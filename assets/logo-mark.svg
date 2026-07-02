@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Billy Digitals logo">
+  <defs>
+    <linearGradient id="bdBg" x1="8" y1="6" x2="88" y2="90" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset=".52" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="bdGloss" x1="48" y1="2" x2="48" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".40"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="92" height="92" rx="26" fill="url(#bdBg)"/>
+  <rect x="2" y="2" width="92" height="92" rx="26" fill="url(#bdGloss)"/>
+  <rect x="2.75" y="2.75" width="90.5" height="90.5" rx="25.25" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="1.5"/>
+  <path d="M35 27 V71 M35 27 C56 27 61.5 31.5 61.5 39 C61.5 46.5 55.5 49 35 49 M35 49 C58 49 64 53.5 64 61 C64 68.5 57 71 35 71"
+        fill="none" stroke="#ffffff" stroke-width="8.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M71.5 16 L74.1 21.9 L80 24.5 L74.1 27.1 L71.5 33 L68.9 27.1 L63 24.5 L68.9 21.9 Z" fill="#ffffff"/>
+</svg>

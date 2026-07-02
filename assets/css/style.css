@@ -112,8 +112,10 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 .nav { display: flex; align-items: center; gap: 28px; }
 .logo {
   font-family: var(--font-display); font-weight: 700; font-size: 1.45rem; letter-spacing: -0.02em;
+  display: inline-flex; align-items: center; gap: 10px;
 }
-.logo span {
+.logo-ic { width: 32px; height: 32px; display: block; flex: none; }
+.logo-word > span {
   background: var(--grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
