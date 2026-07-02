@@ -1,39 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 100 100" role="img" aria-label="Billy Digitals logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="48 16 264 136" role="img" aria-label="Billy Digitals">
   <defs>
-    <linearGradient id="chGrad" x1="18" y1="14" x2="104" y2="108" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#059669"/>
-      <stop offset=".52" stop-color="#10b981"/>
-      <stop offset="1" stop-color="#34d399"/>
+    <linearGradient id="bdBody" x1="60" y1="30" x2="300" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1a13"/><stop offset="1" stop-color="#0e241a"/>
     </linearGradient>
-    <linearGradient id="chGloss" x1="60" y1="30" x2="60" y2="84" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ffffff" stop-opacity=".32"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    <linearGradient id="bdGloss" x1="180" y1="42" x2="180" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".07"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="bdPin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="bdTxt" x1="96" y1="60" x2="264" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6ee7b7"/><stop offset=".55" stop-color="#10b981"/><stop offset="1" stop-color="#059669"/>
     </linearGradient>
   </defs>
 
-  <g fill="url(#chGrad)">
-    <rect x="15" y="42.5" width="13" height="7" rx="3.5"/>
-    <rect x="15" y="56.5" width="13" height="7" rx="3.5"/>
-    <rect x="15" y="70.5" width="13" height="7" rx="3.5"/>
-    <rect x="92" y="42.5" width="13" height="7" rx="3.5"/>
-    <rect x="92" y="56.5" width="13" height="7" rx="3.5"/>
-    <rect x="92" y="70.5" width="13" height="7" rx="3.5"/>
-    <rect x="42.5" y="15" width="7" height="13" rx="3.5"/>
-    <rect x="56.5" y="15" width="7" height="13" rx="3.5"/>
-    <rect x="70.5" y="15" width="7" height="13" rx="3.5"/>
-    <rect x="42.5" y="92" width="7" height="13" rx="3.5"/>
-    <rect x="56.5" y="92" width="7" height="13" rx="3.5"/>
-    <rect x="70.5" y="92" width="7" height="13" rx="3.5"/>
+  <!-- pins -->
+  <g fill="url(#bdPin)">
+    <rect x="96" y="28" width="8" height="16" rx="4"/><rect x="136" y="28" width="8" height="16" rx="4"/><rect x="176" y="28" width="8" height="16" rx="4"/><rect x="216" y="28" width="8" height="16" rx="4"/><rect x="256" y="28" width="8" height="16" rx="4"/>
+    <rect x="96" y="124" width="8" height="16" rx="4"/><rect x="136" y="124" width="8" height="16" rx="4"/><rect x="176" y="124" width="8" height="16" rx="4"/><rect x="216" y="124" width="8" height="16" rx="4"/><rect x="256" y="124" width="8" height="16" rx="4"/>
   </g>
 
-  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chGrad)"/>
-  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chGloss)"/>
-  <rect x="30.75" y="30.75" width="58.5" height="58.5" rx="15.25" fill="none" stroke="#ffffff" stroke-opacity=".2" stroke-width="1.4"/>
+  <!-- chip body -->
+  <rect x="64" y="42" width="232" height="84" rx="18" fill="url(#bdBody)"/>
+  <rect x="64" y="42" width="232" height="84" rx="18" fill="url(#bdGloss)"/>
+  <rect x="64.75" y="42.75" width="230.5" height="82.5" rx="17.25" fill="none" stroke="#ffffff" stroke-opacity=".1" stroke-width="1.5"/>
+  <circle cx="80" cy="56" r="3" fill="#34d399"/>
 
-  <!-- </> coding glyph -->
-  <g fill="none" stroke="#ffffff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="51,49 43,60 51,71"/>
-    <line x1="65" y1="47" x2="55" y2="73"/>
-    <polyline points="69,49 77,60 69,71"/>
+  <!-- BILLY wordmark (custom monoline) -->
+  <g fill="none" stroke="url(#bdTxt)" stroke-width="7.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M96 64 V104"/>
+    <path d="M96 64 C118 64 122 68 122 74 C122 80 117 84 96 84"/>
+    <path d="M96 84 C119 84 124 88 124 94 C124 101 118 104 96 104"/>
+    <path d="M138 64 V104"/>
+    <path d="M160 64 V104 M160 104 H182"/>
+    <path d="M198 64 V104 M198 104 H220"/>
+    <path d="M236 64 L250 86 M264 64 L250 86 M250 86 V104"/>
   </g>
 </svg>
