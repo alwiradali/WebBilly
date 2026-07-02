@@ -309,12 +309,7 @@ function initChat() {
     {
       re: /\b(plan|plans|package|packages|tier|tiers|standard|premium|ultra)\b/i,
       reply: () =>
-        "We offer three levels: <strong>Standard</strong> (up to 5 pages, perfect for small businesses), <strong>Premium</strong> (up to 12 pages, CMS, AI chatbot, advanced SEO) and <strong>Ultra Premium</strong> (unlimited pages, e-commerce or web apps, full branding, a dedicated manager and 12 months of care). Check the <a href=\"#plans\">Plans section</a> for full details!",
-    },
-    {
-      re: /\b(ecommerce|e-commerce|shop|shops|store|stores|sell online|selling|woocommerce|shopify)\b/i,
-      reply: () =>
-        "E-commerce is one of our specialities! 🛒 We build stores with smooth checkout, payments, inventory and analytics — on Shopify, WooCommerce or fully custom. Have a look at the Aurora Store sample in our <a href=\"#templates\">Templates section</a>.",
+        "We offer three levels: <strong>Standard</strong> (up to 5 pages, perfect for small businesses), <strong>Premium</strong> (up to 12 pages, CMS, AI chatbot, advanced SEO) and <strong>Ultra Premium</strong> (unlimited pages, custom web apps, full branding, a dedicated manager and 12 months of care). Check the <a href=\"#plans\">Plans section</a> for full details!",
     },
     {
       re: /\b(seo|google|rank|ranking|search engine|traffic)\b/i,
@@ -339,7 +334,7 @@ function initChat() {
     {
       re: /\b(template|templates|sample|samples|example|examples|portfolio|your work|previous work|design|designs|style|styles)\b/i,
       reply: () =>
-        "We build for every industry — e-commerce, restaurants, corporate, portfolios, real estate, medical, education, SaaS, fitness and travel. Browse the <a href=\"#templates\">sample styles</a>; every project is designed from scratch to match your brand.",
+        "We build for every industry — restaurants, corporate, portfolios, real estate, medical, education, SaaS, fitness and travel. Browse the <a href=\"#templates\">sample styles</a>; every project is designed from scratch to match your brand.",
     },
     {
       re: /\b(process|steps|start|begin|get started|getting started)\b|how (do you|does it|does this) work/i,
@@ -349,7 +344,7 @@ function initChat() {
     {
       re: /\b(service|services|what can you|capability|capabilities)\b|what do you (do|offer)|do you (do|make|build)/i,
       reply: () =>
-        "We handle everything: custom website design, e-commerce, web applications, UI/UX & branding, SEO & performance, AI chatbots & automation, hosting & security, and copywriting. One team, end to end. See <a href=\"#services\">all services</a>.",
+        "We handle everything: custom website design, web applications, UI/UX & branding, SEO & performance, AI chatbots & automation, hosting & security, and copywriting. One team, end to end. See <a href=\"#services\">all services</a>.",
     },
     {
       re: /\b(contact|email|e-mail|whatsapp|human|person|talk|speak|call|phone|reach)\b/i,
