@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 120" role="img" aria-label="Billy Digitals">
+  <defs>
+    <linearGradient id="lkGrad" x1="18" y1="14" x2="104" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#059669"/><stop offset=".52" stop-color="#10b981"/><stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="lkGloss" x1="60" y1="30" x2="60" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".32"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="lkText" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+
+  <svg x="6" y="8" width="104" height="104" viewBox="10 10 100 100">
+    <g fill="url(#lkGrad)">
+      <rect x="15" y="42.5" width="13" height="7" rx="3.5"/><rect x="15" y="56.5" width="13" height="7" rx="3.5"/><rect x="15" y="70.5" width="13" height="7" rx="3.5"/>
+      <rect x="92" y="42.5" width="13" height="7" rx="3.5"/><rect x="92" y="56.5" width="13" height="7" rx="3.5"/><rect x="92" y="70.5" width="13" height="7" rx="3.5"/>
+      <rect x="42.5" y="15" width="7" height="13" rx="3.5"/><rect x="56.5" y="15" width="7" height="13" rx="3.5"/><rect x="70.5" y="15" width="7" height="13" rx="3.5"/>
+      <rect x="42.5" y="92" width="7" height="13" rx="3.5"/><rect x="56.5" y="92" width="7" height="13" rx="3.5"/><rect x="70.5" y="92" width="7" height="13" rx="3.5"/>
+    </g>
+    <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#lkGrad)"/>
+    <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#lkGloss)"/>
+    <rect x="30.75" y="30.75" width="58.5" height="58.5" rx="15.25" fill="none" stroke="#ffffff" stroke-opacity=".2" stroke-width="1.4"/>
+    <g fill="none" stroke="#ffffff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="51,49 43,60 51,71"/><line x1="65" y1="47" x2="55" y2="73"/><polyline points="69,49 77,60 69,71"/>
+    </g>
+  </svg>
+
+  <text x="124" y="61" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-weight="700" font-size="50" letter-spacing="-1.5" dominant-baseline="central">
+    <tspan fill="#0f172a">Billy</tspan><tspan fill="url(#lkText)">Digitals</tspan>
+  </text>
+</svg>

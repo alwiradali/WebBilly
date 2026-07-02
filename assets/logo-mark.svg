@@ -1,18 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 100 100" role="img" aria-label="Billy Digitals logo">
   <defs>
-    <linearGradient id="chipGrad" x1="18" y1="14" x2="104" y2="108" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#6366f1"/>
-      <stop offset=".52" stop-color="#a855f7"/>
-      <stop offset="1" stop-color="#22d3ee"/>
+    <linearGradient id="chGrad" x1="18" y1="14" x2="104" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#059669"/>
+      <stop offset=".52" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#34d399"/>
     </linearGradient>
-    <linearGradient id="chipGloss" x1="60" y1="30" x2="60" y2="84" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ffffff" stop-opacity=".35"/>
+    <linearGradient id="chGloss" x1="60" y1="30" x2="60" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".32"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
   </defs>
 
-  <!-- chip pins -->
-  <g fill="url(#chipGrad)">
+  <g fill="url(#chGrad)">
     <rect x="15" y="42.5" width="13" height="7" rx="3.5"/>
     <rect x="15" y="56.5" width="13" height="7" rx="3.5"/>
     <rect x="15" y="70.5" width="13" height="7" rx="3.5"/>
@@ -27,17 +26,14 @@
     <rect x="70.5" y="92" width="7" height="13" rx="3.5"/>
   </g>
 
-  <!-- chip die -->
-  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chipGrad)"/>
-  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chipGloss)"/>
-  <rect x="30.75" y="30.75" width="58.5" height="58.5" rx="15.25" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="1.4"/>
+  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chGrad)"/>
+  <rect x="30" y="30" width="60" height="60" rx="16" fill="url(#chGloss)"/>
+  <rect x="30.75" y="30.75" width="58.5" height="58.5" rx="15.25" fill="none" stroke="#ffffff" stroke-opacity=".2" stroke-width="1.4"/>
 
-  <!-- circuit accents -->
-  <circle cx="40" cy="40" r="2.4" fill="#ffffff" opacity=".92"/>
-  <circle cx="80" cy="40" r="1.7" fill="#ffffff" opacity=".3"/>
-  <circle cx="40" cy="80" r="1.7" fill="#ffffff" opacity=".3"/>
-
-  <!-- B monogram -->
-  <path d="M48 43 V77 M48 43 C63 43 67 46 67 52 C67 58 62 60 48 60 M48 60 C65 60 69 63 69 69 C69 76 63 77 48 77"
-        fill="none" stroke="#ffffff" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- </> coding glyph -->
+  <g fill="none" stroke="#ffffff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="51,49 43,60 51,71"/>
+    <line x1="65" y1="47" x2="55" y2="73"/>
+    <polyline points="69,49 77,60 69,71"/>
+  </g>
 </svg>
