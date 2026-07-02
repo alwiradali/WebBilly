@@ -302,7 +302,7 @@ function initChat() {
       reply: () => "Talk soon! When you're ready to build something amazing, you know where to find us. 👋",
     },
     {
-      re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much/i,
+      re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
       reply: () =>
         "Every project is unique, so we price per project — no hourly surprises, no hidden fees. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a tailored quote within 24 hours. " + contactLine,
     },
