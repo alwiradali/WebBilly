@@ -531,3 +531,52 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(139, 92, 246, 0.
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ============================================================
+   Premium polish layer
+   ============================================================ */
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; z-index: 300;
+  height: 3px; width: 100%;
+  background: var(--grad);
+  transform: scaleX(0); transform-origin: 0 50%;
+  will-change: transform;
+}
+
+/* Consistent keyboard focus ring across all interactive elements */
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+.fbtn:focus-visible, .faq-q:focus-visible {
+  outline: 2px solid var(--c3);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Cursor-tracking spotlight glow on service cards */
+.card { position: relative; overflow: hidden; }
+.card::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(139, 92, 246, 0.18), transparent 70%);
+  opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+}
+.card:hover::before { opacity: 1; }
+.card > * { position: relative; z-index: 1; }
+
+/* Subtle grain texture for a premium, non-flat finish */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 400; pointer-events: none;
+  opacity: 0.025; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Plan cards lift a touch more with a colored edge glow on hover */
+.plan:hover, .tcard:hover, .quote:hover {
+  box-shadow: 0 22px 55px rgba(99, 102, 241, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress { display: none; }
+  .card::before { display: none; }
+}

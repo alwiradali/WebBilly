@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initPrefill();
   initForm();
   initChat();
+  initScrollProgress();
+  initCardSpotlight();
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 });
@@ -213,6 +215,43 @@ function initForm() {
       "?subject=" + encodeURIComponent(subject) +
       "&body=" + encodeURIComponent(body);
     showToast("Opening your email app — just hit send!");
+  });
+}
+
+/* ---------- Scroll progress bar ---------- */
+function initScrollProgress() {
+  const bar = document.getElementById("scrollProgress");
+  if (!bar) return;
+  let ticking = false;
+  const update = () => {
+    const doc = document.documentElement;
+    const scrolled = window.scrollY || window.pageYOffset || doc.scrollTop || 0;
+    const max = doc.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(scrolled / max, 1) : 0;
+    bar.style.transform = "scaleX(" + p + ")";
+    ticking = false;
+  };
+  update();
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
+}
+
+/* ---------- Cursor spotlight on service cards ---------- */
+function initCardSpotlight() {
+  document.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--mx", e.clientX - rect.left + "px");
+      card.style.setProperty("--my", e.clientY - rect.top + "px");
+    });
   });
 }
 
