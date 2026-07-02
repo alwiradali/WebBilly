@@ -1,13 +1,13 @@
 /* ============================================================
-   WebBilly — Site Scripts
+   Billy Digitals — Site Scripts
    ============================================================ */
 
 const CONFIG = {
-  brand: "WebBilly",
+  brand: "Billy Digitals",
   email: "alwiradali@gmail.com",
   // WhatsApp number: country code + number, digits only (e.g. "447700900123")
   whatsapp: "447519022117",
-  waMessage: "Hi WebBilly! I'd like to discuss a website project.",
+  waMessage: "Hi Billy Digitals! I'd like to discuss a website project.",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -291,7 +291,7 @@ function initChat() {
     {
       re: /^\s*(hi|hello|hey|hiya|salam|assalamualaikum|howdy|yo)[\s!,.?]*$/i,
       reply: () =>
-        "Hey there! 👋 I'm Billy, WebBilly's AI assistant. Ask me about our services, plans, timelines — or tell me what you want to build!",
+        "Hey there! 👋 I'm Billy, your assistant here at Billy Digitals. Ask me about our services, plans, timelines — or tell me what you want to build!",
     },
     {
       re: /^\s*(thanks|thank you|thankyou|great|awesome|perfect|nice|cool)[\s!,.?]*$/i,
@@ -375,7 +375,7 @@ function initChat() {
       if (!welcomed) {
         welcomed = true;
         botSay(
-          "Hi! I'm <strong>Billy</strong> 🤖 — WebBilly's AI assistant. I can tell you about our services, plans and process. What are you looking to build?"
+          "Hi! I'm <strong>Billy</strong> 🤖 — your assistant here at Billy Digitals. I can tell you about our services, plans and process. What are you looking to build?"
         );
       }
       focusTimer = setTimeout(() => {

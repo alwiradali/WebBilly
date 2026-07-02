@@ -1,4 +1,4 @@
-# WebBilly
+# Billy Digitals
 
 Premium web development agency website — static site (HTML/CSS/JS), no build step.
 
