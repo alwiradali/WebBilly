@@ -579,3 +579,36 @@ body::after {
   .scroll-progress { display: none; }
   .card::before { display: none; }
 }
+
+/* ---------- Template thumbnails (link to live samples) ---------- */
+.tthumb {
+  position: relative; display: block; border-radius: 14px; overflow: hidden;
+  aspect-ratio: 16 / 10; border: 1px solid var(--border);
+  background: linear-gradient(140deg, var(--t1, #6366f1), var(--t2, #22d3ee));
+  isolation: isolate;
+}
+.tthumb::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 75% 12%, rgba(255, 255, 255, 0.35), transparent 55%);
+  mix-blend-mode: overlay;
+}
+.tthumb-chrome { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 2; }
+.tthumb-chrome i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); }
+.tthumb-emoji {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 1;
+  font-size: 3.6rem; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.28));
+  transition: transform 0.35s ease;
+}
+.tthumb:hover .tthumb-emoji { transform: scale(1.12) rotate(-5deg); }
+.tthumb-view {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 30px 14px 12px; font-size: 0.86rem; font-weight: 600; color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.tthumb:hover .tthumb-view, .tthumb:focus-visible .tthumb-view { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tthumb-view { opacity: 1; transform: none; }
+  .tthumb-emoji { transition: none; }
+}
