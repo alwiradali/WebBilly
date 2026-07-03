@@ -4,13 +4,13 @@
 name = "billydigitals"
 compatibility_date = "2025-07-03"
 
-[assets]
-directory = "."
-not_found_handling = "404-page"
-
-# Publish straight to the real domain (no workers.dev subdomain needed).
-# Cloudflare creates the DNS + SSL automatically on deploy.
+# NOTE: routes must be declared BEFORE the [assets] table — in TOML any keys
+# after a [table] header belong to that table.
 routes = [
   { pattern = "billydigitals.com", custom_domain = true },
   { pattern = "www.billydigitals.com", custom_domain = true }
 ]
+
+[assets]
+directory = "."
+not_found_handling = "404-page"
