@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /templates/
 
-Sitemap: https://alwiradali.github.io/WebBilly/sitemap.xml
+Sitemap: https://www.billydigitals.com/sitemap.xml
