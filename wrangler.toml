@@ -1,0 +1,8 @@
+# Cloudflare Workers static-site config for Billy Digitals.
+# Serves the repository as static assets (no build step, no server code).
+name = "billydigitals"
+compatibility_date = "2025-07-03"
+
+[assets]
+directory = "."
+not_found_handling = "404-page"
