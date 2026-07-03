@@ -536,6 +536,32 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.
 }
 
 /* ============================================================
+   3D layer — WebGL hero object + interactive card tilt
+   ============================================================ */
+.hero-gl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; opacity: 0.82;
+}
+.hero-scrim {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 50% 46%, rgba(6, 11, 26, 0.86), rgba(6, 11, 26, 0.42) 55%, transparent 78%),
+    linear-gradient(180deg, transparent 60%, var(--bg) 100%);
+}
+.card, .tcard, .plan { transform-style: preserve-3d; }
+.tilt { will-change: transform; transition: transform 0.35s cubic-bezier(.2,.7,.2,1); }
+.tilt-glare {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity 0.35s ease; z-index: 2;
+  background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 0%), rgba(120, 200, 255, 0.16), transparent 60%);
+}
+.tilt:hover .tilt-glare { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-gl { display: none; }
+  .tilt { transform: none !important; }
+}
+
+/* ============================================================
    Premium polish layer
    ============================================================ */
 
