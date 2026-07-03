@@ -117,7 +117,7 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 }
 .logo-ic { width: 32px; height: 32px; display: block; flex: none; }
 .logo-full {
-  height: 2in; /* ~192px — client requested at least 2 inches */
+  height: 3in; /* ~288px — sized so the "Web Design & App Development" line is legible */
   width: auto; display: block;
   transform-style: preserve-3d; will-change: transform;
   animation: logoSway 7s ease-in-out infinite;
@@ -125,14 +125,14 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   transition: transform 0.4s cubic-bezier(.2,.7,.2,1), height 0.3s ease;
 }
 /* shrink once the user scrolls so it doesn't dominate the whole viewport */
-.site-header.scrolled .logo-full { height: 96px; }
+.site-header.scrolled .logo-full { height: 110px; }
 @media (max-width: 900px) {
-  .logo-full { height: 1.4in; }
-  .site-header.scrolled .logo-full { height: 74px; }
+  .logo-full { height: 1.9in; }
+  .site-header.scrolled .logo-full { height: 84px; }
 }
 @media (max-width: 560px) {
-  .logo-full { height: 1.1in; }
-  .site-header.scrolled .logo-full { height: 60px; }
+  .logo-full { height: 1.35in; }
+  .site-header.scrolled .logo-full { height: 64px; }
 }
 @keyframes logoSway {
   0%, 100% { transform: rotateY(-11deg) rotateX(3deg) translateZ(0); }
@@ -165,7 +165,7 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 /* ---------- Hero ---------- */
 .hero {
   position: relative; overflow: hidden;
-  padding: 268px 0 110px; text-align: center;
+  padding: 360px 0 110px; text-align: center;
 }
 .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; pointer-events: none; }
 .orb-1 { width: 480px; height: 480px; background: rgba(43, 127, 255, 0.35); top: -140px; left: -120px; animation: drift 14s ease-in-out infinite alternate; }
