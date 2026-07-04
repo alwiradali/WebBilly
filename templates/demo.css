@@ -240,56 +240,130 @@ body.dark .tile { background: var(--surface); }
 }
 
 /* ============================================================
-   fx3d — 3D hero animation layer (floating centerpiece,
-   depth particles, extruded headline). Added by fx3d.js.
+   fx — per-template signature hero animations (fx3d.js)
    ============================================================ */
-.dhero.fx3d { perspective: 900px; }
-.fx3d-stage { transform-style: preserve-3d; position: relative; }
-.fx3d-hero {
-  display: inline-block;
-  animation: fx3dFloat 6s ease-in-out infinite;
-  will-change: transform;
-  transition: transform 0.15s ease-out;
-  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.35));
+.dhero.fx { perspective: 900px; }
+.fx-stage { transform-style: preserve-3d; position: relative; }
+.fx-stage .art-emoji { position: relative; z-index: 2; transition: transform 0.15s ease-out; will-change: transform; }
+
+/* shared */
+.fx-bob { animation: fxBob 5.5s ease-in-out infinite; display: inline-block; }
+@keyframes fxBob { 0%,100% { translate: 0 0; } 50% { translate: 0 -22px; } }
+.fx-extrude {
+  text-shadow: 0 1px 0 rgba(0,0,0,.25), 0 2px 0 rgba(0,0,0,.2), 0 4px 0 rgba(0,0,0,.16),
+    0 6px 0 rgba(0,0,0,.12), 0 9px 0 rgba(0,0,0,.08), 0 18px 30px rgba(0,0,0,.4);
+  transition: transform .15s ease-out; transform-style: preserve-3d;
 }
-@keyframes fx3dFloat {
-  0%, 100% { margin-top: 0; }
-  50% { margin-top: -26px; }
-}
-.fx3d-shadow {
-  position: absolute; left: 50%; bottom: 6%;
-  width: 46%; height: 26px; border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%);
-  transform: translateX(-50%);
-  animation: fx3dShadow 6s ease-in-out infinite;
-  pointer-events: none; z-index: -1;
-}
-@keyframes fx3dShadow {
-  0%, 100% { scale: 1; opacity: 0.55; }
-  50% { scale: 0.78; opacity: 0.3; }
-}
-.fx3d-p {
-  position: absolute; z-index: 0; pointer-events: none; user-select: none;
-  opacity: 0.85;
-  animation: fx3dDrift 16s ease-in-out infinite;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
-  will-change: transform, translate;
-}
-@keyframes fx3dDrift {
-  0%, 100% { transform: translateY(0) rotate(-6deg) scale(1); }
-  33% { transform: translateY(-22px) rotate(7deg) scale(1.08); }
-  66% { transform: translateY(10px) rotate(-3deg) scale(0.95); }
-}
-.fx3d-title {
-  transform-style: preserve-3d;
-  transition: transform 0.15s ease-out;
-  text-shadow:
-    0 1px 0 rgba(0, 0, 0, 0.22),
-    0 2px 0 rgba(0, 0, 0, 0.18),
-    0 3px 0 rgba(0, 0, 0, 0.14),
-    0 4px 0 rgba(0, 0, 0, 0.10),
-    0 10px 22px rgba(0, 0, 0, 0.35);
-}
+
+/* 🍛 restaurant — orbit + steam */
+.fx-orbit { position: absolute; inset: 0; margin: auto; width: 10px; height: 10px; animation: fxOrbit 16s linear infinite; z-index: 1; pointer-events: none; }
+@keyframes fxOrbit { to { rotate: 360deg; } }
+.fx-orbit-item { position: absolute; left: 0; top: 0; }
+.fx-orbit-emoji { display: inline-block; font-size: 1.7rem; animation: fxOrbitCounter 16s linear infinite; filter: drop-shadow(0 6px 10px rgba(0,0,0,.3)); }
+@keyframes fxOrbitCounter { to { rotate: -360deg; } }
+.fx-steam { position: absolute; bottom: 34%; width: 8px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.5); filter: blur(6px); opacity: 0;
+  animation: fxSteam 3.4s ease-in-out infinite; pointer-events: none; }
+@keyframes fxSteam { 0% { opacity: 0; translate: 0 0 scale(.6); } 30% { opacity: .7; }
+  100% { opacity: 0; translate: 6px -90px; scale: 1.4; } }
+
+/* 📈 corporate — growing bars */
+.fx-chart { position: absolute; left: 50%; bottom: 16%; translate: -50% 0; display: flex; gap: 12px; align-items: flex-end; height: 46%; z-index: 1; pointer-events: none; }
+.fx-bar { width: 26px; height: var(--h); border-radius: 7px 7px 3px 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 24px rgba(0,0,0,.3); transform-origin: bottom;
+  animation: fxBarGrow 2.6s cubic-bezier(.2,.7,.2,1) infinite alternate; }
+@keyframes fxBarGrow { 0% { scale: 1 .25; opacity: .7; } 45%,100% { scale: 1 1; opacity: 1; } }
+.fx-corporate .art-emoji { font-size: clamp(3.4rem, 7vw, 5rem) !important; position: absolute !important; right: 12%; top: 12%; }
+
+/* 🎨 portfolio — paint trail */
+.fx-paint { position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  pointer-events: none; z-index: 3; translate: -50% -50%;
+  animation: fxPaint .9s ease-out forwards; mix-blend-mode: screen; }
+@keyframes fxPaint { 0% { scale: 1; opacity: .95; } 100% { scale: 3.4; opacity: 0; } }
+
+/* 🏙️ realestate — skyline planes */
+.fx-sky { position: absolute; left: -4%; right: -4%; bottom: 0; text-align: center;
+  letter-spacing: .35em; pointer-events: none; user-select: none;
+  transition: translate .25s ease-out; white-space: nowrap; }
+.fx-sky-far { font-size: 1.5rem; opacity: .18; bottom: 30px; filter: blur(1.5px); }
+.fx-sky-mid { font-size: 2.2rem; opacity: .3; bottom: 12px; filter: blur(.6px); }
+.fx-sky-near { font-size: 3rem; opacity: .5; bottom: -6px; }
+
+/* 🩺 medical — pulse + ecg */
+.fx-pulse { display: inline-block; animation: fxPulse 1.6s ease-in-out infinite; transform-origin: center; }
+@keyframes fxPulse { 0%,100% { scale: 1; } 12% { scale: 1.1; } 24% { scale: 1; } 36% { scale: 1.06; } 48% { scale: 1; } }
+.fx-ecg { position: absolute; left: 0; right: 0; bottom: 14px; width: 100%; height: 46px;
+  color: var(--accent); opacity: .55; pointer-events: none; }
+.fx-ecg path { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: fxEcg 4s linear infinite; }
+@keyframes fxEcg { 40% { stroke-dashoffset: 0; } 70% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: -1400; } }
+.fx-bubble { position: absolute; bottom: 8%; font-size: 1rem; opacity: 0;
+  animation: fxBubble 6.5s ease-in infinite; pointer-events: none; }
+@keyframes fxBubble { 0% { opacity: 0; translate: 0 0; scale: .7; } 15% { opacity: .8; }
+  100% { opacity: 0; translate: 14px -260px; scale: 1.25; } }
+
+/* 🎓 education — 3d flip + floaties */
+.fx-flip { display: inline-block; animation: fxFlip 7s cubic-bezier(.4,0,.2,1) infinite; transform-style: preserve-3d; }
+@keyframes fxFlip { 0%, 12% { transform: rotateY(0); } 48%, 62% { transform: rotateY(360deg); } 100% { transform: rotateY(360deg); } }
+.fx-floaty { position: absolute; font-size: 1.6rem; opacity: .85;
+  animation: fxFloaty 9s ease-in-out infinite; pointer-events: none;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,.25)); }
+@keyframes fxFloaty { 0%,100% { translate: 0 0; rotate: -8deg; } 50% { translate: 8px -26px; rotate: 8deg; } }
+
+/* 📊 saas — morph blob + satellites */
+.fx-blob { position: absolute; inset: 8% 10%; z-index: 0; pointer-events: none;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  opacity: .5; filter: blur(4px);
+  animation: fxBlob 9s ease-in-out infinite alternate; }
+@keyframes fxBlob {
+  0%   { border-radius: 58% 42% 60% 40% / 52% 55% 45% 48%; rotate: 0deg; }
+  50%  { border-radius: 42% 58% 38% 62% / 60% 40% 60% 40%; rotate: 12deg; }
+  100% { border-radius: 55% 45% 62% 38% / 42% 60% 40% 58%; rotate: -10deg; } }
+.fx-sat { position: absolute; inset: 0; margin: auto; width: 8px; height: 8px;
+  pointer-events: none; z-index: 2; }
+.fx-sat-0 { animation: fxOrbit 11s linear infinite; }
+.fx-sat-1 { animation: fxOrbit 17s linear infinite reverse; }
+.fx-sat-emoji { display: inline-block; translate: 130px 0; font-size: 1.6rem;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.3)); }
+.fx-sat-1 .fx-sat-emoji { translate: -165px 20px; }
+
+/* 🏋️ fitness — slam + shockwaves */
+.fx-slam { display: inline-block; transform-origin: bottom center;
+  animation: fxSlam 1.5s cubic-bezier(.34,1.4,.4,1) infinite; }
+@keyframes fxSlam {
+  0% { translate: 0 -70px; scale: 1.06 .96; }
+  38% { translate: 0 0; scale: .94 1.06; }
+  46% { translate: 0 4px; scale: 1.12 .88; }
+  60% { translate: 0 0; scale: .98 1.02; }
+  100% { translate: 0 -70px; scale: 1.06 .96; } }
+.fx-ring { position: absolute; left: 50%; bottom: 12%; width: 60px; height: 18px;
+  border: 3px solid var(--accent); border-radius: 50%; translate: -50% 0;
+  opacity: .8; animation: fxRing .65s ease-out forwards; pointer-events: none; }
+@keyframes fxRing { to { scale: 3.2 2.4; opacity: 0; } }
+.fx-ember { position: absolute; bottom: 10%; font-size: 1.1rem; opacity: 0;
+  animation: fxEmber 4.2s ease-in infinite; pointer-events: none; }
+@keyframes fxEmber { 0% { opacity: 0; translate: 0 0; scale: .7; } 18% { opacity: .9; }
+  100% { opacity: 0; translate: -12px -200px; scale: 1.2; } }
+
+/* 🌍 travel — plane + clouds + globe spin */
+.fx-spin-slow { display: inline-block; animation: fxSpinSlow 26s linear infinite; }
+@keyframes fxSpinSlow { to { rotate: 360deg; } }
+.fx-plane { position: absolute; top: 26%; left: -8%; font-size: 2.1rem; z-index: 3;
+  animation: fxPlane 9s linear infinite; pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,.3)); }
+@keyframes fxPlane {
+  0%   { translate: 0 0; rotate: 8deg; }
+  25%  { translate: 30vw -34px; rotate: -4deg; }
+  50%  { translate: 60vw 8px; rotate: 6deg; }
+  75%  { translate: 90vw -26px; rotate: -3deg; }
+  100% { translate: 120vw 0; rotate: 8deg; } }
+.fx-cloud { position: absolute; left: -10%; opacity: .5; z-index: 1;
+  animation: fxCloud linear infinite; pointer-events: none; }
+@keyframes fxCloud { from { translate: 0 0; } to { translate: 125vw 0; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .fx3d-hero, .fx3d-shadow, .fx3d-p { animation: none !important; }
+  .fx-bob, .fx-pulse, .fx-flip, .fx-slam, .fx-spin-slow, .fx-orbit, .fx-orbit-emoji,
+  .fx-steam, .fx-bar, .fx-ecg path, .fx-bubble, .fx-floaty, .fx-blob, .fx-sat,
+  .fx-plane, .fx-cloud, .fx-ember { animation: none !important; }
 }
