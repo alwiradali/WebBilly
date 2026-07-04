@@ -196,7 +196,7 @@
           <button class="fbtn" data-filter="fitness">Fitness</button>
           <button class="fbtn" data-filter="travel">Travel</button>
         </div>
-        <div class="grid templates-grid" id="templatesGrid">
+        <div class="grid templates-grid coverflow" id="templatesGrid">
           <article class="tcard reveal" data-cat="restaurant">
             <a class="tthumb" style="--t1:#e11d48;--t2:#f59e0b" href="templates/restaurant.html" target="_blank" rel="noopener" aria-label="View the Saffron House restaurant sample in a new tab">
               <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -332,7 +332,7 @@
           <h2>Pick the level of <span class="grad">firepower</span> you need</h2>
           <p class="sub">Transparent starting prices — tell us your vision and we'll confirm the final scope. No hidden fees, ever.</p>
         </div>
-        <div class="grid plans-grid">
+        <div class="grid plans-grid coverflow">
           <article class="plan reveal">
             <h3>Standard</h3>
             <p class="plan-price"><strong>£700</strong><span>one-off</span></p>
@@ -396,7 +396,7 @@
           <h2>Two different jobs. <span class="grad">Both essential.</span></h2>
           <p class="sub">Hosting and Care Plans solve completely different problems. Here's exactly what each one does.</p>
         </div>
-        <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:22px;margin-bottom:70px">
+        <div class="grid coverflow" style="grid-template-columns:repeat(2,1fr);gap:22px;margin-bottom:70px">
           <article class="card reveal" style="border-color:rgba(56,189,248,.3)">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
             <h3>🖥️ Hosting — keeps your site <em style="color:var(--c3);font-style:normal">alive</em></h3>
@@ -416,7 +416,7 @@
           <h2>Fast, secure hosting that <span class="grad">never sleeps</span></h2>
           <p class="sub">UK-based servers, free SSL, daily backups and 24/7 monitoring — fully managed by us, so your site stays fast, safe and online while you run your business.</p>
         </div>
-        <div class="grid plans-grid">
+        <div class="grid plans-grid coverflow">
           <article class="plan reveal">
             <h3>Starter</h3>
             <p class="plan-price"><strong>£5</strong><span>/month</span></p>
@@ -495,7 +495,7 @@
           <h2>Care plans that keep you <span class="grad">found on Google</span></h2>
           <p class="sub">SEO, Google Business, content updates and ongoing optimisation — handled for you every month, so customers keep finding you.</p>
         </div>
-        <div class="grid plans-grid">
+        <div class="grid plans-grid coverflow">
           <article class="plan reveal">
             <h3>Starter Care</h3>
             <p class="plan-price"><strong>£60</strong><span>/month</span></p>
@@ -506,6 +506,7 @@
               <li>Up to 2 content updates/month</li>
               <li>Broken link &amp; speed checks</li>
               <li>Monthly performance report</li>
+              <li><strong>📣 £10/month of free social media advertising</strong></li>
             </ul>
             <a class="btn btn-ghost btn-block" href="#contact" data-plan="Care — Starter">Get Started</a>
           </article>
@@ -521,6 +522,7 @@
               <li>Up to 5 content updates/month</li>
               <li>Google reviews monitoring</li>
               <li>Priority email support</li>
+              <li><strong>📣 £20/month of free social media advertising</strong></li>
             </ul>
             <a class="btn btn-primary btn-block" href="#contact" data-plan="Care — Growth">Get Started</a>
           </article>
@@ -536,6 +538,7 @@
               <li>Monthly strategy call</li>
               <li>Google reviews &amp; reputation management</li>
               <li>Same-day priority support</li>
+              <li><strong>📣 £30/month of free social media advertising</strong></li>
             </ul>
             <a class="btn btn-ghost btn-block" href="#contact" data-plan="Care — Complete">Get Started</a>
           </article>
@@ -816,5 +819,6 @@
 
   <script src="assets/js/main.js"></script>
   <script src="assets/js/three-d.js" defer></script>
+  <script src="assets/js/carousel3d.js" defer></script>
 </body>
 </html>
