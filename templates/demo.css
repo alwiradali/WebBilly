@@ -238,3 +238,58 @@ body.dark .tile { background: var(--surface); }
   .rv { opacity: 1; transform: none; transition: none; }
   * { animation: none !important; }
 }
+
+/* ============================================================
+   fx3d — 3D hero animation layer (floating centerpiece,
+   depth particles, extruded headline). Added by fx3d.js.
+   ============================================================ */
+.dhero.fx3d { perspective: 900px; }
+.fx3d-stage { transform-style: preserve-3d; position: relative; }
+.fx3d-hero {
+  display: inline-block;
+  animation: fx3dFloat 6s ease-in-out infinite;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.35));
+}
+@keyframes fx3dFloat {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -26px; }
+}
+.fx3d-shadow {
+  position: absolute; left: 50%; bottom: 6%;
+  width: 46%; height: 26px; border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%);
+  transform: translateX(-50%);
+  animation: fx3dShadow 6s ease-in-out infinite;
+  pointer-events: none; z-index: -1;
+}
+@keyframes fx3dShadow {
+  0%, 100% { scale: 1; opacity: 0.55; }
+  50% { scale: 0.78; opacity: 0.3; }
+}
+.fx3d-p {
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  opacity: 0.85;
+  animation: fx3dDrift 16s ease-in-out infinite;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
+  will-change: transform, translate;
+}
+@keyframes fx3dDrift {
+  0%, 100% { transform: translateY(0) rotate(-6deg) scale(1); }
+  33% { transform: translateY(-22px) rotate(7deg) scale(1.08); }
+  66% { transform: translateY(10px) rotate(-3deg) scale(0.95); }
+}
+.fx3d-title {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.22),
+    0 2px 0 rgba(0, 0, 0, 0.18),
+    0 3px 0 rgba(0, 0, 0, 0.14),
+    0 4px 0 rgba(0, 0, 0, 0.10),
+    0 10px 22px rgba(0, 0, 0, 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fx3d-hero, .fx3d-shadow, .fx3d-p { animation: none !important; }
+}
