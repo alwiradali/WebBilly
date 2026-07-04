@@ -362,8 +362,14 @@ function initChat() {
     {
       re: /\b(host|hosting|server|servers|ssl|backup|backups)\b/i,
       reply: () =>
-        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> £5/mo (personal sites), ⭐ <strong>Business</strong> £10/mo (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> £20/mo (fastest resources, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. <a href=\"#hosting\">See hosting plans</a>.",
-      chips: ["Get a quote", "Show me the plans", "Talk to a human"],
+        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> £5/mo (personal sites), ⭐ <strong>Business</strong> £10/mo (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> £20/mo (fastest server resources, advanced security, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. <a href=\"#hosting\">See hosting plans</a>.",
+      chips: ["Care plans", "Get a quote", "Show me the plans"],
+    },
+    {
+      re: /\b(care plan|care plans|seo plan|growth plan|google ranking|rank on google|keyword|ongoing seo)\b/i,
+      reply: () =>
+        "Our <strong>Care Plans</strong> keep your site growing on Google every month: 🔍 <strong>Starter Care</strong> £50/mo (SEO health checks, Google Business monitoring), 📈 <strong>Growth Care</strong> £75/mo (keyword tracking, GBP management, most popular) and 🚀 <strong>Complete Care</strong> £100/mo (full SEO optimisation, unlimited edits, monthly strategy call). Hosting keeps you online — Care keeps you found. <a href=\"#care\">See Care Plans</a>.",
+      chips: ["Hosting plans", "Get a quote", "Talk to a human"],
     },
     {
       re: /\b(plan|plans|package|packages|tier|tiers)\b/i,
