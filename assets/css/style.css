@@ -321,6 +321,27 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 .plan-price strong { font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .plan-price span { color: var(--muted); font-size: 0.95rem; }
 .plan-for { color: var(--muted); font-size: 0.92rem; min-height: 58px; }
+.hosting-note {
+  margin: 34px auto 0; max-width: 720px; text-align: center;
+  color: var(--muted); font-size: 0.98rem;
+  border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px;
+  background: rgba(56, 189, 248, 0.06); padding: 16px 22px;
+}
+.hosting-note strong { color: var(--text); }
+
+/* ---------- Project / apps card ---------- */
+.project-card { max-width: 780px; margin-inline: auto; padding: 36px; }
+.project-head { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+.project-head .card-icon { margin-bottom: 0; flex: none; }
+.project-head h3 { font-size: 1.5rem; }
+.project-tag { color: var(--c3); font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+.project-desc { color: var(--muted); margin-bottom: 18px; }
+.project-feats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 22px; margin-bottom: 24px; }
+.project-feats li { position: relative; padding-left: 24px; font-size: 0.95rem; }
+.project-feats li::before { content: "✓"; position: absolute; left: 0; color: var(--c3); font-weight: 700; }
+.project-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.project-note { color: var(--muted); font-size: 0.88rem; }
+@media (max-width: 560px) { .project-feats { grid-template-columns: 1fr; } .project-card { padding: 26px; } }
 .plan ul { margin: 22px 0 28px; display: grid; gap: 11px; flex: 1; }
 .plan li { position: relative; padding-left: 28px; font-size: 0.93rem; color: #cfd3ea; }
 .plan li::before {
