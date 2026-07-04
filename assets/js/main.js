@@ -182,17 +182,20 @@ function initPrefill() {
   );
 }
 
-/* ---------- Contact form (mailto compose) ---------- */
+/* ---------- Contact form (Web3Forms delivery, mailto fallback) ---------- */
+const WEB3FORMS_KEY = "ad07600b-6d90-4493-9a9c-ba5158049b9a";
+
 function initForm() {
   const form = document.getElementById("contactForm");
   if (!form) return;
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("f-name").value.trim();
     const email = document.getElementById("f-email").value.trim();
     const category = document.getElementById("f-category").value;
     const plan = document.getElementById("f-plan").value;
     const message = document.getElementById("f-message").value.trim();
+    const botcheck = form.querySelector('[name="botcheck"]');
 
     if (!name || !email || !message) {
       showToast("Please fill in your name, email and message.");
@@ -202,19 +205,48 @@ function initForm() {
       showToast("Please enter a valid email address.");
       return;
     }
+    if (botcheck && botcheck.checked) return; // spam bot filled the honeypot
 
     const subject = "New project enquiry — " + category + " (" + plan + ")";
-    const body =
-      "Name: " + name + "\n" +
-      "Email: " + email + "\n" +
-      "Website type: " + category + "\n" +
-      "Plan: " + plan + "\n\n" +
-      "Project details:\n" + message;
-    window.location.href =
-      "mailto:" + CONFIG.email +
-      "?subject=" + encodeURIComponent(subject) +
-      "&body=" + encodeURIComponent(body);
-    showToast("Opening your email app — just hit send!");
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: subject,
+          from_name: "Billy Digitals Website",
+          name: name,
+          email: email,
+          "website type": category,
+          plan: plan,
+          message: message,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Submission failed");
+      window.location.href = "thank-you.html";
+    } catch (err) {
+      // Delivery service unreachable — fall back to the visitor's email app
+      const body =
+        "Name: " + name + "\n" +
+        "Email: " + email + "\n" +
+        "Website type: " + category + "\n" +
+        "Plan: " + plan + "\n\n" +
+        "Project details:\n" + message;
+      window.location.href =
+        "mailto:" + CONFIG.email +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+      showToast("Opening your email app — just hit send!");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Send Enquiry";
+    }
   });
 }
 
