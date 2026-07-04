@@ -324,10 +324,12 @@ function initChat() {
       re: /^\s*(hi|hello|hey|hiya|salam|assalamualaikum|howdy|yo)[\s!,.?]*$/i,
       reply: () =>
         "Hey there! 👋 I'm Billy, your assistant here at Billy Digitals. Ask me about our services, plans, timelines — or tell me what you want to build!",
+      chips: ["What can you build?", "Show me the plans", "Hosting plans", "Get a quote"],
     },
     {
       re: /^\s*(thanks|thank you|thankyou|great|awesome|perfect|nice|cool)[\s!,.?]*$/i,
       reply: () => "You're welcome! 😊 Anything else you'd like to know — or shall we start your project?",
+      chips: ["Get a quote", "Show me the plans", "Talk to a human"],
     },
     {
       re: /^\s*(bye|goodbye|see you|later|see ya)[\s!,.?]*$/i,
@@ -336,47 +338,92 @@ function initChat() {
     {
       re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
       reply: () =>
-        "Every project is unique, so we price per project — no hourly surprises, no hidden fees. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a tailored quote within 24 hours. " + contactLine,
+        "Website projects are priced per project — no hourly surprises, no hidden fees — and hosting starts from just <strong>£5/month</strong>. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a tailored quote within 24 hours. " + contactLine,
+      chips: ["Show me the plans", "Hosting plans", "Talk to a human"],
     },
     {
-      re: /\b(plan|plans|package|packages|tier|tiers|standard|premium|ultra)\b/i,
+      re: /^\s*standard[\s!,.?]*$/i,
       reply: () =>
-        "We offer three levels: <strong>Standard</strong> (up to 5 pages, perfect for small businesses), <strong>Premium</strong> (up to 12 pages, CMS, AI chatbot, advanced SEO) and <strong>Ultra Premium</strong> (unlimited pages, custom web apps, full branding, a dedicated manager and 12 months of care). Check the <a href=\"#plans\">Plans section</a> for full details!",
+        "<strong>Standard</strong> is perfect for personal brands and small businesses: up to 5 custom pages, fully responsive, contact & WhatsApp integration, essential SEO, 2 revision rounds and a month of post-launch support. Hosting is an easy optional add-on. <a href=\"#plans\">See it in Plans</a>.",
+      chips: ["Premium", "Ultra Premium", "Get a quote"],
+    },
+    {
+      re: /^\s*premium[\s!,.?]*$/i,
+      reply: () =>
+        "<strong>Premium</strong> is our most popular: up to 12 custom pages, bespoke UI with animations, a CMS so you can edit content yourself, advanced SEO, an AI chatbot, <strong>managed hosting included</strong>, 4 revision rounds and 3 months of support. <a href=\"#plans\">See it in Plans</a>.",
+      chips: ["Standard", "Ultra Premium", "Get a quote"],
+    },
+    {
+      re: /^\s*ultra( premium)?[\s!,.?]*$/i,
+      reply: () =>
+        "<strong>Ultra Premium</strong> is the flagship: unlimited pages, full web applications, complete branding, AI automation, copywriting included, 12 months hosting & care, a dedicated project manager and unlimited revisions. <a href=\"#plans\">See it in Plans</a>.",
+      chips: ["Standard", "Premium", "Get a quote"],
+    },
+    {
+      re: /\b(host|hosting|server|servers|ssl|backup|backups)\b/i,
+      reply: () =>
+        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> £5/mo (personal sites), ⭐ <strong>Business</strong> £10/mo (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> £20/mo (fastest resources, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. <a href=\"#hosting\">See hosting plans</a>.",
+      chips: ["Get a quote", "Show me the plans", "Talk to a human"],
+    },
+    {
+      re: /\b(plan|plans|package|packages|tier|tiers)\b/i,
+      reply: () =>
+        "We offer three levels: <strong>Standard</strong> (up to 5 pages, perfect for small businesses), <strong>Premium</strong> (up to 12 pages, CMS, AI chatbot, hosting included) and <strong>Ultra Premium</strong> (unlimited pages, custom web apps, full branding, a dedicated manager and 12 months of care). Tap one to see details 👇",
+      chips: ["Standard", "Premium", "Ultra Premium", "Hosting plans"],
     },
     {
       re: /\b(seo|google|rank|ranking|search engine|traffic)\b/i,
       reply: () =>
         "Every site we build ships SEO-ready: clean structure, fast load times and search-first architecture. Premium and Ultra Premium plans add advanced SEO and speed optimisation so customers find you first.",
+      chips: ["Show me the plans", "Get a quote"],
     },
     {
       re: /\b(time|timeline|deadline|fast|quick|quickly|duration|days|weeks)\b|how long|how soon/i,
       reply: () =>
         "Standard sites usually launch in 1–2 weeks, Premium in 2–4 weeks, and Ultra Premium is scoped per project. You get a clear schedule before we start — and we stick to it. ⚡",
+      chips: ["Show me the plans", "Get a quote"],
     },
     {
-      re: /\b(support|maintain|maintenance|host|hosting|update|updates|after launch|care)\b/i,
+      re: /\b(rack ?pilot|our apps|warehouse|warehouses|factory|factories|inventory|stock)\b/i,
+      reply: () =>
+        "That's <strong>BillyRackPilot</strong> — our flagship platform for organisations running warehouses and factories. 🏭 Plan racking layouts, track stock locations in real time and manage team access, all from one dashboard, on any device. <a href=\"#apps\">Take a look</a> or request a demo!",
+      chips: ["Request a demo", "Talk to a human"],
+    },
+    {
+      re: /\brequest a demo\b|book a demo/i,
+      reply: () =>
+        "Brilliant — tell us a little about your organisation in the <a href=\"#contact\">enquiry form</a> and we'll set up a tailored RackPilot demo. " + contactLine,
+      chips: ["Talk to a human", "What can you build?"],
+    },
+    {
+      re: /\b(support|maintain|maintenance|update|updates|after launch|care)\b/i,
       reply: () =>
         "Yes! Every plan includes post-launch support, and Ultra Premium comes with 12 months of hosting, security and care. We keep your site fast, safe and online — always.",
+      chips: ["Hosting plans", "Get a quote"],
     },
     {
       re: /\b(redesign|rebuild|existing|old site|revamp|refresh)\b/i,
       reply: () =>
         "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"#contact\">enquiry form</a>.",
+      chips: ["Get a quote", "How long does it take?"],
     },
     {
       re: /\b(template|templates|sample|samples|example|examples|portfolio|your work|previous work|design|designs|style|styles)\b/i,
       reply: () =>
         "We build for every industry — restaurants, corporate, portfolios, real estate, medical, education, SaaS, fitness and travel. Browse the <a href=\"#templates\">sample styles</a>; every project is designed from scratch to match your brand.",
+      chips: ["Show me the plans", "Get a quote"],
     },
     {
       re: /\b(process|steps|start|begin|get started|getting started)\b|how (do you|does it|does this) work/i,
       reply: () =>
         "Simple: 1) Discovery — we learn your goals. 2) Design — polished, on-brand screens. 3) Development — fast, clean code. 4) Launch — we handle everything. 5) Growth — ongoing support. Ready? <a href=\"#contact\">Send us your idea</a>!",
+      chips: ["Get a quote", "How long does it take?"],
     },
     {
       re: /\b(service|services|what can you|capability|capabilities)\b|what do you (do|offer)|do you (do|make|build)/i,
       reply: () =>
         "We handle everything: custom website design, web applications, UI/UX & branding, SEO & performance, AI chatbots & automation, hosting & security, and copywriting. One team, end to end. See <a href=\"#services\">all services</a>.",
+      chips: ["Show me the plans", "Hosting plans", "Our apps"],
     },
     {
       re: /\b(contact|email|e-mail|whatsapp|human|person|talk|speak|call|phone|reach)\b/i,
@@ -386,8 +433,11 @@ function initChat() {
       re: /\b(website|web site|site|web app|application|landing page)\b/i,
       reply: () =>
         "Whatever you're building, we've got you. 🚀 Explore our <a href=\"#services\">services</a> and <a href=\"#templates\">sample styles</a>, or <a href=\"#contact\">tell us about your project</a> and we'll come back with a plan within 24 hours.",
+      chips: ["Show me the plans", "Get a quote", "Talk to a human"],
     },
   ];
+
+  const DEFAULT_CHIPS = ["What can you build?", "Show me the plans", "Hosting plans", "Redesign my old website", "Get a quote"];
 
   const fallback = () =>
     "Great question — a human can answer that better than I can! " + contactLine +
@@ -402,7 +452,8 @@ function initChat() {
       if (!welcomed) {
         welcomed = true;
         botSay(
-          "Hi! I'm <strong>Billy</strong> 🤖 — your assistant here at Billy Digitals. I can tell you about our services, plans and process. What are you looking to build?"
+          "Hi! I'm <strong>Billy</strong> 🤖 — your assistant here at Billy Digitals. I can tell you about our services, plans and process. What are you looking to build?",
+          DEFAULT_CHIPS
         );
       }
       focusTimer = setTimeout(() => {
@@ -413,9 +464,21 @@ function initChat() {
 
   toggle.addEventListener("click", () => setOpen(!chat.classList.contains("open")));
 
-  chips.querySelectorAll("button").forEach((chip) =>
-    chip.addEventListener("click", () => send(chip.textContent))
-  );
+  // Chips are re-rendered after every bot reply — delegate clicks
+  chips.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (btn) send(btn.textContent);
+  });
+
+  function setChips(list) {
+    chips.innerHTML = "";
+    (list || DEFAULT_CHIPS).forEach((label) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      chips.appendChild(b);
+    });
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -441,15 +504,16 @@ function initChat() {
     setTimeout(() => {
       typing.remove();
       const intent = INTENTS.find((i) => i.re.test(text));
-      botSay(intent ? intent.reply() : fallback());
+      botSay(intent ? intent.reply() : fallback(), intent && intent.chips);
     }, 650 + Math.random() * 500);
   }
 
-  function botSay(html) {
+  function botSay(html, followups) {
     const div = document.createElement("div");
     div.className = "msg bot";
     div.innerHTML = html; // bot content is trusted, authored in this file
     msgs.appendChild(div);
+    setChips(followups);
     scrollDown();
   }
 
