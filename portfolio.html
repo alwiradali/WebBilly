@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Billy Digitals | Web Design & App Development</title>
+  <meta name="description" content="Selected work by Billy Digitals — real websites and web apps, designed, built and shipped for ambitious brands. From travel sites to warehouse platforms.">
+  <meta name="theme-color" content="#06070d">
+  <meta property="og:title" content="Portfolio — Billy Digitals">
+  <meta property="og:description" content="Real websites and web apps, designed and built by Billy Digitals.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.billydigitals.com/portfolio.html">
+  <meta property="og:image" content="https://www.billydigitals.com/assets/logo-1024.png">
+  <link rel="canonical" href="https://www.billydigitals.com/portfolio.html">
+  <link rel="icon" type="image/png" href="assets/logo-billy-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .pf-hero { position: relative; overflow: hidden; padding: 160px 0 60px; text-align: center; }
+    .pf-hero .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; pointer-events: none; }
+    .pf-hero .o1 { width: 440px; height: 440px; background: rgba(43,127,255,.32); top: -120px; left: -100px; }
+    .pf-hero .o2 { width: 380px; height: 380px; background: rgba(34,211,238,.2); top: 40px; right: -120px; }
+    .pf-hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); letter-spacing: -.03em; max-width: 900px; margin: 18px auto 0; position: relative; z-index: 1; }
+    .pf-hero .sub { position: relative; z-index: 1; }
+    .pf-stats { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; margin-top: 40px; position: relative; z-index: 1; }
+    .pf-stats div { text-align: center; }
+    .pf-stats dt { font-family: var(--font-display); font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .pf-stats dd { color: var(--muted); font-size: .9rem; margin-top: 2px; }
+
+    .work { display: flex; flex-direction: column; gap: 30px; }
+    .work-card { display: grid; grid-template-columns: 1.05fr 1fr; border: 1px solid var(--border); border-radius: 22px; overflow: hidden; background: var(--card); transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
+    .work-card:hover { transform: translateY(-6px); border-color: rgba(56,189,248,.4); box-shadow: 0 26px 60px rgba(0,0,0,.5); }
+    .work-card:nth-child(even) .work-shot { order: 2; }
+    .work-shot { position: relative; min-height: 320px; padding: 26px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--a1), var(--a2)); }
+    .browser { width: 100%; max-width: 380px; border-radius: 12px; overflow: hidden; background: #0a1020; box-shadow: 0 24px 50px rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.1); }
+    .browser-bar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: rgba(255,255,255,.08); }
+    .browser-bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.35); }
+    .browser-bar span { margin-left: 10px; font-size: .72rem; color: rgba(255,255,255,.6); font-family: var(--font-display); }
+    .browser-body { padding: 30px 24px; min-height: 190px; display: flex; flex-direction: column; justify-content: center; }
+    .browser-body .bemoji { font-size: 2.4rem; margin-bottom: 12px; }
+    .browser-body h4 { font-size: 1.5rem; color: #fff; margin-bottom: 6px; }
+    .browser-body p { color: rgba(255,255,255,.75); font-size: .9rem; }
+    .work-info { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+    .work-info .wcat { font-family: var(--font-display); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--c3); margin-bottom: 10px; }
+    .work-info h3 { font-size: 1.9rem; margin-bottom: 12px; }
+    .work-info p { color: var(--muted); margin-bottom: 20px; }
+    .work-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+    .work-tags span { font-size: .8rem; color: #cfe0ff; border: 1px solid var(--border); background: rgba(255,255,255,.04); border-radius: 999px; padding: 6px 13px; }
+    .work-links { display: flex; gap: 14px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      .work-card { grid-template-columns: 1fr; }
+      .work-card:nth-child(even) .work-shot { order: 0; }
+      .work-shot { min-height: 240px; }
+      .work-info { padding: 30px 26px; }
+    }
+    .pf-cta { text-align: center; }
+    .pf-cta h2 { font-size: clamp(2rem, 5vw, 3rem); }
+    .ind-cloud { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .ind-cloud span { font-size: .98rem; font-weight: 500; color: #dbe7ff; border: 1px solid var(--border);
+      background: var(--card); border-radius: 999px; padding: 11px 20px; transition: transform .25s ease, border-color .25s ease, background .25s ease; }
+    .ind-cloud span:hover { transform: translateY(-3px); border-color: rgba(56,189,248,.5); background: rgba(56,189,248,.08); }
+    .ind-cloud span:last-child { background: var(--grad-btn); border-color: transparent; color: #fff; font-weight: 600; }
+    @media (max-width: 700px) { .grid[style*="repeat(4"] { grid-template-columns: repeat(2,1fr) !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#work">Skip to work</a>
+
+  <header class="site-header scrolled" id="siteHeader">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="logo" href="index.html" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-lockup.png" alt="Billy — Web Design & App Development" height="68"></a>
+      <ul class="nav-links">
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="index.html#plans">Plans</a></li>
+        <li><a href="index.html#hosting">Hosting</a></li>
+        <li><a href="portfolio.html" class="active">Portfolio</a></li>
+      </ul>
+      <a class="btn btn-primary nav-cta" href="index.html#contact">Start Your Project</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pf-hero">
+      <div class="orb o1" aria-hidden="true"></div>
+      <div class="orb o2" aria-hidden="true"></div>
+      <div class="container">
+        <p class="tag">Our work</p>
+        <h1>Websites &amp; apps we're <span class="grad">proud of</span>.</h1>
+        <p class="sub">Real projects — designed, engineered and shipped by Billy Digitals. From accountants and law firms to travel agents, trades and local businesses — built from scratch, fast, and made to convert.</p>
+        <dl class="pf-stats">
+          <div><dt>100%</dt><dd>Custom-built</dd></div>
+          <div><dt>&lt;1s</dt><dd>Load times</dd></div>
+          <div><dt>UK</dt><dd>Based &amp; hosted</dd></div>
+          <div><dt>End-to-end</dt><dd>One team</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="work" style="padding-top:40px">
+      <div class="container">
+        <div class="work">
+
+          <article class="work-card reveal" style="--a1:#0284c7;--a2:#0891b2">
+            <div class="work-shot">
+              <div class="browser">
+                <div class="browser-bar"><i></i><i></i><i></i><span>atbpremiertravel.co.uk</span></div>
+                <div class="browser-body"><div class="bemoji">✈️</div><h4>ATB Premier Travel</h4><p>Premium UK travel agency</p></div>
+              </div>
+            </div>
+            <div class="work-info">
+              <p class="wcat">Travel &amp; Tourism · Website</p>
+              <h3>ATB Premier Travel</h3>
+              <p>A hand-coded static website for a premier UK travel agency — 17 pages, glass UI, 3D scroll effects and a built-in "Book with Simon" assistant. We rebuilt a slow, ageing WordPress site into a lightning-fast static build that loads instantly and ranks.</p>
+              <div class="work-tags"><span>HTML5</span><span>CSS3</span><span>Vanilla JS</span><span>SEO</span><span>Managed Hosting</span></div>
+              <div class="work-links">
+                <a class="btn btn-primary" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener">Visit Live Site ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="work-card reveal" style="--a1:#2b7fff;--a2:#38bdf8">
+            <div class="work-shot">
+              <div class="browser">
+                <div class="browser-bar"><i></i><i></i><i></i><span>heaton247.com</span></div>
+                <div class="browser-body"><div class="bemoji">🌐</div><h4>Heaton247</h4><p>Business website</p></div>
+              </div>
+            </div>
+            <div class="work-info">
+              <p class="wcat">Business · Website</p>
+              <h3>Heaton247.com</h3>
+              <p>A clean, conversion-focused business website built for speed and search. Modern, responsive design with a clear path from visitor to enquiry — engineered to load fast and look sharp on every device.</p>
+              <div class="work-tags"><span>Responsive</span><span>SEO-first</span><span>Fast-loading</span><span>Conversion-focused</span></div>
+              <div class="work-links">
+                <a class="btn btn-primary" href="https://heaton247.com" target="_blank" rel="noopener">Visit Live Site ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="work-card reveal" style="--a1:#1e293b;--a2:#0ea5e9">
+            <div class="work-shot">
+              <div class="browser">
+                <div class="browser-bar"><i></i><i></i><i></i><span>BillyRackPilot · app</span></div>
+                <div class="browser-body"><div class="bemoji">🏭</div><h4>BillyRackPilot</h4><p>Warehouse &amp; factory ops</p></div>
+              </div>
+            </div>
+            <div class="work-info">
+              <p class="wcat">Web Application · Our Product</p>
+              <h3>BillyRackPilot</h3>
+              <p>Our flagship platform for organisations running warehouses and factories. Plan racking layouts, track stock locations in real time and manage team roles &amp; shift access — all from one clean dashboard, on any device.</p>
+              <div class="work-tags"><span>Web App</span><span>Live Dashboard</span><span>Stock Tracking</span><span>Team Roles</span></div>
+              <div class="work-links">
+                <a class="btn btn-primary" href="index.html#contact">Request a Demo →</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="tag">Design range</p>
+          <h2>A signature look for <span class="grad">every industry</span></h2>
+          <p class="sub">Sample styles across the categories we build for. Every real project is designed from scratch — these show the calibre.</p>
+        </div>
+        <div class="grid templates-grid">
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#e11d48;--t2:#f59e0b" href="templates/restaurant.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🍛</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Saffron House</h3><span class="tcat">Restaurant &amp; Food</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#2563eb;--t2:#0ea5e9" href="templates/corporate.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">📈</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Northbridge</h3><span class="tcat">Corporate</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#eab308;--t2:#f97316" href="templates/portfolio.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🎨</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Studio Nova</h3><span class="tcat">Portfolio</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#0f766e;--t2:#b45309" href="templates/realestate.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🏙️</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Skyline Estates</h3><span class="tcat">Real Estate</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#0ea5e9;--t2:#14b8a6" href="templates/medical.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🩺</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>CarePoint</h3><span class="tcat">Medical</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#6366f1;--t2:#22d3ee" href="templates/saas.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">📊</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Pulse Analytics</h3><span class="tcat">SaaS &amp; Tech</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#7c3aed;--t2:#f59e0b" href="templates/education.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🎓</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>BrightPath</h3><span class="tcat">Education</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#a3e635;--t2:#f97316" href="templates/fitness.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🏋️</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Iron Republic</h3><span class="tcat">Fitness &amp; Gym</span></div></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#0284c7;--t2:#f59e0b" href="templates/travel.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🌍</span><span class="tthumb-view">View sample ↗</span></a><div class="tinfo"><div><h3>Wanderlight</h3><span class="tcat">Travel &amp; Tourism</span></div></div></article>
+        </div>
+
+        <div class="section-head reveal" style="margin-top:80px">
+          <p class="tag">Industries we build for</p>
+          <h2>Whatever your business, <span class="grad">we've built for it</span></h2>
+          <p class="sub">Accountants, firms, local businesses and everything in between — every site tailored to the sector and the customers it needs to win.</p>
+        </div>
+        <div class="ind-cloud reveal">
+          <span>🧮 Accountants</span><span>⚖️ Solicitors &amp; Law Firms</span><span>💼 Consultants</span>
+          <span>🏠 Estate Agents</span><span>🔨 Tradesmen &amp; Builders</span><span>🦷 Dentists &amp; Clinics</span>
+          <span>💇 Salons &amp; Barbers</span><span>🍽️ Restaurants &amp; Cafés</span><span>🏋️ Gyms &amp; Fitness</span>
+          <span>✈️ Travel Agents</span><span>🛒 E-commerce &amp; Retail</span><span>🎓 Education &amp; Tutors</span>
+          <span>🚗 Automotive</span><span>🧹 Cleaning Services</span><span>📸 Photographers</span>
+          <span>🏥 Medical &amp; Health</span><span>🏭 Warehousing &amp; Logistics</span><span>🚀 Startups &amp; SaaS</span>
+          <span>📍 Local Businesses</span><span>✨ …and yours next</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="tag">Why clients stay</p>
+          <h2>Work you'll be <span class="grad">glad you chose</span></h2>
+        </div>
+        <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Fixed-price, no surprises</h3><p>You approve a clear quote before we start. No hourly meters, no hidden fees.</p></div>
+          <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 22V12"/></svg></div><h3>You own everything</h3><p>Your code, domain and content — all yours. No lock-in, ever.</p></div>
+          <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><h3>Refined until it's right</h3><p>We don't ship until you're genuinely happy with every screen.</p></div>
+          <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Here after launch</h3><p>Managed hosting, updates and real support — we keep you online.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pf-cta">
+      <div class="container container-narrow">
+        <div class="reveal">
+          <p class="tag">Your project next</p>
+          <h2>Like what you see? <span class="grad">Let's build yours.</span></h2>
+          <p class="sub">Tell us your vision and we'll come back within 24 hours with a tailored quote.</p>
+          <div class="hero-cta" style="justify-content:center;margin-top:32px">
+            <a class="btn btn-primary" href="index.html#contact">Start Your Project</a>
+            <a class="btn btn-ghost" href="index.html">Back to Home</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
+      <p><a href="index.html">www.billydigitals.com</a></p>
+    </div>
+  </footer>
+
+  <a class="wa-float" href="https://wa.me/447519022117?text=Hi%20Billy%20Digitals!%20I'd%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+  </a>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>
