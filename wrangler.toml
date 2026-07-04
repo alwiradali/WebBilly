@@ -1,8 +1,12 @@
-# Cloudflare Workers static-site config for Billy Digitals.
-# Serves the repository as static assets (no build step, no server code)
-# and publishes directly to the custom domain.
+# Cloudflare Workers config for Billy Digitals.
+# Serves the repository as static assets AND runs a small Worker that adds
+# one API route (POST /api/send-review) for the review-request email.
 name = "billydigitals"
 compatibility_date = "2025-07-03"
+
+# Worker entry point. Static assets are served by Cloudflare first; this
+# Worker only runs for non-asset paths (i.e. /api/send-review).
+main = "worker.js"
 
 # NOTE: routes must be declared BEFORE the [assets] table — in TOML any keys
 # after a [table] header belong to that table.
@@ -14,3 +18,5 @@ routes = [
 [assets]
 directory = "."
 not_found_handling = "404-page"
+# Lets the Worker fall through to static assets via env.ASSETS.fetch().
+binding = "ASSETS"

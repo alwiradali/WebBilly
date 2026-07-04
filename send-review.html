@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Send review request — Billy Digitals (admin)</title>
+  <link rel="icon" type="image/png" href="assets/logo-billy-icon.png">
+  <style>
+    :root{
+      --bg:#060b1a; --card:rgba(255,255,255,.045); --border:rgba(120,180,255,.16);
+      --text:#eaf2ff; --muted:#93a4c4;
+      --grad-btn:linear-gradient(100deg,#1d6ff5,#0ea5e9 50%,#0891b2);
+      --sans:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:
+      radial-gradient(900px 500px at 50% -10%, rgba(43,127,255,.22), transparent 60%),
+      linear-gradient(160deg,#060b1a,#0a1226);
+      color:var(--text);font-family:var(--sans);display:grid;place-items:center;padding:24px}
+    .card{width:100%;max-width:460px;background:var(--card);border:1px solid var(--border);
+      border-radius:18px;padding:30px 28px;backdrop-filter:blur(8px)}
+    h1{font-size:1.3rem;margin:0 0 4px}
+    p.sub{color:var(--muted);font-size:.9rem;margin:0 0 22px}
+    label{display:block;font-size:.82rem;color:var(--muted);margin:14px 0 6px;letter-spacing:.02em}
+    input{width:100%;padding:12px 14px;border-radius:11px;border:1px solid var(--border);
+      background:rgba(255,255,255,.04);color:var(--text);font-size:1rem;font-family:inherit}
+    input:focus{outline:none;border-color:#38bdf8}
+    button{width:100%;margin-top:22px;padding:14px;border:none;border-radius:999px;cursor:pointer;
+      background:var(--grad-btn);color:#fff;font-size:1rem;font-weight:700;font-family:inherit}
+    button:disabled{opacity:.5;cursor:default}
+    .note{font-size:.78rem;color:var(--muted);margin-top:14px;line-height:1.5}
+    .msg{margin-top:18px;padding:12px 14px;border-radius:11px;font-size:.9rem;display:none}
+    .msg.ok{display:block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#86efac}
+    .msg.err{display:block;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+    .row{display:flex;align-items:center;gap:8px;margin-top:10px}
+    .row input[type=checkbox]{width:auto}
+    .row label{margin:0}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>⭐ Send a review request</h1>
+    <p class="sub">Send the Google-review email to a customer after their project is complete.</p>
+
+    <form id="f" autocomplete="off">
+      <label for="name">Customer name</label>
+      <input id="name" type="text" placeholder="e.g. Sarah Khan" required>
+
+      <label for="email">Customer email</label>
+      <input id="email" type="email" placeholder="customer@example.com" required>
+
+      <label for="key">Admin key</label>
+      <input id="key" type="password" placeholder="Your REVIEW_TOKEN" required>
+      <div class="row">
+        <input id="remember" type="checkbox" checked>
+        <label for="remember">Remember the admin key on this device</label>
+      </div>
+
+      <button id="btn" type="submit">Send review request</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+    <p class="note">This page is private (not linked or indexed). The email only sends when the admin key
+      matches the <code>REVIEW_TOKEN</code> secret on the Worker.</p>
+  </div>
+
+  <script>
+    var KEY_STORE = "bd_review_key";
+    var keyInput = document.getElementById("key");
+    var remember = document.getElementById("remember");
+    var msg = document.getElementById("msg");
+    var btn = document.getElementById("btn");
+
+    // Restore a remembered key
+    try { var saved = localStorage.getItem(KEY_STORE); if (saved) keyInput.value = saved; } catch (e) {}
+
+    function show(type, text) { msg.className = "msg " + type; msg.textContent = text; }
+
+    document.getElementById("f").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var name = document.getElementById("name").value.trim();
+      var email = document.getElementById("email").value.trim();
+      var key = keyInput.value.trim();
+      if (!name || !email || !key) return;
+
+      try {
+        if (remember.checked) localStorage.setItem(KEY_STORE, key);
+        else localStorage.removeItem(KEY_STORE);
+      } catch (e) {}
+
+      btn.disabled = true; btn.textContent = "Sending…"; show("", "");
+      try {
+        var res = await fetch("/api/send-review", {
+          method: "POST",
+          headers: { "content-type": "application/json", "authorization": "Bearer " + key },
+          body: JSON.stringify({ name: name, email: email })
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (res.ok && data.ok) {
+          show("ok", "✅ Review request sent to " + email);
+          document.getElementById("name").value = "";
+          document.getElementById("email").value = "";
+        } else {
+          show("err", "⚠️ " + (data.error || ("Failed (HTTP " + res.status + ")")) + (data.detail ? " — " + data.detail : ""));
+        }
+      } catch (err) {
+        show("err", "⚠️ Network error: " + err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = "Send review request";
+      }
+    });
+  </script>
+</body>
+</html>

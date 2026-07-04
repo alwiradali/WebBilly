@@ -4,3 +4,4 @@ wrangler.toml
 .nojekyll
 README.md
 billy-digitals-logo.zip
+worker.js
