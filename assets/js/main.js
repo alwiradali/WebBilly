@@ -309,12 +309,23 @@ function initChat() {
   const input = document.getElementById("chatText");
   const chips = document.getElementById("chatChips");
   let welcomed = false;
+  let engaged = false;       // true once the customer has sent a message
+  let askedForReview = false; // review is asked at most once per chat
 
   const waUrl =
     "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.waMessage);
   const contactLine =
     'You can email us at <a href="mailto:' + CONFIG.email + '">' + CONFIG.email +
     '</a> or <a href="' + waUrl + '" target="_blank" rel="noopener">chat on WhatsApp</a> — we reply fast.';
+
+  // Google review link (same as the flyer's "Leave a 5-star review" button).
+  const REVIEW_URL = "https://g.page/r/CVVojLMqV7dcECE/review";
+  const reviewLink =
+    '<a href="' + REVIEW_URL + '" target="_blank" rel="noopener">Leave a 5-star Google review →</a>';
+  const reviewAsk =
+    "⭐ Before you go — if I've been helpful, we'd love a quick <strong>Google review</strong>. " +
+    "It takes 10 seconds and means the world to a small team like ours. " + reviewLink + " Thank you! 🙏";
+  const REVIEW_CHIPS = ["Leave a 5★ review", "Get a quote"];
 
   // Order matters: first match wins. Greeting/thanks/bye only fire on
   // whole-message matches or word-bounded patterns so they never shadow
@@ -330,10 +341,19 @@ function initChat() {
       re: /^\s*(thanks|thank you|thankyou|great|awesome|perfect|nice|cool)[\s!,.?]*$/i,
       reply: () => "You're welcome! 😊 Anything else you'd like to know — or shall we start your project?",
       chips: ["Get a quote", "Show me the plans", "Talk to a human"],
+      end: true,
     },
     {
       re: /^\s*(bye|goodbye|see you|later|see ya)[\s!,.?]*$/i,
       reply: () => "Talk soon! When you're ready to build something amazing, you know where to find us. 👋",
+      end: true,
+    },
+    {
+      re: /\b(review|reviews|feedback|rate you|rate us|testimonial|5 ?star|five star|leave a review)\b/i,
+      reply: () =>
+        "You're a legend ⭐ — thank you! Here's the link, it only takes 10 seconds: " + reviewLink +
+        " 🙏 It genuinely helps us reach more people.",
+      chips: ["Get a quote", "Show me the plans"],
     },
     {
       re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
@@ -474,7 +494,18 @@ function initChat() {
     }
   }
 
-  toggle.addEventListener("click", () => setOpen(!chat.classList.contains("open")));
+  toggle.addEventListener("click", () => {
+    const isOpen = chat.classList.contains("open");
+    // First time an engaged chat is closed, ask for a Google review instead of
+    // closing — so every real conversation ends with the review prompt. The
+    // next click closes as normal.
+    if (isOpen && engaged && !askedForReview) {
+      askedForReview = true;
+      botSay(reviewAsk, REVIEW_CHIPS);
+      return;
+    }
+    setOpen(!isOpen);
+  });
 
   // Chips are re-rendered after every bot reply — delegate clicks
   chips.addEventListener("click", (e) => {
@@ -507,6 +538,7 @@ function initChat() {
   });
 
   function send(text) {
+    engaged = true;
     addMsg(text, "user");
     const typing = document.createElement("div");
     typing.className = "msg bot typing";
@@ -517,6 +549,12 @@ function initChat() {
       typing.remove();
       const intent = INTENTS.find((i) => i.re.test(text));
       botSay(intent ? intent.reply() : fallback(), intent && intent.chips);
+      // When the conversation reaches a natural end (thanks / bye), follow up
+      // once with a Google review request.
+      if (intent && intent.end && !askedForReview) {
+        askedForReview = true;
+        setTimeout(() => botSay(reviewAsk, REVIEW_CHIPS), 800);
+      }
     }, 650 + Math.random() * 500);
   }
 
