@@ -317,6 +317,9 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 }
 .plan:hover { transform: translateY(-6px); border-color: rgba(56, 189, 248, 0.4); }
 .plan h3 { font-size: 1.35rem; margin-bottom: 8px; }
+.plan-price { font-family: var(--font-display); margin-bottom: 10px; }
+.plan-price strong { font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.plan-price span { color: var(--muted); font-size: 0.95rem; }
 .plan-for { color: var(--muted); font-size: 0.92rem; min-height: 58px; }
 .plan ul { margin: 22px 0 28px; display: grid; gap: 11px; flex: 1; }
 .plan li { position: relative; padding-left: 28px; font-size: 0.93rem; color: #cfd3ea; }
