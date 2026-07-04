@@ -386,7 +386,7 @@ function initChat() {
     {
       re: /\b(time|timeline|deadline|fast|quick|quickly|duration|days|weeks)\b|how long|how soon/i,
       reply: () =>
-        "Standard sites usually launch in 1–2 weeks, Premium in 2–4 weeks, and Ultra Premium is scoped per project. You get a clear schedule before we start — and we stick to it. ⚡",
+        "Standard sites usually launch in 3 days to a week, Premium in 1–2 weeks, and Ultra Premium in 2–4 weeks — it's a bigger build, so it needs the extra time. You get a clear schedule before we start — and we stick to it. ⚡",
       chips: ["Show me the plans", "Get a quote"],
     },
     {
