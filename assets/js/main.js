@@ -402,6 +402,12 @@ function initChat() {
       chips: ["Hosting plans", "Get a quote"],
     },
     {
+      re: /\b(add-?ons?|booking|calendar|appointment|address finder|postcode|login|register|portal|payments?|gallery|newsletter|multi-?language)\b/i,
+      reply: () =>
+        "We build powerful add-ons into any plan: 🤖 AI chatbots, 📅 booking calendars & appointments, 📍 address/postcode finders, 🔐 customer login & registration, 💳 online payments, ⭐ Google review widgets, 💬 WhatsApp chat, galleries, blogs, newsletters and more. <a href=\"#hosting\">See the add-ons</a> — or tell us what you need!",
+      chips: ["Get a quote", "Show me the plans", "Talk to a human"],
+    },
+    {
       re: /\b(redesign|rebuild|existing|old site|revamp|refresh)\b/i,
       reply: () =>
         "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"#contact\">enquiry form</a>.",
