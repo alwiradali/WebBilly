@@ -32,6 +32,11 @@
       -webkit-font-smoothing:antialiased; padding:34px 20px 44px; overflow-x:hidden;
     }
     .wrap{width:100%; max-width:440px; margin:0 auto; text-align:center}
+    .hero-link{display:block; text-decoration:none; color:inherit; border-radius:20px;
+      transition:transform .18s ease; -webkit-tap-highlight-color:transparent}
+    .hero-link:active{transform:scale(.99)}
+    .tap-hint{display:block; margin-top:12px; font-size:.85rem; font-weight:700;
+      background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
     .logo{height:88px; width:auto; margin:0 auto 18px;
       filter:drop-shadow(0 6px 20px rgba(56,189,248,.3))}
     .badge{display:inline-block; font-size:.72rem; font-weight:600; letter-spacing:.14em;
@@ -85,10 +90,12 @@
 </head>
 <body>
   <main class="wrap">
-    <img class="logo" src="assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design & App Development">
-    <span class="badge">✦ Websites · Apps · Hosting</span>
-    <h1>Your business deserves a website that <span class="grad">outclasses everyone</span>.</h1>
-    <p class="sub">Bespoke, high-performance websites and web apps — designed, built, hosted and cared for by one team.</p>
+    <a class="hero-link" href="https://www.billydigitals.com" target="_blank" rel="noopener" aria-label="Visit the Billy Digitals website">
+      <img class="logo" src="assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design & App Development">
+      <span class="badge">✦ Websites · Apps · Hosting</span>
+      <h1>Your business deserves a website that <span class="grad">outclasses everyone</span>.</h1>
+      <p class="sub">Bespoke, high-performance websites and web apps — designed, built, hosted and cared for by one team. <span class="tap-hint">Tap to visit our site →</span></p>
+    </a>
 
     <div class="chips">
       <span class="chip">Web Design</span>
