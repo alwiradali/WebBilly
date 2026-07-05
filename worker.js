@@ -18,7 +18,7 @@
 const REVIEW_URL = "https://g.page/r/CVVojLMqV7dcECE/review";
 const FROM = "Billy Digitals <hello@billydigitals.com>";
 const REPLY_TO = "info.billydigitals@gmail.com";
-const LOGO = "https://www.billydigitals.com/assets/logo-1024.png";
+const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 
 export default {
   async fetch(request, env) {
@@ -111,8 +111,8 @@ billydigitals.com`;
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(20,40,90,.10);">
         <!-- header -->
-        <tr><td style="background:#0a1226;padding:26px 32px;" align="center">
-          <img src="${LOGO}" alt="Billy Digitals" width="220" style="display:block;width:220px;max-width:60%;height:auto;">
+        <tr><td style="padding:0;background:#0a1226;" align="center">
+          <img src="${LOGO}" alt="Billy Digitals" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
         </td></tr>
         <!-- gradient rule -->
         <tr><td style="height:4px;background:#1d6ff5;background:linear-gradient(100deg,#2b7fff,#38bdf8 50%,#22d3ee);font-size:0;line-height:0;">&nbsp;</td></tr>
