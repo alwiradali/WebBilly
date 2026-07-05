@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zinya Utilities — Business Energy, Telecoms &amp; Payments | Sample by Billy Digitals</title>
+  <meta name="description" content="Zinya Utilities — one partner for business energy, telecoms, Wi-Fi and card payments. Nottingham based, nationwide reach. Get a free, no-obligation quote.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0f2e3a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+  :root{
+    --navy:#0d2430; --navy-2:#123c4a; --teal:#1f7a8c; --teal-2:#2fa3b8; --sage:#8a9a5b; --sage-2:#a7b878;
+    --accent:#e5a72e; --accent-2:#f2c15a; --ink:#0d1f26; --muted:#5c6b73; --muted-2:#8497a0;
+    --bg:#f5f8f7; --bg-2:#eef3f2; --card:#ffffff; --line:#e2ebe8; --dark-line:rgba(255,255,255,.12);
+    --shadow:0 24px 60px -28px rgba(13,36,48,.5); --radius:18px;
+    --sans:'Manrope',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --display:'Space Grotesk','Manrope',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
+  section{position:relative;}
+  h1,h2,h3,h4{font-family:var(--display);line-height:1.1;letter-spacing:-.5px;}
+  .grad{background:linear-gradient(115deg,var(--teal-2),var(--sage-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:800;font-size:12.5px;
+    letter-spacing:1.6px;text-transform:uppercase;color:var(--teal);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;padding:13px 24px;border-radius:12px;
+    border:none;cursor:pointer;font-family:var(--sans);transition:transform .18s ease,box-shadow .18s ease,background .18s ease;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#3a2a06;box-shadow:0 12px 24px -8px rgba(229,167,46,.55);}
+  .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.35);}
+  .btn-dark{background:var(--navy);color:#fff;}
+  .btn-block{width:100%;justify-content:center;}
+
+  /* scroll progress */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:120;
+    background:linear-gradient(90deg,var(--teal),var(--sage),var(--accent));transition:width .1s linear;}
+
+  /* demo banner */
+  .demo-banner{background:linear-gradient(90deg,#1d6ff5,#0891b2);color:#fff;font-size:13.5px;font-weight:600;
+    text-align:center;padding:9px 16px;display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;}
+  .demo-banner a{text-decoration:underline;font-weight:800;}
+
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:100;background:rgba(13,36,48,.82);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--dark-line);transition:padding .25s ease,background .25s ease;}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:15px 0;}
+  .brand{display:flex;align-items:center;gap:11px;color:#fff;}
+  .brand .mk{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--sage));
+    display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:20px;color:#fff;
+    box-shadow:0 6px 16px -4px rgba(31,122,140,.6);}
+  .brand b{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.3px;line-height:1;}
+  .brand small{display:block;font-size:9.5px;letter-spacing:2px;color:var(--sage-2);text-transform:uppercase;font-weight:700;margin-top:3px;}
+  .nav-links{display:flex;gap:30px;}
+  .nav-links a{color:#c7d6d3;font-weight:600;font-size:15px;transition:color .15s;}
+  .nav-links a:hover{color:#fff;}
+  .nav-cta{display:flex;align-items:center;gap:16px;}
+  .nav-phone{color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px;}
+  .nav-toggle{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;}
+
+  /* hero */
+  .hero{position:relative;background:radial-gradient(120% 120% at 80% 0%,#134454 0%,var(--navy) 55%);color:#fff;overflow:hidden;}
+  #bg3d{position:absolute;inset:0;z-index:0;}
+  .hero-fallback{position:absolute;inset:0;z-index:0;opacity:.6;
+    background:radial-gradient(50% 60% at 75% 30%,rgba(47,163,184,.5),transparent 70%),radial-gradient(40% 50% at 20% 80%,rgba(138,154,91,.4),transparent 70%);}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;
+    padding:84px 0 96px;}
+  .hero h1{font-size:clamp(34px,5vw,58px);font-weight:700;margin:20px 0 20px;}
+  .hero .lead{font-size:clamp(16px,2vw,19px);color:#c9dad7;max-width:520px;margin-bottom:32px;}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-trust{display:flex;gap:28px;margin-top:40px;flex-wrap:wrap;}
+  .hero-trust div{font-size:13px;color:#9fb4b0;}
+  .hero-trust b{display:block;font-family:var(--display);font-size:26px;color:#fff;font-weight:700;}
+  .badge-pill{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);
+    padding:8px 15px;border-radius:999px;font-size:13px;font-weight:700;color:#dbe8e5;}
+  .badge-pill .live{width:8px;height:8px;border-radius:50%;background:#48d09b;box-shadow:0 0 0 0 rgba(72,208,155,.7);animation:live 1.8s infinite;}
+  @keyframes live{0%{box-shadow:0 0 0 0 rgba(72,208,155,.6);}70%{box-shadow:0 0 0 10px rgba(72,208,155,0);}100%{box-shadow:0 0 0 0 rgba(72,208,155,0);}}
+
+  /* floating quote card in hero */
+  .quote-card{position:relative;z-index:2;background:rgba(255,255,255,.97);border-radius:20px;padding:26px;color:var(--ink);
+    box-shadow:0 40px 80px -30px rgba(0,0,0,.55);transform-style:preserve-3d;transition:transform .1s ease;}
+  .quote-card h4{font-size:17px;margin-bottom:4px;}
+  .quote-card .qsub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+  .qrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14.5px;}
+  .qrow b{font-family:var(--display);}
+  .qrow .bar{flex:1;height:7px;background:var(--bg-2);border-radius:99px;margin:0 14px;overflow:hidden;}
+  .qrow .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--sage));}
+  .qtotal{margin-top:16px;background:linear-gradient(120deg,#eaf6e6,#f2f9ea);border:1px solid #cfe6c2;border-radius:14px;
+    padding:15px 18px;display:flex;justify-content:space-between;align-items:center;}
+  .qtotal span{font-weight:700;color:#3d6b2c;font-size:14px;}
+  .qtotal b{font-family:var(--display);color:#2f7d1e;font-size:26px;}
+
+  /* marquee trust */
+  .logos{background:var(--navy-2);padding:22px 0;}
+  .logos .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .logos span{color:#9fc0c6;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px;opacity:.9;}
+
+  /* generic section */
+  .sec{padding:88px 0;}
+  .sec.alt{background:var(--bg-2);}
+  .sec.dark{background:var(--navy);color:#fff;}
+  .head{text-align:center;max-width:640px;margin:0 auto 52px;}
+  .head h2{font-size:clamp(28px,3.4vw,40px);font-weight:700;margin:12px 0;}
+  .head p{color:var(--muted);font-size:17px;}
+  .dark .head p{color:#a9c0bd;}
+
+  /* stat counters */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;text-align:center;}
+  .stats .st{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px 18px;box-shadow:var(--shadow);}
+  .stats .n{font-family:var(--display);font-size:42px;font-weight:700;color:var(--navy);line-height:1;}
+  .stats .n em{font-style:normal;color:var(--teal);}
+  .stats .l{color:var(--muted);font-size:14px;margin-top:8px;}
+
+  /* services */
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;position:relative;
+    overflow:hidden;box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .15s ease,box-shadow .25s ease;}
+  .svc::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--teal),var(--sage));}
+  .svc:hover{box-shadow:0 34px 70px -30px rgba(13,36,48,.55);}
+  .svc .ic{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:30px;margin-bottom:18px;
+    transform:translateZ(40px);}
+  .svc:nth-child(1) .ic{background:#e0f0ef;} .svc:nth-child(2) .ic{background:#f4edda;} .svc:nth-child(3) .ic{background:#eaefdd;}
+  .svc h3{font-size:21px;margin-bottom:10px;transform:translateZ(24px);}
+  .svc p{color:var(--muted);font-size:14.8px;margin-bottom:16px;}
+  .svc ul{list-style:none;margin-bottom:18px;}
+  .svc li{font-size:14px;color:var(--ink);padding:5px 0 5px 24px;position:relative;}
+  .svc li::before{content:"✓";position:absolute;left:0;color:var(--sage);font-weight:800;}
+  .svc .more{color:var(--teal);font-weight:800;font-size:14px;}
+
+  /* calculator */
+  .calc{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;background:var(--card);
+    border:1px solid var(--line);border-radius:26px;padding:40px;box-shadow:var(--shadow);}
+  .calc-field{margin-bottom:22px;}
+  .calc-field label{display:flex;justify-content:space-between;font-weight:700;font-size:14.5px;margin-bottom:10px;}
+  .calc-field label b{font-family:var(--display);color:var(--teal);}
+  input[type=range]{-webkit-appearance:none;width:100%;height:8px;border-radius:99px;background:var(--bg-2);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;cursor:pointer;
+    background:#fff;border:5px solid var(--teal);box-shadow:0 4px 10px rgba(31,122,140,.4);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;cursor:pointer;background:#fff;border:5px solid var(--teal);}
+  .calc-out{background:linear-gradient(150deg,var(--navy),var(--teal));border-radius:20px;padding:34px;color:#fff;text-align:center;}
+  .calc-out .cap{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#a9d3d9;font-weight:700;}
+  .calc-out .big{font-family:var(--display);font-size:56px;font-weight:700;margin:8px 0 2px;line-height:1;}
+  .calc-out .per{color:#bfe0e4;font-size:14px;margin-bottom:22px;}
+  .calc-note{font-size:12px;color:var(--muted-2);margin-top:16px;}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:step;}
+  .step{background:rgba(255,255,255,.05);border:1px solid var(--dark-line);border-radius:var(--radius);padding:30px 26px;position:relative;}
+  .step .num{font-family:var(--display);font-size:15px;font-weight:700;color:var(--navy);width:44px;height:44px;border-radius:12px;
+    background:linear-gradient(135deg,var(--sage-2),var(--teal-2));display:grid;place-items:center;margin-bottom:16px;}
+  .step h3{font-size:19px;margin-bottom:8px;}
+  .step p{color:#a9c0bd;font-size:14.5px;}
+
+  /* why us split */
+  .split{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center;}
+  .split-art{border-radius:24px;height:400px;background:linear-gradient(150deg,var(--navy),var(--teal));position:relative;overflow:hidden;
+    box-shadow:var(--shadow);display:grid;place-items:center;}
+  .split-art .ring{position:absolute;border:2px solid rgba(255,255,255,.12);border-radius:50%;}
+  .split-art .emoji{font-size:110px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.4));position:relative;z-index:2;animation:float 5s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
+  .whylist{list-style:none;margin-top:20px;}
+  .whylist li{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .whylist .chk{width:28px;height:28px;flex:none;border-radius:8px;background:#e5f1ee;color:var(--teal);display:grid;place-items:center;font-weight:800;}
+  .whylist b{display:block;}
+  .whylist small{color:var(--muted);font-size:14px;}
+
+  /* testimonials */
+  .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .tcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);}
+  .tcard .stars{color:var(--accent);letter-spacing:2px;font-size:15px;margin-bottom:12px;}
+  .tcard p{font-size:15px;color:var(--ink);margin-bottom:18px;}
+  .tcard .who{display:flex;align-items:center;gap:12px;}
+  .tcard .av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--sage));color:#fff;
+    display:grid;place-items:center;font-weight:800;font-family:var(--display);}
+  .tcard .who b{font-size:14.5px;} .tcard .who small{display:block;color:var(--muted);font-size:12.5px;}
+
+  /* faq */
+  .faq{max-width:820px;margin:0 auto;}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+  .qa button{width:100%;text-align:left;background:none;border:none;padding:20px 24px;font-size:16.5px;font-weight:700;
+    font-family:var(--sans);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--ink);}
+  .qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .qa .ans p{padding:0 24px 20px;color:var(--muted);font-size:15px;}
+  .qa .ic{transition:transform .3s ease;color:var(--teal);font-size:22px;flex:none;}
+  .qa.open .ic{transform:rotate(45deg);}
+
+  /* contact */
+  .contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;}
+  .contact-info h3{font-size:26px;margin-bottom:14px;}
+  .contact-info p{color:#a9c0bd;margin-bottom:24px;}
+  .ci-item{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
+  .ci-item .ic{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:20px;flex:none;}
+  .ci-item b{display:block;} .ci-item small{color:#a9c0bd;}
+  .form{background:var(--card);border-radius:22px;padding:34px;color:var(--ink);box-shadow:var(--shadow);}
+  .form .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-weight:700;font-size:13.5px;margin-bottom:7px;}
+  .field input,.field select,.field textarea{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:11px;
+    font-family:var(--sans);font-size:15px;background:var(--bg);transition:border .15s,box-shadow .15s;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,122,140,.15);}
+  .field textarea{resize:vertical;min-height:110px;}
+  .form-note{font-size:12.5px;color:var(--muted);margin-top:12px;text-align:center;}
+  .form-ok{background:#eaf6e6;border:1px solid #cfe6c2;color:#2f7d1e;padding:14px;border-radius:12px;font-weight:700;
+    text-align:center;margin-bottom:16px;display:none;}
+
+  /* footer */
+  footer.ft{background:#081820;color:#93aaa8;padding:64px 0 28px;}
+  .ft-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px;}
+  .ft-grid h4{color:#fff;font-size:15px;margin-bottom:16px;font-family:var(--sans);font-weight:800;}
+  .ft-grid a,.ft-grid li{color:#93aaa8;font-size:14.5px;line-height:2;list-style:none;}
+  .ft-grid a:hover{color:#fff;}
+  .ft-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;font-size:13px;}
+  .ft .socials{display:flex;gap:10px;margin-top:16px;}
+  .ft .socials a{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:16px;}
+
+  /* back to top */
+  #toTop{position:fixed;right:22px;bottom:96px;width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;
+    border:none;cursor:pointer;font-size:20px;z-index:90;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:var(--shadow);}
+  #toTop.show{opacity:1;pointer-events:auto;}
+
+  /* CHAT BOT */
+  #chatBtn{position:fixed;right:22px;bottom:22px;z-index:95;width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,var(--teal),var(--sage));color:#fff;font-size:28px;box-shadow:0 16px 34px -10px rgba(31,122,140,.7);
+    display:grid;place-items:center;transition:transform .2s;}
+  #chatBtn:hover{transform:scale(1.07);}
+  #chatBtn .ping{position:absolute;top:-3px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#3a2a06;
+    font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;}
+  #chatPanel{position:fixed;right:22px;bottom:96px;z-index:96;width:370px;max-width:calc(100vw - 44px);height:540px;max-height:calc(100vh - 130px);
+    background:#fff;border-radius:20px;box-shadow:0 40px 90px -20px rgba(0,0,0,.5);display:none;flex-direction:column;overflow:hidden;
+    border:1px solid var(--line);}
+  #chatPanel.open{display:flex;animation:pop .28s cubic-bezier(.2,.8,.3,1.2);}
+  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97);}to{opacity:1;transform:none;}}
+  .chat-head{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px;}
+  .chat-head .av{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:20px;position:relative;}
+  .chat-head .av .dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#48d09b;border:2px solid #16414f;}
+  .chat-head b{font-size:15.5px;display:block;} .chat-head small{font-size:12px;color:#bfe0e4;}
+  .chat-head .x{margin-left:auto;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;}
+  .chat-msgs{flex:1;overflow-y:auto;padding:18px;background:var(--bg-2);display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:82%;padding:11px 15px;border-radius:15px;font-size:14.3px;line-height:1.5;}
+  .msg a{color:var(--teal);font-weight:700;text-decoration:underline;}
+  .msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start;box-shadow:0 4px 12px -6px rgba(0,0,0,.12);}
+  .msg.me{background:linear-gradient(135deg,var(--teal),var(--navy-2));color:#fff;border-bottom-right-radius:5px;align-self:flex-end;}
+  .typing{align-self:flex-start;background:#fff;border:1px solid var(--line);padding:13px 16px;border-radius:15px;border-bottom-left-radius:5px;display:flex;gap:4px;}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--muted-2);animation:blink 1.2s infinite;}
+  .typing i:nth-child(2){animation-delay:.2s;} .typing i:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-4px);}}
+  .chat-chips{display:flex;flex-wrap:wrap;gap:7px;padding:10px 14px 4px;background:var(--bg-2);}
+  .chat-chips button{background:#fff;border:1.5px solid var(--teal);color:var(--teal);font-weight:700;font-size:12.5px;
+    padding:7px 12px;border-radius:99px;cursor:pointer;font-family:var(--sans);transition:background .15s,color .15s;}
+  .chat-chips button:hover{background:var(--teal);color:#fff;}
+  .chat-form{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line);background:#fff;}
+  .chat-form input{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;font-family:var(--sans);font-size:14px;}
+  .chat-form input:focus{outline:none;border-color:var(--teal);}
+  .chat-form button{background:linear-gradient(135deg,var(--teal),var(--sage));border:none;color:#fff;width:44px;border-radius:11px;cursor:pointer;font-size:17px;}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+  .rv.in{opacity:1;transform:none;}
+
+  /* responsive */
+  @media(max-width:960px){
+    .hero-grid,.calc,.split,.contact-grid{grid-template-columns:1fr;}
+    .svc-grid,.steps,.tgrid{grid-template-columns:1fr;}
+    .stats{grid-template-columns:1fr 1fr;}
+    .ft-grid{grid-template-columns:1fr 1fr;}
+    .nav-links,.nav-phone{display:none;}
+    .nav-toggle{display:block;}
+    .nav-links.mobile{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;
+      background:var(--navy);padding:8px 0;border-bottom:1px solid var(--dark-line);}
+    .nav-links.mobile a{padding:13px 24px;}
+    .hero-grid{padding:56px 0 64px;}
+    .form .row{grid-template-columns:1fr;}
+    .split-art{height:280px;}
+  }
+  @media(max-width:600px){
+    .nav-cta .btn-primary{display:none;}
+    .hero h1{font-size:38px;}
+    .stats{grid-template-columns:1fr 1fr;}
+    .hero-trust{gap:20px;}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+  </style>
+</head>
+<body>
+  <div id="progress"></div>
+
+  <div class="demo-banner">
+    <span><strong>Billy Digitals</strong> concept demo — a sample rebuild of Zinya Utilities.</span>
+    <a href="../index.html#contact">Want a site like this? →</a>
+  </div>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top">
+        <span class="mk">∞</span>
+        <span><b>Zinya Utilities</b><small>Business Services</small></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#services">Services</a>
+        <a href="#savings">Savings</a>
+        <a href="#how">How it works</a>
+        <a href="#why">Why us</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="nav-phone" href="tel:07771746738">📞 07771 746738</a>
+        <a class="btn btn-primary" href="#contact">Get a free quote</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <canvas id="bg3d"></canvas>
+    <div class="hero-fallback"></div>
+    <div class="wrap hero-grid">
+      <div class="rv in">
+        <span class="badge-pill"><span class="live"></span> Nottingham · Nationwide · 10+ years</span>
+        <h1>One partner for all your <span class="grad">business utilities</span></h1>
+        <p class="lead">Gas, electricity, telecoms, Wi-Fi and card payments — sourced, compared and managed for you. Cut your costs and lose the hassle of juggling suppliers.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#contact">Get a free quote →</a>
+          <a class="btn btn-ghost" href="#services">Explore services</a>
+        </div>
+        <div class="hero-trust">
+          <div><b>10+</b>years' experience</div>
+          <div><b>£2,800</b>avg. annual saving</div>
+          <div><b>1</b>dedicated contact</div>
+        </div>
+      </div>
+      <div class="quote-card rv in" id="tiltCard">
+        <h4>Your estimated savings</h4>
+        <p class="qsub">Typical Zinya review across three services</p>
+        <div class="qrow"><span>Business electricity</span><span class="bar"><i style="width:60%"></i></span><b>–18%</b></div>
+        <div class="qrow"><span>Telecoms &amp; Wi-Fi</span><span class="bar"><i style="width:78%"></i></span><b>–24%</b></div>
+        <div class="qrow"><span>Card payment fees</span><span class="bar"><i style="width:92%"></i></span><b>–31%</b></div>
+        <div class="qtotal"><span>Estimated annual saving</span><b>£2,840</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST STRIP -->
+  <div class="logos">
+    <div class="wrap">
+      <span>✅ Honest advice — no upsell</span>
+      <span>🤝 One dedicated contact</span>
+      <span>📍 Local, nationwide reach</span>
+      <span>🏢 Businesses of all sizes</span>
+      <span>🔒 Fully managed for you</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="stats">
+        <div class="st rv"><div class="n" data-count="10">0</div><div class="l">Years in the industry</div></div>
+        <div class="st rv"><div class="n" data-count="4"><em>+</em></div><div class="l">Core services managed</div></div>
+        <div class="st rv"><div class="n" data-count="2840" data-prefix="£">0</div><div class="l">Avg. yearly saving</div></div>
+        <div class="st rv"><div class="n" data-count="100" data-suffix="%">0</div><div class="l">UK nationwide reach</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="sec alt" id="services">
+    <div class="wrap">
+      <div class="head rv">
+        <span class="eyebrow">What we do</span>
+        <h2>Everything your business runs on — <span class="grad">handled</span></h2>
+        <p>Three core services, one simple relationship. We compare the market so you don't have to.</p>
+      </div>
+      <div class="svc-grid">
+        <div class="svc rv tilt">
+          <div class="ic">⚡</div>
+          <h3>Energy &amp; connectivity</h3>
+          <p>Gas, electricity, telecoms and Wi-Fi solutions tailored to keep your business powered and connected.</p>
+          <ul><li>Business gas &amp; electricity contracts</li><li>Broadband, leased lines &amp; Wi-Fi</li><li>Mobile &amp; telecoms packages</li></ul>
+          <a class="more" href="#contact">Get a quote →</a>
+        </div>
+        <div class="svc rv tilt">
+          <div class="ic">💳</div>
+          <h3>Payment &amp; transactions</h3>
+          <p>Flexible card machines and payment solutions designed around how your business actually trades.</p>
+          <ul><li>Countertop, portable &amp; mobile terminals</li><li>Lower transaction fees</li><li>Fast next-day settlement</li></ul>
+          <a class="more" href="#contact">Get a quote →</a>
+        </div>
+        <div class="svc rv tilt">
+          <div class="ic">🔗</div>
+          <h3>End-to-end management</h3>
+          <p>One partner managing multiple services — saving you time, cutting costs and removing supplier hassle.</p>
+          <ul><li>Single point of contact</li><li>Contract renewals handled</li><li>Ongoing account reviews</li></ul>
+          <a class="more" href="#contact">Get a quote →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAVINGS CALCULATOR -->
+  <section class="sec" id="savings">
+    <div class="wrap">
+      <div class="head rv">
+        <span class="eyebrow">Free tool</span>
+        <h2>See how much you could <span class="grad">save</span></h2>
+        <p>Slide in your rough monthly spend and get an instant estimate. No details needed.</p>
+      </div>
+      <div class="calc rv">
+        <div>
+          <div class="calc-field">
+            <label>Monthly electricity &amp; gas spend <b id="lblEnergy">£800</b></label>
+            <input type="range" id="rEnergy" min="100" max="5000" step="50" value="800">
+          </div>
+          <div class="calc-field">
+            <label>Monthly telecoms &amp; Wi-Fi spend <b id="lblTel">£300</b></label>
+            <input type="range" id="rTel" min="0" max="2000" step="25" value="300">
+          </div>
+          <div class="calc-field">
+            <label>Monthly card takings <b id="lblCard">£15,000</b></label>
+            <input type="range" id="rCard" min="0" max="150000" step="1000" value="15000">
+          </div>
+          <p class="calc-note">Estimates use typical Zinya savings: 18% energy, 24% telecoms, and ~0.6% of card takings in reduced fees. Your actual saving is confirmed in a free review.</p>
+        </div>
+        <div class="calc-out">
+          <div class="cap">Estimated annual saving</div>
+          <div class="big" id="calcTotal">£0</div>
+          <div class="per" id="calcPer">that's £0 back in your pocket each month</div>
+          <a class="btn btn-primary btn-block" href="#contact">Claim these savings →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="sec dark" id="how">
+    <div class="wrap">
+      <div class="head rv">
+        <span class="eyebrow" style="color:var(--sage-2)">How it works</span>
+        <h2>Simple, honest, <span class="grad">hassle-free</span></h2>
+        <p>From first chat to ongoing savings — we handle the heavy lifting.</p>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="num">1</div><h3>Free review</h3><p>Send us a recent bill or two. We review your current contracts and spot where you're overpaying — no cost, no obligation.</p></div>
+        <div class="step rv"><div class="num">2</div><h3>We compare the market</h3><p>Using 10+ years of supplier relationships, we find the right fit for your business — not just the cheapest headline rate.</p></div>
+        <div class="step rv"><div class="num">3</div><h3>We manage it all</h3><p>We handle the switch, the paperwork and future renewals. One contact, zero hassle, ongoing savings.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="sec alt" id="why">
+    <div class="wrap split">
+      <div class="split-art rv">
+        <span class="ring" style="width:120px;height:120px;"></span>
+        <span class="ring" style="width:220px;height:220px;"></span>
+        <span class="ring" style="width:320px;height:320px;"></span>
+        <span class="emoji">🤝</span>
+      </div>
+      <div class="rv">
+        <span class="eyebrow">Why Zinya</span>
+        <h2>We're not here to upsell — <span class="grad">we find the right fit</span></h2>
+        <p style="color:var(--muted);margin:16px 0 8px;">Managing your business utilities shouldn't be complicated. As a genuine one-stop shop, we take the time to understand how your business operates, then recommend solutions that are practical, cost-effective and built to grow with you.</p>
+        <ul class="whylist">
+          <li><span class="chk">✓</span><span><b>Over 10 years' industry experience</b><small>Deep supplier relationships across energy, telecoms and payments.</small></span></li>
+          <li><span class="chk">✓</span><span><b>Solutions for businesses of all sizes</b><small>From your first energy contract to reviewing multiple services.</small></span></li>
+          <li><span class="chk">✓</span><span><b>One dedicated point of contact</b><small>No call centres — a real person who knows your account.</small></span></li>
+          <li><span class="chk">✓</span><span><b>Local business, nationwide reach</b><small>Based in Nottingham, supporting businesses across the UK.</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="head rv">
+        <span class="eyebrow">Client stories</span>
+        <h2>Businesses that <span class="grad">trust Zinya</span></h2>
+        <p>Sample testimonials shown for this demo.</p>
+      </div>
+      <div class="tgrid">
+        <div class="tcard rv"><div class="stars">★★★★★</div><p>"Zinya reviewed our energy and card machine contracts and saved us over £3,000 a year. One phone call and they handled everything."</p><div class="who"><span class="av">RM</span><div><b>Rachel M.</b><small>Café owner, Nottingham</small></div></div></div>
+        <div class="tcard rv"><div class="stars">★★★★★</div><p>"Finally one point of contact for all our utilities. No more chasing suppliers — they just get it sorted. Honest advice throughout."</p><div class="who"><span class="av">TA</span><div><b>Tunde A.</b><small>Retail group, Leicester</small></div></div></div>
+        <div class="tcard rv"><div class="stars">★★★★★</div><p>"As a start-up we had no idea where to begin with business energy. Zinya made it simple and got us a great first contract."</p><div class="who"><span class="av">SK</span><div><b>Sarah K.</b><small>Salon, Derby</small></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="sec alt">
+    <div class="wrap">
+      <div class="head rv">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions, <span class="grad">answered</span></h2>
+      </div>
+      <div class="faq">
+        <div class="qa rv"><button>Does a review really cost nothing?<span class="ic">+</span></button><div class="ans"><p>Yes — our review is completely free and with no obligation. We only earn when we find you a better deal and you choose to switch. If we can't save you money, we'll tell you honestly.</p></div></div>
+        <div class="qa rv"><button>Which services can you manage?<span class="ic">+</span></button><div class="ans"><p>Business gas &amp; electricity, telecoms, broadband and Wi-Fi, mobile, and card payment machines &amp; merchant services — all through one dedicated contact.</p></div></div>
+        <div class="qa rv"><button>Do you only work with businesses in Nottingham?<span class="ic">+</span></button><div class="ans"><p>We're based in Nottingham but support businesses right across the UK. Everything can be handled remotely, so location is never a barrier.</p></div></div>
+        <div class="qa rv"><button>What happens when my contract is up for renewal?<span class="ic">+</span></button><div class="ans"><p>We track your renewal dates for you and get in touch in good time to re-review the market — so you never roll onto expensive out-of-contract rates.</p></div></div>
+        <div class="qa rv"><button>Is my business too small (or too big)?<span class="ic">+</span></button><div class="ans"><p>Neither — we work with everyone from sole traders and start-ups to established multi-site organisations. The advice is tailored to your size and needs.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="sec dark" id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info rv">
+        <span class="eyebrow" style="color:var(--sage-2)">Get in touch</span>
+        <h3>Get your free, no-obligation quote</h3>
+        <p>Tell us a little about your business and we'll come back with a tailored review — usually within one working day.</p>
+        <div class="ci-item"><div class="ic">📞</div><div><b>Call us</b><small><a href="tel:07771746738">07771 746738</a></small></div></div>
+        <div class="ci-item"><div class="ic">✉️</div><div><b>Email</b><small><a href="mailto:kelechi@zinyautilities.com">kelechi@zinyautilities.com</a></small></div></div>
+        <div class="ci-item"><div class="ic">📍</div><div><b>Location</b><small>Nottingham · Supporting businesses UK-wide</small></div></div>
+        <div class="ci-item"><div class="ic">🕘</div><div><b>Hours</b><small>Mon–Fri, 9am–6pm</small></div></div>
+      </div>
+      <form class="form rv" id="quoteForm" novalidate>
+        <div class="form-ok" id="formOk">✅ Thanks! Your enquiry is ready — we'll open your email to send it.</div>
+        <div class="row">
+          <div class="field"><label>Your name*</label><input type="text" name="name" required placeholder="Jane Smith"></div>
+          <div class="field"><label>Business name</label><input type="text" name="business" placeholder="Smith &amp; Co Ltd"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Email*</label><input type="email" name="email" required placeholder="jane@business.com"></div>
+          <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="07000 000000"></div>
+        </div>
+        <div class="field"><label>What can we help with?</label>
+          <select name="service">
+            <option>Business energy (gas &amp; electricity)</option>
+            <option>Telecoms, broadband &amp; Wi-Fi</option>
+            <option>Card payments &amp; merchant services</option>
+            <option>Everything — full utility review</option>
+          </select>
+        </div>
+        <div class="field"><label>Message</label><textarea name="message" placeholder="Tell us about your current suppliers or what you'd like to save on…"></textarea></div>
+        <button type="submit" class="btn btn-primary btn-block">Send my enquiry →</button>
+        <p class="form-note">🔒 We'll never share your details. Demo form — opens your email client to send.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ft">
+    <div class="wrap">
+      <div class="ft-grid">
+        <div>
+          <a class="brand" href="#top" style="color:#fff"><span class="mk">∞</span><span><b>Zinya Utilities</b><small>Business Services</small></span></a>
+          <p style="margin-top:16px;font-size:14.5px;">Your one-stop shop for essential business services. Based in Nottingham, saving businesses time and money across the UK.</p>
+          <div class="socials"><a href="#" aria-label="Facebook">📘</a><a href="#" aria-label="LinkedIn">💼</a></div>
+        </div>
+        <div><h4>Services</h4><ul><li><a href="#services">Energy &amp; connectivity</a></li><li><a href="#services">Payment &amp; transactions</a></li><li><a href="#services">End-to-end management</a></li></ul></div>
+        <div><h4>Company</h4><ul><li><a href="#why">Why us</a></li><li><a href="#how">How it works</a></li><li><a href="#savings">Savings calculator</a></li><li><a href="#contact">Contact</a></li></ul></div>
+        <div><h4>Get in touch</h4><ul><li><a href="tel:07771746738">07771 746738</a></li><li><a href="mailto:kelechi@zinyautilities.com">kelechi@zinyautilities.com</a></li><li>Nottingham, UK</li></ul></div>
+      </div>
+      <div class="ft-bottom">
+        <span>© 2026 Zinya Utilities — All rights reserved.</span>
+        <span>Concept demo designed &amp; built by <a href="../index.html" style="color:#fff;font-weight:700;">Billy Digitals</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <button id="toTop" aria-label="Back to top">↑</button>
+
+  <!-- CHAT BOT -->
+  <button id="chatBtn" aria-label="Chat with Zina">💬<span class="ping">1</span></button>
+  <div id="chatPanel" role="dialog" aria-label="Chat assistant">
+    <div class="chat-head">
+      <div class="av">🤖<span class="dot"></span></div>
+      <div><b>Zina</b><small>Zinya's assistant · online</small></div>
+      <button class="x" id="chatClose" aria-label="Close">×</button>
+    </div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-chips" id="chatChips"></div>
+    <form class="chat-form" id="chatForm">
+      <input id="chatText" type="text" placeholder="Ask Zina anything…" autocomplete="off">
+      <button type="submit" aria-label="Send">➤</button>
+    </form>
+  </div>
+
+  <script src="vendor/three.min.js"></script>
+  <script>
+  /* ============ Zinya Utilities demo — Billy Digitals ============ */
+  (function(){
+    "use strict";
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---- scroll progress + back to top + nav ---- */
+    var prog = document.getElementById("progress");
+    var toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", function(){
+      var h = document.documentElement.scrollHeight - innerHeight;
+      var p = h > 0 ? (scrollY / h) * 100 : 0;
+      prog.style.width = p + "%";
+      toTop.classList.toggle("show", scrollY > 600);
+    }, {passive:true});
+    toTop.onclick = function(){ scrollTo({top:0,behavior:"smooth"}); };
+
+    /* ---- mobile menu ---- */
+    var navToggle = document.getElementById("navToggle");
+    var navLinks = document.getElementById("navLinks");
+    navToggle.onclick = function(){ navLinks.classList.toggle("mobile"); };
+    navLinks.querySelectorAll("a").forEach(function(a){ a.onclick=function(){ navLinks.classList.remove("mobile"); }; });
+
+    /* ---- reveal on scroll ---- */
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.14});
+    document.querySelectorAll(".rv").forEach(function(el){ io.observe(el); });
+
+    /* ---- animated counters ---- */
+    var cio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        var el = e.target, target = +el.dataset.count, pre = el.dataset.prefix||"", suf = el.dataset.suffix||"";
+        var extra = el.querySelector("em") ? el.querySelector("em").outerHTML : "";
+        var start = null, dur = 1400;
+        function tick(t){
+          if(!start) start = t;
+          var k = Math.min((t-start)/dur, 1), val = Math.floor((1-Math.pow(1-k,3))*target);
+          el.innerHTML = pre + val.toLocaleString() + suf + extra;
+          if(k<1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      });
+    }, {threshold:.5});
+    document.querySelectorAll("[data-count]").forEach(function(el){ cio.observe(el); });
+
+    /* ---- savings calculator ---- */
+    var rE=document.getElementById("rEnergy"), rT=document.getElementById("rTel"), rC=document.getElementById("rCard");
+    var lE=document.getElementById("lblEnergy"), lT=document.getElementById("lblTel"), lC=document.getElementById("lblCard");
+    var out=document.getElementById("calcTotal"), per=document.getElementById("calcPer");
+    var shown=0;
+    function gbp(n){ return "£"+Math.round(n).toLocaleString(); }
+    function calc(){
+      var e=+rE.value, t=+rT.value, c=+rC.value;
+      lE.textContent=gbp(e); lT.textContent=gbp(t); lC.textContent=gbp(c);
+      var annual = e*12*0.18 + t*12*0.24 + c*12*0.006;
+      // ease the number
+      var target=annual, step=(target-shown)/12, i=0;
+      clearInterval(calc._iv);
+      calc._iv=setInterval(function(){
+        shown+=step; i++;
+        if(i>=12){ shown=target; clearInterval(calc._iv); }
+        out.textContent=gbp(shown);
+        per.textContent="that's "+gbp(shown/12)+" back in your pocket each month";
+      },22);
+    }
+    [rE,rT,rC].forEach(function(r){ r.addEventListener("input",calc); });
+    calc();
+
+    /* ---- FAQ accordion ---- */
+    document.querySelectorAll(".qa button").forEach(function(b){
+      b.onclick=function(){
+        var qa=b.parentElement, ans=qa.querySelector(".ans"), open=qa.classList.contains("open");
+        document.querySelectorAll(".qa").forEach(function(o){ o.classList.remove("open"); o.querySelector(".ans").style.maxHeight=null; });
+        if(!open){ qa.classList.add("open"); ans.style.maxHeight=ans.scrollHeight+"px"; }
+      };
+    });
+
+    /* ---- 3D tilt on service + quote cards ---- */
+    if(!reduce){
+      document.querySelectorAll(".tilt, #tiltCard").forEach(function(card){
+        card.addEventListener("pointermove", function(e){
+          var r=card.getBoundingClientRect();
+          var x=((e.clientX-r.left)/r.width-.5), y=((e.clientY-r.top)/r.height-.5);
+          card.style.transform="perspective(800px) rotateY("+(x*7)+"deg) rotateX("+(-y*7)+"deg) translateY(-4px)";
+        });
+        card.addEventListener("pointerleave", function(){ card.style.transform=""; });
+      });
+    }
+
+    /* ---- contact form (demo → mailto) ---- */
+    var qf=document.getElementById("quoteForm");
+    qf.onsubmit=function(ev){
+      ev.preventDefault();
+      var f=qf.elements;
+      if(!f.name.value.trim()||!f.email.value.trim()){ alert("Please add your name and email."); return; }
+      document.getElementById("formOk").style.display="block";
+      var body="Name: "+f.name.value+"%0D%0ABusiness: "+f.business.value+"%0D%0AEmail: "+f.email.value+
+        "%0D%0APhone: "+f.phone.value+"%0D%0AService: "+f.service.value+"%0D%0A%0D%0A"+f.message.value;
+      setTimeout(function(){ location.href="mailto:kelechi@zinyautilities.com?subject=Website%20enquiry%20from%20"+encodeURIComponent(f.name.value)+"&body="+body; },700);
+    };
+
+    /* ============ 3D ENERGY HERO (Three.js) ============
+       A living power-grid: glowing nodes, connecting lines, electricity
+       pulses flowing along them, a pulsing energy core, drifting sparks
+       and a slow connectivity globe. Additive glow fakes bloom. */
+    (function(){
+      var canvas=document.getElementById("bg3d");
+      if(reduce || typeof THREE==="undefined" || !canvas){ return; }
+      var renderer;
+      try{ renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true}); }
+      catch(e){ return; } // no WebGL → CSS fallback stays visible
+      var hero=canvas.parentElement, raf, mx=0, my=0;
+      function size(){ return {w:hero.clientWidth, h:hero.clientHeight}; }
+      var s=size();
+      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+      renderer.setSize(s.w,s.h,false);
+      renderer.setClearColor(0x000000,0);
+
+      var scene=new THREE.Scene();
+      scene.fog=new THREE.FogExp2(0x0d2430,0.028);
+      var cam=new THREE.PerspectiveCamera(58,s.w/s.h,.1,140); cam.position.set(0,0,26);
+
+      /* --- palette (energy) --- */
+      var CY=new THREE.Color("#38e0f0"), TEAL=new THREE.Color("#1fb0c8"),
+          GOLD=new THREE.Color("#f5c15a"), GRN=new THREE.Color("#a7e06a");
+      var PAL=[CY,TEAL,GRN,GOLD];
+
+      /* --- soft round glow sprite (radial gradient on canvas) --- */
+      function glowTexture(inner){
+        var c=document.createElement("canvas"); c.width=c.height=64;
+        var g=c.getContext("2d");
+        var rg=g.createRadialGradient(32,32,0,32,32,32);
+        rg.addColorStop(0,inner||"rgba(255,255,255,1)");
+        rg.addColorStop(0.25,"rgba(255,255,255,.85)");
+        rg.addColorStop(0.55,"rgba(120,220,240,.35)");
+        rg.addColorStop(1,"rgba(0,0,0,0)");
+        g.fillStyle=rg; g.fillRect(0,0,64,64);
+        var t=new THREE.CanvasTexture(c); return t;
+      }
+      var GLOW=glowTexture();
+
+      var world=new THREE.Group(); scene.add(world);
+
+      /* ---------- 1. drifting energy sparks (additive glow field) ---------- */
+      var SPARKS=900, sp=[], sc=[];
+      for(var i=0;i<SPARKS;i++){
+        var rad=14+Math.random()*30, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+        sp.push(rad*Math.sin(ph)*Math.cos(th), rad*Math.sin(ph)*Math.sin(th)*0.6, rad*Math.cos(ph));
+        var col=PAL[(Math.random()*PAL.length)|0];
+        sc.push(col.r,col.g,col.b);
+      }
+      var sgeo=new THREE.BufferGeometry();
+      sgeo.setAttribute("position",new THREE.Float32BufferAttribute(sp,3));
+      sgeo.setAttribute("color",new THREE.Float32BufferAttribute(sc,3));
+      var sparks=new THREE.Points(sgeo,new THREE.PointsMaterial({
+        size:.55,map:GLOW,vertexColors:true,transparent:true,opacity:.75,
+        depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}));
+      world.add(sparks);
+
+      /* ---------- 2. power-grid: nodes + lines ---------- */
+      var N=52, nodes=[], npos=[], ncol=[];
+      for(var i=0;i<N;i++){
+        var v=new THREE.Vector3((Math.random()-.5)*40,(Math.random()-.5)*22,(Math.random()-.5)*18);
+        nodes.push(v); npos.push(v.x,v.y,v.z);
+        var col=PAL[(Math.random()*PAL.length)|0]; ncol.push(col.r,col.g,col.b);
+      }
+      var nGeo=new THREE.BufferGeometry();
+      nGeo.setAttribute("position",new THREE.Float32BufferAttribute(npos,3));
+      nGeo.setAttribute("color",new THREE.Float32BufferAttribute(ncol,3));
+      var nodeMesh=new THREE.Points(nGeo,new THREE.PointsMaterial({
+        size:1.15,map:GLOW,vertexColors:true,transparent:true,opacity:.95,
+        depthWrite:false,blending:THREE.AdditiveBlending}));
+      world.add(nodeMesh);
+
+      /* edges between nearby nodes */
+      var edges=[], linePos=[];
+      for(var a=0;a<N;a++){ for(var b=a+1;b<N;b++){
+        var d=nodes[a].distanceTo(nodes[b]);
+        if(d<9){ edges.push([a,b]); linePos.push(nodes[a].x,nodes[a].y,nodes[a].z, nodes[b].x,nodes[b].y,nodes[b].z); }
+      }}
+      var lGeo=new THREE.BufferGeometry();
+      lGeo.setAttribute("position",new THREE.Float32BufferAttribute(linePos,3));
+      var grid=new THREE.LineSegments(lGeo,new THREE.LineBasicMaterial({
+        color:TEAL,transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false}));
+      world.add(grid);
+
+      /* ---------- 3. electricity pulses flowing along edges ---------- */
+      var PMAX=Math.min(edges.length,70), pulses=[], ppos=new Float32Array(PMAX*3), pcol=new Float32Array(PMAX*3);
+      for(var i=0;i<PMAX;i++){
+        var e=edges[(Math.random()*edges.length)|0];
+        var col=PAL[(Math.random()*PAL.length)|0];
+        pulses.push({a:e[0],b:e[1],t:Math.random(),sp:0.15+Math.random()*0.5});
+        pcol[i*3]=Math.min(1,col.r+0.4); pcol[i*3+1]=Math.min(1,col.g+0.4); pcol[i*3+2]=Math.min(1,col.b+0.4);
+      }
+      var pGeo=new THREE.BufferGeometry();
+      pGeo.setAttribute("position",new THREE.BufferAttribute(ppos,3));
+      pGeo.setAttribute("color",new THREE.BufferAttribute(pcol,3));
+      var pulseMesh=new THREE.Points(pGeo,new THREE.PointsMaterial({
+        size:1.5,map:GLOW,vertexColors:true,transparent:true,opacity:1,
+        depthWrite:false,blending:THREE.AdditiveBlending}));
+      world.add(pulseMesh);
+
+      /* ---------- 4. pulsing energy core ---------- */
+      var coreGrp=new THREE.Group(); scene.add(coreGrp);
+      var coreOuter=new THREE.Mesh(new THREE.IcosahedronGeometry(3.4,1),
+        new THREE.MeshBasicMaterial({color:CY,wireframe:true,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false}));
+      var coreMid=new THREE.Mesh(new THREE.IcosahedronGeometry(2.1,0),
+        new THREE.MeshBasicMaterial({color:GOLD,wireframe:true,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+      var coreGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:GLOW,color:CY,transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false}));
+      coreGlow.scale.set(11,11,1);
+      coreGrp.add(coreOuter,coreMid,coreGlow);
+
+      /* ---------- 5. connectivity globe (nationwide reach) ---------- */
+      var globe=new THREE.Mesh(new THREE.SphereGeometry(9,22,16),
+        new THREE.MeshBasicMaterial({color:TEAL,wireframe:true,transparent:true,opacity:.07,depthWrite:false}));
+      scene.add(globe);
+      /* orbiting energy ring */
+      var ring=new THREE.Mesh(new THREE.TorusGeometry(6.2,0.045,8,120),
+        new THREE.MeshBasicMaterial({color:CY,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,depthWrite:false}));
+      ring.rotation.x=Math.PI*0.42; scene.add(ring);
+      var ring2=new THREE.Mesh(new THREE.TorusGeometry(7.6,0.03,8,120),
+        new THREE.MeshBasicMaterial({color:GRN,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false}));
+      ring2.rotation.x=Math.PI*0.62; ring2.rotation.y=Math.PI*0.2; scene.add(ring2);
+
+      /* ---------- interaction ---------- */
+      hero.addEventListener("pointermove",function(e){
+        var r=hero.getBoundingClientRect();
+        mx=((e.clientX-r.left)/r.width-.5); my=((e.clientY-r.top)/r.height-.5);
+      });
+
+      var t=0;
+      function loop(){
+        raf=requestAnimationFrame(loop); t+=0.006;
+
+        world.rotation.y=t*0.28; world.rotation.x=Math.sin(t*0.5)*0.10;
+        sparks.rotation.y=-t*0.12;
+        globe.rotation.y=t*0.35; globe.rotation.x=t*0.10;
+
+        // core pulse (like a heartbeat of power)
+        var pulse=1+Math.sin(t*2.4)*0.10;
+        coreGrp.scale.setScalar(pulse);
+        coreOuter.rotation.y+=0.006; coreOuter.rotation.x+=0.003;
+        coreMid.rotation.y-=0.012; coreMid.rotation.x-=0.006;
+        coreGlow.material.opacity=0.7+Math.sin(t*2.4)*0.2;
+
+        ring.rotation.z+=0.01; ring2.rotation.z-=0.008;
+
+        // advance electricity pulses along their edges
+        for(var i=0;i<PMAX;i++){
+          var pu=pulses[i]; pu.t+=pu.sp*0.016;
+          if(pu.t>1){ pu.t=0; var e=edges[(Math.random()*edges.length)|0]; pu.a=e[0]; pu.b=e[1]; }
+          var A=nodes[pu.a], B=nodes[pu.b], k=pu.t;
+          ppos[i*3]  =A.x+(B.x-A.x)*k;
+          ppos[i*3+1]=A.y+(B.y-A.y)*k;
+          ppos[i*3+2]=A.z+(B.z-A.z)*k;
+        }
+        pGeo.attributes.position.needsUpdate=true;
+
+        // camera parallax
+        cam.position.x += (mx*7 - cam.position.x)*0.045;
+        cam.position.y += (-my*5 - cam.position.y)*0.045;
+        cam.lookAt(0,0,0);
+        renderer.render(scene,cam);
+      }
+      loop();
+
+      addEventListener("resize",function(){
+        var s=size(); cam.aspect=s.w/s.h; cam.updateProjectionMatrix(); renderer.setSize(s.w,s.h,false);
+      });
+      document.addEventListener("visibilitychange",function(){
+        cancelAnimationFrame(raf); if(!document.hidden) loop();
+      });
+    })();
+
+    /* ============ CHAT BOT "Zina" ============ */
+    (function(){
+      var btn=document.getElementById("chatBtn"), panel=document.getElementById("chatPanel"),
+          close=document.getElementById("chatClose"), msgs=document.getElementById("chatMsgs"),
+          chipsBox=document.getElementById("chatChips"), form=document.getElementById("chatForm"),
+          input=document.getElementById("chatText"), ping=btn.querySelector(".ping");
+      var welcomed=false;
+
+      var PHONE="07771 746738", EMAIL="kelechi@zinyautilities.com";
+      var contact='Call <a href="tel:07771746738">'+PHONE+'</a> or email <a href="mailto:'+EMAIL+'">'+EMAIL+'</a> — we reply fast.';
+
+      var INTENTS=[
+        {re:/^\s*(hi|hello|hey|hiya|salam|howdy|yo|good (morning|afternoon|evening))[\s!,.?]*$/i,
+         reply:function(){return "Hi there! 👋 I'm Zina, Zinya Utilities' assistant. I can help with business energy, telecoms, card payments — or getting you a free quote. What are you looking at?";},
+         chips:["What do you do?","How much can I save?","Get a quote"]},
+        {re:/\b(save|saving|savings|cheaper|reduce|lower|overpay)\b|how much can/i,
+         reply:function(){return "Most businesses save around <strong>£2,800 a year</strong> across energy, telecoms and card fees. 💷 Try the <a href=\"#savings\">savings calculator</a> for an instant estimate — then we confirm it with a free review.";},
+         chips:["Get a quote","Energy","Card payments"]},
+        {re:/\b(energy|electric|electricity|gas|power|gas and electric)\b/i,
+         reply:function(){return "⚡ We compare business <strong>gas &amp; electricity</strong> across the market and handle the switch and renewals for you — so you never roll onto expensive out-of-contract rates. "+contact;},
+         chips:["Telecoms","Card payments","Get a quote"]},
+        {re:/\b(telecom|telecoms|broadband|wi-?fi|internet|phone line|mobile|leased line)\b/i,
+         reply:function(){return "📡 We sort <strong>telecoms, broadband, Wi-Fi and mobile</strong> — keeping your business connected on the right package for how you actually work. "+contact;},
+         chips:["Energy","Card payments","Get a quote"]},
+        {re:/\b(card|payment|payments|terminal|machine|merchant|transaction|pdq|checkout)\b/i,
+         reply:function(){return "💳 We provide <strong>card machines &amp; payment solutions</strong> — countertop, portable and mobile — with lower fees and fast settlement, matched to how your business trades. "+contact;},
+         chips:["Energy","Telecoms","Get a quote"]},
+        {re:/\b(quote|quotation|estimate|price|pricing|cost|how do i start|sign up|get started)\b/i,
+         reply:function(){return "Getting a quote is easy and <strong>free</strong>. 📝 Pop your details in the <a href=\"#contact\">quick form</a> or send a recent bill and we'll come back within one working day. "+contact;},
+         chips:["Get a quote","How does it work?","Talk to a human"]},
+        {re:/\b(how does it work|how it works|process|steps|switch|switching)\b/i,
+         reply:function(){return "Three simple steps: <strong>1)</strong> free review of your bills, <strong>2)</strong> we compare the market, <strong>3)</strong> we manage the switch and renewals. One contact, zero hassle. <a href=\"#how\">See how it works →</a>";},
+         chips:["Get a quote","How much can I save?"]},
+        {re:/\b(free|obligation|catch|cost me|charge me|fee)\b/i,
+         reply:function(){return "The review is <strong>100% free with no obligation</strong> ✅. We only earn when we find you a better deal and you choose to switch. If we can't save you money, we'll tell you straight.";},
+         chips:["Get a quote","How much can I save?"]},
+        {re:/\b(where|location|based|nottingham|area|local|nationwide|uk)\b/i,
+         reply:function(){return "📍 We're based in <strong>Nottingham</strong> and support businesses right across the <strong>UK</strong> — everything can be handled remotely.";},
+         chips:["Get a quote","What do you do?"]},
+        {re:/\b(about|who are you|experience|years|trust|legit)\b/i,
+         reply:function(){return "Zinya Utilities is your <strong>one-stop shop</strong> for essential business services, with <strong>10+ years' experience</strong> and one dedicated point of contact. We're here to find the right fit — not to upsell. <a href=\"#why\">Why choose us →</a>";},
+         chips:["What do you do?","Get a quote"]},
+        {re:/\b(human|person|call|phone|speak|contact|email|talk)\b/i,
+         reply:function(){return "Of course 🙂 — "+contact;},
+         chips:["Get a quote","Opening hours"]},
+        {re:/\b(hours|open|opening|when)\b/i,
+         reply:function(){return "🕘 We're open <strong>Mon–Fri, 9am–6pm</strong>. Leave a message any time via the <a href=\"#contact\">form</a> and we'll get back to you.";},
+         chips:["Get a quote","Talk to a human"]},
+        {re:/\b(service|services|what do you|help with|offer)\b/i,
+         reply:function(){return "We manage three core areas for businesses: ⚡ <strong>Energy &amp; connectivity</strong>, 💳 <strong>Payment &amp; transactions</strong>, and 🔗 <strong>end-to-end management</strong> of it all. Which interests you?";},
+         chips:["Energy","Telecoms","Card payments"]},
+        {re:/\b(thanks|thank you|great|perfect|cheers|nice|cool)\b/i,
+         reply:function(){return "You're welcome! 😊 Anything else, or shall I help you grab a free quote?";},
+         chips:["Get a quote","Talk to a human"]},
+        {re:/\b(bye|goodbye|see you|later)\b/i,
+         reply:function(){return "Take care! 👋 When you're ready to start saving, you know where to find us.";},
+         chips:["Get a quote"]}
+      ];
+      var FALLBACK="I want to make sure I get this right 🙂 — I can help with business <strong>energy</strong>, <strong>telecoms</strong>, <strong>card payments</strong>, savings or a free quote. Or "+contact;
+
+      function scroll(){ msgs.scrollTop=msgs.scrollHeight; }
+      function add(html, who){
+        var d=document.createElement("div"); d.className="msg "+(who||"bot"); d.innerHTML=html; msgs.appendChild(d); scroll();
+      }
+      function chips(list){
+        chipsBox.innerHTML="";
+        (list||["What do you do?","How much can I save?","Get a quote"]).forEach(function(t){
+          var b=document.createElement("button"); b.textContent=t;
+          b.onclick=function(){ handle(t); }; chipsBox.appendChild(b);
+        });
+      }
+      function typing(cb){
+        var t=document.createElement("div"); t.className="typing"; t.innerHTML="<i></i><i></i><i></i>";
+        msgs.appendChild(t); scroll();
+        setTimeout(function(){ t.remove(); cb(); }, 650+Math.random()*400);
+      }
+      function respond(text){
+        var hit=INTENTS.find(function(it){ return it.re.test(text); });
+        typing(function(){
+          if(hit){ add(hit.reply()); chips(hit.chips); }
+          else { add(FALLBACK); chips(); }
+        });
+      }
+      function handle(text){
+        if(!text.trim()) return;
+        add(text.replace(/</g,"&lt;"),"me"); chipsBox.innerHTML=""; respond(text);
+      }
+      function open(){
+        panel.classList.add("open"); ping.style.display="none"; input.focus();
+        if(!welcomed){ welcomed=true;
+          typing(function(){
+            add("👋 Hi! I'm <strong>Zina</strong>, Zinya's virtual assistant. Ask me about business energy, telecoms, card payments — or how much you could save.");
+            chips(["What do you do?","How much can I save?","Get a quote"]);
+          });
+        }
+      }
+      btn.onclick=function(){ panel.classList.contains("open") ? panel.classList.remove("open") : open(); };
+      close.onclick=function(){ panel.classList.remove("open"); };
+      form.onsubmit=function(e){ e.preventDefault(); handle(input.value); input.value=""; };
+    })();
+  })();
+  </script>
+</body>
+</html>
