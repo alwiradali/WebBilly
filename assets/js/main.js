@@ -38,6 +38,15 @@ function initContactLinks() {
     "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.waMessage);
   document.querySelectorAll("[data-wa-link]").forEach((a) => {
     a.href = waUrl;
+    a.addEventListener("click", () => window.bdTrack && bdTrack("contact_whatsapp"));
+  });
+  document.querySelectorAll("[data-email-link]").forEach((a) => {
+    a.addEventListener("click", () => window.bdTrack && bdTrack("contact_email"));
+  });
+  // Plan "Request a Quote" buttons — soft engagement signal
+  document.querySelectorAll("[data-plan]").forEach((el) => {
+    el.addEventListener("click", () =>
+      window.bdTrack && bdTrack("select_plan", { plan: el.getAttribute("data-plan") }));
   });
 }
 
@@ -47,9 +56,13 @@ function initHeader() {
   const burger = document.getElementById("hamburger");
   const links = document.getElementById("navLinks");
 
+  if (!header) return;
   const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Pages without the full nav (e.g. thank-you) have no burger menu — stop here.
+  if (!burger || !links) return;
 
   burger.addEventListener("click", () => {
     const open = links.classList.toggle("open");
@@ -308,6 +321,7 @@ function initChat() {
   const form = document.getElementById("chatForm");
   const input = document.getElementById("chatText");
   const chips = document.getElementById("chatChips");
+  if (!chat || !toggle || !form) return; // no chat widget on this page (e.g. thank-you)
   let welcomed = false;
   let engaged = false;       // true once the customer has sent a message
   let askedForReview = false; // review is asked at most once per chat
