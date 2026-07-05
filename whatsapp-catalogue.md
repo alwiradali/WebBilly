@@ -10,32 +10,31 @@ for each product below: add the **image**, **name**, **price**, **description** 
 
 Notes:
 - Set the catalogue **currency to GBP (£)**.
-- Web-design plans are **one-off**; hosting and care are **per month** — this is
-  stated in each name/description (WhatsApp's price field is a single number).
-- For **Ultra Premium** (a range), enter `1800` as the price and let the description
-  say "from £1,800", or hide the price.
+- Web-design plans are **quote-based** — leave the price field blank (or set to 0
+  and hide it) so each item reads "Free quote". Hosting and care are **per month**
+  with fixed prices.
 
 ---
 
 ## Web design (one-off projects)
 
-### 1. Standard Website — £700
+### 1. Standard Website — Free quote
 - **Image:** `assets/catalogue/01-standard-website.png`
-- **Link:** https://www.billydigitals.com/#plans
+- **Link:** https://www.billydigitals.com/#contact
 - **Description:**
-  A professional website built from scratch to match your brand — up to 5 custom pages, fully responsive, with a contact form and WhatsApp built in. Essential on-page SEO, 2 revision rounds and 1 month of post-launch support. One-off from £700.
+  A professional website built from scratch to match your brand — up to 5 custom pages, fully responsive, with a contact form and WhatsApp built in. Essential on-page SEO, 2 revision rounds and 1 month of post-launch support. Tell us your project for a free, tailored quote — no hidden fees.
 
-### 2. Premium Website — £1,200 (Most popular)
+### 2. Premium Website — Free quote (Most popular)
 - **Image:** `assets/catalogue/02-premium-website.png`
-- **Link:** https://www.billydigitals.com/#plans
+- **Link:** https://www.billydigitals.com/#contact
 - **Description:**
-  Our most popular build — up to 12 custom pages with a CMS so you can edit content yourself. Bespoke UI with premium animations, advanced SEO & speed, an AI chatbot, and managed hosting included. 4 revisions + 3 months support. One-off from £1,200.
+  Our most popular build — up to 12 custom pages with a CMS so you can edit content yourself. Bespoke UI with premium animations, advanced SEO & speed, an AI chatbot, and managed hosting included. 4 revisions + 3 months support. Tell us your project for a free, tailored quote.
 
-### 3. Ultra Premium Website — from £1,800
+### 3. Ultra Premium Website — Free quote
 - **Image:** `assets/catalogue/03-ultra-premium-website.png`
-- **Link:** https://www.billydigitals.com/#plans
+- **Link:** https://www.billydigitals.com/#contact
 - **Description:**
-  The full-service flagship — we become your complete digital department. Unlimited pages or a custom web app, complete branding & design system, AI automation, professional copywriting, 12 months of hosting & care, a dedicated project manager and unlimited revisions. One-off from £1,800–£2,500.
+  The full-service flagship — we become your complete digital department. Unlimited pages or a custom web app, complete branding & design system, AI automation, professional copywriting, 12 months of hosting & care, a dedicated project manager and unlimited revisions. Tell us your project for a free, tailored quote.
 
 ---
 
