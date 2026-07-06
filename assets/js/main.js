@@ -80,7 +80,13 @@ function initHeader() {
   // Highlight the nav link of the section in view
   const navAnchors = Array.from(links.querySelectorAll("a"));
   const sections = navAnchors
-    .map((a) => document.querySelector(a.getAttribute("href")))
+    .map((a) => {
+      const href = a.getAttribute("href");
+      // Only in-page anchors (#id) are valid selectors; skip cross-page links.
+      return href && href.charAt(0) === "#" && href.length > 1
+        ? document.querySelector(href)
+        : null;
+    })
     .filter(Boolean);
   const spy = new IntersectionObserver(
     (entries) => {
