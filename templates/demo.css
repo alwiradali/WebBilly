@@ -465,3 +465,25 @@ body.dark .revcard { background: var(--surface); }
 /* ---------- Toast (add to cart feedback) ---------- */
 .dtoast { position: fixed; bottom: 26px; left: 50%; translate: -50% 0; z-index: 200; background: var(--text); color: var(--bg); padding: 13px 22px; border-radius: 999px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 16px 40px rgba(0,0,0,0.3); opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease; }
 .dtoast.show { opacity: 1; transform: translateY(-6px); }
+
+/* ---------- Accepted-payment badges ---------- */
+.pay-note { text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 12px; }
+.pay-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 22px; }
+.pay { height: 30px; min-width: 46px; padding: 0 9px; border-radius: 5px; background: #fff;
+  border: 1px solid rgba(0,0,0,.1); box-shadow: 0 1px 3px rgba(0,0,0,.14);
+  display: inline-flex; align-items: center; justify-content: center; gap: 2px;
+  font-family: var(--display); font-weight: 800; font-size: .62rem; letter-spacing: .2px; color: #1a1f71; }
+.pay.v { color: #1a1f71; font-style: italic; letter-spacing: -.3px; font-size: .74rem; }
+.pay.ax { background: #1f72cd; color: #fff; font-size: .56rem; }
+.pay.kl { background: #ffb3c7; color: #0a0a0a; font-size: .64rem; }
+.pay.pp { color: #003087; }
+.pay.pp b { color: #009cde; font-weight: 800; }
+.pay.sp { background: #5a31f4; color: #fff; font-size: .6rem; }
+.pay.mc { gap: 0; padding: 0 10px; }
+.pay.mc i { width: 15px; height: 15px; border-radius: 50%; display: block; }
+.pay.mc i:first-child { background: #eb001b; }
+.pay.mc i:last-child { background: #f79e1b; margin-left: -7px; mix-blend-mode: multiply; }
+.pay.ap { color: #000; gap: 3px; }
+.pay.ap svg { height: 14px; width: auto; }
+.pay.gp { color: #5f6368; gap: 2px; }
+.pay.gp b { color: #4285f4; font-size: .8rem; }
