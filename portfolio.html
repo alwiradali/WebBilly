@@ -72,6 +72,12 @@
     .ind-cloud span:hover { transform: translateY(-3px); border-color: rgba(56,189,248,.5); background: rgba(56,189,248,.08); }
     .ind-cloud span:last-child { background: var(--grad-btn); border-color: transparent; color: #fff; font-weight: 600; }
     @media (max-width: 700px) { .grid[style*="repeat(4"] { grid-template-columns: repeat(2,1fr) !important; } }
+    .store-grid { grid-template-columns: repeat(4, 1fr); gap: 22px; }
+    @media (max-width: 900px) { .store-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .store-grid { grid-template-columns: 1fr; } }
+    .store-grid .tinfo { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .store-badge { font-size: .74rem; font-weight: 600; color: #cfe0ff; border: 1px solid var(--border);
+      background: rgba(56,189,248,.1); border-radius: 999px; padding: 5px 11px; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -97,7 +103,7 @@
       <div class="container">
         <p class="tag">Our work</p>
         <h1>Websites &amp; apps we're <span class="grad">proud of</span>.</h1>
-        <p class="sub">Real projects — designed, engineered and shipped by Billy Digitals. From accountants and law firms to travel agents, trades and local businesses — built from scratch, fast, and made to convert.</p>
+        <p class="sub">Real projects and online stores — designed, engineered and shipped by Billy Digitals. From e-commerce and travel to law firms, trades and local businesses — built from scratch, fast, and made to convert.</p>
         <dl class="pf-stats">
           <div><dt>100%</dt><dd>Custom-built</dd></div>
           <div><dt>&lt;1s</dt><dd>Load times</dd></div>
@@ -165,6 +171,22 @@
             </div>
           </article>
 
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stores" style="padding-top:20px">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="tag">Online stores</p>
+          <h2>E-commerce that <span class="grad">actually sells</span></h2>
+          <p class="sub">Premium, Shopify-grade storefronts designed &amp; built by Billy Digitals — live cart, product pages, reviews and mobile-perfect checkout. Open any one and try the "Add to bag" button.</p>
+        </div>
+        <div class="grid store-grid">
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#c9a24b;--t2:#131316" href="templates/store-fashion.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🧥</span><span class="tthumb-view">Open live store ↗</span></a><div class="tinfo"><div><h3>Atelier Noir</h3><span class="tcat">Fashion &amp; Apparel</span></div><span class="store-badge">🛒 Cart</span></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#ec4899;--t2:#f9a8d4" href="templates/store-beauty.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">💄</span><span class="tthumb-view">Open live store ↗</span></a><div class="tinfo"><div><h3>Lume Beauty</h3><span class="tcat">Beauty &amp; Cosmetics</span></div><span class="store-badge">🛒 Cart</span></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#22c55e;--t2:#a3e635" href="templates/store-supplements.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">💪</span><span class="tthumb-view">Open live store ↗</span></a><div class="tinfo"><div><h3>Forge Labs</h3><span class="tcat">Supplements &amp; Fitness</span></div><span class="store-badge">🛒 Cart</span></div></article>
+          <article class="tcard reveal"><a class="tthumb" style="--t1:#b45309;--t2:#d9a066" href="templates/store-home.html" target="_blank" rel="noopener"><span class="tthumb-chrome"><i></i><i></i><i></i></span><span class="tthumb-emoji">🛋️</span><span class="tthumb-view">Open live store ↗</span></a><div class="tinfo"><div><h3>Maison &amp; Co</h3><span class="tcat">Homeware &amp; Interiors</span></div><span class="store-badge">🛒 Cart</span></div></article>
         </div>
       </div>
     </section>
