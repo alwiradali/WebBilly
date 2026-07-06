@@ -378,7 +378,7 @@ function initChat() {
     {
       re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
       reply: () =>
-        "Website projects are priced per project — no hourly surprises, no hidden fees — and hosting starts from just <strong>£5/month</strong>. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a tailored quote within 24 hours. " + contactLine,
+        "Everything we do — websites, hosting and care plans — is priced per project, with no hourly surprises and no hidden fees. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a free, tailored quote within 24 hours. " + contactLine,
       chips: ["Show me the plans", "Hosting plans", "Talk to a human"],
     },
     {
@@ -402,13 +402,13 @@ function initChat() {
     {
       re: /\b(host|hosting|server|servers|ssl|backup|backups)\b/i,
       reply: () =>
-        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> £5/mo (personal sites), ⭐ <strong>Business</strong> £10/mo (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> £20/mo (fastest server resources, advanced security, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. <a href=\"#hosting\">See hosting plans</a>.",
+        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> (personal sites), ⭐ <strong>Business</strong> (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> (fastest server resources, advanced security, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. Message us for a free quote. <a href=\"#hosting\">See hosting plans</a>.",
       chips: ["Care plans", "Get a quote", "Show me the plans"],
     },
     {
       re: /\b(care plan|care plans|seo plan|growth plan|google ranking|rank on google|keyword|ongoing seo)\b/i,
       reply: () =>
-        "Our <strong>Care Plans</strong> keep your site growing on Google every month: 🔍 <strong>Starter Care</strong> £60/mo (SEO health checks, Google Business monitoring), 📈 <strong>Growth Care</strong> £70/mo (GBP management, keyword tracking, most popular) and 🚀 <strong>Complete Care</strong> £80/mo (full SEO optimisation, competitor tracking, unlimited edits, monthly strategy call). Hosting keeps you online — Care keeps you found. <a href=\"#care\">See Care Plans</a>.",
+        "Our <strong>Care Plans</strong> keep your site growing on Google every month: 🔍 <strong>Starter Care</strong> (SEO health checks, Google Business monitoring), 📈 <strong>Growth Care</strong> (GBP management, keyword tracking, most popular) and 🚀 <strong>Complete Care</strong> (full SEO optimisation, competitor tracking, unlimited edits, monthly strategy call). Hosting keeps you online — Care keeps you found. Message us for a free quote. <a href=\"#care\">See Care Plans</a>.",
       chips: ["Hosting plans", "Get a quote", "Talk to a human"],
     },
     {
