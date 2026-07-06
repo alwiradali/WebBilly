@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your checklist is ready — Billy Digitals</title>
+  <meta name="description" content="Your free Small Business Website Checklist is ready to download.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#06070d">
+  <link rel="icon" type="image/png" href="assets/logo-billy-icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/analytics.js"></script>
+  <style>
+    .ty { min-height: 82vh; display: grid; place-items: center; text-align: center; padding: 130px 0 70px; position: relative; overflow: hidden; }
+    .ty .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .5; pointer-events: none; }
+    .ty .orb.a { width: 420px; height: 420px; background: rgba(43,127,255,.28); top: -120px; left: -100px; }
+    .ty .orb.b { width: 360px; height: 360px; background: rgba(56,189,248,.18); bottom: -140px; right: -100px; }
+    .ty-inner { position: relative; z-index: 1; max-width: 620px; }
+    .ty-check { width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 22px; display: grid; place-items: center;
+      background: linear-gradient(135deg, #2b7fff, #38bdf8); box-shadow: 0 18px 40px rgba(43,127,255,.45); }
+    .ty-check svg { width: 42px; height: 42px; stroke: #fff; stroke-width: 3; fill: none; }
+    .ty h1 { font-size: clamp(2rem, 4.4vw, 3rem); letter-spacing: -.03em; margin-bottom: 14px; }
+    .ty p.sub { color: var(--muted); font-size: 1.1rem; max-width: 46ch; margin: 0 auto 30px; }
+    .ty-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .ty-next { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 28px; color: var(--muted); font-size: .98rem; }
+    .ty-next b { color: #fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header subpage" id="siteHeader">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="logo" href="index.html" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-lockup.png" alt="Billy — Web Design &amp; App Development" height="68"></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <a class="btn btn-primary nav-cta" href="index.html#contact">Start Your Project</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="ty">
+      <div class="orb a" aria-hidden="true"></div>
+      <div class="orb b" aria-hidden="true"></div>
+      <div class="container ty-inner">
+        <div class="ty-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h1>You're all set! 🎉</h1>
+        <p class="sub">Your free <strong>Small Business Website Checklist</strong> is ready. Tap below to download it — and keep an eye on your inbox for a copy.</p>
+        <div class="ty-cta">
+          <a class="btn btn-primary" href="assets/billy-website-checklist.pdf" download target="_blank" rel="noopener">⬇ Download the Checklist (PDF)</a>
+          <a class="btn btn-ghost" href="index.html">Back to Home</a>
+        </div>
+        <div class="ty-next">
+          <p>👀 <b>Went through it and found gaps?</b> That's exactly what we fix. Get a <b>free, no-pressure review</b> of your current site — we'll tell you honestly what to improve.</p>
+          <div class="ty-cta" style="margin-top:18px">
+            <a class="btn btn-primary" href="index.html#contact">Get My Free Site Review →</a>
+            <a class="btn btn-ghost" data-wa-link href="#" target="_blank" rel="noopener">💬 Ask us on WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
+      <p><a href="index.html">Home</a> &nbsp;·&nbsp; <a href="portfolio.html">Portfolio</a> &nbsp;·&nbsp; <a href="blog.html">Blog</a></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
