@@ -984,3 +984,29 @@ body {
   .lm-banner { grid-template-columns: 1fr; text-align: left; }
   .lm-banner img { display: none; }
 }
+
+/* ---------- Secure-payments trust line (contact form) ---------- */
+.pay-trust { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+  margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+.pay-trust-lead { display: inline-flex; align-items: center; gap: 7px; color: var(--muted);
+  font-size: .86rem; font-weight: 600; white-space: nowrap; }
+.pay-trust-lead svg { width: 17px; height: 17px; color: #38bdf8; }
+.pay-trust .pay-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.pay-trust .pay { height: 27px; min-width: 42px; padding: 0 8px; border-radius: 5px; background: #fff;
+  border: 1px solid rgba(0,0,0,.08); box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  display: inline-flex; align-items: center; justify-content: center; gap: 2px;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif); font-weight: 800; font-size: .58rem;
+  letter-spacing: .2px; color: #1a1f71; }
+.pay-trust .pay.v { font-style: italic; letter-spacing: -.3px; font-size: .68rem; }
+.pay-trust .pay.ax { background: #1f72cd; color: #fff; font-size: .52rem; }
+.pay-trust .pay.kl { background: #ffb3c7; color: #0a0a0a; font-size: .6rem; }
+.pay-trust .pay.pp { color: #003087; }
+.pay-trust .pay.pp b { color: #009cde; }
+.pay-trust .pay.mc { gap: 0; padding: 0 9px; }
+.pay-trust .pay.mc i { width: 14px; height: 14px; border-radius: 50%; display: block; }
+.pay-trust .pay.mc i:first-child { background: #eb001b; }
+.pay-trust .pay.mc i:last-child { background: #f79e1b; margin-left: -6px; mix-blend-mode: multiply; }
+.pay-trust .pay.ap { color: #000; gap: 3px; }
+.pay-trust .pay.ap svg { height: 13px; width: auto; }
+.pay-trust .pay.gp { color: #5f6368; gap: 2px; }
+.pay-trust .pay.gp b { color: #4285f4; font-size: .76rem; }
