@@ -3,185 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pulse — Product Analytics Sample by Billy Digitals</title>
-  <meta name="description" content="Sample SaaS product-analytics website design by Billy Digitals — dashboards, funnels and automation done right.">
+  <title>Pulse — Product Analytics, Simplified</title>
+  <meta name="description" content="Pulse turns raw events into answers — real-time dashboards, funnels, retention and alerts. Understand your product in one glance.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#090c16">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="saas.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #6366f1; --accent-2: #22d3ee; }</style>
 </head>
-<body class="dark">
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo SaaS analytics site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
+<body>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">P</span> Pulse</div>
-      <div class="dnav-links">
-        <a href="#features">Features</a>
-        <a href="#dashboard">Product</a>
-        <a href="#stats">Scale</a>
-        <a href="#trial">Pricing</a>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk"></span> Pulse</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#features">Product</a><a href="#pricing">Pricing</a><a href="#ai">AI</a><a href="#top">Docs</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="#pricing">Sign in</a>
+        <a class="btn btn-fill" href="#cta">Start free</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       </div>
-      <a class="dbtn dbtn-primary" href="#trial">Start free trial</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Product Analytics, Simplified</span>
-        <h1>See every event, <span class="grad-text">answer every question</span>, ship with confidence.</h1>
-        <p class="lead">Pulse turns raw product events into live dashboards, funnels and alerts your whole team can read. No SQL required, no data team bottleneck.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#trial">Start free trial</a>
-          <a class="dbtn dbtn-ghost" href="#dashboard">See it live</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">📊</span></div>
     </div>
   </header>
 
-  <!-- Stats / highlights -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>2.4B</span></div><div class="lbl">Events tracked / day</div></div>
-      <div><div class="num"><span>90+</span></div><div class="lbl">Native integrations</div></div>
-      <div><div class="num"><span>99.99%</span></div><div class="lbl">Platform uptime</div></div>
-      <div><div class="num"><span>1,200</span></div><div class="lbl">Product teams building</div></div>
+  <!-- Hero with LIVE dashboard -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill rv"><b>New</b> Session Replay is live</span>
+        <h1 class="rv">Understand your product <span class="grad">in one glance</span>.</h1>
+        <p class="lede rv">Pulse turns raw events into answers — real-time dashboards, funnels, retention and alerts, without a data team. Ship, measure, repeat.</p>
+        <div class="hero-cta rv">
+          <a class="btn btn-fill" href="#cta">Start free — no card</a>
+          <a class="btn btn-ghost" href="#features">See a live demo</a>
+        </div>
+        <div class="hero-trust rv">
+          <span>Trusted by fast-moving teams</span>
+          <div class="row"><span class="logo">Northwind</span><span class="logo">Orbit</span><span class="logo">Cobalt</span><span class="logo">Lumen</span></div>
+        </div>
+      </div>
+
+      <div class="dash rv" id="dash" aria-label="Live analytics dashboard">
+        <div class="dash-top">
+          <span class="t">Overview</span>
+          <span class="live"><i></i> Live · updating</span>
+        </div>
+        <div class="dash-kpis">
+          <div class="kpi"><div class="l">Active users</div><div class="v" data-kpi="users">0</div><div class="d up" data-kpi-d="users">▲ 0%</div></div>
+          <div class="kpi"><div class="l">Revenue</div><div class="v" data-kpi="rev">0</div><div class="d up" data-kpi-d="rev">▲ 0%</div></div>
+          <div class="kpi"><div class="l">Retention</div><div class="v" data-kpi="ret">0</div><div class="d up" data-kpi-d="ret">▲ 0%</div></div>
+        </div>
+        <div class="dash-tabs" id="dashTabs" role="group" aria-label="Choose metric">
+          <button class="on" data-m="users">Users</button>
+          <button data-m="rev">Revenue</button>
+          <button data-m="ret">Retention</button>
+        </div>
+        <svg class="chart" id="chart" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="g-line" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+            <linearGradient id="g-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.35"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
+          </defs>
+          <g id="gridL"></g>
+          <path class="area" id="area" d=""></path>
+          <polyline class="line" id="line" points=""></polyline>
+          <circle class="dot" id="dot" r="4" cx="0" cy="0"></circle>
+        </svg>
+        <div class="dash-bars" id="bars"></div>
+      </div>
     </div>
   </section>
 
   <!-- Features -->
-  <section class="dsection" id="features">
+  <section class="sec" id="features">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">What Pulse Does</span>
-        <h2>Everything you need to <span class="grad-text">understand your product</span></h2>
-        <p>One platform for tracking, analysis and action — from the first pageview to the power user.</p>
+      <div class="sec-head rv">
+        <p class="eyebrow">What Pulse does</p>
+        <h2>Everything you need to <span class="grad">understand your product</span></h2>
+        <p>One SDK, every answer. From first commit to billions of events, Pulse scales with you.</p>
       </div>
-      <div class="dgrid g3">
-        <div class="dcard rv">
-          <div class="ci">📈</div>
-          <h3>Real-time dashboards</h3>
-          <p>Live metrics that update the moment an event fires. Build boards in minutes and share them with a link — no refresh, no waiting.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🔻</div>
-          <h3>Funnel analysis</h3>
-          <p>Map any multi-step flow and spot exactly where users drop off. Break it down by cohort, device or plan without touching a query.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🔔</div>
-          <h3>Alerts &amp; automation</h3>
-          <p>Set thresholds on any metric and get pinged in Slack the second something moves. Trigger webhooks to keep the rest of your stack in sync.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🧭</div>
-          <h3>Retention &amp; cohorts</h3>
-          <p>See who comes back and who slips away. Slice retention by signup week, feature adoption or acquisition channel in a single click.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🗺️</div>
-          <h3>Session paths</h3>
-          <p>Follow the real journeys users take through your product and surface the flows that convert — and the detours that don't.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🔒</div>
-          <h3>Governance &amp; access</h3>
-          <p>SSO, role-based permissions and a managed event schema keep your data clean, private and audit-ready as your team scales.</p>
-        </div>
+      <div class="feat-grid">
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg></div><h3>Real-time dashboards</h3><p>Build a board in minutes and watch it update live as events land.</p></div>
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></div><h3>Funnel analysis</h3><p>See exactly where users drop off, segment by anything, fix it fast.</p></div>
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v9l6 3"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Retention &amp; cohorts</h3><p>Track how habits form week over week with cohort heatmaps.</p></div>
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 5-2 6-2 6h16s-2-1-2-6a6 6 0 0 0-6-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><h3>Alerts &amp; automation</h3><p>Get pinged the moment a metric moves — Slack, email or webhook.</p></div>
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/></svg></div><h3>Session paths</h3><p>Replay real journeys and see the path that actually converts.</p></div>
+        <div class="feat rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><h3>Governance &amp; access</h3><p>SSO, roles and audit logs. SOC 2 Type II, GDPR-ready by default.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Dashboard split -->
-  <section class="dsection alt" id="dashboard">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034852_ec6f6e37-1e37-4f69-a16f-c8e51d1b8606_min.webp" alt="Analytics dashboard in use" loading="lazy"></div>
+  <!-- AI section (3D blob) -->
+  <section class="sec ai" id="ai">
+    <div class="wrap ai-grid">
+      <div class="dhero-art rv"><span class="art-emoji" aria-hidden="true">📊</span></div>
       <div class="rv">
-        <span class="eyebrow">One Source of Truth</span>
-        <h2>One dashboard <span class="grad-text">for everything</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Pulse plugs into the tools you already use and unifies every signal in one place — so product, growth and engineering finally read from the same numbers.</p>
+        <p class="eyebrow">Pulse AI</p>
+        <h2>Ask your data<br><span class="grad">in plain English</span>.</h2>
+        <p style="color:var(--muted); margin-top:14px;">Type a question, get a chart. Pulse AI writes the query, surfaces the anomaly and tells you why the number moved — before you even ask.</p>
         <ul>
-          <li><span class="chk">✓</span><span><b>Works with</b> Segment, Snowflake, BigQuery and RudderStack out of the box.</span></li>
-          <li><span class="chk">✓</span><span><b>Two-way sync</b> with Slack, Jira and Webhooks to close the loop on every alert.</span></li>
-          <li><span class="chk">✓</span><span><b>SDKs for</b> JavaScript, iOS, Android, Python and Go — instrument once, track everywhere.</span></li>
-          <li><span class="chk">✓</span><span><b>Reverse ETL</b> pushes clean cohorts back to HubSpot and your warehouse automatically.</span></li>
+          <li><span class="chk">✓</span><span><b>Auto-insights</b> flag the metric that changed and the segment behind it.</span></li>
+          <li><span class="chk">✓</span><span><b>Natural-language queries</b> — "signups from paid last week vs organic".</span></li>
+          <li><span class="chk">✓</span><span><b>Forecasts</b> project where you'll land and when you'll hit the target.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- Scale / product tiles -->
-  <section class="dsection" id="stats">
+  <!-- Live metrics band -->
+  <div class="band">
+    <div class="wrap band-grid">
+      <div class="rv"><div class="n" data-count="4200000000" data-suffix="+">0</div><div class="l">Events / day</div></div>
+      <div class="rv"><div class="n" data-count="120" data-suffix="ms">0</div><div class="l">Query latency</div></div>
+      <div class="rv"><div class="n" data-count="9800" data-suffix="+">0</div><div class="l">Teams building</div></div>
+      <div class="rv"><div class="n" data-count="99" data-suffix=".99%">0</div><div class="l">Uptime</div></div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <section class="sec" id="pricing">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Built To Scale</span>
-        <h2>From first commit to <span class="grad-text">billions of events</span></h2>
+      <div class="sec-head rv" style="text-align:center; margin-inline:auto">
+        <p class="eyebrow">Pricing</p>
+        <h2>Start free. <span class="grad">Scale when you're ready.</span></h2>
       </div>
-      <div class="dgrid g4">
-        <div class="tile rv"><div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034852_1bb6f114-ae5f-4d18-8d43-a322d0409ff4_min.webp" alt="High-speed data streams" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034853_1dd0b874-60e0-41bf-81b5-cef5284fc1c3_min.webp" alt="Data centre servers" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034854_3f381978-07b5-4f9e-8416-d72cf1e7df52_min.webp" alt="Connected network nodes" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034859_1d348981-91af-4a68-bf09-47b714eeac95_min.webp" alt="Developer writing code" loading="lazy"></div></div>
+      <div style="text-align:center">
+        <div class="price-toggle rv">Monthly <button class="switch" id="billSwitch" role="switch" aria-checked="false" aria-label="Toggle yearly billing"></button> Yearly <span class="save">Save 20%</span></div>
+      </div>
+      <div class="price-grid">
+        <div class="plan rv">
+          <h3>Starter</h3><div class="pr" data-m="0" data-y="0">£0</div><div class="desc">For side-projects and first commits.</div>
+          <ul><li>1M events / month</li><li>3 dashboards</li><li>7-day retention</li><li>Community support</li></ul>
+          <a class="btn btn-ghost" href="#cta">Start free</a>
+        </div>
+        <div class="plan pop rv">
+          <h3>Growth</h3><div class="pr" data-m="79" data-y="63">£79<span> /mo</span></div><div class="desc">For teams that ship every week.</div>
+          <ul><li>50M events / month</li><li>Unlimited dashboards</li><li>Funnels, cohorts, alerts</li><li>Pulse AI insights</li></ul>
+          <a class="btn btn-fill" href="#cta">Start 14-day trial</a>
+        </div>
+        <div class="plan rv">
+          <h3>Scale</h3><div class="pr" data-m="249" data-y="199">£249<span> /mo</span></div><div class="desc">For products at billions of events.</div>
+          <ul><li>Unlimited events</li><li>SSO, roles, audit logs</li><li>Session replay + paths</li><li>Priority support &amp; SLA</li></ul>
+          <a class="btn btn-ghost" href="#cta">Talk to sales</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Trial CTA -->
-  <section class="dsection" id="trial">
+  <!-- CTA -->
+  <section class="sec" id="cta">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Start your free trial</h2>
-        <p>Full platform, no credit card, 14 days on us. Instrument your product this afternoon and see your first funnel before stand-up tomorrow.</p>
-        <a class="dbtn dbtn-light" href="../index.html#contact">Start free trial</a>
+      <div class="cta rv">
+        <h2>See your product clearly — <span class="grad">today</span>.</h2>
+        <p>Drop in the SDK, send your first event, and watch the dashboard come alive in under five minutes.</p>
+        <a class="btn btn-fill" href="#top" style="font-size:1rem; padding:14px 28px">Start free — no card needed</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">P</span> Pulse</div>
-          <p>Product analytics that turns raw events into decisions your whole team can act on.</p>
-        </div>
-        <div>
-          <h4>Product</h4>
-          <ul>
-            <li><a href="#features">Dashboards</a></li>
-            <li><a href="#features">Funnels</a></li>
-            <li><a href="#dashboard">Integrations</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <ul>
-            <li><a href="#stats">Scale &amp; reliability</a></li>
-            <li><a href="#trial">Pricing</a></li>
-            <li><a href="../index.html#contact">Contact</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top" style="margin-bottom:14px"><span class="mk"></span> Pulse</a><p style="max-width:30ch">Product analytics for teams who ship — real-time answers, no data team required.</p></div>
+        <div><h5>Product</h5><ul><li><a href="#features">Dashboards</a></li><li><a href="#features">Funnels</a></li><li><a href="#ai">Pulse AI</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
+        <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li><li><a href="#">Security</a></li></ul></div>
+        <div><h5>Developers</h5><ul><li><a href="#">Docs</a></li><li><a href="#">API</a></li><li><a href="#">SDKs</a></li><li><a href="#">Status</a></li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© Pulse — a sample design. Real-time product analytics.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <script src="saas.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
