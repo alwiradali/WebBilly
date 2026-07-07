@@ -3,213 +3,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atelier Noir — Fashion Store Sample by Billy Digitals</title>
-  <meta name="description" content="Sample luxury fashion e-commerce store designed &amp; built by Billy Digitals — premium Shopify-grade storefront with cart, collections and reviews.">
+  <title>Atelier Noir — Considered Fashion</title>
+  <meta name="description" content="Atelier Noir — quiet luxury, made to last. A considered edit of outerwear, dresses, bags and footwear.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f4f0ea">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="store-fashion.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #c9a24b; --accent-2: #e7cd8a; }
-    body.dark { --bg:#0b0b0d; --surface:#131316; --surface-2:#1b1b20; }
-    .fash-hero { background: linear-gradient(160deg,#131316,#0b0b0d); }
-  </style>
 </head>
-<body class="dark">
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — a demo luxury fashion store. Fully built by us.</span>
-    <a class="db-cta" href="../index.html#contact">Want a store like this? Request it →</a>
-  </div>
+<body>
 
-  <div class="dmarquee" aria-hidden="true">
-    <div class="dmarquee-track">
-      <span>✦ Complimentary shipping over £150</span><span>✦ 30-day easy returns</span><span>✦ New AW26 collection just dropped</span><span>✦ Members earn rewards on every order</span>
-      <span>✦ Complimentary shipping over £150</span><span>✦ 30-day easy returns</span><span>✦ New AW26 collection just dropped</span><span>✦ Members earn rewards on every order</span>
-    </div>
-  </div>
-
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">AN</span> Atelier Noir</div>
-      <div class="dnav-links">
-        <a href="#new">New In</a>
-        <a href="#collections">Collections</a>
-        <a href="#bestsellers">Bestsellers</a>
-        <a href="#story">The House</a>
+  <!-- Nav -->
+  <header class="an-nav" id="nav">
+    <div class="wrap an-nav-in">
+      <button class="an-burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <a class="an-logo" href="#top">Atelier&nbsp;Noir</a>
+      <nav class="an-links" id="navLinks">
+        <a href="#edit">Shop</a><a href="#lookbook">The Edit</a><a href="#atelier">Atelier</a>
+      </nav>
+      <div class="an-nav-right">
+        <button class="cart-btn" id="cartOpen" aria-label="Open cart">
+          <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+          <span>Bag</span><span class="cart-count" id="cartCount">0</span>
+        </button>
       </div>
-      <a class="dcart" href="#bestsellers" aria-label="Cart">
-        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="badge">2</span>
-      </a>
-    </div>
-  </nav>
-
-  <header class="dhero fash-hero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Autumn / Winter 26</span>
-        <h1>Quiet luxury, <span class="grad-text">loudly made.</span></h1>
-        <p class="lead">Tailored silhouettes, considered fabrics and pieces designed to outlast the season. Modern wardrobing for people who dress with intent.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#bestsellers">Shop the Collection</a>
-          <a class="dbtn dbtn-ghost" href="#story">Our Story</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🧥</span></div>
     </div>
   </header>
 
-  <section class="dsection" style="padding:44px 0">
-    <div class="wrap dtrust rv">
-      <div><div class="ti">🚚</div><h4>Free UK Shipping</h4><p>On all orders over £150</p></div>
-      <div><div class="ti">↩️</div><h4>30-Day Returns</h4><p>Easy, no-quibble refunds</p></div>
-      <div><div class="ti">🔒</div><h4>Secure Checkout</h4><p>Apple Pay, card &amp; Klarna</p></div>
-      <div><div class="ti">✦</div><h4>Rewards</h4><p>Points on every purchase</p></div>
+  <!-- Hero -->
+  <section class="an-hero" id="top">
+    <div class="wrap an-hero-grid">
+      <div>
+        <p class="eyebrow rv">Autumn / Winter — The Edit</p>
+        <h1 class="rv">Quiet luxury,<br><em>made to last</em>.</h1>
+        <p class="lede rv">A small, considered wardrobe of pieces cut from natural fibres and finished by hand in our atelier. Buy less, keep it longer.</p>
+        <div class="rv"><a class="btn" href="#edit">Shop the edit</a></div>
+        <div class="meta rv">
+          <div><div class="n">100%</div><div class="l">Natural fibres</div></div>
+          <div><div class="n">14</div><div class="l">Pieces, not thousands</div></div>
+          <div><div class="n">Free</div><div class="l">Returns &amp; shipping</div></div>
+        </div>
+      </div>
+      <div class="dhero-art rv">
+        <span class="art-emoji" aria-hidden="true">🧥</span>
+        <span class="tagpill">The Camel Overcoat</span>
+      </div>
     </div>
   </section>
 
-  <section class="dsection alt" id="collections">
+  <!-- Strip -->
+  <div class="an-strip" aria-hidden="true">
+    <div class="t">
+      <span>Made in our atelier <i>—</i></span><span>Natural fibres only <i>—</i></span><span>Carbon-neutral delivery <i>—</i></span><span>Repairs for life <i>—</i></span>
+      <span>Made in our atelier <i>—</i></span><span>Natural fibres only <i>—</i></span><span>Carbon-neutral delivery <i>—</i></span><span>Repairs for life <i>—</i></span>
+    </div>
+  </div>
+
+  <!-- The Edit (products) -->
+  <section class="sec" id="edit">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Shop by Collection</span>
-        <h2>Curated <span class="grad-text">for the season</span></h2>
-        <p>Four capsule edits, each built around a mood — from sharp tailoring to weekend ease.</p>
+      <div class="sec-head">
+        <div><p class="eyebrow rv">Shop</p><h2 class="rv">The Edit</h2></div>
+        <div class="filters rv" id="filters" role="group" aria-label="Filter products">
+          <button class="on" data-f="all">All</button>
+          <button data-f="outerwear">Outerwear</button>
+          <button data-f="dresses">Dresses</button>
+          <button data-f="bags">Bags</button>
+          <button data-f="footwear">Footwear</button>
+        </div>
       </div>
-      <div class="catgrid rv">
-        <a class="cat" style="--cbg:linear-gradient(150deg,#3a3a42,#0b0b0d)"><span class="cat-emoji">🧥</span><div><h3>Outerwear</h3><span>28 pieces</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#6d5b3e,#c9a24b)"><span class="cat-emoji">👗</span><div><h3>Dresses</h3><span>34 pieces</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#2b2b32,#4a4a55)"><span class="cat-emoji">👞</span><div><h3>Footwear</h3><span>19 pieces</span></div></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="dsection" id="bestsellers">
-    <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow" id="new">Bestsellers</span>
-        <h2>The pieces <span class="grad-text">everyone's wearing</span></h2>
-        <p>Loved by our community and restocked on repeat. Add to bag and see the cart come alive.</p>
-      </div>
-      <div class="dgrid g4">
-        <article class="pcard rv">
-          <div class="pcard-img fill-a"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp" alt="Camel wool overcoat" loading="lazy"><span class="pcard-tag">New</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>The Camel Overcoat</h3>
-            <p class="pcard-sub">Wool-cashmere blend</p>
-            <span class="stars"><i>★★★★★</i> 4.9 (128)</span>
-            <div class="pcard-foot"><span class="price">£320</span><button class="padd" data-name="Camel Overcoat">＋ Add</button></div>
-          </div>
+      <div class="edit-grid" id="grid">
+        <!-- products; data-price is a number -->
+        <article class="pcard rv" data-cat="outerwear" data-name="The Camel Overcoat" data-price="320" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp">
+          <div class="pcard-img"><span class="pcard-tag">New</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp" alt="The Camel Overcoat" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>The Camel Overcoat</h3><div class="cat">Outerwear</div></div><div class="price">£320</div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-b"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp" alt="Silk slip dress" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Bias Slip Dress</h3>
-            <p class="pcard-sub">Sandwashed silk</p>
-            <span class="stars"><i>★★★★★</i> 4.8 (94)</span>
-            <div class="pcard-foot"><span class="price">£185</span><button class="padd" data-name="Bias Slip Dress">＋ Add</button></div>
-          </div>
+        <article class="pcard rv" data-cat="dresses" data-name="Bias Slip Dress" data-price="185" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp" alt="Bias Slip Dress" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Bias Slip Dress</h3><div class="cat">Dresses</div></div><div class="price">£185</div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-c"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp" alt="Structured leather tote" loading="lazy"><span class="pcard-tag sale">Sale</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Structured Tote</h3>
-            <p class="pcard-sub">Full-grain leather</p>
-            <span class="stars"><i>★★★★★</i> 5.0 (61)</span>
-            <div class="pcard-foot"><span class="price"><s>£260</s>£195</span><button class="padd" data-name="Structured Tote">＋ Add</button></div>
-          </div>
+        <article class="pcard rv" data-cat="bags" data-name="Structured Tote" data-price="195" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp">
+          <div class="pcard-img"><span class="pcard-tag sale">Sale</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp" alt="Structured Tote" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Structured Tote</h3><div class="cat">Bags</div></div><div class="price"><s>£260</s>£195</div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-d"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp" alt="Leather loafers" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Leather Loafers</h3>
-            <p class="pcard-sub">Hand-finished sole</p>
-            <span class="stars"><i>★★★★☆</i> 4.7 (73)</span>
-            <div class="pcard-foot"><span class="price">£210</span><button class="padd" data-name="Leather Loafers">＋ Add</button></div>
-          </div>
+        <article class="pcard rv" data-cat="footwear" data-name="Leather Loafers" data-price="210" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp" alt="Leather Loafers" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Leather Loafers</h3><div class="cat">Footwear</div></div><div class="price">£210</div></div>
+        </article>
+        <article class="pcard rv" data-cat="outerwear" data-name="Wool Trench" data-price="340" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp" alt="Wool Trench" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Wool Trench</h3><div class="cat">Outerwear</div></div><div class="price">£340</div></div>
+        </article>
+        <article class="pcard rv" data-cat="dresses" data-name="Silk Midi Dress" data-price="210" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp" alt="Silk Midi Dress" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Silk Midi Dress</h3><div class="cat">Dresses</div></div><div class="price">£210</div></div>
+        </article>
+        <article class="pcard rv" data-cat="bags" data-name="Mini Crossbody" data-price="160" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp" alt="Mini Crossbody" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Mini Crossbody</h3><div class="cat">Bags</div></div><div class="price">£160</div></div>
+        </article>
+        <article class="pcard rv" data-cat="footwear" data-name="Suede Boots" data-price="245" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp">
+          <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp" alt="Suede Boots" loading="lazy"><div class="pcard-add"><button class="btn padd" type="button">Add to bag</button></div></div>
+          <div class="pcard-info"><div><h3>Suede Boots</h3><div class="cat">Footwear</div></div><div class="price">£245</div></div>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="dsection alt" id="story">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_6a0d338a-b549-4bfe-a73f-2dca7bae0717_min.webp" alt="Tailor sewing in an atelier" loading="lazy"></div>
-      <div class="rv">
-        <span class="eyebrow">The House</span>
-        <h2>Made to be <span class="grad-text">kept, not chased</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Atelier Noir began with a simple frustration: fashion that falls apart faster than it goes out of style. So we do the opposite — small runs, natural fabrics, and a fit obsession that borders on the unreasonable.</p>
+  <!-- Atelier -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-grid">
+      <div class="atelier-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_6a0d338a-b549-4bfe-a73f-2dca7bae0717_min.webp" alt="A tailor sewing in the Atelier Noir workshop" loading="lazy"></div>
+      <div class="atelier-text rv">
+        <p class="eyebrow">The Atelier</p>
+        <h2>Cut, sewn &amp; finished<br>by hand.</h2>
+        <p>Every piece is made to order in our small workshop — no overstock, no waste, no rush. The kind of clothes you mend, not replace.</p>
         <ul>
-          <li><span class="chk">✓</span><span><b>Responsibly sourced fabrics</b> from mills we visit in person.</span></li>
-          <li><span class="chk">✓</span><span><b>Considered production</b> — no overstock, no landfill fashion.</span></li>
-          <li><span class="chk">✓</span><span><b>Lifetime repairs</b> on every tailored piece we make.</span></li>
+          <li><b>01</b><span>Natural fibres — wool, silk, leather, linen — sourced from certified mills.</span></li>
+          <li><b>02</b><span>Made to order in limited runs, so nothing ends up in landfill.</span></li>
+          <li><b>03</b><span>Free repairs for the life of the garment. Bring it back, we'll fix it.</span></li>
         </ul>
-        <div class="dhero-cta" style="margin-top:24px"><a class="dbtn dbtn-primary" href="#bestsellers">Explore the Edit</a></div>
+        <div><a class="btn btn-line" href="#edit">Explore the edit</a></div>
       </div>
     </div>
   </section>
 
-  <section class="dsection">
+  <!-- Lookbook -->
+  <section class="sec" id="lookbook">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Loved by thousands</span>
-        <h2>4.9 stars <span class="grad-text">and counting</span></h2>
-      </div>
-      <div class="dgrid g3">
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"The overcoat is the best thing in my wardrobe. Beautifully cut and the fabric feels like an investment. I've had endless compliments."</p><div class="who"><span class="av">SM</span><div><b>Sophie M.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"Ordered on Tuesday, wearing it Thursday. Packaging was gorgeous and the fit was spot-on straight out of the box."</p><div class="who"><span class="av">JT</span><div><b>James T.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"Finally a brand that makes quiet, grown-up clothes that last. I've reordered three times now. Won't shop anywhere else."</p><div class="who"><span class="av">AR</span><div><b>Amara R.</b><small>Verified buyer</small></div></div></div>
+      <div class="sec-head"><div><p class="eyebrow rv">Lookbook</p><h2 class="rv">A / W campaign</h2></div></div>
+      <div class="edit-grid rv">
+        <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp" alt="Campaign look — overcoat" loading="lazy"></div>
+        <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp" alt="Campaign look — dress" loading="lazy"></div>
+        <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp" alt="Campaign look — tote" loading="lazy"></div>
+        <div class="pcard-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp" alt="Campaign look — loafers" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <section class="dsection" style="padding-top:0">
+  <!-- Footer -->
+  <footer class="foot">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Join the Atelier</h2>
-        <p>Be first to new drops, private sales and 10% off your first order.</p>
-        <form class="dnews"><input type="email" placeholder="Your email address" aria-label="Email" required><button class="dbtn dbtn-light" type="submit">Subscribe</button></form>
-      </div>
-    </div>
-  </section>
-
-  <footer class="dfooter">
-    <div class="wrap">
-      <div class="dfooter-grid">
+      <div class="foot-top">
         <div>
-          <div class="dbrand"><span class="logo-dot">AN</span> Atelier Noir</div>
-          <p>Modern wardrobing, made to be kept. Small-run luxury for people who dress with intent.</p>
+          <h4>Atelier Noir</h4>
+          <p>Quiet luxury, made to last. Join the list for first access to new pieces and atelier stories.</p>
+          <form class="news" id="news"><input type="email" placeholder="Email address" aria-label="Email" required><button class="btn" type="submit">Join</button></form>
         </div>
-        <div>
-          <h4>Shop</h4>
-          <ul><li><a href="#collections">Collections</a></li><li><a href="#bestsellers">Bestsellers</a></li><li><a href="#new">New In</a></li><li><a href="#story">The House</a></li></ul>
-        </div>
-        <div>
-          <h4>Help</h4>
-          <ul><li>Shipping &amp; Returns</li><li>Size Guide</li><li>Track Your Order</li><li>Contact Us</li></ul>
-        </div>
+        <div><h5>Shop</h5><ul><li><a href="#edit">Outerwear</a></li><li><a href="#edit">Dresses</a></li><li><a href="#edit">Bags</a></li><li><a href="#edit">Footwear</a></li></ul></div>
+        <div><h5>House</h5><ul><li><a href="#atelier">The Atelier</a></li><li><a href="#lookbook">Lookbook</a></li><li><a href="#">Repairs</a></li><li><a href="#">Contact</a></li></ul></div>
       </div>
-      <div class="pay-note">Secure checkout · we accept</div>
-      <div class="pay-row" aria-label="Accepted payment methods">
-        <span class="pay v">VISA</span>
-        <span class="pay mc"><i></i><i></i></span>
-        <span class="pay ax">AMEX</span>
-        <span class="pay pp">Pay<b>Pal</b></span>
-        <span class="pay ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 1.9-1.1 2.6-2.1.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM14.2 5.6c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>Pay</span>
-        <span class="pay gp"><b>G</b>Pay</span>
-        <span class="pay kl">Klarna</span>
-        <span class="pay sp">shop</span>
-      </div>
-      <div class="dfooter-bottom">
-        Demo store designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional brand for sample purposes.
-      </div>
+      <div class="foot-base"><span>© Atelier Noir — a sample design.</span><span>Made to order, made to last.</span></div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
-  <script src="store.js"></script>
+  <!-- Cart drawer -->
+  <div class="cart-scrim" id="cartScrim"></div>
+  <aside class="cart" id="cart" aria-label="Shopping bag" aria-hidden="true">
+    <div class="cart-head"><h3>Your bag</h3><button class="cart-close" id="cartClose" aria-label="Close">✕</button></div>
+    <div class="cart-items" id="cartItems"><div class="cart-empty" id="cartEmpty">Your bag is empty.<br>The edit awaits.</div></div>
+    <div class="cart-foot" id="cartFoot" hidden>
+      <div class="cart-sub"><span>Subtotal</span><span id="cartTotal">£0</span></div>
+      <div class="cart-note">Shipping &amp; returns free. Taxes at checkout.</div>
+      <button class="btn" id="checkout" type="button">Checkout</button>
+    </div>
+    <div class="cart-ok" id="cartOk"><div class="tick">✓</div><h3>Order placed</h3><p id="cartOkMsg"></p><button class="btn btn-line" id="cartOkClose" type="button" style="margin-top:20px">Keep shopping</button></div>
+  </aside>
+
+  <script src="store-fashion.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>

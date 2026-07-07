@@ -1,0 +1,181 @@
+/* ============================================================
+   Atelier Noir — bespoke fashion store.
+   Editorial, light, high-fashion: a didone display (Bodoni Moda)
+   over a clean grotesque (Archivo), on bone paper with a camel
+   accent. A real working cart. Nothing shared with other samples.
+   ============================================================ */
+:root{
+  /* fx3d reads --accent / --accent-2 for the 3D hanger scene */
+  --accent:#b08968; --accent-2:#8a8378;
+  --paper:#f4f0ea; --paper-2:#ece6dd; --ink:#17130f; --ink-2:#3a332c;
+  --stone:#8a8378; --camel:#b08968; --line:rgba(23,19,15,.14); --line-2:rgba(23,19,15,.07);
+  --disp:'Bodoni Moda', 'Times New Roman', serif;
+  --sans:'Archivo', system-ui, -apple-system, sans-serif;
+  --wrap:1240px; --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:clamp(14px,.5vw+12px,16px); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+img{max-width:100%; display:block}
+a{color:inherit; text-decoration:none}
+.wrap{width:min(var(--wrap),92vw); margin-inline:auto}
+h1,h2,h3{font-family:var(--disp); font-weight:500; margin:0; line-height:1.02; letter-spacing:-.01em}
+.disp{font-family:var(--disp)}
+.eyebrow{font-family:var(--sans); font-size:.7rem; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:var(--stone)}
+.up{letter-spacing:.24em; text-transform:uppercase}
+
+/* buttons */
+.btn{font-family:var(--sans); font-weight:600; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
+  padding:15px 28px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer;
+  transition:background .3s var(--ease), color .3s, transform .2s; display:inline-flex; align-items:center; gap:10px}
+.btn:hover{background:transparent; color:var(--ink)}
+.btn-line{background:transparent; color:var(--ink)}
+.btn-line:hover{background:var(--ink); color:var(--paper)}
+
+/* nav */
+.an-nav{position:fixed; inset:0 0 auto 0; z-index:50; padding:22px 0; transition:padding .3s var(--ease), background .3s, border-color .3s; border-bottom:1px solid transparent}
+.an-nav.stuck{padding:12px 0; background:rgba(244,240,234,.9); backdrop-filter:blur(12px); border-color:var(--line)}
+.an-nav-in{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px}
+.an-logo{font-family:var(--sans); font-weight:700; letter-spacing:.34em; font-size:1.05rem; text-transform:uppercase}
+.an-links{display:flex; gap:34px; justify-content:center; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600; color:var(--ink-2)}
+.an-links a{position:relative}
+.an-links a::after{content:""; position:absolute; left:0; bottom:-5px; height:1px; width:0; background:var(--ink); transition:width .3s var(--ease)}
+.an-links a:hover::after{width:100%}
+.an-nav-right{display:flex; justify-content:flex-end; align-items:center; gap:20px}
+.cart-btn{position:relative; background:none; border:0; cursor:pointer; color:var(--ink); display:flex; align-items:center; gap:9px; font:inherit; font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600}
+.cart-btn svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.5}
+.cart-count{position:absolute; top:-8px; left:12px; min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:var(--camel); color:#fff; font-size:.62rem; font-weight:700; display:grid; place-items:center; transform:scale(0); transition:transform .3s var(--ease)}
+.cart-count.on{transform:scale(1)}
+.cart-count.pop{animation:pop .4s var(--ease)}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+.an-burger{display:none; background:none;border:0;cursor:pointer;color:var(--ink)} .an-burger svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+/* hero */
+.an-hero{padding:150px 0 70px; position:relative}
+.an-hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center}
+.an-hero h1{font-size:clamp(3.2rem,8vw,6.4rem); font-weight:500; letter-spacing:-.02em}
+.an-hero h1 em{font-style:italic}
+.an-hero .lede{margin:28px 0 34px; color:var(--ink-2); max-width:40ch; font-size:1.05rem}
+.an-hero .meta{display:flex; gap:30px; margin-top:40px; padding-top:26px; border-top:1px solid var(--line)}
+.an-hero .meta div .n{font-family:var(--disp); font-size:1.7rem}
+.an-hero .meta div .l{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--stone); margin-top:2px}
+/* 3D hanger panel */
+.dhero-art{position:relative; aspect-ratio:4/5; overflow:hidden; background:linear-gradient(160deg,#efe9df,#ded5c7);
+  box-shadow:0 40px 80px -40px rgba(23,19,15,.4); display:grid; place-items:center}
+.dhero-art .art-emoji{font-size:clamp(4rem,10vw,7rem); transition:opacity .6s ease}
+.dhero-art .gl-canvas{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1}
+.dhero-art .tagpill{position:absolute; left:18px; bottom:18px; z-index:2; background:var(--paper); padding:8px 14px; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.dhero-art.gl-fallback .art-emoji{animation:floaty 5s ease-in-out infinite}
+
+/* marquee strip */
+.an-strip{border-block:1px solid var(--line); overflow:hidden; white-space:nowrap; padding:14px 0}
+.an-strip .t{display:inline-flex; gap:40px; animation:marq 28s linear infinite}
+.an-strip:hover .t{animation-play-state:paused}
+.an-strip span{font-size:.74rem; letter-spacing:.24em; text-transform:uppercase; color:var(--ink-2)}
+.an-strip i{color:var(--camel)}
+@keyframes marq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.an-strip .t{animation:none}}
+
+/* section */
+.sec{padding:clamp(64px,8vw,110px) 0}
+.sec-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:44px; flex-wrap:wrap}
+.sec-head h2{font-size:clamp(2rem,4.5vw,3.2rem)}
+.sec-head .eyebrow{margin-bottom:12px}
+
+/* product grid */
+.filters{display:flex; gap:8px; flex-wrap:wrap}
+.filters button{font:inherit; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:600; color:var(--stone);
+  background:none; border:1px solid var(--line); padding:9px 16px; cursor:pointer; transition:all .25s}
+.filters button.on{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.filters button:not(.on):hover{color:var(--ink); border-color:var(--ink)}
+.edit-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px; margin-top:36px}
+.pcard{position:relative}
+.pcard.hide{display:none}
+.pcard-img{position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--paper-2)}
+.pcard-img img{width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease)}
+.pcard:hover .pcard-img img{transform:scale(1.05)}
+.pcard-tag{position:absolute; top:12px; left:12px; background:var(--paper); padding:5px 11px; font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
+.pcard-tag.sale{background:var(--camel); color:#fff}
+.pcard-add{position:absolute; left:12px; right:12px; bottom:12px; opacity:0; transform:translateY(10px); transition:opacity .3s, transform .3s var(--ease)}
+.pcard:hover .pcard-add, .pcard:focus-within .pcard-add{opacity:1; transform:none}
+.pcard-add .btn{width:100%; justify-content:center; padding:13px}
+.pcard-info{display:flex; justify-content:space-between; gap:12px; margin-top:14px; align-items:baseline}
+.pcard-info h3{font-size:1.12rem; font-weight:500}
+.pcard-info .cat{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--stone); margin-top:3px}
+.pcard-info .price{font-family:var(--disp); font-size:1.1rem; white-space:nowrap; font-variant-numeric:tabular-nums}
+.pcard-info .price s{color:var(--stone); margin-right:6px; font-size:.9em}
+
+/* atelier split */
+.atelier{background:var(--paper-2)}
+.atelier-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; align-items:stretch}
+.atelier-art{aspect-ratio:auto; min-height:420px; overflow:hidden}
+.atelier-art img{width:100%; height:100%; object-fit:cover}
+.atelier-text{padding:clamp(36px,6vw,88px); display:flex; flex-direction:column; justify-content:center}
+.atelier-text h2{font-size:clamp(2rem,4vw,3rem); margin-bottom:18px}
+.atelier-text p{color:var(--ink-2); max-width:46ch}
+.atelier-text ul{list-style:none; padding:0; margin:26px 0 34px; display:grid; gap:14px}
+.atelier-text li{display:flex; gap:12px; align-items:baseline; color:var(--ink-2)}
+.atelier-text li b{font-family:var(--disp); font-size:1.1rem; color:var(--ink); min-width:34px}
+
+/* newsletter / footer */
+.foot{border-top:1px solid var(--line); padding:70px 0 40px}
+.foot-top{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; margin-bottom:50px}
+.foot h4{font-family:var(--disp); font-size:1.8rem; margin:0 0 8px}
+.foot p{color:var(--ink-2); max-width:34ch}
+.news{display:flex; gap:10px; margin-top:18px; max-width:360px}
+.news input{flex:1; font:inherit; padding:13px 14px; border:1px solid var(--line); background:transparent; color:var(--ink)}
+.news input:focus{outline:none; border-color:var(--ink)}
+.news button{padding:13px 18px}
+.foot h5{font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--stone); margin:0 0 16px}
+.foot ul{list-style:none; padding:0; margin:0; display:grid; gap:11px; color:var(--ink-2); font-size:.9rem}
+.foot ul a:hover{color:var(--ink)}
+.foot-base{border-top:1px solid var(--line-2); padding-top:22px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; color:var(--stone); font-size:.78rem; letter-spacing:.06em}
+
+/* cart drawer */
+.cart-scrim{position:fixed; inset:0; z-index:60; background:rgba(23,19,15,.4); opacity:0; visibility:hidden; transition:opacity .4s, visibility .4s; backdrop-filter:blur(2px)}
+.cart-scrim.open{opacity:1; visibility:visible}
+.cart{position:fixed; top:0; right:0; bottom:0; width:min(420px,92vw); z-index:61; background:var(--paper);
+  transform:translateX(100%); transition:transform .45s var(--ease); display:flex; flex-direction:column; box-shadow:-30px 0 80px -30px rgba(23,19,15,.5)}
+.cart.open{transform:none}
+.cart-head{display:flex; justify-content:space-between; align-items:center; padding:24px; border-bottom:1px solid var(--line)}
+.cart-head h3{font-family:var(--disp); font-size:1.5rem}
+.cart-close{background:none; border:0; cursor:pointer; color:var(--ink); font-size:1.4rem; line-height:1}
+.cart-items{flex:1; overflow-y:auto; padding:8px 24px}
+.cart-empty{padding:60px 20px; text-align:center; color:var(--stone)}
+.citem{display:grid; grid-template-columns:64px 1fr auto; gap:14px; padding:18px 0; border-bottom:1px solid var(--line-2)}
+.citem img{width:64px; height:80px; object-fit:cover; background:var(--paper-2)}
+.citem .nm{font-family:var(--disp); font-size:1.05rem} .citem .pr{color:var(--stone); font-size:.85rem; margin-top:2px; font-variant-numeric:tabular-nums}
+.citem .qty{display:inline-flex; align-items:center; gap:0; margin-top:10px; border:1px solid var(--line)}
+.citem .qty button{width:28px; height:28px; background:none; border:0; cursor:pointer; font-size:1rem; color:var(--ink)}
+.citem .qty span{min-width:26px; text-align:center; font-size:.85rem; font-variant-numeric:tabular-nums}
+.citem .rm{background:none; border:0; cursor:pointer; color:var(--stone); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; align-self:start; justify-self:end}
+.citem .rm:hover{color:var(--camel)}
+.cart-foot{padding:22px 24px; border-top:1px solid var(--line)}
+.cart-sub{display:flex; justify-content:space-between; font-family:var(--disp); font-size:1.3rem; margin-bottom:6px}
+.cart-note{color:var(--stone); font-size:.78rem; margin-bottom:16px}
+.cart-foot .btn{width:100%; justify-content:center}
+.cart-ok{display:none; text-align:center; padding:50px 24px}
+.cart-ok.show{display:block; animation:fade .5s var(--ease)}
+.cart-ok .tick{width:60px; height:60px; margin:0 auto 16px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font-size:1.6rem}
+.cart-ok h3{font-family:var(--disp); font-size:1.6rem} .cart-ok p{color:var(--ink-2); margin-top:10px}
+@keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+
+/* reveal */
+.rv{opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease), transform .8s var(--ease)}
+.rv.in{opacity:1; transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1; transform:none; transition:none}}
+
+/* responsive */
+@media (max-width:1000px){ .edit-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:860px){
+  .an-hero-grid{grid-template-columns:1fr; gap:40px} .dhero-art{order:-1; max-width:440px; margin-inline:auto}
+  .atelier-grid{grid-template-columns:1fr} .atelier-art{min-height:300px}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .an-links{display:none} .an-burger{display:block}
+  .an-nav-in{grid-template-columns:auto 1fr auto}
+  .an-links.open{display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:center; gap:18px; padding:24px; background:var(--paper); border-block:1px solid var(--line)}
+}
+@media (max-width:520px){ .edit-grid{grid-template-columns:1fr 1fr; gap:16px} .foot-top{grid-template-columns:1fr} .pcard-add{opacity:1; transform:none} }
