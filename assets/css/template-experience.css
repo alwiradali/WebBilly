@@ -1,0 +1,158 @@
+/* ============================================================
+   Billy Digitals — Template Experience
+   A rotating "brainstorming" orbit of sample styles + an in-site
+   viewer overlay (opens templates inside the page, with a back
+   button that returns you to the exact spot). Live animated
+   background. Fully responsive; degrades gracefully.
+   ============================================================ */
+
+/* The whole templates section becomes the stage for the live bg. */
+#templates { position: relative; overflow: hidden; }
+.tx-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; display: block;
+}
+#templates > .container { position: relative; z-index: 1; }
+
+/* Hide the original grid once the orbit is live (kept for no-JS / SEO). */
+.tx-live #templatesGrid { display: none; }
+
+/* ---------- Orbit ---------- */
+.tx-stage {
+  position: relative;
+  height: clamp(430px, 62vw, 640px);
+  margin: 18px auto 0;
+  max-width: 1100px;
+  perspective: 1400px;
+  touch-action: pan-y;
+}
+.tx-orbit { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+.tx-hub {
+  position: absolute; left: 50%; top: 50%; z-index: 5;
+  transform: translate(-50%, -50%); text-align: center; pointer-events: none;
+  width: clamp(150px, 26vw, 220px);
+}
+.tx-hub .core {
+  width: clamp(74px, 12vw, 104px); height: clamp(74px, 12vw, 104px);
+  margin: 0 auto 14px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #2b7fff, #0b1a3a 70%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 0 70px 8px rgba(43,127,255,.45);
+  display: grid; place-items: center; color: #fff;
+  font-family: var(--font-display, inherit); font-weight: 800; font-size: clamp(1.4rem, 3vw, 2rem);
+  animation: tx-breathe 5.5s ease-in-out infinite;
+}
+.tx-hub .core span { text-shadow: 0 2px 12px rgba(0,0,0,.4); }
+.tx-hub .hub-label { color: #cdd8ec; font-size: .82rem; letter-spacing: .04em; }
+.tx-hub .hub-label b { color: #fff; }
+@keyframes tx-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+/* orbit nodes */
+.tx-node {
+  position: absolute; left: 50%; top: 50%;
+  width: clamp(118px, 14.5vw, 168px);
+  will-change: transform; cursor: pointer;
+  border: 0; background: none; padding: 0; text-align: center;
+  color: inherit; font: inherit;
+}
+.tx-node .thumb {
+  position: relative; aspect-ratio: 4/3; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(150deg, var(--t1, #2b7fff), var(--t2, #22d3ee));
+  box-shadow: 0 22px 46px -18px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.10) inset;
+  display: grid; place-items: center;
+  transition: box-shadow .3s ease, transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.tx-node .thumb::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 68% 16%, rgba(255,255,255,.42), transparent 55%);
+  mix-blend-mode: overlay;
+}
+.tx-node .emoji { font-size: clamp(2.1rem, 4vw, 3rem); filter: drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
+.tx-node .label { margin-top: 10px; }
+.tx-node .label .name { display: block; font-weight: 700; font-size: .96rem; color: #fff; letter-spacing: -.01em; }
+.tx-node .label .cat { display: block; font-size: .74rem; color: #9fb0c9; margin-top: 2px; }
+.tx-node .go {
+  position: absolute; left: 50%; bottom: 10px; transform: translate(-50%, 8px);
+  font-size: .72rem; font-weight: 700; letter-spacing: .04em; color: #fff;
+  padding: 6px 12px; border-radius: 999px; background: rgba(6,7,13,.6);
+  backdrop-filter: blur(6px); opacity: 0; transition: opacity .25s ease, transform .25s ease; white-space: nowrap;
+}
+.tx-node:hover .thumb, .tx-node:focus-visible .thumb {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 30px 60px -18px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.22) inset;
+}
+.tx-node:hover .go, .tx-node:focus-visible .go { opacity: 1; transform: translate(-50%, 0); }
+.tx-node:focus-visible { outline: none; }
+.tx-node:focus-visible .thumb { outline: 2px solid #fff; outline-offset: 3px; }
+.tx-node.dim { opacity: .28; filter: saturate(.6); }
+
+.tx-hint {
+  text-align: center; margin-top: 10px; color: #8497b3; font-size: .82rem; letter-spacing: .02em;
+}
+.tx-hint kbd {
+  font: inherit; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 6px; padding: 1px 7px; color: #cdd8ec;
+}
+
+/* ---------- In-site viewer overlay ---------- */
+.tx-overlay {
+  position: fixed; inset: 0; z-index: 3000;
+  background: #06070d; display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1), visibility .35s;
+}
+.tx-overlay.open { opacity: 1; visibility: visible; transform: none; }
+.tx-bar {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 14px;
+  padding: 10px clamp(12px, 3vw, 22px); background: #0a0c15;
+  border-bottom: 1px solid rgba(255,255,255,.08); color: #eaf0fb;
+}
+.tx-back {
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04);
+  color: #fff; font: inherit; font-weight: 600; font-size: .92rem;
+  padding: 9px 15px 9px 12px; border-radius: 999px;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.tx-back:hover { background: rgba(43,127,255,.16); border-color: rgba(43,127,255,.5); transform: translateX(-2px); }
+.tx-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tx-bar .tx-title { font-weight: 700; letter-spacing: -.01em; }
+.tx-bar .tx-title .tx-cat { color: #8497b3; font-weight: 500; margin-left: 8px; font-size: .85rem; }
+.tx-bar .tx-spacer { flex: 1; }
+.tx-bar .tx-cta {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+  font-weight: 700; font-size: .88rem; color: #04121f;
+  background: linear-gradient(135deg, #2b7fff, #22d3ee); padding: 9px 16px; border-radius: 999px;
+}
+.tx-bar .tx-newtab { color: #9fb0c9; text-decoration: none; font-size: .84rem; }
+.tx-bar .tx-newtab:hover { color: #fff; }
+.tx-frame-wrap { flex: 1 1 auto; position: relative; background: #06070d; }
+.tx-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.tx-loader {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 2;
+  color: #63728c; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase;
+  background: #06070d; transition: opacity .4s ease;
+}
+.tx-loader.gone { opacity: 0; pointer-events: none; }
+body.tx-locked { overflow: hidden; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .tx-stage { height: clamp(440px, 100vw, 560px); }
+  .tx-bar .tx-newtab { display: none; }
+}
+/* On phones the wheel becomes emoji "bubbles" — labels would collide. */
+@media (max-width: 560px) {
+  .tx-stage { height: clamp(430px, 118vw, 560px); }
+  .tx-node { width: clamp(66px, 21vw, 94px); }
+  .tx-node .thumb { aspect-ratio: 1; border-radius: 50%; }
+  .tx-node .label, .tx-node .go { display: none; }
+  .tx-node .emoji { font-size: clamp(1.5rem, 7vw, 2.1rem); }
+  .tx-bar .tx-cta { display: none; }
+  .tx-hub .hub-label { display: none; }
+}
+
+/* ---------- Reduced motion: static, tidy ring (no spin) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .tx-hub .core { animation: none; }
+}

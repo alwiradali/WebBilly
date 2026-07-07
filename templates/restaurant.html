@@ -3,98 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Saffron House — Restaurant Sample by Billy Digitals</title>
-  <meta name="description" content="Sample restaurant website design by Billy Digitals — menus, reservations and atmosphere done right.">
+  <title>Saffron House — Modern Indian Kitchen</title>
+  <meta name="description" content="Saffron House — bold spice, warm hospitality and unforgettable evenings. Book a table at our modern Indian kitchen in the heart of the city.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#130c09">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="restaurant.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #e11d48; --accent-2: #f59e0b; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo restaurant site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
   <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">S</span> Saffron House</div>
-      <div class="dnav-links">
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="dot">S</span> Saffron House</a>
+      <nav class="nav-links" id="navLinks">
         <a href="#menu">Menu</a>
-        <a href="#about">About</a>
+        <a href="#story">Our Story</a>
         <a href="#gallery">Gallery</a>
         <a href="#visit">Visit</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-fill" href="#reserve">Book a Table</a>
+        <button class="nav-burger" id="burger" aria-label="Menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
       </div>
-      <a class="dbtn dbtn-primary" href="#reserve">Book a Table</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Modern Indian Kitchen</span>
-        <h1>Bold spice, <span class="grad-text">warm hospitality</span>, unforgettable evenings.</h1>
-        <p class="lead">Slow-cooked classics and inventive small plates, served in the heart of the city. Come hungry — leave a regular.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#reserve">Reserve a Table</a>
-          <a class="dbtn dbtn-ghost" href="#menu">View the Menu</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🍛</span></div>
     </div>
   </header>
 
-  <!-- Stats / highlights -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>18</span></div><div class="lbl">Signature dishes</div></div>
-      <div><div class="num"><span>Daily</span></div><div class="lbl">Fresh from market</div></div>
-      <div><div class="num"><span>2</span></div><div class="lbl">Private dining rooms</div></div>
-      <div><div class="num"><span>7pm</span></div><div class="lbl">Live tabla, weekends</div></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <canvas class="spice" id="spice" aria-hidden="true"></canvas>
+    <span class="glow g1"></span><span class="glow g2"></span>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow rv">Modern Indian Kitchen · Est. 2013</p>
+        <h1 class="rv">Bold spice,<br><em>warm hospitality</em>,<br>unforgettable evenings.</h1>
+        <p class="lede rv">Slow-cooked classics and inventive small plates, ground fresh every morning and served in the warm heart of the city. Come hungry — leave a regular.</p>
+        <div class="hero-tags rv">
+          <span><i></i> Spices ground in-house</span>
+          <span><i></i> Vegan &amp; GF menus</span>
+          <span><i></i> Live tabla, weekends</span>
+        </div>
+        <form class="resbar rv" id="quickRes" aria-label="Check table availability">
+          <div class="fld"><label for="qDate">Date</label><input type="date" id="qDate" required></div>
+          <div class="fld"><label for="qTime">Time</label>
+            <select id="qTime"><option>17:30</option><option>18:00</option><option>18:30</option><option selected>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option></select>
+          </div>
+          <div class="fld"><label for="qGuests">Guests</label>
+            <select id="qGuests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+          </div>
+          <button class="btn btn-fill" type="submit">Find a table</button>
+        </form>
+      </div>
+      <div class="dhero-art rv">
+        <span class="art-emoji" aria-hidden="true">🍛</span>
+        <span class="plate-ring" aria-hidden="true"></span>
+      </div>
     </div>
+    <div class="scroll-cue" aria-hidden="true"><span>Scroll</span><span class="rail"></span></div>
   </section>
+
+  <!-- Marquee -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Saffron Butter Chicken <i>✦</i></span><span>Slow Lamb Rogan Josh <i>✦</i></span><span>Black Dal Makhani <i>✦</i></span><span>Chilli Paneer Tikka <i>✦</i></span><span>Golden Onion Bhaji <i>✦</i></span>
+      <span>Saffron Butter Chicken <i>✦</i></span><span>Slow Lamb Rogan Josh <i>✦</i></span><span>Black Dal Makhani <i>✦</i></span><span>Chilli Paneer Tikka <i>✦</i></span><span>Golden Onion Bhaji <i>✦</i></span>
+    </div>
+  </div>
 
   <!-- Menu -->
-  <section class="dsection" id="menu">
+  <section class="sec menu" id="menu">
+    <img class="dish-peek" id="dishPeek" alt="" aria-hidden="true">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Our Menu</span>
-        <h2>Made fresh, <span class="grad-text">served with heart</span></h2>
-        <p>A taste of the favourites. The full à la carte changes with the seasons.</p>
+      <div class="sec-head rv">
+        <p class="eyebrow">Our Menu</p>
+        <h2>Made fresh, served <span class="saff">with heart</span></h2>
+        <p>A taste of the favourites — the full à la carte changes with the seasons. Filter for what you fancy.</p>
       </div>
-      <div class="dgrid g2">
-        <div class="dcard rv">
-          <h3 style="margin-bottom:14px;">Small Plates</h3>
-          <div class="mrow"><div><h4>Chilli Paneer Tikka</h4><p>Charred, smoky, mint yoghurt</p></div><span class="price">£8</span></div>
-          <div class="mrow"><div><h4>Lamb Seekh Rolls</h4><p>House spice blend, burnt garlic</p></div><span class="price">£10</span></div>
-          <div class="mrow"><div><h4>Golden Onion Bhaji</h4><p>Tamarind &amp; date chutney</p></div><span class="price">£6</span></div>
+      <div class="menu-filters rv" id="menuFilters" role="group" aria-label="Filter the menu">
+        <button class="chip on" data-f="all">Everything</button>
+        <button class="chip" data-f="veg">Vegetarian</button>
+        <button class="chip" data-f="sig">Signatures</button>
+        <button class="chip" data-f="hot">Bring the heat</button>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-col rv">
+          <h3>Small Plates</h3>
+          <p class="col-note">To start, or to share across the table.</p>
+          <div class="mitem" data-tags="veg hot" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp"><span class="m-name">Chilli Paneer Tikka</span><span class="m-price">£8</span><span class="m-desc">Charred, smoky, mint yoghurt</span><span class="m-tags"><span class="tag veg">Veg</span><span class="tag hot">Spicy</span></span></div>
+          <div class="mitem" data-tags="hot" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp"><span class="m-name">Lamb Seekh Rolls</span><span class="m-price">£10</span><span class="m-desc">House spice blend, burnt garlic</span><span class="m-tags"><span class="tag hot">Spicy</span></span></div>
+          <div class="mitem" data-tags="veg" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp"><span class="m-name">Golden Onion Bhaji</span><span class="m-price">£6</span><span class="m-desc">Tamarind &amp; date chutney</span><span class="m-tags"><span class="tag veg">Veg</span></span></div>
         </div>
-        <div class="dcard rv">
-          <h3 style="margin-bottom:14px;">From the Kitchen</h3>
-          <div class="mrow"><div><h4>Saffron Butter Chicken</h4><p>Our signature — 24-hour marinade</p></div><span class="price">£16</span></div>
-          <div class="mrow"><div><h4>Slow Lamb Rogan Josh</h4><p>Kashmiri chilli, fennel, clove</p></div><span class="price">£18</span></div>
-          <div class="mrow"><div><h4>Black Dal Makhani</h4><p>Simmered overnight, cream finish</p></div><span class="price">£12</span></div>
+        <div class="menu-col rv">
+          <h3>From the Kitchen</h3>
+          <p class="col-note">Slow, patient cooking — the heart of the house.</p>
+          <div class="mitem" data-tags="sig" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp"><span class="m-name">Saffron Butter Chicken</span><span class="m-price">£16</span><span class="m-desc">Our signature — 24-hour marinade</span><span class="m-tags"><span class="tag sig">Signature</span></span></div>
+          <div class="mitem" data-tags="sig hot" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp"><span class="m-name">Slow Lamb Rogan Josh</span><span class="m-price">£18</span><span class="m-desc">Kashmiri chilli, fennel, clove</span><span class="m-tags"><span class="tag sig">Signature</span><span class="tag hot">Spicy</span></span></div>
+          <div class="mitem" data-tags="veg sig" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp"><span class="m-name">Black Dal Makhani</span><span class="m-price">£12</span><span class="m-desc">Simmered overnight, cream finish</span><span class="m-tags"><span class="tag veg">Veg</span><span class="tag sig">Signature</span></span></div>
         </div>
+      </div>
+      <div class="menu-photos rv">
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp" alt="Fine-dining plated small plate" loading="lazy"></figure>
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp" alt="Sizzling curry in a cast-iron karahi" loading="lazy"></figure>
       </div>
     </div>
   </section>
 
-  <!-- About / split -->
-  <section class="dsection alt" id="about">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034813_4d379dd1-8cb4-44ac-8988-8c0974b16a6d_min.webp" alt="Chef plating a dish in the kitchen" loading="lazy"></div>
-      <div class="rv">
-        <span class="eyebrow">Our Story</span>
-        <h2>A family recipe, <span class="grad-text">a modern table</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Saffron House began with a grandmother's spice tin and a simple belief: food should bring people together. Three generations later, that's still the whole idea.</p>
+  <!-- Story -->
+  <section class="sec story" id="story">
+    <div class="wrap story-grid">
+      <div class="story-art rv">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034813_4d379dd1-8cb4-44ac-8988-8c0974b16a6d_min.webp" alt="Chef plating a dish in the Saffron House kitchen" loading="lazy">
+        <div class="badge"><b>3</b><span>generations of recipes</span></div>
+      </div>
+      <div class="story-text rv">
+        <p class="eyebrow">Our Story</p>
+        <h2>A family recipe,<br>a <span class="saff">modern table</span>.</h2>
+        <p style="color:var(--muted); margin-top:16px;">Saffron House began with a grandmother's spice tin and a simple belief: food should bring people together. Three generations later, that's still the whole idea.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>Spices ground in-house</b> every morning for depth you can taste.</span></li>
           <li><span class="chk">✓</span><span><b>Locally sourced</b> meat, veg and dairy from trusted suppliers.</span></li>
@@ -105,64 +136,114 @@
   </section>
 
   <!-- Gallery -->
-  <section class="dsection" id="gallery">
+  <section class="sec" id="gallery">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">The Atmosphere</span>
-        <h2>Come for dinner, <span class="grad-text">stay for the evening</span></h2>
+      <div class="sec-head rv">
+        <p class="eyebrow">The Atmosphere</p>
+        <h2>Come for dinner, <span class="saff">stay for the evening</span></h2>
       </div>
-      <div class="dgrid g4">
-        <div class="tile rv"><div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp" alt="Plated signature dish" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp" alt="Sizzling curry in a karahi" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034817_d91ddb80-e98b-4115-89be-62c607de4b7b_min.webp" alt="Red wine on a candlelit table" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034817_1fa41536-2e21-47ac-86d2-7d007c4fb0bb_min.webp" alt="Candlelit dining table setting" loading="lazy"></div></div>
+      <div class="mosaic rv">
+        <figure class="tall"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034817_d91ddb80-e98b-4115-89be-62c607de4b7b_min.webp" alt="Red wine on a candlelit table" loading="lazy"><figcaption>A glass by candlelight</figcaption></figure>
+        <figure class="wide"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034817_1fa41536-2e21-47ac-86d2-7d007c4fb0bb_min.webp" alt="Candlelit dining table setting" loading="lazy"><figcaption>Set for the evening</figcaption></figure>
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp" alt="Plated signature dish" loading="lazy"><figcaption>Plated with care</figcaption></figure>
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034815_cf7098ea-52b9-4ad4-86f0-afe15311a519_min.webp" alt="Sizzling curry" loading="lazy"><figcaption>Straight from the karahi</figcaption></figure>
       </div>
     </div>
   </section>
 
-  <!-- Reserve CTA -->
-  <section class="dsection" id="reserve">
+  <!-- Reserve -->
+  <section class="sec reserve" id="reserve">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Reserve your table tonight</h2>
-        <p>Walk-ins welcome, but the good tables go fast. Book ahead and we'll have everything ready.</p>
-        <a class="dbtn dbtn-light" href="#visit">Book a Table</a>
+      <div class="reserve-card rv">
+        <div class="reserve-info">
+          <p class="eyebrow">Reservations</p>
+          <h2>Reserve your table tonight</h2>
+          <p>Walk-ins are always welcome, but the good tables go fast. Book ahead and we'll have everything ready — candles lit, tabla warming up.</p>
+          <div class="hours">
+            <div><span>Tuesday – Thursday</span><b>5pm – 11pm</b></div>
+            <div><span>Friday – Saturday</span><b>5pm – 12am</b></div>
+            <div><span>Sunday roast lunch</span><b>12pm – 4pm</b></div>
+            <div><span>Monday</span><b>Closed</b></div>
+          </div>
+        </div>
+        <div class="reserve-form">
+          <form id="resForm" novalidate>
+            <div class="row">
+              <div class="fld"><label for="rDate">Date</label><input type="date" id="rDate" required></div>
+              <div class="fld"><label for="rTime">Time</label>
+                <select id="rTime"><option>17:30</option><option>18:00</option><option>18:30</option><option selected>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option></select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="fld"><label for="rGuests">Guests</label>
+                <select id="rGuests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9+ (call us)</option></select>
+              </div>
+              <div class="fld"><label for="rName">Name</label><input type="text" id="rName" placeholder="Your name" required></div>
+            </div>
+            <div class="fld"><label for="rPhone">Phone (optional)</label><input type="tel" id="rPhone" placeholder="So we can confirm"></div>
+            <button class="btn btn-fill" type="submit">Reserve table</button>
+          </form>
+          <div class="reserve-ok" id="resOk" role="status" aria-live="polite">
+            <div class="tick">✓</div>
+            <h3>You're booked in!</h3>
+            <p id="resOkMsg"></p>
+            <button class="btn btn-ghost" type="button" id="resAgain">Make another booking</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit -->
+  <section class="sec" id="visit">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Find Us</p>
+        <h2>In the heart <span class="saff">of the city</span></h2>
+      </div>
+      <div class="visit-grid">
+        <div class="visit-card rv"><div class="ic">📍</div><h4>Location</h4><p>42 Market Street<br>City Centre, CC1 2AB</p></div>
+        <div class="visit-card rv"><div class="ic">🕰️</div><h4>Opening Hours</h4><p>Tue–Sun from 5pm<br>Sunday roast, 12–4pm</p></div>
+        <div class="visit-card rv"><div class="ic">📞</div><h4>Get in Touch</h4><p>hello@saffronhouse.co<br>01234 567 890</p></div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="dfooter" id="visit">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
+      <div class="foot-grid">
         <div>
-          <div class="dbrand"><span class="logo-dot">S</span> Saffron House</div>
+          <a class="brand" href="#top"><span class="dot">S</span> Saffron House</a>
           <p>Modern Indian kitchen serving bold, seasonal food in a warm, welcoming room.</p>
         </div>
         <div>
-          <h4>Visit</h4>
+          <h5>Visit</h5>
           <ul>
             <li>42 Market Street</li>
             <li>Open Tue–Sun, 5–11pm</li>
-            <li>Sunday roast lunch, 12–4pm</li>
+            <li>Sunday roast, 12–4pm</li>
           </ul>
         </div>
         <div>
-          <h4>Explore</h4>
+          <h5>Explore</h5>
           <ul>
             <li><a href="#menu">Menu</a></li>
-            <li><a href="#about">Our Story</a></li>
-            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#story">Our Story</a></li>
+            <li><a href="#reserve">Book a Table</a></li>
           </ul>
         </div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
+      <div class="foot-base">
+        <span>© Saffron House — a sample design.</span>
+        <span>Bold spice, warm hospitality.</span>
       </div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="restaurant.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>

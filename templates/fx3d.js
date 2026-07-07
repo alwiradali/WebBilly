@@ -53,8 +53,8 @@
   var page = (location.pathname.split("/").pop() || "").replace(".html", "");
   // store-* pages share the premium-showcase scene, tinted per brand.
   var SCENE_KEY = {
-    "store-beauty": "showcase", "store-fashion": "showcase",
-    "store-home": "showcase", "store-supplements": "showcase"
+    "store-beauty": "beauty", "store-fashion": "fashion",
+    "store-home": "home", "store-supplements": "supplements"
   };
   var key = SCENE_KEY[page] || page;
 
@@ -665,37 +665,248 @@
   };
 
   /* 💎 showcase — the store templates: a faceted brand gem on a lit podium */
-  SCENES.showcase = function (THREE, root, palette) {
-    var gemGeoByPage = {
-      "store-beauty": new THREE.OctahedronGeometry(1.2, 0),
-      "store-fashion": new THREE.DodecahedronGeometry(1.15, 0),
-      "store-home": new THREE.IcosahedronGeometry(1.15, 0),
-      "store-supplements": new THREE.CapsuleGeometry(0.6, 1.0, 8, 24)
-    };
-    var geo = gemGeoByPage[page] || new THREE.OctahedronGeometry(1.2, 0);
-    var gem = new THREE.Mesh(geo,
-      std(THREE, { color: palette.accent, roughness: 0.12, metalness: 0.55, envMapIntensity: 1.6, emissive: palette.accent, emissiveIntensity: 0.14 }));
-    gem.position.y = 0.35;
-    root.add(gem);
-    var podium = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.7, 0.35, 64),
-      std(THREE, { color: 0x14161d, roughness: 0.3, metalness: 0.7, emissive: palette.accent, emissiveIntensity: 0.12 }));
-    podium.position.y = -1.5;
-    root.add(podium);
-    var halo = new THREE.Mesh(new THREE.TorusGeometry(1.55, 0.02, 8, 96),
-      new THREE.MeshBasicMaterial({ color: palette.accent2, transparent: true, opacity: 0.6 }));
-    halo.rotation.x = Math.PI / 2; halo.position.y = -1.3;
-    root.add(halo);
-    var dust = points(THREE, 40, function (p, o) {
-      var a = Math.random() * Math.PI * 2, r = 0.5 + Math.random() * 2.2;
-      p[o] = Math.cos(a) * r; p[o + 1] = Math.random() * 3 - 1.4; p[o + 2] = Math.sin(a) * r;
-    }, { size: 0.05, color: palette.accent2, opacity: 0.7 });
-    root.add(dust);
+  /* 💄 store-beauty — a lacquered serum bottle, glowing elixir, drifting sparkle */
+  SCENES.beauty = function (THREE, root, palette) {
+    var bottle = new THREE.Group(); root.add(bottle);
+    var glass = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true, opacity: 0.5, envMapIntensity: 1.6 });
+    bottle.add(new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.92, 1.9, 48), glass));
+    var elixir = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.85, 1.15, 40),
+      std(THREE, { color: palette.accent, roughness: 0.25, metalness: 0.0, emissive: palette.accent, emissiveIntensity: 0.55, transparent: true, opacity: 0.92 }));
+    elixir.position.y = -0.34; bottle.add(elixir);
+    var neck = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 0.4, 32), glass); neck.position.y = 1.14; bottle.add(neck);
+    var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.5, 32),
+      std(THREE, { color: palette.accent2, roughness: 0.18, metalness: 0.95, envMapIntensity: 1.3 })); cap.position.y = 1.55; bottle.add(cap);
+    bottle.rotation.z = 0.05;
+    var sparks = points(THREE, 60, function (p, o) { var a = Math.random() * 6.2832, r = 1.1 + Math.random() * 1.6; p[o] = Math.cos(a) * r; p[o + 1] = (Math.random() - 0.5) * 3.4; p[o + 2] = Math.sin(a) * r; },
+      { size: 0.06, color: 0xffffff, opacity: 0.85 });
+    root.add(sparks); var sp = sparks.userData.pos;
     return { update: function (t, dt, ptr) {
-      gem.rotation.y += dt * 0.5 + ptr.x * dt * 1.5;
-      gem.rotation.x = Math.sin(t * 0.4) * 0.2 - ptr.y * 0.3;
-      gem.position.y = 0.35 + Math.sin(t * 1.1) * 0.1;
-      halo.scale.setScalar(1 + Math.sin(t * 1.5) * 0.03);
-      dust.rotation.y += dt * 0.12;
+      bottle.rotation.y += dt * 0.5 + ptr.x * dt * 1.2;
+      bottle.position.y = Math.sin(t * 1.1) * 0.08;
+      sparks.rotation.y -= dt * 0.1;
+      for (var i = 1; i < sp.length; i += 3) { sp[i] += dt * 0.28; if (sp[i] > 1.8) sp[i] = -1.8; }
+      sparks.geometry.attributes.position.needsUpdate = true;
+    } };
+  };
+
+  /* 🧥 store-fashion — a metal hanger draped with a softly rippling fabric */
+  SCENES.fashion = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g); g.position.y = 0.2;
+    var metal = std(THREE, { color: 0xd6dbe6, roughness: 0.2, metalness: 0.95, envMapIntensity: 1.2 });
+    var hook = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.045, 14, 30, Math.PI * 1.5), metal);
+    hook.position.y = 1.5; hook.rotation.z = Math.PI * 0.25; g.add(hook);
+    var barGeo = new THREE.CylinderGeometry(0.045, 0.045, 1.75, 12);
+    var b1 = new THREE.Mesh(barGeo, metal); b1.position.set(-0.44, 0.62, 0); b1.rotation.z = Math.PI * 0.44; g.add(b1);
+    var b2 = new THREE.Mesh(barGeo, metal); b2.position.set(0.44, 0.62, 0); b2.rotation.z = -Math.PI * 0.44; g.add(b2);
+    var b3 = new THREE.Mesh(barGeo, metal); b3.position.set(0, 0.2, 0); b3.rotation.z = Math.PI / 2; g.add(b3);
+    var clothGeo = new THREE.PlaneGeometry(1.85, 1.7, 26, 26);
+    var cbase = clothGeo.attributes.position.array.slice(0);
+    var cloth = new THREE.Mesh(clothGeo, new THREE.MeshStandardMaterial({ color: palette.accent, roughness: 0.62, metalness: 0.06, side: THREE.DoubleSide, emissive: palette.accent, emissiveIntensity: 0.08 }));
+    cloth.position.y = -0.72; g.add(cloth);
+    var cpos = clothGeo.attributes.position;
+    return { update: function (t, dt, ptr) {
+      g.rotation.y = Math.sin(t * 0.3) * 0.5 + ptr.x * 0.5;
+      for (var i = 0; i < cpos.count; i++) {
+        var bx = cbase[i * 3], by = cbase[i * 3 + 1];
+        cpos.setZ(i, Math.sin(bx * 3 + t * 2) * 0.07 + Math.sin(by * 2.4 - t * 1.5) * 0.05);
+      }
+      cpos.needsUpdate = true; clothGeo.computeVertexNormals();
+    } };
+  };
+
+  /* 🛋️ store-home — a warm pendant lamp over a little potted plant */
+  SCENES.home = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g);
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.3, 8), std(THREE, { color: 0x20242e, roughness: 0.6 })).translateY(1.75));
+    var shade = new THREE.Mesh(new THREE.ConeGeometry(0.72, 0.72, 40, 1, true),
+      std(THREE, { color: palette.accent, roughness: 0.4, metalness: 0.35, side: THREE.DoubleSide, emissive: palette.accent, emissiveIntensity: 0.18 }));
+    shade.position.y = 0.95; g.add(shade);
+    var bulb = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 24), std(THREE, { color: 0xfff3d6, emissive: 0xffdca0, emissiveIntensity: 1.6, roughness: 0.3 }));
+    bulb.position.y = 0.66; g.add(bulb);
+    var lamp = new THREE.PointLight(0xffd9a0, 26, 12, 2); lamp.position.set(0, 0.6, 0.2); g.add(lamp);
+    var pot = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.32, 0.5, 24), std(THREE, { color: palette.accent2, roughness: 0.5, metalness: 0.2 })); pot.position.y = -1.15; g.add(pot);
+    var leaves = [];
+    for (var i = 0; i < 6; i++) {
+      var lf = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 10), std(THREE, { color: 0x3fae72, roughness: 0.55, metalness: 0.05 }));
+      lf.scale.set(0.34, 1.05, 0.12); var a = i / 6 * 6.2832;
+      lf.position.set(Math.cos(a) * 0.22, -0.55, Math.sin(a) * 0.22);
+      lf.rotation.set(0.5, a, Math.sin(a) * 0.4); g.add(lf); leaves.push(lf);
+    }
+    return { update: function (t, dt, ptr) {
+      g.rotation.y += dt * 0.25 + ptr.x * dt * 0.8;
+      bulb.material.emissiveIntensity = 1.45 + Math.sin(t * 2.4) * 0.2;
+      lamp.intensity = 24 + Math.sin(t * 2.4) * 4;
+      for (var i = 0; i < leaves.length; i++) leaves[i].rotation.z = Math.sin(t * 0.9 + i) * 0.15 + Math.sin(i) * 0.4;
+    } };
+  };
+
+  /* 💪 store-supplements — capsules tumbling in orbit around a protein tub */
+  SCENES.supplements = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g);
+    var tub = new THREE.Mesh(new THREE.CylinderGeometry(0.86, 0.86, 1.5, 48),
+      std(THREE, { color: palette.accent, roughness: 0.35, metalness: 0.4, envMapIntensity: 1.1 }));
+    var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 0.92, 0.34, 48), std(THREE, { color: 0x0f1216, roughness: 0.4, metalness: 0.6 })); lid.position.y = 0.9;
+    var band = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.88, 0.7, 48), new THREE.MeshBasicMaterial({ color: palette.accent2, transparent: true, opacity: 0.22 })); band.position.y = -0.1;
+    g.add(tub); g.add(lid); g.add(band);
+    var orbit = new THREE.Group(); g.add(orbit); var caps = [];
+    for (var i = 0; i < 5; i++) {
+      var cap = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.34, 8, 16),
+        std(THREE, { color: i % 2 ? palette.accent2 : 0xffffff, roughness: 0.25, metalness: 0.2, emissive: i % 2 ? palette.accent2 : 0x000000, emissiveIntensity: 0.3 }));
+      cap.userData = { a: i / 5 * 6.2832, spin: 0.6 + Math.random() }; orbit.add(cap); caps.push(cap);
+    }
+    var energy = points(THREE, 44, function (p, o) { var a = Math.random() * 6.2832, r = 0.6 + Math.random() * 1.9; p[o] = Math.cos(a) * r; p[o + 1] = Math.random() * 3 - 1.4; p[o + 2] = Math.sin(a) * r; },
+      { size: 0.05, color: palette.accent2, opacity: 0.7 });
+    g.add(energy); var ep = energy.userData.pos;
+    return { update: function (t, dt, ptr) {
+      g.rotation.y += dt * 0.2 + ptr.x * dt * 0.8;
+      orbit.rotation.y += dt * 0.7;
+      for (var i = 0; i < caps.length; i++) {
+        var c = caps[i];
+        c.position.set(Math.cos(c.userData.a) * 1.75, Math.sin(t * 1.2 + i) * 0.55, Math.sin(c.userData.a) * 1.75);
+        c.rotation.x = t * c.userData.spin; c.rotation.z = t * 1.1;
+      }
+      for (var j = 1; j < ep.length; j += 3) { ep[j] += dt * 0.35; if (ep[j] > 1.7) ep[j] = -1.7; }
+      energy.geometry.attributes.position.needsUpdate = true;
+    } };
+  };
+
+  /* ⚖️ law — scales of justice, gently finding balance */
+  SCENES.law = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g); g.position.y = 0.2;
+    var gold = std(THREE, { color: 0xd9c27a, roughness: 0.25, metalness: 0.95, envMapIntensity: 1.3 });
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 2.6, 24), gold));                 // post
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(0.18, 24, 24), gold).translateY(1.35));         // finial
+    var beam = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.6, 16), gold);
+    beam.rotation.z = Math.PI / 2; beam.position.y = 1.15; g.add(beam);
+    var arms = new THREE.Group(); arms.position.y = 1.15; g.add(arms);
+    var pans = [];
+    [-1.3, 1.3].forEach(function (x) {
+      var chain = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.85, 8), gold);
+      chain.position.set(x, -0.42, 0); arms.add(chain);
+      var pan = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.42, 0.12, 32, 1, true), gold);
+      pan.position.set(x, -0.85, 0); arms.add(pan); pans.push(pan);
+    });
+    return { update: function (t, dt, ptr) {
+      g.rotation.y += dt * 0.25 + ptr.x * dt * 0.7;
+      var tilt = Math.sin(t * 0.9) * 0.12 + ptr.y * 0.06;
+      arms.rotation.z = tilt;
+      pans[0].rotation.z = -tilt; pans[1].rotation.z = -tilt;   // keep pans level
+    } };
+  };
+
+  /* 🚗 automotive — a spinning alloy wheel with motion streaks */
+  SCENES.automotive = function (THREE, root, palette) {
+    var wheel = new THREE.Group(); root.add(wheel);
+    wheel.add(new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.42, 24, 64), std(THREE, { color: 0x14161c, roughness: 0.55, metalness: 0.3 }))); // tyre
+    var rimMat = std(THREE, { color: 0xd7dce6, roughness: 0.18, metalness: 1.0, envMapIntensity: 1.4 });
+    wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.34, 48), rimMat).rotateX(Math.PI / 2)); // rim disc
+    for (var i = 0; i < 5; i++) {
+      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.95, 0.3), std(THREE, { color: 0x0c0e13, roughness: 0.4, metalness: 0.7 }));
+      var a = i / 5 * 6.2832; spoke.position.set(Math.cos(a) * 0.5, Math.sin(a) * 0.5, 0); spoke.rotation.z = a + Math.PI / 2; wheel.add(spoke);
+    }
+    wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.4, 24), std(THREE, { color: palette.accent, roughness: 0.3, metalness: 0.8, emissive: palette.accent, emissiveIntensity: 0.3 })).rotateX(Math.PI / 2)); // hub cap
+    wheel.rotation.x = 0.42;
+    var streaks = points(THREE, 50, function (p, o) { p[o] = -3 - Math.random() * 3; p[o + 1] = (Math.random() - 0.5) * 3.4; p[o + 2] = (Math.random() - 0.5) * 1.5; },
+      { size: 0.05, color: palette.accent2, opacity: 0.6 });
+    root.add(streaks); var sp = streaks.userData.pos;
+    return { update: function (t, dt, ptr) {
+      wheel.rotation.z -= dt * 3.2;                 // fast spin
+      wheel.rotation.y = ptr.x * 0.4; wheel.rotation.x = 0.42 - ptr.y * 0.2;
+      for (var i = 0; i < sp.length; i += 3) { sp[i] += dt * 7; if (sp[i] > 3) sp[i] = -3 - Math.random() * 2; }
+      streaks.geometry.attributes.position.needsUpdate = true;
+    } };
+  };
+
+  /* ☕ cafe — a coffee cup, rising steam, orbiting beans */
+  SCENES.cafe = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g); g.position.y = -0.2;
+    var cupMat = std(THREE, { color: 0xf3ede4, roughness: 0.3, metalness: 0.05, clearcoat: 1 });
+    var cup = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.62, 1.0, 48), cupMat); cup.position.y = 0.2; g.add(cup);
+    var coffee = new THREE.Mesh(new THREE.CircleGeometry(0.76, 40), std(THREE, { color: 0x3a2318, roughness: 0.4, metalness: 0.1, emissive: 0x2a1710, emissiveIntensity: 0.3 }));
+    coffee.rotation.x = -Math.PI / 2; coffee.position.y = 0.69; g.add(coffee);
+    var handle = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.09, 16, 32, Math.PI * 1.2), cupMat); handle.position.set(0.82, 0.2, 0); handle.rotation.z = -0.3; g.add(handle);
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.2, 0.1, 48), cupMat).translateY(-0.34)); // saucer
+    var steam = points(THREE, 34, function (p, o) { p[o] = (Math.random() - 0.5) * 0.7; p[o + 1] = 0.8 + Math.random() * 2; p[o + 2] = (Math.random() - 0.5) * 0.7; },
+      { size: 0.16, color: 0xffffff, opacity: 0.3 });
+    g.add(steam); var st = steam.userData.pos;
+    var beans = new THREE.Group(); g.add(beans);
+    for (var i = 0; i < 4; i++) { var bn = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), std(THREE, { color: 0x4a2c1a, roughness: 0.5, metalness: 0.1 })); bn.scale.set(1, 0.7, 0.55); bn.userData = { a: i / 4 * 6.2832 }; beans.add(bn); }
+    return { update: function (t, dt, ptr) {
+      g.rotation.y += dt * 0.2 + ptr.x * dt * 0.7;
+      for (var j = 1; j < st.length; j += 3) { st[j] += dt * 0.55; st[j - 1] += Math.sin(t + j) * dt * 0.05; if (st[j] > 2.8) st[j] = 0.8; }
+      steam.geometry.attributes.position.needsUpdate = true;
+      beans.rotation.y += dt * 0.6;
+      beans.children.forEach(function (bn, i) { bn.position.set(Math.cos(bn.userData.a) * 1.7, 0.4 + Math.sin(t * 1.3 + i) * 0.25, Math.sin(bn.userData.a) * 1.7); bn.rotation.x = t; });
+    } };
+  };
+
+  /* 📷 photography — a camera with a focusing lens + light flares */
+  SCENES.photography = function (THREE, root, palette) {
+    var cam = new THREE.Group(); root.add(cam);
+    var body = std(THREE, { color: 0x15171d, roughness: 0.42, metalness: 0.7, envMapIntensity: 1.0 });
+    cam.add(new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.35, 0.95), body));
+    cam.add(new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.3), body).translateY(0.78).translateZ(0)); // pentaprism
+    var lens = new THREE.Group(); lens.position.set(0, -0.05, 0.7); cam.add(lens);
+    var lensMat = std(THREE, { color: 0x0b0c10, roughness: 0.35, metalness: 0.8 });
+    lens.add(new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.6, 0.8, 40), lensMat).rotateX(Math.PI / 2).translateY(0.4 * 0));
+    var lensCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.6, 0.8, 40), lensMat); lensCyl.rotation.x = Math.PI / 2; lensCyl.position.z = 0.4; lens.add(lensCyl);
+    var glass = new THREE.Mesh(new THREE.CircleGeometry(0.45, 40), std(THREE, { color: palette.accent, roughness: 0.05, metalness: 1.0, emissive: palette.accent, emissiveIntensity: 0.35, envMapIntensity: 1.6 }));
+    glass.position.z = 0.81; lens.add(glass);
+    for (var r = 0; r < 2; r++) { var ring = new THREE.Mesh(new THREE.TorusGeometry(0.58 - r * 0.06, 0.03, 12, 40), std(THREE, { color: 0x2a2d36, roughness: 0.4, metalness: 0.8 })); ring.position.z = 0.15 + r * 0.28; lens.add(ring); }
+    cam.add(new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.28, 0.5), std(THREE, { color: palette.accent2, roughness: 0.3, metalness: 0.5, emissive: palette.accent2, emissiveIntensity: 0.4 })).translateX(-0.8).translateY(0.78)); // flash
+    var flares = points(THREE, 30, function (p, o) { var a = Math.random() * 6.2832, rr = 1.4 + Math.random() * 1.4; p[o] = Math.cos(a) * rr; p[o + 1] = (Math.random() - 0.5) * 2.6; p[o + 2] = Math.sin(a) * rr; },
+      { size: 0.07, color: 0xffffff, opacity: 0.7 });
+    root.add(flares);
+    return { update: function (t, dt, ptr) {
+      cam.rotation.y = Math.sin(t * 0.35) * 0.5 + ptr.x * 0.5;
+      cam.rotation.x = -ptr.y * 0.25;
+      var f = 1 + Math.sin(t * 2.2) * 0.06; lens.scale.z = f;    // focus pulse
+      glass.material.emissiveIntensity = 0.3 + (0.5 + 0.5 * Math.sin(t * 2.2)) * 0.4;
+      flares.rotation.y += dt * 0.12;
+    } };
+  };
+
+  /* 🎵 music — a pulsing equalizer over a spinning record */
+  SCENES.music = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g);
+    var disc = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.08, 64), std(THREE, { color: 0x0b0c10, roughness: 0.35, metalness: 0.6 }));
+    disc.rotation.x = 1.15; disc.position.y = -0.9; g.add(disc);
+    disc.add(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.1, 48), std(THREE, { color: palette.accent, roughness: 0.4, metalness: 0.3, emissive: palette.accent, emissiveIntensity: 0.3 })));
+    disc.add(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.14, 16), std(THREE, { color: 0xcccccc, metalness: 1, roughness: 0.2 })));
+    var bars = [], N = 7, barMat = std(THREE, { color: palette.accent2, roughness: 0.3, metalness: 0.6, emissive: palette.accent2, emissiveIntensity: 0.4 });
+    for (var i = 0; i < N; i++) {
+      var b = new THREE.Mesh(new THREE.BoxGeometry(0.34, 1, 0.34), barMat);
+      b.position.set((i - (N - 1) / 2) * 0.5, 0.4, 0); b.userData = { f: 1.4 + i * 0.5, ph: i * 0.7 }; g.add(b); bars.push(b);
+    }
+    var notes = points(THREE, 26, function (p, o) { p[o] = (Math.random() - 0.5) * 4; p[o + 1] = Math.random() * 3 - 1; p[o + 2] = (Math.random() - 0.5) * 2; },
+      { size: 0.08, color: palette.accent, opacity: 0.7 });
+    g.add(notes); var np = notes.userData.pos;
+    return { update: function (t, dt, ptr) {
+      g.rotation.y = Math.sin(t * 0.25) * 0.35 + ptr.x * 0.35;
+      disc.rotation.z -= dt * 1.4;
+      for (var i = 0; i < bars.length; i++) { var h = 0.5 + (0.5 + 0.5 * Math.sin(t * bars[i].userData.f + bars[i].userData.ph)) * 1.7; bars[i].scale.y = h; bars[i].position.y = h / 2; }
+      for (var j = 1; j < np.length; j += 3) { np[j] += dt * 0.5; if (np[j] > 2) np[j] = -1; }
+      notes.geometry.attributes.position.needsUpdate = true;
+    } };
+  };
+
+  /* 🧘 wellness — balancing zen stones over spreading water ripples */
+  SCENES.wellness = function (THREE, root, palette) {
+    var g = new THREE.Group(); root.add(g);
+    var stoneMat = std(THREE, { color: 0x8c99a3, roughness: 0.75, metalness: 0.05 });
+    var accentStone = std(THREE, { color: palette.accent, roughness: 0.6, metalness: 0.1, emissive: palette.accent, emissiveIntensity: 0.12 });
+    var stones = [], sizes = [0.9, 0.72, 0.56, 0.4], y = -0.9;
+    for (var i = 0; i < sizes.length; i++) {
+      var s = new THREE.Mesh(new THREE.SphereGeometry(sizes[i], 32, 24), i === sizes.length - 1 ? accentStone : stoneMat);
+      s.scale.y = 0.42; s.position.y = y + sizes[i] * 0.42; y = s.position.y + sizes[i] * 0.42;
+      s.userData = { base: s.position.y, ph: i * 0.8 }; g.add(s); stones.push(s);
+    }
+    var ripples = [], rmat = new THREE.MeshBasicMaterial({ color: palette.accent2, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+    for (var r = 0; r < 4; r++) { var ring = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.02, 8, 64), rmat.clone()); ring.rotation.x = Math.PI / 2; ring.position.y = -1.35; ring.userData = { off: r * 0.9 }; g.add(ring); ripples.push(ring); }
+    return { update: function (t, dt, ptr) {
+      g.rotation.y += dt * 0.12 + ptr.x * dt * 0.5;
+      for (var i = 0; i < stones.length; i++) { var s = stones[i]; s.rotation.z = Math.sin(t * 0.5 + s.userData.ph) * 0.05; s.position.x = Math.sin(t * 0.4 + s.userData.ph) * 0.04 * (i + 1); }
+      for (var r = 0; r < ripples.length; r++) { var rg = ripples[r]; var k = ((t * 0.5 + rg.userData.off) % 3.6) / 3.6; rg.scale.setScalar(0.3 + k * 3); rg.material.opacity = 0.5 * (1 - k); }
     } };
   };
 })();
