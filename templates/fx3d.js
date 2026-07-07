@@ -61,13 +61,38 @@
   /* ---- reduced-motion is honoured live ---------------------------------- */
   var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false, addEventListener: function () {} };
   var teardown = null;
-  var threePromise = null;
+  var libsPromise = null;
 
-  function importThree() {
-    if (!threePromise) {
-      threePromise = import(new URL("./vendor/three.module.js", scriptURL).href);
+  // Three.js + the post-processing camera layer (bloom / DoF / grade) + a
+  // procedural studio environment for real reflections. `three` resolves via
+  // the page's <script type="importmap">; the jsm modules import it too, so
+  // everyone shares one Three instance.
+  function loadLibs() {
+    if (!libsPromise) {
+      var v = function (p) { return import(new URL("./vendor/jsm/" + p, scriptURL).href); };
+      libsPromise = Promise.all([
+        import("three"),
+        v("postprocessing/EffectComposer.js"),
+        v("postprocessing/RenderPass.js"),
+        v("postprocessing/UnrealBloomPass.js"),
+        v("postprocessing/BokehPass.js"),
+        v("postprocessing/ShaderPass.js"),
+        v("postprocessing/OutputPass.js"),
+        v("environments/RoomEnvironment.js")
+      ]).then(function (m) {
+        return {
+          THREE: m[0],
+          EffectComposer: m[1].EffectComposer,
+          RenderPass: m[2].RenderPass,
+          UnrealBloomPass: m[3].UnrealBloomPass,
+          BokehPass: m[4].BokehPass,
+          ShaderPass: m[5].ShaderPass,
+          OutputPass: m[6].OutputPass,
+          RoomEnvironment: m[7].RoomEnvironment
+        };
+      });
     }
-    return threePromise;
+    return libsPromise;
   }
 
   function webglOK() {
@@ -85,9 +110,9 @@
 
     var state = { cancelled: false, dispose: null };
     teardown = function () { state.cancelled = true; if (state.dispose) state.dispose(); };
-    importThree().then(function (THREE) {
+    loadLibs().then(function (libs) {
       if (state.cancelled) { return; }
-      state.dispose = boot(THREE);
+      state.dispose = boot(libs);
     }).catch(function () {
       if (state.cancelled) return;
       state.dispose = cssFallback();
@@ -116,14 +141,16 @@
      { update(t, dt, pointer, intro) }.  boot owns root.scale (intro) and a
      universal camera parallax so every scene answers the cursor.
      ====================================================================== */
-  function boot(THREE) {
+  function boot(libs) {
+    var THREE = libs.THREE;
     var W = Math.max(art.clientWidth, 2), H = Math.max(art.clientHeight, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    var renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;   // applied once, by OutputPass
+    renderer.toneMappingExposure = 1.1;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     var canvas = renderer.domElement;
     canvas.className = "gl-canvas";
@@ -134,14 +161,38 @@
     camera.position.set(0, 0, 7);
 
     var palette = readPalette(THREE);
-    var env = makeEnv(THREE, renderer, palette);
+    // Brand-gradient backdrop rendered INTO the scene, so the camera layer
+    // (vignette, DoF, grain) works on a fully composed frame.
+    scene.background = makeGradientBg(THREE, palette);
+    // Real studio IBL for believable reflections (procedural — no HDRI binary).
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    var env = pmrem.fromScene(new libs.RoomEnvironment(renderer), 0.04).texture;
+    pmrem.dispose();
     scene.environment = env;
+    scene.environmentIntensity = 0.85;
     rigLights(THREE, scene, palette);
 
     var root = new THREE.Group();
     scene.add(root);
     var build = SCENES[key] || SCENES.saas;   // scene builders are assigned below the IIFE flow
     var api = build(THREE, root, palette, { camera: camera, renderer: renderer });
+
+    /* ---- post-processing: the photographic "camera" layer ---------------- */
+    var composer = new libs.EffectComposer(renderer);
+    composer.setPixelRatio(dpr);
+    composer.setSize(W, H);
+    composer.addPass(new libs.RenderPass(scene, camera));
+    // Bloom — selective; high threshold so only genuinely emissive pixels glow
+    // (diffuse whites must NOT bloom — over-bloom is the classic "cheap 3D" tell).
+    var bloom = new libs.UnrealBloomPass(new THREE.Vector2(W, H), 0.32, 0.6, 1.0);
+    composer.addPass(bloom);
+    // Subtle depth of field — reads as "shot on a real lens".
+    var bokeh = new libs.BokehPass(scene, camera, { focus: 7.0, aperture: 0.00035, maxblur: 0.006, width: W, height: H });
+    composer.addPass(bokeh);
+    // Merged grade pass: chromatic aberration + vignette + film grain.
+    var grade = new libs.ShaderPass(GRADE_SHADER);
+    composer.addPass(grade);
+    composer.addPass(new libs.OutputPass());   // ACES + sRGB, once, last
 
     /* pointer (smoothed) — universal cursor response */
     var pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -155,11 +206,13 @@
     hero.addEventListener("pointermove", onMove);
     hero.addEventListener("pointerleave", onLeave);
 
-    /* resize */
+    /* resize — keep renderer, camera, composer and bloom resolution in sync */
     var ro = new ResizeObserver(function () {
       var w = art.clientWidth, h = art.clientHeight;
       if (w < 2 || h < 2) return;
       renderer.setSize(w, h, false);
+      composer.setSize(w, h);
+      if (bloom.setSize) bloom.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     });
@@ -184,7 +237,8 @@
       camera.position.y += (-pointer.y * 0.4 - camera.position.y) * 0.05;
       camera.lookAt(0, 0, 0);
       api.update(t, dt, pointer, intro);
-      renderer.render(scene, camera);
+      grade.uniforms.uTime.value = t;
+      composer.render();
     }
     function play() { if (running) return; running = true; clock.getDelta(); frame(); }
     function pause() { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = null; }
@@ -205,13 +259,51 @@
       hero.removeEventListener("pointerleave", onLeave);
       if (api.dispose) api.dispose();
       disposeTree(THREE, scene);
+      if (scene.background && scene.background.dispose) scene.background.dispose();
       if (env) env.dispose();
+      if (composer.dispose) composer.dispose();
       renderer.dispose();
       if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
       art.classList.remove("gl-ready");
       setEmoji(true);
     };
   }
+
+  /* Merged final grade — chromatic aberration (edge-weighted) + vignette +
+     animated film grain. One pass; the professional recipe is that no single
+     effect is individually noticeable. */
+  var GRADE_SHADER = {
+    uniforms: {
+      tDiffuse: { value: null },
+      uTime: { value: 0 },
+      uGrain: { value: 0.028 },
+      uVignette: { value: 1.1 },
+      uCA: { value: 0.0018 }
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }"
+    ].join("\n"),
+    fragmentShader: [
+      "varying vec2 vUv;",
+      "uniform sampler2D tDiffuse;",
+      "uniform float uTime, uGrain, uVignette, uCA;",
+      "float rand(vec2 c){ return fract(sin(dot(c, vec2(12.9898,78.233))) * 43758.5453); }",
+      "void main(){",
+      "  vec2 uv = vUv; vec2 d = uv - 0.5; float r2 = dot(d, d);",
+      "  vec2 off = d * uCA * (0.35 + r2 * 2.2);",   // fringing grows toward frame edges
+      "  vec3 col;",
+      "  col.r = texture2D(tDiffuse, uv + off).r;",
+      "  col.g = texture2D(tDiffuse, uv).g;",
+      "  col.b = texture2D(tDiffuse, uv - off).b;",
+      "  float vig = smoothstep(0.95, 0.12, r2 * uVignette);",
+      "  col *= mix(0.86, 1.0, vig);",             // gentle edge darkening
+      "  float g = (rand(uv * vec2(1280.0, 720.0) + fract(uTime)) - 0.5) * uGrain;",
+      "  col += g;",
+      "  gl_FragColor = vec4(col, 1.0);",
+      "}"
+    ].join("\n")
+  };
 
   /* ---- shared 3D helpers ------------------------------------------------- */
   function readPalette(THREE) {
@@ -223,31 +315,27 @@
     return { accent: col("--accent", "#2b7fff"), accent2: col("--accent-2", "#22d3ee") };
   }
 
-  // Procedural environment map (vertical gradient tinted by the brand) so
-  // metallic materials have something real to reflect — the "expensive" look
-  // without shipping an HDRI.
-  function makeEnv(THREE, renderer, palette) {
+  // Brand-gradient backdrop drawn behind the 3D (a diagonal accent→accent-2
+  // wash with a soft top-light), rendered into the scene so the camera layer
+  // grades the whole frame.
+  function makeGradientBg(THREE, palette) {
     var c = document.createElement("canvas");
-    c.width = 16; c.height = 128;
+    c.width = 64; c.height = 64;
     var ctx = c.getContext("2d");
-    var g = ctx.createLinearGradient(0, 0, 0, 128);
-    // A studio-softbox gradient: bright sky, brand-tinted mid, never black —
-    // so metals reflect light and read jewel-like, not like dark silhouettes.
-    var a = palette.accent.clone().lerp(new THREE.Color("#ffffff"), 0.6);
-    var b = palette.accent2.clone().lerp(new THREE.Color("#ffffff"), 0.25);
-    g.addColorStop(0, "#ffffff");
-    g.addColorStop(0.4, "#" + a.getHexString());
-    g.addColorStop(0.72, "#" + b.getHexString());
-    g.addColorStop(1, "#3a4152");
-    ctx.fillStyle = g; ctx.fillRect(0, 0, 16, 128);
+    var a = palette.accent.clone();
+    var b = palette.accent2.clone();
+    var g = ctx.createLinearGradient(0, 0, 64, 64);
+    g.addColorStop(0, "#" + a.clone().lerp(new THREE.Color("#05060a"), 0.35).getHexString());
+    g.addColorStop(1, "#" + b.clone().lerp(new THREE.Color("#05060a"), 0.55).getHexString());
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+    // soft top-left key glow
+    var rg = ctx.createRadialGradient(18, 12, 2, 18, 12, 60);
+    rg.addColorStop(0, "rgba(255,255,255,0.28)");
+    rg.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, 64, 64);
     var tex = new THREE.CanvasTexture(c);
-    tex.mapping = THREE.EquirectangularReflectionMapping;
     tex.colorSpace = THREE.SRGBColorSpace;
-    var pmrem = new THREE.PMREMGenerator(renderer);
-    var env = pmrem.fromEquirectangular(tex).texture;
-    tex.dispose();
-    pmrem.dispose();
-    return env;
+    return tex;
   }
 
   function rigLights(THREE, scene, palette) {
@@ -378,7 +466,7 @@
   /* 🎨 portfolio — a metallic torus-knot, dual-tone, cursor-driven */
   SCENES.portfolio = function (THREE, root, palette) {
     var knot = new THREE.Mesh(new THREE.TorusKnotGeometry(1.25, 0.4, 220, 32),
-      std(THREE, { color: 0xffffff, roughness: 0.12, metalness: 1.0, envMapIntensity: 1.4 }));
+      std(THREE, { color: 0xdbe0ea, roughness: 0.3, metalness: 1.0, envMapIntensity: 0.85 }));
     root.add(knot);
     return { update: function (t, dt, ptr) {
       knot.rotation.y += dt * 0.4 + ptr.x * dt * 2.5;
