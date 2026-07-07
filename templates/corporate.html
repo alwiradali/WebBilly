@@ -3,207 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Northbridge — Consulting Sample by Billy Digitals</title>
-  <meta name="description" content="Sample management consultancy website design by Billy Digitals — strategy, operations and digital transformation, presented with clarity.">
+  <title>Northbridge — Management Consulting</title>
+  <meta name="description" content="Northbridge — advisors who stay for delivery. Strategy, operations and digital transformation for ambitious organisations.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f6f4ee">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="corporate.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #2563eb; --accent-2: #0ea5e9; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo consultancy site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">N</span> Northbridge</div>
-      <div class="dnav-links">
-        <a href="#services">Services</a>
-        <a href="#why">Why Us</a>
-        <a href="#industries">Industries</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#book">Book a Consultation</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Management Consulting</span>
-        <h1>Clear strategy, <span class="grad-text">decisive execution</span>, measurable results.</h1>
-        <p class="lead">Northbridge partners with leadership teams to sharpen strategy, streamline operations and modernise how the business runs — then stays to see it through.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#book">Book a Consultation</a>
-          <a class="dbtn dbtn-ghost" href="#services">Explore Our Work</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">📈</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">N</span> Northbridge</a>
+      <nav class="nav-links" id="navLinks"><a href="#services">Services</a><a href="#industries">Industries</a><a href="#about">About</a><a href="#book">Contact</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#book">Book a consultation</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
-  <!-- Stats / capabilities -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>12</span></div><div class="lbl">Years advising leaders</div></div>
-      <div><div class="num"><span>6</span></div><div class="lbl">Sectors covered</div></div>
-      <div><div class="num"><span>3</span></div><div class="lbl">Regional offices</div></div>
-      <div><div class="num"><span>40+</span></div><div class="lbl">Specialist consultants</div></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rv">Management Consulting</p>
+        <h1 class="rv">Advisors who <span class="brass">stay for delivery</span>.</h1>
+        <p class="lede rv">Northbridge partners with ambitious organisations to set strategy, sharpen operations and ship real change — measured in results, not slide decks.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#book">Book a consultation</a><a class="btn btn-line" href="#services">How we help</a></div>
+        <div class="hero-note rv"><span><b>18 yrs</b> in practice</span><span><b>240+</b> engagements</span><span><b>£1.4bn</b> value delivered</span></div>
+      </div>
+      <div class="dhero-art rv"><span class="art-emoji" aria-hidden="true">📈</span></div>
     </div>
   </section>
 
-  <!-- Services -->
-  <section class="dsection" id="services">
+  <!-- Results band -->
+  <div class="band">
+    <div class="wrap band-grid">
+      <div class="rv"><div class="n" data-count="240" data-suffix="+">0</div><div class="l">Engagements delivered</div></div>
+      <div class="rv"><div class="n"><span data-count="1.4">0</span><span class="brass">bn</span></div><div class="l">Value unlocked (£)</div></div>
+      <div class="rv"><div class="n" data-count="94" data-suffix="%">0</div><div class="l">Would work with us again</div></div>
+      <div class="rv"><div class="n" data-count="12" data-suffix=" wks">0</div><div class="l">Median time to impact</div></div>
+    </div>
+  </div>
+
+  <!-- Services accordion -->
+  <section class="sec" id="services">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">What We Do</span>
-        <h2>Three disciplines, <span class="grad-text">one accountable team</span></h2>
-        <p>We work end to end — from the boardroom decision to the change on the ground.</p>
-      </div>
-      <div class="dgrid g3">
-        <div class="dcard rv">
-          <div class="ci">🧭</div>
-          <h3>Strategy</h3>
-          <p>Market positioning, growth planning and portfolio choices, grounded in evidence and pressure-tested against real trade-offs your team can act on.</p>
+      <div class="sec-head rv"><p class="eyebrow">What we do</p><h2>Three disciplines, <span class="brass">one accountable team</span></h2><p>No hand-offs to a junior bench. The people who diagnose the problem are the people who deliver the fix.</p></div>
+      <div class="acc" id="acc">
+        <div class="acc-item open">
+          <button class="acc-head" aria-expanded="true"><span class="no">01</span><h3>Strategy</h3><span class="pl" aria-hidden="true"></span></button>
+          <div class="acc-body"><div class="acc-body-in">Where to play and how to win — market entry, growth strategy, portfolio and pricing, backed by evidence not assertion. We pressure-test the plan until it survives contact with reality.<div class="tags"><span>Growth</span><span>Market entry</span><span>Pricing</span><span>M&amp;A</span></div></div></div>
         </div>
-        <div class="dcard rv">
-          <div class="ci">⚙️</div>
-          <h3>Operations</h3>
-          <p>Process redesign, cost-to-serve analysis and supply chain improvement that lift margin and free up capacity without disrupting the day to day.</p>
+        <div class="acc-item">
+          <button class="acc-head" aria-expanded="false"><span class="no">02</span><h3>Operations</h3><span class="pl" aria-hidden="true"></span></button>
+          <div class="acc-body"><div class="acc-body-in">Cost, cash and capability — supply chain, process redesign and organisation, with the operating discipline to make savings stick long after we've gone.<div class="tags"><span>Cost-out</span><span>Supply chain</span><span>Process</span><span>Org design</span></div></div></div>
         </div>
-        <div class="dcard rv">
-          <div class="ci">💾</div>
-          <h3>Digital Transformation</h3>
-          <p>Systems modernisation, data foundations and automation roadmaps — sequenced so value lands early and adoption actually sticks across the org.</p>
+        <div class="acc-item">
+          <button class="acc-head" aria-expanded="false"><span class="no">03</span><h3>Digital Transformation</h3><span class="pl" aria-hidden="true"></span></button>
+          <div class="acc-body"><div class="acc-body-in">Technology that earns its keep — data, automation and platform modernisation, delivered in shippable increments your teams can actually run.<div class="tags"><span>Data</span><span>Automation</span><span>Cloud</span><span>Change</span></div></div></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Why Northbridge / split -->
-  <section class="dsection alt" id="why">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034819_19ee2c8c-cd05-45e7-8fb1-f6932a99a56a_min.webp" alt="Consulting team in a modern office" loading="lazy"></div>
-      <div class="rv">
-        <span class="eyebrow">Why Northbridge</span>
-        <h2>Advisors who <span class="grad-text">stay for delivery</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Plenty of firms hand over a deck and leave. We embed alongside your people, transfer the capability, and measure ourselves on the outcome — not the recommendation.</p>
-        <ul>
-          <li><span class="chk">✓</span><span><b>Senior-led teams</b> — the partner who scopes the work is the partner who delivers it.</span></li>
-          <li><span class="chk">✓</span><span><b>Evidence over opinion</b> — every recommendation traces back to data your team can inspect.</span></li>
-          <li><span class="chk">✓</span><span><b>Capability transfer</b> — we leave your teams able to run and sustain the change themselves.</span></li>
-          <li><span class="chk">✓</span><span><b>Outcome-based scoping</b> — engagements defined by results, with clear milestones throughout.</span></li>
-        </ul>
       </div>
     </div>
   </section>
 
   <!-- Industries -->
-  <section class="dsection" id="industries">
+  <section class="sec ind" id="industries">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Industries</span>
-        <h2>Depth where it <span class="grad-text">counts</span></h2>
-        <p>Cross-sector perspective, backed by dedicated practice leads in the areas we know best.</p>
-      </div>
-      <div class="dgrid g4">
-        <div class="dcard rv">
-          <div class="ci">🏦</div>
-          <h3>Financial Services</h3>
-          <p>Cost programmes, risk operations and platform modernisation for banks and insurers.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🏭</div>
-          <h3>Manufacturing</h3>
-          <p>Operational excellence, supply resilience and factory-floor digitisation.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🏥</div>
-          <h3>Healthcare</h3>
-          <p>Care pathway efficiency, workforce planning and system integration.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🛒</div>
-          <h3>Retail &amp; Consumer</h3>
-          <p>Channel strategy, margin recovery and demand-driven planning.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">⚡</div>
-          <h3>Energy &amp; Utilities</h3>
-          <p>Asset optimisation, transition planning and regulatory readiness.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🏛️</div>
-          <h3>Public Sector</h3>
-          <p>Service redesign, digital delivery and value-for-money reviews.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">📡</div>
-          <h3>Technology</h3>
-          <p>Go-to-market strategy, scaling operations and product portfolio focus.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🚚</div>
-          <h3>Logistics</h3>
-          <p>Network design, fulfilment efficiency and last-mile transformation.</p>
-        </div>
+      <div class="sec-head rv"><p class="eyebrow">Industries</p><h2>Depth where it <span class="brass">counts</span></h2></div>
+      <div class="ind-grid rv">
+        <div class="ind-cell"><div class="ic">🏦</div><h4>Financial Services</h4><p>Banking, insurance, wealth.</p></div>
+        <div class="ind-cell"><div class="ic">🏭</div><h4>Manufacturing</h4><p>Industrials &amp; supply chain.</p></div>
+        <div class="ind-cell"><div class="ic">🩺</div><h4>Healthcare</h4><p>Providers &amp; life sciences.</p></div>
+        <div class="ind-cell"><div class="ic">🛍️</div><h4>Retail &amp; Consumer</h4><p>Brands &amp; commerce.</p></div>
+        <div class="ind-cell"><div class="ic">⚡</div><h4>Energy &amp; Utilities</h4><p>Transition &amp; grid.</p></div>
+        <div class="ind-cell"><div class="ic">🏛️</div><h4>Public Sector</h4><p>Government &amp; policy.</p></div>
+        <div class="ind-cell"><div class="ic">💻</div><h4>Technology</h4><p>Software &amp; platforms.</p></div>
+        <div class="ind-cell"><div class="ic">🚚</div><h4>Logistics</h4><p>Transport &amp; distribution.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Book a consultation CTA -->
-  <section class="dsection" id="book">
-    <div class="wrap">
-      <div class="dcta rv">
+  <!-- About -->
+  <section class="sec about" id="about">
+    <div class="wrap about-grid">
+      <div class="about-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034819_19ee2c8c-cd05-45e7-8fb1-f6932a99a56a_min.webp" alt="The Northbridge consulting team in workshop" loading="lazy"></div>
+      <div class="about rv">
+        <p class="eyebrow">Why Northbridge</p>
+        <h2 style="font-size:clamp(1.9rem,3.6vw,2.8rem)">Senior people,<br><span class="brass">on the ground</span>.</h2>
+        <p style="color:var(--muted); margin-top:14px">We keep teams small and senior, and we stay until the change is real — through delivery, adoption and the messy middle most firms leave behind.</p>
+        <ul>
+          <li><span class="chk">✓</span><span><b>No junior bench</b> — the partner who sells the work does the work.</span></li>
+          <li><span class="chk">✓</span><span><b>Outcome-based</b> — a share of our fee is tied to the result.</span></li>
+          <li><span class="chk">✓</span><span><b>Capability transfer</b> — your team can run it once we leave.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Book a consultation -->
+  <section class="book" id="book">
+    <div class="wrap book-grid">
+      <div class="rv">
+        <p class="eyebrow" style="color:#e0b567">Get started</p>
         <h2>Book a consultation</h2>
-        <p>Tell us the challenge on your desk this quarter. We'll spend an hour understanding it — no pitch, no obligation — and outline how we'd approach it.</p>
-        <a class="dbtn dbtn-light" href="#contact">Schedule a Call</a>
+        <p>Tell us where you're stuck. We'll come back within one business day with two or three ways we could help — no obligation, no boilerplate.</p>
+        <div class="assure">
+          <div><b>1-day response</b>&nbsp;— a real partner, not a form reply.</div>
+          <div><b>NDA on request</b>&nbsp;— your details stay confidential.</div>
+          <div><b>No hard sell</b>&nbsp;— we'll tell you if we're not the fit.</div>
+        </div>
+      </div>
+      <div class="book-form">
+        <form id="bookForm" novalidate>
+          <div class="row">
+            <div class="fld"><label for="bName">Name</label><input id="bName" type="text" placeholder="Your name" required></div>
+            <div class="fld"><label for="bCompany">Company</label><input id="bCompany" type="text" placeholder="Organisation" required></div>
+          </div>
+          <div class="row">
+            <div class="fld"><label for="bEmail">Work email</label><input id="bEmail" type="email" placeholder="you@company.com" required></div>
+            <div class="fld"><label for="bTopic">Focus</label><select id="bTopic"><option>Strategy</option><option>Operations</option><option>Digital Transformation</option><option>Not sure yet</option></select></div>
+          </div>
+          <div class="fld"><label for="bMsg">What's the challenge? (optional)</label><textarea id="bMsg" placeholder="A sentence or two is plenty."></textarea></div>
+          <button class="btn btn-fill" type="submit">Request consultation</button>
+        </form>
+        <div class="book-ok" id="bookOk"><div class="tick">✓</div><h3>Request received</h3><p id="bookOkMsg"></p><button class="btn btn-line" id="bookAgain" type="button" style="margin-top:16px">Send another</button></div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter" id="contact">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">N</span> Northbridge</div>
-          <p>Management consultants helping leadership teams turn strategy into measurable, lasting change.</p>
-        </div>
-        <div>
-          <h4>Contact</h4>
-          <ul>
-            <li>18 Kingsway, London</li>
-            <li>Mon–Fri, 9am–6pm</li>
-            <li>hello@northbridge.example</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#why">Why Northbridge</a></li>
-            <li><a href="#industries">Industries</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><h4>Northbridge</h4><p>Management consulting for organisations that would rather ship the change than admire the deck.</p></div>
+        <div><h5>Firm</h5><ul><li><a href="#services">Services</a></li><li><a href="#industries">Industries</a></li><li><a href="#about">About</a></li><li><a href="#book">Careers</a></li></ul></div>
+        <div><h5>Contact</h5><ul><li>hello@northbridge.co</li><li>+44 (0)20 7946 0000</li><li>1 King William St, London</li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© Northbridge — a sample design. Advisors who stay for delivery.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <script src="corporate.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
