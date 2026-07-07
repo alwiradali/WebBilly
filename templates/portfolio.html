@@ -3,209 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio Nova — Creative Studio Sample by Billy Digitals</title>
-  <meta name="description" content="Sample creative studio portfolio design by Billy Digitals — branding, web design and motion, presented with confidence.">
+  <title>Studio Nova — Independent Creative Studio</title>
+  <meta name="description" content="Studio Nova — an independent creative studio building brands with nerve and clarity. Identity, web design and motion.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#eceae4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portfolio.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #eab308; --accent-2: #f97316; }</style>
 </head>
-<body class="dark">
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo creative studio site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
+<body>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">N</span> Studio Nova</div>
-      <div class="dnav-links">
-        <a href="#work">Work</a>
-        <a href="#about">Studio</a>
-        <a href="#services">Services</a>
-        <a href="#start">Contact</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#start">Start a Project</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Independent Creative Studio</span>
-        <h1>We build brands with <span class="grad-text">nerve and clarity</span>.</h1>
-        <p class="lead">Studio Nova is a small team of designers and makers turning ambitious ideas into identities, websites and motion that actually get noticed.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#start">Start a Project</a>
-          <a class="dbtn dbtn-ghost" href="#work">See the Work</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🎨</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="logo" href="#top">Studio&nbsp;Nova</a>
+      <nav class="nav-links" id="navLinks"><a href="#work">Work</a><a href="#studio">Studio</a><a href="#services">Services</a><a href="#contact">Contact</a></nav>
+      <a class="btn" href="#contact">Start a project</a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
     </div>
   </header>
 
-  <!-- Stats / highlights -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>60+</span></div><div class="lbl">Brands shipped</div></div>
-      <div><div class="num"><span>9</span></div><div class="lbl">Years in the studio</div></div>
-      <div><div class="num"><span>3</span></div><div class="lbl">Core disciplines</div></div>
-      <div><div class="num"><span>100%</span></div><div class="lbl">In-house craft</div></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rv">Independent Creative Studio — Est. 2015</p>
+        <h1 class="rv">We build<br>brands with<br><span class="verm">nerve</span> <span class="out">&amp;</span> clarity.</h1>
+        <p class="lede rv">A small, senior team turning ambitious ideas into identities, websites and motion that actually get noticed.</p>
+        <div class="hero-foot rv"><a class="btn" href="#work">See the work</a><span class="yr">60+ brands shipped · 9 yrs</span></div>
+      </div>
+      <div class="dhero-art rv"><span class="art-emoji" aria-hidden="true">🎨</span></div>
     </div>
   </section>
 
-  <!-- Selected Work / gallery -->
-  <section class="dsection" id="work">
+  <div class="strip" aria-hidden="true"><div class="t">
+    <span>Branding <i>✦</i></span><span>Web Design <i>✦</i></span><span>Motion <i>✦</i></span><span>Art Direction <i>✦</i></span><span>Packaging <i>✦</i></span>
+    <span>Branding <i>✦</i></span><span>Web Design <i>✦</i></span><span>Motion <i>✦</i></span><span>Art Direction <i>✦</i></span><span>Packaging <i>✦</i></span>
+  </div></div>
+
+  <!-- Work -->
+  <section class="sec" id="work">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Selected Work</span>
-        <h2>A few things we're <span class="grad-text">proud to sign</span></h2>
-        <p>A snapshot of recent projects across identity, digital and motion. Every one shipped end to end from this studio.</p>
+      <div class="work-head">
+        <h2 class="rv">Selected Work</h2>
+        <div class="filters rv" id="filters" role="group" aria-label="Filter work">
+          <button class="on" data-f="all">All</button><button data-f="branding">Branding</button><button data-f="web">Web</button><button data-f="motion">Motion</button>
+        </div>
       </div>
-      <div class="dgrid g3">
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035008_2f6272d6-5623-4795-bc98-c584bfe01e48_min.webp" alt="Fernwild skincare branding" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Fernwild</h3>
-            <p>Brand identity · Skincare</p>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035009_66bc911d-e195-4343-b379-0ef0c0bf79dc_min.webp" alt="Orbit Labs SaaS web design" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Orbit Labs</h3>
-            <p>Web design · SaaS platform</p>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035010_56ba56eb-bd3a-4517-ae70-af697c4e79a7_min.webp" alt="Reel North title sequence" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Reel North</h3>
-            <p>Motion · Title sequence</p>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035011_04c90cd5-6b98-4512-8867-afa5aef8aeb6_min.webp" alt="Daybreak Coffee packaging" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Daybreak Coffee</h3>
-            <p>Packaging · Retail brand</p>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035012_4d2ad9e1-5955-4e70-b88a-cd55fa7c42fc_min.webp" alt="Meridian Museum wayfinding" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Meridian Museum</h3>
-            <p>Art direction · Wayfinding</p>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035018_ec377e6f-74ea-4aeb-bef4-c3ed73069436_min.webp" alt="Lowtide FM podcast identity" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Lowtide FM</h3>
-            <p>Identity &amp; motion · Podcast</p>
-          </div>
-        </div>
+      <div class="work-grid" id="grid">
+        <article class="proj big rv" data-cat="branding" data-title="Fernwild" data-sub="Brand identity · Skincare" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035008_2f6272d6-5623-4795-bc98-c584bfe01e48_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035008_2f6272d6-5623-4795-bc98-c584bfe01e48_min.webp" alt="Fernwild" loading="lazy"></div>
+          <div class="proj-meta"><h3>Fernwild</h3><div><div class="cat">Brand identity · Skincare</div><div class="no">01</div></div></div>
+        </article>
+        <article class="proj rv" data-cat="web" data-title="Orbit Labs" data-sub="Web design · SaaS platform" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035009_66bc911d-e195-4343-b379-0ef0c0bf79dc_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035009_66bc911d-e195-4343-b379-0ef0c0bf79dc_min.webp" alt="Orbit Labs" loading="lazy"></div>
+          <div class="proj-meta"><h3>Orbit Labs</h3><div><div class="cat">Web · SaaS</div><div class="no">02</div></div></div>
+        </article>
+        <article class="proj rv" data-cat="motion" data-title="Reel North" data-sub="Motion · Title sequence" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035010_56ba56eb-bd3a-4517-ae70-af697c4e79a7_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035010_56ba56eb-bd3a-4517-ae70-af697c4e79a7_min.webp" alt="Reel North" loading="lazy"></div>
+          <div class="proj-meta"><h3>Reel North</h3><div><div class="cat">Motion · Titles</div><div class="no">03</div></div></div>
+        </article>
+        <article class="proj rv" data-cat="branding" data-title="Daybreak Coffee" data-sub="Packaging · Retail brand" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035011_04c90cd5-6b98-4512-8867-afa5aef8aeb6_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035011_04c90cd5-6b98-4512-8867-afa5aef8aeb6_min.webp" alt="Daybreak Coffee" loading="lazy"></div>
+          <div class="proj-meta"><h3>Daybreak Coffee</h3><div><div class="cat">Packaging · Retail</div><div class="no">04</div></div></div>
+        </article>
+        <article class="proj rv" data-cat="branding" data-title="Meridian Museum" data-sub="Art direction · Wayfinding" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035012_4d2ad9e1-5955-4e70-b88a-cd55fa7c42fc_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035012_4d2ad9e1-5955-4e70-b88a-cd55fa7c42fc_min.webp" alt="Meridian Museum" loading="lazy"></div>
+          <div class="proj-meta"><h3>Meridian Museum</h3><div><div class="cat">Art direction</div><div class="no">05</div></div></div>
+        </article>
+        <article class="proj big rv" data-cat="motion" data-title="Lowtide FM" data-sub="Identity &amp; motion · Podcast" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035018_ec377e6f-74ea-4aeb-bef4-c3ed73069436_min.webp">
+          <div class="proj-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035018_ec377e6f-74ea-4aeb-bef4-c3ed73069436_min.webp" alt="Lowtide FM" loading="lazy"></div>
+          <div class="proj-meta"><h3>Lowtide FM</h3><div><div class="cat">Identity &amp; motion · Podcast</div><div class="no">06</div></div></div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- About / split -->
-  <section class="dsection alt" id="about">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035500_44b63af5-d1df-4b0a-b0a4-52b9ef36cd7e_min.webp" alt="Creative design studio team at work" loading="lazy"></div>
-      <div class="rv">
-        <span class="eyebrow">The Studio</span>
-        <h2>Sharp thinking, <span class="grad-text">then sharp design</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">We're a lean, senior team that treats strategy and craft as one job. No hand-offs, no filler — just the people who make the work, in the room with you from first sketch to final file.</p>
-        <ul>
-          <li><span class="chk">✓</span><span><b>Brand strategy &amp; naming</b> that gives the design something real to stand on.</span></li>
-          <li><span class="chk">✓</span><span><b>Visual identity systems</b> — logos, type, colour and the rules that hold them together.</span></li>
-          <li><span class="chk">✓</span><span><b>Websites &amp; digital products</b> designed and built to feel effortless.</span></li>
-          <li><span class="chk">✓</span><span><b>Motion &amp; art direction</b> to bring the whole thing to life.</span></li>
-        </ul>
+  <!-- Studio -->
+  <section class="studio" id="studio">
+    <div class="studio-grid">
+      <div class="studio-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035500_44b63af5-d1df-4b0a-b0a4-52b9ef36cd7e_min.webp" alt="The Studio Nova team at work" loading="lazy"></div>
+      <div class="studio-text rv">
+        <p class="eyebrow">The Studio</p>
+        <h2>Sharp thinking,<br>then <span class="verm">sharp design</span>.</h2>
+        <p>We're a lean, senior team that treats strategy and craft as one job. No hand-offs, no filler — just the people who make the work, in the room with you from first sketch to final file.</p>
+        <div class="studio-stats"><div><div class="n">60+</div><div class="l">Brands shipped</div></div><div><div class="n">9</div><div class="l">Years</div></div><div><div class="n">100%</div><div class="l">In-house craft</div></div></div>
       </div>
     </div>
   </section>
 
   <!-- Services -->
-  <section class="dsection" id="services">
+  <section class="sec" id="services">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">What We Do</span>
-        <h2>Three disciplines, <span class="grad-text">one point of view</span></h2>
-        <p>We keep the offering tight so we can go deep. Pick one or run the whole programme with us.</p>
-      </div>
-      <div class="dgrid g3">
-        <div class="dcard rv">
-          <div class="ci">✳️</div>
-          <h3>Branding</h3>
-          <p>Strategy, naming and full identity systems — the logo, palette, type and voice that make a brand unmistakably itself.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🖥️</div>
-          <h3>Web Design</h3>
-          <p>Marketing sites and product interfaces designed and built to load fast, read clearly and convert without shouting.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🎞️</div>
-          <h3>Motion</h3>
-          <p>Animated logos, title sequences and social cuts that give your identity rhythm, energy and a reason to hit play.</p>
-        </div>
+      <div class="work-head"><h2 class="rv">What We Do</h2></div>
+      <div class="svc">
+        <div class="svc-row rv"><div class="no">01</div><h3>Branding</h3><div><p>Strategy, naming, identity systems — logos, type, colour and the rules that hold them together.</p><div class="tags"><span>Strategy</span><span>Naming</span><span>Identity</span><span>Guidelines</span></div></div></div>
+        <div class="svc-row rv"><div class="no">02</div><h3>Web Design</h3><div><p>Sites and digital products designed and built to feel effortless — fast, considered, conversion-minded.</p><div class="tags"><span>UX</span><span>UI</span><span>Build</span><span>CMS</span></div></div></div>
+        <div class="svc-row rv"><div class="no">03</div><h3>Motion</h3><div><p>Art direction and motion to bring the whole thing to life — titles, launch films, social.</p><div class="tags"><span>Art direction</span><span>Animation</span><span>Film</span></div></div></div>
       </div>
     </div>
   </section>
 
-  <!-- Start a project CTA -->
-  <section class="dsection" id="start">
+  <!-- CTA -->
+  <section class="cta" id="contact">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Got something worth building?</h2>
-        <p>Tell us where you're headed and what's in the way. We'll come back with a plan, a timeline and a straight answer on whether we're the right studio for it.</p>
-        <a class="dbtn dbtn-light" href="#start">Start a Project</a>
-      </div>
+      <p class="eyebrow rv">Let's make something</p>
+      <h2 class="rv">Got a brand<br>worth building?</h2>
+      <a class="btn rv" href="mailto:hello@studionova.co">Start a project →</a>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">N</span> Studio Nova</div>
-          <p>An independent creative studio building brands, websites and motion with nerve and clarity.</p>
-        </div>
-        <div>
-          <h4>Studio</h4>
-          <ul>
-            <li>14 Kiln Yard, East Quarter</li>
-            <li>Mon–Fri, 9am–6pm</li>
-            <li>hello@studionova.demo</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#work">Selected Work</a></li>
-            <li><a href="#about">The Studio</a></li>
-            <li><a href="#services">Services</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><div class="logo" style="font-size:1.4rem">Studio Nova</div><p style="color:var(--muted); max-width:28ch; margin-top:8px">Independent creative studio. Identity, web &amp; motion.</p></div>
+        <div><h5>Studio</h5><ul><li><a href="#work">Work</a></li><li><a href="#studio">About</a></li><li><a href="#services">Services</a></li></ul></div>
+        <div><h5>Connect</h5><ul><li><a href="#">Instagram</a></li><li><a href="#">Behance</a></li><li><a href="mailto:hello@studionova.co">Email</a></li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base"><span>© Studio Nova — a sample design.</span><span>Nerve &amp; clarity.</span></div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <!-- Lightbox -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Project viewer">
+    <div class="lb-bar"><div class="ti" id="lbTitle">—<small id="lbSub"></small></div><button class="lb-close" id="lbClose" aria-label="Close">✕</button></div>
+    <div class="lb-stage"><button class="lb-nav" id="lbPrev" aria-label="Previous">‹</button><img id="lbImg" src="" alt=""><button class="lb-nav" id="lbNext" aria-label="Next">›</button></div>
+    <div class="lb-count" id="lbCount"></div>
+  </div>
+
+  <script src="portfolio.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
