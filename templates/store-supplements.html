@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="demo.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   <style>:root { --accent: #22c55e; --accent-2: #a3e635; }
     body.dark { --bg:#0a0f0c; --surface:#0f1712; --surface-2:#132018; }
   </style>
@@ -92,7 +93,7 @@
       </div>
       <div class="dgrid g4">
         <article class="pcard rv">
-          <div class="pcard-img fill-a"><span class="pemoji">🥤</span><span class="pcard-tag">#1 Seller</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-a"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp" alt="Whey protein tub" loading="lazy"><span class="pcard-tag">#1 Seller</span><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Whey Isolate</h3>
             <p class="pcard-sub">27g protein · low sugar</p>
@@ -102,7 +103,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-b"><span class="pemoji">⚡</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-b"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp" alt="Pre-workout tub" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Pre-Workout V3</h3>
             <p class="pcard-sub">Clean energy, no crash</p>
@@ -112,7 +113,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-c"><span class="pemoji">💊</span><span class="pcard-tag sale">Save 15%</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-c"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_9371fda4-b2f0-4661-acc2-baaccc11b421_min.webp" alt="Creatine tub" loading="lazy"><span class="pcard-tag sale">Save 15%</span><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Creatine Mono</h3>
             <p class="pcard-sub">Pure micronised · 5g</p>
@@ -121,7 +122,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-d"><span class="pemoji">🌿</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-d"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_ac28ce48-46fb-4cbe-b16c-4a3c42ee6235_min.webp" alt="Daily greens powder" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Daily Greens</h3>
             <p class="pcard-sub">32 superfoods · 1 scoop</p>
@@ -135,7 +136,7 @@
 
   <section class="dsection alt" id="bundles">
     <div class="wrap dsplit">
-      <div class="dsplit-art rv">📦</div>
+      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034959_1bcb1e5c-d1f9-4b2b-9958-50dd88f4b587_min.webp" alt="Athlete with a protein shaker" loading="lazy"></div>
       <div class="rv">
         <span class="eyebrow">Build a Bundle</span>
         <h2>Stack your goals, <span class="grad-text">save on the lot</span></h2>
@@ -209,5 +210,6 @@
 
   <script src="demo.js"></script>
   <script src="store.js"></script>
+  <script src="fx3d.js" defer></script>
 </body>
 </html>

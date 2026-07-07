@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="demo.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   <style>:root { --accent: #c9a24b; --accent-2: #e7cd8a; }
     body.dark { --bg:#0b0b0d; --surface:#131316; --surface-2:#1b1b20; }
     .fash-hero { background: linear-gradient(160deg,#131316,#0b0b0d); }
@@ -94,7 +95,7 @@
       </div>
       <div class="dgrid g4">
         <article class="pcard rv">
-          <div class="pcard-img fill-a"><span class="pemoji">🧥</span><span class="pcard-tag">New</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-a"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034929_ffcd6c86-363c-4bb6-9750-8d568ac4b087_min.webp" alt="Camel wool overcoat" loading="lazy"><span class="pcard-tag">New</span><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>The Camel Overcoat</h3>
             <p class="pcard-sub">Wool-cashmere blend</p>
@@ -103,7 +104,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-b"><span class="pemoji">👗</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-b"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034937_09161bca-9db7-4e2a-9fd9-da4a8c4ebe0f_min.webp" alt="Silk slip dress" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Bias Slip Dress</h3>
             <p class="pcard-sub">Sandwashed silk</p>
@@ -112,7 +113,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-c"><span class="pemoji">👜</span><span class="pcard-tag sale">Sale</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-c"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034938_4f507af8-b909-4c18-a4dc-3049f6b37b6b_min.webp" alt="Structured leather tote" loading="lazy"><span class="pcard-tag sale">Sale</span><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Structured Tote</h3>
             <p class="pcard-sub">Full-grain leather</p>
@@ -121,7 +122,7 @@
           </div>
         </article>
         <article class="pcard rv">
-          <div class="pcard-img fill-d"><span class="pemoji">👞</span><button class="pcard-fav" aria-label="Save">♡</button></div>
+          <div class="pcard-img fill-d"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_dcbac733-e997-4fec-b27e-dc8a301ace96_min.webp" alt="Leather loafers" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
           <div class="pcard-body">
             <h3>Leather Loafers</h3>
             <p class="pcard-sub">Hand-finished sole</p>
@@ -135,7 +136,7 @@
 
   <section class="dsection alt" id="story">
     <div class="wrap dsplit">
-      <div class="dsplit-art rv">🪡</div>
+      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034939_6a0d338a-b549-4bfe-a73f-2dca7bae0717_min.webp" alt="Tailor sewing in an atelier" loading="lazy"></div>
       <div class="rv">
         <span class="eyebrow">The House</span>
         <h2>Made to be <span class="grad-text">kept, not chased</span></h2>
@@ -209,5 +210,6 @@
 
   <script src="demo.js"></script>
   <script src="store.js"></script>
+  <script src="fx3d.js" defer></script>
 </body>
 </html>
