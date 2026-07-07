@@ -240,11 +240,22 @@ body.dark .tile { background: var(--surface); }
 }
 
 /* ============================================================
-   fx — per-template signature hero animations (fx3d.js)
+   fx — real WebGL hero scenes (fx3d.js) + graceful fallbacks
    ============================================================ */
+/* Live 3D canvas fills the hero-art panel; brand gradient shows behind it. */
+.dhero-art .gl-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 1; border-radius: inherit;
+}
+.dhero-art .art-emoji { position: relative; z-index: 2; transition: opacity .6s ease; }
+/* Once the scene is live, retire the emoji and the flat gloss overlay. */
+.dhero-art.gl-ready::after { opacity: 0; }
+/* No-WebGL fallback: keep the emoji, give it a calm breathing float. */
+.dhero-art.gl-fallback .art-emoji { animation: fxBob 5.5s ease-in-out infinite; }
+
 .dhero.fx { perspective: 900px; }
 .fx-stage { transform-style: preserve-3d; position: relative; }
-.fx-stage .art-emoji { position: relative; z-index: 2; transition: transform 0.15s ease-out; will-change: transform; }
+.fx-stage .art-emoji { z-index: 2; will-change: transform; }
 
 /* shared */
 .fx-bob { animation: fxBob 5.5s ease-in-out infinite; display: inline-block; }
@@ -365,7 +376,7 @@ body.dark .tile { background: var(--surface); }
 @media (prefers-reduced-motion: reduce) {
   .fx-bob, .fx-pulse, .fx-flip, .fx-slam, .fx-spin-slow, .fx-orbit, .fx-orbit-emoji,
   .fx-steam, .fx-bar, .fx-ecg path, .fx-bubble, .fx-floaty, .fx-blob, .fx-sat,
-  .fx-plane, .fx-cloud, .fx-ember { animation: none !important; }
+  .fx-plane, .fx-cloud, .fx-ember, .dhero-art.gl-fallback .art-emoji { animation: none !important; }
 }
 
 /* ============================================================
