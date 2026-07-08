@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stillwater — Wellness &amp; Yoga Studio</title>
+  <meta name="description" content="Stillwater — a calm space for breath, movement and rest. Try the guided breathing exercise, reserve a class, and book a treatment.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f6f4ee">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wellness.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">✿</span> Stillwater</a>
+      <nav class="nav-links" id="navLinks"><a href="#breathe">Breathe</a><a href="#classes">Classes</a><a href="#treatments">Treatments</a><a href="#about">About</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#classes">Reserve a class</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rv">Wellness · Yoga · Rest</p>
+        <h1 class="rv">Come back to <span class="em">stillness</span>.</h1>
+        <p class="lede rv">A calm studio for breath, movement and proper rest. Unhurried classes, restorative treatments and space to simply be — a few streets from the noise, a world away from it.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#breathe">Try a breath</a><a class="btn btn-line" href="#classes">See the classes</a></div>
+        <div class="hero-note rv"><span><b>Daily</b>classes &amp; drop-ins</span><span><b>7</b>treatment rooms</span><span><b>Calm</b>guaranteed</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true"><span class="art-emoji">🧘</span><div class="art-frame"></div><div class="art-chip c1">Breathe with us</div><div class="art-chip c2">Find your calm</div></div>
+    </div>
+  </section>
+
+  <!-- Breathe -->
+  <section class="sec" id="breathe">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">Take a moment</p><h2>One minute to <span class="em">breathe</span></h2><p>Follow the orb. Let it grow as you breathe in, and settle as you breathe out.</p></div>
+      <div class="breathe rv">
+        <div class="pattern-pick" id="patternPick" role="group" aria-label="Breathing pattern" style="margin-bottom:8px">
+          <button class="on" data-p="calm">Calm 4·4·6</button>
+          <button data-p="box">Box 4·4·4·4</button>
+          <button data-p="sleep">Sleep 4·7·8</button>
+        </div>
+        <div class="breathe-stage">
+          <div class="breathe-ring r3"></div><div class="breathe-ring r2"></div><div class="breathe-ring"></div>
+          <div class="breathe-orb" id="orb"><span class="cue" id="cue">Begin</span></div>
+        </div>
+        <div class="breathe-meta" id="bMeta">Press start for a guided minute.</div>
+        <div class="breathe-actions">
+          <button class="btn btn-fill" id="bStart">Start</button>
+          <button class="btn btn-line" id="bStop" style="display:none">Finish</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Classes -->
+  <section class="sec" id="classes" style="background:var(--sand)">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">This week</p><h2>Reserve <span class="em">your mat</span></h2><p>Small classes, kept intentionally quiet. Pick a day and reserve a spot.</p></div>
+      <div class="cl-tabs rv" id="dayTabs"></div>
+      <div class="cl-list" id="clList"></div>
+    </div>
+  </section>
+
+  <!-- Treatments -->
+  <section class="sec" id="treatments">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">Treatments</p><h2>Restore, <span class="em">unhurried</span></h2></div>
+      <div class="treat">
+        <div class="tr rv"><div class="ti">💆</div><h3>Deep-Tissue Massage</h3><div class="dur">60 or 90 min</div><p>Slow, firm work to release the places you carry your week.</p><div class="pr">from £68</div></div>
+        <div class="tr rv"><div class="ti">🌿</div><h3>Aromatherapy Facial</h3><div class="dur">75 min</div><p>Botanical oils and lymphatic massage for skin that's had enough.</p><div class="pr">from £74</div></div>
+        <div class="tr rv"><div class="ti">🔥</div><h3>Sauna &amp; Cold Plunge</h3><div class="dur">90 min · contrast</div><p>The old reset — heat, cold, rest, repeat, and a clearer head after.</p><div class="pr">from £42</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="sec" id="about" style="background:var(--sand)">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260708_005808_75a36fdd-ddf6-43a0-a4bf-2a4bd23d4785_min.webp" alt="A calm Stillwater treatment space" loading="lazy"></div>
+      <div class="rv">
+        <p class="eyebrow">Our space</p>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.7rem); margin:10px 0">Built to slow <span class="em">your breathing</span></h2>
+        <p style="color:var(--muted)">Warm light, natural materials and no clocks on the wall. Every corner of Stillwater is designed to lower your shoulders the moment you walk in — and keep them there.</p>
+        <ul>
+          <li><span class="chk">✓</span><span><b>Small classes</b> — never more than fourteen mats.</span></li>
+          <li><span class="chk">✓</span><span><b>Qualified teachers</b> across yoga, breathwork and Pilates.</span></li>
+          <li><span class="chk">✓</span><span><b>Tea room &amp; rest space</b> to linger after class.</span></li>
+        </ul>
+        <a class="btn btn-fill" href="#classes" style="margin-top:18px">Reserve a class</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">✿</span> Stillwater</a><p>A calm studio for breath, movement and rest — a few streets from the noise, a world away from it.</p></div>
+        <div><h5>Studio</h5><ul><li><a href="#classes">Classes</a></li><li><a href="#treatments">Treatments</a></li><li><a href="#breathe">Breathe</a></li><li>Memberships</li></ul></div>
+        <div><h5>Visit</h5><ul><li>9 Willow Walk</li><li>Open 7am–9pm daily</li><li>hello@stillwater.studio</li></ul></div>
+      </div>
+      <div class="foot-base">© Stillwater — a sample design by Billy Digitals. Fictional studio for demo purposes.</div>
+    </div>
+  </footer>
+
+  <script src="wellness.js"></script>
+  <script src="fx3d.js" defer></script>
+</body>
+</html>
