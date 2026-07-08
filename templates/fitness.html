@@ -3,186 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iron Republic — Fitness &amp; Gym Sample by Billy Digitals</title>
-  <meta name="description" content="Sample strength &amp; conditioning gym website design by Billy Digitals — programs, coaching and 24/7 training done right.">
+  <title>Iron Republic — Strength &amp; Conditioning</title>
+  <meta name="description" content="Iron Republic — a strength &amp; conditioning gym for people who came to actually get stronger. Coached classes, 24/7 access, real iron.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0a0b08">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fitness.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #a3e635; --accent-2: #f97316; }</style>
 </head>
-<body class="dark">
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo fitness &amp; gym site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
+<body>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">IR</span> Iron Republic</div>
-      <div class="dnav-links">
-        <a href="#programs">Programs</a>
-        <a href="#stats">The Gym</a>
-        <a href="#perks">Membership</a>
-        <a href="#start">Visit</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#start">Join Now</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Strength &amp; Conditioning</span>
-        <h1>Build a body <span class="grad-text">that answers to no one.</span></h1>
-        <p class="lead">No mirrors-and-mood-lighting nonsense. Iron, barbells, coaches who count your reps, and a room that pushes harder every single day.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#start">Join Now</a>
-          <a class="dbtn dbtn-ghost" href="#programs">See the Programs</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🏋️</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">IR</span> Iron&nbsp;Republic</a>
+      <nav class="nav-links" id="navLinks"><a href="#programs">Programs</a><a href="#timetable">Timetable</a><a href="#calc">1RM Calc</a><a href="#membership">Membership</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#membership">Join now</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Strength &amp; Conditioning</span>
+        <h1 class="rv">Build a body that <span class="hl">answers to no one.</span></h1>
+        <p class="lede rv">No mirrors-and-mood-lighting nonsense. Iron, barbells, coaches who count your reps, and a room that pushes harder every single day.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#membership">Join now</a><a class="btn btn-line" href="#timetable">See the timetable</a></div>
+        <div class="hero-stat rv"><div><b>12k</b><span>Sq ft floor</span></div><div><b>60+</b><span>Classes / week</span></div><div><b>24/7</b><span>Access</span></div></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🏋️</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1">First session free</div>
+        <div class="art-chip c2">No lock-in</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marq" aria-hidden="true"><div class="marq-in">
+    <span>Strength <i>/</i></span><span>HIIT <i>/</i></span><span>Powerlifting <i>/</i></span><span>Metcon <i>/</i></span><span>Mobility <i>/</i></span><span>Grit Class <i>/</i></span>
+    <span>Strength <i>/</i></span><span>HIIT <i>/</i></span><span>Powerlifting <i>/</i></span><span>Metcon <i>/</i></span><span>Mobility <i>/</i></span><span>Grit Class <i>/</i></span>
+  </div></div>
+
   <!-- Programs -->
-  <section class="dsection" id="programs">
+  <section class="sec" id="programs">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Train With Purpose</span>
-        <h2>Pick your fight, <span class="grad-text">we'll coach it</span></h2>
-        <p>Every program is coach-led, progression-tracked and built to make you measurably stronger. No filler sets, no wasted reps.</p>
+      <div class="sec-head rv"><span class="eyebrow">Train with purpose</span><h2>Pick your fight, <span class="hl">we'll coach it</span></h2><p>Every program is coach-led, progression-tracked and built to make you measurably stronger.</p></div>
+      <div class="prog-grid">
+        <div class="prog rv"><div class="ic">🏋️</div><h3>Strength</h3><p>Squat, press, deadlift, repeat. Barbell fundamentals loaded week over week so the numbers keep climbing.</p></div>
+        <div class="prog rv"><div class="ic">🔥</div><h3>HIIT</h3><p>45 minutes of controlled chaos. Conditioning circuits that torch the tank and leave nothing on the floor.</p></div>
+        <div class="prog rv"><div class="ic">🥇</div><h3>Powerlifting</h3><p>Meet-ready coaching for the big three. Technique, peaking blocks and platform prep for total-max hunters.</p></div>
+        <div class="prog rv"><div class="ic">🤸</div><h3>Mobility</h3><p>The work that keeps you lifting for decades. Hips, shoulders and spine — move well, then move heavy.</p></div>
+        <div class="prog rv"><div class="ic">⏱️</div><h3>Metcon</h3><p>Mixed-modal engine work. Rowers, sleds and kettlebells stacked into finishers that build a bulletproof base.</p></div>
+        <div class="prog rv"><div class="ic">🥊</div><h3>Grit Class</h3><p>Our signature team session. Partner lifts, shared suffering and a whiteboard nobody wants to lose on.</p></div>
       </div>
-      <div class="dgrid g3">
-        <div class="dcard rv">
-          <div class="ci">🏋️</div>
-          <h3>Strength</h3>
-          <p>Squat, press, deadlift, repeat. Barbell fundamentals loaded week over week so the numbers keep climbing.</p>
+    </div>
+  </section>
+
+  <!-- Timetable -->
+  <section class="sec" id="timetable" style="background:var(--panel); border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">This week</span><h2>Class <span class="hl">timetable</span></h2><p>Pick a day, filter by program, and grab your spot — the floor fills fast.</p></div>
+      <div class="tt rv">
+        <div class="tt-top">
+          <div class="daytabs" id="dayTabs"></div>
+          <div class="progfilter" id="progFilter">
+            <button class="pf on" data-p="all">All</button>
+            <button class="pf" data-p="Strength">Strength</button>
+            <button class="pf" data-p="HIIT">HIIT</button>
+            <button class="pf" data-p="Powerlifting">Powerlifting</button>
+            <button class="pf" data-p="Metcon">Metcon</button>
+          </div>
         </div>
-        <div class="dcard rv">
-          <div class="ci">🔥</div>
-          <h3>HIIT</h3>
-          <p>45 minutes of controlled chaos. Conditioning circuits that torch the tank and leave nothing on the floor.</p>
+        <div class="tt-list" id="ttList"></div>
+        <p class="tt-empty" id="ttEmpty">No classes match that filter on this day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1RM calculator -->
+  <section class="sec" id="calc">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">Know your numbers</span><h2>One-rep-max <span class="ho">calculator</span></h2><p>Enter a weight and the reps you hit — we'll estimate your 1RM and your working percentages.</p></div>
+      <div class="calc rv">
+        <div>
+          <h3>What did you <span class="hl">lift?</span></h3>
+          <p class="lead">Uses the Epley formula, the same one your coach scribbles on the whiteboard.</p>
+          <div class="calc-fields">
+            <div><label for="cWeight">Weight</label><input id="cWeight" type="number" inputmode="decimal" value="100" min="1"></div>
+            <div><label for="cReps">Reps</label><input id="cReps" type="number" inputmode="numeric" value="5" min="1" max="12"></div>
+          </div>
+          <div class="unit-toggle" id="unitToggle"><button class="on" data-u="kg">Kg</button><button data-u="lb">Lb</button></div>
         </div>
-        <div class="dcard rv">
-          <div class="ci">🥇</div>
-          <h3>Powerlifting</h3>
-          <p>Meet-ready coaching for the big three. Technique, peaking blocks and platform prep for total-max hunters.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🤸</div>
-          <h3>Mobility</h3>
-          <p>The work that keeps you lifting for decades. Hips, shoulders and spine — move well, then move heavy.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">⏱️</div>
-          <h3>Metcon</h3>
-          <p>Mixed-modal engine work. Rowers, sleds and kettlebells stacked into finishers that build a bulletproof base.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🥊</div>
-          <h3>Grit Class</h3>
-          <p>Our signature team session. Partner lifts, shared suffering and a whiteboard nobody wants to lose on.</p>
+        <div class="calc-out">
+          <div class="k">Estimated 1-rep max</div>
+          <div class="big"><span id="oneRm">117</span><small id="unitOut">kg</small></div>
+          <div class="pct-table" id="pctTable"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Stats / the gym -->
-  <section class="dsection alt" id="stats">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>12,000</span></div><div class="lbl">Sq ft of training floor</div></div>
-      <div><div class="num"><span>60+</span></div><div class="lbl">Coached classes / week</div></div>
-      <div><div class="num"><span>9</span></div><div class="lbl">Certified strength coaches</div></div>
-      <div><div class="num"><span>24/7</span></div><div class="lbl">Member floor access</div></div>
-    </div>
-  </section>
-
-  <!-- Membership perks / split -->
-  <section class="dsection" id="perks">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034840_67554d1a-91ff-4a4c-89e6-4a976a589649_min.webp" alt="Athlete training with dumbbells" loading="lazy"></div>
+  <!-- Membership perks split -->
+  <section class="sec" style="background:var(--panel); border-block:1px solid var(--line)">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034840_67554d1a-91ff-4a4c-89e6-4a976a589649_min.webp" alt="Athlete training with dumbbells" loading="lazy"></div>
       <div class="rv">
-        <span class="eyebrow">Membership Perks</span>
-        <h2>One card, <span class="grad-text">the whole republic</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">No lock-in contracts, no fine print. Every membership is all-access — pick your goal, we bring the barbells, the coaching and the accountability.</p>
+        <span class="eyebrow">Membership perks</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.8rem); margin:10px 0">One card, <span class="hl">the whole republic</span></h2>
+        <p style="color:var(--muted)">No lock-in contracts, no fine print. Every membership is all-access — pick your goal, we bring the barbells, the coaching and the accountability.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>24/7 fob access</b> — train at 5am or midnight, the platform's always yours.</span></li>
           <li><span class="chk">✓</span><span><b>Unlimited coached classes</b> across every program, booked from the app.</span></li>
-          <li><span class="chk">✓</span><span><b>Free onboarding assessment</b> with a coach who builds your first 4-week block.</span></li>
-          <li><span class="chk">✓</span><span><b>Competition platform &amp; specialty bars</b> — deadlift, squat and axle bars ready to go.</span></li>
+          <li><span class="chk">✓</span><span><b>Free onboarding assessment</b> — a coach builds your first 4-week block.</span></li>
           <li><span class="chk">✓</span><span><b>Recovery zone</b> with sauna, mobility rigs and cold plunge included.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- Gallery / the floor -->
-  <section class="dsection alt">
+  <!-- Membership pricing -->
+  <section class="sec" id="membership">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Inside the Republic</span>
-        <h2>Chalk, iron, <span class="grad-text">and zero excuses</span></h2>
+      <div class="sec-head center rv"><span class="eyebrow">Membership</span><h2>Choose your <span class="hl">weight class</span></h2></div>
+      <div class="mem-toggle rv">
+        <span class="lbl on" id="lblMonth">Monthly</span>
+        <div class="sw" id="billSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+        <span class="lbl" id="lblYear">Annual</span>
+        <span class="save">Save 2 months</span>
       </div>
-      <div class="dgrid g4">
-        <div class="tile rv"><div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034841_aace9bb8-bf4b-411f-9dee-c83c0d347032_min.webp" alt="Loaded barbell on the gym floor" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034842_9e809dd6-6ff5-4a1c-8ea4-b79b0124bdc4_min.webp" alt="Athlete doing a kettlebell swing" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034848_c6c3866d-5b6c-4815-bf12-01a15a696765_min.webp" alt="Gym medals and achievement" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034851_04a4c615-3ca8-430d-aa12-0e6ded143bf0_min.webp" alt="Intense HIIT battle ropes workout" loading="lazy"></div></div>
+      <div class="mem-grid">
+        <div class="plan rv">
+          <h3>Day Pass</h3>
+          <div class="price">£<span data-m="12" data-y="10">12</span></div>
+          <div class="per" id="per1">per visit</div>
+          <ul>
+            <li><b>Full floor access</b> for the day</li>
+            <li>One coached class included</li>
+            <li>Locker &amp; recovery zone</li>
+            <li class="x">✕ 24/7 access</li>
+          </ul>
+          <a class="btn btn-line" href="#top">Get a pass</a>
+        </div>
+        <div class="plan feat rv">
+          <span class="tag">Most popular</span>
+          <h3>All-Access</h3>
+          <div class="price">£<span data-m="49" data-y="41">49</span><small>/mo</small></div>
+          <div class="per" id="per2">billed monthly</div>
+          <ul>
+            <li><b>24/7 fob access</b></li>
+            <li><b>Unlimited</b> coached classes</li>
+            <li>Onboarding assessment</li>
+            <li>Recovery zone &amp; app</li>
+          </ul>
+          <a class="btn btn-fill" href="#top">Join All-Access</a>
+        </div>
+        <div class="plan rv">
+          <h3>Team Iron</h3>
+          <div class="price">£<span data-m="79" data-y="66">79</span><small>/mo</small></div>
+          <div class="per" id="per3">billed monthly</div>
+          <ul>
+            <li>Everything in All-Access</li>
+            <li><b>Weekly 1:1 coaching</b></li>
+            <li>Personalised programming</li>
+            <li>Nutrition check-ins</li>
+          </ul>
+          <a class="btn btn-line" href="#top">Go Team Iron</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Start CTA -->
-  <section class="dsection" id="start">
+  <!-- Gallery -->
+  <section class="sec" style="background:var(--panel); border-block:1px solid var(--line)">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Start your first session</h2>
-        <p>Your first session is on us — a coached intro, a movement screen and a plan to hit your first PR. Show up, we'll handle the rest.</p>
-        <a class="dbtn dbtn-light" href="../index.html#contact">Claim My First Session</a>
+      <div class="sec-head center rv"><span class="eyebrow">Inside the republic</span><h2>Chalk, iron, <span class="hl">zero excuses</span></h2></div>
+      <div class="gal rv">
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034841_aace9bb8-bf4b-411f-9dee-c83c0d347032_min.webp" alt="Loaded barbell on the gym floor" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034842_9e809dd6-6ff5-4a1c-8ea4-b79b0124bdc4_min.webp" alt="Athlete doing a kettlebell swing" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034848_c6c3866d-5b6c-4815-bf12-01a15a696765_min.webp" alt="Gym medals and achievement" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034851_04a4c615-3ca8-430d-aa12-0e6ded143bf0_min.webp" alt="Intense battle ropes workout" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter">
+  <!-- CTA -->
+  <section class="sec">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">IR</span> Iron Republic</div>
-          <p>A strength &amp; conditioning gym for people who came to actually get stronger. Iron, coaching and community.</p>
-        </div>
-        <div>
-          <h4>Visit</h4>
-          <ul>
-            <li>18 Forge Lane, Warehouse District</li>
-            <li>Coached hours: Mon–Sat, 6am–9pm</li>
-            <li>Member floor access: 24/7</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#programs">Programs</a></li>
-            <li><a href="#perks">Membership</a></li>
-            <li><a href="#start">First Session</a></li>
-          </ul>
-        </div>
+      <div class="cta-in rv">
+        <h2>Your first session is on us</h2>
+        <p>A coached intro, a movement screen and a plan to hit your first PR. Show up — we'll handle the rest.</p>
+        <a class="btn btn-light" href="#membership">Claim my first session</a>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">IR</span> Iron Republic</a><p>A strength &amp; conditioning gym for people who came to actually get stronger.</p></div>
+        <div><h5>Visit</h5><ul><li>18 Forge Lane, Warehouse District</li><li>Coached: Mon–Sat 6am–9pm</li><li>Member floor: 24/7</li></ul></div>
+        <div><h5>Explore</h5><ul><li><a href="#programs">Programs</a></li><li><a href="#timetable">Timetable</a></li><li><a href="#membership">Membership</a></li></ul></div>
       </div>
+      <div class="foot-base">© Iron Republic — a sample design. Build a body that answers to no one.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <script src="fitness.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
