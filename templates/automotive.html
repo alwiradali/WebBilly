@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Motors — Engineered for the drive</title>
+  <meta name="description" content="Apex Motors — performance cars built around the driver. Configure your Apex, see the price live, and book a test drive.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#080b0f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="automotive.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">A</span> Apex&nbsp;Motors</a>
+      <nav class="nav-links" id="navLinks"><a href="#models">Models</a><a href="#configure">Configure</a><a href="#testdrive">Test drive</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#configure">Build yours</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Performance · Engineered</span>
+        <h1 class="rv">Built around <span class="hl">the drive.</span></h1>
+        <p class="lede rv">Hand-assembled powertrains, obsessive aerodynamics and a cabin that disappears around you. Apex isn't a car you own — it's one you look forward to.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#configure">Build yours</a><a class="btn btn-line" href="#testdrive">Book a test drive</a></div>
+        <div class="hero-stat rv"><div><b>3.4s</b><span>0–60 mph</span></div><div><b>577</b><span>bhp</span></div><div><b>174</b><span>mph top</span></div></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🏎️</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1">Live wheel telemetry</div>
+        <div class="art-chip c2">Forged alloys</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marq" aria-hidden="true"><div class="marq-in">
+    <span>APEX GT <i>//</i></span><span>APEX S COUPE <i>//</i></span><span>APEX EV <i>//</i></span><span>ENGINEERED FOR THE DRIVE <i>//</i></span>
+    <span>APEX GT <i>//</i></span><span>APEX S COUPE <i>//</i></span><span>APEX EV <i>//</i></span><span>ENGINEERED FOR THE DRIVE <i>//</i></span>
+  </div></div>
+
+  <!-- Models -->
+  <section class="sec" id="models">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">The range</span><h2>Three ways to <span class="hl">move</span></h2><p>Every Apex shares the same obsession — different characters, one bloodline.</p></div>
+      <div class="models">
+        <div class="model rv"><div class="mt">Grand Tourer</div><h3>Apex GT</h3><div class="spec"><span><b>3.9s</b>0–60</span><span><b>503</b>bhp</span><span><b>Petrol</b>V6</span></div><div class="from">£48,900<small> / from</small></div></div>
+        <div class="model rv"><div class="mt">Sport Coupe</div><h3>Apex S</h3><div class="spec"><span><b>3.4s</b>0–60</span><span><b>577</b>bhp</span><span><b>Petrol</b>V8</span></div><div class="from">£62,500<small> / from</small></div></div>
+        <div class="model rv"><div class="mt">Electric</div><h3>Apex EV</h3><div class="spec"><span><b>3.1s</b>0–60</span><span><b>612</b>bhp</span><span><b>Electric</b>AWD</span></div><div class="from">£54,200<small> / from</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configurator -->
+  <section class="sec" id="configure">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">Build a bundle</span><h2>Configure your <span class="hl">Apex</span></h2><p>Choose a model, a finish and your options — the price updates as you build.</p></div>
+      <div class="cfg rv">
+        <div class="cfg-preview">
+          <img id="cfgImg" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260708_005758_c330b3fd-cb2b-437c-ad02-dbda47d54eaf_min.webp" alt="Apex configurator preview">
+          <div class="cfg-wash" id="cfgWash"></div>
+          <div class="cfg-vign"></div>
+          <div class="cfg-badge" id="cfgBadge">Sport Coupe</div>
+          <div class="cfg-name"><h3 id="cfgName">Apex S</h3><div class="cc" id="cfgColorName">Phantom Black</div></div>
+        </div>
+        <div class="cfg-panel">
+          <div class="cfg-group">
+            <div class="glab">Model</div>
+            <div class="cfg-models" id="cfgModels">
+              <button class="opt-b" data-m="0">GT</button>
+              <button class="opt-b on" data-m="1">S</button>
+              <button class="opt-b" data-m="2">EV</button>
+            </div>
+          </div>
+          <div class="cfg-group">
+            <div class="glab">Finish <span id="paintCost" style="color:var(--accent)"></span></div>
+            <div class="cfg-colors" id="cfgColors"></div>
+          </div>
+          <div class="cfg-group">
+            <div class="glab">Wheels</div>
+            <div class="cfg-rows" id="cfgWheels"></div>
+          </div>
+          <div class="cfg-group">
+            <div class="glab">Options</div>
+            <div class="cfg-rows" id="cfgOptions"></div>
+          </div>
+          <div class="cfg-total">
+            <div class="tt"><span class="glab" style="margin:0">Total</span><b id="cfgTotal">£62,500</b></div>
+            <div class="fin">Est. finance from <b id="cfgFinance">£742</b>/mo · 48 mo, 9% APR representative</div>
+            <button class="btn btn-fill" id="cfgReserve">Reserve this build</button>
+            <div class="cfg-done" id="cfgDone"><div class="tick">✓</div><h3>Build reserved</h3><p id="cfgDoneMsg"></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Test drive -->
+  <section class="sec td" id="testdrive">
+    <div class="wrap td-grid">
+      <div class="rv">
+        <span class="eyebrow">Feel it first</span>
+        <h2>Book a test drive</h2>
+        <p style="color:var(--muted)">Bring your licence, we'll bring the keys. Choose a model and a time — a product specialist will confirm within the hour during opening times.</p>
+        <p style="color:var(--muted); font-size:.9rem; margin-top:14px"><b style="color:var(--ink)">Apex Motors Flagship</b><br>1 Velocity Way · Open 7 days, 9am–7pm</p>
+      </div>
+      <div class="tdform">
+        <form id="tdForm" novalidate>
+          <div class="row">
+            <div class="fld"><label for="tName">Name</label><input id="tName" type="text" placeholder="Your name" required></div>
+            <div class="fld"><label for="tPhone">Phone</label><input id="tPhone" type="tel" placeholder="Best number" required></div>
+          </div>
+          <div class="row">
+            <div class="fld"><label for="tModel">Model</label><select id="tModel"><option>Apex GT</option><option selected>Apex S</option><option>Apex EV</option></select></div>
+            <div class="fld"><label for="tWhen">Preferred day</label><select id="tWhen"><option>This weekend</option><option>A weekday evening</option><option>A weekday daytime</option><option>As soon as possible</option></select></div>
+          </div>
+          <div class="fld"><label for="tEmail">Email</label><input id="tEmail" type="email" placeholder="you@email.com" required></div>
+          <button class="btn btn-fill" type="submit">Book test drive</button>
+        </form>
+        <div class="tdform-ok" id="tdOk"><div class="tick">✓</div><h3>Test drive requested</h3><p id="tdMsg"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">A</span> Apex Motors</a><p>Performance cars built around the driver. Hand-assembled, obsessively engineered, unmistakably Apex.</p></div>
+        <div><h5>Range</h5><ul><li><a href="#models">Apex GT</a></li><li><a href="#models">Apex S</a></li><li><a href="#models">Apex EV</a></li><li><a href="#configure">Configure</a></li></ul></div>
+        <div><h5>Owning</h5><ul><li><a href="#testdrive">Test drive</a></li><li>Finance</li><li>Servicing</li><li>Contact</li></ul></div>
+      </div>
+      <div class="foot-base">© Apex Motors — a sample design. Engineered for the drive (fictional brand).</div>
+    </div>
+  </footer>
+
+  <script src="automotive.js"></script>
+  <script src="fx3d.js" defer></script>
+</body>
+</html>
