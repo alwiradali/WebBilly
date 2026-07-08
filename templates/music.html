@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midnight Echo — Official Site</title>
+  <meta name="description" content="Midnight Echo — electronic-soul duo. Play the new record, see the waveform move, and grab tour tickets.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#070510">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="music.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">♫</span> Midnight&nbsp;Echo</a>
+      <nav class="nav-links" id="navLinks"><a href="#listen">Listen</a><a href="#release">New record</a><a href="#tour">Tour</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#tour">Get tickets</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Electronic · Soul · Live</span>
+        <h1 class="rv">Turn it <span class="grad-t">all the way up.</span></h1>
+        <p class="lede rv">Midnight Echo is a two-piece built for the dark of the dancefloor and the drive home after. New record <em>Afterglow</em> out now.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#listen">Play the record</a><a class="btn btn-line" href="#tour">Tour dates</a></div>
+        <div class="hero-note rv"><span><b>4.1M</b> monthly listeners</span><span><b>2</b> albums</span><span><b>32</b> shows this year</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true"><span class="art-emoji">🎧</span><div class="art-frame"></div><div class="art-chip c1">Now spinning</div><div class="art-chip c2">Afterglow</div></div>
+    </div>
+  </section>
+
+  <!-- Listen / player -->
+  <section class="sec" id="listen">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">Listen</span><h2>Press play on <span class="grad-t">Afterglow</span></h2><p>Tap a track — watch the waveform move as it plays. (Demo player; drag the bar to seek.)</p></div>
+      <div class="player-wrap">
+        <div class="player rv" id="player">
+          <div class="pl-art"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260708_005807_dc214a1a-9d08-4e0d-9a34-799e743dbed7_min.webp" alt="Afterglow cover"></div>
+          <div class="pl-now"><div class="t" id="npTitle">Afterglow</div><div class="a" id="npArtist">Midnight Echo</div></div>
+          <div class="wave" id="wave"></div>
+          <div class="seek" id="seek"><span id="seekFill"></span></div>
+          <div class="times"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+          <div class="controls">
+            <button class="ctrl" id="prev" aria-label="Previous">⏮</button>
+            <button class="ctrl play" id="playBtn" aria-label="Play">▶</button>
+            <button class="ctrl" id="next" aria-label="Next">⏭</button>
+          </div>
+        </div>
+        <div class="tracks" id="tracks"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Release -->
+  <section class="sec" id="release" style="background:var(--panel); border-block:1px solid var(--line)">
+    <div class="wrap rel">
+      <div class="rel-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260708_005807_dc214a1a-9d08-4e0d-9a34-799e743dbed7_min.webp" alt="Afterglow album art"><span class="tagd">New album</span></div>
+      <div class="rv">
+        <span class="eyebrow">The new record</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.8rem); margin:10px 0"><span class="grad-t">Afterglow</span></h2>
+        <p style="color:var(--muted)">Ten tracks recorded live to tape over three nights in a converted chapel. Analogue warmth, modular synths and the kind of low end you feel in your chest. Out now on all platforms.</p>
+        <div class="hero-cta" style="margin-top:20px"><a class="btn btn-fill" href="#listen">Play now</a><a class="btn btn-line" href="#tour">See it live</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tour -->
+  <section class="sec" id="tour">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">On tour</span><h2>Catch us <span class="grad-t">live</span></h2></div>
+      <div class="tour" id="tourList"></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">♫</span> Midnight Echo</a><p>Electronic-soul duo. Built for the dark of the dancefloor and the drive home after.</p></div>
+        <div><h5>Music</h5><ul><li><a href="#listen">Afterglow</a></li><li><a href="#release">New record</a></li><li>Spotify</li><li>Apple Music</li></ul></div>
+        <div><h5>Live</h5><ul><li><a href="#tour">Tour dates</a></li><li>Merch</li><li>Bookings</li></ul></div>
+      </div>
+      <div class="foot-base">© Midnight Echo — a sample design by Billy Digitals. Fictional artist for demo purposes.</div>
+    </div>
+  </footer>
+
+  <script src="music.js"></script>
+  <script src="fx3d.js" defer></script>
+</body>
+</html>
