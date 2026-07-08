@@ -3,215 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skyline Estates — Real Estate Sample by Billy Digitals</title>
-  <meta name="description" content="Sample property agency website design by Billy Digitals — listings, valuations and viewings presented beautifully.">
+  <title>Skyline Estates — Property, done properly</title>
+  <meta name="description" content="Skyline Estates — a premium property agency pairing sharp local knowledge with a service that never cuts corners. Browse listings, calculate repayments, book a viewing.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f6f5f0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="realestate.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #0f766e; --accent-2: #b45309; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo estate agency site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">S</span> Skyline Estates</div>
-      <div class="dnav-links">
-        <a href="#listings">Listings</a>
-        <a href="#about">Why Us</a>
-        <a href="#areas">Areas</a>
-        <a href="#visit">Contact</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#book">Book a Viewing</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Premium Property Agency</span>
-        <h1>Find the address that <span class="grad-text">feels like home</span>.</h1>
-        <p class="lead">From city penthouses to leafy family homes, Skyline Estates pairs sharp local knowledge with a service that never cuts corners.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#listings">Browse Listings</a>
-          <a class="dbtn dbtn-ghost" href="#book">Free Valuation</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🏙️</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">S</span> Skyline Estates</a>
+      <nav class="nav-links" id="navLinks"><a href="#listings">Listings</a><a href="#calc">Repayments</a><a href="#areas">Areas</a><a href="#why">Why us</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#calc">Free valuation</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
-  <!-- Stats / highlights -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>340+</span></div><div class="lbl">Homes listed</div></div>
-      <div><div class="num"><span>27</span></div><div class="lbl">Avg. days to sell</div></div>
-      <div><div class="num"><span>18</span></div><div class="lbl">Neighbourhoods covered</div></div>
-      <div><div class="num"><span>2009</span></div><div class="lbl">Serving the city since</div></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rv">Premium Property Agency</p>
+        <h1 class="rv">Find the address that <span class="serif-i">feels like home</span>.</h1>
+        <p class="lede rv">From city penthouses to leafy family homes, Skyline pairs sharp local knowledge with a service that never cuts corners — one agent, valuation to keys.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#listings">Browse listings</a><a class="btn btn-line" href="#calc">Estimate repayments</a></div>
+        <div class="hero-note rv"><span><b>340+</b>homes listed</span><span><b>27</b>avg. days to sell</span><span><b>2009</b>serving the city</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🏙️</span>
+        <div class="art-frame"></div>
+        <div class="art-tag">Live city view</div>
+      </div>
     </div>
   </section>
 
   <!-- Listings -->
-  <section class="dsection" id="listings">
+  <section class="sec" id="listings">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Featured Listings</span>
-        <h2>Handpicked homes, <span class="grad-text">ready to view</span></h2>
-        <p>A snapshot of what's on the market this week. New instructions land every day.</p>
+      <div class="sec-head rv"><p class="eyebrow">Featured Listings</p><h2>Handpicked homes, <span class="serif-i">ready to view</span></h2><p>A snapshot of what's on the market this week. Filter by type and budget — tap any home for details and to book a viewing.</p></div>
+
+      <div class="filterbar rv">
+        <div class="chips" id="chips" role="group" aria-label="Filter by type">
+          <button class="chip on" data-f="all">All homes</button>
+          <button class="chip" data-f="house">Houses</button>
+          <button class="chip" data-f="apartment">Apartments</button>
+          <button class="chip" data-f="new">New builds</button>
+        </div>
+        <div class="price-ctl">
+          <label for="maxPrice">Max budget</label>
+          <input id="maxPrice" type="range" min="400000" max="1300000" step="10000" value="1300000">
+          <b id="maxOut">£1,300,000</b>
+        </div>
       </div>
-      <div class="dgrid g3">
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035021_4460d8bd-c008-47dc-bd75-3c88e842a431_min.webp" alt="Modern riverside family home" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>The Maple, Riverside</h3>
-            <div class="tile-row">
-              <span class="price">£850,000</span>
-              <p>4 bed · 3 bath</p>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035022_43b5afbc-15a9-4db3-87a5-bfa140a3dfad_min.webp" alt="Charming English cottage" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Willow Cottage, Ashgrove</h3>
-            <div class="tile-row">
-              <span class="price">£565,000</span>
-              <p>3 bed · 2 bath</p>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035023_f3548813-1801-4ab2-8814-26ef480ec9f9_min.webp" alt="Penthouse with skyline view" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Skyline Penthouse, Central</h3>
-            <div class="tile-row">
-              <span class="price">£1,240,000</span>
-              <p>2 bed · 2 bath</p>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035029_534c0906-ec76-4c97-a0e5-178b1032b215_min.webp" alt="Elegant house beside a park" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Elm House, Parkside</h3>
-            <div class="tile-row">
-              <span class="price">£695,000</span>
-              <p>4 bed · 2 bath</p>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035030_4d05d2e3-61da-4163-aba9-e259e1b8ba43_min.webp" alt="Renovated old-town townhouse" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>The Sidings, Old Town</h3>
-            <div class="tile-row">
-              <span class="price">£430,000</span>
-              <p>2 bed · 1 bath</p>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035031_0fc8e4fc-8872-4129-93e8-843dbf1fcb9c_min.webp" alt="Harbour-view industrial loft" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Harbour View Loft, Docklands</h3>
-            <div class="tile-row">
-              <span class="price">£980,000</span>
-              <p>3 bed · 2 bath</p>
-            </div>
-          </div>
-        </div>
+
+      <div class="grid" id="grid">
+        <article class="card" data-type="house" data-price="850000" data-title="The Maple" data-addr="Riverside Drive, Riverside" data-beds="4" data-baths="3" data-size="2140" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035021_4460d8bd-c008-47dc-bd75-3c88e842a431_min.webp" data-desc="A light-filled riverside family home with double-height living space, a landscaped south garden and off-street parking for two.">
+          <div class="card-img"><div class="tag-row"><span class="pill">House</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035021_4460d8bd-c008-47dc-bd75-3c88e842a431_min.webp" alt="Modern riverside family home" loading="lazy"></div>
+          <div class="card-body"><h3>The Maple</h3><p class="addr">Riverside Drive, Riverside</p>
+            <div class="meta"><span class="price">£850,000</span><div class="specs"><span>4 bed</span><span>3 bath</span></div></div></div>
+        </article>
+
+        <article class="card" data-type="house" data-price="565000" data-title="Willow Cottage" data-addr="Ash Lane, Ashgrove" data-beds="3" data-baths="2" data-size="1560" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035022_43b5afbc-15a9-4db3-87a5-bfa140a3dfad_min.webp" data-desc="A characterful English cottage with exposed beams, a wood-burner and a mature walled garden, moments from the village green.">
+          <div class="card-img"><div class="tag-row"><span class="pill">House</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035022_43b5afbc-15a9-4db3-87a5-bfa140a3dfad_min.webp" alt="Charming English cottage" loading="lazy"></div>
+          <div class="card-body"><h3>Willow Cottage</h3><p class="addr">Ash Lane, Ashgrove</p>
+            <div class="meta"><span class="price">£565,000</span><div class="specs"><span>3 bed</span><span>2 bath</span></div></div></div>
+        </article>
+
+        <article class="card" data-type="apartment new" data-price="1240000" data-title="Skyline Penthouse" data-addr="Crown Tower, Central" data-beds="2" data-baths="2" data-size="1320" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035023_f3548813-1801-4ab2-8814-26ef480ec9f9_min.webp" data-desc="A sky-high two-bedroom penthouse with a wraparound terrace, floor-to-ceiling glass and 24-hour concierge in the heart of the city.">
+          <div class="card-img"><div class="tag-row"><span class="pill new">New</span><span class="pill">Apartment</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035023_f3548813-1801-4ab2-8814-26ef480ec9f9_min.webp" alt="Penthouse with skyline view" loading="lazy"></div>
+          <div class="card-body"><h3>Skyline Penthouse</h3><p class="addr">Crown Tower, Central</p>
+            <div class="meta"><span class="price">£1,240,000</span><div class="specs"><span>2 bed</span><span>2 bath</span></div></div></div>
+        </article>
+
+        <article class="card" data-type="house" data-price="695000" data-title="Elm House" data-addr="Park Crescent, Parkside" data-beds="4" data-baths="2" data-size="1980" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035029_534c0906-ec76-4c97-a0e5-178b1032b215_min.webp" data-desc="An elegant period house overlooking the park, with high ceilings, restored cornicing and a bright garden studio.">
+          <div class="card-img"><div class="tag-row"><span class="pill">House</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035029_534c0906-ec76-4c97-a0e5-178b1032b215_min.webp" alt="Elegant house beside a park" loading="lazy"></div>
+          <div class="card-body"><h3>Elm House</h3><p class="addr">Park Crescent, Parkside</p>
+            <div class="meta"><span class="price">£695,000</span><div class="specs"><span>4 bed</span><span>2 bath</span></div></div></div>
+        </article>
+
+        <article class="card" data-type="apartment" data-price="430000" data-title="The Sidings" data-addr="Old Town Yard, Old Town" data-beds="2" data-baths="1" data-size="890" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035030_4d05d2e3-61da-4163-aba9-e259e1b8ba43_min.webp" data-desc="A cleverly renovated old-town apartment blending original brick with a crisp modern kitchen — ideal first home or pied-à-terre.">
+          <div class="card-img"><div class="tag-row"><span class="pill">Apartment</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035030_4d05d2e3-61da-4163-aba9-e259e1b8ba43_min.webp" alt="Renovated old-town townhouse" loading="lazy"></div>
+          <div class="card-body"><h3>The Sidings</h3><p class="addr">Old Town Yard, Old Town</p>
+            <div class="meta"><span class="price">£430,000</span><div class="specs"><span>2 bed</span><span>1 bath</span></div></div></div>
+        </article>
+
+        <article class="card" data-type="apartment new" data-price="980000" data-title="Harbour View Loft" data-addr="Dock Street, Docklands" data-beds="3" data-baths="2" data-size="1610" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035031_0fc8e4fc-8872-4129-93e8-843dbf1fcb9c_min.webp" data-desc="A striking industrial loft with harbour views, polished concrete floors and a mezzanine study — steps from the waterfront restaurants.">
+          <div class="card-img"><div class="tag-row"><span class="pill new">New</span><span class="pill">Apartment</span></div><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035031_0fc8e4fc-8872-4129-93e8-843dbf1fcb9c_min.webp" alt="Harbour-view industrial loft" loading="lazy"></div>
+          <div class="card-body"><h3>Harbour View Loft</h3><p class="addr">Dock Street, Docklands</p>
+            <div class="meta"><span class="price">£980,000</span><div class="specs"><span>3 bed</span><span>2 bath</span></div></div></div>
+        </article>
+
+        <p class="empty" id="empty">No homes match that filter. Try widening your budget.</p>
       </div>
     </div>
   </section>
 
-  <!-- About / split : why sell or buy with us -->
-  <section class="dsection alt" id="about">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035020_e05d232d-14c1-4789-a1ec-09562a56b895_min.webp" alt="Agent handing over house keys" loading="lazy"></div>
-      <div class="rv">
-        <span class="eyebrow">Why Skyline</span>
-        <h2>Move with people who <span class="grad-text">know the streets</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Whether you're selling a first flat or buying a forever home, you get one dedicated agent from valuation to keys — no call centres, no guesswork.</p>
-        <ul>
-          <li><span class="chk">✓</span><span><b>Accurate valuations</b> built on real local sold data, not wishful pricing.</span></li>
-          <li><span class="chk">✓</span><span><b>Professional photography</b> and floorplans on every listing, as standard.</span></li>
-          <li><span class="chk">✓</span><span><b>Accompanied viewings</b> seven days a week, arranged around your schedule.</span></li>
-          <li><span class="chk">✓</span><span><b>Sale progression</b> handled end to end so completions stay on track.</span></li>
-        </ul>
+  <!-- Mortgage calculator -->
+  <section class="sec" id="calc">
+    <div class="wrap">
+      <div class="calc-wrap rv">
+        <div>
+          <p class="eyebrow">Repayment Calculator</p>
+          <h2>See what a home could cost each month</h2>
+          <p class="sub">Drag to model your purchase. Figures are indicative — your Skyline agent will introduce you to an independent, whole-of-market broker.</p>
+
+          <div class="calc-field">
+            <div class="lab"><span>Property price</span><b id="pOut">£850,000</b></div>
+            <input id="cPrice" type="range" min="200000" max="1500000" step="10000" value="850000">
+          </div>
+          <div class="calc-field">
+            <div class="lab"><span>Deposit — <span id="dPct">15</span>%</span><b id="dOut">£127,500</b></div>
+            <input id="cDep" type="range" min="5" max="50" step="1" value="15">
+          </div>
+          <div class="calc-field">
+            <div class="lab"><span>Term</span><b id="tOut">25 years</b></div>
+            <input id="cTerm" type="range" min="10" max="35" step="1" value="25">
+          </div>
+          <div class="calc-field">
+            <div class="lab"><span>Interest rate</span><b id="rOut">4.8%</b></div>
+            <input id="cRate" type="range" min="20" max="80" step="1" value="48">
+          </div>
+        </div>
+        <div class="calc-out">
+          <div class="k">Est. monthly repayment</div>
+          <div class="big" id="monthly">£3,704</div>
+          <div class="per">on a repayment mortgage</div>
+          <div class="calc-rows">
+            <div><span>Loan amount</span><b id="loanOut">£722,500</b></div>
+            <div><span>Deposit</span><b id="depOut">£127,500</b></div>
+            <div><span>Total repayable</span><b id="totalOut">£1,111,200</b></div>
+          </div>
+          <a class="btn btn-light" href="#why" style="margin-top:20px; width:100%; justify-content:center">Speak to an agent</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Areas -->
-  <section class="dsection" id="areas">
+  <section class="sec areas" id="areas">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Where We Work</span>
-        <h2>Local experts across <span class="grad-text">the whole city</span></h2>
-      </div>
-      <div class="dgrid g4">
-        <div class="tile rv"><div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035032_df20072e-ef29-4d6b-9e49-b8057ca53c54_min.webp" alt="City skyline at dusk" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035033_0d7167ec-0e83-465e-9a17-a344951b95a5_min.webp" alt="Leafy suburban street" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035038_c2f40931-5eae-4834-8c23-22a627ccefb6_min.webp" alt="Characterful town houses" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035039_31266eae-b2bd-4d5b-a8d3-2d2de00c59e8_min.webp" alt="Countryside village among trees" loading="lazy"></div></div>
+      <div class="sec-head rv"><p class="eyebrow">Where We Work</p><h2>Local experts across <span class="serif-i">the whole city</span></h2></div>
+      <div class="grid rv">
+        <div class="area"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035032_df20072e-ef29-4d6b-9e49-b8057ca53c54_min.webp" alt="City skyline at dusk" loading="lazy"><div class="cap">Central<small>Penthouses & lofts</small></div></div>
+        <div class="area"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035033_0d7167ec-0e83-465e-9a17-a344951b95a5_min.webp" alt="Leafy suburban street" loading="lazy"><div class="cap">Parkside<small>Family homes</small></div></div>
+        <div class="area"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035038_c2f40931-5eae-4834-8c23-22a627ccefb6_min.webp" alt="Characterful town houses" loading="lazy"><div class="cap">Old Town<small>Period character</small></div></div>
+        <div class="area"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035039_31266eae-b2bd-4d5b-a8d3-2d2de00c59e8_min.webp" alt="Countryside village among trees" loading="lazy"><div class="cap">Ashgrove<small>Village life</small></div></div>
       </div>
     </div>
   </section>
 
-  <!-- Book CTA -->
-  <section class="dsection" id="book">
+  <!-- Why us -->
+  <section class="cta" id="why">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Book a viewing or a free valuation</h2>
-        <p>Tell us what you're looking for — or what you're thinking of selling — and we'll be in touch the same day with a plan.</p>
-        <a class="dbtn dbtn-light" href="#visit">Get Started</a>
+      <div class="cta-in rv">
+        <h2>Move with people who know the streets</h2>
+        <p>One dedicated agent from valuation to keys — no call centres, no guesswork. Book a viewing or a free valuation and we'll be in touch the same day.</p>
+        <a class="btn btn-light" href="#listings">Browse homes →</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter" id="visit">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">S</span> Skyline Estates</div>
-          <p>A premium property agency helping the city buy, sell and let with confidence and care.</p>
-        </div>
-        <div>
-          <h4>Visit</h4>
-          <ul>
-            <li>15 Crown Parade</li>
-            <li>Open Mon–Sat, 9am–6pm</li>
-            <li>Viewings by appointment</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#listings">Listings</a></li>
-            <li><a href="#about">Why Us</a></li>
-            <li><a href="#areas">Areas</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">S</span> Skyline Estates</a><p>A premium property agency helping the city buy, sell and let with confidence and care.</p></div>
+        <div><h5>Explore</h5><ul><li><a href="#listings">Listings</a></li><li><a href="#calc">Repayments</a></li><li><a href="#areas">Areas</a></li><li><a href="#why">Why us</a></li></ul></div>
+        <div><h5>Visit</h5><ul><li>15 Crown Parade</li><li>Mon–Sat, 9am–6pm</li><li>hello@skylineestates.co</li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© Skyline Estates — a sample design. Property, done properly.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <!-- Listing modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Property details">
+    <div class="modal-bg" id="modalBg"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <div class="modal-img"><img id="mImg" src="" alt=""></div>
+      <div class="modal-body">
+        <h3 id="mTitle">—</h3>
+        <p class="maddr" id="mAddr"></p>
+        <div class="mprice" id="mPrice"></div>
+        <div class="mspecs" id="mSpecs"></div>
+        <p class="mdesc" id="mDesc"></p>
+        <form class="book-form" id="bookForm" novalidate>
+          <div class="row">
+            <div><label for="bName">Your name</label><input id="bName" type="text" placeholder="Full name" required></div>
+            <div><label for="bPhone">Phone</label><input id="bPhone" type="tel" placeholder="Best number" required></div>
+          </div>
+          <div class="row">
+            <div><label for="bEmail">Email</label><input id="bEmail" type="email" placeholder="you@email.com" required></div>
+            <div><label for="bWhen">Preferred day</label><select id="bWhen"><option>This weekend</option><option>Weekday evening</option><option>Weekday daytime</option><option>As soon as possible</option></select></div>
+          </div>
+          <button class="btn btn-fill" type="submit" style="justify-content:center">Book a viewing</button>
+        </form>
+        <div class="book-ok" id="bookOk"><div class="tick">✓</div><h4>Viewing requested</h4><p id="bookOkMsg"></p></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="realestate.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>

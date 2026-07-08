@@ -114,14 +114,33 @@
   hub.innerHTML = '<div class="core"><span>B</span></div><div class="hub-label"><b>' + items.length + ' industries</b><br>one signature look each</div>';
   stage.appendChild(hub);
 
+  // Real photography for each style instead of emoji, so the orbit reads
+  // as an actual portfolio. Falls back to the emoji if a slug is unmapped.
+  var CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/";
+  var imgMap = {
+    restaurant:  CDN + "hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp",
+    corporate:   CDN + "hf_20260707_034819_19ee2c8c-cd05-45e7-8fb1-f6932a99a56a_min.webp",
+    portfolio:   CDN + "hf_20260707_035008_2f6272d6-5623-4795-bc98-c584bfe01e48_min.webp",
+    realestate:  CDN + "hf_20260707_035023_f3548813-1801-4ab2-8814-26ef480ec9f9_min.webp",
+    medical:     CDN + "hf_20260707_034839_3a8767bc-27fc-4d84-8506-70c8dc7c6570_min.webp",
+    education:   CDN + "hf_20260707_034822_6979d34d-706b-4eb1-9b16-461ffe1c2faa_min.webp",
+    saas:        CDN + "hf_20260707_035009_66bc911d-e195-4343-b379-0ef0c0bf79dc_min.webp",
+    fitness:     CDN + "hf_20260707_034840_67554d1a-91ff-4a4c-89e6-4a976a589649_min.webp",
+    travel:      CDN + "hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp"
+  };
+
   var nodes = items.map(function (it, i) {
     var n = document.createElement("button");
     n.type = "button"; n.className = "tx-node"; n.setAttribute("data-cat", it.cat);
     n.setAttribute("aria-label", "View the " + it.name + " sample");
     n.style.setProperty("--t1", it.t1); n.style.setProperty("--t2", it.t2);
+    var art = imgMap[it.slug]
+      ? '<img class="shot" src="' + imgMap[it.slug] + '" alt="" loading="lazy" decoding="async">'
+      : '<span class="emoji" aria-hidden="true">' + it.emoji + '</span>';
     n.innerHTML =
-      '<span class="thumb"><span class="emoji" aria-hidden="true">' + it.emoji + '</span>' +
-      '<span class="go">Open ↗</span></span>' +
+      '<span class="thumb">' + art +
+      '<span class="badge">' + it.catLabel + '</span>' +
+      '<span class="go">Open ' + it.name + ' ↗</span></span>' +
       '<span class="label"><span class="name">' + it.name + '</span><span class="cat">' + it.catLabel + '</span></span>';
     n._it = it; n._i = i;
     n.addEventListener("click", function () { viewer.open(it); });
@@ -131,7 +150,10 @@
 
   var hint = document.createElement("p");
   hint.className = "tx-hint";
-  hint.innerHTML = 'Drag to spin · click any style to open it here · <kbd>Esc</kbd> to come back';
+  var touch = window.matchMedia && matchMedia("(hover: none)").matches;
+  hint.innerHTML = touch
+    ? 'Swipe to spin the wheel · tap the front style to open it here · a <b>Back to site</b> button brings you right back'
+    : 'Drag to spin · click any style to open it here · <kbd>Esc</kbd> or <b>Back to site</b> returns you';
   stage.appendChild(hint);
 
   grid.parentNode.insertBefore(stage, grid.nextSibling);
@@ -144,23 +166,30 @@
   function measure() {
     var w = stage.clientWidth, h = stage.clientHeight;
     Rx = Math.max(110, Math.min(w * 0.36, 400));
-    Ry = Math.min(h * 0.34, Rx * 0.8);
+    Ry = Math.min(h * 0.30, Rx * 0.74);
   }
   measure(); new ResizeObserver(measure).observe(stage);
 
   // Cards ride an ellipse around the hub; the one nearest the bottom is
   // "front" (largest, sharpest), so the wheel reads as turning in space.
   function layout() {
+    // find the front-most node (nearest the bottom) so it can be the hero
+    var maxDepth = -1, frontI = 0;
+    for (var k = 0; k < N; k++) { var dk = (Math.sin(base + k * step) + 1) / 2; if (dk > maxDepth) { maxDepth = dk; frontI = k; } }
+    var heroI = focusIdx >= 0 ? focusIdx : frontI;
     for (var i = 0; i < N; i++) {
       var ang = base + i * step;
       var x = Math.cos(ang) * Rx;
       var y = Math.sin(ang) * Ry;
       var depth = (Math.sin(ang) + 1) / 2;       // 0 back(top) .. 1 front(bottom)
-      var sc = 0.78 + 0.22 * depth;
+      var isHero = i === heroI;
+      // strong zoom on the middle/front one, back ones recede
+      var sc = 0.5 + 0.62 * depth + (isHero ? 0.14 : 0);
       var n = nodes[i];
+      n.classList.toggle("front", isHero);
       n.style.transform = "translate(-50%,-50%) translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) scale(" + sc.toFixed(3) + ")";
-      n.style.zIndex = String(10 + Math.round(depth * 100));
-      n.style.opacity = (focusIdx >= 0 ? (i === focusIdx ? 1 : 0.2) : (0.5 + 0.5 * depth)).toFixed(3);
+      n.style.zIndex = String(isHero ? 200 : 10 + Math.round(depth * 100));
+      n.style.opacity = (focusIdx >= 0 ? (i === focusIdx ? 1 : 0.16) : (0.32 + 0.68 * depth)).toFixed(3);
     }
   }
 
