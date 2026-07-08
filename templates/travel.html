@@ -3,188 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wanderlight Tours — Travel Sample by Billy Digitals</title>
-  <meta name="description" content="Sample boutique tour operator website by Billy Digitals — curated small-group journeys, handpicked destinations and trips done differently.">
+  <title>Wanderlight Tours — Go further, wander lighter</title>
+  <meta name="description" content="Wanderlight Tours — boutique small-group journeys to the world's most extraordinary corners. Filter journeys by region and style, explore itineraries and enquire in seconds.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#faf6ee">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="travel.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #0284c7; --accent-2: #f59e0b; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo tour operator site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">W</span> Wanderlight</div>
-      <div class="dnav-links">
-        <a href="#destinations">Destinations</a>
-        <a href="#why">Why Us</a>
-        <a href="#gallery">Journeys</a>
-        <a href="#plan">Plan</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#plan">Plan Your Trip</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Boutique Tour Operator</span>
-        <h1>Go further, <span class="grad-text">wander lighter</span>, come home changed.</h1>
-        <p class="lead">Small-group journeys to the world's most extraordinary corners, handcrafted by people who've actually walked the trail. No coaches of fifty. Just you, a few kindred spirits and a guide who knows the good stuff.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#destinations">Explore Destinations</a>
-          <a class="dbtn dbtn-ghost" href="#why">Why Wanderlight</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🌍</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">W</span> Wanderlight</a>
+      <nav class="nav-links" id="navLinks"><a href="#journeys">Journeys</a><a href="#why">Why us</a><a href="#gallery">Moments</a><a href="#plan">Plan a trip</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#plan">Plan your trip</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
-  <!-- Featured destinations -->
-  <section class="dsection" id="destinations">
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Boutique Tour Operator</span>
+        <h1 class="rv">Go further, <span class="serif-i">wander lighter</span>, come home changed.</h1>
+        <p class="lede rv">Small-group journeys to the world's most extraordinary corners, handcrafted by people who've actually walked the trail. No coaches of fifty — just you, a few kindred spirits and a guide who knows the good stuff.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#journeys">Explore journeys</a><a class="btn btn-line" href="#why">Why Wanderlight</a></div>
+        <div class="hero-note rv"><span><b>40+</b>destinations</span><span><b>12</b>max group size</span><span><b>2014</b>wandering since</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🌍</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1">🧭 Local expert guides</div>
+        <div class="art-chip c2">🌱 Carbon-conscious</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Journeys -->
+  <section class="sec" id="journeys">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Featured Journeys</span>
-        <h2>Handpicked places, <span class="grad-text">unhurried pace</span></h2>
-        <p>A snapshot of our signature departures. Every trip runs in intimate groups with room to breathe, wander and linger.</p>
+      <div class="sec-head rv"><span class="eyebrow">Featured journeys</span><h2>Handpicked places, <span class="serif-i">unhurried pace</span></h2><p>Filter by where in the world and how you like to travel — then open any journey for its day-by-day itinerary and departures.</p></div>
+
+      <div class="jfilters rv">
+        <div class="fset" id="regionFilter">
+          <span class="lab">Region</span>
+          <button class="chip on" data-region="all">All</button>
+          <button class="chip" data-region="Europe">Europe</button>
+          <button class="chip" data-region="Americas">Americas</button>
+          <button class="chip" data-region="Africa">Africa</button>
+        </div>
+        <div class="fset" id="styleFilter">
+          <span class="lab">Style</span>
+          <button class="chip on" data-style="all">All</button>
+          <button class="chip" data-style="Hiking">Hiking</button>
+          <button class="chip" data-style="Culture">Culture</button>
+          <button class="chip" data-style="Coastal">Coastal</button>
+        </div>
       </div>
-      <div class="dgrid g3">
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp" alt="Azores volcanic island crater lake" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Azores Island Hop</h3>
-            <p>Volcanic craters, hot springs and hidden coves across three green Atlantic islands.</p>
-            <div class="tile-row">
-              <span>7 nights</span>
-              <span class="price">from £1,240</span>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034914_e1a74ecb-78fe-4bff-9aa9-216f1149d747_min.webp" alt="Patagonia mountain trail" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Patagonia Trails</h3>
-            <p>Glaciers, granite spires and empty valleys on foot through Torres del Paine.</p>
-            <div class="tile-row">
-              <span>11 nights</span>
-              <span class="price">from £3,480</span>
-            </div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034904_cfb62744-dce9-4025-aa84-a52120394ef9_min.webp" alt="Ancient Puglia town" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Ancient Puglia</h3>
-            <p>Whitewashed towns, olive groves and slow feasts down Italy's sunlit heel.</p>
-            <div class="tile-row">
-              <span>6 nights</span>
-              <span class="price">from £1,890</span>
-            </div>
-          </div>
-        </div>
+
+      <div class="jgrid" id="jgrid">
+        <article class="jcard" data-id="azores" data-region="Europe" data-style="Coastal">
+          <div class="jimg"><span class="style-tag">Coastal</span><span class="region-tag">Europe</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp" alt="Azores volcanic crater lake" loading="lazy"></div>
+          <div class="jbody"><h3>Azores Island Hop</h3><p class="blurb">Volcanic craters, hot springs and hidden coves across three green Atlantic islands.</p>
+            <div class="jmeta"><span class="nights">7 nights</span><span class="price">£1,240 <small>/ pp</small></span></div></div>
+        </article>
+        <article class="jcard" data-id="patagonia" data-region="Americas" data-style="Hiking">
+          <div class="jimg"><span class="style-tag">Hiking</span><span class="region-tag">Americas</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034914_e1a74ecb-78fe-4bff-9aa9-216f1149d747_min.webp" alt="Patagonia mountain trail" loading="lazy"></div>
+          <div class="jbody"><h3>Patagonia Trails</h3><p class="blurb">Glaciers, granite spires and empty valleys on foot through Torres del Paine.</p>
+            <div class="jmeta"><span class="nights">11 nights</span><span class="price">£3,480 <small>/ pp</small></span></div></div>
+        </article>
+        <article class="jcard" data-id="puglia" data-region="Europe" data-style="Culture">
+          <div class="jimg"><span class="style-tag">Culture</span><span class="region-tag">Europe</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034904_cfb62744-dce9-4025-aa84-a52120394ef9_min.webp" alt="Ancient Puglia town" loading="lazy"></div>
+          <div class="jbody"><h3>Ancient Puglia</h3><p class="blurb">Whitewashed towns, olive groves and slow feasts down Italy's sunlit heel.</p>
+            <div class="jmeta"><span class="nights">6 nights</span><span class="price">£1,890 <small>/ pp</small></span></div></div>
+        </article>
+        <article class="jcard" data-id="atlas" data-region="Africa" data-style="Culture">
+          <div class="jimg"><span class="style-tag">Culture</span><span class="region-tag">Africa</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034916_a3d4f5e7-5a22-483e-8498-1015fbc3b92a_min.webp" alt="Sahara desert dunes at sunset" loading="lazy"></div>
+          <div class="jbody"><h3>Atlas &amp; Desert Nights</h3><p class="blurb">Kasbahs, mountain villages and a night under the stars on the edge of the Sahara.</p>
+            <div class="jmeta"><span class="nights">8 nights</span><span class="price">£2,150 <small>/ pp</small></span></div></div>
+        </article>
+        <article class="jcard" data-id="fjord" data-region="Europe" data-style="Coastal">
+          <div class="jimg"><span class="style-tag">Coastal</span><span class="region-tag">Europe</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034915_b34949ca-6298-4565-8d33-8f96af54b7e4_min.webp" alt="Kayak on a turquoise fjord" loading="lazy"></div>
+          <div class="jbody"><h3>Norwegian Fjord Kayak</h3><p class="blurb">Paddle mirror-still fjords and sleep in red-timber cabins beneath the cliffs.</p>
+            <div class="jmeta"><span class="nights">9 nights</span><span class="price">£2,690 <small>/ pp</small></span></div></div>
+        </article>
+        <article class="jcard" data-id="andes" data-region="Americas" data-style="Hiking">
+          <div class="jimg"><span class="style-tag">Hiking</span><span class="region-tag">Americas</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="Andean summit at sunrise" loading="lazy"></div>
+          <div class="jbody"><h3>Andean Summits</h3><p class="blurb">High passes, cloud forests and Inca trails to a sunrise above the peaks.</p>
+            <div class="jmeta"><span class="nights">10 nights</span><span class="price">£2,980 <small>/ pp</small></span></div></div>
+        </article>
+        <p class="empty" id="empty">No journeys match that pairing — try a different region or style.</p>
       </div>
     </div>
   </section>
 
-  <!-- Stats band -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>40+</span></div><div class="lbl">Destinations worldwide</div></div>
-      <div><div class="num"><span>12</span></div><div class="lbl">Max group size</div></div>
-      <div><div class="num"><span>60</span></div><div class="lbl">Local expert guides</div></div>
-      <div><div class="num"><span>2014</span></div><div class="lbl">Wandering since</div></div>
-    </div>
-  </section>
-
-  <!-- Why us / split -->
-  <section class="dsection" id="why">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034900_6908df85-5249-446e-a1ae-b287714a483a_min.webp" alt="Quiet scenic coastal road" loading="lazy"></div>
+  <!-- Why -->
+  <section class="sec" id="why" style="background:var(--sand); border-block:1px solid var(--line)">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034900_6908df85-5249-446e-a1ae-b287714a483a_min.webp" alt="A quiet scenic coastal road" loading="lazy"></div>
       <div class="rv">
-        <span class="eyebrow">Travel Done Differently</span>
-        <h2>Fewer crowds, <span class="grad-text">deeper roots</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">We built Wanderlight for travellers who want the real thing — the family-run guesthouse, the guide who's a local legend, the morning with no fixed plan. Everything is designed around going slow and going deep.</p>
+        <span class="eyebrow">Travel done differently</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.8rem); margin:10px 0">Fewer crowds, <span class="serif-i">deeper roots</span></h2>
+        <p style="color:var(--muted)">We built Wanderlight for travellers who want the real thing — the family-run guesthouse, the guide who's a local legend, the morning with no fixed plan. Everything is designed around going slow and going deep.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>Small groups only</b> — never more than twelve, so nowhere feels overrun.</span></li>
-          <li><span class="chk">✓</span><span><b>Local guides who live it</b>, sharing the stories and spots no map will show you.</span></li>
+          <li><span class="chk">✓</span><span><b>Local guides who live it</b>, sharing the stories no map will show you.</span></li>
           <li><span class="chk">✓</span><span><b>Carbon-conscious by design</b>, with slower routes and community-owned stays.</span></li>
-          <li><span class="chk">✓</span><span><b>Real humans on call</b> before, during and after every single journey.</span></li>
+          <li><span class="chk">✓</span><span><b>Real humans on call</b> before, during and after every journey.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- Gallery -->
-  <section class="dsection alt" id="gallery">
+  <section class="sec" id="gallery">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Moments on the Road</span>
-        <h2>The kind of days <span class="grad-text">you remember for years</span></h2>
-      </div>
-      <div class="dgrid g4">
-        <div class="tile rv"><div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="Mountain summit at sunrise" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034915_b34949ca-6298-4565-8d33-8f96af54b7e4_min.webp" alt="Kayak on a turquoise lake" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034916_a3d4f5e7-5a22-483e-8498-1015fbc3b92a_min.webp" alt="Desert sand dunes at sunset" loading="lazy"></div></div>
-        <div class="tile rv"><div class="tile-img fill-d"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034918_14d51e4e-9034-4a39-af78-a1f1ec423a9d_min.webp" alt="Sunrise over the ocean" loading="lazy"></div></div>
+      <div class="sec-head center rv"><span class="eyebrow">Moments on the road</span><h2>The kind of days <span class="serif-i">you remember for years</span></h2></div>
+      <div class="gal rv">
+        <div class="g wide tall"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="Mountain summit at sunrise" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034915_b34949ca-6298-4565-8d33-8f96af54b7e4_min.webp" alt="Kayak on a turquoise lake" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034916_a3d4f5e7-5a22-483e-8498-1015fbc3b92a_min.webp" alt="Desert sand dunes at sunset" loading="lazy"></div>
+        <div class="g wide"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034918_14d51e4e-9034-4a39-af78-a1f1ec423a9d_min.webp" alt="Sunrise over the ocean" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp" alt="Azores crater lake" loading="lazy"></div>
+        <div class="g"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034904_cfb62744-dce9-4025-aa84-a52120394ef9_min.webp" alt="Ancient Puglia town" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <!-- Plan CTA -->
-  <section class="dsection" id="plan">
+  <!-- CTA -->
+  <section class="sec" id="plan">
     <div class="wrap">
-      <div class="dcta rv">
+      <div class="cta-in rv">
         <h2>Let's plan your trip</h2>
         <p>Tell us where you've always dreamed of going and how you like to travel. We'll shape a journey around you — no templates, no hard sell, just a conversation.</p>
-        <a class="dbtn dbtn-light" href="../index.html#contact">Start Planning</a>
+        <a class="btn btn-light" href="#journeys">Browse journeys →</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">W</span> Wanderlight</div>
-          <p>A boutique tour operator crafting small-group journeys for travellers who want to wander further and feel more.</p>
-        </div>
-        <div>
-          <h4>Get in Touch</h4>
-          <ul>
-            <li>The Old Sail Loft, Bristol</li>
-            <li>Mon–Fri, 9am–6pm</li>
-            <li>hello@wanderlight.demo</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#destinations">Destinations</a></li>
-            <li><a href="#why">Why Wanderlight</a></li>
-            <li><a href="#gallery">Journeys</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">W</span> Wanderlight</a><p>A boutique tour operator crafting small-group journeys for travellers who want to wander further and feel more.</p></div>
+        <div><h5>Get in touch</h5><ul><li>The Old Sail Loft, Bristol</li><li>Mon–Fri, 9am–6pm</li><li>hello@wanderlight.demo</li></ul></div>
+        <div><h5>Explore</h5><ul><li><a href="#journeys">Journeys</a></li><li><a href="#why">Why us</a></li><li><a href="#gallery">Moments</a></li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© Wanderlight Tours — a sample design. Go further, wander lighter.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <!-- Journey modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Journey details">
+    <div class="modal-bg" id="modalBg"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <div class="modal-hero"><img id="mImg" src="" alt=""><div class="grad"></div><div class="htxt"><h3 id="mTitle">—</h3><div class="rg" id="mRegion"></div></div></div>
+      <div class="modal-body">
+        <div class="mb-left">
+          <h4>Your itinerary</h4>
+          <ul class="itin" id="mItin"></ul>
+        </div>
+        <div class="mb-right">
+          <div class="mprice" id="mPrice"></div>
+          <div class="mfacts" id="mFacts"></div>
+          <h4 style="font-size:1rem; margin:0 0 8px">Choose a departure</h4>
+          <div class="deps" id="mDeps"></div>
+          <form class="enq" id="enqForm" novalidate>
+            <div class="row"><input id="eName" type="text" placeholder="Your name" required><input id="eTravellers" type="number" min="1" max="12" value="2" placeholder="Travellers"></div>
+            <input id="eEmail" type="email" placeholder="you@email.com" required>
+            <button class="btn btn-fill" type="submit">Enquire about this trip</button>
+          </form>
+          <div class="enq-ok" id="enqOk"><div class="tick">✓</div><h4>Enquiry sent</h4><p id="enqMsg"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="travel.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
