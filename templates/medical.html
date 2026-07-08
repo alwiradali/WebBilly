@@ -3,159 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CarePoint Clinic — Medical &amp; Health Sample by Billy Digitals</title>
-  <meta name="description" content="Sample private clinic website design by Billy Digitals — appointments, health screening and everyday care done right.">
+  <title>CarePoint Clinic — Calm, careful medicine</title>
+  <meta name="description" content="CarePoint Clinic — a modern private clinic bringing everyday care and specialist medicine together under one calm roof. Book an appointment online in under a minute.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f1f7fb">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="medical.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #0ea5e9; --accent-2: #14b8a6; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo clinic site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">C</span> CarePoint Clinic</div>
-      <div class="dnav-links">
-        <a href="#services">Services</a>
-        <a href="#approach">Our Approach</a>
-        <a href="#stats">Why Us</a>
-        <a href="#visit">Visit</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#appointment">Book Appointment</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Private Clinic &amp; Everyday Care</span>
-        <h1>Calm, careful medicine <span class="grad-text">close to home</span>.</h1>
-        <p class="lead">From routine check-ups to specialist care, our clinicians take the time to listen — and see you when you need them, often the same day.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#appointment">Book an Appointment</a>
-          <a class="dbtn dbtn-ghost" href="#services">Explore Services</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🩺</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">✚</span> CarePoint Clinic</a>
+      <nav class="nav-links" id="navLinks"><a href="#services">Services</a><a href="#book">Book</a><a href="#approach">Our approach</a><a href="#team">Our team</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#book">Book appointment</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
-  <!-- Stats / highlights -->
-  <section class="dsection alt" id="stats">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>14</span></div><div class="lbl">Clinicians on the team</div></div>
-      <div><div class="num"><span>Same-day</span></div><div class="lbl">Urgent appointments</div></div>
-      <div><div class="num"><span>9</span></div><div class="lbl">Specialties under one roof</div></div>
-      <div><div class="num"><span>7 days</span></div><div class="lbl">Open every week, 8am–8pm</div></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill-note rv"><span class="dot"></span> Same-day appointments available today</span>
+        <h1 class="rv">Calm, careful medicine <span class="grad">close to home</span>.</h1>
+        <p class="lede rv">From routine check-ups to specialist care, our clinicians take the time to listen — and see you when you need them, often the same day.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#book">Book an appointment</a><a class="btn btn-line" href="#services">Explore services</a></div>
+        <div class="trust rv"><span><b>14</b>clinicians</span><span><b>9</b>specialties</span><span><b>7 days</b>8am–8pm</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🩺</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1"><span class="ic"></span> CQC-style rated “Good”</div>
+        <div class="art-chip c2"><span class="ic"></span> Avg. wait: 6 min</div>
+      </div>
     </div>
   </section>
 
-  <!-- Services -->
-  <section class="dsection" id="services">
+  <!-- Trust band -->
+  <div class="band">
+    <div class="wrap band-grid">
+      <div class="rv"><div class="n">Same-day</div><div class="l">Urgent appointments</div></div>
+      <div class="rv"><div class="n">4.9★</div><div class="l">From 2,100+ patient reviews</div></div>
+      <div class="rv"><div class="n">&lt; 60s</div><div class="l">To book online</div></div>
+      <div class="rv"><div class="n">18 yrs</div><div class="l">Caring for the community</div></div>
+    </div>
+  </div>
+
+  <!-- Services switcher -->
+  <section class="sec" id="services">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Our Services</span>
-        <h2>Everyday health, <span class="grad-text">expertly looked after</span></h2>
-        <p>One clinic for the care your family relies on — from a quick consultation to ongoing specialist support.</p>
+      <div class="sec-head center rv"><p class="eyebrow">Our services</p><h2>Everyday health, <span class="grad">expertly looked after</span></h2><p>One clinic for the care your family relies on. Choose a service to see what's included.</p></div>
+      <div class="svc-tabs rv" id="svcTabs" role="tablist">
+        <button class="svc-tab on" data-s="gp"><span class="ic">🩺</span> General Practice</button>
+        <button class="svc-tab" data-s="screen"><span class="ic">🧪</span> Health Screening</button>
+        <button class="svc-tab" data-s="physio"><span class="ic">🦵</span> Physiotherapy</button>
+        <button class="svc-tab" data-s="derm"><span class="ic">🔬</span> Dermatology</button>
       </div>
-      <div class="dgrid g4">
-        <div class="dcard rv">
-          <div class="ci">🩺</div>
-          <h3>General Practice</h3>
-          <p>Same-day consultations, repeat prescriptions and long-term condition reviews with a GP who knows your history.</p>
+      <div class="svc-panel rv">
+        <div class="svc-media">
+          <img id="svcImg" class="show" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034839_3a8767bc-27fc-4d84-8506-70c8dc7c6570_min.webp" alt="A CarePoint clinician with a patient" loading="lazy">
         </div>
-        <div class="dcard rv">
-          <div class="ci">🧪</div>
-          <h3>Health Screening</h3>
-          <p>Comprehensive check-ups, blood tests and heart, cholesterol and diabetes screening with clear, unhurried results.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🦵</div>
-          <h3>Physiotherapy</h3>
-          <p>Hands-on assessment and tailored recovery plans for back pain, sports injuries and post-surgery rehabilitation.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🔬</div>
-          <h3>Dermatology</h3>
-          <p>Skin checks, mole mapping and treatment for eczema, acne and everyday skin concerns from a specialist team.</p>
+        <div class="svc-info">
+          <h3 id="svcTitle">General Practice</h3>
+          <p class="from" id="svcFrom">Consultations from £75</p>
+          <p class="d" id="svcDesc">Same-day consultations, repeat prescriptions and long-term condition reviews with a GP who knows your history.</p>
+          <ul id="svcList">
+            <li><span class="chk">✓</span>Same-day and pre-bookable appointments</li>
+            <li><span class="chk">✓</span>Repeat prescriptions &amp; medication reviews</li>
+            <li><span class="chk">✓</span>Long-term condition management</li>
+            <li><span class="chk">✓</span>Referrals to our in-house specialists</li>
+          </ul>
+          <a class="btn btn-fill" href="#book" id="svcBook">Book General Practice</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Approach / split -->
-  <section class="dsection alt" id="approach">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034839_3a8767bc-27fc-4d84-8506-70c8dc7c6570_min.webp" alt="Doctor caring for a patient" loading="lazy"></div>
+  <!-- Booking widget -->
+  <section class="sec book" id="book">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">Book online</p><h2>Your appointment, in four quick steps</h2><p>No phone queues — pick a service, a clinician and a time that suits you.</p></div>
+      <div class="booker rv">
+        <div class="steps" id="steps">
+          <div class="step on" data-i="0"><span class="b">1</span><span class="lb">Service</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-i="1"><span class="b">2</span><span class="lb book-hide-sm">Clinician</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-i="2"><span class="b">3</span><span class="lb book-hide-sm">Time</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-i="3"><span class="b">4</span><span class="lb book-hide-sm">Details</span></div>
+        </div>
+
+        <div class="panels" id="panels">
+          <!-- Step 1: service -->
+          <div class="panel on" data-p="0">
+            <h4>What do you need to see us about?</h4>
+            <div class="opts" id="optService">
+              <button class="opt" data-v="General Practice"><span class="t">General Practice</span><span class="s">GP consultation</span></button>
+              <button class="opt" data-v="Health Screening"><span class="t">Health Screening</span><span class="s">Check-up &amp; bloods</span></button>
+              <button class="opt" data-v="Physiotherapy"><span class="t">Physiotherapy</span><span class="s">Injury &amp; recovery</span></button>
+              <button class="opt" data-v="Dermatology"><span class="t">Dermatology</span><span class="s">Skin &amp; mole checks</span></button>
+            </div>
+          </div>
+          <!-- Step 2: clinician -->
+          <div class="panel" data-p="1">
+            <h4>Who would you like to see?</h4>
+            <div class="opts" id="optClinician">
+              <button class="opt sel" data-v="First available"><span class="t">First available</span><span class="s">Soonest slot</span></button>
+              <button class="opt" data-v="Dr Amara Okafor"><span class="t">Dr Amara Okafor</span><span class="s">GP · Women's health</span></button>
+              <button class="opt" data-v="Dr Ravi Menon"><span class="t">Dr Ravi Menon</span><span class="s">GP · Screening lead</span></button>
+              <button class="opt" data-v="Ella Bianchi"><span class="t">Ella Bianchi</span><span class="s">Physiotherapist</span></button>
+            </div>
+          </div>
+          <!-- Step 3: day & time -->
+          <div class="panel" data-p="2">
+            <h4>Pick a day</h4>
+            <div class="days" id="days"></div>
+            <h4 style="margin-top:22px">And a time</h4>
+            <div class="slots" id="slots"></div>
+          </div>
+          <!-- Step 4: details -->
+          <div class="panel" data-p="3">
+            <h4>Almost done — your details</h4>
+            <div class="summary" id="summary">Select the options above to see your appointment summary.</div>
+            <div class="bk-fields">
+              <div><label for="bkName">Full name</label><input id="bkName" type="text" placeholder="Your name" required></div>
+              <div><label for="bkPhone">Phone</label><input id="bkPhone" type="tel" placeholder="Best number" required></div>
+              <div class="full"><label for="bkEmail">Email</label><input id="bkEmail" type="email" placeholder="you@email.com" required></div>
+            </div>
+          </div>
+
+          <!-- Done -->
+          <div class="book-done" id="bookDone">
+            <div class="tick">✓</div>
+            <h3>Appointment requested</h3>
+            <p id="doneMsg"></p>
+            <button class="ghost-btn" id="bookReset" style="margin-top:18px">Book another</button>
+          </div>
+        </div>
+
+        <div class="bk-actions" id="bkActions">
+          <button class="ghost-btn" id="bkBack" disabled>← Back</button>
+          <button class="btn btn-fill" id="bkNext" disabled>Continue →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach -->
+  <section class="sec" id="approach">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034839_3a8767bc-27fc-4d84-8506-70c8dc7c6570_min.webp" alt="A doctor listening to a patient" loading="lazy"></div>
       <div class="rv">
-        <span class="eyebrow">Our Approach</span>
-        <h2>Unhurried care, <span class="grad-text">built around you</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">At CarePoint we believe good medicine starts with listening. Appointments are never rushed, and your clinician explains every step in plain language — so you always leave knowing what happens next.</p>
+        <p class="eyebrow">Our approach</p>
+        <h2 style="font-size:clamp(1.9rem,3.8vw,2.7rem); margin:10px 0">Unhurried care, <span class="grad">built around you</span></h2>
+        <p style="color:var(--muted)">Good medicine starts with listening. Appointments are never rushed, and your clinician explains every step in plain language — so you always leave knowing what happens next.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>Longer appointments</b> as standard, so nothing important gets missed.</span></li>
-          <li><span class="chk">✓</span><span><b>One connected record</b> shared across GP, screening and specialists.</span></li>
-          <li><span class="chk">✓</span><span><b>Clear next steps</b> and follow-up in writing after every visit.</span></li>
-          <li><span class="chk">✓</span><span><b>Accessible for everyone</b> — step-free rooms and family-friendly hours.</span></li>
+          <li><span class="chk">✓</span><span><b>One connected record</b> across GP, screening and specialists.</span></li>
+          <li><span class="chk">✓</span><span><b>Clear next steps</b> in writing after every visit.</span></li>
+          <li><span class="chk">✓</span><span><b>Accessible for everyone</b> — step-free rooms, family-friendly hours.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- Appointment CTA -->
-  <section class="dsection" id="appointment">
+  <!-- Team -->
+  <section class="sec" id="team" style="background:var(--card); border-block:1px solid var(--line)">
     <div class="wrap">
-      <div class="dcta rv">
-        <h2>Book an appointment today</h2>
-        <p>New patients welcome. Choose a time that suits you online, or call the clinic and our reception team will find you the earliest slot.</p>
-        <a class="dbtn dbtn-light" href="#visit">Book an Appointment</a>
+      <div class="sec-head center rv"><p class="eyebrow">Our team</p><h2>Clinicians who <span class="grad">know your name</span></h2></div>
+      <div class="team-grid">
+        <div class="doc rv"><div class="av">AO</div><h4>Dr Amara Okafor</h4><p class="role">GP · Women's Health</p><p>Fifteen years in family medicine with a special interest in women's and children's health.</p></div>
+        <div class="doc rv"><div class="av">RM</div><h4>Dr Ravi Menon</h4><p class="role">GP · Screening Lead</p><p>Leads our preventative screening programme, turning early data into simple, actionable advice.</p></div>
+        <div class="doc rv"><div class="av">EB</div><h4>Ella Bianchi</h4><p class="role">Senior Physiotherapist</p><p>Hands-on rehab for sports injuries and chronic pain, with plans you can actually stick to.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter" id="visit">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">C</span> CarePoint Clinic</div>
-          <p>A modern private clinic bringing everyday care and specialist medicine together under one calm, welcoming roof.</p>
-        </div>
-        <div>
-          <h4>Visit</h4>
-          <ul>
-            <li>18 Elmwood Avenue</li>
-            <li>Open 7 days, 8am–8pm</li>
-            <li>Reception: 020 7946 0111</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#approach">Our Approach</a></li>
-            <li><a href="#appointment">Book Appointment</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">✚</span> CarePoint Clinic</a><p>Everyday care and specialist medicine together under one calm, welcoming roof.</p></div>
+        <div><h5>Visit</h5><ul><li>18 Elmwood Avenue</li><li>Open 7 days · 8am–8pm</li><li>020 7946 0111</li></ul></div>
+        <div><h5>Explore</h5><ul><li><a href="#services">Services</a></li><li><a href="#book">Book</a></li><li><a href="#team">Our team</a></li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© CarePoint Clinic — a sample design. Calm, careful medicine.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <script src="medical.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
