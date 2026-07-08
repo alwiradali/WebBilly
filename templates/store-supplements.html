@@ -3,213 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forge Labs — Supplements Store Sample by Billy Digitals</title>
-  <meta name="description" content="Sample sports nutrition &amp; supplements e-commerce store designed &amp; built by Billy Digitals — bold Shopify-grade storefront with cart, bundles and reviews.">
+  <title>Forge Labs — Fuel the work. Own the result.</title>
+  <meta name="description" content="Forge Labs — clinically-dosed, third-party-tested sports nutrition with nothing to hide. Shop by goal, build a bundle and save.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#080d0a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="store-supplements.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #22c55e; --accent-2: #a3e635; }
-    body.dark { --bg:#0a0f0c; --surface:#0f1712; --surface-2:#132018; }
-  </style>
+  <style>:root { --accent: #22c55e; --accent-2: #a3e635; }</style>
 </head>
-<body class="dark">
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — a demo supplements store. Fully built by us.</span>
-    <a class="db-cta" href="../index.html#contact">Want a store like this? Request it →</a>
-  </div>
+<body>
 
-  <div class="dmarquee" aria-hidden="true">
-    <div class="dmarquee-track">
-      <span>⚡ Free shaker on orders over £45</span><span>⚡ Subscribe &amp; save 20%</span><span>⚡ Informed-Sport certified</span><span>⚡ Next-day delivery before 3pm</span>
-      <span>⚡ Free shaker on orders over £45</span><span>⚡ Subscribe &amp; save 20%</span><span>⚡ Informed-Sport certified</span><span>⚡ Next-day delivery before 3pm</span>
-    </div>
-  </div>
+  <div class="marq" aria-hidden="true"><div class="marq-in">
+    <span>⚡ FREE SHAKER OVER £45</span><span>⚡ SUBSCRIBE &amp; SAVE 20%</span><span>⚡ INFORMED-SPORT CERTIFIED</span><span>⚡ NEXT-DAY BEFORE 3PM</span>
+    <span>⚡ FREE SHAKER OVER £45</span><span>⚡ SUBSCRIBE &amp; SAVE 20%</span><span>⚡ INFORMED-SPORT CERTIFIED</span><span>⚡ NEXT-DAY BEFORE 3PM</span>
+  </div></div>
 
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">FL</span> Forge Labs</div>
-      <div class="dnav-links">
-        <a href="#shop">Shop</a>
-        <a href="#collections">Goals</a>
-        <a href="#bundles">Bundles</a>
-        <a href="#story">Our Science</a>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">FL</span> Forge Labs</a>
+      <nav class="nav-links" id="navLinks"><a href="#shop">Shop</a><a href="#bundle">Build a bundle</a><a href="#science">Our science</a></nav>
+      <div class="nav-cta">
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="count" id="cartCount">0</span></button>
+        <button class="burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       </div>
-      <a class="dcart" href="#shop" aria-label="Cart">
-        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="badge">3</span>
-      </a>
-    </div>
-  </nav>
-
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Informed-Sport Certified</span>
-        <h1>Fuel the work. <span class="grad-text">Own the result.</span></h1>
-        <p class="lead">Clinically-dosed sports nutrition with nothing to hide. Every scoop is third-party tested, transparently labelled and built to actually move the needle.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#shop">Shop Supplements</a>
-          <a class="dbtn dbtn-ghost" href="#bundles">Build a Bundle</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">💪</span></div>
     </div>
   </header>
 
-  <section class="dsection" style="padding:44px 0">
-    <div class="wrap dtrust rv">
-      <div><div class="ti">🔬</div><h4>Lab-Tested</h4><p>Third-party verified</p></div>
-      <div><div class="ti">📋</div><h4>Full Disclosure</h4><p>No proprietary blends</p></div>
-      <div><div class="ti">🚚</div><h4>Next-Day</h4><p>Order before 3pm</p></div>
-      <div><div class="ti">🔁</div><h4>Subscribe &amp; Save</h4><p>20% off, skip anytime</p></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Informed-Sport Certified</span>
+        <h1 class="rv">Fuel the work. <span class="grad">Own the result.</span></h1>
+        <p class="lede rv">Clinically-dosed sports nutrition with nothing to hide. Every scoop is third-party tested, transparently labelled and built to actually move the needle.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#shop">Shop supplements</a><a class="btn btn-line" href="#bundle">Build a bundle</a></div>
+        <div class="hero-stat rv"><div><b>0</b><span>Proprietary blends</span></div><div><b>3rd</b><span>Party tested</span></div><div><b>20%</b><span>Subscribe &amp; save</span></div></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true"><span class="art-emoji">💪</span><div class="art-frame"></div><div class="art-chip c1">LAB-TESTED</div><div class="art-chip c2">FULL LABEL</div></div>
     </div>
   </section>
 
-  <section class="dsection alt" id="collections">
+  <!-- Trust -->
+  <div class="wrap">
+    <div class="trust rv">
+      <div class="t"><div class="ti">🔬</div><h4>Lab-Tested</h4><p>3rd-party verified</p></div>
+      <div class="t"><div class="ti">📋</div><h4>Full Disclosure</h4><p>No blends</p></div>
+      <div class="t"><div class="ti">🚚</div><h4>Next-Day</h4><p>Before 3pm</p></div>
+      <div class="t"><div class="ti">🔁</div><h4>Subscribe</h4><p>Save 20%</p></div>
+    </div>
+  </div>
+
+  <!-- Shop -->
+  <section class="sec" id="shop">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Shop by Goal</span>
-        <h2>What are you <span class="grad-text">training for?</span></h2>
+      <div class="sec-head center rv"><span class="eyebrow">Bestsellers</span><h2>The essentials, <span class="grad">dosed right</span></h2><p>Pick a size or flavour, add to bag — free shaker unlocks at £45.</p></div>
+      <div class="goals rv" id="goals">
+        <button class="goal on" data-goal="all">All</button>
+        <button class="goal" data-goal="muscle">Build muscle</button>
+        <button class="goal" data-goal="energy">Energy &amp; focus</button>
+        <button class="goal" data-goal="recover">Recover</button>
       </div>
-      <div class="catgrid rv">
-        <a class="cat" style="--cbg:linear-gradient(150deg,#16a34a,#0a0f0c)"><span class="cat-emoji">🏋️</span><div><h3>Build Muscle</h3><span>Protein &amp; creatine</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#65a30d,#a3e635)"><span class="cat-emoji">⚡</span><div><h3>Energy &amp; Focus</h3><span>Pre-workout &amp; caffeine</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#0f766e,#22c55e)"><span class="cat-emoji">🛡️</span><div><h3>Recover</h3><span>EAAs &amp; greens</span></div></a>
+      <div class="prods" id="prods">
+        <article class="prod" data-goal="muscle" data-name="Whey Isolate" data-price="39" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp">
+          <div class="pimg"><span class="tag">#1 SELLER</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp" alt="Whey protein tub" loading="lazy"></div>
+          <div class="pbody"><h3>Whey Isolate</h3><p class="sub">27g protein · low sugar</p><span class="stars">★★★★★<small>4.9 (3.4k)</small></span>
+            <div class="pills" data-variant><button class="pill on">1kg</button><button class="pill">2kg</button><button class="pill">4kg</button></div>
+            <div class="pfoot"><span class="price">£39</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <article class="prod" data-goal="energy" data-name="Pre-Workout V3" data-price="32" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp" alt="Pre-workout tub" loading="lazy"></div>
+          <div class="pbody"><h3>Pre-Workout V3</h3><p class="sub">Clean energy, no crash</p><span class="stars">★★★★★<small>4.8 (2.0k)</small></span>
+            <div class="pills" data-variant><button class="pill on">Berry</button><button class="pill">Citrus</button></div>
+            <div class="pfoot"><span class="price">£32</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <article class="prod" data-goal="muscle" data-name="Creatine Mono" data-price="20" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_9371fda4-b2f0-4661-acc2-baaccc11b421_min.webp">
+          <div class="pimg"><span class="tag sale">SAVE 15%</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_9371fda4-b2f0-4661-acc2-baaccc11b421_min.webp" alt="Creatine tub" loading="lazy"></div>
+          <div class="pbody"><h3>Creatine Mono</h3><p class="sub">Pure micronised · 5g</p><span class="stars">★★★★★<small>5.0 (1.9k)</small></span>
+            <div class="pills" data-variant><button class="pill on">300g</button><button class="pill">500g</button></div>
+            <div class="pfoot"><span class="price"><s>£24</s>£20</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <article class="prod" data-goal="recover" data-name="Daily Greens" data-price="29" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_ac28ce48-46fb-4cbe-b16c-4a3c42ee6235_min.webp">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_ac28ce48-46fb-4cbe-b16c-4a3c42ee6235_min.webp" alt="Daily greens powder" loading="lazy"></div>
+          <div class="pbody"><h3>Daily Greens</h3><p class="sub">32 superfoods · 1 scoop</p><span class="stars">★★★★☆<small>4.7 (1.2k)</small></span>
+            <div class="pills" data-variant><button class="pill on">Mint</button><button class="pill">Unflavoured</button></div>
+            <div class="pfoot"><span class="price">£29</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <article class="prod" data-goal="recover" data-name="EAA Recovery" data-price="27" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp" alt="EAA recovery tub" loading="lazy"></div>
+          <div class="pbody"><h3>EAA Recovery</h3><p class="sub">Full spectrum aminos</p><span class="stars">★★★★★<small>4.8 (860)</small></span>
+            <div class="pills" data-variant><button class="pill on">Watermelon</button><button class="pill">Peach</button></div>
+            <div class="pfoot"><span class="price">£27</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <article class="prod" data-goal="muscle" data-name="Protein Bars ×12" data-price="24" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp">
+          <div class="pimg"><span class="tag">NEW</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp" alt="Protein bars box" loading="lazy"></div>
+          <div class="pbody"><h3>Protein Bars ×12</h3><p class="sub">20g protein · real chocolate</p><span class="stars">★★★★★<small>4.9 (1.5k)</small></span>
+            <div class="pills" data-variant><button class="pill on">Choc</button><button class="pill">Salted Caramel</button></div>
+            <div class="pfoot"><span class="price">£24</span><button class="add">＋ Add</button></div></div>
+        </article>
+        <p class="noprod" id="noProd">No products for that goal yet.</p>
       </div>
     </div>
   </section>
 
-  <section class="dsection" id="shop">
+  <!-- Bundle builder -->
+  <section class="sec" id="bundle">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Bestsellers</span>
-        <h2>The essentials, <span class="grad-text">dosed right</span></h2>
-        <p>Pick a size, add to cart, and watch the bag update live.</p>
-      </div>
-      <div class="dgrid g4">
-        <article class="pcard rv">
-          <div class="pcard-img fill-a"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034950_2f114a6c-d76c-4122-8e5a-a28a0bd91d9e_min.webp" alt="Whey protein tub" loading="lazy"><span class="pcard-tag">#1 Seller</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Whey Isolate</h3>
-            <p class="pcard-sub">27g protein · low sugar</p>
-            <span class="stars"><i>★★★★★</i> 4.9 (3.4k)</span>
-            <div class="pills" data-select><span class="pill on">1kg</span><span class="pill">2kg</span><span class="pill">4kg</span></div>
-            <div class="pcard-foot"><span class="price">£39</span><button class="padd" data-name="Whey Isolate">＋ Add</button></div>
+      <div class="sec-head rv"><span class="eyebrow">Build a bundle</span><h2>Stack your goals, <span class="grad">save on the lot</span></h2><p>Pick any 3 tubs for 15% off — flip on Subscribe &amp; Save for 20%, plus a free shaker in every box.</p></div>
+      <div class="bundle rv">
+        <div class="bundle-grid">
+          <div class="bb-pool" id="bbPool"></div>
+          <div class="bb-summary">
+            <h4>Your stack</h4>
+            <p class="hint" id="bbHint">Select 3 products to unlock 15% off</p>
+            <div class="bb-line"><span>Selected</span><b id="bbCount">0 / 3</b></div>
+            <div class="bb-line"><span>Subtotal</span><b id="bbSubtotal">£0</b></div>
+            <div class="bb-line disc"><span id="bbDiscLabel">Discount</span><b id="bbDiscount">−£0</b></div>
+            <div class="sub-toggle" id="subToggle"><div class="sw"></div><div class="st">Subscribe &amp; Save — <b>20% off</b>, skip anytime</div></div>
+            <div class="bb-total"><span>Total</span><b id="bbTotal">£0</b></div>
+            <button class="btn btn-fill" id="bbAdd" disabled>Add bundle to cart</button>
           </div>
-        </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-b"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034955_d65e3c98-3515-4704-b419-a6c812b1c38e_min.webp" alt="Pre-workout tub" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Pre-Workout V3</h3>
-            <p class="pcard-sub">Clean energy, no crash</p>
-            <span class="stars"><i>★★★★★</i> 4.8 (2.0k)</span>
-            <div class="pills" data-select><span class="pill on">Berry</span><span class="pill">Citrus</span></div>
-            <div class="pcard-foot"><span class="price">£32</span><button class="padd" data-name="Pre-Workout V3">＋ Add</button></div>
-          </div>
-        </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-c"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_9371fda4-b2f0-4661-acc2-baaccc11b421_min.webp" alt="Creatine tub" loading="lazy"><span class="pcard-tag sale">Save 15%</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Creatine Mono</h3>
-            <p class="pcard-sub">Pure micronised · 5g</p>
-            <span class="stars"><i>★★★★★</i> 5.0 (1.9k)</span>
-            <div class="pcard-foot"><span class="price"><s>£24</s>£20</span><button class="padd" data-name="Creatine Mono">＋ Add</button></div>
-          </div>
-        </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-d"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034957_ac28ce48-46fb-4cbe-b16c-4a3c42ee6235_min.webp" alt="Daily greens powder" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Daily Greens</h3>
-            <p class="pcard-sub">32 superfoods · 1 scoop</p>
-            <span class="stars"><i>★★★★☆</i> 4.7 (1.2k)</span>
-            <div class="pcard-foot"><span class="price">£29</span><button class="padd" data-name="Daily Greens">＋ Add</button></div>
-          </div>
-        </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="dsection alt" id="bundles">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034959_1bcb1e5c-d1f9-4b2b-9958-50dd88f4b587_min.webp" alt="Athlete with a protein shaker" loading="lazy"></div>
+  <!-- Science -->
+  <section class="sec" id="science" style="background:var(--panel); border-block:1px solid var(--line)">
+    <div class="wrap" style="display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center">
+      <div class="rv" style="border-radius:16px; overflow:hidden; aspect-ratio:4/3; box-shadow:var(--shadow)"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034959_1bcb1e5c-d1f9-4b2b-9958-50dd88f4b587_min.webp" alt="Athlete with a protein shaker" loading="lazy" style="width:100%; height:100%; object-fit:cover"></div>
       <div class="rv">
-        <span class="eyebrow">Build a Bundle</span>
-        <h2>Stack your goals, <span class="grad-text">save on the lot</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Mix any three tubs and save 15% automatically at checkout. Add a subscription and it's 20% off — delivered on your schedule, pause or cancel any time.</p>
-        <ul>
-          <li><span class="chk">✓</span><span><b>Any 3 products</b> — build muscle, energy and recovery in one box.</span></li>
-          <li><span class="chk">✓</span><span><b>Free shaker &amp; scoop</b> on every bundle order.</span></li>
-          <li><span class="chk">✓</span><span><b>Flexible subscription</b> — skip, swap or cancel whenever.</span></li>
+        <span class="eyebrow">Our science</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.8rem); margin:10px 0">Doses you can <span class="grad">actually read</span></h2>
+        <p style="color:var(--muted)">No proprietary blends, no fairy dust. Every active is listed at its clinical dose, every batch is third-party tested for banned substances, and every lab report is a click away.</p>
+        <ul style="list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px">
+          <li style="display:flex; gap:11px"><span style="color:var(--accent)">✓</span> <span><b>Informed-Sport certified</b> — safe for tested athletes.</span></li>
+          <li style="display:flex; gap:11px"><span style="color:var(--accent)">✓</span> <span><b>Full-dose transparency</b> on every single label.</span></li>
+          <li style="display:flex; gap:11px"><span style="color:var(--accent)">✓</span> <span><b>Published lab reports</b> for every batch we ship.</span></li>
         </ul>
-        <div class="dhero-cta" style="margin-top:24px"><a class="dbtn dbtn-primary" href="#shop">Start My Bundle</a></div>
       </div>
     </div>
   </section>
 
-  <section class="dsection">
+  <!-- Reviews -->
+  <section class="sec">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Trusted by athletes</span>
-        <h2>Results people <span class="grad-text">actually feel</span></h2>
-      </div>
-      <div class="dgrid g3">
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"The isolate mixes clean and actually tastes good — no chalky aftertaste. My recovery between sessions is night and day."</p><div class="who"><span class="av">TW</span><div><b>Tom W.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"Pre-workout V3 gives me focus without the jitters or 3pm crash. Love that they show every ingredient dose on the label."</p><div class="who"><span class="av">NB</span><div><b>Nadia B.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"Subscribed to creatine and greens — arrives like clockwork and the bundle discount is unreal. Best supp brand I've used."</p><div class="who"><span class="av">RH</span><div><b>Ryan H.</b><small>Verified buyer</small></div></div></div>
+      <div class="sec-head center rv"><span class="eyebrow">Trusted by athletes</span><h2>Results people <span class="grad">actually feel</span></h2></div>
+      <div class="revs">
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"The isolate mixes clean and actually tastes good — no chalky aftertaste. My recovery is night and day."</p><div class="who"><span class="av">TW</span><div><b>Tom W.</b><small>Verified buyer</small></div></div></div>
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"Pre-Workout V3 gives me focus without the jitters or 3pm crash. Love that they show every dose."</p><div class="who"><span class="av">NB</span><div><b>Nadia B.</b><small>Verified buyer</small></div></div></div>
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"Subscribed to creatine and greens — arrives like clockwork and the bundle discount is unreal."</p><div class="who"><span class="av">RH</span><div><b>Ryan H.</b><small>Verified buyer</small></div></div></div>
       </div>
     </div>
   </section>
 
-  <section class="dsection" style="padding-top:0">
+  <!-- Newsletter -->
+  <section class="sec">
     <div class="wrap">
-      <div class="dcta rv">
+      <div class="news rv">
         <h2>Get 15% off your first order</h2>
         <p>Join the Forge list for training tips, restock alerts and member deals.</p>
-        <form class="dnews"><input type="email" placeholder="Your email address" aria-label="Email" required><button class="dbtn dbtn-light" type="submit">Claim 15% Off</button></form>
+        <form id="newsForm"><input type="email" placeholder="Your email address" aria-label="Email" required><button class="btn btn-light" type="submit">Claim 15% off</button></form>
+        <p class="ok" id="newsOk">✓ You're in — your 15% code just landed in your inbox.</p>
       </div>
     </div>
   </section>
 
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">FL</span> Forge Labs</div>
-          <p>Clinically-dosed sports nutrition with nothing to hide. Third-party tested, transparently labelled, built for results.</p>
-        </div>
-        <div>
-          <h4>Shop</h4>
-          <ul><li><a href="#shop">Bestsellers</a></li><li><a href="#collections">By Goal</a></li><li><a href="#bundles">Bundles</a></li><li><a href="#story">Our Science</a></li></ul>
-        </div>
-        <div>
-          <h4>Help</h4>
-          <ul><li>Subscriptions</li><li>Delivery &amp; Returns</li><li>Lab Reports</li><li>Contact Us</li></ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">FL</span> Forge Labs</a><p>Clinically-dosed sports nutrition with nothing to hide. Third-party tested, transparently labelled, built for results.</p></div>
+        <div><h5>Shop</h5><ul><li><a href="#shop">Bestsellers</a></li><li><a href="#bundle">Bundles</a></li><li><a href="#science">Our science</a></li></ul></div>
+        <div><h5>Help</h5><ul><li>Subscriptions</li><li>Delivery &amp; returns</li><li>Lab reports</li><li>Contact us</li></ul></div>
       </div>
-      <div class="pay-note">Secure checkout · we accept</div>
-      <div class="pay-row" aria-label="Accepted payment methods">
-        <span class="pay v">VISA</span>
-        <span class="pay mc"><i></i><i></i></span>
-        <span class="pay ax">AMEX</span>
-        <span class="pay pp">Pay<b>Pal</b></span>
-        <span class="pay ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 1.9-1.1 2.6-2.1.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM14.2 5.6c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>Pay</span>
-        <span class="pay gp"><b>G</b>Pay</span>
-        <span class="pay kl">Klarna</span>
-        <span class="pay sp">shop</span>
-      </div>
-      <div class="dfooter-bottom">
-        Demo store designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional brand for sample purposes.
-      </div>
+      <div class="foot-base">© Forge Labs — a sample store by Billy Digitals. Fictional brand for demo purposes.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
-  <script src="store.js"></script>
+  <!-- Cart -->
+  <div class="ov" id="ov"></div>
+  <aside class="cart" id="cart" aria-label="Shopping cart">
+    <div class="cart-head"><h3>Your bag</h3><button class="cart-close" id="cartClose" aria-label="Close">✕</button></div>
+    <div class="ship-bar"><div class="st" id="shipText">Add <b>£45</b> more for a free shaker ⚡</div><div class="ship-track"><span id="shipFill"></span></div></div>
+    <div class="cart-items" id="cartItems"><p class="cart-empty" id="cartEmpty">Your bag is empty.</p></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-sub"><span>Subtotal</span><b id="cartSub">£0</b></div>
+      <button class="btn btn-fill" id="checkout">Checkout</button>
+    </div>
+    <div class="cart-done" id="cartDone"><div class="tick">✓</div><h3>Order placed</h3><p id="doneMsg" style="color:var(--muted); margin-top:8px"></p><button class="btn btn-line" id="keepShop" style="margin-top:18px">Keep shopping</button></div>
+  </aside>
+
+  <script src="store-supplements.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
