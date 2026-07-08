@@ -3,210 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maison &amp; Co — Homeware Store Sample by Billy Digitals</title>
-  <meta name="description" content="Sample homeware &amp; interiors e-commerce store designed &amp; built by Billy Digitals — warm, editorial Shopify-grade storefront with cart, rooms and reviews.">
+  <title>Maison &amp; Co — Homeware made to be handed down</title>
+  <meta name="description" content="Maison & Co — considered homeware in natural materials. Shop by room, quick-view any piece and check out in seconds.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#faf6f0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="store-home.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #b45309; --accent-2: #d9a066; --surface:#faf6f0; --surface-2:#f3ece1; }</style>
+  <style>:root { --accent: #b45309; --accent-2: #c98a4b; }</style>
 </head>
 <body>
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — a demo homeware store. Fully built by us.</span>
-    <a class="db-cta" href="../index.html#contact">Want a store like this? Request it →</a>
-  </div>
 
-  <div class="dmarquee" aria-hidden="true">
-    <div class="dmarquee-track">
-      <span>🏡 Free UK delivery over £75</span><span>🏡 Ethically made, built to last</span><span>🏡 Interest-free with Klarna</span><span>🏡 New autumn collection in stock</span>
-      <span>🏡 Free UK delivery over £75</span><span>🏡 Ethically made, built to last</span><span>🏡 Interest-free with Klarna</span><span>🏡 New autumn collection in stock</span>
-    </div>
-  </div>
+  <div class="marq" aria-hidden="true"><div class="marq-in">
+    <span>🏡 Free UK delivery over £75</span><span>🌿 Ethically made, built to last</span><span>💳 Interest-free with Klarna</span><span>🍂 New autumn collection in stock</span>
+    <span>🏡 Free UK delivery over £75</span><span>🌿 Ethically made, built to last</span><span>💳 Interest-free with Klarna</span><span>🍂 New autumn collection in stock</span>
+  </div></div>
 
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">M</span> Maison &amp; Co</div>
-      <div class="dnav-links">
-        <a href="#shop">Shop</a>
-        <a href="#rooms">Rooms</a>
-        <a href="#bestsellers">Bestsellers</a>
-        <a href="#story">Our Story</a>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">M</span> Maison &amp; Co</a>
+      <nav class="nav-links" id="navLinks"><a href="#shop">Shop</a><a href="#shop" data-room="living">Living</a><a href="#shop" data-room="kitchen">Kitchen</a><a href="#story">Our story</a></nav>
+      <div class="nav-cta">
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="count" id="cartCount">0</span></button>
+        <button class="burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       </div>
-      <a class="dcart" href="#shop" aria-label="Cart">
-        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="badge">2</span>
-      </a>
-    </div>
-  </nav>
-
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">The Autumn Home Edit</span>
-        <h1>A home that feels <span class="grad-text">like a deep breath.</span></h1>
-        <p class="lead">Considered homeware in natural materials — pieces made to be lived with, not just looked at. Warm textures, honest craft, quietly beautiful.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#shop">Shop the Edit</a>
-          <a class="dbtn dbtn-ghost" href="#rooms">Shop by Room</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🛋️</span></div>
     </div>
   </header>
 
-  <section class="dsection" style="padding:44px 0">
-    <div class="wrap dtrust rv">
-      <div><div class="ti">🚚</div><h4>Free Delivery</h4><p>On orders over £75</p></div>
-      <div><div class="ti">🌱</div><h4>Ethically Made</h4><p>Responsibly sourced</p></div>
-      <div><div class="ti">💳</div><h4>Pay in 3</h4><p>Interest-free with Klarna</p></div>
-      <div><div class="ti">🛡️</div><h4>5-Year Promise</h4><p>Built to last</p></div>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">The Autumn Home Edit</span>
+        <h1 class="rv">A home that feels <span class="em">like a deep breath.</span></h1>
+        <p class="lede rv">Considered homeware in natural materials — pieces made to be lived with, not just looked at. Warm textures, honest craft, quietly beautiful.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#shop">Shop the edit</a><a class="btn btn-line" href="#story">Our story</a></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true"><span class="art-emoji">🛋️</span><div class="art-frame"></div></div>
     </div>
   </section>
 
-  <section class="dsection alt" id="rooms">
+  <!-- Trust -->
+  <div class="wrap">
+    <div class="trust rv">
+      <div class="t"><div class="ti">🚚</div><h4>Free Delivery</h4><p>On orders over £75</p></div>
+      <div class="t"><div class="ti">🌱</div><h4>Ethically Made</h4><p>Responsibly sourced</p></div>
+      <div class="t"><div class="ti">💳</div><h4>Pay in 3</h4><p>Interest-free with Klarna</p></div>
+      <div class="t"><div class="ti">🛡️</div><h4>5-Year Promise</h4><p>Built to last</p></div>
+    </div>
+  </div>
+
+  <!-- Shop -->
+  <section class="sec" id="shop">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Shop by Room</span>
-        <h2>Style every <span class="grad-text">corner</span></h2>
+      <div class="sec-head center rv"><span class="eyebrow">Bestsellers</span><h2>Loved in <span class="em">homes everywhere</span></h2><p>Shop by room, quick-view any piece, and add to your basket — free delivery unlocks at £75.</p></div>
+      <div class="rooms rv" id="rooms">
+        <button class="room on" data-room="all">All</button>
+        <button class="room" data-room="living">Living Room</button>
+        <button class="room" data-room="kitchen">Kitchen &amp; Dining</button>
+        <button class="room" data-room="bedroom">Bedroom</button>
       </div>
-      <div class="catgrid rv">
-        <a class="cat" style="--cbg:linear-gradient(150deg,#a16207,#b45309)"><span class="cat-emoji">🛋️</span><div><h3>Living Room</h3><span>Sofas, throws &amp; light</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#d9a066,#92400e)"><span class="cat-emoji">🍽️</span><div><h3>Kitchen &amp; Dining</h3><span>Tableware &amp; linen</span></div></a>
-        <a class="cat" style="--cbg:linear-gradient(150deg,#78716c,#b45309)"><span class="cat-emoji">🛏️</span><div><h3>Bedroom</h3><span>Bedding &amp; calm</span></div></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="dsection" id="shop">
-    <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow" id="bestsellers">Bestsellers</span>
-        <h2>Loved in <span class="grad-text">homes everywhere</span></h2>
-        <p>Add anything to your basket and watch the cart update instantly.</p>
-      </div>
-      <div class="dgrid g4">
-        <article class="pcard rv">
-          <div class="pcard-img fill-a"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034941_46ceebf1-29d3-4653-ab59-46bb828439d6_min.webp" alt="Amber soy candle" loading="lazy"><span class="pcard-tag">New</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Amber Soy Candle</h3>
-            <p class="pcard-sub">60-hr burn · hand-poured</p>
-            <span class="stars"><i>★★★★★</i> 4.9 (540)</span>
-            <div class="pcard-foot"><span class="price">£28</span><button class="padd" data-name="Amber Soy Candle">＋ Add</button></div>
-          </div>
+      <div class="prods" id="prods">
+        <article class="prod" data-room="living" data-name="Amber Soy Candle" data-price="28" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034941_46ceebf1-29d3-4653-ab59-46bb828439d6_min.webp" data-desc="A hand-poured soy candle with warm amber, cedar and a whisper of vanilla — the smell of a home settling in for the evening." data-mat="100% soy wax" data-dim="9 × 8 cm" data-care="60-hr burn">
+          <div class="pimg"><span class="tag">New</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034941_46ceebf1-29d3-4653-ab59-46bb828439d6_min.webp" alt="Amber soy candle" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Amber Soy Candle</h3><p class="sub">60-hr burn · hand-poured</p><span class="stars">★★★★★<small>4.9 (540)</small></span>
+            <div class="pfoot"><span class="price">£28</span><button class="add">Add</button></div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-b"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034946_5127c347-bfdf-4da2-89a2-0a4d9c0ab5fb_min.webp" alt="Chunky woven throw" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Woven Throw</h3>
-            <p class="pcard-sub">100% brushed cotton</p>
-            <span class="stars"><i>★★★★★</i> 4.8 (312)</span>
-            <div class="pills" data-select><span class="swatch on" style="background:#d9a066"></span><span class="swatch" style="background:#78716c"></span><span class="swatch" style="background:#a3a3a3"></span></div>
-            <div class="pcard-foot"><span class="price">£65</span><button class="padd" data-name="Woven Throw">＋ Add</button></div>
-          </div>
+        <article class="prod" data-room="living" data-name="Woven Throw" data-price="65" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034946_5127c347-bfdf-4da2-89a2-0a4d9c0ab5fb_min.webp" data-desc="A chunky brushed-cotton throw with fringed edges — the one that lives on the end of the sofa and never quite makes it back." data-mat="100% brushed cotton" data-dim="130 × 170 cm" data-care="Machine washable">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034946_5127c347-bfdf-4da2-89a2-0a4d9c0ab5fb_min.webp" alt="Chunky woven throw" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Woven Throw</h3><p class="sub">100% brushed cotton</p><span class="stars">★★★★★<small>4.8 (312)</small></span>
+            <div class="swatches"><span class="swatch on" style="background:#c98a4b" data-shade="Ochre"></span><span class="swatch" style="background:#7c806b" data-shade="Sage"></span><span class="swatch" style="background:#a3a3a3" data-shade="Stone"></span></div>
+            <div class="pfoot"><span class="price">£65</span><button class="add">Add</button></div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-c"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034947_0cc3c66f-7131-4ad5-885c-3f487f8fc2ab_min.webp" alt="Stoneware dinnerware set" loading="lazy"><span class="pcard-tag sale">Set Deal</span><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Stoneware Set</h3>
-            <p class="pcard-sub">12-piece · dishwasher-safe</p>
-            <span class="stars"><i>★★★★★</i> 5.0 (208)</span>
-            <div class="pcard-foot"><span class="price"><s>£120</s>£95</span><button class="padd" data-name="Stoneware Set">＋ Add</button></div>
-          </div>
+        <article class="prod" data-room="kitchen" data-name="Stoneware Dinner Set" data-price="95" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034947_0cc3c66f-7131-4ad5-885c-3f487f8fc2ab_min.webp" data-desc="A twelve-piece reactive-glaze stoneware set — no two pieces quite alike, all of them dishwasher- and oven-safe." data-mat="Reactive-glaze stoneware" data-dim="12 pieces · 4 settings" data-care="Dishwasher-safe">
+          <div class="pimg"><span class="tag sale">Set deal</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034947_0cc3c66f-7131-4ad5-885c-3f487f8fc2ab_min.webp" alt="Stoneware dinnerware set" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Stoneware Set</h3><p class="sub">12-piece · dishwasher-safe</p><span class="stars">★★★★★<small>5.0 (208)</small></span>
+            <div class="pfoot"><span class="price"><s>£120</s>£95</span><button class="add">Add</button></div></div>
         </article>
-        <article class="pcard rv">
-          <div class="pcard-img fill-d"><img class="pphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034948_4bfc16ee-492d-4a05-a8dd-35ecd0bd93f5_min.webp" alt="Ceramic planter with plant" loading="lazy"><button class="pcard-fav" aria-label="Save">♡</button></div>
-          <div class="pcard-body">
-            <h3>Ceramic Planter</h3>
-            <p class="pcard-sub">Matte finish · drainage</p>
-            <span class="stars"><i>★★★★☆</i> 4.7 (176)</span>
-            <div class="pcard-foot"><span class="price">£34</span><button class="padd" data-name="Ceramic Planter">＋ Add</button></div>
-          </div>
+        <article class="prod" data-room="living" data-name="Ceramic Planter" data-price="34" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034948_4bfc16ee-492d-4a05-a8dd-35ecd0bd93f5_min.webp" data-desc="A matte stoneware planter with a hidden drainage reservoir — happy on a windowsill, a shelf, or the middle of the table." data-mat="Matte stoneware" data-dim="Ø 16 × 15 cm" data-care="Indoor · drainage">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034948_4bfc16ee-492d-4a05-a8dd-35ecd0bd93f5_min.webp" alt="Ceramic planter with plant" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Ceramic Planter</h3><p class="sub">Matte finish · drainage</p><span class="stars">★★★★☆<small>4.7 (176)</small></span>
+            <div class="pfoot"><span class="price">£34</span><button class="add">Add</button></div></div>
         </article>
+        <article class="prod" data-room="kitchen" data-name="Linen Napkin Set" data-price="24" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034947_0cc3c66f-7131-4ad5-885c-3f487f8fc2ab_min.webp" data-desc="Stonewashed pure-linen napkins in a set of four — the kind that get softer with every wash and make a Tuesday feel like an occasion." data-mat="100% stonewashed linen" data-dim="Set of 4 · 45 cm" data-care="Machine washable">
+          <div class="pimg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034947_0cc3c66f-7131-4ad5-885c-3f487f8fc2ab_min.webp" alt="Linen napkin set" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Linen Napkin Set</h3><p class="sub">Set of 4 · stonewashed</p><span class="stars">★★★★★<small>4.8 (410)</small></span>
+            <div class="swatches"><span class="swatch on" style="background:#e8ded0" data-shade="Oat"></span><span class="swatch" style="background:#7c806b" data-shade="Sage"></span><span class="swatch" style="background:#b45309" data-shade="Terracotta"></span></div>
+            <div class="pfoot"><span class="price">£24</span><button class="add">Add</button></div></div>
+        </article>
+        <article class="prod" data-room="bedroom" data-name="Bouclé Cushion" data-price="38" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034949_64150daf-bf11-41c8-aa4f-6f16972d38b1_min.webp" data-desc="A plush bouclé cushion with a feather-down insert and a hidden zip — the finishing touch that makes a bed look properly made." data-mat="Bouclé · feather-down fill" data-dim="50 × 50 cm" data-care="Removable cover">
+          <div class="pimg"><span class="tag">New</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034949_64150daf-bf11-41c8-aa4f-6f16972d38b1_min.webp" alt="Bouclé cushion styled on a bed" loading="lazy"><button class="quick">Quick view</button></div>
+          <div class="pbody"><h3>Bouclé Cushion</h3><p class="sub">Feather-down · 50cm</p><span class="stars">★★★★★<small>4.9 (289)</small></span>
+            <div class="swatches"><span class="swatch on" style="background:#efe7da" data-shade="Cream"></span><span class="swatch" style="background:#c98a4b" data-shade="Caramel"></span></div>
+            <div class="pfoot"><span class="price">£38</span><button class="add">Add</button></div></div>
+        </article>
+        <p class="noprod" id="noProd">Nothing in that room yet — new pieces land every week.</p>
       </div>
     </div>
   </section>
 
-  <section class="dsection alt" id="story">
-    <div class="wrap dsplit">
+  <!-- Story -->
+  <section class="sec" id="story" style="background:var(--sand)">
+    <div class="wrap split">
       <div class="rv">
-        <span class="eyebrow">Our Story</span>
-        <h2>Objects with <span class="grad-text">a longer life</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">Maison &amp; Co started around a kitchen table, tired of throwaway homeware. We work directly with small makers and family mills to bring you pieces built from honest materials — and built to be handed down.</p>
+        <span class="eyebrow">Our story</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.8rem); margin:10px 0">Objects with <span class="em">a longer life</span></h2>
+        <p style="color:var(--muted)">Maison &amp; Co started around a kitchen table, tired of throwaway homeware. We work directly with small makers and family mills to bring you pieces built from honest materials — and built to be handed down.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>Natural materials</b> — stoneware, linen, solid wood, real wool.</span></li>
           <li><span class="chk">✓</span><span><b>Fair partnerships</b> with the artisans who make each piece.</span></li>
           <li><span class="chk">✓</span><span><b>Plastic-free packaging</b> on every order we send.</span></li>
         </ul>
-        <div class="dhero-cta" style="margin-top:24px"><a class="dbtn dbtn-primary" href="#shop">Explore the Collection</a></div>
+        <a class="btn btn-fill" href="#shop">Explore the collection</a>
       </div>
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034949_64150daf-bf11-41c8-aa4f-6f16972d38b1_min.webp" alt="Styled cozy living room" loading="lazy"></div>
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034949_64150daf-bf11-41c8-aa4f-6f16972d38b1_min.webp" alt="Styled cosy living room" loading="lazy"></div>
     </div>
   </section>
 
-  <section class="dsection">
+  <!-- Reviews -->
+  <section class="sec">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">From our customers</span>
-        <h2>Homes they're <span class="grad-text">proud of</span></h2>
-      </div>
-      <div class="dgrid g3">
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"The stoneware set is stunning and so well made — it's completely changed how our table looks. Wrapped beautifully too."</p><div class="who"><span class="av">EC</span><div><b>Ellie C.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"That amber candle is the cosiest thing in our house. Burns clean for hours. I've bought four now as gifts and everyone loves them."</p><div class="who"><span class="av">HM</span><div><b>Harry M.</b><small>Verified buyer</small></div></div></div>
-        <div class="revcard rv"><span class="stars"><i>★★★★★</i></span><p>"Beautiful quality, quick delivery and lovely plastic-free packaging. Maison is my go-to for gifts and treats now."</p><div class="who"><span class="av">PN</span><div><b>Priya N.</b><small>Verified buyer</small></div></div></div>
+      <div class="sec-head center rv"><span class="eyebrow">From our customers</span><h2>Homes they're <span class="em">proud of</span></h2></div>
+      <div class="revs">
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"The stoneware set is stunning and so well made — it's completely changed how our table looks. Wrapped beautifully too."</p><div class="who"><span class="av">EC</span><div><b>Ellie C.</b><small>Verified buyer</small></div></div></div>
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"That amber candle is the cosiest thing in our house. I've bought four now as gifts and everyone loves them."</p><div class="who"><span class="av">HM</span><div><b>Harry M.</b><small>Verified buyer</small></div></div></div>
+        <div class="rev rv"><span class="stars">★★★★★</span><p>"Beautiful quality, quick delivery and lovely plastic-free packaging. Maison is my go-to for gifts and treats now."</p><div class="who"><span class="av">PN</span><div><b>Priya N.</b><small>Verified buyer</small></div></div></div>
       </div>
     </div>
   </section>
 
-  <section class="dsection" style="padding-top:0">
+  <!-- Newsletter -->
+  <section class="sec">
     <div class="wrap">
-      <div class="dcta rv">
+      <div class="news rv">
         <h2>10% off your first order</h2>
         <p>Join the Maison list for new collections, styling ideas and members-only offers.</p>
-        <form class="dnews"><input type="email" placeholder="Your email address" aria-label="Email" required><button class="dbtn dbtn-light" type="submit">Get My Discount</button></form>
+        <form id="newsForm"><input type="email" placeholder="Your email address" aria-label="Email" required><button class="btn btn-light" type="submit">Get my discount</button></form>
+        <p class="ok" id="newsOk">✓ Welcome — your discount code is on its way.</p>
       </div>
     </div>
   </section>
 
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">M</span> Maison &amp; Co</div>
-          <p>Considered homeware in natural materials, made with small makers and built to be handed down.</p>
-        </div>
-        <div>
-          <h4>Shop</h4>
-          <ul><li><a href="#shop">Bestsellers</a></li><li><a href="#rooms">By Room</a></li><li><a href="#shop">New In</a></li><li><a href="#story">Our Story</a></li></ul>
-        </div>
-        <div>
-          <h4>Help</h4>
-          <ul><li>Delivery &amp; Returns</li><li>Care Guides</li><li>Trade Enquiries</li><li>Contact Us</li></ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">M</span> Maison &amp; Co</a><p>Considered homeware in natural materials, made with small makers and built to be handed down.</p></div>
+        <div><h5>Shop</h5><ul><li><a href="#shop">Bestsellers</a></li><li><a href="#shop">By room</a></li><li><a href="#shop">New in</a></li><li><a href="#story">Our story</a></li></ul></div>
+        <div><h5>Help</h5><ul><li>Delivery &amp; returns</li><li>Care guides</li><li>Trade enquiries</li><li>Contact us</li></ul></div>
       </div>
-      <div class="pay-note">Secure checkout · we accept</div>
-      <div class="pay-row" aria-label="Accepted payment methods">
-        <span class="pay v">VISA</span>
-        <span class="pay mc"><i></i><i></i></span>
-        <span class="pay ax">AMEX</span>
-        <span class="pay pp">Pay<b>Pal</b></span>
-        <span class="pay ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 1.9-1.1 2.6-2.1.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM14.2 5.6c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>Pay</span>
-        <span class="pay gp"><b>G</b>Pay</span>
-        <span class="pay kl">Klarna</span>
-        <span class="pay sp">shop</span>
-      </div>
-      <div class="dfooter-bottom">
-        Demo store designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional brand for sample purposes.
-      </div>
+      <div class="foot-base">© Maison &amp; Co — a sample store by Billy Digitals. Fictional brand for demo purposes.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
-  <script src="store.js"></script>
+  <!-- Cart -->
+  <div class="ov" id="ov"></div>
+  <aside class="cart" id="cart" aria-label="Shopping cart">
+    <div class="cart-head"><h3>Your basket</h3><button class="cart-close" id="cartClose" aria-label="Close">✕</button></div>
+    <div class="ship-bar"><div class="st" id="shipText">Add <b>£75</b> more for free delivery 🚚</div><div class="ship-track"><span id="shipFill"></span></div></div>
+    <div class="cart-items" id="cartItems"><p class="cart-empty" id="cartEmpty">Your basket is empty.</p></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-sub"><span>Subtotal</span><b id="cartSub">£0</b></div>
+      <button class="btn btn-fill" id="checkout">Checkout</button>
+    </div>
+    <div class="cart-done" id="cartDone"><div class="tick">✓</div><h3>Order placed</h3><p id="doneMsg" style="color:var(--muted); margin-top:8px"></p><button class="btn btn-line" id="keepShop" style="margin-top:18px">Keep shopping</button></div>
+  </aside>
+
+  <!-- Quick view -->
+  <div class="qv" id="qv" role="dialog" aria-modal="true" aria-label="Product quick view">
+    <div class="ov" id="qvOv" style="position:absolute"></div>
+    <div class="qv-card">
+      <button class="qv-close" id="qvClose" aria-label="Close">✕</button>
+      <div class="qv-img"><img id="qvImg" src="" alt=""></div>
+      <div class="qv-body">
+        <h3 id="qvTitle">—</h3>
+        <p class="qsub" id="qvSub"></p>
+        <div class="qprice" id="qvPrice"></div>
+        <p class="qdesc" id="qvDesc"></p>
+        <ul class="qv-specs" id="qvSpecs"></ul>
+        <button class="btn btn-fill" id="qvAdd">Add to basket</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="store-home.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
