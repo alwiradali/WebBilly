@@ -126,7 +126,13 @@
     education:   CDN + "hf_20260707_034822_6979d34d-706b-4eb1-9b16-461ffe1c2faa_min.webp",
     saas:        CDN + "hf_20260707_035009_66bc911d-e195-4343-b379-0ef0c0bf79dc_min.webp",
     fitness:     CDN + "hf_20260707_034840_67554d1a-91ff-4a4c-89e6-4a976a589649_min.webp",
-    travel:      CDN + "hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp"
+    travel:      CDN + "hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp",
+    law:         CDN + "hf_20260708_005756_f1a5dd19-d2eb-4160-93e4-4eba78244f5f_min.webp",
+    automotive:  CDN + "hf_20260708_005758_c330b3fd-cb2b-437c-ad02-dbda47d54eaf_min.webp",
+    cafe:        CDN + "hf_20260708_005801_9843a2dd-2e0a-42ec-8ec4-3246908139c7_min.webp",
+    photography: CDN + "hf_20260708_005801_da1d7696-58ca-4397-9d2f-291fd21408fa_min.webp",
+    music:       CDN + "hf_20260708_005807_dc214a1a-9d08-4e0d-9a34-799e743dbed7_min.webp",
+    wellness:    CDN + "hf_20260708_005808_75a36fdd-ddf6-43a0-a4bf-2a4bd23d4785_min.webp"
   };
 
   var nodes = items.map(function (it, i) {
