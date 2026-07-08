@@ -3,190 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BrightPath Academy — Education Sample by Billy Digitals</title>
-  <meta name="description" content="Sample online learning academy website design by Billy Digitals — courses, tutors and certificates done right.">
+  <title>BrightPath Academy — Build real skills, one bright step at a time</title>
+  <meta name="description" content="BrightPath Academy — project-based courses in code, design and data, taught by working pros. Take the 30-second quiz and find your path.">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f7f5ff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="demo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="education.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
-  <style>:root { --accent: #7c3aed; --accent-2: #f59e0b; }</style>
 </head>
 <body>
-  <!-- Sample banner -->
-  <div class="demo-banner">
-    <span><strong>Billy Digitals</strong> <span class="db-accent">sample</span> — this is a demo learning academy site.</span>
-    <a class="db-cta" href="../index.html#contact">Want this style? Request it →</a>
-  </div>
 
-  <!-- Nav -->
-  <nav class="dnav">
-    <div class="wrap dnav-inner">
-      <div class="dbrand"><span class="logo-dot">B</span> BrightPath Academy</div>
-      <div class="dnav-links">
-        <a href="#courses">Courses</a>
-        <a href="#why">Why Us</a>
-        <a href="#learn">How It Works</a>
-        <a href="#enrol">Enrol</a>
-      </div>
-      <a class="dbtn dbtn-primary" href="#enrol">Start Learning</a>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header class="dhero">
-    <div class="dhero-blob b1"></div>
-    <div class="dhero-blob b2"></div>
-    <div class="wrap dhero-grid">
-      <div class="rv in">
-        <span class="eyebrow">Learn At Your Own Pace</span>
-        <h1>Build real skills, <span class="grad-text">one bright step</span> at a time.</h1>
-        <p class="lead">Project-based courses in code, design and data — taught by working pros, made for busy people. Start today, finish proud.</p>
-        <div class="dhero-cta">
-          <a class="dbtn dbtn-primary" href="#enrol">Enrol Now</a>
-          <a class="dbtn dbtn-ghost" href="#courses">Browse Courses</a>
-        </div>
-      </div>
-      <div class="dhero-art rv in"><span class="art-emoji">🎓</span></div>
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">✦</span> BrightPath</a>
+      <nav class="nav-links" id="navLinks"><a href="#quiz">Find your path</a><a href="#courses">Courses</a><a href="#why">Why us</a><a href="#how">How it works</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#quiz">Start learning</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
     </div>
   </header>
 
-  <!-- Popular courses -->
-  <section class="dsection" id="courses">
-    <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">Popular Courses</span>
-        <h2>Skills that <span class="grad-text">open doors</span></h2>
-        <p>Hand-picked programmes with real projects, mentor feedback and a certificate at the finish line.</p>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Learn at your own pace</span>
+        <h1 class="rv">Build real skills, <span class="grad">one bright step</span> at a time.</h1>
+        <p class="lede rv">Project-based courses in code, design and data — taught by working pros, made for busy people. Start today, finish proud.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#quiz">Find your path →</a><a class="btn btn-line" href="#courses">Browse courses</a></div>
+        <div class="hero-tags rv"><span class="htag c">● Code</span><span class="htag d">● Design</span><span class="htag a">● Data</span></div>
       </div>
-      <div class="dgrid g3">
-        <div class="tile rv">
-          <div class="tile-img fill-a"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034822_6979d34d-706b-4eb1-9b16-461ffe1c2faa_min.webp" alt="Web development on a laptop" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Web Development Bootcamp</h3>
-            <p>Go from zero to your first live site with HTML, CSS and JavaScript — building as you learn.</p>
-            <div class="tile-row"><span>12 weeks · Beginner</span><span class="price">£299</span></div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-b"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034836_dc80eb30-9163-4596-bdf1-b024a3e3621f_min.webp" alt="UX and product design work" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>UX &amp; Product Design</h3>
-            <p>Master research, wireframes and prototypes, and ship a polished portfolio piece employers notice.</p>
-            <div class="tile-row"><span>10 weeks · Intermediate</span><span class="price">£349</span></div>
-          </div>
-        </div>
-        <div class="tile rv">
-          <div class="tile-img fill-c"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034837_1d4ba4f1-a0b4-4696-9d01-6a58b04461c1_min.webp" alt="Data analytics dashboard" loading="lazy"></div>
-          <div class="tile-body">
-            <h3>Data Analytics Essentials</h3>
-            <p>Turn raw spreadsheets into clear insight with SQL, charts and storytelling that lands.</p>
-            <div class="tile-row"><span>8 weeks · Beginner</span><span class="price">£279</span></div>
-          </div>
-        </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">🎓</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1">🏆 Certificate on completion</div>
+        <div class="art-chip c2">👩‍🏫 Mentor support</div>
       </div>
     </div>
   </section>
 
   <!-- Stats band -->
-  <section class="dsection alt">
-    <div class="wrap dstats rv">
-      <div><div class="num"><span>60+</span></div><div class="lbl">Courses to explore</div></div>
-      <div><div class="num"><span>40</span></div><div class="lbl">Expert tutors</div></div>
-      <div><div class="num"><span>500+</span></div><div class="lbl">Hours of content</div></div>
-      <div><div class="num"><span>Yes</span></div><div class="lbl">Certificate on completion</div></div>
+  <div class="band">
+    <div class="wrap band-grid">
+      <div class="rv"><div class="n"><span class="grad">60+</span></div><div class="l">Courses to explore</div></div>
+      <div class="rv"><div class="n"><span class="grad">40</span></div><div class="l">Expert tutors</div></div>
+      <div class="rv"><div class="n"><span class="grad">92%</span></div><div class="l">Finish &amp; get certified</div></div>
+      <div class="rv"><div class="n"><span class="grad">4.9★</span></div><div class="l">Average course rating</div></div>
+    </div>
+  </div>
+
+  <!-- Find your path quiz -->
+  <section class="sec" id="quiz">
+    <div class="wrap">
+      <div class="quiz rv">
+        <div class="quiz-panel" id="quizPanel">
+          <div class="quiz-head"><span class="badge">30-second quiz</span></div>
+          <h2>Not sure where to start? <span style="opacity:.85">Find your path.</span></h2>
+          <p class="qsub">Answer three quick questions and we'll recommend the perfect course to begin with.</p>
+          <div class="qbar"><span id="qbar"></span></div>
+          <div class="qstage">
+            <!-- Q1 -->
+            <div class="qstep on" data-q="0">
+              <h3>1. What do you want to do?</h3>
+              <div class="qopts">
+                <button class="qopt" data-track="code"><span class="qi">💻</span><span class="qt">Build websites &amp; apps</span><span class="qd">Turn ideas into working products</span></button>
+                <button class="qopt" data-track="design"><span class="qi">🎨</span><span class="qt">Design beautiful things</span><span class="qd">Craft interfaces &amp; brands</span></button>
+                <button class="qopt" data-track="data"><span class="qi">📊</span><span class="qt">Make sense of data</span><span class="qd">Find the story in the numbers</span></button>
+              </div>
+            </div>
+            <!-- Q2 -->
+            <div class="qstep" data-q="1">
+              <h3>2. How much time can you give it?</h3>
+              <div class="qopts">
+                <button class="qopt" data-time="light"><span class="qi">☕</span><span class="qt">A few hours a week</span><span class="qd">Slow &amp; steady</span></button>
+                <button class="qopt" data-time="steady"><span class="qi">🌙</span><span class="qt">Evenings &amp; weekends</span><span class="qd">A solid routine</span></button>
+                <button class="qopt" data-time="all"><span class="qi">🚀</span><span class="qt">I can go all-in</span><span class="qd">Fast track me</span></button>
+              </div>
+            </div>
+            <!-- Q3 -->
+            <div class="qstep" data-q="2">
+              <h3>3. Where are you starting from?</h3>
+              <div class="qopts">
+                <button class="qopt" data-level="Beginner"><span class="qi">🌱</span><span class="qt">Total beginner</span><span class="qd">Brand new to this</span></button>
+                <button class="qopt" data-level="Beginner"><span class="qi">🧩</span><span class="qt">I know a little</span><span class="qd">Dabbled here &amp; there</span></button>
+                <button class="qopt" data-level="Intermediate"><span class="qi">⚡</span><span class="qt">I know the basics</span><span class="qd">Ready to level up</span></button>
+              </div>
+            </div>
+          </div>
+          <button class="qback" id="qback" style="display:none">← Back</button>
+        </div>
+
+        <!-- Result -->
+        <div class="qresult" id="quizResult">
+          <div class="quiz-head"><span class="badge">Your match</span></div>
+          <h2 style="margin-bottom:18px">Here's your bright starting point ✨</h2>
+          <div class="qres-card">
+            <div class="qres-badge" id="rBadge">💻</div>
+            <div>
+              <h4 id="rTitle">Web Development Bootcamp</h4>
+              <div class="rmeta" id="rMeta">Code · 12 weeks · Beginner</div>
+              <div class="rwhy" id="rWhy"></div>
+            </div>
+            <div class="qres-price" id="rPrice">£299</div>
+          </div>
+          <div class="qres-actions">
+            <a class="btn btn-amber" id="rEnrol" href="#courses">Enrol on this course</a>
+            <button class="qback" id="qrestart" style="display:inline-flex; margin-top:0">↻ Retake quiz</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Why learn with us / split -->
-  <section class="dsection" id="why">
-    <div class="wrap dsplit">
-      <div class="dsplit-art rv"><img class="tphoto" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034820_19fcc021-69c5-46b8-a608-036e6cb15454_min.webp" alt="Students learning together" loading="lazy"></div>
+  <!-- Course catalog -->
+  <section class="sec" id="courses">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">Popular courses</span><h2>Skills that <span class="grad">open doors</span></h2><p>Hand-picked programmes with real projects, mentor feedback and a certificate at the finish line.</p></div>
+      <div class="filters rv">
+        <div class="fgroup" id="trackFilter">
+          <button class="fbtn on" data-track="all">All tracks</button>
+          <button class="fbtn" data-track="code">Code</button>
+          <button class="fbtn" data-track="design">Design</button>
+          <button class="fbtn" data-track="data">Data</button>
+        </div>
+        <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="search" type="search" placeholder="Search courses…" aria-label="Search courses"></div>
+      </div>
+      <div class="courses" id="courseGrid">
+        <article class="course" data-track="code" data-level="Beginner" data-title="Web Development Bootcamp">
+          <div class="cover" style="background:linear-gradient(135deg,#6d5efc,#a78bfa)"><span class="track-tag">Code</span>💻</div>
+          <div class="cbody"><h3>Web Development Bootcamp</h3><p class="cdesc">Go from zero to your first live site with HTML, CSS and JavaScript — building as you learn.</p>
+            <div class="cmeta"><span class="lvl">12 weeks · Beginner</span><span class="price">£299</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <article class="course" data-track="design" data-level="Intermediate" data-title="UX &amp; Product Design">
+          <div class="cover" style="background:linear-gradient(135deg,#ec4899,#f9a8d4)"><span class="track-tag">Design</span>🎨</div>
+          <div class="cbody"><h3>UX &amp; Product Design</h3><p class="cdesc">Master research, wireframes and prototypes, and ship a polished portfolio piece employers notice.</p>
+            <div class="cmeta"><span class="lvl">10 weeks · Intermediate</span><span class="price">£349</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <article class="course" data-track="data" data-level="Beginner" data-title="Data Analytics Essentials">
+          <div class="cover" style="background:linear-gradient(135deg,#10b981,#6ee7b7)"><span class="track-tag">Data</span>📊</div>
+          <div class="cbody"><h3>Data Analytics Essentials</h3><p class="cdesc">Turn raw spreadsheets into clear insight with SQL, charts and storytelling that lands.</p>
+            <div class="cmeta"><span class="lvl">8 weeks · Beginner</span><span class="price">£279</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <article class="course" data-track="code" data-level="Intermediate" data-title="Front-End with React">
+          <div class="cover" style="background:linear-gradient(135deg,#6d5efc,#22d3ee)"><span class="track-tag">Code</span>⚛️</div>
+          <div class="cbody"><h3>Front-End with React</h3><p class="cdesc">Build fast, modern interfaces with components, state and hooks — and deploy a real app.</p>
+            <div class="cmeta"><span class="lvl">10 weeks · Intermediate</span><span class="price">£329</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <article class="course" data-track="design" data-level="Beginner" data-title="Brand &amp; Visual Identity">
+          <div class="cover" style="background:linear-gradient(135deg,#ec4899,#f59e0b)"><span class="track-tag">Design</span>🖌️</div>
+          <div class="cbody"><h3>Brand &amp; Visual Identity</h3><p class="cdesc">Design logos, type and colour systems, and package it all into a brand guide clients love.</p>
+            <div class="cmeta"><span class="lvl">6 weeks · Beginner</span><span class="price">£229</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <article class="course" data-track="data" data-level="Intermediate" data-title="Python for Data Science">
+          <div class="cover" style="background:linear-gradient(135deg,#10b981,#3b82f6)"><span class="track-tag">Data</span>🐍</div>
+          <div class="cbody"><h3>Python for Data Science</h3><p class="cdesc">Wrangle data with pandas, visualise it, and build your first predictive model in Python.</p>
+            <div class="cmeta"><span class="lvl">12 weeks · Intermediate</span><span class="price">£379</span></div>
+            <a class="btn btn-fill" href="#quiz">Enrol</a></div>
+        </article>
+        <p class="empty" id="empty">No courses match that — try another track or search.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why -->
+  <section class="sec" id="why">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034820_19fcc021-69c5-46b8-a608-036e6cb15454_min.webp" alt="Students learning together" loading="lazy"></div>
       <div class="rv">
         <span class="eyebrow">Why BrightPath</span>
-        <h2>Learning that <span class="grad-text">actually sticks</span></h2>
-        <p style="color:var(--muted); margin-top:14px;">We built BrightPath for people with real lives and big goals. Small cohorts, clear structure and mentors who genuinely want you to finish.</p>
+        <h2 style="font-size:clamp(1.9rem,3.8vw,2.7rem); margin:10px 0">Learning that <span class="grad">actually sticks</span></h2>
+        <p style="color:var(--muted)">We built BrightPath for people with real lives and big goals. Small cohorts, clear structure and mentors who genuinely want you to finish.</p>
         <ul>
           <li><span class="chk">✓</span><span><b>Learn by building</b> — every course ends with a project you're proud to show.</span></li>
           <li><span class="chk">✓</span><span><b>Mentor support</b> from working professionals, not just pre-recorded videos.</span></li>
           <li><span class="chk">✓</span><span><b>Flexible schedule</b> — study evenings, weekends or lunch breaks, at your pace.</span></li>
-          <li><span class="chk">✓</span><span><b>Certificate you earn</b> and can share on LinkedIn the moment you finish.</span></li>
+          <li><span class="chk">✓</span><span><b>A certificate you earn</b> and can share on LinkedIn the moment you finish.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- How it works -->
-  <section class="dsection alt" id="learn">
+  <section class="sec" id="how" style="background:var(--card); border-block:1px solid var(--line)">
     <div class="wrap">
-      <div class="dhead rv">
-        <span class="eyebrow">How It Works</span>
-        <h2>Three steps to your <span class="grad-text">next skill</span></h2>
-      </div>
-      <div class="dgrid g3">
-        <div class="dcard rv">
-          <div class="ci">🧭</div>
-          <h3>Pick your path</h3>
-          <p>Choose a course that fits your goal and level. Not sure? Our free 10-minute quiz points the way.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">📚</div>
-          <h3>Learn by doing</h3>
-          <p>Follow bite-sized lessons and hands-on projects, with a mentor checking in every week.</p>
-        </div>
-        <div class="dcard rv">
-          <div class="ci">🏆</div>
-          <h3>Earn your certificate</h3>
-          <p>Finish your final project, get it reviewed, and receive a certificate to showcase your new skills.</p>
-        </div>
+      <div class="sec-head center rv"><span class="eyebrow">How it works</span><h2>Three steps to your <span class="grad">next skill</span></h2></div>
+      <div class="steps3">
+        <div class="st rv"><div class="no">01</div><div class="ic">🧭</div><h3>Pick your path</h3><p>Choose a course that fits your goal and level — or take the 30-second quiz above.</p></div>
+        <div class="st rv"><div class="no">02</div><div class="ic">📚</div><h3>Learn by doing</h3><p>Follow bite-sized lessons and hands-on projects, with a mentor checking in every week.</p></div>
+        <div class="st rv"><div class="no">03</div><div class="ic">🏆</div><h3>Earn your certificate</h3><p>Finish your final project, get it reviewed, and receive a certificate to showcase.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Enrol CTA -->
-  <section class="dsection" id="enrol">
+  <!-- CTA -->
+  <section class="cta">
     <div class="wrap">
-      <div class="dcta rv">
+      <div class="cta-in rv">
         <h2>Enrol today, start tomorrow</h2>
         <p>New cohorts open every month. Reserve your spot now and take the first bright step toward a skill you'll actually use.</p>
-        <a class="dbtn dbtn-light" href="#courses">Browse Courses</a>
+        <a class="btn btn-light" href="#quiz">Find your path →</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="dfooter">
+  <footer class="foot">
     <div class="wrap">
-      <div class="dfooter-grid">
-        <div>
-          <div class="dbrand"><span class="logo-dot">B</span> BrightPath Academy</div>
-          <p>An online learning academy helping curious people build real, career-ready skills — at their own pace.</p>
-        </div>
-        <div>
-          <h4>Enrol</h4>
-          <ul>
-            <li>New cohorts monthly</li>
-            <li>Flexible, self-paced study</li>
-            <li>Support@brightpath.academy</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="#courses">Courses</a></li>
-            <li><a href="#why">Why Us</a></li>
-            <li><a href="#learn">How It Works</a></li>
-          </ul>
-        </div>
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">✦</span> BrightPath</a><p>An online learning academy helping curious people build real, career-ready skills — at their own pace.</p></div>
+        <div><h5>Enrol</h5><ul><li>New cohorts monthly</li><li>Flexible, self-paced study</li><li>support@brightpath.academy</li></ul></div>
+        <div><h5>Explore</h5><ul><li><a href="#courses">Courses</a></li><li><a href="#quiz">Find your path</a></li><li><a href="#how">How it works</a></li></ul></div>
       </div>
-      <div class="dfooter-bottom">
-        Demo site designed &amp; built by <a href="../index.html">Billy Digitals</a> · Fictional business for sample purposes.
-      </div>
+      <div class="foot-base">© BrightPath Academy — a sample design. One bright step at a time.</div>
     </div>
   </footer>
 
-  <script src="demo.js"></script>
+  <script src="education.js"></script>
   <script src="fx3d.js" defer></script>
 </body>
 </html>
