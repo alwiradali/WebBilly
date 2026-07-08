@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperture — Photography by Noa Reyes</title>
+  <meta name="description" content="Aperture — a photographer capturing light, place and people. Browse the portfolio, drag the retouch slider, and book a session.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0a0a0c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prata&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="photography.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top">Aperture<b>.</b></a>
+      <nav class="nav-links" id="navLinks"><a href="#work">Work</a><a href="#retouch">Retouch</a><a href="#packages">Packages</a><a href="#book">Book</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#book">Book a session</a>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rv">Photographer · Noa Reyes</p>
+        <h1 class="rv">I chase the light so you keep the moment.</h1>
+        <p class="lede rv">Travel, portrait and interior photography with a quiet, cinematic eye. Every frame is composed in camera and finished by hand — no presets, no shortcuts.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#work">View the work</a><a class="btn btn-line" href="#book">Book a session</a></div>
+        <div class="hero-note rv"><span><b>12 yrs</b>behind the lens</span><span><b>40+</b>countries</span><span><b>300+</b>shoots delivered</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true">
+        <span class="art-emoji">📷</span>
+        <div class="art-frame"></div>
+        <div class="art-chip c1">Shot on prime</div>
+        <div class="art-chip c2">Hand-graded</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work -->
+  <section class="sec" id="work">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">Selected work</p><h2>A portfolio in <span style="color:var(--accent)">available light</span></h2><p>Filter by genre — tap any frame to view it full-screen.</p></div>
+      <div class="filters rv" id="filters">
+        <button class="fbtn on" data-f="all">All</button>
+        <button class="fbtn" data-f="travel">Travel</button>
+        <button class="fbtn" data-f="people">People</button>
+        <button class="fbtn" data-f="interiors">Interiors</button>
+        <button class="fbtn" data-f="food">Food</button>
+      </div>
+      <div class="gallery" id="gallery">
+        <div class="shot rv" data-f="travel" data-t="Blue Hour, Azores"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034901_95dbcf5b-8672-46bb-8082-8e92a9187fad_min.webp" alt="Azores crater lake" loading="lazy"><div class="cap"><div class="g">Travel</div><div class="t">Blue Hour, Azores</div></div></div>
+        <div class="shot rv" data-f="people" data-t="The Studio"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035500_44b63af5-d1df-4b0a-b0a4-52b9ef36cd7e_min.webp" alt="A team at work" loading="lazy"><div class="cap"><div class="g">People</div><div class="t">The Studio</div></div></div>
+        <div class="shot rv" data-f="interiors" data-t="Penthouse, Central"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_035023_f3548813-1801-4ab2-8814-26ef480ec9f9_min.webp" alt="Penthouse interior" loading="lazy"><div class="cap"><div class="g">Interiors</div><div class="t">Penthouse, Central</div></div></div>
+        <div class="shot rv" data-f="travel" data-t="First Light"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="Mountain summit at sunrise" loading="lazy"><div class="cap"><div class="g">Travel</div><div class="t">First Light</div></div></div>
+        <div class="shot rv" data-f="food" data-t="Saffron"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp" alt="A plated dish" loading="lazy"><div class="cap"><div class="g">Food</div><div class="t">Saffron</div></div></div>
+        <div class="shot rv" data-f="people" data-t="Learning"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034820_19fcc021-69c5-46b8-a608-036e6cb15454_min.webp" alt="Students learning" loading="lazy"><div class="cap"><div class="g">People</div><div class="t">Learning</div></div></div>
+        <div class="shot rv" data-f="travel" data-t="Dune Line"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034916_a3d4f5e7-5a22-483e-8498-1015fbc3b92a_min.webp" alt="Desert dunes at sunset" loading="lazy"><div class="cap"><div class="g">Travel</div><div class="t">Dune Line</div></div></div>
+        <div class="shot rv" data-f="interiors" data-t="Quiet Room"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034949_64150daf-bf11-41c8-aa4f-6f16972d38b1_min.webp" alt="Styled living room" loading="lazy"><div class="cap"><div class="g">Interiors</div><div class="t">Quiet Room</div></div></div>
+        <div class="shot rv" data-f="travel" data-t="Old Town"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034904_cfb62744-dce9-4025-aa84-a52120394ef9_min.webp" alt="Ancient town" loading="lazy"><div class="cap"><div class="g">Travel</div><div class="t">Old Town</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Retouch slider -->
+  <section class="sec" id="retouch" style="background:var(--panel); border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">The finish</p><h2>Drag to see the <span style="color:var(--accent)">hand grade</span></h2><p>Every image is graded frame by frame. Drag the handle to compare the raw capture with the delivered edit.</p></div>
+      <div class="ba rv" id="ba">
+        <img class="before-img" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="Before retouch">
+        <img class="after-img" id="baAfter" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260707_034905_58454017-5396-4b3b-9325-4bfc6dc2bd71_min.webp" alt="After retouch">
+        <span class="lab l">Raw</span><span class="lab r">Graded</span>
+        <div class="handle" id="baHandle"><div class="grip">⇔</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Packages -->
+  <section class="sec" id="packages">
+    <div class="wrap">
+      <div class="sec-head center rv"><p class="eyebrow">Sessions</p><h2>Simple, honest <span style="color:var(--accent)">packages</span></h2></div>
+      <div class="pkgs">
+        <div class="pkg rv"><div class="pt">Portrait</div><h3>The Sitting</h3><div class="pr">£240</div><ul><li>90-minute session</li><li>1 location</li><li>20 hand-edited images</li><li>Online gallery</li></ul><a class="btn btn-line" href="#book">Enquire</a></div>
+        <div class="pkg feat rv"><div class="pt">Most booked</div><h3>Half Day</h3><div class="pr">£560</div><ul><li>4-hour session</li><li>Up to 2 locations</li><li>60 hand-edited images</li><li>Print-ready files</li></ul><a class="btn btn-fill" href="#book">Enquire</a></div>
+        <div class="pkg rv"><div class="pt">Editorial</div><h3>Full Day</h3><div class="pr">£980</div><ul><li>8-hour session</li><li>Unlimited locations</li><li>120+ hand-edited images</li><li>Usage licence included</li></ul><a class="btn btn-line" href="#book">Enquire</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking -->
+  <section class="sec book" id="book">
+    <div class="wrap book-grid">
+      <div class="rv">
+        <p class="eyebrow">Let's shoot</p>
+        <h2>Book a session</h2>
+        <p style="color:var(--muted)">Tell me what you have in mind — a portrait, a space, a trip, a story. I'll reply within a day with availability and a plan for the light.</p>
+      </div>
+      <div class="bform">
+        <form id="bookForm" novalidate>
+          <div class="row">
+            <div class="fld"><label for="bName">Name</label><input id="bName" type="text" placeholder="Your name" required></div>
+            <div class="fld"><label for="bEmail">Email</label><input id="bEmail" type="email" placeholder="you@email.com" required></div>
+          </div>
+          <div class="row">
+            <div class="fld"><label for="bType">Session</label><select id="bType"><option>The Sitting — Portrait</option><option>Half Day</option><option>Full Day — Editorial</option><option>Something else</option></select></div>
+            <div class="fld"><label for="bWhen">Timeframe</label><select id="bWhen"><option>In the next 2 weeks</option><option>This month</option><option>Next month</option><option>Flexible</option></select></div>
+          </div>
+          <button class="btn btn-fill" type="submit">Request availability</button>
+        </form>
+        <div class="bform-ok" id="bookOk"><div class="tick">✓</div><h3>Message sent</h3><p id="bookMsg"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top">Aperture<b>.</b></a><p style="margin-top:12px">Travel, portrait and interior photography with a quiet, cinematic eye. Shot in camera, finished by hand.</p></div>
+        <div><h5>Work</h5><ul><li><a href="#work">Travel</a></li><li><a href="#work">People</a></li><li><a href="#work">Interiors</a></li><li><a href="#work">Food</a></li></ul></div>
+        <div><h5>Studio</h5><ul><li><a href="#packages">Packages</a></li><li><a href="#book">Book</a></li><li>Instagram</li></ul></div>
+      </div>
+      <div class="foot-base">© Aperture / Noa Reyes — a sample design. Fictional studio for demo purposes.</div>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lb" id="lb"><button class="lb-close" id="lbClose" aria-label="Close">✕</button><img id="lbImg" src="" alt=""></div>
+
+  <script src="photography.js"></script>
+  <script src="fx3d.js" defer></script>
+</body>
+</html>
