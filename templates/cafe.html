@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember &amp; Oak — Coffee, roasted with care</title>
+  <meta name="description" content="Ember & Oak — a neighbourhood coffee house roasting its own beans. Browse the menu and order ahead for pickup.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#fbf6ee">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cafe.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="mk">☕</span> Ember &amp; Oak</a>
+      <nav class="nav-links" id="navLinks"><a href="#order">Order ahead</a><a href="#beans">Our beans</a><a href="#visit">Visit</a></nav>
+      <div class="nav-cta"><a class="btn btn-fill" href="#order">Order ahead</a>
+        <button class="burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow rv">Neighbourhood roastery</span>
+        <h1 class="rv">Coffee, roasted <span class="em">with care.</span></h1>
+        <p class="lede rv">We roast in small batches out back, pull every shot to order, and know most of our regulars by name. Skip the queue — order ahead and it'll be waiting.</p>
+        <div class="hero-cta rv"><a class="btn btn-fill" href="#order">Order ahead</a><a class="btn btn-line" href="#beans">Our beans</a></div>
+        <div class="hero-note rv"><span><b>Own-roasted</b> beans</span><span><b>Oat, soy &amp; almond</b></span><span><b>Open 7am</b> daily</span></div>
+      </div>
+      <div class="dhero-art rv" aria-hidden="true"><span class="art-emoji">☕</span><div class="art-frame"></div><div class="art-chip c1">Freshly pulled</div><div class="art-chip c2">Small-batch roast</div></div>
+    </div>
+  </section>
+
+  <!-- Order ahead -->
+  <section class="sec" id="order">
+    <div class="wrap">
+      <div class="sec-head rv"><span class="eyebrow">Order ahead</span><h2>Build your <span class="em">order</span></h2><p>Tap to add — pick a collection time and we'll have it ready on the counter.</p></div>
+      <div class="order">
+        <div class="rv">
+          <div class="menu-tabs" id="menuTabs">
+            <button class="mtab on" data-c="all">All</button>
+            <button class="mtab" data-c="espresso">Espresso</button>
+            <button class="mtab" data-c="filter">Filter</button>
+            <button class="mtab" data-c="food">Food</button>
+            <button class="mtab" data-c="pastry">Pastries</button>
+          </div>
+          <div class="menu-list" id="menuList"></div>
+        </div>
+        <div class="bag rv">
+          <h3>Your order</h3>
+          <p class="bsub">Collect from the counter</p>
+          <div class="bag-items" id="bagItems"><p class="bag-empty" id="bagEmpty">Nothing added yet ☕</p></div>
+          <div class="pickup"><label for="pickTime">Collection time</label><select id="pickTime"><option>In 15 minutes</option><option>In 30 minutes</option><option>In 45 minutes</option><option>In 1 hour</option></select></div>
+          <div class="bag-total"><span>Total</span><b id="bagTotal">£0.00</b></div>
+          <button class="btn btn-fill" id="placeOrder" disabled>Place order</button>
+          <div class="bag-done" id="bagDone"><div class="tick">✓</div><h3>Order in!</h3><p id="doneMsg"></p><div class="onum" id="orderNo"></div><button class="btn btn-line" id="newOrder" style="margin-top:16px">Start a new order</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beans -->
+  <section class="sec" id="beans" style="background:var(--cream)">
+    <div class="wrap split">
+      <div class="split-art rv"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260708_005801_9843a2dd-2e0a-42ec-8ec4-3246908139c7_min.webp" alt="A flat white on the counter at Ember & Oak" loading="lazy"></div>
+      <div class="rv">
+        <span class="eyebrow">Our beans</span>
+        <h2 style="font-size:clamp(1.9rem,4vw,2.7rem); margin:10px 0">Roasted out back, <span class="em">never in bulk</span></h2>
+        <p style="color:var(--muted)">We buy green coffee from farms we can name, roast it in 12kg batches, and rest it properly before it ever hits your cup. Fresher coffee, tasted the difference.</p>
+        <ul>
+          <li><span class="chk">✓</span><span><b>Single-origin &amp; seasonal blends</b>, roasted weekly.</span></li>
+          <li><span class="chk">✓</span><span><b>Traceable sourcing</b> — we know the farm and the crop.</span></li>
+          <li><span class="chk">✓</span><span><b>Beans to take home</b>, ground how you like them.</span></li>
+        </ul>
+        <a class="btn btn-fill" href="#order">Start an order</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit -->
+  <section class="sec" id="visit">
+    <div class="wrap">
+      <div class="sec-head center rv"><span class="eyebrow">Visit us</span><h2>Come say <span class="em">hello</span></h2></div>
+      <div class="hours">
+        <div class="h rv"><div class="ti">📍</div><h4>Find us</h4><p>14 Kiln Lane<br>The Old Quarter</p></div>
+        <div class="h rv"><div class="ti">🕗</div><h4>Opening hours</h4><p>Mon–Fri · 7am–5pm<br>Sat–Sun · 8am–4pm</p></div>
+        <div class="h rv"><div class="ti">🐾</div><h4>Good to know</h4><p>Dog-friendly · free WiFi<br>Oat, soy &amp; almond milk</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><a class="brand" href="#top"><span class="mk">☕</span> Ember &amp; Oak</a><p>A neighbourhood coffee house roasting its own beans in small batches, pulling every shot to order.</p></div>
+        <div><h5>Menu</h5><ul><li><a href="#order">Espresso</a></li><li><a href="#order">Filter</a></li><li><a href="#order">Food</a></li><li><a href="#order">Pastries</a></li></ul></div>
+        <div><h5>Visit</h5><ul><li><a href="#visit">Find us</a></li><li><a href="#visit">Hours</a></li><li><a href="#beans">Our beans</a></li></ul></div>
+      </div>
+      <div class="foot-base">© Ember &amp; Oak — a sample design by Billy Digitals. Fictional cafe for demo purposes.</div>
+    </div>
+  </footer>
+
+  <script src="cafe.js"></script>
+  <script src="fx3d.js" defer></script>
+</body>
+</html>
