@@ -207,30 +207,41 @@
       var target = (Math.PI / 2) - focusIdx * step;
       target += Math.round((base - target) / TAU) * TAU;   // nearest equivalent angle
       base += (target - base) * 0.12; vel = 0;
-    } else if (!dragging) {                         // auto-spin (momentum eases back to it)
+    } else if (!dragging && !reduce) {               // idle auto-spin (paused under reduced-motion)
       vel += (0.28 * hoverK - vel) * 0.04;
       base += vel * dt;
+    } else if (!dragging && reduce) {                // reduced-motion: let flung momentum settle, no idle spin
+      base += vel * dt; vel *= 0.94;
     }
     layout();
   }
-  if (reduce) { layout(); }                          // static ring, no spin
-  else { requestAnimationFrame(tick); }
+  // Always run the loop so swipes repaint even under reduced-motion; only
+  // the idle auto-spin above is gated on the reduced-motion preference.
+  requestAnimationFrame(tick);
 
   // hover pauses the spin
   stage.addEventListener("pointerover", function (e) { if (e.target.closest(".tx-node")) hoverK = 0; });
   stage.addEventListener("pointerout", function (e) { if (!stage.matches(":hover")) hoverK = 1; });
 
-  // drag to spin
+  // drag / swipe to spin (works with a filter active — the swipe frees it)
   stage.addEventListener("pointerdown", function (e) {
-    if (focusIdx >= 0) return;
-    dragging = true; lastX = e.clientX; dragMoved = 0; stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+    dragging = true; lastX = e.clientX; dragMoved = 0;
+    try { stage.setPointerCapture && stage.setPointerCapture(e.pointerId); } catch (err) {}
   });
   window.addEventListener("pointermove", function (e) {
     if (!dragging) return;
     var dx = e.clientX - lastX; lastX = e.clientX; dragMoved += Math.abs(dx);
+    // a real swipe releases any category lock so the wheel can free-spin
+    if (dragMoved > 8 && focusIdx >= 0) {
+      focusIdx = -1;
+      fbtns.forEach(function (b) { b.classList.remove("active"); });
+      var allBtn = document.querySelector('.fbtn[data-filter="all"]'); if (allBtn) allBtn.classList.add("active");
+    }
     base += dx * 0.006; vel = dx * 0.05;
   });
-  window.addEventListener("pointerup", function () { dragging = false; });
+  function endDrag() { dragging = false; }
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
   // prevent a click firing after a real drag
   stage.addEventListener("click", function (e) { if (dragMoved > 6) { e.stopPropagation(); e.preventDefault(); } }, true);
 
