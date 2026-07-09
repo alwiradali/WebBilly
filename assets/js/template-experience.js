@@ -149,7 +149,9 @@
       '<span class="go">Open ' + it.name + ' ↗</span></span>' +
       '<span class="label"><span class="name">' + it.name + '</span><span class="cat">' + it.catLabel + '</span></span>';
     n._it = it; n._i = i;
-    n.addEventListener("click", function () { viewer.open(it); });
+    // Keyboard access; pointer taps are handled in the pointerup logic below
+    // (a native click on a slowly-spinning tile can miss, so we don't rely on it).
+    n.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); viewer.open(it); } });
     orbit.appendChild(n);
     return n;
   });
@@ -167,7 +169,8 @@
 
   // geometry + animation
   var N = nodes.length, step = (Math.PI * 2) / N;
-  var base = 0, vel = 0, hoverK = 1, focusIdx = -1, dragging = false, lastX = 0, dragMoved = 0;
+  var base = 0, vel = 0, hoverK = 1, focusIdx = -1, dragging = false, lastX = 0, dragMoved = 0, hovering = false;
+  var canHover = !(window.matchMedia && matchMedia("(hover: none)").matches);
   var Rx = 360, Ry = 240;
   function measure() {
     var w = stage.clientWidth, h = stage.clientHeight;
@@ -207,8 +210,10 @@
       var target = (Math.PI / 2) - focusIdx * step;
       target += Math.round((base - target) / TAU) * TAU;   // nearest equivalent angle
       base += (target - base) * 0.12; vel = 0;
+    } else if (!dragging && hovering) {              // frozen while the mouse is over the wheel, so tiles are easy to click
+      vel = 0;
     } else if (!dragging && !reduce) {               // idle auto-spin (paused under reduced-motion)
-      vel += (0.28 * hoverK - vel) * 0.04;
+      vel += (0.28 - vel) * 0.04;
       base += vel * dt;
     } else if (!dragging && reduce) {                // reduced-motion: let flung momentum settle, no idle spin
       base += vel * dt; vel *= 0.94;
@@ -220,30 +225,51 @@
   requestAnimationFrame(tick);
 
   // hover pauses the spin
-  stage.addEventListener("pointerover", function (e) { if (e.target.closest(".tx-node")) hoverK = 0; });
-  stage.addEventListener("pointerout", function (e) { if (!stage.matches(":hover")) hoverK = 1; });
+  // On a mouse device, freeze the wheel whenever the pointer is over it so
+  // tiles sit still and are easy to click. (Touch devices keep spinning; a
+  // tap there lands on whatever tile is under the finger.)
+  stage.addEventListener("pointerover", function () { if (canHover) hovering = true; });
+  stage.addEventListener("pointerout", function (e) { if (canHover && !stage.contains(e.relatedTarget)) hovering = false; });
 
-  // drag / swipe to spin (works with a filter active — the swipe frees it)
-  stage.addEventListener("pointerdown", function (e) {
-    dragging = true; lastX = e.clientX; dragMoved = 0;
-    try { stage.setPointerCapture && stage.setPointerCapture(e.pointerId); } catch (err) {}
+  // Drag/swipe to spin, tap to open. The tiles sit in a 3D-perspective
+  // context where DOM hit-testing on a transformed tile is unreliable, so we
+  // work in geometry: figure out which tile is nearest the pointer from the
+  // wheel's own maths. Handled on `window` (gated to presses that start over
+  // the stage) so it never depends on which element the browser hit-tests.
+  function stageRect() { return stage.getBoundingClientRect(); }
+  function inStage(x, y) { var r = stageRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }
+  function nearestIndex(x, y) {
+    var r = stageRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, best = 0, bd = Infinity;
+    for (var i = 0; i < N; i++) {
+      var a = base + i * step, nx = cx + Math.cos(a) * Rx, ny = cy + Math.sin(a) * Ry;
+      var d = (x - nx) * (x - nx) + (y - ny) * (y - ny);
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  var pressed = false;
+  window.addEventListener("pointerdown", function (e) {
+    if (!inStage(e.clientX, e.clientY)) return;   // ignore presses elsewhere on the page
+    pressed = true; dragging = true; lastX = e.clientX; dragMoved = 0;
   });
   window.addEventListener("pointermove", function (e) {
     if (!dragging) return;
     var dx = e.clientX - lastX; lastX = e.clientX; dragMoved += Math.abs(dx);
-    // a real swipe releases any category lock so the wheel can free-spin
-    if (dragMoved > 8 && focusIdx >= 0) {
+    if (dragMoved > 8 && focusIdx >= 0) {          // a real swipe releases any category lock
       focusIdx = -1;
       fbtns.forEach(function (b) { b.classList.remove("active"); });
       var allBtn = document.querySelector('.fbtn[data-filter="all"]'); if (allBtn) allBtn.classList.add("active");
     }
     base += dx * 0.006; vel = dx * 0.05;
   });
-  function endDrag() { dragging = false; }
-  window.addEventListener("pointerup", endDrag);
-  window.addEventListener("pointercancel", endDrag);
-  // prevent a click firing after a real drag
-  stage.addEventListener("click", function (e) { if (dragMoved > 6) { e.stopPropagation(); e.preventDefault(); } }, true);
+  window.addEventListener("pointerup", function (e) {
+    if (pressed && dragMoved < 8) {                // a tap → open the tile nearest the pointer
+      var it = nodes[nearestIndex(e.clientX, e.clientY)]._it;
+      if (it) viewer.open(it);
+    }
+    dragging = false; pressed = false;
+  });
+  window.addEventListener("pointercancel", function () { dragging = false; pressed = false; });
 
   // filters bring a style to the front
   var fbtns = [].slice.call(document.querySelectorAll(".fbtn"));
