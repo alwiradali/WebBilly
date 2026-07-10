@@ -17,7 +17,7 @@
 
 const REVIEW_URL = "https://g.page/r/CVVojLMqV7dcECE/review";
 const FROM = "Billy Digitals <hello@billydigitals.com>";
-const REPLY_TO = "info.billydigitals@gmail.com";
+const REPLY_TO = "hello@billydigitals.com";
 const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 
 export default {
