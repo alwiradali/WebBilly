@@ -144,7 +144,7 @@
   function boot(libs) {
     var THREE = libs.THREE;
     var W = Math.max(art.clientWidth, 2), H = Math.max(art.clientHeight, 2);
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
     var renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(dpr);
