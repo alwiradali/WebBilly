@@ -31,7 +31,7 @@ Quote-first: web-design work asks for a free quote; hosting & care keep their pr
 | `/timeline` | Turnaround: Standard 3–7 days, Premium 1–2 weeks, Ultra 2–4 weeks ⚡ |
 | `/start` | Let's go! Send your business name, what you need & deadline — we'll send a free quote 🚀 billydigitals.com/#contact |
 | `/portfolio` | See our work: billydigitals.com/portfolio ✨ |
-| `/review` | Loved it? A 10-second Google review means the world 🌟 https://g.page/r/CVVojLMqV7dcECE/review 🙏 |
+| `/review` | Loved it? A 10-second Google review means the world 🌟 https://g.page/r/CaibQuMCDDWPEAE/review 🙏 |
 | `/thanks` | Thank you! 🙌 We're always here whenever you need us. |
 
 ---

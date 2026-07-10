@@ -339,7 +339,7 @@ function initChat() {
     '</a> or <a href="' + waUrl + '" target="_blank" rel="noopener">chat on WhatsApp</a> — we reply fast.';
 
   // Google review link (same as the flyer's "Leave a 5-star review" button).
-  const REVIEW_URL = "https://g.page/r/CVVojLMqV7dcECE/review";
+  const REVIEW_URL = "https://g.page/r/CaibQuMCDDWPEAE/review";
   const reviewLink =
     '<a href="' + REVIEW_URL + '" target="_blank" rel="noopener">Leave a 5-star Google review →</a>';
   const reviewAsk =
