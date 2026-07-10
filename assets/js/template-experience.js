@@ -41,7 +41,7 @@
   section.insertBefore(bg, section.firstChild);
   (function background() {
     var ctx = bg.getContext("2d");
-    var blobs = [], stars = [], W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var blobs = [], stars = [], W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     var cols = ["#2b7fff", "#22d3ee", "#7c3aed", "#0ea5e9"];
     function size() {
       W = section.clientWidth; H = section.clientHeight;
@@ -202,8 +202,9 @@
     }
   }
 
-  var prev = null, TAU = Math.PI * 2;
+  var prev = null, TAU = Math.PI * 2, running = false, lastBase = NaN, lastFocus = -2, orbitVisible = false;
   function tick(now) {
+    if (!running) return;
     requestAnimationFrame(tick);
     if (prev === null) prev = now; var dt = Math.min((now - prev) / 1000, 0.05); prev = now;
     if (focusIdx >= 0) {                            // ease the focused style to the front (bottom)
@@ -218,11 +219,28 @@
     } else if (!dragging && reduce) {                // reduced-motion: let flung momentum settle, no idle spin
       base += vel * dt; vel *= 0.94;
     }
-    layout();
+    // Only write to the DOM when the wheel actually moved — a frozen or
+    // settled wheel then costs nothing per frame.
+    if (dragging || base !== lastBase || focusIdx !== lastFocus) {
+      layout(); lastBase = base; lastFocus = focusIdx;
+    }
   }
-  // Always run the loop so swipes repaint even under reduced-motion; only
-  // the idle auto-spin above is gated on the reduced-motion preference.
-  requestAnimationFrame(tick);
+  function startOrbit() { if (running) return; running = true; prev = null; requestAnimationFrame(tick); }
+  function stopOrbit() { running = false; }
+  layout();   // position the tiles once up front, even before the wheel scrolls into view
+  // Pause the entire wheel when it's off-screen or the tab is hidden. This is
+  // the single biggest saving on lower-powered laptops — no work when unseen.
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        orbitVisible = e.isIntersecting;
+        (orbitVisible && document.visibilityState !== "hidden") ? startOrbit() : stopOrbit();
+      });
+    }, { threshold: 0.04 }).observe(stage);
+  } else { orbitVisible = true; startOrbit(); }
+  document.addEventListener("visibilitychange", function () {
+    (orbitVisible && document.visibilityState !== "hidden") ? startOrbit() : stopOrbit();
+  });
 
   // hover pauses the spin
   // On a mouse device, freeze the wheel whenever the pointer is over it so
