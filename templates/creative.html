@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER — Creative Studio</title>
+  <meta name="description" content="AETHER is a creative studio shaping bold, cinematic digital experiences — brand, web and motion built for the future.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#07060c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="creative.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="brand" href="#">A<b>ETHER</b></a>
+    <div class="links">
+      <a href="#work">Work</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a class="cta" href="#contact">Start a project</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <canvas id="gem" aria-hidden="true"></canvas>
+
+    <div class="hero-head">
+      <p class="kick">Creative Studio · Est. 2026</p>
+      <h1>
+        <span class="row1">SHAPED BY</span>
+        <span class="big">Light</span>
+      </h1>
+    </div>
+
+    <p class="hero-tag tr">Built<br>for the<br>future</p>
+    <p class="hero-tag bl">We transcend<br>the ordinary</p>
+    <div class="hero-scroll">Scroll<div class="bar"></div></div>
+  </header>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Brand&nbsp;Identity Web&nbsp;Design Motion 3D&nbsp;&amp;&nbsp;WebGL Art&nbsp;Direction Experiences</span>
+      <span>Brand&nbsp;Identity Web&nbsp;Design Motion 3D&nbsp;&amp;&nbsp;WebGL Art&nbsp;Direction Experiences</span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <section class="intro wrap" id="studio">
+    <p class="ey" data-rise>The Studio</p>
+    <h2 data-rise class="d1">We craft <i>cinematic</i> digital worlds where brand, technology and emotion meet — designed to feel <i>inevitable</i>.</h2>
+  </section>
+
+  <!-- WORK -->
+  <section class="work wrap" id="work">
+    <div class="work-grid">
+      <article class="card d1" data-rise>
+        <span class="num">01</span>
+        <span class="tag">Brand · Web</span>
+        <h3>Nova Atelier</h3>
+        <p>A luxury fashion house reimagined with a fluid, immersive storefront.</p>
+      </article>
+      <article class="card d2" data-rise>
+        <span class="num">02</span>
+        <span class="tag">WebGL · Motion</span>
+        <h3>Halcyon Labs</h3>
+        <p>Real-time 3D product experiences for a next-gen hardware brand.</p>
+      </article>
+      <article class="card d1" data-rise>
+        <span class="num">03</span>
+        <span class="tag">Identity</span>
+        <h3>Møller &amp; Co.</h3>
+        <p>Editorial-led rebrand for an architecture practice built on restraint.</p>
+      </article>
+      <article class="card d2" data-rise>
+        <span class="num">04</span>
+        <span class="tag">Experience</span>
+        <h3>Aurora Festival</h3>
+        <p>An interactive launch site that turned a lineup drop into an event.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats wrap">
+    <div class="stat" data-rise><b>60+</b><span>Projects shipped</span></div>
+    <div class="stat" data-rise class="d1"><b>14</b><span>Awards</span></div>
+    <div class="stat" data-rise class="d2"><b>9</b><span>Countries</span></div>
+    <div class="stat" data-rise class="d3"><b>100%</b><span>Bespoke</span></div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-sec wrap" id="contact">
+    <h2 data-rise>Let's build something <i>extraordinary</i>.</h2>
+    <p class="d1" data-rise>Tell us about your vision — we'll shape it into a digital experience people remember.</p>
+    <a class="btn d2" href="#" data-rise>Start a project →</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <span class="brand">AETHER</span>
+    <span>© 2026 Aether Studio — Crafted with obsession.</span>
+    <span>hello@aether.studio</span>
+  </footer>
+
+  <!-- Reveal-on-scroll (standalone so it never depends on the WebGL module) -->
+  <script>
+  (function () {
+    var els = document.querySelectorAll("[data-rise]");
+    function showAll() { els.forEach(function (e) { e.classList.add("in"); }); }
+    if (!("IntersectionObserver" in window)) { showAll(); return; }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); } });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    els.forEach(function (e) { io.observe(e); });
+    // safety net: never let content stay hidden
+    setTimeout(showAll, 2400);
+    window.addEventListener("scroll", function once() { showAll(); window.removeEventListener("scroll", once); }, { passive: true });
+  })();
+  </script>
+
+  <script type="module" src="creative.js"></script>
+</body>
+</html>
