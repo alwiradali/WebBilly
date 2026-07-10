@@ -15,7 +15,7 @@
      REVIEW_TOKEN    — a long random string; the admin page must send it
    ============================================================ */
 
-const REVIEW_URL = "https://g.page/r/CVVojLMqV7dcECE/review";
+const REVIEW_URL = "https://g.page/r/CaibQuMCDDWPEAE/review";
 const FROM = "Billy Digitals <hello@billydigitals.com>";
 const REPLY_TO = "hello@billydigitals.com";
 const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
