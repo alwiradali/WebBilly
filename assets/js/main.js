@@ -4,7 +4,7 @@
 
 const CONFIG = {
   brand: "Billy Digitals",
-  email: "info.billydigitals@gmail.com",
+  email: "hello@billydigitals.com",
   // WhatsApp number: country code + number, digits only (e.g. "447700900123")
   whatsapp: "447519022117",
   waMessage: "Hi Billy Digitals! I'd like to discuss a website project.",

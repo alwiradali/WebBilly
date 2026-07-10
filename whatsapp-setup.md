@@ -43,6 +43,6 @@ New enquiry · Quote sent · In progress · Complete · Review requested
 - Name: Billy Digitals
 - Category: Web designer / Marketing agency
 - Description: Premium web design & app development — websites, web apps, hosting & SEO, built to convert.
-- Website: billydigitals.com · Email: info.billydigitals@gmail.com
+- Website: billydigitals.com · Email: hello@billydigitals.com
 - Profile photo: `assets/whatsapp-profile.png`
 - Catalogue: see `whatsapp-catalogue.md`
