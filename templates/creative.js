@@ -18,6 +18,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   if (!canvas) return;
   var stage = canvas.parentElement;
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
   var W = stage.clientWidth, H = stage.clientHeight;
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
@@ -118,11 +119,14 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   var fill = new THREE.PointLight(0x6d4bff, 1.2, 30); fill.position.set(-3, 3, 5); scene.add(fill);
 
   // ---- Post: subtle bloom ----
-  var composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  var bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.55, 0.6, 0.85);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  var composer = null, bloom = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.55, 0.6, 0.85);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  }
 
   // ---- Interaction ----
   var mx = 0, my = 0, tmx = 0, tmy = 0;
@@ -135,7 +139,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   function resize() {
     W = stage.clientWidth; H = stage.clientHeight;
     camera.aspect = W / H; camera.updateProjectionMatrix();
-    renderer.setSize(W, H); composer.setSize(W, H); bloom.setSize(W, H);
+    renderer.setSize(W, H); if (composer) { composer.setSize(W, H); bloom.setSize(W, H); }
   }
   window.addEventListener("resize", resize);
 
@@ -174,7 +178,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
     camera.position.y += (-my * 0.5 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
 
-    composer.render();
+    if (composer) composer.render(); else renderer.render(scene, camera);
   }
   start();
 

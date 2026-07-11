@@ -133,11 +133,14 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   var group = new THREE.Group(); group.add(points); scene.add(group);
 
   // ---- Post: bloom ----
-  var composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  var bloom = new UnrealBloomPass(new THREE.Vector2(W, H), reduce ? 0.4 : 0.9, 0.75, 0.2);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  var composer = null, bloom = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), reduce ? 0.4 : 0.9, 0.75, 0.2);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  }
 
   // ---- Interaction ----
   var tmx = 0, tmy = 0, mx = 0, my = 0;
@@ -154,7 +157,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   function resize() {
     W = host.clientWidth; H = host.clientHeight || window.innerHeight;
     camera.aspect = W / H; camera.updateProjectionMatrix();
-    renderer.setSize(W, H); composer.setSize(W, H); bloom.setSize(W, H);
+    renderer.setSize(W, H); if (composer) { composer.setSize(W, H); bloom.setSize(W, H); }
     uniforms.uPix.value = renderer.getPixelRatio();
   }
   window.addEventListener("resize", resize);
@@ -181,7 +184,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
     camera.position.y += (-my * 0.9 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
 
-    composer.render();
+    if (composer) composer.render(); else renderer.render(scene, camera);
   }
   start();
 
