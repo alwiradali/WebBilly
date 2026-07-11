@@ -102,6 +102,14 @@
   </script>
   <!-- Analytics & conversion tracking (set your GA4 ID inside analytics.js) -->
   <script src="assets/js/analytics.js"></script>
+  <!-- Smooth page transitions (fails safe: content always reveals) -->
+  <script>
+    document.documentElement.classList.add('js');
+    var _reveal = function () { document.body && document.body.classList.add('page-ready'); };
+    document.addEventListener('DOMContentLoaded', _reveal);
+    window.addEventListener('load', _reveal);
+    setTimeout(_reveal, 1200);
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -112,8 +120,10 @@
     <nav class="nav container" aria-label="Main navigation">
       <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-lockup.png" alt="Billy — Web Design &amp; App Development" height="68"></a>
       <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Home</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#templates">Templates</a></li>
+        <li><a href="#threed">3D &amp; SEO</a></li>
         <li><a href="#process">Process</a></li>
         <li><a href="#plans">Plans</a></li>
         <li><a href="#hosting">Hosting</a></li>
@@ -422,6 +432,55 @@
               <div><h3>Stillwater</h3><span class="tcat">Wellness &amp; Spa</span></div>
               <a class="tlink" href="#contact" data-prefill="Wellness &amp; Spa">Request this style <span aria-hidden="true">→</span></a>
             </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== 3D ANIMATED WEBSITES + SEO OFFERINGS ======== -->
+    <section class="section threed" id="threed">
+      <div class="threed-glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="tag">Signature offerings</p>
+          <h2>Next-level websites that <span class="grad">move people</span></h2>
+          <p class="sub">Beyond flat pages — immersive 3D experiences and SEO that keeps working long after launch. This is the calibre we bring to your brand.</p>
+        </div>
+
+        <!-- Featured live 3D template -->
+        <a class="threed-showcase reveal" href="templates/creative.html" target="_blank" rel="noopener" aria-label="Open the AETHER 3D animated website demo in a new tab">
+          <div class="threed-frame">
+            <span class="tbar" aria-hidden="true"><i></i><i></i><i></i><b>aether · live 3D demo</b></span>
+            <img src="assets/thumb-3d-aether.png" alt="AETHER — a 3D animated website with a rotating crystal rendered live in the browser" loading="lazy" decoding="async" width="1280" height="800">
+            <span class="threed-play">Explore the live 3D demo <span aria-hidden="true">↗</span></span>
+          </div>
+          <div class="threed-meta">
+            <span class="badge3d">✦ Real-time WebGL · buttery smooth</span>
+            <h3>A website that feels <em>alive</em></h3>
+            <p>A cinematic, hand-built 3D scene running live in the browser — interactive light, motion and depth. The kind of first impression that makes a visitor stop, stare, and remember you.</p>
+            <span class="threed-cue">Tap to open the full demo →</span>
+          </div>
+        </a>
+
+        <!-- Three offerings -->
+        <div class="grid offer-grid">
+          <article class="card offer reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg></div>
+            <h3>3D Animated Websites</h3>
+            <p>Real 3D motion — interactive scenes, depth and light rendered live in the browser. Unforgettable first impressions that leave every flat competitor behind, engineered to stay smooth on any device.</p>
+            <a class="tlink offer-cta" href="#contact" data-prefill="3D Animated Website">Enquire about 3D <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="card offer reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+            <h3>Basic SEO</h3>
+            <p>The essential foundation to get found on Google: keyword-optimised pages, clean fast-loading structure, meta tags, sitemap, Google Business Profile and Search Console — everything a new site needs to start ranking.</p>
+            <a class="tlink offer-cta" href="#contact" data-prefill="Basic SEO">Start ranking <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="card offer reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div>
+            <h3>Auto SEO</h3>
+            <p>Hands-off, always-on growth. We continuously optimise, publish fresh content, track your keywords and tune your rankings every month — so your search traffic compounds while you run your business.</p>
+            <a class="tlink offer-cta" href="#contact" data-prefill="Auto SEO">Grow on autopilot <span aria-hidden="true">→</span></a>
           </article>
         </div>
       </div>

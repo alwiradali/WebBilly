@@ -22,9 +22,38 @@ document.addEventListener("DOMContentLoaded", () => {
   initChat();
   initScrollProgress();
   initCardSpotlight();
+  initPageTransitions();
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 });
+
+/* ---------- Smooth fade-out when navigating to another page ---------- */
+function initPageTransitions() {
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest("a");
+    if (!a) return;
+    const href = a.getAttribute("href");
+    if (!href) return;
+    // Only intercept real page navigations on this site — skip anchors,
+    // new tabs, downloads and off-site links (those keep native behaviour).
+    if (
+      href.charAt(0) === "#" ||
+      a.target === "_blank" ||
+      a.hasAttribute("download") ||
+      e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 ||
+      /^(mailto:|tel:|https?:\/\/|\/\/)/i.test(href)
+    ) return;
+    e.preventDefault();
+    document.body.classList.add("page-leaving");
+    setTimeout(() => { window.location.href = href; }, 300);
+  });
+  // Restore visibility when returning via the browser back/forward cache.
+  window.addEventListener("pageshow", (ev) => {
+    if (ev.persisted) document.body.classList.remove("page-leaving");
+  });
+}
 
 /* ---------- Email / WhatsApp links ---------- */
 function initContactLinks() {
