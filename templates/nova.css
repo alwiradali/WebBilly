@@ -1,0 +1,66 @@
+/* ============================================================
+   NOVA — neon-cosmic palette + no-photo section styling
+   Rides the shared MAISON NOIR layout engine (atelier.css).
+   ============================================================ */
+@import url("atelier.css");
+
+:root{
+  --ink:#04050e;
+  --ink-2:#080a18;
+  --paper:#eef2ff;
+  --muted:#8b95bd;
+  --line:rgba(150,175,255,.16);
+  --gold:#7c5cff;
+  --gold-2:#5ad1ff;
+  --serif:'Space Grotesk','Inter',sans-serif;
+  --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+}
+
+.eyebrow{color:var(--gold-2)}
+/* Neon gradient accents on the display italics */
+.hero h1 em,.sec-head h2 em,.feature h2 em,.manifesto em,.cta h2 em,.h-intro h2 em{
+  font-style:normal;
+  background:linear-gradient(100deg,#5a8bff,#d946ef 55%,#22d3ee);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.manifesto .word.on{color:var(--paper)}
+.scroll-cue i::after,.h-progress i{background:linear-gradient(90deg,#5a8bff,#d946ef)}
+::selection{background:#7c5cff;color:#fff}
+.cursor{background:#5ad1ff}
+.cursor-ring.hot{border-color:#5ad1ff;background:rgba(90,209,255,.10)}
+.magnetic{background:linear-gradient(100deg,#3b7bff,#22d3ee);color:#04050e}
+.nav-cta:hover{background:linear-gradient(100deg,#3b7bff,#22d3ee);color:#04050e;border-color:transparent}
+.brand b{background:linear-gradient(100deg,#5a8bff,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat h3 span{color:#5ad1ff}
+.badge3d{color:#c4b5fd}
+
+/* ---- particle canvas in the hero ---- */
+.nova-gl{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.nova-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 50% 42%, transparent 40%, rgba(4,5,14,.35) 78%),
+    linear-gradient(180deg, rgba(4,5,14,.55) 0%, transparent 26%, transparent 60%, rgba(4,5,14,.96) 100%)}
+.hero-inner{z-index:2}
+.hero{background:radial-gradient(120% 90% at 50% 0%, #0a1030 0%, #04050e 60%)}
+
+/* ---- capability cards (no photos) — glowing gradient panels ---- */
+.h-figure{background:#0a0e22}
+.h-card:nth-child(2) .h-figure{background:linear-gradient(150deg,#1a3bff33,#0a0e22 55%),radial-gradient(120% 90% at 20% 10%,#3b7bff55,transparent 60%)}
+.h-card:nth-child(3) .h-figure{background:linear-gradient(150deg,#d946ef33,#0a0e22 55%),radial-gradient(120% 90% at 20% 10%,#d946ef55,transparent 60%)}
+.h-card:nth-child(4) .h-figure{background:linear-gradient(150deg,#22d3ee33,#0a0e22 55%),radial-gradient(120% 90% at 20% 10%,#22d3ee55,transparent 60%)}
+.h-card:nth-child(5) .h-figure{background:linear-gradient(150deg,#7c5cff33,#0a0e22 55%),radial-gradient(120% 90% at 20% 10%,#7c5cff55,transparent 60%)}
+.cap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:30px}
+.cap .cap-t{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.05;color:#fff}
+.cap .cap-d{display:block;color:#c3ccf0;font-size:.92rem;max-width:32ch;margin-top:12px}
+
+/* ---- feature panel (no photo) ---- */
+.feature-fig{background:
+  radial-gradient(90% 70% at 70% 20%, #3b7bff55, transparent 60%),
+  radial-gradient(80% 70% at 20% 90%, #d946ef44, transparent 60%),
+  #06081a;
+  display:grid;place-items:center}
+.feature-fig .glyph{font-family:var(--serif);font-weight:500;font-size:clamp(4rem,12vw,9rem);
+  background:linear-gradient(120deg,#7fb0ff,#d946ef,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 8px 40px rgba(90,120,255,.5))}
+
+/* stats + services borders pick up the cool palette automatically via --line */
