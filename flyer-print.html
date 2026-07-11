@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billy Digitals — Printable Flyer (A5, front &amp; back)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#070b18; --navy2:#0c1226; --blue:#2b7fff; --cyan:#38bdf8; --ink:#eaf1ff; --muted:#9fb0d6;
+    --disp:'Space Grotesk','Segoe UI',Arial,sans-serif;
+    --sans:'Inter','Segoe UI',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#33384a}
+  body{font-family:var(--sans)}
+  .sheet{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px}
+  .page{width:148mm;height:210mm;overflow:hidden;position:relative;color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,#132043 0%,var(--navy2) 45%,var(--navy) 100%);
+    page-break-after:always;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  .pad{position:relative;z-index:2;height:100%;padding:14mm 13mm;display:flex;flex-direction:column}
+  /* decorative */
+  .glow{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;z-index:1}
+  .glow.a{width:80mm;height:80mm;background:rgba(43,127,255,.45);top:-24mm;right:-20mm}
+  .glow.b{width:70mm;height:70mm;background:rgba(56,189,248,.30);bottom:-26mm;left:-24mm}
+  .grid-lines{position:absolute;inset:0;z-index:1;opacity:.06;
+    background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);
+    background-size:14mm 14mm}
+
+  /* ---------- FRONT ---------- */
+  .logo{height:15mm;width:auto;display:block}
+  .eyebrow{margin-top:11mm;font-family:var(--disp);font-size:9pt;letter-spacing:.28em;color:var(--cyan);text-transform:uppercase;font-weight:600}
+  h1{font-family:var(--disp);font-weight:700;font-size:33pt;line-height:1.02;letter-spacing:-.02em;margin-top:5mm}
+  h1 .g{background:linear-gradient(100deg,var(--cyan),#7cc0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--muted);font-size:12.5pt;line-height:1.5;margin-top:6mm;max-width:112mm}
+  .offer{margin-top:8mm;display:inline-flex;align-items:center;gap:10px;align-self:flex-start;
+    background:linear-gradient(100deg,var(--blue),#0ea5e9);color:#fff;border-radius:999px;padding:5mm 8mm;
+    font-family:var(--disp);font-weight:700;font-size:15pt;box-shadow:0 8mm 18mm rgba(43,127,255,.35)}
+  .offer small{display:block;font-family:var(--sans);font-weight:600;font-size:8.5pt;opacity:.9;letter-spacing:.02em}
+  .feats{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:4mm 8mm;padding:6mm 0}
+  .feat{display:flex;gap:3mm;align-items:center;font-size:11pt;font-weight:600;color:#dce7ff}
+  .feat .tick{width:6mm;height:6mm;border-radius:50%;background:rgba(56,189,248,.16);color:var(--cyan);
+    display:grid;place-items:center;font-weight:800;font-size:9pt;flex-shrink:0}
+  .foot{display:flex;align-items:center;gap:6mm;border-top:1px solid rgba(255,255,255,.14);padding-top:6mm}
+  .qr{width:26mm;height:26mm;border-radius:3mm;background:#fff;padding:2mm;flex-shrink:0}
+  .qr img{width:100%;height:100%;display:block}
+  .foot .ftxt{flex:1}
+  .foot .scan{font-family:var(--disp);font-weight:600;font-size:11pt}
+  .foot .web{font-size:13pt;font-weight:700;margin-top:2mm}
+  .foot .web b{color:var(--cyan)}
+  .foot .wa{color:var(--muted);font-size:10.5pt;margin-top:1mm}
+
+  /* ---------- BACK ---------- */
+  .back h2{font-family:var(--disp);font-weight:700;font-size:20pt;letter-spacing:-.01em}
+  .svc{margin-top:4mm;display:grid;grid-template-columns:1fr 1fr;gap:2.6mm 6mm}
+  .svc div{display:flex;gap:3mm;align-items:flex-start;font-size:10.5pt;color:#dce7ff;font-weight:500}
+  .svc .b{color:var(--cyan);font-weight:800}
+  .why{margin-top:5mm}
+  .why .row{display:flex;gap:6mm;flex-wrap:wrap}
+  .why .chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:999px;
+    padding:2.4mm 5mm;font-size:9.5pt;font-weight:600;color:#dce7ff;margin:0 0 2.6mm}
+  .quote{margin-top:4mm;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:4mm;padding:5mm}
+  .quote .stars{color:#fbbf24;font-size:13pt;letter-spacing:2px}
+  .quote p{font-size:10.5pt;line-height:1.45;margin-top:2.5mm;color:#eef4ff;font-style:italic}
+  .quote .who{color:var(--muted);font-size:9.5pt;margin-top:2.5mm;font-style:normal}
+  .steps{margin-top:5mm;display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
+  .step{text-align:center}
+  .step .n{width:11mm;height:11mm;border-radius:50%;margin:0 auto 3mm;display:grid;place-items:center;
+    font-family:var(--disp);font-weight:700;font-size:13pt;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan))}
+  .step b{font-size:10.5pt;display:block}
+  .step span{font-size:8.5pt;color:var(--muted);display:block;margin-top:1mm;line-height:1.35}
+  .cta{margin-top:auto;background:linear-gradient(100deg,rgba(43,127,255,.20),rgba(56,189,248,.10));
+    border:1px solid rgba(56,189,248,.28);border-radius:5mm;padding:5.5mm;display:flex;align-items:center;gap:6mm}
+  .cta .qr{width:28mm;height:28mm}
+  .cta .ct{flex:1}
+  .cta .big{font-family:var(--disp);font-weight:700;font-size:16pt;line-height:1.1}
+  .cta .lines{margin-top:3mm;font-size:10.5pt;line-height:1.7;color:#dce7ff}
+  .cta .lines b{color:var(--cyan)}
+  .cta .g5{color:#fbbf24;font-weight:700;font-size:10pt;margin-top:2mm}
+
+  @media print{
+    html,body{background:#fff}
+    .sheet{padding:0;gap:0}
+    .page{box-shadow:none}
+    @page{size:148mm 210mm;margin:0}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- ============ FRONT ============ -->
+  <section class="page front">
+    <div class="glow a"></div><div class="glow b"></div><div class="grid-lines"></div>
+    <div class="pad">
+      <img class="logo" src="assets/logo-billy-lockup.png" alt="Billy Digitals">
+      <p class="eyebrow">Manchester · UK — Web Design &amp; Development</p>
+      <h1>Premium websites that <span class="g">win you customers</span>.</h1>
+      <p class="lead">Bespoke, mobile‑friendly websites built to look the part, get you found on Google, and turn visitors into real enquiries.</p>
+      <div class="offer">£100 OFF + Pay in 3<small>Interest‑free · until 31 July</small></div>
+
+      <div class="feats">
+        <div class="feat"><span class="tick">✓</span> Custom, on‑brand design</div>
+        <div class="feat"><span class="tick">✓</span> Flawless on mobile</div>
+        <div class="feat"><span class="tick">✓</span> Found on Google (SEO)</div>
+        <div class="feat"><span class="tick">✓</span> Built to convert</div>
+      </div>
+
+      <div class="foot">
+        <div class="qr"><img src="assets/flyer-qr.png" alt="Scan for billydigitals.com"></div>
+        <div class="ftxt">
+          <div class="scan">Scan to see our work →</div>
+          <div class="web"><b>billydigitals.com</b></div>
+          <div class="wa">WhatsApp 07519 022117 · hello@billydigitals.com</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BACK ============ -->
+  <section class="page back">
+    <div class="glow a"></div><div class="glow b"></div><div class="grid-lines"></div>
+    <div class="pad">
+      <h2>What we build</h2>
+      <div class="svc">
+        <div><span class="b">✦</span> Business &amp; brochure websites</div>
+        <div><span class="b">✦</span> Online stores (e‑commerce)</div>
+        <div><span class="b">✦</span> Web apps &amp; booking systems</div>
+        <div><span class="b">✦</span> SEO — get found on Google</div>
+        <div><span class="b">✦</span> Fast, secure hosting</div>
+        <div><span class="b">✦</span> Enquiry &amp; quote forms + WhatsApp</div>
+      </div>
+
+      <div class="why">
+        <div class="row">
+          <span class="chip">7+ years experience</span>
+          <span class="chip">100% bespoke</span>
+          <span class="chip">Fixed, honest pricing</span>
+          <span class="chip">⭐ 5‑star rated</span>
+          <span class="chip">UK support</span>
+        </div>
+      </div>
+
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <p>"If you want a website that actually gets you customers rather than just sitting there, these are the people to go to. Made my life so much easier — thank you!"</p>
+        <div class="who">— Ali, HEAT ON 24/7 Heating &amp; Plumbing, Manchester</div>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="n">1</div><b>Free quote</b><span>Tell us your vision — quote in 24 hours</span></div>
+        <div class="step"><div class="n">2</div><b>We build it</b><span>Design, develop &amp; launch, handled for you</span></div>
+        <div class="step"><div class="n">3</div><b>Grow</b><span>Get found &amp; win more customers</span></div>
+      </div>
+
+      <div class="cta">
+        <div class="qr"><img src="assets/flyer-qr.png" alt="Scan for billydigitals.com"></div>
+        <div class="ct">
+          <div class="big">Get a free quote in 24 hours</div>
+          <div class="lines"><b>billydigitals.com</b><br>WhatsApp 07519 022117<br>hello@billydigitals.com</div>
+          <div class="g5">★★★★★ Rated 5.0 on Google</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
