@@ -118,6 +118,7 @@
   // as an actual portfolio. Falls back to the emoji if a slug is unmapped.
   var CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/";
   var imgMap = {
+    atelier:     CDN + "hf_20260711_221955_6f576c4c-001f-4896-af96-3ce7b07e70a7_min.webp",
     restaurant:  CDN + "hf_20260707_034814_1799480b-9d5d-42dd-b2a6-0126c97e93e2_min.webp",
     corporate:   CDN + "hf_20260707_034819_19ee2c8c-cd05-45e7-8fb1-f6932a99a56a_min.webp",
     portfolio:   CDN + "hf_20260707_035008_2f6272d6-5623-4795-bc98-c584bfe01e48_min.webp",
