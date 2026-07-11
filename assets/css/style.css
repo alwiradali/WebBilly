@@ -1048,3 +1048,14 @@ body {
 .pay-trust .pay.ap svg { height: 13px; width: auto; }
 .pay-trust .pay.gp { color: #5f6368; gap: 2px; }
 .pay-trust .pay.gp b { color: #4285f4; font-size: .76rem; }
+
+/* ---------- Testimonials ---------- */
+#testimonials .tmonial { max-width: 800px; margin: 40px auto 0; background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 42px 40px; text-align: center; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,.28); }
+#testimonials .tstars { color: #fbbf24; font-size: 1.45rem; letter-spacing: 4px; margin-bottom: 18px; }
+#testimonials .tmonial blockquote { margin: 0; font-size: 1.2rem; line-height: 1.72; color: var(--text); font-weight: 500; }
+#testimonials .tmonial figcaption { margin-top: 24px; color: var(--muted); font-size: 1rem; }
+#testimonials .tmonial figcaption strong { color: var(--text); }
+#testimonials .tsource { display: block; margin-top: 10px; color: #38bdf8; font-weight: 600; font-size: .85rem; text-decoration: none; }
+#testimonials .tsource:hover { text-decoration: underline; }
+#testimonials .treviews-cta { text-align: center; margin-top: 28px; }
+@media (max-width: 640px) { #testimonials .tmonial { padding: 30px 22px; } #testimonials .tmonial blockquote { font-size: 1.06rem; } }
