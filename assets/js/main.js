@@ -562,6 +562,20 @@ function initChat() {
     setOpen(!isOpen);
   });
 
+  // Auto-open once, ~5s after the visitor actually "arrives" (i.e. after the
+  // cinematic intro has finished, if it's playing). Never re-opens if the
+  // visitor already engaged with it.
+  let autoOpened = false;
+  (function scheduleAutoOpen() {
+    if (document.getElementById("intro")) { setTimeout(scheduleAutoOpen, 600); return; }
+    setTimeout(() => {
+      if (!autoOpened && !engaged && !chat.classList.contains("open")) {
+        autoOpened = true;
+        setOpen(true);
+      }
+    }, 5000);
+  })();
+
   // Chips are re-rendered after every bot reply — delegate clicks
   chips.addEventListener("click", (e) => {
     const btn = e.target.closest("button");
