@@ -449,8 +449,14 @@ function initChat() {
     {
       re: /\b(seo|google|rank|ranking|search engine|traffic)\b/i,
       reply: () =>
-        "Every site we build ships SEO-ready: clean structure, fast load times and search-first architecture. Premium and Ultra Premium plans add advanced SEO and speed optimisation so customers find you first.",
-      chips: ["Show me the plans", "Get a quote"],
+        "Every site we build ships SEO-ready: clean structure, fast load times and search-first architecture. Premium and Ultra Premium plans add advanced SEO and speed optimisation so customers find you first. Want it hands-off? Ask about <strong>Auto SEO</strong>.",
+      chips: ["Auto SEO", "Advertising & ads", "Get a quote"],
+    },
+    {
+      re: /\b(advertis\w*|ad campaign|ads?|ppc|pay per click|google ads|meta ads|facebook ads|instagram ads|marketing|social media|auto seo|autoseo)\b/i,
+      reply: () =>
+        "Beyond building your site, we bring customers to it. 🎯 <strong>Advertising &amp; PPC</strong> — Google &amp; Meta ad campaigns that pay for themselves. 📣 <strong>Social Media Marketing</strong> — content, reach and growth on Instagram, Facebook &amp; TikTok. 📈 <strong>Auto SEO</strong> — hands-off, we optimise and grow your rankings every month. Tell us your goals for a free plan. " + contactLine,
+      chips: ["Get a quote", "Show me the plans", "Talk to a human"],
     },
     {
       re: /\b(time|timeline|deadline|fast|quick|quickly|duration|days|weeks)\b|how long|how soon/i,
