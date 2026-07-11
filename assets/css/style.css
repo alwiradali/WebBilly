@@ -1176,6 +1176,16 @@ body.page-leaving { opacity: 0; transition: opacity 0.32s ease; }
 }
 
 /* ============================================================
+   Section particle ambience (assets/js/particles.js)
+   ============================================================ */
+.fx-alive { position: relative; }
+.fx-alive > .fx-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+.fx-alive > .container { position: relative; z-index: 1; }
+
+/* ============================================================
    Colour vibrancy pass — a tasteful multi-hue accent system
    ============================================================ */
 /* Each service card gets its own vivid gradient icon + accent */
