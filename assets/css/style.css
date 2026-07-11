@@ -878,7 +878,34 @@ body {
 }
 
 /* ============================================================
-   3D Coverflow Carousel
+   Richness polish pass
+   ============================================================ */
+/* Staggered reveal so grid cards cascade in rather than snapping together */
+.grid > .reveal:nth-child(1) { transition-delay: 0.02s; }
+.grid > .reveal:nth-child(2) { transition-delay: 0.10s; }
+.grid > .reveal:nth-child(3) { transition-delay: 0.18s; }
+.grid > .reveal:nth-child(4) { transition-delay: 0.26s; }
+.grid > .reveal:nth-child(5) { transition-delay: 0.10s; }
+.grid > .reveal:nth-child(6) { transition-delay: 0.18s; }
+.grid > .reveal:nth-child(7) { transition-delay: 0.26s; }
+.grid > .reveal:nth-child(8) { transition-delay: 0.34s; }
+@media (prefers-reduced-motion: reduce) { .grid > .reveal { transition-delay: 0s !important; } }
+
+/* Premium gradient top-accent that draws in on hover */
+.card, .plan { position: relative; }
+.card::after, .plan::after {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 2px;
+  border-radius: 2px; background: var(--grad); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.42s cubic-bezier(.2,.7,.2,1); pointer-events: none;
+}
+.card:hover::after, .plan:hover::after { transform: scaleX(1); }
+
+/* Featured plan sits proud in the clean comparison grid */
+.plan-featured { z-index: 2; box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.55), 0 30px 80px rgba(43, 127, 255, 0.3); }
+.plan-featured::after { transform: scaleX(1); }
+
+/* ============================================================
+   3D Coverflow Carousel  (retained for reference; no longer applied)
    ============================================================ */
 .cf-stage {
   display: block;
