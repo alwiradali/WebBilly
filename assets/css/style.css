@@ -1059,3 +1059,65 @@ body {
 #testimonials .tsource:hover { text-decoration: underline; }
 #testimonials .treviews-cta { text-align: center; margin-top: 28px; }
 @media (max-width: 640px) { #testimonials .tmonial { padding: 30px 22px; } #testimonials .tmonial blockquote { font-size: 1.06rem; } }
+
+/* ---------- 3D Animated Websites + SEO offerings ---------- */
+.threed {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(120% 82% at 82% -12%, rgba(124, 58, 237, 0.18), transparent 55%),
+    radial-gradient(120% 82% at -6% 112%, rgba(34, 211, 238, 0.13), transparent 55%),
+    var(--bg-2);
+}
+.threed-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(46% 38% at 50% 0%, rgba(56, 189, 248, 0.12), transparent 70%);
+}
+.threed .container { position: relative; z-index: 1; }
+.threed-showcase {
+  display: grid; grid-template-columns: 1.32fr 1fr; gap: 34px; align-items: center;
+  max-width: 1060px; margin: 0 auto 46px; padding: 22px; border-radius: 26px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.threed-showcase:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.42); box-shadow: 0 34px 74px rgba(0, 0, 0, 0.6); }
+.threed-frame {
+  position: relative; border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12); background: #07060c; box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+}
+.threed-frame .tbar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #0b1120; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.threed-frame .tbar i { width: 9px; height: 9px; border-radius: 50%; background: #39415a; }
+.threed-frame .tbar b { margin-left: 8px; font-size: 0.76rem; font-weight: 500; color: #8ea0c4; letter-spacing: 0.02em; }
+.threed-frame img { width: 100%; display: block; aspect-ratio: 16 / 10; object-fit: cover; transition: transform 0.6s ease; }
+.threed-showcase:hover .threed-frame img { transform: scale(1.045); }
+.threed-play {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%) translateY(6px);
+  display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; color: #fff;
+  padding: 10px 20px; border-radius: 999px; background: rgba(10, 14, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.22); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.threed-showcase:hover .threed-play { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+.badge3d { display: inline-block; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.07em; color: #c4b5fd; border: 1px solid rgba(124, 58, 237, 0.42); background: rgba(124, 58, 237, 0.13); border-radius: 999px; padding: 5px 14px; margin-bottom: 15px; }
+.threed-meta h3 { font-size: clamp(1.35rem, 3vw, 1.7rem); margin-bottom: 12px; }
+.threed-meta h3 em { font-style: italic; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.threed-meta p { color: var(--muted); font-size: 0.98rem; }
+.threed-cue { display: inline-block; margin-top: 18px; color: var(--c2); font-weight: 600; font-size: 0.9rem; }
+.offer-grid { grid-template-columns: repeat(3, 1fr); max-width: 1060px; margin-inline: auto; }
+.offer { display: flex; flex-direction: column; }
+.offer .card-icon { background: var(--grad); border-color: transparent; color: #fff; }
+.offer-cta { margin-top: auto; padding-top: 18px; display: inline-flex; align-items: center; gap: 6px; color: var(--c2); font-weight: 600; font-size: 0.92rem; }
+.offer-cta:hover { gap: 10px; }
+@media (max-width: 860px) {
+  .threed-showcase { grid-template-columns: 1fr; gap: 22px; }
+  .threed-play { opacity: 1; transform: translateX(-50%); }
+  .offer-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Page-load + navigation transitions ---------- */
+.js body { opacity: 0; }
+body.page-ready { opacity: 1; transition: opacity 0.5s ease; }
+body.page-leaving { opacity: 0; transition: opacity 0.32s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .js body, body.page-ready, body.page-leaving { opacity: 1 !important; transition: none !important; }
+}
