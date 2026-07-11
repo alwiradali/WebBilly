@@ -8,8 +8,13 @@
   "use strict";
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- 1. Hero WebGL glass object ---------- */
+  /* ---------- 1. Hero WebGL glass object ----------
+     Superseded by assets/js/hero3d.js (Three.js particle field),
+     which owns the #heroGL canvas. Kept disabled to avoid claiming
+     a second WebGL context on the same canvas. */
   (function heroGL() {
+    return;
+    /* eslint-disable no-unreachable */
     var cv = document.getElementById("heroGL");
     if (!cv || reduce) { if (cv) cv.style.display = "none"; return; }
     var gl = cv.getContext("webgl") || cv.getContext("experimental-webgl");
