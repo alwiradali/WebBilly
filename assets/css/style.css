@@ -1174,3 +1174,42 @@ body.page-leaving { opacity: 0; transition: opacity 0.32s ease; }
 @media (prefers-reduced-motion: reduce) {
   .js body, body.page-ready, body.page-leaving { opacity: 1 !important; transition: none !important; }
 }
+
+/* ============================================================
+   Colour vibrancy pass — a tasteful multi-hue accent system
+   ============================================================ */
+/* Each service card gets its own vivid gradient icon + accent */
+.services-grid .card:nth-child(1) { --a:#3b82f6; --b:#22d3ee; }
+.services-grid .card:nth-child(2) { --a:#8b5cf6; --b:#6366f1; }
+.services-grid .card:nth-child(3) { --a:#ec4899; --b:#f472b6; }
+.services-grid .card:nth-child(4) { --a:#10b981; --b:#34d399; }
+.services-grid .card:nth-child(5) { --a:#f59e0b; --b:#fbbf24; }
+.services-grid .card:nth-child(6) { --a:#06b6d4; --b:#38bdf8; }
+.services-grid .card:nth-child(7) { --a:#f43f5e; --b:#fb7185; }
+.services-grid .card .card-icon {
+  background: linear-gradient(135deg, var(--a), var(--b));
+  border-color: transparent; color: #fff;
+  box-shadow: 0 10px 26px -8px var(--a);
+}
+.services-grid .card::after { background: linear-gradient(90deg, var(--a), var(--b)); }
+.services-grid .card:hover { border-color: var(--a); }
+
+/* 3D & SEO offering icons — distinct hues per offering */
+.offer-grid .offer:nth-child(1) { --a:#7c3aed; --b:#22d3ee; }
+.offer-grid .offer:nth-child(2) { --a:#10b981; --b:#34d399; }
+.offer-grid .offer:nth-child(3) { --a:#f59e0b; --b:#fb923c; }
+.offer-grid .offer .card-icon { background: linear-gradient(135deg, var(--a), var(--b)); box-shadow: 0 10px 26px -8px var(--a); }
+.offer-grid .offer::after { background: linear-gradient(90deg, var(--a), var(--b)); }
+.offer-grid .offer:hover { border-color: var(--a); }
+
+/* Colourful ambient orbs behind the hero */
+.orb-2 { background: rgba(139, 92, 246, 0.30); }   /* violet */
+.orb-3 { background: rgba(236, 72, 153, 0.20); }   /* magenta */
+
+/* Template cards glow in their own colour on hover */
+.tcard:hover .tthumb { box-shadow: 0 18px 48px -14px var(--t1, #6366f1); }
+
+/* A touch of colour on the tech marquee */
+.marquee li:nth-child(3n+1) { color: #38bdf8; }
+.marquee li:nth-child(3n+2) { color: #a78bfa; }
+.marquee li:nth-child(3n+3) { color: #f472b6; }
