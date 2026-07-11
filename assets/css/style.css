@@ -149,13 +149,21 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   background: linear-gradient(100deg, #059669, #10b981 50%, #34d399);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.nav-links { display: flex; gap: 26px; margin-left: auto; }
+.nav-links { display: flex; gap: 22px; margin-left: auto; align-items: center; }
 .nav-links a {
-  font-size: 0.95rem; font-weight: 500; color: var(--muted);
-  transition: color 0.2s ease;
+  font-size: 0.92rem; font-weight: 500; color: var(--muted); white-space: nowrap;
+  position: relative; transition: color 0.2s ease;
+}
+.nav-links a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px;
+  border-radius: 2px; background: var(--grad); transform: scaleX(0);
+  transform-origin: left; transition: transform 0.28s cubic-bezier(.2,.7,.2,1);
 }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
-.nav-cta { padding: 11px 22px; font-size: 0.9rem; }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.nav-cta { padding: 11px 22px; font-size: 0.9rem; white-space: nowrap; margin-left: 6px; }
+@media (max-width: 1150px) and (min-width: 901px) { .nav-links { gap: 18px; } .nav-more { display: none; } }
+@media (max-width: 1040px) and (min-width: 901px) { .nav-links a { font-size: 0.86rem; } .nav-links { gap: 15px; } }
 .hamburger { display: none; flex-direction: column; gap: 5px; padding: 6px; margin-left: auto; }
 .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s ease, opacity 0.3s ease; }
 .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -712,6 +720,24 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.
     radial-gradient(60% 55% at 50% 46%, rgba(6, 11, 26, 0.86), rgba(6, 11, 26, 0.42) 55%, transparent 78%),
     linear-gradient(180deg, transparent 60%, var(--bg) 100%);
 }
+/* Hero entrance + animated headline shimmer */
+@keyframes heroUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+.hero-badge { animation: heroUp 0.8s cubic-bezier(.2,.7,.2,1) both; }
+.hero h1 { animation: heroUp 0.8s cubic-bezier(.2,.7,.2,1) 0.08s both; }
+.hero-sub { animation: heroUp 0.8s cubic-bezier(.2,.7,.2,1) 0.18s both; }
+.hero-cta { animation: heroUp 0.8s cubic-bezier(.2,.7,.2,1) 0.28s both; }
+.hero-stats { animation: heroUp 0.8s cubic-bezier(.2,.7,.2,1) 0.38s both; }
+.hero h1 .grad {
+  background: linear-gradient(100deg, #2b7fff, #38bdf8 38%, #22d3ee 55%, #7cc4ff 75%, #2b7fff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  background-size: 240% auto; animation: gradFlow 7s linear infinite;
+}
+@keyframes gradFlow { to { background-position: 240% center; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-badge, .hero h1, .hero-sub, .hero-cta, .hero-stats { animation: none; }
+  .hero h1 .grad { animation: none; }
+}
+
 .card, .tcard, .plan { transform-style: preserve-3d; }
 .tilt { will-change: transform; transition: transform 0.35s cubic-bezier(.2,.7,.2,1); }
 .tilt-glare {
