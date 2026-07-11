@@ -1,0 +1,31 @@
+/* ============================================================
+   AURUM — High Jewellery Maison
+   Palette override for the shared MAISON NOIR luxury engine.
+   Signature: true black · radiant gold · emerald.
+   ============================================================ */
+@import url("atelier.css");
+
+:root{
+  --ink:#08070a;
+  --ink-2:#0f0c0a;
+  --paper:#f7efe0;
+  --muted:#a2937c;
+  --line:rgba(247,239,224,.14);
+  --gold:#d4af37;
+  --gold-2:#f2dd97;
+  --emerald:#3ecf9a;
+  --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --sans:'Jost','Manrope',Arial,sans-serif;
+}
+
+/* emerald + gold signature */
+.eyebrow{color:var(--emerald)}
+.hero h1 em,.sec-head h2 em,.feature h2 em,.manifesto em,.cta h2 em{color:var(--gold-2)}
+.scroll-cue i::after,.h-progress i{background:var(--gold-2)}
+.badge3d{color:var(--emerald)}
+::selection{background:var(--gold);color:var(--ink)}
+.cursor{background:var(--emerald)}
+.cursor-ring.hot{border-color:var(--emerald);background:rgba(62,207,154,.08)}
+.magnetic{background:var(--gold-2);color:#20180a}
+.nav-cta:hover{background:var(--gold-2);color:#20180a;border-color:var(--gold-2)}
+.hero-media img{filter:brightness(.72) saturate(1.1) contrast(1.05)}
