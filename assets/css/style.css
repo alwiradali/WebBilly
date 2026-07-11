@@ -1196,6 +1196,8 @@ body.page-leaving { opacity: 0; transition: opacity 0.32s ease; }
 .services-grid .card:nth-child(5) { --a:#f59e0b; --b:#fbbf24; }
 .services-grid .card:nth-child(6) { --a:#06b6d4; --b:#38bdf8; }
 .services-grid .card:nth-child(7) { --a:#f43f5e; --b:#fb7185; }
+.services-grid .card:nth-child(8) { --a:#f97316; --b:#fbbf24; }
+.services-grid .card:nth-child(9) { --a:#14b8a6; --b:#22d3ee; }
 .services-grid .card .card-icon {
   background: linear-gradient(135deg, var(--a), var(--b));
   border-color: transparent; color: #fff;
