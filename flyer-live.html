@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billy Digitals — Websites that win you customers</title>
+  <meta name="description" content="Bespoke, high-performance websites from Billy Digitals. £100 off your new website + pay in 3, interest-free — until 31 July. Rated 5.0 on Google.">
+  <meta property="og:title" content="Billy Digitals — Websites that win you customers">
+  <meta property="og:description" content="£100 off your new website + pay in 3, interest-free — until 31 July. Rated 5.0 on Google.">
+  <meta name="theme-color" content="#050912">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="importmap">{"imports":{"three":"./templates/vendor/three.module.js"}}</script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--blue:#2b7fff;--cyan:#22d3ee;--violet:#7c3aed;--ink:#050912;--paper:#eaf2ff;--muted:#9fb0d0;--gold:#fbbf24}
+    html,body{height:100%}
+    body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(120% 90% at 50% 0%,#0a1430,#050912 62%);color:var(--paper);overflow:hidden;-webkit-font-smoothing:antialiased}
+    #flyer-gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+    .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+      background:radial-gradient(58% 52% at 50% 46%,transparent 42%,rgba(5,9,18,.5) 80%),linear-gradient(180deg,rgba(5,9,18,.6),transparent 24%,transparent 60%,rgba(5,9,18,.94))}
+    .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.045;mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    .wrap{position:relative;z-index:3;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:46px 22px 120px;gap:0}
+    .logo{height:52px;width:auto;margin-bottom:26px;opacity:0}
+    .stars{display:inline-flex;align-items:center;gap:9px;font-size:.82rem;letter-spacing:.05em;color:var(--muted);
+      border:1px solid rgba(120,180,255,.2);background:rgba(120,180,255,.06);border-radius:999px;padding:8px 16px;opacity:0}
+    .stars b{color:var(--gold);letter-spacing:2px}
+    h1{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.03em;line-height:1.02;
+      font-size:clamp(2.4rem,7vw,5.4rem);margin:22px 0 0;max-width:16ch;opacity:0}
+    h1 .g{background:linear-gradient(100deg,var(--blue),var(--cyan) 55%,#7cc4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .sub{color:#c7d5f0;font-size:clamp(1rem,1.7vw,1.22rem);max-width:52ch;margin:22px auto 0;line-height:1.6;opacity:0}
+    .offer{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 16px;margin-top:30px;
+      padding:14px 22px;border-radius:16px;border:1px solid rgba(43,127,255,.35);
+      background:linear-gradient(100deg,rgba(43,127,255,.14),rgba(34,211,238,.08));opacity:0}
+    .offer .big{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.15rem;color:#fff}
+    .offer .big em{font-style:normal;color:var(--cyan)}
+    .offer .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.35)}
+    .offer .pill{font-size:.8rem;font-weight:700;color:#04213f;background:linear-gradient(100deg,#7cc4ff,#22d3ee);
+      padding:5px 12px;border-radius:999px;letter-spacing:.02em}
+    .cta-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px;opacity:0}
+    .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:1rem;padding:15px 30px;border-radius:999px;
+      transition:transform .25s ease,box-shadow .25s ease,background .25s ease;text-decoration:none;color:#fff}
+    .btn.primary{background:linear-gradient(100deg,#1d6ff5,#0891b2);box-shadow:0 12px 34px rgba(43,127,255,.45)}
+    .btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 44px rgba(34,211,238,.5)}
+    .btn.wa{background:#25d366;color:#04210f}
+    .btn.wa:hover{transform:translateY(-2px)}
+    .btn svg{width:18px;height:18px}
+    .contact{margin-top:26px;color:var(--muted);font-size:.92rem;letter-spacing:.01em;opacity:0}
+    .contact b{color:var(--paper)}
+    .qr{position:fixed;right:20px;bottom:20px;z-index:4;display:flex;align-items:center;gap:12px;opacity:0}
+    .qr img{width:74px;height:74px;border-radius:10px;background:#fff;padding:6px;display:block}
+    .qr span{font-size:.8rem;color:var(--muted);max-width:120px;text-align:left;line-height:1.35}
+    .qr span b{color:var(--paper)}
+    .brandtag{position:fixed;left:22px;top:20px;z-index:4;font-family:'Space Grotesk',sans-serif;font-weight:600;
+      font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0}
+    @media (max-width:640px){ .qr{left:50%;right:auto;transform:translateX(-50%);bottom:16px} .wrap{padding-bottom:140px} .brandtag{display:none} }
+    @media (prefers-reduced-motion:reduce){ .logo,.stars,h1,.sub,.offer,.cta-row,.contact,.qr,.brandtag{opacity:1!important} }
+  </style>
+</head>
+<body>
+  <canvas id="flyer-gl" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <span class="brandtag">billydigitals.com</span>
+
+  <main class="wrap">
+    <img class="logo" src="assets/logo-billy-lockup.png" alt="Billy Digitals">
+    <span class="stars"><b>★★★★★</b> Rated 5.0 on Google</span>
+    <h1>Websites that <span class="g">win you customers</span>.</h1>
+    <p class="sub">Bespoke, lightning-fast websites — designed to look the part, get you found on Google, and turn visitors into enquiries.</p>
+
+    <div class="offer">
+      <span class="big"><em>£100 OFF</em> your new website</span>
+      <span class="dot" aria-hidden="true"></span>
+      <span class="big">Pay in 3 · interest-free</span>
+      <span class="pill">Until 31 July</span>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn primary" href="https://billydigitals.com/#contact">Get a free quote
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn wa" href="https://wa.me/447519022117?text=Hi%20Billy%20Digitals!%20I%27d%20like%20a%20free%20quote%20for%20a%20website.">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.9.9-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-5.6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.9.9-.9 2.2-.6 3.3.5 1.6 1.6 3 3.2 4 2.2 1.3 3.3 1.1 4.2 1 .6-.1 1.4-.6 1.6-1.2.2-.6.2-1 .1-1.2 0-.1-.2-.1-.4-.2z"/></svg>
+        WhatsApp us
+      </a>
+    </div>
+
+    <p class="contact"><b>billydigitals.com</b> &nbsp;·&nbsp; WhatsApp 07519 022117 &nbsp;·&nbsp; hello@billydigitals.com</p>
+  </main>
+
+  <a class="qr" href="https://billydigitals.com" aria-label="Visit billydigitals.com">
+    <img src="assets/flyer-qr.png" alt="QR code to billydigitals.com">
+    <span>Scan to see <b>our work</b></span>
+  </a>
+
+  <script src="templates/vendor/gsap.min.js"></script>
+  <script>
+    (function(){
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce || !window.gsap) {
+        document.querySelectorAll('.logo,.stars,h1,.sub,.offer,.cta-row,.contact,.qr,.brandtag').forEach(function(el){el.style.opacity=1;});
+        return;
+      }
+      var tl = gsap.timeline({ defaults:{ ease:"power3.out", duration:0.9 }, delay:0.25 });
+      tl.to(".logo",{opacity:1,y:0},0)
+        .from(".logo",{y:-14},0)
+        .to(".stars",{opacity:1},0.15)
+        .to("h1",{opacity:1,y:0},0.28).from("h1",{y:26},0.28)
+        .to(".sub",{opacity:1},0.5)
+        .to(".offer",{opacity:1,y:0},0.62).from(".offer",{y:18},0.62)
+        .to(".cta-row",{opacity:1,y:0},0.76).from(".cta-row",{y:16},0.76)
+        .to(".contact",{opacity:1},0.9)
+        .to(".brandtag",{opacity:1},0.5)
+        .to(".qr",{opacity:1,y:0},1.0).from(".qr",{y:16},1.0);
+    })();
+  </script>
+  <script type="module" src="flyer-live.js"></script>
+</body>
+</html>
