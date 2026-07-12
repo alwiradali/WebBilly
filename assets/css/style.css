@@ -875,14 +875,19 @@ body {
 }
 
 /* neon glow on primary actions */
-.btn-primary { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35), 0 10px 30px rgba(43, 127, 255, 0.45); }
-.btn-primary:hover { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6), 0 14px 42px rgba(34, 211, 238, 0.5); }
+.btn-primary { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25), 0 12px 30px rgba(43, 127, 255, 0.45); }
+.btn-primary:hover { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6), 0 4px 10px rgba(0, 0, 0, 0.28), 0 18px 46px rgba(34, 211, 238, 0.52); }
 .tag { box-shadow: 0 0 22px rgba(34, 211, 238, 0.12); }
 
 /* glowing edge on hovered surfaces */
 .card:hover, .plan:hover, .tcard:hover, .quote:hover {
   border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.16), 0 22px 55px rgba(43, 127, 255, 0.18);
+  /* layered premium elevation: hairline + ambient + key + coloured glow */
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.30),
+    0 14px 28px rgba(0, 0, 0, 0.34),
+    0 30px 64px rgba(43, 127, 255, 0.22);
 }
 
 /* scrolled header: glass + thin cyan hairline */
@@ -922,7 +927,11 @@ body {
 .card:hover::after, .plan:hover::after { transform: scaleX(1); }
 
 /* Featured plan sits proud in the clean comparison grid */
-.plan-featured { z-index: 2; box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.55), 0 30px 80px rgba(43, 127, 255, 0.3); }
+.plan-featured { z-index: 2; box-shadow:
+  0 0 0 1px rgba(56, 189, 248, 0.55),
+  0 4px 12px rgba(0, 0, 0, 0.32),
+  0 18px 40px rgba(0, 0, 0, 0.30),
+  0 40px 90px rgba(43, 127, 255, 0.34); }
 .plan-featured::after { transform: scaleX(1); }
 
 /* ============================================================

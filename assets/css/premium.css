@@ -1,0 +1,56 @@
+/* ============================================================
+   Billy Digitals — universal PREMIUM polish layer
+   Applied on the homepage and every template. Purely additive:
+   sharper type rendering, elegant selection/focus, refined
+   scrollbar, smoother interactions. No colours, no layout —
+   nothing that can break a template's own design. Grounded in
+   the ui-ux-pro-max premium guidance (crisp type, visible focus,
+   smooth 150-300ms interactions, layered depth, no cheap visuals).
+   ============================================================ */
+
+/* ---- Crisp, expensive-looking typography (weight-safe) ----
+   optimizeLegibility + kerning + ligatures sharpen every font
+   without changing its weight or your chosen smoothing. */
+html{ text-rendering:optimizeLegibility; }
+body{ font-feature-settings:"kern" 1,"liga" 1,"calt" 1; font-kerning:normal; }
+
+/* ---- Elegant text selection that adapts to any palette ----
+   color-mix ties the highlight to the current text colour, so it
+   looks right on dark, light, warm and cool templates alike. */
+::selection{ background:color-mix(in srgb, currentColor 20%, transparent); }
+::-moz-selection{ background:color-mix(in srgb, currentColor 20%, transparent); }
+
+/* ---- Premium, accessible keyboard focus (only on keyboard nav) ---- */
+:focus-visible{
+  outline:2px solid color-mix(in srgb, currentColor 55%, transparent);
+  outline-offset:3px;
+  border-radius:6px;
+}
+/* don't double-ring elements that already draw their own focus box */
+:focus:not(:focus-visible){ outline:none; }
+
+/* ---- Clickable things feel clickable ---- */
+a[href], button, [role="button"], summary, label[for], select{ cursor:pointer; }
+button:disabled, [aria-disabled="true"]{ cursor:not-allowed; }
+
+/* ---- Refined, unobtrusive scrollbar (desktop pointers only) ---- */
+@media (pointer:fine){
+  *{ scrollbar-width:thin; scrollbar-color:rgba(140,140,150,.45) transparent; }
+  ::-webkit-scrollbar{ width:11px; height:11px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{
+    background:rgba(140,140,150,.42);
+    border-radius:99px;
+    border:3px solid transparent;
+    background-clip:content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover{ background:rgba(150,150,160,.62); background-clip:content-box; }
+}
+
+/* ---- Smoother default link/interactive transitions ---- */
+@media (prefers-reduced-motion:no-preference){
+  a[href], button, [role="button"]{
+    transition:color .2s ease, background-color .2s ease, border-color .2s ease,
+               box-shadow .25s ease, transform .2s cubic-bezier(.16,1,.3,1), opacity .2s ease;
+  }
+}
