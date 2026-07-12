@@ -1,11 +1,13 @@
 /* ============================================================
-   Skyline Estates — 3D virtual house tour
-   A furnished, open-plan interior you can look around (drag) and
-   zoom into every corner (scroll / pinch). Three viewpoints:
-   Living room · Kitchen · Bedroom. Self-contained Three.js — no
-   external assets. Fails safe (hides the stage if WebGL is off).
+   Skyline Estates — 3D virtual house tour (architectural render)
+   A furnished, realistically-lit open-plan interior you can look
+   around (drag) and zoom into every corner (scroll / pinch), with
+   Living / Kitchen / Bedroom viewpoints. Image-based lighting
+   (RoomEnvironment), soft shadows, ACES tone mapping and procedural
+   PBR wood / marble / fabric. Self-contained · fails safe.
    ============================================================ */
 import * as THREE from "three";
+import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
 
 (function () {
   "use strict";
@@ -13,198 +15,218 @@ import * as THREE from "three";
   var canvas = document.getElementById("tourGL");
   if (!host || !canvas) return;
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
 
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false }); }
   catch (e) { host.style.display = "none"; return; }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.6 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = !mobile;              // shadows desktop-only for perf
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   var W = host.clientWidth, H = host.clientHeight || Math.round(W * 0.62);
   renderer.setSize(W, H, false);
 
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color("#0e1116");
-  scene.fog = new THREE.Fog("#0e1116", 22, 40);
+  scene.background = new THREE.Color("#0d0f13");
 
-  var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  var camera = new THREE.PerspectiveCamera(58, W / H, 0.05, 100);
 
-  /* ---------- lights ---------- */
-  scene.add(new THREE.HemisphereLight("#f4f0e6", "#3a3730", 0.95));
-  var sun = new THREE.DirectionalLight("#fff4df", 1.15);
-  sun.position.set(-6, 8, 6); scene.add(sun);
-  var warm = new THREE.PointLight("#ffd9a0", 0.5, 30); warm.position.set(2, 3.2, 1.5); scene.add(warm);
-
-  /* ---------- material + mesh helpers ---------- */
-  function mat(color, rough, metal) {
-    return new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: rough == null ? 0.85 : rough, metalness: metal || 0 });
+  /* ---------- realistic image-based lighting ---------- */
+  try {
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  } catch (e) {}
+  var sun = new THREE.DirectionalLight("#fff1d8", mobile ? 1.3 : 2.4);
+  sun.position.set(-3, 8.5, 7);
+  if (!mobile) {
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    var sc = sun.shadow.camera; sc.near = 1; sc.far = 42; sc.left = -13; sc.right = 13; sc.top = 12; sc.bottom = -12;
+    sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
   }
-  function box(w, h, d, color, x, y, z, rough, metal) {
-    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, rough, metal));
-    m.position.set(x, y, z); scene.add(m); return m;
+  scene.add(sun);
+  var warm = new THREE.PointLight("#ffcf94", 12, 22, 2); warm.position.set(1.5, 3.2, 1.8); scene.add(warm);
+
+  /* ---------- procedural PBR textures (canvas) ---------- */
+  function cvs(s) { var c = document.createElement("canvas"); c.width = c.height = s; return c; }
+  function tex(c, rx, ry) { var t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx || 1, ry || 1); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function woodTex() {
+    var c = cvs(512), g = c.getContext("2d"), ph = 74;
+    for (var y = -ph; y < 512; y += ph) {
+      var l = rnd(26, 36);
+      g.fillStyle = "hsl(" + rnd(24, 32) + "," + rnd(34, 46) + "%," + l + "%)";
+      g.fillRect(0, y, 512, ph - 2);
+      for (var i = 0; i < 48; i++) {
+        g.strokeStyle = "rgba(30,18,8," + rnd(0.03, 0.10).toFixed(3) + ")"; g.lineWidth = rnd(0.6, 1.6);
+        var yy = y + Math.random() * ph; g.beginPath(); g.moveTo(0, yy);
+        g.bezierCurveTo(170, yy + rnd(-4, 4), 340, yy + rnd(-4, 4), 512, yy + rnd(-3, 3)); g.stroke();
+      }
+      g.fillStyle = "rgba(15,9,4,0.55)"; g.fillRect(0, y + ph - 2, 512, 2);
+    }
+    return c;
   }
-  function cyl(rt, rb, h, color, x, y, z, rough) {
-    var m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 20), mat(color, rough));
-    m.position.set(x, y, z); scene.add(m); return m;
+  function marbleTex() {
+    var c = cvs(512), g = c.getContext("2d");
+    g.fillStyle = "#eceae4"; g.fillRect(0, 0, 512, 512);
+    for (var i = 0; i < 22; i++) {
+      g.strokeStyle = "rgba(120,124,130," + rnd(0.05, 0.18).toFixed(3) + ")"; g.lineWidth = rnd(0.6, 2.4);
+      g.beginPath(); var x = rnd(-40, 512), y = rnd(-40, 40); g.moveTo(x, y);
+      for (var s = 0; s < 6; s++) { x += rnd(40, 110); y += rnd(30, 120); g.lineTo(x + rnd(-30, 30), y); } g.stroke();
+    }
+    return c;
+  }
+  function fabricTex(base) {
+    var c = cvs(256), g = c.getContext("2d");
+    g.fillStyle = base; g.fillRect(0, 0, 256, 256);
+    for (var i = 0; i < 9000; i++) { g.fillStyle = "rgba(255,255,255," + rnd(0.01, 0.05).toFixed(3) + ")"; g.fillRect(Math.random() * 256, Math.random() * 256, 1, 1); }
+    for (var j = 0; j < 9000; j++) { g.fillStyle = "rgba(0,0,0," + rnd(0.01, 0.05).toFixed(3) + ")"; g.fillRect(Math.random() * 256, Math.random() * 256, 1, 1); }
+    return c;
   }
 
-  /* ---------- shell: floor + two walls + ceiling ---------- */
-  box(13, 0.2, 10, "#b48a5e", 0, -0.1, 0, 0.9);           // wood floor
-  box(0.2, 4.2, 10, "#ece7de", -6.4, 2.0, 0, 0.95);        // left wall
-  box(13, 4.2, 0.2, "#e7e1d6", 0, 2.0, -4.9, 0.95);        // back wall
-  box(13, 0.2, 10, "#f3efe8", 0, 4.1, 0, 1);               // ceiling
+  var woodMap = tex(woodTex(), 4, 3);
+  var marbleMap = tex(marbleTex(), 1, 1);
 
-  // large window on the back wall (glowing sky)
-  var win = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 2.6), new THREE.MeshBasicMaterial({ color: "#cfe8ff" }));
-  win.position.set(2.4, 2.1, -4.78); scene.add(win);
-  box(4.9, 0.16, 0.16, "#cfc7ba", 2.4, 3.42, -4.74, 0.8);  // window frame top/bottom/mid
-  box(4.9, 0.16, 0.16, "#cfc7ba", 2.4, 0.8, -4.74, 0.8);
-  box(0.14, 2.7, 0.14, "#cfc7ba", 2.4, 2.1, -4.72, 0.8);
-  // soft light spilling from the window
-  var winLight = new THREE.RectAreaLight ? null : null;
-  var wl = new THREE.PointLight("#dcefff", 0.6, 22); wl.position.set(2.4, 2.2, -3.4); scene.add(wl);
+  function pbr(o) { return new THREE.MeshStandardMaterial(o); }
+  var M = {
+    floor: pbr({ map: woodMap, roughness: 0.5, metalness: 0.0 }),
+    wall: pbr({ color: "#efe9df", roughness: 0.97 }),
+    ceil: pbr({ color: "#f6f2ec", roughness: 1 }),
+    marble: pbr({ map: marbleMap, roughness: 0.22, metalness: 0.02 }),
+    cab: pbr({ color: "#2f3d38", roughness: 0.5, metalness: 0.15 }),
+    sofa: pbr({ map: tex(fabricTex("#8d7c67"), 1, 1), roughness: 0.95 }),
+    cushion: pbr({ map: tex(fabricTex("#d9cdb8"), 1, 1), roughness: 0.95 }),
+    woodDark: pbr({ color: "#4a3a2c", roughness: 0.55 }),
+    metal: pbr({ color: "#c9cdd2", roughness: 0.32, metalness: 0.9 }),
+    brass: pbr({ color: "#c99a4b", roughness: 0.34, metalness: 0.85 }),
+    bed: pbr({ map: tex(fabricTex("#efe7d8"), 1, 1), roughness: 0.95 }),
+    throwm: pbr({ map: tex(fabricTex("#c98b6b"), 1, 1), roughness: 0.95 }),
+    dark: pbr({ color: "#1b1c20", roughness: 0.5 }),
+    rug: pbr({ map: tex(fabricTex("#c8b6a0"), 1, 1), roughness: 1 }),
+    plant: pbr({ color: "#4f7a44", roughness: 0.8 }),
+    terra: pbr({ color: "#b5643c", roughness: 0.7 })
+  };
 
-  // area rug
-  box(5.4, 0.04, 3.6, "#cbb7a0", -1.6, 0.02, 1.0, 1);
+  function box(w, h, d, m, x, y, z, cast) {
+    var me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+    me.position.set(x, y, z); me.castShadow = cast !== false; me.receiveShadow = true; scene.add(me); return me;
+  }
+  function cyl(rt, rb, h, m, x, y, z, seg) {
+    var me = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 24), m);
+    me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; scene.add(me); return me;
+  }
 
-  /* ---------- LIVING ROOM (centre-left) ---------- */
-  // L-sofa
-  var sofaCol = "#8f7f6b";
-  box(3.6, 0.55, 1.3, sofaCol, -2.0, 0.42, 0.2, 0.9);       // seat base
-  box(3.6, 0.7, 0.35, sofaCol, -2.0, 0.85, -0.35, 0.9);     // backrest
-  box(0.35, 0.62, 1.3, sofaCol, -3.7, 0.6, 0.2, 0.9);       // left arm
-  box(1.3, 0.55, 1.7, sofaCol, -0.55, 0.42, 1.55, 0.9);     // chaise
-  box(0.9, 0.22, 1.0, "#e7ddce", -2.3, 0.72, 0.3, 0.85);    // cushions
-  box(0.9, 0.22, 1.0, "#dcd0bd", -1.3, 0.72, 0.3, 0.85);
-  // coffee table
-  box(1.5, 0.12, 0.85, "#4a3a2c", -1.6, 0.5, 1.5, 0.6);
-  box(0.1, 0.4, 0.1, "#3a2e23", -2.25, 0.25, 1.15); box(0.1, 0.4, 0.1, "#3a2e23", -0.95, 0.25, 1.15);
-  box(0.1, 0.4, 0.1, "#3a2e23", -2.25, 0.25, 1.85); box(0.1, 0.4, 0.1, "#3a2e23", -0.95, 0.25, 1.85);
-  cyl(0.12, 0.16, 0.22, "#c06a3e", -1.6, 0.66, 1.5, 0.7);   // vase on table
-  // TV wall unit + screen (against left wall)
-  box(0.3, 0.7, 3.2, "#2c2a2e", -6.1, 0.35, -1.4, 0.5);
-  var tv = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.5), new THREE.MeshBasicMaterial({ color: "#0b0d12" }));
-  tv.rotation.y = Math.PI / 2; tv.position.set(-6.22, 2.0, -1.4); scene.add(tv);
-  // floor lamp
-  cyl(0.03, 0.03, 2.0, "#2a2a2e", -4.2, 1.0, -0.4); cyl(0.28, 0.34, 0.4, "#f0e6cf", -4.2, 2.1, -0.4, 0.6);
+  /* ---------- shell ---------- */
+  var floor = box(13, 0.2, 10, M.floor, 0, -0.1, 0, false);
+  box(0.2, 4.2, 10, M.wall, -6.4, 2.0, 0, false);
+  box(13, 4.2, 0.2, M.wall, 0, 2.0, -4.9, false);
+  box(13, 0.2, 10, M.ceil, 0, 4.1, 0, false);
 
-  /* ---------- KITCHEN (right side) ---------- */
-  box(0.7, 1.0, 6.0, "#33403a", 5.6, 0.5, -1.0, 0.7);       // base cabinets
-  box(0.75, 0.12, 6.1, "#eceae4", 5.6, 1.06, -1.0, 0.5, 0.1); // worktop
-  box(0.6, 1.0, 3.2, "#33403a", 5.6, 3.0, -2.4, 0.7);       // upper cabinets
-  // island
-  box(2.4, 1.0, 1.2, "#33403a", 2.6, 0.5, 2.6, 0.7);
-  box(2.6, 0.12, 1.4, "#eceae4", 2.6, 1.06, 2.6, 0.5, 0.1);
-  // stools
-  cyl(0.22, 0.22, 0.12, "#c9a24b", 1.7, 0.78, 3.4, 0.6, 0.3); cyl(0.04, 0.04, 0.78, "#7a7a7a", 1.7, 0.4, 3.4, 0.4, 0.6);
-  cyl(0.22, 0.22, 0.12, "#c9a24b", 2.6, 0.78, 3.4, 0.6, 0.3); cyl(0.04, 0.04, 0.78, "#7a7a7a", 2.6, 0.4, 3.4, 0.4, 0.6);
-  cyl(0.22, 0.22, 0.12, "#c9a24b", 3.5, 0.78, 3.4, 0.6, 0.3); cyl(0.04, 0.04, 0.78, "#7a7a7a", 3.5, 0.4, 3.4, 0.4, 0.6);
-  // pendant lights over island
-  var pA = cyl(0.16, 0.10, 0.24, "#1c1c1e", 2.0, 2.5, 2.6, 0.5); var pB = cyl(0.16, 0.10, 0.24, "#1c1c1e", 3.2, 2.5, 2.6, 0.5);
-  scene.add(new THREE.PointLight("#ffdca0", 0.35, 9).translateX ? (function () { var l = new THREE.PointLight("#ffdca0", 0.4, 10); l.position.set(2.6, 2.3, 2.6); return l; })() : new THREE.Object3D());
+  // window (bright exterior) — no shadow-cast
+  var sky = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 2.6), new THREE.MeshBasicMaterial({ color: "#dcefff" }));
+  sky.position.set(2.4, 2.1, -4.78); scene.add(sky);
+  box(4.9, 0.14, 0.14, M.wall, 2.4, 3.42, -4.73, false); box(4.9, 0.14, 0.14, M.wall, 2.4, 0.8, -4.73, false);
+  box(0.12, 2.7, 0.12, M.wall, 2.4, 2.1, -4.71, false);
+  box(0.12, 2.7, 0.12, M.wall, 0.3, 2.1, -4.71, false); box(0.12, 2.7, 0.12, M.wall, 4.5, 2.1, -4.71, false);
 
-  /* ---------- BEDROOM (back-left corner) ---------- */
-  box(3.0, 0.5, 2.4, "#4a3a2c", -4.3, 0.28, -3.3, 0.7);     // bed base
-  box(3.0, 0.35, 2.2, "#efe7d8", -4.3, 0.62, -3.3, 0.9);    // mattress
-  box(3.0, 1.0, 0.2, "#6b5a44", -4.3, 0.7, -4.45, 0.85);    // headboard
-  box(1.1, 0.28, 0.6, "#dfe6ea", -3.7, 0.9, -4.0, 0.9);     // pillow
-  box(1.1, 0.28, 0.6, "#e7edf0", -4.9, 0.9, -4.0, 0.9);
-  box(2.2, 0.16, 1.4, "#c98b6b", -4.3, 0.78, -2.7, 0.9);    // throw blanket
-  box(0.6, 0.5, 0.5, "#3a2e23", -2.5, 0.25, -4.0, 0.7);     // bedside table
-  cyl(0.14, 0.2, 0.3, "#e7d9b8", -2.5, 0.62, -4.0, 0.6);    // lamp
+  box(5.4, 0.04, 3.6, M.rug, -1.6, 0.02, 1.0, false);   // rug
+
+  /* ---------- living room ---------- */
+  box(3.6, 0.5, 1.3, M.sofa, -2.0, 0.42, 0.2);
+  box(3.6, 0.66, 0.32, M.sofa, -2.0, 0.86, -0.35);
+  box(0.34, 0.6, 1.3, M.sofa, -3.72, 0.6, 0.2); box(0.34, 0.6, 1.3, M.sofa, -0.28, 0.6, 0.2);
+  box(1.3, 0.5, 1.7, M.sofa, -0.55, 0.42, 1.5);          // chaise
+  box(0.86, 0.24, 0.9, M.cushion, -2.35, 0.7, 0.28); box(0.86, 0.24, 0.9, M.cushion, -1.4, 0.7, 0.28);
+  box(0.7, 0.22, 0.7, M.cushion, -0.55, 0.7, 1.5);
+  box(1.5, 0.1, 0.85, M.woodDark, -1.6, 0.5, 1.55);      // coffee table top
+  box(0.09, 0.4, 0.09, M.metal, -2.25, 0.25, 1.2); box(0.09, 0.4, 0.09, M.metal, -0.95, 0.25, 1.2);
+  box(0.09, 0.4, 0.09, M.metal, -2.25, 0.25, 1.9); box(0.09, 0.4, 0.09, M.metal, -0.95, 0.25, 1.9);
+  cyl(0.11, 0.15, 0.22, M.terra, -1.6, 0.66, 1.55);
+  box(0.28, 0.7, 3.0, M.dark, -6.05, 0.35, -1.4);        // media unit
+  var tv = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 1.45), new THREE.MeshStandardMaterial({ color: "#07080c", roughness: 0.15, metalness: 0.3 }));
+  tv.rotation.y = Math.PI / 2; tv.position.set(-6.2, 2.0, -1.4); tv.receiveShadow = true; scene.add(tv);
+  cyl(0.03, 0.03, 2.0, M.metal, -4.4, 1.0, -0.6); cyl(0.3, 0.36, 0.42, M.cushion, -4.4, 2.12, -0.6);  // floor lamp
+
+  /* ---------- kitchen ---------- */
+  box(0.7, 1.0, 6.0, M.cab, 5.7, 0.5, -1.0);
+  box(0.78, 0.1, 6.1, M.marble, 5.7, 1.06, -1.0, false);
+  box(0.55, 0.95, 3.2, M.cab, 5.75, 3.0, -2.4);
+  box(2.4, 1.0, 1.2, M.cab, 2.6, 0.5, 2.6);
+  box(2.62, 0.1, 1.42, M.marble, 2.6, 1.06, 2.6, false);
+  var sx = [1.7, 2.6, 3.5];
+  for (var q = 0; q < 3; q++) { cyl(0.22, 0.2, 0.1, M.brass, sx[q], 0.8, 3.5); cyl(0.035, 0.035, 0.78, M.metal, sx[q], 0.4, 3.5); }
+  cyl(0.16, 0.1, 0.24, M.dark, 2.1, 2.55, 2.6); cyl(0.16, 0.1, 0.24, M.dark, 3.1, 2.55, 2.6);
+  var isl = new THREE.PointLight("#ffd9a0", 6, 9, 2); isl.position.set(2.6, 2.3, 2.6); scene.add(isl);
+
+  /* ---------- bedroom ---------- */
+  box(3.0, 0.45, 2.4, M.woodDark, -4.3, 0.26, -3.3);
+  box(2.9, 0.34, 2.2, M.bed, -4.3, 0.6, -3.3);
+  box(3.0, 1.05, 0.18, M.bed, -4.3, 0.72, -4.45);
+  box(1.05, 0.26, 0.58, M.cushion, -3.75, 0.88, -4.0); box(1.05, 0.26, 0.58, M.cushion, -4.85, 0.88, -4.0);
+  box(2.2, 0.14, 1.3, M.throwm, -4.3, 0.76, -2.75);
+  box(0.6, 0.5, 0.5, M.woodDark, -2.4, 0.25, -4.1); cyl(0.14, 0.2, 0.3, M.cushion, -2.4, 0.62, -4.1);
 
   /* ---------- greenery + art ---------- */
-  cyl(0.28, 0.22, 0.5, "#b5643c", 4.6, 0.25, 3.7, 0.8);     // plant pot
-  var foliage = mat("#4f7a44", 0.9);
-  var fol = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), foliage); fol.position.set(4.6, 0.95, 3.7); scene.add(fol);
-  var fol2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 0), foliage); fol2.position.set(4.6, 1.4, 3.7); scene.add(fol2);
-  // wall art on back wall
-  function art(x, c) { var a = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.5), new THREE.MeshBasicMaterial({ color: c })); a.position.set(x, 2.3, -4.77); scene.add(a); box(1.24, 1.64, 0.06, "#2b2620", x, 2.3, -4.82, 0.6); }
-  art(-3.2, "#c9986a"); art(-1.7, "#7d93a8");
+  cyl(0.28, 0.22, 0.5, M.terra, 4.7, 0.25, 3.8);
+  var f1 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 1), M.plant); f1.position.set(4.7, 0.98, 3.8); f1.castShadow = true; scene.add(f1);
+  var f2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 1), M.plant); f2.position.set(4.7, 1.42, 3.8); f2.castShadow = true; scene.add(f2);
+  function art(x, c) { var a = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.5), new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 })); a.position.set(x, 2.35, -4.76); scene.add(a); box(1.22, 1.62, 0.05, M.dark, x, 2.35, -4.8, false); }
+  art(-3.4, "#c2905f"); art(-1.85, "#7d93a8");
 
-  /* ---------- camera orbit control ---------- */
+  /* ---------- camera orbit + presets ---------- */
   var VIEWS = {
-    living: { tx: -1.6, ty: 1.15, tz: 0.8, az: 0.62, pol: 1.34, rad: 6.6 },
-    kitchen: { tx: 3.4, ty: 1.2, tz: 1.2, az: -0.5, pol: 1.4, rad: 5.6 },
-    bedroom: { tx: -3.9, ty: 1.0, tz: -3.0, az: 0.95, pol: 1.42, rad: 4.9 }
+    living: { tx: -1.6, ty: 1.15, tz: 0.9, az: 0.6, pol: 1.36, rad: 6.4 },
+    kitchen: { tx: 3.4, ty: 1.2, tz: 1.4, az: -0.5, pol: 1.42, rad: 5.4 },
+    bedroom: { tx: -3.9, ty: 1.0, tz: -3.0, az: 0.98, pol: 1.44, rad: 4.7 }
   };
-  var cur = { tx: -1.6, ty: 1.15, tz: 0.8, az: 0.62, pol: 1.34, rad: 6.6 };
-  var dst = Object.assign({}, cur);
-
+  var cur = Object.assign({}, VIEWS.living), dst = Object.assign({}, VIEWS.living);
   function applyCam() {
-    var st = cur;
-    var x = st.tx + st.rad * Math.sin(st.pol) * Math.sin(st.az);
-    var y = st.ty + st.rad * Math.cos(st.pol);
-    var z = st.tz + st.rad * Math.sin(st.pol) * Math.cos(st.az);
-    camera.position.set(x, y, z);
-    camera.lookAt(st.tx, st.ty, st.tz);
+    var s = cur;
+    camera.position.set(
+      s.tx + s.rad * Math.sin(s.pol) * Math.sin(s.az),
+      s.ty + s.rad * Math.cos(s.pol),
+      s.tz + s.rad * Math.sin(s.pol) * Math.cos(s.az));
+    camera.lookAt(s.tx, s.ty, s.tz);
   }
   applyCam();
+  function goTo(n) { var v = VIEWS[n]; if (v) { for (var k in v) dst[k] = v[k]; } }
 
-  function goTo(name) {
-    var v = VIEWS[name]; if (!v) return;
-    dst.tx = v.tx; dst.ty = v.ty; dst.tz = v.tz; dst.az = v.az; dst.pol = v.pol; dst.rad = v.rad;
-  }
-
-  /* ---------- interaction: drag look + wheel/pinch zoom ---------- */
-  var dragging = false, lx = 0, ly = 0, pinch = 0;
-  function down(x, y) { dragging = true; lx = x; ly = y; }
-  function move(x, y) {
-    if (!dragging) return;
-    dst.az -= (x - lx) * 0.006; dst.pol += (y - ly) * 0.005;
-    dst.pol = Math.max(0.75, Math.min(1.62, dst.pol));
-    lx = x; ly = y;
-  }
-  function up() { dragging = false; }
+  /* ---------- interaction ---------- */
+  var dragging = false, lx = 0, ly = 0, pinch = 0, autoAz = true;
+  function down(x, y) { dragging = true; lx = x; ly = y; autoAz = false; }
+  function move(x, y) { if (!dragging) return; dst.az -= (x - lx) * 0.006; dst.pol += (y - ly) * 0.005; dst.pol = Math.max(0.72, Math.min(1.6, dst.pol)); lx = x; ly = y; }
   canvas.addEventListener("mousedown", function (e) { down(e.clientX, e.clientY); });
   window.addEventListener("mousemove", function (e) { move(e.clientX, e.clientY); });
-  window.addEventListener("mouseup", up);
-  canvas.addEventListener("wheel", function (e) { e.preventDefault(); dst.rad = Math.max(1.4, Math.min(9, dst.rad + e.deltaY * 0.006)); }, { passive: false });
-  canvas.addEventListener("touchstart", function (e) {
-    if (e.touches.length === 1) down(e.touches[0].clientX, e.touches[0].clientY);
-    else if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-  }, { passive: true });
+  window.addEventListener("mouseup", function () { dragging = false; });
+  canvas.addEventListener("wheel", function (e) { e.preventDefault(); autoAz = false; dst.rad = Math.max(1.3, Math.min(9, dst.rad + e.deltaY * 0.006)); }, { passive: false });
+  canvas.addEventListener("touchstart", function (e) { if (e.touches.length === 1) down(e.touches[0].clientX, e.touches[0].clientY); else if (e.touches.length === 2) { pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); autoAz = false; } }, { passive: true });
   canvas.addEventListener("touchmove", function (e) {
     if (e.touches.length === 1) move(e.touches[0].clientX, e.touches[0].clientY);
-    else if (e.touches.length === 2) {
-      var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      if (pinch) { dst.rad = Math.max(1.4, Math.min(9, dst.rad - (d - pinch) * 0.02)); }
-      pinch = d;
-      if (e.cancelable) e.preventDefault();
-    }
+    else if (e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); if (pinch) dst.rad = Math.max(1.3, Math.min(9, dst.rad - (d - pinch) * 0.02)); pinch = d; if (e.cancelable) e.preventDefault(); }
   }, { passive: false });
   canvas.addEventListener("touchend", function () { dragging = false; pinch = 0; });
-
   var buttons = host.querySelectorAll("[data-room]");
   Array.prototype.forEach.call(buttons, function (b) {
-    b.addEventListener("click", function () {
-      Array.prototype.forEach.call(buttons, function (o) { o.classList.remove("on"); });
-      b.classList.add("on"); goTo(b.getAttribute("data-room"));
-    });
+    b.addEventListener("click", function () { Array.prototype.forEach.call(buttons, function (o) { o.classList.remove("on"); }); b.classList.add("on"); goTo(b.getAttribute("data-room")); autoAz = false; });
   });
 
-  /* ---------- loop (pauses off-screen) ---------- */
-  var raf = null, onScreen = true, autoAz = true;
+  /* ---------- loop ---------- */
+  var raf = null, onScreen = true;
   function frame() {
     raf = requestAnimationFrame(frame);
-    // ease toward destination
     for (var k in dst) cur[k] += (dst[k] - cur[k]) * 0.08;
-    if (!dragging && autoAz && !reduce) dst.az += 0.0011;   // gentle idle drift
-    applyCam();
-    renderer.render(scene, camera);
+    if (!dragging && autoAz && !reduce) dst.az += 0.0011;
+    applyCam(); renderer.render(scene, camera);
   }
   function start() { if (raf == null && onScreen && !document.hidden) frame(); }
   function stop() { if (raf != null) { cancelAnimationFrame(raf); raf = null; } }
-  canvas.addEventListener("pointerdown", function () { autoAz = false; });
   document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (es) { es.forEach(function (e) { onScreen = e.isIntersecting; onScreen ? start() : stop(); }); }, { threshold: 0.01 }).observe(host);
-  }
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { es.forEach(function (e) { onScreen = e.isIntersecting; onScreen ? start() : stop(); }); }, { threshold: 0.01 }).observe(host);
   start();
-
-  function resize() {
-    W = host.clientWidth; H = host.clientHeight || Math.round(W * 0.62);
-    camera.aspect = W / H; camera.updateProjectionMatrix(); renderer.setSize(W, H, false);
-  }
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", function () { W = host.clientWidth; H = host.clientHeight || Math.round(W * 0.62); camera.aspect = W / H; camera.updateProjectionMatrix(); renderer.setSize(W, H, false); });
 })();
