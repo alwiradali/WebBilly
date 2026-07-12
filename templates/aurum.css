@@ -29,3 +29,26 @@
 .magnetic{background:var(--gold-2);color:#20180a}
 .nav-cta:hover{background:var(--gold-2);color:#20180a;border-color:var(--gold-2)}
 .hero-media img{filter:brightness(.72) saturate(1.1) contrast(1.05)}
+
+/* ============================================================
+   Distinct layout — centered, symmetric "maison" composition
+   (sets AURUM apart from the left-aligned Maison Noir engine)
+   ============================================================ */
+.hero { align-items: center; }
+.hero-inner { text-align: center; max-width: 1080px; margin-inline: auto; width: 100%; padding-bottom: clamp(56px, 9vw, 110px); }
+.hero-eyebrow, .hero h1 { margin-inline: auto; }
+.hero-foot { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+.hero-foot p { max-width: 540px; }
+.scroll-cue { justify-content: center; }
+.sec-head { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+.sec-head h2 { max-width: 22ch; }
+.h-intro h2 { text-align: center; }
+/* thin gold frames on every image — a display-case feel */
+.h-figure, .feature-fig { border: 1px solid rgba(212, 175, 55, 0.42); }
+/* centered feature block */
+.feature { grid-template-columns: 0.9fr 1.1fr; direction: rtl; }
+.feature > * { direction: ltr; }
+/* centred services, no index numbers */
+.svc { justify-content: center; text-align: center; }
+.svc .svc-idx { display: none; }
+.svc:hover { padding-left: 0; }
