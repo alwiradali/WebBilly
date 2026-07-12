@@ -1,0 +1,273 @@
+/* ============================================================
+   Billy Digitals — Barber template ("Fade & Co")
+   Premium, masculine, booking-first. Charcoal + warm brass.
+   Written mobile-first (base = phone), enhanced at >=760px.
+   Shared by barber.html and the personalised gara-barber.html.
+   ============================================================ */
+
+:root{
+  --ink:#0d0d0f;        /* page */
+  --ink-2:#141317;      /* raised surfaces */
+  --ink-3:#1c1a20;      /* cards */
+  --line:rgba(255,255,255,.10);
+  --brass:#d8a24b;      /* primary accent */
+  --brass-2:#f0c375;    /* highlight */
+  --cream:#f4f1ea;      /* headings */
+  --muted:#b3ada3;      /* body */
+  --muted-2:#8a857d;    /* faint */
+  --ok:#57c98a;
+  --radius:18px;
+  --wrap:1180px;
+  --shadow:0 24px 60px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--muted);
+  font:16px/1.65 'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{color:var(--cream);margin:0;line-height:1.02;font-weight:400}
+.display{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.01em}
+.oswald{font-family:'Oswald',sans-serif}
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding:0 20px}
+.eyebrow{
+  font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--brass);margin:0 0 14px;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;letter-spacing:.14em;
+  text-transform:uppercase;padding:15px 26px;border-radius:999px;cursor:pointer;
+  border:1px solid transparent;transition:transform .18s ease,box-shadow .25s ease,background .25s ease,color .2s ease;
+}
+.btn-fill{background:linear-gradient(100deg,var(--brass),var(--brass-2));color:#20160a;box-shadow:0 14px 34px rgba(216,162,75,.32)}
+.btn-fill:hover{transform:translateY(-2px);box-shadow:0 20px 44px rgba(216,162,75,.44)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--cream)}
+.btn-ghost:hover{border-color:var(--brass);color:var(--brass-2)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;inset:0 0 auto;z-index:200;transition:background .3s ease,border-color .3s ease,backdrop-filter .3s}
+.nav.scrolled{background:rgba(13,13,15,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em;color:var(--cream);white-space:nowrap}
+.brand .pole{width:16px;height:26px;border-radius:8px;background:
+  repeating-linear-gradient(135deg,var(--brass) 0 5px,#20160a 5px 10px,var(--cream) 10px 15px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);flex:none}
+.nav-links{display:none}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-right .btn{padding:11px 18px;font-size:12.5px}
+.burger{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;background:none;border:1px solid var(--line);border-radius:12px;color:var(--cream)}
+.burger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none}
+/* mobile drawer */
+.drawer{position:fixed;inset:0;z-index:190;background:rgba(9,9,11,.96);backdrop-filter:blur(6px);
+  display:flex;flex-direction:column;gap:6px;justify-content:center;align-items:center;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s}
+.drawer.open{opacity:1;visibility:visible}
+.drawer a{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.05em;color:var(--cream);padding:8px 0}
+.drawer a:active{color:var(--brass-2)}
+.drawer .btn{margin-top:16px;font-size:15px}
+.drawer-close{position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--cream);font-size:22px}
+
+/* ---------- hero (self-contained CSS scene) ---------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;padding:96px 0 40px;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 82% 8%,rgba(216,162,75,.20),transparent 52%),
+    radial-gradient(90% 70% at 6% 96%,rgba(216,162,75,.10),transparent 58%),
+    linear-gradient(180deg,#151217 0%,#0d0d0f 70%)}
+.hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+/* diagonal barber-pole texture sweeping in from the right */
+.hero-bg::before{content:"";position:absolute;top:-25%;right:-12%;width:68%;height:150%;transform:rotate(5deg);
+  background:repeating-linear-gradient(135deg,rgba(216,162,75,.12) 0 13px,rgba(244,241,234,.05) 13px 26px,transparent 26px 46px);
+  -webkit-mask:linear-gradient(90deg,transparent,#000 46%);mask:linear-gradient(90deg,transparent,#000 46%);opacity:.6}
+/* fine engraving grid + vignette + floor fade */
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 46px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 46px),
+    linear-gradient(180deg,transparent 52%,rgba(13,13,15,.92)),
+    radial-gradient(100% 60% at 50% 122%,rgba(0,0,0,.6),transparent)}
+.hero-inner{position:relative;z-index:1;width:100%}
+.hero .eyebrow{margin-bottom:12px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,17vw,132px);color:var(--cream);letter-spacing:.01em}
+.hero h1 .amp{color:var(--brass)}
+.hero-sub{max-width:34ch;margin:16px 0 24px;color:#e7e2d8;font-size:clamp(15px,4.4vw,18px)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px}
+.hero-cta .btn{flex:1 1 auto;min-width:150px}
+.hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.openbadge{display:inline-flex;align-items:center;gap:9px;font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;letter-spacing:.06em;color:var(--cream)}
+.openbadge .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(87,201,138,.2);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(87,201,138,0)}}
+.stars{color:var(--brass-2);font-size:14px;letter-spacing:2px}
+.hero-meta b{color:var(--cream)}
+
+/* ---------- marquee ---------- */
+.strip{background:var(--brass);color:#20160a;overflow:hidden;border-block:1px solid rgba(0,0,0,.2)}
+.strip .row{display:flex;gap:0;white-space:nowrap;animation:marq 26s linear infinite;padding:13px 0}
+.strip span{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.16em;font-size:14px;padding:0 26px;display:inline-flex;align-items:center;gap:26px}
+.strip span::after{content:"✦";opacity:.55}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- section frame ---------- */
+section{position:relative}
+.band{padding:74px 0}
+.sec-head{max-width:640px;margin:0 auto 40px;text-align:center}
+.sec-head h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,11vw,72px);letter-spacing:.02em}
+.sec-head p{margin:14px 0 0;color:var(--muted)}
+
+/* ---------- services / price list ---------- */
+.svc{display:grid;grid-template-columns:1fr;gap:14px}
+.svc-card{background:var(--ink-3);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;transition:border-color .25s,transform .25s,background .25s}
+.svc-card:hover{border-color:rgba(216,162,75,.5);transform:translateY(-3px);background:#211e26}
+.svc-card h3{font-family:'Oswald',sans-serif;font-weight:600;font-size:20px;color:var(--cream);letter-spacing:.01em}
+.svc-card p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.svc-card .dur{display:inline-block;margin-top:9px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);font-family:'Oswald',sans-serif}
+.price{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--brass-2);line-height:1;white-space:nowrap}
+.price small{font-size:16px;color:var(--muted-2);margin-right:1px}
+
+/* ---------- signature cuts (CSS lookbook) ---------- */
+.look{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.look .card{position:relative;overflow:hidden;border-radius:16px;aspect-ratio:3/4;border:1px solid var(--line);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:18px;isolation:isolate;
+  background:linear-gradient(165deg,#211d26,#0f0e12);transition:transform .3s ease,border-color .3s ease}
+.look .card:hover{transform:translateY(-4px);border-color:rgba(216,162,75,.5)}
+/* motif: soft brass arc + fade lines evoking a cut */
+.look .card::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.9;
+  background:
+    radial-gradient(70% 55% at 50% 0%,rgba(216,162,75,.22),transparent 60%),
+    repeating-linear-gradient(180deg,rgba(255,255,255,.05) 0 2px,transparent 2px 12px)}
+.look .card::after{content:"";position:absolute;right:-30%;top:-20%;width:80%;height:70%;z-index:-1;
+  border-radius:50%;background:radial-gradient(circle,rgba(240,195,117,.16),transparent 65%)}
+.look .card .no{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.2em;color:var(--brass);position:absolute;top:16px;left:18px}
+.look .card h4{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.03em;color:var(--cream)}
+.look .card p{margin:5px 0 0;font-size:13px;color:var(--muted)}
+.look .card.tall{grid-row:span 2;aspect-ratio:auto}
+
+/* ---------- about / why ---------- */
+.about{display:grid;grid-template-columns:1fr;gap:26px;align-items:center}
+.about-art{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);
+  aspect-ratio:4/5;background:
+   radial-gradient(90% 70% at 30% 12%,rgba(216,162,75,.22),transparent 55%),
+   linear-gradient(160deg,#211d26,#0e0d11);display:flex;align-items:center;justify-content:center}
+/* big barber pole centrepiece */
+.about-art .pole-lg{width:64px;height:64%;border-radius:40px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 30px 60px rgba(0,0,0,.5);
+  background:repeating-linear-gradient(135deg,var(--brass) 0 16px,#1a130a 16px 32px,var(--cream) 32px 48px);
+  animation:poleSpin 3.5s linear infinite}
+@keyframes poleSpin{to{background-position:0 96px}}
+.about-art::after{content:"CRAFT";position:absolute;bottom:16px;left:0;right:0;text-align:center;
+  font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:.3em;color:rgba(244,241,234,.08)}
+.about h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,11vw,64px);letter-spacing:.02em}
+.about .lede{margin:14px 0 20px;color:#d9d3c9}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.ticks li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:#ddd7cc}
+.ticks li::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;margin-top:1px;
+  background:radial-gradient(circle at 50% 45%,var(--brass-2),var(--brass));
+  box-shadow:0 0 0 4px rgba(216,162,75,.15)}
+
+/* ---------- booking band ---------- */
+.book-band{background:
+  linear-gradient(180deg,rgba(216,162,75,.09),transparent),var(--ink-2);
+  border-block:1px solid var(--line);text-align:center}
+.book-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,13vw,90px);letter-spacing:.02em}
+.book-band p{max-width:44ch;margin:12px auto 26px;color:var(--muted)}
+.book-band .btn{margin:5px}
+
+/* ---------- visit ---------- */
+.visit{display:grid;grid-template-columns:1fr;gap:16px}
+.vcard{background:var(--ink-3);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.vcard h4{font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:14px}
+.hours{list-style:none;margin:0;padding:0}
+.hours li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:#ddd7cc}
+.hours li:last-child{border-bottom:0}
+.hours li.today{color:var(--brass-2);font-weight:600}
+.hours span:first-child{font-family:'Oswald',sans-serif;letter-spacing:.06em}
+.vcard address{font-style:normal;color:#ddd7cc;font-size:15px;line-height:1.8}
+.vcard .map{margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/10;
+  background:
+   linear-gradient(180deg,rgba(216,162,75,.08),transparent),
+   repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 34px),
+   repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 34px),var(--ink);
+  position:relative;display:flex;align-items:center;justify-content:center}
+.vcard .map .pin{width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--brass);box-shadow:0 8px 20px rgba(216,162,75,.5)}
+.vcard .map .pin::after{content:"";position:absolute;inset:6px;border-radius:50%;background:#20160a}
+
+/* ---------- reviews ---------- */
+.reviews{display:grid;grid-template-columns:1fr;gap:14px}
+.rev{background:var(--ink-3);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.rev .stars{font-size:16px;letter-spacing:3px}
+.rev p{margin:12px 0 16px;color:#e3ddd2;font-size:15.5px;line-height:1.7}
+.rev .who{display:flex;align-items:center;gap:12px}
+.rev .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--brass),#6d4d1f);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;color:#20160a;font-size:19px}
+.rev .who b{color:var(--cream);display:block;font-weight:600;font-size:14px}
+.rev .who small{color:var(--muted-2)}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line);padding:44px 0 96px;text-align:center}
+.foot .brand{justify-content:center;margin-bottom:14px}
+.foot .socials{display:flex;gap:12px;justify-content:center;margin:18px 0}
+.foot .socials a{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--cream);transition:border-color .25s,color .25s}
+.foot .socials a:hover{border-color:var(--brass);color:var(--brass-2)}
+.foot .socials svg{width:19px;height:19px;fill:currentColor}
+.foot small{color:var(--muted-2);font-size:13px}
+
+/* ---------- booking modal (demo) ---------- */
+.modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(6,6,8,.72);backdrop-filter:blur(6px)}
+.modal.open{display:flex}
+.modal-card{width:100%;max-width:420px;background:var(--ink-2);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:var(--shadow)}
+.modal-card h3{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.02em;margin-bottom:4px}
+.modal-card p.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.field input,.field select{width:100%;background:var(--ink-3);border:1px solid var(--line);border-radius:12px;color:var(--cream);
+  font:15px/1.2 'Inter',sans-serif;padding:13px 14px;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--brass)}
+.modal .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .btn{width:100%;margin-top:6px}
+.modal-x{float:right;background:none;border:0;color:var(--muted);font-size:26px;line-height:1;cursor:pointer;margin:-6px -4px 0 0}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);z-index:400;
+  background:var(--cream);color:#1a1712;font-weight:600;font-size:14px;padding:13px 20px;border-radius:999px;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- desktop enhancements ---------- */
+@media(max-width:410px){
+  .brand{font-size:23px;gap:8px}
+  .nav-right .btn{padding:10px 13px;font-size:11px;letter-spacing:.1em}
+  .nav-in{height:60px}
+}
+@media(min-width:760px){
+  .nav-links{display:flex;gap:30px;font-family:'Oswald',sans-serif;font-weight:500;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+  .nav-links a{color:#d8d3ca;transition:color .2s}
+  .nav-links a:hover{color:var(--brass-2)}
+  .burger{display:none}
+  .band{padding:110px 0}
+  .hero{padding:120px 0 56px}
+  .hero-cta .btn{flex:0 0 auto}
+  .svc{grid-template-columns:1fr 1fr;gap:16px}
+  .gal{grid-template-columns:repeat(4,1fr);gap:12px;grid-auto-rows:1fr}
+  .about{grid-template-columns:1.05fr 1fr;gap:48px}
+  .about.flip .about-art{order:2}
+  .visit{grid-template-columns:1fr 1fr}
+  .reviews{grid-template-columns:repeat(3,1fr)}
+}
+@media(min-width:1000px){
+  .hero-sub{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  .strip .row{animation:none}
+  html{scroll-behavior:auto}
+}
