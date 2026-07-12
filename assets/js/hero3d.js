@@ -31,7 +31,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   var camera = new THREE.PerspectiveCamera(52, W / H, 0.1, 100);
   camera.position.set(0, 0, 14);
 
-  var N = mobile ? 8000 : 16000, R = 6.0;
+  var N = mobile ? 13000 : 16000, R = 6.0;
   var pos = new Float32Array(N * 3), rnd = new Float32Array(N);
   var golden = Math.PI * (3 - Math.sqrt(5));
   for (var i = 0; i < N; i++) {
@@ -79,23 +79,24 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   ].join("\n");
 
   var uniforms = {
-    uTime: { value: 0 }, uSize: { value: mobile ? 40 : 50 }, uPix: { value: renderer.getPixelRatio() },
+    uTime: { value: 0 }, uSize: { value: mobile ? 56 : 50 }, uPix: { value: renderer.getPixelRatio() },
     uMouse: { value: new THREE.Vector3(999, 999, 999) },
     uCA: { value: new THREE.Color("#2b7fff") }, uCB: { value: new THREE.Color("#22d3ee") }, uCC: { value: new THREE.Color("#7c3aed") }
   };
   var mat = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vert, fragmentShader: frag, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false });
   var group = new THREE.Group(); group.add(new THREE.Points(geo, mat)); scene.add(group);
 
-  // Bloom is the priciest pass — desktop only. On mobile we render the
-  // scene directly (the additive points still glow).
+  // Bloom is what gives the field its glow. Enabled everywhere now — on
+  // mobile at a lighter strength; the capped pixel-ratio keeps it smooth.
   var composer = null, bloom = null;
-  if (!mobile) {
+  try {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), reduce ? 0.35 : 0.8, 0.75, 0.2);
+    var bStrength = reduce ? 0.35 : (mobile ? 0.66 : 0.8);
+    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), bStrength, mobile ? 0.62 : 0.75, mobile ? 0.12 : 0.2);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
-  }
+  } catch (e) { composer = null; }
 
   var tmx = 0, tmy = 0, mx = 0, my = 0;
   window.addEventListener("pointermove", function (e) { tmx = (e.clientX / window.innerWidth - 0.5) * 2; tmy = (e.clientY / window.innerHeight - 0.5) * 2; }, { passive: true });
