@@ -1,0 +1,47 @@
+/* ============================================================
+   Billy Digitals — universal mobile-first quality layer
+   Template-agnostic touch, legibility & feel refinements.
+   Loaded on the homepage and on every template page.
+   Deliberately additive: no colours, no layout — only things
+   that make a phone feel native. Safe to sit on top of any
+   template's own stylesheet.
+   ============================================================ */
+
+/* Stop iOS from auto-inflating text after rotation; keep sizes as authored */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Kill the grey flash Safari/Chrome paint over tapped elements */
+* { -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+
+/* Nothing should ever push the page sideways on a phone */
+img, video, svg { max-width: 100%; }
+
+/* Touch devices only — never affects desktop pointer behaviour */
+@media (hover: none) and (pointer: coarse) {
+
+  /* Thumb-friendly minimum hit area (Apple/Material floor is 44px) */
+  a[class*="btn"], a[class*="cta"], a[class*="button"],
+  .btn, .cta, .button, .nav-cta, button, [role="button"],
+  .chip, .tcf-open, .intro-skip, input[type="submit"] {
+    min-height: 44px;
+  }
+
+  /* Fast, subtle press feedback so taps feel responsive */
+  a[class*="btn"], a[class*="cta"], a[class*="button"],
+  .btn, .cta, .button, .nav-cta, button, [role="button"] {
+    transition: transform 0.12s ease;
+  }
+  a[class*="btn"]:active, a[class*="cta"]:active, a[class*="button"]:active,
+  .btn:active, .cta:active, .button:active, .nav-cta:active,
+  button:active, [role="button"]:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Momentum scrolling for any horizontal strip (marquees, carousels, rails) */
+@media (max-width: 900px) {
+  [class*="marquee"], [class*="scroll-x"], [class*="rail"],
+  [class*="track"], [class*="carousel"] {
+    -webkit-overflow-scrolling: touch;
+  }
+}
