@@ -1224,6 +1224,23 @@ body.page-leaving { opacity: 0; transition: opacity 0.32s ease; }
 .intro-cue.show { opacity: 1; animation: cuePulse 2.2s ease-in-out infinite; }
 @keyframes cuePulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 body.intro-lock { overflow: hidden; }
+
+/* cinematic layers */
+.intro-vign { position: absolute; inset: 0; z-index: 2; pointer-events: none; box-shadow: inset 0 0 240px 70px rgba(0, 0, 0, 0.78); }
+.intro-grain { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.intro-bar { position: absolute; left: 0; right: 0; height: 0; background: #000; z-index: 3; pointer-events: none;
+  transition: height 1s cubic-bezier(.76,0,.24,1); }
+.intro-bar.top { top: 0; } .intro-bar.bot { bottom: 0; }
+#intro.cinema .intro-bar { height: 8vh; }
+#intro.opening .intro-bar { height: 0; }
+.intro-flash { position: absolute; inset: 0; z-index: 4; pointer-events: none; background: #eaf3ff; opacity: 0; }
+#intro.flash .intro-flash { animation: introFlash 0.55s ease-out forwards; }
+@keyframes introFlash { 0% { opacity: 0; } 16% { opacity: 0.9; } 100% { opacity: 0; } }
+.intro-tag { position: absolute; left: 0; right: 0; bottom: 19%; z-index: 3; text-align: center; color: #cfe0ff;
+  font: 600 clamp(11px, 1.4vw, 14px)/1 'Space Grotesk', 'Inter', sans-serif; letter-spacing: 0.36em; text-transform: uppercase;
+  opacity: 0; transform: translateY(10px); transition: opacity 1s ease, transform 1s ease; }
+.intro-tag.show { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
 /* ============================================================
