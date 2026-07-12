@@ -17,9 +17,11 @@ import * as THREE from "three";
   var seen = false;
   try { seen = sessionStorage.getItem("bdIntroSeen") === "1"; } catch (e) {}
 
+  function signalDone() { try { document.dispatchEvent(new CustomEvent("bd:introdone")); } catch (e) {} }
   function finishInstant() {
     document.body.classList.remove("intro-lock");
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    signalDone();
   }
   if (reduce || seen) { finishInstant(); return; }
 
@@ -158,6 +160,7 @@ import * as THREE from "three";
     document.body.classList.remove("intro-lock");
     try { geo.dispose(); mat.dispose(); renderer.dispose(); var ext = renderer.getContext().getExtension("WEBGL_lose_context"); if (ext) ext.loseContext(); } catch (e) {}
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    signalDone();
   }
 
   var posAttr = geo.getAttribute("position");

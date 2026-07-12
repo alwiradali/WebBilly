@@ -94,18 +94,21 @@ import { OutputPass } from "./templates/vendor/jsm/postprocessing/OutputPass.js"
   var mat = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vert, fragmentShader: frag, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false });
   var group = new THREE.Group(); group.add(new THREE.Points(geo, mat)); scene.add(group);
 
-  var composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  var bloom = new UnrealBloomPass(new THREE.Vector2(W, H), reduce ? 0.4 : 0.85, 0.75, 0.2);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  var composer = null, bloom = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), reduce ? 0.4 : 0.85, 0.75, 0.2);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  }
 
   var tmx = 0, tmy = 0, mx = 0, my = 0;
   window.addEventListener("pointermove", function (e) { tmx = (e.clientX / window.innerWidth - 0.5) * 2; tmy = (e.clientY / window.innerHeight - 0.5) * 2; }, { passive: true });
   window.addEventListener("resize", function () {
     W = window.innerWidth; H = window.innerHeight;
     camera.aspect = W / H; camera.updateProjectionMatrix();
-    renderer.setSize(W, H); composer.setSize(W, H); bloom.setSize(W, H); uniforms.uPix.value = renderer.getPixelRatio();
+    renderer.setSize(W, H); if (composer) { composer.setSize(W, H); bloom.setSize(W, H); } uniforms.uPix.value = renderer.getPixelRatio();
   });
 
   var t = 0, last = 0, raf = null;
@@ -122,7 +125,7 @@ import { OutputPass } from "./templates/vendor/jsm/postprocessing/OutputPass.js"
     camera.position.x += (mx * 1.1 - camera.position.x) * 0.04;
     camera.position.y += (-my * 0.8 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
-    composer.render();
+    if (composer) composer.render(); else renderer.render(scene, camera);
   }
   start();
   document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
