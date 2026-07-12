@@ -1,192 +1,123 @@
 /* ============================================================
    Billy Digitals — Template Experience
-   A rotating "brainstorming" orbit of sample styles + an in-site
+   A smooth 3D coverflow carousel of sample styles + an in-site
    viewer overlay (opens templates inside the page, with a back
-   button that returns you to the exact spot). Live animated
-   background. Fully responsive; degrades gracefully.
+   button). Live animated background. Fully responsive.
    ============================================================ */
 
-/* The whole templates section becomes the stage for the live bg. */
 #templates { position: relative; overflow: hidden; }
-.tx-bg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none; display: block;
-}
+.tx-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
 #templates > .container { position: relative; z-index: 1; }
 
-/* Hide the original grid once the orbit is live (kept for no-JS / SEO). */
+/* Hide the original grid once the carousel is live (kept for no-JS / SEO). */
 .tx-live #templatesGrid { display: none; }
 
-/* ---------- Orbit ---------- */
-.tx-stage {
-  position: relative;
-  height: clamp(430px, 62vw, 640px);
-  margin: 18px auto 0;
-  max-width: 1100px;
-  perspective: 1400px;
-  touch-action: pan-y;
+/* ---------- Coverflow carousel ---------- */
+.tcf-wrap { max-width: 1180px; margin: 26px auto 0; }
+.tcf {
+  position: relative; margin: 0 auto; perspective: 1700px;
+  touch-action: pan-y; outline: none; /* height set by JS */
 }
-.tx-orbit { position: absolute; inset: 0; transform-style: preserve-3d; }
+.tcf-track { position: absolute; inset: 0; transform-style: preserve-3d; }
 
-.tx-hub {
-  position: absolute; left: 50%; top: 50%; z-index: 5;
-  transform: translate(-50%, -50%); text-align: center; pointer-events: none;
-  width: clamp(150px, 26vw, 220px);
-}
-.tx-hub .core {
-  width: clamp(74px, 12vw, 104px); height: clamp(74px, 12vw, 104px);
-  margin: 0 auto 14px; border-radius: 50%;
-  background: radial-gradient(circle at 34% 30%, #2b7fff, #0b1a3a 70%);
-  box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 0 70px 8px rgba(43,127,255,.45);
-  display: grid; place-items: center; color: #fff;
-  font-family: var(--font-display, inherit); font-weight: 800; font-size: clamp(1.4rem, 3vw, 2rem);
-  animation: tx-breathe 5.5s ease-in-out infinite;
-}
-.tx-hub .core span { text-shadow: 0 2px 12px rgba(0,0,0,.4); }
-.tx-hub .hub-label { color: #cdd8ec; font-size: .82rem; letter-spacing: .04em; }
-.tx-hub .hub-label b { color: #fff; }
-@keyframes tx-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-
-/* orbit nodes */
-.tx-node {
+.tcf-card {
   position: absolute; left: 50%; top: 50%;
-  width: clamp(118px, 14.5vw, 168px);
-  will-change: transform; cursor: pointer;
-  border: 0; background: none; padding: 0; text-align: center;
-  color: inherit; font: inherit;
+  border: 0; padding: 0; background: none; cursor: pointer;
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 30px 60px -22px rgba(0, 0, 0, 0.8);
+  will-change: transform, opacity; transform: translate(-50%, -50%);
+  -webkit-tap-highlight-color: transparent;
 }
-.tx-node .thumb {
-  position: relative; aspect-ratio: 4/3; border-radius: 16px; overflow: hidden;
+.tcf-thumb {
+  position: relative; display: grid; place-items: center; width: 100%; height: 100%;
+  border-radius: 18px; overflow: hidden;
   background: linear-gradient(150deg, var(--t1, #2b7fff), var(--t2, #22d3ee));
-  box-shadow: 0 22px 46px -18px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.10) inset;
-  display: grid; place-items: center;
-  transition: box-shadow .3s ease, transform .3s cubic-bezier(.2,.7,.2,1);
 }
-.tx-node .thumb::after {
-  content: ""; position: absolute; inset: 0; z-index: 2;
-  background: radial-gradient(circle at 68% 16%, rgba(255,255,255,.30), transparent 55%),
-              linear-gradient(to top, rgba(6,9,20,.55), transparent 46%);
-  mix-blend-mode: normal; pointer-events: none;
+.tcf-thumb .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tcf-thumb .emoji { font-size: clamp(2.4rem, 6vw, 3.6rem); filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4)); }
+.tcf-thumb::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(4, 7, 16, 0.84) 2%, rgba(4, 7, 16, 0.15) 36%, transparent 62%),
+    radial-gradient(circle at 72% 14%, rgba(255, 255, 255, 0.22), transparent 55%);
 }
-.tx-node .thumb .shot {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;
-  transition: transform .5s cubic-bezier(.2,.7,.2,1);
+.tcf-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 15px 18px; text-align: left; }
+.tcf-name { display: block; color: #fff; font-weight: 700; font-size: clamp(1rem, 1.5vw, 1.18rem); letter-spacing: -0.01em; }
+.tcf-cat { display: block; color: #b9c6df; font-size: 0.8rem; margin-top: 2px; }
+.tcf-open {
+  position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%) scale(0.9); z-index: 3;
+  font-size: 0.82rem; font-weight: 700; color: #04121f; white-space: nowrap;
+  background: linear-gradient(135deg, #7cc4ff, #22d3ee); padding: 9px 18px; border-radius: 999px;
+  opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none;
+  box-shadow: 0 10px 26px -8px rgba(34, 211, 238, 0.7);
 }
-.tx-node .thumb .badge {
-  position: absolute; left: 9px; top: 9px; z-index: 3;
-  font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: #fff; background: rgba(6,9,20,.5); backdrop-filter: blur(5px);
-  padding: 3px 8px; border-radius: 999px; opacity: 0; transition: opacity .3s ease;
-}
-.tx-node .emoji { position: relative; z-index: 1; font-size: clamp(2.1rem, 4vw, 3rem); filter: drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
-.tx-node .label { margin-top: 10px; }
-.tx-node .label .name { display: block; font-weight: 700; font-size: .96rem; color: #fff; letter-spacing: -.01em; }
-.tx-node .label .cat { display: block; font-size: .74rem; color: #9fb0c9; margin-top: 2px; }
-.tx-node .go {
-  position: absolute; left: 50%; bottom: 10px; transform: translate(-50%, 8px);
-  font-size: .72rem; font-weight: 700; letter-spacing: .04em; color: #fff;
-  padding: 6px 12px; border-radius: 999px; background: rgba(6,7,13,.6);
-  backdrop-filter: blur(6px); opacity: 0; transition: opacity .25s ease, transform .25s ease; white-space: nowrap;
-}
-.tx-node:hover .thumb, .tx-node:focus-visible .thumb {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 30px 60px -18px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.22) inset;
-}
-.tx-node:hover .go, .tx-node:focus-visible .go { opacity: 1; transform: translate(-50%, 0); }
-.tx-node:focus-visible { outline: none; }
-.tx-node:focus-visible .thumb { outline: 2px solid #fff; outline-offset: 3px; }
-.tx-node.dim { opacity: .28; filter: saturate(.6); }
+.tcf-card.front { box-shadow: 0 42px 84px -24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(120, 180, 255, 0.4); }
+.tcf-card.front .tcf-open { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.tcf-card.front .tcf-name { font-size: clamp(1.08rem, 1.7vw, 1.3rem); }
 
-/* the front / focused style is the hero: ringed, brighter, its CTA shown */
-.tx-node.front .thumb {
-  box-shadow: 0 34px 70px -18px rgba(0,0,0,.85),
-              0 0 0 2px rgba(255,255,255,.9) inset,
-              0 0 0 5px rgba(43,127,255,.35);
+/* arrows */
+.tcf-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 300;
+  width: 52px; height: 52px; border-radius: 50%; cursor: pointer;
+  border: 1px solid rgba(160, 180, 255, 0.25); background: rgba(10, 16, 32, 0.55);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: #eaf2ff; font-size: 1.8rem; line-height: 1; display: grid; place-items: center;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
 }
-.tx-node.front .thumb .shot { transform: scale(1.05); }
-.tx-node.front .badge { opacity: 1; }
-.tx-node.front .go { opacity: 1; transform: translate(-50%, 0); }
-.tx-node.front .label .name { color: #fff; }
+.tcf-arrow:hover { background: rgba(43, 127, 255, 0.3); border-color: rgba(56, 189, 248, 0.6); }
+.tcf-arrow:active { transform: translateY(-50%) scale(0.92); }
+.tcf-arrow.prev { left: clamp(4px, 3vw, 44px); }
+.tcf-arrow.next { right: clamp(4px, 3vw, 44px); }
 
-.tx-hint {
-  text-align: center; margin-top: 10px; color: #8497b3; font-size: .82rem; letter-spacing: .02em;
-}
-.tx-hint kbd {
-  font: inherit; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
-  border-radius: 6px; padding: 1px 7px; color: #cdd8ec;
-}
-.tx-hint b { color: #dbe6fb; font-weight: 700; }
+.tcf-hint { text-align: center; margin-top: 16px; color: #8497b3; font-size: 0.84rem; letter-spacing: 0.02em; }
+.tcf-hint b { color: #dbe6fb; }
 
 /* ---------- In-site viewer overlay ---------- */
 .tx-overlay {
   position: fixed; inset: 0; z-index: 3000;
   background: #06070d; display: flex; flex-direction: column;
   opacity: 0; visibility: hidden; transform: translateY(8px);
-  transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1), visibility .35s;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.7,.2,1), visibility 0.35s;
 }
 .tx-overlay.open { opacity: 1; visibility: visible; transform: none; }
 .tx-bar {
   flex: 0 0 auto; display: flex; align-items: center; gap: 14px;
   padding: 10px clamp(12px, 3vw, 22px); background: #0a0c15;
-  border-bottom: 1px solid rgba(255,255,255,.08); color: #eaf0fb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #eaf0fb;
 }
 .tx-back {
   display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
-  border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04);
-  color: #fff; font: inherit; font-weight: 600; font-size: .92rem;
+  border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.04);
+  color: #fff; font: inherit; font-weight: 600; font-size: 0.92rem;
   padding: 9px 15px 9px 12px; border-radius: 999px;
-  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
-.tx-back:hover { background: rgba(43,127,255,.16); border-color: rgba(43,127,255,.5); transform: translateX(-2px); }
+.tx-back:hover { background: rgba(43, 127, 255, 0.16); border-color: rgba(43, 127, 255, 0.5); transform: translateX(-2px); }
 .tx-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
-.tx-bar .tx-title { font-weight: 700; letter-spacing: -.01em; }
-.tx-bar .tx-title .tx-cat { color: #8497b3; font-weight: 500; margin-left: 8px; font-size: .85rem; }
+.tx-bar .tx-title { font-weight: 700; letter-spacing: -0.01em; }
+.tx-bar .tx-title .tx-cat { color: #8497b3; font-weight: 500; margin-left: 8px; font-size: 0.85rem; }
 .tx-bar .tx-spacer { flex: 1; }
 .tx-bar .tx-cta {
   display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
-  font-weight: 700; font-size: .88rem; color: #04121f;
+  font-weight: 700; font-size: 0.88rem; color: #04121f;
   background: linear-gradient(135deg, #2b7fff, #22d3ee); padding: 9px 16px; border-radius: 999px;
 }
-.tx-bar .tx-newtab { color: #9fb0c9; text-decoration: none; font-size: .84rem; }
+.tx-bar .tx-newtab { color: #9fb0c9; text-decoration: none; font-size: 0.84rem; }
 .tx-bar .tx-newtab:hover { color: #fff; }
 .tx-frame-wrap { flex: 1 1 auto; position: relative; background: #06070d; }
 .tx-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 .tx-loader {
   position: absolute; inset: 0; display: grid; place-items: center; z-index: 2;
-  color: #63728c; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase;
-  background: #06070d; transition: opacity .4s ease;
+  color: #63728c; font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase;
+  background: #06070d; transition: opacity 0.4s ease;
 }
 .tx-loader.gone { opacity: 0; pointer-events: none; }
 body.tx-locked { overflow: hidden; }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .tx-stage { height: clamp(440px, 100vw, 560px); }
-  .tx-bar .tx-newtab { display: none; }
-}
-/* On phones the wheel becomes photo "bubbles" — labels would collide, but
-   the front one keeps its name + a tap-to-open cue so it's obvious. */
-@media (max-width: 560px) {
-  .tx-stage { height: clamp(460px, 122vw, 580px); }
-  .tx-node { width: clamp(74px, 24vw, 104px); }
-  .tx-node .thumb { aspect-ratio: 1; border-radius: 50%; }
-  .tx-node .label, .tx-node .go { display: none; }
-  .tx-node .emoji { font-size: clamp(1.5rem, 7vw, 2.1rem); }
-  .tx-node .badge { display: none; }
-  /* the zoomed hero shows its name below and an Open pill so touch users
-     know what's tappable without hovering */
-  .tx-node.front .label { display: block; position: absolute; left: 50%; top: calc(100% + 8px);
-    transform: translateX(-50%); white-space: nowrap; }
-  .tx-node.front .label .name { font-size: .9rem; }
-  .tx-node.front .label .cat { display: none; }
-  /* replace the long "Open <name> ↗" text with a compact pill on phones */
-  .tx-node.front .go { display: block; font-size: 0; padding: 5px 11px; }
-  .tx-node.front .go::before { content: "Open ↗"; font-size: .64rem; }
+@media (max-width: 900px) { .tx-bar .tx-newtab { display: none; } }
+@media (max-width: 640px) {
+  .tcf-arrow { width: 44px; height: 44px; font-size: 1.5rem; }
+  .tcf-arrow.prev { left: 6px; } .tcf-arrow.next { right: 6px; }
   .tx-bar .tx-cta { display: none; }
-  .tx-hub .hub-label { display: none; }
-}
-
-/* ---------- Reduced motion: static, tidy ring (no spin) ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .tx-hub .core { animation: none; }
 }
