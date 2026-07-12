@@ -195,3 +195,28 @@ a{color:inherit;text-decoration:none}
   *{scroll-behavior:auto!important}
   [data-fade],.hero-eyebrow,.hero-foot p{opacity:1!important;transform:none!important}
 }
+
+/* ============================================================
+   Premium pass — metallic gold accent text
+   The italic accent words become brushed metal rather than flat
+   gold. Uses each palette's own --gold / --gold-2, so Maison Noir,
+   Aurum and Lumière each render in their own metal. text-fill keeps
+   it working through the per-template colour overrides.
+   ============================================================ */
+.hero h1 em, .sec-head h2 em, .feature h2 em, .manifesto em, .cta h2 em{
+  background-image:linear-gradient(174deg,
+    var(--gold-2) 0%,
+    var(--gold) 32%,
+    color-mix(in srgb, var(--gold) 62%, #3a2410) 60%,
+    var(--gold-2) 84%,
+    var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.30));
+}
+/* graceful fallback if text-clip isn't supported */
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1 em, .sec-head h2 em, .feature h2 em, .manifesto em, .cta h2 em{
+    -webkit-text-fill-color:currentColor; background-image:none; color:var(--gold-2);
+  }
+}
