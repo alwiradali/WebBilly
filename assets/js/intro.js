@@ -219,11 +219,11 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
       tx = (s.pts[i][0] - s.cx) * scale;
       var ty = -(s.pts[i][1] - s.cy) * scale, tz = (Math.random() - 0.5) * 0.7;
       target[i * 3] = tx; target[i * 3 + 1] = ty; target[i * 3 + 2] = tz;
-      // launch out of deep space: random direction, far away — particles rush in and assemble together
-      var ang = Math.random() * Math.PI * 2, rad = 24 + Math.random() * 34;
-      launch[i * 3] = Math.cos(ang) * rad;
-      launch[i * 3 + 1] = Math.sin(ang) * rad * 0.72;
-      launch[i * 3 + 2] = -34 - Math.random() * 46;
+      // launch as motes of the nebula itself — scattered across the cloud
+      // at its depth, then rush forward and coalesce into the wordmark
+      launch[i * 3] = (Math.random() - 0.5) * span * 1.9;
+      launch[i * 3 + 1] = (Math.random() - 0.5) * span * 1.15;
+      launch[i * 3 + 2] = -16 - Math.random() * 34;
       cur[i * 3] = launch[i * 3]; cur[i * 3 + 1] = launch[i * 3 + 1]; cur[i * 3 + 2] = launch[i * 3 + 2];
       // near-simultaneous assembly with a tiny random stagger (fast, not sequential)
       delay[i] = Math.random() * SWEEP;
@@ -271,7 +271,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
           }
         }
         camera.position.z += (15 - camera.position.z) * 0.05;
-        if (t > SWEEP + FORM + 0.12) { phase = 1; holdAt = t; if (cue) cue.classList.add("show"); if (tag) tag.classList.add("show"); }
+        if (t > SWEEP + FORM + 0.12) { phase = 1; holdAt = t; if (tag) tag.classList.add("show"); }
       } else if (phase === 1) {
         for (var j = 0; j < N; j++) {
           cur[j * 3] += (target[j * 3] - cur[j * 3]) * 0.16;
@@ -279,7 +279,8 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
           cur[j * 3 + 2] += (target[j * 3 + 2] - cur[j * 3 + 2]) * 0.16;
         }
         camera.position.z += (12.5 - camera.position.z) * 0.02;
-        if (t - holdAt > 7) triggerBurst();
+        // auto-advance quickly — a brief beat to read, then fly through (no scroll needed)
+        if (t - holdAt > 1.25) triggerBurst();
       } else {
         for (var m2 = 0; m2 < N; m2++) {
           cur[m2 * 3] += vel[m2 * 3] * dt; cur[m2 * 3 + 1] += vel[m2 * 3 + 1] * dt; cur[m2 * 3 + 2] += vel[m2 * 3 + 2] * dt;
@@ -292,7 +293,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     }
 
     nebUni.uTime.value = t;
-    nebUni.uOpacity.value += ((phase < 2 ? 1 : 0) - nebUni.uOpacity.value) * 0.06;
+    nebUni.uOpacity.value += ((phase < 2 ? 1 : 0) - nebUni.uOpacity.value) * (phase < 2 ? 0.06 : 0.16);
     neb.rotation.z += dt * 0.006;
     neb.position.x = mxr * 1.2; neb.position.y = -myr * 0.9;
     dust.rotation.y += dt * 0.02; dust.rotation.x = myr * 0.05;
