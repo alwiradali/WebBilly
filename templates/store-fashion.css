@@ -179,3 +179,19 @@ h1,h2,h3{font-family:var(--disp); font-weight:500; margin:0; line-height:1.02; l
   .an-links.open{display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:center; gap:18px; padding:24px; background:var(--paper); border-block:1px solid var(--line)}
 }
 @media (max-width:520px){ .edit-grid{grid-template-columns:1fr 1fr; gap:16px} .foot-top{grid-template-columns:1fr} .pcard-add{opacity:1; transform:none} }
+
+/* ============================================================
+   Ultra-luxury accent — brushed sheen on the hero highlight
+   (light → base → deep, in this template's own accent colour)
+   ============================================================ */
+h1 em{
+  background-image:linear-gradient(176deg,
+    color-mix(in srgb, var(--camel) 60%, #ffffff) 0%,
+    var(--camel) 48%,
+    color-mix(in srgb, var(--camel) 72%, #000000) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.20));
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  h1 em{ -webkit-text-fill-color:currentColor; background-image:none; }
+}
