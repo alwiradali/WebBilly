@@ -52,7 +52,7 @@ h1,h2,h3,h4{font-family:var(--disp); font-weight:600; line-height:1.08; margin:0
 .burger svg{width:100%; height:100%; fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round}
 
 /* hero */
-.hero{padding:132px 0 60px; position:relative}
+.hero{padding:132px 0 60px; position:relative; overflow:hidden}
 .hero::before{content:""; position:absolute; top:-10%; right:-6%; width:52vw; height:52vw; max-width:640px;
   max-height:640px; border-radius:50%; z-index:-1;
   background:radial-gradient(circle,rgba(20,184,166,.16),transparent 66%)}
