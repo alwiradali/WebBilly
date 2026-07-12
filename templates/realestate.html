@@ -105,6 +105,29 @@
     </div>
   </section>
 
+  <!-- 3D virtual tour -->
+  <section class="sec tour" id="tour">
+    <div class="wrap">
+      <div class="tour-head">
+        <p class="eyebrow">Step inside · 3D virtual tour</p>
+        <h2>See every <span class="serif-i">corner</span> before you visit</h2>
+        <p class="tour-lead">Walk the whole home from your sofa — drag to look around, zoom right into any corner. No appointment needed.</p>
+      </div>
+      <div class="tour-stage" id="tourStage">
+        <canvas id="tourGL" aria-label="Interactive 3D tour of the property"></canvas>
+        <div class="tour-rooms" role="group" aria-label="Jump to a room">
+          <button type="button" data-room="living" class="on">Living room</button>
+          <button type="button" data-room="kitchen">Kitchen</button>
+          <button type="button" data-room="bedroom">Bedroom</button>
+        </div>
+        <div class="tour-hint" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/></svg>
+          Drag to look · scroll or pinch to zoom into any corner
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Mortgage calculator -->
   <section class="sec" id="calc">
     <div class="wrap">
@@ -212,5 +235,6 @@
   <script src="realestate.js"></script>
   <script src="fx3d.js" defer></script>
   <script src="backbar.js" defer></script>
+  <script type="module" src="realestate-tour.js"></script>
 </body>
 </html>
