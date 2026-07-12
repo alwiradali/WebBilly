@@ -1,11 +1,12 @@
 /* ============================================================
    Billy Digitals — Cinematic intro
-   Letterbox opens · GPU particles rush out of deep space from every
-   direction and assemble into "BILLY DIGITALS" as the camera pushes
-   in · a tagline fades up · on first scroll the camera flies through
-   the wordmark as it bursts and the homepage is revealed. Bloom +
-   dust (desktop). Fast (~1s to form). Plays once per visit · Skip ·
-   plays under reduced-motion · failure safe.
+   A living, flowing nebula (domain-warped GPU noise) fades up as
+   letterbox bars open · GPU particles rush out of deep space and
+   assemble into "Welcome to / Billy Digitals" · the tagline "where
+   you grow" fades in · on first scroll the camera flies through the
+   wordmark as it bursts and the homepage is revealed. Bloom + dust
+   (desktop). Fast (~1s to form). Once per visit · Skip · plays under
+   reduced-motion · failure safe.
    ============================================================ */
 import * as THREE from "three";
 import { EffectComposer } from "../../templates/vendor/jsm/postprocessing/EffectComposer.js";
@@ -82,6 +83,49 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   });
   var dust = new THREE.Points(dgeo, dmat); scene.add(dust);
 
+  /* ---------- moving nebula backdrop ---------- */
+  var OCT = mobile ? 3 : 4;
+  var nebFrag = [
+    "precision highp float;",
+    "uniform float uTime; uniform float uOpacity;",
+    "varying vec2 vUv;",
+    "vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}",
+    "vec2 mod289(vec2 x){return x-floor(x*(1.0/289.0))*289.0;}",
+    "vec3 permute(vec3 x){return mod289(((x*34.0)+1.0)*x);}",
+    "float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);",
+    "vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);",
+    "vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);",
+    "vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod289(i);",
+    "vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));",
+    "vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);m=m*m;m=m*m;",
+    "vec3 x=2.0*fract(p*C.www)-1.0;vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);vec3 a0=x-ox;",
+    "m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);",
+    "vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.0*dot(m,g);}",
+    "float fbm(vec2 p){float s=0.0,a=0.5;for(int i=0;i<" + OCT + ";i++){s+=a*snoise(p);p*=2.03;a*=0.5;}return s;}",
+    "void main(){vec2 uv=vUv;uv.x*=1.58;float t=uTime*0.045;",
+    "vec2 q=vec2(fbm(uv*3.0+vec2(0.0,t)),fbm(uv*3.0+vec2(5.2,1.3)-t));",
+    "float n=fbm(uv*3.0+q*1.75+vec2(t*0.7,-t*0.5));n=n*0.5+0.5;",
+    "float cloud=smoothstep(0.30,0.94,n);",
+    "vec3 deep=vec3(0.012,0.028,0.085);vec3 blue=vec3(0.07,0.30,0.85);",
+    "vec3 cyan=vec3(0.10,0.68,0.92);vec3 viol=vec3(0.44,0.22,0.82);",
+    "vec3 col=mix(deep,blue,cloud);",
+    "col=mix(col,cyan,smoothstep(0.62,1.0,n)*0.7);",
+    "col=mix(col,viol,smoothstep(0.35,0.78,fbm(uv*2.0-t*0.8))*0.38);",
+    "float vig=smoothstep(1.18,0.12,length(vUv-0.5)*1.32);col*=vig;",
+    "float alpha=(0.5+cloud*0.5)*uOpacity;",
+    "gl_FragColor=vec4(col,alpha);}"
+  ].join("\n");
+  var nebUni = { uTime: { value: 0 }, uOpacity: { value: 0 } };
+  var nebMat = new THREE.ShaderMaterial({
+    uniforms: nebUni,
+    vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+    fragmentShader: nebFrag,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.NormalBlending
+  });
+  var neb = new THREE.Mesh(new THREE.PlaneGeometry(300, 190), nebMat);
+  neb.position.set(0, 0, -52); neb.renderOrder = -10;
+  scene.add(neb);
+
   /* ---------- bloom (desktop) ---------- */
   var composer = null, bloom = null;
   if (!mobile) {
@@ -132,7 +176,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   function cleanup() {
     window.removeEventListener("resize", resize);
     document.body.classList.remove("intro-lock");
-    try { if (geo) geo.dispose(); if (mat) mat.dispose(); dgeo.dispose(); dmat.dispose(); renderer.dispose();
+    try { if (geo) geo.dispose(); if (mat) mat.dispose(); dgeo.dispose(); dmat.dispose(); neb.geometry.dispose(); nebMat.dispose(); renderer.dispose();
       var ext = renderer.getContext().getExtension("WEBGL_lose_context"); if (ext) ext.loseContext(); } catch (e) {}
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     signalDone();
@@ -147,8 +191,10 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     var c = document.createElement("canvas"), cw = 1900, ch = 620; c.width = cw; c.height = ch;
     var x = c.getContext("2d");
     x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
-    x.font = "800 200px 'Playfair Display', Georgia, serif";
-    x.fillText("BILLY DIGITALS", cw / 2, ch * 0.5);
+    x.font = "italic 600 120px 'Playfair Display', Georgia, serif";
+    x.fillText("Welcome to", cw / 2, ch * 0.24);
+    x.font = "800 188px 'Playfair Display', Georgia, serif";
+    x.fillText("Billy Digitals", cw / 2, ch * 0.63);
     var data = x.getImageData(0, 0, cw, ch).data, pts = [], nx = cw, xx = 0, ny = ch, xy = 0, step = mobile ? 5 : 4;
     for (var py = 0; py < ch; py += step) for (var px = 0; px < cw; px += step) {
       if (data[(py * cw + px) * 4 + 3] > 130) { pts.push([px, py]); if (px < nx) nx = px; if (px > xx) xx = px; if (py < ny) ny = py; if (py > xy) xy = py; }
@@ -245,6 +291,10 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
       posAttr.needsUpdate = true;
     }
 
+    nebUni.uTime.value = t;
+    nebUni.uOpacity.value += ((phase < 2 ? 1 : 0) - nebUni.uOpacity.value) * 0.06;
+    neb.rotation.z += dt * 0.006;
+    neb.position.x = mxr * 1.2; neb.position.y = -myr * 0.9;
     dust.rotation.y += dt * 0.02; dust.rotation.x = myr * 0.05;
     camera.position.x += (mxr * 1.6 - camera.position.x) * 0.04;
     camera.position.y += (-myr * 1.1 - camera.position.y) * 0.04;
@@ -257,8 +307,8 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   var fr;
   if (document.fonts && document.fonts.load) {
     fr = Promise.race([
-      document.fonts.load("800 90px 'Playfair Display'"),
-      new Promise(function (res) { setTimeout(res, 700); })
+      Promise.all([document.fonts.load("italic 600 90px 'Playfair Display'"), document.fonts.load("800 90px 'Playfair Display'")]),
+      new Promise(function (res) { setTimeout(res, 750); })
     ]);
   } else { fr = Promise.resolve(); }
   fr.then(build, build);
