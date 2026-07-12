@@ -1301,3 +1301,32 @@ body.intro-lock { overflow: hidden; }
 .marquee li:nth-child(3n+1) { color: #38bdf8; }
 .marquee li:nth-child(3n+2) { color: #a78bfa; }
 .marquee li:nth-child(3n+3) { color: #f472b6; }
+
+/* ============================================================
+   Hero typewriter welcome — "Welcome to Billy Digitals /
+   Where you grow" typed letter-by-letter with a 3D flip.
+   ============================================================ */
+.hero-welcome{ margin:0 0 16px; perspective:640px; }
+.hw-top{ display:block; font-family:'Space Grotesk','Inter',sans-serif; font-weight:700;
+  font-size:clamp(1.45rem,4.4vw,2.7rem); line-height:1.06; letter-spacing:-.01em; min-height:1.1em; }
+.hw-bot{ display:block; font-family:'Space Grotesk','Inter',sans-serif; font-weight:600;
+  font-size:clamp(.95rem,2.1vw,1.3rem); letter-spacing:.05em; text-transform:uppercase; margin-top:8px; min-height:1.1em;
+  background:linear-gradient(100deg,#5cc6ff,#22d3ee 60%,#7cc4ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+/* each letter flips up into place in 3D as it is typed */
+.hero-welcome .ch{ display:inline-block; white-space:pre; opacity:0;
+  transform:rotateX(-92deg) translateY(4px); transform-origin:50% 100%;
+  transition:opacity .16s ease, transform .3s cubic-bezier(.2,.85,.25,1); }
+.hero-welcome .ch.in{ opacity:1; transform:none; }
+/* blue 3D extrude on the main line (matches the site's blue → cyan) */
+.hw-top .ch{ color:#f4f9ff; text-shadow:
+  1px 1px 0 #3b7fe0, 2px 2px 0 #2f6bcb, 3px 3px 0 #2657ad, 4px 4px 0 #1f478f, 5px 7px 10px rgba(4,10,26,.55); }
+/* glowing caret */
+.hw-cursor{ display:inline-block; width:.085em; height:1.02em; margin-left:3px; vertical-align:-0.14em;
+  border-radius:2px; background:#22d3ee; box-shadow:0 0 12px rgba(34,211,238,.85); animation:hwBlink 1.05s steps(1) infinite; }
+.hw-bot .hw-cursor{ vertical-align:-0.1em; }
+.hw-cursor.rest{ animation:hwBlink 1.2s steps(1) infinite; }
+@keyframes hwBlink{ 50%{ opacity:0; } }
+@media (prefers-reduced-motion:reduce){
+  .hero-welcome .ch{ opacity:1; transform:none; transition:none; }
+  .hw-cursor{ display:none; }
+}

@@ -115,19 +115,6 @@
   </script>
 </head>
 <body>
-  <!-- ======== CINEMATIC INTRO ======== -->
-  <div id="intro" aria-hidden="true">
-    <canvas id="introGL"></canvas>
-    <div class="intro-vign" aria-hidden="true"></div>
-    <div class="intro-grain" aria-hidden="true"></div>
-    <span class="intro-bar top" aria-hidden="true"></span>
-    <span class="intro-bar bot" aria-hidden="true"></span>
-    <div class="intro-flash" aria-hidden="true"></div>
-    <p class="intro-tag">where you grow</p>
-    <button class="intro-skip" type="button">Skip intro</button>
-    <p class="intro-cue">Scroll to enter</p>
-  </div>
-
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
@@ -162,6 +149,10 @@
       <canvas id="heroGL" class="hero-gl" aria-hidden="true"></canvas>
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="container hero-inner">
+        <p class="hero-welcome" aria-label="Welcome to Billy Digitals — where you grow">
+          <span class="hw-top" id="hwTop"></span>
+          <span class="hw-bot" id="hwBot"></span>
+        </p>
         <p class="hero-badge">✦ Bespoke websites for ambitious brands</p>
         <h1>Your business deserves a website that <span class="grad">outclasses everyone</span>.</h1>
         <p class="hero-sub">Billy Digitals designs and builds high-performance, conversion-focused websites — from stunning portfolios to powerful web applications. You dream it. We ship it.</p>
@@ -1168,6 +1159,6 @@
   <script src="assets/js/template-experience.js" defer></script>
   <script src="assets/js/particles.js" defer></script>
   <script type="module" src="assets/js/hero3d.js"></script>
-  <script type="module" src="assets/js/intro.js"></script>
+  <script src="assets/js/welcome-type.js" defer></script>
 </body>
 </html>
