@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ÉCLAT — Maison de Couture</title>
+  <meta name="description" content="Éclat is a haute-couture maison — gowns cut and embroidered by hand in Paris. A bespoke sample experience by Billy Digitals.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f6f1e7">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="eclat.css">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <div class="loader" aria-hidden="true">
+    <div class="loader-inner"><div class="loader-num">0</div><span class="loader-word">Éclat · Maison de Couture</span></div>
+  </div>
+
+  <header class="nav">
+    <a class="brand" href="#top">ÉCL<b>A</b>T</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#collections">Collections</a>
+      <a href="#maison">Maison</a>
+      <a href="#atelier">Atelier</a>
+      <a href="#appointments">Appointments</a>
+    </nav>
+    <a class="nav-cta magnetic" href="#appointments">Book a fitting</a>
+    <button class="nav-burg" aria-label="Menu"><span></span><span></span></button>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <p class="hero-eyebrow eyebrow">Haute Couture · Maison · Paris</p>
+      <h1>
+        <span class="ln"><span>Dressed in</span></span>
+        <span class="ln"><span><em>light</em>.</span></span>
+      </h1>
+      <div class="hero-foot">
+        <p>Gowns drawn, cut and embroidered entirely by hand — one atelier, one client, one silhouette at a time.</p>
+        <span class="scroll-cue">Explore <i></i></span>
+      </div>
+    </div>
+    <div class="hero-media" aria-hidden="true">
+      <canvas class="hero-gl"></canvas>
+    </div>
+  </section>
+
+  <section class="section manifesto wrap" id="maison">
+    <p data-words>A dress is not made. It is <em>discovered</em> — traced in silk and gold thread until the light finds a shape, and stays.</p>
+  </section>
+
+  <section class="h-scroll" id="collections">
+    <div class="h-pin">
+      <div class="h-track">
+        <div class="h-intro">
+          <p class="eyebrow">The Collections</p>
+          <h2>Cut by hand,<br>worn like <em>light</em>.</h2>
+        </div>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">01</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp" alt="Model in a flowing champagne-gold couture gown"></figure>
+          <div class="h-meta"><h3>Le Bal</h3><span>Haute Couture</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">02</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215940_354d931d-c45a-4520-adaa-ae129b37913b_min.webp" alt="Model in a tailored ivory and gold couture ensemble"></figure>
+          <div class="h-meta"><h3>La Tailleur</h3><span>Prêt-à-Couture</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">03</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215930_98b3bd3d-2f80-403b-8c7c-254b0804f106_min.webp" alt="Hand embroidering gold thread onto ivory silk"></figure>
+          <div class="h-meta"><h3>Fil d'Or</h3><span>Embroidery</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">04</span><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp" alt="Champagne-gold couture gown, bridal silhouette"></figure>
+          <div class="h-meta"><h3>La Mariée</h3><span>Bridal</span></div>
+        </article>
+      </div>
+    </div>
+    <div class="h-progress" aria-hidden="true"><i></i></div>
+  </section>
+
+  <section class="section wrap" id="atelier">
+    <div class="feature">
+      <figure class="feature-fig">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215930_98b3bd3d-2f80-403b-8c7c-254b0804f106_min.webp" alt="Hands hand-embroidering gold thread onto ivory silk">
+        <span class="mask" aria-hidden="true"></span>
+      </figure>
+      <div>
+        <p class="eyebrow" data-fade>The Atelier</p>
+        <h2 data-fade>Every stitch, set<br>by <em>hand</em>.</h2>
+        <p data-fade>A single gown can hold four hundred hours of work — drawn in the studio, toiled in calico, then embroidered thread by thread at our Paris bench. Nothing is rushed, nothing outsourced, because couture is measured in patience.</p>
+        <div class="tag-row" data-fade>
+          <span>Made in Paris</span><span>Hand-embroidered</span><span>Two fittings minimum</span><span>Fully bespoke</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section stats">
+    <div class="wrap stats-grid">
+      <div class="stat" data-fade><h3><span data-count="400" data-suffix="+">0</span></h3><p>Hours per gown</p></div>
+      <div class="stat" data-fade><h3><span data-count="6">0</span></h3><p>Ateliers</p></div>
+      <div class="stat" data-fade><h3><span data-count="32">0</span></h3><p>Master hands</p></div>
+      <div class="stat" data-fade><h3><span data-count="100" data-suffix="%">0</span></h3><p>Hand-finished</p></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="services">
+    <div class="sec-head">
+      <h2>The <em>maison</em>.</h2>
+      <p class="eyebrow" data-fade>Services / 01 — 05</p>
+    </div>
+    <div class="svc-list">
+      <div class="svc" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp"><span class="svc-name">Haute Couture</span><span class="svc-idx">01</span></div>
+      <div class="svc" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215940_354d931d-c45a-4520-adaa-ae129b37913b_min.webp"><span class="svc-name">Bespoke Tailoring</span><span class="svc-idx">02</span></div>
+      <div class="svc" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp"><span class="svc-name">Bridal &amp; Ceremony</span><span class="svc-idx">03</span></div>
+      <div class="svc" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215930_98b3bd3d-2f80-403b-8c7c-254b0804f106_min.webp"><span class="svc-name">Embroidery &amp; Restoration</span><span class="svc-idx">04</span></div>
+      <div class="svc" data-img="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215940_354d931d-c45a-4520-adaa-ae129b37913b_min.webp"><span class="svc-name">Private Appointments</span><span class="svc-idx">05</span></div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-in"><span>Silk</span><span>Gold thread</span><span>By hand</span><span>Paris</span><span>Silk</span><span>Gold thread</span><span>By hand</span><span>Paris</span></div>
+  </div>
+
+  <section class="section cta wrap" id="appointments">
+    <p class="eyebrow" data-fade>By appointment</p>
+    <h2 data-fade>Book a private<br><em>fitting</em>.</h2>
+    <a class="magnetic" href="#top">
+      Request an appointment
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-top">
+      <div class="foot-brand serif">Éclat</div>
+      <div class="foot-cols">
+        <div class="foot-col"><h4>Maison</h4><a href="#collections">Collections</a><a href="#maison">Heritage</a><a href="#atelier">The Atelier</a></div>
+        <div class="foot-col"><h4>Appointments</h4><p>atelier@eclat.paris</p><p>+33 1 00 00 00 00</p><p>Rue Saint-Honoré, Paris</p></div>
+        <div class="foot-col"><h4>Follow</h4><a href="#">Instagram</a><a href="#">Pinterest</a><a href="#">The Journal</a></div>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span>© 2026 Éclat — a sample experience</span>
+      <span>Designed &amp; built by Billy Digitals</span>
+    </div>
+  </footer>
+
+  <div class="svc-peek" aria-hidden="true"><img src="" alt=""></div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="atelier.js" defer></script>
+  <script type="module" src="eclat-gl.js"></script>
+  <script src="backbar.js" defer></script>
+</body>
+</html>
