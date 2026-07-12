@@ -95,7 +95,14 @@ h1,h2,h3,h4{color:var(--cream);margin:0;line-height:1.02;font-weight:400}
 .hero-inner{position:relative;z-index:1;width:100%}
 .hero .eyebrow{margin-bottom:12px}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,17vw,132px);color:var(--cream);letter-spacing:.01em}
-.hero h1 .amp{color:var(--brass)}
+.hero h1 .amp{
+  background-image:linear-gradient(174deg,var(--brass-2) 0%,var(--brass) 34%,color-mix(in srgb,var(--brass) 60%,#2a1a08) 62%,var(--brass-2) 86%,var(--brass) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.32));
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1 .amp{-webkit-text-fill-color:currentColor;background-image:none;color:var(--brass)}
+}
 .hero-sub{max-width:34ch;margin:16px 0 24px;color:#e7e2d8;font-size:clamp(15px,4.4vw,18px)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
 .hero-cta .btn{flex:1 1 auto;min-width:150px}
