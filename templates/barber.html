@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fade &amp; Co — Master Barbers</title>
+  <meta name="description" content="Fade & Co — sharp cuts, clean fades and hot-towel shaves from master barbers. Book your chair online, 24/7.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0d0d0f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="barber.css">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><span class="pole" aria-hidden="true"></span> Fade &amp; Co</a>
+      <nav class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About</a>
+        <a href="#visit">Visit</a>
+      </nav>
+      <div class="nav-right">
+        <a class="btn btn-fill" href="#book" data-book>Book now</a>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" data-close aria-label="Close menu">✕</button>
+    <a href="#services">Services</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#about">About</a>
+    <a href="#visit">Visit</a>
+    <a class="btn btn-fill" href="#book" data-book>Book your chair</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <p class="eyebrow rv">Master Barbers · Est. 2016</p>
+      <h1 class="rv">SHARP CUTS.<br>CLEAN <span class="amp">FADES</span>.</h1>
+      <p class="hero-sub rv">Precision cuts, beard sculpting and hot-towel shaves — walk in a regular, walk out sharper. Book your chair in seconds.</p>
+      <div class="hero-cta rv">
+        <a class="btn btn-fill" href="#book" data-book>Book your chair</a>
+        <a class="btn btn-ghost" href="#services">View services</a>
+      </div>
+      <div class="hero-meta rv">
+        <span class="openbadge" id="openBadge"><span class="dot"></span> Open now</span>
+        <span class="stars">★★★★★ <b>4.9</b></span>
+        <span>Over <b>2,000</b> five-star cuts</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="strip" aria-hidden="true">
+    <div class="row">
+      <span>Skin Fades</span><span>Beard Sculpting</span><span>Hot Towel Shave</span><span>Kids Cuts</span><span>Student Deals</span>
+      <span>Skin Fades</span><span>Beard Sculpting</span><span>Hot Towel Shave</span><span>Kids Cuts</span><span>Student Deals</span>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <section class="band" id="services">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">The Menu</p>
+        <h2>Services &amp; Prices</h2>
+        <p>Straightforward pricing, no surprises. Every cut finished with a hot towel and styling.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-card rv"><div><h3>Skin Fade</h3><p>Precision fade, tapered and blended to the skin.</p><span class="dur">30 min</span></div><div class="price"><small>£</small>18</div></div>
+        <div class="svc-card rv"><div><h3>Cut &amp; Beard</h3><p>Full haircut with beard shape-up and line detail.</p><span class="dur">45 min</span></div><div class="price"><small>£</small>25</div></div>
+        <div class="svc-card rv"><div><h3>Beard Trim &amp; Shape</h3><p>Sculpted, tidied and conditioned with beard oil.</p><span class="dur">20 min</span></div><div class="price"><small>£</small>12</div></div>
+        <div class="svc-card rv"><div><h3>Hot Towel Shave</h3><p>Traditional straight-razor shave, hot towel finish.</p><span class="dur">30 min</span></div><div class="price"><small>£</small>20</div></div>
+        <div class="svc-card rv"><div><h3>Kids Cut <span style="color:var(--muted-2);font-size:13px">(u12)</span></h3><p>Patient, friendly cuts for the little ones.</p><span class="dur">25 min</span></div><div class="price"><small>£</small>12</div></div>
+        <div class="svc-card rv"><div><h3>Student Cut</h3><p>Full cut with valid student ID — any day.</p><span class="dur">30 min</span></div><div class="price"><small>£</small>15</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="band" id="gallery" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">The Work</p>
+        <h2>Signature Cuts</h2>
+        <p>A few of the styles walking out of the chair every day.</p>
+      </div>
+      <div class="look">
+        <div class="card tall rv"><span class="no">01</span><h4>Skin Fade</h4><p>Tapered to the skin, razor-clean lines.</p></div>
+        <div class="card rv"><span class="no">02</span><h4>Textured Crop</h4><p>Soft fringe, natural movement.</p></div>
+        <div class="card rv"><span class="no">03</span><h4>Classic Scissor</h4><p>Timeless, tailored to your shape.</p></div>
+        <div class="card rv"><span class="no">04</span><h4>Beard Sculpt</h4><p>Defined edges, conditioned finish.</p></div>
+        <div class="card tall rv"><span class="no">05</span><h4>Pompadour</h4><p>Volume up top, tight on the sides.</p></div>
+        <div class="card rv"><span class="no">06</span><h4>Buzz &amp; Line-Up</h4><p>Sharp, low-maintenance, crisp edge.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="band" id="about" style="padding-top:0">
+    <div class="wrap">
+      <div class="about flip">
+        <div class="about-art rv"><span class="pole-lg" aria-hidden="true"></span></div>
+        <div>
+          <p class="eyebrow rv">Why Fade &amp; Co</p>
+          <h2 class="rv">Craft, not conveyor belt.</h2>
+          <p class="lede rv">We take the time to get it right — a proper consultation, a clean line and a finish that lasts. No rushing, no guesswork, just barbers who care about the cut.</p>
+          <ul class="ticks">
+            <li class="rv">Master barbers with 10+ years on the clippers</li>
+            <li class="rv">Walk-ins welcome — or book ahead in seconds</li>
+            <li class="rv">Late chairs Thursday &amp; Friday until 8pm</li>
+            <li class="rv">Every cut finished with a hot towel &amp; style</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking band -->
+  <section class="band book-band">
+    <div class="wrap">
+      <p class="eyebrow rv">Book in 30 seconds</p>
+      <h2 class="rv">Grab your chair.</h2>
+      <p class="rv">Pick a service, choose a time, done. Book online any time of day — even when we're behind the chair.</p>
+      <div class="rv">
+        <a class="btn btn-fill" href="#book" data-book>Book online</a>
+        <a class="btn btn-ghost" href="tel:+441610000000">Call the shop</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit -->
+  <section class="band" id="visit">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Find Us</p>
+        <h2>Visit The Shop</h2>
+      </div>
+      <div class="visit">
+        <div class="vcard rv">
+          <h4>Opening Hours</h4>
+          <ul class="hours">
+            <li data-hours="9-19"><span>Monday</span><span>9:00 – 19:00</span></li>
+            <li data-hours="9-19"><span>Tuesday</span><span>9:00 – 19:00</span></li>
+            <li data-hours="9-19"><span>Wednesday</span><span>9:00 – 19:00</span></li>
+            <li data-hours="9-20"><span>Thursday</span><span>9:00 – 20:00</span></li>
+            <li data-hours="9-20"><span>Friday</span><span>9:00 – 20:00</span></li>
+            <li data-hours="8-18"><span>Saturday</span><span>8:00 – 18:00</span></li>
+            <li data-hours="10-16"><span>Sunday</span><span>10:00 – 16:00</span></li>
+          </ul>
+        </div>
+        <div class="vcard rv">
+          <h4>Where &amp; How</h4>
+          <address>
+            12 High Street<br>
+            Your Town, AB1 2CD<br><br>
+            <b style="color:var(--cream)">01610 000 000</b><br>
+            hello@fadeandco.co
+          </address>
+          <div class="map" aria-hidden="true"><span class="pin"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="band" id="reviews" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Google Reviews</p>
+        <h2>What The Chair Says</h2>
+      </div>
+      <div class="reviews">
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Best fade I've had in years. Proper attention to detail and a spot-on beard line. Booked my next three already."</p><div class="who"><span class="av">J</span><div><b>James P.</b><small>Regular since 2021</small></div></div></div>
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Booked online the night before, in and out with a clean skin fade. Friendly team and a great atmosphere."</p><div class="who"><span class="av">M</span><div><b>Marcus D.</b><small>New customer</small></div></div></div>
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Took my son for his first proper cut — so patient with him and he loves it. We'll be back every month."</p><div class="who"><span class="av">A</span><div><b>Aisha K.</b><small>Local mum</small></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="foot">
+    <div class="wrap">
+      <a class="brand" href="#top"><span class="pole" aria-hidden="true"></span> Fade &amp; Co</a>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.61.07-.3-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.73-1.63-2.02-.17-.29 0-.44.13-.59.13-.13.29-.33.43-.5.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.28-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.02 3.08 4.9 4.32.68.29 1.22.47 1.63.6.69.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34ZM12 2a10 10 0 0 0-8.6 15.05L2 22l5.05-1.33A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3 .79.8-2.92-.2-.31A8.2 8.2 0 1 1 12 20.2Z"/></svg></a>
+      </div>
+      <small>© Fade &amp; Co · Your Town. A sample design by Billy Digitals.</small>
+    </div>
+  </footer>
+
+  <!-- Booking modal (demo) -->
+  <div class="modal" id="book" role="dialog" aria-modal="true" aria-label="Book an appointment">
+    <div class="modal-card">
+      <button class="modal-x" data-close aria-label="Close">✕</button>
+      <h3>Book Your Chair</h3>
+      <p class="sub">Pick a service and a time — we'll confirm by text.</p>
+      <form id="bookForm">
+        <div class="field"><label for="bkService">Service</label>
+          <select id="bkService"><option>Skin Fade — £18</option><option>Cut &amp; Beard — £25</option><option>Beard Trim &amp; Shape — £12</option><option>Hot Towel Shave — £20</option><option>Kids Cut — £12</option><option>Student Cut — £15</option></select>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="bkDate">Date</label><input type="date" id="bkDate" required></div>
+          <div class="field"><label for="bkTime">Time</label>
+            <select id="bkTime"><option>09:30</option><option>10:30</option><option>11:30</option><option>13:00</option><option selected>15:00</option><option>16:30</option><option>18:00</option></select>
+          </div>
+        </div>
+        <div class="field"><label for="bkName">Name</label><input type="text" id="bkName" placeholder="Your name" required></div>
+        <div class="field"><label for="bkPhone">Mobile</label><input type="tel" id="bkPhone" placeholder="07…" required></div>
+        <button class="btn btn-fill" type="submit">Request booking</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Booking request sent — we'll text to confirm. ✂️</div>
+
+  <script src="barber.js"></script>
+  <script src="backbar.js" defer></script>
+</body>
+</html>
