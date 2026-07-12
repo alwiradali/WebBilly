@@ -97,6 +97,7 @@
   var CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/";
   var imgMap = {
     noir: CDN + "hf_20260712_215021_20e0ea05-8a6c-4245-86d0-e48ce36d176c_min.webp",
+    eclat: CDN + "hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp",
     atelier: CDN + "hf_20260711_221955_6f576c4c-001f-4896-af96-3ce7b07e70a7_min.webp",
     aurum: CDN + "hf_20260711_224020_97fde0a0-9e26-4b4d-b552-e1c29e6b0ac9_min.webp",
     lumiere: CDN + "hf_20260711_224045_1064b9e1-ba5a-4869-99fa-1dff51d0b3d7_min.webp",
