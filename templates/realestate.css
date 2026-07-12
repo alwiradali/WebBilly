@@ -260,3 +260,28 @@ h1 .serif-i{
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){
   h1 .serif-i{ -webkit-text-fill-color:currentColor; background-image:none; }
 }
+
+/* ---------- 3D virtual tour ---------- */
+.tour-head{max-width:640px;margin:0 auto 30px;text-align:center}
+.tour-head h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-top:10px}
+.tour-lead{margin-top:12px;color:var(--muted);font-size:1.05rem;line-height:1.55}
+.tour-stage{position:relative;border-radius:20px;overflow:hidden;background:#0e1116;
+  aspect-ratio:16/10;box-shadow:0 34px 74px -34px rgba(15,36,32,.55);border:1px solid var(--line);touch-action:none}
+#tourGL{width:100%;height:100%;display:block;cursor:grab}
+#tourGL:active{cursor:grabbing}
+.tour-rooms{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:8px;
+  background:rgba(14,17,22,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px;z-index:2}
+.tour-rooms button{border:0;background:transparent;color:#e7ede9;font:600 .84rem/1 var(--sans);
+  padding:11px 17px;border-radius:999px;cursor:pointer;transition:background .25s,color .25s}
+.tour-rooms button.on{background:var(--accent);color:#fff}
+.tour-rooms button:hover:not(.on){background:rgba(255,255,255,.10)}
+.tour-hint{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:7px;
+  background:rgba(14,17,22,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);color:#cfd8d3;font-size:.76rem;padding:8px 13px;border-radius:999px;z-index:2}
+@media(max-width:640px){
+  .tour-stage{aspect-ratio:4/5}
+  .tour-hint{font-size:.68rem;left:10px;top:10px;padding:6px 10px}
+  .tour-rooms{bottom:12px}
+  .tour-rooms button{padding:10px 13px;font-size:.78rem}
+}
