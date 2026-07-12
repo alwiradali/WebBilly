@@ -1241,7 +1241,6 @@ body.intro-lock { overflow: hidden; }
   font: 600 clamp(11px, 1.4vw, 14px)/1 'Space Grotesk', 'Inter', sans-serif; letter-spacing: 0.36em; text-transform: uppercase;
   opacity: 0; transform: translateY(10px); transition: opacity 1s ease, transform 1s ease; }
 .intro-tag.show { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
 /* ============================================================
    Section particle ambience (assets/js/particles.js)

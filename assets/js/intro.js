@@ -32,7 +32,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     signalDone();
   }
-  if (reduce || seen) { finishInstant(); return; }
+  if (seen) { finishInstant(); return; }
 
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true, powerPreference: "high-performance" }); }
@@ -191,15 +191,15 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(cur, 3));
     geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
-    uniforms = { uSize: { value: mobile ? 46 : 42 }, uPix: { value: renderer.getPixelRatio() }, uFade: { value: 1 } };
+    uniforms = { uSize: { value: mobile ? 58 : 42 }, uPix: { value: renderer.getPixelRatio() }, uFade: { value: 1 }, uBright: { value: mobile ? 1.85 : 1.3 } };
     mat = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: "uniform float uSize; uniform float uPix; attribute vec3 color; varying vec3 vC;" +
         "void main(){ vC=color; vec4 mv=modelViewMatrix*vec4(position,1.0);" +
         "gl_PointSize=uSize*uPix*(1.0/-mv.z); gl_Position=projectionMatrix*mv; }",
-      fragmentShader: "precision highp float; uniform float uFade; varying vec3 vC;" +
+      fragmentShader: "precision highp float; uniform float uFade; uniform float uBright; varying vec3 vC;" +
         "void main(){ vec2 uv=gl_PointCoord-0.5; float d=length(uv); float a=smoothstep(0.5,0.04,d);" +
-        "if(a<=0.001) discard; vec3 col=vC*1.3 + smoothstep(0.42,0.0,d)*0.4; gl_FragColor=vec4(col, a*uFade); }",
+        "if(a<=0.001) discard; vec3 col=vC*uBright + smoothstep(0.42,0.0,d)*0.5; gl_FragColor=vec4(col, a*uFade); }",
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false
     });
     points = new THREE.Points(geo, mat); scene.add(points);
