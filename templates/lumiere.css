@@ -30,3 +30,31 @@
 /* sea-teal accent on the stat figures for a coastal pop */
 .stat h3 span{color:var(--teal)}
 .h-num{color:var(--paper)}
+
+/* ============================================================
+   Distinct layout — right-aligned, soft & rounded "magazine"
+   (sets Lumière apart from the left-aligned Maison Noir engine)
+   ============================================================ */
+.hero { align-items: center; }
+.hero-inner { text-align: right; }
+.hero-eyebrow, .hero h1 { margin-left: auto; }
+.hero-foot { flex-direction: row-reverse; }
+.hero-foot p { margin-left: auto; text-align: right; }
+.scroll-cue { flex-direction: row-reverse; }
+/* everything softly rounded — warm and welcoming */
+.h-figure, .feature-fig { border-radius: 26px; }
+.h-num { border-radius: 999px; }
+.nav-cta, .magnetic { border-radius: 999px; }
+/* right-aligned section heads + reversed feature */
+.sec-head { flex-direction: row-reverse; text-align: right; }
+.h-intro h2 { text-align: right; }
+.feature { direction: rtl; }
+.feature > * { direction: ltr; }
+.feature-fig { border-radius: 30px; }
+.manifesto p { font-style: italic; }
+.tag-row span { border-color: rgba(244, 184, 126, 0.4); }
+@media (max-width: 640px) {
+  .hero-inner, .hero-foot p, .sec-head, .h-intro h2 { text-align: left; }
+  .hero-eyebrow, .hero h1, .hero-foot p { margin-left: 0; }
+  .hero-foot, .scroll-cue, .sec-head { flex-direction: row; }
+}
