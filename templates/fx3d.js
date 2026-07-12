@@ -499,26 +499,182 @@
     } };
   };
 
-  /* 🩺 medical — a beating core with a floating cross */
+  /* 🩺 medical — a living anatomy on glass: a standing skeleton with a
+     beating heart, breathing lungs, a pulsing brain, and blood cells
+     coursing through the veins. Everything is built procedurally from
+     primitives + swept curves — no model files. Tasteful medical anatomy
+     (head-to-feet); no lower reproductive detail is modelled. */
   SCENES.medical = function (THREE, root, palette) {
-    var heart = new THREE.Mesh(new THREE.IcosahedronGeometry(1.15, 3),
-      std(THREE, { color: palette.accent, roughness: 0.3, metalness: 0.2, emissive: palette.accent, emissiveIntensity: 0.4 }));
-    root.add(heart);
-    var cross = new THREE.Group();
-    var cm = std(THREE, { color: 0xffffff, roughness: 0.2, metalness: 0.3, emissive: 0xffffff, emissiveIntensity: 0.15 });
-    cross.add(new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.1, 0.32), cm));
-    cross.add(new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.32, 0.32), cm));
-    cross.position.set(0, 0, 1.35);
-    root.add(cross);
-    function beat(t) { // double-thump, like a pulse
-      var x = (t * 1.1) % 1;
-      return 1 + 0.10 * Math.exp(-Math.pow((x - 0.10) * 9, 2)) + 0.07 * Math.exp(-Math.pow((x - 0.28) * 9, 2));
+    var V = THREE.Vector3;
+    var fig = new THREE.Group();          // spins; root stays for the intro scale
+    fig.scale.setScalar(0.9);
+    root.add(fig);
+
+    /* ---- materials -------------------------------------------------------- */
+    var boneMat  = std(THREE, { color: 0xe9dfcb, roughness: 0.62, metalness: 0.03, emissive: 0x1a1712, emissiveIntensity: 0.04 });
+    var skullMat = new THREE.MeshPhysicalMaterial({ color: 0xece2cf, roughness: 0.22, metalness: 0.0, transmission: 0.55, thickness: 0.4, ior: 1.3, clearcoat: 0.8, transparent: true, opacity: 0.82 });   // glassy → brain shows through
+    var heartMat = std(THREE, { color: 0xd11e2c, roughness: 0.32, metalness: 0.06, emissive: 0xff1e30, emissiveIntensity: 0.5 });
+    var brainMat = std(THREE, { color: 0xff9bb2, roughness: 0.6, metalness: 0.0,  emissive: 0xff4d78, emissiveIntensity: 0.75 });
+    var socketMat = std(THREE, { color: 0x0a0f12, roughness: 0.9, metalness: 0.0 });
+    var vesselMat = new THREE.MeshStandardMaterial({ color: 0x8a1626, roughness: 0.45, metalness: 0.0, emissive: 0x3a0510, emissiveIntensity: 0.6, transparent: true, opacity: 0.7 });
+    var lungMat  = new THREE.MeshPhysicalMaterial({ color: 0xff7f96, roughness: 0.45, metalness: 0.0, transmission: 0.25, thickness: 0.6, ior: 1.3, emissive: 0xff6f88, emissiveIntensity: 0.28, transparent: true, opacity: 0.96 });
+    var arterialMat = new THREE.MeshBasicMaterial({ color: 0xff2f44, toneMapped: false });   // bright → blooms
+    var venousMat   = new THREE.MeshBasicMaterial({ color: 0x35b6ff, toneMapped: false });
+
+    /* ---- helpers ---------------------------------------------------------- */
+    function segment(a, b, rTop, rBot, mat) {          // a tapered bone between two points
+      var dir = new V().subVectors(b, a), len = dir.length();
+      var m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, len, 12, 1), mat || boneMat);
+      m.position.copy(a).add(b).multiplyScalar(0.5);
+      m.quaternion.setFromUnitVectors(new V(0, 1, 0), dir.normalize());
+      fig.add(m); return m;
     }
+    function ball(x, y, z, r, mat) {
+      var m = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 16), mat || boneMat);
+      m.position.set(x, y, z); fig.add(m); return m;
+    }
+    function curveFrom(arr) { return new THREE.CatmullRomCurve3(arr.map(function (p) { return new V(p[0], p[1], p[2]); })); }
+
+    /* ---- glass surface the figure stands on ------------------------------- */
+    var floor = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.05, 0.14, 72),
+      new THREE.MeshPhysicalMaterial({ color: 0x0b2531, roughness: 0.06, metalness: 0.0, transmission: 0.55, thickness: 1.4, ior: 1.35, clearcoat: 1.0, transparent: true, opacity: 0.92 }));
+    floor.position.y = -2.24; fig.add(floor);
+    var pad = new THREE.Mesh(new THREE.CircleGeometry(1.15, 48),
+      new THREE.MeshBasicMaterial({ color: palette.accent2, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    pad.rotation.x = -Math.PI / 2; pad.position.y = -2.16; fig.add(pad);
+
+    /* ---- skull + brain (glassy skull, brain glowing inside) --------------- */
+    var brain = new THREE.Mesh(new THREE.IcosahedronGeometry(0.24, 2), brainMat);
+    brain.position.set(0, 1.97, 0.0); brain.scale.set(1.08, 0.92, 1.02); fig.add(brain);
+    var skull = ball(0, 1.92, 0, 0.32, skullMat); skull.scale.set(1, 1.16, 1.08);
+    var jaw = new THREE.Mesh(new THREE.SphereGeometry(0.24, 18, 14, 0, Math.PI * 2, Math.PI * 0.42, Math.PI * 0.5), skullMat);
+    jaw.position.set(0, 1.66, 0.05); jaw.scale.set(1, 0.9, 1.05); fig.add(jaw);
+    ball(-0.13, 1.9, 0.27, 0.07, socketMat);      // eye sockets
+    ball(0.13, 1.9, 0.27, 0.07, socketMat);
+    ball(0, 1.8, 0.31, 0.04, socketMat);          // nasal cavity
+
+    /* ---- spine (gentle S-curve) ------------------------------------------- */
+    var spineTop = 1.5, spineBot = -0.05, NV = 13;
+    for (var v = 0; v < NV; v++) {
+      var f = v / (NV - 1);
+      var y = spineTop + (spineBot - spineTop) * f;
+      var z = 0.06 * Math.sin(f * Math.PI * 1.6) - 0.02;   // cervical fwd / thoracic back
+      var vert = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, 0.07, 10), boneMat);
+      vert.position.set(0, y, z); fig.add(vert);
+    }
+
+    /* ---- ribcage ---------------------------------------------------------- */
+    var ribGrp = new THREE.Group(); fig.add(ribGrp);
+    var NR = 7;
+    for (var r = 0; r < NR; r++) {
+      var rf = r / (NR - 1);
+      var h = 1.34 - rf * 0.72;                            // top → bottom
+      var wide = 0.62 * Math.sin((0.25 + rf * 0.62) * Math.PI) + 0.28;   // barrel profile
+      var depth = 0.42 - rf * 0.05;
+      for (var s = -1; s <= 1; s += 2) {
+        var ribCurve = curveFrom([
+          [0, h + 0.02, -depth * 0.75],
+          [s * wide * 0.7, h + 0.03, -depth * 0.15],
+          [s * wide, h - 0.05, depth * 0.4],
+          [s * wide * 0.55, h - 0.14, depth * 0.9],
+          [s * 0.09, h - 0.18, depth * 0.98]
+        ]);
+        var rib = new THREE.Mesh(new THREE.TubeGeometry(ribCurve, 40, 0.033, 7, false), boneMat);
+        ribGrp.add(rib);
+      }
+    }
+    var sternum = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.62, 0.06), boneMat);
+    sternum.position.set(0, 1.02, 0.4); fig.add(sternum);
+
+    /* ---- shoulders, arms, pelvis, legs ------------------------------------ */
+    segment(new V(-0.5, 1.4, 0.08), new V(0.5, 1.4, 0.08), 0.05, 0.05);   // clavicle span
+    var pelvis = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.09, 12, 28), boneMat);
+    pelvis.position.set(0, -0.22, 0); pelvis.rotation.x = Math.PI / 2; pelvis.scale.set(1, 1, 0.62); fig.add(pelvis);
+
+    for (var side = -1; side <= 1; side += 2) {
+      var sh = new V(side * 0.62, 1.36, 0.0);
+      var el = new V(side * 0.82, 0.55, 0.02);
+      var wr = new V(side * 0.86, -0.18, 0.04);
+      ball(sh.x, sh.y, sh.z, 0.1);                          // shoulder
+      segment(sh, el, 0.055, 0.075);                        // upper arm
+      segment(el, wr, 0.04, 0.055);                         // forearm
+      ball(wr.x, wr.y - 0.08, wr.z, 0.08);                  // hand
+
+      var hip = new V(side * 0.2, -0.32, 0);
+      var kn = new V(side * 0.22, -1.18, 0.02);
+      var an = new V(side * 0.22, -2.02, 0.0);
+      segment(hip, kn, 0.075, 0.11);                        // femur
+      ball(kn.x, kn.y, kn.z, 0.09);                         // knee
+      segment(kn, an, 0.05, 0.075);                         // tibia
+      var foot = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.09, 0.34), boneMat);
+      foot.position.set(side * 0.22, -2.1, 0.09); fig.add(foot);
+    }
+
+    /* ---- heart ------------------------------------------------------------ */
+    var heartGrp = new THREE.Group();
+    var lobeGeo = new THREE.SphereGeometry(0.16, 18, 14);
+    var lL = new THREE.Mesh(lobeGeo, heartMat); lL.position.set(-0.1, 0.09, 0); heartGrp.add(lL);
+    var lR = new THREE.Mesh(lobeGeo, heartMat); lR.position.set(0.1, 0.09, 0); heartGrp.add(lR);
+    var apex = new THREE.Mesh(new THREE.ConeGeometry(0.23, 0.32, 20), heartMat);
+    apex.position.set(0, -0.13, 0); apex.rotation.x = Math.PI; heartGrp.add(apex);
+    heartGrp.position.set(-0.13, 0.95, 0.26); heartGrp.rotation.z = 0.2;
+    fig.add(heartGrp);
+
+    /* ---- lungs ------------------------------------------------------------ */
+    var lungGeo = new THREE.SphereGeometry(0.27, 20, 16);
+    var lungL = new THREE.Mesh(lungGeo, lungMat); lungL.position.set(-0.32, 1.0, 0.06); lungL.scale.set(0.86, 1.55, 0.74); fig.add(lungL);
+    var lungR = new THREE.Mesh(lungGeo, lungMat); lungR.position.set(0.32, 1.0, 0.06); lungR.scale.set(0.86, 1.55, 0.74); fig.add(lungR);
+
+    /* ---- vessels + flowing blood cells ------------------------------------ */
+    var vessels = [
+      { pts: [[-0.14, 0.8, 0.2], [-0.05, 1.16, 0.14], [0.16, 1.06, 0.12], [0.04, 0.86, 0.16], [-0.14, 0.8, 0.2]], art: true },   // aortic arch
+      { pts: [[-0.05, 1.12, 0.1], [0.0, 1.42, 0.06], [0.05, 1.72, 0.04], [0.0, 1.96, 0.0]], art: true },                          // carotid → brain
+      { pts: [[-0.08, 0.95, 0.14], [0.35, 1.3, 0.06], [0.63, 1.34, 0.0], [0.8, 0.55, 0.0], [0.86, -0.16, 0.02], [0.86, -0.3, 0.04]], art: true },  // right arm
+      { pts: [[-0.08, 0.95, 0.14], [-0.35, 1.3, 0.06], [-0.63, 1.34, 0.0], [-0.8, 0.55, 0.0], [-0.86, -0.16, 0.02], [-0.86, -0.3, 0.04]], art: false }, // left arm
+      { pts: [[0.06, -0.05, 0.06], [0.2, -0.6, 0.03], [0.22, -1.18, 0.02], [0.22, -1.7, 0.0], [0.22, -2.0, 0.05]], art: true },   // right leg
+      { pts: [[-0.06, -0.05, 0.06], [-0.2, -0.6, 0.03], [-0.22, -1.18, 0.02], [-0.22, -1.7, 0.0], [-0.22, -2.0, 0.05]], art: false } // left leg
+    ];
+    var cells = [];
+    vessels.forEach(function (vd, vi) {
+      var curve = curveFrom(vd.pts);
+      var tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 50, 0.02, 7, false), vesselMat);
+      fig.add(tube);
+      var N = 4;
+      for (var k = 0; k < N; k++) {
+        var arterial = vd.art ? (k % 2 === 0) : (k % 2 === 1);
+        var cell = new THREE.Mesh(new THREE.SphereGeometry(0.037, 8, 8), arterial ? arterialMat : venousMat);
+        fig.add(cell);
+        cells.push({ mesh: cell, curve: curve, u: k / N, speed: 0.14 + vi * 0.012 + (arterial ? 0.05 : 0) });
+      }
+    });
+
+    function beat(t) {   // double-thump, like a real pulse
+      var x = (t * 1.1) % 1;
+      return 0.10 * Math.exp(-Math.pow((x - 0.10) * 9, 2)) + 0.07 * Math.exp(-Math.pow((x - 0.28) * 9, 2));
+    }
+
     return { update: function (t, dt, ptr) {
-      heart.scale.setScalar(beat(t));
-      heart.rotation.y += dt * 0.25;
-      cross.rotation.z = Math.sin(t * 0.6) * 0.25 + ptr.x * 0.3;
-      cross.position.y = Math.sin(t * 1.2) * 0.12;
+      fig.rotation.y = t * 0.16 + ptr.x * 0.5;
+      fig.rotation.x = ptr.y * 0.12 - 0.02;
+
+      var b = beat(t);                                   // 0 at rest, spikes on each thump
+      heartGrp.scale.setScalar(1 + b * 1.9);
+      heartMat.emissiveIntensity = 0.4 + b * 7.0;
+
+      brain.scale.setScalar(1 + 0.025 * Math.sin(t * 3.0));
+      brainMat.emissiveIntensity = 0.7 + 0.35 * Math.sin(t * 3.0);
+
+      var inh = Math.sin(t * 0.8) * 0.5 + 0.5;           // slow inhale/exhale
+      var sx = 1 + 0.13 * inh, sy = 1.5 * (1 + 0.16 * inh), sz = 0.72 * (1 + 0.13 * inh);
+      lungL.scale.set(0.82 * (1 + 0.13 * inh), sy, sz); lungR.scale.set(0.82 * (1 + 0.13 * inh), sy, sz);
+      lungMat.emissiveIntensity = 0.12 + 0.16 * inh;
+      ribGrp.scale.set(1 + 0.03 * inh, 1, 1 + 0.035 * inh);
+
+      for (var i = 0; i < cells.length; i++) {
+        var c = cells[i];
+        c.u += c.speed * dt; if (c.u > 1) c.u -= 1;
+        c.mesh.position.copy(c.curve.getPointAt(c.u));
+      }
     } };
   };
 
