@@ -204,11 +204,12 @@
 
   /* ---- motion loop ---- */
   var running = false, raf = null, visible = false, hovering = false, dragging = false, dirty = true, lastPos = NaN, autoT = 0;
+  var viewerPaused = false;   // frozen while a template is open in the viewer
   var AUTO = 3.8, last = 0;
   function loop(now) {
     if (!running) return; raf = requestAnimationFrame(loop);
     var dt = Math.min((now - last) / 1000, 0.05) || 0.016; last = now;
-    if (!dragging && !hovering && !reduce) { autoT += dt; if (autoT >= AUTO) { autoT = 0; target += 1; } }
+    if (!dragging && !hovering && !reduce && !viewerPaused) { autoT += dt; if (autoT >= AUTO) { autoT = 0; target += 1; } }
     pos += (target - pos) * 0.12;
     if (Math.abs(target - pos) < 0.0004) pos = target;
     if (dragging || pos !== lastPos || dirty) { layout(); lastPos = pos; dirty = false; }
@@ -298,7 +299,9 @@
       titleEl.innerHTML = it.name + '<span class="tx-cat">' + it.catLabel + '</span>';
       newtab.href = it.href; cta.href = "#contact";
       loader.classList.remove("gone"); frame.src = it.href;
-      el.classList.add("open"); document.body.classList.add("tx-locked"); isOpen = true; back.focus();
+      el.classList.add("open"); document.body.classList.add("tx-locked"); isOpen = true;
+      viewerPaused = true;                // freeze the carousel on this style
+      back.focus();
     }
     function open(it) {
       if (!isOpen) { history.pushState({ txView: it.slug }, "", "#style=" + it.slug); pushed = true; }
@@ -307,11 +310,14 @@
     }
     function hide() {
       el.classList.remove("open"); document.body.classList.remove("tx-locked"); isOpen = false;
+      viewerPaused = false;               // let the carousel breathe again
       setTimeout(function () { if (!isOpen) { frame.src = "about:blank"; loader.classList.remove("gone"); } }, 360);
     }
     function requestClose() { if (pushed && history.state && history.state.txView) { history.back(); } else { hide(); } }
     back.addEventListener("click", requestClose);
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen) requestClose(); });
+    // the "Billy Digitals" pill inside the previewed template asks us to close (one clean click, no reload)
+    window.addEventListener("message", function (e) { if (e.data && e.data.bdCloseViewer && isOpen) requestClose(); });
     window.addEventListener("popstate", function () {
       var st = history.state;
       if (st && st.txView) { var it = bySlug(st.txView); if (it) { show(it); return; } }

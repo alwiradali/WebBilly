@@ -32,6 +32,21 @@
     ".bd-backpill svg{flex:none}" +
     "@media print{.bd-backpill{display:none}}";
 
+  // If we're being previewed inside the in-site viewer (an iframe on the
+  // homepage), the pill should just close the viewer — one clean click,
+  // no full reload, and it lands you back exactly where you were with the
+  // carousel still on this style. Otherwise (opened directly / new tab)
+  // it keeps its normal link to the homepage.
+  var inFrame = false;
+  try { inFrame = window.parent && window.parent !== window; } catch (e) { inFrame = true; }
+  if (inFrame) {
+    pill.addEventListener("click", function (e) {
+      e.preventDefault();
+      try { window.parent.postMessage({ bdCloseViewer: true }, "*"); }
+      catch (err) { window.top.location.href = "../index.html"; }
+    });
+  }
+
   function mount() {
     if (!document.body) return;
     document.head.appendChild(css);
