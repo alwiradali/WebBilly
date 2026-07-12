@@ -73,7 +73,13 @@ body::after{content:""; position:fixed; inset:0; z-index:60; pointer-events:none
 .hero .glow.g2{width:520px; height:520px; background:rgba(242,165,65,.16); bottom:-200px; left:-140px}
 .hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; width:100%}
 .hero h1{font-size:clamp(3rem,7vw,5.6rem); font-optical-sizing:auto; font-weight:400}
-.hero h1 em{font-style:italic; color:var(--saffron)}
+.hero h1 em{font-style:italic; color:var(--saffron);
+  background-image:linear-gradient(174deg, var(--saffron) 0%, var(--ember) 52%, var(--chili) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.26))}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1 em{-webkit-text-fill-color:currentColor; background-image:none; color:var(--saffron)}
+}
 .hero .lede{margin:26px 0 0; color:var(--muted); font-size:clamp(1.05rem,1.4vw,1.22rem); max-width:44ch}
 .hero-tags{display:flex; gap:18px; flex-wrap:wrap; margin-top:26px; color:var(--muted-2); font-size:.85rem; font-weight:600}
 .hero-tags span{display:flex; align-items:center; gap:8px}
