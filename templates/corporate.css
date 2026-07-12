@@ -139,3 +139,19 @@ h1,h2,h3{font-family:var(--disp); font-weight:500; margin:0; line-height:1.08; l
   .about-art{max-width:460px; margin-inline:auto}
 }
 @media (max-width:520px){ .band-grid,.ind-grid,.book-form .row{grid-template-columns:1fr} .acc-body-in{padding-left:0} }
+
+/* ============================================================
+   Ultra-luxury accent — brushed sheen on the hero highlight
+   (light → base → deep, in this template's own accent colour)
+   ============================================================ */
+h1 .brass{
+  background-image:linear-gradient(176deg,
+    color-mix(in srgb, var(--brass) 60%, #ffffff) 0%,
+    var(--brass) 48%,
+    color-mix(in srgb, var(--brass) 72%, #000000) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.20));
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  h1 .brass{ -webkit-text-fill-color:currentColor; background-image:none; }
+}
