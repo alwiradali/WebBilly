@@ -1,11 +1,11 @@
 /* ============================================================
    Billy Digitals — Cinematic intro
-   Letterbox opens · particles are blown in on the wind from the
-   left and settle, left-to-right, writing "Welcome to Billy
-   Digitals" in an elegant font · a tagline fades up · on first
-   scroll the camera flies through the words as they burst and the
-   homepage is revealed. Bloom + dust (desktop). Fast (~1.6s to
-   form). Once per visit · Skip · reduced-motion & failure safe.
+   Letterbox opens · GPU particles rush out of deep space from every
+   direction and assemble into "BILLY DIGITALS" as the camera pushes
+   in · a tagline fades up · on first scroll the camera flies through
+   the wordmark as it bursts and the homepage is revealed. Bloom +
+   dust (desktop). Fast (~1s to form). Plays once per visit · Skip ·
+   plays under reduced-motion · failure safe.
    ============================================================ */
 import * as THREE from "three";
 import { EffectComposer } from "../../templates/vendor/jsm/postprocessing/EffectComposer.js";
@@ -96,7 +96,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   /* ---------- interaction / lifecycle wiring (works even before points build) ---------- */
   var phase = 0, t = 0, last = 0, holdAt = 0, raf = null, built = false, points = null, geo = null, mat = null;
   var N = 0, target, launch, delay, cur, vel, uniforms, posAttr, minTx = 0, maxTx = 1;
-  var SWEEP = 1.15, FORM = 0.5;
+  var SWEEP = 0.22, FORM = 0.72;
   var mxr = 0, myr = 0;
   window.addEventListener("pointermove", function (e) { mxr = (e.clientX / window.innerWidth - 0.5); myr = (e.clientY / window.innerHeight - 0.5); }, { passive: true });
 
@@ -147,10 +147,8 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     var c = document.createElement("canvas"), cw = 1900, ch = 620; c.width = cw; c.height = ch;
     var x = c.getContext("2d");
     x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
-    x.font = "italic 600 120px 'Playfair Display', Georgia, serif";
-    x.fillText("Welcome to", cw / 2, ch * 0.26);
-    x.font = "700 190px 'Playfair Display', Georgia, serif";
-    x.fillText("Billy Digitals", cw / 2, ch * 0.66);
+    x.font = "800 200px 'Playfair Display', Georgia, serif";
+    x.fillText("BILLY DIGITALS", cw / 2, ch * 0.5);
     var data = x.getImageData(0, 0, cw, ch).data, pts = [], nx = cw, xx = 0, ny = ch, xy = 0, step = mobile ? 5 : 4;
     for (var py = 0; py < ch; py += step) for (var px = 0; px < cw; px += step) {
       if (data[(py * cw + px) * 4 + 3] > 130) { pts.push([px, py]); if (px < nx) nx = px; if (px > xx) xx = px; if (py < ny) ny = py; if (py > xy) xy = py; }
@@ -169,21 +167,20 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
     cur = new Float32Array(N * 3); vel = new Float32Array(N * 3); delay = new Float32Array(N);
     var col = new Float32Array(N * 3);
     var C1 = new THREE.Color("#4a97ff"), C2 = new THREE.Color("#57e2ff"), C3 = new THREE.Color("#b79bff");
-    minTx = Infinity; maxTx = -Infinity;
+    minTx = -span / 2; maxTx = span / 2;
     var i, tx;
-    for (i = 0; i < N; i++) { tx = (s.pts[i][0] - s.cx) * scale; if (tx < minTx) minTx = tx; if (tx > maxTx) maxTx = tx; }
-    var launchX = -(span * 0.62) - 8;
     for (i = 0; i < N; i++) {
       tx = (s.pts[i][0] - s.cx) * scale;
       var ty = -(s.pts[i][1] - s.cy) * scale, tz = (Math.random() - 0.5) * 0.7;
       target[i * 3] = tx; target[i * 3 + 1] = ty; target[i * 3 + 2] = tz;
-      // launch off-screen left (blown in on the wind), scattered in y/z
-      launch[i * 3] = launchX - Math.random() * 22;
-      launch[i * 3 + 1] = ty + (Math.random() - 0.5) * 9;
-      launch[i * 3 + 2] = (Math.random() - 0.5) * 9 - 2;
+      // launch out of deep space: random direction, far away — particles rush in and assemble together
+      var ang = Math.random() * Math.PI * 2, rad = 24 + Math.random() * 34;
+      launch[i * 3] = Math.cos(ang) * rad;
+      launch[i * 3 + 1] = Math.sin(ang) * rad * 0.72;
+      launch[i * 3 + 2] = -34 - Math.random() * 46;
       cur[i * 3] = launch[i * 3]; cur[i * 3 + 1] = launch[i * 3 + 1]; cur[i * 3 + 2] = launch[i * 3 + 2];
-      // left-to-right sweep: earlier for leftmost letters
-      delay[i] = ((tx - minTx) / (maxTx - minTx || 1)) * SWEEP + Math.random() * 0.05;
+      // near-simultaneous assembly with a tiny random stagger (fast, not sequential)
+      delay[i] = Math.random() * SWEEP;
       var m = (tx / span) + 0.5;
       var cc = m < 0.5 ? C1.clone().lerp(C2, Math.max(0, m) * 2) : C2.clone().lerp(C3, Math.min(1, (m - 0.5) * 2));
       col[i * 3] = cc.r; col[i * 3 + 1] = cc.g; col[i * 3 + 2] = cc.b;
@@ -260,7 +257,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   var fr;
   if (document.fonts && document.fonts.load) {
     fr = Promise.race([
-      Promise.all([document.fonts.load("italic 600 90px 'Playfair Display'"), document.fonts.load("700 90px 'Playfair Display'")]),
+      document.fonts.load("800 90px 'Playfair Display'"),
       new Promise(function (res) { setTimeout(res, 700); })
     ]);
   } else { fr = Promise.resolve(); }
