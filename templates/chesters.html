@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chesters Stockport — Great Tasting Chicken, Pizza &amp; More</title>
+  <meta name="description" content="Chesters Stockport — great tasting chicken, pizza, burgers and wings on Manchester Road. Order online for delivery or collection.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0a1740">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="takeaway.css">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top">
+        <span class="star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.7 6.2 6.7.6-5.1 4.4 1.6 6.6L12 16.4 6.1 20l1.6-6.6L2.6 9l6.7-.6z"/></svg></span>
+        Chesters
+      </a>
+      <nav class="nav-links">
+        <a href="#deals">Deals</a>
+        <a href="#menu">Menu</a>
+        <a href="#why">Why Us</a>
+        <a href="#visit">Find Us</a>
+      </nav>
+      <div class="nav-right">
+        <a class="btn btn-red" href="#order" data-order>Order online</a>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" data-close aria-label="Close menu">✕</button>
+    <a href="#deals">Deals</a>
+    <a href="#menu">Menu</a>
+    <a href="#why">Why Us</a>
+    <a href="#visit">Find Us</a>
+    <a class="btn btn-red" href="#order" data-order>Order online</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <span class="flash rv">★ 50% off your first online order</span>
+      <p class="eyebrow rv">Great Tasting Chicken · Stockport</p>
+      <h1 class="rv">PROPER CHICKEN,<br>PIZZA &amp; <span class="red">MORE</span>.</h1>
+      <p class="hero-sub rv">Freshly cooked chicken, stone-baked pizza, burgers and loaded wings — delivered hot to your door or ready to collect. Order in seconds.</p>
+      <div class="hero-cta rv">
+        <a class="btn btn-red" href="#order" data-order>Order online</a>
+        <a class="btn btn-ghost" href="#menu">View menu</a>
+      </div>
+      <div class="hero-meta rv">
+        <span class="openbadge" id="openBadge"><span class="dot"></span> Open now</span>
+        <span class="stars">★★★★★ <b>4.6</b></span>
+        <span>Delivery &amp; collection · <b>Stockport</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="strip" aria-hidden="true">
+    <div class="row">
+      <span>Family Feast £19.99</span><span>9" Pizza Deal</span><span>Free Collection</span><span>Loaded Wings</span><span>Delivered Hot</span>
+      <span>Family Feast £19.99</span><span>9" Pizza Deal</span><span>Free Collection</span><span>Loaded Wings</span><span>Delivered Hot</span>
+    </div>
+  </div>
+
+  <!-- Deals -->
+  <section class="band" id="deals">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Today's Offers</p>
+        <h2>Deals Worth <span class="red">Ordering</span></h2>
+        <p>Big feasts, better prices. Add them straight to your order.</p>
+      </div>
+      <div class="deals">
+        <div class="deal feature rv">
+          <span class="tag">Family Favourite</span>
+          <h3>Great Deal D</h3>
+          <p>12" garlic bread with cheese, 12 spicy wings, 2 fillet burgers, 2 chips &amp; a 1.5L drink. Feeds the whole family.</p>
+          <div class="row"><span class="price"><small>£</small>19.99</span><a class="btn btn-gold" href="#order" data-order>Add to order</a></div>
+        </div>
+        <div class="deal rv">
+          <span class="tag">50% Off</span>
+          <h3>First Order Deal</h3>
+          <p>50% off any main meal on your first online order. New customers only.</p>
+          <div class="row"><span class="price">½ <small>price</small></span><a class="btn btn-red" href="#order" data-order>Claim it</a></div>
+        </div>
+        <div class="deal rv">
+          <span class="tag pop">Popular</span>
+          <h3>9" Pizza Deal</h3>
+          <p>Any 9" pizza with 5 wings, chips and a can of pop.</p>
+          <div class="row"><span class="price"><small>£</small>10.99</span><a class="btn btn-red" href="#order" data-order>Add to order</a></div>
+        </div>
+        <div class="deal rv">
+          <span class="tag">Sharer</span>
+          <h3>Wing Bucket</h3>
+          <p>20 spicy or BBQ wings with 2 chips and 2 dips.</p>
+          <div class="row"><span class="price"><small>£</small>13.99</span><a class="btn btn-red" href="#order" data-order>Add to order</a></div>
+        </div>
+        <div class="deal rv">
+          <span class="tag">Solo</span>
+          <h3>Burger Meal</h3>
+          <p>Fillet or zinger burger with chips and a drink.</p>
+          <div class="row"><span class="price"><small>£</small>6.49</span><a class="btn btn-red" href="#order" data-order>Add to order</a></div>
+        </div>
+        <div class="deal rv">
+          <span class="tag">Kids</span>
+          <h3>Kids Box</h3>
+          <p>Chicken nuggets, chips, a drink and a little treat.</p>
+          <div class="row"><span class="price"><small>£</small>4.99</span><a class="btn btn-red" href="#order" data-order>Add to order</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu categories -->
+  <section class="band" id="menu" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">The Menu</p>
+        <h2>What're You <span class="red">Craving</span>?</h2>
+      </div>
+      <div class="menu">
+        <a class="mcat rv" href="#order" data-order><span class="ico">🍗</span><h4>Fried Chicken</h4><span>Wings, fillets &amp; boxes</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🍕</span><h4>Pizza</h4><span>Stone-baked, 9" &amp; 12"</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🍔</span><h4>Burgers</h4><span>Fillet, zinger &amp; more</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🌶️</span><h4>Loaded Wings</h4><span>Spicy, BBQ &amp; buffalo</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🥙</span><h4>Wraps &amp; Kebabs</h4><span>Fresh &amp; filling</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🍟</span><h4>Sides</h4><span>Chips, rings &amp; dips</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🥤</span><h4>Drinks</h4><span>Cans, bottles &amp; shakes</span></a>
+        <a class="mcat rv" href="#order" data-order><span class="ico">🍩</span><h4>Desserts</h4><span>Cookie dough &amp; more</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why -->
+  <section class="band" id="why" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Why Chesters</p>
+        <h2>Cooked Fresh, <span class="red">Every Time</span></h2>
+      </div>
+      <div class="why">
+        <div class="wcard rv"><div class="ico">🔥</div><h4>Made To Order</h4><p>Every meal cooked fresh when you order — never sitting under a lamp.</p></div>
+        <div class="wcard rv"><div class="ico">🛵</div><h4>Fast Delivery</h4><p>Hot food to your door across Stockport, or ready to collect in minutes.</p></div>
+        <div class="wcard rv"><div class="ico">💯</div><h4>Halal &amp; Fresh</h4><p>Quality halal chicken and fresh ingredients you can taste.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order band -->
+  <section class="band order-band">
+    <div class="wrap">
+      <p class="eyebrow rv">Hungry?</p>
+      <h2 class="rv">Order In <span class="gold">30 Seconds</span>.</h2>
+      <p class="rv">Delivery or collection, paid online — no phone queue, no waiting on hold. Your food, sorted.</p>
+      <div class="rv">
+        <a class="btn btn-red" href="#order" data-order>Start your order</a>
+        <a class="btn btn-ghost" href="tel:01612220270">Call 0161 222 0270</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit -->
+  <section class="band" id="visit">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Find Us</p>
+        <h2>Delivery &amp; <span class="red">Collection</span></h2>
+      </div>
+      <div class="visit">
+        <div class="vcard rv">
+          <h4>Opening Hours</h4>
+          <ul class="hours">
+            <li data-hours="12-23"><span>Monday</span><span>12:00 – 23:00</span></li>
+            <li data-hours="12-23"><span>Tuesday</span><span>12:00 – 23:00</span></li>
+            <li data-hours="12-23"><span>Wednesday</span><span>12:00 – 23:00</span></li>
+            <li data-hours="12-23"><span>Thursday</span><span>12:00 – 23:00</span></li>
+            <li data-hours="12-24"><span>Friday</span><span>12:00 – 00:00</span></li>
+            <li data-hours="12-24"><span>Saturday</span><span>12:00 – 00:00</span></li>
+            <li data-hours="12-23"><span>Sunday</span><span>12:00 – 23:00</span></li>
+          </ul>
+        </div>
+        <div class="vcard rv">
+          <h4>Where To Find Us</h4>
+          <address>
+            408 Manchester Road<br>
+            Stockport, SK4 5BY<br><br>
+            <b style="color:var(--cream)">0161 222 0270</b><br>
+            order@chestersstockport.co.uk
+          </address>
+          <div class="map" aria-hidden="true"><span class="pin"></span></div>
+          <div class="deliv">
+            <span class="pill">🛵 Delivery from £1.50</span>
+            <span class="pill">🏪 Free collection</span>
+            <span class="pill">⏰ Open till late</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="band" id="reviews" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Google Reviews</p>
+        <h2>What Stockport <span class="red">Says</span></h2>
+      </div>
+      <div class="reviews">
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Best chicken in Stockport, no contest. Wings are unreal and delivery was quicker than expected. Ordering online is so much easier."</p><div class="who"><span class="av">R</span><div><b>Ryan T.</b><small>Regular</small></div></div></div>
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Got the Great Deal D for the family and it was massive. Everything hot and fresh. Will be ordering every Friday now."</p><div class="who"><span class="av">S</span><div><b>Sana M.</b><small>Heaton Chapel</small></div></div></div>
+        <div class="rev rv"><div class="stars">★★★★★</div><p>"Pizza and wings combo is class for the price. Easy to order, paid online, done. Proper local gem."</p><div class="who"><span class="av">D</span><div><b>Daniel K.</b><small>Stockport</small></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="foot">
+    <div class="wrap">
+      <a class="brand" href="#top"><span class="star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.7 6.2 6.7.6-5.1 4.4 1.6 6.6L12 16.4 6.1 20l1.6-6.6L2.6 9l6.7-.6z"/></svg></span> Chesters</a>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg></a>
+        <a href="tel:01612220270" aria-label="Call us"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1z"/></svg></a>
+      </div>
+      <small>© Chesters · 408 Manchester Rd, Stockport. A sample design by Billy Digitals.</small>
+    </div>
+  </footer>
+
+  <!-- Order modal (demo) -->
+  <div class="modal" id="order" role="dialog" aria-modal="true" aria-label="Start your order">
+    <div class="modal-card">
+      <button class="modal-x" data-close aria-label="Close">✕</button>
+      <h3>Start Your Order</h3>
+      <p class="sub">Delivery or collection — pay securely online.</p>
+      <div class="otype">
+        <button type="button" class="on">🛵 Delivery</button>
+        <button type="button">🏪 Collection</button>
+      </div>
+      <form id="orderForm">
+        <div class="field"><label for="oPostcode">Delivery postcode</label><input type="text" id="oPostcode" placeholder="SK4 …" required></div>
+        <div class="field"><label for="oName">Name</label><input type="text" id="oName" placeholder="Your name" required></div>
+        <div class="field"><label for="oPhone">Mobile</label><input type="tel" id="oPhone" placeholder="07…" required></div>
+        <button class="btn btn-red" type="submit">See the menu &amp; order</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Nice one — this is where your live order would begin. 🍗</div>
+
+  <script src="takeaway.js"></script>
+  <script src="backbar.js" defer></script>
+</body>
+</html>
