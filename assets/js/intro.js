@@ -17,6 +17,10 @@ import * as THREE from "three";
   var seen = false;
   try { seen = sessionStorage.getItem("bdIntroSeen") === "1"; } catch (e) {}
 
+  // Reveal the page instantly so the intro shows the moment the visitor
+  // arrives (the opaque overlay covers the homepage, so there's no flash).
+  document.body.classList.add("page-ready");
+
   function signalDone() { try { document.dispatchEvent(new CustomEvent("bd:introdone")); } catch (e) {} }
   function finishInstant() {
     document.body.classList.remove("intro-lock");
@@ -42,46 +46,52 @@ import * as THREE from "three";
   var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
   camera.position.set(0, 0, 16);
 
-  // ---- Sample the wordmark into target points ----
+  // ---- Sample the wordmark into target points (with tight bounding box
+  //      so the text fills the screen no matter the font metrics) ----
   function sampleText() {
     var c = document.createElement("canvas");
-    var cw = 1600, ch = 500; c.width = cw; c.height = ch;
+    var cw = 1600, ch = 560; c.width = cw; c.height = ch;
     var x = c.getContext("2d");
     x.fillStyle = "#fff";
     x.textAlign = "center"; x.textBaseline = "middle";
-    // Two lines so it reads big on any aspect
-    x.font = "700 190px 'Space Grotesk', 'Arial Black', sans-serif";
-    x.fillText("BILLY", cw / 2, ch * 0.33);
-    x.font = "700 132px 'Space Grotesk', 'Arial Black', sans-serif";
-    x.fillText("DIGITALS", cw / 2, ch * 0.72);
+    x.font = "700 210px 'Space Grotesk', 'Arial Black', sans-serif";
+    x.fillText("BILLY", cw / 2, ch * 0.31);
+    x.font = "700 158px 'Space Grotesk', 'Arial Black', sans-serif";
+    x.fillText("DIGITALS", cw / 2, ch * 0.73);
     var data = x.getImageData(0, 0, cw, ch).data;
-    var pts = [];
-    var step = mobile ? 6 : 5;
+    var pts = [], minX = cw, maxX = 0, minY = ch, maxY = 0;
+    var step = 4;
     for (var py = 0; py < ch; py += step) {
       for (var px = 0; px < cw; px += step) {
         if (data[(py * cw + px) * 4 + 3] > 130) {
           pts.push([px, py]);
+          if (px < minX) minX = px; if (px > maxX) maxX = px;
+          if (py < minY) minY = py; if (py > maxY) maxY = py;
         }
       }
     }
-    return { pts: pts, cw: cw, ch: ch };
+    return { pts: pts, bw: (maxX - minX) || cw, bh: (maxY - minY) || ch, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2 };
   }
   var s = sampleText();
   var N = s.pts.length;
   if (N < 200) { renderer.dispose(); finishInstant(); return; }
 
-  var span = mobile ? 12 : 15;                 // world width of the wordmark
-  var scale = span / s.cw;
+  // Fill ~90% of the visible width at the text plane, so it's big and
+  // prominent on every screen (and never wider than a phone).
+  var halfH = 16 * Math.tan(55 * Math.PI / 360);
+  var visW = 2 * halfH * (W / H);
+  var span = Math.min(visW * 0.9, 24);
+  var scale = span / s.bw;
   var target = new Float32Array(N * 3);
   var start = new Float32Array(N * 3);
   var cur = new Float32Array(N * 3);
   var vel = new Float32Array(N * 3);
   var col = new Float32Array(N * 3);
-  var C1 = new THREE.Color("#2b7fff"), C2 = new THREE.Color("#22d3ee"), C3 = new THREE.Color("#7c3aed");
+  var C1 = new THREE.Color("#3b8bff"), C2 = new THREE.Color("#38dcff"), C3 = new THREE.Color("#9b7cff");
   for (var i = 0; i < N; i++) {
     var px = s.pts[i][0], py = s.pts[i][1];
-    var tx = (px - s.cw / 2) * scale;
-    var ty = -(py - s.ch / 2) * scale;
+    var tx = (px - s.cx) * scale;
+    var ty = -(py - s.cy) * scale;
     var tz = (Math.random() - 0.5) * 0.6;
     target[i * 3] = tx; target[i * 3 + 1] = ty; target[i * 3 + 2] = tz;
     // start scattered on a big shell (the "explosion" seed)
@@ -100,7 +110,7 @@ import * as THREE from "three";
   geo.setAttribute("position", new THREE.BufferAttribute(cur, 3));
   geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
 
-  var uniforms = { uSize: { value: mobile ? 15 : 20 }, uPix: { value: renderer.getPixelRatio() }, uFade: { value: 1 } };
+  var uniforms = { uSize: { value: mobile ? 40 : 46 }, uPix: { value: renderer.getPixelRatio() }, uFade: { value: 1 } };
   var mat = new THREE.ShaderMaterial({
     uniforms: uniforms,
     vertexShader: [
@@ -110,8 +120,8 @@ import * as THREE from "three";
     ].join("\n"),
     fragmentShader: [
       "precision highp float; uniform float uFade; varying vec3 vC;",
-      "void main(){ vec2 uv=gl_PointCoord-0.5; float d=length(uv); float a=smoothstep(0.5,0.05,d);",
-      "if(a<=0.001) discard; gl_FragColor=vec4(vC, a*uFade); }"
+      "void main(){ vec2 uv=gl_PointCoord-0.5; float d=length(uv); float a=smoothstep(0.5,0.04,d);",
+      "if(a<=0.001) discard; vec3 col=vC*1.25 + smoothstep(0.42,0.0,d)*0.35; gl_FragColor=vec4(col, a*uFade); }"
     ].join("\n"),
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false
   });
@@ -169,13 +179,12 @@ import * as THREE from "three";
     var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now; t += dt;
 
     if (phase === 0) {
-      var ease = 0;
       for (var i = 0; i < N; i++) {
-        cur[i * 3] += (target[i * 3] - cur[i * 3]) * 0.05;
-        cur[i * 3 + 1] += (target[i * 3 + 1] - cur[i * 3 + 1]) * 0.05;
-        cur[i * 3 + 2] += (target[i * 3 + 2] - cur[i * 3 + 2]) * 0.05;
+        cur[i * 3] += (target[i * 3] - cur[i * 3]) * 0.14;
+        cur[i * 3 + 1] += (target[i * 3 + 1] - cur[i * 3 + 1]) * 0.14;
+        cur[i * 3 + 2] += (target[i * 3 + 2] - cur[i * 3 + 2]) * 0.14;
       }
-      if (t > 2.4) { phase = 1; holdAt = t; if (cue) cue.classList.add("show"); }
+      if (t > 1.1) { phase = 1; holdAt = t; if (cue) cue.classList.add("show"); }
     } else if (phase === 1) {
       // gentle shimmer while holding the wordmark
       for (var j = 0; j < N; j++) {
