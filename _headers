@@ -1,0 +1,19 @@
+# Cloudflare headers — security posture + caching for immutable assets.
+# HTML/CSS/JS are left to Cloudflare's defaults so deploys go live instantly.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Strict-Transport-Security: max-age=15552000; includeSubDomains
+
+# Vendored libraries never change — cache them hard.
+/templates/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts and the favicon are effectively static.
+/assets/favicon-192.png
+  Cache-Control: public, max-age=2592000
+/favicon.ico
+  Cache-Control: public, max-age=2592000
