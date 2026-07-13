@@ -110,6 +110,8 @@ async function handleQuote(request, env) {
 
   const name = String(body.name || "").trim();
   const email = String(body.email || "").trim();
+  const phone = String(body.phone || "").trim();
+  const business = String(body.business || "").trim();
   const category = String(body.category || "").trim();
   const plan = String(body.plan || "").trim();
   const message = String(body.message || "").trim();
@@ -119,8 +121,8 @@ async function handleQuote(request, env) {
     return json({ error: "A valid email address is required." }, 400);
   }
 
-  const subject = "New project enquiry — " + (category || "Website") + " (" + (plan || "—") + ")";
-  const { html, text } = quoteEmail({ name, email, category, plan, message });
+  const subject = "New project enquiry — " + (business || name) + " · " + (category || "Website");
+  const { html, text } = quoteEmail({ name, email, phone, business, category, plan, message });
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -144,7 +146,9 @@ function quoteEmail(d) {
   const esc = (s) => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
   const rows = [
     ["Name", d.name],
+    ["Business", d.business || "—"],
     ["Email", d.email],
+    ["Phone", d.phone || "—"],
     ["Website type", d.category || "—"],
     ["Plan", d.plan || "—"],
   ];
@@ -152,7 +156,9 @@ function quoteEmail(d) {
 `New project enquiry — via billydigitals.com
 
 Name: ${d.name}
+Business: ${d.business || "—"}
 Email: ${d.email}
+Phone: ${d.phone || "—"}
 Website type: ${d.category || "—"}
 Plan: ${d.plan || "—"}
 
@@ -173,7 +179,12 @@ Reply straight to this email to answer ${d.name}.`;
       <tr><td style="height:4px;background:linear-gradient(100deg,#2b7fff,#38bdf8 50%,#22d3ee);font-size:0;line-height:0;">&nbsp;</td></tr>
       <tr><td style="padding:26px 40px 6px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;color:#3a476a;">
-          ${rows.map(([k, v]) => `<tr><td style="padding:6px 0;width:140px;color:#8a97b5;">${k}</td><td style="padding:6px 0;color:#1a2540;font-weight:600;">${esc(v)}</td></tr>`).join("")}
+          ${rows.map(([k, v]) => {
+            let val = esc(v);
+            if (k === "Email" && v && v !== "—") val = `<a href="mailto:${esc(v)}" style="color:#1d6ff5;text-decoration:none;">${esc(v)}</a>`;
+            if (k === "Phone" && v && v !== "—") val = `<a href="tel:${v.replace(/[^0-9+]/g, "")}" style="color:#1d6ff5;text-decoration:none;">${esc(v)}</a>`;
+            return `<tr><td style="padding:6px 0;width:140px;color:#8a97b5;">${k}</td><td style="padding:6px 0;color:#1a2540;font-weight:600;">${val}</td></tr>`;
+          }).join("")}
         </table>
       </td></tr>
       <tr><td style="padding:14px 40px 30px;">
