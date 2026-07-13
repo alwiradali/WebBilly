@@ -261,22 +261,22 @@ function initForm() {
     btn.textContent = "Sending…";
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      // Delivered straight from our own site (Cloudflare Worker → Resend),
+      // from hello@billydigitals.com, with the customer set as reply-to.
+      const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: subject,
-          from_name: "Billy Digitals Website",
           name: name,
           email: email,
-          "website type": category,
+          category: category,
           plan: plan,
           message: message,
+          botcheck: botcheck && botcheck.checked ? 1 : 0,
         }),
       });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message || "Submission failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || "Submission failed");
       window.location.href = "thank-you.html";
     } catch (err) {
       // Delivery service unreachable — fall back to the visitor's email app

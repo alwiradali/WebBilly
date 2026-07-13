@@ -27,6 +27,10 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleSendReview(request, env);
     }
+    if (url.pathname === "/api/quote") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleQuote(request, env);
+    }
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
@@ -82,6 +86,108 @@ async function handleSendReview(request, env) {
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
   return json({ ok: true, sent_to: email });
+}
+
+async function handleQuote(request, env) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  // Same-origin guard: only accept posts made from our own site.
+  const origin = request.headers.get("origin") || "";
+  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
+    return json({ error: "Forbidden" }, 403);
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+
+  // Honeypot — a real person never fills this. Pretend success so bots move on.
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim();
+  const email = String(body.email || "").trim();
+  const category = String(body.category || "").trim();
+  const plan = String(body.plan || "").trim();
+  const message = String(body.message || "").trim();
+
+  if (!name || !message) return json({ error: "Please include your name and a message." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+
+  const subject = "New project enquiry — " + (category || "Website") + " (" + (plan || "—") + ")";
+  const { html, text } = quoteEmail({ name, email, category, plan, message });
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + env.RESEND_API_KEY,
+      "content-type": "application/json",
+    },
+    // Sent from our own domain, straight to our inbox, with the customer set
+    // as reply-to so hitting "Reply" answers them directly.
+    body: JSON.stringify({ from: FROM, to: [REPLY_TO], reply_to: email, subject, html, text }),
+  });
+
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  return json({ ok: true });
+}
+
+function quoteEmail(d) {
+  const esc = (s) => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  const rows = [
+    ["Name", d.name],
+    ["Email", d.email],
+    ["Website type", d.category || "—"],
+    ["Plan", d.plan || "—"],
+  ];
+  const text =
+`New project enquiry — via billydigitals.com
+
+Name: ${d.name}
+Email: ${d.email}
+Website type: ${d.category || "—"}
+Plan: ${d.plan || "—"}
+
+Project details:
+${d.message}
+
+Reply straight to this email to answer ${d.name}.`;
+
+  const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#eef2fb;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#1a2540;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2fb;padding:28px 12px;"><tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(20,40,90,.10);">
+      <tr><td style="background:#0a1226;padding:22px 40px;">
+        <span style="color:#ffffff;font-size:18px;font-weight:700;">New project enquiry</span>
+        <span style="display:block;color:#8fb2ff;font-size:13px;margin-top:2px;">via billydigitals.com</span>
+      </td></tr>
+      <tr><td style="height:4px;background:linear-gradient(100deg,#2b7fff,#38bdf8 50%,#22d3ee);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:26px 40px 6px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;color:#3a476a;">
+          ${rows.map(([k, v]) => `<tr><td style="padding:6px 0;width:140px;color:#8a97b5;">${k}</td><td style="padding:6px 0;color:#1a2540;font-weight:600;">${esc(v)}</td></tr>`).join("")}
+        </table>
+      </td></tr>
+      <tr><td style="padding:14px 40px 30px;">
+        <div style="font-size:13px;color:#8a97b5;margin-bottom:6px;">Project details</div>
+        <div style="font-size:15px;line-height:1.6;color:#1a2540;white-space:pre-wrap;background:#f4f7fd;border:1px solid #e4ebf7;border-radius:10px;padding:14px 16px;">${esc(d.message)}</div>
+      </td></tr>
+      <tr><td style="background:#f4f7fd;padding:16px 40px;border-top:1px solid #e4ebf7;" align="center">
+        <span style="font-size:13px;color:#8a97b5;">Reply to this email to answer <strong>${esc(d.name)}</strong> directly.</span>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+
+  return { html, text };
 }
 
 function reviewEmail(firstName) {
