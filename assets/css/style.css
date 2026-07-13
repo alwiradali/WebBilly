@@ -539,7 +539,7 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.
 
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--border); background: var(--bg-2); padding: 64px 0 0; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 34px; padding-bottom: 44px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr repeat(5, 1fr); gap: 30px; padding-bottom: 44px; }
 .footer-grid p { color: var(--muted); font-size: 0.92rem; margin-top: 14px; max-width: 300px; }
 .footer-grid h4 { font-size: 0.95rem; margin-bottom: 16px; }
 .footer-grid ul { display: grid; gap: 10px; }
