@@ -139,7 +139,87 @@ async function handleQuote(request, env) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
+
+  // Best-effort instant acknowledgement to the customer. If this fails we
+  // still succeed — the enquiry already reached our inbox.
+  try {
+    const ack = ackEmail(name.split(/\s+/)[0] || "there");
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + env.RESEND_API_KEY,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        from: FROM,
+        to: [email],
+        reply_to: REPLY_TO,
+        subject: "We've got your enquiry ✅ — Billy Digitals",
+        html: ack.html,
+        text: ack.text,
+      }),
+    });
+  } catch (e) {
+    /* ignore — the enquiry already reached us */
+  }
+
   return json({ ok: true });
+}
+
+function ackEmail(firstName) {
+  const wa = "https://wa.me/447519022117";
+  const text =
+`Hi ${firstName},
+
+Thanks for getting in touch with Billy Digitals — we've received your enquiry and we'll get back to you within 24 hours (usually much sooner).
+
+If it's urgent, message us on WhatsApp: ${wa}
+
+Talk soon,
+Billy
+Billy Digitals
+billydigitals.com`;
+
+  const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#eef2fb;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#1a2540;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Thanks — we've got your enquiry and we'll reply within 24 hours.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2fb;padding:28px 12px;"><tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(20,40,90,.10);">
+      <tr><td style="padding:0;background:#0a1226;" align="center">
+        <img src="${LOGO}" alt="Billy Digitals" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+      </td></tr>
+      <tr><td style="height:4px;background:linear-gradient(100deg,#2b7fff,#38bdf8 50%,#22d3ee);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:36px 40px 8px;">
+        <p style="margin:0 0 18px;font-size:18px;">Hi ${firstName},</p>
+        <p style="margin:0 0 18px;font-size:16px;line-height:1.6;color:#3a476a;">
+          Thanks for getting in touch with <strong>Billy Digitals</strong> — we've received your enquiry and one of us will get back to you <strong>within 24 hours</strong> (usually much sooner). 🚀
+        </p>
+        <p style="margin:0 0 26px;font-size:16px;line-height:1.6;color:#3a476a;">
+          Prefer to chat now? We're one message away.
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 40px 30px;">
+        <a href="${wa}" style="display:inline-block;background:linear-gradient(100deg,#1d6ff5,#0ea5e9 55%,#0891b2);color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:15px 34px;border-radius:999px;">
+          💬 Message us on WhatsApp
+        </a>
+      </td></tr>
+      <tr><td style="padding:0 40px 36px;">
+        <p style="margin:0;font-size:16px;line-height:1.5;color:#3a476a;">
+          Talk soon,<br><strong style="color:#1a2540;">Billy</strong><br>Billy Digitals
+        </p>
+      </td></tr>
+      <tr><td style="background:#f4f7fd;padding:20px 40px;border-top:1px solid #e4ebf7;" align="center">
+        <p style="margin:0;font-size:13px;color:#8a97b5;">
+          <a href="https://www.billydigitals.com" style="color:#1d6ff5;text-decoration:none;">billydigitals.com</a>
+          &nbsp;·&nbsp; Just reply to this email to reach us directly.
+        </p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+
+  return { html, text };
 }
 
 function quoteEmail(d) {
