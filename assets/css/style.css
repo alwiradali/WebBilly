@@ -522,6 +522,7 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
 .field label { font-size: 0.86rem; font-weight: 600; color: #cfd3ea; }
+.field label .opt { font-weight: 400; color: #8a93b5; font-size: 0.92em; }
 .field input, .field select, .field textarea {
   background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 12px;
   padding: 13px 15px; font-size: 0.95rem; color: var(--text); width: 100%;

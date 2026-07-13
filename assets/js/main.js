@@ -240,17 +240,23 @@ function initForm() {
     e.preventDefault();
     const name = document.getElementById("f-name").value.trim();
     const email = document.getElementById("f-email").value.trim();
+    const phone = (document.getElementById("f-phone") || {}).value ? document.getElementById("f-phone").value.trim() : "";
+    const business = (document.getElementById("f-business") || {}).value ? document.getElementById("f-business").value.trim() : "";
     const category = document.getElementById("f-category").value;
     const plan = document.getElementById("f-plan").value;
     const message = document.getElementById("f-message").value.trim();
     const botcheck = form.querySelector('[name="botcheck"]');
 
-    if (!name || !email || !message) {
-      showToast("Please fill in your name, email and message.");
+    if (!name || !email || !phone || !message) {
+      showToast("Please fill in your name, email, phone and message.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Please enter a valid email address.");
+      return;
+    }
+    if (phone.replace(/\D/g, "").length < 7) {
+      showToast("Please enter a valid phone number.");
       return;
     }
     if (botcheck && botcheck.checked) return; // spam bot filled the honeypot
@@ -269,6 +275,8 @@ function initForm() {
         body: JSON.stringify({
           name: name,
           email: email,
+          phone: phone,
+          business: business,
           category: category,
           plan: plan,
           message: message,
@@ -283,6 +291,8 @@ function initForm() {
       const body =
         "Name: " + name + "\n" +
         "Email: " + email + "\n" +
+        "Phone: " + phone + "\n" +
+        "Business: " + (business || "—") + "\n" +
         "Website type: " + category + "\n" +
         "Plan: " + plan + "\n\n" +
         "Project details:\n" + message;
@@ -600,6 +610,77 @@ function initChat() {
     send(text);
   });
 
+  /* ---------- In-chat lead capture ----------
+     When a visitor wants a quote / to talk to us, Billy collects their
+     details right in the chat and sends them to our inbox via /api/quote
+     (the same route the enquiry form uses). */
+  let capture = null;
+  const CAPTURE_TRIGGER = /\b(get (a |me a )?quote|free quote|leave (my )?details|talk to (a )?human|speak to (a |someone)|start (my |a )?project|get started|enquire|enquiry|contact you|book (a )?call|request (a )?call|work with you|hire you|try again)\b/i;
+  function esc(s) {
+    return String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+  }
+  const CAPTURE_STEPS = [
+    { key: "name", ask: () => "Perfect — let's get you a free, tailored quote. 📝<br>First, what's your <strong>name</strong>?",
+      valid: (v) => v.trim().length >= 2, err: "Just your name so we know who we're chatting with 🙂" },
+    { key: "business", ask: (d) => "Great to meet you, " + esc(d.name.split(/\s+/)[0]) + "! What's your <strong>business or brand name</strong>? <span style=\"opacity:.65\">(type “none” if it's personal)</span>",
+      clean: (v) => (/^(none|n\/?a|no|skip|personal)$/i.test(v.trim()) ? "" : v.trim()), valid: () => true },
+    { key: "email", ask: () => "What's the best <strong>email</strong> to send your quote to?",
+      valid: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()), err: "Hmm, that doesn't look right — mind popping your email in again? (e.g. jane@company.com)" },
+    { key: "phone", ask: () => "And a <strong>phone number</strong> we can reach you on? 📞",
+      valid: (v) => v.replace(/\D/g, "").length >= 7, err: "That number looks a little short — could you type it again?" },
+    { key: "message", ask: () => "Last one — briefly, <strong>what do you need</strong>? (new website, redesign, app, SEO, ads…)",
+      valid: (v) => v.trim().length >= 2, err: "A quick line on what you're after and we're done 👍" },
+  ];
+  function botTyping(cb) {
+    const t = document.createElement("div");
+    t.className = "msg bot typing";
+    t.innerHTML = "<i></i><i></i><i></i>";
+    msgs.appendChild(t); scrollDown();
+    setTimeout(() => { t.remove(); cb(); }, 480 + Math.random() * 320);
+  }
+  function startCapture() {
+    capture = { i: 0, data: {} };
+    setChips([]);
+    botTyping(() => botSay(CAPTURE_STEPS[0].ask(capture.data)));
+  }
+  function handleCapture(text) {
+    const v = text.trim();
+    if (/^(cancel|stop|never ?mind|forget it)$/i.test(v)) {
+      capture = null;
+      botTyping(() => botSay("No problem — I'm here whenever you're ready. 👋", ["Get a quote", "Show me the plans"]));
+      return;
+    }
+    const step = CAPTURE_STEPS[capture.i];
+    const val = step.clean ? step.clean(v) : v;
+    if (!step.valid(val)) { botTyping(() => botSay(step.err)); return; }
+    capture.data[step.key] = val;
+    capture.i++;
+    if (capture.i >= CAPTURE_STEPS.length) { submitCapture(); return; }
+    botTyping(() => botSay(CAPTURE_STEPS[capture.i].ask(capture.data)));
+  }
+  function submitCapture() {
+    const d = capture.data;
+    botTyping(() => botSay("Sending your details through… ⏳"));
+    fetch("/api/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: d.name, email: d.email, phone: d.phone, business: d.business,
+        category: "Chatbot enquiry", plan: "—", message: d.message, botcheck: 0,
+      }),
+    })
+      .then((r) => r.json().catch(() => ({})).then((j) => ({ ok: r.ok && j.ok })))
+      .then((res) => {
+        if (!res.ok) throw new Error("send failed");
+        window.bdTrack && bdTrack("chat_lead");
+        botSay("🎉 All done, " + esc(d.name.split(/\s+/)[0]) + "! Your enquiry's on its way to our team — we'll be in touch within 24 hours, usually much sooner. Anything else I can help with?", ["Show me the plans", "Hosting plans"]);
+      })
+      .catch(() => {
+        botSay("Hmm, something glitched sending that. 😅 Please email <a href=\"mailto:" + CONFIG.email + "\">" + CONFIG.email + "</a> or <a href=\"" + waUrl + "\" target=\"_blank\" rel=\"noopener\">message us on WhatsApp</a> and we'll sort it right away.", ["Try again", "Show me the plans"]);
+      })
+      .finally(() => { capture = null; });
+  }
+
   // Close panel when an in-chat anchor link is used, so the section is visible
   msgs.addEventListener("click", (e) => {
     const a = e.target.closest("a");
@@ -609,6 +690,8 @@ function initChat() {
   function send(text) {
     engaged = true;
     addMsg(text, "user");
+    if (capture) { handleCapture(text); return; }        // mid lead-capture
+    if (CAPTURE_TRIGGER.test(text)) { startCapture(); return; }
     const typing = document.createElement("div");
     typing.className = "msg bot typing";
     typing.innerHTML = "<i></i><i></i><i></i>";
