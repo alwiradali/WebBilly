@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /templates/
 Disallow: /send-review.html
+Disallow: /admin.html
 
 Sitemap: https://www.billydigitals.com/sitemap.xml
