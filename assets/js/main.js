@@ -549,7 +549,7 @@ function initChat() {
       if (!welcomed) {
         welcomed = true;
         botSay(
-          "Hi! I'm <strong>Billy</strong> 🤖 — your assistant here at Billy Digitals. I can tell you about our services, plans and process. What are you looking to build?",
+          "Hi! I'm <strong>Billy</strong> — your assistant here at Billy Digitals. I can tell you about our services, plans and process. What are you looking to build?",
           DEFAULT_CHIPS
         );
       }
