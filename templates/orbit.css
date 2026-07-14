@@ -221,3 +221,50 @@ em{font-style:normal;background:var(--grad);-webkit-background-clip:text;backgro
   animation:spin 12s linear infinite;filter:blur(2px)}
 .cta-orbit .core{position:absolute;inset:36%;border-radius:50%;background:radial-gradient(circle,rgba(43,107,255,.55),transparent 70%);filter:blur(14px)}
 .cta a.magnetic{position:relative;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 20px 60px -18px rgba(80,120,255,.9),0 0 60px -6px rgba(43,107,255,.5)}
+
+/* ============================================================
+   Real imagery + animations (added)
+   ============================================================ */
+/* image feature cards */
+.b-card.media{padding:0;overflow:hidden}
+.b-card.media .b-shot{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;perspective:800px}
+.b-card.media.tall .b-shot{aspect-ratio:auto;flex:1}
+.b-shot img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.05);transition:transform .7s cubic-bezier(.2,.7,.2,1);will-change:transform}
+.b-card.media:hover .b-shot img{transform:scale(1.11)}
+.b-shot::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(5,6,14,.55))}
+.b-shot.kenburns img{animation:kenburns 16s ease-in-out infinite alternate}
+@keyframes kenburns{from{transform:scale(1.06) translate(0,0)}to{transform:scale(1.16) translate(-2.5%,-2%)}}
+.b-shot .play{position:absolute;left:50%;top:50%;width:56px;height:56px;transform:translate(-50%,-50%);border-radius:50%;
+  background:rgba(255,255,255,.14);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;z-index:2}
+.b-shot .play::before{content:"";border-left:14px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.b-shot .play::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(255,255,255,.35);animation:playPulse 2.2s ease-out infinite}
+@keyframes playPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+.b-card.media .b-txt{padding:20px 24px 24px}
+.b-card.media h3{margin:0 0 8px}
+
+/* electric moving border on tiles */
+@property --elecA{syntax:'<angle>';inherits:false;initial-value:0deg}
+.elec{position:relative;isolation:isolate}
+.elec::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;z-index:3;pointer-events:none;
+  background:conic-gradient(from var(--elecA),transparent 0 62%,#38bdf8 74%,#a855f7 84%,#22d3ee 92%,transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:elecSpin 3.6s linear infinite;filter:drop-shadow(0 0 6px rgba(56,189,248,.6))}
+@keyframes elecSpin{to{--elecA:360deg}}
+@media (prefers-reduced-motion:reduce){.elec::after{animation:none}}
+
+/* CTA orbital clock (real image + ticks + sweeping hand) */
+.cta-clock{position:relative;width:min(300px,72vw);aspect-ratio:1;margin:0 auto 8px;display:block}
+.cta-clock .clock-glow{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,rgba(43,107,255,.5),transparent 66%);filter:blur(24px);animation:clockPulse 4.5s ease-in-out infinite}
+@keyframes clockPulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+.cta-clock .clock-core{position:absolute;inset:6%;width:88%;height:88%;object-fit:contain;border-radius:50%;animation:spinSlow 44s linear infinite;filter:drop-shadow(0 0 18px rgba(80,120,255,.5))}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.cta-clock .clock-ticks{position:absolute;inset:0;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(180,210,255,.55) 0 0.5deg,transparent 0.5deg 6deg);
+  -webkit-mask:radial-gradient(closest-side,transparent 88%,#000 89%);mask:radial-gradient(closest-side,transparent 88%,#000 89%);
+  animation:spinSlowRev 60s linear infinite}
+@keyframes spinSlowRev{to{transform:rotate(-360deg)}}
+.cta-clock .clock-hand{position:absolute;left:50%;top:50%;width:2px;height:44%;background:linear-gradient(var(--c2),transparent);
+  transform-origin:bottom center;transform:translate(-50%,-100%);border-radius:2px;box-shadow:0 0 10px var(--c2);animation:sweep 6s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes sweep{to{transform:translate(-50%,-100%) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.cta-clock .clock-core,.cta-clock .clock-ticks,.cta-clock .clock-hand,.cta-clock .clock-glow{animation:none}}
