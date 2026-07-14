@@ -1423,3 +1423,32 @@ body.intro-lock { overflow: hidden; }
   -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
   filter: url(#electricEdge) blur(7px) saturate(1.3);
 }
+
+/* ============================================================
+   Flagship spotlight — ORBIT featured on its own
+   ============================================================ */
+.flagship{position:relative;overflow:hidden}
+.flagship::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(50% 60% at 78% 40%, rgba(43,107,255,.16), transparent 60%),
+             radial-gradient(45% 55% at 20% 70%, rgba(183,75,245,.13), transparent 60%);}
+.flagship-in{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,5vw,64px);align-items:center}
+@media (max-width:900px){.flagship-in{grid-template-columns:1fr;gap:28px}}
+.flagship-txt h2{font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.6vw,3.4rem);line-height:1.04;letter-spacing:-.02em;margin:10px 0 14px}
+.flagship-txt .sub{color:var(--muted);font-size:1.08rem;line-height:1.6;max-width:34em}
+.flagship-tags{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 26px}
+.flagship-tags span{font-size:.82rem;color:var(--muted);border:1px solid var(--border);padding:7px 14px;border-radius:999px}
+.flagship-card{position:relative;display:block;border-radius:20px;overflow:hidden;border:1px solid var(--border);
+  background:#05060e;box-shadow:0 40px 100px -30px rgba(0,0,0,.8);transition:transform .5s cubic-bezier(.2,.7,.2,1);isolation:isolate}
+.flagship-card:hover{transform:translateY(-6px)}
+.flagship-card img{width:100%;display:block;aspect-ratio:1264/848;object-fit:cover}
+.flagship-card .flag-glow{position:absolute;inset:-2px;z-index:-1;border-radius:22px;
+  background:conic-gradient(from var(--elecA,0deg),transparent 0 55%,#2b6bff 66%,#22d3ee 78%,#b74bf5 90%,transparent 100%);
+  filter:blur(14px);opacity:.8;animation:elecSpin 4s linear infinite}
+.flagship-card .tthumb-chrome{position:absolute;top:0;left:0;right:0;height:38px;display:flex;align-items:center;gap:7px;padding:0 15px;z-index:2;background:linear-gradient(180deg,rgba(6,8,18,.85),transparent)}
+.flagship-card .tthumb-chrome i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.3)}
+.flagship-card .tthumb-chrome i:nth-child(1){background:#ff5f57}.flagship-card .tthumb-chrome i:nth-child(2){background:#febc2e}.flagship-card .tthumb-chrome i:nth-child(3){background:#28c840}
+.flagship-open{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;
+  font-family:var(--font-display);font-weight:700;font-size:1rem;color:#04121f;background:var(--grad-btn);
+  padding:13px 24px;border-radius:999px;opacity:0;transition:opacity .3s;box-shadow:0 12px 30px -8px rgba(43,127,255,.8)}
+.flagship-card:hover .flagship-open{opacity:1}
+@media (prefers-reduced-motion:reduce){.flagship-card .flag-glow{animation:none}}
