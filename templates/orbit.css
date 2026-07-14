@@ -57,7 +57,9 @@ em{font-style:normal;background:var(--grad);-webkit-background-clip:text;backgro
 
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
-.orbit-gl{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.orbit-gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.5;
+  -webkit-mask-image:radial-gradient(135% 95% at 50% 16%,#000 20%,transparent 80%);
+  mask-image:radial-gradient(135% 95% at 50% 16%,#000 20%,transparent 80%)}
 .hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(5,6,14,.55) 100%),linear-gradient(180deg,transparent 55%,var(--bg) 100%)}
 .hero-inner{position:relative;z-index:2;width:min(1180px,92vw);margin-inline:auto;padding-top:12vh}
 .hero-eyebrow{opacity:0;transform:translateY(10px);display:inline-block;margin-bottom:22px;
@@ -397,17 +399,18 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
    Hero aurora backdrop behind the alien Core (also the fallback
    if WebGL is unavailable). Cheap animated radial gradients.
    ============================================================ */
+/* the live caustic background (fixed, page-wide) carries the hero now;
+   the CSS aurora only shows as a gentle fallback if WebGL is unavailable */
 .hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(42% 40% at 30% 32%, rgba(43,107,255,.20), transparent 60%),
-    radial-gradient(40% 38% at 72% 42%, rgba(183,75,245,.16), transparent 60%),
-    radial-gradient(46% 40% at 50% 78%, rgba(34,211,238,.12), transparent 62%);
-  filter:blur(10px); animation: heroAur 18s ease-in-out infinite; }
+    radial-gradient(42% 40% at 30% 32%, rgba(43,107,255,.14), transparent 60%),
+    radial-gradient(40% 38% at 72% 42%, rgba(183,75,245,.12), transparent 60%),
+    radial-gradient(46% 40% at 50% 78%, rgba(34,211,238,.08), transparent 62%);
+  filter:blur(12px); animation: heroAur 18s ease-in-out infinite; }
 @keyframes heroAur{
-  0%,100%{ transform:translate3d(0,0,0) scale(1); opacity:.9 }
-  50%    { transform:translate3d(0,-2%,0) scale(1.08); opacity:1 }
+  0%,100%{ transform:translate3d(0,0,0) scale(1); opacity:.7 }
+  50%    { transform:translate3d(0,-2%,0) scale(1.08); opacity:.85 }
 }
-.orbit-gl{ z-index:1 }        /* the Core sits above the aurora */
 .hero-scrim, .hero-inner{ z-index:2 }
 @media (prefers-reduced-motion:reduce){ .hero::after{ animation:none } }
 
