@@ -66,19 +66,19 @@ Notes:
 - **Image:** `assets/catalogue/07-starter-care.png`
 - **Link:** https://www.billydigitals.com/#care
 - **Description:**
-  Keep growing while we keep watch. Monthly SEO health check, Google Business Profile monitoring, up to 2 content updates/month, broken-link & speed checks, and a monthly performance report. Includes £10/month of free social media advertising. £60/month.
+  Keep growing while we keep watch. Monthly SEO health check, Google Business Profile monitoring, up to 2 content updates/month, broken-link & speed checks, and a monthly performance report. £60/month.
 
 ### 8. Growth Care — £70/month (Most popular)
 - **Image:** `assets/catalogue/08-growth-care.png`
 - **Link:** https://www.billydigitals.com/#care
 - **Description:**
-  For businesses ready to actively climb the rankings. Everything in Starter Care plus Google Business management & posts, keyword & ranking tracking, up to 5 content updates/month and priority support. Includes £20/month of free social media advertising. £70/month.
+  For businesses ready to actively climb the rankings. Everything in Starter Care plus Google Business management & posts, keyword & ranking tracking, up to 5 content updates/month and priority support. £70/month.
 
 ### 9. Complete Care — £80/month
 - **Image:** `assets/catalogue/09-complete-care.png`
 - **Link:** https://www.billydigitals.com/#care
 - **Description:**
-  Your full-service SEO & growth department. Everything in Growth Care plus full on-page SEO, competitor tracking, unlimited minor content updates, a monthly strategy call and reputation management. Includes £30/month of free social media advertising. £80/month.
+  Your full-service SEO & growth department. Everything in Growth Care plus full on-page SEO, competitor tracking, unlimited minor content updates, a monthly strategy call and reputation management. £80/month.
 
 ---
 
