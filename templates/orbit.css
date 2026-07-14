@@ -379,3 +379,16 @@ em{font-style:normal;background:var(--grad);-webkit-background-clip:text;backgro
   background:conic-gradient(from var(--elecA),transparent 0 55%,#38bdf8 66%,#a855f7 78%,#22d3ee 88%,#38bdf8 96%,transparent 100%);
   filter:drop-shadow(0 0 8px rgba(56,189,248,.85)) drop-shadow(0 0 14px rgba(168,85,247,.5));
   animation-duration:3.2s}
+
+/* ============================================================
+   Ambient page glow so scrolling never shows pure-black voids
+   ============================================================ */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60% 44% at 12% 18%, rgba(43,107,255,.13), transparent 62%),
+    radial-gradient(52% 42% at 88% 64%, rgba(183,75,245,.11), transparent 62%),
+    radial-gradient(60% 40% at 50% 108%, rgba(34,211,238,.09), transparent 60%);}
+/* lift card visibility so they don't read as black boxes */
+.b-card{background:rgba(255,255,255,.05)}
+.h-figure{background:linear-gradient(160deg,#0e1430,#0a0e22)}
+.app{background:linear-gradient(180deg,#0e1330,#0a0e20)}

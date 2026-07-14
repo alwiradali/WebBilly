@@ -1374,3 +1374,52 @@ body.intro-lock { overflow: hidden; }
 .tcard:hover .tthumb::after { animation-duration: 1.6s; filter: drop-shadow(0 0 11px var(--t2,#38bdf8)) drop-shadow(0 0 20px var(--t1,#a855f7)); }
 @keyframes elecSpin { to { --elecA: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .tthumb::after { animation: none; } }
+
+/* ============================================================
+   Blaze — huly-style fire/electric border (featured always on,
+   others on hover). Sparks rise from the card.
+   ============================================================ */
+@property --blazeA { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.blaze { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
+  --bz1:#ff6a00; --bz2:#ffc23d; --bz3:#ff3d00; }
+.blaze ~ * { position: relative; z-index: 1; }
+.blaze::before, .blaze::after { content:""; position:absolute; border-radius: inherit; opacity: 0;
+  transition: opacity .4s ease; animation: blazeSpin 3.6s linear infinite; }
+.blaze::before { inset:-6px; border-radius: 26px;
+  background: conic-gradient(from var(--blazeA), var(--bz1), var(--bz2), var(--bz3), var(--bz2), var(--bz1));
+  filter: blur(13px) saturate(1.35); }
+.blaze::after { inset:0; padding:2.5px;
+  background: conic-gradient(from var(--blazeA), var(--bz2), var(--bz1), #fff6dd, var(--bz1), var(--bz2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  filter: drop-shadow(0 0 5px var(--bz1)) drop-shadow(0 0 12px var(--bz2)); }
+.blaze i { position:absolute; bottom:8%; width:4px; height:4px; border-radius:50%; background:#ffe0a0;
+  box-shadow:0 0 8px 1px #ff8a00; opacity:0; }
+.blaze i:nth-child(1){ left:22% } .blaze i:nth-child(2){ left:54% } .blaze i:nth-child(3){ left:80% }
+/* lit states: featured always, any plan on hover */
+.plan-featured .blaze::before { opacity:.9 } .plan-featured .blaze::after { opacity:1 }
+.plan:hover .blaze::before { opacity:.9 } .plan:hover .blaze::after { opacity:1 }
+.plan-featured .blaze i, .plan:hover .blaze i { animation: ember 2.6s ease-in infinite; }
+.plan-featured .blaze i:nth-child(2){ animation-delay:1s } .plan-featured .blaze i:nth-child(3){ animation-delay:1.9s }
+@keyframes blazeSpin { to { --blazeA: 360deg; } }
+@keyframes ember { 0%{opacity:0;transform:translateY(0) scale(1)} 15%{opacity:1} 100%{opacity:0;transform:translateY(-120px) scale(.3)} }
+@media (prefers-reduced-motion: reduce) { .blaze::before,.blaze::after,.blaze i { animation: none; } .blaze i{opacity:0} }
+
+/* ---- electric-wave texture + per-tier colours (pricing only) ---- */
+#plans .blaze::after { filter: url(#electricEdge) drop-shadow(0 0 5px var(--bz1)) drop-shadow(0 0 12px var(--bz2)); }
+#plans .blaze::before { filter: url(#electricEdge) blur(9px) saturate(1.3); }
+#plans .plan .blaze { --bz1:#22d3ee; --bz2:#34d399; --bz3:#22d3ee; }        /* Standard = teal-green */
+#plans .plan-featured .blaze { --bz1:#ff7a00; --bz2:#ffc23d; --bz3:#ff3d00; } /* Premium = fire */
+#plans .plan-featured ~ .plan .blaze { --bz1:#b74bf5; --bz2:#d946ef; --bz3:#7c3aed; } /* Ultra = violet */
+/* keep the effect OFF everywhere except the pricing plans (perf) */
+#hosting .blaze::before, #hosting .blaze::after, #hosting .blaze i,
+#care .blaze::before, #care .blaze::after, #care .blaze i { opacity: 0 !important; animation: none !important; }
+
+/* fix: glow must be a RING (border only), not fill the card face */
+#plans .blaze::before {
+  inset: -1px; border-radius: inherit; padding: 4px;
+  background: conic-gradient(from var(--blazeA), var(--bz1), var(--bz2), var(--bz3), var(--bz2), var(--bz1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  filter: url(#electricEdge) blur(7px) saturate(1.3);
+}
