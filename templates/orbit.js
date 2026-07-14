@@ -24,7 +24,7 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
 
   var renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
   } catch (e) { canvas.style.display = "none"; return; }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.1 : 1.6));
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); canvas.style.display = "none"; }, false);
@@ -60,31 +60,42 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   ].join("\n");
 
   var uniforms = {
-    uTime: { value: 0 }, uAmp: { value: 0.34 }, uProg: { value: 0 },
+    uTime: { value: 0 }, uAmp: { value: 0.17 }, uProg: { value: 0 },
     uMouse: { value: new THREE.Vector3(0, 0, 1) }
   };
 
+  // Gentle, flowing displacement — a smooth breathing organism, not a spiky rock.
   var vert = [
     "uniform float uTime; uniform float uAmp; uniform vec3 uMouse; uniform float uProg;",
     "varying vec3 vN; varying vec3 vView; varying float vD;",
     noiseGLSL,
+    "float fbm(vec3 p){",
+    "  float f = snoise(p*1.1 + vec3(0.0, uTime*0.18, 0.0)) * 0.55;",
+    "  f += snoise(p*2.3 - uTime*0.14) * 0.30;",
+    "  f += snoise(p*4.6 + uTime*0.10) * 0.15;",
+    "  return f;",
+    "}",
     "void main(){",
     "  vec3 p = position;",
-    "  float n  = snoise(p*1.3 + vec3(0.0, uTime*0.28, 0.0));",
-    "  float n2 = snoise(p*2.7 - uTime*0.22);",
-    "  float n3 = snoise(p*5.5 + uTime*0.15);",
-    "  float disp = (n*0.62 + n2*0.26 + n3*0.10) * (uAmp + uProg*0.5);",
+    "  float disp = fbm(p) * (uAmp + uProg*0.28);",
     "  float md = distance(normalize(p), normalize(uMouse));",
-    "  disp += (0.5/(1.0+md*md*7.0)) * uAmp;",   // pointer bulge
+    "  disp += (0.32/(1.0+md*md*10.0)) * uAmp;",   // soft pointer swell
     "  vec3 np = p + normal * disp;",
     "  vD = disp;",
-    "  vN = normalize(normalMatrix * normal);",
+    // perturb the normal a touch so highlights follow the surface flow (smoothly)
+    "  vec3 t1 = normalize(cross(normal, vec3(0.0,1.0,0.0) + 1e-4));",
+    "  vec3 t2 = normalize(cross(normal, t1));",
+    "  float e = 0.35;",
+    "  float da = fbm(p + t1*e) * uAmp, db = fbm(p + t2*e) * uAmp;",
+    "  vec3 pn = normalize(normal - (t1*(da-disp) + t2*(db-disp)) / e * 0.6);",
+    "  vN = normalize(normalMatrix * pn);",
     "  vec4 mv = modelViewMatrix * vec4(np,1.0);",
     "  vView = -mv.xyz;",
     "  gl_Position = projectionMatrix * mv;",
     "}"
   ].join("\n");
 
+  // Luminous iridescent pearl — the whole body glows, not just the rim.
   var frag = [
     "precision highp float;",
     "uniform float uTime;",
@@ -92,26 +103,38 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
     "vec3 pal(float t){ return 0.5 + 0.5*cos(6.28318*(t + vec3(0.00,0.33,0.67))); }",
     "void main(){",
     "  vec3 V = normalize(vView); vec3 N = normalize(vN);",
-    "  float fres = pow(1.0 - max(dot(V,N),0.0), 2.6);",
-    "  float t = fres*1.15 + vD*1.7 + uTime*0.05;",
-    "  vec3 irid = pal(t);",
-    "  irid = mix(irid, vec3(0.20,0.55,1.0), 0.35);",       // bias toward alien blue
-    "  vec3 col = mix(vec3(0.02,0.03,0.08), irid*0.7, clamp(fres*1.15+0.10,0.0,1.0));",
-    "  col += fres * vec3(0.30,0.52,0.95) * 0.55;",          // subtle glowing rim (bloom catches this)
-    "  col += pow(fres,5.0) * vec3(0.8,0.7,1.1) * 0.5;",     // hot violet edge, tamed
+    "  float ndv = max(dot(V,N), 0.0);",
+    "  float fres = pow(1.0 - ndv, 2.2);",
+    "  float t = fres*0.85 + vD*2.4 + uTime*0.04;",
+    "  vec3 irid = pal(t);",                                  // full-spectrum thin film across the body
+    "  vec3 body = mix(vec3(0.05,0.08,0.20), irid, 0.40);",   // colourful but restrained base
+    "  vec3 col = mix(body, irid, clamp(fres*1.0, 0.0, 1.0));",
+    "  float key = clamp(dot(N, normalize(vec3(0.35,0.75,0.55))), 0.0, 1.0);",
+    "  col += pow(key, 3.0) * vec3(0.45,0.65,1.0) * 0.16;",   // soft directional sheen
+    "  col += fres * vec3(0.30,0.55,1.0) * 0.45;",            // gentle rim
+    "  col += pow(fres, 4.0) * vec3(0.9,0.8,1.15) * 0.38;",   // faint iridescent edge
+    "  col *= 0.82;",                                          // overall calm — ambient, not a spotlight
     "  gl_FragColor = vec4(col, 1.0);",
     "}"
   ].join("\n");
 
-  var geo = new THREE.IcosahedronGeometry(1.55, mobile ? 5 : 7);
+  var geo = new THREE.IcosahedronGeometry(1.5, mobile ? 6 : 7);
   var mat = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vert, fragmentShader: frag });
   var core = new THREE.Mesh(geo, mat);
-  var group = new THREE.Group(); group.add(core); group.position.x = 1.15; scene.add(group);
+  var group = new THREE.Group(); group.add(core); scene.add(group);
+  // ambient depth only — a quiet glow behind the headline, never competing with the product UI
+  group.position.x = mobile ? 0.15 : 1.5;    // behind the product UI, not on the headline
+  group.position.y = mobile ? -0.35 : -0.1;
+  group.scale.setScalar(mobile ? 0.46 : 0.62);
 
-  // faint outer glow shell
+  // soft atmospheric halo (smooth additive glow — replaces the old wireframe shell)
   var shell = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.9, 2),
-    new THREE.MeshBasicMaterial({ color: 0x2b6bff, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, wireframe: true })
+    new THREE.IcosahedronGeometry(1.72, 4),
+    new THREE.ShaderMaterial({
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
+      vertexShader: "varying vec3 vN; varying vec3 vV; void main(){ vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.0); vV=-mv.xyz; gl_Position=projectionMatrix*mv; }",
+      fragmentShader: "precision highp float; varying vec3 vN; varying vec3 vV; void main(){ float f=pow(1.0-max(dot(normalize(vV),normalize(vN)),0.0),2.6); gl_FragColor=vec4(vec3(0.20,0.44,1.0)*f, f*0.32); }"
+    })
   );
   group.add(shell);
 
@@ -140,9 +163,11 @@ import { OutputPass } from "./vendor/jsm/postprocessing/OutputPass.js";
   // ---------- bloom (desktop only) ----------
   var composer = null, bloom = null;
   if (!mobile) {
-    composer = new EffectComposer(renderer);
+    var db = renderer.getDrawingBufferSize(new THREE.Vector2());
+    var rt = new THREE.WebGLRenderTarget(db.x, db.y, { samples: 4, type: THREE.HalfFloatType });
+    composer = new EffectComposer(renderer, rt);
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.5, 0.6, 0.4);
+    bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.34, 0.75, 0.72);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   }

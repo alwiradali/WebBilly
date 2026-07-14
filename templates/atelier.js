@@ -67,7 +67,7 @@
 
   if (!hasGSAP || reduce) {
     // Static fallback: reveal everything.
-    document.querySelectorAll("[data-fade],.hero-eyebrow,.hero-foot p").forEach(function (el) { el.style.opacity = 1; el.style.transform = "none"; });
+    document.querySelectorAll("[data-fade],.hero-eyebrow,.hero-foot p,.hero-sub,.hero-actions,.hero-meta,.hero-ui").forEach(function (el) { el.style.opacity = 1; el.style.transform = "none"; });
     document.querySelectorAll(".hero h1 .ln > span").forEach(function (el) { el.style.transform = "none"; });
     document.querySelectorAll(".manifesto .word").forEach(function (el) { el.classList.add("on"); });
     var l0 = document.querySelector(".loader"); if (l0) l0.style.display = "none";
@@ -111,7 +111,8 @@
     var tl = gsap.timeline({ defaults: { ease: "power4.out" } });
     tl.from(".hero h1 .ln > span", { yPercent: 115, duration: 1.1, stagger: 0.08 }, 0)
       .to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.8 }, 0.3)
-      .to(".hero-foot p", { opacity: 1, duration: 0.9 }, 0.6)
+      .to(".hero-sub, .hero-actions, .hero-meta", { opacity: 1, duration: 0.9, stagger: 0.12 }, 0.55)
+      .from(".hero-ui", { opacity: 0, y: 40, scale: 0.94, duration: 1.2, ease: "power3.out" }, 0.35)
       .from(".scroll-cue", { opacity: 0, duration: 0.8 }, 0.7);
     ScrollTrigger.refresh();
   });
