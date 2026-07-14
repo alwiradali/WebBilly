@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>/* Reload should keep you where the browser opens (top), not restore to the Templates section */if("scrollRestoration" in history){history.scrollRestoration="manual";}</script>
+  <script>/* On reload, always land at the very top — never restore or jump to a leftover #section hash */
+  if("scrollRestoration" in history){history.scrollRestoration="manual";}
+  (function(){try{
+    var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0];
+    var reload=n?n.type==="reload":(performance.navigation&&performance.navigation.type===1);
+    if(reload){
+      if(location.hash){history.replaceState(null,"",location.pathname+location.search);}
+      window.scrollTo(0,0);
+      addEventListener("load",function(){window.scrollTo(0,0);setTimeout(function(){window.scrollTo(0,0);},60);});
+    }
+  }catch(e){}})();</script>
   <title>Billy Digitals — Premium Web Development Agency</title>
   <meta name="description" content="Billy Digitals designs and builds premium, high-performance websites, web apps, hosting and SEO for ambitious brands. Get a free quote in 24 hours.">
   <meta name="theme-color" content="#06070d">
