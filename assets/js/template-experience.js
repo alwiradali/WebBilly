@@ -119,7 +119,8 @@
     wellness: CDN + "hf_20260708_005808_75a36fdd-ddf6-43a0-a4bf-2a4bd23d4785_min.webp",
     barber: CDN + "hf_20260712_213912_4b9ad79b-4956-46ac-87d1-e7682f213f29_min.webp",
     chesters: CDN + "hf_20260712_213920_4a64eb96-184d-4d77-9911-dd8162408a2d_min.webp",
-    orbit: "assets/work-orbit.webp"
+    orbit: "assets/work-orbit.webp",
+    meridian: "assets/work-meridian.webp"
   };
 
   var stage = document.createElement("div");
