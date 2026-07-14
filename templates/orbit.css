@@ -392,3 +392,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .b-card{background:rgba(255,255,255,.05)}
 .h-figure{background:linear-gradient(160deg,#0e1430,#0a0e22)}
 .app{background:linear-gradient(180deg,#0e1330,#0a0e20)}
+
+/* ============================================================
+   Hero aurora backdrop behind the alien Core (also the fallback
+   if WebGL is unavailable). Cheap animated radial gradients.
+   ============================================================ */
+.hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(42% 40% at 30% 32%, rgba(43,107,255,.20), transparent 60%),
+    radial-gradient(40% 38% at 72% 42%, rgba(183,75,245,.16), transparent 60%),
+    radial-gradient(46% 40% at 50% 78%, rgba(34,211,238,.12), transparent 62%);
+  filter:blur(10px); animation: heroAur 18s ease-in-out infinite; }
+@keyframes heroAur{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); opacity:.9 }
+  50%    { transform:translate3d(0,-2%,0) scale(1.08); opacity:1 }
+}
+.orbit-gl{ z-index:1 }        /* the Core sits above the aurora */
+.hero-scrim, .hero-inner{ z-index:2 }
+@media (prefers-reduced-motion:reduce){ .hero::after{ animation:none } }
