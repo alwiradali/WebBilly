@@ -43,7 +43,7 @@ ul{list-style:none}
   transition:opacity 2s 1.9s var(--e1);
   -webkit-mask-image:radial-gradient(130% 92% at 50% 20%,#000 24%,transparent 78%);
   mask-image:radial-gradient(130% 92% at 50% 20%,#000 24%,transparent 78%)}
-#gl.up{opacity:.62}
+#gl.up{opacity:.72}
 #grain{position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.04;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
   animation:gr 5s steps(5) infinite}
@@ -766,7 +766,7 @@ var FS=[
 'float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<OCT;i++){v+=a*nz(p);p*=2.03;a*=.5;}return v;}',
 'void main(){',
 ' vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;',
-' float t=uT*.05;',
+' float t=uT*.038;',
 ' vec2 m=(uM-.5)*vec2(uRes.x/uRes.y,1.)*2.;',
 ' float md=length(uv-m);',
 ' vec2 p=uv*1.55;',
@@ -777,10 +777,16 @@ var FS=[
 ' float f2=pow(1.-abs(fbm(p*2.7-t*.8)),15.);',
 ' float g=(f1*.72+f2*.5)*uAmp;',
 ' g*=smoothstep(1.35,.05,length(uv*vec2(.82,1.)));',
-' vec3 cold=mix(vec3(.02,.05,.13),vec3(.42,.85,.95),g);',
+// slowly drifting hue across space + time -> teal, blue, indigo, magenta, green
+' float hue=.52+.30*fbm(p*.95+t*.5)+.16*uv.x+.05*sin(t*.7)+g*.15;',
+' vec3 spec=.5+.5*cos(6.2831853*(hue+vec3(0.,.33,.67)));',
+' vec3 cold=mix(vec3(.02,.04,.11),spec,g);',
 ' vec3 warm=mix(vec3(.08,.03,.02),vec3(1.,.44,.15),g);',
 ' vec3 col=mix(cold,warm,uWarm);',
-' col+=vec3(.05,.06,.16)*pow(g,2.2);',
+// a second colour band from the fine caustics, offset in hue for extra range
+' vec3 spec2=.5+.5*cos(6.2831853*(hue+.45+vec3(0.,.33,.67)));',
+' col+=spec2*pow(f2,1.4)*.24*(1.-uWarm);',
+' col+=vec3(.05,.06,.16)*pow(g,2.0);',
 ' gl_FragColor=vec4(col,1.);}'
 ].join('\n');
 var VS='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
