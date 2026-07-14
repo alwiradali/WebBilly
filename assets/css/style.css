@@ -1360,15 +1360,17 @@ body.intro-lock { overflow: hidden; }
 @property --elecA { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 .tthumb { position: relative; }
 .tthumb::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
   z-index: 4; pointer-events: none;
-  background: conic-gradient(from var(--elecA), transparent 0 58%, #38bdf8 72%, #a855f7 84%, #22d3ee 93%, transparent 100%);
+  /* each tile glows in its OWN colour (--t1/--t2 set per card) */
+  background: conic-gradient(from var(--elecA),
+    transparent 0 52%, var(--t2,#38bdf8) 64%, var(--t1,#a855f7) 76%, #fff 84%, var(--t2,#22d3ee) 92%, transparent 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  filter: drop-shadow(0 0 5px rgba(56,189,248,.55));
-  animation: elecSpin 3.6s linear infinite;
+  filter: drop-shadow(0 0 7px var(--t2,#38bdf8)) drop-shadow(0 0 12px var(--t1,#a855f7));
+  animation: elecSpin 3.2s linear infinite;
 }
-.tcard:hover .tthumb::after { animation-duration: 1.8s; filter: drop-shadow(0 0 9px rgba(120,90,255,.8)); }
+.tcard:hover .tthumb::after { animation-duration: 1.6s; filter: drop-shadow(0 0 11px var(--t2,#38bdf8)) drop-shadow(0 0 20px var(--t1,#a855f7)); }
 @keyframes elecSpin { to { --elecA: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .tthumb::after { animation: none; } }

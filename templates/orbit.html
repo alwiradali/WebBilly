@@ -122,28 +122,59 @@
       <p class="lead" data-fade>Stop paying for — and switching between — ten different apps. Orbit does it all, and it's genuinely fast.</p>
     </div>
     <div class="bento">
-      <article class="b-card wide media elec" data-fade>
-        <div class="b-shot" data-tilt><img data-parallax src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260714_134542_36018f5d-1985-4ef9-89c4-111d3cb59bce_min.webp" alt="Orbit kanban project board interface" loading="lazy" decoding="async"></div>
+      <article class="b-card wide elec" data-fade>
+        <div class="ui-frame">
+          <div class="ui-kanban" aria-hidden="true">
+            <div class="kb-col"><span class="kb-h">To do</span>
+              <div class="kb-card"><span class="kb-tag c1"></span><span class="kb-ln"></span><span class="kb-ln s"></span><span class="kb-avs"><i></i><i></i></span></div>
+              <div class="kb-card"><span class="kb-ln"></span><span class="kb-ln s"></span></div>
+            </div>
+            <div class="kb-col"><span class="kb-h">In progress</span>
+              <div class="kb-card"><span class="kb-tag c2"></span><span class="kb-ln g"></span><span class="kb-ln"></span><span class="kb-avs"><i></i></span></div>
+              <div class="kb-card"><span class="kb-ln s"></span></div>
+            </div>
+            <div class="kb-col"><span class="kb-h">Done</span>
+              <div class="kb-card"><span class="kb-ln"></span><span class="kb-ln g"></span></div>
+            </div>
+          </div>
+        </div>
         <div class="b-txt"><h3>Projects &amp; Issues</h3><p>Kanban boards, sprints and roadmaps that stay in sync with your docs and chat automatically.</p></div>
       </article>
 
       <article class="b-card sm elec" data-fade>
-        <div class="big">1</div>
-        <div><h3>App to rule them all</h3><p>Replaces 10+ tools.</p></div>
+        <div class="ui-frame center">
+          <div class="ui-donut" aria-hidden="true">
+            <svg viewBox="0 0 120 120"><circle class="don-bg" cx="60" cy="60" r="48"/><circle class="don-fg" cx="60" cy="60" r="48"/></svg>
+            <span class="don-c">10<b>→</b>1</span>
+          </div>
+        </div>
+        <div class="b-txt"><h3>All-in-one</h3><p>Replaces 10+ tools with one.</p></div>
       </article>
 
       <article class="b-card sm elec" data-fade>
-        <div class="vortex" aria-hidden="true"><span class="bell">🔔</span></div>
-        <div><h3>Notifications</h3><p>Everything that matters, nothing that doesn't.</p></div>
+        <div class="vortex" aria-hidden="true">
+          <svg class="bell-ic" viewBox="0 0 24 24" fill="none" stroke="#eaf2ff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="ping"></span>
+        </div>
+        <div class="b-txt"><h3>Notifications</h3><p>Everything that matters, nothing that doesn't.</p></div>
       </article>
 
-      <article class="b-card wide media elec" data-fade>
-        <div class="b-shot kenburns" data-tilt><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260714_134547_bf7c32f1-ad89-4b77-b634-53514cffb167_min.webp" alt="Orbit virtual office team on a video call" loading="lazy" decoding="async"><span class="play" aria-hidden="true"></span></div>
+      <article class="b-card wide elec" data-fade>
+        <div class="ui-frame">
+          <div class="ui-office" aria-hidden="true">
+            <span class="vo a1"><b class="live"></b></span><span class="vo a2"></span><span class="vo a3"></span><span class="vo a4"><b class="live"></b></span>
+          </div>
+        </div>
         <div class="b-txt"><h3>Virtual office</h3><p>Drop into HD audio &amp; video rooms — like sitting together, from anywhere.</p></div>
       </article>
 
-      <article class="b-card mid media elec" data-fade>
-        <div class="b-shot" data-tilt><img data-parallax src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260714_134545_54031a20-98bf-4d5a-99d2-4a0fd2d43854_min.webp" alt="Orbit analytics dashboard with charts" loading="lazy" decoding="async"></div>
+      <article class="b-card mid elec" data-fade>
+        <div class="ui-frame">
+          <div class="ui-mini-chart" aria-hidden="true">
+            <svg class="mc-svg" viewBox="0 0 200 90" preserveAspectRatio="none"><polyline class="mc-line" points="0,72 33,56 66,62 100,34 133,44 166,20 200,28"/></svg>
+            <div class="mc-bars"><i style="--h:40%"></i><i style="--h:62%"></i><i style="--h:50%"></i><i style="--h:80%"></i><i style="--h:70%"></i><i style="--h:100%"></i></div>
+          </div>
+        </div>
         <div class="b-txt"><h3>Dashboards &amp; insights</h3><p>Live analytics on your team's work — see progress, spot blockers, ship on time.</p></div>
       </article>
 
@@ -162,10 +193,10 @@
     </div>
     <div class="dash-panel elec" data-fade>
       <div class="dash-kpis">
-        <div class="kpi"><span class="kpi-l">Tasks shipped</span><span class="kpi-v"><span data-count="1284">0</span></span><span class="kpi-d up">▲ 12%</span></div>
-        <div class="kpi"><span class="kpi-l">Avg cycle time</span><span class="kpi-v"><span data-count="2" data-suffix="d">0</span></span><span class="kpi-d up">▲ 8%</span></div>
-        <div class="kpi"><span class="kpi-l">On-time delivery</span><span class="kpi-v"><span data-count="96" data-suffix="%">0</span></span><span class="kpi-d up">▲ 4%</span></div>
-        <div class="kpi"><span class="kpi-l">Active projects</span><span class="kpi-v"><span data-count="38">0</span></span><span class="kpi-d">this quarter</span></div>
+        <div class="kpi"><span class="kpi-l">Tasks shipped</span><svg class="kpi-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,28 20,24 40,26 60,14 80,17 100,5"/></svg><span class="kpi-d up">▲ 12%</span></div>
+        <div class="kpi"><span class="kpi-l">Cycle time</span><svg class="kpi-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,10 20,15 40,12 60,20 80,22 100,28"/></svg><span class="kpi-d up">▼ faster</span></div>
+        <div class="kpi"><span class="kpi-l">On-time delivery</span><svg class="kpi-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,24 20,20 40,22 60,16 80,10 100,6"/></svg><span class="kpi-d up">▲ 4%</span></div>
+        <div class="kpi"><span class="kpi-l">Active projects</span><div class="kpi-mini-bars"><i style="--h:45%"></i><i style="--h:70%"></i><i style="--h:55%"></i><i style="--h:90%"></i><i style="--h:75%"></i></div><span class="kpi-d">this quarter</span></div>
       </div>
       <div class="dash-chart">
         <svg class="dash-line" viewBox="0 0 600 210" preserveAspectRatio="none" aria-hidden="true">
@@ -210,7 +241,19 @@
   <!-- ============ FEATURE STATEMENT ============ -->
   <section class="section wrap">
     <div class="feature">
-      <figure class="feature-fig"><span class="glyph">✦</span><span class="mask" aria-hidden="true"></span></figure>
+      <figure class="feature-fig">
+        <div class="ff-window" aria-hidden="true">
+          <span class="ff-bar"><i></i><i></i><i></i></span>
+          <div class="ff-body">
+            <div class="ff-side"><span></span><span></span><span></span><span></span></div>
+            <div class="ff-main">
+              <svg class="ff-chart" viewBox="0 0 240 110" preserveAspectRatio="none"><defs><linearGradient id="ffg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".4"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></linearGradient></defs><polygon class="ff-area" points="0,88 40,72 80,80 120,50 160,60 200,30 240,40 240,110 0,110"/><polyline class="ff-line" points="0,88 40,72 80,80 120,50 160,60 200,30 240,40"/></svg>
+              <div class="ff-cards"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+        <span class="mask" aria-hidden="true"></span>
+      </figure>
       <div>
         <p class="eyebrow" data-fade>The craft</p>
         <h2 data-fade>Designed to feel <em>calm</em>.</h2>

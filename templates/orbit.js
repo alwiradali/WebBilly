@@ -66,7 +66,10 @@
   var uScroll = gl.getUniformLocation(prog, "uScroll");
   var vao = gl.createVertexArray(); gl.bindVertexArray(vao);
 
-  var dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+  var mob = window.matchMedia && matchMedia("(max-width: 820px)").matches;
+  var dpr = Math.min(window.devicePixelRatio || 1, mob ? 0.85 : 1.4);  // cap hard on mobile to avoid iOS memory reloads
+  // If the GPU context is lost (iOS memory pressure), don't let it hard-fail — just hide the canvas.
+  canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); canvas.style.display = "none"; }, false);
   var mx = 0, my = 0, tmx = 0, tmy = 0, scroll = 0;
   function resize() {
     var w = canvas.clientWidth, h = canvas.clientHeight;
