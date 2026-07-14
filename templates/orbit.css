@@ -501,3 +501,43 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   .hui-cal{ right:-2%; top:-5% } .hui-chat{ left:-2%; bottom:-4% }
   .hui-body{ grid-template-columns:96px 1fr; min-height:260px; }
 }
+
+/* ============================================================
+   WHAT WE OFFER — Pixel-Point-style pixel-art feature tiles
+   ============================================================ */
+.offer-title{ font-family:var(--disp); font-weight:700; letter-spacing:-.02em; line-height:1.08;
+  font-size:clamp(1.8rem,4.2vw,3rem); max-width:16ch; margin-bottom:56px; }
+em.mag{ background:none; -webkit-text-fill-color:initial; color:var(--accent); }
+.offer-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(26px,3.4vw,52px) clamp(28px,4vw,64px); }
+.offer-cell{ }
+.pxi{ display:inline-block; width:64px; height:64px; margin-bottom:20px;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.5)); transition:transform .4s cubic-bezier(.2,.7,.2,1); }
+.pxi svg{ width:100%; height:100%; display:block; }
+.pxi .bg{ fill:#0b0b0d; }
+.offer-cell:hover .pxi{ transform:translateY(-5px) rotate(-2deg); }
+.offer-cell h3{ font-family:var(--disp); font-weight:700; font-size:1.18rem; letter-spacing:-.01em; margin-bottom:9px; }
+.offer-cell p{ color:var(--mut); font-size:1rem; line-height:1.6; max-width:32ch; }
+@media (max-width:900px){ .offer-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:560px){ .offer-grid{ grid-template-columns:1fr; gap:30px; } .offer-title{ margin-bottom:36px; } }
+
+/* ============================================================
+   SOCIAL PROOF — big rounded star-count cards
+   ============================================================ */
+.proof-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+.proof-card{ position:relative; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  min-height:230px; border-radius:22px; text-align:center; padding:30px 24px;
+  background:#0a0b12; border:1px solid rgba(150,180,255,.12); overflow:hidden;
+  transition:transform .4s cubic-bezier(.2,.7,.2,1), border-color .3s; }
+.proof-card::after{ content:""; position:absolute; right:-30%; bottom:-40%; width:75%; height:80%;
+  background:linear-gradient(135deg,rgba(43,107,255,.55),rgba(183,75,245,.35)); transform:skewX(-18deg);
+  filter:blur(6px); opacity:.5; transition:opacity .4s; }
+.proof-card:hover{ transform:translateY(-6px); border-color:rgba(56,189,248,.4); }
+.proof-card:hover::after{ opacity:.85; }
+.pc-star{ position:absolute; top:16px; left:18px; z-index:2; display:inline-flex; align-items:center; gap:6px;
+  font-size:.82rem; font-weight:700; color:#ffd23d; }
+.pc-star svg{ width:15px; height:15px; }
+.pc-logo{ position:relative; z-index:2; font-family:var(--disp); font-weight:700; font-size:clamp(1.5rem,3vw,2rem);
+  letter-spacing:-.01em; color:#eef2ff; }
+.pc-logo b{ font-weight:800; }
+.pc-cap{ position:relative; z-index:2; margin-top:12px; color:var(--mut); font-size:.92rem; }
+@media (max-width:860px){ .proof-grid{ grid-template-columns:1fr; } .proof-card{ min-height:170px; } }
