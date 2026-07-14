@@ -607,8 +607,10 @@ a.ccard:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.
 }
 .chat-avatar {
   width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--grad); font-family: var(--font-display); font-weight: 700; color: #fff;
+  background: #fff; font-family: var(--font-display); font-weight: 700; color: #fff;
+  overflow: hidden; box-shadow: 0 0 0 1px rgba(120,180,255,.35), 0 4px 14px rgba(43,127,255,.4);
 }
+.chat-avatar img { width: 80%; height: 80%; object-fit: contain; display: block; }
 .chat-head strong { font-family: var(--font-display); display: block; line-height: 1.2; }
 .chat-head span { color: var(--muted); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; }
@@ -1351,3 +1353,22 @@ body.intro-lock { overflow: hidden; }
   .hero-welcome .ch{ opacity:1; transform:none; transition:none; }
   .hw-cursor{ display:none; }
 }
+
+/* ============================================================
+   Electric moving border on template tiles (showcase)
+   ============================================================ */
+@property --elecA { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.tthumb { position: relative; }
+.tthumb::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+  z-index: 4; pointer-events: none;
+  background: conic-gradient(from var(--elecA), transparent 0 58%, #38bdf8 72%, #a855f7 84%, #22d3ee 93%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 5px rgba(56,189,248,.55));
+  animation: elecSpin 3.6s linear infinite;
+}
+.tcard:hover .tthumb::after { animation-duration: 1.8s; filter: drop-shadow(0 0 9px rgba(120,90,255,.8)); }
+@keyframes elecSpin { to { --elecA: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .tthumb::after { animation: none; } }

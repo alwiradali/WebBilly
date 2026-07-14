@@ -153,3 +153,26 @@
       .to(cur, { opacity: 0, duration: 0.4 }, 3.3);
   }
 })();
+
+/* ============================================================
+   ORBIT — 3D tilt on image feature cards
+   ============================================================ */
+(function () {
+  "use strict";
+  var touch = window.matchMedia && matchMedia("(hover: none)").matches;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (touch || reduce) return;
+  document.querySelectorAll("[data-tilt]").forEach(function (el) {
+    el.addEventListener("pointermove", function (e) {
+      var r = el.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transition = "transform 0s";
+      el.style.transform = "perspective(800px) rotateY(" + (px * 7).toFixed(2) + "deg) rotateX(" + (-py * 7).toFixed(2) + "deg)";
+    });
+    el.addEventListener("pointerleave", function () {
+      el.style.transition = "transform .5s cubic-bezier(.2,.7,.2,1)";
+      el.style.transform = "";
+    });
+  });
+})();
