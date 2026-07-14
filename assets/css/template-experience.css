@@ -23,7 +23,7 @@
 .tcf-card {
   position: absolute; left: 50%; top: 50%;
   border: 0; padding: 0; background: none; cursor: pointer;
-  border-radius: 18px; overflow: hidden;
+  border-radius: 18px; overflow: visible;
   box-shadow: 0 30px 60px -22px rgba(0, 0, 0, 0.8);
   will-change: transform, opacity; transform: translate(-50%, -50%);
   -webkit-tap-highlight-color: transparent;
@@ -51,9 +51,65 @@
   opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none;
   box-shadow: 0 10px 26px -8px rgba(34, 211, 238, 0.7);
 }
-.tcf-card.front { box-shadow: 0 42px 84px -24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(120, 180, 255, 0.4); }
+.tcf-card.front { box-shadow: 0 42px 84px -24px rgba(0, 0, 0, 0.9); }
 .tcf-card.front .tcf-open { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .tcf-card.front .tcf-name { font-size: clamp(1.08rem, 1.7vw, 1.3rem); }
+
+/* ---------- Live electric border on the focused tile ---------- */
+@property --tcfA { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+/* moving arc of current running around the card edge (masked ring) */
+.tcf-card::before {
+  content: ""; position: absolute; inset: 0; z-index: 4; border-radius: 18px;
+  padding: 2px; pointer-events: none; opacity: 0;
+  background:
+    conic-gradient(from var(--tcfA),
+      transparent 0 34%,
+      var(--t2, #38bdf8) 44%, #eafcff 50%, #ffffff 52%, #eafcff 54%, var(--t1, #a855f7) 60%,
+      transparent 70% 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 7px var(--t2, #38bdf8)) drop-shadow(0 0 15px var(--t1, #a855f7)) drop-shadow(0 0 3px #fff);
+  transition: opacity .35s ease;
+}
+/* soft, wider halo that breathes with the current */
+.tcf-card::after {
+  content: ""; position: absolute; inset: -2px; z-index: 3; border-radius: 20px;
+  padding: 6px; pointer-events: none; opacity: 0;
+  background:
+    conic-gradient(from calc(var(--tcfA) * -1),
+      transparent 0 55%, var(--t1, #a855f7) 70%, var(--t2, #38bdf8) 82%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: blur(3px) drop-shadow(0 0 16px var(--t2, #38bdf8));
+  transition: opacity .35s ease;
+}
+.tcf-card.front::before { opacity: 1; animation: tcfArc 2.4s linear infinite; }
+.tcf-card.front::after  { opacity: .85; animation: tcfArc 3.6s linear infinite reverse; }
+.tcf-card.front:hover::before { animation-duration: 1.3s; }
+@keyframes tcfArc { to { --tcfA: 360deg; } }
+
+/* flying spark residues that lift off the lit edge */
+.tcf-sparks { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; }
+.tcf-card.front .tcf-sparks { opacity: 1; }
+.tcf-sparks i {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: #eafcff; box-shadow: 0 0 6px 1px var(--t2, #38bdf8);
+}
+.tcf-card.front .tcf-sparks i { animation: tcfSpark 1.8s ease-out infinite; }
+.tcf-sparks i:nth-child(1) { left: 14%; bottom: 3%; animation-delay: .0s; }
+.tcf-sparks i:nth-child(2) { left: 42%; bottom: 3%; animation-delay: .5s; }
+.tcf-sparks i:nth-child(3) { left: 68%; bottom: 3%; animation-delay: 1s; }
+.tcf-sparks i:nth-child(4) { left: 88%; bottom: 3%; animation-delay: 1.4s; }
+.tcf-sparks i:nth-child(5) { left: 28%; top: 3%; animation-delay: .8s; }
+.tcf-sparks i:nth-child(6) { left: 78%; top: 3%; animation-delay: .3s; }
+@keyframes tcfSpark {
+  0%   { opacity: 0; transform: translateY(0) scale(.6); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-26px) translateX(6px) scale(.2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tcf-card.front::before, .tcf-card.front::after, .tcf-card.front .tcf-sparks i { animation: none; }
+}
 
 /* arrows */
 .tcf-arrow {

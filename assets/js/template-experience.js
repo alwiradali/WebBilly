@@ -144,6 +144,7 @@
       : '<span class="emoji" aria-hidden="true">' + it.emoji + '</span>';
     b.innerHTML =
       '<span class="tcf-thumb">' + art + '<span class="tcf-open">Open live ↗</span></span>' +
+      '<span class="tcf-sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>' +
       '<span class="tcf-info"><span class="tcf-name">' + it.name + '</span><span class="tcf-cat">' + it.catLabel + '</span></span>';
     b._it = it; b._i = i;
     b.addEventListener("click", function () {
