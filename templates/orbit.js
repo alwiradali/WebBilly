@@ -176,3 +176,30 @@
     });
   });
 })();
+
+/* ============================================================
+   ORBIT — animated dashboard (line draws, bars grow)
+   ============================================================ */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stroke = document.querySelector(".dash-stroke");
+  var area = document.querySelector(".dash-area");
+  var bars = document.querySelectorAll(".dash-bars i");
+  if (!stroke && !bars.length) return;
+  var g = window.gsap, ST = window.ScrollTrigger;
+  if (!g || !ST || reduce) {
+    if (stroke) stroke.style.strokeDasharray = "none";
+    bars.forEach(function (b) { b.style.transform = "none"; });
+    return;
+  }
+  g.registerPlugin(ST);
+  var trig = { trigger: ".dash-panel", start: "top 80%", once: true };
+  if (stroke) {
+    var len = stroke.getTotalLength();
+    g.set(stroke, { strokeDasharray: len, strokeDashoffset: len });
+    g.to(stroke, { strokeDashoffset: 0, duration: 1.9, ease: "power2.out", scrollTrigger: trig });
+  }
+  if (area) { g.set(area, { opacity: 0 }); g.to(area, { opacity: 1, duration: 1.5, ease: "power1.out", scrollTrigger: trig }); }
+  if (bars.length) g.to(bars, { scaleY: 1, duration: 0.7, stagger: 0.06, ease: "power2.out", scrollTrigger: trig });
+})();
