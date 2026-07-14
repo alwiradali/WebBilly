@@ -120,4 +120,10 @@ body.tx-locked { overflow: hidden; }
   .tcf-arrow { width: 44px; height: 44px; font-size: 1.5rem; }
   .tcf-arrow.prev { left: 6px; } .tcf-arrow.next { right: 6px; }
   .tx-bar .tx-cta { display: none; }
+  /* keep the viewer chrome to one slim line so it never eats the preview */
+  .tx-bar { padding: 6px 10px; gap: 9px; }
+  .tx-back { padding: 7px 13px 7px 10px; font-size: 0.82rem; white-space: nowrap; }
+  .tx-back svg { width: 15px; height: 15px; }
+  .tx-bar .tx-title { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .tx-bar .tx-title .tx-cat { display: none; }
 }
