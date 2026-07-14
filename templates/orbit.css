@@ -541,3 +541,48 @@ em.mag{ background:none; -webkit-text-fill-color:initial; color:var(--accent); }
 .pc-logo b{ font-weight:800; }
 .pc-cap{ position:relative; z-index:2; margin-top:12px; color:var(--mut); font-size:.92rem; }
 @media (max-width:860px){ .proof-grid{ grid-template-columns:1fr; } .proof-card{ min-height:170px; } }
+
+/* ============================================================
+   PROCESS — the magic, numbered 1–6 (pink numerals)
+   ============================================================ */
+.proc-title{ font-family:var(--disp); font-weight:700; letter-spacing:-.02em; line-height:1.1;
+  font-size:clamp(1.9rem,4.4vw,3.1rem); max-width:18ch; margin-bottom:56px; }
+.proc-list{ display:grid; grid-template-columns:1fr 1fr; gap:44px 64px; }
+.proc-step{ display:flex; gap:20px; align-items:flex-start; }
+.proc-n{ font-family:var(--disp); font-weight:800; font-size:1.6rem; color:var(--accent); line-height:1; flex:0 0 auto; min-width:38px; }
+.proc-body h3{ font-family:var(--disp); font-weight:700; font-size:1.5rem; letter-spacing:-.01em; margin-bottom:10px; }
+.proc-body p{ color:var(--mut); font-size:1.02rem; line-height:1.62; max-width:40ch; }
+@media (max-width:820px){ .proc-list{ grid-template-columns:1fr; gap:30px; } }
+
+/* ============================================================
+   TECH STACK — Next.js diagram
+   ============================================================ */
+.stack-diagram{ display:flex; flex-direction:column; align-items:center; }
+.stk-core{ position:relative; width:min(760px,100%); border-radius:20px; padding:52px 24px 60px;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  background:radial-gradient(120% 120% at 50% 20%, rgba(43,107,255,.12), transparent 70%), #0a0d18;
+  border:1px solid rgba(150,180,255,.12); overflow:hidden; }
+.stk-core::before{ content:""; position:absolute; inset:0; z-index:0;
+  background-image:radial-gradient(circle, rgba(120,160,255,.55) 1px, transparent 1.4px);
+  background-size:26px 26px; opacity:.14; }
+.stk-N{ position:relative; z-index:1; font-family:var(--disp); font-weight:700; font-size:clamp(3.2rem,8vw,5.6rem);
+  line-height:.9; background:linear-gradient(180deg,#fff,#7f93b5); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stk-core-label{ position:relative; z-index:1; color:var(--mut); font-size:.95rem; letter-spacing:.02em; }
+.stk-wires{ width:min(760px,100%); height:64px; margin-top:-6px; display:block; }
+.stk-branches{ display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(760px,100%); }
+.stk-branch{ background:#0a0b12; border:1px dashed rgba(150,180,255,.2); border-radius:16px; padding:18px; }
+.stk-tag{ display:inline-block; font-family:var(--disp); font-size:.72rem; letter-spacing:.06em; color:var(--mut);
+  background:rgba(255,255,255,.04); border:1px solid var(--line); padding:5px 11px; border-radius:8px; margin-bottom:16px; }
+.stk-chips{ display:flex; flex-direction:column; gap:10px; }
+.stk-chip{ display:flex; align-items:center; gap:10px; font-weight:600; font-size:.98rem;
+  background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:10px; padding:11px 14px;
+  transition:transform .25s, border-color .25s; }
+.stk-chip:hover{ transform:translateX(4px); border-color:rgba(56,189,248,.4); }
+.stk-chip i{ width:14px; height:14px; border-radius:4px; flex:0 0 auto; }
+.ci-pay{ background:#f5397e } .ci-con{ background:#2b6bff } .ci-san{ background:linear-gradient(135deg,#f03e2f,#ff9b8a) }
+.stk-md{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; height:calc(100% - 44px); justify-content:center;
+  background:linear-gradient(135deg,rgba(43,107,255,.9),rgba(70,90,200,.85)); border-radius:12px; padding:18px 16px; color:#fff; }
+.stk-md b{ font-family:var(--disp); font-weight:800; font-size:1.7rem; letter-spacing:.02em; display:inline-flex; align-items:center; }
+.stk-md b span{ font-size:1.2rem; margin:0 1px; opacity:.9; }
+.stk-md-cap{ font-size:.9rem; color:rgba(255,255,255,.82); }
+@media (max-width:560px){ .stk-branches{ grid-template-columns:1fr; } .stk-wires{ display:none; } }
