@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initContactLinks();
   initHeader();
   initReveal();
+  initOrbitStory();
   initCounters();
   initFilters();
   initFaq();
@@ -145,6 +146,22 @@ function initReveal() {
     { threshold: 0.12 }
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+}
+
+/* ---------- ORBIT story: spotlight the chapter in view ---------- */
+function initOrbitStory() {
+  const chapters = document.querySelectorAll("#orbit-story .os-chapter");
+  if (!chapters.length) return;
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("is-lit", entry.isIntersecting);
+      });
+    },
+    // light up when a chapter is within the vertical middle band of the screen
+    { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+  );
+  chapters.forEach((el) => io.observe(el));
 }
 
 /* ---------- Animated counters ---------- */
