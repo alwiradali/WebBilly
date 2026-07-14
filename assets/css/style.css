@@ -271,6 +271,20 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
 .fbtn:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.25); }
 .fbtn.active { background: var(--grad-btn); color: #fff; border-color: transparent; }
 .templates-grid { grid-template-columns: repeat(3, 1fr); }
+.client-work { margin-bottom: 44px; }
+.cw-label {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 18px; display: flex; align-items: center; gap: 10px;
+}
+.cw-label::before {
+  content: ""; width: 9px; height: 9px; border-radius: 50%; flex: none;
+  background: #27c93f; box-shadow: 0 0 0 4px rgba(39,201,63,0.18), 0 0 12px #27c93f;
+  animation: cwPulse 2.2s ease-in-out infinite;
+}
+@keyframes cwPulse { 0%,100%{ box-shadow:0 0 0 3px rgba(39,201,63,0.14),0 0 10px #27c93f; } 50%{ box-shadow:0 0 0 6px rgba(39,201,63,0.22),0 0 16px #27c93f; } }
+.client-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 760px) { .client-grid { grid-template-columns: 1fr; } }
 .tcard {
   background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 16px; transition: transform 0.3s ease, border-color 0.3s ease;
