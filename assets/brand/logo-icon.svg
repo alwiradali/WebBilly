@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Billy Digitals icon">
+  <defs>
+    <linearGradient id="bd" x1="18" y1="20" x2="176" y2="182" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2b7fff"/>
+      <stop offset=".55" stop-color="#22bff0"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#bd)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+    <!-- top bowl: a browser window -->
+    <rect x="30" y="24" width="122" height="74" rx="22"/>
+    <!-- bottom bowl: a device / app card, bulging a touch wider -->
+    <rect x="30" y="104" width="132" height="74" rx="26"/>
+    <!-- phone home indicator -->
+    <path d="M83 165 h26" stroke-width="7"/>
+  </g>
+  <!-- browser traffic-light dots -->
+  <g fill="url(#bd)">
+    <circle cx="47" cy="40" r="3.1"/><circle cx="58" cy="40" r="3.1"/><circle cx="69" cy="40" r="3.1"/>
+  </g>
+</svg>
