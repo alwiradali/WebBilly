@@ -76,7 +76,7 @@
     res: gl.getUniformLocation(pr, 'uRes'), t: gl.getUniformLocation(pr, 'uT'), m: gl.getUniformLocation(pr, 'uM'),
     w: gl.getUniformLocation(pr, 'uWarm'), a: gl.getUniformLocation(pr, 'uAmp'), pg: gl.getUniformLocation(pr, 'uProg')
   };
-  var SC = mobile ? 0.5 : 0.62;
+  var SC = mobile ? 0.42 : 0.62;
   function size() {
     var w = Math.max(1, Math.round(window.innerWidth * SC)), h = Math.max(1, Math.round(window.innerHeight * SC));
     canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(U.res, w, h);
@@ -85,6 +85,7 @@
 
   var M = { x: .5, y: .42, tx: .5, ty: .42 }, S = { prog: 0, pgS: 0 };
   var T0 = performance.now(), raf = null;
+  var lastDraw = 0, minDelta = mobile ? (1000 / 30) : 0;   // cap mobile to ~30fps to ease GPU/battery
   function lerp(a, b, k) { return a + (b - a) * k; }
   function clamp(v, a, b) { return Math.min(Math.max(v, a), b); }
   window.addEventListener('pointermove', function (e) { M.tx = e.clientX / window.innerWidth; M.ty = 1 - e.clientY / window.innerHeight; }, { passive: true });
@@ -97,6 +98,8 @@
   function loop(now) {
     raf = requestAnimationFrame(loop);
     if (document.hidden) return;
+    if (now - lastDraw < minDelta) return;   // frame throttle (mobile)
+    lastDraw = now;
     M.x = lerp(M.x, M.tx, .045); M.y = lerp(M.y, M.ty, .045);
     var pw = S.prog;                                 // Lenis already smooths scroll
     var warm = clamp((pw - 0.6) / 0.4, 0, 1);        // warms to violet-magenta toward the end
