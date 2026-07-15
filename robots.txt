@@ -1,7 +1,44 @@
+# Billy Digitals — robots.txt
+# Search engines: full access to public pages.
 User-agent: *
 Allow: /
 Disallow: /templates/
 Disallow: /send-review.html
 Disallow: /admin.html
+
+# --- AI answer engines: explicitly welcomed so we can be read & cited ---
+# (ChatGPT / OpenAI)
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+
+# (Anthropic / Claude)
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+
+# (Perplexity)
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# (Google AI — Gemini / AI Overviews)
+User-agent: Google-Extended
+Allow: /
+
+# (Apple Intelligence)
+User-agent: Applebot-Extended
+Allow: /
+
+# (Microsoft Copilot / Bing)
+User-agent: Bingbot
+Allow: /
 
 Sitemap: https://www.billydigitals.com/sitemap.xml
