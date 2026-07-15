@@ -57,10 +57,13 @@ em{font-style:normal;background:var(--grad);-webkit-background-clip:text;backgro
 
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
-.orbit-gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.5;
-  -webkit-mask-image:radial-gradient(135% 95% at 50% 16%,#000 20%,transparent 80%);
-  mask-image:radial-gradient(135% 95% at 50% 16%,#000 20%,transparent 80%)}
-.hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(5,6,14,.55) 100%),linear-gradient(180deg,transparent 55%,var(--bg) 100%)}
+.orbit-gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.9;
+  -webkit-mask-image:radial-gradient(130% 115% at 50% 46%,#000 40%,transparent 92%);
+  mask-image:radial-gradient(130% 115% at 50% 46%,#000 40%,transparent 92%)}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:
+  radial-gradient(72% 54% at 50% 46%, rgba(5,6,14,.58), transparent 72%),
+  radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(5,6,14,.5) 100%),
+  linear-gradient(180deg,transparent 55%,var(--bg) 100%)}
 .hero-inner{position:relative;z-index:2;width:min(1180px,92vw);margin-inline:auto;padding-top:12vh}
 .hero-eyebrow{opacity:0;transform:translateY(10px);display:inline-block;margin-bottom:22px;
   padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03);backdrop-filter:blur(6px)}
@@ -598,3 +601,30 @@ em.mag{ background:none; -webkit-text-fill-color:initial; color:var(--accent); }
 .stk-md b span{ font-size:1.2rem; margin:0 1px; opacity:.9; }
 .stk-md-cap{ font-size:.9rem; color:rgba(255,255,255,.82); }
 @media (max-width:560px){ .stk-branches{ grid-template-columns:1fr; } .stk-wires{ display:none; } }
+
+/* ============================================================
+   HERO — centered over the orbital field (distinct from Meridian)
+   ============================================================ */
+.hero{ text-align:left; }
+.hero-centered{ position:relative; z-index:2; width:min(1000px,92vw); margin-inline:auto;
+  display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:8vh; }
+.hero-centered .hero-eyebrow{ margin-bottom:24px; }
+.hero-centered h1{ font-size:clamp(2.3rem,6.6vw,5.4rem); line-height:1.0; }
+.hero-centered h1 em{ font-style:normal; }
+.hero-centered .hero-sub{ margin:26px auto 0; max-width:54ch; color:var(--mut); font-size:clamp(1rem,1.2vw,1.16rem); opacity:0; }
+.hero-centered .hero-sub b{ color:var(--ink); font-weight:600; }
+.hero-centered .hero-actions{ display:flex; gap:16px; justify-content:center; margin-top:32px; flex-wrap:wrap; opacity:0; }
+.hero-centered .hero-meta{ display:inline-flex; align-items:center; gap:8px; justify-content:center; margin-top:26px;
+  font-size:.9rem; color:var(--mut); opacity:0; }
+.hero-centered .hero-meta svg{ width:16px; height:16px; color:#ffd23d; }
+.hero-centered .hero-meta b{ color:var(--ink); font-weight:700; }
+.hero-centered .hero-ghost{ font-family:var(--disp); font-weight:600; font-size:.95rem; color:var(--ink);
+  padding:15px 26px; border-radius:12px; border:1px solid var(--line2, rgba(255,255,255,.16)); background:rgba(255,255,255,.03);
+  transition:border-color .25s, background .25s; }
+.hero-centered .hero-ghost:hover{ border-color:rgba(160,190,255,.5); background:rgba(255,255,255,.06); }
+.hero-centered .scroll-cue{ position:static; margin-top:46px; }
+.is-in .hero-centered .hero-sub, .is-in .hero-centered .hero-actions, .is-in .hero-centered .hero-meta{ opacity:1; transition:opacity .8s ease .3s; }
+@media (max-width:640px){
+  .hero-centered{ padding-top:12vh; }
+  .hero-centered h1{ font-size:clamp(2rem,8.6vw,2.8rem); }
+}
