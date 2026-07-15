@@ -29,7 +29,7 @@
   size(); window.addEventListener("resize", size);
 
   // ---- build the rings + orbiting nodes ----
-  var RINGS = mobile ? 5 : 7;
+  var RINGS = mobile ? 4 : 7;
   var rings = [];
   for (var i = 0; i < RINGS; i++) {
     var frac = 0.14 + (i / (RINGS - 1)) * 0.82;      // ring radius as fraction of R/2
@@ -47,6 +47,23 @@
   }
   var stars = [], SN = mobile ? 80 : 150;
   for (var s = 0; s < SN; s++) stars.push({ x: Math.random(), y: Math.random(), z: Math.random() * 0.85 + 0.15 });
+
+  // Pre-render glow sprites once (hue-bucketed) so we never allocate a gradient
+  // per node per frame — that churn is what spikes memory/GPU during recording.
+  var GLOW = [], HUE_MIN = 180, HUE_STEP = 16, GN = 16;
+  (function buildGlow() {
+    for (var g = 0; g < GN; g++) {
+      var sc = document.createElement("canvas"), SZ = 48; sc.width = SZ; sc.height = SZ;
+      var sx = sc.getContext("2d"), h = HUE_MIN + g * HUE_STEP;
+      var gg = sx.createRadialGradient(SZ / 2, SZ / 2, 0, SZ / 2, SZ / 2, SZ / 2);
+      gg.addColorStop(0, "hsla(" + h + ",95%,76%,0.95)");
+      gg.addColorStop(0.45, "hsla(" + h + ",95%,66%,0.35)");
+      gg.addColorStop(1, "hsla(" + h + ",95%,60%,0)");
+      sx.fillStyle = gg; sx.fillRect(0, 0, SZ, SZ);
+      GLOW.push(sc);
+    }
+  })();
+  function glowFor(h) { var i = Math.round((h - HUE_MIN) / HUE_STEP); return GLOW[i < 0 ? 0 : (i >= GN ? GN - 1 : i)]; }
 
   var mx = 0, my = 0, tmx = 0, tmy = 0, prog = 0, tprog = 0, rot = 0;
   window.addEventListener("pointermove", function (e) { tmx = e.clientX / window.innerWidth - 0.5; tmy = e.clientY / window.innerHeight - 0.5; }, { passive: true });
@@ -101,10 +118,10 @@
         var hue = hue0 + nd.hueOff;
         ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(nx, ny);
         ctx.strokeStyle = "hsla(" + hue + ",85%,66%,0.09)"; ctx.lineWidth = 1; ctx.stroke();
-        var ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, nd.sz * 5.5);
-        ng.addColorStop(0, "hsla(" + hue + ",95%,74%,0.9)");
-        ng.addColorStop(1, "hsla(" + hue + ",95%,60%,0)");
-        ctx.fillStyle = ng; ctx.beginPath(); ctx.arc(nx, ny, nd.sz * 5.5, 0, Math.PI * 2); ctx.fill();
+        var spr = glowFor(hue), d = nd.sz * 11;
+        ctx.globalCompositeOperation = "lighter";
+        ctx.drawImage(spr, nx - d / 2, ny - d / 2, d, d);
+        ctx.globalCompositeOperation = "source-over";
         ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(nx, ny, nd.sz * 0.62, 0, Math.PI * 2); ctx.fill();
       }
       ctx.restore();

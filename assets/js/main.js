@@ -11,6 +11,7 @@ const CONFIG = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  initSmoothScroll();
   initContactLinks();
   initHeader();
   initReveal();
@@ -53,6 +54,31 @@ function initPageTransitions() {
   // Restore visibility when returning via the browser back/forward cache.
   window.addEventListener("pageshow", (ev) => {
     if (ev.persisted) document.body.classList.remove("page-leaving");
+  });
+}
+
+/* ---------- Buttery smooth scroll (desktop) ----------
+   Lenis smooths the wheel on desktop for a premium, lag-free feel.
+   It intentionally leaves touch devices on native scroll (already
+   smooth, and far lighter on battery). Anchor links are handled so
+   the nav still jumps to sections. */
+function initSmoothScroll() {
+  if (!window.Lenis) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia && matchMedia("(pointer: coarse)").matches) return; // native on touch
+  var lenis = new Lenis({ duration: 1.05, smoothWheel: true, wheelMultiplier: 1, lerp: 0.1 });
+  window.__lenis = lenis;
+  function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var id = a.getAttribute("href");
+      if (!id || id.length < 2) return;
+      var el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      lenis.scrollTo(el, { offset: -80 });
+    });
   });
 }
 
