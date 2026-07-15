@@ -144,6 +144,9 @@
     var track = document.querySelector(".h-track");
     var bar = document.querySelector(".h-progress i");
     if (!pin || !track) return;
+    // On mobile the horizontal pin overlaps neighbouring sections — let the
+    // cards fall into normal vertical flow instead (handled by CSS).
+    if (window.matchMedia && matchMedia("(max-width: 820px)").matches) return;
     function amount () { return Math.max(0, track.scrollWidth - window.innerWidth); }
     var tween = gsap.to(track, {
       x: function () { return -amount(); }, ease: "none",
