@@ -67,15 +67,19 @@
 
   var mx = 0, my = 0, tmx = 0, tmy = 0, prog = 0, tprog = 0, rot = 0;
   window.addEventListener("pointermove", function (e) { tmx = e.clientX / window.innerWidth - 0.5; tmy = e.clientY / window.innerHeight - 0.5; }, { passive: true });
+  var scrolling = false, scrollT = null;
   window.addEventListener("scroll", function () {
     var d = document.documentElement.scrollHeight - window.innerHeight;
     tprog = Math.min(Math.max((window.pageYOffset || 0) / (d || 1), 0), 1);
+    if (mobile) { scrolling = true; if (scrollT) clearTimeout(scrollT); scrollT = setTimeout(function () { scrolling = false; }, 150); }
   }, { passive: true });
 
   var last = performance.now(), lastDraw = 0, minDelta = mobile ? (1000 / 30) : 0, raf = null;
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    if (document.hidden) return;
+    if (document.hidden) { last = now; return; }
+    // hand the frame budget back to the scroller while actively scrolling (mobile)
+    if (mobile && scrolling) { last = now; return; }
     if (now - lastDraw < minDelta) return;
     var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now; lastDraw = now;
 
