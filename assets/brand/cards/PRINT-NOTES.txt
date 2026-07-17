@@ -1,0 +1,17 @@
+Billy Digitals — Business Card (print-ready)
+
+Files:
+  business-card-front.png  — front (1075x720 px)
+  business-card-back.png   — back  (1075x720 px)
+  billy-digitals-card.pdf  — both sides, 2 pages, ready to send to a printer
+
+Specs:
+  • 300 DPI
+  • Size WITH bleed: 91 x 61 mm
+  • Final TRIM size: 85 x 55 mm (standard UK/EU business card)  → 3 mm bleed on every edge
+  • Keep any re-added text inside the safe area (~5 mm from the trim edge)
+  • QR code points to https://www.billydigitals.com
+
+Printing: upload the PDF (or the two PNGs) to any printer — Vistaprint, MOO,
+instantprint, or a local print shop. Choose "double-sided", 350–400gsm,
+matt or soft-touch lamination for a premium feel.
