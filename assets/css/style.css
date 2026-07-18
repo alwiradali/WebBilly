@@ -4,7 +4,37 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+html { scroll-padding-top: 90px; }
+/* Native smooth-scroll ONLY when Lenis is not driving. When Lenis is active it
+   adds .lenis to <html>; the two must never both smooth the scroll or it jumps
+   and stutters. */
+html:not(.lenis) { scroll-behavior: smooth; }
+
+/* ---------- Lenis (smooth scroll) base CSS ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* While the user is actively scrolling, freeze the expensive decorative
+   animations (blurred spinning glows, drifting orbs, marquees). Their motion is
+   invisible mid-scroll anyway, and pausing them frees the compositor so the
+   scroll itself stays buttery. They resume the instant scrolling stops. */
+html.lenis-scrolling .flag-glow,
+html.lenis-scrolling .blaze::before,
+html.lenis-scrolling .blaze::after,
+html.lenis-scrolling .os-glow,
+html.lenis-scrolling .orb,
+html.lenis-scrolling .marquee-track,
+html.lenis-scrolling .tthumb::after,
+html.lenis-scrolling .logo-full { animation-play-state: paused !important; }
+
+/* Off-screen pause (set by initIdleAnimPause) — covers the element and the
+   ::before/::after that carry the animation on .blaze. */
+.anim-paused,
+.anim-paused::before,
+.anim-paused::after { animation-play-state: paused !important; }
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--bg);
@@ -107,9 +137,9 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   animation: headerDrop 0.8s cubic-bezier(.2,.7,.2,1) both;
 }
 .site-header.scrolled {
-  background: rgba(6, 9, 18, 0.85);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(6, 9, 18, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 34px rgba(0, 0, 0, 0.4);
   border-bottom-color: rgba(56, 189, 248, 0.16);
   padding: 8px 0;

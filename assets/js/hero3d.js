@@ -113,8 +113,20 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   document.addEventListener("bd:introdone", function () { introPending = false; start(); });
   function start() { if (introPending) return; if (raf == null && onScreen && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } }
   function stop() { if (raf != null) { cancelAnimationFrame(raf); raf = null; } }
+
+  // While the page is actively scrolling, skip the heavy bloom render so the
+  // main thread is free for a smooth scroll. The particle field freezes for a
+  // few hundred ms — invisible while the viewport is moving — then resumes.
+  var scrolling = false, scrollTimer = 0;
+  window.addEventListener("scroll", function () {
+    scrolling = true;
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function () { scrolling = false; last = performance.now(); }, 160);
+  }, { passive: true });
+
   function loop(now) {
     raf = requestAnimationFrame(loop);
+    if (scrolling) { last = now; return; }
     var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     t += dt * (reduce ? 0.3 : 1); uniforms.uTime.value = t;
     mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;

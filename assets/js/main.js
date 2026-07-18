@@ -25,9 +25,34 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollProgress();
   initCardSpotlight();
   initPageTransitions();
+  initIdleAnimPause();
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 });
+
+/* ---------- Pause expensive decorative animations while off-screen ----------
+   The blurred spinning glows (flagship cards, plan "blaze", orbit-story) and
+   the logo marquee re-rasterise every frame. Running them while they're far
+   below the fold just steals GPU/paint budget from scrolling. This observer
+   pauses each one until it's actually near the viewport. */
+function initIdleAnimPause() {
+  if (!("IntersectionObserver" in window)) return;
+  const nodes = document.querySelectorAll(".flag-glow, .blaze, .os-glow, .marquee-track");
+  if (!nodes.length) return;
+  // start paused; the observer switches them on when near view. A class is used
+  // (not inline style) so it also pauses the ::before/::after that carry the
+  // actual animation on .blaze.
+  nodes.forEach((n) => n.classList.add("anim-paused"));
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        e.target.classList.toggle("anim-paused", !e.isIntersecting);
+      });
+    },
+    { rootMargin: "200px 0px" }
+  );
+  nodes.forEach((n) => io.observe(n));
+}
 
 /* ---------- Smooth fade-out when navigating to another page ---------- */
 function initPageTransitions() {
