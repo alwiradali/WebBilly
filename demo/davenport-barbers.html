@@ -55,6 +55,9 @@ header.scrolled{background:rgba(12,11,9,.96);border-bottom:1px solid var(--line)
   background:repeating-linear-gradient(45deg,#d4a94a 0 14px,#0c0b09 14px 28px);filter:blur(.3px)}
 .hero .glow{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);
   background:radial-gradient(circle,rgba(212,169,74,.22),transparent 70%);top:-120px;left:-100px}
+.hero-art{position:absolute;right:4%;top:50%;transform:translateY(-50%);height:78%;max-height:560px;
+  opacity:.14;z-index:1;pointer-events:none}
+@media(max-width:860px){.hero-art{opacity:.07;right:-10%}}
 .hero-in{position:relative;z-index:2;padding:120px 0 60px;max-width:720px}
 .rate{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);background:rgba(255,255,255,.02);
   padding:7px 14px;border-radius:40px;font-size:.8rem;color:var(--muted);margin-bottom:22px}
@@ -98,15 +101,17 @@ section{padding:88px 0}
 @media(max-width:640px){.book-grid{grid-template-columns:1fr}.book-card{padding:26px}}
 
 /* gallery */
-.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.gal .g{aspect-ratio:3/4;border-radius:4px;position:relative;overflow:hidden;border:1px solid var(--line);
-  display:flex;align-items:flex-end;padding:16px;font-family:var(--head);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.86rem}
-.gal .g span{position:relative;z-index:2}
-.gal .g::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.75))}
-.g1{background:radial-gradient(120% 120% at 30% 20%,#3a2f1c,#0c0b09)}
-.g2{background:radial-gradient(120% 120% at 70% 30%,#2a2a2e,#0c0b09)}
-.g3{background:radial-gradient(120% 120% at 40% 60%,#3d2a18,#0c0b09)}
-.g4{background:radial-gradient(120% 120% at 60% 40%,#22201a,#0c0b09)}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gal .g{aspect-ratio:3/4;border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--line);
+  display:flex;align-items:flex-end;padding:18px;transition:.3s}
+.gal .g:hover{border-color:var(--gold);transform:translateY(-4px)}
+.gal .g .lbl{position:relative;z-index:3;font-family:var(--head);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.9rem;color:var(--cream)}
+.gal .g .art{position:absolute;inset:0;z-index:1;width:100%;height:100%;color:var(--gold);opacity:.9}
+.gal .g::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 45%,rgba(4,3,2,.85))}
+.g1{background:radial-gradient(130% 120% at 30% 15%,#4a3a1e,#100d08)}
+.g2{background:radial-gradient(130% 120% at 70% 25%,#2c2c34,#0d0d10)}
+.g3{background:radial-gradient(130% 120% at 35% 60%,#4a3018,#120c07)}
+.g4{background:radial-gradient(130% 120% at 65% 35%,#26231a,#0e0d09)}
 @media(max-width:760px){.gal{grid-template-columns:repeat(2,1fr)}}
 
 /* reviews */
@@ -154,6 +159,14 @@ footer .cr a{color:var(--gold2)}
 
 <section class="hero">
   <div class="pole"></div><div class="glow"></div>
+  <svg class="hero-art" viewBox="0 0 300 400" fill="none" stroke="#d4a94a" stroke-width="1.2" aria-hidden="true">
+    <!-- crossed scissors + comb emblem -->
+    <circle cx="90" cy="300" r="20"/><circle cx="150" cy="300" r="20"/>
+    <path d="M110 285 L235 150 M130 285 L235 175"/>
+    <path d="M170 285 L110 220 M150 285 L120 250" opacity=".7"/>
+    <rect x="70" y="70" width="160" height="16" rx="3" opacity=".6"/>
+    <path d="M78 86 v22 M90 86 v22 M102 86 v22 M114 86 v22 M126 86 v22 M138 86 v22 M150 86 v22 M162 86 v22 M174 86 v22 M186 86 v22 M198 86 v22 M210 86 v22 M222 86 v22" stroke-width="1" opacity=".5"/>
+  </svg>
   <div class="wrap hero-in">
     <div class="rate"><span class="stars">★★★★★</span> <b>5.0</b> · 105+ reviews on Google</div>
     <h1>Sharp cuts.<br><span>Proper barbering.</span></h1>
@@ -284,12 +297,41 @@ footer .cr a{color:var(--gold2)}
       <p>A look at the cuts leaving Davenport Barbers every day.</p>
     </div>
     <div class="gal">
-      <div class="g g1"><span>Skin Fades</span></div>
-      <div class="g g2"><span>Classic Cuts</span></div>
-      <div class="g g3"><span>Beard Sculpts</span></div>
-      <div class="g g4"><span>Hot Towel Shaves</span></div>
+      <div class="g g1">
+        <svg class="art" viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".9">
+          <path d="M42 120c-8-6-14-18-14-34 0-24 14-44 34-44 14 0 24 10 24 24 0 6-2 12-6 18" stroke-opacity=".8"/>
+          <path d="M40 70c6-2 12-3 18-3M40 80c8-2 16-3 22-3M42 90c8-1 15-2 20-2M46 100c6 0 11 0 15 1" stroke-width="1"/>
+          <path d="M42 120c0 14 8 26 22 26 10 0 18-6 18-16" stroke-dasharray="2 3"/>
+        </svg>
+        <span class="lbl">Skin Fades</span>
+      </div>
+      <div class="g g2">
+        <svg class="art" viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".9">
+          <path d="M40 118c-6-8-10-20-10-36C30 58 44 40 62 40s30 16 30 40c0 16-6 30-16 38" stroke-opacity=".8"/>
+          <path d="M50 44l-6 30M60 42l-4 34M72 44l0 32M82 50l4 26" stroke-width="1"/>
+          <rect x="34" y="120" width="52" height="7" rx="3"/>
+        </svg>
+        <span class="lbl">Classic Cuts</span>
+      </div>
+      <div class="g g3">
+        <svg class="art" viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".9">
+          <circle cx="60" cy="66" r="26" stroke-opacity=".8"/>
+          <path d="M38 78c2 22 12 42 22 42s20-20 22-42" />
+          <path d="M40 84c8 4 32 4 40 0M44 96c6 3 22 3 32 0M50 108c4 2 12 2 20 0" stroke-width="1"/>
+        </svg>
+        <span class="lbl">Beard Sculpts</span>
+      </div>
+      <div class="g g4">
+        <svg class="art" viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".9">
+          <rect x="30" y="40" width="42" height="14" rx="7" stroke-opacity=".8"/>
+          <path d="M72 47l24-8M74 52l22 2" stroke-width="1.2"/>
+          <path d="M36 66c6 22 12 42 22 42s16-20 20-40" />
+          <path d="M40 74c10 3 26 3 34 0" stroke-width="1" stroke-dasharray="3 3"/>
+        </svg>
+        <span class="lbl">Hot Towel Shaves</span>
+      </div>
     </div>
-    <p style="text-align:center;color:var(--muted);margin-top:18px;font-size:.9rem">Real photos of your work drop straight in here.</p>
+    <p style="text-align:center;color:var(--muted);margin-top:18px;font-size:.9rem">✂️ Your real shop &amp; haircut photos drop straight into this gallery.</p>
   </div>
 </section>
 
