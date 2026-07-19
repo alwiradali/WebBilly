@@ -127,6 +127,13 @@ section{padding:88px 0}
 .pg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(4,3,2,.8))}
 .pg .cap{position:relative;z-index:2;font-family:var(--head);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.86rem;color:var(--cream)}
 @media(max-width:760px){.photo-grid{grid-template-columns:1fr 1fr;grid-auto-rows:200px}.pg-big{grid-column:1/-1}}
+/* owners */
+.owners{display:flex;justify-content:center;gap:40px;margin-top:44px;flex-wrap:wrap}
+.owner{text-align:center}
+.owner .ph{width:150px;height:150px;border-radius:50%;background-size:cover;background-position:center top;
+  margin:0 auto 14px;border:2px solid var(--gold);box-shadow:0 12px 30px -10px rgba(212,169,74,.5)}
+.owner .on{font-family:var(--head);font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:1.05rem;color:var(--cream)}
+.owner .or{color:var(--gold2);font-size:.85rem;margin-top:2px;letter-spacing:.04em}
 
 /* reviews */
 .rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
@@ -314,9 +321,23 @@ footer .cr a{color:var(--gold2)}
     <div class="photo-grid">
       <div class="pg pg-big" style="background-image:url('/assets/davenport/interior.jpg')"><span class="cap">The Shop Floor</span></div>
       <div class="pg" style="background-image:url('/assets/davenport/shopfront.jpg')"><span class="cap">106 Kennerley Rd</span></div>
-      <div class="pg" style="background-image:url('/assets/davenport/barber1.jpg')"><span class="cap">The Team</span></div>
+      <div class="pg" style="background-image:url('/assets/davenport/exterior.jpg')"><span class="cap">Come Say Hello</span></div>
     </div>
     <p style="text-align:center;color:var(--muted);margin-top:18px;font-size:.9rem">Modern chairs · hexagon lighting · a proper Stockport barbershop.</p>
+
+    <div class="owners">
+      <div class="owner">
+        <div class="ph" style="background-image:url('/assets/davenport/owner1.jpg')"></div>
+        <div class="on">The Owners</div>
+        <div class="or">Master Barbers</div>
+      </div>
+      <div class="owner">
+        <div class="ph" style="background-image:url('/assets/davenport/owner2.jpg')"></div>
+        <div class="on">Your Barbers</div>
+        <div class="or">Skin Fades &amp; Beard Work</div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);margin-top:16px;font-size:.9rem">Meet the team behind the chair — add their names &amp; a line about each.</p>
   </div>
 </section>
 
