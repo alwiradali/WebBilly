@@ -139,6 +139,31 @@ header .tag{font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color
 footer{border-top:1px solid var(--line);padding-block:3rem;text-align:center;color:var(--dim);font-size:.85rem}
 footer .lg{font-family:var(--disp);font-size:1.8rem;color:var(--ink);letter-spacing:.1em}
 
+/* ===== 06 IGNITION (lights turning on) ===== */
+.ign-stage{position:relative;height:300vh;background:#0a0c14}
+.ign-pin{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
+.ign-pin canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.ichap{position:absolute;left:0;right:0;top:13%;text-align:center;opacity:0;transition:opacity .7s var(--ease);z-index:2;padding-inline:1.2rem}
+.ichap .k{font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.8rem}
+.ichap h2{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,5.2vw,4.2rem);color:var(--ink);text-wrap:balance}
+/* ===== 07 SPOTLIGHT / TORCH ===== */
+.torch{position:relative;background:#08070a;min-height:82vh;display:grid;place-items:center;overflow:hidden}
+.torch .wrap{position:relative;text-align:center;padding-inline:1.2rem;max-width:18ch}
+.torch h2{font-family:var(--serif);font-weight:500;font-size:clamp(2.2rem,6.5vw,5rem);line-height:1.08;margin:0}
+.torch .dim{color:#1b1922}
+.torch .lit{position:absolute;inset:0;color:var(--gold-2);
+  -webkit-mask:radial-gradient(260px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.45) 42%,transparent 70%);
+          mask:radial-gradient(260px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.45) 42%,transparent 70%)}
+.torch .halo{position:absolute;width:560px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(255,180,90,.13),transparent 62%)}
+.torch .hint{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);z-index:2}
+/* ===== 08 GOD RAYS ===== */
+.rays{position:relative;min-height:80vh;background:#0a0910;overflow:hidden;display:grid;place-items:center}
+.rays canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.rays .c{position:relative;z-index:2;text-align:center;padding-inline:1.2rem}
+.rays h2{font-family:var(--disp);font-size:clamp(2.6rem,9vw,7rem);color:var(--ink)}
+.rays p{color:var(--dim);margin-top:1rem;letter-spacing:.02em}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv,.wr>span{opacity:1!important;transform:none!important}}
 </style>
 </head>
@@ -217,9 +242,35 @@ footer .lg{font-family:var(--disp);font-size:1.8rem;color:var(--ink);letter-spac
   </div>
 </section>
 
+<!-- ===== 06 IGNITION ===== -->
+<div class="ign-stage" id="ignStage"><div class="ign-pin">
+  <span class="tag-chip"><b>06</b> Lighting · Ignition</span>
+  <canvas id="ign"></canvas>
+  <div class="ichap" data-from="0" data-to="0.5"><div class="k">As dusk falls</div><h2>A scene sets the mood…</h2></div>
+  <div class="ichap" data-from="0.5" data-to="1.01"><div class="k">Scroll to ignite</div><h2>…and the lights come alive.</h2></div>
+</div></div>
+
+<!-- ===== 07 SPOTLIGHT / TORCH ===== -->
+<section class="torch" id="torch">
+  <span class="tag-chip"><b>07</b> Lighting · Spotlight</span>
+  <div class="halo" id="halo"></div>
+  <div class="wrap">
+    <h2 class="dim">Some things are best seen in the right light.</h2>
+    <h2 class="lit" id="litText" aria-hidden="true">Some things are best seen in the right light.</h2>
+  </div>
+  <div class="hint">Move your cursor</div>
+</section>
+
+<!-- ===== 08 GOD RAYS ===== -->
+<section class="rays" id="rays">
+  <span class="tag-chip"><b>08</b> Lighting · God Rays</span>
+  <canvas id="raysfx"></canvas>
+  <div class="c"><h2 class="disp">Cinematic light.</h2><p>Volumetric beams &amp; drifting dust — pure atmosphere.</p></div>
+</section>
+
 <div class="marq"><div class="t">
-  <span>PARTICLES</span><span class="o">SEAL</span><span>PRODUCT SPIN</span><span class="o">HORIZONTAL</span><span>STACKING</span><span class="o">BEFORE / AFTER</span>
-  <span>PARTICLES</span><span class="o">SEAL</span><span>PRODUCT SPIN</span><span class="o">HORIZONTAL</span><span>STACKING</span><span class="o">BEFORE / AFTER</span>
+  <span>PARTICLES</span><span class="o">SEAL</span><span>PRODUCT SPIN</span><span class="o">HORIZONTAL</span><span>STACKING</span><span class="o">BEFORE / AFTER</span><span>IGNITION</span><span class="o">SPOTLIGHT</span><span>GOD RAYS</span>
+  <span>PARTICLES</span><span class="o">SEAL</span><span>PRODUCT SPIN</span><span class="o">HORIZONTAL</span><span>STACKING</span><span class="o">BEFORE / AFTER</span><span>IGNITION</span><span class="o">SPOTLIGHT</span><span>GOD RAYS</span>
 </div></div>
 
 <!-- ===== OUTRO ===== -->
@@ -227,7 +278,7 @@ footer .lg{font-family:var(--disp);font-size:1.8rem;color:var(--ink);letter-spac
   <div class="hero-k rv" style="font-size:.74rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-2);margin-bottom:1.4rem">All hand-built</div>
   <h2 class="disp rv">No libraries.</h2>
   <div class="stats">
-    <div class="stat rv"><div class="n" data-count="6">6</div><div class="l">Effects in this file</div></div>
+    <div class="stat rv"><div class="n" data-count="9">9</div><div class="l">Effects in this file</div></div>
     <div class="stat rv"><div class="n" data-count="0">0</div><div class="l">Dependencies</div></div>
     <div class="stat rv"><div class="n" data-count="60" data-suffix="fps">60fps</div><div class="l">Buttery smooth</div></div>
   </div>
@@ -334,6 +385,76 @@ footer .lg{font-family:var(--disp);font-size:1.8rem;color:var(--ink);letter-spac
     // gentle auto-demo until user interacts
     var demo=true;wrap.addEventListener("pointerdown",function(){demo=false;});
     var t=0;(function d(){if(demo&&!reduce){t+=0.015;var r=wrap.getBoundingClientRect();set(r.left+r.width*(0.5+0.32*Math.sin(t)));}requestAnimationFrame(d);})();
+  })();
+
+  /* ===== 06 ignition (lights turning on) ===== */
+  (function(){
+    var c=document.getElementById("ign"); if(!c)return; var xx=c.getContext("2d"),W,H,dpr;
+    function sz(){dpr=Math.min(devicePixelRatio||1,2);W=c.width=c.clientWidth*dpr;H=c.height=c.clientHeight*dpr;}
+    sz();addEventListener("resize",sz);
+    var stars=[];for(var i=0;i<70;i++)stars.push({x:Math.random(),y:Math.random()*0.55,z:Math.random()});
+    function hx(h){return [parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];}
+    function mix(a,b,t){var A=hx(a),B=hx(b);return "rgb("+Math.round(A[0]+(B[0]-A[0])*t)+","+Math.round(A[1]+(B[1]-A[1])*t)+","+Math.round(A[2]+(B[2]-A[2])*t)+")";}
+    function draw(p){
+      var g=xx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,mix("#26304a","#0a0c15",p));g.addColorStop(.58,"#10121b");g.addColorStop(1,mix("#14101a","#2a1c12",p));
+      xx.fillStyle=g;xx.fillRect(0,0,W,H);
+      stars.forEach(function(s){xx.globalAlpha=(0.25+s.z*0.5)*(1-p);xx.fillStyle="#dfe4f5";xx.beginPath();xx.arc(s.x*W,s.y*H,dpr*(0.5+s.z),0,7);xx.fill();});
+      xx.globalAlpha=1;
+      var by=H*0.60,bx0=W*0.14,bx1=W*0.86;
+      xx.fillStyle="#080910";xx.beginPath();xx.moveTo(bx0,H);xx.lineTo(bx0,by+H*0.02);xx.lineTo(W*0.5,by-H*0.09);xx.lineTo(bx1,by+H*0.02);xx.lineTo(bx1,H);xx.closePath();xx.fill();
+      var cols=7,rows=3,gw=(bx1-bx0)*0.82/cols,padx=(bx1-bx0)*0.09;
+      for(var r=0;r<rows;r++)for(var col=0;col<cols;col++){
+        var idx=r*cols+col,lit=Math.max(0,Math.min(1,(p-(idx/(cols*rows))*0.75)*3.5));
+        if(lit<=0.01)continue;
+        var wx=bx0+padx+col*gw+gw*0.12,wy=by+H*0.05+r*H*0.09,ww=gw*0.62,wh=H*0.052;
+        var rgc=xx.createRadialGradient(wx+ww/2,wy+wh/2,0,wx+ww/2,wy+wh/2,ww*2.4);
+        rgc.addColorStop(0,"rgba(255,190,110,"+(0.45*lit)+")");rgc.addColorStop(1,"rgba(255,190,110,0)");
+        xx.fillStyle=rgc;xx.fillRect(wx-ww*1.5,wy-wh*1.5,ww*4,wh*4);
+        xx.fillStyle="rgba(255,214,150,"+(0.85*lit)+")";xx.fillRect(wx,wy,ww,wh);
+      }
+      var p2=Math.max(0,Math.min(1,(p-0.25)*1.7));
+      if(p2>0){xx.save();xx.strokeStyle="rgba(255,188,104,"+p2+")";xx.lineWidth=3.2*dpr;xx.shadowColor="rgba(255,180,90,0.9)";xx.shadowBlur=20*dpr;
+        xx.beginPath();xx.moveTo(W*0.5,by+H*0.02);xx.lineTo(W*0.5,H*0.99);xx.stroke();
+        xx.beginPath();xx.moveTo(W*0.3,H*0.9);xx.lineTo(W*0.7,H*0.9);xx.stroke();xx.restore();}
+      var ag=xx.createRadialGradient(W*0.5,by,0,W*0.5,by,W*0.65);
+      ag.addColorStop(0,"rgba(255,168,88,"+(0.2*p)+")");ag.addColorStop(1,"rgba(255,168,88,0)");
+      xx.fillStyle=ag;xx.fillRect(0,0,W,H);
+    }
+    var st=document.getElementById("ignStage"),ch=[].slice.call(st.querySelectorAll(".ichap")),tp=0,pp=0;
+    function onS(){var r=st.getBoundingClientRect(),tot=st.offsetHeight-innerHeight;tp=Math.min(1,Math.max(0,(-r.top)/tot));
+      ch.forEach(function(e){var f=+e.dataset.from,t=+e.dataset.to;e.style.opacity=(tp>=f&&tp<t)?1:0;});}
+    addEventListener("scroll",onS,{passive:true});addEventListener("resize",onS);onS();
+    (function lp(){pp+=(tp-pp)*0.07;draw(pp);requestAnimationFrame(lp);})();
+  })();
+
+  /* ===== 07 spotlight / torch ===== */
+  (function(){
+    var sec=document.getElementById("torch"),lit=document.getElementById("litText"),halo=document.getElementById("halo");if(!sec)return;
+    var tx=0.5,ty=0.5,cx=0.5,cy=0.5,auto=true,t=0;
+    sec.addEventListener("pointermove",function(e){auto=false;var r=sec.getBoundingClientRect();tx=(e.clientX-r.left)/r.width;ty=(e.clientY-r.top)/r.height;});
+    sec.addEventListener("pointerleave",function(){auto=true;});
+    (function lp(){ if(auto&&!reduce){t+=0.012;tx=0.5+0.30*Math.cos(t);ty=0.5+0.22*Math.sin(t*1.3);}
+      cx+=(tx-cx)*0.12;cy+=(ty-cy)*0.12;
+      lit.style.setProperty("--mx",(cx*100)+"%");lit.style.setProperty("--my",(cy*100)+"%");
+      if(halo){halo.style.left=(cx*100)+"%";halo.style.top=(cy*100)+"%";}
+      requestAnimationFrame(lp);})();
+  })();
+
+  /* ===== 08 god rays ===== */
+  (function(){
+    var c=document.getElementById("raysfx");if(!c)return;var xx=c.getContext("2d"),W,H,dpr,dust;
+    function sz(){dpr=Math.min(devicePixelRatio||1,2);W=c.width=c.clientWidth*dpr;H=c.height=c.clientHeight*dpr;
+      dust=[];for(var i=0;i<48;i++)dust.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4*dpr+0.3,v:(Math.random()*0.3+0.05)*dpr});}
+    sz();addEventListener("resize",sz);var t=0;
+    (function draw(){xx.clearRect(0,0,W,H);xx.fillStyle="#0a0910";xx.fillRect(0,0,W,H);
+      for(var i=0;i<4;i++){var off=Math.sin(t*0.3+i)*0.08,bx=W*(0.22+i*0.20)+off*W;
+        xx.save();xx.translate(bx,-H*0.2);xx.rotate(0.32);
+        var g=xx.createLinearGradient(0,0,0,H*1.5);g.addColorStop(0,"rgba(255,196,120,"+(0.10+0.04*Math.sin(t+i))+")");g.addColorStop(1,"rgba(255,196,120,0)");
+        xx.fillStyle=g;xx.fillRect(-W*0.055,0,W*0.11,H*1.5);xx.restore();}
+      xx.fillStyle="rgba(255,222,175,0.7)";
+      dust.forEach(function(d){d.y-=d.v;if(d.y< -5)d.y=H+5;xx.globalAlpha=0.25+0.4*Math.abs(Math.sin(t+d.x*0.01));xx.beginPath();xx.arc(d.x,d.y,d.r,0,7);xx.fill();});
+      xx.globalAlpha=1; if(!reduce)t+=0.01; requestAnimationFrame(draw);})();
   })();
 })();
 </script>
