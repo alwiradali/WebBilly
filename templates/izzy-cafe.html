@@ -55,7 +55,8 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
 
 /* ===== HERO ===== */
 .hero{position:relative;height:100svh;min-height:640px;overflow:hidden;display:flex;align-items:flex-end}
-.hero-bg{position:absolute;inset:-9% 0;height:118%;background:url(/assets/izzy/hero.webp) center/cover;will-change:transform;z-index:-2}
+.hero-bg{position:absolute;inset:-9% 0;height:118%;background:url(/assets/izzy/hero.webp) center/cover;will-change:transform;z-index:-3}
+.hero-smoke{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;
  background:linear-gradient(180deg,rgba(20,16,14,.62) 0%,rgba(20,16,14,.32) 30%,rgba(20,16,14,.5) 55%,rgba(20,16,14,.97) 100%)}
 .hero-in{position:relative;z-index:2;padding:0 6vw 8vh;width:100%;max-width:1280px;margin:0 auto;text-shadow:0 2px 24px rgba(10,6,4,.45)}
@@ -116,11 +117,12 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
 .ritual{padding:clamp(90px,14vh,170px) 0;position:relative;overflow:hidden}
 .rgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
 .rstack{position:relative;height:min(80vh,620px)}
+.ritual-steam{position:absolute;inset:-8% -6% 0 -6%;width:112%;height:108%;z-index:4;pointer-events:none}
 .rstack .ri{position:absolute;border-radius:14px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
 .ri.a{width:62%;top:0;left:0;aspect-ratio:4/5;z-index:2}
 .ri.b{width:52%;right:0;bottom:0;aspect-ratio:1/1;z-index:3}
 .ri img{width:100%;height:100%;object-fit:cover}
-.rtag{position:absolute;z-index:4;bottom:8%;left:50%;transform:translateX(-50%);background:var(--cream);color:var(--char);
+.rtag{position:absolute;z-index:6;bottom:8%;left:50%;transform:translateX(-50%);background:var(--cream);color:var(--char);
  padding:10px 20px;border-radius:999px;font-family:var(--serif);font-style:italic;font-size:1.05rem;white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.4)}
 .rtxt .lede{margin-top:24px}
 .rlist{margin-top:30px;display:flex;flex-direction:column;gap:2px}
@@ -188,6 +190,7 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="hero-bg" data-fx="parallax" data-fx-speed="0.16"></div>
+  <canvas class="hero-smoke" id="heroSmoke"></canvas>
   <div class="hero-in">
     <p class="eyebrow" data-fx="reveal" data-fx-variant="down">Charcoal grill · Neighbourhood cafe · Withington</p>
     <h1 data-fx="text" data-fx-step="60">Fired over charcoal, brewed with love.</h1>
@@ -273,6 +276,7 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
     <div class="rstack">
       <div class="ri a" data-fx="parallax" data-fx-speed="0.1"><img src="/assets/izzy/coffee.webp" alt="Latte with heart art"></div>
       <div class="ri b" data-fx="parallax" data-fx-speed="-0.12"><img src="/assets/izzy/tea.webp" alt="Karak chai being poured"></div>
+      <canvas class="ritual-steam" id="ritualSteam"></canvas>
       <span class="rtag">poured with care ✦</span>
     </div>
     <div class="rtxt">
@@ -341,6 +345,75 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
   var nav=document.getElementById('nav');
   function s(){ nav.classList.toggle('solid', (window.pageYOffset||0) > 40); }
   s(); addEventListener('scroll', s, {passive:true});
+})();
+
+/* ===== live steam / smoke over the real photos ===== */
+(function(){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var DPR=Math.min(2, window.devicePixelRatio||1);
+
+  function Field(canvas, opts){
+    var x=canvas.getContext('2d'), W=0, H=0, parts=[], t=0, vis=true, raf;
+    var col=opts.color, mode=opts.mode, emitters=opts.emitters, max=opts.max||120,
+        rate=opts.rate||2, blend=opts.blend||'lighter', intensity=opts.intensity||0.16;
+    function size(){ var b=canvas.getBoundingClientRect(); W=canvas.width=Math.max(1,b.width*DPR); H=canvas.height=Math.max(1,b.height*DPR); }
+    size(); addEventListener('resize', size, {passive:true});
+    function spawn(e){
+      parts.push({
+        baseX:e.x*W + (Math.random()-0.5)*e.r*W, baseY:e.y*H,
+        x:0, y:e.y*H,
+        vy:-(e.rise||0.5)*(0.6+Math.random()*0.8)*DPR,
+        r:(mode==='smoke'?0.04:0.05)*W*(0.6+Math.random()*0.9),
+        life:1, decay:0.0035+Math.random()*0.0045,
+        phase:Math.random()*6.28, rot:(0.5+Math.random()*0.8)*(Math.random()<0.5?-1:1),
+        twist:(mode==='smoke'?2.2:5.5)+Math.random()*3, amp:(mode==='smoke'?0.05:0.075)*W*(0.6+Math.random()*0.7),
+        drift:(Math.random()-0.5)*0.6
+      });
+    }
+    function frame(){
+      raf=requestAnimationFrame(frame);
+      if(!vis){ return; }
+      t+=0.016;
+      x.clearRect(0,0,W,H);
+      x.globalCompositeOperation=blend;
+      for(var ei=0; ei<emitters.length; ei++){
+        var e=emitters[ei];
+        for(var k=0;k<rate;k++){ if(parts.length<max && Math.random()<(e.rate||1)) spawn(e); }
+      }
+      for(var i=parts.length-1;i>=0;i--){
+        var p=parts[i];
+        p.y+=p.vy; p.vy*=0.996; p.r+=(mode==='smoke'?0.7:0.5)*DPR; p.life-=p.decay;
+        if(p.life<=0 || p.y< -H*0.15){ parts.splice(i,1); continue; }
+        var rise=(p.baseY-p.y), riseN=rise/H;
+        var swirlAmp=p.amp*Math.min(1, riseN*3.2);
+        var ang=p.phase + t*p.rot + riseN*p.twist;
+        p.x=p.baseX + Math.sin(ang)*swirlAmp + p.drift*rise*0.02;
+        var top=1-Math.min(1, riseN*(mode==='smoke'?1.2:1.7));
+        var al=p.life*p.life*top*intensity;
+        if(al<=0.003) continue;
+        var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+        g.addColorStop(0,'rgba('+col+','+al+')'); g.addColorStop(1,'rgba('+col+',0)');
+        x.fillStyle=g; x.beginPath(); x.arc(p.x,p.y,p.r,0,6.28); x.fill();
+      }
+      x.globalCompositeOperation='source-over';
+    }
+    raf=requestAnimationFrame(frame);
+    // pause when off-screen
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(en){ vis=en[0].isIntersecting; },{threshold:0.02}).observe(canvas);
+    }
+  }
+
+  function boot(){
+    var hs=document.getElementById('heroSmoke');
+    if(hs) new Field(hs,{ mode:'smoke', color:'246,242,235', blend:'source-over', intensity:0.19, max:200, rate:3,
+      emitters:[ {x:0.22,y:0.72,r:0.18,rate:0.8,rise:0.62},{x:0.46,y:0.76,r:0.22,rate:0.95,rise:0.74},
+                 {x:0.68,y:0.72,r:0.2,rate:0.9,rise:0.66},{x:0.86,y:0.70,r:0.15,rate:0.7,rise:0.6} ] });
+    var rs=document.getElementById('ritualSteam');
+    if(rs) new Field(rs,{ mode:'steam', color:'244,240,231', blend:'lighter', intensity:0.14, max:150, rate:2,
+      emitters:[ {x:0.30,y:0.30,r:0.06,rate:0.4,rise:0.5},{x:0.71,y:0.60,r:0.05,rate:1,rise:0.7} ] });
+  }
+  if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>
 </body></html>
