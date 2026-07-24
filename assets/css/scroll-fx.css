@@ -15,3 +15,107 @@
   .section-head h2,
   .section-head .tag { will-change: transform; }
 }
+
+/* =============================================================
+   data-fx toolkit — global scroll-effects system (additive, v2)
+   Driven by assets/js/scroll-fx.js. Opt-in per element via
+   data-fx="reveal|stagger|text|parallax|pin|horizontal|progressbar".
+   Does NOT touch the .reveal class or hero parallax above.
+   ============================================================= */
+
+/* Shared easing/timing tokens — tweak these to change the "feel" globally */
+:root {
+  --fx-dur: 0.9s;
+  --fx-ease: cubic-bezier(0.22, 1, 0.36, 1); /* smooth "expo out" — reads premium */
+  --fx-distance: 40px;
+}
+
+/* ---- 1. REVEAL ---- */
+[data-fx="reveal"] {
+  opacity: 0;
+  transform: translateY(var(--fx-distance));
+  transition: opacity var(--fx-dur) var(--fx-ease),
+              transform var(--fx-dur) var(--fx-ease);
+  will-change: opacity, transform;
+}
+[data-fx="reveal"][data-fx-variant="down"]  { transform: translateY(calc(var(--fx-distance) * -1)); }
+[data-fx="reveal"][data-fx-variant="left"]  { transform: translateX(var(--fx-distance)); }
+[data-fx="reveal"][data-fx-variant="right"] { transform: translateX(calc(var(--fx-distance) * -1)); }
+[data-fx="reveal"][data-fx-variant="scale"] { transform: scale(0.92); }
+[data-fx="reveal"].fx-in {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* ---- 2. STAGGER ---- */
+.fx-stagger-item {
+  opacity: 0;
+  transform: translateY(var(--fx-distance));
+  transition: opacity var(--fx-dur) var(--fx-ease),
+              transform var(--fx-dur) var(--fx-ease);
+  will-change: opacity, transform;
+}
+.fx-stagger-item.fx-in { opacity: 1; transform: translateY(0); }
+
+/* ---- 3. TEXT REVEAL ---- */
+[data-fx="text"] .fx-word { display: inline-block; overflow: hidden; vertical-align: top; }
+[data-fx="text"] .fx-word-inner {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.7s var(--fx-ease);
+  will-change: transform;
+}
+[data-fx="text"] .fx-word-inner.fx-in,
+[data-fx="text"].fx-in .fx-word-inner { transform: translateY(0); }
+
+/* ---- 4. PARALLAX ---- */
+[data-fx="parallax"] { will-change: transform; }
+
+/* ---- 5. PIN ---- */
+[data-fx="pin"] { position: relative; }
+[data-fx="pin"] > .fx-pin-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* Example of driving something from progress:
+   [data-fx="pin"] .my-img { transform: scale(calc(1 + var(--fx-progress) * 0.3)); } */
+
+/* ---- 6. HORIZONTAL ---- */
+[data-fx="horizontal"] { position: relative; }
+.fx-h-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.fx-h-track {
+  display: flex;
+  gap: 2rem;
+  will-change: transform;
+  padding: 0 5vw;
+}
+
+/* ---- 7. PROGRESS BAR ---- */
+[data-fx="progressbar"] {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: currentColor; /* inherits your accent color */
+  z-index: 9999;
+  will-change: transform;
+}
+
+/* ---- Accessibility ---- */
+@media (prefers-reduced-motion: reduce) {
+  [data-fx] { transition: none !important; }
+}
