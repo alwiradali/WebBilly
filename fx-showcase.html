@@ -1,0 +1,179 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Billy Digitals — Motion Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/scroll-fx.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#060b1a;--text:#eaf2ff;--muted:#93a4c4;--c1:#2b7fff;--c2:#38bdf8;--c3:#22d3ee;
+ --disp:'Space Grotesk',Inter,sans-serif;--serif:'Playfair Display',Georgia,serif}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+.grad{background:linear-gradient(100deg,var(--c1),var(--c2) 55%,var(--c3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+section{position:relative;padding:120px 6vw}
+.eyebrow{font-family:var(--disp);font-weight:600;letter-spacing:.22em;text-transform:uppercase;font-size:.72rem;color:var(--c2);margin-bottom:18px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.6rem,7vw,6rem);line-height:1.02;letter-spacing:-.02em}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.6vw,3.4rem);line-height:1.05;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.65;max-width:56ch;margin-top:18px}
+.tagline{font-family:var(--disp);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;z-index:-1}
+.b1{width:46vw;height:46vw;background:radial-gradient(circle,rgba(43,127,255,.55),transparent 65%);top:-8vw;right:-6vw}
+.b2{width:38vw;height:38vw;background:radial-gradient(circle,rgba(34,211,238,.4),transparent 65%);bottom:-10vw;left:-4vw}
+.cue{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);font-family:var(--disp);font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.cue span{display:block;width:1px;height:38px;margin:12px auto 0;background:linear-gradient(var(--c2),transparent);animation:cue 2s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.4);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* card grids */
+.grid{display:grid;gap:22px;margin-top:48px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(120,180,255,.14);
+ border-radius:18px;padding:30px;min-height:190px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.card .n{font-family:var(--serif);font-size:2.4rem;color:rgba(255,255,255,.16);position:absolute;top:14px;left:22px}
+.card h3{font-family:var(--disp);font-weight:600;font-size:1.15rem;margin-bottom:6px}
+.card p{color:var(--muted);font-size:.92rem}
+.chip{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.28);border-radius:999px;padding:14px 22px;
+ font-family:var(--disp);font-weight:500;font-size:.95rem;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:40px}
+
+/* PIN scrub */
+.pinsec{height:320vh}
+.pin-stage{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center}
+.pin-img{position:absolute;inset:0;background-size:cover;background-position:center;
+ transform:scale(calc(1.05 + var(--fx-progress,0)*0.45));filter:brightness(calc(.35 + var(--fx-progress,0)*.5))}
+.pin-veil{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,transparent,rgba(6,11,26,.85))}
+.pin-word{position:relative;font-family:var(--serif);font-weight:600;font-size:clamp(2.4rem,9vw,8rem);line-height:1;text-align:center;
+ transform:scale(calc(.72 + var(--fx-progress,0)*.42));letter-spacing:calc(var(--fx-progress,0)*.06em);
+ opacity:calc(.25 + var(--fx-progress,0)*.9)}
+.pin-cap{position:absolute;bottom:8vh;left:50%;transform:translateX(-50%);text-align:center}
+.pin-bar{width:min(520px,70vw);height:3px;background:rgba(255,255,255,.14);border-radius:3px;margin:14px auto 0;overflow:hidden}
+.pin-bar i{display:block;height:100%;width:100%;transform-origin:0 50%;transform:scaleX(var(--fx-progress,0));
+ background:linear-gradient(90deg,var(--c1),var(--c3))}
+
+/* HORIZONTAL */
+.hsec{height:300vh}
+.hcard{flex:0 0 auto;width:min(66vw,520px);height:62vh;border-radius:20px;overflow:hidden;position:relative;
+ border:1px solid rgba(120,180,255,.14)}
+.hcard .hi{position:absolute;inset:0;background-size:cover;background-position:center}
+.hcard .hl{position:absolute;left:26px;bottom:22px;z-index:2}
+.hcard .hl b{font-family:var(--serif);font-weight:600;font-size:1.7rem;display:block}
+.hcard .hl span{font-family:var(--disp);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(234,242,255,.75)}
+.hcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(4,7,16,.8))}
+.hintro{position:absolute;top:80px;left:6vw;z-index:3}
+
+/* PARALLAX gallery */
+.pgal{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:center;margin-top:50px}
+.pgal .pi{border-radius:16px;overflow:hidden;border:1px solid rgba(120,180,255,.14)}
+.pgal .pi img{width:100%;display:block}
+
+/* OUTRO */
+.outro{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.btn{display:inline-block;margin-top:30px;font-family:var(--disp);font-weight:600;color:#04101f;
+ background:linear-gradient(100deg,var(--c1),var(--c3));padding:16px 34px;border-radius:999px;text-decoration:none;
+ transition:transform .3s,box-shadow .3s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(43,127,255,.4)}
+
+@media(max-width:760px){
+ section{padding:84px 7vw}
+ .g2,.g3,.pgal{grid-template-columns:1fr}
+ .hcard{width:82vw;height:52vh}
+ .pgal{gap:18px}
+}
+</style></head>
+<body>
+
+<div data-fx="progressbar" style="color:#38bdf8"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="blob b1" data-fx="parallax" data-fx-speed="0.18"></span>
+  <span class="blob b2" data-fx="parallax" data-fx-speed="-0.12"></span>
+  <p class="eyebrow" data-fx="reveal" data-fx-variant="down">Billy Digitals · Motion System</p>
+  <h1 data-fx="text">Motion that feels alive.</h1>
+  <p class="sub" data-fx="reveal" data-fx-delay="200">One tiny toolkit, seven effects — the same buttery scroll motion the award-winning agencies use, now baked into every page we build for you. Keep scrolling.</p>
+  <div class="cue">Scroll<span></span></div>
+</section>
+
+<!-- REVEAL DIRECTIONS -->
+<section>
+  <p class="eyebrow" data-fx="reveal">01 — Reveal</p>
+  <h2 data-fx="reveal" data-fx-delay="80">Content that <span class="grad">arrives with intention</span></h2>
+  <p class="sub" data-fx="reveal" data-fx-delay="160">Every element can fade in from any direction, or scale up — timed to feel deliberate, never twitchy.</p>
+  <div class="grid g2">
+    <div class="card" data-fx="reveal" data-fx-variant="up"><span class="n">↑</span><h3>Rise up</h3><p>The default — fades and lifts into place.</p></div>
+    <div class="card" data-fx="reveal" data-fx-variant="left"><span class="n">←</span><h3>Slide in</h3><p>Drifts in from the side as it enters view.</p></div>
+    <div class="card" data-fx="reveal" data-fx-variant="right" data-fx-delay="100"><span class="n">→</span><h3>Slide from right</h3><p>Mirror the motion for balance.</p></div>
+    <div class="card" data-fx="reveal" data-fx-variant="scale" data-fx-delay="180"><span class="n">◎</span><h3>Scale in</h3><p>Gently grows to full size — great for images.</p></div>
+  </div>
+</section>
+
+<!-- STAGGER -->
+<section>
+  <p class="eyebrow" data-fx="reveal">02 — Stagger</p>
+  <h2 data-fx="text">Lists that cascade in</h2>
+  <p class="sub" data-fx="reveal" data-fx-delay="120">Perfect for feature lists, service grids and menus — each item follows the last in a smooth wave.</p>
+  <div class="chips" data-fx="stagger" data-fx-step="90">
+    <span class="chip">Custom Design</span><span class="chip">SEO Built-in</span><span class="chip">Blazing Fast</span>
+    <span class="chip">Mobile-first</span><span class="chip">AI Chat</span><span class="chip">Booking</span>
+    <span class="chip">Hosting & Care</span><span class="chip">Analytics</span><span class="chip">Secure</span>
+  </div>
+</section>
+
+<!-- PIN / SCRUB -->
+<section class="pinsec" data-fx="pin">
+  <div class="pin-stage fx-pin-inner">
+    <div class="pin-img" style="background-image:url(assets/thumb-aether.webp)"></div>
+    <div class="pin-veil"></div>
+    <div class="pin-word grad">Scroll-scrubbed.</div>
+    <div class="pin-cap">
+      <p class="tagline">03 — Pin &amp; scrub · driven frame-by-frame by scroll</p>
+      <div class="pin-bar"><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- HORIZONTAL -->
+<section class="hsec" data-fx="horizontal">
+  <div class="fx-h-sticky">
+    <div class="hintro">
+      <p class="eyebrow">04 — Horizontal</p>
+      <h2>Scroll down,<br>move sideways →</h2>
+    </div>
+    <div class="fx-h-track">
+      <div class="hcard"><span class="hi" style="background-image:url(assets/work-atb.webp)"></span><span class="hl"><b>ATB Premier Travel</b><span>Travel Agency</span></span></div>
+      <div class="hcard"><span class="hi" style="background-image:url(assets/work-heaton247.webp)"></span><span class="hl"><b>Heat On 24/7</b><span>Heating & Plumbing</span></span></div>
+      <div class="hcard"><span class="hi" style="background-image:url(assets/work-meridian.webp)"></span><span class="hl"><b>Meridian</b><span>SaaS Platform</span></span></div>
+      <div class="hcard"><span class="hi" style="background-image:url(assets/thumb-nova.webp)"></span><span class="hl"><b>Nova</b><span>AI Product</span></span></div>
+      <div class="hcard"><span class="hi" style="background-image:url(assets/thumb-ember.webp)"></span><span class="hl"><b>Ember</b><span>Restaurant</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX GALLERY -->
+<section>
+  <p class="eyebrow" data-fx="reveal">05 — Parallax</p>
+  <h2 data-fx="reveal" data-fx-delay="80">Depth as you <span class="grad">move</span></h2>
+  <p class="sub" data-fx="reveal" data-fx-delay="150">Layers drift at different speeds, so the page feels three-dimensional instead of flat.</p>
+  <div class="pgal">
+    <div class="pi" data-fx="parallax" data-fx-speed="0.22"><img src="assets/thumb-aether.webp" alt=""></div>
+    <div class="pi" data-fx="parallax" data-fx-speed="-0.14"><img src="assets/thumb-averley.webp" alt=""></div>
+    <div class="pi" data-fx="parallax" data-fx-speed="0.3"><img src="assets/thumb-apex.webp" alt=""></div>
+  </div>
+</section>
+
+<!-- OUTRO -->
+<section class="outro">
+  <p class="eyebrow" data-fx="reveal" data-fx-variant="down">06 — Progress bar at the top ↑</p>
+  <h2 data-fx="text">This is the calibre we build in.</h2>
+  <p class="sub" data-fx="reveal" data-fx-delay="150" style="text-align:center">Every effect on this page is one small, fast, reusable toolkit — dropped into any page we make for your brand.</p>
+  <a class="btn" href="#" data-fx="reveal" data-fx-variant="scale" data-fx-delay="260">Start your project →</a>
+</section>
+
+<script src="assets/js/scroll-fx.js" defer></script>
+</body></html>
