@@ -1,0 +1,17 @@
+/* ============================================================
+   Billy Digitals — additive scroll effects & polish
+   Loaded last. Purely additive & reversible — does not alter
+   structure, forms, chat or SEO. Respects reduced-motion.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  /* More premium reveal easing (timing only — preserves stagger delays,
+     never hides content) */
+  .reveal {
+    transition-timing-function: cubic-bezier(.22, 1, .36, 1);
+    transition-duration: .85s;
+  }
+  /* Hint the compositor for the elements we parallax */
+  .hero-inner { will-change: transform, opacity; }
+  .section-head h2,
+  .section-head .tag { will-change: transform; }
+}
