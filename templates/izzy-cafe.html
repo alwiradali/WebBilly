@@ -352,66 +352,85 @@ h2{font-size:clamp(2.2rem,5.4vw,4.2rem)}
   if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var DPR=Math.min(2, window.devicePixelRatio||1);
 
+  function mix(a,b,f){ var A=a.split(',').map(Number),B=b.split(',').map(Number);
+    return A.map(function(v,i){return Math.round(v+(B[i]-v)*f);}).join(','); }
+
   function Field(canvas, opts){
-    var x=canvas.getContext('2d'), W=0, H=0, parts=[], t=0, vis=true, raf;
-    var col=opts.color, mode=opts.mode, emitters=opts.emitters, max=opts.max||120,
-        rate=opts.rate||2, blend=opts.blend||'lighter', intensity=opts.intensity||0.16;
-    function size(){ var b=canvas.getBoundingClientRect(); W=canvas.width=Math.max(1,b.width*DPR); H=canvas.height=Math.max(1,b.height*DPR); }
+    var x=canvas.getContext('2d'), W=0, H=0, scale=1, parts=[], t=0, vis=true, raf, last=0;
+    var col=opts.color, warm=opts.warm||null, alpha=opts.alpha||0.08,
+        emitters=opts.emitters, max=opts.max||280,
+        rise=opts.rise||1, spread=opts.spread||1, curl=opts.curl||1,
+        life=opts.life||3.2, size0=opts.size||0.045, grow=opts.grow||1,
+        cutY=(opts.cutY!=null?opts.cutY:0.12), cutR=opts.cutR||0.22;
+    function size(){ var b=canvas.getBoundingClientRect(); W=canvas.width=Math.max(1,b.width*DPR); H=canvas.height=Math.max(1,b.height*DPR); scale=Math.min(W,H); }
     size(); addEventListener('resize', size, {passive:true});
-    function spawn(e){
-      parts.push({
-        baseX:e.x*W + (Math.random()-0.5)*e.r*W, baseY:e.y*H,
-        x:0, y:e.y*H,
-        vy:-(e.rise||0.5)*(0.6+Math.random()*0.8)*DPR,
-        r:(mode==='smoke'?0.04:0.05)*W*(0.6+Math.random()*0.9),
-        life:1, decay:0.0035+Math.random()*0.0045,
-        phase:Math.random()*6.28, rot:(0.5+Math.random()*0.8)*(Math.random()<0.5?-1:1),
-        twist:(mode==='smoke'?2.2:5.5)+Math.random()*3, amp:(mode==='smoke'?0.05:0.075)*W*(0.6+Math.random()*0.7),
-        drift:(Math.random()-0.5)*0.6
-      });
+
+    // divergence-free curl-noise velocity (analytic stream function) → smoke folds & curls
+    var _v=[0,0];
+    function vel(px,py,tt){
+      var s=0.0021, X=px*s, Y=py*s;
+      _v[0] =  Math.sin(X + tt*0.6)      * -Math.sin(Y - tt*0.35)
+             + 0.5*Math.sin(X*2.1 - tt*0.5) * -Math.sin(Y*1.9 + tt*0.3)*1.9;
+      _v[1] = -( Math.cos(X + tt*0.6)      *  Math.cos(Y - tt*0.35)
+             + 0.5*Math.cos(X*2.1 - tt*0.5)*2.1 * Math.cos(Y*1.9 + tt*0.3) );
     }
-    function frame(){
-      raf=requestAnimationFrame(frame);
-      if(!vis){ return; }
-      t+=0.016;
-      x.clearRect(0,0,W,H);
-      x.globalCompositeOperation=blend;
-      for(var ei=0; ei<emitters.length; ei++){
-        var e=emitters[ei];
-        for(var k=0;k<rate;k++){ if(parts.length<max && Math.random()<(e.rate||1)) spawn(e); }
+
+    function emit(){
+      for(var i=0;i<emitters.length;i++){
+        var e=emitters[i];
+        if(Math.random() < (e.rate||0.5)){
+          var burst=1 + (Math.random()*(e.burst||2)|0);
+          for(var k=0;k<burst && parts.length<max;k++){
+            var ang=Math.random()*6.28, rr=Math.random()*e.r*W;
+            parts.push({ x:e.x*W+Math.cos(ang)*rr, y:e.y*H+(Math.random()-0.5)*e.r*H*0.4,
+              r:size0*scale*(0.45+Math.random()*0.8), age:0, life:life*(0.7+Math.random()*0.7),
+              rise:(e.rise||rise)*(0.7+Math.random()*0.6), seed:Math.random()*120,
+              drift:(Math.random()-0.5) });
+          }
+        }
       }
+    }
+    function frame(ts){
+      raf=requestAnimationFrame(frame);
+      if(!vis){ last=ts; return; }
+      var dt=last? Math.min(0.05,(ts-last)/1000):0.016; last=ts; t+=dt; var f=dt*60;
+      emit();
+      x.clearRect(0,0,W,H);
       for(var i=parts.length-1;i>=0;i--){
-        var p=parts[i];
-        p.y+=p.vy; p.vy*=0.996; p.r+=(mode==='smoke'?0.7:0.5)*DPR; p.life-=p.decay;
-        if(p.life<=0 || p.y< -H*0.15){ parts.splice(i,1); continue; }
-        var rise=(p.baseY-p.y), riseN=rise/H;
-        var swirlAmp=p.amp*Math.min(1, riseN*3.2);
-        var ang=p.phase + t*p.rot + riseN*p.twist;
-        p.x=p.baseX + Math.sin(ang)*swirlAmp + p.drift*rise*0.02;
-        var top=1-Math.min(1, riseN*(mode==='smoke'?1.2:1.7));
-        var al=p.life*p.life*top*intensity;
-        if(al<=0.003) continue;
+        var p=parts[i]; p.age+=dt; var ln=p.age/p.life;
+        if(ln>=1){ parts.splice(i,1); continue; }
+        vel(p.x, p.y, t + p.seed);
+        p.x += (_v[0]*curl*spread + p.drift*0.35) * scale*0.0045 * f;
+        p.y += (-p.rise*1.2 + _v[1]*curl*0.7)     * scale*0.0045 * f;
+        p.r += grow*scale*0.0042*f;
+        var fade=Math.sin(Math.min(1,ln)*Math.PI);      // fade in then out
+        var a=alpha*fade*fade;
+        a *= Math.max(0, Math.min(1, (p.y/H - cutY)/cutR)); // thin out as it rises
+        if(a<=0.004) continue;
+        var c=(warm && ln<0.4)? mix(col,warm,(0.4-ln)/0.4*0.7) : col;
         var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-        g.addColorStop(0,'rgba('+col+','+al+')'); g.addColorStop(1,'rgba('+col+',0)');
+        g.addColorStop(0,'rgba('+c+','+a+')');
+        g.addColorStop(0.55,'rgba('+c+','+(a*0.45)+')');
+        g.addColorStop(1,'rgba('+c+',0)');
         x.fillStyle=g; x.beginPath(); x.arc(p.x,p.y,p.r,0,6.28); x.fill();
       }
-      x.globalCompositeOperation='source-over';
     }
     raf=requestAnimationFrame(frame);
-    // pause when off-screen
     if('IntersectionObserver' in window){
-      new IntersectionObserver(function(en){ vis=en[0].isIntersecting; },{threshold:0.02}).observe(canvas);
+      new IntersectionObserver(function(en){ vis=en[0].isIntersecting; if(vis)last=0; },{threshold:0.02}).observe(canvas);
     }
   }
 
   function boot(){
     var hs=document.getElementById('heroSmoke');
-    if(hs) new Field(hs,{ mode:'smoke', color:'246,242,235', blend:'source-over', intensity:0.19, max:200, rate:3,
-      emitters:[ {x:0.22,y:0.72,r:0.18,rate:0.8,rise:0.62},{x:0.46,y:0.76,r:0.22,rate:0.95,rise:0.74},
-                 {x:0.68,y:0.72,r:0.2,rate:0.9,rise:0.66},{x:0.86,y:0.70,r:0.15,rate:0.7,rise:0.6} ] });
+    if(hs) new Field(hs,{ color:'230,224,215', warm:'208,166,116', alpha:0.06, max:150,
+      rise:1.15, spread:0.9, curl:1.25, life:2.5, size:0.038, grow:0.82, cutY:0.16, cutR:0.26,
+      emitters:[ {x:0.30,y:0.78,r:0.035,rate:0.4,burst:2},{x:0.55,y:0.80,r:0.04,rate:0.42,burst:2},
+                 {x:0.78,y:0.77,r:0.035,rate:0.36,burst:2} ] });
     var rs=document.getElementById('ritualSteam');
-    if(rs) new Field(rs,{ mode:'steam', color:'244,240,231', blend:'lighter', intensity:0.14, max:150, rate:2,
-      emitters:[ {x:0.30,y:0.30,r:0.06,rate:0.4,rise:0.5},{x:0.71,y:0.60,r:0.05,rate:1,rise:0.7} ] });
+    if(rs) new Field(rs,{ color:'238,238,233', alpha:0.07, max:150,
+      rise:1.2, spread:0.62, curl:1.0, life:2.6, size:0.034, grow:0.8, cutY:0.05, cutR:0.2,
+      emitters:[ {x:0.30,y:0.31,r:0.025,rate:0.26,burst:1},{x:0.71,y:0.60,r:0.025,rate:0.6,burst:2} ] });
   }
   if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
 })();
