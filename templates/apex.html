@@ -31,6 +31,7 @@ section{position:relative}
 #app{width:100%;z-index:1}
 html.smooth #app{position:fixed;top:0;left:0;will-change:transform}
 html.smooth,html.smooth body{overflow:visible}
+html.smooth body{overscroll-behavior-y:none}
 
 /* ============ global overlays ============ */
 #grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:90;opacity:.05;mix-blend-mode:overlay;
@@ -164,6 +165,28 @@ html.smooth .pin-in{position:relative;top:auto}
 footer{padding:6vh 5vw;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);flex-wrap:wrap;gap:1rem;color:var(--dim);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
 footer .bd{font-family:var(--disp);color:var(--ink);letter-spacing:.12em}
 
+@media(max-width:720px){
+  #hd{padding:18px 6vw}
+  #hd .bd{font-size:.82rem}
+  #hero{padding:0 6vw}
+  #hero .sub{flex-direction:column;align-items:flex-start;gap:1.2rem}
+  #hero .cue{align-self:flex-start}
+  .statement{padding:24vh 7vw}
+  .htitle{top:8vh;left:6vw}
+  .htitle h2{font-size:clamp(2rem,10vw,4rem)}
+  .panel{width:82vw;height:56vh;padding:7vw}
+  .htrack{gap:6vw;padding:0 9vw}
+  .panel .no,.panel .cap{top:6vw}.panel .no{left:6vw}.panel .cap{right:6vw}
+  .stackstage{width:88vw;height:68vh}
+  .scard2{height:68vh}
+  .scard2 .big{font-size:clamp(2rem,10vw,3.4rem)}
+  .marq{padding:11vh 0}
+  .gwrap .head{flex-direction:column;align-items:flex-start;gap:.5rem;margin-bottom:5vh}
+  .gwrap .head h2{font-size:clamp(2rem,9vw,4rem)}
+  #idx{left:16px;bottom:16px;font-size:.6rem}
+  #cta h2{font-size:clamp(2.6rem,13.5vw,15rem)}
+  .magnet{padding:20px 36px}
+}
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
   #hero h1 .l,#hero .sub,#load .lw span{transform:none;opacity:1;clip-path:none}
@@ -324,14 +347,14 @@ else{
 /* ---------- main init (scroll engine + effects) ---------- */
 function init(){
   var vh=innerHeight,vw=innerWidth;
-  var smooth=fine&&!reduce&&vw>820;
+  var smooth=!reduce;                 // momentum + JS pins on desktop AND mobile
   var cur=0,target=0,vel=0;
   var pins=[].slice.call(document.querySelectorAll("[data-pin]"));
   var offsets=new Map();
 
   function offTop(el){var y=0;while(el&&el!==app&&el!==document.body){y+=el.offsetTop;el=el.offsetParent;}return y;}
   function measure(){
-    vh=innerHeight;vw=innerWidth;smooth=fine&&!reduce&&vw>820;
+    vh=innerHeight;vw=innerWidth;smooth=!reduce;
     if(smooth){document.documentElement.classList.add("smooth");document.body.style.height=app.scrollHeight+"px";}
     else{document.documentElement.classList.remove("smooth");document.body.style.height="";app.style.transform="";}
     pins.forEach(function(p){offsets.set(p,offTop(p));});
@@ -424,7 +447,7 @@ function init(){
   var panels=document.querySelectorAll(".panel .pi");
   function frame(){
     target=window.scrollY||window.pageYOffset;
-    var e=smooth?0.09:1;
+    var e=smooth?(fine?0.09:0.14):1;   // snappier on touch so it tracks the finger
     var prev=cur;cur=smooth?lerp(cur,target,e):target;
     if(Math.abs(target-cur)<0.05)cur=target;
     vel=cur-prev;
