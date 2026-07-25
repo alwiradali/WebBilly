@@ -48,8 +48,9 @@ h2 em{font-style:italic;color:var(--gold)}
 
 /* HERO */
 .hero{position:relative;height:100svh;min-height:640px;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
-.hero-bg{position:absolute;inset:0;background:url(/assets/izzy/grill-dark.webp) center/cover;transform:scale(1.06);will-change:transform;z-index:-2}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 50% 40%,rgba(27,21,18,.35),rgba(18,13,11,.82) 90%),linear-gradient(180deg,rgba(18,13,11,.72),transparent 26%,transparent 58%,rgba(18,13,11,.97))}
+.hero-bg{position:absolute;inset:0;background:url(/assets/izzy/grill-dark.webp) center/cover;transform:scale(1.06);will-change:transform;z-index:-3}
+.hero-smoke{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(120% 90% at 50% 40%,rgba(27,21,18,.35),rgba(18,13,11,.82) 90%),linear-gradient(180deg,rgba(18,13,11,.72),transparent 26%,transparent 58%,rgba(18,13,11,.97))}
 .hero-center{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(20px,5vw,70px);padding:0 5vw;text-align:center}
 .hero-center .side{font-family:var(--sans);font-weight:500;letter-spacing:.24em;text-transform:uppercase;font-size:.66rem;color:var(--parch);opacity:.85;line-height:1.7;white-space:nowrap}
 .hero h1{font-family:var(--serif);font-weight:300;color:var(--cream);font-size:clamp(3.4rem,12vw,11rem);line-height:.86;letter-spacing:-.02em;text-transform:uppercase}
@@ -173,6 +174,7 @@ h2 em{font-style:italic;color:var(--gold)}
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="hero-bg" id="hbg"></div>
+  <canvas class="hero-smoke" id="heroSmoke"></canvas>
   <div class="hero-center">
     <div class="side" data-rv>Halal<br>Charcoal Grill</div>
     <h1 data-text data-step="70">Fired over<br>charcoal</h1>
@@ -238,10 +240,14 @@ h2 em{font-style:italic;color:var(--gold)}
     <div class="hs-intro"><p class="lbl">Straight from the pass</p><h2>Scroll to<br>see the plates →</h2></div>
     <div class="hs-track">
       <div class="hcard"><img src="/assets/izzy/hero.webp" alt=""><span class="hl"><b>Mixed Charcoal Grill</b><span>Kofte · Shish · Chops</span></span></div>
+      <div class="hcard"><img src="/assets/izzy/chops.webp" alt=""><span class="hl"><b>Lamb Chops</b><span>Charcoal-grilled</span></span></div>
+      <div class="hcard"><img src="/assets/izzy/wings.webp" alt=""><span class="hl"><b>Glazed Wings</b><span>Smoked &amp; sticky</span></span></div>
       <div class="hcard"><img src="/assets/izzy/brunch.webp" alt=""><span class="hl"><b>Eggs on Sourdough</b><span>All-day brunch</span></span></div>
       <div class="hcard"><img src="/assets/izzy/pancakes.webp" alt=""><span class="hl"><b>Buttermilk Pancakes</b><span>Berries &amp; syrup</span></span></div>
       <div class="hcard"><img src="/assets/izzy/barista.webp" alt=""><span class="hl"><b>Flat White</b><span>Poured to order</span></span></div>
       <div class="hcard"><img src="/assets/izzy/brunch2.webp" alt=""><span class="hl"><b>Halloumi &amp; Avo</b><span>Brunch favourite</span></span></div>
+      <div class="hcard"><img src="/assets/izzy/baklava.webp" alt=""><span class="hl"><b>Baklava</b><span>Honey &amp; pistachio</span></span></div>
+      <div class="hcard"><img src="/assets/izzy/burger.webp" alt=""><span class="hl"><b>Signature Burger</b><span>Smash &amp; brioche</span></span></div>
     </div>
   </div>
 </section>
@@ -342,6 +348,31 @@ h2 em{font-style:italic;color:var(--gold)}
     $('a,button,.pcard,.hcard').forEach(function(el){el.addEventListener('pointerenter',function(){cur.classList.add('big');});el.addEventListener('pointerleave',function(){cur.classList.remove('big');});});
   }
   var nav=document.getElementById('nav');function ns(){nav.classList.toggle('solid',(scrollY||0)>40);}ns();addEventListener('scroll',ns,{passive:true});
+
+  /* live curl-noise smoke over the grill hero */
+  (function(){
+    if(reduce)return; var cv=document.getElementById('heroSmoke'); if(!cv)return;
+    var x=cv.getContext('2d'),DPR=Math.min(2,devicePixelRatio||1),W=0,H=0,scale=1,parts=[],t=0,vis=true,last=0;
+    var col='236,228,216', warm='210,150,96';
+    var em=[{x:0.28,y:0.82,r:0.05,rate:0.5,burst:2},{x:0.5,y:0.85,r:0.06,rate:0.55,burst:2},{x:0.72,y:0.82,r:0.05,rate:0.5,burst:2}];
+    function sz(){var b=cv.getBoundingClientRect();W=cv.width=Math.max(1,b.width*DPR);H=cv.height=Math.max(1,b.height*DPR);scale=Math.min(W,H);}
+    sz();addEventListener('resize',sz,{passive:true});
+    var _v=[0,0];
+    function vel(px,py,tt){var s=0.0021,X=px*s,Y=py*s;
+      _v[0]=Math.sin(X+tt*0.6)*-Math.sin(Y-tt*0.35)+0.5*Math.sin(X*2.1-tt*0.5)*-Math.sin(Y*1.9+tt*0.3)*1.9;
+      _v[1]=-(Math.cos(X+tt*0.6)*Math.cos(Y-tt*0.35)+0.5*Math.cos(X*2.1-tt*0.5)*2.1*Math.cos(Y*1.9+tt*0.3));}
+    function emit(){em.forEach(function(e){if(Math.random()<e.rate){var n=1+(Math.random()*e.burst|0);for(var k=0;k<n&&parts.length<160;k++){var a=Math.random()*6.28,rr=Math.random()*e.r*W;parts.push({x:e.x*W+Math.cos(a)*rr,y:e.y*H+(Math.random()-0.5)*e.r*H*0.4,r:0.04*scale*(0.5+Math.random()*0.8),age:0,life:2.4*(0.7+Math.random()*0.7),rise:1.1*(0.7+Math.random()*0.6),seed:Math.random()*120,drift:(Math.random()-0.5)});}}});}
+    function frame(ts){requestAnimationFrame(frame);if(!vis){last=ts;return;}var dt=last?Math.min(0.05,(ts-last)/1000):0.016;last=ts;t+=dt;var f=dt*60;emit();x.clearRect(0,0,W,H);
+      for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.age+=dt;var ln=p.age/p.life;if(ln>=1){parts.splice(i,1);continue;}
+        vel(p.x,p.y,t+p.seed);p.x+=(_v[0]*1.25*0.9+p.drift*0.35)*scale*0.0045*f;p.y+=(-p.rise*1.2+_v[1]*0.7)*scale*0.0045*f;p.r+=0.82*scale*0.0042*f;
+        var fade=Math.sin(Math.min(1,ln)*Math.PI),a=0.06*fade*fade;a*=Math.max(0,Math.min(1,(p.y/H-0.16)/0.26));if(a<=0.004)continue;
+        var c=(ln<0.4)?mix(col,warm,(0.4-ln)/0.4*0.7):col;var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+        g.addColorStop(0,'rgba('+c+','+a+')');g.addColorStop(0.55,'rgba('+c+','+(a*0.45)+')');g.addColorStop(1,'rgba('+c+',0)');
+        x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,p.r,0,6.28);x.fill();}}
+    function mix(A,B,fr){var a=A.split(',').map(Number),b=B.split(',').map(Number);return a.map(function(v,i){return Math.round(v+(b[i]-v)*fr);}).join(',');}
+    requestAnimationFrame(frame);
+    if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;if(vis)last=0;},{threshold:0.02}).observe(cv);
+  })();
 })();
 </script>
 </body></html>
