@@ -407,6 +407,46 @@ body.lock{overflow:hidden}
 .footg p{font-size:.88rem;color:var(--txt);font-weight:300;max-width:34ch;margin-top:12px}
 @media(min-width:780px){.footg{grid-template-columns:1.4fr 1fr 1fr 1.1fr;gap:4vw}}
 
+
+/* ============ marque strip ============ */
+.marques{border-block:1px solid var(--line);background:var(--paper2);padding:34px 0;overflow:hidden}
+.marques .lab{text-align:center;font-size:.6rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--faint);margin-bottom:22px}
+.mq-in{display:flex;white-space:nowrap;width:max-content;animation:mqx 46s linear infinite}
+.mq-in span{font-family:var(--disp);font-weight:400;font-size:clamp(1.1rem,2vw,1.55rem);color:var(--ink);
+ letter-spacing:.14em;text-transform:uppercase;padding:0 clamp(20px,3vw,42px);opacity:.42;transition:opacity .3s}
+.mq-in span:hover{opacity:1;color:var(--acc)}
+@keyframes mqx{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.mq-in{animation:none;flex-wrap:wrap;white-space:normal;width:auto;justify-content:center;gap:8px}}
+
+/* ============ three pillars ============ */
+.pil{display:grid;grid-template-columns:1fr;gap:18px;margin-top:46px}
+.pilc{position:relative;border-radius:var(--r);overflow:hidden;min-height:400px;display:flex;align-items:flex-end;
+ border:1px solid var(--line2);isolation:isolate}
+.pilc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transform:scale(1.06);
+ transition:transform 1.3s var(--ease)}
+.pilc:hover img{transform:scale(1)}
+.pilc::after{content:"";position:absolute;inset:0;z-index:-1;
+ background:linear-gradient(180deg,rgba(14,13,12,.18) 0%,rgba(14,13,12,.42) 42%,rgba(14,13,12,.92) 100%)}
+.pilc .pc2{padding:28px 26px;color:#f5f2ec}
+.pilc .pc2 span{display:block;font-size:.6rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:#dcc08a;margin-bottom:10px}
+.pilc .pc2 h3{font-size:1.6rem;font-weight:400;color:#f5f2ec;letter-spacing:-.01em}
+.pilc .pc2 p{font-size:.9rem;color:#cfc9bf;margin-top:9px;font-weight:300;line-height:1.65;max-width:34ch}
+@media(min-width:860px){.pil{grid-template-columns:repeat(3,1fr)}}
+
+/* ============ accreditation + trade ============ */
+.accr{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:30px;padding:20px 24px;
+ border:1px solid var(--acc);border-radius:var(--r);background:rgba(143,106,36,.05)}
+.accr .bg2{width:44px;height:44px;border-radius:50%;border:1px solid var(--acc);display:grid;place-items:center;color:var(--acc);flex:none}
+.accr .bg2 svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.accr b{display:block;font-family:var(--disp);font-size:1.1rem;color:var(--ink);font-weight:500}
+.accr span{font-size:.84rem;color:var(--txt)}
+.trade{display:grid;grid-template-columns:1fr;gap:34px;align-items:center;margin-top:56px;
+ border:1px solid var(--line);border-radius:var(--r);padding:34px 28px;background:var(--card)}
+.trade ul{list-style:none;display:grid;gap:10px;margin-top:18px}
+.trade li{display:flex;gap:11px;font-size:.9rem;color:var(--txt);font-weight:300;align-items:flex-start}
+.trade li svg{width:15px;height:15px;stroke:var(--acc);fill:none;stroke-width:2;flex:none;margin-top:5px}
+@media(min-width:860px){.trade{grid-template-columns:1.1fr .9fr;gap:5vw;padding:44px 40px}}
+
 </style></head>
 <body>
 
@@ -425,7 +465,7 @@ body.lock{overflow:hidden}
   <div class="wrap nav-in">
   <a class="brand" href="#top"><i></i>Lustre</a>
   <nav class="nlinks">
-    <a href="#services">Services</a><a href="#journey">How it works</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
+    <a href="#services">Services</a><a href="#protection">Protection</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
   </nav>
   <div style="display:flex;align-items:center;gap:10px">
     <a class="btn btn-p mag" href="#book">Reserve</a>
@@ -437,7 +477,7 @@ body.lock{overflow:hidden}
 
 <div class="drawer dark" id="drawer">
   <button class="dx" data-close aria-label="Close menu">✕</button>
-  <a href="#services">Services</a><a href="#journey">How it works</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
+  <a href="#services">Services</a><a href="#protection">Protection</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
   <a class="btn btn-p" href="#book">Reserve</a>
 </div>
 
@@ -479,6 +519,12 @@ body.lock{overflow:hidden}
   <span>Paint Correction</span><span>Ceramic Protection</span><span>Interior Restoration</span><span>Wheels Off Detail</span><span>Glass &amp; Trim</span><span>Collection &amp; Delivery</span>
   <span>Paint Correction</span><span>Ceramic Protection</span><span>Interior Restoration</span><span>Wheels Off Detail</span><span>Glass &amp; Trim</span><span>Collection &amp; Delivery</span>
 </div></div>
+
+<!-- ================= MARQUES ================= -->
+<section class="marques" aria-label="Marques we care for">
+  <p class="lab">Marques we regularly care for</p>
+  <div class="mq-in"><span>Porsche</span><span>Aston Martin</span><span>Ferrari</span><span>Lamborghini</span><span>Mercedes-Benz</span><span>BMW</span><span>Audi</span><span>Land Rover</span><span>Bentley</span><span>McLaren</span><span>Tesla</span><span>Mini</span><span>Porsche</span><span>Aston Martin</span><span>Ferrari</span><span>Lamborghini</span><span>Mercedes-Benz</span><span>BMW</span><span>Audi</span><span>Land Rover</span><span>Bentley</span><span>McLaren</span><span>Tesla</span><span>Mini</span></div>
+</section>
 
 <!-- ================= USP STRIP ================= -->
 <section class="usp"><div class="wrap"><div class="usp-g" data-stag="90">
@@ -554,6 +600,45 @@ body.lock{overflow:hidden}
     <div class="sv si"><span class="n">04</span><h3>Express Polish</h3><p>A single-stage machine polish to lift dullness and restore depth, sealed with a durable protective layer.</p><div class="fr"><b>£00</b><span>from · half day</span></div></div>
     <div class="sv si"><span class="n">05</span><h3>Full Polish</h3><p>Decontamination, multi-stage correction and hand wax. The paintwork is measured before and after — nothing is guessed.</p><div class="fr"><b>£00</b><span>from · full day</span></div></div>
     <div class="sv si"><span class="n">06</span><h3>Full Valet</h3><p>Our most complete service. Seats and carpets shampooed, leather fed, every vent and seam detailed, exterior fully protected.</p><div class="fr"><b>£00</b><span>from · 1–2 days</span></div></div>
+  </div>
+</div></section>
+
+<!-- ================= THREE PILLARS ================= -->
+<section class="sec" id="protection" style="padding-top:0"><div class="wrap">
+  <span class="kicker" data-rv>Our specialisms</span>
+  <h2 data-text data-step="34">Three ways we protect <em style="color:var(--acc)">paint.</em></h2>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Correction removes what is already there. Protection decides what happens next. Most cars need a considered combination of the two — we will tell you which.</p>
+
+  <div class="pil" data-stag="140">
+    <div class="pilc si"><img src="/assets/valet/gloss.webp" alt="Machine polishing" loading="lazy">
+      <div class="pc2"><span>01 · Correction</span><h3>Machine Polishing</h3>
+      <p>Swirls, wash marks and oxidation cut back by machine in measured stages, until the paint reflects cleanly again.</p></div></div>
+    <div class="pilc si"><img src="/assets/valet/drops.webp" alt="Ceramic coating" loading="lazy">
+      <div class="pc2"><span>02 · Protection</span><h3>Ceramic Coating</h3>
+      <p>A cured glass-like layer that resists chemicals and UV, makes washing safer, and holds gloss for years — not weeks.</p></div></div>
+    <div class="pilc si"><img src="/assets/valet/paint.webp" alt="Paint protection film" loading="lazy">
+      <div class="pc2"><span>03 · Defence</span><h3>Paint Protection Film</h3>
+      <p>Self-healing film applied to the panels that take the punishment — bonnet, wings, mirrors — invisible once it is on.</p></div></div>
+  </div>
+
+  <div class="accr" data-rv style="transition-delay:.2s">
+    <span class="bg2"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17l-5.9 3 1.2-6.5L2.5 8.9 9.1 8z" stroke-linejoin="round"/></svg></span>
+    <span style="flex:1;min-width:220px"><b>Accredited installer</b><span>Approved and trained by our coating manufacturer — coatings registered and guaranteed in your name.</span></span>
+    <a class="btn btn-g" href="#book">Ask about coatings</a>
+  </div>
+
+  <div class="trade" data-rv style="transition-delay:.25s">
+    <div>
+      <span class="kicker">Trade &amp; dealerships</span>
+      <h3 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400">We work behind the scenes, too.</h3>
+      <p class="lede" style="margin-top:14px">Alongside private owners we prepare stock for dealerships, showrooms and specialists — handover preparation, coating on delivery, and ongoing maintenance contracts.</p>
+    </div>
+    <ul>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Handover and showroom preparation</li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Coating applied before customer delivery</li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Fleet and forecourt maintenance</li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Trade rates and scheduled collection</li>
+    </ul>
   </div>
 </div></section>
 
@@ -709,6 +794,14 @@ body.lock{overflow:hidden}
       <div class="ans">Our nine-year coating is guaranteed in writing, subject to an annual inspection. In practice it means rain beads and rolls off, road salt struggles to bond, and routine washing becomes far quicker and far safer for the paint.</div>
     </details>
     <details>
+      <summary>What exactly is a ceramic coating?</summary>
+      <div class="ans">A liquid polymer that chemically bonds to your paint and cures into a hard, glass-like layer. It does not remove existing scratches — that is what correction is for — but once cured it resists chemicals and UV, repels water, and makes every future wash safer and quicker.</div>
+    </details>
+    <details>
+      <summary>What is Paint Protection Film, and do I need it?</summary>
+      <div class="ans">A clear, self-healing urethane film applied over the panels that take stone chips — typically the bonnet, front wings and mirrors. Ceramic protects against chemicals and water; film protects against physical impact. On a car that covers motorway miles, the two together are the strongest answer.</div>
+    </details>
+    <details>
       <summary>Will polishing damage my paintwork?</summary>
       <div class="ans">Not when it is measured. We take paint-depth readings across every panel before any machine touches the car, and again afterwards. If a panel is too thin to correct safely, we will tell you and protect it instead.</div>
     </details>
@@ -786,7 +879,7 @@ body.lock{overflow:hidden}
     <div><h5>Services</h5><ul>
       <li><a href="#services">Hand Wash &amp; Dry</a></li><li><a href="#services">Mini Valet</a></li>
       <li><a href="#services">Full Polish</a></li><li><a href="#services">Full Valet</a></li>
-      <li><a href="#packages">Ceramic Protection</a></li></ul></div>
+      <li><a href="#protection">Ceramic Coating</a></li><li><a href="#protection">Paint Protection Film</a></li></ul></div>
     <div><h5>Studio</h5><ul>
       <li><a href="#journey">How it works</a></li><li><a href="#work">Before &amp; after</a></li>
       <li><a href="#reviews">Reviews</a></li><li><a href="#faq">FAQ</a></li>
