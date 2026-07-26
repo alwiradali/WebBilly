@@ -21,6 +21,9 @@
 </head>
 <body>
 
+  <!-- Preloader -->
+  <div class="pl" id="pl"><span class="pole-load" aria-hidden="true"></span><div class="pl-name">Gara Barber</div><div class="pl-sub">Heald Green</div></div>
+
   <!-- Nav -->
   <header class="nav" id="nav">
     <div class="wrap nav-in">
@@ -52,7 +55,7 @@
 
   <!-- Hero -->
   <section class="hero" id="top">
-    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-bg" aria-hidden="true"><img class="hero-photo" src="/assets/barber/hero.webp" alt="" fetchpriority="high"></div>
     <div class="wrap hero-inner">
       <p class="eyebrow rv">Heald Green · Master Barbers</p>
       <h1 class="rv">SHARP FADES.<br>HEALD <span class="amp">GREEN</span>.</h1>
@@ -105,12 +108,12 @@
         <p>A few of the styles walking out of the chair every day.</p>
       </div>
       <div class="look">
-        <div class="card tall rv"><span class="no">01</span><h4>Skin Fade</h4><p>Tapered to the skin, razor-clean lines.</p></div>
-        <div class="card rv"><span class="no">02</span><h4>Textured Crop</h4><p>Soft fringe, natural movement.</p></div>
-        <div class="card rv"><span class="no">03</span><h4>Classic Scissor</h4><p>Timeless, tailored to your shape.</p></div>
-        <div class="card rv"><span class="no">04</span><h4>Beard Sculpt</h4><p>Defined edges, conditioned finish.</p></div>
-        <div class="card tall rv"><span class="no">05</span><h4>Pompadour</h4><p>Volume up top, tight on the sides.</p></div>
-        <div class="card rv"><span class="no">06</span><h4>Buzz &amp; Line-Up</h4><p>Sharp, low-maintenance, crisp edge.</p></div>
+        <div class="card tall rv"><img class="shot" src="/assets/barber/g-fade.webp" alt="Skin fade haircut" loading="lazy"><span class="scrim"></span><span class="no">01</span><h4>Skin Fade</h4><p>Tapered to the skin, razor-clean lines.</p></div>
+        <div class="card rv"><img class="shot" src="/assets/barber/g-crop.webp" alt="Textured crop" loading="lazy"><span class="scrim"></span><span class="no">02</span><h4>Textured Crop</h4><p>Soft fringe, natural movement.</p></div>
+        <div class="card rv"><img class="shot" src="/assets/barber/g-scissor.webp" alt="Classic scissor cut" loading="lazy"><span class="scrim"></span><span class="no">03</span><h4>Classic Scissor</h4><p>Timeless, tailored to your shape.</p></div>
+        <div class="card rv"><img class="shot" src="/assets/barber/g-cut.webp" alt="Barber checking the finish" loading="lazy"><span class="scrim"></span><span class="no">04</span><h4>The Finish</h4><p>Every angle checked, clean neckline.</p></div>
+        <div class="card tall rv"><img class="shot" src="/assets/barber/g-shop.webp" alt="Inside the barbershop" loading="lazy"><span class="scrim"></span><span class="no">05</span><h4>The Shop</h4><p>Sit back. You're in good hands.</p></div>
+        <div class="card rv"><img class="shot" src="/assets/barber/g-lineup.webp" alt="Skin fade and line-up" loading="lazy"><span class="scrim"></span><span class="no">06</span><h4>Fade &amp; Line-Up</h4><p>Razor-sharp edges, blended clean.</p></div>
       </div>
     </div>
   </section>
@@ -119,7 +122,7 @@
   <section class="band" id="about" style="padding-top:0">
     <div class="wrap">
       <div class="about flip">
-        <div class="about-art rv"><span class="pole-lg" aria-hidden="true"></span></div>
+        <div class="about-art rv"><img class="shot" data-par src="/assets/barber/about.webp" alt="Inside the shop" loading="lazy"><span class="badge-pole" aria-hidden="true"></span></div>
         <div>
           <p class="eyebrow rv">Why Gara Barber</p>
           <h2 class="rv">Heald Green's chair of choice.</h2>
@@ -235,6 +238,24 @@
 
   <div class="toast" id="toast">Booking request sent — we'll text to confirm. ✂️</div>
 
+  <script>
+  (function(){
+    var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var pl=document.getElementById('pl');
+    if(pl){ if(reduce){pl.parentNode&&pl.parentNode.removeChild(pl);}
+      else{document.body.classList.add('loading');
+        setTimeout(function(){pl.classList.add('done');document.body.classList.remove('loading');},1500);
+        setTimeout(function(){pl.parentNode&&pl.parentNode.removeChild(pl);},2600);} }
+    if(reduce)return;
+    var ph=document.querySelector('.hero-photo'),aps=[].slice.call(document.querySelectorAll('[data-par]')),t=0;
+    function fr(){t=0;var y=window.scrollY||0;
+      if(ph&&y<window.innerHeight*1.2){ph.style.transform='translate3d(0,'+(y*0.12)+'px,0)';}
+      aps.forEach(function(el){var r=el.getBoundingClientRect();if(r.bottom<-100||r.top>innerHeight+100)return;var c=(r.top+r.height/2)-innerHeight/2;el.style.transform='translate3d(0,'+(-c*0.05)+'px,0) scale(1.06)';});
+    }
+    addEventListener('scroll',function(){if(!t)t=requestAnimationFrame(fr);},{passive:true});
+    addEventListener('load',fr);fr();
+  })();
+  </script>
   <script src="barber.js"></script>
   <script src="backbar.js" defer></script>
 </body>
