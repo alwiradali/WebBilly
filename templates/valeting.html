@@ -464,6 +464,46 @@ body.lock{overflow:hidden}
 .trade li svg{width:15px;height:15px;stroke:var(--acc);fill:none;stroke-width:2;flex:none;margin-top:5px}
 @media(min-width:860px){.trade{grid-template-columns:1.1fr .9fr;gap:5vw;padding:44px 40px}}
 
+
+/* ============ correction stages ============ */
+.stages{display:grid;grid-template-columns:1fr;gap:1px;margin-top:26px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stg{background:var(--card);padding:24px 22px;transition:background .35s var(--ease)}
+.stg:hover{background:var(--paper2)}
+.stg .sn{font-size:.6rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:10px}
+.stg h4{font-size:1.16rem;font-weight:400;letter-spacing:-.01em}
+.stg p{font-size:.86rem;color:var(--txt);margin-top:8px;font-weight:300;line-height:1.6}
+.stg .sp{font-family:var(--disp);font-size:1.3rem;color:var(--ink);margin-top:14px;display:block}
+.stg .sp small{font-size:.7rem;color:var(--faint);font-family:var(--body);margin-right:4px}
+@media(min-width:820px){.stages{grid-template-columns:repeat(3,1fr)}}
+
+/* ============ membership ============ */
+.vip{position:relative;overflow:hidden;border-radius:var(--r);border:1px solid var(--line);background:var(--card);
+ display:grid;grid-template-columns:1fr;gap:32px;padding:38px 28px;margin-top:52px;
+ box-shadow:0 30px 70px -50px rgba(60,45,20,.5)}
+.vip::before{content:"";position:absolute;inset:0;pointer-events:none;
+ background:radial-gradient(60% 90% at 88% 12%,rgba(201,162,39,.10),transparent 60%)}
+.vip>*{position:relative}
+.vip .tag2{display:inline-flex;align-items:center;gap:8px;font-size:.58rem;font-weight:500;letter-spacing:.22em;
+ text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:7px 14px;margin-bottom:18px}
+.vip h3{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:400;letter-spacing:-.02em}
+.vip .price{display:flex;align-items:baseline;gap:8px;margin:22px 0 6px}
+.vip .price b{font-family:var(--disp);font-weight:400;font-size:clamp(2.6rem,5vw,3.6rem);color:var(--ink);line-height:1}
+.vip .price span{font-size:.86rem;color:var(--faint)}
+.vip ul{list-style:none;display:grid;gap:11px;margin-top:20px}
+.vip li{display:flex;gap:11px;font-size:.9rem;color:var(--txt);font-weight:300;align-items:flex-start}
+.vip li svg{width:15px;height:15px;stroke:var(--acc);fill:none;stroke-width:2;flex:none;margin-top:5px}
+.vip .note{font-size:.78rem;color:var(--faint);margin-top:16px}
+@media(min-width:860px){.vip{grid-template-columns:1.05fr .95fr;gap:5vw;padding:52px 46px;align-items:center}}
+
+/* ============ locations ============ */
+.locs{display:grid;grid-template-columns:1fr;gap:16px;margin-top:26px}
+.loc{border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;background:var(--card);transition:border-color .35s}
+.loc:hover{border-color:var(--acc)}
+.loc b{display:block;font-family:var(--disp);font-weight:500;font-size:1.16rem;color:var(--ink)}
+.loc span{display:block;font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+.loc p{font-size:.88rem;color:var(--txt);margin-top:6px;font-weight:300}
+@media(min-width:700px){.locs{grid-template-columns:1fr 1fr}}
+
 </style></head>
 <body>
 
@@ -482,7 +522,7 @@ body.lock{overflow:hidden}
   <div class="wrap nav-in">
   <a class="brand" href="#top"><i></i>Lustre</a>
   <nav class="nlinks">
-    <a href="#services">Services</a><a href="#protection">Protection</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
+    <a href="#services">Services</a><a href="#protection">Protection</a><a href="#membership">Membership</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
   </nav>
   <div style="display:flex;align-items:center;gap:10px">
     <a class="btn btn-p mag" href="#book">Reserve</a>
@@ -494,7 +534,7 @@ body.lock{overflow:hidden}
 
 <div class="drawer dark" id="drawer">
   <button class="dx" data-close aria-label="Close menu">✕</button>
-  <a href="#services">Services</a><a href="#protection">Protection</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
+  <a href="#services">Services</a><a href="#protection">Protection</a><a href="#membership">Membership</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
   <a class="btn btn-p" href="#book">Reserve</a>
 </div>
 
@@ -627,7 +667,7 @@ body.lock{overflow:hidden}
 <section class="sec" id="protection" style="padding-top:0"><div class="wrap">
   <span class="kicker" data-rv>Our specialisms</span>
   <h2 data-text data-step="34">Three ways we protect <em style="color:var(--acc)">paint.</em></h2>
-  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Correction removes what is already there. Protection decides what happens next. Most cars need a considered combination of the two — we will tell you which.</p>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Swirl-free technique, safe on delicate finishes, exposed carbon and ceramic brake components. Correction removes what is already there. Protection decides what happens next. Most cars need a considered combination of the two — we will tell you which.</p>
 
   <div class="pil" data-stag="140">
     <div class="pilc si"><img src="/assets/valet/gloss.webp" alt="Machine polishing" loading="lazy">
@@ -639,6 +679,15 @@ body.lock{overflow:hidden}
     <div class="pilc si"><img src="/assets/valet/paint.webp" alt="Paint protection film" loading="lazy">
       <div class="pc2"><span>03 · Defence</span><h3>Paint Protection Film</h3>
       <p>Self-healing film applied to the panels that take the punishment — bonnet, wings, mirrors — invisible once it is on.</p></div></div>
+  </div>
+
+
+  <h3 style="font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:400;margin-top:54px" data-rv>Correction, in stages.</h3>
+  <p class="lede" data-rv style="transition-delay:.1s;margin-top:10px">How far we go depends on the paint, not the package. We measure first, then recommend the lightest stage that will actually get there.</p>
+  <div class="stages" data-stag="90">
+    <div class="stg si"><span class="sn">Stage 1</span><h4>Enhancement</h4><p>A single refining pass. Lifts around 60–70% of light swirling and restores gloss without removing meaningful clear coat.</p><span class="sp"><small>from £</small>00</span></div>
+    <div class="stg si"><span class="sn">Stage 2</span><h4>Correction</h4><p>A cutting pass followed by refinement. Removes the majority of swirls, wash marks and lighter scratches.</p><span class="sp"><small>from £</small>00</span></div>
+    <div class="stg si"><span class="sn">Stage 3</span><h4>Concours</h4><p>Multi-pass correction, panel by panel, measured throughout. Reserved for cars where near-perfect is the brief.</p><span class="sp"><small>from £</small>00</span></div>
   </div>
 
   <div class="accr" data-rv style="transition-delay:.2s">
@@ -710,6 +759,29 @@ body.lock{overflow:hidden}
         <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Engine bay cleaned and dressed</li>
       </ul>
       <a class="btn btn-g" href="#book">Reserve Concours</a>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= MEMBERSHIP ================= -->
+<section class="sec" id="membership" style="padding-top:0"><div class="wrap">
+  <div class="vip" data-rv>
+    <div>
+      <span class="tag2">Membership</span>
+      <h3>Keep it looking like this, every month.</h3>
+      <p class="lede" style="margin-top:14px">A maintenance plan for owners who would rather never think about it. Unlimited protective washes, booked when it suits you, on paint we already know.</p>
+      <div class="price"><b>£00</b><span>per month · cancel anytime</span></div>
+      <p class="note">Membership washes use the same two-bucket method and fresh mitt as every other visit.</p>
+    </div>
+    <div>
+      <ul>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited maintenance washes</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority booking, ahead of general slots</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Discounted correction and coating work</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Annual ceramic inspection included</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Collection and delivery within the local area</li>
+      </ul>
+      <a class="btn btn-p mag" href="#book" style="width:100%;margin-top:26px">Join the membership</a>
     </div>
   </div>
 </div></section>
@@ -855,8 +927,11 @@ body.lock{overflow:hidden}
       <span class="kicker" data-rv>By appointment</span>
       <h2 data-text data-step="34">Reserve the studio.</h2>
       <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Tell us the car and what you have in mind. We will confirm your date and a firm figure — collection and delivery arranged locally.</p>
+      <div class="locs" data-stag="110">
+        <div class="loc si"><span>Studio one</span><b>Unit 1, Your Industrial Estate</b><p>Your Town, Postcode · Open 7 days</p></div>
+        <div class="loc si"><span>Studio two</span><b>The Arches, Second Location</b><p>Nearby Town, Postcode · Mon – Sat</p></div>
+      </div>
       <div class="vi" data-stag="110">
-        <div class="si"><span>The studio</span><b>Unit 1, Your Industrial Estate</b><p>Your Town, Postcode</p></div>
         <div class="si"><span>Appointments</span><b>0000 000 0000</b><p>Monday – Saturday · 8am – 6pm</p></div>
         <div class="si"><span>Follow</span><b>@yourstudio</b><p>Before and afters, every week</p></div>
       </div>
@@ -902,7 +977,7 @@ body.lock{overflow:hidden}
       <li><a href="#protection">Ceramic Coating</a></li><li><a href="#protection">Paint Protection Film</a></li></ul></div>
     <div><h5>Studio</h5><ul>
       <li><a href="#journey">How it works</a></li><li><a href="#work">Before &amp; after</a></li>
-      <li><a href="#reviews">Reviews</a></li><li><a href="#faq">FAQ</a></li>
+      <li><a href="#reviews">Reviews</a></li><li><a href="#membership">Membership</a></li><li><a href="#faq">FAQ</a></li>
       <li><a href="#book">Reserve</a></li></ul></div>
     <div><h5>Find us</h5><ul>
       <li>Unit 1, Your Industrial Estate</li><li>Your Town, Postcode</li>
