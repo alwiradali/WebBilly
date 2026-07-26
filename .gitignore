@@ -1,3 +1,7 @@
 
 # Graphify generated output (local analysis only)
 graphify-out/
+
+# Agent skills / config (local tooling, not site content)
+.agents/
+.claude/
