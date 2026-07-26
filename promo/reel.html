@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Billy Digitals — Promo Reel (9:16)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   BILLY DIGITALS — PROMO REEL DESIGN SYSTEM
+   Everything you'd want to change lives in :root and CONFIG below.
+   Stage is a fixed 1080×1920 (9:16) canvas, scaled to fit the screen.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  /* ---- brand palette (matches billydigitals.com) ---- */
+  --bg:#060b1a;          /* deep navy ground */
+  --ink:#eaf2ff;         /* primary text */
+  --dim:#8fa3c4;         /* secondary text */
+  --c1:#2b7fff;          /* primary blue */
+  --c2:#38bdf8;          /* sky */
+  --c3:#22d3ee;          /* cyan */
+  --gold:#ffd24a;        /* offer / CTA accent */
+  --slab:#2b3444;        /* the "concrete" that cracks open */
+  --slab2:#141a25;
+
+  /* ---- type ---- */
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+
+  /* ---- motion ---- */
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-in:cubic-bezier(.7,0,.84,0);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#000;overflow:hidden}
+body{display:grid;place-items:center;font-family:var(--body)}
+
+/* stage: authored at 1080×1920, scaled with a CSS var set in JS */
+#stage{
+  position:relative;width:1080px;height:1920px;flex:none;
+  transform-origin:50% 50%;transform:scale(var(--fit,1));
+  background:var(--bg);overflow:hidden;color:var(--ink);
+  font-feature-settings:"ss01";
+}
+
+/* ── shared scene plumbing ───────────────────────────────── */
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none}
+
+/* ── S1: the slab that cracks ────────────────────────────── */
+#slabWrap{position:absolute;inset:0;z-index:30;will-change:opacity}
+.slab{
+  position:absolute;top:0;height:100%;width:50.6%;
+  background:
+    radial-gradient(120% 80% at 50% 0%,#3a4557,transparent 62%),
+    linear-gradient(180deg,var(--slab),var(--slab2));
+  will-change:transform;
+}
+.slab::after{ /* grit */
+  content:"";position:absolute;inset:0;opacity:.5;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%,rgba(255,255,255,.06),transparent),
+    radial-gradient(1.5px 1.5px at 70% 60%,rgba(255,255,255,.05),transparent),
+    radial-gradient(2px 2px at 40% 80%,rgba(255,255,255,.04),transparent);
+  background-size:180px 180px,240px 240px,300px 300px;
+}
+#slabL{left:0;clip-path:polygon(0 0,100% 0,94% 12%,100% 26%,92% 41%,99% 55%,93% 70%,100% 84%,95% 100%,0 100%)}
+#slabR{right:0;clip-path:polygon(6% 0,100% 0,100% 100%,5% 100%,0 84%,7% 70%,1% 55%,8% 41%,0 26%,6% 12%)}
+/* glow that leaks out of the crack as it opens */
+#crackGlow{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:8px;height:100%;z-index:29;opacity:0;
+  background:linear-gradient(90deg,transparent,var(--c2),transparent);
+  filter:blur(14px);
+}
+
+.hook{
+  position:absolute;left:0;right:0;top:36%;z-index:31;text-align:center;padding:0 96px;
+}
+.hook .l{display:block;overflow:hidden}
+.hook .l i{
+  display:block;font-style:normal;font-family:var(--display);font-weight:800;
+  font-size:104px;line-height:1.05;letter-spacing:-.035em;text-transform:uppercase;
+  transform:translateY(110%);
+}
+.hook .sub{
+  margin-top:28px;font-size:30px;color:var(--dim);font-weight:500;opacity:0;
+}
+
+/* ── S2: the showcase ────────────────────────────────────── */
+#show{z-index:10}
+#show .glow{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(70% 45% at 50% 22%,rgba(43,127,255,.30),transparent 70%),
+    radial-gradient(60% 40% at 20% 82%,rgba(34,211,238,.18),transparent 70%);
+}
+.headline{
+  position:absolute;left:0;right:0;top:118px;text-align:center;padding:0 76px;z-index:3;
+}
+.headline .k{
+  display:inline-block;font-size:24px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--c2);margin-bottom:26px;
+}
+.headline h1{
+  font-family:var(--display);font-weight:800;font-size:96px;line-height:1.02;
+  letter-spacing:-.04em;text-transform:uppercase;
+}
+.headline h1 em{font-style:italic;color:var(--c2)}
+
+/* the device that cycles through real sites */
+.device{
+  position:absolute;left:50%;top:640px;transform:translateX(-50%);
+  width:880px;border-radius:22px;overflow:hidden;z-index:3;
+  background:#0a0f1c;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 60px 120px -40px rgba(0,0,0,.9),0 0 0 1px rgba(56,189,248,.14);
+}
+.device .bar{
+  height:56px;display:flex;align-items:center;gap:10px;padding:0 20px;
+  background:#121826;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.device .bar i{width:13px;height:13px;border-radius:50%;background:#39414f;flex:none}
+.device .bar .url{
+  margin-left:14px;flex:1;height:30px;border-radius:8px;background:#0b1220;
+  display:flex;align-items:center;padding:0 14px;font-size:17px;color:#7f8ea8;
+}
+.device .screens{position:relative;aspect-ratio:1440/900;background:#0a0f1c}
+.device .screens img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0;
+}
+
+.proof{
+  position:absolute;left:0;right:0;top:1400px;display:flex;justify-content:center;gap:74px;z-index:3;
+}
+.proof div{text-align:center}
+.proof b{display:block;font-family:var(--display);font-weight:700;font-size:70px;line-height:1;letter-spacing:-.03em}
+.proof span{display:block;margin-top:12px;font-size:22px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+
+/* ── S3: the offer / end card ────────────────────────────── */
+#end{z-index:20}
+#end .glow{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(60% 40% at 50% 32%,rgba(255,210,74,.16),transparent 70%),
+    radial-gradient(80% 50% at 50% 100%,rgba(43,127,255,.26),transparent 70%);
+}
+.endin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 84px;text-align:center}
+.mark{display:flex;align-items:center;gap:16px;margin-bottom:54px}
+.mark .dot{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c3));box-shadow:0 0 30px var(--c2)}
+.mark span{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:.14em;text-transform:uppercase}
+
+.offer{
+  border:2px solid var(--gold);border-radius:999px;padding:20px 44px;margin-bottom:46px;
+  display:inline-flex;align-items:baseline;gap:14px;background:rgba(255,210,74,.07);
+}
+.offer b{font-family:var(--display);font-weight:800;font-size:74px;color:var(--gold);letter-spacing:-.03em;line-height:1}
+.offer span{font-size:26px;color:var(--gold);font-weight:600;letter-spacing:.06em}
+.deadline{font-size:28px;color:var(--dim);margin-bottom:56px;font-weight:500}
+.deadline b{color:var(--ink)}
+
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--gold);color:#1b1403;font-family:var(--display);font-weight:800;
+  font-size:38px;letter-spacing:.02em;padding:32px 62px;border-radius:999px;
+  box-shadow:0 24px 60px -18px rgba(255,210,74,.5);
+}
+.contact{margin-top:56px;display:grid;gap:20px;font-size:32px;font-weight:600}
+.contact div{display:flex;align-items:center;justify-content:center;gap:16px;color:var(--ink)}
+.contact svg{width:32px;height:32px;stroke:var(--c2);fill:none;stroke-width:1.9;flex:none}
+.contact .site{color:var(--c2)}
+
+/* progress hairline so the loop reads as a story */
+#prog{position:absolute;left:0;bottom:0;height:5px;width:100%;transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--c1),var(--c3));z-index:60}
+
+/* on-screen controls (never captured in the export) */
+#ui{position:fixed;left:12px;bottom:12px;z-index:99;display:flex;gap:8px;font:500 13px var(--body)}
+#ui button{background:#111827;color:#e5edff;border:1px solid #2b3648;border-radius:8px;padding:9px 14px;cursor:pointer}
+#ui button:hover{border-color:var(--c2)}
+body.export #ui{display:none}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- ░░ SCENE 2 — showcase (sits under the slab, revealed by the crack) ░░ -->
+  <section class="scene" id="show">
+    <div class="glow"></div>
+    <div class="headline">
+      <span class="k" data-a>Stockport &amp; Manchester</span>
+      <h1 data-a>We build websites<br>that <em>grow businesses.</em></h1>
+    </div>
+    <div class="device" data-a>
+      <div class="bar"><i></i><i></i><i></i><div class="url">billydigitals.com</div></div>
+      <div class="screens" id="screens"></div>
+    </div>
+    <div class="proof">
+      <div data-a><b id="n1">0</b><span>Day turnaround</span></div>
+      <div data-a><b id="n2">0</b><span>Live sites</span></div>
+      <div data-a><b id="n3">0</b><span>Google score</span></div>
+    </div>
+  </section>
+
+  <!-- ░░ SCENE 3 — offer / end card ░░ -->
+  <section class="scene" id="end">
+    <div class="glow"></div>
+    <div class="endin">
+      <div class="mark" data-b><span class="dot"></span><span>Billy Digitals</span></div>
+      <div class="offer" data-b><b>£100</b><span>OFF YOUR NEW WEBSITE</span></div>
+      <p class="deadline" data-b>Offer ends <b>31 August</b> — a few build slots left</p>
+      <div class="cta" data-b>Get your free mock-up</div>
+      <div class="contact">
+        <div data-b><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" stroke-linecap="round" stroke-linejoin="round"/></svg>07519 022117</div>
+        <div data-b><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>hello@billydigitals.com</div>
+        <div data-b class="site"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" stroke-linecap="round"/></svg>billydigitals.com</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ SCENE 1 — the slab (top layer) ░░ -->
+  <div id="slabWrap">
+    <div id="crackGlow"></div>
+    <div class="slab" id="slabL"></div>
+    <div class="slab" id="slabR"></div>
+    <div class="hook" id="hook">
+      <span class="l"><i>Your website</i></span>
+      <span class="l"><i>shouldn't just</i></span>
+      <span class="l"><i>sit there.</i></span>
+      <p class="sub">Watch what happens when it works.</p>
+    </div>
+  </div>
+
+  <div id="prog"></div>
+</div>
+
+<div id="ui">
+  <button id="replay">↻ Replay</button>
+  <button id="rec">● Recording mode</button>
+</div>
+
+<script src="reel-shots.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIG — the whole reel is driven from here.
+   Times are seconds from the start. Total = END.
+   ═══════════════════════════════════════════════════════════ */
+const CONFIG = {
+  hookLines:  ["Your website", "shouldn't just", "sit there."],
+  hookSub:    "Watch what happens when it works.",
+  kicker:     "Stockport & Manchester",
+  headline:   ["We build websites", "that ", "grow businesses."],
+  url:        "billydigitals.com",
+  stats:      [{to:7,  label:"Day turnaround"},
+               {to:40, label:"Live sites", suffix:"+"},
+               {to:5.0,label:"Google score", dec:1}],
+  offerAmount:"£100",
+  offerLabel: "OFF YOUR NEW WEBSITE",
+  deadline:   "31 August",
+  ctaText:    "Get your free mock-up",
+  phone:      "07519 022117",
+  email:      "hello@billydigitals.com",
+  site:       "billydigitals.com",
+
+  /* timeline (seconds) */
+  T: { hookIn:0.35, hookHold:2.5, crack:2.9, crackDur:1.5,
+       showIn:3.6,  statsIn:5.2,  endIn:8.6,  END:13.0 }
+};
+
+/* ── fit the 1080×1920 stage into whatever window it's viewed in ── */
+const stage = document.getElementById('stage');
+function fit(){
+  const s = Math.min(innerWidth/1080, innerHeight/1920);
+  stage.style.setProperty('--fit', s);
+}
+addEventListener('resize', fit); fit();
+
+/* ── build the device screens from the embedded shots ── */
+const SHOTS = window.__SHOTS__ || {};
+const screens = document.getElementById('screens');
+const order = ['valeting','izzy','salon','barber'];
+order.forEach((k,i)=>{
+  if(!SHOTS[k]) return;
+  const img = document.createElement('img');
+  img.src = SHOTS[k]; img.alt = '';
+  if(i===0) img.className = 'on';
+  screens.appendChild(img);
+});
+
+/* ══════════════════════════════════════════════════════════
+   TIMELINE — every visual value is a pure function of t.
+   No CSS transitions drive the story, so a frame rendered at
+   t=6.5s looks identical whether it plays live or is exported.
+   ══════════════════════════════════════════════════════════ */
+const T = CONFIG.T;
+const $ = id => document.getElementById(id);
+const slabWrap=$('slabWrap'), slabL=$('slabL'), slabR=$('slabR'),
+      glow=$('crackGlow'), hook=$('hook'), show=$('show'), end=$('end'), prog=$('prog');
+const hookLines=[...hook.querySelectorAll('.l i')];
+const hookSub  = hook.querySelector('.sub');
+const showEls  = [...show.querySelectorAll('[data-a]')];
+const endEls   = [...end.querySelectorAll('[data-b]')];
+const shots    = [...screens.children];
+const statEls  = [$('n1'),$('n2'),$('n3')];
+
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
+const easeOut=x=>1-Math.pow(1-x,3);
+const easeIn =x=>x*x*x;
+
+function render(t){
+  /* ── S1 hook ─────────────────────────────────────────── */
+  hookLines.forEach((el,i)=>{
+    const p=easeOut(seg(t, T.hookIn+i*0.13, T.hookIn+i*0.13+1.05));
+    el.style.transform='translateY('+((1-p)*110).toFixed(2)+'%)';
+  });
+  hookSub.style.opacity=seg(t,T.hookIn+0.62,T.hookIn+1.42).toFixed(3);
+
+  /* ── the crack ───────────────────────────────────────── */
+  const cp=seg(t,T.crack,T.crack+T.crackDur);
+  const e=easeIn(cp<0.18 ? cp/0.18*0.06 : 0.06+(cp-0.18)/0.82*0.94);
+  slabL.style.transform='translateX('+(-e*112).toFixed(2)+'%) rotate('+(-e*2.4).toFixed(2)+'deg)';
+  slabR.style.transform='translateX('+( e*112).toFixed(2)+'%) rotate('+( e*2.4).toFixed(2)+'deg)';
+  glow.style.opacity=Math.sin(cp*Math.PI).toFixed(3);
+  glow.style.width=(8+cp*120).toFixed(1)+'px';
+  hook.style.opacity=(1-clamp(cp/0.45,0,1)).toFixed(3);
+  hook.style.transform='scale('+(1+cp*0.12).toFixed(3)+')';
+  slabWrap.style.opacity=(1-clamp((cp-0.78)/0.22,0,1)).toFixed(3);
+
+  /* ── S2 showcase ─────────────────────────────────────── */
+  const showOut = t>=T.endIn ? clamp(1-(t-T.endIn)/0.55,0,1) : 1;
+  show.style.opacity=(seg(t,T.showIn,T.showIn+0.5)*showOut).toFixed(3);
+  showEls.forEach((el,i)=>{
+    const p=easeOut(seg(t,T.showIn+i*0.12,T.showIn+i*0.12+0.9));
+    el.style.opacity=p.toFixed(3);
+    el.style.transform='translateY('+((1-p)*38).toFixed(1)+'px)';
+  });
+
+  /* cycle the real sites, crossfading between them */
+  if(shots.length){
+    const CYC=1.15, k=Math.max(0,t-T.showIn), idx=Math.floor(k/CYC), fr=(k%CYC)/CYC;
+    const cur=idx%shots.length, nxt=(idx+1)%shots.length;
+    const blend=clamp((fr-0.78)/0.22,0,1);
+    shots.forEach((im,i)=>{
+      let o=0;
+      if(i===cur) o=1-blend;
+      if(i===nxt) o=Math.max(o,blend);
+      im.style.opacity=o.toFixed(3);
+      im.style.transform='scale('+(1.05-0.05*clamp(fr*1.3,0,1)).toFixed(3)+')';
+    });
+  }
+
+  /* count-ups */
+  const cp2=easeOut(seg(t,T.statsIn,T.statsIn+1.2));
+  CONFIG.stats.forEach((st,i)=>{
+    const v=st.to*cp2;
+    statEls[i].textContent=(st.dec?v.toFixed(st.dec):Math.round(v))+((cp2>=1&&st.suffix)?st.suffix:'');
+  });
+
+  /* ── S3 end card ─────────────────────────────────────── */
+  end.style.opacity=seg(t,T.endIn,T.endIn+0.5).toFixed(3);
+  endEls.forEach((el,i)=>{
+    const p=easeOut(seg(t,T.endIn+i*0.09,T.endIn+i*0.09+0.8));
+    el.style.opacity=p.toFixed(3);
+    el.style.transform='translateY('+((1-p)*30).toFixed(1)+'px)';
+  });
+
+  prog.style.transform='scaleX('+clamp(t/T.END,0,1).toFixed(4)+')';
+}
+
+/* live playback just feeds wall-clock time into render() */
+let t0=null, paused=false;
+function frame(now){
+  if(!paused){
+    if(t0===null)t0=now;
+    let t=(now-t0)/1000;
+    if(t>=T.END){ t0=now; t=0; }
+    render(t);
+  }
+  requestAnimationFrame(frame);
+}
+render(0);
+requestAnimationFrame(frame);
+
+/* the exporter drives this directly, one frame at a time */
+window.__renderAt = t => { paused = true; render(t); };
+window.__resume   = () => { paused = false; t0 = null; };
+
+document.getElementById('replay').onclick=()=>{ paused=false; t0=null; };
+document.getElementById('rec').onclick=()=>{ document.body.classList.toggle('export'); };
+</script>
+
+</body>
+</html>
