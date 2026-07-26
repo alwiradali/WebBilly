@@ -5,3 +5,4 @@ graphify-out/
 # Agent skills / config (local tooling, not site content)
 .agents/
 .claude/
+skills-lock.json
