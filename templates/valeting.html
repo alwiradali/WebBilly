@@ -110,8 +110,18 @@ body.lock{overflow:hidden}
 /* the figure — pointer/touch reactive gloss lives here */
 .hero-fig{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;isolation:isolate;
  box-shadow:0 50px 90px -54px rgba(60,45,20,.55);border:1px solid var(--line2)}
-.hero-fig img{width:100%;height:112%;object-fit:cover;object-position:center 44%;will-change:transform}
-.gloss{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:2;
+.hero-fig img{position:absolute;inset:0;width:100%;height:112%;object-fit:cover;object-position:center 44%;will-change:transform,opacity}
+.hero-fig #heroDirty{z-index:0;opacity:1;transition:opacity .9s ease}
+.hero-fig #heroClean{z-index:0;opacity:0;transition:opacity .9s ease}
+.hero-fig.clean #heroDirty{opacity:0}
+.hero-fig.clean #heroClean{opacity:1}
+#foam{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hero-stage{position:absolute;left:16px;top:16px;z-index:4;display:inline-flex;align-items:center;gap:9px;
+ padding:9px 15px;border-radius:999px;background:rgba(14,13,12,.52);backdrop-filter:blur(8px);
+ font-size:.6rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#f5f2ec;
+ transition:opacity .5s ease}
+.hero-stage i{width:6px;height:6px;border-radius:50%;background:#dcc08a;flex:none;box-shadow:0 0 10px #dcc08a}
+.gloss{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:3;
  background:radial-gradient(46% 38% at var(--mx,60%) var(--my,42%),rgba(255,240,208,.26),rgba(220,192,138,.09) 44%,transparent 70%)}
 .hero-fig .tagv{position:absolute;left:16px;bottom:16px;z-index:3;color:#f5f2ec;
  font-size:.6rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;text-shadow:0 1px 14px rgba(0,0,0,.7)}
@@ -127,6 +137,13 @@ body.lock{overflow:hidden}
 @media(min-width:960px){
  .hero-grid{grid-template-columns:1.04fr .96fr;gap:5vw}
  .hero-fig{aspect-ratio:4/5;max-height:78vh}
+}
+@media(max-width:959px){
+ /* the wash is the headline act — show it first on a phone */
+ .hero-grid>div:last-child{order:-1}
+ .hero-grid{gap:30px}
+ .hero-fig{aspect-ratio:5/4}
+ .hero-seal{width:84px;height:84px;font-size:.78rem;top:-10px;right:-6px}
 }
 /* ============ marquee ============ */
 .marq{border-block:1px solid var(--line2);overflow:hidden;background:var(--paper2);padding:17px 0}
@@ -504,9 +521,12 @@ body.lock{overflow:hidden}
   </div>
   <div style="position:relative">
     <div class="hero-fig" id="heroFig">
-      <img id="heroImg" src="/assets/valet/hero.webp" alt="Freshly corrected paintwork" fetchpriority="high">
+      <img id="heroDirty" src="/assets/valet/before.webp" alt="" aria-hidden="true">
+      <img id="heroClean" src="/assets/valet/after.webp" alt="Paintwork after a full wash and machine polish" fetchpriority="high">
+      <canvas id="foam" aria-hidden="true"></canvas>
       <div class="gloss" id="gloss"></div>
-      <span class="tagv">Signature · Two-stage correction</span>
+      <span class="hero-stage" id="heroStage"><i></i><span id="stageTxt">Snow foam</span></span>
+      <span class="tagv">Signature · Wash, correct, protect</span>
     </div>
     <span class="hero-seal" data-rv data-hold style="transition-delay:.5s">by<br>appointment</span>
   </div>
@@ -995,6 +1015,117 @@ if(hero&&gloss&&!reduce){
   })();
 }
 
+/* ---------- HERO FOAM SEQUENCE — the wash, on a loop ---------- */
+(function(){
+  var fig=$('#heroFig'),cv=$('#foam'),dirty=$('#heroDirty'),clean=$('#heroClean'),
+      stage=$('#heroStage'),stageTxt=$('#stageTxt');
+  if(!fig||!cv)return;
+  if(reduce){fig.classList.add('clean');cv.style.display='none';if(stage)stage.style.opacity='0';return;}
+
+  var ctx=cv.getContext('2d'),W=0,H=0,dpr=Math.min(devicePixelRatio||1,2);
+
+  /* pre-rendered foam sprite — cheap to blit hundreds of times */
+  var sp=document.createElement('canvas'),S=128;sp.width=sp.height=S;
+  var sc=sp.getContext('2d');
+  (function(){
+    var g=sc.createRadialGradient(S/2,S/2,2,S/2,S/2,S/2);
+    g.addColorStop(0,'rgba(255,255,255,.98)');
+    g.addColorStop(.55,'rgba(252,251,247,.94)');
+    g.addColorStop(.78,'rgba(243,241,235,.62)');
+    g.addColorStop(1,'rgba(235,232,224,0)');
+    sc.fillStyle=g;sc.beginPath();sc.arc(S/2,S/2,S/2,0,6.2832);sc.fill();
+    /* bubble texture */
+    for(var i=0;i<16;i++){
+      var a=Math.random()*6.2832,d=Math.random()*S*.34,
+          x=S/2+Math.cos(a)*d,y=S/2+Math.sin(a)*d,r=3+Math.random()*9;
+      sc.strokeStyle='rgba(255,255,255,.85)';sc.lineWidth=1.1;
+      sc.beginPath();sc.arc(x,y,r,0,6.2832);sc.stroke();
+      sc.fillStyle='rgba(255,255,255,.5)';
+      sc.beginPath();sc.arc(x-r*.3,y-r*.3,r*.28,0,6.2832);sc.fill();
+    }
+  })();
+
+  var blobs=[];
+  function build(){
+    var n=innerWidth<760?170:260;
+    blobs=[];
+    for(var i=0;i<n;i++){
+      blobs.push({
+        x:Math.random(), y:Math.random(),
+        r:.045+Math.random()*.085,
+        a:.62+Math.random()*.38,
+        sp:.5+Math.random()*.8,
+        dx:(Math.random()-.5)*.07,
+        ph:Math.random()*6.2832
+      });
+    }
+    /* order left-to-right so the foam sweeps across like a lance */
+    blobs.sort(function(a,b){return a.x-b.x;});
+  }
+  function size(){
+    var r=fig.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    cv.style.width=W+'px';cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  build();size();
+  addEventListener('resize',function(){size();build();},{passive:true});
+
+  /* timeline (seconds) */
+  var T_FOAM=2.6, T_HOLD=1.0, T_RINSE=2.2, T_SHOW=3.2, T_BACK=1.0;
+  var TOTAL=T_FOAM+T_HOLD+T_RINSE+T_SHOW+T_BACK, t0=null, label='';
+  function ease(x){return 1-Math.pow(1-x,3);}
+
+  function setLabel(txt){
+    if(txt===label||!stageTxt)return;label=txt;
+    stage.style.opacity='0';
+    setTimeout(function(){stageTxt.textContent=txt;stage.style.opacity='1';},240);
+  }
+
+  function draw(ts){
+    if(t0===null)t0=ts;
+    var t=((ts-t0)/1000)%TOTAL;
+    var cover=0, fall=0;
+
+    if(t<T_FOAM){                       /* foam sweeps on */
+      cover=ease(t/T_FOAM); setLabel('Snow foam');
+    }else if(t<T_FOAM+T_HOLD){          /* dwelling */
+      cover=1; setLabel('Dwelling');
+      if(!fig.classList.contains('clean'))fig.classList.add('clean');
+    }else if(t<T_FOAM+T_HOLD+T_RINSE){  /* rinsed away */
+      var r=(t-T_FOAM-T_HOLD)/T_RINSE;
+      cover=1-ease(r); fall=ease(r); setLabel('Rinsing');
+    }else if(t<TOTAL-T_BACK){           /* the reveal */
+      cover=0; setLabel('Protected');
+    }else{                              /* back round */
+      cover=0; setLabel('Protected');
+      if(fig.classList.contains('clean'))fig.classList.remove('clean');
+    }
+
+    ctx.clearRect(0,0,W,H);
+    if(cover>0.002){
+      var edge=cover*1.5;
+      for(var i=0;i<blobs.length;i++){
+        var b=blobs[i];
+        /* each blob pops in as the foam front passes its x position */
+        var local=(edge-b.x)/0.5;
+        if(local<=0)continue;
+        var pop=local>1?1:local;
+        var wob=Math.sin(ts/650*b.sp+b.ph)*0.012;
+        var rr=b.r*Math.min(W,H)*(0.55+0.45*pop);
+        var x=(b.x+b.dx*cover+wob)*W;
+        var y=(b.y+wob*0.6+fall*(0.35+b.r))*H;
+        ctx.globalAlpha=Math.min(1,pop)*b.a*(1-fall*0.85);
+        ctx.drawImage(sp,x-rr,y-rr,rr*2,rr*2);
+      }
+      ctx.globalAlpha=1;
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
 /* ---------- BEFORE / AFTER — drag on mouse AND touch ---------- */
 (function(){
   var ba=$('#ba');if(!ba)return;
@@ -1066,7 +1197,7 @@ if(!reduce){
 }
 
 /* ---------- scroll engine: progress, parallax, pin scrub, horizontal ---------- */
-var bar=$('#bar'),heroImg=$('#heroImg'),beadImg=$('#beadImg'),
+var bar=$('#bar'),heroImgs=$$('.hero-fig img'),beadImg=$('#beadImg'),
     pins=$$('[data-pin]'),
     hss=$$('[data-hs]').map(function(e){return{e:e,t:$('.hs-track',e)};}),
     vh=innerHeight,tick=0;
@@ -1078,7 +1209,7 @@ function frame(){
     bar.style.transform='scaleX('+dp+')';
   }
   if(reduce)return;
-  if(heroImg&&y<vh*1.4){heroImg.style.transform='translate3d(0,'+(y*.05).toFixed(1)+'px,0)';}
+  if(y<vh*1.4){var hy=(y*.05).toFixed(1);heroImgs.forEach(function(im){im.style.transform='translate3d(0,'+hy+'px,0)';});}
   if(beadImg){
     var br=beadImg.getBoundingClientRect();
     if(br.bottom>-160&&br.top<vh+160){
