@@ -33,10 +33,22 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
 [data-bar]{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:0 50%;z-index:60}
 @media(prefers-reduced-motion:reduce){[data-rv],.ti,.si,.clipr{opacity:1!important;transform:none!important;clip-path:none!important}}
 /* cursor */
-.cur,.curd{position:fixed;top:0;left:0;z-index:90;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);mix-blend-mode:difference}
+.cur,.curd{position:fixed;top:0;left:0;z-index:90;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);mix-blend-mode:difference;opacity:0}
+body.cursor-on .cur,body.cursor-on .curd{opacity:1}
 .cur{width:36px;height:36px;border:1px solid #fff;transition:width .3s,height .3s,background .3s}.curd{width:5px;height:5px;background:#fff}
 .cur.big{width:66px;height:66px;background:rgba(255,255,255,.12)}
 @media(hover:none){.cur,.curd{display:none}}
+/* preloader — the one authored entrance */
+.pl{position:fixed;inset:0;z-index:100;background:var(--espresso);display:grid;place-items:center;transition:transform 1.05s var(--ease) .15s}
+.pl.done{transform:translateY(-101%)}
+.pl .mk{text-align:center;color:var(--ivory)}
+.pl .mk .lg{display:inline-block;overflow:hidden;vertical-align:top}
+.pl .mk .lg b{font-family:var(--serif);font-weight:300;font-size:clamp(2.6rem,8vw,4.6rem);letter-spacing:.2em;text-transform:uppercase;display:inline-block;transform:translateY(120%);animation:plUp 1.05s var(--ease) .15s forwards}
+.pl .mk .ln{width:0;height:1px;background:var(--gold);margin:20px auto 0;animation:plLn 1s var(--ease) .55s forwards}
+.pl .mk small{display:block;font-family:var(--sans);font-weight:500;font-size:.56rem;letter-spacing:.52em;text-transform:uppercase;color:var(--gold);margin-top:16px;opacity:0;animation:plFade .8s ease .75s forwards}
+@keyframes plUp{to{transform:none}}@keyframes plLn{to{width:min(220px,52vw)}}@keyframes plFade{to{opacity:1}}
+body.loading{overflow:hidden}
+@media(prefers-reduced-motion:reduce){.pl{display:none!important}}
 /* announce + nav */
 .ann{background:var(--espresso);color:#e8ddcd;text-align:center;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;padding:9px}
 .nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:22px 6vw;transition:.5s;background:rgba(245,241,234,0)}
@@ -47,14 +59,24 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
 .nlinks a{color:var(--ink);text-decoration:none;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;opacity:.8}.nlinks a:hover{opacity:1;color:var(--goldd)}
 .nav .btn{padding:12px 24px}.mag{will-change:transform;transition:transform .3s var(--ease),background .4s}
 /* hero */
-.hero{display:grid;grid-template-columns:1.02fr .98fr;gap:5vw;align-items:center;padding:5vh 6vw 7vh;max-width:1320px;margin:0 auto;min-height:86vh}
+.hero{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:5vw;align-items:center;padding:5vh 6vw 7vh;max-width:1320px;margin:0 auto;min-height:86vh}
 .hero h1{font-size:clamp(3rem,6.6vw,6.4rem);margin:0}
 .hero .lede{margin-top:6px}.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
 .hero-meta{display:flex;gap:30px;flex-wrap:wrap;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
 .hero-meta div span{display:block;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--goldd);margin-bottom:5px}
 .hero-meta div b{font-family:var(--serif);font-size:1.15rem;font-weight:500}
 .hfig{position:relative}
-.hfig .im{position:relative;overflow:hidden;aspect-ratio:4/5;box-shadow:0 60px 100px -50px rgba(60,40,20,.6);animation:wipe 1.35s var(--ease) .25s both}
+.hfig .im{position:relative;overflow:hidden;aspect-ratio:4/5;box-shadow:0 60px 100px -50px rgba(60,40,20,.6);animation:wipe 1.25s var(--ease) 1.85s both}
+.hfig .cap{position:absolute;right:16px;bottom:16px;z-index:2;text-align:right}
+.hfig .cap b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.04rem;color:var(--ivory);display:block;line-height:1.1;text-shadow:0 1px 16px rgba(20,15,11,.55)}
+.hfig .cap span{font-family:var(--sans);font-weight:500;font-size:.5rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(251,248,243,.85);display:block;margin-top:5px;text-shadow:0 1px 12px rgba(20,15,11,.6)}
+.scue{position:absolute;left:6vw;bottom:26px;display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:.56rem;letter-spacing:.28em;text-transform:uppercase;color:var(--goldd);transition:gap .4s var(--ease)}
+.scue:hover{gap:18px}
+.scue i{display:block;width:46px;height:1px;background:var(--gold);position:relative;overflow:hidden}
+.scue i::after{content:"";position:absolute;inset:0;background:var(--porcelain);animation:scu 2.6s var(--ease) infinite}
+@keyframes scu{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.hfig .im{animation:none}.scue i::after{animation:none}}
+@media(max-width:860px){.scue{display:none}}
 @keyframes wipe{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
 @media(prefers-reduced-motion:reduce){.hfig .im{animation:none}}
 .hfig .im img{width:100%;height:118%;object-fit:cover;object-position:center 28%;will-change:transform}
@@ -131,6 +153,7 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
 }
 </style></head>
 <body>
+<div class="pl" id="pl"><div class="mk"><span class="lg"><b>Maison</b></span><div class="ln"></div><small>Hair Atelier</small></div></div>
 <div data-bar></div>
 <div class="cur" id="cur"></div><div class="curd" id="curd"></div>
 
@@ -144,25 +167,26 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
 <!-- HERO -->
 <header class="hero" id="top">
   <div>
-    <p class="eyebrow" data-rv>Creative Colour &amp; Balayage</p>
-    <h1 data-text data-step="60">Hair,<br><span class="it">considered.</span></h1>
-    <div class="rule" data-rv style="transition-delay:.2s"></div>
-    <p class="lede" data-rv style="transition-delay:.25s">An appointment-only atelier for colour, cut and care — where every look is designed around you, using only premium, hair-loving products.</p>
-    <div class="hero-cta" data-rv style="transition-delay:.35s">
+    <p class="eyebrow" data-rv data-hold>Creative Colour &amp; Balayage</p>
+    <h1 data-text data-step="60" data-hold>Hair,<br><span class="it">considered.</span></h1>
+    <div class="rule" data-rv data-hold style="transition-delay:.2s"></div>
+    <p class="lede" data-rv data-hold style="transition-delay:.25s">An appointment-only atelier for colour, cut and care — where every look is designed around you, using only premium, hair-loving products.</p>
+    <div class="hero-cta" data-rv data-hold style="transition-delay:.35s">
       <a class="btn btn-solid mag" href="#visit">Book an appointment</a>
       <a class="btn btn-line" href="#services">View services</a>
     </div>
-    <div class="hero-meta" data-rv style="transition-delay:.45s">
+    <div class="hero-meta" data-rv data-hold style="transition-delay:.45s">
       <div><span>Craft</span><b>Balayage · Colour</b></div>
       <div><span>Care</span><b>Cruelty-free</b></div>
       <div><span>Since</span><b>Est. 2015</b></div>
     </div>
   </div>
   <div class="hfig">
-    <div class="im"><img data-par="0.05" src="/assets/salon/hero.webp" alt="Balayage hair"></div>
-    <span class="tagv" data-rv>Maison · Hair Atelier</span>
-    <span class="est" data-rv style="transition-delay:.5s">the art<br>of colour</span>
+    <div class="im"><img data-par="0.05" src="/assets/salon/hero.webp" alt="Balayage hair"><span class="cap"><b>Hand-painted balayage</b><span>Studio No.1 · Natural light</span></span></div>
+    <span class="tagv" data-rv data-hold>Maison · Hair Atelier</span>
+    <span class="est" data-rv data-hold style="transition-delay:.5s">the art<br>of colour</span>
   </div>
+  <a class="scue" href="#services" aria-label="Scroll to explore"><i></i>Scroll</a>
 </header>
 
 <!-- MARQUEE -->
@@ -275,12 +299,18 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
 <script>
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,$=function(s){return [].slice.call(document.querySelectorAll(s));},clamp=function(v,a,b){return v<a?a:v>b?b:v;};
+  var pl=document.getElementById('pl'),held=$('[data-hold]');
+  function revealHero(){held.forEach(function(e){e.classList.add('in');});}
+  if(pl&&!reduce){document.body.classList.add('loading');
+    setTimeout(function(){pl.classList.add('done');document.body.classList.remove('loading');revealHero();},1850);
+    setTimeout(function(){if(pl.parentNode)pl.parentNode.removeChild(pl);},3000);
+  }else if(pl){if(pl.parentNode)pl.parentNode.removeChild(pl);revealHero();}
   $('[data-text]').forEach(function(el){if(el.__d)return;el.__d=1;var step=parseFloat(el.getAttribute('data-step')||60),wi=0,ns=[].slice.call(el.childNodes);el.textContent='';
     function w(node,d){var a=document.createElement('span');a.className='tw';var i=document.createElement('span');i.className='ti';if(typeof node==='string')i.textContent=node;else i.appendChild(node);i.style.transitionDelay=d+'ms';a.appendChild(i);return a;}
     ns.forEach(function(n){if(n.nodeType===3){n.nodeValue.split(/(\s+)/).forEach(function(t){if(t==='')return;if(!t.trim()){el.appendChild(document.createTextNode(t));return;}el.appendChild(w(t,wi*step));wi++;});}else if(n.nodeName==='BR'){el.appendChild(document.createElement('br'));}else{el.appendChild(w(n,wi*step));wi++;}});});
   $('[data-stag]').forEach(function(c){var s=parseFloat(c.getAttribute('data-stag')||100);[].forEach.call(c.querySelectorAll('.si'),function(ch,i){ch.style.transitionDelay=(i*s)+'ms';});});
   if(reduce){$('[data-rv],[data-text],[data-stag],.clipr').forEach(function(e){e.classList.add('in');});}
-  else{var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.16,rootMargin:'0px 0px -6% 0px'});$('[data-rv],[data-text],[data-stag],.clipr').forEach(function(e){io.observe(e);});}
+  else{var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.16,rootMargin:'0px 0px -6% 0px'});$('[data-rv],[data-text],[data-stag],.clipr').forEach(function(e){if(!e.hasAttribute('data-hold'))io.observe(e);});}
   function count(el){var raw=el.getAttribute('data-count'),to=parseFloat(raw),dec=(raw.split('.')[1]||'').length,t0=null;function st(ts){if(t0===null)t0=ts;var p=clamp((ts-t0)/1500,0,1),e=1-Math.pow(1-p,3);el.textContent=(to*e).toFixed(dec);if(p<1)requestAnimationFrame(st);else el.textContent=to.toFixed(dec);}requestAnimationFrame(st);}
   if(reduce){$('[data-count]').forEach(function(e){e.textContent=e.getAttribute('data-count');});}
   else{var cio=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){count(e.target);cio.unobserve(e.target);}});},{threshold:.6});$('[data-count]').forEach(function(e){cio.observe(e);});}
@@ -297,7 +327,7 @@ h2{font-size:clamp(2.3rem,5.4vw,4.6rem)}
   if(matchMedia('(hover:hover) and (pointer:fine)').matches && !reduce){
     $('.mag').forEach(function(el){el.addEventListener('pointermove',function(e){var r=el.getBoundingClientRect();el.style.transform='translate('+((e.clientX-r.left-r.width/2)*.3)+'px,'+((e.clientY-r.top-r.height/2)*.45)+'px)';});el.addEventListener('pointerleave',function(){el.style.transform='';});});
     var cur=document.getElementById('cur'),curd=document.getElementById('curd'),cx=0,cy=0,tx=0,ty=0;
-    addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY;curd.style.transform='translate('+tx+'px,'+ty+'px) translate(-50%,-50%)';});
+    addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY;curd.style.transform='translate('+tx+'px,'+ty+'px) translate(-50%,-50%)';if(!document.body.classList.contains('cursor-on'))document.body.classList.add('cursor-on');});
     (function cc(){cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;cur.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';requestAnimationFrame(cc);})();
     $('a,button,.hcard,.tcard').forEach(function(el){el.addEventListener('pointerenter',function(){cur.classList.add('big');});el.addEventListener('pointerleave',function(){cur.classList.remove('big');});});
   }
