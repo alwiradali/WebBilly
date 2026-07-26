@@ -1,0 +1,674 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>Hydra — Car Wash &amp; Valeting · Scroll Landing Template</title>
+<meta name="description" content="A scroll-driven car wash and valeting landing page template — the wash runs as you scroll. Neutral demo by Billy Digitals.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#eef4f7">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   HYDRA — scroll-driven car wash landing page
+   The page has one idea: scrolling IS the conveyor. Everything
+   animates off a single smoothed scroll value, so nothing ever
+   snaps or fights the momentum.
+   ═══════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ice:#eef4f7;      /* page */
+  --ice2:#e2ecf1;     /* alt band */
+  --card:#fff;
+  --deep:#052734;     /* petrol — the tunnel */
+  --deep2:#03161f;
+  --ink:#071a22;
+  --txt:#4b6470;
+  --faint:#7d949e;
+  --aqua:#0891b2;
+  --aqua2:#06b6d4;
+  --spray:#67e8f9;
+  --line:rgba(7,26,34,.13);
+  --line2:rgba(7,26,34,.07);
+  --disp:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Instrument Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --r:16px;
+}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--ice);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ── smooth scroll rig ────────────────────────────────────────
+   The page keeps its real height on <body>; the content is fixed
+   and translated to a lerped scroll value. Native scrolling (and
+   touch momentum) still drives it — we just follow with easing. */
+#vp{position:fixed;inset:0;overflow:hidden;z-index:1}
+#scroller{will-change:transform}
+body.no-smooth #vp{position:static;overflow:visible}
+body.no-smooth #scroller{transform:none!important}
+
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--disp);color:var(--ink);line-height:1.02;letter-spacing:-.035em;font-weight:700;text-wrap:balance}
+h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
+.kick{display:block;font-size:.66rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--aqua);margin-bottom:16px}
+.lede{font-size:clamp(1rem,1.25vw,1.1rem);line-height:1.75;max-width:60ch;color:var(--txt)}
+.sec{padding:clamp(90px,13vh,150px) 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;font-weight:600;font-size:.8rem;
+ letter-spacing:.1em;text-transform:uppercase;padding:17px 32px;border-radius:999px;border:1px solid transparent;
+ cursor:pointer;transition:transform .3s var(--ease),background .3s,color .3s,border-color .3s}
+.btn-p{background:var(--ink);color:#fff}
+.btn-p:hover{background:var(--aqua);transform:translateY(-2px)}
+.btn-g{border-color:var(--line);color:var(--ink)}
+.btn-g:hover{border-color:var(--ink)}
+
+/* progress rail */
+#rail{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+ background:linear-gradient(90deg,var(--aqua),var(--spray));z-index:60}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s var(--ease),box-shadow .4s}
+.nav.on{background:rgba(238,244,247,.9);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line2)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:74px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:1.3rem;
+ letter-spacing:-.03em;color:var(--ink)}
+.brand i{width:11px;height:11px;border-radius:50%;background:var(--aqua2);box-shadow:0 0 0 4px rgba(6,182,212,.18);flex:none}
+.nlinks{display:none;gap:30px}
+.nlinks a{font-size:.82rem;font-weight:500;color:var(--txt);transition:color .25s}
+.nlinks a:hover{color:var(--aqua)}
+.nav .btn{padding:12px 22px;font-size:.68rem}
+
+/* ── hero ─────────────────────────────────────────────────── */
+.hero{min-height:100svh;display:flex;align-items:center;padding:120px 0 60px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:38px;align-items:center}
+.hero h1{font-size:clamp(3rem,9vw,7rem);font-weight:800;letter-spacing:-.05em;line-height:.94}
+.hero h1 span{display:block;overflow:hidden}
+.hero h1 span i{display:block;font-style:normal;transform:translateY(105%)}
+.hero h1 em{font-style:normal;color:var(--aqua2)}
+.hero .lede{margin-top:22px;max-width:44ch}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero-meta{display:flex;gap:14px 28px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.hero-meta div b{display:block;font-family:var(--disp);font-weight:700;font-size:1.5rem;color:var(--ink);letter-spacing:-.03em}
+.hero-meta div span{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.hero-fig{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:5/4;background:var(--deep);
+ box-shadow:0 50px 90px -50px rgba(5,39,52,.55)}
+.hero-fig img{position:absolute;inset:0;width:100%;height:112%;object-fit:cover;will-change:transform}
+.hero-fig .tag{position:absolute;left:16px;bottom:16px;z-index:3;color:#fff;font-size:.62rem;font-weight:600;
+ letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 12px rgba(0,0,0,.6)}
+.scue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;
+ align-items:center;gap:9px;font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.scue i{width:1px;height:42px;background:linear-gradient(180deg,var(--aqua),transparent);display:block}
+
+/* ── THE TUNNEL — pinned, scroll drives the wash ──────────── */
+.tunnel{height:520vh;position:relative;background:var(--deep)}
+.tun-st{position:absolute;top:0;left:0;right:0;height:100svh;overflow:hidden;display:grid;place-items:center;will-change:transform}
+.tun-bg{position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 40%,#0a3d52,var(--deep2))}
+/* the car travelling through */
+.tun-car{position:absolute;left:50%;top:58%;width:min(72vw,700px);aspect-ratio:3/2;border-radius:18px;overflow:hidden;
+ transform:translate(-50%,-50%);box-shadow:0 50px 110px -50px #000;z-index:2}
+.tun-car img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tun-car .clean{opacity:0}
+/* water + foam layers, opacity driven by scroll */
+.lay{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0}
+#layFoam{background:
+  radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,0) 72%) 12% 22%/34% 34% no-repeat,
+  radial-gradient(closest-side,rgba(255,255,255,.92),rgba(255,255,255,0) 72%) 46% 12%/40% 40% no-repeat,
+  radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 72%) 80% 30%/36% 36% no-repeat,
+  radial-gradient(closest-side,rgba(255,255,255,.92),rgba(255,255,255,0) 72%) 24% 70%/42% 42% no-repeat,
+  radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 72%) 62% 74%/38% 38% no-repeat,
+  radial-gradient(closest-side,rgba(255,255,255,.88),rgba(255,255,255,0) 72%) 90% 66%/32% 32% no-repeat}
+#layWater{background:repeating-linear-gradient(102deg,rgba(178,235,250,.5) 0 2px,transparent 2px 13px);mix-blend-mode:screen}
+#layShine{background:linear-gradient(104deg,transparent 36%,rgba(255,255,255,.7) 50%,transparent 64%);mix-blend-mode:screen}
+/* jets down the sides of the tunnel */
+.jets{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0}
+.jets span{position:absolute;top:0;width:2px;height:100%;
+ background:linear-gradient(180deg,transparent,rgba(103,232,249,.6),transparent)}
+.tun-copy{position:absolute;top:13vh;left:0;right:0;z-index:4;text-align:center;color:#fff;padding:0 22px;pointer-events:none}
+.tun-copy .st{font-family:var(--disp);font-weight:800;font-size:clamp(2rem,6vw,4.2rem);letter-spacing:-.04em;color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.5)}
+.tun-copy .sd{margin-top:12px;font-size:clamp(.9rem,1.6vw,1.05rem);color:#9fc7d6;max-width:34ch;margin-inline:auto}
+.tun-steps{position:absolute;left:0;right:0;bottom:5vh;z-index:5;display:flex;justify-content:center;gap:clamp(10px,2.6vw,30px);padding:0 22px;flex-wrap:wrap}
+.tun-steps b{font-family:var(--body);font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+ color:rgba(255,255,255,.3);transition:color .4s var(--ease);white-space:nowrap}
+.tun-steps b.on{color:var(--spray)}
+.tun-bar{position:absolute;left:50%;bottom:calc(5vh + 44px);transform:translateX(-50%);width:min(420px,64vw);
+ height:2px;background:rgba(255,255,255,.16);z-index:5;overflow:hidden}
+.tun-bar i{display:block;height:100%;transform-origin:0 50%;background:linear-gradient(90deg,var(--aqua2),var(--spray))}
+
+/* ── stats ────────────────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:34px 20px;padding:clamp(60px,9vh,90px) 0;border-bottom:1px solid var(--line)}
+.stat b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(2.4rem,5.4vw,3.6rem);color:var(--ink);
+ letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
+.stat b .u{color:var(--aqua2)}
+.stat span{display:block;margin-top:10px;font-size:.68rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+
+/* ── stacking service cards (scroll-driven) ───────────────── */
+.stack{position:relative}
+.card{position:relative;will-change:transform;border-radius:var(--r);overflow:hidden;background:var(--card);
+ border:1px solid var(--line);display:grid;grid-template-columns:1fr;min-height:400px;margin-bottom:26px;
+ will-change:transform;box-shadow:0 30px 70px -55px rgba(5,39,52,.5)}
+.card-in{padding:34px 28px;display:flex;flex-direction:column;justify-content:center}
+.card .n{font-family:var(--disp);font-weight:700;font-size:.8rem;color:var(--aqua);letter-spacing:.1em;margin-bottom:14px}
+.card h3{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:700;letter-spacing:-.035em}
+.card p{margin-top:12px;font-size:.95rem;max-width:42ch}
+.card .price{margin-top:20px;font-family:var(--disp);font-weight:700;font-size:1.7rem;color:var(--ink);letter-spacing:-.03em}
+.card .price small{font-size:.72rem;font-weight:500;color:var(--faint);font-family:var(--body);margin-right:5px;letter-spacing:.1em;text-transform:uppercase}
+.card ul{list-style:none;display:grid;gap:8px;margin-top:18px}
+.card li{display:flex;gap:10px;font-size:.9rem;align-items:flex-start}
+.card li svg{width:15px;height:15px;stroke:var(--aqua);fill:none;stroke-width:2.2;flex:none;margin-top:4px}
+.card figure{position:relative;overflow:hidden;min-height:240px}
+.card figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+
+/* ── scroll-scrubbed before/after ─────────────────────────── */
+.ba{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:16/10;background:var(--deep)}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ba .aft{clip-path:inset(0 0 0 var(--sp,50%))}
+.ba .hd{position:absolute;top:0;bottom:0;left:var(--sp,50%);width:2px;background:var(--spray);
+ box-shadow:0 0 24px rgba(103,232,249,.8);z-index:3}
+.ba .lb{position:absolute;bottom:16px;z-index:4;font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+ padding:9px 15px;border-radius:999px;background:rgba(3,22,31,.66);backdrop-filter:blur(8px);color:#fff}
+.ba .lb.l{left:16px}.ba .lb.r{right:16px;color:var(--spray)}
+
+/* ── horizontal gallery ───────────────────────────────────── */
+.hs{height:300vh;position:relative}
+.hs-st{position:absolute;top:0;left:0;right:0;height:100svh;overflow:hidden;display:flex;align-items:flex-end;padding-bottom:8vh;will-change:transform}
+.hs-hd{position:absolute;top:100px;left:22px;right:22px;z-index:3;max-width:26ch}
+.hs-track{display:flex;gap:18px;padding:0 22px;will-change:transform}
+.gc{flex:0 0 auto;width:min(72vw,380px);height:54vh;border-radius:var(--r);overflow:hidden;position:relative}
+.gc img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
+.gc:hover img{transform:scale(1.05)}
+.gc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(3,22,31,.86))}
+.gc b{position:absolute;left:20px;bottom:18px;z-index:2;font-family:var(--disp);font-weight:700;color:#fff;font-size:1.15rem;letter-spacing:-.02em}
+
+/* ── book ─────────────────────────────────────────────────── */
+.book{background:var(--deep);color:#cfe4ec}
+.book h2{color:#fff}
+.bgrid{display:grid;grid-template-columns:1fr;gap:38px}
+.vi{display:grid;gap:22px;margin-top:28px}
+.vi span{display:block;font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--spray);margin-bottom:5px}
+.vi b{font-family:var(--disp);font-weight:700;font-size:1.2rem;color:#fff;letter-spacing:-.02em}
+.vi p{font-size:.88rem;color:#8fb4c4}
+.fcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:30px 26px}
+.fcard h3{color:#fff;font-size:1.5rem}
+.fcard>p{font-size:.9rem;color:#9fc0ce;margin:8px 0 20px}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8fb4c4;margin-bottom:6px}
+.fld input,.fld select{width:100%;background:rgba(3,22,31,.6);border:1px solid rgba(255,255,255,.14);border-radius:11px;
+ color:#fff;font:400 .95rem var(--body);padding:14px;-webkit-appearance:none;appearance:none}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--spray)}
+.fld input::placeholder{color:#6d8f9f}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.fcard .btn{width:100%;background:var(--spray);color:#04222f;margin-top:6px}
+.fcard .btn:hover{background:#fff}
+.done{display:none;text-align:center;padding:16px 0}.done.on{display:block}
+.done .tk{width:52px;height:52px;border-radius:50%;background:rgba(103,232,249,.14);border:1px solid var(--spray);
+ color:var(--spray);display:grid;place-items:center;margin:0 auto 12px;font-size:22px}
+.foot{border-top:1px solid rgba(255,255,255,.12);margin-top:56px;padding:26px 0 8px;display:flex;justify-content:space-between;
+ flex-wrap:wrap;gap:12px;font-size:.8rem;color:#7fa3b3}
+.foot a{color:var(--spray)}
+
+/* reveal — one shared, gentle rise */
+[data-rv]{opacity:0;transform:translateY(28px);transition:opacity .95s var(--ease),transform .95s var(--ease)}
+[data-rv].in{opacity:1;transform:none}
+
+@media(min-width:820px){
+  .nlinks{display:flex}
+  .hero-grid{grid-template-columns:1.05fr .95fr;gap:5vw}
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .card{grid-template-columns:1.05fr .95fr;min-height:440px}
+  .card-in{padding:48px 44px}
+  .bgrid{grid-template-columns:1.1fr .9fr;gap:5vw}
+  .hs-hd{left:calc(50vw - 600px + 22px)}
+  .hs-track{padding:0 calc(50vw - 600px + 22px)}
+}
+@media(max-width:819px){
+  .tun-car{top:53%;width:88vw}
+  .tun-copy{top:11vh}
+  .tun-steps{gap:8px 14px;bottom:4vh}
+  .tun-bar{bottom:calc(4vh + 62px);width:70vw}
+  .hero{padding-top:104px}
+  .card{margin-bottom:18px}
+  .card figure{min-height:210px}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-rv]{opacity:1!important;transform:none!important;transition:none!important}
+  .hero h1 span i{transform:none!important}
+}
+</style></head>
+<body>
+
+<div id="rail"></div>
+
+<header class="nav" id="nav"><div class="wrap nav-in">
+  <a class="brand" href="#top"><i></i>Hydra</a>
+  <nav class="nlinks">
+    <a href="#wash">The Wash</a><a href="#services">Services</a><a href="#work">Results</a><a href="#book">Book</a>
+  </nav>
+  <a class="btn btn-p" href="#book">Book a wash</a>
+</div></header>
+
+<div id="vp"><div id="scroller">
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero" id="top"><div class="wrap"><div class="hero-grid">
+  <div>
+    <span class="kick" data-rv>Hand wash · Valeting · Ceramic</span>
+    <h1><span><i>Filthy in.</i></span><span><i><em>Flawless</em> out.</i></span></h1>
+    <p class="lede" data-rv style="transition-delay:.15s">A proper hand wash takes forty minutes and two buckets. No spinning brushes, no swirl marks, no queue — just your car back the way it left the factory.</p>
+    <div class="hero-cta" data-rv style="transition-delay:.25s">
+      <a class="btn btn-p" href="#book">Book a wash</a>
+      <a class="btn btn-g" href="#wash">See how it works</a>
+    </div>
+    <div class="hero-meta" data-rv style="transition-delay:.35s">
+      <div><b>40<span style="color:var(--aqua2)">min</span></b><span>Average wash</span></div>
+      <div><b>2</b><span>Bucket method</span></div>
+      <div><b>4.9</b><span>Google rating</span></div>
+    </div>
+  </div>
+  <div class="hero-fig" data-rv style="transition-delay:.2s">
+    <img id="heroImg" src="/assets/carwash/car-clean.webp" alt="A freshly washed car" fetchpriority="high">
+    <span class="tag">Finished · hand washed &amp; sealed</span>
+  </div>
+</div></div>
+<div class="scue"><i></i>Scroll</div>
+</header>
+
+<!-- ══════════ THE TUNNEL — scroll drives the wash ══════════ -->
+<section class="tunnel" id="wash" data-tunnel>
+  <div class="tun-st">
+    <div class="tun-bg"></div>
+    <div class="jets" id="jets"><span style="left:6%"></span><span style="left:14%"></span><span style="left:22%"></span>
+      <span style="right:6%"></span><span style="right:14%"></span><span style="right:22%"></span></div>
+    <div class="tun-car" id="tunCar">
+      <img class="dirty" src="/assets/carwash/car-dirty.webp" alt="">
+      <img class="clean" id="tunClean" src="/assets/carwash/car-clean.webp" alt="The same car, washed">
+      <div class="lay" id="layWater"></div>
+      <div class="lay" id="layFoam"></div>
+      <div class="lay" id="layShine"></div>
+    </div>
+    <div class="tun-copy">
+      <div class="st" id="tunTitle">Pull in</div>
+      <p class="sd" id="tunSub">Keep scrolling — the wash runs at your pace.</p>
+    </div>
+    <div class="tun-bar"><i id="tunBar"></i></div>
+    <div class="tun-steps" id="tunSteps">
+      <b>01 Pull in</b><b>02 Pre-rinse</b><b>03 Snow foam</b><b>04 Hand wash</b><b>05 Rinse</b><b>06 Dry &amp; seal</b>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ STATS ══════════ -->
+<div class="wrap"><section class="stats" data-rv>
+  <div class="stat"><b><span data-count="12000">0</span><span class="u">+</span></b><span>Cars washed</span></div>
+  <div class="stat"><b><span data-count="9">0</span></b><span>Years open</span></div>
+  <div class="stat"><b><span data-count="4.9">0</span></b><span>Google rating</span></div>
+  <div class="stat"><b><span data-count="7">0</span></b><span>Days a week</span></div>
+</section></div>
+
+<!-- ══════════ SERVICES — stacking cards ══════════ -->
+<section class="sec" id="services"><div class="wrap">
+  <span class="kick" data-rv>What you can book</span>
+  <h2 data-rv style="transition-delay:.05s">Four ways to get it clean.</h2>
+  <p class="lede" data-rv style="transition-delay:.12s;margin-top:14px">Every wash is by hand, with fresh water and a clean mitt. Prices are a guide for a standard hatchback.</p>
+
+  <div class="stack" style="margin-top:52px">
+    <article class="card" data-card>
+      <div class="card-in">
+        <span class="n">01</span><h3>Express Wash</h3>
+        <p>Snow foam, two-bucket hand wash, wheels and arches, then hand dried. In and out inside the hour.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Snow foam pre-wash</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Wheels, arches, tyres dressed</li>
+        </ul>
+        <div class="price"><small>from</small>£00</div>
+      </div>
+      <figure><img data-par src="/assets/carwash/suds.webp" alt="Snow foam" loading="lazy"></figure>
+    </article>
+
+    <article class="card" data-card>
+      <div class="card-in">
+        <span class="n">02</span><h3>Wash &amp; Vac</h3>
+        <p>Everything in the Express, plus the inside — carpets and seats vacuumed, dash wiped, glass polished both sides.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full interior vacuum</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Glass streak-free, inside &amp; out</li>
+        </ul>
+        <div class="price"><small>from</small>£00</div>
+      </div>
+      <figure><img data-par src="/assets/carwash/cabin.webp" alt="Interior detail" loading="lazy"></figure>
+    </article>
+
+    <article class="card" data-card>
+      <div class="card-in">
+        <span class="n">03</span><h3>Full Valet</h3>
+        <p>The deep one. Seats and carpets shampooed, every vent and seam detailed, paint decontaminated and waxed by hand.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Seats &amp; carpets shampooed</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Clay bar &amp; hand wax</li>
+        </ul>
+        <div class="price"><small>from</small>£00</div>
+      </div>
+      <figure><img data-par src="/assets/carwash/hand.webp" alt="Hand washing" loading="lazy"></figure>
+    </article>
+
+    <article class="card" data-card>
+      <div class="card-in">
+        <span class="n">04</span><h3>Ceramic Seal</h3>
+        <p>A cured protective layer that makes rain bead and roll straight off. Washing gets quicker, and stays safer, for years.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Machine polish before sealing</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Guarantee in writing</li>
+        </ul>
+        <div class="price"><small>from</small>£00</div>
+      </div>
+      <figure><img data-par src="/assets/carwash/beads.webp" alt="Water beading" loading="lazy"></figure>
+    </article>
+  </div>
+</div></section>
+
+<!-- ══════════ BEFORE / AFTER — scrubbed by scroll ══════════ -->
+<section class="sec" id="work" style="padding-top:0"><div class="wrap">
+  <span class="kick" data-rv>The difference</span>
+  <h2 data-rv style="transition-delay:.05s">Scroll it clean.</h2>
+  <p class="lede" data-rv style="transition-delay:.12s;margin-top:14px">Same car, same light, one wash apart. The line follows your scroll — no clicking required.</p>
+  <div class="ba" id="ba" data-rv style="margin-top:38px;transition-delay:.18s">
+    <img src="/assets/carwash/car-dirty.webp" alt="Before the wash">
+    <img class="aft" src="/assets/carwash/car-clean.webp" alt="After the wash">
+    <span class="lb l">Before</span><span class="lb r">After</span>
+    <span class="hd"></span>
+  </div>
+</div></section>
+
+<!-- ══════════ HORIZONTAL GALLERY ══════════ -->
+<section class="hs" data-hs>
+  <div class="hs-st">
+    <div class="hs-hd"><span class="kick">Off the forecourt</span><h2 style="font-size:clamp(1.8rem,4vw,2.8rem)">Recent washes →</h2></div>
+    <div class="hs-track">
+      <div class="gc"><img src="/assets/carwash/gloss.webp" alt="" loading="lazy"><b>Paint, waxed</b></div>
+      <div class="gc"><img src="/assets/carwash/wheel.webp" alt="" loading="lazy"><b>Wheels off</b></div>
+      <div class="gc"><img src="/assets/carwash/paint.webp" alt="" loading="lazy"><b>Sealed &amp; beading</b></div>
+      <div class="gc"><img src="/assets/carwash/cabin.webp" alt="" loading="lazy"><b>Cabin reset</b></div>
+      <div class="gc"><img src="/assets/carwash/hand.webp" alt="" loading="lazy"><b>By hand, always</b></div>
+      <div class="gc"><img src="/assets/carwash/beads.webp" alt="" loading="lazy"><b>Rain, refused</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BOOK ══════════ -->
+<section class="sec book" id="book"><div class="wrap">
+  <div class="bgrid">
+    <div>
+      <span class="kick" style="color:var(--spray)" data-rv>Book in</span>
+      <h2 data-rv style="transition-delay:.05s">Pick a time. We'll do the rest.</h2>
+      <p class="lede" data-rv style="transition-delay:.12s;margin-top:14px;color:#9fc0ce">Walk-ins welcome, but booking means no waiting. Tell us the car and we'll confirm by text.</p>
+      <div class="vi" data-rv style="transition-delay:.2s">
+        <div><span>Where</span><b>Unit 1, Your Retail Park</b><p>Your Town, Postcode</p></div>
+        <div><span>Call</span><b>0000 000 0000</b><p>Open 7 days · 8am – 6pm</p></div>
+        <div><span>Follow</span><b>@yourwash</b><p>Before and afters, daily</p></div>
+      </div>
+    </div>
+    <div class="fcard" data-rv style="transition-delay:.15s">
+      <h3>Book a wash</h3>
+      <p>No deposit — pay when you collect.</p>
+      <form id="f" novalidate>
+        <div class="fld"><label for="c">Your car</label><input id="c" type="text" placeholder="e.g. Golf, 2021" required></div>
+        <div class="r2">
+          <div class="fld"><label for="s">Service</label>
+            <select id="s"><option>Express Wash</option><option selected>Wash &amp; Vac</option><option>Full Valet</option><option>Ceramic Seal</option></select></div>
+          <div class="fld"><label for="w">When</label>
+            <select id="w"><option>Today</option><option>Tomorrow</option><option>This week</option><option>Weekend</option></select></div>
+        </div>
+        <div class="fld"><label for="n">Name</label><input id="n" type="text" placeholder="Your name" required></div>
+        <div class="fld"><label for="p">Mobile</label><input id="p" type="tel" placeholder="07…" required></div>
+        <button class="btn" type="submit">Request my slot</button>
+      </form>
+      <div class="done" id="done"><div class="tk">✓</div><h3>Booked in</h3><p style="color:#9fc0ce;margin-top:6px">We'll text you to confirm your time.</p></div>
+    </div>
+  </div>
+  <div class="foot">
+    <span>© Hydra Car Wash · Scroll landing template</span>
+    <span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span>
+  </div>
+</div></section>
+
+</div></div>
+
+<script>
+(function(){
+"use strict";
+var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+var $  = function(s,r){return (r||document).querySelector(s);},
+    $$ = function(s,r){return [].slice.call((r||document).querySelectorAll(s));},
+    clamp=function(v,a,b){return v<a?a:v>b?b:v;},
+    lerp =function(a,b,t){return a+(b-a)*t;};
+
+/* ═══════════════════════════════════════════════════════════
+   1. SMOOTH SCROLL
+   Body keeps the real height; #scroller is translated to a
+   lerped scroll position. Every animation below reads `sy`
+   (the smoothed value) so nothing drifts out of sync.
+   ═══════════════════════════════════════════════════════════ */
+var vp=$('#vp'), scroller=$('#scroller');
+var sy=0, target=0, vh=innerHeight, docH=0;
+var SMOOTH = !reduce && matchMedia('(min-width:0px)').matches;
+
+if(!SMOOTH) document.body.classList.add('no-smooth');
+
+function measure(){
+  vh=innerHeight;
+  docH=scroller.getBoundingClientRect().height;
+  if(SMOOTH) document.body.style.height=docH+'px';
+}
+function onResize(){ measure(); }
+addEventListener('resize',onResize,{passive:true});
+addEventListener('orientationchange',function(){setTimeout(measure,220);},{passive:true});
+if(window.ResizeObserver) new ResizeObserver(measure).observe(scroller);
+measure();
+
+/* ═══════════════════════════════════════════════════════════
+   2. SCROLL-DRIVEN SCENES — all pure functions of `sy`
+   ═══════════════════════════════════════════════════════════ */
+var rail=$('#rail'), nav=$('#nav'), heroImg=$('#heroImg');
+
+/* the tunnel */
+var tunnel=$('[data-tunnel]'), tunSt=$('.tun-st'), tunCar=$('#tunCar'), tunClean=$('#tunClean'),
+    layWater=$('#layWater'), layFoam=$('#layFoam'), layShine=$('#layShine'),
+    jets=$('#jets'), tunBar=$('#tunBar'), tunTitle=$('#tunTitle'), tunSub=$('#tunSub'),
+    tunSteps=$$('#tunSteps b');
+var STAGES=[
+  {t:'Pull in',        s:'Keep scrolling — the wash runs at your pace.'},
+  {t:'Pre-rinse',      s:'High pressure lifts the grit off before anything touches the paint.'},
+  {t:'Snow foam',      s:'Thick lather, left to dwell, softening what the rinse left behind.'},
+  {t:'Hand wash',      s:'Two buckets, a clean mitt, one panel at a time.'},
+  {t:'Rinse',          s:'Every last trace of foam taken off with free-flowing water.'},
+  {t:'Dry &amp; seal', s:'Hand dried with plush towels, then sealed to hold the shine.'}
+];
+var lastStage=-1;
+
+function tunnelAt(p){                       /* p: 0→1 through the pinned section */
+  var n=STAGES.length, i=clamp(Math.floor(p*n),0,n-1);
+  if(i!==lastStage){
+    lastStage=i;
+    tunTitle.innerHTML=STAGES[i].t;
+    tunSub.innerHTML=STAGES[i].s;
+    tunSteps.forEach(function(b,k){ b.classList.toggle('on', k<=i); });
+  }
+  /* the car drives in, holds, then drives out */
+  var enter=clamp(p/0.10,0,1), exit=clamp((p-0.92)/0.08,0,1);
+  var x=(1-enter)*70 - exit*70;
+  tunCar.style.transform='translate(calc(-50% + '+x.toFixed(2)+'vw),-50%) scale('+(0.94+enter*0.06).toFixed(3)+')';
+  tunCar.style.opacity=String(clamp(enter,0,1)*(1-exit));
+
+  /* water on during rinse stages, foam through the middle, shine at the end */
+  var water=Math.max(bump(p,0.12,0.30), bump(p,0.62,0.80));
+  var foam =bump(p,0.28,0.62);
+  var shine=clamp((p-0.80)/0.14,0,1);
+  layWater.style.opacity=water.toFixed(3);
+  layFoam.style.opacity=foam.toFixed(3);
+  layShine.style.opacity=(shine*0.9).toFixed(3);
+  layShine.style.transform='translateX('+((shine-0.5)*40).toFixed(1)+'%)';
+  jets.style.opacity=water.toFixed(3);
+
+  /* the paint itself turns clean under the foam */
+  tunClean.style.opacity=clamp((p-0.42)/0.22,0,1).toFixed(3);
+  tunBar.style.transform='scaleX('+p.toFixed(4)+')';
+}
+function bump(p,a,b){                        /* 0 → 1 → 0 across [a,b] */
+  if(p<a||p>b) return 0;
+  return Math.sin((p-a)/(b-a)*Math.PI);
+}
+
+/* stacking cards: each shrinks slightly as the next arrives */
+var cards=$$('[data-card]');
+/* scroll-scrubbed before/after */
+var ba=$('#ba');
+/* horizontal gallery */
+var hs=$$('[data-hs]').map(function(e){return {e:e,t:$('.hs-track',e),st:$('.hs-st',e)};});
+/* parallax inside card images */
+var pars=$$('[data-par]');
+
+function rect(el){                            /* geometry in smoothed-scroll space */
+  var r=el.getBoundingClientRect();
+  return {top:r.top, height:r.height, bottom:r.bottom};
+}
+
+function render(){
+  /* progress rail */
+  var maxS=Math.max(1, docH-vh);
+  rail.style.transform='scaleX('+clamp(sy/maxS,0,1).toFixed(4)+')';
+  nav.classList.toggle('on', sy>30);
+
+  if(reduce) return;
+
+  /* hero image drifts */
+  if(heroImg && sy<vh*1.4) heroImg.style.transform='translate3d(0,'+(sy*0.06).toFixed(1)+'px,0)';
+
+  /* the tunnel */
+  if(tunnel){
+    var r=rect(tunnel), h=tunnel.offsetHeight-vh;
+    /* hold the panel at the top of the viewport for the length of the section */
+    if(tunSt) tunSt.style.transform='translate3d(0,'+clamp(-r.top,0,Math.max(0,h)).toFixed(1)+'px,0)';
+    if(r.bottom>-200 && r.top<vh+200){
+      tunnelAt(h>0 ? clamp(-r.top/h,0,1) : 0);
+    }
+  }
+
+  /* stacking cards — each pins at the top, then the next slides over it */
+  cards.forEach(function(c){
+    var r=c.getBoundingClientRect(), stop=96;
+    var over=clamp(stop-r.top,0,vh*1.6);      /* px scrolled past its resting point */
+    var p=clamp(over/(vh*0.75),0,1);
+    var sc=1-p*0.07, o=1-p*0.30;
+    c.style.transform='translate3d(0,'+over.toFixed(1)+'px,0) scale('+sc.toFixed(3)+')';
+    c.style.opacity=o.toFixed(3);
+    c.style.zIndex=String(10+cards.indexOf(c));
+  });
+
+  /* card image parallax */
+  pars.forEach(function(im){
+    var r=im.getBoundingClientRect();
+    if(r.bottom<-100||r.top>vh+100) return;
+    var c=(r.top+r.height/2)-vh/2;
+    im.style.transform='translate3d(0,'+(-c*0.06).toFixed(1)+'px,0) scale(1.12)';
+  });
+
+  /* before/after scrubs itself as it crosses the viewport */
+  if(ba){
+    var r=ba.getBoundingClientRect();
+    if(r.bottom>-100 && r.top<vh+100){
+      var p=clamp((vh*0.9-r.top)/(vh*0.75),0,1);
+      ba.style.setProperty('--sp',(6+p*84).toFixed(2)+'%');
+    }
+  }
+
+  /* horizontal gallery */
+  hs.forEach(function(o){
+    if(!o.t) return;
+    var r=o.e.getBoundingClientRect(), h=o.e.offsetHeight-vh;
+    if(o.st) o.st.style.transform='translate3d(0,'+clamp(-r.top,0,Math.max(0,h)).toFixed(1)+'px,0)';
+    var p=h>0?clamp(-r.top/h,0,1):0;
+    var d=Math.max(0,o.t.scrollWidth-innerWidth);
+    o.t.style.transform='translate3d('+(-d*p).toFixed(1)+'px,0,0)';
+  });
+}
+
+/* ── the loop: one lerp, one render, everything in step ── */
+function raf(){
+  target = SMOOTH ? (scrollY||pageYOffset||0) : (scrollY||0);
+  sy = SMOOTH ? lerp(sy, target, 0.095) : target;
+  if(Math.abs(target-sy)<0.08) sy=target;
+  if(SMOOTH) scroller.style.transform='translate3d(0,'+(-sy).toFixed(2)+'px,0)';
+  render();
+  requestAnimationFrame(raf);
+}
+sy = target = scrollY||0;
+render();
+requestAnimationFrame(raf);
+
+/* ═══════════════════════════════════════════════════════════
+   3. ENTRANCE REVEALS + COUNTERS
+   ═══════════════════════════════════════════════════════════ */
+if(reduce){
+  $$('[data-rv]').forEach(function(e){e.classList.add('in');});
+  $$('[data-count]').forEach(function(e){e.textContent=e.getAttribute('data-count');});
+}else{
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  $$('[data-rv]').forEach(function(e){io.observe(e);});
+
+  /* hero headline rises once fonts are in */
+  var hl=$$('.hero h1 span i');
+  function riseHero(){
+    hl.forEach(function(el,i){
+      el.style.transition='transform 1.1s var(--ease) '+(i*0.09)+'s';
+      el.style.transform='none';
+    });
+  }
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(riseHero); else riseHero();
+
+  var cio=new IntersectionObserver(function(en){
+    en.forEach(function(e){
+      if(!e.isIntersecting) return; cio.unobserve(e.target);
+      var el=e.target, raw=el.getAttribute('data-count'), to=parseFloat(raw),
+          dec=(raw.split('.')[1]||'').length, t0=null;
+      requestAnimationFrame(function step(ts){
+        if(t0===null)t0=ts;
+        var p=clamp((ts-t0)/1500,0,1), v=to*(1-Math.pow(1-p,3));
+        el.textContent = dec ? v.toFixed(dec) : Math.round(v).toLocaleString();
+        if(p<1) requestAnimationFrame(step);
+      });
+    });
+  },{threshold:.6});
+  $$('[data-count]').forEach(function(e){cio.observe(e);});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. NAV + FORM
+   ═══════════════════════════════════════════════════════════ */
+$$('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(ev){
+    var id=a.getAttribute('href'); if(id.length<2) return;
+    var t=document.querySelector(id); if(!t) return;
+    ev.preventDefault();
+    /* target sits in smoothed space — add current sy back on */
+    var y = t.getBoundingClientRect().top + sy - 70;
+    scrollTo({top:y, behavior: reduce ? 'auto' : 'smooth'});
+  });
+});
+
+var f=$('#f');
+if(f) f.addEventListener('submit',function(ev){
+  ev.preventDefault();
+  var bad=false;
+  ['#c','#n','#p'].forEach(function(sel){
+    var i=$(sel);
+    if(!i.value.trim()){ i.style.borderColor='#fb7185'; bad=true; }
+  });
+  if(bad) return;
+  f.style.display='none'; $('#done').classList.add('on');
+});
+})();
+</script>
+</body></html>
