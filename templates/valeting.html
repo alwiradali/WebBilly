@@ -2,40 +2,49 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
-<title>Lustre — Car Care Studio · Premium Valeting Template</title>
-<meta name="description" content="A premium car valeting and detailing website template — paint correction, ceramic coating, interior detailing. Neutral demo by Billy Digitals.">
+<title>Lustre — Car Care Atelier · Luxury Valeting Template</title>
+<meta name="description" content="A luxury car valeting and detailing website template — paint correction, ceramic protection, interior restoration. Neutral demo by Billy Digitals.">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#07080a">
+<meta name="theme-color" content="#f7f4ef">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
- --void:#07080a;--carbon:#0d0f13;--steel:#161a21;--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.06);
- --plat:#f2f6fa;--mut:#98a1b0;--mut2:#6d7686;
- --ice:#5ecdf5;--ice2:#a8e6ff;--ice-d:#2a9fd0;
- --disp:'Sora',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;
+ --paper:#f7f4ef;--paper2:#efeae3;--card:#ffffff;--field:#f1ece4;
+ --ink:#191714;--txt:#5d574f;--faint:#8a837a;
+ --line:rgba(25,23,20,.14);--line2:rgba(25,23,20,.07);
+ --acc:#8f6a24;--acc2:#a8823a;--acc3:#c9a227;
+ --disp:'Bodoni Moda',Didot,Georgia,serif;--body:'Jost',system-ui,sans-serif;
  --ease:cubic-bezier(.16,1,.3,1);--r:14px;
 }
+.dark{
+ --paper:#0e0d0c;--paper2:#141311;--card:#141311;--field:#1a1815;
+ --ink:#f5f2ec;--txt:#a8a29a;--faint:#7d776f;
+ --line:rgba(255,255,255,.13);--line2:rgba(255,255,255,.07);
+ --acc:#dcc08a;--acc2:#eadcbb;--acc3:#b39359;
+ background:#0e0d0c;color:var(--txt);
+}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:var(--body);font-weight:300;background:var(--void);color:var(--mut);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
+body{font-family:var(--body);font-weight:300;background:var(--paper);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 .wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 22px}
-h1,h2,h3,h4{font-family:var(--disp);color:var(--plat);line-height:1.04;letter-spacing:-.03em;font-weight:600;text-wrap:balance}
+h1,h2,h3,h4{font-family:var(--disp);color:var(--ink);line-height:1.06;letter-spacing:-.015em;font-weight:400;text-wrap:balance}
 h2{font-size:clamp(2.1rem,5.6vw,4rem)}
-.kicker{font-family:var(--body);font-weight:600;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ice);display:block;margin-bottom:16px}
-.lede{font-size:clamp(1rem,1.25vw,1.09rem);line-height:1.75;color:var(--mut);max-width:62ch}
+.kicker{font-family:var(--body);font-weight:500;font-size:.62rem;letter-spacing:.36em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:16px}
+.lede{font-size:clamp(1rem,1.2vw,1.06rem);line-height:1.8;font-weight:300;color:var(--txt);max-width:62ch}
 .sec{padding:clamp(86px,13vh,150px) 0}
 section[id],header[id]{scroll-margin-top:78px}
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;font-family:var(--body);font-weight:600;
- font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;padding:16px 30px;border-radius:999px;
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;font-family:var(--body);font-weight:500;
+ font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:16px 30px;border-radius:999px;
  border:1px solid transparent;cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease)}
-.btn-p{background:var(--ice);color:#04222f}
-.btn-p:hover{background:var(--ice2)}
-.btn-g{border-color:var(--line);color:var(--plat)}
-.btn-g:hover{border-color:var(--ice);color:var(--ice2)}
+.btn-p{background:var(--acc);color:#fbf8f2}
+.dark .btn-p,.nav .btn-p{background:var(--acc);color:#1f1708}
+.btn-p:hover{background:var(--acc2)}
+.btn-g{border-color:var(--line);color:var(--ink)}
+.btn-g:hover{border-color:var(--acc);color:var(--acc2)}
 .mag{will-change:transform}
 /* reveal */
 [data-rv]{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
@@ -45,134 +54,146 @@ section[id],header[id]{scroll-margin-top:78px}
 [data-text].in .ti{transform:none}
 .si{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
 [data-stag].in .si{opacity:1;transform:none}
-#bar{position:fixed;top:0;left:0;height:2px;width:100%;background:linear-gradient(90deg,var(--ice-d),var(--ice2));transform:scaleX(0);transform-origin:0 50%;z-index:80}
+#bar{position:fixed;top:0;left:0;height:2px;width:100%;background:linear-gradient(90deg,#b39359,#8f6a24);transform:scaleX(0);transform-origin:0 50%;z-index:80}
 @media(prefers-reduced-motion:reduce){[data-rv],.ti,.si{opacity:1!important;transform:none!important;transition:none!important}}
 
 /* ============ preloader ============ */
-#pl{position:fixed;inset:0;z-index:200;background:var(--void);display:grid;place-items:center;transition:transform 1s var(--ease) .2s}
+#pl{position:fixed;inset:0;z-index:200;background:var(--paper);display:grid;place-items:center;transition:transform 1s var(--ease) .2s}
 #pl.done{transform:translateY(-101%)}
 #pl .in{text-align:center;width:min(360px,74vw)}
-#pl .nm{font-family:var(--disp);font-weight:600;font-size:clamp(1.9rem,6vw,2.5rem);color:var(--plat);letter-spacing:.16em;text-transform:uppercase;
+#pl .nm{font-family:var(--disp);font-weight:500;font-size:clamp(2rem,6.4vw,2.7rem);color:var(--ink);letter-spacing:.26em;text-transform:uppercase;
  opacity:0;transform:translateY(10px);animation:plu .8s var(--ease) .15s forwards}
-#pl .sb{font-size:.6rem;font-weight:600;letter-spacing:.44em;text-transform:uppercase;color:var(--ice);margin-top:10px;opacity:0;animation:plf .7s ease .4s forwards}
+#pl .sb{font-size:.6rem;font-weight:600;letter-spacing:.44em;text-transform:uppercase;color:var(--acc);margin-top:10px;opacity:0;animation:plf .7s ease .4s forwards}
 #pl .tr{height:1px;background:rgba(255,255,255,.12);margin-top:26px;overflow:hidden;position:relative}
-#pl .tr i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--ice-d),var(--ice2))}
-#pl .pc{margin-top:12px;font-family:var(--disp);font-size:.7rem;letter-spacing:.2em;color:var(--mut2);font-variant-numeric:tabular-nums}
+#pl .tr i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--acc3),var(--acc2))}
+#pl .pc{margin-top:12px;font-family:var(--body);font-size:.7rem;letter-spacing:.2em;color:var(--faint);font-variant-numeric:tabular-nums}
 @keyframes plu{to{opacity:1;transform:none}}@keyframes plf{to{opacity:1}}
 body.lock{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#pl{display:none}}
 
 /* ============ nav ============ */
-.nav{position:fixed;top:0;left:0;right:0;z-index:70;transition:background .4s var(--ease),backdrop-filter .4s,border-color .4s}
+.nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(247,244,239,.86);backdrop-filter:blur(14px);transition:background .4s var(--ease),backdrop-filter .4s,border-color .4s}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:72px;gap:18px}
-.nav.on{background:rgba(7,8,10,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line2)}
-.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:600;font-size:1.12rem;color:var(--plat);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
-.brand i{width:9px;height:9px;border-radius:50%;background:var(--ice);box-shadow:0 0 16px var(--ice);flex:none}
+.nav.on{background:rgba(247,244,239,.95);border-bottom:1px solid var(--line2);box-shadow:0 1px 22px rgba(60,45,20,.06)}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:500;font-size:1.22rem;color:var(--ink);transition:color .4s;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 16px var(--acc);flex:none}
 .nlinks{display:none;gap:34px}
-.nlinks a{font-size:.76rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);transition:color .25s}
-.nlinks a:hover{color:var(--ice2)}
+.nlinks a{font-size:.76rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--txt);transition:color .3s}
+.nlinks a:hover{color:var(--acc2)}
 .nav .btn{padding:12px 22px;font-size:.68rem}
-.burger{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;background:none;border:1px solid var(--line);border-radius:11px;color:var(--plat);cursor:pointer}
+.burger{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;background:none;border:1px solid var(--line);border-radius:11px;color:var(--ink);cursor:pointer}
 .burger svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;fill:none}
-.drawer{position:fixed;inset:0;z-index:90;background:rgba(7,8,10,.97);backdrop-filter:blur(8px);display:flex;flex-direction:column;
+.drawer{position:fixed;inset:0;z-index:90;background:rgba(14,13,12,.97);backdrop-filter:blur(8px);display:flex;flex-direction:column;
  align-items:center;justify-content:center;gap:4px;opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s}
 .drawer.open{opacity:1;visibility:visible}
-.drawer a{font-family:var(--disp);font-weight:500;font-size:1.9rem;color:var(--plat);padding:11px 0;letter-spacing:-.02em}
+.drawer a{font-family:var(--disp);font-weight:400;font-size:2rem;color:var(--ink);padding:11px 0;letter-spacing:-.02em}
 .drawer .btn{margin-top:22px;font-size:.78rem}
-.dx{position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--plat);font-size:20px;cursor:pointer}
+.dx{position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--ink);font-size:20px;cursor:pointer}
 
-/* ============ hero ============ */
-.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;padding:112px 0 46px;isolation:isolate}
-.hero-media{position:absolute;inset:0;z-index:-2;overflow:hidden}
-.hero-media img{width:100%;height:118%;object-fit:cover;object-position:center 42%;opacity:.62;will-change:transform}
-/* touch/pointer reactive specular gloss — light travelling over polished paint */
-.gloss{position:absolute;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:screen;transition:opacity .6s ease;
- background:radial-gradient(38vmax 30vmax at var(--mx,60%) var(--my,42%),rgba(150,225,255,.20),rgba(94,205,245,.07) 42%,transparent 68%)}
-.hero-scrim{position:absolute;inset:0;z-index:-1;
- background:linear-gradient(90deg,rgba(7,8,10,.95) 0%,rgba(7,8,10,.72) 44%,rgba(7,8,10,.35) 100%),
- linear-gradient(180deg,rgba(7,8,10,.86) 0%,transparent 34%,rgba(7,8,10,.6) 74%,var(--void) 100%)}
-.hero h1{font-size:clamp(2.9rem,8.2vw,6.6rem);font-weight:600;letter-spacing:-.04em;max-width:15ch}
-.hero h1 em{font-style:normal;color:var(--ice)}
-.hero .lede{margin-top:22px;max-width:46ch;color:#c2cad6}
-.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+/* ============ hero (light editorial split) ============ */
+.hero{background:var(--paper);padding:132px 0 64px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.2vw,4.9rem);font-weight:400;letter-spacing:-.02em;max-width:13ch}
+.hero h1 em{font-style:italic;color:var(--acc);font-weight:400}
+.hero .lede{margin-top:20px;max-width:46ch}
+.hbul{list-style:none;display:grid;gap:9px;margin-top:22px}
+.hbul li{display:flex;gap:11px;align-items:flex-start;font-size:.92rem;color:var(--ink);font-weight:300}
+.hbul li svg{width:15px;height:15px;stroke:var(--acc);fill:none;stroke-width:2;flex:none;margin-top:5px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .hero-cta .btn{flex:1 1 auto;min-width:190px}
-.hmeta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;margin-top:38px;padding-top:24px;border-top:1px solid var(--line2)}
-.chip{display:inline-flex;align-items:center;gap:9px;font-size:.78rem;font-weight:500;color:var(--plat)}
-.chip .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.16);animation:pz 2.4s infinite}
-@keyframes pz{50%{box-shadow:0 0 0 9px rgba(74,222,128,0)}}
-.hmeta .st{color:var(--ice2);letter-spacing:2px;font-size:.84rem}
-.hmeta b{color:var(--plat);font-weight:600}
-.scue{position:absolute;left:22px;bottom:20px;display:none;align-items:center;gap:12px;font-size:.6rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--mut2);z-index:2}
-.scue i{display:block;width:44px;height:1px;background:rgba(255,255,255,.2);position:relative;overflow:hidden}
-.scue i::after{content:"";position:absolute;inset:0;background:var(--ice);animation:sc 2.8s var(--ease) infinite}
+.hmeta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:32px;padding-top:22px;border-top:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:9px;font-size:.78rem;font-weight:400;color:var(--ink)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:#3f9d5d;box-shadow:0 0 0 4px rgba(63,157,93,.15);animation:pz 2.4s infinite}
+@keyframes pz{50%{box-shadow:0 0 0 9px rgba(63,157,93,0)}}
+.hmeta .st{color:var(--acc2);letter-spacing:2px;font-size:.84rem}
+.hmeta b{color:var(--ink);font-weight:500}
+/* the figure — pointer/touch reactive gloss lives here */
+.hero-fig{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;isolation:isolate;
+ box-shadow:0 50px 90px -54px rgba(60,45,20,.55);border:1px solid var(--line2)}
+.hero-fig img{width:100%;height:112%;object-fit:cover;object-position:center 44%;will-change:transform}
+.gloss{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;z-index:2;
+ background:radial-gradient(46% 38% at var(--mx,60%) var(--my,42%),rgba(255,240,208,.26),rgba(220,192,138,.09) 44%,transparent 70%)}
+.hero-fig .tagv{position:absolute;left:16px;bottom:16px;z-index:3;color:#f5f2ec;
+ font-size:.6rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;text-shadow:0 1px 14px rgba(0,0,0,.7)}
+.hero-fig::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 58%,rgba(14,13,12,.55))}
+.hero-seal{position:absolute;top:-16px;right:-12px;z-index:4;width:104px;height:104px;border-radius:50%;
+ background:var(--paper);border:1px solid var(--acc);display:grid;place-items:center;text-align:center;
+ font-family:var(--disp);font-style:italic;color:var(--acc);font-size:.9rem;line-height:1.15;transform:rotate(-7deg)}
+.scue{position:absolute;left:22px;bottom:18px;display:none;align-items:center;gap:12px;font-size:.6rem;font-weight:500;
+ letter-spacing:.26em;text-transform:uppercase;color:var(--faint);z-index:3}
+.scue i{display:block;width:44px;height:1px;background:var(--line);position:relative;overflow:hidden}
+.scue i::after{content:"";position:absolute;inset:0;background:var(--acc);animation:sc 2.8s var(--ease) infinite}
 @keyframes sc{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
-
+@media(min-width:960px){
+ .hero-grid{grid-template-columns:1.04fr .96fr;gap:5vw}
+ .hero-fig{aspect-ratio:4/5;max-height:78vh}
+}
 /* ============ marquee ============ */
-.marq{border-block:1px solid var(--line2);overflow:hidden;background:var(--carbon);padding:17px 0}
+.marq{border-block:1px solid var(--line2);overflow:hidden;background:var(--paper2);padding:17px 0}
 .marq-in{display:flex;white-space:nowrap;width:max-content;animation:mq 34s linear infinite}
-.marq-in span{font-family:var(--disp);font-weight:500;font-size:.86rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);padding:0 26px;display:inline-flex;align-items:center;gap:26px}
-.marq-in span::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--ice);opacity:.7}
+.marq-in span{font-family:var(--disp);font-weight:500;font-size:.86rem;letter-spacing:.2em;text-transform:uppercase;color:var(--txt);padding:0 26px;display:inline-flex;align-items:center;gap:26px}
+.marq-in span::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--acc);opacity:.7}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* ============ stats ============ */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:34px 20px;padding:clamp(58px,8vh,86px) 0;border-bottom:1px solid var(--line2)}
-.stat b{font-family:var(--disp);font-weight:300;font-size:clamp(2.4rem,5.4vw,3.6rem);color:var(--plat);display:block;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-.stat b .u{color:var(--ice);font-size:.46em;vertical-align:super;margin-left:2px}
-.stat>span{display:block;margin-top:11px;font-size:.66rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2)}
+.stat b{font-family:var(--disp);font-weight:400;font-size:clamp(2.4rem,5.4vw,3.6rem);color:var(--ink);display:block;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.stat b .u{color:var(--acc);font-size:.46em;vertical-align:super;margin-left:2px}
+.stat>span{display:block;margin-top:11px;font-size:.66rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
 
 /* ============ before / after ============ */
-.ba{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:7/5;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;background:var(--steel)}
+.ba{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:7/5;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;background:var(--field)}
 .ba:active{cursor:grabbing}
 .ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
 .ba .aft{clip-path:inset(0 0 0 var(--sp,50%))}
-.ba .hd{position:absolute;top:0;bottom:0;left:var(--sp,50%);width:2px;background:var(--ice);box-shadow:0 0 22px rgba(94,205,245,.75);pointer-events:none;z-index:3}
+.ba .hd{position:absolute;top:0;bottom:0;left:var(--sp,50%);width:2px;background:#e8d5ab;box-shadow:0 0 22px rgba(232,213,171,.8);pointer-events:none;z-index:3}
 .ba .hd::after{content:"";position:absolute;top:50%;left:50%;width:52px;height:52px;transform:translate(-50%,-50%);border-radius:50%;
- background:rgba(7,8,10,.72);border:1.5px solid var(--ice);backdrop-filter:blur(6px)}
-.ba .hd b{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;color:var(--ice2);font-size:13px;
+ background:rgba(14,13,12,.7);border:1.5px solid #e8d5ab;backdrop-filter:blur(6px)}
+.ba .hd b{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;color:#eadcbb;font-size:13px;
  letter-spacing:1px;white-space:nowrap;font-weight:400}
 .ba .lb{position:absolute;bottom:16px;z-index:2;font-family:var(--body);font-weight:600;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
- padding:9px 15px;border-radius:999px;background:rgba(7,8,10,.66);backdrop-filter:blur(8px);color:var(--plat);pointer-events:none}
-.ba .lb.l{left:16px}.ba .lb.r{right:16px;color:var(--ice2)}
-.ba-hint{margin-top:16px;font-size:.76rem;color:var(--mut2);display:flex;align-items:center;gap:9px}
-.ba-hint svg{width:17px;height:17px;stroke:var(--ice);fill:none;stroke-width:1.6;flex:none}
+ padding:9px 15px;border-radius:999px;background:rgba(14,13,12,.68);backdrop-filter:blur(8px);color:#f5f2ec;pointer-events:none}
+.ba .lb.l{left:16px}.ba .lb.r{right:16px;color:#eadcbb}
+.ba-hint{margin-top:16px;font-size:.76rem;color:var(--faint);display:flex;align-items:center;gap:9px}
+.ba-hint svg{width:17px;height:17px;stroke:var(--acc);fill:none;stroke-width:1.6;flex:none}
 
 /* ============ packages ============ */
 .pk{display:grid;grid-template-columns:1fr;gap:16px;margin-top:48px}
-.pkc{position:relative;border:1px solid var(--line);border-radius:var(--r);padding:32px 26px 30px;background:var(--carbon);overflow:hidden;
+.pkc{position:relative;border:1px solid var(--line);border-radius:var(--r);padding:32px 26px 30px;background:var(--card);overflow:hidden;
  transition:border-color .4s var(--ease),background .4s var(--ease);transform-style:preserve-3d;will-change:transform}
 .pkc::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s ease;
- background:radial-gradient(24vmax 20vmax at var(--px,50%) var(--py,0%),rgba(94,205,245,.13),transparent 62%)}
-.pkc:hover,.pkc.act{border-color:rgba(94,205,245,.42);background:#11151b}
+ background:radial-gradient(24vmax 20vmax at var(--px,50%) var(--py,0%),rgba(201,162,39,.11),transparent 62%)}
+.pkc:hover,.pkc.act{border-color:rgba(143,106,36,.4);background:var(--paper2)}
 .pkc:hover::after,.pkc.act::after{opacity:1}
-.pkc.feat{border-color:rgba(94,205,245,.34)}
-.pkc .tag{position:absolute;top:18px;right:18px;font-size:.56rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#04222f;background:var(--ice);padding:6px 11px;border-radius:999px}
-.pkc h3{font-size:1.5rem;font-weight:600;letter-spacing:-.02em}
-.pkc .sub{font-size:.82rem;color:var(--mut2);margin-top:6px}
-.pkc .pr{font-family:var(--disp);font-weight:300;font-size:2.9rem;color:var(--plat);margin:22px 0 4px;letter-spacing:-.04em;line-height:1}
-.pkc .pr small{font-size:.95rem;color:var(--mut2);font-weight:400;margin-right:3px}
-.pkc .dur{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ice);font-weight:600}
+.pkc.feat{border-color:rgba(143,106,36,.34);box-shadow:0 26px 60px -40px rgba(60,45,20,.5)}
+.pkc .tag{position:absolute;top:18px;right:18px;font-size:.56rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#fbf8f2;background:var(--acc);padding:6px 11px;border-radius:999px}
+.pkc h3{font-size:1.75rem;font-weight:400;letter-spacing:-.01em}
+.pkc .sub{font-size:.82rem;color:var(--faint);margin-top:6px}
+.pkc .pr{font-family:var(--disp);font-weight:400;font-size:2.9rem;color:var(--ink);margin:22px 0 4px;letter-spacing:-.04em;line-height:1}
+.pkc .pr small{font-size:.95rem;color:var(--faint);font-weight:400;margin-right:3px}
+.pkc .dur{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:600}
 .pkc ul{list-style:none;margin:24px 0 28px;display:grid;gap:11px}
-.pkc li{display:flex;gap:11px;font-size:.9rem;color:#b9c2cf;align-items:flex-start}
-.pkc li svg{width:16px;height:16px;stroke:var(--ice);fill:none;stroke-width:2;flex:none;margin-top:4px}
+.pkc li{display:flex;gap:11px;font-size:.88rem;color:var(--txt);align-items:flex-start}
+.pkc li svg{width:16px;height:16px;stroke:var(--acc);fill:none;stroke-width:2;flex:none;margin-top:4px}
 .pkc .btn{width:100%}
 
 /* ============ pinned process ============ */
-.proc{height:340vh;position:relative;background:var(--void)}
+.proc{height:340vh;position:relative;background:var(--paper)}
 .proc-st{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
 .proc-bg{position:absolute;inset:0;background:url(/assets/valet/night.webp) center/cover;
  transform:scale(calc(1.06 + var(--p,0)*.26));filter:brightness(calc(.26 + var(--p,0)*.30)) saturate(calc(.7 + var(--p,0)*.55));will-change:transform,filter}
-.proc-veil{position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 46%,transparent,rgba(7,8,10,.9))}
-.proc-ghost{position:absolute;font-family:var(--disp);font-weight:700;font-size:clamp(5rem,22vw,20rem);color:rgba(242,246,250,.045);
+.proc-veil{position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 46%,transparent,rgba(14,13,12,.9))}
+.proc-ghost{position:absolute;font-family:var(--disp);font-weight:500;font-size:clamp(5rem,22vw,20rem);color:rgba(245,242,236,.05);
  white-space:nowrap;letter-spacing:-.05em;transform:scale(calc(.88+var(--p,0)*.32))}
 .proc-in{position:relative;text-align:center;padding:0 22px;max-width:780px}
-.proc-in h2{color:var(--plat);font-size:clamp(2.1rem,6.4vw,4.4rem)}
+.proc-in h2{color:var(--ink);font-size:clamp(2.1rem,6.4vw,4.4rem)}
 .proc-track{width:min(440px,64vw);height:1px;background:rgba(255,255,255,.14);margin:30px auto 0;overflow:hidden}
-.proc-track i{display:block;height:100%;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,var(--ice-d),var(--ice2))}
+.proc-track i{display:block;height:100%;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,var(--acc3),var(--acc2))}
 .proc-steps{position:absolute;left:0;right:0;bottom:5vh;display:flex;justify-content:center;gap:clamp(14px,3.4vw,42px);padding:0 22px;flex-wrap:wrap}
-.proc-steps div{font-size:.78rem;max-width:19ch;color:#9aa4b3;opacity:.26;transition:opacity .55s var(--ease),color .55s}
-.proc-steps div b{font-family:var(--disp);color:var(--ice);margin-right:8px;font-weight:600}
+.proc-steps div{font-size:.78rem;max-width:19ch;color:#a49d93;opacity:.26;transition:opacity .55s var(--ease),color .55s}
+.proc-steps div b{font-family:var(--disp);color:#dcc08a;margin-right:8px;font-weight:500}
 .proc.s1 .p1,.proc.s2 .p1,.proc.s2 .p2,.proc.s3 .p1,.proc.s3 .p2,.proc.s3 .p3,
-.proc.s4 .p1,.proc.s4 .p2,.proc.s4 .p3,.proc.s4 .p4{opacity:1;color:#d5dce6}
+.proc.s4 .p1,.proc.s4 .p2,.proc.s4 .p3,.proc.s4 .p4{opacity:1;color:#e6e0d5}
 
 /* ============ horizontal gallery ============ */
 .hs{height:300vh;position:relative}
@@ -183,43 +204,70 @@ body.lock{overflow:hidden}
 .gc{flex:0 0 auto;width:min(74vw,400px);height:56vh;border-radius:var(--r);overflow:hidden;position:relative;border:1px solid var(--line2)}
 .gc img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
 .gc:hover img{transform:scale(1.06)}
-.gc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(7,8,10,.88))}
+.gc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(14,13,12,.88))}
 .gc .cap{position:absolute;left:20px;bottom:18px;z-index:2}
-.gc .cap b{display:block;font-family:var(--disp);font-weight:600;font-size:1.16rem;color:var(--plat);letter-spacing:-.02em}
-.gc .cap span{font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ice)}
+.gc .cap b{display:block;font-family:var(--disp);font-weight:500;font-size:1.24rem;color:#f5f2ec;letter-spacing:-.01em}
+.gc .cap span{font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+
+/* ============ the wash (editorial trio) ============ */
+.wash{display:grid;grid-template-columns:1fr;gap:16px;margin-top:48px}
+.wf{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;border:1px solid var(--line2)}
+.wf img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.3s var(--ease)}
+.wf.in img,.si.in .wf img{transform:scale(1)}
+.wf:hover img{transform:scale(1.05)}
+.wf::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 44%,rgba(14,13,12,.9))}
+.wf .wc{position:absolute;left:20px;right:20px;bottom:18px;z-index:2}
+.wf .wc b{display:block;font-family:var(--disp);font-weight:500;font-size:1.2rem;color:#f5f2ec;letter-spacing:-.01em}
+.wf .wc span{display:block;margin-top:5px;font-size:.62rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#dcc08a}
+@media(min-width:760px){
+ .wash{grid-template-columns:repeat(3,1fr);gap:18px}
+ .wash .wf:nth-child(2){transform:translateY(40px)}
+}
+
+/* ============ beading band (full bleed, parallax) ============ */
+.bead{position:relative;min-height:88svh;display:grid;place-items:center;overflow:hidden;border-block:1px solid var(--line2)}
+.bead-bg{position:absolute;inset:-12% 0;z-index:0}
+.bead-bg img{width:100%;height:100%;object-fit:cover;opacity:.5;will-change:transform}
+.bead-veil{position:absolute;inset:0;z-index:1;background:radial-gradient(110% 80% at 50% 50%,rgba(14,13,12,.3),rgba(14,13,12,.92))}
+.bead-in{position:relative;z-index:2;text-align:center;padding:0 22px;max-width:660px}
+.bead-in h2{font-size:clamp(2rem,5.4vw,3.7rem)}
+.bead-in .lede{margin:20px auto 0;max-width:46ch;color:#bcb6ac}
+.bead-fig{display:flex;justify-content:center;gap:clamp(26px,6vw,64px);margin-top:36px;flex-wrap:wrap}
+.bead-fig div b{display:block;font-family:var(--disp);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.4rem);color:var(--ink);line-height:1}
+.bead-fig div span{display:block;margin-top:8px;font-size:.6rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#dcc08a}
 
 /* ============ quote ============ */
-.quote{background:var(--carbon);border-block:1px solid var(--line2);text-align:center;padding:clamp(80px,13vh,140px) 22px}
-.quote .st{color:var(--ice);letter-spacing:5px;font-size:1rem}
-.quote q{display:block;font-family:var(--disp);font-weight:300;font-size:clamp(1.4rem,3.4vw,2.5rem);color:var(--plat);
- line-height:1.35;max-width:24ch;margin:22px auto 0;letter-spacing:-.03em;quotes:none}
-.quote .who{margin-top:26px;font-size:.66rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--mut2)}
+.quote{background:var(--paper2);border-block:1px solid var(--line);text-align:center;padding:clamp(80px,13vh,140px) 22px}
+.quote .st{color:var(--acc);letter-spacing:5px;font-size:1rem}
+.quote q{display:block;font-family:var(--disp);font-weight:400;font-style:italic;font-size:clamp(1.5rem,3.6vw,2.6rem);color:var(--ink);
+ line-height:1.4;max-width:22ch;margin:24px auto 0;letter-spacing:-.01em;quotes:none}
+.quote .who{margin-top:26px;font-size:.66rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
 
 /* ============ book ============ */
 .bk{display:grid;grid-template-columns:1fr;gap:38px}
 .vi{display:grid;gap:22px;margin-top:30px}
-.vi>div span{display:block;font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ice);margin-bottom:6px}
-.vi>div b{font-family:var(--disp);font-weight:500;font-size:1.16rem;color:var(--plat);letter-spacing:-.02em}
-.vi>div p{font-size:.88rem;color:var(--mut2);margin-top:2px}
-.card{border:1px solid var(--line);border-radius:var(--r);padding:30px 26px;background:var(--carbon)}
+.vi>div span{display:block;font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+.vi>div b{font-family:var(--disp);font-weight:500;font-size:1.24rem;color:var(--ink);letter-spacing:-.02em}
+.vi>div p{font-size:.88rem;color:var(--faint);margin-top:2px}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:30px 26px;background:var(--card);box-shadow:0 24px 60px -44px rgba(60,45,20,.45)}
 .card h3{font-size:1.5rem}
-.card>p{font-size:.9rem;color:var(--mut);margin:10px 0 22px}
+.card>p{font-size:.9rem;color:var(--txt);margin:10px 0 22px}
 .fld{margin-bottom:13px}
-.fld label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);margin-bottom:7px}
-.fld input,.fld select{width:100%;background:var(--steel);border:1px solid var(--line2);border-radius:11px;color:var(--plat);
+.fld label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.fld input,.fld select{width:100%;background:var(--field);border:1px solid var(--line2);border-radius:11px;color:var(--ink);
  font:400 .95rem/1.2 var(--body);padding:14px;-webkit-appearance:none;appearance:none}
-.fld input:focus,.fld select:focus{outline:none;border-color:var(--ice)}
-.fld input::placeholder{color:#5c6472}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc)}
+.fld input::placeholder{color:#a49d93}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .card .btn{width:100%;margin-top:8px}
 .done{display:none;text-align:center;padding:14px 0}
 .done.on{display:block}
-.done .tk{width:52px;height:52px;border-radius:50%;background:rgba(94,205,245,.14);border:1px solid var(--ice);color:var(--ice);
+.done .tk{width:52px;height:52px;border-radius:50%;background:rgba(143,106,36,.12);border:1px solid var(--acc);color:var(--acc);
  display:grid;place-items:center;margin:0 auto 14px;font-size:22px}
-.done p{font-size:.9rem;color:var(--mut);margin-top:6px}
+.done p{font-size:.9rem;color:var(--txt);margin-top:6px}
 /* footer */
-.foot{border-top:1px solid var(--line2);padding:34px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--mut2)}
-.foot a{color:var(--ice)}
+.foot{border-top:1px solid var(--line2);padding:26px 0 40px;margin-top:34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--faint)}
+.foot a{color:var(--acc)}
 
 @media(min-width:760px){
  .nlinks{display:flex}.burger{display:none}
@@ -241,76 +289,244 @@ body.lock{overflow:hidden}
 }
 @media(max-width:380px){.nav .btn{display:none}}
 @media(prefers-reduced-motion:reduce){.marq-in,.scue i::after{animation:none}html{scroll-behavior:auto}}
+
+/* ============ top utility bar ============ */
+.topbar{display:none;border-bottom:1px solid var(--line2)}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;gap:20px;height:38px;font-size:.72rem;color:var(--faint)}
+.topbar a{color:var(--faint);transition:color .25s}.topbar a:hover{color:var(--acc2)}
+.topbar .sep{color:var(--line);margin:0 10px}
+.nav.on .topbar{display:none}
+@media(min-width:900px){.topbar{display:block}}
+
+/* ============ hero trust bullets ============ */
+.hbul{list-style:none;display:grid;gap:9px;margin-top:24px}
+.hbul li{display:flex;gap:11px;align-items:flex-start;font-size:.92rem;color:#cbc5bb;font-weight:300}
+.hbul li svg{width:15px;height:15px;stroke:#dcc08a;fill:none;stroke-width:2;flex:none;margin-top:5px}
+
+/* ============ USP strip 01–04 ============ */
+.usp{background:var(--paper2);border-bottom:1px solid var(--line2)}
+.usp-g{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.usp-g div{padding:30px 22px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.usp-g div:nth-child(2n){border-right:0}
+.usp-g b{display:block;font-family:var(--disp);font-weight:400;font-size:.85rem;color:var(--acc);letter-spacing:.16em;margin-bottom:10px}
+.usp-g p{font-family:var(--disp);font-size:1.02rem;color:var(--ink);line-height:1.3;letter-spacing:-.01em}
+@media(min-width:900px){
+ .usp-g{grid-template-columns:repeat(4,1fr)}
+ .usp-g div{border-bottom:0;padding:38px 26px}
+ .usp-g div:nth-child(2n){border-right:1px solid var(--line2)}
+ .usp-g div:last-child{border-right:0}
+}
+
+/* ============ services grid ============ */
+.svc{display:grid;grid-template-columns:1fr;gap:1px;margin-top:44px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.sv{background:var(--card);padding:30px 26px;position:relative;transition:background .4s var(--ease)}
+.sv:hover,.sv.act{background:var(--paper2)}
+.sv .n{font-family:var(--body);font-size:.6rem;font-weight:500;letter-spacing:.24em;color:var(--faint);display:block;margin-bottom:14px}
+.sv h3{font-size:1.42rem;font-weight:400;letter-spacing:-.01em}
+.sv p{font-size:.9rem;color:var(--txt);margin-top:9px;font-weight:300;line-height:1.65}
+.sv .fr{margin-top:16px;display:flex;align-items:baseline;gap:8px}
+.sv .fr b{font-family:var(--disp);font-weight:400;font-size:1.6rem;color:var(--acc2);line-height:1}
+.sv .fr span{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+@media(min-width:700px){.svc{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.svc{grid-template-columns:repeat(3,1fr)}}
+
+/* ============ google reviews ============ */
+.rvhead{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px;padding:20px 24px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.rvhead .sc{font-family:var(--disp);font-size:2.4rem;color:var(--ink);line-height:1;font-weight:400}
+.rvhead .mt b{display:block;color:var(--acc2);letter-spacing:3px;font-size:.95rem}
+.rvhead .mt span{font-size:.8rem;color:var(--faint)}
+.rvhead .gg{margin-left:auto;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.revs{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px}
+.rev{border:1px solid var(--line);border-radius:var(--r);padding:26px 24px;background:var(--card)}
+.rev .st{color:var(--acc);letter-spacing:3px;font-size:.86rem}
+.rev p{font-size:.94rem;color:var(--txt);margin:13px 0 18px;font-weight:300;line-height:1.72}
+.rev .who{display:flex;align-items:center;gap:12px}
+.rev .av{width:38px;height:38px;border-radius:50%;background:var(--field);border:1px solid var(--line);display:grid;place-items:center;
+ font-family:var(--disp);color:var(--acc);font-size:1rem;flex:none}
+.rev .who b{display:block;font-family:var(--body);font-weight:500;font-size:.86rem;color:var(--ink)}
+.rev .who small{font-size:.74rem;color:var(--faint)}
+@media(min-width:860px){.revs{grid-template-columns:repeat(3,1fr)}}
+
+/* ============ FAQ ============ */
+.faq{margin-top:40px;border-top:1px solid var(--line2)}
+.faq details{border-bottom:1px solid var(--line2)}
+.faq summary{list-style:none;cursor:pointer;padding:24px 46px 24px 0;position:relative;
+ font-family:var(--disp);font-size:1.12rem;color:var(--ink);letter-spacing:-.01em;transition:color .3s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--acc2)}
+.faq summary::after{content:"";position:absolute;right:8px;top:50%;width:11px;height:11px;margin-top:-7px;
+ border-right:1px solid var(--acc);border-bottom:1px solid var(--acc);transform:rotate(45deg);transition:transform .35s var(--ease)}
+.faq details[open] summary::after{transform:rotate(-135deg);margin-top:-3px}
+.faq .ans{padding:0 0 24px;font-size:.94rem;color:var(--txt);max-width:74ch;font-weight:300;line-height:1.75}
+.faq details[open] .ans{animation:fq .45s var(--ease)}
+@keyframes fq{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* ============ areas covered ============ */
+.areas{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.areas span{border:1px solid var(--line2);border-radius:999px;padding:10px 18px;font-size:.78rem;color:var(--txt);
+ transition:border-color .3s,color .3s}
+.areas span:hover{border-color:var(--acc);color:var(--acc2)}
+
+/* ============ hours table ============ */
+.hours{list-style:none;margin-top:18px;border-top:1px solid var(--line2)}
+.hours li{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line2);font-size:.88rem;color:var(--txt)}
+.hours li.today{color:var(--acc2)}
+.hours li span:first-child{font-weight:400}
+
+
+/* ============ socials ============ */
+.soc{display:flex;gap:9px;align-items:center}
+.soc a{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;
+ color:var(--txt);transition:border-color .3s,color .3s,background .3s}
+.soc a:hover{border-color:var(--acc);color:var(--acc);background:rgba(143,106,36,.06)}
+.soc svg{width:15px;height:15px;fill:currentColor}
+.topbar .soc a{width:26px;height:26px;border:0}
+.topbar .soc svg{width:14px;height:14px}
+
+/* ============ journey ============ */
+.jn{display:grid;grid-template-columns:1fr;gap:1px;margin-top:46px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.jstep{background:var(--card);padding:30px 26px;position:relative;transition:background .4s var(--ease)}
+.jstep:hover{background:var(--paper2)}
+.jstep b{display:block;font-family:var(--disp);font-size:2.1rem;color:var(--acc);line-height:1;font-weight:400;opacity:.5}
+.jstep h4{font-size:1.18rem;font-weight:400;margin-top:14px;letter-spacing:-.01em}
+.jstep p{font-size:.88rem;color:var(--txt);margin-top:8px;font-weight:300;line-height:1.65}
+@media(min-width:700px){.jn{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.jn{grid-template-columns:repeat(3,1fr)}}
+
+/* ============ map ============ */
+.mapwrap{margin-top:24px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--paper2);
+ filter:grayscale(.34) contrast(1.02)}
+.mapwrap iframe{display:block;width:100%;height:300px;border:0}
+
+/* ============ footer expand ============ */
+.footg{display:grid;grid-template-columns:1fr;gap:34px;padding-top:52px;border-top:1px solid var(--line);margin-top:64px}
+.footg h5{font-family:var(--body);font-weight:500;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:14px}
+.footg ul{list-style:none;display:grid;gap:9px}
+.footg li a,.footg li{font-size:.88rem;color:var(--txt);font-weight:300}
+.footg li a:hover{color:var(--acc)}
+.footg p{font-size:.88rem;color:var(--txt);font-weight:300;max-width:34ch;margin-top:12px}
+@media(min-width:780px){.footg{grid-template-columns:1.4fr 1fr 1fr 1.1fr;gap:4vw}}
+
 </style></head>
 <body>
 
-<div id="pl"><div class="in">
-  <div class="nm">Lustre</div><div class="sb">Car Care Studio</div>
+<div id="pl" class="dark"><div class="in">
+  <div class="nm">Lustre</div><div class="sb">Car Care Atelier</div>
   <div class="tr"><i id="plBar"></i></div><div class="pc"><span id="plPc">0</span>%</div>
 </div></div>
 
 <div id="bar"></div>
 
-<header class="nav" id="nav"><div class="wrap nav-in">
+<header class="nav" id="nav">
+  <div class="topbar"><div class="wrap topbar-in">
+    <span>Mon – Sat 08:00 – 18:00 <span class="sep">|</span> Sun by arrangement</span>
+    <span style="display:flex;align-items:center;gap:14px"><a href="mailto:hello@yourstudio.co.uk">hello@yourstudio.co.uk</a><span class="sep">|</span><a href="tel:00000000000">0000 000 0000</a><span class="soc" style="margin-left:6px"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5Z"/></svg></a><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg></a><a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3v11.6a2.5 2.5 0 1 1-1.8-2.4V9.1a5.6 5.6 0 1 0 4.8 5.5V9.2a7.2 7.2 0 0 0 4.2 1.3V7.5a4.3 4.3 0 0 1-3.2-1.7Z"/></svg></a><a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.61.07-.3-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.73-1.63-2.02-.17-.29 0-.44.13-.59.13-.13.29-.33.43-.5.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.28-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.02 3.08 4.9 4.32.68.29 1.22.47 1.63.6.69.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34ZM12 2a10 10 0 0 0-8.6 15.05L2 22l5.05-1.33A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3 .79.8-2.92-.2-.31A8.2 8.2 0 1 1 12 20.2Z"/></svg></a></span></span>
+  </div></div>
+  <div class="wrap nav-in">
   <a class="brand" href="#top"><i></i>Lustre</a>
   <nav class="nlinks">
-    <a href="#work">The Work</a><a href="#packages">Packages</a><a href="#process">Process</a><a href="#book">Book</a>
+    <a href="#services">Services</a><a href="#journey">How it works</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
   </nav>
   <div style="display:flex;align-items:center;gap:10px">
-    <a class="btn btn-p mag" href="#book">Book a slot</a>
+    <a class="btn btn-p mag" href="#book">Reserve</a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
       <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
     </button>
   </div>
 </div></header>
 
-<div class="drawer" id="drawer">
+<div class="drawer dark" id="drawer">
   <button class="dx" data-close aria-label="Close menu">✕</button>
-  <a href="#work">The Work</a><a href="#packages">Packages</a><a href="#process">Process</a><a href="#book">Book</a>
-  <a class="btn btn-p" href="#book">Book a slot</a>
+  <a href="#services">Services</a><a href="#journey">How it works</a><a href="#packages">Collections</a><a href="#reviews">Reviews</a><a href="#book">Reserve</a>
+  <a class="btn btn-p" href="#book">Reserve</a>
 </div>
 
 <!-- ================= HERO ================= -->
-<header class="hero" id="top">
-  <div class="hero-media"><img id="heroImg" src="/assets/valet/hero.webp" alt="" fetchpriority="high"></div>
-  <div class="gloss" id="gloss"></div>
-  <div class="hero-scrim"></div>
-  <div class="wrap">
-    <span class="kicker" data-rv data-hold>Detailing · Paint Correction · Ceramic</span>
-    <h1 data-text data-step="56" data-hold>Your car, returned <em>flawless.</em></h1>
-    <p class="lede" data-rv data-hold style="transition-delay:.2s">Machine polishing, ceramic protection and interior detailing — carried out by hand, in a controlled studio, by people who treat every panel like it's their own.</p>
-    <div class="hero-cta" data-rv data-hold style="transition-delay:.3s">
-      <a class="btn btn-p mag" href="#book">Book your slot</a>
-      <a class="btn btn-g" href="#packages">See packages</a>
+<header class="hero" id="top"><div class="wrap"><div class="hero-grid">
+  <div>
+    <span class="kicker" data-rv data-hold>Paint Correction · Ceramic Protection · By Appointment</span>
+    <h1 data-text data-step="54" data-hold>A finish worthy of the <em>marque.</em></h1>
+    <p class="lede" data-rv data-hold style="transition-delay:.2s">Multi-stage paint correction, ceramic protection and interior restoration — undertaken entirely by hand, in a climate-controlled studio, for owners who notice what others overlook.</p>
+    <ul class="hbul" data-rv data-hold style="transition-delay:.26s">
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Mobile and unit-based detailing</li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ceramic coating with a written guarantee</li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Fully insured, collection and delivery arranged</li>
+    </ul>
+    <div class="hero-cta" data-rv data-hold style="transition-delay:.34s">
+      <a class="btn btn-p mag" href="#book">Reserve your appointment</a>
+      <a class="btn btn-g" href="#services">View our services</a>
     </div>
-    <div class="hmeta" data-rv data-hold style="transition-delay:.4s">
+    <div class="hmeta" data-rv data-hold style="transition-delay:.42s">
       <span class="chip"><span class="dot"></span><span id="openTxt">Open now · closes 6pm</span></span>
       <span class="st">★★★★★ <b>4.9</b></span>
-      <span>Over <b>1,800</b> cars detailed</span>
+      <span>Rated <b>Excellent</b> on Google</span>
     </div>
   </div>
-  <a class="scue" href="#work"><i></i>Scroll</a>
+  <div style="position:relative">
+    <div class="hero-fig" id="heroFig">
+      <img id="heroImg" src="/assets/valet/hero.webp" alt="Freshly corrected paintwork" fetchpriority="high">
+      <div class="gloss" id="gloss"></div>
+      <span class="tagv">Signature · Two-stage correction</span>
+    </div>
+    <span class="hero-seal" data-rv data-hold style="transition-delay:.5s">by<br>appointment</span>
+  </div>
+</div></div>
+<a class="scue" href="#wash"><i></i>Scroll</a>
 </header>
 
 <!-- ================= MARQUEE ================= -->
 <div class="marq" aria-hidden="true"><div class="marq-in">
-  <span>Paint Correction</span><span>Ceramic Coating</span><span>Interior Detail</span><span>Alloy Refurb</span><span>Glass Polish</span><span>Collection &amp; Delivery</span>
-  <span>Paint Correction</span><span>Ceramic Coating</span><span>Interior Detail</span><span>Alloy Refurb</span><span>Glass Polish</span><span>Collection &amp; Delivery</span>
+  <span>Paint Correction</span><span>Ceramic Protection</span><span>Interior Restoration</span><span>Wheels Off Detail</span><span>Glass &amp; Trim</span><span>Collection &amp; Delivery</span>
+  <span>Paint Correction</span><span>Ceramic Protection</span><span>Interior Restoration</span><span>Wheels Off Detail</span><span>Glass &amp; Trim</span><span>Collection &amp; Delivery</span>
 </div></div>
+
+<!-- ================= USP STRIP ================= -->
+<section class="usp"><div class="wrap"><div class="usp-g" data-stag="90">
+  <div class="si"><b>01</b><p>Two-bucket hand wash, never a brush</p></div>
+  <div class="si"><b>02</b><p>pH-neutral, paint-safe chemistry</p></div>
+  <div class="si"><b>03</b><p>Collection and delivery arranged</p></div>
+  <div class="si"><b>04</b><p>Fully insured and guaranteed</p></div>
+</div></div></section>
 
 <!-- ================= STATS ================= -->
 <div class="wrap"><section class="stats" data-stag="110">
-  <div class="stat si"><b><span data-count="1800">0</span><span class="u">+</span></b><span>Cars detailed</span></div>
-  <div class="stat si"><b><span data-count="12">0</span></b><span>Years in the trade</span></div>
+  <div class="stat si"><b><span data-count="1800">0</span><span class="u">+</span></b><span>Vehicles entrusted</span></div>
+  <div class="stat si"><b><span data-count="12">0</span></b><span>Years of practice</span></div>
   <div class="stat si"><b><span data-count="4.9">0</span></b><span>Average rating</span></div>
-  <div class="stat si"><b><span data-count="9">0</span><span class="u">yr</span></b><span>Ceramic warranty</span></div>
+  <div class="stat si"><b><span data-count="9">0</span><span class="u">yr</span></b><span>Year ceramic warranty</span></div>
 </section></div>
+
+<!-- ================= THE WASH ================= -->
+<section class="sec" id="wash"><div class="wrap">
+  <span class="kicker" data-rv>The wash</span>
+  <h2 data-text data-step="34">Before a machine touches it, <em style="color:var(--acc)">water does.</em></h2>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Every commission begins the same way — a snow foam bath left to dwell, a pressure rinse that lifts the grit away before a mitt ever lands, then a two-bucket hand wash. Ninety per cent of swirl marks are put there during washing. Not here.</p>
+  <div class="wash" data-stag="150">
+    <div class="wf si"><img src="/assets/valet/wash-mist.webp" alt="Vehicle under a high-pressure rinse" loading="lazy"><span class="wc"><b>The pre-rinse</b><span>Pressure, before contact</span></span></div>
+    <div class="wf si"><img src="/assets/valet/wash-foam.webp" alt="Snow foam lather" loading="lazy"><span class="wc"><b>The foam bath</b><span>Left to dwell, never rushed</span></span></div>
+    <div class="wf si"><img src="/assets/valet/wash-hand.webp" alt="Two-bucket hand wash on wet paintwork" loading="lazy"><span class="wc"><b>By hand, always</b><span>Two buckets, one panel at a time</span></span></div>
+  </div>
+</div></section>
+
+<!-- ================= THE JOURNEY ================= -->
+<section class="sec" id="journey" style="padding-top:0"><div class="wrap">
+  <span class="kicker" data-rv>How it works</span>
+  <h2 data-text data-step="34">Six steps, and you drive away <em style="color:var(--acc)">grinning.</em></h2>
+  <div class="jn" data-stag="90">
+    <div class="jstep si"><b>01</b><h4>Come on in</h4><p>Book online or call. Park up, hand over the keys and let us take it from there — no queue, no waiting room strip lighting.</p></div>
+    <div class="jstep si"><b>02</b><h4>Let's take a look</h4><p>We walk the car with you under proper lighting, take paint-depth readings and agree exactly what it needs. Nothing is added later.</p></div>
+    <div class="jstep si"><b>03</b><h4>Treat yourself</h4><p>Coffee on us, or leave the car with us for the day. Collection and delivery can be arranged if you would rather not move at all.</p></div>
+    <div class="jstep si"><b>04</b><h4>We treat your car</h4><p>Foam, decontaminate, wash by hand, correct by machine, protect. The same order, every single time, however long it takes.</p></div>
+    <div class="jstep si"><b>05</b><h4>Come back to a new car</h4><p>Final inspection under the lights before you see it. If we are not happy with a panel, it goes back on the bench.</p></div>
+    <div class="jstep si"><b>06</b><h4>Drive home safely</h4><p>We hand it back with aftercare advice, and a reminder of when it is next due. Ceramic clients get an annual inspection.</p></div>
+  </div>
+</div></section>
 
 <!-- ================= BEFORE / AFTER ================= -->
 <section class="sec" id="work"><div class="wrap">
   <span class="kicker" data-rv>The difference</span>
-  <h2 data-text data-step="34">Drag it. See the <em style="font-style:normal;color:var(--ice)">gloss.</em></h2>
-  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Same panel, same light, same car — one machine polish apart. Drag the handle across to see what a proper correction actually does to paint.</p>
+  <h2 data-text data-step="34">Two panels. One polish <em style="color:var(--acc)">apart.</em></h2>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">The same panel, photographed in the same light. Everything between them is time, patience and a rotary machine. Draw the handle across.</p>
 
   <div style="margin-top:40px" data-rv>
     <div class="ba" id="ba" role="slider" aria-label="Before and after comparison" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
@@ -321,72 +537,109 @@ body.lock{overflow:hidden}
     </div>
     <p class="ba-hint">
       <svg viewBox="0 0 24 24"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Drag the handle — or swipe on your phone
+      Draw the handle across — or swipe, on a phone
     </p>
+  </div>
+</div></section>
+
+<!-- ================= SERVICES ================= -->
+<section class="sec" id="services" style="padding-top:0"><div class="wrap">
+  <span class="kicker" data-rv>What we offer</span>
+  <h2 data-text data-step="34">From a weekly wash to a full <em style="color:var(--acc)">restoration.</em></h2>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Whether it needs an hour or three days, the standard does not change. Every service below is carried out by hand, by the same people, in the same studio.</p>
+  <div class="svc" data-stag="80">
+    <div class="sv si"><span class="n">01</span><h3>Hand Wash &amp; Dry</h3><p>Snow foam, two-bucket contact wash, wheels and arches cleaned, then dried with plush towels for a streak-free finish.</p><div class="fr"><b>£00</b><span>from · 45 min</span></div></div>
+    <div class="sv si"><span class="n">02</span><h3>Wash &amp; Vacuum</h3><p>Everything in the hand wash, plus carpets and seats vacuumed through, dashboard and console wiped down, tyres dressed.</p><div class="fr"><b>£00</b><span>from · 1 hour</span></div></div>
+    <div class="sv si"><span class="n">03</span><h3>Mini Valet</h3><p>An inside-out refresh. Full wash, interior vacuum, glass polished inside and out, door shuts and trims detailed.</p><div class="fr"><b>£00</b><span>from · 90 min</span></div></div>
+    <div class="sv si"><span class="n">04</span><h3>Express Polish</h3><p>A single-stage machine polish to lift dullness and restore depth, sealed with a durable protective layer.</p><div class="fr"><b>£00</b><span>from · half day</span></div></div>
+    <div class="sv si"><span class="n">05</span><h3>Full Polish</h3><p>Decontamination, multi-stage correction and hand wax. The paintwork is measured before and after — nothing is guessed.</p><div class="fr"><b>£00</b><span>from · full day</span></div></div>
+    <div class="sv si"><span class="n">06</span><h3>Full Valet</h3><p>Our most complete service. Seats and carpets shampooed, leather fed, every vent and seam detailed, exterior fully protected.</p><div class="fr"><b>£00</b><span>from · 1–2 days</span></div></div>
   </div>
 </div></section>
 
 <!-- ================= PACKAGES ================= -->
 <section class="sec" id="packages" style="padding-top:0"><div class="wrap">
-  <span class="kicker" data-rv>What we do</span>
-  <h2 data-text data-step="34">Three levels of care.</h2>
-  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Every booking starts with a proper inspection. Prices are guides for a standard hatchback — larger or heavily contaminated vehicles are quoted on sight.</p>
+  <span class="kicker" data-rv>The collections</span>
+  <h2 data-text data-step="34">Three degrees of <em style="color:var(--acc)">devotion.</em></h2>
+  <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Every commission opens with an inspection under paint-depth lighting. Figures below are a guide for a standard hatchback; larger or heavily neglected vehicles are quoted on sight.</p>
 
   <div class="pk" data-stag="130">
     <div class="pkc si" data-tilt>
-      <h3>Express</h3><p class="sub">The weekly refresh</p>
-      <div class="pr"><small>from £</small>00</div><div class="dur">90 minutes</div>
+      <h3>Maintenance</h3><p class="sub">The considered upkeep</p>
+      <div class="pr"><small>from £</small>00</div><div class="dur">Half a day</div>
       <ul>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Snow foam pre-wash &amp; hand wash</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Wheels, arches &amp; tyre dressing</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Glass polish inside &amp; out</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Interior vacuum &amp; wipe-down</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Pressure wash with traffic film remover</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Snow foam bath and two-bucket hand wash</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Wheels, arches and tyre dressing</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Glass and trim brought back</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cabin vacuumed and hand-finished</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Door shuts, sills and tyres dressed</li>
       </ul>
-      <a class="btn btn-g" href="#book">Book Express</a>
+      <a class="btn btn-g" href="#book">Reserve Maintenance</a>
     </div>
 
     <div class="pkc si feat" data-tilt>
-      <span class="tag">Most booked</span>
-      <h3>Signature</h3><p class="sub">Correction &amp; protection</p>
+      <span class="tag">Most requested</span>
+      <h3>Signature</h3><p class="sub">Correction and protection</p>
       <div class="pr"><small>from £</small>00</div><div class="dur">Full day</div>
       <ul>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Express</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Clay bar decontamination</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Single-stage machine polish</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>6-month sealant &amp; interior detail</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Maintenance</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Clay and chemical decontamination</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Single-stage machine correction</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Six-month sealant and interior detail</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Leather cleaned and conditioned</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Floor mats deep cleaned</li>
       </ul>
-      <a class="btn btn-p" href="#book">Book Signature</a>
+      <a class="btn btn-p" href="#book">Reserve Signature</a>
     </div>
 
     <div class="pkc si" data-tilt>
-      <h3>Concours</h3><p class="sub">The full restoration</p>
+      <h3>Concours</h3><p class="sub">Nothing left untouched</p>
       <div class="pr"><small>from £</small>00</div><div class="dur">2–3 days</div>
       <ul>
         <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Signature</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-stage paint correction</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>9-year ceramic coating</li>
-        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Leather feed &amp; fabric protection</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-stage correction, measured throughout</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Nine-year ceramic protection</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Leather fed, fabric sealed</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full interior shampoo</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Engine bay cleaned and dressed</li>
       </ul>
-      <a class="btn btn-g" href="#book">Book Concours</a>
+      <a class="btn btn-g" href="#book">Reserve Concours</a>
     </div>
   </div>
 </div></section>
 
+<!-- ================= BEADING BAND ================= -->
+<section class="bead dark">
+  <div class="bead-bg"><img id="beadImg" src="/assets/valet/beading.webp" alt="" loading="lazy"></div>
+  <div class="bead-veil"></div>
+  <div class="bead-in">
+    <span class="kicker" data-rv>Ceramic protection</span>
+    <h2 data-text data-step="32">Water finds <em style="color:var(--acc)">nowhere to hold.</em></h2>
+    <p class="lede" data-rv style="transition-delay:.2s">A cured ceramic layer sits harder than the clear coat beneath it. Rain beads and rolls, road salt refuses to bond, and a fortnight of British weather rinses off with a hose.</p>
+    <div class="bead-fig" data-stag="120">
+      <div class="si"><b>110°</b><span>Contact angle</span></div>
+      <div class="si"><b>9<span style="color:var(--acc);font-size:.5em;vertical-align:super">H</span></b><span>Surface hardness</span></div>
+      <div class="si"><b>9 yr</b><span>Written guarantee</span></div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= PINNED PROCESS ================= -->
-<section class="proc" id="process" data-pin>
+<section class="proc dark" id="process" data-pin>
   <div class="proc-st">
     <div class="proc-bg"></div><div class="proc-veil"></div>
     <div class="proc-ghost" aria-hidden="true">Correction</div>
     <div class="proc-in">
       <span class="kicker">The process</span>
-      <h2>Gloss isn't sprayed on. It's <em style="font-style:normal;color:var(--ice)">cut in.</em></h2>
+      <h2>Gloss is never applied. It is <em style="color:var(--acc)">revealed.</em></h2>
       <div class="proc-track"><i></i></div>
     </div>
     <div class="proc-steps">
-      <div class="p1"><b>01</b>Inspection under paint-depth lighting</div>
-      <div class="p2"><b>02</b>Foam, decontaminate, safe hand wash</div>
-      <div class="p3"><b>03</b>Machine polish to cut the swirls out</div>
-      <div class="p4"><b>04</b>Ceramic seal, cured and inspected</div>
+      <div class="p1"><b>01</b>Inspected and measured under paint-depth lighting</div>
+      <div class="p2"><b>02</b>Bathed in snow foam, decontaminated, washed by hand</div>
+      <div class="p3"><b>03</b>Machine polished until the swirls have gone</div>
+      <div class="p4"><b>04</b>Sealed in ceramic, cured overnight, inspected again</div>
     </div>
   </div>
 </section>
@@ -394,46 +647,124 @@ body.lock{overflow:hidden}
 <!-- ================= HORIZONTAL GALLERY ================= -->
 <section class="hs" data-hs>
   <div class="hs-st">
-    <div class="hs-hd"><span class="kicker">Recent work</span><h2>Off the ramp →</h2></div>
+    <div class="hs-hd"><span class="kicker">Recently entrusted</span><h2>From the studio floor →</h2></div>
     <div class="hs-track">
-      <div class="gc"><img src="/assets/valet/gloss.webp" alt="Corrected paint gloss" loading="lazy"><span class="cap"><b>Paint correction</b><span>Two-stage cut</span></span></div>
-      <div class="gc"><img src="/assets/valet/wheel.webp" alt="Alloy wheel detail" loading="lazy"><span class="cap"><b>Wheels off detail</b><span>Barrels &amp; arches</span></span></div>
-      <div class="gc"><img src="/assets/valet/interior.webp" alt="Leather interior detail" loading="lazy"><span class="cap"><b>Leather care</b><span>Clean, feed, protect</span></span></div>
-      <div class="gc"><img src="/assets/valet/paint.webp" alt="Deep gloss finish" loading="lazy"><span class="cap"><b>Ceramic coated</b><span>9-year protection</span></span></div>
-      <div class="gc"><img src="/assets/valet/cabin.webp" alt="Cabin detail" loading="lazy"><span class="cap"><b>Cabin reset</b><span>Every vent, every seam</span></span></div>
-      <div class="gc"><img src="/assets/valet/street.webp" alt="Finished car at night" loading="lazy"><span class="cap"><b>Handed back</b><span>Ready for the road</span></span></div>
+      <div class="gc"><img src="/assets/valet/gloss.webp" alt="Corrected paint gloss" loading="lazy"><span class="cap"><b>Paint correction</b><span>Two-stage, by hand</span></span></div>
+      <div class="gc"><img src="/assets/valet/wheel.webp" alt="Alloy wheel detail" loading="lazy"><span class="cap"><b>Wheels off detail</b><span>Barrels and arches</span></span></div>
+      <div class="gc"><img src="/assets/valet/interior.webp" alt="Leather interior detail" loading="lazy"><span class="cap"><b>Leather restored</b><span>Cleaned, fed, protected</span></span></div>
+      <div class="gc"><img src="/assets/valet/paint.webp" alt="Deep gloss finish" loading="lazy"><span class="cap"><b>Ceramic protected</b><span>Nine-year guarantee</span></span></div>
+      <div class="gc"><img src="/assets/valet/cabin.webp" alt="Cabin detail" loading="lazy"><span class="cap"><b>Cabin renewed</b><span>Every vent, every seam</span></span></div>
+      <div class="gc"><img src="/assets/valet/drops.webp" alt="Water beading on treated paint" loading="lazy"><span class="cap"><b>Beading test</b><span>The morning after</span></span></div>
+      <div class="gc"><img src="/assets/valet/wash-hand.webp" alt="Hand wash in progress" loading="lazy"><span class="cap"><b>The hand wash</b><span>Where care begins</span></span></div>
+      <div class="gc"><img src="/assets/valet/street.webp" alt="Finished car at night" loading="lazy"><span class="cap"><b>Returned</b><span>Better than delivered</span></span></div>
     </div>
   </div>
 </section>
 
+<!-- ================= REVIEWS ================= -->
+<section class="sec" id="reviews" style="padding-bottom:0"><div class="wrap">
+  <span class="kicker" data-rv>What owners say</span>
+  <h2 data-text data-step="34">Owners who came back, and <em style="color:var(--acc)">sent others.</em></h2>
+
+  <div class="rvhead" data-rv style="transition-delay:.15s">
+    <span class="sc">4.9</span>
+    <span class="mt"><b>★★★★★</b><span>Based on your Google reviews</span></span>
+    <span class="gg">Google reviews widget</span>
+  </div>
+
+  <div class="revs" data-stag="130">
+    <div class="rev si">
+      <div class="st">★★★★★</div>
+      <p>Communication was spot on — I knew exactly when they were arriving. Left them to it and the car came back looking better than the day I collected it. Already booked the next one.</p>
+      <div class="who"><span class="av">★</span><div><b>Sample review</b><small>Signature · replace with your own</small></div></div>
+    </div>
+    <div class="rev si">
+      <div class="st">★★★★★</div>
+      <p>Took a Mini in for a deep clean and machine polish — the paintwork was in a bad state. The results were better than I thought possible. Genuinely looked showroom again.</p>
+      <div class="who"><span class="av">★</span><div><b>Sample review</b><small>Full Polish · replace with your own</small></div></div>
+    </div>
+    <div class="rev si">
+      <div class="st">★★★★★</div>
+      <p>Quick to respond, honest advice on what my car actually needed rather than the most expensive option. That's rare. Wouldn't go anywhere else now.</p>
+      <div class="who"><span class="av">★</span><div><b>Sample review</b><small>Mini Valet · replace with your own</small></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec" id="faq"><div class="wrap">
+  <span class="kicker" data-rv>Questions</span>
+  <h2 data-text data-step="34">Before you book.</h2>
+  <div class="faq" data-rv style="transition-delay:.15s">
+    <details>
+      <summary>How long does a full detail take?</summary>
+      <div class="ans">A Mini Valet takes around ninety minutes. A Full Polish is a full day, and a Concours commission is two to three days depending on the condition of the paint. We would rather keep the car an extra day than rush the last stage.</div>
+    </details>
+    <details>
+      <summary>Do you come to me, or do I bring the car in?</summary>
+      <div class="ans">Both. Maintenance work and valeting can be carried out at your home or workplace provided there is space and access. Correction and ceramic work is always done in the studio, where lighting and temperature are controlled. Collection and delivery can be arranged locally.</div>
+    </details>
+    <details>
+      <summary>How long does a ceramic coating actually last?</summary>
+      <div class="ans">Our nine-year coating is guaranteed in writing, subject to an annual inspection. In practice it means rain beads and rolls off, road salt struggles to bond, and routine washing becomes far quicker and far safer for the paint.</div>
+    </details>
+    <details>
+      <summary>Will polishing damage my paintwork?</summary>
+      <div class="ans">Not when it is measured. We take paint-depth readings across every panel before any machine touches the car, and again afterwards. If a panel is too thin to correct safely, we will tell you and protect it instead.</div>
+    </details>
+    <details>
+      <summary>Are you insured?</summary>
+      <div class="ans">Fully — including motor trade road risk, so your car is covered while it is in our care and while being moved. Certificates are available on request.</div>
+    </details>
+  </div>
+
+  <div style="margin-top:56px">
+    <span class="kicker" data-rv>Where we work</span>
+    <h3 style="font-size:clamp(1.4rem,2.6vw,1.9rem)" data-rv>Covering your town and the surrounding area.</h3>
+    <div class="areas" data-rv style="transition-delay:.15s">
+      <span>Your Town</span><span>Neighbouring Town</span><span>The Village</span><span>City Centre</span>
+      <span>North Side</span><span>South Side</span><span>Surrounding villages</span><span>Within 20 miles</span>
+    </div>
+  </div>
+</div></section>
+
 <!-- ================= QUOTE ================= -->
 <section class="quote">
   <div class="st" data-rv>★★★★★</div>
-  <q data-rv style="transition-delay:.1s">Picked it up and genuinely thought they'd swapped my car. Three years of swirls, gone.</q>
-  <p class="who" data-rv style="transition-delay:.2s">— A very happy customer</p>
+  <q data-rv style="transition-delay:.1s">I collected it and genuinely thought they had swapped my car. Three years of swirls, simply gone.</q>
+  <p class="who" data-rv style="transition-delay:.2s">— A returning client</p>
 </section>
 
 <!-- ================= BOOK ================= -->
 <section class="sec" id="book"><div class="wrap">
   <div class="bk">
     <div>
-      <span class="kicker" data-rv>Book your slot</span>
-      <h2 data-text data-step="34">Bring it in.</h2>
-      <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Tell us the car and what you're after — we'll confirm a slot and a firm price. Collection and delivery available locally.</p>
+      <span class="kicker" data-rv>By appointment</span>
+      <h2 data-text data-step="34">Reserve the studio.</h2>
+      <p class="lede" data-rv style="transition-delay:.2s;margin-top:16px">Tell us the car and what you have in mind. We will confirm your date and a firm figure — collection and delivery arranged locally.</p>
       <div class="vi" data-stag="110">
-        <div class="si"><span>Studio</span><b>Unit 1, Your Industrial Estate</b><p>Your Town, Postcode</p></div>
-        <div class="si"><span>Bookings</span><b>0000 000 0000</b><p>Mon – Sat · 8am – 6pm</p></div>
-        <div class="si"><span>Follow</span><b>@yourstudio</b><p>Before &amp; afters, every week</p></div>
+        <div class="si"><span>The studio</span><b>Unit 1, Your Industrial Estate</b><p>Your Town, Postcode</p></div>
+        <div class="si"><span>Appointments</span><b>0000 000 0000</b><p>Monday – Saturday · 8am – 6pm</p></div>
+        <div class="si"><span>Follow</span><b>@yourstudio</b><p>Before and afters, every week</p></div>
+      </div>
+      <ul class="hours" data-rv style="transition-delay:.25s">
+        <li data-d="1"><span>Monday – Friday</span><span>08:00 – 18:00</span></li>
+        <li data-d="6"><span>Saturday</span><span>08:00 – 16:00</span></li>
+        <li data-d="0"><span>Sunday</span><span>By arrangement</span></li>
+      </ul>
+      <div class="mapwrap" data-rv style="transition-delay:.2s">
+        <iframe title="Studio location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Manchester,UK&amp;output=embed"></iframe>
       </div>
     </div>
     <div class="card" data-rv style="transition-delay:.15s">
-      <h3>Request a slot</h3>
-      <p>No deposit to enquire — we'll confirm by text.</p>
+      <h3>Request an appointment</h3>
+      <p>No deposit to enquire. We will confirm by text.</p>
       <form id="bkForm" novalidate>
-        <div class="fld"><label for="bCar">Your car</label><input id="bCar" type="text" placeholder="e.g. Golf GTI, 2021" required></div>
+        <div class="fld"><label for="bCar">The car</label><input id="bCar" type="text" placeholder="e.g. Golf GTI, 2021" required></div>
         <div class="r2">
-          <div class="fld"><label for="bPkg">Package</label>
-            <select id="bPkg"><option>Express</option><option selected>Signature</option><option>Concours</option><option>Not sure yet</option></select>
+          <div class="fld"><label for="bPkg">Collection</label>
+            <select id="bPkg"><option>Maintenance</option><option selected>Signature</option><option>Concours</option><option>Advise me</option></select>
           </div>
           <div class="fld"><label for="bWhen">Preferred</label>
             <select id="bWhen"><option>This week</option><option>Next week</option><option>Weekend</option><option>Flexible</option></select>
@@ -441,13 +772,32 @@ body.lock{overflow:hidden}
         </div>
         <div class="fld"><label for="bName">Name</label><input id="bName" type="text" placeholder="Your name" required></div>
         <div class="fld"><label for="bPhone">Mobile</label><input id="bPhone" type="tel" placeholder="07…" required></div>
-        <button class="btn btn-p" type="submit">Request my slot</button>
+        <button class="btn btn-p" type="submit">Request appointment</button>
       </form>
-      <div class="done" id="bkDone"><div class="tk">✓</div><h3>Request sent</h3><p>We'll text you to confirm your slot and price.</p></div>
+      <div class="done" id="bkDone"><div class="tk">✓</div><h3>Request received</h3><p>We will text you to confirm your date and figure.</p></div>
     </div>
   </div>
+  <div class="footg">
+    <div>
+      <a class="brand" href="#top" style="color:var(--ink)"><i></i>Lustre</a>
+      <p>Paint correction, ceramic protection and interior restoration — carried out by hand, by appointment.</p>
+      <div class="soc" style="margin-top:18px"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5Z"/></svg></a><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.75-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg></a><a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3v11.6a2.5 2.5 0 1 1-1.8-2.4V9.1a5.6 5.6 0 1 0 4.8 5.5V9.2a7.2 7.2 0 0 0 4.2 1.3V7.5a4.3 4.3 0 0 1-3.2-1.7Z"/></svg></a><a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.61.07-.3-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.73-1.63-2.02-.17-.29 0-.44.13-.59.13-.13.29-.33.43-.5.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.28-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.02 3.08 4.9 4.32.68.29 1.22.47 1.63.6.69.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34ZM12 2a10 10 0 0 0-8.6 15.05L2 22l5.05-1.33A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3 .79.8-2.92-.2-.31A8.2 8.2 0 1 1 12 20.2Z"/></svg></a></div>
+    </div>
+    <div><h5>Services</h5><ul>
+      <li><a href="#services">Hand Wash &amp; Dry</a></li><li><a href="#services">Mini Valet</a></li>
+      <li><a href="#services">Full Polish</a></li><li><a href="#services">Full Valet</a></li>
+      <li><a href="#packages">Ceramic Protection</a></li></ul></div>
+    <div><h5>Studio</h5><ul>
+      <li><a href="#journey">How it works</a></li><li><a href="#work">Before &amp; after</a></li>
+      <li><a href="#reviews">Reviews</a></li><li><a href="#faq">FAQ</a></li>
+      <li><a href="#book">Reserve</a></li></ul></div>
+    <div><h5>Find us</h5><ul>
+      <li>Unit 1, Your Industrial Estate</li><li>Your Town, Postcode</li>
+      <li><a href="tel:00000000000">0000 000 0000</a></li>
+      <li><a href="mailto:hello@yourstudio.co.uk">hello@yourstudio.co.uk</a></li></ul></div>
+  </div>
   <div class="foot">
-    <span>© Lustre Car Care Studio · Premium valeting template</span>
+    <span>© Lustre Car Care Atelier · Luxury valeting template</span>
     <span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span>
   </div>
 </div></section>
@@ -533,7 +883,7 @@ else{
 }
 
 /* ---------- TOUCH-REACTIVE hero gloss (finger or cursor moves the light) ---------- */
-var hero=$('.hero'),gloss=$('#gloss');
+var hero=$('#heroFig'),gloss=$('#gloss');
 if(hero&&gloss&&!reduce){
   var gx=60,gy=42,tgx=60,tgy=42,idle=true,drift=0;
   hero.addEventListener('pointermove',function(e){
@@ -623,7 +973,7 @@ if(!reduce){
 }
 
 /* ---------- scroll engine: progress, parallax, pin scrub, horizontal ---------- */
-var bar=$('#bar'),heroImg=$('#heroImg'),
+var bar=$('#bar'),heroImg=$('#heroImg'),beadImg=$('#beadImg'),
     pins=$$('[data-pin]'),
     hss=$$('[data-hs]').map(function(e){return{e:e,t:$('.hs-track',e)};}),
     vh=innerHeight,tick=0;
@@ -635,7 +985,14 @@ function frame(){
     bar.style.transform='scaleX('+dp+')';
   }
   if(reduce)return;
-  if(heroImg&&y<vh*1.3){heroImg.style.transform='translate3d(0,'+(y*.16).toFixed(1)+'px,0)';}
+  if(heroImg&&y<vh*1.4){heroImg.style.transform='translate3d(0,'+(y*.05).toFixed(1)+'px,0)';}
+  if(beadImg){
+    var br=beadImg.getBoundingClientRect();
+    if(br.bottom>-160&&br.top<vh+160){
+      var bc=(br.top+br.height/2)-vh/2;
+      beadImg.style.transform='translate3d(0,'+(-bc*.11).toFixed(1)+'px,0) scale(1.1)';
+    }
+  }
   pins.forEach(function(el){
     var r=el.getBoundingClientRect(),h=el.offsetHeight-vh,
         p=h>0?clamp(-r.top/h,0,1):0;
@@ -686,8 +1043,18 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduce){
   var el=$('#openTxt');if(!el)return;
   var d=new Date(),day=d.getDay(),h=d.getHours()+d.getMinutes()/60;
   var open=day!==0&&h>=8&&h<18;
-  el.textContent=open?'Open now · closes 6pm':'Closed · book online';
+  el.textContent=open?'Open now · closes 6pm':'Closed · reserve online';
   if(!open){var dot=$('.chip .dot');if(dot){dot.style.background='#f87171';dot.style.boxShadow='0 0 0 4px rgba(248,113,113,.16)';}}
+})();
+
+/* ---------- highlight today's opening hours ---------- */
+(function(){
+  var d=new Date().getDay();
+  $$('.hours li').forEach(function(li){
+    var m=(li.getAttribute('data-d')||'').split(',').map(Number);
+    var match=(m.indexOf(d)>-1)||(li.getAttribute('data-d')==='1'&&d>=1&&d<=5);
+    if(match)li.classList.add('today');
+  });
 })();
 
 /* ---------- booking form (demo) ---------- */
