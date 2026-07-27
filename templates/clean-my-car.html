@@ -170,28 +170,42 @@ header.nav.hide{transform:translateY(-145%)}
 
 /* ============ SERVICES — ELECTRIC FLYING BOXES ============ */
 .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.7rem;align-items:stretch}
-.efly{opacity:0;transform:perspective(1200px) rotateX(14deg) translateY(60px);
+.efly{opacity:0;transform:translateY(60px) rotateX(14deg);perspective:1100px;
   transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}
-.efly.in{opacity:1;transform:perspective(1200px) rotateX(0) translateY(0)}
+.efly.in{opacity:1;transform:translateY(0) rotateX(0)}
 .efly[data-d="1"]{transition-delay:.12s}
 .efly[data-d="2"]{transition-delay:.24s}
-.card{position:relative;height:100%;border-radius:26px;padding:2px;background:transparent;isolation:isolate}
-/* electric outline */
-.card::before{content:"";position:absolute;inset:0;border-radius:26px;padding:1.6px;
-  background:conic-gradient(from var(--a,0deg),var(--magenta),#ff8ac2,#fff0f6,var(--pink),var(--magenta));
+.card{position:relative;height:100%;border-radius:26px;padding:2.5px;background:transparent;isolation:isolate;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.16,1,.3,1);will-change:transform}
+/* electric outline — bright flowing threads */
+.card::before{content:"";position:absolute;inset:0;border-radius:26px;padding:2.4px;
+  background:conic-gradient(from var(--a,0deg),
+    var(--magenta),#ff6fb0,#ffffff,#ff9ecb,var(--pink),#ffffff,#ff6fb0,var(--magenta),#ffd6e8,#ff7ab8,var(--magenta));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  animation:spin 6s linear infinite;opacity:.9}
-.card::after{content:"";position:absolute;inset:-2px;border-radius:28px;z-index:-1;
-  background:conic-gradient(from var(--a,0deg),var(--magenta),#ff8ac2,#fff0f6,var(--pink),var(--magenta));
-  filter:blur(15px);opacity:0;transition:opacity .5s;animation:spin 6s linear infinite}
-.card:hover::after{opacity:.55}
-.card:hover{transform:translateY(-6px)}
-.card{transition:transform .5s cubic-bezier(.16,1,.3,1)}
+  animation:spin 4.2s linear infinite;opacity:1;
+  filter:drop-shadow(0 0 4px rgba(236,78,140,.8)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
+/* travelling light comet */
+.card .thread{content:"";position:absolute;inset:0;border-radius:26px;padding:2.4px;pointer-events:none;
+  background:conic-gradient(from var(--a,0deg),transparent 0 68%,rgba(255,255,255,.2) 74%,#ffffff 80%,#ff8ac2 84%,transparent 90% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 4.2s linear infinite;mix-blend-mode:screen;opacity:.9}
+/* glow halo — always on, stronger on hover */
+.card::after{content:"";position:absolute;inset:-3px;border-radius:29px;z-index:-1;
+  background:conic-gradient(from var(--a,0deg),var(--magenta),#ff7ab8,#ffffff,var(--pink),var(--magenta),#ff9ecb,var(--magenta));
+  filter:blur(17px);opacity:.42;transition:opacity .5s;animation:spin 4.2s linear infinite}
+.card:hover::after{opacity:.9}
 @keyframes spin{to{--a:360deg}}
 @property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
-.card-in{position:relative;height:100%;border-radius:24px;background:linear-gradient(180deg,#fff,#fff8fb);
+.card-in{position:relative;height:100%;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#fff,#fff8fb);
   padding:1.9rem 1.7rem 2rem;display:flex;flex-direction:column;box-shadow:0 30px 60px -34px rgba(190,30,110,.4)}
+/* cursor sheen for 3D depth */
+.card-in::before{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;z-index:1;
+  background:radial-gradient(340px circle at var(--mx,50%) var(--my,-20%),rgba(255,255,255,.6),transparent 60%);
+  opacity:0;transition:opacity .4s}
+.card:hover .card-in::before{opacity:1}
+.card-in>*{position:relative;z-index:2}
 .card.feat .card-in{background:linear-gradient(180deg,#fff 0%,#FFF0F6 100%)}
 .tag{position:absolute;top:1.2rem;right:1.2rem;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--pink),var(--magenta));padding:.32rem .7rem;border-radius:100px}
 .svc-ico{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;margin-bottom:1rem;
@@ -764,6 +778,30 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
     var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(init,180); });
     raf=requestAnimationFrame(draw);
   }
+})();
+</script>
+
+<script>
+/* 3D tilt + electric thread on service tiles */
+(function(){
+  var cards=document.querySelectorAll('#services .card');
+  cards.forEach(function(card){
+    var t=document.createElement('span'); t.className='thread'; card.insertBefore(t,card.firstChild);
+  });
+  if(!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  cards.forEach(function(card){
+    var rect=null, raf=0, tx=0,ty=0,cx=50,cy=50;
+    function apply(){ raf=0; card.style.transform='rotateX('+ty+'deg) rotateY('+tx+'deg) translateY(-8px)';
+      card.style.setProperty('--mx',cx+'%'); card.style.setProperty('--my',cy+'%'); }
+    card.addEventListener('pointerenter',function(){ rect=card.getBoundingClientRect(); });
+    card.addEventListener('pointermove',function(e){
+      if(!rect) rect=card.getBoundingClientRect();
+      var px=(e.clientX-rect.left)/rect.width, py=(e.clientY-rect.top)/rect.height;
+      tx=(px-0.5)*13; ty=(0.5-py)*11; cx=px*100; cy=py*100;
+      if(!raf) raf=requestAnimationFrame(apply);
+    });
+    card.addEventListener('pointerleave',function(){ rect=null; card.style.transform=''; });
+  });
 })();
 </script>
 <!-- ============ FLOATING BUBBLES: WhatsApp + Chatbot ============ -->
