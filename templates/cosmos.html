@@ -1,0 +1,326 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>Nebula — Cosmic Agency · Scroll Landing Template</title>
+<meta name="description" content="A dark, cosmic, particle-driven landing page — the hero morphs from a globe to a ring to a black hole to a galaxy as you scroll. Neutral demo by Billy Digitals.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#04030a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   NEBULA — one particle system, four formations, driven by scroll.
+   A single 3D point cloud morphs globe → ring → vortex → galaxy as
+   you scroll, while copy fades through in front of it.
+   ═══════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#04030a; --void2:#080614;
+  --star:#f3f0ff; --dim:#a39fc4; --faint:#6f6a92;
+  --violet:#7c5cff; --cyan:#38e6ff; --ember:#ff8a3c;
+  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.06);
+  --disp:'Instrument Serif',Georgia,serif;
+  --body:'Geist',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--void);color:var(--dim);font-family:var(--body);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* the fixed canvas sits behind everything */
+#sky{position:fixed;inset:0;z-index:0;display:block}
+#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
+  background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 80% 70%,#fff,transparent);
+  background-size:3px 3px;mix-blend-mode:overlay}
+.vign{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 45%,transparent 40%,rgba(4,3,10,.72) 100%)}
+
+/* progress + nav */
+#rail{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));z-index:40}
+.nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  padding:22px clamp(20px,5vw,54px);transition:opacity .5s}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-size:1.5rem;color:var(--star);letter-spacing:.02em}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan);flex:none}
+.nav .r{display:flex;align-items:center;gap:26px}
+.nav .r a{font-size:.78rem;font-weight:400;letter-spacing:.04em;color:var(--dim);transition:color .25s}
+.nav .r a:hover{color:var(--star)}
+.nbtn{border:1px solid var(--line);border-radius:999px;padding:10px 20px!important;color:var(--star)!important;transition:border-color .3s,background .3s}
+.nbtn:hover{border-color:var(--cyan);background:rgba(56,230,255,.08)}
+@media(max-width:720px){.nav .r a:not(.nbtn){display:none}}
+
+/* content lives in stacked full-height panels; text pinned centre */
+#scroll{position:relative;z-index:2}
+.panel{height:100svh;display:grid;place-items:center;text-align:center;padding:0 24px;position:relative}
+.cap{position:relative;max-width:20ch;opacity:0;transform:translateY(30px);will-change:opacity,transform}
+.cap::before{content:"";position:absolute;inset:-18% -22%;z-index:-1;
+  background:radial-gradient(60% 60% at 50% 50%,rgba(4,3,10,.72),transparent 72%)}
+.cap h1,.cap h2{text-shadow:0 2px 44px rgba(4,3,10,.75),0 0 12px rgba(4,3,10,.6)}
+.cap p{text-shadow:0 1px 22px rgba(4,3,10,.9)}
+.kick{display:block;font-family:var(--body);font-weight:500;font-size:.66rem;letter-spacing:.4em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+.cap h1,.cap h2{font-family:var(--disp);font-weight:400;color:var(--star);line-height:1.04;letter-spacing:-.01em}
+.cap h1{font-size:clamp(2.6rem,8vw,6.2rem)}
+.cap h2{font-size:clamp(2.1rem,6vw,4.6rem)}
+.cap em{font-style:italic;color:var(--cyan)}
+.cap .em-v{font-style:italic;color:var(--violet)}
+.cap .em-e{font-style:italic;color:var(--ember)}
+.cap p{margin:22px auto 0;max-width:44ch;font-size:clamp(.98rem,1.4vw,1.12rem);line-height:1.75;color:var(--dim);font-weight:300}
+.cap .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--body);font-weight:500;
+  font-size:.8rem;letter-spacing:.06em;padding:16px 30px;border-radius:999px;transition:transform .3s var(--ease),background .3s,border-color .3s,color .3s}
+.btn-p{background:var(--star);color:#0a0818}.btn-p:hover{transform:translateY(-2px);background:#fff}
+.btn-g{border:1px solid var(--line);color:var(--star)}.btn-g:hover{border-color:var(--star)}
+.scue{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:.58rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);transition:opacity .5s}
+.scue i{width:1px;height:38px;background:linear-gradient(180deg,var(--cyan),transparent)}
+
+/* closing contact block (solid, readable) */
+.outro{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:120px 24px 60px;position:relative;background:linear-gradient(180deg,transparent,var(--void2) 40%,var(--void))}
+.outro .cap{opacity:1;transform:none}
+.contact{display:grid;gap:16px;margin-top:38px;font-size:1.05rem;color:var(--star)}
+.contact a{display:inline-flex;align-items:center;gap:12px;justify-content:center}
+.contact svg{width:20px;height:20px;stroke:var(--cyan);fill:none;stroke-width:1.6}
+.foot{position:relative;z-index:2;padding:30px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-size:.76rem;color:var(--faint);border-top:1px solid var(--line2);background:var(--void)}
+.foot a{color:var(--cyan)}
+
+/* preloader */
+#pl{position:fixed;inset:0;z-index:90;background:var(--void);display:grid;place-items:center;transition:opacity .8s ease}
+#pl.done{opacity:0;pointer-events:none}
+#pl .n{font-family:var(--disp);font-size:clamp(1.8rem,5vw,2.6rem);color:var(--star);letter-spacing:.04em;opacity:0;animation:pf 1s ease .2s forwards}
+#pl .pc{margin-top:14px;font-family:var(--body);font-size:.8rem;letter-spacing:.3em;color:var(--faint);font-variant-numeric:tabular-nums}
+@keyframes pf{to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#pl{display:none}.cap{opacity:1!important;transform:none!important}}
+</style></head>
+<body>
+
+<canvas id="sky"></canvas>
+<div class="vign"></div>
+<div id="grain"></div>
+<div id="rail"></div>
+
+<div id="pl"><div style="text-align:center"><div class="n">Nebula</div><div class="pc"><span id="plPc">0</span>%</div></div></div>
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top"><i></i>Nebula</a>
+  <div class="r">
+    <a href="#work">Work</a><a href="#studio">Studio</a><a href="#contact">Contact</a>
+    <a class="nbtn" href="#contact">Start a project</a>
+  </div>
+</nav>
+
+<div id="scroll">
+  <!-- 1 · GLOBE -->
+  <section class="panel" id="top"><div class="cap" data-cap="0">
+    <span class="kick">Digital Studio</span>
+    <h1>We don't build sites.<br>We build <em>gravity.</em></h1>
+    <p>Websites with a pull — the kind visitors orbit, remember, and come back to. Scroll in.</p>
+  </div></section>
+
+  <!-- 2 · RING -->
+  <section class="panel"><div class="cap" data-cap="1">
+    <span class="kick">Interaction</span>
+    <h2>Technology that redefines<br>how people <span class="em-v">meet</span> your brand.</h2>
+    <p>Motion, depth and detail — engineered so the first three seconds do the selling.</p>
+  </div></section>
+
+  <!-- 3 · VORTEX -->
+  <section class="panel"><div class="cap" data-cap="2">
+    <span class="kick">Focus</span>
+    <h2>Everything revolves<br>around one thing —<br><em>your growth.</em></h2>
+    <p>Every pixel earns its place, pulled toward a single outcome: more of the right customers.</p>
+  </div></section>
+
+  <!-- 4 · GALAXY -->
+  <section class="panel"><div class="cap" data-cap="3">
+    <span class="kick">The work</span>
+    <h2>A universe of possibilities —<br>already <span class="em-e">in motion.</span></h2>
+    <p>From cosmic heroes to quiet, fast, functional sites. Whatever the brief orbits, we design its centre.</p>
+    <span class="cta">
+      <a class="btn btn-p" href="#contact">See it move</a>
+      <a class="btn btn-g" href="#studio">The studio</a>
+    </span>
+  </div></section>
+
+  <!-- OUTRO / CONTACT -->
+  <section class="outro" id="contact">
+    <div class="cap">
+      <span class="kick" id="studio">Start a project</span>
+      <h2>Let's give your brand<br>its own <em>orbit.</em></h2>
+      <p>Tell us where you want to be seen. We'll design the thing people can't scroll past.</p>
+      <div class="contact">
+        <a href="tel:07519022117"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" stroke-linecap="round" stroke-linejoin="round"/></svg>07519 022117</a>
+        <a href="mailto:hello@billydigitals.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>hello@billydigitals.com</a>
+      </div>
+      <span class="cta"><a class="btn btn-p" href="mailto:hello@billydigitals.com">Start a project</a></span>
+    </div>
+  </section>
+  <footer class="foot">
+    <span>© Nebula · Cosmic landing template</span>
+    <span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span>
+  </footer>
+</div>
+
+<div class="scue" id="scue"><span>Scroll</span><i></i></div>
+
+<script>
+(function(){
+"use strict";
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var cv=document.getElementById('sky'), ctx=cv.getContext('2d');
+var DPR=Math.min(devicePixelRatio||1,1.6), W=0,H=0,CX=0,CY=0;
+function resize(){ W=innerWidth; H=innerHeight; cv.width=W*DPR; cv.height=H*DPR;
+  cv.style.width=W+'px'; cv.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); CX=W/2; CY=H/2; }
+resize(); addEventListener('resize',resize,{passive:true});
+
+/* ── build four formations for N particles ──────────────────── */
+var N = (innerWidth<760?900:1500);
+var F=[[],[],[],[]];   // 0 globe · 1 ring · 2 vortex · 3 galaxy
+var GA=Math.PI*(3-Math.sqrt(5));   // golden angle
+for(var i=0;i<N;i++){
+  var t=i/N;
+  // 0 · sphere (fibonacci)
+  var y=1-t*2, r=Math.sqrt(1-y*y), th=GA*i;
+  F[0].push([Math.cos(th)*r, y, Math.sin(th)*r].map(function(v){return v*1.15;}));
+  // 1 · torus ring (fat band on the equator)
+  var a=t*Math.PI*22, rr=1.28+ (Math.random()-0.5)*0.10;
+  var tube=(Math.random()-0.5)*0.34;
+  F[1].push([Math.cos(a)*rr, tube, Math.sin(a)*rr]);
+  // 2 · vortex / black hole (spiral collapsing toward centre, funnel in z)
+  var vr=Math.pow(t,0.7)*1.7, va=t*Math.PI*30;
+  F[2].push([Math.cos(va)*vr, (0.5-t)*1.5, Math.sin(va)*vr]);
+  // 3 · galaxy (2-3 log-spiral arms, flat disk, slight thickness)
+  var arm=i%3, base=arm*(Math.PI*2/3);
+  var gr=Math.pow(Math.random(),0.6)*1.7;
+  var ga=base + gr*2.4 + (Math.random()-0.5)*0.5;
+  F[3].push([Math.cos(ga)*gr, (Math.random()-0.5)*0.18*(1-gr/2), Math.sin(ga)*gr]);
+}
+/* per-particle character */
+var col=[], siz=[];
+for(i=0;i<N;i++){
+  var r=Math.random();
+  col.push(r<0.10?2:(r<0.42?1:0));   // 2 ember, 1 cyan, 0 violet
+  siz.push(0.7+Math.random()*1.7);
+}
+var COLS=[[124,92,255],[56,230,255],[255,138,60]];
+
+/* ── scroll state ───────────────────────────────────────────── */
+var sc=0, tsc=0, docH=1;
+function measure(){ docH=Math.max(1, document.getElementById('scroll').scrollHeight-innerHeight); }
+measure(); addEventListener('resize',measure,{passive:true});
+if(window.ResizeObserver) new ResizeObserver(measure).observe(document.getElementById('scroll'));
+addEventListener('scroll',function(){ tsc=(scrollY||pageYOffset||0)/docH; },{passive:true});
+
+/* caption fades: 5 panels across the scroll (4 morph + outro handled by CSS) */
+var caps=[].slice.call(document.querySelectorAll('.cap[data-cap]'));
+var rail=document.getElementById('rail'), scue=document.getElementById('scue'), nav=document.getElementById('nav');
+
+var rot=0, t0=null;
+function lerp(a,b,t){return a+(b-a)*t;}
+function frame(ts){
+  if(t0===null)t0=ts; var dt=Math.min(40,ts-t0); t0=ts;
+  sc += (tsc-sc)*0.08;                       // eased scroll
+  rot += (reduce?0:0.0016)*dt;               // gentle ambient spin
+
+  /* formation morph: 4 stops across 0..~0.8 of the page, galaxy holds to end */
+  var span=sc/0.80*3;                         // 0..3 over first 80%
+  var fi=Math.max(0,Math.min(2.999,span));
+  var a=Math.floor(fi), b=a+1, m=fi-a;
+  var me=m*m*(3-2*m);                         // smoothstep between formations
+
+  rail.style.transform='scaleX('+Math.min(1,sc).toFixed(4)+')';
+  var faded = sc>0.02;
+  scue.style.opacity = sc>0.05?'0':'1';
+
+  /* caption visibility — hero holds at the very top, then each panel owns a band */
+  var CENTRES=[0.0,0.26,0.5,0.74], HALF=0.17;
+  for(var c=0;c<caps.length;c++){
+    var d=Math.abs(sc-CENTRES[c]);
+    var vis=Math.max(0,1-d/HALF);
+    vis=vis*vis*(3-2*vis);
+    caps[c].style.opacity=vis.toFixed(3);
+    caps[c].style.transform='translateY('+((1-vis)*28).toFixed(1)+'px)';
+  }
+
+  /* rotation matrices (Y + slight X) */
+  var cy=Math.cos(rot), sy=Math.sin(rot), tilt=0.42, cx=Math.cos(tilt), sx=Math.sin(tilt);
+  /* galaxy/vortex spin faster the deeper you go */
+  var spin=rot*(1+me*(a>=2?1.4:0));
+
+  var scale=Math.min(W,H)*0.31;
+  var persp=3.0;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.globalCompositeOperation='lighter';
+
+  var Fa=F[a], Fb=F[b<4?b:3];
+  var cyy=Math.cos(spin), syy=Math.sin(spin);
+
+  for(i=0;i<N;i++){
+    var pa=Fa[i], pb=Fb[i];
+    var x=lerp(pa[0],pb[0],me), yv=lerp(pa[1],pb[1],me), z=lerp(pa[2],pb[2],me);
+    /* spin around Y */
+    var x1=x*cyy - z*syy, z1=x*syy + z*cyy;
+    /* tilt around X */
+    var y1=yv*cx - z1*sx, z2=yv*sx + z1*cx;
+    /* perspective */
+    var pz=persp/(persp - z2);
+    if(pz<=0) continue;
+    var sxp=CX + x1*scale*pz;
+    var syp=CY + y1*scale*pz;
+    if(sxp<-30||sxp>W+30||syp<-30||syp>H+30) continue;
+    var depth=(z2+1.6)/3.2;                   // 0 far .. 1 near
+    var cc=COLS[col[i]];
+    var al=(0.18+depth*0.8)*Math.min(1,pz*0.9);
+    var rad=siz[i]*pz*(0.6+depth*0.9);
+    ctx.globalAlpha=Math.min(1,al);
+    ctx.fillStyle='rgb('+cc[0]+','+cc[1]+','+cc[2]+')';
+    ctx.beginPath(); ctx.arc(sxp,syp,rad,0,6.2832); ctx.fill();
+  }
+  /* bright core for vortex + galaxy */
+  var coreP=Math.max(0, (fi-1.4)/1.6);
+  if(coreP>0){
+    var g=ctx.createRadialGradient(CX,CY,0,CX,CY,scale*0.5);
+    g.addColorStop(0,'rgba(255,240,220,'+(0.5*coreP).toFixed(3)+')');
+    g.addColorStop(0.4,'rgba(255,150,80,'+(0.16*coreP).toFixed(3)+')');
+    g.addColorStop(1,'rgba(120,90,255,0)');
+    ctx.globalAlpha=1; ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(CX,CY,scale*0.5,0,6.2832); ctx.fill();
+  }
+  ctx.globalCompositeOperation='source-over';
+  ctx.globalAlpha=1;
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* preloader — count while the first frames warm up */
+var pl=document.getElementById('pl'), plPc=document.getElementById('plPc');
+if(pl){
+  if(reduce){pl.classList.add('done');}
+  else{
+    var s0=null;
+    requestAnimationFrame(function tick(ts){
+      if(s0===null)s0=ts;
+      var p=Math.min(1,(ts-s0)/1100), e=1-Math.pow(1-p,3);
+      plPc.textContent=Math.round(e*100);
+      if(p<1)requestAnimationFrame(tick);
+      else setTimeout(function(){pl.classList.add('done');},180);
+    });
+  }
+}
+
+/* smooth-ish anchor jumps */
+[].slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function(A){
+  A.addEventListener('click',function(e){
+    var id=A.getAttribute('href'); if(id.length<2) return;
+    var t=document.querySelector(id); if(!t) return;
+    e.preventDefault();
+    scrollTo({top:t.getBoundingClientRect().top+scrollY-10,behavior:reduce?'auto':'smooth'});
+  });
+});
+})();
+</script>
+</body></html>
