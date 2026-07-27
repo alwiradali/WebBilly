@@ -50,18 +50,21 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.06;letter-spacin
 .sec{position:relative;padding:clamp(68px,9vw,132px) 0}
 
 /* ============ REVEAL ============ */
-[data-rev]{opacity:0;transform:transl3d(0,0,0);transform:translateY(34px) scale(.985);
-  transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
-[data-rev].in{opacity:1;transform:none}
-[data-rev][data-d="1"]{transition-delay:.09s}
-[data-rev][data-d="2"]{transition-delay:.18s}
-[data-rev][data-d="3"]{transition-delay:.27s}
-[data-rev][data-d="4"]{transition-delay:.36s}
-[data-rev][data-d="5"]{transition-delay:.45s}
+[data-rev]{opacity:0;transform:translateY(56px) scale(.955);filter:blur(6px);
+  transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1),filter 1s cubic-bezier(.16,1,.3,1);will-change:transform,opacity}
+[data-rev].in{opacity:1;transform:none;filter:none}
+[data-rev][data-d="1"]{transition-delay:.1s}
+[data-rev][data-d="2"]{transition-delay:.2s}
+[data-rev][data-d="3"]{transition-delay:.3s}
+[data-rev][data-d="4"]{transition-delay:.4s}
+[data-rev][data-d="5"]{transition-delay:.5s}
+/* scroll progress bar */
+.scrollbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:70;
+  background:linear-gradient(90deg,var(--rose),var(--pink),var(--magenta));box-shadow:0 0 12px rgba(224,27,118,.6)}
+/* Entrance reveals stay ON for everyone (client wants motion); only calm the
+   continuously-looping decorations when the visitor prefers reduced motion. */
 @media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  [data-rev]{opacity:1!important;transform:none!important;transition:none!important}
-  .bubble,.spark,.orb,.flycar{animation:none!important}
+  .bubble,.spark,.orb,.flycar,.fab,.fab .ring{animation:none!important}
 }
 
 /* ============ NAV ============ */
@@ -292,12 +295,101 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
   .hero{padding-top:120px}
   .prow .pp{font-size:1.5rem}
 }
+/* ============ PRELOADER — foam filling the whole screen ============ */
+#preload{position:fixed;inset:0;z-index:9999;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(120% 90% at 50% 0%,#FFFFFF 0%,#FFF3F8 45%,#FCE7EF 100%);
+  transition:opacity .8s ease,visibility .8s ease}
+#preload.done{opacity:0;visibility:hidden}
+.pl-foam{position:absolute;left:0;right:0;bottom:0;height:0;
+  background:linear-gradient(180deg,#FBC4DA 0%,#F79DBE 55%,#F17FA9 100%);
+  box-shadow:0 -10px 40px rgba(224,27,118,.25);transition:height 2.15s cubic-bezier(.55,0,.25,1)}
+#preload.fill .pl-foam{height:130%}
+.pl-crest{position:absolute;top:-18px;left:0;right:0;height:36px;
+  background:radial-gradient(circle at 12px 18px,#FBC4DA 13px,transparent 14px);background-size:36px 36px;background-repeat:repeat-x;
+  filter:drop-shadow(0 -2px 0 #FBC4DA)}
+.pl-bubbles{position:absolute;inset:0;pointer-events:none}
+.pl-bubbles i{position:absolute;bottom:-40px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(247,157,190,.55) 60%,rgba(224,27,118,0));
+  animation:plRise linear forwards}
+@keyframes plRise{to{transform:translateY(-115vh) translateX(var(--dx,0));opacity:0}}
+.pl-center{position:relative;z-index:2;text-align:center;animation:plFloat 3s ease-in-out infinite}
+@keyframes plFloat{50%{transform:translateY(-8px)}}
+.pl-mark{width:min(230px,58vw);height:auto;margin:0 auto -.6rem;filter:drop-shadow(0 10px 22px rgba(224,27,118,.2))}
+.pl-word{font-family:var(--script);font-size:clamp(2.4rem,8vw,3.6rem);color:#1c1418;line-height:1;display:flex;justify-content:center;align-items:baseline;gap:.2rem}
+.pl-word b{font-family:var(--sans);font-weight:700;font-size:.42em;background:linear-gradient(180deg,#FF4DA0,#E01B76);-webkit-background-clip:text;background-clip:text;color:transparent;align-self:center}
+.pl-word .hb{color:var(--pink);font-size:.5em;align-self:center}
+.pl-tag{font-family:var(--script2);font-weight:700;font-size:1.1rem;color:var(--magenta);margin-top:.4rem}
+.pl-bar{width:180px;max-width:60vw;height:6px;border-radius:100px;background:rgba(224,27,118,.14);margin:1.2rem auto 0;overflow:hidden}
+.pl-bar span{display:block;height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--pink),var(--magenta));transition:width 2.1s cubic-bezier(.5,0,.3,1)}
+#preload.fill .pl-bar span{width:100%}
+@media (prefers-reduced-motion:reduce){.pl-center{animation:none}}
+
 /* floating sparkles */
 .spark{position:absolute;color:var(--rose);opacity:.5;animation:tw 4s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:.7;transform:scale(1.15)}}
 </style>
 </head>
 <body>
+
+<!-- ================= PRELOADER (foam fill) ================= -->
+<div id="preload">
+  <div class="pl-foam" id="plFoam"><span class="pl-crest"></span></div>
+  <div class="pl-bubbles" id="plBubbles"></div>
+  <div class="pl-center">
+    <svg class="pl-mark" viewBox="0 0 460 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="plP" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF4DA0"/><stop offset="1" stop-color="#E01B76"/></linearGradient></defs>
+      <path d="M92 150 A175 150 0 0 1 372 150" stroke="#F5A8C0" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+      <path d="M392 44l3.4 9L405 56l-9.6 3.4L392 69l-3.4-9.6L379 56l9.6-3.6z" fill="#F03E8E"/>
+      <path d="M72 158 C112 146 146 118 214 116 C276 114 328 126 372 148 C384 154 396 160 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M150 126 C196 110 258 108 306 124 C324 130 340 140 352 150" stroke="url(#plP)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M72 158 C92 168 126 170 168 170 L344 170 C378 170 398 168 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M262 126 C296 124 322 134 340 150 C316 156 288 154 270 145 C260 140 258 131 262 126 Z" fill="#1c1418"/>
+      <path d="M80 150 C96 143 118 144 130 151 C116 158 96 158 80 150 Z" fill="#1c1418"/>
+    </svg>
+    <div class="pl-word">Clean<b>MY</b>Car<span class="hb">♥</span></div>
+    <div class="pl-tag">Clean. Shine. Protect.</div>
+    <div class="pl-bar"><span id="plFill"></span></div>
+  </div>
+</div>
+
+<div class="scrollbar" id="scrollbar"></div>
+
+<script>
+(function(){
+  var pl=document.getElementById('preload'); if(!pl) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.documentElement.style.overflow='hidden';
+  // spawn rising foam bubbles
+  var box=document.getElementById('plBubbles');
+  if(box && !reduce){
+    for(var i=0;i<26;i++){
+      var b=document.createElement('i');
+      var sz=8+Math.random()*30;
+      b.style.width=sz+'px'; b.style.height=sz+'px';
+      b.style.left=(Math.random()*100)+'%';
+      b.style.setProperty('--dx',(Math.random()*40-20)+'px');
+      b.style.animationDuration=(1.6+Math.random()*1.8)+'s';
+      b.style.animationDelay=(Math.random()*1.1)+'s';
+      box.appendChild(b);
+    }
+  }
+  // start the fill on next frame
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ pl.classList.add('fill'); }); });
+  var hide=function(){
+    pl.classList.add('done');
+    document.documentElement.style.overflow='';
+    setTimeout(function(){ if(pl&&pl.parentNode) pl.parentNode.removeChild(pl); },900);
+  };
+  var MIN=reduce?400:2350; // let the foam finish filling
+  var start=Date.now();
+  window.addEventListener('load',function(){
+    var wait=Math.max(0,MIN-(Date.now()-start));
+    setTimeout(hide,wait);
+  });
+  // safety: never trap the visitor
+  setTimeout(hide, reduce?1200:3600);
+})();
+</script>
 
 <!-- ================= NAV ================= -->
 <header class="nav" id="nav">
@@ -644,12 +736,23 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 
   /* nav scrolled state */
   var nav=document.getElementById('nav');
+  var bar=document.getElementById('scrollbar');
+  var orbs=document.querySelectorAll('.hero .orb');
+  var heroInner=document.querySelector('.hero-inner');
   var lastY=window.scrollY, ticking=false;
   var onScroll=function(){
     var y=window.scrollY;
     nav.classList.toggle('scrolled', y>20);
     if(y>240 && y>lastY+4){ nav.classList.add('hide'); }
     else if(y<lastY-4 || y<=120){ nav.classList.remove('hide'); }
+    // scroll progress bar
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    if(bar) bar.style.width=(h>0?(y/h*100):0)+'%';
+    // hero parallax (scroll-reactive)
+    if(!rm && y<window.innerHeight){
+      for(var i=0;i<orbs.length;i++){ orbs[i].style.transform='translateY('+(y*(0.15+i*0.08))+'px)'; }
+      if(heroInner){ heroInner.style.transform='translateY('+(y*0.22)+'px)'; heroInner.style.opacity=Math.max(0,1-y/(window.innerHeight*0.85)); }
+    }
     lastY=y; ticking=false;
   };
   onScroll();
@@ -673,10 +776,10 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
   function block(){ var s=''; items.forEach(function(it){ s+='<span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="'+it[1]+'"/></svg>'+it[0]+'</span><span class="dot">✦</span>'; }); return s; }
   mv.innerHTML=block()+block();
 
-  /* reveals */
+  /* reveals — run for everyone (client wants motion) */
   var revs=document.querySelectorAll('[data-rev],.efly');
-  if('IntersectionObserver' in window && !rm){
-    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:.1,rootMargin:'0px 0px -10% 0px'});
     revs.forEach(function(el){ io.observe(el); });
   } else { revs.forEach(function(el){ el.classList.add('in'); }); }
 
