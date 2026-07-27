@@ -198,8 +198,10 @@ body.lock{overflow:hidden}
 .proc{height:340vh;position:relative;background:var(--paper)}
 .proc-st{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
 .proc-bg{position:absolute;inset:0;background:url(/assets/valet/night.webp) center/cover;
- transform:scale(calc(1.06 + var(--p,0)*.26));filter:brightness(calc(.26 + var(--p,0)*.30)) saturate(calc(.7 + var(--p,0)*.55));will-change:transform,filter}
-.proc-veil{position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 46%,transparent,rgba(14,13,12,.9))}
+ transform:scale(calc(1.06 + var(--p,0)*.2));filter:brightness(.5) saturate(.95);will-change:transform}
+/* darkening veil fades as you scroll — opacity is compositor-cheap, unlike animating filter */
+.proc-veil{position:absolute;inset:0;background:radial-gradient(122% 92% at 50% 46%,transparent,rgba(14,13,12,.92));
+ opacity:calc(1 - var(--p,0)*.4)}
 .proc-ghost{position:absolute;font-family:var(--disp);font-weight:500;font-size:clamp(5rem,22vw,20rem);color:rgba(245,242,236,.05);
  white-space:nowrap;letter-spacing:-.05em;transform:scale(calc(.88+var(--p,0)*.32))}
 .proc-in{position:relative;text-align:center;padding:0 22px;max-width:780px}
@@ -1070,10 +1072,27 @@ else{
   $$('[data-count]').forEach(function(e){cio.observe(e);});
 }
 
+/* ---------- hero on-screen gate: the decorative loops below only run while
+   the hero is visible, so they never compete with mid-page scrolling ------- */
+var heroOnScreen=true, heroKicks=[];
+(function(){
+  var hf=$('#heroFig');
+  if(hf && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(en){
+      var v=en[0].isIntersecting;
+      if(v && !heroOnScreen){ heroOnScreen=true; heroKicks.forEach(function(k){k();}); }
+      else heroOnScreen=v;
+    },{threshold:0.01}).observe(hf);
+  }
+})();
+addEventListener('visibilitychange',function(){
+  if(!document.hidden && heroOnScreen) heroKicks.forEach(function(k){k();});
+},{passive:true});
+
 /* ---------- TOUCH-REACTIVE hero gloss (finger or cursor moves the light) ---------- */
 var hero=$('#heroFig'),gloss=$('#gloss');
 if(hero&&gloss&&!reduce){
-  var gx=60,gy=42,tgx=60,tgy=42,idle=true,drift=0;
+  var gx=60,gy=42,tgx=60,tgy=42,idle=true,drift=0,glRun=false;
   hero.addEventListener('pointermove',function(e){
     var r=hero.getBoundingClientRect();
     tgx=((e.clientX-r.left)/r.width)*100;
@@ -1081,13 +1100,17 @@ if(hero&&gloss&&!reduce){
     idle=false;
   },{passive:true});
   hero.addEventListener('pointerleave',function(){idle=true;},{passive:true});
-  (function gl(){
+  function gl(){
+    if(!heroOnScreen||document.hidden){glRun=false;return;}
+    glRun=true;
     if(idle){drift+=0.006;tgx=58+Math.cos(drift)*22;tgy=40+Math.sin(drift*.8)*14;}
     gx+=(tgx-gx)*.07;gy+=(tgy-gy)*.07;
     gloss.style.setProperty('--mx',gx.toFixed(2)+'%');
     gloss.style.setProperty('--my',gy.toFixed(2)+'%');
     requestAnimationFrame(gl);
-  })();
+  }
+  heroKicks.push(function(){ if(!glRun){glRun=true;requestAnimationFrame(gl);} });
+  requestAnimationFrame(gl);
 }
 
 /* ---------- HERO FOAM SEQUENCE — the wash, on a loop ---------- */
@@ -1196,8 +1219,11 @@ if(hero&&gloss&&!reduce){
       }
       ctx.globalAlpha=1;
     }
+    if(!heroOnScreen||document.hidden){foamRun=false;return;}  /* pause off-screen */
     requestAnimationFrame(draw);
   }
+  var foamRun=true;
+  heroKicks.push(function(){ if(!foamRun){foamRun=true;t0=null;requestAnimationFrame(draw);} });
   requestAnimationFrame(draw);
 })();
 
