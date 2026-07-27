@@ -1,0 +1,337 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>Nebula — from one cloud · Scroll Landing Template</title>
+<meta name="description" content="One realistic nebula that morphs into a DNA helix spine and opens into a galaxy as you scroll, with work images around the spine. Neutral demo by Billy Digitals.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#03020a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   NEBULA — one particle cloud, three lives.
+   A realistic nebula (thousands of soft additive particles) morphs
+   on scroll into a vertical DNA/spine helix — with the studio's work
+   floating around it — then opens into a spiral galaxy.
+   ═══════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#03020a; --star:#f4f1fb; --dim:#b3aecb; --faint:#726c92;
+  --rose:#ff5e8a; --magenta:#c65cff; --violet:#7c5cff; --teal:#3fe0ff; --gold:#ffd27a;
+  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.06);
+  --disp:'Fraunces',Georgia,serif; --body:'Geist',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--void);color:var(--dim);font-family:var(--body);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+#sky{position:fixed;inset:0;z-index:0;display:block}
+.vign{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(130% 100% at 50% 42%,transparent 44%,rgba(3,2,10,.8) 100%)}
+#rail{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--magenta),var(--teal));z-index:40}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  padding:20px clamp(20px,5vw,52px)}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:400;font-size:1.5rem;color:var(--star);letter-spacing:.01em}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 18px var(--teal)}
+.nbtn{border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:.72rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--star);transition:border-color .3s,background .3s}
+.nbtn:hover{border-color:var(--teal);background:rgba(63,224,255,.08)}
+
+#scroll{position:relative;z-index:2}
+.panel{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 24px}
+.cap{position:relative;max-width:24ch}
+.cap::before{content:"";position:absolute;inset:-30% -30%;z-index:-1;background:radial-gradient(60% 60% at 50% 50%,rgba(3,2,10,.7),transparent 72%)}
+.kick{display:block;font-family:var(--body);font-weight:500;font-size:.64rem;letter-spacing:.42em;text-transform:uppercase;color:var(--teal);margin-bottom:22px}
+.cap h1,.cap h2{font-family:var(--disp);font-weight:300;color:var(--star);line-height:1.02;letter-spacing:-.015em}
+.cap h1{font-size:clamp(2.7rem,8vw,6.4rem)}
+.cap h2{font-size:clamp(2.1rem,5.6vw,4.4rem)}
+.cap em{font-style:italic;color:var(--teal)}
+.cap .em-m{font-style:italic;color:var(--magenta)}
+.cap .em-g{font-style:italic;color:var(--gold)}
+.cap p{margin:22px auto 0;max-width:46ch;font-size:clamp(1rem,1.35vw,1.14rem);line-height:1.75;color:var(--dim);font-weight:300;
+  text-shadow:0 1px 22px rgba(3,2,10,.9)}
+.cap h1,.cap h2{text-shadow:0 2px 44px rgba(3,2,10,.8),0 0 16px rgba(3,2,10,.7)}
+.cap .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--body);font-weight:500;font-size:.8rem;letter-spacing:.06em;
+  padding:16px 32px;border-radius:999px;transition:transform .3s var(--ease),background .3s,border-color .3s,color .3s}
+.btn-p{background:var(--star);color:#0a0818}.btn-p:hover{transform:translateY(-2px);background:#fff}
+.btn-g{border:1px solid var(--line);color:var(--star)}.btn-g:hover{border-color:var(--star)}
+
+/* ── the spine: tall section, work images alternate around the helix ── */
+.spine{position:relative;padding:40px 0}
+.spine-intro{min-height:60svh;display:grid;place-items:center;text-align:center;padding:0 24px}
+.works{position:relative;display:flex;flex-direction:column;gap:44vh;padding:20vh 0 30vh}
+.work{position:relative;width:min(84vw,420px)}
+.work.l{margin-right:auto;margin-left:clamp(20px,6vw,10%)}
+.work.r{margin-left:auto;margin-right:clamp(20px,6vw,10%)}
+.work figure{position:relative;overflow:hidden;border-radius:14px;aspect-ratio:16/11;
+  border:1px solid var(--line);box-shadow:0 40px 90px -50px rgba(0,0,0,.9),0 0 0 1px rgba(124,92,255,.14);
+  background:#0a0818;opacity:0;transform:translateY(40px) scale(.97);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.work.in figure{opacity:1;transform:none}
+.work figure img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.work .meta{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-top:16px;
+  opacity:0;transform:translateY(16px);transition:opacity 1s var(--ease) .12s,transform 1s var(--ease) .12s}
+.work.in .meta{opacity:1;transform:none}
+.work .meta b{font-family:var(--disp);font-weight:400;font-size:1.35rem;color:var(--star);letter-spacing:-.01em}
+.work .meta span{font-family:var(--body);font-weight:500;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);white-space:nowrap}
+.work .desc{margin-top:8px;font-size:.92rem;color:var(--dim);max-width:38ch;opacity:0;transition:opacity 1s var(--ease) .2s}
+.work.in .desc{opacity:1}
+@media(min-width:900px){.work{width:min(40vw,460px)}}
+
+/* contact */
+.contact{position:relative;z-index:3;display:grid;gap:14px;margin-top:34px;font-size:1.02rem;color:var(--star)}
+.contact a{display:inline-flex;align-items:center;gap:12px;justify-content:center}
+.contact svg{width:19px;height:19px;stroke:var(--teal);fill:none;stroke-width:1.6}
+.foot{position:relative;z-index:2;padding:28px clamp(20px,5vw,52px);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-size:.74rem;color:var(--faint);border-top:1px solid var(--line2);background:var(--void)}
+.foot a{color:var(--teal)}
+.scue{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:.56rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);transition:opacity .5s}
+.scue i{width:1px;height:34px;background:linear-gradient(180deg,var(--teal),transparent)}
+
+#pl{position:fixed;inset:0;z-index:60;background:var(--void);display:grid;place-items:center;transition:opacity .7s ease}
+#pl.done{opacity:0;pointer-events:none}
+#pl .n{font-family:var(--disp);font-weight:300;font-size:clamp(1.9rem,5vw,2.6rem);color:var(--star);letter-spacing:.02em;text-align:center}
+#pl .pc{margin-top:12px;font-size:.78rem;letter-spacing:.3em;color:var(--faint);font-variant-numeric:tabular-nums;text-align:center}
+@media(prefers-reduced-motion:reduce){#pl{display:none}.cap,.work figure,.work .meta,.work .desc{opacity:1!important;transform:none!important}}
+</style></head>
+<body>
+
+<canvas id="sky"></canvas>
+<div class="vign"></div>
+<div id="rail"></div>
+<div id="pl"><div><div class="n">Nebula</div><div class="pc"><span id="plPc">0</span>%</div></div></div>
+
+<nav class="nav">
+  <a class="brand" href="#top"><i></i>Nebula</a>
+  <a class="nbtn" href="#contact">Start a project</a>
+</nav>
+<div class="scue" id="scue"><span>Scroll</span><i></i></div>
+
+<div id="scroll">
+  <!-- NEBULA -->
+  <header class="panel" id="top"><div class="cap">
+    <span class="kick">Billy Digitals</span>
+    <h1>It all begins as a <em>nebula.</em></h1>
+    <p>A cloud of everything and nothing — raw potential, unformed. Scroll, and watch it find its structure.</p>
+  </div></header>
+
+  <!-- SPINE / DNA -->
+  <section class="spine" id="work">
+    <div class="spine-intro"><div class="cap">
+      <span class="kick">From cloud to code</span>
+      <h2>The cloud draws itself<br>into a <span class="em-m">spine.</span></h2>
+      <p>Every project is structure pulled out of chaos — a backbone the whole brand hangs from. Here's some of ours.</p>
+    </div></div>
+
+    <div class="works">
+      <article class="work l" data-work><figure><img data-par src="/assets/nebula/work-valeting.webp" alt="Lustre valeting" loading="lazy" width="440" height="303"></figure>
+        <div class="meta"><b>Lustre</b><span>Car Care</span></div><p class="desc">A luxury valeting studio — the wash runs as you scroll.</p></article>
+      <article class="work r" data-work><figure><img data-par src="/assets/nebula/work-izzy.webp" alt="Izzy's Cafe" loading="lazy" width="440" height="303"></figure>
+        <div class="meta"><b>Izzy's</b><span>Café &amp; Grill</span></div><p class="desc">Real-photo flagship with live smoke and a $100k feel.</p></article>
+      <article class="work l" data-work><figure><img data-par src="/assets/nebula/work-salon.webp" alt="Maison salon" loading="lazy" width="440" height="303"></figure>
+        <div class="meta"><b>Maison</b><span>Hair Atelier</span></div><p class="desc">A hushed, editorial luxury salon world.</p></article>
+      <article class="work r" data-work><figure><img data-par src="/assets/nebula/work-barber.webp" alt="Fade &amp; Co barber" loading="lazy" width="440" height="303"></figure>
+        <div class="meta"><b>Fade &amp; Co</b><span>Barbers</span></div><p class="desc">Charcoal, brass and real chairs — a barber flagship.</p></article>
+      <article class="work l" data-work><figure><img data-par src="/assets/nebula/work-ring.webp" alt="Interactive hero" loading="lazy" width="440" height="303"></figure>
+        <div class="meta"><b>Interaction</b><span>Motion</span></div><p class="desc">WebGL heroes that do the selling in three seconds.</p></article>
+    </div>
+  </section>
+
+  <!-- GALAXY -->
+  <section class="panel" id="galaxy"><div class="cap">
+    <span class="kick">And then</span>
+    <h2>It opens into a<br><span class="em-g">galaxy.</span></h2>
+    <p>From one cloud: structure, then scale. A brand that spins on its own axis and pulls people in.</p>
+  </div></section>
+
+  <!-- CONTACT -->
+  <section class="panel" id="contact"><div class="cap">
+    <span class="kick">Start a project</span>
+    <h2>Let's give your brand<br>its own <em>orbit.</em></h2>
+    <p>Tell us where you want to be seen — we'll design the thing people can't scroll past.</p>
+    <div class="contact">
+      <a href="tel:07519022117"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" stroke-linecap="round" stroke-linejoin="round"/></svg>07519 022117</a>
+      <a href="mailto:hello@billydigitals.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>hello@billydigitals.com</a>
+    </div>
+    <span class="cta"><a class="btn btn-p" href="mailto:hello@billydigitals.com">Start a project</a></span>
+  </div></section>
+  <footer class="foot"><span>© Nebula · Cosmic morph template</span><span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var TAU=Math.PI*2, sin=Math.sin, cos=Math.cos, PI=Math.PI, pow=Math.pow, sqrt=Math.sqrt, rnd=Math.random;
+var cv=document.getElementById('sky'), ctx=cv.getContext('2d');
+var DPR=Math.min(devicePixelRatio||1,1.5), W=0,H=0,CX=0,CY=0;
+function resize(){ W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);CX=W/2;CY=H/2; }
+resize(); addEventListener('resize',resize,{passive:true});
+
+/* soft particle sprite for the glow */
+var sp=document.createElement('canvas'),SS=48; sp.width=sp.height=SS;
+(function(){var c=sp.getContext('2d'),g=c.createRadialGradient(SS/2,SS/2,0,SS/2,SS/2,SS/2);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.35,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=g;c.fillRect(0,0,SS,SS);})();
+
+var COLS={rose:[255,94,138],mag:[198,92,255],vio:[124,92,255],teal:[63,224,255],gold:[255,210,122],ice:[220,225,255]};
+var NEBPAL=[COLS.mag,COLS.vio,COLS.rose,COLS.teal,COLS.gold];
+function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+function gauss(){return (rnd()+rnd()+rnd()-1.5)/1.5;}
+
+/* ── build the three formations ─────────────────────────────── */
+var N = innerWidth<760?1300:2600;
+var P=[];
+/* nebula clump centres */
+var clumps=[[-0.5,0.3,0.1],[0.55,-0.15,-0.2],[0.05,0.5,0.3],[-0.2,-0.45,-0.1],[0.3,0.15,0.4]];
+var turns=5, HR=0.74, HY=2.15;
+for(var i=0;i<N;i++){
+  var p={};
+  /* NEBULA — clumpy gas cloud */
+  var c=clumps[(rnd()*clumps.length)|0];
+  var spread=0.34+rnd()*0.5;
+  p.nx=c[0]+gauss()*spread; p.ny=c[1]+gauss()*spread*0.8; p.nz=c[2]+gauss()*spread;
+  if(rnd()<0.14){ var rr=1+rnd()*0.9, aa=rnd()*TAU, bb=rnd()*PI; /* faint outer field */
+    p.nx=cos(aa)*sin(bb)*rr; p.ny=cos(bb)*rr*0.8; p.nz=sin(aa)*sin(bb)*rr; }
+  p.cN=NEBPAL[(rnd()*NEBPAL.length)|0];
+
+  /* DNA / SPINE — vertical double helix + rungs + loose tangle */
+  var u=i/N, y=(u-0.5)*2*HY, ang=u*turns*TAU;
+  var role=rnd(), jit=0.018;
+  if(role<0.44){ p.dx=cos(ang)*HR+gauss()*jit; p.dy=y; p.dz=sin(ang)*HR+gauss()*jit; p.cD=COLS.teal; }
+  else if(role<0.88){ p.dx=cos(ang+PI)*HR+gauss()*jit; p.dy=y; p.dz=sin(ang+PI)*HR+gauss()*jit; p.cD=COLS.vio; }
+  else if(role<0.965){ var tt=rnd(); var ax=cos(ang)*HR,az=sin(ang)*HR,bx=cos(ang+PI)*HR,bz=sin(ang+PI)*HR;
+    p.dx=ax+(bx-ax)*tt; p.dy=y; p.dz=az+(bz-az)*tt; p.cD=COLS.gold; }
+  else { p.dx=cos(ang)*(HR+0.5+rnd()*0.5)+gauss()*0.2; p.dy=y+gauss()*0.25;
+    p.dz=sin(ang)*(HR+0.5)+gauss()*0.25; p.cD=mix(COLS.teal,COLS.mag,rnd()); }
+
+  /* GALAXY — flat spiral disk */
+  var arm=i%3, base=arm*(TAU/3), gr=pow(rnd(),0.6)*1.7, ga=base+gr*2.6+gauss()*0.4;
+  p.gx=cos(ga)*gr; p.gy=(rnd()-0.5)*0.12*(1-gr/1.7); p.gz=sin(ga)*gr;
+  var inn=1-gr/1.7; p.cG=mix(COLS.vio,COLS.gold,inn*inn*0.9); p.cG=mix(p.cG,COLS.teal,rnd()*0.25);
+
+  p.s=0.5+rnd()*1.8; p.a=0.5+rnd()*0.5;
+  P.push(p);
+}
+
+/* nebula background gas blobs */
+var gas=[];
+for(i=0;i<7;i++){ gas.push({x:(rnd()-0.5)*0.9,y:(rnd()-0.5)*0.9,r:0.5+rnd()*0.6,c:NEBPAL[(rnd()*NEBPAL.length)|0],ph:rnd()*TAU}); }
+
+/* ── scroll → morph phase ───────────────────────────────────── */
+var sc=0,tsc=0,docH=1,rot=0,t0=null;
+function measure(){docH=Math.max(1,document.getElementById('scroll').scrollHeight-innerHeight);}
+measure(); addEventListener('resize',measure,{passive:true});
+if(window.ResizeObserver) new ResizeObserver(measure).observe(document.getElementById('scroll'));
+addEventListener('scroll',function(){tsc=(scrollY||pageYOffset||0)/docH;},{passive:true});
+function smooth(x){return x*x*(3-2*x);}
+
+function phaseOf(p){
+  /* neb(0) -> dna(1) over 0..0.22, hold dna to 0.72, dna -> galaxy(2) to 1 */
+  if(p<0.22) return smooth(p/0.22);
+  if(p<0.72) return 1;
+  return 1+smooth((p-0.72)/0.28);
+}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+function draw(){
+  requestAnimationFrame(draw);
+  if(document.hidden) return;
+  sc += (tsc-sc)*0.08;
+  if(!reduce) rot += 0.0016;
+  var f=phaseOf(sc);
+  var scale=Math.min(W,H)*(0.34 - Math.max(0,f-1)*0.02);
+  var persp=3.2;
+
+  /* travel down the spine during the DNA hold */
+  var yTravel = (sc>0.22 && sc<0.72) ? (sc-0.22)/0.5 : (sc>=0.72?1:0);
+  var yOff = -yTravel*0.9 + (f>1?(f-1)*0.4:0);
+
+  var cy=cos(rot),sy=sin(rot),tilt=(f>1? lerp(0.15,1.0,Math.min(1,f-1)) : 0.15),ct=cos(tilt),st=sin(tilt);
+
+  ctx.clearRect(0,0,W,H);
+  ctx.globalCompositeOperation='lighter';
+
+  /* nebula gas glow (fades as it becomes the spine) */
+  var gasA=Math.max(0,1-f)*0.5;
+  if(gasA>0.01){
+    for(i=0;i<gas.length;i++){var G=gas[i];
+      var gx=CX+G.x*scale*2.2, gy=CY+G.y*scale*2.2, gr=G.r*scale*2.4;
+      var rg=ctx.createRadialGradient(gx,gy,0,gx,gy,gr);
+      rg.addColorStop(0,'rgba('+G.c[0]+','+G.c[1]+','+G.c[2]+','+(gasA*0.18)+')');
+      rg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.globalAlpha=1;ctx.fillStyle=rg;ctx.beginPath();ctx.arc(gx,gy,gr,0,TAU);ctx.fill();
+    }
+  }
+
+  for(i=0;i<N;i++){
+    var p=P[i], x,y,z,col, m;
+    if(f<=1){ m=f;   x=lerp(p.nx,p.dx,m); y=lerp(p.ny,p.dy,m); z=lerp(p.nz,p.dz,m); col=mix(p.cN,p.cD,m); }
+    else    { m=f-1; x=lerp(p.dx,p.gx,m); y=lerp(p.dy,p.gy,m); z=lerp(p.dz,p.gz,m); col=mix(p.cD,p.cG,m); }
+    y+=yOff;
+    /* rotate Y */
+    var x1=x*cy - z*sy, z1=x*sy + z*cy;
+    /* tilt X (flat for spine, tips toward disk for galaxy) */
+    var y1=y*ct - z1*st, z2=y*st + z1*ct;
+    var pz=persp/(persp-z2); if(pz<=0) continue;
+    var X=CX+x1*scale*pz, Y=CY+y1*scale*pz;
+    if(X<-40||X>W+40||Y<-40||Y>H+40) continue;
+    var depth=(z2+1.7)/3.4;
+    var rad=p.s*pz*(0.5+depth*0.9);
+    var al=p.a*(0.12+depth*0.72)*Math.min(1,pz);
+    if(al<=0.01) continue;
+    ctx.globalAlpha=al>1?1:al;
+    /* tint the white sprite by drawing it then multiplying? simpler: fillStyle dot for small, sprite for glow */
+    ctx.fillStyle='rgb('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+')';
+    ctx.beginPath();ctx.arc(X,Y,rad,0,TAU);ctx.fill();
+  }
+
+  /* galaxy core ignites at the end */
+  if(f>1.3){
+    var cP=Math.min(1,(f-1.3)/0.7);
+    var g=ctx.createRadialGradient(CX,CY,0,CX,CY,scale*0.5);
+    g.addColorStop(0,'rgba(255,240,220,'+(0.55*cP)+')');g.addColorStop(0.4,'rgba(255,170,90,'+(0.18*cP)+')');g.addColorStop(1,'rgba(124,92,255,0)');
+    ctx.globalAlpha=1;ctx.fillStyle=g;ctx.beginPath();ctx.arc(CX,CY,scale*0.5,0,TAU);ctx.fill();
+  }
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+
+  document.getElementById('rail').style.transform='scaleX('+Math.min(1,sc)+')';
+}
+sc=tsc=(scrollY||0)/docH;
+requestAnimationFrame(draw);
+
+/* ── reveals for work cards + parallax ──────────────────────── */
+var scue=document.getElementById('scue');
+addEventListener('scroll',function(){scue.style.opacity=(scrollY||0)>60?'0':'1';},{passive:true});
+if(reduce){ [].forEach.call(document.querySelectorAll('[data-work]'),function(e){e.classList.add('in');}); }
+else{
+  var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},
+    {threshold:.28,rootMargin:'0px 0px -8% 0px'});
+  [].forEach.call(document.querySelectorAll('[data-work]'),function(e){io.observe(e);});
+  var pars=[].slice.call(document.querySelectorAll('[data-par]')),vh=innerHeight,tk=0;
+  addEventListener('resize',function(){vh=innerHeight;},{passive:true});
+  function pf(){tk=0;var y=0;pars.forEach(function(im){var r=im.getBoundingClientRect();
+    if(r.bottom<-100||r.top>vh+100)return;var cc=(r.top+r.height/2)-vh/2;
+    im.style.transform='translate3d(0,'+(-cc*0.05).toFixed(1)+'px,0) scale(1.08)';});}
+  addEventListener('scroll',function(){if(!tk)tk=requestAnimationFrame(pf);},{passive:true});pf();
+}
+
+/* anchors */
+[].slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function(a){
+  a.addEventListener('click',function(e){var id=a.getAttribute('href');var t=document.querySelector(id);
+    if(t){e.preventDefault();scrollTo({top:t.getBoundingClientRect().top+scrollY-10,behavior:reduce?'auto':'smooth'});}});
+});
+
+/* preloader */
+var pl=document.getElementById('pl'),plPc=document.getElementById('plPc');
+if(pl && !reduce){var s0=null;requestAnimationFrame(function tick(ts){if(s0===null)s0=ts;
+  var p=Math.min(1,(ts-s0)/1100),e=1-pow(1-p,3);plPc.textContent=Math.round(e*100);
+  if(p<1)requestAnimationFrame(tick);else setTimeout(function(){pl.classList.add('done');},160);});}
+})();
+</script>
+</body></html>
