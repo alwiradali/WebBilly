@@ -1,0 +1,351 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>Obscura — Architecture &amp; Interiors · Editorial Studio Template</title>
+<meta name="description" content="A severe editorial studio portfolio template — monochrome, full-bleed photography, high-contrast serif. Neutral demo by Billy Digitals.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   OBSCURA — severe editorial minimalism.
+   Monochrome. No accent hue. The photography carries all colour;
+   the interface is hairlines, whitespace and two typographic voices.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#000000;
+  --fg:#F6F4F1;
+  --fg-muted:#8C8C8C;
+  --fg-faint:#5A5A5A;
+  --rule:rgba(255,255,255,0.11);
+  --surface:rgba(255,255,255,0.03);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --gutter:24px;
+}
+@media(min-width:900px){ :root{ --gutter:64px } }
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg-muted);font-family:var(--sans);font-weight:400;
+  line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+.wrap{width:100%;max-width:1440px;margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter)}
+.eyebrow{font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint)}
+@media(min-width:900px){.eyebrow{font-size:12px}}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:400;color:var(--fg);letter-spacing:-.02em;line-height:1.02}
+p{max-width:62ch}
+.body{font-size:15px;line-height:1.65;color:var(--fg-muted)}
+@media(min-width:900px){.body{font-size:17px}}
+
+/* reveal */
+[data-rv]{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+[data-rv].in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){[data-rv]{transform:none;transition:opacity .8s ease}}
+
+/* ── 1 · NAV ─────────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s var(--ease),backdrop-filter .4s}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px;
+  padding:0 var(--gutter);border-bottom:1px solid var(--rule)}
+.nav.solid{background:rgba(0,0,0,.72);backdrop-filter:blur(14px)}
+.wordmark{font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg)}
+.menu-t{display:inline-flex;align-items:center;gap:10px;background:none;border:0;color:var(--fg);cursor:pointer;
+  font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:6px 2px}
+.menu-t .bars{display:inline-flex;flex-direction:column;gap:4px}
+.menu-t .bars i{width:20px;height:1px;background:var(--fg);display:block}
+
+/* ── 2 · HERO ────────────────────────────────────────────── */
+.hero{position:relative;height:100svh;min-height:600px;overflow:hidden}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  animation:heroZoom 1.6s var(--ease) both;will-change:transform}
+@keyframes heroZoom{from{transform:scale(1.06)}to{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.hero-img{animation:none}}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(to top,#000 0%,transparent 55%)}
+.hero-in{position:absolute;left:0;right:0;bottom:0;padding:0 var(--gutter) clamp(64px,12vh,120px);}
+.hero-in .eyebrow{color:var(--fg-muted)}
+.hero h1{margin-top:22px;font-size:clamp(42px,11vw,124px);line-height:0.98;max-width:16ch}
+.scue{position:absolute;left:var(--gutter);bottom:26px;width:1px;height:56px;overflow:hidden;background:var(--rule)}
+.scue::after{content:"";position:absolute;left:0;top:0;width:100%;height:40%;background:var(--fg);
+  animation:scDown 2.4s var(--ease) infinite}
+@keyframes scDown{0%{transform:translateY(-100%)}60%,100%{transform:translateY(340%)}}
+@media(prefers-reduced-motion:reduce){.scue::after{animation:none;height:100%;opacity:.4}}
+
+/* ── section frame ───────────────────────────────────────── */
+.sec{padding-block:96px}
+@media(min-width:900px){.sec{padding-block:180px}}
+
+/* ── 3 · STATEMENT ───────────────────────────────────────── */
+.statement .eyebrow{display:block;margin-bottom:40px}
+.statement p{font-family:var(--serif);font-weight:400;color:var(--fg);letter-spacing:-.01em;
+  font-size:clamp(28px,5vw,52px);line-height:1.14;max-width:20ch}
+
+/* ── 4 · SELECTED WORK ───────────────────────────────────── */
+.work-head{display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:26px;border-bottom:1px solid var(--rule);margin-bottom:64px}
+.work-head h2{font-size:clamp(28px,5vw,54px)}
+.projects{display:flex;flex-direction:column;gap:96px}
+@media(min-width:900px){.projects{gap:160px}}
+.proj figure{position:relative;overflow:hidden;aspect-ratio:4/5;background:var(--surface)}
+@media(min-width:900px){.proj figure{aspect-ratio:3/2}}
+.proj img{width:100%;height:112%;object-fit:cover;will-change:transform}
+.proj .cap{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+  border-top:1px solid var(--rule);margin-top:22px;padding-top:20px}
+.proj .cap h3{font-size:clamp(24px,3.4vw,32px)}
+.proj .cap .meta{font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--fg-faint);text-align:right;white-space:nowrap}
+/* staggered widths on desktop */
+@media(min-width:900px){
+  .proj{width:100%}
+  .proj.offset{width:66.66%;margin-left:auto}
+  .proj.narrow{width:50%}
+}
+
+/* ── 5 · CAPABILITIES ────────────────────────────────────── */
+.caps{border-top:1px solid var(--rule)}
+.cap-row{display:grid;grid-template-columns:auto 1fr;gap:20px 28px;align-items:baseline;
+  padding:32px 0;border-bottom:1px solid var(--rule);cursor:default}
+@media(min-width:900px){.cap-row{grid-template-columns:64px 1fr 1fr;padding:40px 0}}
+.cap-row .no{font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;color:var(--fg-faint);padding-top:8px}
+.cap-row .name{font-family:var(--serif);font-size:clamp(24px,3vw,28px);color:var(--fg);grid-column:2/-1}
+@media(min-width:900px){.cap-row .name{grid-column:auto}}
+.cap-row .desc{font-size:14px;color:var(--fg-muted);grid-column:1/-1;max-width:52ch;
+  max-height:0;opacity:0;overflow:hidden;transition:max-height .5s var(--ease),opacity .5s var(--ease),margin .5s var(--ease)}
+@media(min-width:900px){.cap-row .desc{grid-column:2/-1}}
+.cap-row:hover .desc,.cap-row:focus-within .desc{max-height:120px;opacity:1;margin-top:14px}
+.cap-row .short{font-size:14px;color:var(--fg-muted);grid-column:1/-1}
+@media(min-width:900px){.cap-row .short{grid-column:3/-1;text-align:left}}
+
+/* ── 6 · FIGURES ─────────────────────────────────────────── */
+.figs{display:flex;flex-direction:column}
+@media(min-width:900px){.figs{flex-direction:row}}
+.fig{padding:36px 0;border-bottom:1px solid var(--rule)}
+@media(min-width:900px){.fig{flex:1;border-bottom:0;border-right:1px solid var(--rule);padding:0 40px}
+  .fig:first-child{padding-left:0}.fig:last-child{border-right:0;padding-right:0}}
+.fig b{font-family:var(--serif);font-weight:400;color:var(--fg);font-size:clamp(56px,7vw,80px);line-height:1;display:block;letter-spacing:-.03em}
+.fig span{display:block;margin-top:16px;font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint)}
+
+/* ── 7 · QUOTE ───────────────────────────────────────────── */
+.quote{text-align:center}
+.quote blockquote{font-family:var(--serif);font-weight:400;color:var(--fg);font-size:clamp(30px,4.2vw,40px);
+  line-height:1.28;max-width:22ch;margin:0 auto;letter-spacing:-.01em}
+.quote .attr{display:block;margin-top:34px;font-family:var(--sans);font-weight:500;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint)}
+
+/* ── 8 · CONTACT CTA ─────────────────────────────────────── */
+.cta-sec h2{font-size:clamp(38px,7vw,88px);line-height:1.0;max-width:14ch}
+.cta-sec p{margin:26px 0 40px}
+.pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--rule);border-radius:999px;
+  padding:18px 44px;font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--fg);background:transparent;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.pill:hover{background:var(--fg);color:#000;border-color:var(--fg)}
+
+/* ── 9 · FOOTER ──────────────────────────────────────────── */
+.foot{border-top:1px solid var(--rule);padding:64px 0 40px}
+.foot-grid{display:grid;grid-template-columns:1fr;gap:44px}
+@media(min-width:720px){.foot-grid{grid-template-columns:2fr 1fr 1fr}}
+.foot .wordmark{font-size:14px}
+.foot h4{font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:18px}
+.foot ul{list-style:none;display:grid;gap:12px}
+.foot ul a{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);transition:color .3s}
+.foot ul a:hover{color:var(--fg)}
+.foot-base{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:64px;
+  padding-top:26px;border-top:1px solid var(--rule);
+  font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint)}
+.foot-base a:hover{color:var(--fg)}
+</style></head>
+<body>
+
+<!-- 1 · NAV -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="wordmark" href="#top">Obscura</a>
+    <button class="menu-t" id="menu" aria-label="Menu">Menu <span class="bars"><i></i><i></i></span></button>
+  </div>
+</header>
+
+<!-- 2 · HERO -->
+<section class="hero" id="top">
+  <img class="hero-img" id="heroImg" src="/assets/studio/hero.webp" alt="A dark contemporary residence at dusk" fetchpriority="high">
+  <div class="hero-scrim"></div>
+  <div class="hero-in">
+    <span class="eyebrow">Architecture · Interiors · Since 2014</span>
+    <h1>Spaces that hold their silence.</h1>
+  </div>
+  <span class="scue" aria-hidden="true"></span>
+</section>
+
+<!-- 3 · STATEMENT -->
+<section class="sec statement wrap">
+  <span class="eyebrow" data-rv>The practice</span>
+  <p data-rv style="transition-delay:.08s">We design buildings and interiors that do less, and mean more — where light, proportion and material are left to speak without ornament.</p>
+</section>
+
+<!-- 4 · SELECTED WORK -->
+<section class="sec wrap" id="work">
+  <div class="work-head" data-rv>
+    <h2>Selected work</h2>
+    <span class="eyebrow">2016 — 2024</span>
+  </div>
+  <div class="projects">
+    <article class="proj" data-rv>
+      <figure><img data-par src="/assets/studio/w1.webp" alt="A shadowed corridor opening to daylight" loading="lazy" width="1600" height="1067"></figure>
+      <div class="cap"><h3>House at the Quarry</h3><span class="meta">Girona, ES · 2024</span></div>
+    </article>
+    <article class="proj offset" data-rv>
+      <figure><img data-par src="/assets/studio/w2.webp" alt="A double-height reading room" loading="lazy" width="1600" height="1067"></figure>
+      <div class="cap"><h3>The Reading Rooms</h3><span class="meta">Copenhagen, DK · 2023</span></div>
+    </article>
+    <article class="proj" data-rv>
+      <figure><img data-par src="/assets/studio/w4.webp" alt="A glass pavilion lit from within at night" loading="lazy" width="1600" height="1067"></figure>
+      <div class="cap"><h3>Pavilion No. 9</h3><span class="meta">Rotterdam, NL · 2022</span></div>
+    </article>
+    <article class="proj narrow" data-rv>
+      <figure><img data-par src="/assets/studio/w5.webp" alt="A restrained principal bedroom" loading="lazy" width="1600" height="1067"></figure>
+      <div class="cap"><h3>Suite, Private Residence</h3><span class="meta">Lake Como, IT · 2021</span></div>
+    </article>
+    <article class="proj offset" data-rv>
+      <figure><img data-par src="/assets/studio/w3.webp" alt="A calm living lounge" loading="lazy" width="1600" height="1067"></figure>
+      <div class="cap"><h3>Villa on the Ridge</h3><span class="meta">Kyoto, JP · 2019</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- 5 · CAPABILITIES -->
+<section class="sec wrap" id="studio">
+  <div class="work-head" data-rv><h2>Capabilities</h2><span class="eyebrow">How we work</span></div>
+  <div class="caps">
+    <div class="cap-row" data-rv tabindex="0">
+      <span class="no">01</span><span class="name">Architecture</span>
+      <span class="short">New-build and adaptive reuse, concept to completion.</span>
+      <span class="desc">Full architectural service — feasibility, planning, detailed design and site supervision — carried out in-house so the drawing and the built thing never drift apart.</span>
+    </div>
+    <div class="cap-row" data-rv tabindex="0">
+      <span class="no">02</span><span class="name">Interiors</span>
+      <span class="short">Rooms designed with the building, not after it.</span>
+      <span class="desc">Interiors developed alongside the shell — joinery, lighting, materials and furniture drawn as one continuous idea rather than a later dressing.</span>
+    </div>
+    <div class="cap-row" data-rv tabindex="0">
+      <span class="no">03</span><span class="name">Master Planning</span>
+      <span class="short">The order beneath the individual buildings.</span>
+      <span class="desc">Site strategy, massing and circulation for larger or phased schemes, setting the rules the architecture then quietly follows.</span>
+    </div>
+    <div class="cap-row" data-rv tabindex="0">
+      <span class="no">04</span><span class="name">Furniture &amp; Objects</span>
+      <span class="short">Pieces made for a single room.</span>
+      <span class="desc">One-off and small-batch furniture and fittings, prototyped with our makers when nothing off the shelf will hold the line.</span>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · FIGURES -->
+<section class="sec wrap">
+  <div class="figs">
+    <div class="fig" data-rv><b>62</b><span>Projects completed</span></div>
+    <div class="fig" data-rv style="transition-delay:.08s"><b>11</b><span>Countries</span></div>
+    <div class="fig" data-rv style="transition-delay:.16s"><b>9</b><span>Awards</span></div>
+    <div class="fig" data-rv style="transition-delay:.24s"><b>2014</b><span>Founded</span></div>
+  </div>
+</section>
+
+<!-- 7 · QUOTE -->
+<section class="sec wrap quote">
+  <blockquote data-rv>"They gave us the one thing we didn't know how to ask for — restraint."</blockquote>
+  <span class="attr" data-rv style="transition-delay:.1s">Private client · Lake Como</span>
+</section>
+
+<!-- 8 · CONTACT CTA -->
+<section class="sec wrap cta-sec" id="contact">
+  <h2 data-rv>Have a site in mind?</h2>
+  <p class="body" data-rv style="transition-delay:.06s">We take on a small number of projects each year. Tell us where you want to build.</p>
+  <div data-rv style="transition-delay:.12s"><a class="pill" href="mailto:studio@yourdomain.com">Start a conversation</a></div>
+</section>
+
+<!-- 9 · FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a class="wordmark" href="#top">Obscura</a></div>
+      <div>
+        <h4>Studio</h4>
+        <ul><li><a href="#work">Work</a></li><li><a href="#studio">Capabilities</a></li><li><a href="#contact">Contact</a></li></ul>
+      </div>
+      <div>
+        <h4>Elsewhere</h4>
+        <ul><li><a href="#">Instagram</a></li><li><a href="#">Journal</a></li><li><a href="#">Press</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© Obscura Studio · Editorial template</span>
+      <span><a href="https://billydigitals.com">Website by Billy Digitals</a> · <a href="#top">Back to top</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var $=function(s,r){return (r||document).querySelector(s);},
+    $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s));},
+    clamp=function(v,a,b){return v<a?a:v>b?b:v;};
+
+/* nav: transparent over hero, solid + blur past ~80vh */
+var nav=$('#nav');
+function onScroll(){ nav.classList.toggle('solid', (scrollY||0) > innerHeight*0.8); }
+onScroll(); addEventListener('scroll',onScroll,{passive:true});
+
+/* scroll reveals, staggered 80ms between siblings */
+if(reduce){
+  $$('[data-rv]').forEach(function(e){e.classList.add('in');});
+}else{
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var sibs=$$('[data-rv]',e.target.parentNode).filter(function(n){return !n.classList.contains('in');});
+      var idx=sibs.indexOf(e.target);
+      setTimeout(function(){e.target.classList.add('in');}, Math.max(0,idx)*80);
+      io.unobserve(e.target);
+    });
+  },{threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  $$('[data-rv]').forEach(function(e){io.observe(e);});
+}
+
+/* gentle parallax on work + hero, capped at 8% */
+var pars=$$('[data-par]'), heroImg=$('#heroImg'), tick=0, vh=innerHeight;
+addEventListener('resize',function(){vh=innerHeight;},{passive:true});
+function frame(){
+  tick=0; if(reduce) return;
+  var y=scrollY||0;
+  pars.forEach(function(im){
+    var r=im.getBoundingClientRect();
+    if(r.bottom<-120||r.top>vh+120) return;
+    var c=(r.top+r.height/2)-vh/2;
+    var shift=clamp(-c*0.05, -r.height*0.08, r.height*0.08);  /* ≤8% */
+    im.style.transform='translate3d(0,'+shift.toFixed(1)+'px,0)';
+  });
+}
+addEventListener('scroll',function(){if(!tick)tick=requestAnimationFrame(frame);},{passive:true});
+addEventListener('load',frame); frame();
+
+/* smooth anchor jumps */
+$$('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var id=a.getAttribute('href'); if(id.length<2) return;
+    var t=$(id); if(!t) return;
+    e.preventDefault();
+    scrollTo({top:t.getBoundingClientRect().top+scrollY-64,behavior:reduce?'auto':'smooth'});
+  });
+});
+/* menu trigger jumps to work (single-page) */
+var mt=$('#menu'); if(mt) mt.addEventListener('click',function(){
+  var t=$('#work'); if(t) scrollTo({top:t.getBoundingClientRect().top+scrollY-64,behavior:reduce?'auto':'smooth'});
+});
+})();
+</script>
+</body></html>
