@@ -163,6 +163,10 @@ img,svg{display:block;max-width:100%}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err{color:#c62b57;font-size:.86rem;margin-top:.8rem;text-align:center;display:none}
 .hidden{display:none!important}
+/* keep floating bubbles clear of the sticky action bar */
+.fab-stack{bottom:88px!important}
+.chatbox{bottom:158px!important}
+@media(max-width:480px){.fab-stack{bottom:84px!important}.chatbox{bottom:150px!important}}
 </style>
 </head>
 <body>

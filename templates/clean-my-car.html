@@ -82,12 +82,12 @@ header.nav{position:fixed;inset:0 0 auto;z-index:60;transition:.4s ease}
   box-shadow:0 14px 40px -22px rgba(190,30,110,.5);transition:.4s ease}
 .scrolled .nav-in{background:rgba(255,255,255,.82);box-shadow:0 18px 50px -24px rgba(190,30,110,.6)}
 header.nav.hide{transform:translateY(-145%)}
-.nav-brand{display:flex;align-items:center;gap:.5rem;font-family:var(--script);font-size:1.5rem;color:var(--ink);line-height:1}
+.nav-brand{display:flex;align-items:center;gap:.55rem;font-family:var(--script);font-size:1.75rem;color:#1c1418;line-height:1}
 .nav-mark{width:46px;height:46px;flex:0 0 auto;border-radius:50%;box-shadow:0 6px 16px -6px rgba(224,27,118,.5)}
-.nav-word{display:inline-flex;align-items:baseline;font-family:var(--script)}
-.nav-brand b{font-family:var(--sans);font-weight:700;font-size:.86rem;color:var(--pink);letter-spacing:.02em;transform:translateY(-1px);margin:0 .12rem}
-.nav-brand .hb{color:var(--pink);font-size:1rem;transform:translateY(-2px);margin-left:.1rem}
-@media(max-width:560px){.nav-mark{width:38px}.nav-brand{font-size:1.25rem}}
+.nav-word{display:inline-flex;align-items:baseline;font-family:var(--script);white-space:nowrap}
+.nav-brand b{font-family:var(--serif);font-weight:600;font-size:.5em;color:#C9899B;letter-spacing:.1em;text-transform:uppercase;transform:translateY(-2px);margin:0 .22em}
+.nav-brand .hb{color:var(--pink);font-size:.62em;transform:translateY(-2px);margin-left:.18em}
+@media(max-width:560px){.nav-mark{width:38px}.nav-brand{font-size:1.4rem}}
 .nav-links{display:flex;align-items:center;gap:.4rem}
 .nav-links a{padding:.5rem .85rem;border-radius:100px;font-weight:500;font-size:.9rem;color:var(--ink-soft);transition:.25s}
 .nav-links a:hover{color:var(--magenta);background:rgba(236,78,140,.08)}
@@ -396,7 +396,7 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
   <div class="nav-in">
     <a href="#top" class="nav-brand" aria-label="Clean My Car home">
       <img class="nav-mark" src="/assets/cleanmycar/logo.png" alt="Clean My Car" width="48" height="48">
-      <span class="nav-word">Clean<b>MY</b>Car<span class="hb">♥</span></span>
+      <span class="nav-word">Clean <b>MY</b> Car <span class="hb">♥</span></span>
     </a>
     <nav class="nav-links">
       <a href="#services">Services</a>
