@@ -56,9 +56,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.06;letter-spacin
 .sec{position:relative;padding:clamp(68px,9vw,132px) 0}
 
 /* ============ REVEAL ============ */
-[data-rev]{opacity:0;transform:translateY(56px) scale(.955);filter:blur(6px);
-  transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1),filter 1s cubic-bezier(.16,1,.3,1);will-change:transform,opacity}
-[data-rev].in{opacity:1;transform:none;filter:none}
+[data-rev]{opacity:0;transform:translateY(48px);
+  transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+[data-rev].in{opacity:1;transform:none}
 [data-rev][data-d="1"]{transition-delay:.1s}
 [data-rev][data-d="2"]{transition-delay:.2s}
 [data-rev][data-d="3"]{transition-delay:.3s}
@@ -175,39 +175,28 @@ header.nav.hide{transform:translateY(-145%)}
 .efly.in{opacity:1;transform:translateY(0) rotateX(0)}
 .efly[data-d="1"]{transition-delay:.12s}
 .efly[data-d="2"]{transition-delay:.24s}
-.card{position:relative;height:100%;border-radius:26px;padding:2.5px;background:transparent;isolation:isolate;
-  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.16,1,.3,1);will-change:transform}
-/* electric outline — bright flowing threads */
-.card::before{content:"";position:absolute;inset:0;border-radius:26px;padding:2.4px;
-  background:conic-gradient(from var(--a,0deg),
+.card{position:relative;height:100%;border-radius:26px;padding:2.5px;isolation:isolate;overflow:hidden;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .4s ease;will-change:transform;
+  box-shadow:0 14px 34px -18px rgba(190,30,110,.45),0 0 16px -2px rgba(236,78,140,.35)}
+.card:hover{box-shadow:0 22px 48px -18px rgba(190,30,110,.55),0 0 26px 0 rgba(236,78,140,.6)}
+/* electric outline — a big conic gradient that simply ROTATES (GPU-cheap);
+   the opaque .card-in on top covers the centre, leaving only the glowing ring. */
+.card::before{content:"";position:absolute;inset:-80%;z-index:0;
+  background:conic-gradient(from 0deg,
     var(--magenta),#ff6fb0,#ffffff,#ff9ecb,var(--pink),#ffffff,#ff6fb0,var(--magenta),#ffd6e8,#ff7ab8,var(--magenta));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  animation:spin 4.2s linear infinite;opacity:1;
-  filter:drop-shadow(0 0 4px rgba(236,78,140,.8)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
-/* travelling light comet */
-.card .thread{content:"";position:absolute;inset:0;border-radius:26px;padding:2.4px;pointer-events:none;
-  background:conic-gradient(from var(--a,0deg),transparent 0 68%,rgba(255,255,255,.2) 74%,#ffffff 80%,#ff8ac2 84%,transparent 90% 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  animation:spin 4.2s linear infinite;mix-blend-mode:screen;opacity:.9}
-/* glow halo — always on, stronger on hover */
-.card::after{content:"";position:absolute;inset:-3px;border-radius:29px;z-index:-1;
-  background:conic-gradient(from var(--a,0deg),var(--magenta),#ff7ab8,#ffffff,var(--pink),var(--magenta),#ff9ecb,var(--magenta));
-  filter:blur(17px);opacity:.42;transition:opacity .5s;animation:spin 4.2s linear infinite}
-.card:hover::after{opacity:.9}
-@keyframes spin{to{--a:360deg}}
-@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
-.card-in{position:relative;height:100%;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#fff,#fff8fb);
+  animation:cardspin 5.5s linear infinite;animation-play-state:paused;will-change:transform}
+.card.live::before{animation-play-state:running}
+@keyframes cardspin{to{transform:rotate(360deg)}}
+.card-in{position:relative;z-index:1;height:100%;border-radius:23px;overflow:hidden;background:linear-gradient(180deg,#fff,#fff8fb);
   padding:1.9rem 1.7rem 2rem;display:flex;flex-direction:column;box-shadow:0 30px 60px -34px rgba(190,30,110,.4)}
-/* cursor sheen for 3D depth */
-.card-in::before{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;z-index:1;
+/* cursor sheen for 3D depth (desktop hover only) */
+.card-in::before{content:"";position:absolute;inset:0;border-radius:23px;pointer-events:none;z-index:1;
   background:radial-gradient(340px circle at var(--mx,50%) var(--my,-20%),rgba(255,255,255,.6),transparent 60%);
   opacity:0;transition:opacity .4s}
 .card:hover .card-in::before{opacity:1}
 .card-in>*{position:relative;z-index:2}
 .card.feat .card-in{background:linear-gradient(180deg,#fff 0%,#FFF0F6 100%)}
-.tag{position:absolute;top:1.2rem;right:1.2rem;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--pink),var(--magenta));padding:.32rem .7rem;border-radius:100px}
+.tag{position:absolute;top:1.2rem;right:1.2rem;z-index:3;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#fff;background:linear-gradient(120deg,var(--pink),var(--magenta));padding:.32rem .7rem;border-radius:100px}
 .svc-ico{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;margin-bottom:1rem;
   background:linear-gradient(135deg,var(--blush),#fff);border:1px solid rgba(236,78,140,.18);box-shadow:inset 0 1px 0 #fff}
 .svc-ico svg{width:26px;height:26px;color:var(--magenta)}
@@ -308,7 +297,10 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 @media (max-width:860px){
   .nav-links{display:none}
   .burger{display:flex}
-  .nav-in{padding:8px 8px 8px 16px}
+  .nav-in{padding:8px 8px 8px 16px;background:rgba(255,255,255,.92);
+    backdrop-filter:none;-webkit-backdrop-filter:none}
+  /* calmer hero decorations on phones for buttery scrolling */
+  .orb{filter:blur(38px);animation:none}
 }
 @media (max-width:560px){
   .nav-brand{font-size:1.25rem}
@@ -718,10 +710,11 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
     // scroll progress bar
     var h=document.documentElement.scrollHeight-window.innerHeight;
     if(bar) bar.style.width=(h>0?(y/h*100):0)+'%';
-    // hero parallax (scroll-reactive)
-    if(!rm && y<window.innerHeight){
-      for(var i=0;i<orbs.length;i++){ orbs[i].style.transform='translateY('+(y*(0.15+i*0.08))+'px)'; }
-      if(heroInner){ heroInner.style.transform='translateY('+(y*0.22)+'px)'; heroInner.style.opacity=Math.max(0,1-y/(window.innerHeight*0.85)); }
+    // hero parallax — only the content (cheap); orbs are left to their CSS float
+    // (translating big blurred/blended orbs every frame was the main scroll cost)
+    if(!rm && y<window.innerHeight && heroInner){
+      heroInner.style.transform='translateY('+(y*0.18)+'px)';
+      heroInner.style.opacity=Math.max(0,1-y/(window.innerHeight*0.9));
     }
     lastY=y; ticking=false;
   };
@@ -785,9 +778,11 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 /* 3D tilt + electric thread on service tiles */
 (function(){
   var cards=document.querySelectorAll('#services .card');
-  cards.forEach(function(card){
-    var t=document.createElement('span'); t.className='thread'; card.insertBefore(t,card.firstChild);
-  });
+  // run the electric ring only while the tiles are on screen (saves the GPU while scrolling elsewhere)
+  if('IntersectionObserver' in window){
+    var lio=new IntersectionObserver(function(es){ es.forEach(function(e){ e.target.classList.toggle('live', e.isIntersecting); }); },{rootMargin:'60px'});
+    cards.forEach(function(c){ lio.observe(c); });
+  } else { cards.forEach(function(c){ c.classList.add('live'); }); }
   if(!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
   cards.forEach(function(card){
     var rect=null, raf=0, tx=0,ty=0,cx=50,cy=50;
