@@ -163,6 +163,19 @@ img,svg{display:block;max-width:100%}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err{color:#c62b57;font-size:.86rem;margin-top:.8rem;text-align:center;display:none}
 .hidden{display:none!important}
+/* address autocomplete */
+.addr-wrap{position:relative}
+.addr-wrap .addr-pin{position:absolute;left:.85rem;top:.85rem;color:var(--magenta);pointer-events:none}
+.addr-wrap .addr-pin svg{width:18px;height:18px}
+.addr-wrap #fAddr{padding-left:2.5rem}
+.addr-dd{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:30;list-style:none;margin:0;padding:.3rem;
+  background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 50px -20px rgba(190,30,110,.4);
+  max-height:260px;overflow:auto;display:none}
+.addr-dd.show{display:block}
+.addr-dd li{display:flex;gap:.55rem;align-items:flex-start;padding:.62rem .7rem;border-radius:10px;cursor:pointer;font-size:.88rem;color:var(--ink);line-height:1.35}
+.addr-dd li:hover,.addr-dd li.active{background:var(--blush)}
+.addr-dd li svg{width:16px;height:16px;color:var(--magenta);flex:0 0 auto;margin-top:2px}
+.addr-dd .msg{padding:.7rem;color:var(--muted);font-size:.84rem;text-align:center}
 /* keep floating bubbles clear of the sticky action bar */
 .fab-stack{bottom:88px!important}
 .chatbox{bottom:158px!important}
@@ -226,7 +239,13 @@ img,svg{display:block;max-width:100%}
         <div class="field"><label>Phone <span class="req">*</span></label><input id="fPhone" type="tel" autocomplete="tel" placeholder="07…"></div>
       </div>
       <div class="field"><label>Email <span class="req">*</span></label><input id="fEmail" type="email" autocomplete="email" placeholder="you@email.com"></div>
-      <div class="field"><label>Full address &amp; postcode <span class="req">*</span></label><input id="fAddr" type="text" autocomplete="street-address" placeholder="12 Rose Street, Birmingham, B1 2CD"></div>
+      <div class="field"><label>Full address &amp; postcode <span class="req">*</span></label>
+        <div class="addr-wrap">
+          <span class="addr-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg></span>
+          <input id="fAddr" type="text" autocomplete="off" placeholder="Start typing your address or postcode…">
+          <ul class="addr-dd" id="addrDD" role="listbox"></ul>
+        </div>
+      </div>
       <div class="field">
         <label>Where will the car be parked?</label>
         <div class="radio-row" id="parkRow">
@@ -546,6 +565,71 @@ img,svg{display:block;max-width:100%}
   renderCal(); updateBar();
 })();
 </script>
+<script>
+/* Address autocomplete (free OpenStreetMap / Nominatim — Google-Maps-style dropdown) */
+(function(){
+  var input=document.getElementById('fAddr'), dd=document.getElementById('addrDD');
+  if(!input||!dd) return;
+  var pin='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+  var t=null, ctrl=null, items=[], active=-1, lastQ='';
+  function hide(){ dd.classList.remove('show'); dd.innerHTML=''; active=-1; }
+  function show(){ dd.classList.add('show'); }
+  function msg(txt){ dd.innerHTML='<li class="msg">'+txt+'</li>'; show(); }
+
+  function search(q){
+    if(ctrl) ctrl.abort();
+    ctrl=new AbortController();
+    var url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=gb&limit=6&q='+encodeURIComponent(q);
+    fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(list){
+        items=list||[];
+        if(!items.length){ msg('No matches — you can type it in manually.'); return; }
+        dd.innerHTML=items.map(function(it,i){ return '<li role="option" data-i="'+i+'">'+pin+'<span>'+esc(it.display_name)+'</span></li>'; }).join('');
+        show(); active=-1;
+        Array.prototype.forEach.call(dd.querySelectorAll('li'),function(li){
+          li.addEventListener('mousedown',function(e){ e.preventDefault(); pick(+li.dataset.i); });
+        });
+      })
+      .catch(function(e){ if(e.name!=='AbortError') hide(); });
+  }
+  function esc(s){ return String(s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}); }
+  function pick(i){
+    var it=items[i]; if(!it) return;
+    // Tidy: prefer a concise "house road, area, postcode" line, fall back to full label
+    var a=it.address||{}, parts=[];
+    var line1=[a.house_number,a.road].filter(Boolean).join(' ');
+    if(line1) parts.push(line1);
+    var area=a.suburb||a.neighbourhood||a.village||a.town||a.city||a.county;
+    if(area) parts.push(area);
+    if(a.postcode) parts.push(a.postcode);
+    input.value=parts.length?parts.join(', '):it.display_name;
+    hide();
+  }
+
+  input.addEventListener('input',function(){
+    var q=input.value.trim();
+    clearTimeout(t);
+    if(q.length<3){ hide(); return; }
+    if(q===lastQ) return; lastQ=q;
+    t=setTimeout(function(){ search(q); },350); // debounce (respects Nominatim usage)
+  });
+  input.addEventListener('keydown',function(e){
+    if(!dd.classList.contains('show')) return;
+    var lis=dd.querySelectorAll('li[role=option]');
+    if(!lis.length) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); active=(active+1)%lis.length; }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); active=(active-1+lis.length)%lis.length; }
+    else if(e.key==='Enter'){ if(active>=0){ e.preventDefault(); pick(active); } return; }
+    else if(e.key==='Escape'){ hide(); return; }
+    else return;
+    lis.forEach(function(li,i){ li.classList.toggle('active',i===active); });
+    lis[active].scrollIntoView({block:'nearest'});
+  });
+  document.addEventListener('click',function(e){ if(!e.target.closest('.addr-wrap')) hide(); });
+})();
+</script>
+
 <!-- ============ FLOATING BUBBLES: WhatsApp + Chatbot ============ -->
 <style>
 .fab-stack{position:fixed;right:18px;bottom:18px;z-index:80;display:flex;flex-direction:column;gap:.7rem;align-items:flex-end}
