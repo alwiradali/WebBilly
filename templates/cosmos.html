@@ -3,152 +3,152 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
-<title>Nebula — Cosmic Agency · Scroll Landing Template</title>
-<meta name="description" content="A dark, cosmic, particle-driven landing page — the hero morphs from a globe to a ring to a black hole to a galaxy as you scroll. Neutral demo by Billy Digitals.">
+<title>Nebula — Cosmic Scenes · Scroll Landing Template</title>
+<meta name="description" content="A cosmic landing template — full-screen WebGL-style heroes you snap through: distortion sphere, glowing ring, horizon, black hole, galaxy. Neutral demo by Billy Digitals.">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#04030a">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   NEBULA — one particle system, four formations, driven by scroll.
-   A single 3D point cloud morphs globe → ring → vortex → galaxy as
-   you scroll, while copy fades through in front of it.
+   NEBULA — a montage of distinct cosmic heroes, one per screen.
+   Each section is its own full-viewport scene with its own canvas
+   effect; you snap between them like flipping through the reel.
    ═══════════════════════════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --void:#04030a; --void2:#080614;
-  --star:#f3f0ff; --dim:#a39fc4; --faint:#6f6a92;
+  --void:#04030a; --star:#f3f0ff; --dim:#a7a2c6; --faint:#6f6a92;
   --violet:#7c5cff; --cyan:#38e6ff; --ember:#ff8a3c;
-  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.06);
-  --disp:'Instrument Serif',Georgia,serif;
-  --body:'Geist',system-ui,sans-serif;
+  --line:rgba(255,255,255,.13); --line2:rgba(255,255,255,.06);
+  --disp:'Instrument Serif',Georgia,serif; --body:'Geist',system-ui,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
 }
 html{-webkit-text-size-adjust:100%}
-body{background:var(--void);color:var(--dim);font-family:var(--body);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background:var(--void);color:var(--dim);font-family:var(--body);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 
-/* the fixed canvas sits behind everything */
-#sky{position:fixed;inset:0;z-index:0;display:block}
-#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
-  background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 80% 70%,#fff,transparent);
-  background-size:3px 3px;mix-blend-mode:overlay}
-.vign{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(120% 100% at 50% 45%,transparent 40%,rgba(4,3,10,.72) 100%)}
+/* snap scroller — each scene fills the screen and clicks into place */
+#deck{height:100svh;overflow-y:scroll;overflow-x:hidden;scroll-snap-type:y mandatory;scroll-behavior:smooth;position:relative}
+.scene{position:relative;height:100svh;scroll-snap-align:start;overflow:hidden;display:grid;place-items:center}
+.scene canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vign{position:absolute;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 45%,transparent 42%,rgba(4,3,10,.78) 100%)}
 
-/* progress + nav */
-#rail{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);transform-origin:0 50%;
-  background:linear-gradient(90deg,var(--violet),var(--cyan));z-index:40}
-.nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
-  padding:22px clamp(20px,5vw,54px);transition:opacity .5s}
-.brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-size:1.5rem;color:var(--star);letter-spacing:.02em}
-.brand i{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan);flex:none}
-.nav .r{display:flex;align-items:center;gap:26px}
-.nav .r a{font-size:.78rem;font-weight:400;letter-spacing:.04em;color:var(--dim);transition:color .25s}
-.nav .r a:hover{color:var(--star)}
-.nbtn{border:1px solid var(--line);border-radius:999px;padding:10px 20px!important;color:var(--star)!important;transition:border-color .3s,background .3s}
-.nbtn:hover{border-color:var(--cyan);background:rgba(56,230,255,.08)}
-@media(max-width:720px){.nav .r a:not(.nbtn){display:none}}
-
-/* content lives in stacked full-height panels; text pinned centre */
-#scroll{position:relative;z-index:2}
-.panel{height:100svh;display:grid;place-items:center;text-align:center;padding:0 24px;position:relative}
-.cap{position:relative;max-width:20ch;opacity:0;transform:translateY(30px);will-change:opacity,transform}
-.cap::before{content:"";position:absolute;inset:-18% -22%;z-index:-1;
-  background:radial-gradient(60% 60% at 50% 50%,rgba(4,3,10,.72),transparent 72%)}
-.cap h1,.cap h2{text-shadow:0 2px 44px rgba(4,3,10,.75),0 0 12px rgba(4,3,10,.6)}
-.cap p{text-shadow:0 1px 22px rgba(4,3,10,.9)}
-.kick{display:block;font-family:var(--body);font-weight:500;font-size:.66rem;letter-spacing:.4em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
-.cap h1,.cap h2{font-family:var(--disp);font-weight:400;color:var(--star);line-height:1.04;letter-spacing:-.01em}
-.cap h1{font-size:clamp(2.6rem,8vw,6.2rem)}
-.cap h2{font-size:clamp(2.1rem,6vw,4.6rem)}
-.cap em{font-style:italic;color:var(--cyan)}
-.cap .em-v{font-style:italic;color:var(--violet)}
-.cap .em-e{font-style:italic;color:var(--ember)}
-.cap p{margin:22px auto 0;max-width:44ch;font-size:clamp(.98rem,1.4vw,1.12rem);line-height:1.75;color:var(--dim);font-weight:300}
-.cap .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--body);font-weight:500;
-  font-size:.8rem;letter-spacing:.06em;padding:16px 30px;border-radius:999px;transition:transform .3s var(--ease),background .3s,border-color .3s,color .3s}
+/* overlay copy */
+.copy{position:relative;z-index:3;text-align:center;padding:0 26px;max-width:22ch;
+  opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.scene.in .copy{opacity:1;transform:none}
+.kick{display:block;font-family:var(--body);font-weight:500;font-size:.64rem;letter-spacing:.4em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px}
+.copy h1,.copy h2{font-family:var(--disp);font-weight:400;color:var(--star);line-height:1.04;letter-spacing:-.01em}
+.copy h1{font-size:clamp(2.7rem,8vw,6rem)}
+.copy h2{font-size:clamp(2rem,5.4vw,4.1rem)}
+.copy em{font-style:italic;color:var(--cyan)}
+.copy .ev{font-style:italic;color:var(--violet)}
+.copy .ee{font-style:italic;color:var(--ember)}
+.copy p{margin:20px auto 0;max-width:42ch;font-size:clamp(.95rem,1.3vw,1.08rem);line-height:1.7;color:var(--dim)}
+.copy h1,.copy h2,.copy p{text-shadow:0 2px 40px rgba(4,3,10,.85),0 0 14px rgba(4,3,10,.7)}
+.copy .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--body);font-weight:500;font-size:.78rem;letter-spacing:.06em;
+  padding:15px 30px;border-radius:999px;transition:transform .3s var(--ease),background .3s,border-color .3s,color .3s}
 .btn-p{background:var(--star);color:#0a0818}.btn-p:hover{transform:translateY(-2px);background:#fff}
 .btn-g{border:1px solid var(--line);color:var(--star)}.btn-g:hover{border-color:var(--star)}
-.scue{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-size:.58rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);transition:opacity .5s}
-.scue i{width:1px;height:38px;background:linear-gradient(180deg,var(--cyan),transparent)}
 
-/* closing contact block (solid, readable) */
-.outro{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:120px 24px 60px;position:relative;background:linear-gradient(180deg,transparent,var(--void2) 40%,var(--void))}
-.outro .cap{opacity:1;transform:none}
-.contact{display:grid;gap:16px;margin-top:38px;font-size:1.05rem;color:var(--star)}
+/* fixed chrome */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:20px clamp(20px,5vw,50px);pointer-events:none}
+.nav>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:1.45rem;color:var(--star);letter-spacing:.02em}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+.nbtn{border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:.72rem;font-weight:500;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--star);transition:border-color .3s,background .3s}
+.nbtn:hover{border-color:var(--cyan);background:rgba(56,230,255,.08)}
+/* scene dots */
+.dots{position:fixed;right:clamp(16px,3vw,30px);top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:12px}
+.dots button{width:8px;height:8px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.32);background:transparent;cursor:pointer;transition:.3s}
+.dots button.on{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.scue{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:.56rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);transition:opacity .5s}
+.scue i{width:1px;height:34px;background:linear-gradient(180deg,var(--cyan),transparent)}
+@media(max-width:640px){.dots{display:none}}
+
+/* outro / contact scene */
+.outro{background:var(--void)}
+.contact{position:relative;z-index:3;display:grid;gap:14px;margin-top:34px;font-size:1.02rem;color:var(--star)}
 .contact a{display:inline-flex;align-items:center;gap:12px;justify-content:center}
-.contact svg{width:20px;height:20px;stroke:var(--cyan);fill:none;stroke-width:1.6}
-.foot{position:relative;z-index:2;padding:30px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  font-size:.76rem;color:var(--faint);border-top:1px solid var(--line2);background:var(--void)}
+.contact svg{width:19px;height:19px;stroke:var(--cyan);fill:none;stroke-width:1.6}
+.foot{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:24px clamp(20px,5vw,50px);display:flex;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;font-size:.72rem;color:var(--faint);border-top:1px solid var(--line2)}
 .foot a{color:var(--cyan)}
 
 /* preloader */
-#pl{position:fixed;inset:0;z-index:90;background:var(--void);display:grid;place-items:center;transition:opacity .8s ease}
+#pl{position:fixed;inset:0;z-index:60;background:var(--void);display:grid;place-items:center;transition:opacity .7s ease}
 #pl.done{opacity:0;pointer-events:none}
-#pl .n{font-family:var(--disp);font-size:clamp(1.8rem,5vw,2.6rem);color:var(--star);letter-spacing:.04em;opacity:0;animation:pf 1s ease .2s forwards}
-#pl .pc{margin-top:14px;font-family:var(--body);font-size:.8rem;letter-spacing:.3em;color:var(--faint);font-variant-numeric:tabular-nums}
-@keyframes pf{to{opacity:1}}
-@media(prefers-reduced-motion:reduce){#pl{display:none}.cap{opacity:1!important;transform:none!important}}
+#pl .n{font-family:var(--disp);font-size:clamp(1.8rem,5vw,2.5rem);color:var(--star);letter-spacing:.06em}
+#pl .pc{margin-top:12px;font-size:.78rem;letter-spacing:.3em;color:var(--faint);font-variant-numeric:tabular-nums;text-align:center}
+@media(prefers-reduced-motion:reduce){#deck{scroll-snap-type:none}.copy{opacity:1;transform:none}#pl{display:none}}
 </style></head>
 <body>
 
-<canvas id="sky"></canvas>
-<div class="vign"></div>
-<div id="grain"></div>
-<div id="rail"></div>
+<div id="pl"><div><div class="n">Nebula</div><div class="pc"><span id="plPc">0</span>%</div></div></div>
 
-<div id="pl"><div style="text-align:center"><div class="n">Nebula</div><div class="pc"><span id="plPc">0</span>%</div></div></div>
-
-<nav class="nav" id="nav">
-  <a class="brand" href="#top"><i></i>Nebula</a>
-  <div class="r">
-    <a href="#work">Work</a><a href="#studio">Studio</a><a href="#contact">Contact</a>
-    <a class="nbtn" href="#contact">Start a project</a>
-  </div>
+<nav class="nav">
+  <a class="brand" href="#s0"><i></i>Nebula</a>
+  <a class="nbtn" href="#contact">Start a project</a>
 </nav>
+<div class="dots" id="dots"></div>
+<div class="scue" id="scue"><span>Scroll</span><i></i></div>
 
-<div id="scroll">
-  <!-- 1 · GLOBE -->
-  <section class="panel" id="top"><div class="cap" data-cap="0">
-    <span class="kick">Digital Studio</span>
-    <h1>We don't build sites.<br>We build <em>gravity.</em></h1>
-    <p>Websites with a pull — the kind visitors orbit, remember, and come back to. Scroll in.</p>
-  </div></section>
+<main id="deck">
+  <section class="scene" id="s0" data-scene="sphere">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">Digital Studio</span>
+      <h1>We don't build sites.<br>We build <em>gravity.</em></h1>
+      <p>Five worlds, one studio. Keep scrolling.</p>
+    </div>
+  </section>
 
-  <!-- 2 · RING -->
-  <section class="panel"><div class="cap" data-cap="1">
-    <span class="kick">Interaction</span>
-    <h2>Technology that redefines<br>how people <span class="em-v">meet</span> your brand.</h2>
-    <p>Motion, depth and detail — engineered so the first three seconds do the selling.</p>
-  </div></section>
+  <section class="scene" id="s1" data-scene="ring">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">Interaction</span>
+      <h2>Technology that redefines<br>the nature of <em>interaction.</em></h2>
+      <p>Motion and depth, engineered so the first three seconds do the selling.</p>
+      <span class="cta"><a class="btn btn-g" href="#s2">See more</a></span>
+    </div>
+  </section>
 
-  <!-- 3 · VORTEX -->
-  <section class="panel"><div class="cap" data-cap="2">
-    <span class="kick">Focus</span>
-    <h2>Everything revolves<br>around one thing —<br><em>your growth.</em></h2>
-    <p>Every pixel earns its place, pulled toward a single outcome: more of the right customers.</p>
-  </div></section>
+  <section class="scene" id="s2" data-scene="horizon">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">Focus</span>
+      <h2>Everything revolves around<br>one thing — <span class="ee">your growth.</span></h2>
+      <p>Every pixel pulled toward a single outcome: more of the right customers.</p>
+    </div>
+  </section>
 
-  <!-- 4 · GALAXY -->
-  <section class="panel"><div class="cap" data-cap="3">
-    <span class="kick">The work</span>
-    <h2>A universe of possibilities —<br>already <span class="em-e">in motion.</span></h2>
-    <p>From cosmic heroes to quiet, fast, functional sites. Whatever the brief orbits, we design its centre.</p>
-    <span class="cta">
-      <a class="btn btn-p" href="#contact">See it move</a>
-      <a class="btn btn-g" href="#studio">The studio</a>
-    </span>
-  </div></section>
+  <section class="scene" id="s3" data-scene="hole">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">Gravity</span>
+      <h2>A pull nothing<br>can <span class="ev">escape.</span></h2>
+      <p>Design with a centre of mass — visitors fall in, and orbit.</p>
+    </div>
+  </section>
 
-  <!-- OUTRO / CONTACT -->
-  <section class="outro" id="contact">
-    <div class="cap">
-      <span class="kick" id="studio">Start a project</span>
+  <section class="scene" id="s4" data-scene="galaxy">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">The work</span>
+      <h2>A universe of possibilities —<br>already <span class="ee">in motion.</span></h2>
+      <p>From cosmic heroes to quiet, fast, functional sites. We design the centre of each.</p>
+      <span class="cta"><a class="btn btn-p" href="#contact">See it move</a></span>
+    </div>
+  </section>
+
+  <section class="scene outro" id="contact" data-scene="stars">
+    <canvas></canvas><div class="vign"></div>
+    <div class="copy">
+      <span class="kick">Start a project</span>
       <h2>Let's give your brand<br>its own <em>orbit.</em></h2>
       <p>Tell us where you want to be seen. We'll design the thing people can't scroll past.</p>
       <div class="contact">
@@ -157,170 +157,230 @@ a{color:inherit;text-decoration:none}
       </div>
       <span class="cta"><a class="btn btn-p" href="mailto:hello@billydigitals.com">Start a project</a></span>
     </div>
+    <div class="foot"><span>© Nebula · Cosmic scenes template</span><span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span></div>
   </section>
-  <footer class="foot">
-    <span>© Nebula · Cosmic landing template</span>
-    <span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span>
-  </footer>
-</div>
-
-<div class="scue" id="scue"><span>Scroll</span><i></i></div>
+</main>
 
 <script>
 (function(){
 "use strict";
 var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-var cv=document.getElementById('sky'), ctx=cv.getContext('2d');
-var DPR=Math.min(devicePixelRatio||1,1.6), W=0,H=0,CX=0,CY=0;
-function resize(){ W=innerWidth; H=innerHeight; cv.width=W*DPR; cv.height=H*DPR;
-  cv.style.width=W+'px'; cv.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); CX=W/2; CY=H/2; }
-resize(); addEventListener('resize',resize,{passive:true});
+var TAU=Math.PI*2, sin=Math.sin, cos=Math.cos, PI=Math.PI;
+var COL={violet:[124,92,255],cyan:[86,224,255],ember:[255,150,80],warm:[255,214,170],white:[243,240,255]};
+function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+var GA=PI*(3-Math.sqrt(5));
 
-/* ── build four formations for N particles ──────────────────── */
-var N = (innerWidth<760?900:1500);
-var F=[[],[],[],[]];   // 0 globe · 1 ring · 2 vortex · 3 galaxy
-var GA=Math.PI*(3-Math.sqrt(5));   // golden angle
-for(var i=0;i<N;i++){
-  var t=i/N;
-  // 0 · sphere (fibonacci)
-  var y=1-t*2, r=Math.sqrt(1-y*y), th=GA*i;
-  F[0].push([Math.cos(th)*r, y, Math.sin(th)*r].map(function(v){return v*1.15;}));
-  // 1 · torus ring (fat band on the equator)
-  var a=t*Math.PI*22, rr=1.28+ (Math.random()-0.5)*0.10;
-  var tube=(Math.random()-0.5)*0.34;
-  F[1].push([Math.cos(a)*rr, tube, Math.sin(a)*rr]);
-  // 2 · vortex / black hole (spiral collapsing toward centre, funnel in z)
-  var vr=Math.pow(t,0.7)*1.7, va=t*Math.PI*30;
-  F[2].push([Math.cos(va)*vr, (0.5-t)*1.5, Math.sin(va)*vr]);
-  // 3 · galaxy (2-3 log-spiral arms, flat disk, slight thickness)
-  var arm=i%3, base=arm*(Math.PI*2/3);
-  var gr=Math.pow(Math.random(),0.6)*1.7;
-  var ga=base + gr*2.4 + (Math.random()-0.5)*0.5;
-  F[3].push([Math.cos(ga)*gr, (Math.random()-0.5)*0.18*(1-gr/2), Math.sin(ga)*gr]);
+/* ── build a scene object per section ───────────────────────── */
+var sections=[].slice.call(document.querySelectorAll('.scene'));
+var scenes=sections.map(function(el){
+  var cv=el.querySelector('canvas'), ctx=cv.getContext('2d');
+  var s={el:el,cv:cv,ctx:ctx,type:el.getAttribute('data-scene'),W:0,H:0,dpr:Math.min(devicePixelRatio||1,1.6),
+         vis:0,rot:0,t:0,pts:[],mobile:innerWidth<760};
+  build(s); size(s); return s;
+});
+function size(s){
+  var r=s.el.getBoundingClientRect(); s.W=r.width||innerWidth; s.H=r.height||innerHeight;
+  s.cv.width=s.W*s.dpr; s.cv.height=s.H*s.dpr; s.ctx.setTransform(s.dpr,0,0,s.dpr,0,0);
 }
-/* per-particle character */
-var col=[], siz=[];
-for(i=0;i<N;i++){
-  var r=Math.random();
-  col.push(r<0.10?2:(r<0.42?1:0));   // 2 ember, 1 cyan, 0 violet
-  siz.push(0.7+Math.random()*1.7);
+addEventListener('resize',function(){scenes.forEach(function(s){s.mobile=innerWidth<760;size(s);build(s);});},{passive:true});
+
+function build(s){
+  var N, i, t, a, r, arm;
+  s.pts=[]; s.stars=[];
+  if(s.type==='sphere'){
+    N=s.mobile?620:1100;
+    for(i=0;i<N;i++){ t=i/N; var y=1-t*2, rr=Math.sqrt(1-y*y), th=GA*i;
+      s.pts.push({x:cos(th)*rr,y:y,z:sin(th)*rr,ph:Math.random()*TAU}); }
+  }else if(s.type==='ring'){
+    N=s.mobile?520:900;
+    for(i=0;i<N;i++){ a=(i/N)*TAU; var band=(Math.random()-0.5)*0.14;
+      s.pts.push({a:a,r:1+ (Math.random()-0.5)*0.05,band:band,sp:0.6+Math.random()*0.8,ph:Math.random()*TAU}); }
+  }else if(s.type==='horizon'){
+    N=s.mobile?260:460;
+    for(i=0;i<N;i++){ s.pts.push({x:Math.random()*2-1, y:Math.random(), sp:0.1+Math.random()*0.5, sz:0.5+Math.random()*1.6, ph:Math.random()*TAU}); }
+    starfield(s, s.mobile?60:120);
+  }else if(s.type==='hole'){
+    N=s.mobile?600:1000;
+    for(i=0;i<N;i++){ r=0.42+Math.pow(Math.random(),0.6)*0.9; a=Math.random()*TAU;
+      s.pts.push({r:r,a:a,sp:(0.6/r),th:(Math.random()-0.5)*0.12}); }
+    starfield(s, s.mobile?70:140);
+  }else if(s.type==='galaxy'){
+    N=s.mobile?680:1200;
+    for(i=0;i<N;i++){ arm=i%3; var base=arm*(TAU/3); r=Math.pow(Math.random(),0.6)*1.5;
+      a=base+r*2.6+(Math.random()-0.5)*0.5;
+      s.pts.push({r:r,a:a,y:(Math.random()-0.5)*0.10*(1-r/1.6),c:Math.random()}); }
+    starfield(s, s.mobile?60:120);
+  }else{ /* stars */ starfield(s, s.mobile?120:240); }
 }
-var COLS=[[124,92,255],[56,230,255],[255,138,60]];
+function starfield(s,n){ for(var i=0;i<n;i++){ s.stars.push({x:Math.random(),y:Math.random(),z:Math.random(),ph:Math.random()*TAU}); } }
 
-/* ── scroll state ───────────────────────────────────────────── */
-var sc=0, tsc=0, docH=1;
-function measure(){ docH=Math.max(1, document.getElementById('scroll').scrollHeight-innerHeight); }
-measure(); addEventListener('resize',measure,{passive:true});
-if(window.ResizeObserver) new ResizeObserver(measure).observe(document.getElementById('scroll'));
-addEventListener('scroll',function(){ tsc=(scrollY||pageYOffset||0)/docH; },{passive:true});
-
-/* caption fades: 5 panels across the scroll (4 morph + outro handled by CSS) */
-var caps=[].slice.call(document.querySelectorAll('.cap[data-cap]'));
-var rail=document.getElementById('rail'), scue=document.getElementById('scue'), nav=document.getElementById('nav');
-
-var rot=0, t0=null;
-function lerp(a,b,t){return a+(b-a)*t;}
-function frame(ts){
-  if(t0===null)t0=ts; var dt=Math.min(40,ts-t0); t0=ts;
-  sc += (tsc-sc)*0.08;                       // eased scroll
-  rot += (reduce?0:0.0016)*dt;               // gentle ambient spin
-
-  /* formation morph: 4 stops across 0..~0.8 of the page, galaxy holds to end */
-  var span=sc/0.80*3;                         // 0..3 over first 80%
-  var fi=Math.max(0,Math.min(2.999,span));
-  var a=Math.floor(fi), b=a+1, m=fi-a;
-  var me=m*m*(3-2*m);                         // smoothstep between formations
-
-  rail.style.transform='scaleX('+Math.min(1,sc).toFixed(4)+')';
-  var faded = sc>0.02;
-  scue.style.opacity = sc>0.05?'0':'1';
-
-  /* caption visibility — hero holds at the very top, then each panel owns a band */
-  var CENTRES=[0.0,0.26,0.5,0.74], HALF=0.17;
-  for(var c=0;c<caps.length;c++){
-    var d=Math.abs(sc-CENTRES[c]);
-    var vis=Math.max(0,1-d/HALF);
-    vis=vis*vis*(3-2*vis);
-    caps[c].style.opacity=vis.toFixed(3);
-    caps[c].style.transform='translateY('+((1-vis)*28).toFixed(1)+'px)';
+/* ── draw dispatch ─────────────────────────────────────────── */
+function drawStars(s){
+  var ctx=s.ctx;
+  for(var i=0;i<s.stars.length;i++){ var st=s.stars[i];
+    var tw=0.4+0.6*(0.5+0.5*sin(s.t*1.5+st.ph));
+    ctx.globalAlpha=(0.15+st.z*0.5)*tw; ctx.fillStyle='#fff';
+    ctx.fillRect(st.x*s.W, st.y*s.H, st.z<0.5?1:1.5, st.z<0.5?1:1.5);
   }
+  ctx.globalAlpha=1;
+}
+function dot(ctx,x,y,r,c,a){ ctx.globalAlpha=a<0?0:a>1?1:a; ctx.fillStyle='rgb('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+')';
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill(); }
 
-  /* rotation matrices (Y + slight X) */
-  var cy=Math.cos(rot), sy=Math.sin(rot), tilt=0.42, cx=Math.cos(tilt), sx=Math.sin(tilt);
-  /* galaxy/vortex spin faster the deeper you go */
-  var spin=rot*(1+me*(a>=2?1.4:0));
-
-  var scale=Math.min(W,H)*0.31;
-  var persp=3.0;
-
+function draw(s){
+  var ctx=s.ctx, W=s.W, H=s.H, CX=W/2, CY=H/2, t=s.t, scale=Math.min(W,H)*0.30, persp=3.0;
   ctx.clearRect(0,0,W,H);
   ctx.globalCompositeOperation='lighter';
 
-  var Fa=F[a], Fb=F[b<4?b:3];
-  var cyy=Math.cos(spin), syy=Math.sin(spin);
+  if(s.type==='sphere'){
+    var cy=cos(s.rot),sy=sin(s.rot),tx=0.4,cx=cos(tx),sxx=sin(tx);
+    for(var i=0;i<s.pts.length;i++){ var p=s.pts[i];
+      var disp=1+0.14*sin(3*p.y+t*1.1+p.ph);
+      var x=p.x*disp,Y=p.y*disp,z=p.z*disp;
+      var x1=x*cy-z*sy, z1=x*sy+z*cy;
+      var y1=Y*cx-z1*sxx, z2=Y*sxx+z1*cx;
+      var pz=persp/(persp-z2); if(pz<=0)continue;
+      var depth=(z2+1.4)/2.8;
+      var c=mix(COL.violet,COL.ember,(Y+1)/2*0.9);
+      c=mix(c,COL.cyan,depth*0.25);
+      dot(ctx,CX+x1*scale*pz,CY+y1*scale*pz,(0.7+depth*1.3)*pz,c,(0.14+depth*0.8)*Math.min(1,pz));
+    }
+  }
+  else if(s.type==='ring'){
+    /* soft bloom haze */
+    var g=ctx.createRadialGradient(CX,CY,scale*0.4,CX,CY,scale*1.5);
+    g.addColorStop(0,'rgba(124,92,255,0.05)'); g.addColorStop(0.5,'rgba(56,230,255,0.05)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=1; ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    var cyr=cos(s.rot*0.5), syr=sin(s.rot*0.5), tilt=1.05, ct=cos(tilt), stt=sin(tilt);
+    var R=scale*1.5;
+    for(var i=0;i<s.pts.length;i++){ var p=s.pts[i];
+      var a=p.a+s.rot*0.35;
+      var rr=p.r*(1+0.06*sin(a*6+t*1.4+p.ph));
+      var x=cos(a)*rr, z=sin(a)*rr, y=p.band + 0.05*sin(a*3+t+p.ph);
+      var x1=x*cyr - z*syr, z1=x*syr + z*cyr;
+      var y1=y*ct - z1*stt, z2=y*stt + z1*ct;
+      var pz=persp/(persp-z2); if(pz<=0)continue;
+      var depth=(z2+1.4)/2.8;
+      var c=mix(COL.cyan,COL.violet,(sin(a*2+t)+1)/2*0.6);
+      c=mix(c,COL.white,depth*0.4);
+      dot(ctx,CX+x1*R*pz*0.33,CY+y1*R*pz*0.33,(0.6+depth*1.5)*pz,c,(0.2+depth*0.75)*Math.min(1,pz));
+    }
+  }
+  else if(s.type==='horizon'){
+    drawStars(s);
+    var hy=H*0.66;                     /* horizon line height */
+    /* warm glow sitting on the horizon */
+    var gx=CX+ sin(t*0.3)*W*0.12;
+    var gg=ctx.createRadialGradient(gx,hy,0,gx,hy,W*0.5);
+    gg.addColorStop(0,'rgba(255,150,80,0.5)'); gg.addColorStop(0.3,'rgba(124,92,255,0.18)'); gg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=1; ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(gx,hy,W*0.5,0,TAU); ctx.fill();
+    /* the glowing curved horizon */
+    ctx.globalCompositeOperation='lighter';
+    for(var k=0;k<3;k++){ ctx.beginPath();
+      for(var xx=0;xx<=W;xx+=6){ var yy=hy + (xx-CX)*(xx-CX)/(W*3.4) - 4 + k*2; if(xx===0)ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
+      ctx.strokeStyle='rgba('+ (k===0?'255,214,170':'124,92,255') +','+(0.5-k*0.15)+')'; ctx.lineWidth=(3-k)*1.4; ctx.stroke();
+    }
+    /* rising sparks from the horizon */
+    for(var i=0;i<s.pts.length;i++){ var p=s.pts[i];
+      var life=(t*p.sp+p.ph)%1;
+      var px=CX+p.x*W*0.5;
+      var py=hy - life*H*0.5;
+      var curve=(px-CX)*(px-CX)/(W*3.4);
+      dot(ctx,px,py+curve, p.sz*(1-life)*1.4, mix(COL.ember,COL.violet,life), (1-life)*0.7);
+    }
+  }
+  else if(s.type==='hole'){
+    drawStars(s);
+    var tilt=1.15, ct=cos(tilt), stt=sin(tilt);
+    /* accretion particles on tilted orbits */
+    for(var i=0;i<s.pts.length;i++){ var p=s.pts[i];
+      var a=p.a + s.rot*p.sp*1.4;
+      var x=cos(a)*p.r, z=sin(a)*p.r, y=p.th;
+      var y1=y*ct - z*stt, z2=y*stt + z*ct;
+      var pz=persp/(persp-z2); if(pz<=0)continue;
+      var depth=(z2+1.4)/2.8;
+      var inner=1-(p.r-0.42)/0.9;
+      var c=mix(COL.violet,COL.warm,inner*inner);
+      dot(ctx,CX+x*scale*pz,CY+y1*scale*pz,(0.5+depth*1.3)*pz,c,(0.2+depth*0.7)*Math.min(1,pz));
+    }
+    /* bright event-horizon rim + dark core */
+    var rimR=scale*0.42;
+    var rg=ctx.createRadialGradient(CX,CY,rimR*0.7,CX,CY,rimR*1.35);
+    rg.addColorStop(0,'rgba(0,0,0,0)'); rg.addColorStop(0.62,'rgba(255,190,120,0.55)');
+    rg.addColorStop(0.8,'rgba(124,92,255,0.35)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=1; ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(CX,CY,rimR*1.35,0,TAU); ctx.fill();
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle='#04030a'; ctx.beginPath(); ctx.arc(CX,CY,rimR*0.66,0,TAU); ctx.fill();
+    ctx.globalCompositeOperation='lighter';
+  }
+  else if(s.type==='galaxy'){
+    drawStars(s);
+    var cyr=cos(s.rot*0.4),syr=sin(s.rot*0.4),tilt=1.02,ct=cos(tilt),stt=sin(tilt);
+    for(var i=0;i<s.pts.length;i++){ var p=s.pts[i];
+      var a=p.a+s.rot*0.4*(1.2-p.r*0.4);
+      var x=cos(a)*p.r, z=sin(a)*p.r, y=p.y;
+      var x1=x*cyr-z*syr, z1=x*syr+z*cyr;
+      var y1=y*ct - z1*stt, z2=y*stt+z1*ct;
+      var pz=persp/(persp-z2); if(pz<=0)continue;
+      var depth=(z2+1.4)/2.8, inner=1-p.r/1.5;
+      var c=mix(COL.violet,COL.warm,inner*inner*0.9);
+      c=mix(c,COL.cyan,p.c*0.25);
+      dot(ctx,CX+x1*scale*pz,CY+y1*scale*pz,(0.5+depth*1.2)*pz,c,(0.18+depth*0.7)*Math.min(1,pz));
+    }
+    var cg=ctx.createRadialGradient(CX,CY,0,CX,CY,scale*0.5);
+    cg.addColorStop(0,'rgba(255,240,220,0.6)'); cg.addColorStop(0.4,'rgba(255,150,80,0.2)'); cg.addColorStop(1,'rgba(124,92,255,0)');
+    ctx.globalAlpha=1; ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(CX,CY,scale*0.5,0,TAU); ctx.fill();
+  }
+  else { drawStars(s); }
 
-  for(i=0;i<N;i++){
-    var pa=Fa[i], pb=Fb[i];
-    var x=lerp(pa[0],pb[0],me), yv=lerp(pa[1],pb[1],me), z=lerp(pa[2],pb[2],me);
-    /* spin around Y */
-    var x1=x*cyy - z*syy, z1=x*syy + z*cyy;
-    /* tilt around X */
-    var y1=yv*cx - z1*sx, z2=yv*sx + z1*cx;
-    /* perspective */
-    var pz=persp/(persp - z2);
-    if(pz<=0) continue;
-    var sxp=CX + x1*scale*pz;
-    var syp=CY + y1*scale*pz;
-    if(sxp<-30||sxp>W+30||syp<-30||syp>H+30) continue;
-    var depth=(z2+1.6)/3.2;                   // 0 far .. 1 near
-    var cc=COLS[col[i]];
-    var al=(0.18+depth*0.8)*Math.min(1,pz*0.9);
-    var rad=siz[i]*pz*(0.6+depth*0.9);
-    ctx.globalAlpha=Math.min(1,al);
-    ctx.fillStyle='rgb('+cc[0]+','+cc[1]+','+cc[2]+')';
-    ctx.beginPath(); ctx.arc(sxp,syp,rad,0,6.2832); ctx.fill();
-  }
-  /* bright core for vortex + galaxy */
-  var coreP=Math.max(0, (fi-1.4)/1.6);
-  if(coreP>0){
-    var g=ctx.createRadialGradient(CX,CY,0,CX,CY,scale*0.5);
-    g.addColorStop(0,'rgba(255,240,220,'+(0.5*coreP).toFixed(3)+')');
-    g.addColorStop(0.4,'rgba(255,150,80,'+(0.16*coreP).toFixed(3)+')');
-    g.addColorStop(1,'rgba(120,90,255,0)');
-    ctx.globalAlpha=1; ctx.fillStyle=g;
-    ctx.beginPath(); ctx.arc(CX,CY,scale*0.5,0,6.2832); ctx.fill();
-  }
-  ctx.globalCompositeOperation='source-over';
-  ctx.globalAlpha=1;
-  requestAnimationFrame(frame);
+  ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
 }
-requestAnimationFrame(frame);
 
-/* preloader — count while the first frames warm up */
-var pl=document.getElementById('pl'), plPc=document.getElementById('plPc');
-if(pl){
-  if(reduce){pl.classList.add('done');}
-  else{
-    var s0=null;
-    requestAnimationFrame(function tick(ts){
-      if(s0===null)s0=ts;
-      var p=Math.min(1,(ts-s0)/1100), e=1-Math.pow(1-p,3);
-      plPc.textContent=Math.round(e*100);
-      if(p<1)requestAnimationFrame(tick);
-      else setTimeout(function(){pl.classList.add('done');},180);
-    });
-  }
-}
-
-/* smooth-ish anchor jumps */
-[].slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function(A){
-  A.addEventListener('click',function(e){
-    var id=A.getAttribute('href'); if(id.length<2) return;
-    var t=document.querySelector(id); if(!t) return;
-    e.preventDefault();
-    scrollTo({top:t.getBoundingClientRect().top+scrollY-10,behavior:reduce?'auto':'smooth'});
+/* ── run loop: animate whichever scenes are on screen ───────── */
+var io=new IntersectionObserver(function(en){
+  en.forEach(function(e){
+    var s=scenes[sections.indexOf(e.target)];
+    if(!s)return; s.vis=e.intersectionRatio;
+    e.target.classList.toggle('in', e.intersectionRatio>0.35);
+    if(e.intersectionRatio>0.5) setActiveDot(sections.indexOf(e.target));
   });
+},{root:document.getElementById('deck'),threshold:[0,0.35,0.5,0.75,1]});
+sections.forEach(function(el){io.observe(el);});
+
+var t0=null;
+function loop(ts){
+  if(t0===null)t0=ts; var dt=Math.min(50,ts-t0)/1000; t0=ts;
+  for(var i=0;i<scenes.length;i++){ var s=scenes[i];
+    if(s.vis<=0.02){continue;}
+    if(!reduce){ s.t+=dt; s.rot+=dt*0.32; }
+    draw(s);
+  }
+  requestAnimationFrame(loop);
+}
+if(reduce){ scenes.forEach(function(s){s.t=1;s.rot=0.6;s.vis=1;draw(s);}); sections.forEach(function(el){el.classList.add('in');}); }
+requestAnimationFrame(loop);
+
+/* ── scene dots + scroll cue ───────────────────────────────── */
+var dots=document.getElementById('dots'), deck=document.getElementById('deck'), scue=document.getElementById('scue');
+sections.forEach(function(el,i){
+  var b=document.createElement('button'); if(i===0)b.className='on';
+  b.addEventListener('click',function(){ el.scrollIntoView({behavior:reduce?'auto':'smooth'}); });
+  dots.appendChild(b);
 });
+function setActiveDot(i){ [].forEach.call(dots.children,function(b,k){b.classList.toggle('on',k===i);}); }
+deck.addEventListener('scroll',function(){ scue.style.opacity = deck.scrollTop>60?'0':'1'; },{passive:true});
+
+/* anchor jumps inside the snap deck */
+[].slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function(a){
+  a.addEventListener('click',function(e){ var id=a.getAttribute('href'); var t=document.querySelector(id);
+    if(t){ e.preventDefault(); t.scrollIntoView({behavior:reduce?'auto':'smooth'}); } });
+});
+
+/* preloader */
+var pl=document.getElementById('pl'), plPc=document.getElementById('plPc');
+if(pl && !reduce){ var s0=null; requestAnimationFrame(function tick(ts){ if(s0===null)s0=ts;
+  var p=Math.min(1,(ts-s0)/1000), e=1-Math.pow(1-p,3); plPc.textContent=Math.round(e*100);
+  if(p<1)requestAnimationFrame(tick); else setTimeout(function(){pl.classList.add('done');},160); }); }
 })();
 </script>
 </body></html>
