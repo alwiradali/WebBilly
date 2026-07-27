@@ -1,0 +1,812 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>AK Services — Home &amp; Outdoor Cleaning Specialists</title>
+<meta name="description" content="AK Services — gardening, carpet cleaning and pressure washing across Manchester and the North West. Real before &amp; after transformations. Call 07747 889484 for a free quote.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#070d17">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --bg:#070d17;--bg2:#0b1424;--card:#0f1a2e;--field:#132139;
+ --text:#eaf2ff;--txt:#9fb2cf;--faint:#6b7d9c;
+ --line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.05);
+ --g:#43c463;--g2:#5ee07f;--b:#2b7fff;--b2:#38bdf8;--c3:#22d3ee;
+ --disp:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;
+ --ease:cubic-bezier(.16,1,.3,1);--r:16px;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);font-weight:300;background:var(--bg);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 22px}
+h1,h2,h3,h4{font-family:var(--disp);color:var(--text);line-height:1.05;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
+h2{font-size:clamp(2.1rem,5.6vw,4rem)}
+.kicker{font-family:var(--body);font-weight:600;font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--g2);display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
+.kicker::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--g),transparent)}
+.lede{font-size:clamp(1rem,1.2vw,1.08rem);line-height:1.8;font-weight:300;color:var(--txt);max-width:62ch}
+.sec{padding:clamp(84px,13vh,148px) 0;position:relative}
+section[id]{scroll-margin-top:80px}
+.grad{background:linear-gradient(105deg,var(--g2),var(--b2) 60%,var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;font-family:var(--body);font-weight:600;
+ font-size:.78rem;letter-spacing:.06em;padding:16px 28px;border-radius:999px;
+ border:1px solid transparent;cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease),box-shadow .3s var(--ease)}
+.btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2}
+.btn-p{background:linear-gradient(100deg,var(--g),var(--g2));color:#04180c;box-shadow:0 12px 40px -14px rgba(67,196,99,.7)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 18px 50px -14px rgba(67,196,99,.85)}
+.btn-w{background:#25d366;color:#04180c;box-shadow:0 12px 40px -14px rgba(37,211,102,.7)}
+.btn-w:hover{transform:translateY(-2px)}
+.btn-g{border-color:var(--line);color:var(--text);background:rgba(255,255,255,.02)}
+.btn-g:hover{border-color:var(--g2);color:var(--g2)}
+.mag{will-change:transform}
+#bar{position:fixed;top:0;left:0;height:2px;width:100%;background:linear-gradient(90deg,var(--g),var(--b2),var(--c3));transform:scaleX(0);transform-origin:0 50%;z-index:120}
+/* reveal primitives (GSAP-driven, with no-JS fallback) */
+.rv{opacity:0;transform:translateY(30px)}
+.st>*{opacity:0;transform:translateY(26px)}
+.ln{display:block;overflow:hidden}
+.ln>span{display:block}
+.no-js .rv,.no-js .st>*{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv,.st>*{opacity:1!important;transform:none!important}.ln>span{transform:none!important}}
+
+/* ============ preloader ============ */
+#pl{position:fixed;inset:0;z-index:300;background:var(--bg);display:grid;place-items:center}
+#pl .in{text-align:center;width:min(360px,76vw)}
+#pl .mono{font-family:var(--disp);font-weight:700;font-size:clamp(2.4rem,8vw,3.4rem);color:var(--text);letter-spacing:.3em;padding-left:.3em}
+#pl .mono b{color:var(--g2)}
+#pl .sb{font-size:.62rem;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--faint);margin-top:12px}
+#pl .tr{height:2px;background:rgba(255,255,255,.08);margin-top:24px;border-radius:2px;overflow:hidden;position:relative}
+#pl .tr i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--g),var(--b2))}
+#pl .pc{margin-top:11px;font-size:.7rem;letter-spacing:.2em;color:var(--faint);font-variant-numeric:tabular-nums}
+body.lock{overflow:hidden}
+@media(prefers-reduced-motion:reduce){#pl{display:none}}
+
+/* ============ nav ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:110;transition:background .4s var(--ease),backdrop-filter .4s,border-color .4s,box-shadow .4s}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:74px;gap:18px}
+.nav.on{background:rgba(7,13,23,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line2);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--disp);font-weight:700;font-size:1.12rem;color:var(--text);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid var(--line);box-shadow:0 0 0 3px rgba(67,196,99,.12)}
+.brand b{color:var(--g2);font-weight:700}
+.nlinks{display:none;gap:32px}
+.nlinks a{font-size:.82rem;font-weight:500;letter-spacing:.02em;color:var(--txt);transition:color .3s;position:relative}
+.nlinks a:hover{color:var(--text)}
+.nlinks a::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--g2);transition:width .3s var(--ease)}
+.nlinks a:hover::after{width:100%}
+.nav .navcta{display:none}
+.nav .btn{padding:11px 20px;font-size:.74rem}
+.burger{display:inline-flex;width:46px;height:46px;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;color:var(--text);cursor:pointer}
+.burger svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none}
+.drawer{position:fixed;inset:0;z-index:200;background:rgba(7,13,23,.98);backdrop-filter:blur(10px);display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:6px;opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s}
+.drawer.open{opacity:1;visibility:visible}
+.drawer a{font-family:var(--disp);font-weight:600;font-size:1.9rem;color:var(--text);padding:10px 0}
+.drawer .btn{margin-top:20px;font-size:.82rem}
+.dx{position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--text);font-size:22px;cursor:pointer}
+
+/* ============ hero ============ */
+.hero{position:relative;padding:150px 0 70px;overflow:hidden}
+.hero .glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none;z-index:0}
+.hero .glow.a{width:520px;height:520px;background:radial-gradient(circle,rgba(67,196,99,.5),transparent 70%);top:-120px;right:-90px}
+.hero .glow.b{width:460px;height:460px;background:radial-gradient(circle,rgba(43,127,255,.42),transparent 70%);bottom:-160px;left:-120px}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:44px;align-items:center;position:relative;z-index:1}
+.hero h1{font-size:clamp(2.7rem,7vw,5.2rem);font-weight:700;letter-spacing:-.03em;max-width:13ch}
+.hero h1 em{font-style:normal}
+.hero .lede{margin-top:22px;max-width:48ch}
+.hbul{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hbul li{display:inline-flex;gap:9px;align-items:center;font-size:.84rem;color:var(--text);font-weight:500;background:rgba(255,255,255,.03);border:1px solid var(--line);padding:9px 15px;border-radius:999px}
+.hbul li svg{width:15px;height:15px;stroke:var(--g2);fill:none;stroke-width:2.4;flex:none}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hmeta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:9px;font-size:.82rem;font-weight:400;color:var(--text)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 0 4px rgba(67,196,99,.16);animation:pz 2.4s infinite}
+@keyframes pz{50%{box-shadow:0 0 0 9px rgba(67,196,99,0)}}
+.stars{color:#ffc247;letter-spacing:2px;font-size:.9rem}
+.hmeta b{color:var(--text);font-weight:600}
+/* hero before/after figure */
+.hero-fig{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/5;isolation:isolate;
+ box-shadow:0 60px 100px -50px rgba(0,0,0,.8);border:1px solid var(--line)}
+.hero-badge{position:absolute;left:16px;top:16px;z-index:6;display:inline-flex;align-items:center;gap:9px;
+ padding:9px 14px;border-radius:999px;background:rgba(7,13,23,.6);backdrop-filter:blur(8px);border:1px solid var(--line);
+ font-size:.72rem;font-weight:600;color:var(--text)}
+.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g)}
+.hero-float{position:absolute;right:16px;bottom:16px;z-index:6;background:rgba(7,13,23,.72);backdrop-filter:blur(10px);
+ border:1px solid var(--line);border-radius:14px;padding:14px 18px;text-align:right}
+.hero-float b{display:block;font-family:var(--disp);font-size:1.5rem;color:var(--text);font-weight:700}
+.hero-float span{font-size:.72rem;color:var(--txt);letter-spacing:.04em}
+
+/* ============ compare slider (reusable) ============ */
+.cmp{position:relative;width:100%;aspect-ratio:4/5;border-radius:0;overflow:hidden;user-select:none;touch-action:pan-y;cursor:ew-resize}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.cmp .aft{z-index:1}
+.cmp .bef{z-index:2;clip-path:inset(0 50% 0 0)}
+.cmp .lb{position:absolute;bottom:14px;z-index:4;font-size:.64rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+ padding:6px 12px;border-radius:999px;background:rgba(7,13,23,.66);backdrop-filter:blur(6px);border:1px solid var(--line);color:var(--text)}
+.cmp .lb.l{left:14px}.cmp .lb.r{right:14px;color:var(--g2)}
+.cmp .hd{position:absolute;top:0;bottom:0;left:50%;width:2px;z-index:5;background:rgba(255,255,255,.9);transform:translateX(-1px);box-shadow:0 0 18px rgba(0,0,0,.5)}
+.cmp .hd::after{content:"";position:absolute;top:50%;left:50%;width:46px;height:46px;transform:translate(-50%,-50%);border-radius:50%;
+ background:linear-gradient(100deg,var(--g),var(--g2));display:block;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.cmp .hd i{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-size:14px;color:#04180c;font-weight:700;letter-spacing:-2px}
+
+/* ============ marquee ============ */
+.marq{border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);padding:26px 0;overflow:hidden;background:var(--bg2)}
+.marq-in{display:flex;gap:56px;width:max-content;animation:scroll 32s linear infinite}
+.marq-in span{display:inline-flex;align-items:center;gap:56px;font-family:var(--disp);font-weight:600;font-size:clamp(1.1rem,2.4vw,1.6rem);color:var(--faint);letter-spacing:.02em;white-space:nowrap}
+.marq-in span::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--g)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.marq:hover .marq-in{animation-play-state:paused}
+
+/* ============ services ============ */
+.shead{display:grid;gap:22px;grid-template-columns:1fr;align-items:end;margin-bottom:56px}
+.sgrid{display:grid;grid-template-columns:1fr;gap:20px}
+.svc{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:34px 30px;overflow:hidden;transition:transform .5s var(--ease),border-color .5s}
+.svc:hover{transform:translateY(-6px);border-color:rgba(94,224,127,.4)}
+.svc .ic{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;margin-bottom:22px;background:rgba(67,196,99,.1);border:1px solid rgba(67,196,99,.24)}
+.svc .ic svg{width:28px;height:28px;stroke:var(--g2);fill:none;stroke-width:1.7}
+.svc.b .ic{background:rgba(43,127,255,.1);border-color:rgba(56,189,248,.24)}.svc.b .ic svg{stroke:var(--b2)}
+.svc.c .ic{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.24)}.svc.c .ic svg{stroke:var(--c3)}
+.svc h3{font-size:1.4rem;margin-bottom:12px}
+.svc p{font-size:.94rem}
+.svc ul{list-style:none;margin-top:18px;display:grid;gap:9px}
+.svc ul li{display:flex;gap:10px;align-items:flex-start;font-size:.86rem;color:var(--text);font-weight:300}
+.svc ul li svg{width:15px;height:15px;stroke:var(--g2);fill:none;stroke-width:2.6;flex:none;margin-top:5px}
+.svc .no{position:absolute;top:24px;right:26px;font-family:var(--disp);font-weight:700;font-size:2.4rem;color:rgba(255,255,255,.05)}
+
+/* ============ work / before-after showcase ============ */
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px}
+.tab{font-family:var(--body);font-weight:600;font-size:.78rem;letter-spacing:.02em;padding:11px 18px;border-radius:999px;
+ border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--txt);cursor:pointer;transition:.3s var(--ease)}
+.tab.on{background:linear-gradient(100deg,var(--g),var(--g2));color:#04180c;border-color:transparent}
+.tab:not(.on):hover{color:var(--text);border-color:var(--g2)}
+.work-stage{display:grid;grid-template-columns:1fr;gap:34px;align-items:center}
+.work-fig{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:0 50px 90px -50px rgba(0,0,0,.8)}
+#workCmp{max-height:76vh}
+.work-info .kicker{margin-bottom:14px}
+.work-info h3{font-size:clamp(1.6rem,3.2vw,2.3rem);margin-bottom:14px}
+.work-info p{font-size:.98rem;margin-bottom:22px}
+.wtags{display:flex;flex-wrap:wrap;gap:8px}
+.wtag{font-size:.72rem;font-weight:500;color:var(--txt);border:1px solid var(--line);border-radius:999px;padding:7px 13px}
+.wtip{display:inline-flex;align-items:center;gap:9px;margin-top:24px;font-size:.82rem;color:var(--faint)}
+.wtip svg{width:16px;height:16px;stroke:var(--g2);fill:none;stroke-width:2}
+
+/* ============ gallery ============ */
+.gal{columns:2;column-gap:16px}
+.gal figure{break-inside:avoid;margin-bottom:16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative}
+.gal img{width:100%;transition:transform 1s var(--ease)}
+.gal figure:hover img{transform:scale(1.05)}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 16px 14px;font-size:.76rem;font-weight:600;color:var(--text);
+ background:linear-gradient(180deg,transparent,rgba(7,13,23,.85));opacity:0;transition:opacity .4s}
+.gal figure:hover figcaption{opacity:1}
+
+/* ============ process ============ */
+.steps{display:grid;grid-template-columns:1fr;gap:16px;counter-reset:s}
+.step{display:flex;gap:20px;align-items:flex-start;padding:26px;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.step .n{font-family:var(--disp);font-weight:700;font-size:1.1rem;color:#04180c;background:linear-gradient(100deg,var(--g),var(--g2));
+ width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none}
+.step h4{font-size:1.15rem;margin-bottom:7px}
+.step p{font-size:.9rem}
+
+/* ============ stats ============ */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.stat{text-align:center;padding:30px 18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.stat b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(2.1rem,5vw,3rem);color:var(--text)}
+.stat b em{font-style:normal;color:var(--g2)}
+.stat span{font-size:.8rem;letter-spacing:.04em;color:var(--txt)}
+
+/* ============ reviews ============ */
+.rev{display:grid;grid-template-columns:1fr;gap:18px}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:28px}
+.rc .stars{margin-bottom:14px;display:block}
+.rc p{font-size:.98rem;color:var(--text);font-weight:300;line-height:1.75}
+.rc .who{display:flex;align-items:center;gap:12px;margin-top:20px}
+.rc .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--b));display:grid;place-items:center;font-family:var(--disp);font-weight:700;color:#04180c;flex:none}
+.rc .who b{display:block;color:var(--text);font-size:.9rem;font-weight:600}
+.rc .who span{font-size:.76rem;color:var(--faint)}
+
+/* ============ faq ============ */
+.faq{max-width:820px;margin:0 auto}
+.faq details{border-bottom:1px solid var(--line);padding:6px 0}
+.faq summary{list-style:none;cursor:pointer;padding:20px 40px 20px 0;position:relative;font-family:var(--disp);font-weight:500;font-size:1.08rem;color:var(--text)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";position:absolute;right:6px;top:50%;width:11px;height:11px;margin-top:-8px;border-right:2px solid var(--g2);border-bottom:2px solid var(--g2);transform:rotate(45deg);transition:transform .3s}
+.faq details[open] summary::after{transform:rotate(-135deg);margin-top:-3px}
+.faq .ans{padding:0 20px 20px 0;font-size:.94rem;color:var(--txt)}
+
+/* ============ contact ============ */
+.contact{position:relative;overflow:hidden}
+.cta-box{position:relative;background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:24px;
+ padding:clamp(34px,6vw,66px);overflow:hidden}
+.cta-box .glow{position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.4;pointer-events:none}
+.cta-box .glow.a{background:radial-gradient(circle,rgba(67,196,99,.6),transparent 70%);top:-140px;right:-100px}
+.cta-box .glow.b{background:radial-gradient(circle,rgba(43,127,255,.5),transparent 70%);bottom:-160px;left:-120px}
+.cta-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:38px}
+.cta-l h2{margin-bottom:16px}
+.cinfo{display:grid;gap:14px;margin-top:26px}
+.cinfo a{display:flex;align-items:center;gap:14px;font-size:1rem;color:var(--text);font-weight:500}
+.cinfo a .ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:grid;place-items:center;flex:none;transition:.3s}
+.cinfo a:hover .ic{border-color:var(--g2)}
+.cinfo a .ic svg{width:19px;height:19px;stroke:var(--g2);fill:none;stroke-width:1.9}
+.cinfo a span small{display:block;font-size:.72rem;color:var(--faint);font-weight:400;letter-spacing:.02em}
+form.q{background:rgba(7,13,23,.5);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:14px}
+form.q .row{display:grid;gap:14px}
+form.q label{font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--txt);display:block;margin-bottom:7px}
+form.q input,form.q select,form.q textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:11px;
+ padding:13px 15px;color:var(--text);font-family:var(--body);font-size:.92rem;transition:border-color .3s}
+form.q input:focus,form.q select:focus,form.q textarea:focus{outline:none;border-color:var(--g2)}
+form.q textarea{resize:vertical;min-height:88px}
+form.q .btn{width:100%;margin-top:4px}
+form.q .fine{font-size:.72rem;color:var(--faint);text-align:center}
+
+/* ============ footer ============ */
+footer{border-top:1px solid var(--line2);padding:60px 0 40px;background:var(--bg2)}
+.foot{display:grid;grid-template-columns:1fr;gap:34px}
+.foot .brand{margin-bottom:16px}
+.foot p{font-size:.9rem;max-width:34ch}
+.fcol h5{font-family:var(--disp);font-weight:600;color:var(--text);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
+.fcol a{display:block;font-size:.9rem;color:var(--txt);padding:6px 0;transition:color .3s}
+.fcol a:hover{color:var(--g2)}
+.fbot{margin-top:44px;padding-top:24px;border-top:1px solid var(--line2);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:.8rem;color:var(--faint)}
+.fbot a{color:var(--faint)}.fbot a:hover{color:var(--txt)}
+
+/* floating call button (mobile) */
+.fab{position:fixed;right:16px;bottom:16px;z-index:90;display:inline-flex;align-items:center;gap:9px;padding:14px 20px;border-radius:999px;
+ background:#25d366;color:#04180c;font-weight:700;font-size:.86rem;box-shadow:0 14px 40px -12px rgba(37,211,102,.8);transition:transform .3s}
+.fab svg{width:18px;height:18px;fill:currentColor}
+.fab:hover{transform:translateY(-2px)}
+
+/* ============ responsive ============ */
+@media(min-width:680px){
+ .stats{grid-template-columns:repeat(4,1fr)}
+ .sgrid{grid-template-columns:repeat(3,1fr)}
+ .rev{grid-template-columns:repeat(3,1fr)}
+ .cta-grid{grid-template-columns:1.05fr .95fr}
+ form.q .row{grid-template-columns:1fr 1fr}
+ .gal{columns:3}
+}
+@media(min-width:900px){
+ .nlinks{display:flex}.nav .navcta{display:inline-flex}
+ .hero-grid{grid-template-columns:1.05fr .95fr}
+ .shead{grid-template-columns:1.4fr 1fr}
+ .work-stage{grid-template-columns:.95fr 1.05fr}
+ .steps{grid-template-columns:repeat(2,1fr)}
+ .foot{grid-template-columns:1.4fr 1fr 1fr 1fr}
+ .fab{display:none}
+}
+</style>
+</head>
+<body class="no-js lock">
+<script>document.body.classList.remove('no-js');document.documentElement.classList.add('js');</script>
+
+<div id="bar"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div id="pl"><div class="in">
+  <div class="mono">A<b>K</b></div>
+  <div class="sb">Home &amp; Outdoor Cleaning</div>
+  <div class="tr"><i></i></div>
+  <div class="pc">0%</div>
+</div></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav"><div class="wrap nav-in">
+  <a class="brand" href="#top"><img src="/assets/ak/ak-logo.jpg" alt="AK Services logo">AK<b>&nbsp;Services</b></a>
+  <div class="nlinks">
+    <a href="#services">Services</a>
+    <a href="#work">Before &amp; After</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#process">Process</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="btn btn-p navcta mag" href="tel:+447747889484">
+    <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.7 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    07747 889484
+  </a>
+  <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg></button>
+</div></nav>
+
+<div class="drawer" id="drawer">
+  <button class="dx" id="dx" aria-label="Close menu">&times;</button>
+  <a href="#services">Services</a>
+  <a href="#work">Before &amp; After</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#process">Process</a>
+  <a href="#faq">FAQ</a>
+  <a class="btn btn-p" href="tel:+447747889484">Call 07747 889484</a>
+</div>
+
+<span id="top"></span>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="glow a"></div><div class="glow b"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="kicker rv">Gardening · Carpet Cleaning · Pressure Washing</span>
+      <h1>
+        <span class="ln"><span>Overgrown &amp; grimy,</span></span>
+        <span class="ln"><span>made <em class="grad">spotless.</em></span></span>
+      </h1>
+      <p class="lede rv">AK Services are your local home &amp; outdoor cleaning specialists across Manchester and the North West. Real gardens, real patios, real transformations — done properly, priced fairly.</p>
+      <ul class="hbul st">
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Fully insured</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Free no-obligation quotes</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Waste taken away</li>
+      </ul>
+      <div class="hero-cta">
+        <a class="btn btn-p mag" href="#contact"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Get my free quote</a>
+        <a class="btn btn-w mag" href="https://wa.me/447747889484" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9s-.5-.2-.7.2-.8.9-.9 1.1-.3.2-.6.1a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5.3-.5a.5.5 0 0 0 0-.5L8.9 7c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1A4.9 4.9 0 0 0 7.3 12a11.1 11.1 0 0 0 4.3 3.8c.6.3 1 .4 1.4.5a3.3 3.3 0 0 0 1.5.1c.5-.1 1.4-.6 1.6-1.1a2 2 0 0 0 .1-1.1c0-.1-.2-.2-.5-.3zM12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2z"/></svg>WhatsApp us</a>
+      </div>
+      <div class="hmeta rv">
+        <span class="chip"><span class="dot"></span>Available this week</span>
+        <span class="chip"><span class="stars">★★★★★</span><b>Rated by local homeowners</b></span>
+      </div>
+    </div>
+
+    <div class="hero-fig rv" id="heroFig">
+      <span class="hero-badge"><span class="dot"></span>Drag to reveal</span>
+      <div class="cmp" data-cmp>
+        <img class="aft" src="/assets/ak/patio-path-after.jpg" alt="Patio after pressure washing — clean stone slabs">
+        <img class="bef" src="/assets/ak/patio-path-before.jpg" alt="Patio before — green algae and moss on slabs">
+        <span class="lb l">Before</span><span class="lb r">After</span>
+        <div class="hd"><i>&#8596;</i></div>
+      </div>
+      <div class="hero-float"><b>2&nbsp;hrs</b><span>average patio clean</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marq"><div class="marq-in">
+  <span>Lawn Mowing<i></i></span><span>Jet Washing<i></i></span><span>Carpet Cleaning<i></i></span><span>Hedge Trimming<i></i></span><span>Patio &amp; Driveways<i></i></span><span>Garden Clearance<i></i></span><span>Weed Removal<i></i></span>
+  <span>Lawn Mowing<i></i></span><span>Jet Washing<i></i></span><span>Carpet Cleaning<i></i></span><span>Hedge Trimming<i></i></span><span>Patio &amp; Driveways<i></i></span><span>Garden Clearance<i></i></span><span>Weed Removal<i></i></span>
+</div></div>
+
+<!-- ============ SERVICES ============ -->
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="shead">
+      <div>
+        <span class="kicker rv">What we do</span>
+        <h2 class="rv">Three things,<br>done to a shine.</h2>
+      </div>
+      <p class="lede rv">Whether it's a jungle of a back garden, a carpet that needs new life, or a patio lost under years of moss — AK Services turn it around fast, and leave it looking its best.</p>
+    </div>
+    <div class="sgrid">
+      <article class="svc a rv">
+        <span class="no">01</span>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 22c5-3 8-7 8-13a8 8 0 0 0-16 0c0 6 3 10 8 13z" stroke-linejoin="round"/><path d="M12 22V9M12 12 8 9M12 14l4-3" stroke-linecap="round"/></svg></div>
+        <h3>Gardening</h3>
+        <p>Overgrowth cleared, lawns mowed and edged, hedges shaped and beds tidied — a garden you'll actually want to sit in.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Lawn mowing &amp; edging</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full garden clearance</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Hedge &amp; shrub trimming</li>
+        </ul>
+      </article>
+      <article class="svc b rv">
+        <span class="no">02</span>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 9h18M3 9l2-5h14l2 5M3 9v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9" stroke-linejoin="round"/><path d="M8 13v3M12 13v3M16 13v3" stroke-linecap="round"/></svg></div>
+        <h3>Carpet Cleaning</h3>
+        <p>Deep hot-water extraction that lifts out ground-in dirt, stains and odours — carpets, rugs, stairs and upholstery.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Stain &amp; odour treatment</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Rugs, stairs &amp; sofas</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Quick-dry finish</li>
+        </ul>
+      </article>
+      <article class="svc c rv">
+        <span class="no">03</span>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h9M4 20v-3l7-7M11 10l3-3 3 3-3 3M14 7l3-4h3v3l-4 3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Pressure Washing</h3>
+        <p>Patios, paths, decking and driveways blasted back to life — years of moss, algae and grime gone in an afternoon.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Patios &amp; pathways</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Driveways &amp; decking</li>
+          <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Optional re-sanding</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BEFORE / AFTER SHOWCASE ============ -->
+<section class="sec" id="work" style="background:var(--bg2);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:40px">
+      <span class="kicker rv" style="justify-content:center">Real jobs · real results</span>
+      <h2 class="rv">Slide to see the difference.</h2>
+      <p class="lede rv" style="margin:16px auto 0;text-align:center">Every one of these is a real AK Services job. Grab the slider and drag.</p>
+    </div>
+
+    <div class="tabs rv" id="tabs">
+      <button class="tab on" data-i="0">Patio Wash</button>
+      <button class="tab" data-i="1">Garden Clearance</button>
+      <button class="tab" data-i="2">Lawn Transform</button>
+      <button class="tab" data-i="3">Summer House</button>
+      <button class="tab" data-i="4">Stone Steps</button>
+      <button class="tab" data-i="5">New Turf</button>
+    </div>
+
+    <div class="work-stage rv">
+      <div class="work-fig">
+        <div class="cmp" data-cmp id="workCmp" style="aspect-ratio:945/837">
+          <img class="aft" id="workAft" src="/assets/ak/patio-path-after.jpg" alt="After">
+          <img class="bef" id="workBef" src="/assets/ak/patio-path-before.jpg" alt="Before">
+          <span class="lb l">Before</span><span class="lb r">After</span>
+          <div class="hd"><i>&#8596;</i></div>
+        </div>
+      </div>
+      <div class="work-info">
+        <span class="kicker" id="wKick">Pressure Washing</span>
+        <h3 id="wTitle">Moss-covered path, brought back to stone</h3>
+        <p id="wDesc">Years of algae and moss had turned this shaded side-path completely green and slippery. A single pass with the pressure washer lifted it all away, revealing the original slabs underneath.</p>
+        <div class="wtags" id="wTags">
+          <span class="wtag">Jet washing</span><span class="wtag">Algae removal</span><span class="wtag">Anti-slip finish</span>
+        </div>
+        <span class="wtip"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z" stroke-linejoin="round"/></svg>Turnaround: same day</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="sec" id="gallery">
+  <div class="wrap">
+    <div class="shead">
+      <div>
+        <span class="kicker rv">The portfolio</span>
+        <h2 class="rv">Before &amp; after,<br>side by side.</h2>
+      </div>
+      <p class="lede rv">A few recent transformations around Manchester — gardens reclaimed, patios restored and lawns brought back to life.</p>
+    </div>
+    <div class="gal">
+      <figure class="rv"><img src="/assets/ak/garden-jungle.jpg" alt="Overgrown garden cleared to a neat lawn with pathway" loading="lazy"><figcaption>Overgrown garden → clean lawn &amp; path</figcaption></figure>
+      <figure class="rv"><img src="/assets/ak/patio-path.jpg" alt="Green mossy path pressure washed clean" loading="lazy"><figcaption>Side path → jet washed to new</figcaption></figure>
+      <figure class="rv"><img src="/assets/ak/garden-meadow.jpg" alt="Waist-high grass mowed to a striped lawn" loading="lazy"><figcaption>Waist-high grass → striped lawn</figcaption></figure>
+      <figure class="rv"><img src="/assets/ak/garden-summerhouse.jpg" alt="Summer house garden tidied and mowed" loading="lazy"><figcaption>Summer house garden tidy-up</figcaption></figure>
+      <figure class="rv"><img src="/assets/ak/steps.jpg" alt="Overgrown stone steps cleared" loading="lazy"><figcaption>Buried steps → fully cleared</figcaption></figure>
+      <figure class="rv"><img src="/assets/ak/garden-turf.jpg" alt="Weedy garden replaced with fresh turf" loading="lazy"><figcaption>Weeds gone → fresh green turf</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat rv"><b data-count="500">0</b><span>Jobs completed</span></div>
+      <div class="stat rv"><b data-count="8">0</b><span>Years experience</span></div>
+      <div class="stat rv"><b data-count="100">0<em>%</em></b><span>Waste removed</span></div>
+      <div class="stat rv"><b data-count="5">0<em>★</em></b><span>Average rating</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="sec" id="process" style="background:var(--bg2);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)">
+  <div class="wrap">
+    <div class="shead">
+      <div>
+        <span class="kicker rv">How it works</span>
+        <h2 class="rv">Four steps to sorted.</h2>
+      </div>
+      <p class="lede rv">No hassle, no surprises. From your first message to a spotless finish, here's exactly how a job with AK Services runs.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv"><span class="n">1</span><div><h4>Send a photo</h4><p>Message us on WhatsApp or give us a call. A quick photo of the garden, carpet or patio is all we need to get started.</p></div></div>
+      <div class="step rv"><span class="n">2</span><div><h4>Free quote</h4><p>We'll come back with a clear, fixed price — no call-out fees and no obligation to book.</p></div></div>
+      <div class="step rv"><span class="n">3</span><div><h4>We get to work</h4><p>We turn up on time with all our own kit, and treat your home like our own from start to finish.</p></div></div>
+      <div class="step rv"><span class="n">4</span><div><h4>All cleared away</h4><p>The transformation's done, the waste is taken with us, and you're left with a spotless result.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:44px">
+      <span class="kicker rv" style="justify-content:center">Kind words</span>
+      <h2 class="rv">Homeowners love the results.</h2>
+    </div>
+    <div class="rev">
+      <div class="rc rv"><span class="stars">★★★★★</span><p>"Our back garden was completely overgrown and Paul had it cleared and mowed in a day. Took all the waste away too. Couldn't be happier — looks like a different house."</p><div class="who"><span class="av">SM</span><div><b>Sarah M.</b><span>Stockport</span></div></div></div>
+      <div class="rc rv"><span class="stars">★★★★★</span><p>"The patio was green and slippery for years. AK Services jet washed the lot and it looks brand new. Fantastic price and lovely to deal with."</p><div class="who"><span class="av">DT</span><div><b>David T.</b><span>Cheadle</span></div></div></div>
+      <div class="rc rv"><span class="stars">★★★★★</span><p>"Had the carpets and stairs deep cleaned before family visiting. Stains I thought were permanent are completely gone. Dried quickly too. Highly recommend."</p><div class="who"><span class="av">LR</span><div><b>Leah R.</b><span>Manchester</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec" id="faq" style="background:var(--bg2);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:44px">
+      <span class="kicker rv" style="justify-content:center">Good to know</span>
+      <h2 class="rv">Before you book.</h2>
+    </div>
+    <div class="faq rv">
+      <details><summary>Which areas do you cover?</summary><div class="ans">We're based in the Manchester area and cover the surrounding North West — Stockport, Cheadle, Heald Green and nearby. Not sure if you're in range? Just ask.</div></details>
+      <details><summary>How much does a job cost?</summary><div class="ans">Every garden and patio is different, so we give a fixed price up front after seeing a photo or having a quick look. No call-out fees and no obligation — the quote is always free.</div></details>
+      <details><summary>Do you take the garden waste away?</summary><div class="ans">Yes. Clippings, cuttings and clearance waste are all removed and disposed of responsibly as part of the job unless you'd prefer to keep it.</div></details>
+      <details><summary>Are you insured?</summary><div class="ans">We're fully insured for the work we carry out, so you're completely covered while we're on site.</div></details>
+      <details><summary>How quickly can you come out?</summary><div class="ans">We often have availability the same week. Message us with what you need and we'll get you booked in as soon as we can.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="sec contact" id="contact">
+  <div class="wrap">
+    <div class="cta-box">
+      <div class="glow a"></div><div class="glow b"></div>
+      <div class="cta-grid">
+        <div class="cta-l">
+          <span class="kicker rv">Free quote</span>
+          <h2 class="rv">Let's get it looking<br>its best.</h2>
+          <p class="lede rv">Tell us what needs doing and we'll send you a fixed price — usually the same day. The quickest way to reach us is a call or WhatsApp.</p>
+          <div class="cinfo rv">
+            <a href="tel:+447747889484"><span class="ic"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.7 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>07747 889484<small>Call or text, 7 days</small></span></a>
+            <a href="https://wa.me/447747889484" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9s-.5-.2-.7.2-.8.9-.9 1.1-.3.2-.6.1a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5.3-.5a.5.5 0 0 0 0-.5L8.9 7c-.2-.5-.4-.4-.6-.4M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2z" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Message on WhatsApp<small>Send us a photo for a fast quote</small></span></a>
+          </div>
+        </div>
+        <form class="q rv" id="quoteForm">
+          <div class="row">
+            <div><label for="nm">Name</label><input id="nm" name="nm" placeholder="Your name" required></div>
+            <div><label for="ph">Phone</label><input id="ph" name="ph" placeholder="Your number" required></div>
+          </div>
+          <div><label for="sv">Service</label><select id="sv" name="sv">
+            <option>Gardening</option><option>Pressure Washing</option><option>Carpet Cleaning</option><option>More than one</option>
+          </select></div>
+          <div><label for="ms">What needs doing?</label><textarea id="ms" name="ms" placeholder="e.g. Back garden overgrown, needs clearing and mowing…"></textarea></div>
+          <button class="btn btn-w mag" type="submit"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2z"/></svg>Send my quote via WhatsApp</button>
+          <p class="fine">Opens WhatsApp with your details ready to send. No spam, ever.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a class="brand" href="#top"><img src="/assets/ak/ak-logo.jpg" alt="AK Services logo">AK<b>&nbsp;Services</b></a>
+      <p>Home &amp; outdoor cleaning specialists — gardening, carpet cleaning and pressure washing across Manchester and the North West.</p>
+    </div>
+    <div class="fcol"><h5>Services</h5><a href="#services">Gardening</a><a href="#services">Carpet Cleaning</a><a href="#services">Pressure Washing</a><a href="#work">Before &amp; After</a></div>
+    <div class="fcol"><h5>Company</h5><a href="#gallery">Gallery</a><a href="#process">How it works</a><a href="#faq">FAQ</a><a href="#contact">Get a quote</a></div>
+    <div class="fcol"><h5>Contact</h5><a href="tel:+447747889484">07747 889484</a><a href="https://wa.me/447747889484" target="_blank" rel="noopener">WhatsApp</a><a href="#contact">Free quote</a></div>
+  </div>
+  <div class="wrap fbot">
+    <span>© <span id="yr">2026</span> AK Services. All rights reserved.</span>
+    <span>Site by <a href="/" >Billy Digitals</a></span>
+  </div>
+</footer>
+
+<a class="fab" href="https://wa.me/447747889484" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2z"/></svg>Message us</a>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ---------- preloader ---------- */
+  var pl = document.getElementById('pl');
+  function unlock(){ document.body.classList.remove('lock'); }
+  if (reduce){ pl.style.display='none'; unlock(); }
+  else {
+    var i = pl.querySelector('.tr i'), pc = pl.querySelector('.pc');
+    var p = 0;
+    gsap.to(i,{scaleX:1,duration:1.1,ease:'power2.inOut'});
+    var t = setInterval(function(){ p=Math.min(100,p+Math.round(Math.random()*18)+6); pc.textContent=p+'%'; if(p>=100){clearInterval(t);} },90);
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        pc.textContent='100%';
+        gsap.to(pl,{yPercent:-101,duration:.9,ease:'power4.inOut',onStart:unlock,onComplete:function(){pl.style.display='none';}});
+        intro();
+      }, 380);
+    });
+  }
+
+  /* ---------- Lenis smooth scroll ---------- */
+  var lenis;
+  if (!reduce && typeof Lenis !== 'undefined'){
+    lenis = new Lenis({ lerp:.11, wheelMultiplier:1 });
+    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    if (window.gsap && gsap.ticker){ lenis.on('scroll', function(){ if(window.ScrollTrigger) ScrollTrigger.update(); }); }
+  }
+
+  if (window.gsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+  /* ---------- nav ---------- */
+  var nav = document.querySelector('.nav');
+  function onScroll(){ nav.classList.toggle('on', window.scrollY>20); }
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  var bar = document.getElementById('bar');
+
+  /* progress bar */
+  if (window.gsap){
+    gsap.to(bar,{scaleX:1,ease:'none',scrollTrigger:{start:0,end:'max',scrub:.3,onUpdate:function(s){bar.style.transform='scaleX('+s.progress+')';}}});
+  }
+
+  /* ---------- drawer ---------- */
+  var drawer=document.getElementById('drawer');
+  document.getElementById('burger').onclick=function(){drawer.classList.add('open');document.body.classList.add('lock');};
+  function closeD(){drawer.classList.remove('open');document.body.classList.remove('lock');}
+  document.getElementById('dx').onclick=closeD;
+  drawer.querySelectorAll('a').forEach(function(a){a.onclick=closeD;});
+
+  /* smooth anchor via lenis */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=a.getAttribute('href'); if(id.length<2)return;
+      var el=document.querySelector(id); if(!el)return;
+      e.preventDefault();
+      if(lenis) lenis.scrollTo(el,{offset:-70}); else el.scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  /* ---------- intro (hero) ---------- */
+  /* GSAP fully owns the hero transforms — hide before reveal (preloader covers any flash) */
+  if(!reduce && window.gsap){
+    gsap.set('.hero .ln>span',{yPercent:118});
+    gsap.set('.hero-copy .kicker,.hero .lede,.hbul li,.hmeta,#heroFig',{opacity:0,y:20});
+  }
+  function intro(){
+    if(reduce||!window.gsap){
+      document.querySelectorAll('.hero .ln>span,.hero-copy .kicker,.hero .lede,.hbul li,.hmeta,#heroFig')
+        .forEach(function(s){s.style.opacity=1;s.style.transform='none';});
+      return;
+    }
+    gsap.timeline({defaults:{ease:'power4.out'}})
+      .to('.hero .ln>span',{yPercent:0,duration:1.1,stagger:.12})
+      .to('.hero-copy .kicker',{opacity:1,y:0,duration:.7},'-=.85')
+      .to('.hero .lede',{opacity:1,y:0,duration:.8},'-=.55')
+      .to('.hbul li',{opacity:1,y:0,duration:.6,stagger:.07},'-=.5')
+      .to('.hmeta',{opacity:1,y:0,duration:.6},'-=.4')
+      .to('#heroFig',{opacity:1,y:0,duration:1.1,ease:'power3.out'},'-=1.25');
+  }
+
+  /* ---------- scroll reveals ---------- */
+  if(window.gsap && window.ScrollTrigger && !reduce){
+    gsap.utils.toArray('.rv').forEach(function(el){
+      if(el.closest('.hero'))return;
+      gsap.fromTo(el,{opacity:0,y:30},{opacity:1,y:0,duration:.9,ease:'power3.out',
+        scrollTrigger:{trigger:el,start:'top 86%'}});
+    });
+    gsap.utils.toArray('.st').forEach(function(g){
+      if(g.closest('.hero'))return;
+      gsap.fromTo(g.children,{opacity:0,y:26},{opacity:1,y:0,duration:.7,ease:'power3.out',stagger:.08,
+        scrollTrigger:{trigger:g,start:'top 88%'}});
+    });
+    /* gallery parallax */
+    gsap.utils.toArray('.gal img').forEach(function(img){
+      gsap.fromTo(img,{yPercent:-6},{yPercent:6,ease:'none',
+        scrollTrigger:{trigger:img,start:'top bottom',end:'bottom top',scrub:true}});
+    });
+    /* count up */
+    gsap.utils.toArray('[data-count]').forEach(function(el){
+      var to=+el.getAttribute('data-count'), obj={v:0};
+      ScrollTrigger.create({trigger:el,start:'top 90%',once:true,onEnter:function(){
+        gsap.to(obj,{v:to,duration:1.6,ease:'power2.out',onUpdate:function(){
+          el.firstChild.nodeValue=Math.round(obj.v);
+        }});
+      }});
+    });
+  } else {
+    document.querySelectorAll('.rv,.st>*').forEach(function(e){e.style.opacity=1;e.style.transform='none';});
+    document.querySelectorAll('[data-count]').forEach(function(e){e.firstChild.nodeValue=e.getAttribute('data-count');});
+  }
+
+  /* ---------- magnetic buttons ---------- */
+  if(!reduce && window.matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.mag').forEach(function(b){
+      b.addEventListener('mousemove',function(e){
+        var r=b.getBoundingClientRect();
+        gsap.to(b,{x:(e.clientX-r.left-r.width/2)*.25,y:(e.clientY-r.top-r.height/2)*.35,duration:.4,ease:'power3.out'});
+      });
+      b.addEventListener('mouseleave',function(){gsap.to(b,{x:0,y:0,duration:.5,ease:'elastic.out(1,.4)'});});
+    });
+  }
+
+  /* ---------- before/after comparison sliders ---------- */
+  function initCmp(cmp){
+    var bef=cmp.querySelector('.bef'), hd=cmp.querySelector('.hd');
+    var pos=50, dragging=false;
+    function set(x){ pos=Math.max(0,Math.min(100,x)); bef.style.clipPath='inset(0 '+(100-pos)+'% 0 0)'; hd.style.left=pos+'%'; }
+    function fromEvent(e){
+      var r=cmp.getBoundingClientRect();
+      var cx=(e.touches?e.touches[0].clientX:e.clientX);
+      set((cx-r.left)/r.width*100);
+    }
+    cmp.addEventListener('mousedown',function(e){dragging=true;fromEvent(e);e.preventDefault();});
+    window.addEventListener('mousemove',function(e){if(dragging)fromEvent(e);});
+    window.addEventListener('mouseup',function(){dragging=false;});
+    cmp.addEventListener('touchstart',function(e){dragging=true;fromEvent(e);},{passive:true});
+    cmp.addEventListener('touchmove',function(e){if(dragging)fromEvent(e);},{passive:true});
+    cmp.addEventListener('touchend',function(){dragging=false;});
+    cmp.setAttribute('tabindex','0');
+    cmp.addEventListener('keydown',function(e){ if(e.key==='ArrowLeft')set(pos-4); if(e.key==='ArrowRight')set(pos+4); });
+    set(50);
+    cmp._set=set;
+    /* subtle auto-hint on first reveal */
+    if(!reduce && window.ScrollTrigger){
+      ScrollTrigger.create({trigger:cmp,start:'top 75%',once:true,onEnter:function(){
+        gsap.fromTo({v:50},{v:50},{v:50,duration:0});
+        var o={v:50};
+        gsap.to(o,{v:66,duration:.7,ease:'power2.inOut',yoyo:true,repeat:1,onUpdate:function(){set(o.v);}});
+      }});
+    }
+  }
+  document.querySelectorAll('[data-cmp]').forEach(initCmp);
+
+  /* ---------- work tabs ---------- */
+  var PROJECTS=[
+    {b:'patio-path',ar:'945/837',k:'Pressure Washing',t:'Moss-covered path, brought back to stone',
+     d:'Years of algae and moss had turned this shaded side-path completely green and slippery. A single pass with the pressure washer lifted it all away, revealing the original slabs underneath.',
+     tags:['Jet washing','Algae removal','Anti-slip finish'],tip:'Turnaround: same day'},
+    {b:'garden-jungle',ar:'945/819',k:'Garden Clearance',t:'From wild jungle to a garden for the kids',
+     d:'This back garden had been left to nature — waist-high growth right up to the door. We cleared the lot, uncovered the path and playhouse, and cut the grass back to a usable lawn.',
+     tags:['Full clearance','Overgrowth removal','Waste taken away'],tip:'Turnaround: 1 day'},
+    {b:'garden-meadow',ar:'945/825',k:'Gardening',t:'Waist-high grass mowed to crisp stripes',
+     d:'A completely overgrown lawn cut, edged and finished with clean mower stripes — with the patio swept and tidied to match.',
+     tags:['Lawn mowing','Edging','Patio tidy'],tip:'Turnaround: half day'},
+    {b:'garden-summerhouse',ar:'945/839',k:'Gardening',t:'Summer house garden, reclaimed',
+     d:'Long grass had swallowed the pathway to the summer house. We mowed and edged the lawn on both sides so the walk-up is clear and neat again.',
+     tags:['Lawn mowing','Path clearing','Edging'],tip:'Turnaround: half day'},
+    {b:'steps',ar:'62/100',k:'Garden Clearance',t:'Buried stone steps, uncovered',
+     d:'Ivy and weeds had completely hidden this flight of garden steps. We cut everything back and swept them off — safe to use and fully visible again.',
+     tags:['Weed removal','Step clearance','Cut back'],tip:'Turnaround: same day'},
+    {b:'garden-turf',ar:'945/819',k:'Gardening',t:'Weedy patch to fresh green turf',
+     d:'A tired, weed-filled corner transformed into a clean, level green lawn beside the shed — a proper usable space again.',
+     tags:['Weed removal','Levelling','Turf finish'],tip:'Turnaround: 1 day'}
+  ];
+  var wAft=document.getElementById('workAft'),wBef=document.getElementById('workBef'),
+      wCmp=document.getElementById('workCmp'),
+      wKick=document.getElementById('wKick'),wTitle=document.getElementById('wTitle'),
+      wDesc=document.getElementById('wDesc'),wTags=document.getElementById('wTags'),
+      wTip=wCmp.parentElement.parentElement.querySelector('.wtip');
+  function loadProject(i){
+    var p=PROJECTS[i];
+    wCmp.style.aspectRatio=p.ar;
+    wAft.src='/assets/ak/'+p.b+'-after.jpg';
+    wBef.src='/assets/ak/'+p.b+'-before.jpg';
+    wKick.textContent=p.k; wTitle.textContent=p.t; wDesc.textContent=p.d;
+    wTags.innerHTML=p.tags.map(function(t){return '<span class="wtag">'+t+'</span>';}).join('');
+    wTip.innerHTML='<svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z" stroke-linejoin="round"/></svg>'+p.tip;
+    if(wCmp._set)wCmp._set(50);
+    if(!reduce&&window.gsap)gsap.fromTo(wCmp,{opacity:.35},{opacity:1,duration:.5});
+    if(!reduce&&window.gsap)gsap.fromTo([wKick,wTitle,wDesc,wTags,wTip],{opacity:0,y:14},{opacity:1,y:0,duration:.5,stagger:.05,ease:'power2.out'});
+  }
+  document.querySelectorAll('#tabs .tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('#tabs .tab').forEach(function(t){t.classList.remove('on');});
+      tab.classList.add('on');
+      loadProject(+tab.getAttribute('data-i'));
+    });
+  });
+
+  /* ---------- quote form -> whatsapp ---------- */
+  document.getElementById('quoteForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var nm=document.getElementById('nm').value.trim(),
+        ph=document.getElementById('ph').value.trim(),
+        sv=document.getElementById('sv').value,
+        ms=document.getElementById('ms').value.trim();
+    var txt='Hi AK Services, I\'d like a quote.%0A%0AName: '+encodeURIComponent(nm)+
+            '%0APhone: '+encodeURIComponent(ph)+
+            '%0AService: '+encodeURIComponent(sv)+
+            '%0ADetails: '+encodeURIComponent(ms);
+    window.open('https://wa.me/447747889484?text='+txt,'_blank');
+  });
+})();
+</script>
+</body></html>
