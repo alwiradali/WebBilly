@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Book Online — Clean My Car · Women's Mobile Valeting, Birmingham</title>
+<meta name="theme-color" content="#FCF4F1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FCF4F1; --blush:#FBE7EC; --rose:#F5A8C0; --pink:#EC4E8C; --magenta:#E01B76; --pink-soft:#F7C3D5;
+  --gold:#D8A79F; --ink:#241A20; --ink-soft:#5A4750; --muted:#9A8189; --line:rgba(224,27,118,.16);
+  --serif:'Playfair Display',Georgia,serif; --sans:'Poppins',-apple-system,sans-serif; --script:'Great Vibes',cursive; --script2:'Dancing Script',cursive;
+  --shadow:0 24px 60px -30px rgba(190,30,110,.4); --ok:#1faa6a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;
+  background:radial-gradient(900px 600px at 85% -10%,#FCE1EA 0%,transparent 55%),radial-gradient(760px 520px at -8% 8%,#FBEAF0 0%,transparent 52%),var(--cream);}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(760px,94vw);margin-inline:auto}
+
+/* header */
+.bk-head{padding:22px 0 6px;text-align:center}
+.bk-head .lock{display:flex;flex-direction:column;align-items:center;gap:.1rem}
+.bk-head .art{width:min(210px,52vw);margin-bottom:-.8rem}
+.bk-head .word{display:flex;align-items:baseline;gap:.24rem;line-height:1}
+.bk-head .word .s{font-family:var(--script);color:#1c1418;font-size:2.5rem}
+.bk-head .word .my{font-family:var(--sans);font-weight:700;font-size:1.15rem;align-self:center;background:linear-gradient(180deg,#FF4DA0,#E01B76);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bk-head .word .hb{align-self:center;margin-left:.05rem}
+.bk-head .sub{font-family:var(--sans);font-weight:600;letter-spacing:.28em;font-size:.6rem;text-transform:uppercase;color:var(--ink);margin-top:.5rem}
+.bk-head .back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--muted);margin-top:.7rem}
+.bk-head .back:hover{color:var(--magenta)}
+
+/* steps bar */
+.steps{display:flex;align-items:center;justify-content:center;gap:.4rem;margin:14px auto 6px;flex-wrap:wrap}
+.stp{display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.82rem;font-weight:500}
+.stp .b{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;font-weight:700;background:#fff;border:1.5px solid var(--line);color:var(--muted);transition:.3s}
+.stp.on{color:var(--magenta)}
+.stp.on .b{background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;border-color:transparent;box-shadow:0 8px 18px -8px rgba(224,27,118,.7)}
+.stp.done .b{background:#fff;border-color:var(--pink);color:var(--magenta)}
+.stp .sep{width:20px;height:1.5px;background:var(--line)}
+@media(max-width:560px){.stp .lbl{display:none}.stp .sep{width:12px}}
+
+/* card shell */
+.panel{background:rgba(255,255,255,.75);border:1px solid var(--line);border-radius:22px;padding:clamp(1.2rem,3.5vw,2rem);box-shadow:var(--shadow);backdrop-filter:blur(8px);margin:10px 0 120px}
+.step-view{display:none;animation:fade .5s cubic-bezier(.16,1,.3,1)}
+.step-view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.h{font-family:var(--serif);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;margin-bottom:.2rem}
+.h em{font-style:italic;color:var(--magenta)}
+.hint{color:var(--ink-soft);font-weight:300;font-size:.95rem;margin-bottom:1.3rem}
+
+/* service options */
+.svc-opt{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.4rem}
+.opt{position:relative;border:1.5px solid var(--line);border-radius:16px;padding:1.05rem 1.1rem;cursor:pointer;transition:.28s;background:#fff;display:flex;gap:1rem;align-items:flex-start}
+.opt:hover{border-color:var(--rose);transform:translateY(-2px);box-shadow:0 18px 34px -22px rgba(190,30,110,.4)}
+.opt.sel{border-color:var(--magenta);box-shadow:0 0 0 3px rgba(236,78,140,.16),0 18px 34px -20px rgba(190,30,110,.5);background:linear-gradient(180deg,#fff,#FFF4F8)}
+.opt .ic{width:44px;height:44px;flex:0 0 auto;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blush),#fff);border:1px solid var(--line)}
+.opt .ic svg{width:23px;height:23px;color:var(--magenta)}
+.opt .txt{flex:1;min-width:0}
+.opt .txt b{font-size:1.08rem;display:block}
+.opt .txt small{color:var(--ink-soft);font-weight:300;font-size:.86rem;display:block;margin-top:.1rem}
+.opt .dur{display:inline-block;margin-top:.45rem;font-size:.72rem;font-weight:600;color:var(--pink);background:#FFEbF3;border-radius:100px;padding:.2rem .6rem}
+.opt .from{text-align:right;flex:0 0 auto}
+.opt .from span{font-size:.66rem;color:var(--muted);display:block}
+.opt .from b{font-family:var(--serif);font-size:1.5rem;color:var(--magenta)}
+.opt .tick{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:linear-gradient(120deg,var(--pink),var(--magenta));display:none;place-items:center}
+.opt.sel .tick{display:grid}
+.opt .tick svg{width:13px;height:13px;color:#fff}
+
+/* vehicle chips */
+.lbl-t{font-weight:600;font-size:.9rem;margin:.4rem 0 .6rem;color:var(--ink)}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:100px;padding:.6rem 1.05rem;cursor:pointer;font-weight:500;font-size:.9rem;transition:.25s;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.chip small{font-size:.7rem;color:var(--muted);font-weight:400}
+.chip:hover{border-color:var(--rose)}
+.chip.sel{border-color:var(--magenta);background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;box-shadow:0 12px 24px -12px rgba(224,27,118,.7)}
+.chip.sel small{color:rgba(255,255,255,.85)}
+
+/* calendar */
+.cal{border:1px solid var(--line);border-radius:16px;padding:1rem;background:#fff}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+.cal-top b{font-family:var(--serif);font-size:1.15rem}
+.cal-nav{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;transition:.25s}
+.cal-nav:hover:not(:disabled){border-color:var(--pink);color:var(--magenta)}
+.cal-nav:disabled{opacity:.3;cursor:not-allowed}
+.cal-nav svg{width:16px;height:16px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-grid .dow{text-align:center;font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;padding:.3rem 0}
+.day{aspect-ratio:1;border:none;background:transparent;border-radius:11px;cursor:pointer;font-weight:500;font-size:.92rem;color:var(--ink);transition:.2s;position:relative}
+.day:hover:not(:disabled):not(.sel){background:var(--blush)}
+.day:disabled{color:#d8c6cd;cursor:not-allowed}
+.day.empty{pointer-events:none}
+.day.sel{background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;box-shadow:0 10px 20px -10px rgba(224,27,118,.75)}
+.day.today:not(.sel)::after{content:"";position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--pink)}
+
+/* time slots */
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:.5rem;margin-top:1rem}
+.slot{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:.6rem 0;text-align:center;cursor:pointer;font-weight:600;font-size:.9rem;transition:.22s}
+.slot:hover{border-color:var(--rose)}
+.slot.sel{border-color:var(--magenta);background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;box-shadow:0 12px 24px -12px rgba(224,27,118,.7)}
+.slot-empty{color:var(--muted);font-size:.9rem;padding:1rem 0;text-align:center;font-weight:300}
+
+/* form */
+.field{margin-bottom:1rem}
+.field label{display:block;font-weight:600;font-size:.85rem;margin-bottom:.35rem}
+.field label .req{color:var(--magenta)}
+.field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:.8rem .9rem;font-family:inherit;font-size:.95rem;color:var(--ink);background:#fff;transition:.25s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(236,78,140,.14)}
+.field textarea{resize:vertical;min-height:84px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.radio-row{display:flex;gap:.6rem;flex-wrap:wrap}
+.radio{flex:1;min-width:130px;border:1.5px solid var(--line);border-radius:12px;padding:.7rem .9rem;cursor:pointer;display:flex;align-items:center;gap:.55rem;transition:.25s;font-size:.9rem;font-weight:500;background:#fff}
+.radio:hover{border-color:var(--rose)}
+.radio.sel{border-color:var(--magenta);background:#FFF4F8}
+.radio .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;transition:.2s}
+.radio.sel .dot{border-color:var(--magenta);background:radial-gradient(circle at center,var(--magenta) 0 42%,#fff 46%)}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;color:var(--ink-soft);cursor:pointer;background:#FFF4F8;border:1px solid var(--line);border-radius:12px;padding:.75rem .9rem}
+.check input{margin-top:.15rem;accent-color:var(--magenta);width:17px;height:17px;flex:0 0 auto}
+
+/* review */
+.rev{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-bottom:1.2rem}
+.rev .r{display:flex;justify-content:space-between;gap:1rem;padding:.85rem 1.1rem;font-size:.94rem}
+.rev .r:not(:last-child){border-bottom:1px solid var(--blush)}
+.rev .r span{color:var(--muted)}
+.rev .r b{font-weight:600;text-align:right}
+.rev .r.total{background:#FFF4F8}
+.rev .r.total b{font-family:var(--serif);font-size:1.4rem;color:var(--magenta)}
+.notebox{font-size:.82rem;color:var(--ink-soft);background:#FFF9FB;border:1px dashed var(--line);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;line-height:1.55}
+
+/* sticky footer bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -14px 40px -24px rgba(190,30,110,.5)}
+.bar-in{width:min(760px,94vw);margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 0}
+.bar .sum{min-width:0}
+.bar .sum b{display:block;font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .sum span{font-size:.78rem;color:var(--muted)}
+.bar .sum .pp{color:var(--magenta);font-weight:700}
+.bar-btns{display:flex;gap:.5rem;flex:0 0 auto}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:.95rem;padding:.85rem 1.5rem;border-radius:100px;transition:.28s cubic-bezier(.16,1,.3,1);display:inline-flex;align-items:center;gap:.5rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{color:#fff;background:linear-gradient(120deg,var(--pink),var(--magenta));box-shadow:0 14px 30px -12px rgba(224,27,118,.7)}
+.btn-primary:not(:disabled):hover{transform:translateY(-2px)}
+.btn-ghost{color:var(--ink);background:#fff;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--pink);color:var(--magenta)}
+@media(max-width:560px){.btn{padding:.8rem 1.15rem;font-size:.9rem}.bar .sum b{font-size:.86rem}}
+
+/* success */
+.done-wrap{text-align:center;padding:1rem 0 2rem}
+.done-badge{width:88px;height:88px;border-radius:50%;margin:0 auto 1.2rem;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink),var(--magenta));box-shadow:0 20px 44px -18px rgba(224,27,118,.7);animation:pop .6s cubic-bezier(.16,1.4,.3,1)}
+.done-badge svg{width:44px;height:44px;color:#fff}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.done-wrap h2{font-family:var(--serif);font-size:1.9rem;margin-bottom:.4rem}
+.done-wrap p{color:var(--ink-soft);font-weight:300;max-width:460px;margin:0 auto 1.4rem}
+.done-actions{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+.spin{width:17px;height:17px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{color:#c62b57;font-size:.86rem;margin-top:.8rem;text-align:center;display:none}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="bk-head">
+    <a href="/templates/clean-my-car" class="lock" aria-label="Clean My Car">
+      <svg class="art" viewBox="0 0 460 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bArc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7B8C8"/><stop offset=".5" stop-color="#E01B76"/><stop offset="1" stop-color="#F7B8C8"/></linearGradient>
+          <linearGradient id="bPink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF4DA0"/><stop offset="1" stop-color="#E01B76"/></linearGradient>
+        </defs>
+        <path d="M92 150 A175 150 0 0 1 372 150" stroke="url(#bArc)" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+        <path d="M392 44l3.4 9L405 56l-9.6 3.4L392 69l-3.4-9.6L379 56l9.6-3.6z" fill="#F03E8E"/>
+        <path d="M420 74l2.3 6.2 6.2 2.3-6.2 2.3L420 93l-2.3-6.2L411.5 84.5l6.2-2.3z" fill="#F5A8C0"/>
+        <circle cx="70" cy="128" r="8.5" stroke="#EC4E8C" stroke-width="2.4"/><circle cx="52" cy="146" r="5.5" stroke="#F5A8C0" stroke-width="2"/><circle cx="73" cy="152" r="4" fill="#F7C3D5"/>
+        <path d="M72 158 C112 146 146 118 214 116 C276 114 328 126 372 148 C384 154 396 160 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M150 126 C196 110 258 108 306 124 C324 130 340 140 352 150" stroke="url(#bPink)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M116 152 C158 132 210 128 262 132 C292 134 318 142 340 154" stroke="#1c1418" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+        <path d="M72 158 C92 168 126 170 168 170 L344 170 C378 170 398 168 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M262 126 C296 124 322 134 340 150 C316 156 288 154 270 145 C260 140 258 131 262 126 Z" fill="#1c1418"/>
+        <path d="M80 150 C96 143 118 144 130 151 C116 158 96 158 80 150 Z" fill="#1c1418"/>
+      </svg>
+      <div class="word"><span class="s">Clean</span><span class="my">MY</span><span class="s">Car</span>
+        <svg class="hb" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21c-1-1-8-6-8-12 0-3 2.5-5 5-5 1.8 0 3 1 3 2 0-1 1.2-2 3-2 2.5 0 5 2 5 5 0 6-7 11-8 12Z" fill="none" stroke="#F03E8E" stroke-width="1.8"/></svg>
+      </div>
+      <div class="sub">Women's Mobile Valeting · Birmingham</div>
+    </a>
+    <a href="/templates/clean-my-car" class="back">← Back to website</a>
+  </div>
+
+  <div class="steps" id="stepsBar">
+    <div class="stp on" data-s="1"><span class="b">1</span><span class="lbl">Service</span></div>
+    <span class="sep"></span>
+    <div class="stp" data-s="2"><span class="b">2</span><span class="lbl">Date &amp; time</span></div>
+    <span class="sep"></span>
+    <div class="stp" data-s="3"><span class="b">3</span><span class="lbl">Details</span></div>
+    <span class="sep"></span>
+    <div class="stp" data-s="4"><span class="b">4</span><span class="lbl">Confirm</span></div>
+  </div>
+
+  <div class="panel">
+
+    <!-- STEP 1 -->
+    <section class="step-view active" data-view="1">
+      <h2 class="h">Choose your <em>service</em></h2>
+      <p class="hint">Every wash includes snow foam. Pick a service, then your vehicle size.</p>
+      <div class="svc-opt" id="svcOpt"></div>
+      <div class="lbl-t">Vehicle size</div>
+      <div class="chips" id="vehChips"></div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step-view" data-view="2">
+      <h2 class="h">Pick a <em>date &amp; time</em></h2>
+      <p class="hint">Choose when you'd like us to come to you. We'll confirm your slot after booking.</p>
+      <div class="cal">
+        <div class="cal-top">
+          <button class="cal-nav" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <b id="calLabel"></b>
+          <button class="cal-nav" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="lbl-t" style="margin-top:1.2rem">Available times <span id="slotDate" style="color:var(--muted);font-weight:400"></span></div>
+      <div id="slotWrap"><p class="slot-empty">Please pick a date first.</p></div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step-view" data-view="3">
+      <h2 class="h">Your <em>details</em></h2>
+      <p class="hint">So we know where to come and how to confirm your booking.</p>
+      <div class="row2">
+        <div class="field"><label>Full name <span class="req">*</span></label><input id="fName" type="text" autocomplete="name" placeholder="Jane Smith"></div>
+        <div class="field"><label>Phone <span class="req">*</span></label><input id="fPhone" type="tel" autocomplete="tel" placeholder="07…"></div>
+      </div>
+      <div class="field"><label>Email <span class="req">*</span></label><input id="fEmail" type="email" autocomplete="email" placeholder="you@email.com"></div>
+      <div class="field"><label>Full address &amp; postcode <span class="req">*</span></label><input id="fAddr" type="text" autocomplete="street-address" placeholder="12 Rose Street, Birmingham, B1 2CD"></div>
+      <div class="field">
+        <label>Where will the car be parked?</label>
+        <div class="radio-row" id="parkRow">
+          <div class="radio" data-v="Driveway"><span class="dot"></span>Driveway</div>
+          <div class="radio" data-v="On-street"><span class="dot"></span>On-street</div>
+        </div>
+      </div>
+      <div class="field"><label>Notes (car make/model, anything else)</label><textarea id="fNotes" placeholder="e.g. Black BMW 1 Series — quite muddy after a trip away"></textarea></div>
+      <label class="check"><input type="checkbox" id="fAccess"><span>I can provide access to a <strong>water tap</strong> and a <strong>power socket</strong> on the day (an extension lead is fine).</span></label>
+      <input type="text" id="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step-view" data-view="4">
+      <h2 class="h">Review &amp; <em>confirm</em></h2>
+      <p class="hint">Double-check everything looks right, then send your booking request.</p>
+      <div class="rev" id="review"></div>
+      <div class="notebox">💧🔌 Please remember we'll need access to a water tap and a power socket on the day. This sends a booking <b>request</b> — you'll get an email straight away and we'll message you to confirm the exact slot.</div>
+      <p class="err" id="errMsg"></p>
+    </section>
+
+    <!-- SUCCESS -->
+    <section class="step-view" data-view="done">
+      <div class="done-wrap">
+        <div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h2>Booking request sent! 💗</h2>
+        <p id="doneMsg">Thank you — we've emailed your confirmation and we'll message you shortly to lock in your slot.</p>
+        <div class="done-actions">
+          <a id="doneWa" href="#" target="_blank" rel="noopener" class="btn btn-primary"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6a10 10 0 0 1-3.8-3.4c-.3-.4-.9-1.3-.9-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2 0 .4-.1.5l-.3.4c-.2.2-.3.3-.1.6.2.3.8 1.3 1.7 2 .9.7 2 .8 2.4.9.2 0 .4 0 .5-.2l.6-.7c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.3.1.1.1.6-.1 1.3z"/></svg>Message on WhatsApp</a>
+          <a href="/templates/clean-my-car" class="btn btn-ghost">Back to website</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- sticky action bar -->
+<div class="bar" id="bar">
+  <div class="bar-in">
+    <div class="sum" id="barSum"><b>Choose a service</b><span>Snow foam included on every wash</span></div>
+    <div class="bar-btns">
+      <button class="btn btn-ghost hidden" id="btnBack">Back</button>
+      <button class="btn btn-primary" id="btnNext" disabled>Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var SERVICES = {
+    wash:{key:'wash',name:'Wash & Dry',tag:'Outside only',desc:'A thorough exterior wash & dry — clean, shiny and refreshed.',dur:'1h 30m',
+      icon:'<path d="M12 2s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+      prices:{small:10,medium:12,suv:15}},
+    standard:{key:'standard',name:'Standard Valet',tag:'Inside & out',desc:'Everyday clean inside and out to keep your car fresh.',dur:'3h',
+      icon:'<path d="M3 13l2-5a3 3 0 0 1 3-2h8a3 3 0 0 1 3 2l2 5v6H3v-6z"/><circle cx="7" cy="16" r="1.4"/><circle cx="17" cy="16" r="1.4"/>',
+      prices:{small:30,medium:30,suv:45}},
+    premium:{key:'premium',name:'Premium Valet',tag:'Showroom finish',desc:'Our most detailed valet — a full showroom finish, in & out.',dur:'4h',
+      icon:'<path d="M3 8l4 3 5-7 5 7 4-3-2 11H5L3 8z"/>',
+      prices:{small:50,medium:50,suv:65}}
+  };
+  var VEH = [
+    {key:'small',label:'Small',eg:'Fiat 500, Aygo'},
+    {key:'medium',label:'Medium',eg:'Golf, Focus'},
+    {key:'suv',label:'Large SUV',eg:'X5, Q7, RR'}
+  ];
+  var state = {step:1, service:null, vehicle:null, date:null, time:null, parking:'Driveway'};
+
+  var $ = function(s){return document.querySelector(s)};
+  var fmtGBP = function(n){return '£'+n};
+
+  /* ---- Step 1: services ---- */
+  var svcOpt = $('#svcOpt');
+  Object.keys(SERVICES).forEach(function(k){
+    var s = SERVICES[k];
+    var lowest = Math.min(s.prices.small,s.prices.medium,s.prices.suv);
+    var el = document.createElement('div');
+    el.className='opt'; el.dataset.k=k;
+    el.innerHTML =
+      '<div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>'+
+      '<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">'+s.icon+'</svg></div>'+
+      '<div class="txt"><b>'+s.name+'</b><small>'+s.desc+'</small><span class="dur">⏱ '+s.dur+'</span></div>'+
+      '<div class="from"><span>from</span><b>'+fmtGBP(lowest)+'</b></div>';
+    el.addEventListener('click',function(){ selectService(k); });
+    svcOpt.appendChild(el);
+  });
+  var vehChips = $('#vehChips');
+  VEH.forEach(function(v){
+    var c = document.createElement('div');
+    c.className='chip'; c.dataset.k=v.key;
+    c.innerHTML = v.label+'<small>'+v.eg+'</small>';
+    c.addEventListener('click',function(){ selectVehicle(v.key); });
+    vehChips.appendChild(c);
+  });
+
+  function selectService(k){
+    state.service=k;
+    svcOpt.querySelectorAll('.opt').forEach(function(o){o.classList.toggle('sel',o.dataset.k===k)});
+    renderVehPrices(); updateBar();
+  }
+  function selectVehicle(k){
+    state.vehicle=k;
+    vehChips.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('sel',c.dataset.k===k)});
+    updateBar();
+  }
+  function renderVehPrices(){
+    if(!state.service) return;
+    var s=SERVICES[state.service];
+    vehChips.querySelectorAll('.chip').forEach(function(c){
+      var p=s.prices[c.dataset.k];
+      var small=c.querySelector('small');
+      var base=VEH.filter(function(v){return v.key===c.dataset.k})[0];
+      small.textContent = fmtGBP(p);
+    });
+  }
+
+  /* ---- Step 2: calendar ---- */
+  var today = new Date(); today.setHours(0,0,0,0);
+  var view = new Date(today.getFullYear(), today.getMonth(), 1);
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DOW=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  function renderCal(){
+    $('#calLabel').textContent = MON[view.getMonth()]+' '+view.getFullYear();
+    var grid=$('#calGrid'); grid.innerHTML='';
+    DOW.forEach(function(d){var e=document.createElement('div');e.className='dow';e.textContent=d;grid.appendChild(e);});
+    var first=new Date(view.getFullYear(),view.getMonth(),1);
+    var start=first.getDay();
+    var days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+    for(var i=0;i<start;i++){var e=document.createElement('div');e.className='day empty';grid.appendChild(e);}
+    var maxDate=new Date(today); maxDate.setDate(maxDate.getDate()+90);
+    for(var d=1;d<=days;d++){
+      var dt=new Date(view.getFullYear(),view.getMonth(),d);
+      var b=document.createElement('button'); b.className='day'; b.textContent=d;
+      if(dt.getTime()===today.getTime()) b.classList.add('today');
+      if(dt<today || dt>maxDate){ b.disabled=true; }
+      else {
+        (function(dt){ b.addEventListener('click',function(){ selectDate(dt); }); })(dt);
+      }
+      if(state.date && dt.getTime()===state.date.getTime()) b.classList.add('sel');
+      grid.appendChild(b);
+    }
+    var prevDisabled = (view.getFullYear()===today.getFullYear() && view.getMonth()===today.getMonth());
+    $('#calPrev').disabled = prevDisabled;
+  }
+  $('#calPrev').addEventListener('click',function(){ view.setMonth(view.getMonth()-1); renderCal(); });
+  $('#calNext').addEventListener('click',function(){ view.setMonth(view.getMonth()+1); renderCal(); });
+
+  function prettyDate(dt){
+    var wd=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dt.getDay()];
+    return wd+' '+dt.getDate()+' '+MON[dt.getMonth()]+' '+dt.getFullYear();
+  }
+  function selectDate(dt){
+    state.date=dt; state.time=null;
+    renderCal(); renderSlots(); updateBar();
+    $('#slotDate').textContent = '· '+prettyDate(dt);
+  }
+  function durationMins(){ return state.service==='premium'?240:(state.service==='standard'?180:90); }
+  function renderSlots(){
+    var wrap=$('#slotWrap');
+    if(!state.date){ wrap.innerHTML='<p class="slot-empty">Please pick a date first.</p>'; return; }
+    var open=9*60, close=18*60, dur=durationMins(), step=30;
+    var isToday = state.date.getTime()===today.getTime();
+    var nowM = isToday ? (new Date().getHours()*60+new Date().getMinutes()+60) : -1; // 1h lead time
+    var out=[], any=false;
+    for(var m=open;m+dur<=close;m+=step){
+      if(isToday && m<nowM) continue;
+      any=true;
+      var hh=Math.floor(m/60), mm=m%60;
+      var lbl=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+      out.push('<div class="slot" data-t="'+lbl+'">'+lbl+'</div>');
+    }
+    if(!any){ wrap.innerHTML='<p class="slot-empty">No slots left for this day — please pick another date.</p>'; return; }
+    wrap.innerHTML='<div class="slots">'+out.join('')+'</div>';
+    wrap.querySelectorAll('.slot').forEach(function(s){
+      if(state.time===s.dataset.t) s.classList.add('sel');
+      s.addEventListener('click',function(){
+        state.time=s.dataset.t;
+        wrap.querySelectorAll('.slot').forEach(function(x){x.classList.remove('sel')});
+        s.classList.add('sel'); updateBar();
+      });
+    });
+  }
+
+  /* ---- Step 3: details ---- */
+  $('#parkRow').querySelectorAll('.radio').forEach(function(r){
+    r.addEventListener('click',function(){
+      state.parking=r.dataset.v;
+      $('#parkRow').querySelectorAll('.radio').forEach(function(x){x.classList.toggle('sel',x===r)});
+    });
+  });
+  $('#parkRow').querySelector('.radio').classList.add('sel');
+  ['fName','fPhone','fEmail','fAddr','fAccess'].forEach(function(id){
+    $('#'+id).addEventListener('input',updateBar);
+  });
+
+  function priceOf(){ if(!state.service||!state.vehicle) return null; return SERVICES[state.service].prices[state.vehicle]; }
+  function vehLabel(){ var v=VEH.filter(function(x){return x.key===state.vehicle})[0]; return v?v.label:''; }
+
+  /* ---- navigation ---- */
+  function go(step){
+    state.step=step;
+    document.querySelectorAll('.step-view').forEach(function(v){v.classList.toggle('active',v.dataset.view==String(step))});
+    $('#stepsBar').querySelectorAll('.stp').forEach(function(s){
+      var n=+s.dataset.s; s.classList.toggle('on',n===step); s.classList.toggle('done',n<step);
+    });
+    $('#btnBack').classList.toggle('hidden',step===1);
+    if(step===4){ buildReview(); $('#btnNext').innerHTML='Confirm booking'; }
+    else { $('#btnNext').innerHTML='Next'; }
+    window.scrollTo({top:0,behavior:'smooth'});
+    updateBar();
+  }
+  function stepValid(step){
+    if(step===1) return state.service&&state.vehicle;
+    if(step===2) return state.date&&state.time;
+    if(step===3){
+      var okEmail=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($('#fEmail').value.trim());
+      return $('#fName').value.trim()&&$('#fPhone').value.trim()&&okEmail&&$('#fAddr').value.trim()&&$('#fAccess').checked;
+    }
+    if(step===4) return true;
+    return false;
+  }
+  function updateBar(){
+    var sum=$('#barSum');
+    var p=priceOf();
+    if(state.service){
+      var s=SERVICES[state.service];
+      var line=s.name+(state.vehicle?(' · '+vehLabel()):'');
+      var extra = state.date&&state.time ? (prettyShort(state.date)+' · '+state.time) : (s.dur+' · snow foam included');
+      sum.innerHTML='<b>'+line+(p!=null?(' — <span class="pp">'+fmtGBP(p)+'</span>'):'')+'</b><span>'+extra+'</span>';
+    }
+    $('#btnNext').disabled = !stepValid(state.step);
+  }
+  function prettyShort(dt){ return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()]+' '+dt.getDate()+' '+MON[dt.getMonth()].slice(0,3); }
+
+  $('#btnBack').addEventListener('click',function(){ if(state.step>1) go(state.step-1); });
+  $('#btnNext').addEventListener('click',function(){
+    if(!stepValid(state.step)) return;
+    if(state.step<4){ go(state.step+1); }
+    else { submit(); }
+  });
+
+  /* ---- review + submit ---- */
+  function bookingPayload(){
+    var s=SERVICES[state.service];
+    return {
+      service: s.name,
+      vehicle: vehLabel(),
+      price: fmtGBP(priceOf()),
+      duration: s.dur,
+      date: prettyDate(state.date),
+      time: state.time,
+      name: $('#fName').value.trim(),
+      email: $('#fEmail').value.trim(),
+      phone: $('#fPhone').value.trim(),
+      address: $('#fAddr').value.trim(),
+      parking: state.parking,
+      notes: $('#fNotes').value.trim(),
+      botcheck: $('#botcheck').value
+    };
+  }
+  function buildReview(){
+    var d=bookingPayload();
+    var rows=[['Service',d.service],['Vehicle',d.vehicle],['Date',d.date],['Time',d.time],
+      ['Name',d.name],['Phone',d.phone],['Email',d.email],['Address',d.address],['Parking',d.parking]];
+    if(d.notes) rows.push(['Notes',d.notes]);
+    var html=rows.map(function(r){return '<div class="r"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join('');
+    html+='<div class="r total"><span>Total</span><b>'+d.price+'</b></div>';
+    $('#review').innerHTML=html;
+  }
+  function esc(s){return String(s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]})}
+
+  function waLink(d){
+    var t='Hi Clean My Car! I\'d like to book:\n\n'+
+      'Service: '+d.service+' ('+d.vehicle+') — '+d.price+'\n'+
+      'When: '+d.date+' at '+d.time+'\n'+
+      'Name: '+d.name+'\n'+'Phone: '+d.phone+'\n'+'Address: '+d.address+'\n'+
+      'Parking: '+d.parking+(d.notes?('\nNotes: '+d.notes):'');
+    return 'https://wa.me/447513286544?text='+encodeURIComponent(t);
+  }
+
+  function submit(){
+    var d=bookingPayload();
+    var btn=$('#btnNext'); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Sending…';
+    $('#errMsg').style.display='none';
+    $('#doneWa').href=waLink(d);
+
+    fetch('/api/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+      .then(function(res){
+        if(res.ok){ finish(d,true); }
+        else { throw new Error(res.j&&res.j.error||'Something went wrong'); }
+      })
+      .catch(function(e){
+        // Fallback — still let them book via WhatsApp
+        $('#errMsg').textContent = 'We couldn\'t send it automatically. Tap “Message on WhatsApp” below to send your booking straight to us.';
+        $('#errMsg').style.display='block';
+        finish(d,false);
+      })
+      .finally(function(){ btn.disabled=false; btn.innerHTML='Confirm booking'; });
+  }
+  function finish(d,emailed){
+    document.querySelectorAll('.step-view').forEach(function(v){v.classList.remove('active')});
+    document.querySelector('[data-view="done"]').classList.add('active');
+    $('#stepsBar').querySelectorAll('.stp').forEach(function(s){s.classList.add('done');s.classList.remove('on')});
+    $('#bar').style.display='none';
+    $('#doneWa').href=waLink(d);
+    $('#doneMsg').textContent = emailed
+      ? 'Thank you, '+d.name.split(' ')[0]+'! We\'ve emailed your confirmation to '+d.email+' and we\'ll message you shortly to lock in your slot.'
+      : 'Almost there — please tap “Message on WhatsApp” to send us your booking and we\'ll confirm your slot.';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  /* preselect from ?service= */
+  var qs=new URLSearchParams(location.search);
+  var pre=qs.get('service');
+  if(pre&&SERVICES[pre]){ selectService(pre); }
+  renderCal(); updateBar();
+})();
+</script>
+<!-- ============ FLOATING BUBBLES: WhatsApp + Chatbot ============ -->
+<style>
+.fab-stack{position:fixed;right:18px;bottom:18px;z-index:80;display:flex;flex-direction:column;gap:.7rem;align-items:flex-end}
+.fab{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;position:relative;
+  background:linear-gradient(135deg,var(--pink),var(--magenta));box-shadow:0 16px 34px -10px rgba(224,27,118,.7);
+  color:#fff;transition:transform .3s cubic-bezier(.16,1,.3,1);animation:fabFloat 3.6s ease-in-out infinite}
+.fab:nth-child(2){animation-delay:.5s}
+.fab:hover{transform:translateY(-4px) scale(1.05)}
+.fab svg{width:28px;height:28px}
+.fab .badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:#fff;color:var(--magenta);
+  font-size:.66rem;font-weight:800;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.fab .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--pink);animation:fabRing 2.4s ease-out infinite;pointer-events:none}
+@keyframes fabFloat{50%{transform:translateY(-7px)}}
+@keyframes fabRing{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+.fab-label{position:absolute;right:70px;top:50%;transform:translateY(-50%);white-space:nowrap;background:#fff;color:var(--ink);
+  font-size:.8rem;font-weight:600;padding:.45rem .8rem;border-radius:100px;box-shadow:0 10px 24px -12px rgba(190,30,110,.5);
+  opacity:0;pointer-events:none;transition:.3s}
+.fab:hover .fab-label{opacity:1;right:66px}
+
+.chatbox{position:fixed;right:18px;bottom:88px;z-index:81;width:min(370px,calc(100vw - 36px));height:min(560px,calc(100vh - 130px));
+  background:#fff;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 40px 90px -30px rgba(190,30,110,.55),0 0 0 1px rgba(224,27,118,.1);
+  transform-origin:bottom right;opacity:0;transform:translateY(16px) scale(.94);pointer-events:none;transition:.34s cubic-bezier(.16,1,.3,1)}
+.chatbox.open{opacity:1;transform:none;pointer-events:auto}
+.cb-head{background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;padding:1rem 1.1rem;display:flex;align-items:center;gap:.7rem;position:relative}
+.cb-head .av{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:0 0 auto;backdrop-filter:blur(4px)}
+.cb-head .av svg{width:24px;height:24px}
+.cb-head b{font-size:1rem;display:block;line-height:1.1;font-family:var(--serif,'Playfair Display',serif)}
+.cb-head span{font-size:.74rem;opacity:.9;display:flex;align-items:center;gap:.35rem}
+.cb-head span::before{content:"";width:7px;height:7px;border-radius:50%;background:#5cf0a8;box-shadow:0 0 0 3px rgba(92,240,168,.3)}
+.cb-close{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:grid;place-items:center;transition:.25s;flex:0 0 auto}
+.cb-close:hover{background:rgba(255,255,255,.3)}
+.cb-close svg{width:16px;height:16px}
+.cb-body{flex:1;overflow-y:auto;padding:1rem;background:linear-gradient(180deg,#FFF6FA,#FCF4F1);display:flex;flex-direction:column;gap:.6rem;scroll-behavior:smooth}
+.msg{max-width:82%;padding:.65rem .85rem;border-radius:16px;font-size:.9rem;line-height:1.5;animation:msgIn .34s cubic-bezier(.16,1,.3,1)}
+.msg.bot{align-self:flex-start;background:#fff;color:var(--ink);border:1px solid rgba(224,27,118,.1);border-bottom-left-radius:5px;box-shadow:0 6px 16px -12px rgba(190,30,110,.5)}
+.msg.user{align-self:flex-end;background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;border-bottom-right-radius:5px}
+.msg a.cb-btn{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;margin-right:.35rem;padding:.5rem .85rem;border-radius:100px;
+  background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;font-weight:600;font-size:.82rem;text-decoration:none}
+.msg a.cb-btn.ghost{background:#fff;color:var(--magenta);border:1.5px solid rgba(224,27,118,.25)}
+.msg a.cb-btn svg{width:15px;height:15px}
+.msg .price-line{display:flex;justify-content:space-between;gap:1rem;padding:.15rem 0}
+.msg .price-line b{color:var(--magenta)}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cb-typing{align-self:flex-start;background:#fff;border:1px solid rgba(224,27,118,.1);border-radius:16px;border-bottom-left-radius:5px;padding:.7rem .9rem;display:flex;gap:4px}
+.cb-typing i{width:7px;height:7px;border-radius:50%;background:var(--rose);animation:blink 1.2s infinite}
+.cb-typing i:nth-child(2){animation-delay:.2s}.cb-typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.cb-quick{display:flex;gap:.4rem;flex-wrap:wrap;padding:.55rem .7rem;background:#fff;border-top:1px solid rgba(224,27,118,.1)}
+.cb-quick button{background:#FFF0F6;border:1px solid rgba(224,27,118,.18);color:var(--magenta);font-family:inherit;font-weight:600;
+  font-size:.78rem;padding:.4rem .7rem;border-radius:100px;cursor:pointer;transition:.22s;white-space:nowrap}
+.cb-quick button:hover{background:var(--magenta);color:#fff;border-color:transparent}
+.cb-input{display:flex;gap:.5rem;padding:.7rem;border-top:1px solid rgba(224,27,118,.1);background:#fff}
+.cb-input input{flex:1;border:1.5px solid rgba(224,27,118,.16);border-radius:100px;padding:.65rem .95rem;font-family:inherit;font-size:.9rem;color:var(--ink);outline:none;transition:.25s}
+.cb-input input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(236,78,140,.13)}
+.cb-input button{width:42px;height:42px;border-radius:50%;border:none;flex:0 0 auto;cursor:pointer;background:linear-gradient(120deg,var(--pink),var(--magenta));color:#fff;display:grid;place-items:center}
+.cb-input button svg{width:19px;height:19px}
+@media (prefers-reduced-motion:reduce){.fab,.fab .ring{animation:none}}
+@media (max-width:480px){.chatbox{right:10px;left:10px;width:auto;bottom:84px}.fab-stack{right:14px;bottom:14px}}
+</style>
+
+<div class="fab-stack">
+  <a class="fab" href="https://wa.me/447513286544?text=Hi%20Clean%20My%20Car%2C%20I%27d%20like%20to%20ask%20about%20a%20valet" target="_blank" rel="noopener" aria-label="WhatsApp us">
+    <span class="ring"></span>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6a10 10 0 0 1-3.8-3.4c-.3-.4-.9-1.3-.9-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2 0 .4-.1.5l-.3.4c-.2.2-.3.3-.1.6.2.3.8 1.3 1.7 2 .9.7 2 .8 2.4.9.2 0 .4 0 .5-.2l.6-.7c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.3.1.1.1.6-.1 1.3z"/></svg>
+    <span class="fab-label">Chat on WhatsApp</span>
+  </a>
+  <button class="fab" id="cbToggle" aria-label="Open chat">
+    <span class="ring"></span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/><path d="M8.5 11.5h.01M12.5 11.5h.01M16.5 11.5h.01"/></svg>
+    <span class="badge">1</span>
+    <span class="fab-label">Ask us anything</span>
+  </button>
+</div>
+
+<div class="chatbox" id="chatbox" role="dialog" aria-label="Clean My Car chat">
+  <div class="cb-head">
+    <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M5 13l1.5-4A2 2 0 0 1 8.4 8h7.2a2 2 0 0 1 1.9 1l1.5 4v5H5v-5z"/><circle cx="8" cy="16" r="1.2" fill="#fff"/><circle cx="16" cy="16" r="1.2" fill="#fff"/></svg></div>
+    <div><b>Clean My Car</b><span>We usually reply in minutes</span></div>
+    <button class="cb-close" id="cbClose" aria-label="Close chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="cb-body" id="cbBody"></div>
+  <div class="cb-quick" id="cbQuick"></div>
+  <form class="cb-input" id="cbForm">
+    <input id="cbInput" type="text" placeholder="Type your message…" autocomplete="off">
+    <button type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+  </form>
+</div>
+
+<script>
+(function(){
+  var toggle=document.getElementById('cbToggle'), box=document.getElementById('chatbox'),
+      body=document.getElementById('cbBody'), quick=document.getElementById('cbQuick'),
+      form=document.getElementById('cbForm'), input=document.getElementById('cbInput'),
+      badge=toggle.querySelector('.badge'), started=false;
+  var BOOK='/templates/clean-my-car-book', WA='https://wa.me/447513286544', TEL='tel:07513286544';
+
+  var QUICK=[['💷 Prices','prices'],['📅 Book a valet','book'],['📍 Areas','area'],['⏱ How long?','time'],['✨ What\'s included?','included'],['💬 Human','human']];
+  function renderQuick(){ quick.innerHTML=''; QUICK.forEach(function(q){ var b=document.createElement('button'); b.textContent=q[0]; b.onclick=function(){ handle(q[1],q[0]); }; quick.appendChild(b); }); }
+
+  function scroll(){ body.scrollTop=body.scrollHeight; }
+  function addUser(t){ var m=document.createElement('div'); m.className='msg user'; m.textContent=t; body.appendChild(m); scroll(); }
+  function addBot(html,cb){
+    var typing=document.createElement('div'); typing.className='cb-typing'; typing.innerHTML='<i></i><i></i><i></i>';
+    body.appendChild(typing); scroll();
+    setTimeout(function(){
+      typing.remove();
+      var m=document.createElement('div'); m.className='msg bot'; m.innerHTML=html; body.appendChild(m); scroll();
+      if(cb) cb();
+    }, 520);
+  }
+  var waBtn='<a class="cb-btn" href="'+WA+'?text=Hi%20Clean%20My%20Car!" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2z"/></svg>WhatsApp</a>';
+  var bookBtn='<a class="cb-btn" href="'+BOOK+'">📅 Book online</a>';
+
+  var ANSWERS={
+    greeting:function(){return "Hi lovely! 👋 I'm the Clean My Car helper. I can tell you about our <b>prices</b>, <b>services</b>, <b>areas we cover</b>, or help you <b>book</b>. What would you like to know?";},
+    prices:function(){return "Here's our pricing 💷 (snow foam included on every wash):"+
+      "<div style='margin-top:.5rem'>"+
+      "<div class='price-line'><span>Wash &amp; Dry — Small</span><b>£10</b></div>"+
+      "<div class='price-line'><span>Wash &amp; Dry — Medium</span><b>£12</b></div>"+
+      "<div class='price-line'><span>Wash &amp; Dry — Large SUV</span><b>£15</b></div>"+
+      "<div class='price-line'><span>Standard Valet — Sm/Med</span><b>£30</b></div>"+
+      "<div class='price-line'><span>Standard Valet — SUV</span><b>£45</b></div>"+
+      "<div class='price-line'><span>Premium Valet — Sm/Med</span><b>£50</b></div>"+
+      "<div class='price-line'><span>Premium Valet — SUV</span><b>£65</b></div>"+
+      "</div>"+bookBtn;},
+    book:function(){return "Booking takes under a minute — pick your service, date &amp; time and we'll come to you. 💗"+bookBtn+waBtn;},
+    area:function(){return "We're fully mobile across <b>Birmingham &amp; surrounding areas</b> — we come to you at home or work. 📍 Not sure if we reach you? Just ask on WhatsApp."+waBtn;},
+    time:function(){return "Roughly how long we'll need ⏱<div style='margin-top:.4rem'><div class='price-line'><span>Wash &amp; Dry</span><b>~1h 30m</b></div><div class='price-line'><span>Standard Valet</span><b>~3h</b></div><div class='price-line'><span>Premium Valet</span><b>~4h</b></div></div>";},
+    included:function(){return "Every wash includes <b>snow foam</b>. ✨<br><b>Wash &amp; Dry:</b> hand wash, wheels &amp; arches, windows, door shuts, tyres dressed, shine boost.<br><b>Standard:</b> all that + interior vacuum, steam clean, dash &amp; panels wiped, mats.<br><b>Premium:</b> everything + hand polish, seats/carpets shampooed, trims &amp; vents detailed, showroom finish."+bookBtn;},
+    access:function(){return "On the day we just need two things 💧🔌<br>• Access to a <b>water tap</b> (outside is best)<br>• A <b>power socket</b> — we bring an extension lead.<br>That's it — we handle the rest!";},
+    human:function(){return "Of course — you can reach the team directly here 💬<br>📞 <a href='"+TEL+"' style='color:var(--magenta);font-weight:600'>07513 286544</a><br>📧 cleanmycarbirmingham@gmail.com"+waBtn;},
+    contact:function(){return this.human();},
+    fallback:function(){return "I'm not totally sure on that one, but the team can help straight away 💬 Message us on WhatsApp or book online and pop it in the notes."+waBtn+bookBtn;}
+  };
+
+  function intent(t){
+    t=t.toLowerCase();
+    if(/(price|cost|how much|charge|£|quote|rate)/.test(t)) return 'prices';
+    if(/(book|appoint|reserve|slot|schedule|when can)/.test(t)) return 'book';
+    if(/(area|where|cover|come to|birmingham|postcode|travel|reach|near)/.test(t)) return 'area';
+    if(/(how long|time|hour|duration|take)/.test(t)) return 'time';
+    if(/(includ|what.*(do|get)|service|premium|standard|wash|valet|detail|clean)/.test(t)) return 'included';
+    if(/(water|socket|power|access|park|electric|tap|hose|driveway)/.test(t)) return 'access';
+    if(/(human|talk|call|phone|number|whatsapp|contact|email|speak|message)/.test(t)) return 'human';
+    if(/(hi|hello|hey|heya|hiya|good (morning|afternoon|evening)|yo)\b/.test(t)) return 'greeting';
+    if(/(thank|cheers|ta|great|perfect|lovely)/.test(t)) return 'thanks';
+    return 'fallback';
+  }
+  function handle(key,label){
+    addUser(label|| key);
+    if(key==='thanks'){ addBot("You're so welcome! 💗 Anything else I can help with?"); return; }
+    var fn=ANSWERS[key]||ANSWERS.fallback;
+    addBot(fn.call(ANSWERS));
+  }
+
+  function open(){
+    box.classList.add('open'); badge.style.display='none';
+    if(!started){ started=true; renderQuick();
+      addBot(ANSWERS.greeting());
+    }
+    setTimeout(function(){ input.focus(); },300);
+  }
+  function close(){ box.classList.remove('open'); }
+  toggle.addEventListener('click',function(){ box.classList.contains('open')?close():open(); });
+  document.getElementById('cbClose').addEventListener('click',close);
+  form.addEventListener('submit',function(e){ e.preventDefault(); var v=input.value.trim(); if(!v) return; input.value=''; addUser(v); var k=intent(v);
+    if(k==='thanks'){ addBot("You're so welcome! 💗 Anything else?"); return; }
+    addBot((ANSWERS[k]||ANSWERS.fallback).call(ANSWERS)); });
+})();
+</script>
+<!-- ============ /FLOATING BUBBLES ============ -->
+
+</body>
+</html>

@@ -31,6 +31,10 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
+    if (url.pathname === "/api/book") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleBook(request, env);
+    }
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
@@ -278,6 +282,213 @@ Reply straight to this email to answer ${d.name}.`;
   </td></tr></table>
 </body></html>`;
 
+  return { html, text };
+}
+
+/* ============================================================
+   Clean My Car — booking requests  (POST /api/book)
+   Emails the booking to Clean My Car and an instant confirmation
+   to the customer. Uses the same verified Resend sender.
+   ============================================================ */
+const CMC_EMAIL = "cleanmycarbirmingham@gmail.com";
+const CMC_FROM = "Clean My Car <hello@billydigitals.com>";
+const CMC_WA = "https://wa.me/447513286544";
+const CMC_PHONE = "07513 286544";
+
+async function handleBook(request, env) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  const origin = request.headers.get("origin") || "";
+  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
+    return json({ error: "Forbidden" }, 403);
+  }
+
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+
+  // Honeypot — bots fill this; pretend success.
+  if (body.botcheck) return json({ ok: true });
+
+  const d = {
+    service: String(body.service || "").trim(),
+    vehicle: String(body.vehicle || "").trim(),
+    price: String(body.price || "").trim(),
+    duration: String(body.duration || "").trim(),
+    date: String(body.date || "").trim(),
+    time: String(body.time || "").trim(),
+    name: String(body.name || "").trim(),
+    email: String(body.email || "").trim(),
+    phone: String(body.phone || "").trim(),
+    address: String(body.address || "").trim(),
+    parking: String(body.parking || "").trim(),
+    notes: String(body.notes || "").trim(),
+  };
+
+  if (!d.name || !d.service || !d.date || !d.time) {
+    return json({ error: "Please choose a service, date and time and add your name." }, 400);
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+  if (!d.phone) return json({ error: "A contact phone number is required." }, 400);
+
+  // 1) Booking notification to Clean My Car (reply-to = customer)
+  const owner = cmcOwnerEmail(d);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: CMC_FROM, to: [CMC_EMAIL], reply_to: d.email,
+      subject: `New booking — ${d.service} · ${d.date} ${d.time} · ${d.name}`,
+      html: owner.html, text: owner.text,
+    }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+
+  // 2) Instant confirmation to the customer (reply-to = Clean My Car)
+  try {
+    const cust = cmcCustomerEmail(d);
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: CMC_FROM, to: [d.email], reply_to: CMC_EMAIL,
+        subject: "Booking request received ✨ — Clean My Car",
+        html: cust.html, text: cust.text,
+      }),
+    });
+  } catch (e) { /* booking already reached Clean My Car */ }
+
+  return json({ ok: true });
+}
+
+function cmcRows(d) {
+  return [
+    ["Service", d.service],
+    ["Vehicle", d.vehicle || "—"],
+    ["Price", d.price || "—"],
+    ["Duration", d.duration || "—"],
+    ["Date", d.date],
+    ["Time", d.time],
+    ["Name", d.name],
+    ["Email", d.email],
+    ["Phone", d.phone],
+    ["Address", d.address || "—"],
+    ["Parking", d.parking || "—"],
+  ];
+}
+
+function cmcOwnerEmail(d) {
+  const esc = (s) => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  const rows = cmcRows(d);
+  const text =
+`New booking request — via billydigitals.com
+
+${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}
+
+Notes:
+${d.notes || "—"}
+
+Reply straight to this email to answer ${d.name}.`;
+
+  const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#fdeef2;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#241a20;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fdeef2;padding:28px 12px;"><tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(190,30,110,.14);">
+      <tr><td style="background:#241a20;padding:22px 40px;">
+        <span style="color:#ffffff;font-size:19px;font-weight:700;">New booking request 💗</span>
+        <span style="display:block;color:#f5a8c0;font-size:13px;margin-top:2px;">Clean My Car — via billydigitals.com</span>
+      </td></tr>
+      <tr><td style="height:4px;background:linear-gradient(100deg,#ff4da0,#e01b76 55%,#f5a8c0);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:26px 40px 6px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;color:#5a4750;">
+          ${rows.map(([k, v]) => {
+            let val = esc(v);
+            if (k === "Email" && v && v !== "—") val = `<a href="mailto:${esc(v)}" style="color:#e01b76;text-decoration:none;">${esc(v)}</a>`;
+            if (k === "Phone" && v && v !== "—") val = `<a href="tel:${String(v).replace(/[^0-9+]/g, "")}" style="color:#e01b76;text-decoration:none;">${esc(v)}</a>`;
+            if (k === "Price") val = `<strong style="color:#e01b76;">${esc(v)}</strong>`;
+            return `<tr><td style="padding:6px 0;width:120px;color:#a48;">${k}</td><td style="padding:6px 0;color:#241a20;font-weight:600;">${val}</td></tr>`;
+          }).join("")}
+        </table>
+      </td></tr>
+      <tr><td style="padding:14px 40px 30px;">
+        <div style="font-size:13px;color:#a48;margin-bottom:6px;">Customer notes</div>
+        <div style="font-size:15px;line-height:1.6;color:#241a20;white-space:pre-wrap;background:#fdf2f6;border:1px solid #f6d6e2;border-radius:10px;padding:14px 16px;">${esc(d.notes || "—")}</div>
+      </td></tr>
+      <tr><td style="background:#fdf2f6;padding:16px 40px;border-top:1px solid #f6d6e2;" align="center">
+        <span style="font-size:13px;color:#a48;">Reply to this email to confirm with <strong>${esc(d.name)}</strong>.</span>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+  return { html, text };
+}
+
+function cmcCustomerEmail(d) {
+  const esc = (s) => String(s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  const first = d.name ? d.name.split(/\s+/)[0] : "there";
+  const rows = [
+    ["Service", d.service], ["Vehicle", d.vehicle || "—"], ["Price", d.price || "—"],
+    ["Date", d.date], ["Time", d.time], ["Address", d.address || "—"],
+  ];
+  const text =
+`Hi ${first},
+
+Thank you for booking with Clean My Car 💗 We've received your request:
+
+${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}
+
+This is a booking REQUEST — we'll message you shortly to confirm your slot.
+
+A couple of quick things for the day:
+• Please have access to a water tap (outside is best).
+• We need access to a power socket — we have an extension lead.
+
+Need to change anything? Reply to this email, message us on WhatsApp (${CMC_WA}) or call ${CMC_PHONE}.
+
+See you soon,
+Clean My Car — Women's Mobile Valeting, Birmingham
+Clean. Shine. Protect. ♥`;
+
+  const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#fdeef2;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#241a20;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">We've received your booking request — we'll confirm your slot shortly. 💗</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fdeef2;padding:28px 12px;"><tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(190,30,110,.14);">
+      <tr><td align="center" style="background:#fff5f9;padding:30px 40px 16px;">
+        <div style="font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:700;color:#241a20;letter-spacing:.5px;">Clean <span style="color:#e01b76;">My</span> Car <span style="color:#f03e8e;">&#10084;</span></div>
+        <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c77;margin-top:6px;">Women's Mobile Valeting · Birmingham</div>
+      </td></tr>
+      <tr><td style="height:4px;background:linear-gradient(100deg,#ff4da0,#e01b76 55%,#f5a8c0);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:32px 40px 8px;">
+        <p style="margin:0 0 16px;font-size:18px;">Hi ${esc(first)},</p>
+        <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:#5a4750;">
+          Thank you for booking with <strong>Clean My Car</strong> — we've received your request. This is a booking <strong>request</strong>, and we'll message you shortly to confirm your slot. ✨
+        </p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;color:#5a4750;background:#fdf2f6;border:1px solid #f6d6e2;border-radius:12px;">
+          ${rows.map(([k, v], i) => `<tr><td style="padding:11px 18px;width:110px;color:#a48;${i ? "border-top:1px solid #f6d6e2;" : ""}">${k}</td><td style="padding:11px 18px;color:#241a20;font-weight:600;${i ? "border-top:1px solid #f6d6e2;" : ""}">${k === "Price" ? `<strong style="color:#e01b76;">${esc(v)}</strong>` : esc(v)}</td></tr>`).join("")}
+        </table>
+      </td></tr>
+      <tr><td style="padding:20px 40px 6px;">
+        <div style="font-size:13px;color:#a48;margin-bottom:8px;">Two quick things for the day</div>
+        <p style="margin:0 0 6px;font-size:15px;line-height:1.6;color:#5a4750;">💧 Please have access to a water tap (outside is best).</p>
+        <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#5a4750;">🔌 We need access to a power socket — we bring an extension lead.</p>
+      </td></tr>
+      <tr><td align="center" style="padding:6px 40px 30px;">
+        <a href="${CMC_WA}" style="display:inline-block;background:linear-gradient(100deg,#ff4da0,#e01b76);color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:14px 30px;border-radius:999px;">💬 Message us on WhatsApp</a>
+      </td></tr>
+      <tr><td style="background:#fff5f9;padding:20px 40px;border-top:1px solid #f6d6e2;" align="center">
+        <p style="margin:0;font-size:13px;color:#a48;">Clean. Shine. Protect. ♥ &nbsp;·&nbsp; ${CMC_PHONE} &nbsp;·&nbsp; Birmingham &amp; surrounding areas</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
   return { html, text };
 }
 
