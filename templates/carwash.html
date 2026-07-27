@@ -92,7 +92,7 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
 .hero-meta{display:flex;gap:14px 28px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
 .hero-meta div b{display:block;font-family:var(--disp);font-weight:700;font-size:1.5rem;color:var(--ink);letter-spacing:-.03em}
 .hero-meta div span{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
-.hero-fig{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:5/4;background:var(--deep);
+.hero-fig{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:3/2;background:var(--deep);
  box-shadow:0 50px 90px -50px rgba(5,39,52,.55)}
 .hero-fig img{position:absolute;inset:0;width:100%;height:112%;object-fit:cover;will-change:transform}
 .hero-fig .tag{position:absolute;left:16px;bottom:16px;z-index:3;color:#fff;font-size:.62rem;font-weight:600;
@@ -145,7 +145,7 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
 
 /* ── stacking service cards (scroll-driven) ───────────────── */
 .stack{position:relative}
-.card{position:relative;will-change:transform;border-radius:var(--r);overflow:hidden;background:var(--card);
+.card{position:relative;border-radius:var(--r);overflow:hidden;background:var(--card);
  border:1px solid var(--line);display:grid;grid-template-columns:1fr;min-height:400px;margin-bottom:26px;
  will-change:transform;box-shadow:0 30px 70px -55px rgba(5,39,52,.5)}
 .card-in{padding:34px 28px;display:flex;flex-direction:column;justify-content:center}
@@ -208,6 +208,29 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
  flex-wrap:wrap;gap:12px;font-size:.8rem;color:#7fa3b3}
 .foot a{color:var(--spray)}
 
+
+/* ── three-state scroll trigger: dirty → washed → protected ──── */
+.trisec{height:300vh;position:relative}
+.tri-st{position:absolute;top:0;left:0;right:0;height:100svh;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:22px;padding:90px 22px 30px;will-change:transform}
+.tri-hd{text-align:center;max-width:44ch}
+.tri-hd h2{font-size:clamp(1.9rem,4.6vw,3.2rem)}
+.tri-hd p{margin-top:10px;font-size:.95rem;color:var(--txt)}
+.tri{width:min(100%,860px);max-height:56vh;position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/2;background:var(--deep);
+ box-shadow:0 40px 90px -60px rgba(5,39,52,.7)}
+.tri img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity}
+.tri img.on{opacity:1}
+.tri::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(3,22,31,.8));pointer-events:none}
+.tri-lb{position:absolute;left:18px;bottom:18px;z-index:3;pointer-events:none}
+.tri-lb b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(1.3rem,3vw,2rem);color:#fff;letter-spacing:-.03em}
+.tri-lb span{display:block;margin-top:4px;font-size:.66rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--spray)}
+.tri-dots{position:absolute;right:18px;bottom:22px;z-index:3;display:flex;gap:8px}
+.tri-dots button{width:34px;height:5px;border-radius:99px;border:0;background:rgba(255,255,255,.28);cursor:pointer;padding:0;
+ transition:background .35s var(--ease)}
+.tri-dots button.on{background:var(--spray)}
+.tri-hint{margin-top:14px;font-size:.8rem;color:var(--faint);display:flex;align-items:center;gap:8px}
+.tri-hint i{width:26px;height:1px;background:var(--aqua);display:block}
+
 /* reveal — one shared, gentle rise */
 [data-rv]{opacity:0;transform:translateY(28px);transition:opacity .95s var(--ease),transform .95s var(--ease)}
 [data-rv].in{opacity:1;transform:none}
@@ -221,6 +244,11 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
   .bgrid{grid-template-columns:1.1fr .9fr;gap:5vw}
   .hs-hd{left:calc(50vw - 600px + 22px)}
   .hs-track{padding:0 calc(50vw - 600px + 22px)}
+}
+@media(min-width:900px){ .card{will-change:transform} }
+@media(max-width:899px){
+  .card{transform:none!important;opacity:1!important;margin-bottom:16px}
+  .card figure img{transform:none!important}
 }
 @media(max-width:819px){
   .tun-car{top:53%;width:88vw}
@@ -267,8 +295,8 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
     </div>
   </div>
   <div class="hero-fig" data-rv style="transition-delay:.2s">
-    <img id="heroImg" src="/assets/carwash/car-clean.webp" alt="A freshly washed car" fetchpriority="high">
-    <span class="tag">Finished · hand washed &amp; sealed</span>
+    <img id="heroImg" src="/assets/carwash/lambo-hero.webp" alt="A supercar in the wash bay" fetchpriority="high">
+    <span class="tag">In the bay · hand wash &amp; ceramic</span>
   </div>
 </div></div>
 <div class="scue"><i></i>Scroll</div>
@@ -281,8 +309,8 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
     <div class="jets" id="jets"><span style="left:6%"></span><span style="left:14%"></span><span style="left:22%"></span>
       <span style="right:6%"></span><span style="right:14%"></span><span style="right:22%"></span></div>
     <div class="tun-car" id="tunCar">
-      <img class="dirty" src="/assets/carwash/car-dirty.webp" alt="">
-      <img class="clean" id="tunClean" src="/assets/carwash/car-clean.webp" alt="The same car, washed">
+      <img class="dirty" src="/assets/carwash/lambo-dirty.webp" alt="">
+      <img class="clean" id="tunClean" src="/assets/carwash/lambo-clean.webp" alt="The same car, washed">
       <div class="lay" id="layWater"></div>
       <div class="lay" id="layFoam"></div>
       <div class="lay" id="layShine"></div>
@@ -367,18 +395,28 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
   </div>
 </div></section>
 
-<!-- ══════════ BEFORE / AFTER — scrubbed by scroll ══════════ -->
-<section class="sec" id="work" style="padding-top:0"><div class="wrap">
-  <span class="kick" data-rv>The difference</span>
-  <h2 data-rv style="transition-delay:.05s">Scroll it clean.</h2>
-  <p class="lede" data-rv style="transition-delay:.12s;margin-top:14px">Same car, same light, one wash apart. The line follows your scroll — no clicking required.</p>
-  <div class="ba" id="ba" data-rv style="margin-top:38px;transition-delay:.18s">
-    <img src="/assets/carwash/car-dirty.webp" alt="Before the wash">
-    <img class="aft" src="/assets/carwash/car-clean.webp" alt="After the wash">
-    <span class="lb l">Before</span><span class="lb r">After</span>
-    <span class="hd"></span>
+<!-- ══════════ THREE-STATE TRIGGER — pinned, stepped by scroll ══════════ -->
+<section class="trisec" id="work" data-tri>
+  <div class="tri-st">
+    <div class="tri-hd">
+      <span class="kick">The difference</span>
+      <h2>Dirty. Washed. <em style="font-style:normal;color:var(--aqua2)">Protected.</em></h2>
+      <p>One car, three stages — off the road, through a full hand wash, then sealed with paint protection film.</p>
+    </div>
+    <div class="tri" id="tri">
+      <img id="triA" class="on" src="/assets/carwash/lambo-dirty.webp" alt="Supercar before the wash — road film and water spotting">
+      <img id="triB" src="/assets/carwash/lambo-clean.webp" alt="The same car after a full hand wash">
+      <img id="triC" src="/assets/carwash/lambo-ppf.webp" alt="The same car with paint protection film, water beading on the panels">
+      <span class="tri-lb"><span id="triK">Step 01</span><b id="triT">Before</b></span>
+      <span class="tri-dots" id="triD">
+        <button type="button" class="on" data-i="0" aria-label="Before"></button>
+        <button type="button" data-i="1" aria-label="After the wash"></button>
+        <button type="button" data-i="2" aria-label="Protected"></button>
+      </span>
+    </div>
+    <p class="tri-hint"><i></i>Keep scrolling — or tap the bars to jump</p>
   </div>
-</div></section>
+</section>
 
 <!-- ══════════ HORIZONTAL GALLERY ══════════ -->
 <section class="hs" data-hs>
@@ -427,7 +465,7 @@ h2{font-size:clamp(2.2rem,5.6vw,4.2rem)}
     </div>
   </div>
   <div class="foot">
-    <span>© Hydra Car Wash · Scroll landing template</span>
+    <span>© Hydra Car Wash · Scroll landing template<br><small style="opacity:.7">Vehicle photography: Wikimedia Commons, CC BY-SA 4.0</small></span>
     <span>Website by <a href="https://billydigitals.com">Billy Digitals</a></span>
   </div>
 </div></section>
@@ -451,7 +489,13 @@ var $  = function(s,r){return (r||document).querySelector(s);},
    ═══════════════════════════════════════════════════════════ */
 var vp=$('#vp'), scroller=$('#scroller');
 var sy=0, target=0, vh=innerHeight, docH=0;
-var SMOOTH = !reduce && matchMedia('(min-width:0px)').matches;
+/* Transform-scrolling a long page is expensive on phones and fights native
+   momentum, which is what caused the stutter. Desktop pointers get the eased
+   rig; touch devices keep native scrolling (already smooth) and still get
+   every scroll-driven animation. */
+var SMOOTH = !reduce
+  && matchMedia('(hover:hover) and (pointer:fine)').matches
+  && !matchMedia('(max-width:900px)').matches;
 
 if(!SMOOTH) document.body.classList.add('no-smooth');
 
@@ -521,8 +565,25 @@ function bump(p,a,b){                        /* 0 → 1 → 0 across [a,b] */
 
 /* stacking cards: each shrinks slightly as the next arrives */
 var cards=$$('[data-card]');
-/* scroll-scrubbed before/after */
-var ba=$('#ba');
+var STACK = !reduce && matchMedia('(min-width:900px)').matches;
+cards.forEach(function(c,i){c.style.zIndex=String(i);});
+/* three-state trigger: dirty → washed → protected */
+var tri=$('#tri'), triSec=$('[data-tri]'), triSt=$('.tri-st'),
+    triImgs=[$('#triA'),$('#triB'),$('#triC')],
+    triT=$('#triT'), triK=$('#triK'), triDots=$$('#triD button');
+var TRI=[{k:'Step 01',t:'Before'},{k:'Step 02',t:'Washed'},{k:'Step 03',t:'PPF + Ceramic'}];
+var triCur=-1, triLock=-1;
+function triSet(i){
+  if(i===triCur) return;
+  triCur=i;
+  triImgs.forEach(function(im,k){ if(im) im.classList.toggle('on',k===i); });
+  triDots.forEach(function(b,k){ b.classList.toggle('on',k===i); });
+  if(triT) triT.textContent=TRI[i].t;
+  if(triK) triK.textContent=TRI[i].k;
+}
+triDots.forEach(function(b){
+  b.addEventListener('click',function(){ triLock=+b.getAttribute('data-i'); triSet(triLock); });
+});
 /* horizontal gallery */
 var hs=$$('[data-hs]').map(function(e){return {e:e,t:$('.hs-track',e),st:$('.hs-st',e)};});
 /* parallax inside card images */
@@ -554,31 +615,35 @@ function render(){
     }
   }
 
-  /* stacking cards — each pins at the top, then the next slides over it */
-  cards.forEach(function(c){
-    var r=c.getBoundingClientRect(), stop=96;
-    var over=clamp(stop-r.top,0,vh*1.6);      /* px scrolled past its resting point */
-    var p=clamp(over/(vh*0.75),0,1);
-    var sc=1-p*0.07, o=1-p*0.30;
-    c.style.transform='translate3d(0,'+over.toFixed(1)+'px,0) scale('+sc.toFixed(3)+')';
-    c.style.opacity=o.toFixed(3);
-    c.style.zIndex=String(10+cards.indexOf(c));
-  });
+  /* stacking cards — desktop only; on phones they simply flow (no overlap, no cost) */
+  if(STACK){
+    for(var ci=0;ci<cards.length;ci++){
+      var c=cards[ci], cr=c.getBoundingClientRect();
+      if(cr.bottom<-80||cr.top>vh+80) continue;
+      var over=clamp(96-cr.top,0,vh*0.9);
+      var pp=clamp(over/(vh*0.75),0,1);
+      c.style.transform='translate3d(0,'+over.toFixed(1)+'px,0) scale('+(1-pp*0.06).toFixed(3)+')';
+      c.style.opacity=(1-pp*0.28).toFixed(3);
+    }
+  }
 
-  /* card image parallax */
-  pars.forEach(function(im){
-    var r=im.getBoundingClientRect();
-    if(r.bottom<-100||r.top>vh+100) return;
-    var c=(r.top+r.height/2)-vh/2;
-    im.style.transform='translate3d(0,'+(-c*0.06).toFixed(1)+'px,0) scale(1.12)';
-  });
+  /* card image parallax (desktop only — priciest paint on mobile) */
+  if(STACK){
+    for(var pi=0;pi<pars.length;pi++){
+      var im=pars[pi], rr=im.getBoundingClientRect();
+      if(rr.bottom<-100||rr.top>vh+100) continue;
+      var cc=(rr.top+rr.height/2)-vh/2;
+      im.style.transform='translate3d(0,'+(-cc*0.06).toFixed(1)+'px,0) scale(1.12)';
+    }
+  }
 
-  /* before/after scrubs itself as it crosses the viewport */
-  if(ba){
-    var r=ba.getBoundingClientRect();
-    if(r.bottom>-100 && r.top<vh+100){
-      var p=clamp((vh*0.9-r.top)/(vh*0.75),0,1);
-      ba.style.setProperty('--sp',(6+p*84).toFixed(2)+'%');
+  /* the trigger is pinned, and scroll steps it through the three states */
+  if(triSec){
+    var sr=triSec.getBoundingClientRect(), sh=triSec.offsetHeight-vh;
+    if(triSt) triSt.style.transform='translate3d(0,'+clamp(-sr.top,0,Math.max(0,sh)).toFixed(1)+'px,0)';
+    if(triLock<0 && sr.bottom>-200 && sr.top<vh+200){
+      var tp=sh>0?clamp(-sr.top/sh,0,1):0;
+      triSet(tp<0.33?0:(tp<0.66?1:2));
     }
   }
 
