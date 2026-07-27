@@ -7,6 +7,12 @@
 <title>Clean My Car — Women's Mobile Valeting Service · Birmingham</title>
 <meta name="description" content="Clean My Car — a women's mobile valeting service in Birmingham. We come to you at home or work. Wash & dry from £10, full valets from £30. Clean. Shine. Protect." />
 <meta name="theme-color" content="#FCF4F1" />
+<link rel="icon" type="image/png" href="/assets/cleanmycar/logo.png" />
+<link rel="apple-touch-icon" href="/assets/cleanmycar/logo.png" />
+<meta property="og:title" content="Clean My Car — Women's Mobile Valeting, Birmingham" />
+<meta property="og:description" content="We come to you at home or work. Wash & dry from £10, full valets from £30. Clean. Shine. Protect." />
+<meta property="og:image" content="/assets/cleanmycar/logo.png" />
+<meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -77,7 +83,7 @@ header.nav{position:fixed;inset:0 0 auto;z-index:60;transition:.4s ease}
 .scrolled .nav-in{background:rgba(255,255,255,.82);box-shadow:0 18px 50px -24px rgba(190,30,110,.6)}
 header.nav.hide{transform:translateY(-145%)}
 .nav-brand{display:flex;align-items:center;gap:.5rem;font-family:var(--script);font-size:1.5rem;color:var(--ink);line-height:1}
-.nav-mark{width:46px;height:auto;flex:0 0 auto}
+.nav-mark{width:46px;height:46px;flex:0 0 auto;border-radius:50%;box-shadow:0 6px 16px -6px rgba(224,27,118,.5)}
 .nav-word{display:inline-flex;align-items:baseline;font-family:var(--script)}
 .nav-brand b{font-family:var(--sans);font-weight:700;font-size:.86rem;color:var(--pink);letter-spacing:.02em;transform:translateY(-1px);margin:0 .12rem}
 .nav-brand .hb{color:var(--pink);font-size:1rem;transform:translateY(-2px);margin-left:.1rem}
@@ -101,7 +107,8 @@ header.nav.hide{transform:translateY(-145%)}
 .mnav .socrow{display:flex;gap:1rem;margin-top:1rem}
 
 /* ============ LOGO LOCKUP (stand-in; auto-swaps to real PNG) ============ */
-.logo-real{max-height:118px;width:auto;margin-inline:auto}
+.logo-real{width:min(340px,74vw);height:auto;margin-inline:auto;border-radius:50%;
+  box-shadow:0 30px 70px -26px rgba(224,27,118,.5);filter:drop-shadow(0 6px 14px rgba(224,27,118,.12))}
 .logo-lock{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.2rem}
 .logo-lock .car{width:min(360px,70vw);height:auto;margin-bottom:-1.3rem;filter:drop-shadow(0 8px 16px rgba(224,27,118,.16))}
 .logo-word{display:flex;align-items:baseline;gap:.3rem;line-height:1}
@@ -314,11 +321,8 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 @keyframes plRise{to{transform:translateY(-115vh) translateX(var(--dx,0));opacity:0}}
 .pl-center{position:relative;z-index:2;text-align:center;animation:plFloat 3s ease-in-out infinite}
 @keyframes plFloat{50%{transform:translateY(-8px)}}
-.pl-mark{width:min(230px,58vw);height:auto;margin:0 auto -.6rem;filter:drop-shadow(0 10px 22px rgba(224,27,118,.2))}
-.pl-word{font-family:var(--script);font-size:clamp(2.4rem,8vw,3.6rem);color:#1c1418;line-height:1;display:flex;justify-content:center;align-items:baseline;gap:.2rem}
-.pl-word b{font-family:var(--sans);font-weight:700;font-size:.42em;background:linear-gradient(180deg,#FF4DA0,#E01B76);-webkit-background-clip:text;background-clip:text;color:transparent;align-self:center}
-.pl-word .hb{color:var(--pink);font-size:.5em;align-self:center}
-.pl-tag{font-family:var(--script2);font-weight:700;font-size:1.1rem;color:var(--magenta);margin-top:.4rem}
+.pl-mark{width:min(210px,54vw);height:auto;margin:0 auto;border-radius:50%;box-shadow:0 24px 60px -22px rgba(224,27,118,.5)}
+.pl-tag{font-family:var(--script2);font-weight:700;font-size:1.4rem;color:var(--magenta);margin-top:1rem}
 .pl-bar{width:180px;max-width:60vw;height:6px;border-radius:100px;background:rgba(224,27,118,.14);margin:1.2rem auto 0;overflow:hidden}
 .pl-bar span{display:block;height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--pink),var(--magenta));transition:width 2.1s cubic-bezier(.5,0,.3,1)}
 #preload.fill .pl-bar span{width:100%}
@@ -336,17 +340,7 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
   <div class="pl-foam" id="plFoam"><span class="pl-crest"></span></div>
   <div class="pl-bubbles" id="plBubbles"></div>
   <div class="pl-center">
-    <svg class="pl-mark" viewBox="0 0 460 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="plP" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF4DA0"/><stop offset="1" stop-color="#E01B76"/></linearGradient></defs>
-      <path d="M92 150 A175 150 0 0 1 372 150" stroke="#F5A8C0" stroke-width="4" stroke-linecap="round" opacity=".8"/>
-      <path d="M392 44l3.4 9L405 56l-9.6 3.4L392 69l-3.4-9.6L379 56l9.6-3.6z" fill="#F03E8E"/>
-      <path d="M72 158 C112 146 146 118 214 116 C276 114 328 126 372 148 C384 154 396 160 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M150 126 C196 110 258 108 306 124 C324 130 340 140 352 150" stroke="url(#plP)" stroke-width="3" stroke-linecap="round"/>
-      <path d="M72 158 C92 168 126 170 168 170 L344 170 C378 170 398 168 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M262 126 C296 124 322 134 340 150 C316 156 288 154 270 145 C260 140 258 131 262 126 Z" fill="#1c1418"/>
-      <path d="M80 150 C96 143 118 144 130 151 C116 158 96 158 80 150 Z" fill="#1c1418"/>
-    </svg>
-    <div class="pl-word">Clean<b>MY</b>Car<span class="hb">♥</span></div>
+    <img class="pl-mark" src="/assets/cleanmycar/logo.png" alt="Clean My Car" width="230" height="230">
     <div class="pl-tag">Clean. Shine. Protect.</div>
     <div class="pl-bar"><span id="plFill"></span></div>
   </div>
@@ -395,15 +389,7 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 <header class="nav" id="nav">
   <div class="nav-in">
     <a href="#top" class="nav-brand" aria-label="Clean My Car home">
-      <svg class="nav-mark" viewBox="0 0 200 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs><linearGradient id="nvP" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF4DA0"/><stop offset="1" stop-color="#E01B76"/></linearGradient></defs>
-        <path d="M18 70 A80 66 0 0 1 168 70" stroke="#F5A8C0" stroke-width="3" stroke-linecap="round" opacity=".85"/>
-        <path d="M178 20l2 5.4 5.4 2-5.4 2-2 5.6-2-5.6-5.4-2 5.4-2z" fill="#F03E8E"/>
-        <path d="M22 72 C50 60 74 34 128 33 C176 32 214 46 250 68" stroke="#1c1418" stroke-width="3" stroke-linecap="round" transform="scale(.82) translate(6,4)"/>
-        <path d="M70 44 C104 30 150 30 186 46" stroke="url(#nvP)" stroke-width="2.6" stroke-linecap="round" transform="scale(.82) translate(6,4)"/>
-        <path d="M22 72 C42 82 76 84 118 84 L162 84" stroke="#1c1418" stroke-width="3" stroke-linecap="round" transform="scale(.82) translate(6,4)"/>
-        <path d="M150 40 C182 38 208 50 224 66 C200 72 172 70 154 61 C146 56 145 45 150 40 Z" fill="#1c1418" transform="scale(.82) translate(6,4)"/>
-      </svg>
+      <img class="nav-mark" src="/assets/cleanmycar/logo.png" alt="Clean My Car" width="48" height="48">
       <span class="nav-word">Clean<b>MY</b>Car<span class="hb">♥</span></span>
     </a>
     <nav class="nav-links">
@@ -447,39 +433,9 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
   </div>
 
   <div class="hero-inner wrap">
-    <!-- LOGO: real PNG loads when present at /assets/cleanmycar/logo.png; elegant lockup shows until then -->
+    <!-- Real Clean My Car logo -->
     <div class="logo-wrap" data-rev>
-      <img class="logo-real" src="/assets/cleanmycar/logo.png" alt="Clean My Car — Women's Valeting Service" style="display:none"
-           onload="this.style.display='block';this.nextElementSibling.style.display='none'">
-      <div class="logo-lock" aria-hidden="false">
-        <svg class="car" viewBox="0 0 460 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="lgArc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7B8C8"/><stop offset=".5" stop-color="#E01B76"/><stop offset="1" stop-color="#F7B8C8"/></linearGradient>
-            <linearGradient id="lgPink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF4DA0"/><stop offset="1" stop-color="#E01B76"/></linearGradient>
-          </defs>
-          <path d="M92 150 A175 150 0 0 1 372 150" stroke="url(#lgArc)" stroke-width="4" stroke-linecap="round" opacity=".8"/>
-          <path d="M392 44l3.4 9L405 56l-9.6 3.4L392 69l-3.4-9.6L379 56l9.6-3.6z" fill="#F03E8E"/>
-          <path d="M420 74l2.3 6.2 6.2 2.3-6.2 2.3L420 93l-2.3-6.2L411.5 84.5l6.2-2.3z" fill="#F5A8C0"/>
-          <path d="M410 104l1.7 4.6 4.6 1.7-4.6 1.7L410 118l-1.7-4.6L403.7 112l4.6-1.7z" fill="#F03E8E"/>
-          <circle cx="70" cy="128" r="8.5" stroke="#EC4E8C" stroke-width="2.4"/>
-          <circle cx="52" cy="146" r="5.5" stroke="#F5A8C0" stroke-width="2"/>
-          <circle cx="73" cy="152" r="4" fill="#F7C3D5"/>
-          <circle cx="57" cy="160" r="2.8" fill="#EC4E8C"/>
-          <path d="M72 158 C112 146 146 118 214 116 C276 114 328 126 372 148 C384 154 396 160 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
-          <path d="M150 126 C196 110 258 108 306 124 C324 130 340 140 352 150" stroke="url(#lgPink)" stroke-width="3" stroke-linecap="round"/>
-          <path d="M116 152 C158 132 210 128 262 132 C292 134 318 142 340 154" stroke="#1c1418" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-          <path d="M72 158 C92 168 126 170 168 170 L344 170 C378 170 398 168 406 164" stroke="#1c1418" stroke-width="3.2" stroke-linecap="round"/>
-          <path d="M262 126 C296 124 322 134 340 150 C316 156 288 154 270 145 C260 140 258 131 262 126 Z" fill="#1c1418"/>
-          <path d="M80 150 C96 143 118 144 130 151 C116 158 96 158 80 150 Z" fill="#1c1418"/>
-          <path d="M36 178 c-4-6-14-4-14 4 0 6 8 10 14 14 6-4 14-8 14-14 0-8-10-10-14-4Z" fill="#F5A8C0"/>
-        </svg>
-        <div class="logo-word">
-          <span class="s clean">Clean</span><span class="my">MY</span><span class="s car2">Car</span>
-          <svg class="hb-svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 21c-1-1-8-6-8-12 0-3 2.5-5 5-5 1.8 0 3 1 3 2 0-1 1.2-2 3-2 2.5 0 5 2 5 5 0 6-7 11-8 12Z" fill="none" stroke="#F03E8E" stroke-width="1.8"/></svg>
-        </div>
-        <div class="logo-sub">Women's Valeting Service</div>
-        <div class="logo-sub2">📍 Mobile Valeting Service 🚗</div>
-      </div>
+      <img class="logo-real" src="/assets/cleanmycar/logo.png" alt="Clean My Car — Women's Valeting Service · Mobile Valeting · Birmingham" width="760" height="760">
     </div>
 
     <p class="tagline" data-rev data-d="1">Clean. Shine. Protect.</p>
@@ -712,8 +668,8 @@ footer{padding:3.4rem 0 2.6rem;text-align:center;border-top:1px solid rgba(224,2
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="wrap">
-    <div class="foot-brand">Clean <b>MY</b> Car ♥</div>
-    <div class="foot-sub">Women's Mobile Valeting Service</div>
+    <img src="/assets/cleanmycar/logo.png" alt="Clean My Car" width="96" height="96" style="width:96px;height:96px;border-radius:50%;margin:0 auto .9rem;box-shadow:0 14px 34px -16px rgba(224,27,118,.5)">
+    <div class="foot-sub">Women's Mobile Valeting Service · Birmingham</div>
     <div class="foot-soc">
       <a href="https://www.instagram.com/cleanmycarbirmingham" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       <a href="https://www.tiktok.com/@cleanmycarbirmingham" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.2v12.5a2.34 2.34 0 1 1-2.34-2.34c.24 0 .47.04.68.1V9.9a5.6 5.6 0 0 0-.68-.04A5.55 5.55 0 1 0 15.5 15.4V9.13a7.5 7.5 0 0 0 4.3 1.35V7.28a4.3 4.3 0 0 1-3.2-1.46z"/></svg></a>
