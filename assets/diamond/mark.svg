@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <linearGradient id="dCrown" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eaf7ff"/><stop offset="1" stop-color="#59b6ff"/>
+    </linearGradient>
+    <linearGradient id="dBody" x1="0" y1="0" x2=".35" y2="1">
+      <stop offset="0" stop-color="#8fd4ff"/><stop offset=".5" stop-color="#37a2f2"/><stop offset="1" stop-color="#1f5fe0"/>
+    </linearGradient>
+  </defs>
+  <!-- crown (top table + facets) -->
+  <path d="M34 20 L86 20 L112 50 L8 50 Z" fill="url(#dCrown)"/>
+  <!-- pavilion tapering into a water droplet tip -->
+  <path d="M8 50 L112 50 C104 92 84 118 60 132 C36 118 16 92 8 50 Z" fill="url(#dBody)"/>
+  <!-- facet lines -->
+  <g stroke="#ffffff" stroke-opacity=".62" stroke-width="1.4" stroke-linejoin="round" fill="none">
+    <path d="M34 20 L22 50 M86 20 L98 50 M34 20 L60 50 L86 20 M8 50 L60 50 L112 50 M22 50 L60 132 M98 50 L60 132 M60 50 L60 132"/>
+  </g>
+  <!-- bright top-left facet -->
+  <path d="M34 20 L60 50 L22 50 Z" fill="#ffffff" fill-opacity=".34"/>
+  <!-- water highlight -->
+  <ellipse cx="44" cy="86" rx="6.5" ry="12" fill="#ffffff" fill-opacity=".33"/>
+  <!-- sparkle -->
+  <path d="M101 12 l2.2 5.6 5.6 2.2 -5.6 2.2 -2.2 5.6 -2.2 -5.6 -5.6 -2.2 5.6 -2.2z" fill="#8fd0ff"/>
+</svg>
