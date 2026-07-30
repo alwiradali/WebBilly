@@ -32,7 +32,7 @@
   /* ---------- 3D tilt on cards ---------- */
   (function tilt() {
     if (touch) return;
-    var cards = document.querySelectorAll(".card, .tcard, .offer, .plan, .host-card");
+    var cards = document.querySelectorAll(".card, .offer, .plan, .host-card");
     cards.forEach(function (el) {
       if (getComputedStyle(el).position === "static") el.style.position = "relative";
       el.classList.add("tilt");
@@ -80,9 +80,13 @@
     });
   })();
 
-  /* ---------- aurora accents in a few sections ---------- */
+  /* ---------- aurora accents in a few simple sections ----------
+     Desktop only, and never inside sections that run their own
+     layout/carousel scripts (e.g. #templates) — injecting a child
+     there corrupts their measurements and balloons the height. */
   (function aurora() {
-    ["services", "templates", "contact"].forEach(function (id) {
+    if (touch) return;
+    ["services", "contact"].forEach(function (id) {
       var sec = document.getElementById(id);
       if (!sec) return;
       if (getComputedStyle(sec).position === "static") sec.style.position = "relative";
