@@ -389,6 +389,71 @@ body.has-hero-video .hero-vidph{display:none}
 .videobox:hover .play{transform:scale(1.08);background:rgba(253,250,246,.28)}
 .videobox .play svg{width:26px;height:26px;color:#fff;margin-left:4px}
 
+/* ---------- 3D auto-swapping look cards ---------- */
+.looks3d{background:linear-gradient(180deg,var(--cream),var(--blush) 55%,var(--cream))}
+.cards3d{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:56px;perspective:1600px}
+.flip3d{position:relative;aspect-ratio:3/4.1;border-radius:22px;transform-style:preserve-3d;
+  animation:float3d 6s ease-in-out infinite;will-change:transform}
+.flip3d:nth-child(2){animation-delay:-1.5s}.flip3d:nth-child(3){animation-delay:-3s}.flip3d:nth-child(4){animation-delay:-4.5s}
+@keyframes float3d{0%,100%{transform:translateY(0) rotateZ(0)}50%{transform:translateY(-14px) rotateZ(.4deg)}}
+.flip3d-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.1s var(--ease)}
+.flip3d.flipped .flip3d-inner{transform:rotateY(180deg)}
+.flip3d .face{position:absolute;inset:0;border-radius:22px;overflow:hidden;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;box-shadow:0 50px 90px -50px rgba(120,80,50,.65);background:var(--blush)}
+.flip3d .face.back{transform:rotateY(180deg)}
+.flip3d .face img{width:100%;height:100%;object-fit:cover}
+.flip3d .face::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(42,34,29,.6),transparent 55%)}
+.flip3d .glare{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,248,240,.32) 47%,transparent 60%);
+  background-size:250% 250%;background-position:120% 0;animation:sheen 6s var(--ease) infinite}
+@keyframes sheen{0%,72%{background-position:120% 0}86%,100%{background-position:-40% 0}}
+.flip3d figcaption{position:absolute;left:20px;bottom:18px;z-index:3;color:#fff}
+.flip3d figcaption b{font-family:var(--serif);font-style:italic;font-weight:500;font-size:1.35rem;display:block;line-height:1.1}
+.flip3d figcaption span{font-size:.56rem;letter-spacing:.24em;text-transform:uppercase;opacity:.92}
+.flip3d .dot{position:absolute;top:16px;right:16px;z-index:3;display:flex;gap:5px}
+.flip3d .dot i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.4s}
+.flip3d .dot i.on{background:#fff;width:16px;border-radius:10px}
+@media(prefers-reduced-motion:reduce){.flip3d,.flip3d .glare{animation:none}.flip3d.flipped .flip3d-inner{transition:none}}
+
+/* ---------- reel video (web mockup) ---------- */
+.videobox.has-vid .ph{opacity:0;pointer-events:none;transition:opacity .6s}
+.videobox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.videobox .vscrim{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(30,22,18,.4),transparent 40%);opacity:0;transition:opacity .6s}
+.videobox.has-vid .vscrim{opacity:1}
+.vsound{position:absolute;right:16px;bottom:16px;z-index:4;width:44px;height:44px;border-radius:50%;
+  background:rgba(30,22,18,.4);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.35);
+  display:none;place-items:center}
+.videobox.has-vid .vsound{display:grid}
+.vsound svg{width:18px;height:18px;color:#fff}
+.vbadge{position:absolute;left:16px;top:16px;z-index:4;display:none;align-items:center;gap:7px;
+  font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#fff;background:rgba(30,22,18,.38);
+  backdrop-filter:blur(8px);padding:7px 13px;border-radius:100px}
+.videobox.has-vid .vbadge{display:inline-flex}
+.vbadge i{width:7px;height:7px;border-radius:50%;background:#ff5a7a;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+
+/* ---------- trusted band ---------- */
+.trust{background:linear-gradient(160deg,var(--ink),#3a2f28);color:#f2e7db;text-align:center;position:relative;overflow:hidden}
+.trust .glow{position:absolute;width:60vw;height:60vw;border-radius:50%;filter:blur(100px);opacity:.22;
+  background:radial-gradient(circle,var(--gold),transparent 70%);top:-30%;left:50%;transform:translateX(-50%);pointer-events:none}
+.trust h2{color:#fff}
+.trust .stars{color:var(--gold);font-size:1.6rem;letter-spacing:6px;margin:6px 0}
+.trust .rating{font-family:var(--display);font-size:3.4rem;line-height:1;color:#fff}
+.trust-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:48px}
+.trust-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:26px 18px;
+  transition:transform .5s var(--ease),background .5s}
+.trust-item:hover{transform:translateY(-6px);background:rgba(255,255,255,.09)}
+.trust-item .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px;
+  background:linear-gradient(140deg,var(--gold-2),var(--gold-deep))}
+.trust-item .ic svg{width:22px;height:22px;color:#fff}
+.trust-item b{font-family:var(--serif);font-size:1.6rem;display:block;color:#fff}
+.trust-item span{font-size:.72rem;letter-spacing:.1em;color:var(--nude);text-transform:uppercase;margin-top:2px;display:block}
+.trust-cta{margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.trust-cta .btn-line{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.05)}
+@media(max-width:1024px){.cards3d{grid-template-columns:repeat(2,1fr)}.trust-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.cards3d{grid-template-columns:1fr 1fr;gap:14px}.trust-grid{grid-template-columns:1fr 1fr}}
+
 /* ---------- testimonials ---------- */
 .testi{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
 .tcard{background:var(--ivory);border:1px solid var(--line);border-radius:20px;padding:34px 30px;transition:transform .6s var(--ease)}
@@ -442,6 +507,13 @@ body.has-hero-video .hero-vidph{display:none}
 .footer-bot{max-width:1300px;margin:44px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);
   display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.72rem;color:#9a8b7d}
 .footer-bot a{display:inline}
+
+/* ---------- product image thumbnails ---------- */
+.pcard-shop .thumb img,.prod .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .7s var(--ease)}
+.pcard-shop:hover .thumb img,.prod:hover .thumb img{transform:scale(1.07)}
+.ci .ic{overflow:hidden}
+.ci .ic img{width:100%;height:100%;object-fit:cover}
 
 /* ---------- floating WhatsApp + chat ---------- */
 .fabs{position:fixed;right:22px;bottom:22px;z-index:60;display:flex;flex-direction:column;gap:14px;align-items:center}

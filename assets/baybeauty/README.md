@@ -26,3 +26,10 @@ and floats gold dust on top. The reel section (`#reel`) works the same way.
 ## 🤖 AI chat
 "Bay" is a local knowledge-base concierge (prices, bridal, booking, areas) — instant, offline.
 To upgrade to a live LLM, replace `replyFor()` in `bb.js` with a `fetch()` to your endpoint.
+
+## Update — 3D cards, Trusted band, reel video, WhatsApp fix
+- **3D look cards** (`#motion`): auto-flip & photo-swap. Edit each card's `data-imgs="..."` to change the photos it cycles.
+- **Trusted band** (`#trusted`): editable stats/rating.
+- **Reel video**: `reel.mp4` is a royalty-free Pexels clip used as a mockup — autoplays muted when scrolled into view. Swap for Bayan's own clip anytime.
+- All model/product photos are royalty-free web stock (Pexels) standing in for Bayan's real work.
+- WhatsApp icon replaced with a clean glyph everywhere.

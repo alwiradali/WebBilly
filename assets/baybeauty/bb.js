@@ -233,7 +233,7 @@
     const fabs = document.createElement("div"); fabs.className = "fabs";
     fabs.innerHTML = `
       <a class="fab fab-wa" href="${waLink()}" target="_blank" rel="noopener" aria-label="WhatsApp Bay Beauty">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.05 24l1.7-6.2A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.45L.05 24zM6.6 20.1l.37.22a9.86 9.86 0 0 0 5.03 1.38 9.9 9.9 0 1 0-9.9-9.9c0 1.8.48 3.5 1.4 5.03l.24.38-1 3.65 3.86-.94zM17.5 14.3c-.13-.22-.48-.35-1-.6-.53-.27-3.12-1.54-3.6-1.72-.48-.17-.83-.26-1.18.27-.35.53-1.35 1.7-1.66 2.05-.3.35-.6.4-1.13.13-.53-.26-2.23-.82-4.25-2.62-1.57-1.4-2.63-3.13-2.94-3.66-.3-.53-.03-.82.23-1.08.24-.24.53-.62.8-.93.26-.31.35-.53.53-.88.17-.36.09-.67-.04-.93-.13-.27-1.18-2.85-1.62-3.9-.43-1.03-.86-.88-1.18-.9l-1-.02c-.35 0-.92.13-1.4.66-.48.53-1.84 1.8-1.84 4.38 0 2.58 1.88 5.08 2.14 5.43.26.36 3.7 5.65 8.96 7.92 1.25.54 2.23.86 2.99 1.1 1.26.4 2.4.34 3.3.21.98-.15 3.02-1.23 3.45-2.42.43-1.2.43-2.22.3-2.43z"/></svg>
+        <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C9 3 3.5 8.5 3.5 15.5c0 2.4.7 4.7 1.9 6.7L3 29l7-1.8c1.9 1 4 1.6 6.1 1.6 7 0 12.5-5.5 12.5-12.5S23 3 16 3zm0 22.8c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-3.9 1 1-3.8-.2-.4c-1-1.6-1.6-3.5-1.6-5.5C5.6 9.6 10.3 5 16 5s10.4 4.6 10.4 10.4S21.7 25.8 16 25.8zm5.7-7.8c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.5-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/></svg>
       </a>
       <button class="fab fab-chat" aria-label="Chat with Bay" data-open-chat>
         <span class="ping"></span>
@@ -321,10 +321,60 @@
     });
   }
 
+  /* ========== reel video (web mockup) — autoplays muted on scroll ========== */
+  function reelVideo() {
+    const box = $("[data-reel]"); if (!box) return;
+    const v = $("[data-reel-video]", box); if (!v) return;
+    const src = v.querySelector("source");
+    if (!src || !(src.getAttribute("src") || "").trim()) return;
+    v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute("playsinline", "");
+    if (reduce) { box.classList.add("has-vid"); v.setAttribute("controls", ""); v.load(); return; }
+    let loaded = false;
+    new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) {
+        if (!loaded) { v.load(); loaded = true; box.classList.add("has-vid"); }
+        v.play().catch(() => {});
+      } else v.pause();
+    }), { threshold: 0.35 }).observe(box);
+    const btn = $(".vsound", box);
+    const spk = on => on
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg>';
+    if (btn) btn.addEventListener("click", e => {
+      e.stopPropagation(); v.muted = !v.muted;
+      btn.setAttribute("aria-pressed", String(!v.muted)); btn.innerHTML = spk(!v.muted);
+      if (!v.muted) v.play().catch(() => {});
+    });
+  }
+
+  /* ========== 3D look cards — auto flip + photo-swap ========== */
+  function look3d() {
+    const wrap = $(".cards3d"), cards = $$(".flip3d");
+    if (!wrap || !cards.length || reduce) return;
+    let visible = true;
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { threshold: 0.15 }).observe(wrap);
+    cards.forEach((card, ci) => {
+      const imgs = (card.dataset.imgs || "").split(",").map(s => s.trim()).filter(Boolean);
+      if (imgs.length < 2) return;
+      imgs.forEach(u => { const im = new Image(); im.src = u; });
+      const front = $(".face.front img", card), back = $(".face.back img", card), dots = $$(".dot i", card);
+      let flipped = false, idx = 1;
+      function tick() {
+        if (!visible || document.hidden) return;
+        flipped = !flipped; card.classList.toggle("flipped", flipped);
+        dots.forEach((d, i) => d.classList.toggle("on", i === idx % dots.length));
+        const hidden = flipped ? front : back, adv = (idx + 1) % imgs.length;
+        setTimeout(() => { hidden.src = imgs[adv]; }, 650);
+        idx = adv;
+      }
+      setTimeout(() => setInterval(tick, 4200), 1200 + ci * 750);
+    });
+  }
+
   /* ========== boot ========== */
   function boot() {
     wireLinks(); preloader(); scrollSetup(); reveals(); progress();
-    nav(); cursor(); counters(); tilt(); heroVideo(); chatbot();
+    nav(); cursor(); counters(); tilt(); heroVideo(); reelVideo(); look3d(); chatbot();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
