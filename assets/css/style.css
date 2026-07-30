@@ -226,10 +226,10 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   position: relative; overflow: hidden;
   padding: 360px 0 110px; text-align: center;
 }
-.orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; pointer-events: none; }
-.orb-1 { width: 480px; height: 480px; background: rgba(43, 127, 255, 0.35); top: -140px; left: -120px; animation: drift 14s ease-in-out infinite alternate; }
-.orb-2 { width: 420px; height: 420px; background: rgba(56, 189, 248, 0.28); top: 60px; right: -140px; animation: drift 18s ease-in-out infinite alternate-reverse; }
-.orb-3 { width: 360px; height: 360px; background: rgba(34, 211, 238, 0.18); bottom: -160px; left: 34%; animation: drift 16s ease-in-out infinite alternate; }
+.orb { position: absolute; border-radius: 50%; filter: blur(110px); opacity: 0.32; pointer-events: none; }
+.orb-1 { width: 520px; height: 520px; background: rgba(43, 127, 255, 0.26); top: -160px; left: -140px; animation: drift 18s ease-in-out infinite alternate; }
+.orb-2 { width: 440px; height: 440px; background: rgba(56, 189, 248, 0.18); top: 40px; right: -160px; animation: drift 22s ease-in-out infinite alternate-reverse; }
+.orb-3 { width: 380px; height: 380px; background: rgba(34, 211, 238, 0.12); bottom: -180px; left: 34%; animation: drift 20s ease-in-out infinite alternate; }
 @keyframes drift {
   from { transform: translate(0, 0) scale(1); }
   to { transform: translate(46px, 34px) scale(1.12); }
@@ -241,8 +241,12 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   padding: 7px 18px; border-radius: 999px; margin-bottom: 26px;
 }
 .hero h1 {
-  font-size: clamp(2.3rem, 5.6vw, 4.1rem); letter-spacing: -0.03em;
-  max-width: 900px; margin-inline: auto;
+  font-size: clamp(2.35rem, 5.7vw, 4.3rem); letter-spacing: -0.03em;
+  max-width: 920px; margin-inline: auto; line-height: 1.04;
+}
+.hero h1 .accent {
+  font-family: 'Playfair Display', Georgia, serif; font-style: italic;
+  font-weight: 600; letter-spacing: 0; padding-right: 0.04em;
 }
 .hero-sub { color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.2rem); max-width: 640px; margin: 24px auto 0; }
 .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 38px; }
@@ -251,10 +255,10 @@ h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
   max-width: 880px; margin: 72px auto 0;
 }
 .hero-stats > div {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 22px 12px;
+  background: transparent; border: 0; border-top: 1px solid var(--border); border-radius: 0;
+  padding: 22px 12px 0;
 }
-.hero-stats dt { font-family: var(--font-display); font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-weight: 700; }
+.hero-stats dt { font-family: var(--font-display); font-size: clamp(1.35rem, 2.5vw, 1.95rem); font-weight: 700; }
 .hero-stats dt span {
   background: var(--grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
