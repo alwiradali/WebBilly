@@ -1,0 +1,118 @@
+/* ============================================================
+   Billy Digitals — LIGHT THEME
+   Clean, airy, editorial. Loaded LAST so it overrides the dark base.
+   Brand accent stays blue; surfaces go white with soft shadows.
+   ============================================================ */
+:root{
+  --bg:#f6f7fb;
+  --bg-2:#eceff7;
+  --card:#ffffff;
+  --card-hover:#f3f7ff;
+  --border:rgba(18,28,54,.10);
+  --text:#0f1524;
+  --muted:#5b6785;
+  --shadow:0 22px 50px rgba(20,40,90,.10);
+  --ink-soft:#41506e;
+}
+
+body{background:var(--bg);color:var(--text)}
+::selection{background:rgba(29,111,245,.18);color:#0d1424}
+::-webkit-scrollbar-track{background:#e9edf6}
+::-webkit-scrollbar-thumb{background:#c4cfe4}
+::-webkit-scrollbar-thumb:hover{background:#aab8d6}
+
+/* ---------- header / nav ---------- */
+.site-header{background:transparent}
+.site-header.scrolled{
+  background:rgba(255,255,255,.82)!important;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(18,28,54,.08)!important;
+  box-shadow:0 8px 30px rgba(20,40,90,.06);
+}
+.nav-links a{color:var(--ink-soft)}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-toggle span{background:var(--text)}
+/* mobile menu panel */
+.nav.open,.mobile-menu,.nav-drawer{background:#fff!important}
+
+/* ---------- hero ---------- */
+.hero-gl{display:none!important}
+.orb{display:none!important}
+.hero-scrim{display:none!important}
+.hero{
+  background:radial-gradient(1200px 620px at 50% -14%, #e7edff 0%, #f6f7fb 60%);
+  padding:clamp(230px,26vw,340px) 0 clamp(90px,12vw,140px);
+}
+.hero h1{color:#0d1424}
+.hero-badge{color:#1d6ff5;border-color:rgba(29,111,245,.28);background:rgba(29,111,245,.07)}
+.hero-sub{color:var(--muted)}
+.hw-top .ch{color:#0d1424;text-shadow:1px 1px 0 rgba(29,111,245,.16), 2px 2px 0 rgba(29,111,245,.10)}
+.hw-bot{background-image:linear-gradient(100deg,#1d6ff5,#0891b2 60%,#1d6ff5)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent}
+.hero-stats > div{border-top-color:rgba(18,28,54,.12)}
+.hero-stats dd{color:var(--muted)}
+.hero-stats dt span{-webkit-text-fill-color:transparent}
+
+/* ---------- generic sections ---------- */
+.section-alt{background:#eef1f8}
+.section-head h2,h1,h2,h3{color:var(--text)}
+.section-head .sub,.sub{color:var(--muted)}
+.tag{color:#1d6ff5;border-color:rgba(29,111,245,.22);background:rgba(29,111,245,.06)}
+
+/* ---------- cards ---------- */
+.card{background:#fff;border:1px solid var(--border);box-shadow:0 10px 30px rgba(20,40,90,.06)}
+.card:hover{background:#fff;border-color:rgba(29,111,245,.32);box-shadow:0 24px 50px rgba(20,40,90,.14)}
+.card h3{color:var(--text)}
+.card p{color:var(--muted)}
+.card-icon{background:rgba(29,111,245,.08);color:#1d6ff5;border-color:rgba(29,111,245,.15)}
+
+/* ---------- marquee + trust ---------- */
+.marquee{border-color:rgba(18,28,54,.08);background:transparent}
+.marquee li{color:#93a1bd}
+.trust-strip{color:var(--muted)}
+.trust-name{color:var(--text)}
+.trust-label{color:var(--muted)}
+
+/* ---------- template gallery cards ---------- */
+.tcard{background:#fff;border:1px solid var(--border);box-shadow:0 10px 30px rgba(20,40,90,.06)}
+.tcard:hover{box-shadow:0 26px 54px rgba(20,40,90,.16)}
+.tinfo h3{color:var(--text)}
+.tcat{color:var(--muted)}
+.tlink{color:#1d6ff5}
+.filter-chip,.tfilter button{color:var(--ink-soft);border-color:var(--border);background:#fff}
+.filter-chip.active,.tfilter button.active{color:#fff}
+
+/* ---------- process / offerings / misc panels ---------- */
+.offer,.why-strip>div,.plan,.host-card,.faq-item,.testi,.quote-card,.review-card{background:#fff;border-color:var(--border)}
+.why-strip>div strong{color:var(--text)}
+.why-strip>div span{color:var(--muted)}
+.process-list li p,.process-list li h3{color:inherit}
+.pnum{color:#1d6ff5}
+
+/* ---------- forms / contact ---------- */
+input,select,textarea{background:#fff;border:1px solid var(--border);color:var(--text)}
+input::placeholder,textarea::placeholder{color:#9aa6c2}
+label{color:var(--ink-soft)}
+
+/* ---------- proof strip (trusted by / powered by) ---------- */
+.proof-strip,.ps-strip{background:transparent}
+.ps-label{color:var(--muted)}
+.ps-chip{color:var(--text);border-color:var(--border);background:#fff}
+.ps-chip b{color:#1d6ff5}
+.ps-chip--soft{color:var(--muted)}
+.ps-tech{color:var(--ink-soft)}
+.ps-tech svg{color:#1d6ff5}
+.ps-div{background:var(--border)}
+
+/* ---------- footer (light, clean) ---------- */
+.site-footer{background:#eef1f8;border-top:1px solid var(--border)}
+.footer-grid h4{color:var(--text)}
+.footer-grid p,.footer-grid ul a{color:var(--muted)}
+.footer-grid ul a:hover{color:var(--text)}
+.footer-grid strong{color:var(--text)}
+.socials a{background:#fff;border:1px solid var(--border);color:var(--ink-soft)}
+.socials a:hover{color:#1d6ff5;border-color:rgba(29,111,245,.4)}
+.footer-bottom{border-top:1px solid var(--border);color:var(--muted)}
+.footer-bottom strong{color:var(--text)}
+
+/* soften any leftover dark decorative glows on light */
+.blaze::before,.blaze::after,.threed-glow{opacity:.35;mix-blend-mode:normal}
