@@ -371,10 +371,32 @@
     });
   }
 
+  /* ========== device-orientation tilt (tilt phone → tiles tilt) ========== */
+  function deviceTilt() {
+    const els = $$("[data-devtilt]");
+    if (!els.length || reduce || !window.DeviceOrientationEvent) return;
+    let baseG = null, baseB = null;
+    function handle(e) {
+      let g = e.gamma, b = e.beta; if (g == null || b == null) return;
+      if (baseG == null) { baseG = g; baseB = b; }
+      const dg = Math.max(-18, Math.min(18, g - baseG));
+      const db = Math.max(-18, Math.min(18, b - baseB));
+      const ry = (dg / 18) * 10, rx = (-db / 18) * 8;
+      els.forEach(el => { el.style.transform = `perspective(1400px) rotateY(${ry}deg) rotateX(${rx}deg)`; });
+    }
+    const start = () => window.addEventListener("deviceorientation", handle, { passive: true });
+    const DOE = window.DeviceOrientationEvent;
+    if (typeof DOE.requestPermission === "function") {
+      const ask = () => { DOE.requestPermission().then(p => { if (p === "granted") start(); }).catch(() => {}); };
+      document.addEventListener("touchend", ask, { once: true });
+      document.addEventListener("click", ask, { once: true });
+    } else start();
+  }
+
   /* ========== boot ========== */
   function boot() {
     wireLinks(); preloader(); scrollSetup(); reveals(); progress();
-    nav(); cursor(); counters(); tilt(); heroVideo(); reelVideo(); look3d(); chatbot();
+    nav(); cursor(); counters(); tilt(); heroVideo(); reelVideo(); look3d(); deviceTilt(); chatbot();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

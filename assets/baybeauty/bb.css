@@ -172,6 +172,8 @@ body.loading{overflow:hidden}
 [data-rv="scale"]{transform:scale(.94)}
 [data-rv="left"]{transform:translateX(-40px)}
 [data-rv="right"]{transform:translateX(40px)}
+[data-rv="tilt3d"]{opacity:0;transform:perspective(1200px) rotateX(24deg) translateY(40px);transform-origin:top center}
+[data-rv="tilt3d"].in{opacity:1;transform:none;transition:opacity 1s var(--ease),transform 1.15s var(--ease)}
 [data-stag]>*{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
 [data-stag].in>*{opacity:1;transform:none}
 .clip{clip-path:inset(0 0 100% 0);transition:clip-path 1.3s var(--ease)}.clip.in{clip-path:inset(0 0 0 0)}
@@ -306,7 +308,30 @@ body.has-hero-video .hero-vidph{display:none}
 .spec .ic svg{width:24px;height:24px}
 .spec h4{font-family:var(--serif);font-size:1.35rem;font-weight:600;position:relative;z-index:1}
 .spec p{font-size:.86rem;color:var(--taupe);margin-top:8px;position:relative;z-index:1}
-.spec .no{position:absolute;top:18px;right:22px;font-family:var(--display);font-size:.9rem;color:var(--blush-2);z-index:1}
+.spec .no{position:absolute;top:18px;right:22px;font-family:var(--display);font-size:.9rem;color:var(--blush-2);z-index:2}
+/* photo inside spec tiles — subtle, brightens on hover */
+.spec-media{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.14;
+  transition:opacity .6s var(--ease),transform 1.2s var(--ease);transform:scale(1.04);z-index:0}
+.spec-media::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(253,250,246,.82),rgba(253,250,246,.62) 55%,rgba(244,221,208,.5))}
+.spec:hover .spec-media{opacity:.4;transform:scale(1.1)}
+.spec .ic,.spec h4,.spec p{position:relative;z-index:2}
+
+/* animated gold outline (travelling arc) — @property progressive enhancement */
+@property --animb{syntax:'<angle>';inherits:false;initial-value:0deg}
+.animb{position:relative}
+.animb::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;z-index:3;pointer-events:none;
+  background:conic-gradient(from var(--animb),transparent 55%,var(--gold) 74%,var(--rose) 84%,var(--gold-2) 90%,transparent 96%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:animb 4.5s linear infinite;opacity:.9}
+.flip3d.animb::after{border-radius:22px}
+.cards3d .flip3d.animb::after{animation-duration:5.5s}
+@keyframes animb{to{--animb:360deg}}
+@media(prefers-reduced-motion:reduce){.animb::after{animation:none;opacity:.5}}
+
+/* device-orientation tilt containers */
+.spec-grid,.cards3d{transform-style:preserve-3d;transition:transform .3s ease-out}
+[data-devtilt]{will-change:transform}
 
 /* ---------- gallery / signature looks ---------- */
 .looks{position:relative}
