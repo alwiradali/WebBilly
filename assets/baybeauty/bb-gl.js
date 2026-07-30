@@ -31,7 +31,7 @@ import { UnrealBloomPass } from "/templates/vendor/jsm/postprocessing/UnrealBloo
   const hasVideo = !!(src && src.getAttribute("src") && src.getAttribute("src").trim() && !/PUT-VIDEO-HERE/.test(src.getAttribute("src")));
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.3 : 1.6));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
