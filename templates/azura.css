@@ -1,0 +1,53 @@
+/* ============================================================
+   AZURA — Private Yacht Charter
+   Palette + type override for the shared luxury engine.
+   Signature: deep ocean ink · ivory · brushed gold · aqua.
+   ============================================================ */
+@import url("atelier.css");
+
+:root{
+  --ink:#06121b;
+  --ink-2:#0a1a26;
+  --paper:#f3efe4;
+  --muted:#8ba2ac;
+  --line:rgba(243,239,228,.13);
+  --gold:#bb965b;
+  --gold-2:#e8d09a;
+  --aqua:#5ec7c7;
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Jost','Manrope',Arial,sans-serif;
+}
+
+.eyebrow{color:var(--aqua)}
+::selection{background:var(--gold);color:var(--ink)}
+.cursor{background:var(--aqua)}
+.cursor-ring.hot{border-color:var(--aqua);background:rgba(94,199,199,.08)}
+.magnetic{background:var(--gold-2);color:#1a1305}
+.nav-cta:hover{background:var(--gold-2);color:#1a1305;border-color:var(--gold-2)}
+.brand b{color:var(--aqua)}
+.scroll-cue i::after,.h-progress i{background:var(--aqua)}
+
+/* Playfair carries weight — allow a touch heavier display */
+.hero h1{font-weight:400}
+
+/* bright sea imagery: keep it luminous but readable */
+.hero-media img{filter:brightness(.62) saturate(1.1) contrast(1.03)}
+.hero-media::after{background:linear-gradient(180deg,rgba(6,18,27,.5) 0%,transparent 32%,rgba(6,18,27,.35) 60%,rgba(6,18,27,.94) 100%)}
+
+/* landscape crops suit yacht photography */
+.feature-fig{aspect-ratio:5/4}
+
+/* centered "maison"-style hero to distinguish from ALTAIR */
+.hero{align-items:center}
+.hero-inner{text-align:center;max-width:1120px;margin-inline:auto;width:100%;padding-bottom:clamp(52px,9vw,110px)}
+.hero-eyebrow,.hero h1{margin-inline:auto}
+.hero-foot{flex-direction:column;align-items:center;gap:18px;text-align:center}
+.hero-foot p{max-width:56ch}
+
+/* signature: destination chip row */
+.dest-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:26px}
+.dest-row span{border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.74rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.dest-row span b{color:var(--aqua);font-weight:600}
+
+.marquee span::after{color:var(--aqua)}

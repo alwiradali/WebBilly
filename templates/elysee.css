@@ -1,0 +1,46 @@
+/* ============================================================
+   ÉLYSÉE — Private Travel & Concierge
+   Palette + type override for the shared luxury engine.
+   Signature: warm espresso · sand ivory · champagne · terracotta.
+   ============================================================ */
+@import url("atelier.css");
+
+:root{
+  --ink:#14100b;
+  --ink-2:#1d160e;
+  --paper:#f6efe1;
+  --muted:#b3a48d;
+  --line:rgba(246,239,225,.13);
+  --gold:#c99a58;
+  --gold-2:#ecd199;
+  --terra:#e0894a;
+  --serif:'Prata',Georgia,'Times New Roman',serif;
+  --sans:'Manrope','Helvetica Neue',Arial,sans-serif;
+}
+
+.eyebrow{color:var(--terra)}
+::selection{background:var(--gold);color:var(--ink)}
+.cursor{background:var(--terra)}
+.cursor-ring.hot{border-color:var(--terra);background:rgba(224,137,74,.10)}
+.magnetic{background:var(--gold-2);color:#2a1c08}
+.nav-cta:hover{background:var(--gold-2);color:#2a1c08;border-color:var(--gold-2)}
+.brand b{color:var(--terra)}
+.scroll-cue i::after,.h-progress i{background:var(--terra)}
+
+/* Prata is 400 only — lift display weights */
+.hero h1,.sec-head h2,.feature h2,.manifesto p,.cta h2,.stat h3,.svc-name,.h-intro h2,.h-meta h3,.foot-brand{font-weight:400}
+
+/* sunlit resort imagery */
+.hero-media img{filter:brightness(.64) saturate(1.08) contrast(1.02)}
+.hero-media::after{background:linear-gradient(180deg,rgba(20,16,11,.5) 0%,transparent 30%,rgba(20,16,11,.34) 60%,rgba(20,16,11,.93) 100%)}
+
+/* landscape crops for destination photography */
+.feature-fig{aspect-ratio:5/4}
+
+/* signature: "curated for" chip row */
+.jrn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.jrn-row span{border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.74rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.jrn-row span b{color:var(--terra);font-weight:600}
+
+.marquee span::after{color:var(--terra)}
