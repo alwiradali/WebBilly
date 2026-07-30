@@ -83,6 +83,9 @@ h3{font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,2.2rem);font-weight:500
 /* ---------- decorative bits ---------- */
 .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.4;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+/* perf: full-screen blend layer is costly on mobile — drop it there */
+@media(max-width:880px){.grain{display:none}
+  .nav.solid{backdrop-filter:none;background:rgba(251,245,239,.95)}}
 .divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 auto;color:var(--gold)}
 .divider::before,.divider::after{content:"";height:1px;width:min(120px,22vw);
   background:linear-gradient(90deg,transparent,var(--gold-2))}
@@ -327,6 +330,8 @@ body.has-hero-video .hero-vidph{display:none}
 .flip3d.animb::after{border-radius:22px}
 .cards3d .flip3d.animb::after{animation-duration:5.5s}
 @keyframes animb{to{--animb:360deg}}
+/* perf: only the 4 flip cards animate their outline; tiles keep a static gold arc */
+.spec.animb::after{animation:none;background:conic-gradient(from 215deg,transparent 55%,var(--gold) 73%,var(--rose) 84%,var(--gold-2) 90%,transparent 96%);opacity:.7}
 @media(prefers-reduced-motion:reduce){.animb::after{animation:none;opacity:.5}}
 
 /* device-orientation tilt containers */
