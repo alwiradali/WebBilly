@@ -64,6 +64,41 @@
     });
   })();
 
+  /* ---------- phone gyroscope tilt ----------
+     On touch devices, tilt cards to how the phone is held via the device
+     orientation sensor. Updates two CSS vars (--gx/--gy) that the mobile
+     tilt rule in wow.css reads, so one cheap update tilts every card.
+     iOS 13+ needs a user gesture to grant sensor access, so we request it
+     on the first tap. Transform-only — cannot affect layout. */
+  (function gyroTilt() {
+    if (!touch) return;
+    var root = document.documentElement, raf = 0, gx = 0, gy = 0;
+    function apply() {
+      root.style.setProperty("--gx", gx.toFixed(2) + "deg");
+      root.style.setProperty("--gy", gy.toFixed(2) + "deg");
+      raf = 0;
+    }
+    function onOrient(e) {
+      var gamma = e.gamma || 0, beta = e.beta || 0;      // gamma: L/R (-90..90), beta: F/B
+      gy = Math.max(-10, Math.min(10, gamma * 0.18));    // rotateY from left-right tilt
+      gx = Math.max(-8, Math.min(8, (beta - 45) * -0.11)); // rotateX from front-back (neutral ~45°)
+      if (!raf) raf = requestAnimationFrame(apply);
+    }
+    function start() { window.addEventListener("deviceorientation", onOrient, { passive: true }); }
+    var DOE = window.DeviceOrientationEvent;
+    if (!DOE) return;
+    if (typeof DOE.requestPermission === "function") {   // iOS 13+
+      var ask = function () {
+        DOE.requestPermission().then(function (s) { if (s === "granted") start(); }).catch(function () {});
+        window.removeEventListener("touchend", ask); window.removeEventListener("click", ask);
+      };
+      window.addEventListener("touchend", ask, { once: true });
+      window.addEventListener("click", ask, { once: true });
+    } else {
+      start();
+    }
+  })();
+
   /* ---------- magnetic buttons ---------- */
   (function magnetic() {
     if (touch) return;
@@ -97,15 +132,33 @@
     });
   })();
 
-  /* ---------- extra reveals for elements main.js doesn't cover ---------- */
+  /* ---------- bulletproof reveal reinforcement ----------
+     The 3D reveal hides .reveal until it gets .in. To guarantee nothing
+     ever stays invisible (even on fast mobile scroll), we reinforce with a
+     zero-threshold observer AND a scroll/​load sweep that reveals anything
+     that has entered the viewport. Belt and braces. */
   (function reveals() {
-    var targets = document.querySelectorAll(".wow-up, .wow-stagger");
-    if (!targets.length) return;
+    var sel = ".reveal:not(.plan):not(.tcard), .wow-up, .wow-stagger";
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
       });
-    }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
-    targets.forEach(function (t) { io.observe(t); });
+    }, { threshold: 0, rootMargin: "0px 0px -2% 0px" });
+    document.querySelectorAll(sel).forEach(function (t) { io.observe(t); });
+
+    var raf = 0;
+    function sweep() {
+      var bottom = (window.scrollY || document.documentElement.scrollTop || 0) + window.innerHeight;
+      document.querySelectorAll(".reveal:not(.in):not(.plan):not(.tcard), .wow-up:not(.in), .wow-stagger:not(.in)").forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        var top = r.top + (window.scrollY || document.documentElement.scrollTop || 0);
+        if (top < bottom - 20) el.classList.add("in");
+      });
+      raf = 0;
+    }
+    addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(sweep); }, { passive: true });
+    addEventListener("resize", sweep, { passive: true });
+    addEventListener("load", sweep);
+    sweep();
   })();
 })();

@@ -30,6 +30,19 @@
 .wow-stagger.in > *:nth-child(7){transition-delay:.36s}
 .wow-stagger.in > *:nth-child(8){transition-delay:.42s}
 
+/* ---------- phone gyroscope tilt (mobile "fully 3D" feel) ----------
+   Cards tilt to how the phone is held. Transform-only (no layout impact).
+   Applied only AFTER a card has revealed (.in) so it never fights the
+   reveal, and only to safe cards (never carousel .plan/.tcard). --gx/--gy
+   are driven by wow.js from the device orientation; 0deg at rest. */
+@media (hover:none) and (prefers-reduced-motion:no-preference){
+  .services-grid,.offer-grid{perspective:1000px}
+  .card.in,.offer.in{
+    transform:perspective(1000px) rotateX(var(--gx,0deg)) rotateY(var(--gy,0deg));
+    transition:transform .25s ease-out;transform-style:preserve-3d;will-change:transform;
+  }
+}
+
 /* ---------- aurora accent blobs (subtle, moving) ---------- */
 .wow-aurora{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .wow-aurora::before,.wow-aurora::after{content:"";position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;
@@ -47,6 +60,25 @@
 
 /* ---------- magnetic buttons ---------- */
 .magnetic-btn{will-change:transform;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- 3D scroll reveal (homepage) ----------
+   Upgrades the existing .reveal so content rotates up into place in 3D as
+   it scrolls into view. Transform/opacity only — never changes layout size.
+   Parents get perspective so the rotateX reads with real depth. */
+/* Desktop only (>=861px). On phones/tablets the base fade-in reveal is kept —
+   heavy per-section 3D there risks blank sections + costs performance.
+   Carousel/self-managed cards (.plan, .tcard) are excluded — they own their
+   visibility and must never be hidden by the reveal transform. */
+@media (min-width:861px) and (prefers-reduced-motion:no-preference){
+  .container,.services-grid,.offer-grid,.process-list,.footer-grid{perspective:1300px}
+  .reveal:not(.plan):not(.tcard){
+    opacity:0;transform:translateY(44px) rotateX(14deg) scale(.985);
+    transform-origin:50% 100%;
+    transition:opacity .85s cubic-bezier(.2,.7,.2,1), transform .95s cubic-bezier(.2,.7,.2,1);
+    will-change:transform,opacity;backface-visibility:hidden;
+  }
+  .reveal:not(.plan):not(.tcard).in{opacity:1;transform:none}
+}
 
 /* ---------- pause heavy motion while actively scrolling / off-screen ---------- */
 html.lenis-scrolling .wow-aurora::before,
