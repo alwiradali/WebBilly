@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Boutique — Bay Beauty by Bayan · Gift Vouchers, Lashes & Masterclasses</title>
+<meta name="description" content="Shop Bay Beauty — gift vouchers, luxe lash sets, bridal packages & 1-to-1 masterclasses. A little luxury to keep or to give.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fbf5ef">
+<link rel="icon" href="/assets/baybeauty/bb-logo-fav.png" data-bb-logo>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/baybeauty/bb.css">
+<style>
+  .shop-head{position:relative;text-align:center;padding:clamp(120px,18vh,220px) 6vw clamp(30px,5vh,60px);
+    background:linear-gradient(160deg,var(--blush),var(--cream));overflow:hidden}
+  .shop-head .glow{position:absolute;width:50vw;height:50vw;border-radius:50%;filter:blur(90px);opacity:.4;
+    background:radial-gradient(circle,var(--rose),transparent 70%);top:-10%;left:-5%;pointer-events:none}
+  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:30px 0 0}
+  .filters button{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;padding:11px 22px;border-radius:100px;
+    border:1px solid var(--line-2);background:var(--ivory);color:var(--ink-soft);transition:.4s var(--ease)}
+  .filters button.on,.filters button:hover{background:linear-gradient(120deg,var(--gold-2),var(--gold-deep));color:#fff;border-color:transparent}
+  .products{max-width:1300px;margin:0 auto;padding:clamp(40px,7vh,70px) 6vw clamp(90px,13vh,150px);
+    display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .prod{background:var(--ivory);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;
+    transition:transform .6s var(--ease),box-shadow .6s var(--ease)}
+  .prod:hover{transform:translateY(-8px);box-shadow:0 46px 80px -48px rgba(120,80,50,.55)}
+  .prod .thumb{aspect-ratio:1;background:linear-gradient(150deg,var(--blush),var(--nude));display:grid;place-items:center;position:relative;overflow:hidden}
+  .prod .thumb .emoji{font-size:4rem;transition:transform .7s var(--ease)}
+  .prod:hover .thumb .emoji{transform:scale(1.12) rotate(-4deg)}
+  .prod .thumb .badge{position:absolute;top:12px;left:12px;font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;
+    background:rgba(253,250,246,.85);color:var(--gold-deep);padding:5px 11px;border-radius:100px}
+  .prod .body{padding:22px;display:flex;flex-direction:column;flex:1}
+  .prod .body h4{font-family:var(--serif);font-size:1.25rem;font-weight:600}
+  .prod .body p{font-size:.82rem;color:var(--taupe);margin:6px 0 14px;flex:1}
+  .prod .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .prod .pr{font-family:var(--display);color:var(--gold-deep);font-size:1.4rem}
+  .prod .add{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;padding:11px 18px;border-radius:100px;
+    background:var(--ink);color:#fff;transition:.4s var(--ease);white-space:nowrap}
+  .prod .add:hover{background:var(--gold-deep)}
+  .prod .add.added{background:var(--gold-2)}
+  /* cart button in nav */
+  .cart-btn{position:relative;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;background:var(--ivory)}
+  .cart-btn svg{width:20px;height:20px;color:var(--ink)}
+  .cart-btn .count{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:100px;
+    background:linear-gradient(140deg,var(--gold-2),var(--gold-deep));color:#fff;font-size:.66rem;display:grid;place-items:center;
+    transform:scale(0);transition:transform .3s var(--ease)}
+  .cart-btn .count.show{transform:scale(1)}
+  /* drawer */
+  .cart-ov{position:fixed;inset:0;background:rgba(30,22,18,.4);z-index:74;opacity:0;pointer-events:none;transition:opacity .5s}
+  .cart-ov.open{opacity:1;pointer-events:auto}
+  .cart{position:fixed;top:0;right:0;height:100dvh;width:min(420px,100vw);background:var(--cream);z-index:75;
+    transform:translateX(100%);transition:transform .6s var(--ease);display:flex;flex-direction:column;box-shadow:-30px 0 80px -40px rgba(60,40,20,.5)}
+  .cart.open{transform:none}
+  .cart-h{display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid var(--line)}
+  .cart-h b{font-family:var(--serif);font-size:1.4rem;font-weight:600}
+  .cart-h button{width:36px;height:36px;border-radius:50%;background:var(--ivory);display:grid;place-items:center}
+  .cart-items{flex:1;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;gap:14px}
+  .ci{display:flex;gap:14px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .ci .ic{width:56px;height:56px;border-radius:12px;background:linear-gradient(150deg,var(--blush),var(--nude));display:grid;place-items:center;font-size:1.6rem;flex:none}
+  .ci .info{flex:1}.ci .info b{font-family:var(--serif);font-size:1rem;font-weight:600;display:block}
+  .ci .info .p{color:var(--gold-deep);font-size:.86rem}
+  .ci .qty{display:flex;align-items:center;gap:8px}
+  .ci .qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;font-size:1rem;color:var(--ink)}
+  .ci .qty span{min-width:18px;text-align:center;font-size:.9rem}
+  .ci .rm{font-size:.66rem;color:var(--taupe);text-decoration:underline;margin-top:4px;display:inline-block}
+  .cart-empty{text-align:center;color:var(--taupe);padding:50px 20px}
+  .cart-empty .e{font-size:3rem;margin-bottom:14px}
+  .cart-f{padding:22px 24px;border-top:1px solid var(--line);background:var(--ivory)}
+  .cart-f .tot{display:flex;justify-content:space-between;font-family:var(--serif);font-size:1.3rem;font-weight:600;margin-bottom:16px}
+  .cart-f .btn{width:100%;justify-content:center}
+  .cart-f .note{font-size:.72rem;color:var(--taupe);text-align:center;margin-top:12px}
+  @media(max-width:1024px){.products{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.products{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="loading">
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-d" aria-hidden="true"></div>
+
+<div class="pl" aria-hidden="true"><div class="pl-in">
+  <img class="pl-logo" src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty">
+  <div class="pl-name">Bay Beauty</div><div class="pl-sub">boutique</div><div class="pl-bar"></div>
+</div><div class="pl-num">BB</div></div>
+
+<div class="ann">Free UK delivery on vouchers <span class="heart">♥</span> A little luxury to keep or to give</div>
+
+<header class="nav">
+  <a class="nav-brand" href="/bay-beauty"><img src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty logo"><span class="txt"><b>Bay Beauty</b><small>boutique</small></span></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="/bay-beauty#about">About</a><a href="/bay-beauty#services">Services</a><a href="/bay-beauty#pricing">Pricing</a><a href="/bay-beauty-booking">Book</a>
+  </nav>
+  <div class="nav-cta">
+    <button class="cart-btn magnetic" id="cartBtn" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="count" id="cartCount">0</span>
+    </button>
+  </div>
+  <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</header>
+<nav class="mmenu" aria-label="Mobile">
+  <a href="/bay-beauty#about">About</a><a href="/bay-beauty#services">Services</a><a href="/bay-beauty#pricing">Pricing</a>
+  <a href="/bay-beauty-booking">Book</a><a href="/bay-beauty">Home</a>
+</nav>
+
+<section class="shop-head">
+  <div class="glow" aria-hidden="true"></div>
+  <p class="eyebrow center" data-rv style="justify-content:center">The boutique</p>
+  <h1 data-rv style="font-size:clamp(2.6rem,7vw,5rem)">Gift &amp; <span class="script">shop</span></h1>
+  <p class="lede" data-rv style="margin:16px auto 0">Vouchers, lashes, bridal packages &amp; masterclasses — order in seconds, checkout on WhatsApp.</p>
+  <div class="filters" data-rv id="filters">
+    <button class="on" data-cat="all">All</button>
+    <button data-cat="voucher">Gift Vouchers</button>
+    <button data-cat="bridal">Bridal</button>
+    <button data-cat="beauty">Beauty</button>
+    <button data-cat="learn">Learn</button>
+  </div>
+</section>
+
+<div class="products" id="products"><!-- injected --></div>
+
+<!-- cart drawer -->
+<div class="cart-ov" id="cartOv"></div>
+<aside class="cart" id="cart" aria-label="Shopping cart">
+  <div class="cart-h"><b>Your bag</b><button id="cartClose" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-f">
+    <div class="tot"><span>Total</span><span id="cartTotal">£0</span></div>
+    <a class="btn btn-solid" id="checkout" target="_blank" rel="noopener"><span>Checkout on WhatsApp</span>
+      <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M.05 24l1.7-6.2A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.45L.05 24zM6.6 20.1l.37.22a9.86 9.86 0 0 0 5.03 1.38 9.9 9.9 0 1 0-9.9-9.9c0 1.8.48 3.5 1.4 5.03l.24.38-1 3.65 3.86-.94z"/></svg></a>
+    <p class="note">Secure your order with Bayan — she'll confirm payment &amp; delivery.</p>
+  </div>
+</aside>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div>
+      <div class="fbrand"><img src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty"><div><b>Bay Beauty</b><small>by Bayan</small></div></div>
+      <p class="blurb">Luxury mobile makeup artist across <span data-area-txt>Luton · London · UK</span>. Women-only &amp; hijabi-friendly.</p>
+      <div class="socials">
+        <a data-ig target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a data-tt target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.3 2.3 1.9 4.1 4 4.4v3c-1.5 0-2.9-.5-4-1.3V15a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.1c-.3-.1-.7-.2-1-.2a3 3 0 1 0 3 3V3h3z"/></svg></a>
+        <a data-wa target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.05 24l1.7-6.2A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.45L.05 24zM6.6 20.1l.37.22a9.86 9.86 0 0 0 5.03 1.38 9.9 9.9 0 1 0-9.9-9.9c0 1.8.48 3.5 1.4 5.03l.24.38-1 3.65 3.86-.94z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Shop</h4><a href="#" data-cat-link="voucher">Gift vouchers</a><a href="#" data-cat-link="bridal">Bridal</a><a href="#" data-cat-link="beauty">Beauty</a><a href="#" data-cat-link="learn">Masterclasses</a></div>
+    <div><h4>Contact</h4><a data-wa target="_blank" rel="noopener">WhatsApp</a><a data-mail>Email</a><a href="/bay-beauty-booking">Book a service</a></div>
+  </div>
+  <div class="footer-bot"><span>© <span data-year>2026</span> Bay Beauty by Bayan</span><span>Enhancing beauty with modesty &amp; confidence <span class="heart">♥</span></span></div>
+</footer>
+
+<script src="/templates/vendor/gsap.min.js"></script>
+<script src="/templates/vendor/ScrollTrigger.min.js"></script>
+<script src="/templates/vendor/lenis.min.js"></script>
+<script src="/assets/baybeauty/bb.js"></script>
+<script>
+(function(){
+  var PRODUCTS=[
+    {id:"v35", cat:"voucher", emoji:"🎁", name:"Gift Voucher — £35", price:35, badge:"Bestseller", desc:"The perfect little gift. Redeemable against any service."},
+    {id:"v55", cat:"voucher", emoji:"💝", name:"Gift Voucher — £55", price:55, desc:"Treat someone to a full Soft Glam experience."},
+    {id:"v75", cat:"voucher", emoji:"💖", name:"Gift Voucher — £75", price:75, desc:"A Full Glam or Occasion look, beautifully gifted."},
+    {id:"v100",cat:"voucher", emoji:"👑", name:"Gift Voucher — £100", price:100, desc:"Luxury credit to spend however they wish."},
+    {id:"bridal", cat:"bridal", emoji:"👰", name:"Bridal Package", price:700, badge:"3 events", desc:"Three bridal events — trial, nikkah & wedding. Luxury from start to finish."},
+    {id:"engage", cat:"bridal", emoji:"💍", name:"Engagement Glam", price:165, desc:"Camera-ready engagement makeup for your celebration."},
+    {id:"lash", cat:"beauty", emoji:"👁️", name:"Luxe Lash Set", price:15, desc:"Bayan's favourite reusable strip lashes — the ones she uses on clients."},
+    {id:"kit", cat:"beauty", emoji:"💄", name:"Touch-Up Kit", price:20, desc:"Blot, gloss & set — keep your glam flawless all day."},
+    {id:"spray", cat:"beauty", emoji:"✨", name:"Setting Spray", price:18, desc:"Lock in your look for 16+ hours of flawless wear."},
+    {id:"class1", cat:"learn", emoji:"🎓", name:"1-to-1 Masterclass", price:120, badge:"Popular", desc:"Learn your own everyday glam in a private 2-hour session."},
+    {id:"classbr", cat:"learn", emoji:"📸", name:"Content Creator Class", price:150, desc:"Master camera-ready makeup for photos, reels & TikTok."},
+    {id:"giftbox", cat:"beauty", emoji:"🎀", name:"Bay Beauty Gift Box", price:45, desc:"Lashes, setting spray & a touch-up kit in a keepsake box."}
+  ];
+  var $=function(s){return document.querySelector(s)}, $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+  var KEY="bb_cart", cart={};
+  try{cart=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){cart={}}
+
+  // render products
+  var grid=$("#products");
+  function card(p){
+    return '<article class="prod" data-cat="'+p.cat+'" data-rv data-tilt>'+
+      '<div class="thumb">'+(p.badge?'<span class="badge">'+p.badge+'</span>':'')+'<span class="emoji">'+p.emoji+'</span></div>'+
+      '<div class="body"><h4>'+p.name.replace(/ — £\d+/,'')+'</h4><p>'+p.desc+'</p>'+
+      '<div class="row"><span class="pr">£'+p.price+'</span>'+
+      '<button class="add" data-add="'+p.id+'">Add to bag</button></div></div></article>';
+  }
+  grid.innerHTML=PRODUCTS.map(card).join("");
+  if(window.BB) {} // ensure bb.js loaded reveals; refresh reveal observer isn't exposed, so add .in for injected on scroll fallback:
+  // re-run simple reveal for injected nodes
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.1});
+  $$("#products [data-rv]").forEach(function(el){io.observe(el);});
+
+  // cart ops
+  function save(){localStorage.setItem(KEY,JSON.stringify(cart));}
+  function count(){return Object.keys(cart).reduce(function(a,k){return a+cart[k];},0);}
+  function total(){return Object.keys(cart).reduce(function(a,k){var p=PRODUCTS.filter(function(x){return x.id===k})[0];return a+(p?p.price*cart[k]:0);},0);}
+  function prod(id){return PRODUCTS.filter(function(x){return x.id===id})[0];}
+
+  function renderCart(){
+    var c=$("#cartCount"); var n=count();
+    c.textContent=n; c.classList.toggle("show",n>0);
+    var items=$("#cartItems");
+    var ids=Object.keys(cart).filter(function(k){return cart[k]>0;});
+    if(!ids.length){items.innerHTML='<div class="cart-empty"><div class="e">🛍️</div><p>Your bag is empty.<br>Add a little luxury ✨</p></div>';}
+    else{items.innerHTML=ids.map(function(k){var p=prod(k);return '<div class="ci"><div class="ic">'+p.emoji+'</div>'+
+      '<div class="info"><b>'+p.name.replace(/ — £\d+/,'')+'</b><span class="p">£'+p.price+'</span><br><a class="rm" data-rm="'+k+'">Remove</a></div>'+
+      '<div class="qty"><button data-dec="'+k+'">−</button><span>'+cart[k]+'</span><button data-inc="'+k+'">+</button></div></div>';}).join("");}
+    $("#cartTotal").textContent="£"+total();
+    // checkout link
+    var lines=["Hi Bayan! I'd love to order from the Bay Beauty boutique 🛍️",""];
+    ids.forEach(function(k){var p=prod(k);lines.push("• "+cart[k]+"× "+p.name.replace(/ — £\d+/,'')+" — £"+(p.price*cart[k]));});
+    lines.push("","Total: £"+total(),"","Please let me know how to pay & delivery 🤍");
+    var msg=lines.join("\n");
+    var link=window.BB?window.BB.waLink(msg):("https://wa.me/?text="+encodeURIComponent(msg));
+    $("#checkout").href=link;
+    $("#checkout").style.opacity=ids.length?"1":".5";
+    $("#checkout").style.pointerEvents=ids.length?"auto":"none";
+  }
+  function add(id){cart[id]=(cart[id]||0)+1;save();renderCart();openCart();}
+
+  document.addEventListener("click",function(e){
+    var t=e.target.closest("[data-add],[data-inc],[data-dec],[data-rm],[data-cat-link]");
+    if(!t)return;
+    if(t.hasAttribute("data-add")){add(t.getAttribute("data-add"));t.textContent="Added ✓";t.classList.add("added");setTimeout(function(){t.textContent="Add to bag";t.classList.remove("added");},1200);}
+    if(t.hasAttribute("data-inc")){var i=t.getAttribute("data-inc");cart[i]++;save();renderCart();}
+    if(t.hasAttribute("data-dec")){var d=t.getAttribute("data-dec");cart[d]--;if(cart[d]<=0)delete cart[d];save();renderCart();}
+    if(t.hasAttribute("data-rm")){delete cart[t.getAttribute("data-rm")];save();renderCart();}
+    if(t.hasAttribute("data-cat-link")){e.preventDefault();filter(t.getAttribute("data-cat-link"));$("#filters button[data-cat='"+t.getAttribute("data-cat-link")+"']").click();window.scrollTo({top:$("#products").offsetTop-100,behavior:"smooth"});}
+  });
+
+  // drawer
+  function openCart(){$("#cart").classList.add("open");$("#cartOv").classList.add("open");}
+  function closeCart(){$("#cart").classList.remove("open");$("#cartOv").classList.remove("open");}
+  $("#cartBtn").addEventListener("click",openCart);
+  $("#cartClose").addEventListener("click",closeCart);
+  $("#cartOv").addEventListener("click",closeCart);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeCart();});
+
+  // filters
+  function filter(cat){
+    $$("#products .prod").forEach(function(el){
+      var show=cat==="all"||el.getAttribute("data-cat")===cat;
+      el.style.display=show?"":"none";
+    });
+  }
+  $$("#filters button").forEach(function(b){b.addEventListener("click",function(){
+    $$("#filters button").forEach(function(x){x.classList.remove("on");});b.classList.add("on");filter(b.getAttribute("data-cat"));
+  });});
+
+  renderCart();
+})();
+</script>
+</body>
+</html>

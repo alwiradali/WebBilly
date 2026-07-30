@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Book an Appointment — Bay Beauty by Bayan</title>
+<meta name="description" content="Book your makeup appointment with Bay Beauty by Bayan. Bridal, glam & occasion makeup across Luton, London & the UK.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fbf5ef">
+<link rel="icon" href="/assets/baybeauty/bb-logo-fav.png" data-bb-logo>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/baybeauty/bb.css">
+<style>
+  .book-head{position:relative;text-align:center;padding:clamp(120px,18vh,220px) 6vw clamp(40px,7vh,80px);
+    background:linear-gradient(160deg,var(--blush),var(--cream));overflow:hidden}
+  .book-head .glow{position:absolute;width:50vw;height:50vw;border-radius:50%;filter:blur(90px);opacity:.4;
+    background:radial-gradient(circle,var(--rose),transparent 70%);top:-10%;right:-5%;pointer-events:none}
+  .book-wrap{max-width:960px;margin:-40px auto 0;padding:0 6vw clamp(80px,12vh,140px);position:relative;z-index:2}
+  .book-card{background:var(--cream);border:1px solid var(--line);border-radius:26px;padding:clamp(28px,5vw,52px);
+    box-shadow:0 50px 100px -60px rgba(120,80,50,.5)}
+  .book-steps{display:flex;gap:8px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+  .book-steps .s{display:flex;align-items:center;gap:9px;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe)}
+  .book-steps .s b{width:26px;height:26px;border-radius:50%;background:var(--blush);color:var(--gold-deep);display:grid;place-items:center;font-family:var(--display)}
+  .book-steps .s.on b{background:linear-gradient(140deg,var(--gold-2),var(--gold-deep));color:#fff}
+  .sec-title{font-family:var(--serif);font-size:1.3rem;font-weight:600;margin:8px 0 18px;display:flex;align-items:center;gap:10px}
+  .sec-title .n{font-family:var(--display);color:var(--blush-2);font-size:1.6rem}
+  .booked{text-align:center;padding:30px 0}
+  .booked .big{width:84px;height:84px;border-radius:50%;background:linear-gradient(140deg,var(--gold-2),var(--gold-deep));
+    display:grid;place-items:center;margin:0 auto 22px}
+  .booked .big svg{width:38px;height:38px;color:#fff}
+  .summary{background:var(--ivory);border:1px dashed var(--line-2);border-radius:16px;padding:20px 24px;margin:24px 0;text-align:left}
+  .summary div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+  .summary div:last-child{border:0}.summary div span:first-child{color:var(--taupe)}
+  .note{font-size:.82rem;color:var(--taupe);text-align:center;margin-top:18px}
+  .aside-info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+  .aside-info .b{background:var(--ivory);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .aside-info .b b{display:block;font-family:var(--serif);font-size:1.05rem;margin-bottom:4px}
+  .aside-info .b span{font-size:.76rem;color:var(--taupe)}
+  @media(max-width:640px){.aside-info{grid-template-columns:1fr}.book-steps .s span{display:none}}
+</style>
+</head>
+<body class="loading">
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-d" aria-hidden="true"></div>
+
+<div class="pl" aria-hidden="true"><div class="pl-in">
+  <img class="pl-logo" src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty">
+  <div class="pl-name">Bay Beauty</div><div class="pl-sub">by Bayan</div><div class="pl-bar"></div>
+</div><div class="pl-num">BB</div></div>
+
+<div class="ann">50% deposit secures your date <span class="heart">♥</span> Women-only · Hijabi-friendly · <span data-area-txt>Luton · London · UK</span></div>
+
+<header class="nav">
+  <a class="nav-brand" href="/bay-beauty"><img src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty logo"><span class="txt"><b>Bay Beauty</b><small>by Bayan</small></span></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="/bay-beauty#about">About</a><a href="/bay-beauty#services">Services</a><a href="/bay-beauty#pricing">Pricing</a><a href="/bay-beauty-shop">Shop</a>
+  </nav>
+  <div class="nav-cta"><a class="btn btn-line magnetic" href="/bay-beauty"><span>← Home</span></a></div>
+  <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</header>
+<nav class="mmenu" aria-label="Mobile">
+  <a href="/bay-beauty#about">About</a><a href="/bay-beauty#services">Services</a><a href="/bay-beauty#pricing">Pricing</a>
+  <a href="/bay-beauty-shop">Shop</a><a href="/bay-beauty">Home</a>
+</nav>
+
+<section class="book-head">
+  <div class="glow" aria-hidden="true"></div>
+  <p class="eyebrow center" data-rv style="justify-content:center">Reserve your glam</p>
+  <h1 data-rv style="font-size:clamp(2.6rem,7vw,5rem)">Book an <span class="script">appointment</span></h1>
+  <p class="lede" data-rv style="margin:16px auto 0">Tell me a little about your day and I'll confirm everything over WhatsApp. It only takes a minute.</p>
+</section>
+
+<div class="book-wrap">
+  <div class="book-card" data-rv>
+    <div class="book-steps">
+      <div class="s on"><b>1</b><span>Service</span></div>
+      <div class="s on"><b>2</b><span>Date &amp; place</span></div>
+      <div class="s on"><b>3</b><span>Your details</span></div>
+    </div>
+
+    <form id="bookForm">
+      <div class="sec-title"><span class="n">01</span> Choose your service</div>
+      <div class="svc-opts" id="svcOpts">
+        <label class="svc-opt"><input type="radio" name="service" value="Soft Glam — £55" checked><span class="box"><b>Soft Glam</b><span>£55</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Full Glam — £75"><span class="box"><b>Full Glam</b><span>£75</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Occasion Makeup — £75"><span class="box"><b>Occasion Makeup</b><span>£75</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Occasion Trial — £35"><span class="box"><b>Occasion Trial</b><span>£35</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Engagement Makeup — £165"><span class="box"><b>Engagement</b><span>£165</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Bridal Trial — £175"><span class="box"><b>Bridal Trial</b><span>£175</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Bridal Makeup — £300"><span class="box"><b>Bridal Makeup</b><span>£300</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Bridal Package (3 events) — £700"><span class="box"><b>Bridal Package</b><span>£700</span></span></label>
+        <label class="svc-opt"><input type="radio" name="service" value="Editorial Makeup — £50–£80"><span class="box"><b>Editorial</b><span>£50–£80</span></span></label>
+      </div>
+
+      <div class="sec-title" style="margin-top:34px"><span class="n">02</span> When &amp; where</div>
+      <div class="form-grid">
+        <div class="field"><label for="date">Preferred date</label><input type="date" id="date" name="date" required></div>
+        <div class="field"><label for="time">Preferred time</label><input type="time" id="time" name="time"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label for="postcode">Your postcode / area</label><input type="text" id="postcode" name="postcode" placeholder="e.g. LU1 · covers Luton, London & UK"></div>
+        <div class="field"><label for="people">How many people?</label>
+          <select id="people" name="people"><option>Just me</option><option>2</option><option>3</option><option>4</option><option>5+</option><option>Bridal party</option></select>
+        </div>
+      </div>
+
+      <div class="sec-title" style="margin-top:20px"><span class="n">03</span> Your details</div>
+      <div class="form-grid">
+        <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required placeholder="Your name"></div>
+        <div class="field"><label for="phone">Phone / WhatsApp</label><input type="tel" id="phone" name="phone" required placeholder="07…"></div>
+      </div>
+      <div class="field"><label for="email">Email <span style="text-transform:none;letter-spacing:0;color:var(--taupe)">(optional)</span></label><input type="email" id="email" name="email" placeholder="you@email.com"></div>
+      <div class="field"><label for="notes">Tell me about your look / occasion</label><textarea id="notes" name="notes" placeholder="Theme, style, what you're looking for, anything you'd like me to focus on…"></textarea></div>
+
+      <div class="deposit" style="margin:6px 0 26px">
+        <b>50% deposit secures your date <span class="heart">♥</span></b>
+        <p>Deposits are non-refundable — unless I ever need to cancel, then you're fully reimbursed. Balance due before or on your appointment.</p>
+      </div>
+
+      <button type="submit" class="btn btn-solid magnetic" style="width:100%;justify-content:center;font-size:.86rem">
+        <span>Confirm on WhatsApp</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M.05 24l1.7-6.2A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.45L.05 24zM6.6 20.1l.37.22a9.86 9.86 0 0 0 5.03 1.38 9.9 9.9 0 1 0-9.9-9.9c0 1.8.48 3.5 1.4 5.03l.24.38-1 3.65 3.86-.94z"/></svg>
+      </button>
+      <p class="note">Prefer email? <a data-mail style="color:var(--gold-deep);font-weight:500">Email Bayan instead →</a></p>
+    </form>
+
+    <!-- confirmation (revealed after submit) -->
+    <div class="booked" id="booked" hidden>
+      <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+      <h3 style="font-size:1.8rem">Almost there, <span id="bkName">lovely</span>! ✨</h3>
+      <p class="lede" style="margin:12px auto 0">I've opened WhatsApp with your request pre-filled — just hit send and I'll confirm your date &amp; deposit link.</p>
+      <div class="summary" id="bkSummary"></div>
+      <a id="bkWa" class="btn btn-solid magnetic" target="_blank" rel="noopener" style="justify-content:center"><span>Open WhatsApp again</span></a>
+      <p class="note">Didn't open? <a id="bkMail" data-mail style="color:var(--gold-deep);font-weight:500">Email the details instead</a></p>
+    </div>
+  </div>
+
+  <div class="aside-info" data-rv>
+    <div class="b"><b>I come to you</b><span>Mobile across Luton, London &amp; UK</span></div>
+    <div class="b"><b>Women-only</b><span>Hijabi-friendly &amp; private</span></div>
+    <div class="b"><b>Free consultation</b><span>For every bridal booking</span></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div>
+      <div class="fbrand"><img src="/assets/baybeauty/bb-logo.png" alt="Bay Beauty"><div><b>Bay Beauty</b><small>by Bayan</small></div></div>
+      <p class="blurb">Luxury mobile makeup artist across <span data-area-txt>Luton · London · UK</span>. Women-only &amp; hijabi-friendly.</p>
+      <div class="socials">
+        <a data-ig target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a data-tt target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.3 2.3 1.9 4.1 4 4.4v3c-1.5 0-2.9-.5-4-1.3V15a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.1c-.3-.1-.7-.2-1-.2a3 3 0 1 0 3 3V3h3z"/></svg></a>
+        <a data-wa target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.05 24l1.7-6.2A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.45L.05 24zM6.6 20.1l.37.22a9.86 9.86 0 0 0 5.03 1.38 9.9 9.9 0 1 0-9.9-9.9c0 1.8.48 3.5 1.4 5.03l.24.38-1 3.65 3.86-.94z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><a href="/bay-beauty#about">About</a><a href="/bay-beauty#services">Services</a><a href="/bay-beauty#pricing">Pricing</a><a href="/bay-beauty-shop">Shop</a></div>
+    <div><h4>Contact</h4><a data-wa target="_blank" rel="noopener">WhatsApp</a><a data-mail>Email</a><a data-ig target="_blank" rel="noopener">Instagram</a></div>
+  </div>
+  <div class="footer-bot"><span>© <span data-year>2026</span> Bay Beauty by Bayan</span><span>I can't wait to glam you <span class="heart">♥</span></span></div>
+</footer>
+
+<script src="/templates/vendor/gsap.min.js"></script>
+<script src="/templates/vendor/ScrollTrigger.min.js"></script>
+<script src="/templates/vendor/lenis.min.js"></script>
+<script src="/assets/baybeauty/bb.js"></script>
+<script>
+(function(){
+  // prefill service from ?service=
+  var params=new URLSearchParams(location.search), want=(params.get("service")||"").toLowerCase();
+  if(want){document.querySelectorAll('input[name="service"]').forEach(function(r){
+    if(r.value.toLowerCase().indexOf(want)===0||r.value.toLowerCase().indexOf(want)>-1)r.checked=true;});}
+  // min date = today
+  var d=document.getElementById("date"); if(d){d.min=new Date().toISOString().split("T")[0];}
+
+  var form=document.getElementById("bookForm");
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var svc=(form.querySelector('input[name="service"]:checked')||{}).value||"Makeup";
+    var name=form.name.value.trim(), phone=form.phone.value.trim(), email=form.email.value.trim();
+    var date=form.date.value, time=form.time.value, pc=form.postcode.value.trim(), ppl=form.people.value, notes=form.notes.value.trim();
+    var lines=[
+      "Hi Bayan! I'd love to book in ✨","",
+      "💄 Service: "+svc,
+      "📅 Date: "+(date||"(flexible)")+(time?" at "+time:""),
+      "📍 Area: "+(pc||"(to confirm)"),
+      "👥 People: "+ppl,
+      "🙋 Name: "+name,
+      "📱 Phone: "+phone,
+      email?("✉️ Email: "+email):"",
+      notes?("📝 Notes: "+notes):"",
+      "","(Happy to pay the 50% deposit to secure my date 🤍)"
+    ].filter(Boolean);
+    var msg=lines.join("\n");
+    var wa=window.BB?window.BB.waLink(msg):("https://wa.me/?text="+encodeURIComponent(msg));
+
+    // summary
+    var sum=document.getElementById("bkSummary");
+    sum.innerHTML=[
+      ["Service",svc],["Date",(date||"Flexible")+(time?" · "+time:"")],["Area",pc||"To confirm"],["People",ppl],["Name",name],["Phone",phone]
+    ].map(function(r){return "<div><span>"+r[0]+"</span><span>"+(r[1]||"—")+"</span></div>";}).join("");
+    document.getElementById("bkName").textContent=name||"lovely";
+
+    var waBtn=document.getElementById("bkWa"); waBtn.href=wa;
+    var mail=document.getElementById("bkMail");
+    if(mail){mail.href="mailto:"+(window.BB?window.BB.config.email:"")+"?subject="+encodeURIComponent("Booking — "+svc)+"&body="+encodeURIComponent(msg);}
+
+    form.hidden=true; document.getElementById("booked").hidden=false;
+    document.querySelectorAll(".book-steps .s").forEach(function(s){s.classList.add("on");});
+    window.scrollTo({top:form.getBoundingClientRect().top+window.scrollY-120,behavior:"smooth"});
+    window.open(wa,"_blank");
+  });
+})();
+</script>
+</body>
+</html>
