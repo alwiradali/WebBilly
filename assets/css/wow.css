@@ -1,0 +1,64 @@
+/* ============================================================
+   Billy Digitals — WOW motion layer (light theme)
+   Tasteful, GPU-cheap interactions: scroll progress, 3D tilt,
+   magnetic buttons, parallax, aurora accents, reveals.
+   All transform/opacity only. Gated + reduced-motion safe.
+   ============================================================ */
+
+/* ---------- scroll progress bar ---------- */
+.wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
+
+/* ---------- 3D tilt ---------- */
+.tilt{transform-style:preserve-3d;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s ease;will-change:transform}
+.tilt .tilt-lift{transform:translateZ(28px);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.tilt-sheen{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(29,111,245,.14),transparent 45%);
+  transition:opacity .35s ease;z-index:3}
+.tilt.is-tilting .tilt-sheen{opacity:1}
+
+/* ---------- reveal (richer than base) ---------- */
+.wow-up{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.wow-up.in{opacity:1;transform:none}
+.wow-stagger > *{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.wow-stagger.in > *{opacity:1;transform:none}
+.wow-stagger.in > *:nth-child(2){transition-delay:.06s}
+.wow-stagger.in > *:nth-child(3){transition-delay:.12s}
+.wow-stagger.in > *:nth-child(4){transition-delay:.18s}
+.wow-stagger.in > *:nth-child(5){transition-delay:.24s}
+.wow-stagger.in > *:nth-child(6){transition-delay:.30s}
+.wow-stagger.in > *:nth-child(7){transition-delay:.36s}
+.wow-stagger.in > *:nth-child(8){transition-delay:.42s}
+
+/* ---------- aurora accent blobs (subtle, moving) ---------- */
+.wow-aurora{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.wow-aurora::before,.wow-aurora::after{content:"";position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;
+  will-change:transform}
+.wow-aurora::before{width:46vw;height:46vw;max-width:620px;max-height:620px;left:-8vw;top:-10vw;
+  background:radial-gradient(circle,rgba(29,111,245,.20),transparent 70%);animation:wowFloatA 20s ease-in-out infinite alternate}
+.wow-aurora::after{width:40vw;height:40vw;max-width:560px;max-height:560px;right:-6vw;bottom:-12vw;
+  background:radial-gradient(circle,rgba(34,211,238,.18),transparent 70%);animation:wowFloatB 26s ease-in-out infinite alternate}
+@keyframes wowFloatA{to{transform:translate(60px,40px) scale(1.15)}}
+@keyframes wowFloatB{to{transform:translate(-50px,-40px) scale(1.1)}}
+.wow-aurora + *{position:relative;z-index:1}
+
+/* keep section content above aurora */
+.section{position:relative}
+
+/* ---------- magnetic buttons ---------- */
+.magnetic-btn{will-change:transform;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- pause heavy motion while actively scrolling / off-screen ---------- */
+html.lenis-scrolling .wow-aurora::before,
+html.lenis-scrolling .wow-aurora::after{animation-play-state:paused!important}
+
+@media (hover:none){
+  .tilt{transform:none!important}
+  .tilt-sheen{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .wow-up,.wow-stagger>*{opacity:1!important;transform:none!important;transition:none!important}
+  .wow-aurora::before,.wow-aurora::after{animation:none!important}
+  .tilt,.magnetic-btn{transition:none!important}
+  .wow-progress{display:none}
+}
