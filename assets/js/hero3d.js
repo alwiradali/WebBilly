@@ -19,6 +19,12 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
 
+  // Do not run this heavy WebGL+bloom field when it can't be seen (the light
+  // theme hides #heroGL) or on mobile / reduced-motion — it was burning GPU
+  // and memory into an invisible canvas and triggering iOS tab reloads.
+  var _cs = window.getComputedStyle(canvas);
+  if (mobile || reduce || _cs.display === "none" || _cs.visibility === "hidden") { return; }
+
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true, powerPreference: "high-performance" }); }
   catch (e) { canvas.style.display = "none"; return; }

@@ -11,6 +11,10 @@
   var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
   var COLORS = ["#2b7fff", "#22d3ee", "#7c3aed", "#38bdf8"];
 
+  // Skip the decorative particle canvases on mobile / reduced-motion to keep
+  // memory low and avoid iOS tab reloads.
+  if (mobile || reduce) return;
+
   document.querySelectorAll(".fx-alive").forEach(function (section) {
     var canvas = document.createElement("canvas");
     canvas.className = "fx-canvas";
