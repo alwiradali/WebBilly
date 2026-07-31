@@ -1,0 +1,112 @@
+/* ============================================================
+   Billy Digitals — AGENCY THEME
+   Synthesized from award-winning agency references (K72 primary:
+   black canvas, monumental type, ghost outline pill buttons,
+   electric-lime accent, flat surfaces; OHZI/ThoughtLab: floating
+   3D hero form). Loaded LAST. Base = dark style.css.
+   ============================================================ */
+:root{
+  --bg:#000000; --bg-2:#000000;
+  --card:transparent; --card-hover:rgba(255,255,255,.04);
+  --border:rgba(255,255,255,.16);
+  --text:#ffffff; --muted:#8a8a8a; --silver:#b6b6b6;
+  --c1:#d3fd50; --c2:#d3fd50; --c3:#d3fd50;
+  --lime:#d3fd50;
+  --grad:linear-gradient(90deg,#d3fd50,#d3fd50);
+  --grad-btn:transparent;
+  --shadow:none;
+  --font-display:'Space Grotesk','Inter',system-ui,sans-serif;
+}
+*{text-shadow:none!important}
+body{background:#000;color:#fff;font-family:'Inter',system-ui,sans-serif;font-weight:400}
+::selection{background:#d3fd50;color:#000}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#222}
+
+/* ---------- monumental type ---------- */
+h1,h2,h3,h4,.hero h1,.section-head h2,.panel h3,.stat h3,.plan h3,.foot-brand{
+  font-family:'Space Grotesk',sans-serif!important;font-weight:500!important;letter-spacing:-.03em!important;color:#fff}
+.hero h1{font-size:clamp(3.2rem,13vw,9rem);line-height:.92;font-weight:600!important}
+.section-head h2{font-size:clamp(2.4rem,6vw,5rem);line-height:.98}
+p,.sub,.section-head .sub,.hero-sub,.card p,.panel p,.footer-grid p{font-weight:400;color:var(--silver)}
+/* accent words stay ghost-white (K72: no colour in headlines) */
+.grad{background:none!important;-webkit-text-fill-color:#fff!important;color:#fff!important}
+.hero h1 .accent{-webkit-text-fill-color:#fff!important;color:#fff!important;font-family:'Space Grotesk',sans-serif!important;font-style:normal}
+/* lime = decorative accent only */
+.eyebrow,.tag,.cw-label,.ps-label,.hero-badge{color:#d3fd50!important;background:transparent!important;
+  border-color:rgba(211,253,80,.4)!important;text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+
+/* ---------- header ---------- */
+.site-header.scrolled{background:rgba(0,0,0,.7)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1)!important;box-shadow:none}
+.nav-links a{color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:.82rem}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a.active::after,.nav-links a:hover::after{background:#d3fd50}
+
+/* ---------- hero → void ---------- */
+.hero{background:#000!important}
+.hero-badge{color:#d3fd50;border:1px solid rgba(211,253,80,.4);background:transparent;text-transform:uppercase;letter-spacing:.14em}
+.hero-sub{color:#fff;font-weight:400}
+.hero-stats > div{background:transparent;border:0;border-top:1px solid rgba(255,255,255,.16)}
+.hero-stats dt span{-webkit-text-fill-color:#d3fd50;color:#d3fd50;background:none}
+.hero-stats dd{color:var(--muted)}
+.hero-welcome .hw-top .ch{color:#fff!important}
+.hw-bot{background:none!important;-webkit-text-fill-color:#d3fd50!important;color:#d3fd50!important}
+
+/* ---------- SIGNATURE: ghost outline pill buttons ---------- */
+.btn-primary,.nav-cta{background:transparent!important;color:#fff!important;border:2px solid #ffffff!important;
+  border-radius:9999px!important;text-transform:uppercase;letter-spacing:.06em;font-weight:600;transition:background .3s,color .3s,border-color .3s}
+.btn-primary:hover,.nav-cta:hover{background:#d3fd50!important;color:#000!important;border-color:#d3fd50!important}
+.btn-ghost{background:transparent;border:2px solid rgba(255,255,255,.35);color:#fff;border-radius:9999px;text-transform:uppercase;letter-spacing:.06em}
+.btn-ghost:hover{border-color:#fff}
+.magnetic,.magnetic-btn{border-radius:9999px}
+
+/* ---------- flat outlined cards ---------- */
+.card,.tcard,.offer,.plan,.host-card,.ccard,.contact-form,.why-strip>div,.faq-item,.testi,.review-card{
+  background:transparent!important;box-shadow:none!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:18px}
+.card:hover,.tcard:hover,.offer:hover{background:rgba(255,255,255,.04)!important;border-color:#d3fd50!important;box-shadow:none!important}
+.card-icon{background:transparent!important;color:#d3fd50!important;border:1px solid rgba(211,253,80,.4)!important}
+.card h3,.offer h3{color:#fff}.card p,.offer p{color:var(--muted)}
+.section-alt{background:#000}
+
+/* ---------- statement pill / panels ---------- */
+.statement h2{color:#fff}
+.hl-pill{background:#d3fd50;color:#000;box-shadow:none}
+.panel{background:#000!important;border:1px solid rgba(255,255,255,.16)!important;color:#fff}
+.panel.p-cream,.panel h3,.panel p,.panel .ptags span{color:#fff!important}
+.panel .ptags span{border-color:rgba(255,255,255,.35)}
+.wire-globe{color:#d3fd50}
+
+/* ---------- spinning badge ---------- */
+.spin-badge{color:#fff}
+.spin-badge .core{background:#d3fd50;color:#000}
+
+/* ---------- gallery / filters ---------- */
+.tinfo h3{color:#fff}.tcat{color:var(--muted)}.tlink{color:#d3fd50}
+.filter-chip,.tfilter button{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted)}
+.filter-chip.active,.tfilter button.active{background:#d3fd50;color:#000;border-color:#d3fd50}
+.cw-pills span{background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.25)}
+
+/* ---------- process / stats / marquee / trust ---------- */
+.pnum,.stat h3 span{color:#d3fd50}
+.why-strip>div strong{color:#fff}.why-strip>div span{color:var(--muted)}
+.marquee{border-color:rgba(255,255,255,.12)}.marquee li{color:#4d4d4d}
+.marquee li::after,.marquee span::after{color:#d3fd50}
+.trust-strip,.trust-label,.ps-tech{color:var(--muted)}
+.trust-name,.ps-chip{color:#fff;background:transparent;border-color:rgba(255,255,255,.2)}
+.ps-chip b{color:#d3fd50}
+
+/* ---------- forms ---------- */
+input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px}
+input::placeholder,textarea::placeholder{color:#6a6a6a}label{color:var(--muted)}
+
+/* ---------- footer ---------- */
+.site-footer{background:#000;border-top:1px solid rgba(255,255,255,.12)}
+.footer-grid h4{color:#fff}.footer-grid p,.footer-grid ul a{color:var(--muted)}
+.footer-grid ul a:hover{color:#d3fd50}
+.socials a{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff}
+.socials a:hover{color:#d3fd50;border-color:#d3fd50}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.12);color:var(--muted)}
+
+/* aurora → lime on black, very subtle */
+.wow-aurora::before{background:radial-gradient(circle,rgba(211,253,80,.12),transparent 70%)}
+.wow-aurora::after{background:radial-gradient(circle,rgba(211,253,80,.06),transparent 70%)}
