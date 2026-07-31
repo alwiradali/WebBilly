@@ -9,6 +9,11 @@
 .wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
 
+/* ---------- featured-project category pills (tecreative-style) ---------- */
+.cw-pills{position:absolute;left:14px;top:14px;z-index:4;display:flex;flex-wrap:wrap;gap:8px;pointer-events:none}
+.cw-pills span{background:rgba(255,255,255,.94);color:#12131a;font-weight:600;font-size:.8rem;letter-spacing:.01em;
+  padding:7px 15px;border-radius:999px;box-shadow:0 6px 16px rgba(10,20,40,.18);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+
 /* ---------- colored service panels with spinning wireframe globe ---------- */
 .panels{padding:clamp(30px,5vw,70px) 0 0}
 .panel{position:relative;overflow:hidden;border-radius:28px;padding:clamp(28px,4vw,52px);margin-bottom:22px;
