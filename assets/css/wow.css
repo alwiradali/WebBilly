@@ -9,6 +9,18 @@
 .wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
 
+/* ---------- rotating circular badge button (rayo-style) ---------- */
+.spin-badge{position:relative;width:136px;height:136px;margin:0 auto 30px;display:grid;place-items:center;color:var(--text)}
+.spin-badge .ring{position:absolute;inset:0;width:100%;height:100%;animation:spinBadge 16s linear infinite}
+.spin-badge .ring text{font-family:var(--font-display,'Space Grotesk',sans-serif);font-size:11.6px;letter-spacing:.16em;font-weight:600;fill:currentColor;text-transform:uppercase}
+.spin-badge .core{position:relative;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;
+  background:var(--grad-btn,linear-gradient(100deg,#1d6ff5,#0891b2));box-shadow:0 12px 26px rgba(29,111,245,.36);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.spin-badge .core svg{width:23px;height:23px}
+.spin-badge:hover .core{transform:scale(1.1)}
+.spin-badge:hover .ring{animation-duration:7s}
+@keyframes spinBadge{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin-badge .ring{animation:none}}
+
 /* ---------- 3D tilt ---------- */
 .tilt{transform-style:preserve-3d;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s ease;will-change:transform}
 .tilt .tilt-lift{transform:translateZ(28px);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
