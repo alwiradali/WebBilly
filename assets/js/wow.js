@@ -177,6 +177,30 @@
     hero.addEventListener("pointerleave", function () { s.style.opacity = "0"; });
   })();
 
+  /* ---------- Huly-style border beam on tiles ----------
+     A light comet travels around each tile's rounded outline (masked
+     rotating conic gradient). Appended as a child so it never clashes
+     with the ::before/::after already used on cards. */
+  (function hulyBeam() {
+    var sel = ".panel, #services .card, .offer, .tcard, .plan, .host-card";
+    var beams = [];
+    document.querySelectorAll(sel).forEach(function (el) {
+      if (getComputedStyle(el).position === "static") el.style.position = "relative";
+      var b = document.createElement("span");
+      b.className = "hbeam"; b.setAttribute("aria-hidden", "true");
+      el.appendChild(b); beams.push(b);
+    });
+    // Only animate the comets on tiles that are actually on screen.
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { e.target.classList.toggle("live", e.isIntersecting); });
+      }, { rootMargin: "120px 0px" });
+      beams.forEach(function (b) { io.observe(b); });
+    } else {
+      beams.forEach(function (b) { b.classList.add("live"); });
+    }
+  })();
+
   /* ---------- bulletproof reveal reinforcement ----------
      The 3D reveal hides .reveal until it gets .in. To guarantee nothing
      ever stays invisible (even on fast mobile scroll), we reinforce with a

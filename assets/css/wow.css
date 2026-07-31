@@ -218,3 +218,32 @@ body{background:#0a0a0a}
   .section-head.reveal h2{filter:none!important}
 }
 html.lenis-scrolling .panel .pglobe,html.lenis-scrolling .spin-badge{animation-play-state:paused}
+
+/* ============================================================
+   HULY-STYLE TILE BORDER BEAM
+   A light comet continuously traces each tile's rounded outline —
+   a rotating conic gradient masked to the border ring only. This is
+   the huly.io tile outline animation. GPU-cheap: one masked layer
+   per tile, only the angle animates. Paused while scrolling / off
+   under reduced-motion.
+   ============================================================ */
+@property --hb{syntax:'<angle>';inherits:false;initial-value:0deg}
+.hbeam{position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;z-index:4;
+  background:conic-gradient(from var(--hb),
+    transparent 0 68%,
+    rgba(128,82,255,.0) 68%,
+    #8052ff 82%, #c4b5fd 88%, #ffffff 90.5%, #c4b5fd 93%, #8052ff 96%,
+    transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:hbSpin 5.5s linear infinite;animation-play-state:paused;opacity:.95;filter:drop-shadow(0 0 4px rgba(128,82,255,.55))}
+.hbeam.live{animation-play-state:running}
+/* stagger so the comets aren't all in lock-step */
+.panel:nth-child(2) .hbeam,.card:nth-child(2) .hbeam,.tcard:nth-child(2n) .hbeam{animation-delay:-1.8s}
+.panel:nth-child(3) .hbeam,.card:nth-child(3) .hbeam,.tcard:nth-child(3n) .hbeam{animation-delay:-3.4s}
+.card:nth-child(4) .hbeam{animation-delay:-4.6s}
+@keyframes hbSpin{to{--hb:360deg}}
+/* retire the old electric plan ring so tiles share one outline system */
+#plans .blaze{opacity:0!important;animation:none!important}
+html.lenis-scrolling .hbeam{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.hbeam{animation:none!important;opacity:.5}}
