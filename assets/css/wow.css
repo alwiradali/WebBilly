@@ -9,6 +9,33 @@
 .wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
 
+/* ---------- colored service panels with spinning wireframe globe ---------- */
+.panels{padding:clamp(30px,5vw,70px) 0 0}
+.panel{position:relative;overflow:hidden;border-radius:28px;padding:clamp(28px,4vw,52px);margin-bottom:22px;
+  display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;min-height:290px;color:#fff}
+.panel.p-blue{background:linear-gradient(135deg,#4f7cf6,#3a63e0)}
+.panel.p-purple{background:linear-gradient(135deg,#8f7cf2,#6f57e6)}
+.panel.p-cream{background:linear-gradient(135deg,#efe9dc,#e4dcc9);color:#14151d}
+.panel h3{font-family:var(--font-display,'Space Grotesk',sans-serif);font-weight:700;font-size:clamp(1.9rem,3.8vw,3.1rem);
+  line-height:1.02;letter-spacing:-.02em;margin-bottom:18px;color:inherit}
+.panel p,.panel .ptags span{color:inherit}
+.panel p{font-size:1.05rem;opacity:.94;max-width:40ch;margin-top:16px;line-height:1.5}
+.panel .ptags{display:flex;flex-wrap:wrap;gap:10px}
+.panel .ptags span{border:1.5px solid currentColor;border-radius:999px;padding:8px 18px;font-weight:600;font-size:.88rem;opacity:.92}
+.panel .pglobe{justify-self:center;width:min(240px,64%);color:inherit}
+.wire-globe{width:100%;height:auto;display:block;overflow:visible}
+.wire-globe .wg-static ellipse,.wire-globe .wg-static circle.mer,.wire-globe .wg-static line{fill:none;stroke:currentColor;stroke-width:1.1;opacity:.4}
+.wire-globe .wg-spin ellipse{fill:none;stroke:currentColor;stroke-width:1.1;opacity:.6}
+.wire-globe .wg-spin{transform-origin:100px 100px;animation:wgSpin 20s linear infinite}
+.wire-globe .node{fill:currentColor;opacity:.95}
+@keyframes wgSpin{to{transform:rotate(360deg)}}
+html.lenis-scrolling .wire-globe .wg-spin{animation-play-state:paused}
+@media (max-width:760px){
+  .panel{grid-template-columns:1fr;min-height:0}
+  .panel .pglobe{justify-self:start;width:150px;margin-top:22px;order:3}
+}
+@media (prefers-reduced-motion:reduce){.wire-globe .wg-spin{animation:none}}
+
 /* ---------- bold statement band + moving green highlight pill ---------- */
 .statement{padding:clamp(64px,9vw,120px) 0;text-align:center}
 .statement h2{font-family:var(--font-display,'Space Grotesk',sans-serif);font-weight:700;letter-spacing:-.025em;line-height:1.08;
