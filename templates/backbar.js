@@ -47,6 +47,18 @@
     });
   }
 
+  // If this template was opened in a fresh tab (nothing to go Back to), make
+  // the browser Back button return to the homepage instead of about:blank.
+  if (!inFrame) {
+    try {
+      if (history.length <= 1) {
+        history.replaceState({ bdBack: 1 }, "", location.href);
+        history.pushState({ bdBack: 2 }, "", location.href);
+        window.addEventListener("popstate", function () { location.replace("../index.html"); });
+      }
+    } catch (e) {}
+  }
+
   function mount() {
     if (!document.body) return;
     document.head.appendChild(css);
