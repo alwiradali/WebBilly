@@ -103,7 +103,6 @@
   (function pinZoom() {
     var wrap = document.querySelector(".pinzoom");
     if (!wrap) return;
-    if ((window.matchMedia && matchMedia("(max-width: 860px)").matches)) return;
     var word = wrap.querySelector(".pz-word");
     var tag = wrap.querySelector(".pz-tag");
     if (!word) return;
