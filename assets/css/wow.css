@@ -163,3 +163,44 @@ html.lenis-scrolling .wow-aurora::after{animation-play-state:paused!important}
   .tilt,.magnetic-btn{transition:none!important}
   .wow-progress{display:none}
 }
+
+/* ============================================================
+   EXTRA MOTION LAYER — cursor spotlight · idle 3D float ·
+   button shine · heading blur-in. Transform/opacity/filter only,
+   desktop-gated where it could cost mobile perf. Reduced-motion safe.
+   ============================================================ */
+
+/* cursor spotlight that tracks the pointer across the hero (desktop) */
+.wow-spot{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+  transition:opacity .5s ease;mix-blend-mode:screen;
+  background:radial-gradient(340px circle at var(--sx,50%) var(--sy,50%),rgba(56,189,248,.16),rgba(43,127,255,.06) 40%,transparent 72%)}
+.hero>.container,.hero .hero-inner,.hero-welcome{position:relative;z-index:2}
+
+/* idle 3D float on the wireframe globes + spinning contact badge */
+@media (min-width:761px) and (prefers-reduced-motion:no-preference){
+  .panel .pglobe{animation:wowFloat 7.5s ease-in-out infinite}
+  .panel.p-purple .pglobe{animation-delay:-2.5s}
+  .panel.p-cream .pglobe{animation-delay:-4.8s}
+  .spin-badge{animation:wowFloat 6s ease-in-out infinite}
+}
+@keyframes wowFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-14px,0)}}
+
+/* moving shine sweep across primary CTAs */
+.btn-primary,.nav-cta{position:relative;overflow:hidden}
+.btn-primary::after,.nav-cta::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:skewX(-18deg);pointer-events:none;animation:wowShine 4.6s ease-in-out infinite}
+@keyframes wowShine{0%,62%{left:-60%}80%,100%{left:130%}}
+
+/* blur-to-sharp entrance on the big serif section heads (desktop) */
+@media (min-width:861px) and (prefers-reduced-motion:no-preference){
+  .section-head.reveal h2{filter:blur(9px);transition:filter 1s cubic-bezier(.2,.7,.2,1)}
+  .section-head.reveal.in h2{filter:blur(0)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .panel .pglobe,.spin-badge{animation:none!important}
+  .btn-primary::after,.nav-cta::after{display:none}
+  .section-head.reveal h2{filter:none!important}
+}
+html.lenis-scrolling .panel .pglobe,html.lenis-scrolling .spin-badge{animation-play-state:paused}

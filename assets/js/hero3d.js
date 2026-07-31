@@ -87,7 +87,7 @@ import { OutputPass } from "../../templates/vendor/jsm/postprocessing/OutputPass
   var uniforms = {
     uTime: { value: 0 }, uSize: { value: mobile ? 56 : 50 }, uPix: { value: renderer.getPixelRatio() },
     uMouse: { value: new THREE.Vector3(999, 999, 999) },
-    uCA: { value: new THREE.Color("#2b7fff") }, uCB: { value: new THREE.Color("#22d3ee") }, uCC: { value: new THREE.Color("#7c3aed") }
+    uCA: { value: new THREE.Color("#2b7fff") }, uCB: { value: new THREE.Color("#38bdf8") }, uCC: { value: new THREE.Color("#22d3ee") }
   };
   var mat = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vert, fragmentShader: frag, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false });
   var group = new THREE.Group(); group.add(new THREE.Points(geo, mat)); scene.add(group);

@@ -154,6 +154,29 @@
     });
   })();
 
+  /* ---------- cursor spotlight over the hero ----------
+     A soft brand-blue glow that follows the pointer across the hero.
+     Desktop only, pointer-events none, transform-free (paints a moving
+     radial-gradient var) — cannot affect layout. */
+  (function spotlight() {
+    if (touch) return;
+    var hero = document.querySelector(".hero");
+    if (!hero) return;
+    if (getComputedStyle(hero).position === "static") hero.style.position = "relative";
+    var s = document.createElement("div");
+    s.className = "wow-spot";
+    s.setAttribute("aria-hidden", "true");
+    hero.insertBefore(s, hero.firstChild);
+    var raf = 0, x = 0, y = 0;
+    function apply() { s.style.setProperty("--sx", x + "px"); s.style.setProperty("--sy", y + "px"); raf = 0; }
+    hero.addEventListener("pointermove", function (e) {
+      var r = hero.getBoundingClientRect();
+      x = e.clientX - r.left; y = e.clientY - r.top; s.style.opacity = "1";
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
+    hero.addEventListener("pointerleave", function () { s.style.opacity = "0"; });
+  })();
+
   /* ---------- bulletproof reveal reinforcement ----------
      The 3D reveal hides .reveal until it gets .in. To guarantee nothing
      ever stays invisible (even on fast mobile scroll), we reinforce with a
