@@ -186,3 +186,8 @@ input:focus,select:focus,textarea:focus{border-color:#9a6bff!important}
 .orb-3{background:rgba(255,184,41,.12)!important}
 .wow-aurora::after{background:radial-gradient(circle,rgba(255,184,41,.10),transparent 70%)}
 .wow-spot{background:radial-gradient(340px circle at var(--sx,50%) var(--sy,50%),rgba(128,82,255,.18),rgba(255,184,41,.05) 42%,transparent 72%)}
+
+/* let the fixed constellation show through EVERY section (loaded last,
+   so it beats the opaque .hero / .section-alt backgrounds above) */
+.hero,.section,.section-alt,.statement,.panels-sec,.pinzoom{background:transparent!important}
+.section-alt{background:transparent!important}

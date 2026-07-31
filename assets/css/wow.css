@@ -170,9 +170,19 @@ html.lenis-scrolling .wow-aurora::after{animation-play-state:paused!important}
    desktop-gated where it could cost mobile perf. Reduced-motion safe.
    ============================================================ */
 
-/* Dala constellation canvas — sits behind hero content, above bg */
-.dala-hero{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
-.hero .hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* Dala constellation — ONE cloud fixed behind the whole page,
+   morphing shape on scroll (lightbulb → globe → swirl). The page
+   content rides above it (z-index:1); sections go transparent so
+   the black-velvet void + constellation show through everywhere. */
+.dala-bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
+body{background:#0a0a0a}
+.site-header,#main,.powerstrip,.site-footer,.chat,.toast{position:relative;z-index:1}
+.hero,.section,.section-alt,.statement,.panels-sec,.pinzoom,.powerstrip{background:transparent!important}
+.pinzoom .pz-stage{background:transparent}
+/* let the hero bulb show through — only a faint bottom fade for legibility */
+.hero .hero-scrim{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(58% 52% at 50% 44%,rgba(10,10,10,.34),transparent 72%),
+  linear-gradient(180deg,transparent 66%,#0a0a0a 100%)!important}
 
 /* cursor spotlight that tracks the pointer across the hero (desktop) */
 .wow-spot{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
