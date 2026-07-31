@@ -1,0 +1,118 @@
+/* ============================================================
+   Billy Digitals — DALA THEME
+   Pure-black void · single violet accent · amber sparks ·
+   monolithic weight-400 Inter headlines · ultra-light body ·
+   no cards, no borders, no shadows — content floats on black.
+   Loaded LAST. Base = dark style.css.
+   ============================================================ */
+:root{
+  --bg:#000000; --bg-2:#000000;
+  --card:transparent; --card-hover:rgba(255,255,255,.03);
+  --border:rgba(255,255,255,.10);
+  --text:#ffffff; --muted:#9a9a9a; --silver:#bdbdbd;
+  --c1:#8052ff; --c2:#8052ff; --c3:#8052ff;
+  --iris:#8052ff; --amber:#ffb829;
+  --grad:linear-gradient(90deg,#8052ff,#8052ff);
+  --grad-btn:linear-gradient(90deg,#8052ff,#8052ff);
+  --shadow:none;
+  --font-display:'Inter','Space Grotesk',system-ui,sans-serif;
+}
+*{text-shadow:none!important}
+body{background:#000;color:#fff;font-family:'Inter',system-ui,sans-serif;font-weight:300}
+::selection{background:#8052ff;color:#fff}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#26262e}
+
+/* ---------- type: hierarchy from scale, not weight ---------- */
+h1,h2,h3,h4,.hero h1,.section-head h2,.panel h3,.stat h3,.plan h3{
+  font-family:'Inter',sans-serif!important;font-weight:400!important;letter-spacing:-.04em!important;color:#fff}
+.hero h1{font-size:clamp(3rem,11vw,7rem);line-height:1.02}
+p,.sub,.section-head .sub,.hero-sub,.card p,.panel p,.footer-grid p{font-weight:300;color:var(--silver)}
+.eyebrow,.tag,.cw-label,.ps-label{color:var(--amber)!important;background:transparent!important;border-color:rgba(255,184,41,.28)!important;
+  text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+
+/* accent words → flat violet (no gradient) */
+.grad{background:none!important;-webkit-text-fill-color:#8052ff!important;color:#8052ff!important}
+.hero h1 .accent{color:#ffb829!important;-webkit-text-fill-color:#ffb829!important;font-family:'Playfair Display',serif;font-style:italic}
+
+/* ---------- header ---------- */
+.site-header.scrolled{background:rgba(0,0,0,.72)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)!important;box-shadow:none}
+.nav-links a{color:var(--muted)}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+
+/* ---------- hero: light gradient → void ---------- */
+.hero{background:#000!important}
+.hero-badge{color:#ffb829;border:1px solid rgba(255,184,41,.3);background:transparent}
+.hero-sub{color:#fff;font-weight:300}
+.hero-stats > div{background:transparent;border:0;border-top:1px solid rgba(255,255,255,.1)}
+.hero-stats dt span{-webkit-text-fill-color:#8052ff;color:#8052ff;background:none}
+.hero-stats dd{color:var(--muted)}
+.hero-welcome .hw-top .ch{color:#fff!important}
+.hw-bot{background:none!important;-webkit-text-fill-color:#8052ff!important;color:#8052ff!important}
+
+/* ---------- buttons: single violet pill ---------- */
+.btn-primary{background:#8052ff!important;color:#fff!important;border:none;border-radius:9999px}
+.btn-primary:hover{background:#8f66ff!important}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:9999px}
+.nav-cta{background:#8052ff;color:#fff;border-radius:9999px}
+.magnetic-btn,.magnetic{border-radius:9999px}
+
+/* ---------- strip card chrome — float on black ---------- */
+.card,.tcard,.offer,.plan,.host-card,.ccard,.contact-form,.why-strip>div,.faq-item,.testi,.review-card,.pricing-card{
+  background:transparent!important;box-shadow:none!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:24px}
+.card:hover,.tcard:hover,.offer:hover{background:rgba(255,255,255,.03)!important;border-color:rgba(128,82,255,.5)!important;box-shadow:none!important}
+.card-icon{background:rgba(128,82,255,.12)!important;color:#8052ff!important;border:none}
+.card h3,.offer h3{color:#fff}
+.card p,.offer p{color:var(--muted)}
+
+/* section alt = still void */
+.section-alt{background:#000}
+
+/* ---------- statement pill → violet/amber ---------- */
+.statement h2{color:#fff}
+.hl-pill{background:#8052ff;color:#fff;box-shadow:none}
+
+/* ---------- colored panels → void with violet ---------- */
+.panel{background:#000!important;border:1px solid rgba(255,255,255,.1)!important;color:#fff}
+.panel.p-cream{color:#fff}
+.panel h3,.panel p,.panel .ptags span{color:#fff!important}
+.panel .ptags span{border-color:rgba(255,255,255,.3)}
+.wire-globe{color:#8052ff}
+
+/* ---------- spinning badge ---------- */
+.spin-badge{color:#fff}
+.spin-badge .core{background:#8052ff}
+
+/* ---------- gallery / filters ---------- */
+.tinfo h3{color:#fff}.tcat{color:var(--muted)}.tlink{color:#8052ff}
+.filter-chip,.tfilter button{background:transparent;border:1px solid rgba(255,255,255,.16);color:var(--muted)}
+.filter-chip.active,.tfilter button.active{background:#8052ff;color:#fff;border-color:#8052ff}
+.cw-pills span{background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(4px)}
+
+/* ---------- process / stats ---------- */
+.pnum,.stat h3 span{color:#8052ff}
+.why-strip>div strong{color:#fff}.why-strip>div span{color:var(--muted)}
+
+/* ---------- marquee / trust / proof ---------- */
+.marquee{border-color:rgba(255,255,255,.08)}
+.marquee li{color:#5a5a63}
+.trust-strip,.trust-label,.ps-tech{color:var(--muted)}
+.trust-name,.ps-chip{color:#fff;background:transparent;border-color:rgba(255,255,255,.14)}
+.ps-chip b{color:#8052ff}
+
+/* ---------- forms ---------- */
+input,select,textarea{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:12px}
+input::placeholder,textarea::placeholder{color:#6f6f78}
+label{color:var(--muted)}
+
+/* ---------- footer ---------- */
+.site-footer{background:#000;border-top:1px solid rgba(255,255,255,.08)}
+.footer-grid h4{color:#fff}.footer-grid p,.footer-grid ul a{color:var(--muted)}
+.footer-grid ul a:hover{color:#fff}
+.socials a{background:transparent;border:1px solid rgba(255,255,255,.16);color:#fff}
+.socials a:hover{color:#8052ff;border-color:#8052ff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);color:var(--muted)}
+
+/* aurora → violet on black */
+.wow-aurora::before{background:radial-gradient(circle,rgba(128,82,255,.22),transparent 70%)}
+.wow-aurora::after{background:radial-gradient(circle,rgba(255,184,41,.12),transparent 70%)}
