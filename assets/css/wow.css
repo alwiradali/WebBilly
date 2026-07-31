@@ -170,6 +170,10 @@ html.lenis-scrolling .wow-aurora::after{animation-play-state:paused!important}
    desktop-gated where it could cost mobile perf. Reduced-motion safe.
    ============================================================ */
 
+/* Dala constellation canvas — sits behind hero content, above bg */
+.dala-hero{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+.hero .hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none}
+
 /* cursor spotlight that tracks the pointer across the hero (desktop) */
 .wow-spot{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
   transition:opacity .5s ease;mix-blend-mode:screen;
