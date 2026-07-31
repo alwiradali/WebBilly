@@ -116,3 +116,57 @@ input::placeholder,textarea::placeholder{color:#6a6a66}
 .socials a{border-color:rgba(245,245,240,.2);color:#f5f5f0}
 .wow-aurora::before{background:radial-gradient(circle,rgba(211,253,80,.12),transparent 70%)}
 .wow-aurora::after{background:radial-gradient(circle,rgba(211,253,80,.06),transparent 70%)}
+
+/* ============================================================
+   PERFECTION PASS — ruthless single-accent discipline + rhythm
+   One canvas (#0A0A0A), one ink (#F5F5F0), one accent (lime).
+   Kills every leftover multi-hue from the old vibrancy layer.
+   ============================================================ */
+/* breathing room under the monumental serif heads */
+.section-head h2{margin-bottom:.44em}
+.section-head .sub,.section-head p.sub{max-width:52ch;margin-left:auto;margin-right:auto}
+
+/* service + 3D/SEO icons → uniform lime, no coloured halos */
+.services-grid .card .card-icon,.offer-grid .offer .card-icon,.card-icon{
+  background:rgba(211,253,80,.08)!important;color:#d3fd50!important;
+  border:1px solid rgba(211,253,80,.45)!important;box-shadow:none!important}
+.services-grid .card::after,.offer-grid .offer::after{background:#d3fd50!important}
+.services-grid .card:hover,.offer-grid .offer:hover{border-color:#d3fd50!important}
+
+/* limited-offer ribbon → lime block + charcoal split (was orange→pink) */
+.offer-ribbon{border:1px solid rgba(211,253,80,.3)!important;box-shadow:0 30px 70px -34px rgba(0,0,0,.8)!important}
+.offer-main{background:linear-gradient(140deg,#d3fd50,#b6e63f)!important;color:#0a0a0a!important}
+.offer-head,.offer-head strong,.offer-sub,.offer-sub b{color:#0a0a0a!important}
+.offer-flag{background:rgba(10,10,10,.16)!important;color:#0a0a0a!important}
+.offer-split{background:#111111!important}
+.offer-3{background:#0a0a0a!important;color:#d3fd50!important}
+.offer-split p{color:var(--muted)!important}.offer-split p strong{color:#f5f5f0!important}
+
+/* most-popular plan → lime frame + lime badge (was blue/amber) */
+.plan-featured{background:linear-gradient(170deg,rgba(211,253,80,.08),transparent 60%)!important;
+  border-color:rgba(211,253,80,.55)!important;box-shadow:0 24px 60px -28px rgba(211,253,80,.25)!important}
+.plan-badge{background:#d3fd50!important;color:#0a0a0a!important}
+.plan li::before{color:#d3fd50!important}
+
+/* calm the old violet/magenta ambient orbs + rainbow marquee */
+.orb-2,.orb-3{background:rgba(211,253,80,.10)!important}
+.marquee li:nth-child(3n+1),.marquee li:nth-child(3n+2){color:#4a4a46!important}
+.tcard:hover .tthumb{box-shadow:0 20px 52px -16px rgba(211,253,80,.35)!important}
+
+/* crisper focus + link states in the single accent */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid #d3fd50;outline-offset:2px}
+input:focus,select:focus,textarea:focus{border-color:#d3fd50!important}
+.tlink:hover,.footer-grid ul a:hover,.nav-links a:hover{color:#d3fd50}
+
+/* animated electric plan rings → all lime family (was fire/teal/violet) */
+#plans .plan .blaze{--bz1:#d3fd50!important;--bz2:#eaffa0!important;--bz3:#b6e63f!important}
+#plans .plan-featured .blaze{--bz1:#d3fd50!important;--bz2:#f4ffcf!important;--bz3:#a9e63a!important}
+#plans .plan-featured ~ .plan .blaze{--bz1:#b6e63f!important;--bz2:#d3fd50!important;--bz3:#8fce2f!important}
+/* in-card "£100 off" pills → lime (was mint) */
+.pay-off,.offer-3{background:linear-gradient(90deg,#d3fd50,#b6e63f)!important;color:#0a0a0a!important}
+.offer-3{background:#0a0a0a!important;color:#d3fd50!important}
+
+/* uniform section rhythm — generous award whitespace */
+.section{padding-top:clamp(72px,9vw,132px);padding-bottom:clamp(72px,9vw,132px)}
+
