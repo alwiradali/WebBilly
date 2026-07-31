@@ -114,5 +114,16 @@ label{color:var(--ink-soft)}
 .footer-bottom{border-top:1px solid var(--border);color:var(--muted)}
 .footer-bottom strong{color:var(--text)}
 
+/* ---------- chatbot stays a dark widget — keep its text light ---------- */
+.chat-panel{color:#eaf2ff}
+.chat-head strong{color:#eaf2ff}
+.chat-head span{color:#9fb0cc}
+.chat-msgs .msg,.msg.bot{color:#eaf2ff}
+.msg.user{color:#fff}
+.chat-chips button{color:#cdd8ee}
+.chat-chips button:hover{color:#fff}
+.chat-input input{color:#eaf2ff}
+.chat-input input::placeholder{color:#8fa0bf}
+
 /* soften any leftover dark decorative glows on light */
 .blaze::before,.blaze::after,.threed-glow{opacity:.35;mix-blend-mode:normal}
