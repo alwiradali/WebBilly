@@ -9,6 +9,17 @@
 .wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
 
+/* ---------- bold statement band + moving green highlight pill ---------- */
+.statement{padding:clamp(64px,9vw,120px) 0;text-align:center}
+.statement h2{font-family:var(--font-display,'Space Grotesk',sans-serif);font-weight:700;letter-spacing:-.025em;line-height:1.08;
+  font-size:clamp(2.1rem,7vw,5rem);color:var(--text);margin:0 auto;max-width:15ch}
+.hl-pill{display:inline-block;overflow:hidden;vertical-align:baseline;background:#c6f24e;color:#0e1220;
+  border-radius:.42em;width:3.7em;height:1.02em;line-height:1.02em;position:relative;top:.16em;box-shadow:0 8px 22px rgba(150,200,40,.28)}
+.hl-pill .hl-track{display:inline-block;white-space:nowrap;will-change:transform;animation:hlMarquee 5.5s linear infinite}
+.hl-pill .hl-track span{padding:0 .34em}
+@keyframes hlMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.hl-pill .hl-track{animation:none}}
+
 /* ---------- rotating circular badge button (rayo-style) ---------- */
 .spin-badge{position:relative;width:136px;height:136px;margin:0 auto 30px;display:grid;place-items:center;color:var(--text)}
 .spin-badge .ring{position:absolute;inset:0;width:100%;height:100%;animation:spinBadge 16s linear infinite}
