@@ -9,6 +9,22 @@
 .wow-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   z-index:2000;background:linear-gradient(90deg,#1d6ff5,#22d3ee);pointer-events:none;will-change:transform}
 
+/* ---------- pinned zoom statement (scroll-scrubbed 3D scale) ---------- */
+.pinzoom{position:relative;height:250vh}
+.pinzoom .pz-stage{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;gap:18px;padding:0 5vw}
+.pz-eyebrow{opacity:.8}
+.pz-word{font-family:'Space Grotesk','Inter',sans-serif;font-weight:600;letter-spacing:-.04em;line-height:.9;color:#fff;
+  font-size:clamp(3rem,12vw,10rem);transform:scale(var(--pz,.55));transform-origin:50% 50%;will-change:transform,opacity;margin:0}
+.pz-word .lime{color:#d3fd50}
+.pz-tag{color:#8a8a8a;font-size:clamp(1rem,2vw,1.3rem);opacity:var(--pzt,0);transition:opacity .3s}
+@media (max-width:860px){
+  .pinzoom{height:auto}
+  .pinzoom .pz-stage{position:static;height:auto;padding:90px 6vw}
+  .pz-word{transform:none!important;font-size:clamp(2.4rem,11vw,3.6rem)}
+  .pz-tag{opacity:1!important}
+}
+@media (prefers-reduced-motion:reduce){.pz-word{transform:none!important}.pz-tag{opacity:1!important}}
+
 /* ---------- featured-project category pills (tecreative-style) ---------- */
 .cw-pills{position:absolute;left:14px;top:14px;z-index:4;display:flex;flex-wrap:wrap;gap:8px;pointer-events:none}
 .cw-pills span{background:rgba(255,255,255,.94);color:#12131a;font-weight:600;font-size:.8rem;letter-spacing:.01em;

@@ -99,6 +99,29 @@
     }
   })();
 
+  /* ---------- pinned zoom statement: scale the word with scroll ---------- */
+  (function pinZoom() {
+    var wrap = document.querySelector(".pinzoom");
+    if (!wrap) return;
+    if ((window.matchMedia && matchMedia("(max-width: 860px)").matches)) return;
+    var word = wrap.querySelector(".pz-word");
+    var tag = wrap.querySelector(".pz-tag");
+    if (!word) return;
+    var raf = 0;
+    function upd() {
+      var r = wrap.getBoundingClientRect();
+      var total = wrap.offsetHeight - window.innerHeight;
+      var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+      word.style.setProperty("--pz", (0.55 + p * 0.95).toFixed(3));
+      word.style.opacity = (0.4 + Math.min(1, p * 1.5) * 0.6).toFixed(2);
+      if (tag) tag.style.setProperty("--pzt", (Math.max(0, (p - 0.5) * 2)).toFixed(2));
+      raf = 0;
+    }
+    addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
+    addEventListener("resize", upd, { passive: true });
+    upd();
+  })();
+
   /* ---------- magnetic buttons ---------- */
   (function magnetic() {
     if (touch) return;
