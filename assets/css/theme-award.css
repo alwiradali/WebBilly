@@ -1,0 +1,118 @@
+/* ============================================================
+   Billy Digitals — AWARD THEME
+   Award-agency finish over the agency base (loaded LAST).
+   • Near-black canvas #0A0A0A · off-white type #F5F5F0
+   • High-contrast display SERIF headlines (Playfair Display,
+     MSCHF / Leonardo.Ai register) with clean Inter body
+   • Single electric-lime accent, kept decorative
+   • Floating asymmetric BENTO service tiles
+   Transform/colour only — no layout math that could balloon
+   height on mobile. Base: style.css → theme-agency.css → here.
+   ============================================================ */
+:root{
+  --bg:#0a0a0a; --bg-2:#0a0a0a;
+  --card:transparent; --card-hover:rgba(245,245,240,.05);
+  --border:rgba(245,245,240,.15);
+  --text:#f5f5f0; --muted:#9a988f; --silver:#c7c5bc;
+  --c1:#d3fd50; --c2:#d3fd50; --c3:#d3fd50; --lime:#d3fd50;
+  --grad:linear-gradient(90deg,#d3fd50,#d3fd50);
+  --grad-btn:transparent; --shadow:none;
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --font-display:'Playfair Display',Georgia,serif;
+}
+body{background:#0a0a0a;color:#f5f5f0;font-family:'Inter',system-ui,sans-serif;font-weight:400}
+::selection{background:#d3fd50;color:#0a0a0a}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#242424}
+.hero{background:#0a0a0a!important}
+.section-alt{background:#080808}
+.panel{color:#0a0a0a}
+
+/* ---------- DISPLAY SERIF: monumental, high-contrast ---------- */
+.hero h1,.section-head h2,.statement h2,.pz-word,.panel h3,.foot-brand,
+.threed-copy h2,.big-quote{
+  font-family:var(--serif)!important;font-weight:700!important;
+  letter-spacing:-.015em!important;color:#f5f5f0}
+.hero h1{font-size:clamp(3rem,12.5vw,8.6rem);line-height:.94;font-weight:700!important}
+.section-head h2{font-size:clamp(2.5rem,6vw,5rem);line-height:1.0}
+.statement h2{font-family:var(--serif)!important;line-height:1.05}
+.pz-word{font-family:var(--serif)!important;font-weight:700;letter-spacing:-.02em}
+/* accent words → high-contrast serif ITALIC (the award signature) */
+.hero h1 .accent,.grad{font-family:var(--serif)!important;font-style:italic!important;font-weight:600!important;
+  -webkit-text-fill-color:#f5f5f0!important;color:#f5f5f0!important;background:none!important}
+.hw-bot{font-family:var(--serif)!important;font-style:italic!important;
+  background:none!important;-webkit-text-fill-color:#d3fd50!important;color:#d3fd50!important}
+.pz-word .lime{font-style:italic;color:#d3fd50}
+/* sub-headings (h3/h4 in cards) stay clean grotesk for legibility */
+.card h3,.offer h3,.plan h3,.stat h3,.faq-item h3,.host-card h3,.tinfo h3{
+  font-family:'Space Grotesk',sans-serif!important;font-weight:600!important;letter-spacing:-.02em!important}
+p,.sub,.section-head .sub,.hero-sub,.card p,.panel p,.footer-grid p{color:var(--silver);font-weight:400}
+
+/* eyebrows / tags — lime, mono-ish, wide tracking */
+.eyebrow,.tag,.cw-label,.ps-label,.hero-badge,.pz-eyebrow{
+  color:#d3fd50!important;background:transparent!important;border-color:rgba(211,253,80,.4)!important;
+  text-transform:uppercase;letter-spacing:.18em;font-weight:600;font-family:'Space Grotesk',sans-serif!important}
+
+/* ---------- header ---------- */
+.site-header.scrolled{background:rgba(10,10,10,.72)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(245,245,240,.1)!important}
+
+/* ---------- ghost pill buttons kept, off-white ink ---------- */
+.btn-primary,.nav-cta{background:transparent!important;color:#f5f5f0!important;border:2px solid #f5f5f0!important}
+.btn-primary:hover,.nav-cta:hover{background:#d3fd50!important;color:#0a0a0a!important;border-color:#d3fd50!important}
+.btn-ghost{border-color:rgba(245,245,240,.35);color:#f5f5f0}
+.btn-ghost:hover{border-color:#f5f5f0}
+
+/* ---------- flat cards on near-black ---------- */
+.card,.tcard,.offer,.plan,.host-card,.ccard,.contact-form,.why-strip>div,.faq-item,.testi,.review-card{
+  background:transparent!important;border:1px solid rgba(245,245,240,.13)!important;box-shadow:none!important}
+.card:hover,.tcard:hover,.offer:hover{background:rgba(245,245,240,.045)!important;border-color:#d3fd50!important}
+.card-icon{background:transparent!important;color:#d3fd50!important;border:1px solid rgba(211,253,80,.4)!important}
+
+/* ---------- FLOATING ASYMMETRIC BENTO service tiles ---------- */
+@media (min-width:761px){
+  .panels{display:grid;grid-template-columns:1.25fr 1fr;grid-auto-rows:1fr;gap:20px;padding-top:clamp(30px,4vw,60px)}
+  .panel{margin-bottom:0;min-height:0}
+  .panel.p-blue{grid-row:span 2;min-height:520px;align-content:center}      /* tall hero tile */
+  .panel.p-blue h3{font-size:clamp(2.4rem,4.4vw,3.6rem)}
+  .panels .panel{transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s}
+  .panels .panel:hover{transform:translateY(-6px)}
+}
+.panel{border-radius:26px}
+.panel h3{font-family:var(--serif)!important;font-weight:700!important;letter-spacing:-.015em!important}
+.panel.p-blue{background:linear-gradient(150deg,#d3fd50,#b6e63f)!important;color:#0a0a0a!important;border:0!important}
+.panel.p-purple,.panel.p-cream{background:#111111!important;color:#f5f5f0!important;border:1px solid rgba(245,245,240,.14)!important}
+.panel.p-blue h3,.panel.p-blue p{color:#0a0a0a!important}
+.panel.p-purple h3,.panel.p-cream h3,.panel.p-purple p,.panel.p-cream p{color:#f5f5f0!important}
+.panel.p-blue .ptags span{border-color:rgba(10,10,10,.45)!important;color:#0a0a0a!important}
+.panel.p-purple .ptags span,.panel.p-cream .ptags span{border-color:rgba(245,245,240,.32)!important;color:#f5f5f0!important}
+.panel.p-blue .wire-globe{color:#0a0a0a}
+.panel.p-purple .wire-globe,.panel.p-cream .wire-globe{color:#d3fd50}
+
+/* ---------- statement pill / spinning badge ---------- */
+.statement h2{color:#f5f5f0}
+.hl-pill{background:#d3fd50;color:#0a0a0a;box-shadow:none}
+.spin-badge{color:#f5f5f0}.spin-badge .core{background:#d3fd50;color:#0a0a0a}
+.wire-globe{color:#d3fd50}
+
+/* ---------- gallery / filters / marquee / trust ---------- */
+.tcat{color:var(--muted)}.tlink{color:#d3fd50}
+.filter-chip,.tfilter button{background:transparent;border:1px solid rgba(245,245,240,.2);color:var(--muted)}
+.filter-chip.active,.tfilter button.active{background:#d3fd50;color:#0a0a0a;border-color:#d3fd50}
+.cw-pills span{background:rgba(10,10,10,.6);color:#f5f5f0;border:1px solid rgba(245,245,240,.25)}
+.pnum,.stat h3 span{color:#d3fd50}
+.marquee{border-color:rgba(245,245,240,.12)}.marquee li{color:#4a4a46}
+.marquee li::after,.marquee span::after{color:#d3fd50}
+.trust-name,.ps-chip{color:#f5f5f0;background:transparent;border-color:rgba(245,245,240,.2)}
+.ps-chip b{color:#d3fd50}
+
+/* ---------- forms ---------- */
+input,select,textarea{background:transparent;border:1px solid rgba(245,245,240,.2);color:#f5f5f0}
+input::placeholder,textarea::placeholder{color:#6a6a66}
+
+/* ---------- footer ---------- */
+.site-footer{background:#080808;border-top:1px solid rgba(245,245,240,.12)}
+.footer-grid ul a:hover,.socials a:hover{color:#d3fd50}
+.socials a{border-color:rgba(245,245,240,.2);color:#f5f5f0}
+.wow-aurora::before{background:radial-gradient(circle,rgba(211,253,80,.12),transparent 70%)}
+.wow-aurora::after{background:radial-gradient(circle,rgba(211,253,80,.06),transparent 70%)}
