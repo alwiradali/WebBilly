@@ -292,7 +292,7 @@
         '<button type="button" class="tx-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg> Back to site</button>' +
         '<span class="tx-title"></span>' +
         '<span class="tx-spacer"></span>' +
-        '<a class="tx-newtab" target="_blank" rel="noopener">Open in new tab ↗</a>' +
+        '<a class="tx-newtab" href="/portfolio" target="_blank" rel="noopener">Open in new tab ↗</a>' +
         '<a class="tx-cta" href="#contact">Request this style</a>' +
       '</div>' +
       '<div class="tx-frame-wrap"><div class="tx-loader">Loading sample…</div><iframe class="tx-frame" title="Template preview" loading="lazy"></iframe></div>';
