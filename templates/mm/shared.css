@@ -180,9 +180,9 @@ footer a:hover{color:var(--teal)}
 .prose p{color:var(--body);margin-bottom:15px}
 .prose h2{font-size:clamp(1.4rem,3vw,1.95rem);margin:32px 0 12px}
 .prose h3{font-size:1.14rem;margin:24px 0 9px;color:var(--ink)}
-.prose ul{display:grid;gap:9px;margin:13px 0 18px}
-.prose li{display:flex;gap:9px;color:var(--body)}
-.prose li::before{content:"✓";color:var(--teal);font-weight:800;flex-shrink:0}
+.prose ul{display:grid;gap:9px;margin:13px 0 18px;list-style:none}
+.prose li{position:relative;padding-left:24px;color:var(--body);line-height:1.6}
+.prose li::before{content:"✓";position:absolute;left:0;top:0;color:var(--teal);font-weight:800}
 .arealist{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px}
 .arealist a{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:.875rem;color:var(--ink);
   transition:border-color .25s,transform .25s,color .25s,box-shadow .25s}
@@ -232,8 +232,8 @@ footer a:hover{color:var(--teal)}
   .portrait .cap{padding:34px 16px 14px}
 }
 @media(max-width:999px){
-  #about .portrait{max-width:320px;margin:0 auto}
-  #about .portrait img{aspect-ratio:1/1;max-height:none;object-position:center 14%}
+  #about .portrait{max-width:330px;margin:0 auto}
+  #about .portrait img{aspect-ratio:4/5;max-height:none;object-position:center 22%}
 }
 
 /* ---------- chemistry molecule background ---------- */
@@ -255,3 +255,9 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
 .bond-rule b{width:9px;height:9px;border-radius:50%;background:var(--grad);flex:0 0 auto}
 .hexmark{position:absolute;pointer-events:none;opacity:.07;z-index:0}
 .hexmark svg{width:100%;height:100%}
+
+/* pull quote in the About section */
+.prose .pullquote,.pullquote{position:relative;margin:20px 0 0;padding:16px 18px 16px 22px;
+  border-left:3px solid var(--teal);border-radius:0 12px 12px 0;
+  background:linear-gradient(90deg,rgba(18,165,148,.09),rgba(18,165,148,.02));
+  color:var(--ink);font-style:italic;font-size:1.02rem;line-height:1.62}
