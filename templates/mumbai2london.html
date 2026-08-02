@@ -229,7 +229,14 @@ footer .fl a{min-height:40px;display:inline-flex;align-items:center;padding:0 4p
 .reel-card video{display:block;width:100%;aspect-ratio:640/1124;object-fit:cover;background:#160d07}
 .reel-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:31px;
   background:linear-gradient(to top,rgba(9,5,2,.94) 2%,rgba(9,5,2,.72) 22%,rgba(9,5,2,.12) 46%,transparent 62%)}
-.reel-cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:clamp(18px,2.6vw,26px) clamp(18px,2.4vw,24px)}
+.reel-cap{position:absolute;left:0;right:0;bottom:0;z-index:3;pointer-events:none;
+  padding:clamp(18px,2.6vw,26px) clamp(18px,2.4vw,24px)}
+/* shown only if the browser refuses to autoplay (iOS Low Power Mode) */
+.reel-card.tap::before{content:"\25B6";position:absolute;z-index:4;top:50%;left:50%;width:64px;height:64px;
+  margin:-32px 0 0 -32px;border-radius:50%;background:rgba(10,6,3,.62);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);border:2px solid rgba(255,201,60,.85);color:var(--marigold);
+  display:grid;place-items:center;font-size:22px;padding-left:4px;pointer-events:none}
+.reel-card.tap .reel-badge::after{content:" — tap to play"}
 .reel-cap h3{font-family:var(--dis);font-weight:700;font-size:clamp(1.18rem,2.1vw,1.5rem);color:#fff;
   margin-bottom:6px;line-height:1.16;text-shadow:0 2px 18px rgba(0,0,0,.7)}
 .reel-cap h3 span{background:var(--holi);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -520,9 +527,10 @@ footer small{color:#9b8468;font-size:12.5px}
       <div class="reel-card" data-reel>
         <span class="reel-badge"><i></i> Real booking</span>
         <video class="reel-vid" poster="../assets/mumbai2london/bride-reel-poster.webp"
-               muted loop playsinline preload="metadata" aria-label="The bride arriving beside the decorated Mumbai2London rickshaw">
-          <source src="../assets/mumbai2london/bride-reel.webm" type="video/webm">
+               muted loop autoplay playsinline webkit-playsinline preload="auto"
+               disablepictureinpicture disableremoteplayback aria-label="The bride arriving beside the decorated Mumbai2London rickshaw">
           <source src="../assets/mumbai2london/bride-reel.mp4" type="video/mp4">
+          <source src="../assets/mumbai2london/bride-reel.webm" type="video/webm">
         </video>
         <div class="reel-cap">
           <h3>Lights <span>and sound</span></h3>
@@ -532,9 +540,10 @@ footer small{color:#9b8468;font-size:12.5px}
       <div class="reel-card" data-reel data-flip>
         <span class="reel-badge"><i></i> Real booking</span>
         <video class="reel-vid" poster="../assets/mumbai2london/colour-smoke-poster.webp"
-               muted loop playsinline preload="metadata" aria-label="Colour smoke flares beside the decorated Mumbai2London rickshaw">
-          <source src="../assets/mumbai2london/colour-smoke.webm" type="video/webm">
+               muted loop autoplay playsinline webkit-playsinline preload="auto"
+               disablepictureinpicture disableremoteplayback aria-label="Colour smoke flares beside the decorated Mumbai2London rickshaw">
           <source src="../assets/mumbai2london/colour-smoke.mp4" type="video/mp4">
+          <source src="../assets/mumbai2london/colour-smoke.webm" type="video/webm">
         </video>
         <div class="reel-cap">
           <h3>Turns up <span>anywhere</span></h3>
@@ -839,16 +848,55 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
   var cards=[].slice.call(document.querySelectorAll('.reel-card[data-reel]'));
   if(!cards.length) return;
-  /* each clip plays only while it is on screen, so phones aren't decoding two at once */
-  var vo=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){ var q=e.target.play(); if(q&&q.catch) q.catch(function(){}); }
-      else { e.target.pause(); }
+  var vids=cards.map(function(c){ return c.querySelector('video'); }).filter(Boolean);
+
+  /* iOS is unreliable about decoding two inline clips at once — one of them just
+     stops and never comes back. So on a phone only the clip nearest the middle of
+     the screen plays; on a desktop both can. Re-evaluated on every scroll, which
+     also recovers a clip iOS killed on its own (backgrounding, low power, decoder
+     pressure) — the IntersectionObserver alone never fires again for that. */
+  var solo=matchMedia('(max-width:900px)').matches;
+  matchMedia('(max-width:900px)').addEventListener?
+    matchMedia('(max-width:900px)').addEventListener('change',function(e){solo=e.matches;pick();}):0;
+
+  function seen(v){
+    var r=v.getBoundingClientRect(), vh=innerHeight||0;
+    var vis=Math.max(0,Math.min(r.bottom,vh)-Math.max(r.top,0));
+    return r.height?vis/Math.min(r.height,vh):0;
+  }
+  function start(v){
+    if(!v.paused) return;
+    var q=v.play();
+    if(q&&q.catch) q.catch(function(){ v.closest('.reel-card').classList.add('tap'); });
+  }
+  function pick(){
+    var best=null, bs=0;
+    vids.forEach(function(v){ var sc=seen(v); if(sc>bs){bs=sc;best=v;} });
+    vids.forEach(function(v){
+      var want = seen(v)>0.28 && (!solo || v===best);
+      if(want) start(v); else if(!v.paused) v.pause();
     });
-  },{threshold:.2});
-  cards.forEach(function(c){ var v=c.querySelector('video'); if(v) vo.observe(v); });
-  if(reduce) return;
+  }
+  /* if something outside our control pauses a clip that should be running, restart it */
+  vids.forEach(function(v){
+    v.addEventListener('pause',function(){ setTimeout(pick,120); });
+    v.addEventListener('stalled',function(){ v.load(); setTimeout(pick,300); });
+    /* tapping a clip that autoplay refused (Low Power Mode) starts it by hand */
+    v.addEventListener('click',function(){
+      v.closest('.reel-card').classList.remove('tap');
+      if(v.paused){ var q=v.play(); if(q&&q.catch) q.catch(function(){}); } else { v.pause(); }
+    });
+  });
+  addEventListener('visibilitychange',function(){ if(!document.hidden) setTimeout(pick,150); });
+  addEventListener('pageshow',function(){ setTimeout(pick,150); });
+  pick();
+
   var raf=0;
+  /* reduced motion: keep the clips playing, drop the tilt */
+  if(reduce){
+    addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(function(){ pick(); raf=0; }); },{passive:true});
+    return;
+  }
   function upd(){
     var vh=innerHeight, k=innerWidth<=920?0.5:1;   // gentler tilt on phones
     cards.forEach(function(card){
@@ -862,6 +910,7 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       card.style.setProperty('--rs',(1-Math.abs(e)*0.12*k).toFixed(3));
       card.style.setProperty('--ty',(e*26*k).toFixed(1)+'px');
     });
+    pick();
     raf=0;
   }
   addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
