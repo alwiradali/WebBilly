@@ -6,3 +6,6 @@ graphify-out/
 .agents/
 .claude/
 skills-lock.json
+
+# Generated deployable client builds (see scripts/build-mm.py)
+dist/
