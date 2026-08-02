@@ -21,6 +21,7 @@ URLs natively, so /areas/glasgow works with no redirect hop.
 
 import json
 import os
+import posixpath
 import re
 import shutil
 import sys
@@ -48,11 +49,14 @@ def breadcrumb_jsonld(html, domain, canonical_path):
     if len(names) < 2:
         return ''  # a one-item trail is not a breadcrumb
 
-    # the trail is always Home -> the areas hub -> this page
-    paths = ['/', '/areas/', canonical_path]
+    # First crumb is always home and the last is always this page; anything in
+    # between is the section hub (/areas/, /courses/), derived from the path so
+    # this keeps working as new sections are added.
+    section = '/' + canonical_path.strip('/').split('/')[0] + '/'
+    paths = ['/'] + [section] * (len(names) - 2) + [canonical_path]
     items = [
         '{"@type":"ListItem","position":%d,"name":%s,"item":"https://%s%s"}'
-        % (i + 1, json.dumps(name), domain, paths[i] if i < len(paths) else canonical_path)
+        % (i + 1, json.dumps(name), domain, paths[i])
         for i, name in enumerate(names)
     ]
     return ('<script type="application/ld+json">\n'
@@ -69,28 +73,30 @@ def rewrite(html, domain, canonical_path):
     html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js)"',
                   lambda m: m.group(0).split('=')[0] + '="/' + m.group(1) + '"', html)
 
-    # Internal links -> absolute clean URLs, so Pages serves them without a
-    # 301 hop. Every pattern has to tolerate a trailing #fragment: the area
-    # pages link back to ../index.html#booking and friends, and an earlier
-    # version of this that ignored fragments left those pointing at .html.
-    in_areas = canonical_path.startswith('/areas/')
-    frag = r'(#[^"]*)?'
+    # Internal links -> absolute clean URLs, so the host serves them without a
+    # 301 hop. This resolves each href against the page's own directory rather
+    # than matching folder names: an earlier version hardcoded "areas/" and
+    # silently left the courses pages' links pointing at .html.
+    page_dir = canonical_path if canonical_path.endswith('/') else \
+        posixpath.dirname(canonical_path)
+    if not page_dir.endswith('/'):
+        page_dir += '/'  # dirname('/faq') is already '/', so don't double it
 
-    def sub(pattern, target):
-        return lambda h: re.sub(pattern, lambda m: 'href="%s%s"' % (
-            target(m), m.groups()[-1] or ''), h)
+    def resolve(m):
+        href = m.group(1)
+        if re.match(r'(?:[a-z]+:|//|/|#)', href):
+            return m.group(0)  # already absolute, external, or a bare fragment
+        path, _, frag = href.partition('#')
+        if not path.endswith('.html'):
+            return m.group(0)
+        target = posixpath.normpath(posixpath.join(page_dir, path))
+        if posixpath.basename(target) == 'index.html':
+            target = posixpath.dirname(target).rstrip('/') + '/'
+        else:
+            target = target[:-len('.html')]
+        return 'href="%s%s"' % (target, '#' + frag if frag else '')
 
-    # the home page, linked from any depth
-    html = sub(r'href="(?:\.\./)+index\.html' + frag + '"', lambda m: '/')(html)
-    # the areas hub, linked from the home page or from a sibling area page
-    html = sub(r'href="(?:areas/)?index\.html' + frag + '"',
-               lambda m: '/areas/' if in_areas else '/areas/')(html)
-    # individual area pages, from inside /areas/ or from the home page
-    html = sub(r'href="areas/([a-z0-9-]+)\.html' + frag + '"',
-               lambda m: '/areas/' + m.group(1))(html)
-    if in_areas:
-        html = sub(r'href="([a-z0-9-]+)\.html' + frag + '"',
-                   lambda m: '/areas/' + m.group(1))(html)
+    html = re.sub(r'href="([^"]+)"', resolve, html)
 
     # this is her live site now, not a client demo
     html = html.replace('<meta name="robots" content="noindex, nofollow">',
@@ -119,29 +125,37 @@ def main():
 
     if os.path.isdir(OUT):
         shutil.rmtree(OUT)
-    os.makedirs(os.path.join(OUT, 'areas'))
+    os.makedirs(OUT)
 
     shutil.copytree(ASSETS, os.path.join(OUT, 'assets'))
     for f in ('shared.css', 'molecules.js', 'schedule.js'):
         shutil.copy(os.path.join(SRC, f), os.path.join(OUT, f))
 
+    # Walk every page rather than naming the sections, so adding a new folder
+    # under templates/mm is picked up without touching this script.
     pages = []
+    for dirpath, _dirs, files in os.walk(SRC):
+        rel_dir = os.path.relpath(dirpath, SRC)
+        rel_dir = '' if rel_dir == '.' else rel_dir
+        for name in sorted(f for f in files if f.endswith('.html')):
+            rel = os.path.join(rel_dir, name) if rel_dir else name
+            if name == 'index.html':
+                path = '/' + (rel_dir + '/' if rel_dir else '')
+            else:
+                path = '/' + (rel_dir + '/' if rel_dir else '') + name[:-5]
 
-    with open(os.path.join(SRC, 'index.html')) as fh:
-        html = fh.read()
-    with open(os.path.join(OUT, 'index.html'), 'w') as fh:
-        fh.write(rewrite(html, domain, '/'))
-    pages.append(('/', '1.0'))
+            with open(os.path.join(SRC, rel)) as fh:
+                html = fh.read()
+            dest = os.path.join(OUT, rel)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            with open(dest, 'w') as fh:
+                fh.write(rewrite(html, domain, path))
 
-    for name in sorted(os.listdir(os.path.join(SRC, 'areas'))):
-        if not name.endswith('.html'):
-            continue
-        path = '/areas/' if name == 'index.html' else '/areas/' + name[:-5]
-        with open(os.path.join(SRC, 'areas', name)) as fh:
-            html = fh.read()
-        with open(os.path.join(OUT, 'areas', name), 'w') as fh:
-            fh.write(rewrite(html, domain, path))
-        pages.append((path, '0.8' if name == 'index.html' else '0.6'))
+            depth = path.strip('/').count('/')
+            priority = '1.0' if path == '/' else ('0.8' if depth == 0 or name == 'index.html' else '0.6')
+            pages.append((path, priority))
+
+    pages.sort(key=lambda p: (p[0] != '/', p[0]))
 
     today = date.today().isoformat()
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',
