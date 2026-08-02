@@ -64,15 +64,15 @@
       <a href="#top"><img class="logo" src="../../assets/mm/logo.png" alt="Molecular Miracles Chemistry Tuition"></a>
       <span class="sp"></span>
       <div class="nlinks">
-        <a href="#about">About</a><a href="#levels">Courses</a><a href="#how">How It Works</a>
-        <a href="#reviews">Reviews</a><a href="#areas">Areas</a><a href="#booking">Booking</a>
+        <a href="#about">About</a><a href="#levels">Courses</a><a href="#timetable">Timetable</a>
+        <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#booking">Booking</a>
       </div>
       <a class="btn btn-p" href="#booking">Book a Place</a>
       <div class="burger" id="bg"><span></span><span></span><span></span></div>
     </div>
     <div class="mobmenu" id="mm">
-      <a href="#about">About</a><a href="#levels">Courses</a><a href="#how">How It Works</a>
-      <a href="#reviews">Reviews</a><a href="#areas">Areas We Cover</a><a href="#booking">Booking &amp; Enquiries</a>
+      <a href="#about">About</a><a href="#levels">Courses</a><a href="#timetable">Class Timetable</a>
+      <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#areas">Areas We Cover</a><a href="#booking">Booking &amp; Enquiries</a>
     </div>
   </div>
 </nav>
@@ -184,6 +184,17 @@
       </div>
     </div>
     <p style="text-align:center;margin-top:32px;color:var(--mut)">Prices vary by course and group — <a href="#booking" style="color:var(--teal);font-weight:600">enquire for current rates</a>.</p>
+  </div>
+</section>
+
+<section id="timetable">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill">Class Timetable</span>
+      <h2>When the <span class="g">classes run</span></h2>
+      <p>Small groups of no more than five. Tap any class to send an enquiry about that group &mdash; I'll confirm the place and what's left in it.</p>
+    </div>
+    <div class="rv d1" id="timetable-body"></div>
   </div>
 </section>
 
@@ -344,6 +355,7 @@
         <ul>
           <li><a href="#about">About Lynsey</a></li>
           <li><a href="#levels">Courses</a></li>
+          <li><a href="#timetable">Class Timetable</a></li>
           <li><a href="#how">How It Works</a></li>
           <li><a href="#reviews">Reviews</a></li>
           <li><a href="#areas">Areas We Cover</a></li>
@@ -395,6 +407,7 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
   document.getElementById('ok').classList.add('on');
 });
 </script>
+<script src="schedule.js" defer></script>
 <script src="molecules.js" defer></script>
 </body>
 </html>
