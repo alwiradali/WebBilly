@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Create an invoice — Mumbai2London</title>
+<meta name="theme-color" content="#140b05">
+<link rel="icon" href="../assets/mumbai2london/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#140b05; --card:#241608; --line:rgba(240,178,67,.22);
+  --cream:#fff3e0; --muted:#c8ab88; --marigold:#ffc93c; --saffron:#ff8a1f;
+  --dis:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif;
+  --grad:linear-gradient(135deg,#ff8a1f,#ffc93c);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16px;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px 60px}
+.top{padding:28px 0 4px;display:flex;align-items:center;gap:14px}
+.top img{width:52px;height:52px;border-radius:50%}
+.top h1{font-family:var(--dis);font-weight:700;font-size:1.5rem;line-height:1.15}
+.top .sub{color:var(--muted);font-size:12px;letter-spacing:.13em;text-transform:uppercase}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3.5vw,28px);margin-top:20px}
+.panel h2{font-family:var(--dis);font-weight:700;font-size:1.2rem;margin-bottom:4px}
+.panel .hint{color:var(--muted);font-size:13.5px;font-weight:300;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.fld label{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fld input,.fld textarea,.fld select{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;color:var(--cream);font-family:var(--ui);font-size:15px}
+.fld textarea{min-height:90px;resize:vertical}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:none;border-color:var(--marigold);box-shadow:0 0 0 3px rgba(255,201,60,.14)}
+.items{margin-top:6px}
+.irow{display:grid;grid-template-columns:1fr 78px 108px 100px 40px;gap:10px;align-items:center;margin-bottom:10px}
+.irow .amt{text-align:right;color:var(--marigold);font-weight:700;font-variant-numeric:tabular-nums}
+.irow .del{background:none;border:1px solid var(--line);border-radius:10px;color:var(--muted);
+  width:36px;height:38px;cursor:pointer;font-size:19px;line-height:1}
+.irow .del:hover{border-color:#ff6a58;color:#ff9b8c}
+.ihead{display:grid;grid-template-columns:1fr 78px 108px 100px 40px;gap:10px;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ihead span:nth-child(2),.ihead span:nth-child(3),.ihead span:nth-child(4){text-align:right}
+@media(max-width:640px){
+  .irow,.ihead{grid-template-columns:1fr 60px 88px 84px 38px;gap:7px;font-size:13px}
+  .irow input{padding:10px 9px;font-size:14px}
+}
+.addbtn{background:none;border:1px dashed var(--line);border-radius:12px;color:var(--marigold);
+  font:inherit;font-weight:600;font-size:14px;padding:11px 18px;cursor:pointer}
+.addbtn:hover{border-color:var(--marigold)}
+.sums{margin-top:18px;margin-left:auto;width:min(300px,100%)}
+.sums .r{display:flex;justify-content:space-between;padding:6px 0;font-variant-numeric:tabular-nums}
+.sums .r span:first-child{color:var(--muted)}
+.sums .r.big{border-top:1px solid var(--line);margin-top:7px;padding-top:12px;font-size:1.2rem;font-weight:800}
+.gobtn{width:100%;margin-top:22px;border:0;border-radius:999px;background:var(--grad);color:#231204;
+  font-weight:800;font-size:16px;padding:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 18px 42px -16px rgba(255,138,31,.8);transition:transform .2s,filter .2s}
+.gobtn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.05)}
+.gobtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.gobtn svg{width:18px;height:18px}
+.msg{margin-top:14px;border-radius:14px;padding:14px 16px;font-size:14px;display:none;gap:9px;align-items:flex-start}
+.msg svg{width:16px;height:16px;flex:0 0 16px;margin-top:2px}
+.msg.err{display:flex;background:rgba(255,80,60,.12);border:1px solid rgba(255,80,60,.4);color:#ffb3a8}
+.msg.ok{display:flex;background:rgba(0,180,81,.12);border:1px solid rgba(0,180,81,.4);color:#9ef2c2}
+.msg.warn{display:flex;background:rgba(255,201,60,.1);border:1px solid rgba(255,201,60,.36);color:#ffd97a}
+.linkbox{margin-top:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;font-size:12.5px;word-break:break-all;color:var(--muted);display:none}
+.linkbox.on{display:block}
+.linkbox a{color:var(--marigold)}
+.lock{max-width:420px;margin:12vh auto;text-align:center}
+.lock img{width:70px;height:70px;border-radius:50%;margin:0 auto 16px;display:block}
+.lock h1{font-family:var(--dis);font-weight:700;font-size:1.5rem;margin-bottom:6px}
+.lock p{color:var(--muted);font-weight:300;font-size:14.5px;margin-bottom:20px}
+.lock input{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;color:var(--cream);font-family:var(--ui);font-size:15px;text-align:center}
+.lock button{width:100%;margin-top:12px;border:0;border-radius:999px;background:var(--grad);color:#231204;
+  font-weight:800;font-size:15.5px;padding:14px;cursor:pointer}
+.small{color:#907a5c;font-size:12px;line-height:1.6;margin-top:14px}
+</style>
+</head>
+<body>
+
+<!-- lock screen -->
+<div class="wrap" id="lock">
+  <div class="lock">
+    <img src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
+    <h1>Invoicing</h1>
+    <p>Enter your admin key to create and send invoices.</p>
+    <input id="key" type="password" placeholder="Admin key" autocomplete="current-password">
+    <button id="unlock">Unlock</button>
+    <p class="small">The key is stored only in this browser. Ask Billy Digitals if you don't have it.</p>
+  </div>
+</div>
+
+<!-- builder -->
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <img src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
+    <div>
+      <h1>Create an invoice</h1>
+      <div class="sub">Mumbai2London · emailed for e-signature</div>
+    </div>
+  </header>
+
+  <section class="panel">
+    <h2>Customer</h2>
+    <p class="hint">They'll get the invoice at this address with a button to sign it.</p>
+    <div class="grid">
+      <div class="fld"><label for="cname">Full name</label><input id="cname" type="text" placeholder="Priya Sharma"></div>
+      <div class="fld"><label for="cemail">Email</label><input id="cemail" type="email" placeholder="priya@example.com"></div>
+      <div class="fld"><label for="cphone">Phone (optional)</label><input id="cphone" type="tel" placeholder="07…"></div>
+      <div class="fld"><label for="caddr">Address (optional)</label><input id="caddr" type="text" placeholder="12 High St, Manchester"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Event</h2>
+    <div class="grid">
+      <div class="fld"><label for="etype">Event type</label>
+        <select id="etype">
+          <option>Wedding</option><option>Mehndi night</option><option>Sangeet</option>
+          <option>Birthday party</option><option>Photo booth</option><option>Film / TV shoot</option>
+          <option>Corporate / brand</option><option>Festival</option><option>Other</option>
+        </select></div>
+      <div class="fld"><label for="edate">Event date</label><input id="edate" type="date"></div>
+      <div class="fld"><label for="etime">Arrival time</label><input id="etime" type="time"></div>
+      <div class="fld"><label for="eloc">Location</label><input id="eloc" type="text" placeholder="Venue, town"></div>
+      <div class="fld"><label for="due">Payment due</label><input id="due" type="date"></div>
+      <div class="fld"><label for="invno">Invoice no. (optional)</label><input id="invno" type="text" placeholder="auto"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Items</h2>
+    <p class="hint">Totals are worked out on the server, so the amounts in the signing link can't be edited.</p>
+    <div class="ihead"><span>Description</span><span>Qty</span><span>Unit £</span><span>Amount</span><span></span></div>
+    <div class="items" id="items"></div>
+    <button class="addbtn" id="addItem" type="button">+ Add line</button>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="fld"><label for="vat">VAT %</label><input id="vat" type="number" min="0" max="100" step="0.5" value="0"></div>
+      <div class="fld"><label for="dep">Deposit paid £</label><input id="dep" type="number" min="0" step="0.01" value="0"></div>
+    </div>
+    <div class="sums" id="sums"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Notes</h2>
+    <div class="fld"><textarea id="notes" placeholder="Anything the customer should know — access, parking, timings…"></textarea></div>
+    <button class="gobtn" id="send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5 11 13"/><path d="M21.5 2.5 15 21l-4-8-8-4z"/></svg>
+      <span id="sendTxt">Email invoice for signature</span>
+    </button>
+    <div class="msg" id="msg"></div>
+    <div class="linkbox" id="linkbox"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var esc=function(x){return String(x==null?"":x).replace(/[<>&]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c];});};
+  var gbp=function(n){return "£"+(Math.round(Number(n)*100)/100).toFixed(2);};
+  var KEY="m2l_admin_key";
+
+  /* ---- lock ---- */
+  function unlock(){ $("lock").hidden=true; $("app").hidden=false; }
+  if(localStorage.getItem(KEY)) unlock();
+  $("unlock").addEventListener("click",function(){
+    var v=$("key").value.trim(); if(!v) return;
+    localStorage.setItem(KEY,v); unlock();
+  });
+  $("key").addEventListener("keydown",function(e){ if(e.key==="Enter") $("unlock").click(); });
+
+  /* ---- line items ---- */
+  var PRESETS=[
+    ["Decorated rickshaw hire — up to 4 hours",1,450],
+    ["Additional hour",0,85],
+    ["Delivery & collection",1,0]
+  ];
+  function addRow(desc,qty,unit){
+    var row=document.createElement("div"); row.className="irow";
+    row.innerHTML='<input class="d" type="text" placeholder="Description">'+
+      '<input class="q" type="number" min="0" step="1" value="1">'+
+      '<input class="u" type="number" min="0" step="0.01" value="0">'+
+      '<div class="amt">£0.00</div>'+
+      '<button class="del" type="button" title="Remove">×</button>';
+    $("items").appendChild(row);
+    row.querySelector(".d").value=desc||"";
+    row.querySelector(".q").value=(qty==null?1:qty);
+    row.querySelector(".u").value=(unit==null?0:unit);
+    row.querySelector(".del").addEventListener("click",function(){ row.remove(); recalc(); });
+    row.addEventListener("input",recalc);
+    recalc();
+  }
+  function rows(){
+    return [].slice.call(document.querySelectorAll(".irow")).map(function(r){
+      return { desc:r.querySelector(".d").value.trim(),
+               qty:Number(r.querySelector(".q").value)||0,
+               unit:Number(r.querySelector(".u").value)||0, el:r };
+    });
+  }
+  function recalc(){
+    var sub=0;
+    rows().forEach(function(it){
+      var amt=it.qty*it.unit; sub+=amt;
+      it.el.querySelector(".amt").textContent=gbp(amt);
+    });
+    var vatRate=Number($("vat").value)||0, vat=sub*(vatRate/100), total=sub+vat;
+    var dep=Math.min(total,Number($("dep").value)||0), bal=total-dep;
+    var h='<div class="r"><span>Subtotal</span><span>'+gbp(sub)+'</span></div>';
+    if(vatRate>0) h+='<div class="r"><span>VAT ('+vatRate+'%)</span><span>'+gbp(vat)+'</span></div>';
+    h+='<div class="r big"><span>Total</span><span>'+gbp(total)+'</span></div>';
+    if(dep>0){ h+='<div class="r"><span>Deposit</span><span>− '+gbp(dep)+'</span></div>';
+               h+='<div class="r big"><span>Balance due</span><span>'+gbp(bal)+'</span></div>'; }
+    $("sums").innerHTML=h;
+  }
+  PRESETS.forEach(function(p){ if(p[1]>0) addRow(p[0],p[1],p[2]); });
+  if(!document.querySelectorAll(".irow").length) addRow("",1,0);
+  $("addItem").addEventListener("click",function(){ addRow("",1,0); });
+  $("vat").addEventListener("input",recalc); $("dep").addEventListener("input",recalc);
+
+  /* ---- send ---- */
+  function show(kind,text,html){
+    var m=$("msg"); m.className="msg "+kind;
+    m.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+
+      (kind==="ok"?'<path d="m4.5 12.6 5 5L19.5 7"/>':'<circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.2M12 16.4h.01"/>')+
+      '</svg><span>'+(html||esc(text))+'</span>';
+  }
+  $("send").addEventListener("click",function(){
+    var items=rows().filter(function(i){return i.desc && i.qty>0;})
+                    .map(function(i){return {desc:i.desc,qty:i.qty,unit:i.unit};});
+    if(!$("cname").value.trim()) return show("err","Add the customer's name.");
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($("cemail").value.trim())) return show("err","Add a valid customer email.");
+    if(!items.length) return show("err","Add at least one line item with a description and quantity.");
+
+    var fmt=function(v){ if(!v) return ""; var d=new Date(v+"T00:00:00");
+      return isNaN(d)?v:d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); };
+
+    $("send").disabled=true; $("sendTxt").textContent="Sending…"; $("msg").className="msg"; $("linkbox").classList.remove("on");
+    fetch("/api/m2l-invoice/send",{
+      method:"POST",
+      headers:{"content-type":"application/json","authorization":"Bearer "+(localStorage.getItem(KEY)||"")},
+      body:JSON.stringify({
+        customerName:$("cname").value.trim(), customerEmail:$("cemail").value.trim(),
+        customerPhone:$("cphone").value.trim(), customerAddress:$("caddr").value.trim(),
+        eventType:$("etype").value, eventDate:fmt($("edate").value), eventTime:$("etime").value,
+        eventLocation:$("eloc").value.trim(), dueDate:fmt($("due").value),
+        invoiceNo:$("invno").value.trim(),
+        items:items, vatRate:Number($("vat").value)||0, deposit:Number($("dep").value)||0,
+        notes:$("notes").value.trim()
+      })
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); })
+      .then(function(res){
+        $("send").disabled=false; $("sendTxt").textContent="Email invoice for signature";
+        if(res.status===401){ localStorage.removeItem(KEY); return show("err","That admin key was rejected. Reload and try again."); }
+        if(!res.ok||!res.j.ok) throw new Error(res.j.error||"Something went wrong.");
+        show("ok","Invoice "+res.j.id+" emailed to "+$("cemail").value.trim()+" for "+gbp(res.j.total)+". You'll get a copy, and another when they sign.");
+        var lb=$("linkbox"); lb.classList.add("on");
+        lb.innerHTML='<b style="color:var(--cream)">Signing link</b><br><a href="'+esc(res.j.url)+'" target="_blank" rel="noopener">'+esc(res.j.url)+'</a>'+
+          (res.j.insecureSecret?'<br><br><span style="color:#ffd97a">Note: set the INVOICE_SECRET worker secret to harden these links.</span>':'');
+      })
+      .catch(function(err){
+        $("send").disabled=false; $("sendTxt").textContent="Email invoice for signature";
+        show("err",err.message||"Could not send the invoice.");
+      });
+  });
+})();
+</script>
+</body>
+</html>

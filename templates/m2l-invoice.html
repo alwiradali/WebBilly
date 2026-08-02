@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Your invoice — Mumbai2London</title>
+<meta name="theme-color" content="#140b05">
+<link rel="icon" href="../assets/mumbai2london/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#140b05; --ink2:#1d1108; --card:#241608; --line:rgba(240,178,67,.22);
+  --cream:#fff3e0; --muted:#c8ab88; --marigold:#ffc93c; --saffron:#ff8a1f;
+  --green:#00b451;
+  --dis:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif;
+  --grad:linear-gradient(135deg,#ff8a1f,#ffc93c);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+a{color:inherit}
+.top{padding:26px 0 6px;text-align:center}
+.top img{width:74px;height:74px;border-radius:50%;margin:0 auto;display:block;box-shadow:0 0 0 3px rgba(240,178,67,.3),0 14px 40px -14px rgba(255,138,31,.7)}
+.top .biz{font-family:var(--dis);font-weight:700;font-size:1.35rem;margin-top:12px}
+.top .sub{color:var(--muted);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+
+.doc{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,34px);margin:22px 0 30px;
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9)}
+.docTop{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid var(--line)}
+.docTop h1{font-family:var(--dis);font-weight:700;font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.1}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 15px;font-size:11.5px;
+  font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.pill.await{background:rgba(255,201,60,.14);border:1px solid rgba(255,201,60,.4);color:var(--marigold)}
+.pill.done{background:rgba(0,180,81,.14);border:1px solid rgba(0,180,81,.45);color:#7ce495}
+.pill svg{width:14px;height:14px}
+
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 24px;margin-top:20px}
+.meta .k{color:var(--muted);font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+.meta .v{font-weight:600;margin-top:2px;word-break:break-word}
+
+table.items{width:100%;border-collapse:collapse;margin-top:26px;font-size:15px}
+table.items th{text-align:left;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+  font-weight:600;padding:0 0 10px;border-bottom:1px solid var(--line)}
+table.items th.n,table.items td.n{text-align:right}
+table.items th.c,table.items td.c{text-align:center}
+table.items td{padding:13px 0;border-bottom:1px solid rgba(240,178,67,.11);vertical-align:top}
+table.items td.n{font-variant-numeric:tabular-nums;padding-left:14px;white-space:nowrap}
+table.items th.n{padding-left:14px}
+@media(max-width:480px){table.items{font-size:13.5px}table.items td.n,table.items th.n{padding-left:9px}}
+.tot{margin-top:18px;margin-left:auto;width:min(320px,100%)}
+.tot .r{display:flex;justify-content:space-between;gap:20px;padding:7px 0;font-variant-numeric:tabular-nums}
+.tot .r span:first-child{color:var(--muted)}
+.tot .r.big{border-top:1px solid var(--line);margin-top:8px;padding-top:14px;font-size:1.3rem;font-weight:800}
+.tot .r.big span:first-child{color:var(--cream)}
+.tot .r.due span:last-child{color:var(--marigold)}
+
+.note{margin-top:22px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.note b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.note p{white-space:pre-wrap;font-weight:300}
+
+.terms{margin-top:22px}
+.terms summary{cursor:pointer;font-weight:600;color:var(--marigold);list-style:none;display:flex;align-items:center;gap:9px}
+.terms summary::-webkit-details-marker{display:none}
+.terms summary::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg);margin-left:2px;transition:transform .25s}
+.terms[open] summary::after{transform:rotate(-135deg)}
+.terms ol{margin:14px 0 0 18px;color:var(--muted);font-size:14px;font-weight:300;line-height:1.8}
+
+/* ---- signing ---- */
+.sign{background:linear-gradient(160deg,rgba(255,201,60,.09),rgba(255,255,255,.02));
+  border:1px solid var(--line);border-radius:22px;padding:clamp(20px,4vw,30px);margin-bottom:34px}
+.sign h2{font-family:var(--dis);font-weight:700;font-size:1.45rem}
+.sign .lede{color:var(--muted);font-weight:300;margin-top:6px}
+.fld{margin-top:18px}
+.fld label{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.fld input[type=text]{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:13px;
+  padding:14px 16px;color:var(--cream);font-family:var(--ui);font-size:16px}
+.fld input[type=text]:focus{outline:none;border-color:var(--marigold);box-shadow:0 0 0 3px rgba(255,201,60,.15)}
+.padwrap{position:relative;margin-top:7px;border:1.5px dashed rgba(240,178,67,.4);border-radius:16px;background:#fffdf7;overflow:hidden}
+#pad{display:block;width:100%;height:190px;touch-action:none;cursor:crosshair}
+.padhint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:#b09268;font-size:14px;font-weight:500}
+.padhint.gone{display:none}
+.padbar{display:flex;justify-content:space-between;align-items:center;margin-top:9px;gap:12px;flex-wrap:wrap}
+.padbar small{color:var(--muted);font-size:12px}
+.lnk{background:none;border:0;color:var(--marigold);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0}
+.agree{display:flex;gap:12px;align-items:flex-start;margin-top:20px;color:var(--muted);font-size:14px;font-weight:300;cursor:pointer}
+.agree input{width:21px;height:21px;flex:0 0 21px;accent-color:var(--saffron);margin-top:2px;cursor:pointer}
+.agree b{color:var(--cream);font-weight:600}
+.gobtn{width:100%;margin-top:22px;border:0;border-radius:999px;background:var(--grad);color:#231204;
+  font-family:var(--ui);font-weight:800;font-size:16.5px;padding:17px 24px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 18px 42px -16px rgba(255,138,31,.85);transition:transform .2s,filter .2s}
+.gobtn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.05)}
+.gobtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.gobtn svg{width:19px;height:19px}
+.msg{margin-top:14px;border-radius:14px;padding:13px 16px;font-size:14px;display:none;gap:9px;align-items:flex-start}
+.msg svg{width:16px;height:16px;flex:0 0 16px;margin-top:2px}
+.msg.err{display:flex;background:rgba(255,80,60,.12);border:1px solid rgba(255,80,60,.4);color:#ffb3a8}
+.msg.ok{display:flex;background:rgba(0,180,81,.12);border:1px solid rgba(0,180,81,.4);color:#9ef2c2}
+.legal{color:#907a5c;font-size:12px;line-height:1.65;margin-top:16px}
+
+.done-card{display:none;text-align:center;background:rgba(0,180,81,.08);border:1px solid rgba(0,180,81,.35);
+  border-radius:22px;padding:36px 24px;margin-bottom:34px}
+.done-card.on{display:block}
+.done-card .tick{width:60px;height:60px;margin:0 auto 16px;border-radius:50%;background:rgba(0,180,81,.18);
+  display:grid;place-items:center;color:#7ce495}
+.done-card .tick svg{width:30px;height:30px}
+.done-card h2{font-family:var(--dis);font-weight:700;font-size:1.5rem}
+.done-card p{color:var(--muted);font-weight:300;margin-top:8px}
+.ways{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.ways a{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;
+  padding:11px 20px;font-weight:600;font-size:14px;text-decoration:none;transition:border-color .25s,transform .2s}
+.ways a:hover{border-color:var(--marigold);transform:translateY(-2px)}
+.ways svg{width:17px;height:17px}
+.foot{text-align:center;color:#7d6a4f;font-size:12.5px;padding:0 0 40px}
+.bad{text-align:center;padding:70px 20px}
+.bad h1{font-family:var(--dis);font-size:1.7rem;margin-bottom:10px}
+.bad p{color:var(--muted);font-weight:300}
+@media print{
+  body{background:#fff;color:#000}
+  .sign,.top img,.ways,.foot{display:none}
+  .doc{border:1px solid #ccc;box-shadow:none;background:#fff;color:#000}
+  .meta .k,.tot .r span:first-child,table.items th{color:#555}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <img src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
+    <div class="biz">Mumbai2London</div>
+    <div class="sub">Nationwide Rickshaw Hire</div>
+  </header>
+
+  <section class="doc">
+    <div class="docTop">
+      <div>
+        <h1>Invoice</h1>
+        <div style="color:var(--muted);font-size:14px;margin-top:4px" id="invNo"></div>
+      </div>
+      <span class="pill await" id="status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+        Awaiting signature
+      </span>
+    </div>
+    <div class="meta" id="meta"></div>
+
+    <table class="items">
+      <thead><tr><th>Description</th><th class="c">Qty</th><th class="n">Unit</th><th class="n">Amount</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="tot" id="totals"></div>
+
+    <div class="note" id="noteBox" hidden><b>Notes</b><p id="noteTxt"></p></div>
+
+    <details class="terms">
+      <summary>Terms of hire</summary>
+      <ol id="termsList"></ol>
+    </details>
+  </section>
+
+  <section class="sign" id="signBox">
+    <h2>Sign to confirm your booking</h2>
+    <p class="lede">Type your name, draw your signature, and we'll email a signed copy to you and to Mumbai2London.</p>
+
+    <div class="fld">
+      <label for="typed">Your full name</label>
+      <input id="typed" type="text" autocomplete="name" placeholder="e.g. Priya Sharma" maxlength="120">
+    </div>
+
+    <div class="fld">
+      <label for="pad">Draw your signature</label>
+      <div class="padwrap">
+        <canvas id="pad"></canvas>
+        <div class="padhint" id="padhint">Sign here with your finger or mouse</div>
+      </div>
+      <div class="padbar">
+        <small>Use your finger on a phone, or your mouse on a computer.</small>
+        <button type="button" class="lnk" id="clearPad">Clear signature</button>
+      </div>
+    </div>
+
+    <label class="agree">
+      <input type="checkbox" id="agree">
+      <span>I confirm I've read the invoice and the <b>terms of hire</b>, and I agree to them. I understand this is my <b>electronic signature</b>.</span>
+    </label>
+
+    <button class="gobtn" id="go" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20.5 7 19l11.1-11.1a2.1 2.1 0 0 0-3-3L4 16.1z"/><path d="M14.5 5.5 18.5 9.5"/></svg>
+      <span id="goTxt">Agree &amp; sign</span>
+    </button>
+    <div class="msg" id="msg"></div>
+    <p class="legal">Signing records the date and time, your IP address and device, and a fingerprint of this invoice, so both sides have proof of what was agreed. Under the Electronic Communications Act 2000 an electronic signature like this is admissible as evidence in the UK.</p>
+  </section>
+
+  <section class="done-card" id="done">
+    <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.6 5 5L19.5 7"/></svg></div>
+    <h2>Signed — thank you</h2>
+    <p id="doneTxt">Your booking is confirmed. A signed copy is on its way to your inbox.</p>
+    <div class="ways">
+      <a href="https://wa.me/447519022117" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg> WhatsApp us</a>
+      <a href="mailto:enquiries@mumbai2london.co.uk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="2.4"/><path d="m3.7 6.8 8.3 5.9 8.3-5.9"/></svg> Email us</a>
+      <a href="#" id="printLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9V3.5h11V9"/><rect x="3.5" y="9" width="17" height="7.5" rx="2"/><path d="M6.5 14h11v6.5h-11z"/></svg> Print / save PDF</a>
+    </div>
+  </section>
+
+  <p class="foot">Mumbai2London · Nationwide Rickshaw Hire · enquiries@mumbai2london.co.uk</p>
+</div>
+
+<div class="wrap bad" id="bad" hidden>
+  <h1>We couldn't open this invoice</h1>
+  <p>The link looks incomplete or has been altered. Please use the button in your email, or ask us to resend it.</p>
+  <div class="ways" style="margin-top:22px">
+    <a href="https://wa.me/447519022117" target="_blank" rel="noopener">WhatsApp us</a>
+    <a href="mailto:enquiries@mumbai2london.co.uk">Email us</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var TERMS=[
+    "A booking is confirmed once this invoice is signed and any deposit has cleared.",
+    "The balance is due on or before the event date unless agreed otherwise in writing.",
+    "Cancellations more than 14 days before the event are refunded in full less the deposit.",
+    "The rickshaw is supplied decorated and delivered to the agreed address and time.",
+    "Mumbai2London holds its own insurance; the hirer is responsible for damage caused by guests."
+  ];
+  var $=function(id){return document.getElementById(id);};
+  var esc=function(x){return String(x==null?"":x).replace(/[<>&]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c];});};
+  var gbp=function(n){return "£"+(Math.round(Number(n)*100)/100).toFixed(2);};
+
+  /* ---- read the signed token from the URL ---- */
+  var token=(location.hash||"").replace(/^#/,"").trim();
+  var data=null;
+  try{
+    var raw=token.split(".")[0].replace(/-/g,"+").replace(/_/g,"/");
+    var json=decodeURIComponent(escape(atob(raw+"===".slice((raw.length+3)%4))));
+    data=JSON.parse(json);
+  }catch(e){ data=null; }
+  if(!data||!data.items||!data.items.length){ $("bad").hidden=false; return; }
+  $("app").hidden=false;
+
+  /* ---- render ---- */
+  $("invNo").textContent=data.id||"";
+  var issued=data.issued?new Date(data.issued):null;
+  var ev=data.event||{}, cu=data.customer||{};
+  var meta=[
+    ["Billed to", cu.name],
+    ["Email", cu.email],
+    cu.phone?["Phone",cu.phone]:null,
+    cu.address?["Address",cu.address]:null,
+    issued?["Issued", issued.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})]:null,
+    data.due?["Payment due", data.due]:null,
+    ev.type?["Event", ev.type]:null,
+    ev.date?["Event date", ev.date+(ev.time?" · "+ev.time:"")]:null,
+    ev.location?["Location", ev.location]:null
+  ].filter(Boolean);
+  $("meta").innerHTML=meta.map(function(m){
+    return '<div><div class="k">'+esc(m[0])+'</div><div class="v">'+esc(m[1])+'</div></div>';
+  }).join("");
+
+  var sub=0;
+  $("rows").innerHTML=data.items.map(function(it){
+    var amt=(Number(it.qty)||0)*(Number(it.unit)||0); sub+=amt;
+    return '<tr><td>'+esc(it.desc)+'</td><td class="c">'+(Number(it.qty)||0)+'</td>'+
+           '<td class="n">'+gbp(it.unit)+'</td><td class="n"><b>'+gbp(amt)+'</b></td></tr>';
+  }).join("");
+  var vatRate=Number(data.vatRate)||0, vat=sub*(vatRate/100), total=sub+vat;
+  var dep=Math.min(total,Number(data.deposit)||0), bal=total-dep;
+  var rows='<div class="r"><span>Subtotal</span><span>'+gbp(sub)+'</span></div>';
+  if(vatRate>0) rows+='<div class="r"><span>VAT ('+vatRate+'%)</span><span>'+gbp(vat)+'</span></div>';
+  rows+='<div class="r big"><span>Total</span><span>'+gbp(total)+'</span></div>';
+  if(dep>0){
+    rows+='<div class="r"><span>Deposit</span><span>− '+gbp(dep)+'</span></div>';
+    rows+='<div class="r big due"><span>Balance due</span><span>'+gbp(bal)+'</span></div>';
+  }
+  $("totals").innerHTML=rows;
+
+  if(data.notes){ $("noteBox").hidden=false; $("noteTxt").textContent=data.notes; }
+  $("termsList").innerHTML=TERMS.map(function(t){return "<li>"+esc(t)+"</li>";}).join("");
+  document.title="Invoice "+(data.id||"")+" — Mumbai2London";
+  $("printLink").addEventListener("click",function(e){e.preventDefault();window.print();});
+
+  /* ---- signature pad ---- */
+  var pad=$("pad"), ctx=pad.getContext("2d"), drawing=false, hasInk=false, last=null;
+  function sizePad(){
+    var r=pad.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+    var data=hasInk?pad.toDataURL():null;
+    pad.width=Math.round(r.width*dpr); pad.height=Math.round(r.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth=2.4; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#1a1008";
+    if(data){ var img=new Image(); img.onload=function(){ ctx.drawImage(img,0,0,r.width,r.height); }; img.src=data; }
+  }
+  function pos(e){
+    var r=pad.getBoundingClientRect();
+    var p=e.touches&&e.touches[0]?e.touches[0]:e;
+    return {x:p.clientX-r.left, y:p.clientY-r.top};
+  }
+  function start(e){ e.preventDefault(); drawing=true; last=pos(e); }
+  function move(e){
+    if(!drawing) return; e.preventDefault();
+    var p=pos(e);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    last=p;
+    if(!hasInk){ hasInk=true; $("padhint").classList.add("gone"); check(); }
+  }
+  function end(){ drawing=false; last=null; }
+  pad.addEventListener("pointerdown",start);
+  pad.addEventListener("pointermove",move);
+  addEventListener("pointerup",end);
+  pad.addEventListener("touchstart",start,{passive:false});
+  pad.addEventListener("touchmove",move,{passive:false});
+  addEventListener("touchend",end);
+  addEventListener("resize",sizePad);
+  sizePad();
+
+  $("clearPad").addEventListener("click",function(){
+    ctx.clearRect(0,0,pad.width,pad.height); hasInk=false; $("padhint").classList.remove("gone"); check();
+  });
+
+  /* ---- submit ---- */
+  var typed=$("typed"), agree=$("agree"), go=$("go"), msg=$("msg");
+  function check(){ go.disabled=!(typed.value.trim().length>1 && agree.checked && hasInk); }
+  typed.addEventListener("input",check); agree.addEventListener("change",check);
+
+  function show(kind,text){
+    msg.className="msg "+kind;
+    msg.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+
+      (kind==="ok"?'<path d="m4.5 12.6 5 5L19.5 7"/>':'<circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.2M12 16.4h.01"/>')+
+      '</svg><span>'+esc(text)+'</span>';
+  }
+
+  go.addEventListener("click",function(){
+    if(go.disabled) return;
+    go.disabled=true; $("goTxt").textContent="Signing…"; msg.className="msg";
+    fetch("/api/m2l-invoice/sign",{
+      method:"POST", headers:{"content-type":"application/json"},
+      body:JSON.stringify({ token:token, typedName:typed.value.trim(), agree:agree.checked, signature:pad.toDataURL("image/png") })
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(res){
+        if(!res.ok||!res.j.ok){ throw new Error(res.j.error||"Something went wrong."); }
+        $("signBox").style.display="none";
+        var st=$("status"); st.className="pill done";
+        st.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.6 5 5L19.5 7"/></svg> Signed';
+        $("doneTxt").textContent="Thanks "+res.j.name+" — your booking is confirmed and a signed copy is on its way to "+(cu.email||"your inbox")+".";
+        $("done").classList.add("on");
+        $("done").scrollIntoView({behavior:"smooth",block:"center"});
+      })
+      .catch(function(err){
+        go.disabled=false; $("goTxt").textContent="Agree & sign";
+        show("err", err.message||"We couldn't record your signature. Please try again.");
+      });
+  });
+})();
+</script>
+</body>
+</html>

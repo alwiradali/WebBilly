@@ -34,6 +34,14 @@ export default {
     if (url.pathname === "/api/m2l-book") {
       return handleM2LBook(request, env);
     }
+    if (url.pathname === "/api/m2l-invoice/send") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleInvoiceSend(request, env);
+    }
+    if (url.pathname === "/api/m2l-invoice/sign") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleInvoiceSign(request, env);
+    }
     if (url.pathname === "/api/book") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
@@ -666,4 +674,370 @@ ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f
   } catch (e) { /* enquiry already delivered */ }
 
   return json({ ok: true });
+}
+
+
+/* ============================================================
+   Mumbai2London — invoices by email, signed digitally
+   ------------------------------------------------------------
+   No database is bound to this Worker, so invoices are carried in a
+   tamper-proof signed token rather than stored server-side:
+
+     token = base64url(payload JSON) + "." + base64url(HMAC-SHA256)
+
+   The customer opens /templates/m2l-invoice#<token>, which renders the
+   invoice from the payload. When they sign, the Worker re-verifies the
+   HMAC before doing anything, so the amounts in a signed invoice cannot
+   have been edited in the URL. The signed copy is emailed to both
+   parties — those two emails are the record of the agreement.
+
+   Secrets:
+     M2L_ADMIN_TOKEN — required. Protects invoice creation so the
+                       endpoint cannot be used to send mail from the
+                       domain. Requests without it are refused.
+     INVOICE_SECRET  — HMAC key. Falls back to RESEND_API_KEY so the
+                       flow works before it is set; set it properly in
+                       production (the response flags when it is missing).
+   ============================================================ */
+
+const M2L_INVOICE_URL = "https://www.billydigitals.com/templates/m2l-invoice";
+const M2L_TERMS = [
+  "A booking is confirmed once this invoice is signed and any deposit has cleared.",
+  "The balance is due on or before the event date unless agreed otherwise in writing.",
+  "Cancellations more than 14 days before the event are refunded in full less the deposit.",
+  "The rickshaw is supplied decorated and delivered to the agreed address and time.",
+  "Mumbai2London holds its own insurance; the hirer is responsible for damage caused by guests.",
+];
+
+function b64uEncode(bytes) {
+  let bin = "";
+  const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  for (let i = 0; i < arr.length; i++) bin += String.fromCharCode(arr[i]);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function b64uDecodeToString(str) {
+  const pad = str.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(pad + "===".slice((pad.length + 3) % 4));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+async function hmacKey(env) {
+  const secret = env.INVOICE_SECRET || env.RESEND_API_KEY || "";
+  return crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]
+  );
+}
+async function signPayload(env, payloadJson) {
+  const key = await hmacKey(env);
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payloadJson));
+  return b64uEncode(new TextEncoder().encode(payloadJson)) + "." + b64uEncode(sig);
+}
+async function verifyToken(env, token) {
+  const parts = String(token || "").split(".");
+  if (parts.length !== 2) return null;
+  let payloadJson;
+  try { payloadJson = b64uDecodeToString(parts[0]); } catch { return null; }
+  const key = await hmacKey(env);
+  let sigBytes;
+  try {
+    const raw = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const bin = atob(raw + "===".slice((raw.length + 3) % 4));
+    sigBytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) sigBytes[i] = bin.charCodeAt(i);
+  } catch { return null; }
+  const ok = await crypto.subtle.verify("HMAC", key, sigBytes, new TextEncoder().encode(payloadJson));
+  if (!ok) return null;
+  try { return JSON.parse(payloadJson); } catch { return null; }
+}
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+const gbp = (n) => "£" + (Math.round(Number(n) * 100) / 100).toFixed(2);
+const escHtml = (x) => String(x == null ? "" : x).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+
+/* Build the invoice totals on the server — client-sent totals are ignored. */
+function computeInvoice(body) {
+  const items = (Array.isArray(body.items) ? body.items : [])
+    .map((it) => ({
+      desc: String(it.desc || "").trim().slice(0, 160),
+      qty: Math.max(0, Number(it.qty) || 0),
+      unit: Math.max(0, Number(it.unit) || 0),
+    }))
+    .filter((it) => it.desc && it.qty > 0);
+  const subtotal = items.reduce((t, it) => t + it.qty * it.unit, 0);
+  const vatRate = Math.min(100, Math.max(0, Number(body.vatRate) || 0));
+  const vat = subtotal * (vatRate / 100);
+  const total = subtotal + vat;
+  const deposit = Math.min(total, Math.max(0, Number(body.deposit) || 0));
+  return { items, subtotal, vatRate, vat, total, deposit, balance: total - deposit };
+}
+
+function invoiceRowsHtml(inv) {
+  return inv.items.map((it) => `<tr>
+<td style="padding:11px 14px;border-bottom:1px solid #f0e2cd">${escHtml(it.desc)}</td>
+<td style="padding:11px 14px;border-bottom:1px solid #f0e2cd;text-align:center;color:#8a6b46">${it.qty}</td>
+<td style="padding:11px 14px;border-bottom:1px solid #f0e2cd;text-align:right;color:#8a6b46">${gbp(it.unit)}</td>
+<td style="padding:11px 14px;border-bottom:1px solid #f0e2cd;text-align:right;font-weight:700">${gbp(it.qty * it.unit)}</td>
+</tr>`).join("");
+}
+function invoiceTotalsHtml(inv) {
+  const row = (k, v, strong) => `<tr><td style="padding:6px 14px;text-align:right;color:#8a6b46">${escHtml(k)}</td>
+<td style="padding:6px 14px;text-align:right;${strong ? "font-weight:800;font-size:17px;color:#2b1a0d" : "font-weight:600"}">${escHtml(v)}</td></tr>`;
+  let h = row("Subtotal", gbp(inv.subtotal));
+  if (inv.vatRate > 0) h += row("VAT (" + inv.vatRate + "%)", gbp(inv.vat));
+  h += row("Total", gbp(inv.total), true);
+  if (inv.deposit > 0) {
+    h += row("Deposit", "− " + gbp(inv.deposit));
+    h += row("Balance due", gbp(inv.balance), true);
+  }
+  return h;
+}
+
+/* ---------- create + email an invoice ---------- */
+async function handleInvoiceSend(request, env) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  if (!env.M2L_ADMIN_TOKEN) {
+    return json({ error: "Invoicing is locked until the M2L_ADMIN_TOKEN secret is set on the Worker." }, 503);
+  }
+  const auth = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  if (auth !== env.M2L_ADMIN_TOKEN) return json({ error: "Not authorised." }, 401);
+
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+
+  const cust = {
+    name: String(body.customerName || "").trim(),
+    email: String(body.customerEmail || "").trim(),
+    phone: String(body.customerPhone || "").trim(),
+    address: String(body.customerAddress || "").trim(),
+  };
+  if (!cust.name) return json({ error: "Customer name is required." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cust.email)) return json({ error: "A valid customer email is required." }, 400);
+
+  const inv = computeInvoice(body);
+  if (!inv.items.length) return json({ error: "Add at least one line item." }, 400);
+
+  const payload = {
+    v: 1,
+    id: String(body.invoiceNo || "").trim() || ("M2L-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 6).toUpperCase()),
+    issued: new Date().toISOString(),
+    due: String(body.dueDate || "").trim(),
+    event: {
+      type: String(body.eventType || "").trim(),
+      date: String(body.eventDate || "").trim(),
+      time: String(body.eventTime || "").trim(),
+      location: String(body.eventLocation || "").trim(),
+    },
+    customer: cust,
+    items: inv.items,
+    vatRate: inv.vatRate,
+    deposit: inv.deposit,
+    notes: String(body.notes || "").trim().slice(0, 800),
+  };
+  const payloadJson = JSON.stringify(payload);
+  const token = await signPayload(env, payloadJson);
+  const link = M2L_INVOICE_URL + "#" + token;
+
+  const ev = payload.event;
+  const meta = [
+    ["Invoice", payload.id],
+    ["Issued", new Date(payload.issued).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })],
+    payload.due ? ["Due", payload.due] : null,
+    ev.type ? ["Event", ev.type] : null,
+    ev.date ? ["Event date", ev.date + (ev.time ? " · " + ev.time : "")] : null,
+    ev.location ? ["Location", ev.location] : null,
+  ].filter(Boolean);
+
+  const invoiceBlock = `
+<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;margin-top:16px">
+<tr style="background:#fdf3e2"><th align="left" style="padding:10px 14px;font-size:12px;color:#8a6b46;text-transform:uppercase;letter-spacing:.08em">Description</th>
+<th style="padding:10px 14px;font-size:12px;color:#8a6b46">Qty</th>
+<th align="right" style="padding:10px 14px;font-size:12px;color:#8a6b46">Unit</th>
+<th align="right" style="padding:10px 14px;font-size:12px;color:#8a6b46">Amount</th></tr>
+${invoiceRowsHtml(inv)}
+</table>
+<table style="width:100%;border-collapse:collapse;margin-top:10px">${invoiceTotalsHtml(inv)}</table>`;
+
+  const metaBlock = `<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden">
+${meta.map(([k, v]) => `<tr><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${escHtml(k)}</td><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;font-weight:600">${escHtml(v)}</td></tr>`).join("")}
+</table>`;
+
+  const custHtml = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:640px;margin:0 auto;padding:28px">
+<div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:24px;color:#231204">
+<h1 style="margin:0;font-size:23px">Your invoice from Mumbai2London</h1>
+<p style="margin:7px 0 0;opacity:.85">Invoice ${escHtml(payload.id)}${ev.date ? " · " + escHtml(ev.date) : ""}</p></div>
+<p style="margin:18px 0 14px">Hi ${escHtml(cust.name)}, thanks for booking with us. Here's your invoice — please review and sign it online to confirm the booking.</p>
+${metaBlock}
+${invoiceBlock}
+<div style="text-align:center;margin:26px 0 8px">
+<a href="${escHtml(link)}" style="display:inline-block;background:linear-gradient(135deg,#ff8a1f,#ffc93c);color:#231204;font-weight:800;text-decoration:none;padding:15px 32px;border-radius:999px;font-size:16px">Review &amp; sign your invoice</a>
+</div>
+<p style="text-align:center;color:#8a6b46;font-size:12px;margin:0 0 18px">Signing takes about 20 seconds — no account needed.</p>
+${payload.notes ? `<div style="background:#fff;border-radius:14px;padding:16px"><b>Notes</b><p style="margin:8px 0 0;white-space:pre-wrap">${escHtml(payload.notes)}</p></div>` : ""}
+<p style="color:#8a6b46;font-size:12px;margin-top:20px;text-align:center">Mumbai2London · Nationwide Rickshaw Hire<br>${escHtml(M2L_EMAIL)}</p>
+</div></body></html>`;
+
+  const custText = `Invoice ${payload.id} from Mumbai2London\n\n`
+    + meta.map(([k, v]) => `${k}: ${v}`).join("\n")
+    + `\n\n${inv.items.map((it) => `${it.desc} — ${it.qty} x ${gbp(it.unit)} = ${gbp(it.qty * it.unit)}`).join("\n")}`
+    + `\n\nTotal: ${gbp(inv.total)}` + (inv.deposit > 0 ? `\nDeposit: ${gbp(inv.deposit)}\nBalance due: ${gbp(inv.balance)}` : "")
+    + `\n\nReview and sign your invoice:\n${link}\n`;
+
+  const r1 = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: M2L_FROM, to: [cust.email], reply_to: M2L_EMAIL,
+      subject: `Invoice ${payload.id} — Mumbai2London`,
+      html: custHtml, text: custText,
+    }),
+  });
+  if (!r1.ok) return json({ error: "Email provider rejected the request", detail: await r1.text() }, 502);
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: M2L_FROM, to: [M2L_EMAIL], reply_to: cust.email,
+        subject: `Invoice ${payload.id} sent to ${cust.name} — awaiting signature`,
+        html: `<!doctype html><html><body style="font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d;background:#fff7ea;padding:24px">
+<div style="max-width:640px;margin:0 auto">
+<h2 style="margin:0 0 6px">Invoice ${escHtml(payload.id)} sent</h2>
+<p style="margin:0 0 16px;color:#8a6b46">To ${escHtml(cust.name)} &lt;${escHtml(cust.email)}&gt; — awaiting their signature.</p>
+${metaBlock}${invoiceBlock}
+<p style="margin-top:18px;font-size:12px;color:#8a6b46">Signing link: <a href="${escHtml(link)}">${escHtml(link)}</a></p>
+</div></body></html>`,
+        text: `Invoice ${payload.id} sent to ${cust.name} <${cust.email}>. Awaiting signature.\n\n${custText}`,
+      }),
+    });
+  } catch (e) { /* the customer already has it */ }
+
+  return json({ ok: true, id: payload.id, url: link, total: inv.total, insecureSecret: !env.INVOICE_SECRET });
+}
+
+/* ---------- customer signs it ---------- */
+async function handleInvoiceSign(request, env) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured." }, 500);
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+
+  const payload = await verifyToken(env, body.token);
+  if (!payload) return json({ error: "This invoice link is invalid or has been altered. Please ask for a fresh link." }, 400);
+
+  const typedName = String(body.typedName || "").trim().slice(0, 120);
+  const sigData = String(body.signature || "");
+  if (!typedName) return json({ error: "Please type your full name to sign." }, 400);
+  if (body.agree !== true) return json({ error: "Please tick the box to confirm you agree." }, 400);
+  const m = /^data:image\/png;base64,([A-Za-z0-9+/=]+)$/.exec(sigData);
+  if (!m || m[1].length < 400) return json({ error: "Please draw your signature in the box." }, 400);
+  if (m[1].length > 900000) return json({ error: "Signature image is too large." }, 400);
+
+  const inv = computeInvoice(payload);
+  const signedAt = new Date();
+  const audit = {
+    signedAt: signedAt.toISOString(),
+    name: typedName,
+    ip: request.headers.get("cf-connecting-ip") || "unknown",
+    country: (request.cf && request.cf.country) || "unknown",
+    agent: (request.headers.get("user-agent") || "unknown").slice(0, 200),
+    invoiceHash: (await sha256Hex(JSON.stringify(payload))).slice(0, 32),
+  };
+
+  const ev = payload.event;
+  const meta = [
+    ["Invoice", payload.id],
+    ev.type ? ["Event", ev.type] : null,
+    ev.date ? ["Event date", ev.date + (ev.time ? " · " + ev.time : "")] : null,
+    ev.location ? ["Location", ev.location] : null,
+    ["Customer", payload.customer.name],
+    ["Email", payload.customer.email],
+  ].filter(Boolean);
+
+  const auditRows = [
+    ["Signed by", audit.name],
+    ["Signed at", signedAt.toLocaleString("en-GB", { dateStyle: "full", timeStyle: "short", timeZone: "Europe/London" }) + " (UK time)"],
+    ["IP address", audit.ip],
+    ["Country", audit.country],
+    ["Device", audit.agent],
+    ["Invoice fingerprint", audit.invoiceHash],
+  ];
+
+  const shared = `
+<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden">
+${meta.map(([k, v]) => `<tr><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${escHtml(k)}</td><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;font-weight:600">${escHtml(v)}</td></tr>`).join("")}
+</table>
+<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;margin-top:14px">
+<tr style="background:#fdf3e2"><th align="left" style="padding:10px 14px;font-size:12px;color:#8a6b46;text-transform:uppercase;letter-spacing:.08em">Description</th>
+<th style="padding:10px 14px;font-size:12px;color:#8a6b46">Qty</th>
+<th align="right" style="padding:10px 14px;font-size:12px;color:#8a6b46">Unit</th>
+<th align="right" style="padding:10px 14px;font-size:12px;color:#8a6b46">Amount</th></tr>
+${invoiceRowsHtml(inv)}
+</table>
+<table style="width:100%;border-collapse:collapse;margin-top:10px">${invoiceTotalsHtml(inv)}</table>
+<div style="background:#fff;border-radius:14px;padding:18px;margin-top:16px">
+<b style="display:block;margin-bottom:10px">Signature</b>
+<p style="margin:0 0 4px;font-family:'Segoe Script','Brush Script MT',cursive;font-size:26px;color:#2b1a0d">${escHtml(audit.name)}</p>
+<p style="margin:0;color:#8a6b46;font-size:12px">The handwritten signature is attached to this email as signature.png</p>
+</div>
+<div style="background:#fff;border-radius:14px;padding:18px;margin-top:14px">
+<b style="display:block;margin-bottom:10px">Audit trail</b>
+<table style="width:100%;border-collapse:collapse;font-size:12.5px">
+${auditRows.map(([k, v]) => `<tr><td style="padding:5px 0;color:#8a6b46;width:150px">${escHtml(k)}</td><td style="padding:5px 0;word-break:break-word">${escHtml(v)}</td></tr>`).join("")}
+</table></div>
+<div style="background:#fff;border-radius:14px;padding:18px;margin-top:14px">
+<b style="display:block;margin-bottom:8px">Terms agreed</b>
+<ol style="margin:0;padding-left:18px;color:#5c4630;font-size:12.5px;line-height:1.7">${M2L_TERMS.map((t) => `<li>${escHtml(t)}</li>`).join("")}</ol>
+</div>`;
+
+  const attachments = [{ filename: "signature.png", content: m[1] }];
+  const textSummary = `Invoice ${payload.id} signed by ${audit.name} on ${audit.signedAt}\n`
+    + meta.map(([k, v]) => `${k}: ${v}`).join("\n")
+    + `\n\nTotal: ${gbp(inv.total)}` + (inv.deposit > 0 ? `\nDeposit: ${gbp(inv.deposit)}\nBalance due: ${gbp(inv.balance)}` : "")
+    + `\n\nAudit: ip=${audit.ip} country=${audit.country} fingerprint=${audit.invoiceHash}`;
+
+  const ownerRes = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: M2L_FROM, to: [M2L_EMAIL], reply_to: payload.customer.email,
+      subject: `SIGNED — Invoice ${payload.id} · ${payload.customer.name}`,
+      html: `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:640px;margin:0 auto;padding:28px">
+<div style="background:linear-gradient(135deg,#00b451,#7ce495);border-radius:18px;padding:22px 24px;color:#04331b">
+<h1 style="margin:0;font-size:22px">Invoice signed</h1>
+<p style="margin:6px 0 0;opacity:.9">${escHtml(payload.customer.name)} signed invoice ${escHtml(payload.id)}</p></div>
+${shared}</div></body></html>`,
+      text: textSummary,
+      attachments,
+    }),
+  });
+  if (!ownerRes.ok) return json({ error: "Could not record the signature — please try again.", detail: await ownerRes.text() }, 502);
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: M2L_FROM, to: [payload.customer.email], reply_to: M2L_EMAIL,
+        subject: `Your signed copy — Invoice ${payload.id} · Mumbai2London`,
+        html: `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:640px;margin:0 auto;padding:28px">
+<div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:24px;color:#231204">
+<h1 style="margin:0;font-size:23px">Thanks, ${escHtml(payload.customer.name)} — you're booked</h1>
+<p style="margin:7px 0 0;opacity:.85">Signed copy of invoice ${escHtml(payload.id)}. Keep this email for your records.</p></div>
+${shared}
+<p style="text-align:center;color:#8a6b46;font-size:12px;margin-top:18px">Questions? Reply to this email or <a href="${M2L_WA}" style="color:#e2620a;font-weight:700">WhatsApp us</a>.<br>Mumbai2London · Nationwide Rickshaw Hire</p>
+</div></body></html>`,
+        text: textSummary,
+        attachments,
+      }),
+    });
+  } catch (e) { /* the business copy is the record */ }
+
+  return json({ ok: true, id: payload.id, signedAt: audit.signedAt, name: audit.name });
 }
