@@ -19,6 +19,7 @@ Upload that folder to Cloudflare Pages in her account — Pages serves clean
 URLs natively, so /areas/glasgow works with no redirect hop.
 """
 
+import json
 import os
 import re
 import shutil
@@ -28,6 +29,35 @@ from datetime import date
 SRC = os.path.join(os.path.dirname(__file__), '..', 'templates', 'mm')
 ASSETS = os.path.join(os.path.dirname(__file__), '..', 'assets', 'mm')
 OUT = os.path.join(os.path.dirname(__file__), '..', 'dist', 'molecular-miracles')
+
+
+def breadcrumb_jsonld(html, domain, canonical_path):
+    """Build BreadcrumbList markup from the page's own visible breadcrumb.
+
+    The area pages already render "Home > Areas > Glasgow" but carry no
+    structured data for it, so Google shows a bare URL in results instead of a
+    trail. Google requires the markup to match what the user actually sees, so
+    the names are read straight out of the rendered crumb rather than being
+    reconstructed from the path.
+    """
+    m = re.search(r'<p class="crumb[^"]*">(.*?)</p>', html, re.S)
+    if not m:
+        return ''
+    text = re.sub(r'<[^>]+>', '', m.group(1)).replace('&rsaquo;', '›')
+    names = [n.strip() for n in text.split('›') if n.strip()]
+    if len(names) < 2:
+        return ''  # a one-item trail is not a breadcrumb
+
+    # the trail is always Home -> the areas hub -> this page
+    paths = ['/', '/areas/', canonical_path]
+    items = [
+        '{"@type":"ListItem","position":%d,"name":%s,"item":"https://%s%s"}'
+        % (i + 1, json.dumps(name), domain, paths[i] if i < len(paths) else canonical_path)
+        for i, name in enumerate(names)
+    ]
+    return ('<script type="application/ld+json">\n'
+            '{"@context":"https://schema.org","@type":"BreadcrumbList",'
+            '"itemListElement":[%s]}\n</script>\n' % ','.join(items))
 
 
 def rewrite(html, domain, canonical_path):
@@ -74,6 +104,7 @@ def rewrite(html, domain, canonical_path):
     tags = ('<link rel="canonical" href="https://%s%s">\n'
             '<meta property="og:url" content="https://%s%s">\n'
             % (domain, canonical_path, domain, canonical_path))
+    tags += breadcrumb_jsonld(html, domain, canonical_path)
     html = html.replace('</head>', tags + '</head>', 1)
 
     return html
