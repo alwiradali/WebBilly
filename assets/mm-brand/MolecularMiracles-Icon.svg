@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Molecular Miracles icon">
+  <defs>
+    <linearGradient id="mmGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14B8A6"/>
+      <stop offset="0.5" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="mmGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE9A8"/>
+      <stop offset="1" stop-color="#F5B301"/>
+    </linearGradient>
+  </defs>
+  <!-- electron orbit -->
+  <ellipse cx="120" cy="126" rx="96" ry="40" fill="none" stroke="url(#mmGrad)" stroke-width="3.5"
+           opacity="0.34" transform="rotate(-22 120 126)"/>
+  <!-- benzene ring: outer -->
+  <polygon points="120,54 176.9,86.5 176.9,151.5 120,184 63.1,151.5 63.1,86.5"
+           fill="none" stroke="url(#mmGrad)" stroke-width="10" stroke-linejoin="round"/>
+  <!-- benzene ring: inner (aromatic hint) -->
+  <polygon points="120,78 156,98.5 156,139.5 120,160 84,139.5 84,98.5"
+           fill="none" stroke="url(#mmGrad)" stroke-width="3.5" stroke-linejoin="round" opacity="0.42"/>
+  <!-- atoms -->
+  <g fill="url(#mmGrad)">
+    <circle cx="120" cy="54"  r="11.5"/>
+    <circle cx="176.9" cy="86.5"  r="11.5"/>
+    <circle cx="176.9" cy="151.5" r="11.5"/>
+    <circle cx="120" cy="184" r="11.5"/>
+    <circle cx="63.1" cy="151.5" r="11.5"/>
+    <circle cx="63.1" cy="86.5"  r="11.5"/>
+  </g>
+  <!-- orbiting electrons -->
+  <circle cx="211" cy="105" r="6.5" fill="#3B82F6"/>
+  <circle cx="29"  cy="147" r="6.5" fill="#14B8A6"/>
+  <!-- miracle spark -->
+  <path d="M188 36 L195 58 L217 65 L195 72 L188 94 L181 72 L159 65 L181 58 Z" fill="url(#mmGold)"/>
+  <circle cx="52" cy="50" r="4.5" fill="#F5B301"/>
+</svg>
