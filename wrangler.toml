@@ -49,7 +49,14 @@ directory = "."
 not_found_handling = "404-page"
 # Lets the Worker fall through to static assets via env.ASSETS.fetch().
 binding = "ASSETS"
-# These paths must reach the Worker before the static-asset router, so a
-# client domain can serve its site at "/" instead of the Billy Digitals
-# homepage. If your wrangler is too old for the array form, use `true`.
-run_worker_first = ["/", "/admin", "/invoice", "/sign"]
+# These paths must reach the Worker before the static-asset router.
+#
+# "/api/*" is not optional. With not_found_handling set, the asset router
+# answers unmatched paths itself and never falls through to the Worker, so
+# every /api/ endpoint was being served the static 404 page (405 on POST) —
+# the quote form, the review emails and the whole Mumbai2London booking,
+# chat, admin and invoice layer were dead in production because of it.
+#
+# The rest let a client domain serve its site at "/" instead of the Billy
+# Digitals homepage. If wrangler is too old for the array form, use `true`.
+run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
