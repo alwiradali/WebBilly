@@ -31,6 +31,9 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
+    if (url.pathname === "/api/m2l-book") {
+      return handleM2LBook(request, env);
+    }
     if (url.pathname === "/api/book") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
@@ -564,4 +567,103 @@ billydigitals.com`;
 </html>`;
 
   return { html, text };
+}
+
+
+/* ============================================================
+   Mumbai2London — rickshaw hire enquiries  (POST /api/m2l-book)
+   Emails the enquiry to Mumbai2London and an instant
+   confirmation to the customer. Same verified Resend sender.
+   ============================================================ */
+const M2L_EMAIL = "enquiries@mumbai2london.co.uk";
+const M2L_FROM = "Mumbai2London <hello@billydigitals.com>";
+const M2L_WA = "https://wa.me/447519022117";
+
+async function handleM2LBook(request, env) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  const origin = request.headers.get("origin") || "";
+  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
+    return json({ error: "Forbidden" }, 403);
+  }
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (body.botcheck) return json({ ok: true });
+
+  const d = {
+    eventType: String(body.eventType || "").trim(),
+    date: String(body.date || "").trim(),
+    time: String(body.time || "").trim(),
+    hours: String(body.hours || "").trim(),
+    location: String(body.location || "").trim(),
+    name: String(body.name || "").trim(),
+    email: String(body.email || "").trim(),
+    phone: String(body.phone || "").trim(),
+    notes: String(body.notes || "").trim(),
+  };
+  if (!d.name || !d.eventType || !d.date) {
+    return json({ error: "Please choose an event type and date, and add your name." }, 400);
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+  if (!d.phone) return json({ error: "A contact phone number is required." }, 400);
+
+  const esc = (x) => String(x).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  const rows = [
+    ["Event", d.eventType], ["Date", d.date], ["Time", d.time || "—"],
+    ["Hours", d.hours || "—"], ["Location", d.location || "—"],
+    ["Name", d.name], ["Email", d.email], ["Phone", d.phone],
+  ];
+  const ownerText = `New rickshaw enquiry\n\n${rows.map(([k,v])=>`${k}: ${v}`).join("\n")}\n\nNotes:\n${d.notes || "—"}\n\nReply straight to this email to answer ${d.name}.`;
+  const ownerHtml = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:600px;margin:0 auto;padding:28px">
+<div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:22px 24px;color:#231204">
+<h1 style="margin:0;font-size:22px">New rickshaw enquiry 🛺</h1>
+<p style="margin:6px 0 0;opacity:.85">via mumbai2london booking form</p></div>
+<table style="width:100%;border-collapse:collapse;margin-top:18px;background:#fff;border-radius:14px;overflow:hidden">
+${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${esc(k)}</td><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;font-weight:600">${esc(v)}</td></tr>`).join("")}
+</table>
+<div style="margin-top:16px;background:#fff;border-radius:14px;padding:16px"><b>Notes</b><p style="margin:8px 0 0;white-space:pre-wrap">${esc(d.notes || "—")}</p></div>
+</div></body></html>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: M2L_FROM, to: [M2L_EMAIL], reply_to: d.email,
+      subject: `New enquiry — ${d.eventType} · ${d.date} · ${d.name}`,
+      html: ownerHtml, text: ownerText,
+    }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+
+  try {
+    const custHtml = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:600px;margin:0 auto;padding:28px">
+<div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:26px 24px;color:#231204">
+<h1 style="margin:0;font-size:24px">Thanks, ${esc(d.name)}! 🛺</h1>
+<p style="margin:8px 0 0">We've got your enquiry for <b>${esc(d.eventType)}</b> on <b>${esc(d.date)}</b>.</p></div>
+<div style="background:#fff;border-radius:14px;padding:20px;margin-top:16px">
+<p style="margin:0 0 12px">We'll come back to you shortly to confirm availability and pricing.</p>
+<p style="margin:0">Need us sooner? <a href="${M2L_WA}" style="color:#e2620a;font-weight:700">WhatsApp us</a> or reply to this email.</p></div>
+<p style="text-align:center;color:#8a6b46;font-size:12px;margin-top:18px">Mumbai2London · Nationwide Rickshaw Hire</p>
+</div></body></html>`;
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: M2L_FROM, to: [d.email], reply_to: M2L_EMAIL,
+        subject: "Enquiry received 🛺 — Mumbai2London",
+        html: custHtml,
+        text: `Thanks ${d.name}! We've got your enquiry for ${d.eventType} on ${d.date}. We'll confirm availability shortly.`,
+      }),
+    });
+  } catch (e) { /* enquiry already delivered */ }
+
+  return json({ ok: true });
 }
