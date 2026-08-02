@@ -218,37 +218,28 @@ footer .fl a{min-height:40px;display:inline-flex;align-items:center;padding:0 4p
 
 /* ---------- reel: bridal video, 3D scroll-scrubbed ---------- */
 .reel{perspective:1500px;overflow:hidden}
-.reel-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(20px,4vw,48px);align-items:center;margin-top:46px}
-@media(max-width:920px){.reel-wrap{grid-template-columns:1fr;gap:26px}}
-.reel-stack{display:grid;gap:clamp(22px,3.2vw,38px);justify-items:center}
-.reel-card{position:relative;width:min(302px,72vw);margin:0 auto;border-radius:34px;overflow:hidden;
+.reel-stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,1.8vw,24px);
+  align-items:start;margin:46px auto 0;max-width:860px}
+@media(max-width:800px){.reel-stack{grid-template-columns:1fr;gap:24px;max-width:360px}}
+.reel-card{position:relative;width:100%;border-radius:34px;overflow:hidden;
   border:3px solid rgba(240,178,67,.5);background:#160d07;
   box-shadow:0 44px 96px -30px rgba(0,0,0,.95),0 0 70px -20px rgba(255,138,31,.55);
   transform:rotateY(var(--ry,-16deg)) rotateX(var(--rx,7deg)) scale(var(--rs,.88)) translateY(var(--ty,40px));
   will-change:transform}
 .reel-card video{display:block;width:100%;aspect-ratio:640/1124;object-fit:cover;background:#160d07}
 .reel-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:31px;
-  background:linear-gradient(to top,rgba(12,7,3,.5),transparent 34%)}
+  background:linear-gradient(to top,rgba(9,5,2,.94) 2%,rgba(9,5,2,.72) 22%,rgba(9,5,2,.12) 46%,transparent 62%)}
+.reel-cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:clamp(18px,2.6vw,26px) clamp(18px,2.4vw,24px)}
+.reel-cap h3{font-family:var(--dis);font-weight:700;font-size:clamp(1.18rem,2.1vw,1.5rem);color:#fff;
+  margin-bottom:6px;line-height:1.16;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.reel-cap h3 span{background:var(--holi);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.reel-cap p{color:#e8d7bf;font-weight:300;font-size:.94rem;line-height:1.45;text-shadow:0 2px 14px rgba(0,0,0,.8)}
 .reel-badge{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:8px;
   background:rgba(10,6,3,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   border:1px solid rgba(240,178,67,.42);border-radius:999px;padding:6px 13px;
   font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--marigold)}
 .reel-badge i{width:7px;height:7px;border-radius:50%;background:#ff3b30;animation:reelPulse 1.9s ease-in-out infinite}
 @keyframes reelPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
-.reel-side{opacity:0;transform:translateY(34px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
-.reel-side.in{opacity:1;transform:none}
-.reel-side.r{transition-delay:.14s}
-.reel-side h3{font-family:var(--dis);font-weight:700;font-size:clamp(1.25rem,2.4vw,1.6rem);color:#fff;margin-bottom:9px}
-.reel-side h3 span{background:var(--holi);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.reel-side p{color:#d8c4ab;font-weight:300;font-size:.98rem}
-.reel-side .l-in{max-width:34ch;margin-left:auto}
-.reel-side .r-in{max-width:34ch}
-@media(min-width:921px){
-  .reel-wrap{align-items:stretch}
-  .reel-side.l{text-align:right;align-self:start;padding-top:clamp(40px,7vw,96px)}
-  .reel-side.r{align-self:end;padding-bottom:clamp(40px,7vw,96px)}
-}
-@media(max-width:920px){.reel-side .l-in,.reel-side .r-in{max-width:44ch;margin:0 auto;text-align:center}}
 
 .addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px;margin-top:4px}
 .ad{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.28);border:1px solid rgba(240,178,67,.22);
@@ -412,7 +403,7 @@ footer small{color:#9b8468;font-size:12.5px}
   .rv,.fcard,.scard{opacity:1!important;transform:none!important}
   .pin{height:auto}.pin-stage{position:relative;height:auto;padding:60px 0}
   .pin-img{position:relative;transform:none}.pin-copy{opacity:1!important}
-  .reel-card{transform:none!important}.reel-side{opacity:1!important;transform:none!important}
+  .reel-card{transform:none!important}
 }
 </style>
 </head>
@@ -525,35 +516,31 @@ footer small{color:#9b8468;font-size:12.5px}
       <h2>Made for the <em>big entrance</em></h2>
       <p class="lede">Real footage from real bookings — the bride steps out, the colour goes up, and the whole party turns round.</p>
     </div>
-    <div class="reel-wrap">
-      <div class="reel-side l"><div class="l-in">
-        <h3>Lights <span>and sound</span></h3>
-        <p>Dynamic lights and powerful speakers on board — from elegant and romantic to bold and energetic.</p>
-      </div></div>
-
-      <div class="reel-stack">
-        <div class="reel-card" data-reel>
-          <span class="reel-badge"><i></i> Real booking</span>
-          <video class="reel-vid" poster="../assets/mumbai2london/bride-reel-poster.webp"
-                 muted loop playsinline preload="metadata" aria-label="The bride arriving beside the decorated Mumbai2London rickshaw">
-            <source src="../assets/mumbai2london/bride-reel.webm" type="video/webm">
-            <source src="../assets/mumbai2london/bride-reel.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="reel-card" data-reel data-flip>
-          <span class="reel-badge"><i></i> Real booking</span>
-          <video class="reel-vid" poster="../assets/mumbai2london/colour-smoke-poster.webp"
-                 muted loop playsinline preload="metadata" aria-label="Colour smoke flares beside the decorated Mumbai2London rickshaw">
-            <source src="../assets/mumbai2london/colour-smoke.webm" type="video/webm">
-            <source src="../assets/mumbai2london/colour-smoke.mp4" type="video/mp4">
-          </video>
+    <div class="reel-stack">
+      <div class="reel-card" data-reel>
+        <span class="reel-badge"><i></i> Real booking</span>
+        <video class="reel-vid" poster="../assets/mumbai2london/bride-reel-poster.webp"
+               muted loop playsinline preload="metadata" aria-label="The bride arriving beside the decorated Mumbai2London rickshaw">
+          <source src="../assets/mumbai2london/bride-reel.webm" type="video/webm">
+          <source src="../assets/mumbai2london/bride-reel.mp4" type="video/mp4">
+        </video>
+        <div class="reel-cap">
+          <h3>Lights <span>and sound</span></h3>
+          <p>Dynamic lights and powerful speakers on board — from elegant and romantic to bold and energetic.</p>
         </div>
       </div>
-
-      <div class="reel-side r"><div class="r-in">
-        <h3>Turns up <span>anywhere</span></h3>
-        <p>Delivered and set up nationwide — venues, temples, hotels, gardens and London city streets.</p>
-      </div></div>
+      <div class="reel-card" data-reel data-flip>
+        <span class="reel-badge"><i></i> Real booking</span>
+        <video class="reel-vid" poster="../assets/mumbai2london/colour-smoke-poster.webp"
+               muted loop playsinline preload="metadata" aria-label="Colour smoke flares beside the decorated Mumbai2London rickshaw">
+          <source src="../assets/mumbai2london/colour-smoke.webm" type="video/webm">
+          <source src="../assets/mumbai2london/colour-smoke.mp4" type="video/mp4">
+        </video>
+        <div class="reel-cap">
+          <h3>Turns up <span>anywhere</span></h3>
+          <p>Delivered and set up nationwide — venues, temples, hotels, gardens and London city streets.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -852,10 +839,6 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
   var cards=[].slice.call(document.querySelectorAll('.reel-card[data-reel]'));
   if(!cards.length) return;
-  document.querySelectorAll('.reel-side').forEach(function(el){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.25});
-    io.observe(el);
-  });
   /* each clip plays only while it is on screen, so phones aren't decoding two at once */
   var vo=new IntersectionObserver(function(es){
     es.forEach(function(e){
