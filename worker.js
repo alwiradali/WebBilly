@@ -52,10 +52,93 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
     }
+    // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
+    // at clean root URLs, and is indexable.
+    if (isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
+
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
 };
+
+/* ------------------------------------------------------------------
+   Client-domain hosting
+
+   Set M2L_HOST in wrangler.toml (or as a secret) to the client's own
+   hostnames, comma separated — e.g. "mumbai2london.co.uk,www.mumbai2london.co.uk".
+   Requests to those hosts get:
+       /          -> the Mumbai2London site
+       /admin     -> the back office
+       /invoice   -> the invoice builder
+       /sign      -> the customer signing page
+   …with the noindex tag stripped so Google can find it, and everything
+   else on billydigitals.com hidden behind a 404.
+------------------------------------------------------------------- */
+const M2L_PAGES = {
+  "/": "/templates/mumbai2london.html",
+  "/admin": "/templates/m2l-admin.html",
+  "/invoice": "/templates/m2l-invoice-admin.html",
+  "/sign": "/templates/m2l-invoice.html",
+};
+
+function m2lHosts(env) {
+  return String((env && env.M2L_HOST) || "")
+    .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+}
+function isM2LHost(hostname, env) {
+  return m2lHosts(env).includes(String(hostname || "").toLowerCase());
+}
+
+async function serveM2L(request, url, env) {
+  let p = url.pathname.replace(/\/+$/, "") || "/";
+
+  // Assets, the favicon and robots/sitemap pass straight through.
+  if (p.startsWith("/assets/") || p === "/favicon.ico" || p === "/robots.txt" || p === "/sitemap.xml") {
+    return env.ASSETS.fetch(request);
+  }
+
+  const target = M2L_PAGES[p];
+  if (!target) {
+    // Anything that isn't part of the client's site is not on their domain.
+    return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
+  }
+
+  const res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
+  if (!res.ok) return res;
+
+  // The pages carry noindex so the demo stays hidden on billydigitals.com.
+  // On the client's own domain we want the opposite: index the front page,
+  // keep the back office and the signing pages out of search.
+  const publicPage = p === "/";
+  const canonical = "https://" + url.hostname + (publicPage ? "/" : p);
+
+  let rw = new HTMLRewriter().on('meta[name="robots"]', {
+    element: (el) => (publicPage ? el.remove() : el.setAttribute("content", "noindex,nofollow")),
+  });
+  if (publicPage) {
+    rw = rw.on("head", {
+      element: (el) => el.append(
+        `<link rel="canonical" href="${canonical}">` +
+        `<meta property="og:url" content="${canonical}">`,
+        { html: true }
+      ),
+    });
+  }
+  return rw.transform(new Response(res.body, res));
+}
+
+/* Same-origin guard: accept posts from our own site, and from the client
+   domains listed in M2L_HOST once their site is pointed at this worker. */
+function originOk(request, env) {
+  const origin = request.headers.get("origin") || "";
+  if (!origin) return true;
+  if (/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) return true;
+  try {
+    return isM2LHost(new URL(origin).hostname, env);
+  } catch (_) {
+    return false;
+  }
+}
 
 function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), {
@@ -114,10 +197,7 @@ async function handleQuote(request, env) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
   // Same-origin guard: only accept posts made from our own site.
-  const origin = request.headers.get("origin") || "";
-  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
-    return json({ error: "Forbidden" }, 403);
-  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
   let body;
   try {
@@ -316,10 +396,7 @@ async function handleBook(request, env) {
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
-  const origin = request.headers.get("origin") || "";
-  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
-    return json({ error: "Forbidden" }, 403);
-  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
@@ -597,10 +674,7 @@ async function handleM2LBook(request, env) {
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
-  const origin = request.headers.get("origin") || "";
-  if (origin && !/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) {
-    return json({ error: "Forbidden" }, 403);
-  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
   if (body.botcheck) return json({ ok: true });
@@ -669,7 +743,7 @@ ${clash ? `<div style="margin-top:14px;background:#fff2cf;border:1px solid #e8b3
 ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${esc(k)}</td><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;font-weight:600">${esc(v)}</td></tr>`).join("")}
 </table>
 <div style="margin-top:16px;background:#fff;border-radius:14px;padding:16px"><b>Notes</b><p style="margin:8px 0 0;white-space:pre-wrap">${esc(d.notes || "—")}</p></div>
-<p style="text-align:center;margin-top:18px"><a href="https://www.billydigitals.com/templates/m2l-admin" style="display:inline-block;background:linear-gradient(135deg,#ff8a1f,#ffc93c);color:#231204;font-weight:800;text-decoration:none;padding:13px 26px;border-radius:999px">Open the back office</a></p>
+<p style="text-align:center;margin-top:18px"><a href="${m2lPage(env, "admin")}" style="display:inline-block;background:linear-gradient(135deg,#ff8a1f,#ffc93c);color:#231204;font-weight:800;text-decoration:none;padding:13px 26px;border-radius:999px">Open the back office</a></p>
 </div></body></html>`;
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -736,7 +810,15 @@ ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f
                        production (the response flags when it is missing).
    ============================================================ */
 
-const M2L_INVOICE_URL = "https://www.billydigitals.com/templates/m2l-invoice";
+/* Where the M2L pages live. Once M2L_HOST is set the links in every email
+   point at the client's own domain instead of billydigitals.com. */
+function m2lPage(env, key) {
+  const hosts = m2lHosts(env);
+  if (hosts.length) return "https://" + hosts[0] + { admin: "/admin", invoice: "/invoice", sign: "/sign", site: "" }[key];
+  return "https://www.billydigitals.com" +
+    { admin: "/templates/m2l-admin", invoice: "/templates/m2l-invoice-admin",
+      sign: "/templates/m2l-invoice", site: "/templates/mumbai2london" }[key];
+}
 const M2L_TERMS = [
   "A booking is confirmed once this invoice is signed and any deposit has cleared.",
   "The balance is due on or before the event date unless agreed otherwise in writing.",
@@ -875,7 +957,7 @@ async function handleInvoiceSend(request, env) {
   };
   const payloadJson = JSON.stringify(payload);
   const token = await signPayload(env, payloadJson);
-  const link = M2L_INVOICE_URL + "#" + token;
+  const link = m2lPage(env, "sign") + "#" + token;
 
   const ev = payload.event;
   const meta = [

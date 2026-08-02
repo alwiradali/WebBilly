@@ -197,6 +197,10 @@ button{font-family:var(--ui)}
   var DW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   var WA="https://wa.me/447940762404";
 
+  /* Works both as a demo under /templates/ and on the client's own domain. */
+  var ROOT = location.pathname.indexOf('/templates/')===0 ? '/templates/m2l-' : '/';
+  function page(n){ return ROOT + (ROOT==='/' ? n : (n==='invoice'?'invoice-admin':n)); }
+
   function tok(){ return localStorage.getItem(KEY)||""; }
   function api(path,opts){
     opts=opts||{};
@@ -318,7 +322,7 @@ button{font-family:var(--ui)}
   }
   $("tEnq").addEventListener('click',function(){ tab('e'); });
   $("tCal").addEventListener('click',function(){ tab('c'); });
-  $("tInv").addEventListener('click',function(){ location.href='./m2l-invoice-admin'; });
+  $("tInv").addEventListener('click',function(){ location.href=page('invoice'); });
 
   /* ---------- enquiries ---------- */
   var filter='';
@@ -394,7 +398,7 @@ button{font-family:var(--ui)}
     [['name',e.name],['email',e.email],['phone',e.phone],['type',e.event_type],
      ['date',e.event_date],['time',e.event_time],['loc',e.location],
      ['hours',e.hours],['addons',e.addons]].forEach(function(p){ if(p[1]) q.set(p[0],p[1]); });
-    return './m2l-invoice-admin?'+q.toString();
+    return page('invoice')+'?'+q.toString();
   }
   function wire(e){
     var root=$("e_"+e.id); if(!root) return;

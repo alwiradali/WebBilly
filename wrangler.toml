@@ -13,7 +13,18 @@ main = "worker.js"
 routes = [
   { pattern = "billydigitals.com", custom_domain = true },
   { pattern = "www.billydigitals.com", custom_domain = true }
+  # Client sites on their own domains — uncomment and set the real hostname
+  # once the domain's nameservers point at Cloudflare, then add the same
+  # hostnames to M2L_HOST below.
+  # ,{ pattern = "mumbai2london.co.uk", custom_domain = true }
+  # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
 ]
+
+[vars]
+# Comma-separated hostnames that should serve ONLY the Mumbai2London site,
+# at clean root URLs (/, /admin, /invoice, /sign) and indexable by Google.
+# Leave empty and everything stays as it is on billydigitals.com.
+M2L_HOST = ""
 
 # D1 database for Mumbai2London enquiries + booking diary.
 # Create it once with:  npx wrangler d1 create m2l
@@ -29,3 +40,7 @@ directory = "."
 not_found_handling = "404-page"
 # Lets the Worker fall through to static assets via env.ASSETS.fetch().
 binding = "ASSETS"
+# These paths must reach the Worker before the static-asset router, so a
+# client domain can serve its site at "/" instead of the Billy Digitals
+# homepage. If your wrangler is too old for the array form, use `true`.
+run_worker_first = ["/", "/admin", "/invoice", "/sign"]
