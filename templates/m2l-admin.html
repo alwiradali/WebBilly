@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Back office — Mumbai2London</title>
+<meta name="theme-color" content="#140b05">
+<link rel="icon" href="../assets/mumbai2london/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#140b05; --card:#241608; --card2:#1c1108; --line:rgba(240,178,67,.22);
+  --cream:#fff3e0; --muted:#c8ab88; --marigold:#ffc93c; --saffron:#ff8a1f;
+  --dis:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif;
+  --grad:linear-gradient(135deg,#ff8a1f,#ffc93c);
+  --new:#7dd3fc; --quoted:#ffc93c; --confirmed:#7ce495; --declined:#ff9b8c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 70px}
+a{color:inherit}
+button{font-family:var(--ui)}
+
+/* lock */
+.lock{max-width:400px;margin:13vh auto;text-align:center}
+.lock img{width:70px;height:70px;border-radius:50%;margin:0 auto 16px;display:block}
+.lock h1{font-family:var(--dis);font-weight:700;font-size:1.5rem;margin-bottom:6px}
+.lock p{color:var(--muted);font-weight:300;font-size:14.5px;margin-bottom:18px}
+.lock input{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;color:var(--cream);font-size:15px;text-align:center}
+.lock button{width:100%;margin-top:11px;border:0;border-radius:999px;background:var(--grad);color:#231204;
+  font-weight:800;font-size:15.5px;padding:14px;cursor:pointer}
+.lock .err{color:#ffb0a2;font-size:13.5px;margin-top:12px;display:none}
+
+/* shell */
+.top{display:flex;align-items:center;gap:13px;padding:22px 0 6px;flex-wrap:wrap}
+.top img{width:46px;height:46px;border-radius:50%}
+.top h1{font-family:var(--dis);font-weight:700;font-size:1.35rem;line-height:1.15}
+.top .sub{color:var(--muted);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase}
+.top .sp{flex:1}
+.top .out{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);
+  padding:9px 16px;font-size:13.5px;cursor:pointer}
+.top .out:hover{border-color:var(--marigold);color:var(--marigold)}
+
+.tabs{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+  border-radius:999px;padding:10px 20px;font-size:14.5px;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--grad);color:#231204;border-color:transparent}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-top:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 17px}
+.stat b{display:block;font-family:var(--dis);font-size:1.7rem;line-height:1}
+.stat span{color:var(--muted);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(16px,3vw,24px);margin-top:16px}
+.panel h2{font-family:var(--dis);font-weight:700;font-size:1.15rem;margin-bottom:3px}
+.panel .hint{color:var(--muted);font-size:13.5px;font-weight:300;margin-bottom:14px}
+
+/* enquiry rows */
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.filters button{border:1px solid var(--line);background:none;color:var(--muted);border-radius:999px;
+  padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.filters button.on{border-color:var(--marigold);color:var(--marigold);background:rgba(255,201,60,.1)}
+.enq{border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden;background:var(--card2)}
+.enq summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;
+  grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.enq summary::-webkit-details-marker{display:none}
+.enq .who{min-width:0}
+.enq .who b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.enq .who span{color:var(--muted);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{border-radius:999px;padding:4px 11px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.badge.new{background:rgba(125,211,252,.14);color:var(--new);border:1px solid rgba(125,211,252,.4)}
+.badge.quoted{background:rgba(255,201,60,.14);color:var(--quoted);border:1px solid rgba(255,201,60,.4)}
+.badge.confirmed{background:rgba(0,180,81,.14);color:var(--confirmed);border:1px solid rgba(0,180,81,.45)}
+.badge.declined{background:rgba(255,80,60,.12);color:var(--declined);border:1px solid rgba(255,80,60,.4)}
+.enq .body{padding:0 16px 16px;border-top:1px solid var(--line)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:11px 20px;margin:14px 0}
+.kv .k{color:var(--muted);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+.kv .v{font-weight:600;font-size:14.5px;word-break:break-word}
+.kv .v a{color:var(--marigold)}
+.notes{background:rgba(0,0,0,.3);border-radius:12px;padding:12px 14px;font-weight:300;font-size:14px;white-space:pre-wrap}
+.reply{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;color:var(--cream);font-family:var(--ui);font-size:14.5px;min-height:92px;resize:vertical;margin-top:12px}
+.reply:focus{outline:none;border-color:var(--marigold)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.acts button{border:0;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:700;cursor:pointer}
+.b-conf{background:linear-gradient(135deg,#00b451,#7ce495);color:#04331b}
+.b-quote{background:var(--grad);color:#231204}
+.b-dec{background:rgba(255,80,60,.16);color:#ffb0a2;border:1px solid rgba(255,80,60,.4)!important}
+.acts label{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;cursor:pointer;margin-left:auto}
+.acts label input{width:17px;height:17px;accent-color:var(--saffron)}
+.wa,.mail{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;
+  padding:9px 15px;font-size:13px;font-weight:600;text-decoration:none;color:var(--cream)}
+.wa:hover,.mail:hover{border-color:var(--marigold)}
+.rowmsg{font-size:13px;margin-top:10px;display:none}
+.rowmsg.ok{display:block;color:#9ef2c2}
+.rowmsg.err{display:block;color:#ffb0a2}
+
+/* diary */
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.calhead b{font-family:var(--dis);font-size:1.15rem}
+.calhead button{background:none;border:1px solid var(--line);color:var(--cream);border-radius:10px;
+  width:36px;height:36px;font-size:17px;cursor:pointer}
+.calhead button:hover{border-color:var(--marigold)}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dgrid .dw{text-align:center;color:var(--muted);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding-bottom:5px}
+.dcell{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;
+  font-size:14px;font-weight:600;transition:border-color .2s,background .2s}
+.dcell:hover{border-color:var(--marigold)}
+.dcell.pad{border:0;background:none;cursor:default}
+.dcell.today{border-color:rgba(240,178,67,.6)}
+.dcell.sel{background:var(--grad);color:#231204;border-color:transparent}
+.dcell .n{font-size:10px;font-weight:800;border-radius:999px;padding:1px 7px;background:rgba(0,180,81,.9);color:#04331b}
+.dcell .n.h{background:var(--marigold);color:#231204}
+.dcell.sel .n{background:rgba(0,0,0,.28);color:#fff}
+.dayout{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+.dayout h3{font-family:var(--dis);font-size:1.05rem;margin-bottom:10px}
+.slot{display:flex;gap:12px;align-items:center;background:rgba(0,0,0,.28);border:1px solid var(--line);
+  border-radius:12px;padding:11px 14px;margin-bottom:8px;flex-wrap:wrap}
+.slot .t{font-weight:800;color:var(--marigold);min-width:52px}
+.slot .who{flex:1;min-width:150px}
+.slot .who b{display:block;font-size:14.5px}
+.slot .who span{color:var(--muted);font-size:12.5px}
+.empty{color:var(--muted);font-weight:300;font-size:14px}
+.warn{background:rgba(255,201,60,.1);border:1px solid rgba(255,201,60,.36);color:#ffd97a;
+  border-radius:14px;padding:14px 16px;font-size:14px;margin-top:16px}
+.warn code{background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;font-size:12.5px;display:inline-block;margin-top:4px}
+.spin{color:var(--muted);font-size:14px;padding:14px 0}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="lock">
+  <div class="lock">
+    <img src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
+    <h1>Back office</h1>
+    <p>Sign in to see your enquiries and booking diary.</p>
+    <input id="key" type="password" placeholder="Admin key" autocomplete="current-password">
+    <button id="unlock">Sign in</button>
+    <div class="err" id="lockErr"></div>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <img src="../assets/mumbai2london/logo.webp" alt="">
+    <div><h1>Back office</h1><div class="sub">Mumbai2London</div></div>
+    <span class="sp"></span>
+    <button class="out" id="signout">Sign out</button>
+  </header>
+
+  <div class="tabs">
+    <button id="tEnq" class="on">Enquiries</button>
+    <button id="tCal">Booking diary</button>
+    <button id="tInv">New invoice</button>
+  </div>
+
+  <div id="viewEnq">
+    <div class="stats" id="stats"></div>
+    <section class="panel">
+      <h2>Enquiries</h2>
+      <p class="hint">Newest first. Open one to reply — replying emails the customer straight away.</p>
+      <div class="filters" id="filters"></div>
+      <div id="list"><div class="spin">Loading…</div></div>
+    </section>
+  </div>
+
+  <div id="viewCal" hidden>
+    <section class="panel">
+      <div class="calhead">
+        <button id="cPrev" aria-label="Previous month">‹</button>
+        <b id="cLabel"></b>
+        <button id="cNext" aria-label="Next month">›</button>
+      </div>
+      <p class="hint">Green means confirmed, amber means an enquiry is being held. Tap a day to see who's booked and at what time.</p>
+      <div class="dgrid" id="dgrid"></div>
+      <div class="dayout" id="dayout"><p class="empty">Tap a date to see that day's bookings.</p></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(i){return document.getElementById(i);};
+  var esc=function(x){return String(x==null?"":x).replace(/[<>&"]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c];});};
+  var KEY="m2l_admin_key";
+  var MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var WA="https://wa.me/447940762404";
+
+  function tok(){ return localStorage.getItem(KEY)||""; }
+  function api(path,opts){
+    opts=opts||{};
+    opts.headers=Object.assign({'content-type':'application/json','authorization':'Bearer '+tok()},opts.headers||{});
+    return fetch(path,opts).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); });
+  }
+  function pad(n){ return n<10?'0'+n:''+n; }
+  function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function pretty(iso){
+    if(!iso) return '—';
+    var p=String(iso).split('-'); if(p.length!==3) return iso;
+    var d=new Date(+p[0],+p[1]-1,+p[2]);
+    return isNaN(d)?iso:d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  }
+
+  /* ---------- sign in ---------- */
+  function show(){ $("lock").hidden=true; $("app").hidden=false; loadEnq(); }
+  $("unlock").addEventListener('click',function(){
+    var v=$("key").value.trim(); if(!v) return;
+    localStorage.setItem(KEY,v);
+    api('/api/m2l/admin/enquiries?limit=1').then(function(r){
+      if(r.status===401){ localStorage.removeItem(KEY); $("lockErr").textContent='That key was not recognised.'; $("lockErr").style.display='block'; return; }
+      show();
+    });
+  });
+  $("key").addEventListener('keydown',function(e){ if(e.key==='Enter') $("unlock").click(); });
+  $("signout").addEventListener('click',function(){ localStorage.removeItem(KEY); location.reload(); });
+  if(tok()) show();
+
+  /* ---------- tabs ---------- */
+  function tab(which){
+    $("tEnq").classList.toggle('on',which==='e');
+    $("tCal").classList.toggle('on',which==='c');
+    $("viewEnq").hidden=which!=='e';
+    $("viewCal").hidden=which!=='c';
+    if(which==='c') drawCal();
+  }
+  $("tEnq").addEventListener('click',function(){ tab('e'); });
+  $("tCal").addEventListener('click',function(){ tab('c'); });
+  $("tInv").addEventListener('click',function(){ location.href='./m2l-invoice-admin'; });
+
+  /* ---------- enquiries ---------- */
+  var filter='';
+  var FILTERS=[['','All'],['new','New'],['quoted','Quoted'],['confirmed','Confirmed'],['declined','Declined']];
+  function drawFilters(counts){
+    $("filters").innerHTML='';
+    FILTERS.forEach(function(f){
+      var b=document.createElement('button');
+      var n=f[0]?(counts[f[0]]||0):Object.keys(counts).reduce(function(t,k){return t+counts[k];},0);
+      b.textContent=f[1]+' ('+n+')';
+      if(filter===f[0]) b.classList.add('on');
+      b.addEventListener('click',function(){ filter=f[0]; loadEnq(); });
+      $("filters").appendChild(b);
+    });
+  }
+  function notConnected(msg){
+    $("list").innerHTML='<div class="warn"><b>The booking database isn\'t connected yet.</b><br>'+esc(msg||'')+
+      '<br><br>Create it once, then redeploy:<br><code>npx wrangler d1 create m2l</code><br>'+
+      '<code>npx wrangler d1 execute m2l --remote --file=./migrations/0001_m2l.sql</code></div>';
+    $("stats").innerHTML='';
+  }
+  function loadEnq(){
+    $("list").innerHTML='<div class="spin">Loading…</div>';
+    api('/api/m2l/admin/enquiries'+(filter?('?status='+filter):'')).then(function(r){
+      if(r.status===401){ localStorage.removeItem(KEY); location.reload(); return; }
+      if(!r.ok){ notConnected(r.j&&r.j.error); return; }
+      var counts=r.j.counts||{};
+      drawFilters(counts);
+      $("stats").innerHTML=[['new','New'],['quoted','Quoted'],['confirmed','Confirmed'],['declined','Declined']]
+        .map(function(c){ return '<div class="stat"><b>'+(counts[c[0]]||0)+'</b><span>'+c[1]+'</span></div>'; }).join('');
+      var rows=r.j.rows||[];
+      if(!rows.length){ $("list").innerHTML='<p class="empty">No enquiries here yet.</p>'; return; }
+      $("list").innerHTML=rows.map(card).join('');
+      rows.forEach(wire);
+    });
+  }
+  function card(e){
+    var when=[pretty(e.event_date),e.event_time].filter(Boolean).join(' · ');
+    return '<details class="enq" id="e_'+esc(e.id)+'">'+
+      '<summary><span class="badge '+esc(e.status)+'">'+esc(e.status)+'</span>'+
+      '<span class="who"><b>'+esc(e.name)+' — '+esc(e.event_type||'Enquiry')+'</b><span>'+esc(when||'no date')+(e.location?(' · '+esc(e.location)):'')+'</span></span>'+
+      '<span class="badge" style="border:1px solid var(--line);color:var(--muted)">'+esc((e.source==='chat')?'Chat':'Form')+'</span></summary>'+
+      '<div class="body"><div class="kv">'+
+        kv('Date',pretty(e.event_date))+kv('Time',e.event_time||'—')+kv('Hours',e.hours||'—')+
+        kv('Location',e.location||'—')+
+        kv('Phone','<a href="tel:'+esc(e.phone)+'">'+esc(e.phone)+'</a>')+
+        kv('Email','<a href="mailto:'+esc(e.email)+'">'+esc(e.email)+'</a>')+
+        kv('Add-ons',e.addons||'—')+kv('Received',new Date(e.created_at).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}))+
+      '</div>'+
+      (e.notes?('<div class="notes">'+esc(e.notes)+'</div>'):'')+
+      (e.reply?('<div class="notes" style="margin-top:10px;border-left:3px solid var(--marigold)"><b>Your last reply</b>\n'+esc(e.reply)+'</div>'):'')+
+      '<textarea class="reply" id="r_'+esc(e.id)+'" placeholder="Write your reply — this gets emailed to '+esc(e.name)+'…"></textarea>'+
+      '<div class="acts">'+
+        '<button class="b-quote" data-a="quoted" data-id="'+esc(e.id)+'">Send quote</button>'+
+        '<button class="b-conf" data-a="confirmed" data-id="'+esc(e.id)+'">Confirm booking</button>'+
+        '<button class="b-dec" data-a="declined" data-id="'+esc(e.id)+'">Decline</button>'+
+        '<a class="wa" href="'+WA+'" target="_blank" rel="noopener">WhatsApp</a>'+
+        '<a class="mail" href="mailto:'+esc(e.email)+'">Email direct</a>'+
+        '<label><input type="checkbox" id="s_'+esc(e.id)+'" checked> Email the customer</label>'+
+      '</div><div class="rowmsg" id="m_'+esc(e.id)+'"></div></div></details>';
+  }
+  function kv(k,v){ return '<div><div class="k">'+esc(k)+'</div><div class="v">'+v+'</div></div>'; }
+  function wire(e){
+    var root=$("e_"+e.id); if(!root) return;
+    root.querySelectorAll('.acts button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var id=b.getAttribute('data-id'), status=b.getAttribute('data-a');
+        var reply=($("r_"+id)||{}).value||'';
+        var send=($("s_"+id)||{}).checked;
+        var m=$("m_"+id); m.className='rowmsg'; b.disabled=true;
+        api('/api/m2l/admin/update',{method:'POST',body:JSON.stringify({id:id,status:status,reply:reply,sendEmail:send})})
+          .then(function(r){
+            b.disabled=false;
+            if(!r.ok){ m.className='rowmsg err'; m.textContent=(r.j&&r.j.error)||'Could not save.'; return; }
+            m.className='rowmsg ok';
+            m.textContent='Marked '+status+(r.j.emailed?' and emailed the customer.':'.');
+            setTimeout(loadEnq,900);
+          });
+      });
+    });
+  }
+
+  /* ---------- booking diary ---------- */
+  var view=new Date(); view.setDate(1);
+  var DAYS={}, selected=null;
+  function drawCal(){
+    $("cLabel").textContent=MN[view.getMonth()]+' '+view.getFullYear();
+    var from=ymd(new Date(view.getFullYear(),view.getMonth(),1));
+    var to=ymd(new Date(view.getFullYear(),view.getMonth()+1,0));
+    fetch('/api/m2l/availability?from='+from+'&to='+to).then(function(r){return r.json();})
+      .then(function(j){ DAYS=(j&&j.days)||{}; paint(); }).catch(paint);
+  }
+  function paint(){
+    var g=$("dgrid"); g.innerHTML='';
+    DW.forEach(function(d){ var s=document.createElement('div'); s.className='dw'; s.textContent=d; g.appendChild(s); });
+    var first=new Date(view.getFullYear(),view.getMonth(),1);
+    var lead=(first.getDay()+6)%7;
+    for(var i=0;i<lead;i++){ var p=document.createElement('div'); p.className='dcell pad'; g.appendChild(p); }
+    var n=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+    var todayStr=ymd(new Date());
+    for(var d=1;d<=n;d++){
+      var iso=ymd(new Date(view.getFullYear(),view.getMonth(),d));
+      var info=DAYS[iso];
+      var c=document.createElement('div');
+      c.className='dcell'+(iso===todayStr?' today':'')+(selected===iso?' sel':'');
+      c.innerHTML='<span>'+d+'</span>'+(info&&info.count?('<span class="n'+((info.taken&&info.taken.length)?'':' h')+'">'+info.count+'</span>'):'');
+      (function(iso){ c.addEventListener('click',function(){ selected=iso; paint(); openDay(iso); }); })(iso);
+      g.appendChild(c);
+    }
+  }
+  function openDay(iso){
+    var out=$("dayout");
+    out.innerHTML='<h3>'+pretty(iso)+'</h3><div class="spin">Loading…</div>';
+    api('/api/m2l/admin/day?date='+iso).then(function(r){
+      if(!r.ok){ out.innerHTML='<h3>'+pretty(iso)+'</h3><p class="empty">'+esc((r.j&&r.j.error)||'Could not load.')+'</p>'; return; }
+      var rows=r.j.rows||[];
+      if(!rows.length){ out.innerHTML='<h3>'+pretty(iso)+'</h3><p class="empty">Nothing booked — this day is free.</p>'; return; }
+      out.innerHTML='<h3>'+pretty(iso)+' — '+rows.length+' booking'+(rows.length>1?'s':'')+'</h3>'+
+        rows.map(function(e){
+          return '<div class="slot"><span class="t">'+esc(e.event_time||'—')+'</span>'+
+            '<span class="who"><b>'+esc(e.name)+' — '+esc(e.event_type||'Enquiry')+'</b>'+
+            '<span>'+esc(e.location||'no location')+' · '+esc(e.phone)+'</span></span>'+
+            '<span class="badge '+esc(e.status)+'">'+esc(e.status)+'</span></div>';
+        }).join('');
+    });
+  }
+  $("cPrev").addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()-1,1); drawCal(); });
+  $("cNext").addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()+1,1); drawCal(); });
+})();
+</script>
+</body>
+</html>

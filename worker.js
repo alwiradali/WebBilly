@@ -34,6 +34,12 @@ export default {
     if (url.pathname === "/api/m2l-book") {
       return handleM2LBook(request, env);
     }
+    if (url.pathname === "/api/m2l/availability") {
+      return handleAvailability(request, env);
+    }
+    if (url.pathname.startsWith("/api/m2l/admin/")) {
+      return handleM2LAdmin(request, env, url);
+    }
     if (url.pathname === "/api/m2l-invoice/send") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleInvoiceSend(request, env);
@@ -585,7 +591,7 @@ billydigitals.com`;
    ============================================================ */
 const M2L_EMAIL = "enquiries@mumbai2london.co.uk";
 const M2L_FROM = "Mumbai2London <hello@billydigitals.com>";
-const M2L_WA = "https://wa.me/447519022117";
+const M2L_WA = "https://wa.me/447940762404";
 
 async function handleM2LBook(request, env) {
   if (!env.RESEND_API_KEY) {
@@ -609,6 +615,9 @@ async function handleM2LBook(request, env) {
     email: String(body.email || "").trim(),
     phone: String(body.phone || "").trim(),
     notes: String(body.notes || "").trim(),
+    addons: (Array.isArray(body.addons) ? body.addons : String(body.addons || "").split(","))
+      .map((x) => String(x).trim()).filter(Boolean).slice(0, 12).join(", "),
+    source: body.source === "chat" ? "chat" : "form",
   };
   if (!d.name || !d.eventType || !d.date) {
     return json({ error: "Please choose an event type and date, and add your name." }, 400);
@@ -619,21 +628,48 @@ async function handleM2LBook(request, env) {
   if (!d.phone) return json({ error: "A contact phone number is required." }, 400);
 
   const esc = (x) => String(x).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+
+  /* Save it to the diary (if D1 is connected) and note any clash that day. */
+  let enquiryId = "", clash = 0;
+  const db = m2lDb(env);
+  if (db) {
+    try {
+      enquiryId = "ENQ-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-"
+        + Math.random().toString(36).slice(2, 6).toUpperCase();
+      const iso = /^\d{4}-\d{2}-\d{2}$/.test(d.date) ? d.date : "";
+      if (iso) {
+        const c = await db.prepare(
+          `SELECT COUNT(*) n FROM enquiries WHERE event_date=?1 AND status IN ('confirmed','quoted')`
+        ).bind(iso).first();
+        clash = (c && c.n) || 0;
+      }
+      await db.prepare(
+        `INSERT INTO enquiries (id,created_at,status,event_type,event_date,event_time,hours,location,addons,name,email,phone,notes,source)
+         VALUES (?1,?2,'new',?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13)`
+      ).bind(enquiryId, new Date().toISOString(), d.eventType, iso, d.time, d.hours,
+             d.location, d.addons, d.name, d.email, d.phone, d.notes, d.source).run();
+    } catch (e) { enquiryId = ""; }
+  }
+
   const rows = [
     ["Event", d.eventType], ["Date", d.date], ["Time", d.time || "—"],
     ["Hours", d.hours || "—"], ["Location", d.location || "—"],
+    ["Extras", d.addons || "—"],
     ["Name", d.name], ["Email", d.email], ["Phone", d.phone],
+    ["Came from", d.source === "chat" ? "Website chat" : "Booking form"],
   ];
   const ownerText = `New rickshaw enquiry\n\n${rows.map(([k,v])=>`${k}: ${v}`).join("\n")}\n\nNotes:\n${d.notes || "—"}\n\nReply straight to this email to answer ${d.name}.`;
   const ownerHtml = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
 <div style="max-width:600px;margin:0 auto;padding:28px">
 <div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:22px 24px;color:#231204">
-<h1 style="margin:0;font-size:22px">New rickshaw enquiry 🛺</h1>
-<p style="margin:6px 0 0;opacity:.85">via mumbai2london booking form</p></div>
+<h1 style="margin:0;font-size:22px">New rickshaw enquiry</h1>
+<p style="margin:6px 0 0;opacity:.85">${enquiryId ? esc(enquiryId) + " · " : ""}via the mumbai2london website</p></div>
+${clash ? `<div style="margin-top:14px;background:#fff2cf;border:1px solid #e8b33d;border-radius:12px;padding:13px 15px;color:#6b4a06;font-size:14px"><b>Heads up:</b> you already have ${clash} booking${clash > 1 ? "s" : ""} in the diary for ${esc(d.date)}.</div>` : ""}
 <table style="width:100%;border-collapse:collapse;margin-top:18px;background:#fff;border-radius:14px;overflow:hidden">
 ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${esc(k)}</td><td style="padding:11px 16px;border-bottom:1px solid #f3e6d2;font-weight:600">${esc(v)}</td></tr>`).join("")}
 </table>
 <div style="margin-top:16px;background:#fff;border-radius:14px;padding:16px"><b>Notes</b><p style="margin:8px 0 0;white-space:pre-wrap">${esc(d.notes || "—")}</p></div>
+<p style="text-align:center;margin-top:18px"><a href="https://www.billydigitals.com/templates/m2l-admin" style="display:inline-block;background:linear-gradient(135deg,#ff8a1f,#ffc93c);color:#231204;font-weight:800;text-decoration:none;padding:13px 26px;border-radius:999px">Open the back office</a></p>
 </div></body></html>`;
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -654,7 +690,7 @@ ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f
     const custHtml = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
 <div style="max-width:600px;margin:0 auto;padding:28px">
 <div style="background:linear-gradient(135deg,#ff8a1f,#ffc93c);border-radius:18px;padding:26px 24px;color:#231204">
-<h1 style="margin:0;font-size:24px">Thanks, ${esc(d.name)}! 🛺</h1>
+<h1 style="margin:0;font-size:24px">Thanks, ${esc(d.name)}</h1>
 <p style="margin:8px 0 0">We've got your enquiry for <b>${esc(d.eventType)}</b> on <b>${esc(d.date)}</b>.</p></div>
 <div style="background:#fff;border-radius:14px;padding:20px;margin-top:16px">
 <p style="margin:0 0 12px">We'll come back to you shortly to confirm availability and pricing.</p>
@@ -666,7 +702,7 @@ ${rows.map(([k,v])=>`<tr><td style="padding:11px 16px;border-bottom:1px solid #f
       headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
       body: JSON.stringify({
         from: M2L_FROM, to: [d.email], reply_to: M2L_EMAIL,
-        subject: "Enquiry received 🛺 — Mumbai2London",
+        subject: "Enquiry received — Mumbai2London",
         html: custHtml,
         text: `Thanks ${d.name}! We've got your enquiry for ${d.eventType} on ${d.date}. We'll confirm availability shortly.`,
       }),
@@ -704,8 +740,8 @@ const M2L_INVOICE_URL = "https://www.billydigitals.com/templates/m2l-invoice";
 const M2L_TERMS = [
   "A booking is confirmed once this invoice is signed and any deposit has cleared.",
   "The balance is due on or before the event date unless agreed otherwise in writing.",
-  "Cancellations more than 14 days before the event are refunded in full less the deposit.",
-  "The rickshaw is supplied decorated and delivered to the agreed address and time.",
+  "Cancellations more than 14 days before the event are refunded in full, less the deposit.",
+  "The rickshaw is supplied decorated and delivered to the agreed address at the agreed time.",
   "Mumbai2London holds its own insurance; the hirer is responsible for damage caused by guests.",
 ];
 
@@ -1040,4 +1076,153 @@ ${shared}
   } catch (e) { /* the business copy is the record */ }
 
   return json({ ok: true, id: payload.id, signedAt: audit.signedAt, name: audit.name });
+}
+
+
+/* ============================================================
+   Mumbai2London — booking diary + enquiry inbox (Cloudflare D1)
+   ------------------------------------------------------------
+   Every enquiry is stored in D1 so the public calendar can show which
+   dates are already taken and Himansu has a back office to work from.
+
+   Everything degrades safely: if the D1 binding is missing the site
+   still takes enquiries by email, the calendar simply shows every slot
+   as free, and the admin pages say the database is not connected yet.
+
+     GET  /api/m2l/availability?from=YYYY-MM-DD&to=YYYY-MM-DD
+     GET  /api/m2l/admin/enquiries?status=&limit=
+     GET  /api/m2l/admin/day?date=YYYY-MM-DD
+     POST /api/m2l/admin/update    { id, status, reply, sendEmail }
+   Admin routes need:  Authorization: Bearer <M2L_ADMIN_TOKEN>
+   ============================================================ */
+
+const M2L_SLOTS = ["10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
+/* A booking blocks the whole day: one rickshaw, one event. */
+const M2L_ONE_PER_DAY = true;
+
+function m2lDb(env) { return env.M2L_DB || null; }
+
+async function handleAvailability(request, env) {
+  const db = m2lDb(env);
+  const url = new URL(request.url);
+  const from = (url.searchParams.get("from") || "").slice(0, 10);
+  const to = (url.searchParams.get("to") || "").slice(0, 10);
+  if (!db) return json({ ok: true, connected: false, slots: M2L_SLOTS, days: {} });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+    return json({ error: "from and to must be YYYY-MM-DD" }, 400);
+  }
+  try {
+    const rs = await db.prepare(
+      `SELECT event_date, event_time, status FROM enquiries
+        WHERE event_date BETWEEN ?1 AND ?2 AND status IN ('confirmed','quoted')`
+    ).bind(from, to).all();
+    const days = {};
+    for (const r of (rs.results || [])) {
+      const d = r.event_date;
+      if (!d) continue;
+      if (!days[d]) days[d] = { taken: [], held: [], count: 0 };
+      days[d].count++;
+      (r.status === "confirmed" ? days[d].taken : days[d].held).push(r.event_time || "");
+    }
+    return json({ ok: true, connected: true, slots: M2L_SLOTS, onePerDay: M2L_ONE_PER_DAY, days });
+  } catch (e) {
+    return json({ ok: true, connected: false, slots: M2L_SLOTS, days: {}, note: String(e).slice(0, 120) });
+  }
+}
+
+function adminOk(request, env) {
+  if (!env.M2L_ADMIN_TOKEN) return "unset";
+  const auth = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  return auth === env.M2L_ADMIN_TOKEN;
+}
+
+async function handleM2LAdmin(request, env, url) {
+  const ok = adminOk(request, env);
+  if (ok === "unset") return json({ error: "Set the M2L_ADMIN_TOKEN secret on the Worker to use the back office." }, 503);
+  if (!ok) return json({ error: "Not authorised." }, 401);
+  const db = m2lDb(env);
+  if (!db) return json({ error: "The booking database is not connected yet. Create the D1 database and redeploy.", connected: false }, 503);
+  const path = url.pathname.replace("/api/m2l/admin/", "");
+
+  try {
+    if (path === "enquiries" && request.method === "GET") {
+      const status = url.searchParams.get("status") || "";
+      const limit = Math.min(300, Math.max(1, Number(url.searchParams.get("limit")) || 200));
+      const q = status
+        ? db.prepare(`SELECT * FROM enquiries WHERE status=?1 ORDER BY created_at DESC LIMIT ?2`).bind(status, limit)
+        : db.prepare(`SELECT * FROM enquiries ORDER BY created_at DESC LIMIT ?1`).bind(limit);
+      const rs = await q.all();
+      const counts = await db.prepare(`SELECT status, COUNT(*) n FROM enquiries GROUP BY status`).all();
+      const byStatus = {};
+      for (const c of (counts.results || [])) byStatus[c.status] = c.n;
+      return json({ ok: true, connected: true, rows: rs.results || [], counts: byStatus });
+    }
+
+    if (path === "day" && request.method === "GET") {
+      const date = (url.searchParams.get("date") || "").slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "date must be YYYY-MM-DD" }, 400);
+      const rs = await db.prepare(
+        `SELECT * FROM enquiries WHERE event_date=?1 ORDER BY COALESCE(event_time,'99:99') ASC`
+      ).bind(date).all();
+      return json({ ok: true, date, rows: rs.results || [] });
+    }
+
+    if (path === "update" && request.method === "POST") {
+      const body = await request.json();
+      const id = String(body.id || "");
+      const status = String(body.status || "");
+      const reply = String(body.reply || "").trim().slice(0, 4000);
+      if (!id) return json({ error: "Missing enquiry id." }, 400);
+      if (status && !["new", "quoted", "confirmed", "declined"].includes(status)) {
+        return json({ error: "Unknown status." }, 400);
+      }
+      const cur = await db.prepare(`SELECT * FROM enquiries WHERE id=?1`).bind(id).first();
+      if (!cur) return json({ error: "Enquiry not found." }, 404);
+
+      const newStatus = status || cur.status;
+      const now = new Date().toISOString();
+      await db.prepare(
+        `UPDATE enquiries SET status=?1, reply=COALESCE(NULLIF(?2,''), reply), replied_at=CASE WHEN ?2<>'' THEN ?3 ELSE replied_at END WHERE id=?4`
+      ).bind(newStatus, reply, now, id).run();
+
+      let emailed = false;
+      if (body.sendEmail && env.RESEND_API_KEY && cur.email) {
+        const confirmed = newStatus === "confirmed";
+        const declined = newStatus === "declined";
+        const head = confirmed ? "Your booking is confirmed"
+          : declined ? "About your enquiry"
+          : "About your rickshaw enquiry";
+        const bar = confirmed ? "linear-gradient(135deg,#00b451,#7ce495)" : "linear-gradient(135deg,#ff8a1f,#ffc93c)";
+        const ink = confirmed ? "#04331b" : "#231204";
+        const when = [cur.event_date, cur.event_time].filter(Boolean).join(" · ");
+        const html = `<!doctype html><html><body style="margin:0;background:#fff7ea;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#2b1a0d">
+<div style="max-width:620px;margin:0 auto;padding:28px">
+<div style="background:${bar};border-radius:18px;padding:24px;color:${ink}">
+<h1 style="margin:0;font-size:23px">${escHtml(head)}</h1>
+<p style="margin:7px 0 0;opacity:.88">Hi ${escHtml(cur.name)}${when ? " — " + escHtml(when) : ""}</p></div>
+${reply ? `<div style="background:#fff;border-radius:14px;padding:20px;margin-top:16px;white-space:pre-wrap">${escHtml(reply)}</div>` : ""}
+<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;margin-top:14px">
+${[["Event", cur.event_type], ["Date", cur.event_date], ["Time", cur.event_time], ["Hours", cur.hours], ["Location", cur.location], ["Extras", cur.addons]]
+  .filter(([, v]) => v).map(([k, v]) => `<tr><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;color:#8a6b46;font-size:13px">${escHtml(k)}</td><td style="padding:10px 14px;border-bottom:1px solid #f3e6d2;font-weight:600">${escHtml(v)}</td></tr>`).join("")}
+</table>
+<p style="text-align:center;color:#8a6b46;font-size:12px;margin-top:20px">Mumbai2London · Nationwide Rickshaw Hire<br>
+<a href="${M2L_WA}" style="color:#e2620a;font-weight:700">WhatsApp</a> · ${escHtml(M2L_EMAIL)}</p>
+</div></body></html>`;
+        const r = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+          body: JSON.stringify({
+            from: M2L_FROM, to: [cur.email], reply_to: M2L_EMAIL,
+            subject: confirmed ? `Booking confirmed — ${when || cur.event_type || "your event"}` : `Re: your rickshaw enquiry`,
+            html, text: (reply || head) + (when ? `\n\n${when}` : ""),
+          }),
+        });
+        emailed = r.ok;
+      }
+      return json({ ok: true, status: newStatus, emailed });
+    }
+  } catch (e) {
+    return json({ error: "Database error", detail: String(e).slice(0, 200) }, 500);
+  }
+  return json({ error: "Unknown admin route" }, 404);
 }

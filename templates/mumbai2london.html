@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Mumbai2London — Nationwide Rickshaw Hire | Weddings · Parties · Events</title>
-<meta name="description" content="Authentic Mumbai-style auto rickshaw hire across the UK — weddings, mehndi nights, sangeets, parties, photo booths and films. Book your desi ride.">
+<meta name="description" content="Authentic Mumbai-style auto rickshaw hire across the UK — weddings, Mehndi nights, Sangeets, parties, photo booths and films. Book your desi ride.">
 <meta name="theme-color" content="#0f0a07">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -172,6 +172,71 @@ img{max-width:100%;display:block}
 @media(min-width:921px){.reel-side.l{text-align:right}}
 @media(max-width:920px){.reel-side .l-in,.reel-side .r-in{max-width:44ch;margin:0 auto;text-align:center}}
 
+.addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px;margin-top:4px}
+.ad{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.28);border:1px solid rgba(240,178,67,.22);
+  border-radius:12px;padding:11px 13px;font-size:14px;font-weight:300;color:#e9d6bd;cursor:pointer;transition:border-color .2s,background .2s}
+.ad:hover{border-color:rgba(255,201,60,.5)}
+.ad input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--saffron);cursor:pointer}
+.ad:has(input:checked){border-color:var(--marigold);background:rgba(255,201,60,.12)}
+.req{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#ffb0a2;background:rgba(255,80,60,.14);
+  border:1px solid rgba(255,80,60,.32);border-radius:999px;padding:2px 7px;margin-left:6px;font-weight:700;vertical-align:middle}
+.opt{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(240,178,67,.28);
+  border-radius:999px;padding:2px 7px;margin-left:6px;font-weight:700;vertical-align:middle}
+.fld input.bad,.fld select.bad{border-color:#ff6a58!important;box-shadow:0 0 0 3px rgba(255,80,60,.14)!important}
+.cal-grid .day.busy{position:relative;opacity:.45}
+.cal-grid .day.busy::after{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:#ff6a58}
+.cal-grid .day.some::after{background:var(--marigold)}
+.callegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)}
+.callegend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.slots button.taken{opacity:.34;text-decoration:line-through;cursor:not-allowed}
+.slots button.taken:hover{border-color:rgba(240,178,67,.35);background:transparent}
+
+.socials{display:flex;gap:12px;justify-content:center;margin-top:16px}
+.socials a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--marigold);
+  border:1px solid rgba(240,178,67,.3);transition:transform .25s,border-color .25s,background .25s}
+.socials a svg{width:19px;height:19px}
+.socials a:hover{transform:translateY(-3px);border-color:var(--marigold);background:rgba(255,201,60,.12)}
+
+/* floating WhatsApp */
+.wa-float{position:fixed;right:18px;bottom:18px;z-index:70;width:56px;height:56px;border-radius:50%;
+  background:#25d366;color:#05311a;display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(37,211,102,.8);
+  transition:transform .25s}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:29px;height:29px}
+@media(max-width:640px){.wa-float{right:14px;bottom:82px;width:52px;height:52px}.wa-float svg{width:27px;height:27px}}
+
+/* chat assistant */
+.chat-fab{position:fixed;right:18px;bottom:84px;z-index:70;height:52px;padding:0 20px;border:0;border-radius:999px;
+  background:var(--grad);color:#231204;font-family:var(--ui);font-weight:800;font-size:14.5px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px;box-shadow:0 14px 34px -12px rgba(255,138,31,.9);transition:transform .25s}
+.chat-fab:hover{transform:translateY(-2px)}
+.chat-fab svg{width:19px;height:19px}
+@media(max-width:640px){.chat-fab{right:14px;bottom:18px;height:48px;padding:0 17px;font-size:13.5px}}
+.chat-panel{position:fixed;right:18px;bottom:18px;z-index:80;width:min(370px,calc(100vw - 28px));
+  max-height:min(620px,calc(100vh - 36px));display:none;flex-direction:column;overflow:hidden;
+  background:#1c1108;border:1px solid rgba(240,178,67,.3);border-radius:22px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.95)}
+.chat-panel.on{display:flex}
+.chat-head{display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--grad);color:#231204}
+.chat-head img{width:34px;height:34px;border-radius:50%}
+.chat-head b{font-family:var(--dis);font-size:15px;display:block;line-height:1.2}
+.chat-head small{font-size:11px;opacity:.8}
+.chat-head .x{margin-left:auto;background:none;border:0;font-size:24px;line-height:1;cursor:pointer;color:#231204;padding:0 4px}
+.chat-log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:180px}
+.bub{max-width:84%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;white-space:pre-wrap}
+.bub.bot{background:rgba(255,255,255,.06);border:1px solid rgba(240,178,67,.18);color:#f3e2cb;align-self:flex-start;border-bottom-left-radius:5px}
+.bub.me{background:var(--grad);color:#231204;align-self:flex-end;font-weight:500;border-bottom-right-radius:5px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 12px}
+.chips button{border:1px solid rgba(240,178,67,.4);background:rgba(255,201,60,.08);color:var(--marigold);
+  border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.chips button:hover{background:rgba(255,201,60,.2)}
+.chat-in{display:flex;gap:8px;padding:12px 14px;border-top:1px solid rgba(240,178,67,.18)}
+.chat-in input{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(240,178,67,.25);border-radius:12px;
+  padding:11px 13px;color:var(--cream);font-family:var(--ui);font-size:15px}
+.chat-in input:focus{outline:none;border-color:var(--marigold)}
+.chat-in button{border:0;border-radius:12px;background:var(--grad);color:#231204;font-weight:800;padding:0 16px;cursor:pointer}
+
 /* ---------- services ---------- */
 .svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:44px}
 .scard{position:relative;border-radius:22px;padding:30px 24px 26px;overflow:hidden;
@@ -290,7 +355,7 @@ footer small{color:#9b8468;font-size:12.5px}
 
 <header class="hero" id="top">
   <div class="hero-glow" aria-hidden="true"></div>
-  <div class="fp a"><img src="../assets/mumbai2london/bride-rickshaw.webp" alt="Bride in the rickshaw"></div>
+  <div class="fp a"><img src="../assets/mumbai2london/rickshaw-market.webp" alt="Decorated rickshaw at a street market"></div>
   <div class="fp b"><img src="../assets/mumbai2london/carnival-duo.webp" alt="Carnival dancers"></div>
   <div class="fp c"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Marigold garlands inside the rickshaw"></div>
   <div class="fp d"><img src="../assets/mumbai2london/rickshaw-manor.webp" alt="Rickshaw at Bhaktivedanta Manor"></div>
@@ -298,10 +363,10 @@ footer small{color:#9b8468;font-size:12.5px}
     <img class="hero-logo" src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
     <span class="kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16v-5a5 5 0 0 1 5-5h3l4 5h2.5A3.5 3.5 0 0 1 21 14.5V16"/><path d="M3 16h1.8m4.4 0h5.6m3.4 0H21"/><circle cx="6.6" cy="17.6" r="2.3"/><circle cx="17.4" cy="17.6" r="2.3"/><path d="M11 6v5"/></svg> Nationwide Rickshaw Hire</span>
     <h1>Time for a <span class="grad">desi ride</span>.</h1>
-    <p class="sub">Authentic Mumbai-style auto rickshaws for weddings, mehndi nights, sangeets, parties, films and photo booths — decked in marigolds and delivered anywhere in the UK.</p>
+    <p class="sub">Authentic Mumbai-style auto rickshaws for weddings, Mehndi nights, Sangeets, parties, films and photo booths — decked in marigolds and delivered anywhere in the UK.</p>
     <div class="hero-cta">
       <a class="btn btn-p" href="#book">Check your date →</a>
-      <a class="btn btn-wa" href="https://wa.me/447519022117" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg> WhatsApp us</a>
+      <a class="btn btn-wa" href="https://wa.me/447940762404" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg> WhatsApp us</a>
       <a class="btn btn-g" href="#gallery">See the rickshaw</a>
     </div>
     <div class="trust"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg>Weddings &amp; Mehndi</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8v4.1M12 17.1v4.1M2.8 12h4.1M17.1 12h4.1M5.5 5.5l2.9 2.9M15.6 15.6l2.9 2.9M18.5 5.5l-2.9 2.9M8.4 15.6l-2.9 2.9"/></svg>Parties &amp; Sangeets</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.8A2.6 2.6 0 0 1 5.6 6.2h1.7l1.2-2.1h7l1.2 2.1h1.7A2.6 2.6 0 0 1 21 8.8v7.6a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 16.4V8.8z"/><circle cx="12" cy="12.4" r="3.5"/></svg>Photo Booth</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2h18v9.3A1.5 1.5 0 0 1 19.5 20h-15A1.5 1.5 0 0 1 3 18.5V9.2z"/><path d="M3.4 9.2 6 4.8l3.5 4.4M9.5 9.2 12.9 4.8l3.5 4.4M16.4 9.2 19.8 5.2"/></svg>Films &amp; TV</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6.8-5.4 6.8-11a6.8 6.8 0 1 0-13.6 0C5.2 15.6 12 21 12 21z"/><circle cx="12" cy="9.9" r="2.6"/></svg>Nationwide</span></div>
@@ -336,12 +401,10 @@ footer small{color:#9b8468;font-size:12.5px}
       <p class="lede">From seafront festivals to temple weddings — here's the rickshaw doing what it does best.</p>
     </div>
     <div class="fgrid">
-      <figure class="fcard tall"><img src="../assets/mumbai2london/bride-rickshaw.webp" alt="Bride waving from the rickshaw" loading="lazy"><figcaption class="cap"><small>Weddings</small>The bride's grand entrance</figcaption></figure>
       <figure class="fcard tall"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Garlands and bells inside" loading="lazy"><figcaption class="cap"><small>Detail</small>Marigolds &amp; brass bells</figcaption></figure>
       <figure class="fcard"><img src="../assets/mumbai2london/carnival-duo.webp" alt="Carnival dancers in costume" loading="lazy"><figcaption class="cap"><small>Festivals</small>Carnival energy</figcaption></figure>
       <figure class="fcard wide"><img src="../assets/mumbai2london/seafront-wide.webp" alt="Rickshaw at the seafront" loading="lazy"><figcaption class="cap"><small>Nationwide</small>Seafront to city centre</figcaption></figure>
       <figure class="fcard"><img src="../assets/mumbai2london/carnival-gujarati.webp" alt="Dancer in traditional Gujarati dress" loading="lazy"><figcaption class="cap"><small>Culture</small>Garba &amp; folk dance</figcaption></figure>
-      <figure class="fcard tall"><img src="../assets/mumbai2london/bride-seated.webp" alt="Bride seated in the rickshaw" loading="lazy"><figcaption class="cap"><small>Mehndi</small>Bridal photo moments</figcaption></figure>
       <figure class="fcard tall"><img src="../assets/mumbai2london/rickshaw-manor.webp" alt="Rickshaw at Bhaktivedanta Manor" loading="lazy"><figcaption class="cap"><small>Venues</small>Bhaktivedanta Manor</figcaption></figure>
       <figure class="fcard tall"><img src="../assets/mumbai2london/interior-dash.webp" alt="Decorated rickshaw dashboard" loading="lazy"><figcaption class="cap"><small>Photo booth</small>Every angle a picture</figcaption></figure>
       <figure class="fcard"><img src="../assets/mumbai2london/carnival-mc.webp" alt="MC on the mic at a carnival" loading="lazy"><figcaption class="cap"><small>Parties</small>Bring the noise</figcaption></figure>
@@ -392,7 +455,7 @@ footer small{color:#9b8468;font-size:12.5px}
       <p class="lede">Hired nationwide and delivered ready to go — decorated, photogenic and always a talking point.</p>
     </div>
     <div class="svc">
-      <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/bride-seated.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg></div><h3>Weddings</h3><p>Baraat entrances, couple portraits and a send-off nobody forgets.</p></article>
+      <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/rickshaw-manor.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg></div><h3>Weddings</h3><p>Baraat entrances, couple portraits and a send-off nobody forgets.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/interior-garlands.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2c1.6 2 2.4 3.3 2.4 4.5A2.4 2.4 0 0 1 12 10a2.4 2.4 0 0 1-2.4-2.3c0-1.2.8-2.5 2.4-4.5z"/><path d="M3.8 13.6h16.4l-2.2 4.3a3 3 0 0 1-2.7 1.6H8.7a3 3 0 0 1-2.7-1.6l-2.2-4.3z"/></svg></div><h3>Mehndi &amp; Sangeet</h3><p>The perfect backdrop for henna nights, dancing and family photos.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/live-music.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8v4.1M12 17.1v4.1M2.8 12h4.1M17.1 12h4.1M5.5 5.5l2.9 2.9M15.6 15.6l2.9 2.9M18.5 5.5l-2.9 2.9M8.4 15.6l-2.9 2.9"/></svg></div><h3>Parties</h3><p>Birthdays, anniversaries and celebrations that need a showstopper.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/interior-dash.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.8A2.6 2.6 0 0 1 5.6 6.2h1.7l1.2-2.1h7l1.2 2.1h1.7A2.6 2.6 0 0 1 21 8.8v7.6a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 16.4V8.8z"/><circle cx="12" cy="12.4" r="3.5"/></svg></div><h3>Photo Booth</h3><p>Guests queue for it all night — garlands, props and pure colour.</p></article>
@@ -408,7 +471,7 @@ footer small{color:#9b8468;font-size:12.5px}
     <div class="head-c rv">
       <span class="eyebrow">Book your date</span>
       <h2>Reserve the <em>rickshaw</em></h2>
-      <p class="lede">Pick a date and time, tell us about your event, and we'll confirm availability — you'll get an instant email straight away.</p>
+      <p class="lede">Pick a date and time, tell us about your event, and we'll confirm availability — you'll get a confirmation email straight away.</p>
     </div>
     <div class="bwrap">
       <!-- calendar -->
@@ -421,6 +484,7 @@ footer small{color:#9b8468;font-size:12.5px}
         </div>
         <div class="cal-grid" id="calGrid" role="grid" aria-label="Choose a date"></div>
         <div class="slots" id="slots" aria-label="Choose a time"></div>
+        <div class="callegend"><span><i style="background:#7ce495"></i>Free</span><span><i style="background:var(--marigold)"></i>Being held</span><span><i style="background:#ff6a58"></i>Booked</span></div>
         <div class="picked" id="picked"></div>
       </div>
       <!-- form -->
@@ -446,10 +510,23 @@ footer small{color:#9b8468;font-size:12.5px}
             <div class="fld"><label for="loc">Location / venue</label><input id="loc" name="location" type="text" placeholder="City or venue"></div>
           </div>
           <div class="two">
-            <div class="fld"><label for="nm">Your name</label><input id="nm" name="name" type="text" required placeholder="Full name"></div>
-            <div class="fld"><label for="ph">Phone</label><input id="ph" name="phone" type="tel" required placeholder="07…"></div>
+            <div class="fld"><label for="nm">Your name <span class="req">required</span></label><input id="nm" name="name" type="text" required placeholder="Full name"></div>
+            <div class="fld"><label for="ph">Phone <span class="req">required</span></label><input id="ph" name="phone" type="tel" required placeholder="07…"></div>
           </div>
-          <div class="fld"><label for="em">Email</label><input id="em" name="email" type="email" required placeholder="you@email.com"></div>
+          <div class="fld"><label for="em">Email <span class="req">required</span></label><input id="em" name="email" type="email" required placeholder="you@email.com"></div>
+          <div class="fld">
+            <label>Decoration add-ons <span class="opt">optional</span></label>
+            <div class="addons" id="addons">
+              <label class="ad"><input type="checkbox" name="addons" value="Extra marigold garlands"><span>Extra marigold garlands</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Fairy lights / LED"><span>Fairy lights &amp; LED</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Flower canopy"><span>Flower canopy</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Personalised name board"><span>Personalised name board</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Just Married sign"><span>“Just Married” sign</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Bells &amp; tassels"><span>Bells &amp; tassels</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Red carpet"><span>Red carpet</span></label>
+              <label class="ad"><input type="checkbox" name="addons" value="Colour theme to match outfits"><span>Colour theme to match outfits</span></label>
+            </div>
+          </div>
           <div class="fld"><label for="nt">Tell us about your event</label><textarea id="nt" name="notes" rows="3" placeholder="Guest numbers, timings, anything special…"></textarea></div>
           <button class="btn btn-p submit" type="submit" id="sendBtn">Send enquiry →</button>
           <p class="note">Instant confirmation email · No obligation</p>
@@ -459,19 +536,40 @@ footer small{color:#9b8468;font-size:12.5px}
     </div>
 
     <div class="ways">
-      <a class="way w1 rv" href="https://wa.me/447519022117" target="_blank" rel="noopener"><span class="wi"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg></span><div><b>WhatsApp</b><span>Fastest reply — message us now</span></div></a>
-      <a class="way w2 rv" href="tel:+447519022117"><span class="wi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16.9v2.5a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.2 17.2 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.6h2.5a1.8 1.8 0 0 1 1.8 1.6c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8.5 10.7a14 14 0 0 0 5.3 5.3l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.7 1.8z"/></svg></span><div><b>Call us</b><span>+44 7519 022117</span></div></a>
+      <a class="way w1 rv" href="https://wa.me/447940762404" target="_blank" rel="noopener"><span class="wi"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg></span><div><b>WhatsApp</b><span>Fastest reply — message us now</span></div></a>
+      <a class="way w2 rv" href="tel:+447940762404"><span class="wi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16.9v2.5a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.2 17.2 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.6h2.5a1.8 1.8 0 0 1 1.8 1.6c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8.5 10.7a14 14 0 0 0 5.3 5.3l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.7 1.8z"/></svg></span><div><b>Call us</b><span>+44 7940 762404</span></div></a>
       <a class="way w3 rv" href="mailto:enquiries@mumbai2london.co.uk"><span class="wi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="5" width="18.4" height="14" rx="2.4"/><path d="m3.7 6.8 8.3 5.9 8.3-5.9"/></svg></span><div><b>Email</b><span>enquiries@mumbai2london.co.uk</span></div></a>
     </div>
   </div>
+</section>
+
+<a class="wa-float" href="https://wa.me/447940762404" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg></a>
+<button class="chat-fab" id="chatFab" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.3 9.3 0 0 1-2.9-.4L3 21l1.5-5.1A8.2 8.2 0 0 1 3.6 11.5a8.4 8.4 0 0 1 9-8.4 8.4 8.4 0 0 1 8.4 8.4z"/></svg>
+  Ask us anything
+</button>
+<section class="chat-panel" id="chatPanel" aria-label="Booking assistant">
+  <div class="chat-head">
+    <img src="../assets/mumbai2london/logo.webp" alt="">
+    <div><b>Mumbai2London</b><small>Typically replies in minutes</small></div>
+    <button class="x" id="chatX" aria-label="Close chat">&times;</button>
+  </div>
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chips" id="chatChips"></div>
+  <form class="chat-in" id="chatForm"><input id="chatText" type="text" placeholder="Type your answer…" autocomplete="off"><button type="submit">Send</button></form>
 </section>
 
 <div class="holi-bar" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
     <img src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
-    <div class="fl"><a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#services">Services</a><a href="#book">Book</a>
-      <a href="https://www.instagram.com/mumbai2london" target="_blank" rel="noopener">@mumbai2london</a></div>
+    <div class="fl"><a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#services">Services</a><a href="#book">Book</a></div>
+    <div class="socials" aria-label="Follow Mumbai2London">
+      <a href="https://www.instagram.com/mumbai2london" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.41a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg></a>
+      <a href="https://www.facebook.com/mumbai2london" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.44 18.63.07 12 .07S0 5.44 0 12.07c0 5.99 4.39 10.95 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.88v2.24h3.33l-.53 3.47h-2.8v8.38C19.61 23.02 24 18.06 24 12.07z"/></svg></a>
+      <a href="https://www.tiktok.com/@mumbai2london" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+      <a href="https://wa.me/447940762404" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg></a>
+    </div>
     <small>© <span id="yr"></span> Mumbai2London · Nationwide Rickshaw Hire · Mumbai style, delivered.</small>
   </div>
 </footer>
@@ -584,6 +682,122 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('resize',upd,{passive:true}); upd();
 })();
 
+/* ---------- booking assistant ----------
+   A guided script rather than an AI model: it asks the same questions the
+   form asks, in order, validates each answer, then posts the finished
+   enquiry to the same endpoint. Cheap, predictable, works offline of any
+   third-party service, and it never invents prices. */
+(function(){
+  var fab=document.getElementById('chatFab'), panel=document.getElementById('chatPanel'),
+      log=document.getElementById('chatLog'), chips=document.getElementById('chatChips'),
+      form=document.getElementById('chatForm'), input=document.getElementById('chatText'),
+      x=document.getElementById('chatX');
+  if(!fab||!panel) return;
+
+  var data={source:'chat', addons:[]}, step=0, started=false;
+  var EVENTS=['Wedding','Mehndi night','Sangeet','Birthday party','Photo booth','Film / TV shoot','Corporate / brand','Festival','Other'];
+  var ADDONS=['Extra marigold garlands','Fairy lights / LED','Flower canopy','Personalised name board','Just Married sign','Red carpet'];
+
+  function say(text,who){
+    var b=document.createElement('div');
+    b.className='bub '+(who||'bot'); b.textContent=text;
+    log.appendChild(b); log.scrollTop=log.scrollHeight;
+  }
+  function setChips(list,cb){
+    chips.innerHTML='';
+    (list||[]).forEach(function(t){
+      var b=document.createElement('button'); b.type='button'; b.textContent=t;
+      b.addEventListener('click',function(){ cb(t); });
+      chips.appendChild(b);
+    });
+  }
+  function ask(){
+    setChips([]);
+    if(step===0){ say('Hi! I can take your details and get you a quote. What\'s the occasion?');
+      setChips(EVENTS,function(v){ pick(v); }); }
+    else if(step===1){ say('Lovely. What date is it? You can type it like 12/09/2026.'); }
+    else if(step===2){ say('Roughly what time should we arrive?');
+      setChips(['10:00','12:00','14:00','16:00','18:00','20:00','Not sure yet'],function(v){ pick(v); }); }
+    else if(step===3){ say('Where is it? Venue or town is fine.'); }
+    else if(step===4){ say('Any decoration add-ons? Tap as many as you like, then tap Done.');
+      setChips(ADDONS.concat(['Done']),function(v){
+        if(v==='Done'){ pick(data.addons.length?data.addons.join(', '):'None'); return; }
+        if(data.addons.indexOf(v)<0){ data.addons.push(v); say(v,'me'); }
+      }); }
+    else if(step===5){ say('What\'s your name?'); }
+    else if(step===6){ say('Best phone number for you?'); }
+    else if(step===7){ say('And your email, so we can send written confirmation?'); }
+    else if(step===8){ send(); }
+    input.focus();
+  }
+  function pick(v){ say(v,'me'); handle(v); }
+  function handle(v){
+    v=String(v).trim();
+    if(step===0){ data.eventType=v; step=1; }
+    else if(step===1){
+      var d=parseDate(v);
+      if(!d){ say('Sorry, I didn\'t catch that date — try 12/09/2026 or 12 Sept 2026.'); return; }
+      data.date=d; step=2;
+    }
+    else if(step===2){ data.time=(v==='Not sure yet'?'':v); step=3; }
+    else if(step===3){ data.location=v; step=4; }
+    else if(step===4){ step=5; }
+    else if(step===5){
+      if(v.length<2){ say('Just your name so we know who we\'re speaking to.'); return; }
+      data.name=v; step=6;
+    }
+    else if(step===6){
+      if(v.replace(/[^0-9]/g,'').length<9){ say('That number looks short — could you check it?'); return; }
+      data.phone=v; step=7;
+    }
+    else if(step===7){
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){ say('That email doesn\'t look right — could you check it?'); return; }
+      data.email=v; step=8;
+    }
+    ask();
+  }
+  function parseDate(v){
+    var m=/^(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})$/.exec(v);
+    if(m){ var y=+m[3]; if(y<100) y+=2000;
+      return y+'-'+('0'+ +m[2]).slice(-2)+'-'+('0'+ +m[1]).slice(-2); }
+    var d=new Date(v);
+    if(!isNaN(d) && d.getFullYear()>2000){
+      return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    }
+    return null;
+  }
+  function send(){
+    setChips([]);
+    say('Thanks — sending that over now…');
+    fetch('/api/m2l-book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(res){
+        if(res.ok&&res.j.ok){
+          say('All done! We\'ve emailed your confirmation to '+data.email+' and Himansu will come back to you shortly.');
+          setChips(['Message on WhatsApp'],function(){ window.open('https://wa.me/447940762404','_blank','noopener'); });
+        } else {
+          say((res.j&&res.j.error)||'Something went wrong — please WhatsApp us instead.');
+          setChips(['Message on WhatsApp'],function(){ window.open('https://wa.me/447940762404','_blank','noopener'); });
+        }
+      })
+      .catch(function(){
+        say('I couldn\'t send that — please WhatsApp us and we\'ll pick it up.');
+        setChips(['Message on WhatsApp'],function(){ window.open('https://wa.me/447940762404','_blank','noopener'); });
+      });
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=input.value.trim(); if(!v) return;
+    input.value=''; say(v,'me'); handle(v);
+  });
+  function open_(){ panel.classList.add('on'); fab.style.display='none';
+    if(!started){ started=true; ask(); } input.focus(); }
+  function close_(){ panel.classList.remove('on'); fab.style.display=''; }
+  fab.addEventListener('click',open_);
+  x.addEventListener('click',close_);
+  addEventListener('keydown',function(e){ if(e.key==='Escape'&&panel.classList.contains('on')) close_(); });
+})();
+
 /* ---------- calendar ---------- */
 (function(){
   var grid=document.getElementById('calGrid'), label=document.getElementById('calLabel'),
@@ -596,6 +810,21 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var today=new Date(); today.setHours(0,0,0,0);
   var view=new Date(today.getFullYear(),today.getMonth(),1);
   var selDate=null, selTime=null;
+  var DIARY={}, loaded={};          /* 'YYYY-MM-DD' -> {taken:[],held:[],count:n} */
+
+  function key(dt){ return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate()); }
+  function loadMonth(v){
+    var mk=v.getFullYear()+'-'+pad(v.getMonth()+1);
+    if(loaded[mk]) return;
+    loaded[mk]=1;
+    var from=mk+'-01', last=new Date(v.getFullYear(),v.getMonth()+1,0).getDate();
+    var to=mk+'-'+pad(last);
+    fetch('/api/m2l/availability?from='+from+'&to='+to)
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(j && j.days){ Object.keys(j.days).forEach(function(k){ DIARY[k]=j.days[k]; }); render(); renderSlots(); }
+      }).catch(function(){});
+  }
 
   function pad(n){ return n<10?'0'+n:''+n; }
   function render(){
@@ -611,6 +840,11 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       var b=document.createElement('button');
       b.type='button'; b.className='day'; b.textContent=d;
       if(cur<today){ b.disabled=true; }
+      var info=DIARY[key(cur)];
+      if(info && !b.disabled){
+        if(info.taken && info.taken.length){ b.classList.add('busy'); b.title='Already booked'; }
+        else if(info.held && info.held.length){ b.classList.add('busy','some'); b.title='Being held for another enquiry'; }
+      }
       if(selDate && cur.getTime()===selDate.getTime()) b.classList.add('sel');
       (function(cur){ b.addEventListener('click',function(){ selDate=cur; selTime=null; render(); renderSlots(); sync(); }); })(cur);
       grid.appendChild(b);
@@ -619,12 +853,24 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function renderSlots(){
     slotsEl.innerHTML='';
     if(!selDate) return;
+    var info=DIARY[key(selDate)]||{taken:[],held:[]};
+    var gone=(info.taken||[]).concat(info.held||[]);
     TIMES.forEach(function(t){
       var b=document.createElement('button'); b.type='button'; b.textContent=t;
-      if(selTime===t) b.classList.add('sel');
-      b.addEventListener('click',function(){ selTime=t; renderSlots(); sync(); });
+      if(gone.indexOf(t)>-1){
+        b.classList.add('taken'); b.disabled=true; b.title='Not available';
+      } else {
+        if(selTime===t) b.classList.add('sel');
+        b.addEventListener('click',function(){ selTime=t; renderSlots(); sync(); });
+      }
       slotsEl.appendChild(b);
     });
+    if(info.taken && info.taken.length){
+      var w=document.createElement('p');
+      w.style.cssText='width:100%;margin-top:10px;font-size:13px;color:#ffb0a2';
+      w.textContent='We already have a booking on this date — send the enquiry anyway and we\'ll tell you if we can fit you in.';
+      slotsEl.appendChild(w);
+    }
   }
   function sync(){
     if(selDate){
@@ -635,13 +881,14 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       picked.innerHTML=TICK_SVG+'<span>'+selDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(selTime?(' · '+selTime):' · pick a time')+'</span>';
     }
   }
-  document.getElementById('calPrev').addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()-1,1); render(); });
-  document.getElementById('calNext').addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()+1,1); render(); });
+  document.getElementById('calPrev').addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()-1,1); render(); loadMonth(view); });
+  document.getElementById('calNext').addEventListener('click',function(){ view=new Date(view.getFullYear(),view.getMonth()+1,1); render(); loadMonth(view); });
   dateInput.addEventListener('change',function(){
     if(!dateInput.value) return;
     var p=dateInput.value.split('-'); selDate=new Date(+p[0],+p[1]-1,+p[2]);
-    view=new Date(+p[0],+p[1]-1,1); render(); renderSlots(); sync();
+    view=new Date(+p[0],+p[1]-1,1); render(); loadMonth(view); renderSlots(); sync();
   });
+  loadMonth(view);
   render();
 })();
 
@@ -654,8 +901,20 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     msg.className='msg';
     var d={};
     new FormData(f).forEach(function(v,k){ d[k]=v; });
-    if(!d.eventType||!d.date||!d.name||!d.phone||!d.email){
-      msg.className='msg err'; msg.textContent='Please fill in event type, date, name, phone and email.'; return;
+    d.addons=[].slice.call(document.querySelectorAll('#addons input:checked')).map(function(c){return c.value;});
+    [].slice.call(f.querySelectorAll('.bad')).forEach(function(el){ el.classList.remove('bad'); });
+    function flag(id){ var el=document.getElementById(id); if(el){ el.classList.add('bad'); } return el; }
+    var miss=[];
+    if(!d.eventType){ miss.push('event type'); flag('ev'); }
+    if(!d.date){ miss.push('date'); flag('dt'); }
+    if(!d.name || d.name.trim().length<2){ miss.push('your name'); flag('nm'); }
+    if(!d.phone || d.phone.replace(/[^0-9]/g,'').length<9){ miss.push('a contact phone number'); flag('ph'); }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test((d.email||'').trim())){ miss.push('a valid email address'); flag('em'); }
+    if(miss.length){
+      msg.className='msg err';
+      msg.textContent='Please add '+(miss.length>1?miss.slice(0,-1).join(', ')+' and '+miss[miss.length-1]:miss[0])+'.';
+      var first=f.querySelector('.bad'); if(first){ first.focus(); first.scrollIntoView({behavior:'smooth',block:'center'}); }
+      return;
     }
     btn.textContent='Sending…'; btn.style.opacity=.7;
     fetch('/api/m2l-book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)})
@@ -663,7 +922,7 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       .then(function(res){
         if(res.ok && res.j.ok){
           msg.className='msg ok';
-          msg.innerHTML=TICK_SVG+'<span>Enquiry sent! Check your inbox — we’ve emailed you a confirmation and will be in touch shortly.</span>';
+          msg.innerHTML=TICK_SVG+"<span>Enquiry sent! Check your inbox — we've emailed you a confirmation and will be in touch shortly.</span>";
           f.reset(); document.getElementById('picked').classList.remove('on'); document.getElementById('slots').innerHTML='';
         } else {
           msg.className='msg err';
