@@ -85,6 +85,10 @@ button{font-family:var(--ui)}
 .reply{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;
   padding:12px 14px;color:var(--cream);font-family:var(--ui);font-size:14.5px;min-height:92px;resize:vertical;margin-top:12px}
 .reply:focus{outline:none;border-color:var(--marigold)}
+.tmpl{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.tmpl button{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);
+  font:inherit;font-size:12.5px;font-weight:600;padding:7px 14px;cursor:pointer}
+.tmpl button:hover{border-color:var(--marigold);color:var(--cream)}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
 .acts button{border:0;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:700;cursor:pointer}
 .b-conf{background:linear-gradient(135deg,#00b451,#7ce495);color:#04331b}
@@ -208,6 +212,88 @@ button{font-family:var(--ui)}
     return isNaN(d)?iso:d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
   }
 
+  /* ---------- quote / reply templates -------------------------------
+     Prices mirror the price list in m2l-invoice-admin.html — change them
+     in both places if you put your rates up. */
+  var PRICE={ "wedding":[450,4], "mehndi night":[375,3], "sangeet":[375,3], "birthday party":[350,3],
+              "photo booth":[395,4], "corporate brand event":[550,4], "film tv shoot":[750,8],
+              "festival":[650,6] };
+  var EXTRA_HOUR=85;
+  var ADDON_PRICE={ "extra marigold garlands":45, "fairy lights led":40, "flower canopy":120,
+                    "personalised name board":55, "just married sign":25, "bells tassels":20,
+                    "red carpet":35, "colour theme to match outfits":60 };
+  var norm=function(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); };
+  var gbp=function(n){ return '£'+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,''); };
+  var first=function(n){ return String(n||'there').trim().split(/\s+/)[0]; };
+
+  function hoursOf(e){
+    var r=norm(e.hours);
+    return /half day/.test(r)?4:(/full day|multiple/.test(r)?8:(parseInt(r,10)||0));
+  }
+  function quoteMsg(e){
+    var key=norm(e.event_type), base=PRICE[key]||PRICE.wedding;
+    var rate=base[0], inc=base[1], hrs=hoursOf(e), extra=(hrs>inc)?(hrs-inc):0;
+    var lines=[], total=rate;
+    lines.push('  • '+(e.event_type||'Rickshaw hire')+' — decorated rickshaw, up to '+inc+' hours .... '+gbp(rate));
+    if(extra){ total+=extra*EXTRA_HOUR;
+      lines.push('  • '+extra+' extra hour'+(extra>1?'s':'')+' at '+gbp(EXTRA_HOUR)+' .... '+gbp(extra*EXTRA_HOUR)); }
+    lines.push('  • Delivery, set-up and collection .... included');
+    var picked=String(e.addons||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
+    picked.forEach(function(a){
+      var p=ADDON_PRICE[norm(a)];
+      if(p==null) return;
+      total+=p; lines.push('  • '+a+' .... '+gbp(p));
+    });
+    var dep=Math.round(total*0.25*100)/100;
+    var when=pretty(e.event_date)+(e.event_time?(' at '+e.event_time):'');
+
+    return 'Hi '+first(e.name)+',\n\n'+
+      'Thank you for your enquiry — we\'d love to be part of your '+(e.event_type||'event').toLowerCase()+
+      ' on '+when+(e.location?(' at '+e.location):'')+'. That date is currently free.\n\n'+
+      'WHAT YOU GET\n'+
+      '  • Our classic Mumbai2London rickshaw, hand-decorated in fresh marigolds, silks, bells and tassels\n'+
+      '  • We arrive 30 minutes before your start time and set everything up for you\n'+
+      '  • A driver and an attendant in traditional dress for the whole booking\n'+
+      '  • Short rides for the couple and guests, or a static display — whatever suits your venue\n'+
+      '  • Unlimited photos with the rickshaw for you, your guests and your photographer\n'+
+      '  • The rickshaw fully valeted and polished the day before\n'+
+      '  • Public liability insurance and venue paperwork provided on request\n'+
+      '  • Delivery, set-up and collection anywhere within 30 miles of Manchester (further afield quoted at £1.20 a mile)\n'+
+      '  • We cover the whole of the UK — weddings, mehndi and sangeet nights, birthdays, photo booths, corporate events, festivals, film and TV\n\n'+
+      'YOUR QUOTE\n'+lines.join('\n')+'\n'+
+      '  ─────────────────────────────\n'+
+      '  Total .... '+gbp(total)+'\n\n'+
+      'TO SECURE THE DATE\n'+
+      '  A '+gbp(dep)+' deposit (25%) holds it, with the balance due before the event.\n'+
+      '  Reply to this email and I\'ll send you an invoice you can sign on your phone in a few seconds.\n'+
+      '  I can hold '+pretty(e.event_date)+' for you for 48 hours.\n\n'+
+      'Any questions at all, just reply or WhatsApp me on 07940 762404.\n\n'+
+      'Warm wishes,\nHimansu\nMumbai2London — Nationwide Rickshaw Hire\n07940 762404';
+  }
+  function confirmMsg(e){
+    return 'Hi '+first(e.name)+',\n\n'+
+      'Brilliant — you\'re booked in. '+pretty(e.event_date)+(e.event_time?(' at '+e.event_time):'')+
+      (e.location?(', '+e.location):'')+' is now reserved for you and taken off our calendar.\n\n'+
+      'WHAT HAPPENS NEXT\n'+
+      '  • We arrive 30 minutes before your start time, decorated and ready\n'+
+      '  • The balance is due before the event — the invoice link is in your email\n'+
+      '  • We\'ll message you the week of the event to confirm timings and parking\n\n'+
+      'WHAT WE NEED FROM YOU\n'+
+      '  • The full venue address and a contact name on the day\n'+
+      '  • Anything the venue needs from us — we can send insurance documents straight to them\n'+
+      '  • Let us know if the timings change; we can usually move things around\n\n'+
+      'Thank you for choosing us — we can\'t wait.\n\n'+
+      'Himansu\nMumbai2London — Nationwide Rickshaw Hire\n07940 762404';
+  }
+  function chaseMsg(e){
+    return 'Hi '+first(e.name)+',\n\n'+
+      'Just following up on the quote I sent for '+pretty(e.event_date)+'. '+
+      'That date is still free at the moment, but it is a popular one and I don\'t want you to miss it.\n\n'+
+      'If you\'d like to go ahead, reply here and I\'ll send the invoice over — a 25% deposit holds the date.\n'+
+      'If your plans have changed, no problem at all, just let me know and I\'ll release it.\n\n'+
+      'Himansu\nMumbai2London — Nationwide Rickshaw Hire\n07940 762404';
+  }
+
   /* ---------- sign in ---------- */
   function show(){ $("lock").hidden=true; $("app").hidden=false; loadEnq(); }
   $("unlock").addEventListener('click',function(){
@@ -284,19 +370,42 @@ button{font-family:var(--ui)}
       '</div>'+
       (e.notes?('<div class="notes">'+esc(e.notes)+'</div>'):'')+
       (e.reply?('<div class="notes" style="margin-top:10px;border-left:3px solid var(--marigold)"><b>Your last reply</b>\n'+esc(e.reply)+'</div>'):'')+
+      '<div class="tmpl">'+
+        '<button type="button" data-t="quote" data-id="'+esc(e.id)+'">Insert full quote</button>'+
+        '<button type="button" data-t="confirm" data-id="'+esc(e.id)+'">Insert confirmation</button>'+
+        '<button type="button" data-t="chase" data-id="'+esc(e.id)+'">Insert follow-up</button>'+
+        '<button type="button" data-t="clear" data-id="'+esc(e.id)+'">Clear</button>'+
+      '</div>'+
       '<textarea class="reply" id="r_'+esc(e.id)+'" placeholder="Write your reply — this gets emailed to '+esc(e.name)+'…"></textarea>'+
       '<div class="acts">'+
         '<button class="b-quote" data-a="quoted" data-id="'+esc(e.id)+'">Send quote</button>'+
         '<button class="b-conf" data-a="confirmed" data-id="'+esc(e.id)+'">Confirm booking</button>'+
         '<button class="b-dec" data-a="declined" data-id="'+esc(e.id)+'">Decline</button>'+
+        '<a class="mail" href="'+esc(invUrl(e))+'">Create invoice</a>'+
         '<a class="wa" href="'+WA+'" target="_blank" rel="noopener">WhatsApp</a>'+
         '<a class="mail" href="mailto:'+esc(e.email)+'">Email direct</a>'+
         '<label><input type="checkbox" id="s_'+esc(e.id)+'" checked> Email the customer</label>'+
       '</div><div class="rowmsg" id="m_'+esc(e.id)+'"></div></div></details>';
   }
   function kv(k,v){ return '<div><div class="k">'+esc(k)+'</div><div class="v">'+v+'</div></div>'; }
+  /* carry the enquiry across so the invoice opens ready to send */
+  function invUrl(e){
+    var q=new URLSearchParams();
+    [['name',e.name],['email',e.email],['phone',e.phone],['type',e.event_type],
+     ['date',e.event_date],['time',e.event_time],['loc',e.location],
+     ['hours',e.hours],['addons',e.addons]].forEach(function(p){ if(p[1]) q.set(p[0],p[1]); });
+    return './m2l-invoice-admin?'+q.toString();
+  }
   function wire(e){
     var root=$("e_"+e.id); if(!root) return;
+    root.querySelectorAll('.tmpl button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=b.getAttribute('data-t'), ta=$("r_"+e.id);
+        ta.value = t==='quote'?quoteMsg(e) : t==='confirm'?confirmMsg(e) : t==='chase'?chaseMsg(e) : '';
+        ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight+4,620)+'px';
+        ta.focus(); ta.setSelectionRange(0,0);
+      });
+    });
     root.querySelectorAll('.acts button').forEach(function(b){
       b.addEventListener('click',function(){
         var id=b.getAttribute('data-id'), status=b.getAttribute('data-a');

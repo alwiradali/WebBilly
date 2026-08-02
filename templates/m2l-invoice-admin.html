@@ -35,6 +35,10 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
 .fld input:focus,.fld textarea:focus,.fld select:focus{outline:none;border-color:var(--marigold);box-shadow:0 0 0 3px rgba(255,201,60,.14)}
 .items{margin-top:6px}
 .irow{display:grid;grid-template-columns:1fr 78px 108px 100px 40px;gap:10px;align-items:center;margin-bottom:10px}
+.irow input{background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:11px;padding:11px 13px;
+  color:var(--cream);font-family:var(--ui);font-size:14.5px;min-width:0}
+.irow .q,.irow .u{text-align:right;font-variant-numeric:tabular-nums}
+.irow input:focus{outline:none;border-color:var(--marigold);box-shadow:0 0 0 3px rgba(255,201,60,.14)}
 .irow .amt{text-align:right;color:var(--marigold);font-weight:700;font-variant-numeric:tabular-nums}
 .irow .del{background:none;border:1px solid var(--line);border-radius:10px;color:var(--muted);
   width:36px;height:38px;cursor:pointer;font-size:19px;line-height:1}
@@ -43,12 +47,33 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
   text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .ihead span:nth-child(2),.ihead span:nth-child(3),.ihead span:nth-child(4){text-align:right}
 @media(max-width:640px){
-  .irow,.ihead{grid-template-columns:1fr 60px 88px 84px 38px;gap:7px;font-size:13px}
-  .irow input{padding:10px 9px;font-size:14px}
+  /* description gets its own full-width line so it stays readable */
+  .ihead{display:none}
+  .irow{grid-template-columns:1fr 86px 92px 38px;gap:8px;padding-bottom:11px;margin-bottom:11px;
+    border-bottom:1px solid rgba(240,178,67,.13)}
+  .irow .d{grid-column:1/-1}
+  .irow input{padding:10px 11px;font-size:14px}
+  .chip{font-size:13px;padding:8px 13px}
 }
 .addbtn{background:none;border:1px dashed var(--line);border-radius:12px;color:var(--marigold);
   font:inherit;font-weight:600;font-size:14px;padding:11px 18px;cursor:pointer}
 .addbtn:hover{border-color:var(--marigold)}
+.cat{margin-bottom:16px}
+.cat h3{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:999px;color:var(--cream);
+  font:inherit;font-size:13.5px;font-weight:600;padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:border-color .18s,background .18s}
+.chip:hover{border-color:var(--marigold)}
+.chip.on{background:rgba(255,201,60,.14);border-color:var(--marigold)}
+.chip i{font-style:normal;color:var(--marigold);font-variant-numeric:tabular-nums}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.quick button{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);
+  font:inherit;font-size:12.5px;font-weight:600;padding:7px 14px;cursor:pointer}
+.quick button:hover{border-color:var(--marigold);color:var(--cream)}
+.from{background:rgba(255,201,60,.09);border:1px solid rgba(255,201,60,.3);border-radius:14px;
+  padding:11px 15px;margin-top:14px;font-size:13.5px;color:#ffd97a;display:none}
+.from.on{display:block}
 .sums{margin-top:18px;margin-left:auto;width:min(300px,100%)}
 .sums .r{display:flex;justify-content:space-between;padding:6px 0;font-variant-numeric:tabular-nums}
 .sums .r span:first-child{color:var(--muted)}
@@ -103,6 +128,8 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
     </div>
   </header>
 
+  <div class="from" id="fromEnq"></div>
+
   <section class="panel">
     <h2>Customer</h2>
     <p class="hint">They'll get the invoice at this address with a button to sign it.</p>
@@ -120,8 +147,8 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
       <div class="fld"><label for="etype">Event type</label>
         <select id="etype">
           <option>Wedding</option><option>Mehndi night</option><option>Sangeet</option>
-          <option>Birthday party</option><option>Photo booth</option><option>Film / TV shoot</option>
-          <option>Corporate / brand</option><option>Festival</option><option>Other</option>
+          <option>Birthday / party</option><option>Photo booth</option><option>Film / TV shoot</option>
+          <option>Corporate / brand event</option><option>Festival</option><option>Other</option>
         </select></div>
       <div class="fld"><label for="edate">Event date</label><input id="edate" type="date"></div>
       <div class="fld"><label for="etime">Arrival time</label><input id="etime" type="time"></div>
@@ -133,14 +160,22 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
 
   <section class="panel">
     <h2>Items</h2>
-    <p class="hint">Totals are worked out on the server, so the amounts in the signing link can't be edited.</p>
+    <p class="hint">Tap anything from your price list to add it. Every price is editable before you send —
+      totals are worked out on the server, so the amounts in the signing link can't be tampered with.</p>
+
+    <div class="cat"><h3>Hire package — pick one</h3><div class="chips" id="cPacks"></div></div>
+    <div class="cat"><h3>Extras</h3><div class="chips" id="cExtras"></div></div>
+    <div class="cat"><h3>Decoration add-ons</h3><div class="chips" id="cAddons"></div></div>
+
     <div class="ihead"><span>Description</span><span>Qty</span><span>Unit £</span><span>Amount</span><span></span></div>
     <div class="items" id="items"></div>
     <button class="addbtn" id="addItem" type="button">+ Add line</button>
 
     <div class="grid" style="margin-top:18px">
       <div class="fld"><label for="vat">VAT %</label><input id="vat" type="number" min="0" max="100" step="0.5" value="0"></div>
-      <div class="fld"><label for="dep">Deposit paid £</label><input id="dep" type="number" min="0" step="0.01" value="0"></div>
+      <div class="fld"><label for="dep">Deposit paid £</label><input id="dep" type="number" min="0" step="0.01" value="0">
+        <div class="quick"><button type="button" data-dep="25">25% deposit</button><button type="button" data-dep="50">50% deposit</button><button type="button" data-dep="0">Clear</button></div>
+      </div>
     </div>
     <div class="sums" id="sums"></div>
   </section>
@@ -174,12 +209,42 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
   });
   $("key").addEventListener("keydown",function(e){ if(e.key==="Enter") $("unlock").click(); });
 
-  /* ---- line items ---- */
-  var PRESETS=[
-    ["Decorated rickshaw hire — up to 4 hours",1,450],
-    ["Additional hour",0,85],
-    ["Delivery & collection",1,0]
+  /* ---- price list ---------------------------------------------------
+     Edit the numbers here once and every future invoice picks them up. */
+  var PACKS=[
+    ["Wedding — decorated rickshaw, up to 4 hours",450],
+    ["Mehndi / Sangeet — decorated rickshaw, up to 3 hours",375],
+    ["Birthday / private party — up to 3 hours",350],
+    ["Photo booth rickshaw — up to 4 hours",395],
+    ["Corporate / brand activation — up to 4 hours",550],
+    ["Film / TV shoot — full day, up to 8 hours",750],
+    ["Festival / mela — up to 6 hours",650]
   ];
+  var EXTRAS=[
+    ["Additional hour",85],
+    ["Delivery, set-up & collection (within 30 miles of Manchester)",0],
+    ["Extra mileage beyond 30 miles (per mile)",1.20],
+    ["Second venue / location move on the day",95],
+    ["Late finish after 23:00",75],
+    ["Driver & attendant in traditional dress",0]
+  ];
+  var ADDONS=[
+    ["Extra marigold garlands",45],
+    ["Fairy lights / LED",40],
+    ["Flower canopy",120],
+    ["Personalised name board",55],
+    ["“Just Married” sign",25],
+    ["Bells & tassels",20],
+    ["Red carpet",35],
+    ["Colour theme to match outfits",60]
+  ];
+  /* event type on the enquiry -> which package to start from */
+  var PACK_FOR={ "wedding":0, "mehndi night":1, "mehndi":1, "sangeet":1, "birthday party":2, "birthday":2,
+                 "photo booth":3, "corporate brand event":4, "corporate":4, "film tv shoot":5, "film tv":5,
+                 "festival":6, "mela":6 };
+  var norm=function(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim(); };
+
+  /* ---- line items ---- */
   function addRow(desc,qty,unit){
     var row=document.createElement("div"); row.className="irow";
     row.innerHTML='<input class="d" type="text" placeholder="Description">'+
@@ -216,11 +281,112 @@ body{background:var(--ink);color:var(--cream);font-family:var(--ui);font-size:16
     if(dep>0){ h+='<div class="r"><span>Deposit</span><span>− '+gbp(dep)+'</span></div>';
                h+='<div class="r big"><span>Balance due</span><span>'+gbp(bal)+'</span></div>'; }
     $("sums").innerHTML=h;
+    if(document.querySelector(".chip")) syncChips();
   }
-  PRESETS.forEach(function(p){ if(p[1]>0) addRow(p[0],p[1],p[2]); });
+  /* ---- price-list chips ---- */
+  function findRow(desc){
+    var f=null;
+    [].slice.call(document.querySelectorAll(".irow")).forEach(function(r){
+      if(!f && norm(r.querySelector(".d").value)===norm(desc)) f=r;
+    });
+    return f;
+  }
+  function blankRow(){
+    var f=null;
+    [].slice.call(document.querySelectorAll(".irow")).forEach(function(r){
+      if(!f && !r.querySelector(".d").value.trim()) f=r;
+    });
+    return f;
+  }
+  function syncChips(){
+    [].slice.call(document.querySelectorAll(".chip")).forEach(function(c){
+      c.classList.toggle("on",!!findRow(c.getAttribute("data-d")));
+    });
+  }
+  function putItem(desc,unit,single){
+    if(single){
+      [].slice.call(document.querySelectorAll('.chip[data-g="pack"]')).forEach(function(c){
+        var r=findRow(c.getAttribute("data-d")); if(r) r.remove();
+      });
+    }
+    var b=blankRow();
+    if(b){ b.querySelector(".d").value=desc; b.querySelector(".q").value=1; b.querySelector(".u").value=unit; }
+    else addRow(desc,1,unit);
+  }
+  function toggleItem(desc,unit,single){
+    var ex=findRow(desc);
+    if(ex) ex.remove(); else putItem(desc,unit,single);
+    if(!document.querySelectorAll(".irow").length) addRow("",1,0);
+    recalc();
+  }
+  function chipRow(host,list,group,single){
+    list.forEach(function(p){
+      var b=document.createElement("button");
+      b.type="button"; b.className="chip"; b.setAttribute("data-d",p[0]); b.setAttribute("data-g",group);
+      b.innerHTML=esc(p[0])+' <i>'+(p[1]>0?gbp(p[1]):"included")+"</i>";
+      b.addEventListener("click",function(){ toggleItem(p[0],p[1],single); });
+      host.appendChild(b);
+    });
+  }
+  chipRow($("cPacks"),PACKS,"pack",true);
+  chipRow($("cExtras"),EXTRAS,"extra",false);
+  chipRow($("cAddons"),ADDONS,"addon",false);
+
+  /* ---- prefill: from an enquiry if we were deep-linked, else sensible defaults ---- */
+  var Q=new URLSearchParams(location.search);
+  function setIf(id,v){ if(v) $(id).value=v; }
+  var d14=new Date(); d14.setDate(d14.getDate()+14);
+  $("due").value=d14.toISOString().slice(0,10);
+
+  setIf("cname",Q.get("name")); setIf("cemail",Q.get("email"));
+  setIf("cphone",Q.get("phone")); setIf("eloc",Q.get("loc"));
+  setIf("edate",Q.get("date")); setIf("etime",(Q.get("time")||"").slice(0,5));
+
+  var et=norm(Q.get("type"));
+  if(et){
+    [].slice.call($("etype").options).forEach(function(o){ if(norm(o.text)===et) $("etype").value=o.value||o.text; });
+  }
+
+  /* base package: matched to the event type, falling back to the wedding package */
+  var pk=PACKS[PACK_FOR[et]!=null?PACK_FOR[et]:0];
+  addRow(pk[0],1,pk[1]);
+  addRow(EXTRAS[1][0],1,EXTRAS[1][1]);           /* delivery, set-up & collection */
+
+  /* extra hours beyond what the package covers */
+  var inc=Number((pk[0].match(/up to (\d+) hours/)||[])[1]||0);
+  var raw=norm(Q.get("hours"));
+  var hrs=/half day/.test(raw)?4:(/full day|multiple/.test(raw)?8:(parseInt(raw,10)||0));
+  if(inc && hrs>inc) addRow(EXTRAS[0][0],hrs-inc,EXTRAS[0][1]);
+
+  /* decoration add-ons they ticked on the enquiry */
+  (Q.get("addons")||"").split(",").forEach(function(a){
+    if(!norm(a)) return;
+    ADDONS.forEach(function(p){ if(norm(p[0])===norm(a)) addRow(p[0],1,p[1]); });
+  });
+
   if(!document.querySelectorAll(".irow").length) addRow("",1,0);
+  recalc();
+
+  if(Q.get("name")){
+    var f=$("fromEnq"); f.className="from on";
+    f.textContent="Prefilled from "+Q.get("name")+"’s enquiry. Check the hours, mileage and add-on prices, then send.";
+  }
+
+  $("notes").value="Booking is held once the deposit clears. The balance is due before the event date. "+
+    "The rickshaw arrives decorated and set up 30 minutes before your start time, with a driver and attendant "+
+    "in traditional dress. Please make sure there is safe access and space to park at the venue.";
+
   $("addItem").addEventListener("click",function(){ addRow("",1,0); });
   $("vat").addEventListener("input",recalc); $("dep").addEventListener("input",recalc);
+  [].slice.call(document.querySelectorAll("[data-dep]")).forEach(function(b){
+    b.addEventListener("click",function(){
+      var pct=Number(b.getAttribute("data-dep"))||0, sub=0;
+      rows().forEach(function(i){ sub+=i.qty*i.unit; });
+      var total=sub*(1+(Number($("vat").value)||0)/100);
+      $("dep").value=pct?(Math.round(total*pct)/100).toFixed(2):"0";
+      recalc();
+    });
+  });
 
   /* ---- send ---- */
   function show(kind,text,html){
