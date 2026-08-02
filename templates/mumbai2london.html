@@ -39,6 +39,13 @@ img{max-width:100%;display:block}
   border:1px solid rgba(240,178,67,.28);border-radius:999px;padding:8px 10px 8px 14px;
   box-shadow:0 18px 44px -18px rgba(0,0,0,.8)}
 .nav-in .logo{height:44px;width:auto;border-radius:50%}
+.brandlink{display:flex;align-items:center;gap:11px;min-width:0}
+.wm{font-family:var(--dis);font-weight:700;font-size:clamp(17px,4.6vw,21px);line-height:1;
+  letter-spacing:-.01em;white-space:nowrap;color:var(--cream)}
+.wm i{font-style:normal;color:var(--marigold)}
+.wm small{display:block;margin-top:3px;font-family:var(--ui);font-weight:600;font-size:8.5px;
+  letter-spacing:.19em;text-transform:uppercase;color:var(--muted)}
+@media(max-width:360px){.wm{font-size:16px}.wm small{display:none}}
 .nav .sp{flex:1}
 .nlinks{display:none;gap:20px;font-size:14.5px;font-weight:500;color:#e9d9c3}
 .nlinks a:hover{color:var(--marigold)}
@@ -373,7 +380,10 @@ footer small{color:#9b8468;font-size:12.5px}
 
 <nav class="nav">
   <div class="nav-in">
-    <a href="#top"><img class="logo" src="../assets/mumbai2london/logo.webp" alt="Mumbai2London — Nationwide Rickshaw Hire"></a>
+    <a class="brandlink" href="#top" aria-label="Mumbai2London — Nationwide Rickshaw Hire">
+      <img class="logo" src="../assets/mumbai2london/logo.webp" alt="">
+      <span class="wm">Mumbai<i>2</i>London<small>Nationwide Rickshaw Hire</small></span>
+    </a>
     <span class="sp"></span>
     <div class="nlinks">
       <a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#services">Services</a><a href="#book">Book</a>
