@@ -39,10 +39,28 @@ def rewrite(html, domain, canonical_path):
     html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js)"',
                   lambda m: m.group(0).split('=')[0] + '="/' + m.group(1) + '"', html)
 
-    # internal links -> clean URLs, so Pages serves them without a 301 hop
-    html = html.replace('href="../index.html"', 'href="/"')
-    html = html.replace('href="index.html"', 'href="/areas/"' if '/areas/' in canonical_path or canonical_path == '/areas/' else 'href="/"')
-    html = re.sub(r'href="([a-z0-9-]+)\.html"', r'href="\1"', html)
+    # Internal links -> absolute clean URLs, so Pages serves them without a
+    # 301 hop. Every pattern has to tolerate a trailing #fragment: the area
+    # pages link back to ../index.html#booking and friends, and an earlier
+    # version of this that ignored fragments left those pointing at .html.
+    in_areas = canonical_path.startswith('/areas/')
+    frag = r'(#[^"]*)?'
+
+    def sub(pattern, target):
+        return lambda h: re.sub(pattern, lambda m: 'href="%s%s"' % (
+            target(m), m.groups()[-1] or ''), h)
+
+    # the home page, linked from any depth
+    html = sub(r'href="(?:\.\./)+index\.html' + frag + '"', lambda m: '/')(html)
+    # the areas hub, linked from the home page or from a sibling area page
+    html = sub(r'href="(?:areas/)?index\.html' + frag + '"',
+               lambda m: '/areas/' if in_areas else '/areas/')(html)
+    # individual area pages, from inside /areas/ or from the home page
+    html = sub(r'href="areas/([a-z0-9-]+)\.html' + frag + '"',
+               lambda m: '/areas/' + m.group(1))(html)
+    if in_areas:
+        html = sub(r'href="([a-z0-9-]+)\.html' + frag + '"',
+                   lambda m: '/areas/' + m.group(1))(html)
 
     # this is her live site now, not a client demo
     html = html.replace('<meta name="robots" content="noindex, nofollow">',
