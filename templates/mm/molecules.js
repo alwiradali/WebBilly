@@ -29,8 +29,8 @@
   function build() {
     var area = W * H;
     var count = Math.round(area / 26000);           // density by area
-    count = Math.max(14, Math.min(count, 64));       // clamp
-    var ringCount = W < 700 ? 2 : (W < 1200 ? 3 : 5);
+    count = Math.max(18, Math.min(count, 72));       // clamp
+    var ringCount = W < 700 ? 3 : (W < 1200 ? 5 : 7);
 
     atoms = [];
     for (var i = 0; i < count; i++) {
@@ -39,7 +39,7 @@
         y: Math.random() * H,
         vx: rand(-0.22, 0.22),
         vy: rand(-0.22, 0.22),
-        r: rand(1.8, 3.8),
+        r: rand(2.6, 5.4),
         c: PALETTE[(Math.random() * PALETTE.length) | 0]
       });
     }
@@ -49,7 +49,7 @@
       rings.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        s: rand(24, 52),
+        s: rand(30, 66),
         a: Math.random() * Math.PI * 2,
         va: rand(-0.0022, 0.0022),
         vx: rand(-0.13, 0.13),
@@ -87,21 +87,21 @@
       wrap(g, g.s + 10);
 
       ctx.strokeStyle = g.c;
-      ctx.globalAlpha = 0.13;
-      ctx.lineWidth = 1.6;
+      ctx.globalAlpha = 0.30;
+      ctx.lineWidth = 2.2;
       hexPath(g.x, g.y, g.s, g.a);
       ctx.stroke();
 
-      ctx.globalAlpha = 0.09;
+      ctx.globalAlpha = 0.19;
       hexPath(g.x, g.y, g.s * 0.62, g.a);
       ctx.stroke();
 
-      ctx.globalAlpha = 0.20;
+      ctx.globalAlpha = 0.46;
       ctx.fillStyle = g.c;
       for (var v = 0; v < 6; v++) {
         var ang = g.a + v * Math.PI / 3;
         ctx.beginPath();
-        ctx.arc(g.x + Math.cos(ang) * g.s, g.y + Math.sin(ang) * g.s, 2.4, 0, Math.PI * 2);
+        ctx.arc(g.x + Math.cos(ang) * g.s, g.y + Math.sin(ang) * g.s, 3.2, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -119,9 +119,9 @@
         var d2 = dx * dx + dy * dy;
         if (d2 < maxD * maxD) {
           var d = Math.sqrt(d2);
-          ctx.globalAlpha = (1 - d / maxD) * 0.16;
+          ctx.globalAlpha = (1 - d / maxD) * 0.34;
           ctx.strokeStyle = a.c;
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 1.35;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -133,7 +133,7 @@
     // atoms
     for (var n = 0; n < atoms.length; n++) {
       var p = atoms[n];
-      ctx.globalAlpha = 0.42;
+      ctx.globalAlpha = 0.72;
       ctx.fillStyle = p.c;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -153,12 +153,12 @@
     ctx.clearRect(0, 0, W, H);
     for (var r = 0; r < rings.length; r++) {
       var g = rings[r];
-      ctx.strokeStyle = g.c; ctx.globalAlpha = 0.13; ctx.lineWidth = 1.6;
+      ctx.strokeStyle = g.c; ctx.globalAlpha = 0.30; ctx.lineWidth = 2.2;
       hexPath(g.x, g.y, g.s, g.a); ctx.stroke();
     }
     for (var n = 0; n < atoms.length; n++) {
       var p = atoms[n];
-      ctx.globalAlpha = 0.36; ctx.fillStyle = p.c;
+      ctx.globalAlpha = 0.66; ctx.fillStyle = p.c;
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
     }
     ctx.globalAlpha = 1;
