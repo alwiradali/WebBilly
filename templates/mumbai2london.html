@@ -51,6 +51,26 @@ img{max-width:100%;display:block}
 .btn-g:hover{border-color:var(--marigold);transform:translateY(-2px)}
 .btn-wa{background:#25d366;color:#05311a}
 @media(min-width:900px){.nlinks{display:flex}}
+/* ---------- mobile menu ---------- */
+.burger{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(240,178,67,.32);
+  border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;padding:0}
+.burger span{display:block;width:19px;height:2px;background:var(--marigold);border-radius:2px;
+  transition:transform .3s,opacity .3s}
+.burger span+span{margin-top:4.5px}
+.burger.on span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger.on span:nth-child(2){opacity:0}
+.burger.on span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+@media(min-width:900px){.burger{display:none}}
+.mmenu{display:none;max-width:1080px;margin:9px auto 0;background:rgba(28,17,8,.97);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(240,178,67,.28);border-radius:20px;padding:9px;
+  box-shadow:0 30px 70px -26px rgba(0,0,0,.92)}
+.mmenu.on{display:block}
+.mmenu a{display:flex;align-items:center;min-height:50px;padding:0 16px;border-radius:13px;
+  font-size:16px;font-weight:600;color:#f0dfc6;text-decoration:none}
+.mmenu a:active,.mmenu a:hover{background:rgba(255,201,60,.12);color:var(--marigold)}
+.mmenu .cta{background:var(--grad);color:#231204;justify-content:center;margin-top:5px;font-weight:800}
+@media(min-width:900px){.mmenu{display:none!important}}
 
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;padding:80px 0 60px;overflow:hidden}
@@ -87,11 +107,18 @@ img{max-width:100%;display:block}
 .fp.a{left:3%;top:20%;transform:rotate(-8deg);animation:fpIn 1s .5s both,float1 9s 1.5s ease-in-out infinite}
 .fp.b{right:4%;top:15%;transform:rotate(7deg);animation:fpIn 1s .7s both,float2 11s 1.7s ease-in-out infinite}
 .fp.c{left:8%;bottom:11%;transform:rotate(6deg);animation:fpIn 1s .9s both,float2 10s 1.9s ease-in-out infinite}
-.fp.d{right:7%;bottom:14%;transform:rotate(-6deg);animation:fpIn 1s 1.1s both,float1 12s 2.1s ease-in-out infinite}
+.fp.d{right:7%;bottom:23%;transform:rotate(-6deg);animation:fpIn 1s 1.1s both,float1 12s 2.1s ease-in-out infinite}
 @keyframes fpIn{from{opacity:0;transform:translateY(40px) scale(.9)}to{opacity:1}}
 @keyframes float1{0%,100%{translate:0 0}50%{translate:0 -20px}}
 @keyframes float2{0%,100%{translate:0 0}50%{translate:0 16px}}
-@media(max-width:1150px){.fp{display:none}}
+@media(max-width:1150px) and (min-width:901px){.fp{width:120px}.fp.a{left:1%}.fp.b{right:1%}}
+/* Phones: don't hide the photos — lay them out as a visible tilted strip. */
+@media(max-width:900px){
+  .fparea{position:static;display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:22px auto 0;max-width:420px}
+  .fp{position:static;width:clamp(72px,20vw,96px);animation:fpIn .8s both}
+  .fp.a{transform:rotate(-6deg)}.fp.b{transform:rotate(5deg)}
+  .fp.c{transform:rotate(4deg)}.fp.d{transform:rotate(-5deg)}
+}
 
 /* ---------- marquee ---------- */
 .mq{overflow:hidden;border-block:1px solid rgba(240,178,67,.2);background:rgba(255,201,60,.05);padding:15px 0}
@@ -130,6 +157,8 @@ img{max-width:100%;display:block}
 .fcard .cap small{display:block;font-family:var(--ui);font-weight:400;font-size:12px;color:var(--marigold);letter-spacing:.1em;text-transform:uppercase}
 .fcard.tall img{aspect-ratio:3/5}
 .fcard.wide{grid-column:span 2}.fcard.wide img{aspect-ratio:16/10}
+@media(max-width:520px){.navcta{display:none}}
+footer .fl a{min-height:40px;display:inline-flex;align-items:center;padding:0 4px}
 @media(max-width:640px){.fcard.wide{grid-column:span 1}.fcard.wide img{aspect-ratio:4/5}}
 
 /* ---------- pinned rickshaw zoom ---------- */
@@ -349,16 +378,26 @@ footer small{color:#9b8468;font-size:12.5px}
     <div class="nlinks">
       <a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#services">Services</a><a href="#book">Book</a>
     </div>
-    <a class="btn btn-p" href="#book">Book the rickshaw</a>
+    <a class="btn btn-p navcta" href="#book">Book the rickshaw</a>
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mmenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mmenu" id="mmenu">
+    <a href="#events">Events</a><a href="#gallery">Gallery</a><a href="#reel">Video</a>
+    <a href="#services">Services</a><a href="#book">Book</a>
+    <a class="cta" href="https://wa.me/447940762404" target="_blank" rel="noopener">WhatsApp us</a>
   </div>
 </nav>
 
 <header class="hero" id="top">
   <div class="hero-glow" aria-hidden="true"></div>
+  <div class="fparea">
   <div class="fp a"><img src="../assets/mumbai2london/rickshaw-market.webp" alt="Decorated rickshaw at a street market"></div>
   <div class="fp b"><img src="../assets/mumbai2london/carnival-duo.webp" alt="Carnival dancers"></div>
   <div class="fp c"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Marigold garlands inside the rickshaw"></div>
   <div class="fp d"><img src="../assets/mumbai2london/rickshaw-manor.webp" alt="Rickshaw at Bhaktivedanta Manor"></div>
+  </div>
   <div class="wrap">
     <img class="hero-logo" src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
     <span class="kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16v-5a5 5 0 0 1 5-5h3l4 5h2.5A3.5 3.5 0 0 1 21 14.5V16"/><path d="M3 16h1.8m4.4 0h5.6m3.4 0H21"/><circle cx="6.6" cy="17.6" r="2.3"/><circle cx="17.4" cy="17.6" r="2.3"/><path d="M11 6v5"/></svg> Nationwide Rickshaw Hire</span>
@@ -606,46 +645,82 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('resize',upd,{passive:true}); upd();
 })();
 
-/* ---------- holi colour burst canvas ---------- */
+/* ---------- mobile menu ---------- */
+(function(){
+  var b=document.getElementById('burger'), m=document.getElementById('mmenu');
+  if(!b||!m) return;
+  function set(on){ m.classList.toggle('on',on); b.classList.toggle('on',on); b.setAttribute('aria-expanded',on?'true':'false'); }
+  b.addEventListener('click',function(){ set(!m.classList.contains('on')); });
+  m.addEventListener('click',function(e){ if(e.target.tagName==='A') set(false); });
+  addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); });
+  matchMedia('(min-width:900px)').addEventListener('change',function(ev){ if(ev.matches) set(false); });
+})();
+
+/* ---------- holi powder burst canvas ----------
+   Gulal, not confetti: a few hundred very fine motes per throw, most of
+   them slow (so a dense cloud forms at the point of impact) and a handful
+   flung out to the edges. Heavy air drag and light gravity make the powder
+   hang and billow rather than fall like paper. */
 (function(){
   var c=document.getElementById('holi'); if(!c||reduce) return;
-  var x=c.getContext('2d'); if(!x) return;
-  var COLORS=['#ff3b30','#ff8a1f','#ffc93c','#00b451','#12a4d9','#8b3ffd','#e6007e','#ffffff'];
-  var DPR=Math.min(devicePixelRatio||1, 2), W=0,H=0, parts=[], bursts=0;
+  var x=c.getContext('2d',{alpha:true}); if(!x) return;
+  var COLORS=['#ff3b30','#ff8a1f','#ffc93c','#00b451','#12a4d9','#8b3ffd','#e6007e','#fff0d8'];
+  var small=matchMedia('(max-width:760px)').matches;
+  var DPR=Math.min(devicePixelRatio||1, small?1.75:2), W=0,H=0, parts=[], bursts=0;
+  var CAP=small?1400:2600, PER=small?190:320;
   function size(){ W=innerWidth;H=innerHeight;c.width=W*DPR;c.height=H*DPR;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize',size,{passive:true});
+
   function burst(cx,cy,n){
+    n=n||PER;
     for(var i=0;i<n;i++){
-      var a=Math.random()*Math.PI*2, sp=1+Math.random()*5.5;
-      parts.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.2,
-        r:1.5+Math.random()*5,c:COLORS[(Math.random()*COLORS.length)|0],life:1,dec:.006+Math.random()*.012});
+      var a=Math.random()*Math.PI*2;
+      /* pow() biases most motes slow — dense core, a few stragglers flung wide */
+      var sp=Math.pow(Math.random(),2.3)*(small?7:9)+0.25;
+      var haze=Math.random()<0.3;              /* 30% soft cloud, 70% grains */
+      parts.push({
+        x:cx+(Math.random()-0.5)*8, y:cy+(Math.random()-0.5)*8,
+        vx:Math.cos(a)*sp*(haze?0.55:1), vy:Math.sin(a)*sp*(haze?0.55:1)-0.5,
+        r:haze?(3+Math.random()*6):(0.45+Math.random()*1.7),
+        a:haze?0.1:0.8,
+        c:COLORS[(Math.random()*COLORS.length)|0],
+        life:1, dec:haze?(0.006+Math.random()*0.01):(0.003+Math.random()*0.008),
+        drift:(Math.random()-0.5)*0.05
+      });
     }
-    if(parts.length>1400) parts.splice(0,parts.length-1400);
+    if(parts.length>CAP) parts.splice(0,parts.length-CAP);
   }
-  // burst as each section scrolls in
+
   var bo=new IntersectionObserver(function(es){
     es.forEach(function(e){
       if(e.isIntersecting && bursts<40){
         bursts++;
         var r=e.target.getBoundingClientRect();
-        burst(r.left+r.width*(0.2+Math.random()*0.6), Math.max(60,r.top+40), 90);
+        burst(r.left+r.width*(0.2+Math.random()*0.6), Math.max(60,r.top+40));
       }
     });
   },{threshold:.25});
   document.querySelectorAll('.sec,.pin').forEach(function(s){ bo.observe(s); });
-  addEventListener('click',function(e){ burst(e.clientX,e.clientY,60); },{passive:true});
-  setTimeout(function(){ burst(W*0.5,H*0.42,140); },700);
+  addEventListener('click',function(e){ burst(e.clientX,e.clientY,small?150:240); },{passive:true});
+  setTimeout(function(){ burst(W*0.5,H*0.42,small?260:420); },700);
+
   (function loop(){
     requestAnimationFrame(loop);
     x.clearRect(0,0,W,H);
+    x.globalCompositeOperation='lighter';        /* powder glows where it piles up */
     for(var i=parts.length-1;i>=0;i--){
       var p=parts[i];
-      p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.vx*=0.992; p.vy*=0.992; p.life-=p.dec;
-      if(p.life<=0||p.y>H+40){ parts.splice(i,1); continue; }
-      x.globalAlpha=Math.max(0,p.life)*0.85; x.fillStyle=p.c;
-      x.beginPath(); x.arc(p.x,p.y,p.r,0,6.283); x.fill();
+      p.vx=(p.vx+p.drift)*0.938;                 /* heavy drag — powder stalls fast */
+      p.vy=p.vy*0.938+0.012;                     /* barely any gravity, so it hangs */
+      p.x+=p.vx; p.y+=p.vy; p.life-=p.dec;
+      if(p.life<=0||p.y>H+30){ parts.splice(i,1); continue; }
+      x.globalAlpha=Math.max(0,p.life)*p.a;
+      x.fillStyle=p.c;
+      var r=p.r*(0.45+p.life*0.55);              /* motes thin out as they disperse */
+      if(r<1.1){ x.fillRect(p.x,p.y,r*2,r*2); }  /* rects are ~3x faster at this size */
+      else { x.beginPath(); x.arc(p.x,p.y,r,0,6.283); x.fill(); }
     }
-    x.globalAlpha=1;
+    x.globalAlpha=1; x.globalCompositeOperation='source-over';
   })();
 })();
 
