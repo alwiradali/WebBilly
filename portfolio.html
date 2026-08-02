@@ -3,368 +3,284 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio — Billy Digitals | Websites & Online Stores That Sell</title>
-  <meta name="description" content="Selected work by Billy Digitals — live websites, web apps and premium e-commerce storefronts. Seven years of commerce craft, now building for ambitious brands.">
-  <meta name="theme-color" content="#06070d">
+  <title>Portfolio — Billy Digitals | Live Websites, Redesigns & Templates</title>
+  <meta name="description" content="Selected work by Billy Digitals — live websites, redesign studies and premium templates. Designed, built and shipped end to end for ambitious brands.">
+  <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="Portfolio — Billy Digitals">
-  <meta property="og:description" content="Live websites, web apps and premium storefronts — designed and built by Billy Digitals.">
+  <meta property="og:description" content="Live websites, redesigns and premium templates — designed and built by Billy Digitals.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.billydigitals.com/portfolio">
   <meta property="og:site_name" content="Billy Digitals">
   <meta property="og:image" content="https://www.billydigitals.com/assets/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://www.billydigitals.com/assets/og-image.png">
   <link rel="canonical" href="https://www.billydigitals.com/portfolio">
   <link rel="icon" href="/favicon.ico?v=4" sizes="any">
-  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png?v=4">
   <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png?v=4">
-  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=4">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script src="assets/js/analytics.js"></script>
-  <style>
-    /* ===== Portfolio page ===== */
-    .pf-hero { position: relative; overflow: hidden; padding: 150px 0 70px; }
-    .pf-hero .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; pointer-events: none; animation: pfDrift 18s ease-in-out infinite alternate; }
-    .pf-hero .o1 { width: 560px; height: 560px; background: rgba(43,127,255,.28); top: -180px; right: -120px; }
-    .pf-hero .o2 { width: 480px; height: 480px; background: rgba(34,211,238,.18); bottom: -220px; left: -140px; animation-duration: 22s; }
-    @keyframes pfDrift { to { transform: translate(38px, 28px); } }
-    @media (prefers-reduced-motion: reduce) { .pf-hero .orb { animation: none; } }
-    .pf-hero h1 { font-size: clamp(2.5rem, 6vw, 4.4rem); line-height: 1.03; letter-spacing: -.03em; max-width: 16ch; position: relative; }
-    .pf-hero p.lede { color: var(--muted); font-size: 1.14rem; max-width: 58ch; margin-top: 22px; position: relative; }
-    .pf-actions { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; position: relative; }
-    .pf-stats { display: flex; gap: 48px; margin-top: 60px; flex-wrap: wrap; position: relative; }
-    .pf-stats .n { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.3rem); font-weight: 700; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .pf-stats .l { color: var(--muted); font-size: .84rem; margin-top: 2px; }
-
-    .p-sec { padding: 60px 0; }
-    .p-head { margin-bottom: 40px; }
-    .p-head h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); letter-spacing: -.02em; margin-top: 10px; }
-    .p-head p { color: var(--muted); margin-top: 12px; max-width: 68ch; }
-
-    .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 24px; }
-    .pcard { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; transition: transform .28s cubic-bezier(.2,.7,.2,1), border-color .28s, box-shadow .28s; }
-    .pcard:hover { transform: translateY(-6px); border-color: rgba(56,189,248,.45); box-shadow: 0 22px 55px rgba(0,0,0,.5); }
-    .pshot { position: relative; aspect-ratio: 16/10; overflow: hidden; background: #0d1015; }
-    .pshot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
-    .pcard:hover .pshot img { transform: scale(1.05); }
-    .pshot.brand { display: flex; align-items: center; justify-content: center; }
-    .pshot.brand span.bn { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: #cfe3ff; letter-spacing: -.01em; }
-    .ptag { position: absolute; top: 13px; left: 13px; font-family: var(--font-display); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; padding: 6px 11px; border-radius: 20px; backdrop-filter: blur(6px); }
-    .ptag.built { background: rgba(53,196,255,.22); color: #bfeaff; border: 1px solid rgba(53,196,255,.45); }
-    .ptag.study { background: rgba(10,12,15,.5); color: #dbe7ff; border: 1px solid rgba(255,255,255,.2); }
-    .pbody { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
-    .pbody h3 { font-size: 1.22rem; }
-    .pbody .role { color: var(--c3); font-size: .8rem; font-weight: 600; font-family: var(--font-display); margin-top: 5px; }
-    .pbody p { color: var(--muted); font-size: .9rem; margin-top: 11px; flex: 1; }
-    .pbody .stack { color: var(--muted); font-size: .73rem; margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--border); }
-    .pbody .visit { display: inline-flex; align-items: center; gap: 7px; font-size: .84rem; font-weight: 600; color: var(--text); font-family: var(--font-display); margin-top: 13px; transition: gap .2s, color .2s; }
-    .pbody .visit:hover { color: var(--c2); gap: 11px; }
-
-    .p-note { margin-top: 24px; padding: 16px 20px; background: rgba(255,255,255,.03); border: 1px solid var(--border); border-left: 3px solid var(--c2); border-radius: 12px; color: var(--muted); font-size: .86rem; max-width: 82ch; }
-
-    /* store demos strip */
-    .store-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-    @media (max-width: 900px) { .store-strip { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .store-strip { grid-template-columns: 1fr; } }
-    .sd { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); min-height: 168px; display: flex; align-items: flex-end; padding: 18px; color: #fff; isolation: isolate; transition: transform .28s ease, border-color .28s; }
-    .sd:hover { transform: translateY(-5px); border-color: rgba(56,189,248,.5); }
-    .sd::before { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--sdbg); }
-    .sd::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgba(0,0,0,.62), transparent 60%); }
-    .sd .em { position: absolute; top: 14px; right: 16px; font-size: 2.1rem; filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
-    .sd h4 { font-size: 1.1rem; font-family: var(--font-display); }
-    .sd span.c { font-size: .78rem; opacity: .9; display: block; margin-top: 2px; }
-    .sd .live { position: absolute; top: 14px; left: 14px; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: rgba(0,0,0,.45); padding: 4px 9px; border-radius: 20px; backdrop-filter: blur(4px); }
-
-    .caps { display: flex; flex-wrap: wrap; gap: 11px; }
-    .cap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 17px; font-size: .88rem; font-family: var(--font-display); font-weight: 500; transition: border-color .2s, color .2s, transform .2s; }
-    .cap:hover { border-color: var(--c2); color: var(--c2); transform: translateY(-2px); }
-
-    .exp-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-    @media (max-width: 760px) { .exp-wrap { grid-template-columns: 1fr; } }
-    .exp { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 30px; transition: border-color .25s, transform .25s; }
-    .exp:hover { border-color: rgba(56,189,248,.4); transform: translateY(-4px); }
-    .exp .co { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
-    .exp .meta { color: var(--c3); font-size: .82rem; font-weight: 500; margin: 5px 0 13px; }
-    .exp p { color: var(--muted); font-size: .92rem; }
-
-    .p-cta { text-align: center; background: linear-gradient(135deg, rgba(18,22,29,.9), rgba(10,16,26,.9)); border: 1px solid var(--border); border-radius: 24px; padding: 60px 34px; position: relative; overflow: hidden; }
-    .p-cta h2 { font-size: clamp(1.9rem, 4.2vw, 2.9rem); }
-    .p-cta p { color: var(--muted); margin: 14px auto 30px; max-width: 48ch; }
-    .p-cta .methods { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+  <script src="assets/js/analytics.js" defer></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"CollectionPage","name":"Portfolio — Billy Digitals","url":"https://www.billydigitals.com/portfolio","inLanguage":"en-GB","isPartOf":{"@id":"https://www.billydigitals.com/#website"},"about":"Websites, web applications and e-commerce storefronts designed and built by Billy Digitals."}
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"Portfolio — Billy Digitals","url":"https://www.billydigitals.com/portfolio","inLanguage":"en-GB","isPartOf":{"@id":"https://www.billydigitals.com/#website"},"about":"Live websites, redesigns and templates designed and built by Billy Digitals."}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
     {"@type":"ListItem","position":1,"name":"Home","item":"https://www.billydigitals.com/"},
     {"@type":"ListItem","position":2,"name":"Portfolio","item":"https://www.billydigitals.com/portfolio"}]}
   </script>
+  <style>
+    :root{
+      --ink:#08304c; --teal:#084e72; --body:#2c2c2c; --helper:#797979;
+      --mist:#eeeeee; --hair:rgba(8,48,76,.10); --canvas:#ffffff;
+      --mint:#d7ffe2; --sky:#e8f1ff; --peach:#ffebd6;
+      --mint-ink:#0a7a3a; --sky-ink:#2563a8; --peach-ink:#b5651d;
+      --rainbow:linear-gradient(90deg,#26c0ff,#e600c2 20%,#ff4940 40%,#ffa130 60%,#ffc837 80%,#00cc3d);
+      --ui:'Inter',ui-sans-serif,system-ui,sans-serif;
+      --display:'Plus Jakarta Sans','Inter',sans-serif;
+      --sh-card:0 0 0 1px rgba(8,48,76,.06),0 16px 16px -8px rgba(0,0,0,.03),0 5px 5px -2.5px rgba(0,0,0,.03),0 2px 2px -1px rgba(0,0,0,.03);
+      --sh-hover:0 0 0 1px rgba(8,48,76,.12),0 26px 32px -14px rgba(8,48,76,.16);
+      --sh-nav:0 16px 16px -8px rgba(0,0,0,.03),0 10px 10px -5px rgba(0,0,0,.03),0 5px 5px -2.5px rgba(0,0,0,.03),0 2px 2px -1px rgba(0,0,0,.03);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--canvas);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+    /* ---- floating pill nav ---- */
+    .pnav{position:sticky;top:16px;z-index:60;padding:0 16px;margin-top:16px}
+    .pnav-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:14px;background:#fff;border-radius:28px;box-shadow:var(--sh-nav);padding:9px 12px 9px 18px}
+    .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--ink)}
+    .brand .sq{width:15px;height:15px;border-radius:5px;background:var(--rainbow)}
+    .pnav .sp{flex:1}
+    .announce{display:none;align-items:center;gap:8px;background:var(--sky);border-radius:9999px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--ink)}
+    .announce b{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-ink)}
+    .nav-links{display:none;gap:20px;font-size:15px;font-weight:500;color:var(--ink)}
+    .nav-links a:hover{color:var(--teal)}
+    .ghost{font-weight:500;font-size:15px;color:var(--ink);padding:8px 6px}
+    .rbtn{position:relative;border-radius:28px;padding:10px 18px;font-weight:600;font-size:15px;color:var(--ink);background:#fff;display:inline-flex;align-items:center;gap:8px;transition:transform .2s}
+    .rbtn::before{content:"";position:absolute;inset:0;border-radius:28px;padding:1.6px;background:var(--rainbow);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .rbtn:hover{transform:translateY(-1px)}
+    @media(min-width:1040px){.announce{display:inline-flex}}
+    @media(min-width:760px){.nav-links{display:flex}}
+
+    /* ---- hero ---- */
+    .hero{position:relative;text-align:center;padding:78px 0 54px;overflow:hidden}
+    .hero .glow{position:absolute;left:50%;top:30px;width:640px;height:440px;max-width:120vw;transform:translateX(-50%);
+      background:radial-gradient(closest-side,rgba(142,81,255,.16),rgba(142,81,255,.06) 46%,transparent 78%);pointer-events:none;z-index:0}
+    .hero .wrap{position:relative;z-index:2}
+    .eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--sky);border-radius:9999px;padding:5px 13px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-ink);margin-bottom:22px}
+    .display{font-family:var(--display);font-weight:700;color:var(--ink);font-size:clamp(2.7rem,7.4vw,4.9rem);line-height:1.0;letter-spacing:-.045em;max-width:15ch;margin:0 auto}
+    .display .rw{font-style:italic;font-weight:700;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .lede{font-size:18px;line-height:1.55;color:var(--body);max-width:52ch;margin:24px auto 0}
+    .hero-cta{margin-top:30px;display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap}
+    .hstats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-top:46px}
+    .hstats .n{font-family:var(--display);font-weight:700;font-size:1.7rem;letter-spacing:-.02em}
+    .hstats .l{color:var(--helper);font-size:12.5px;margin-top:2px}
+    /* tilted polaroids */
+    .poly{position:absolute;width:150px;background:#fff;border-radius:20px;box-shadow:var(--sh-card);padding:8px;z-index:1}
+    .poly .pic{aspect-ratio:4/5;border-radius:14px;display:grid;place-items:center;font-size:2rem}
+    .poly .cap{font-size:11px;color:var(--helper);font-weight:500;padding:8px 4px 2px;text-align:center}
+    .poly.p1{left:-10px;top:120px;transform:rotate(-6deg)}
+    .poly.p2{right:-6px;top:90px;transform:rotate(5deg)}
+    .poly.p3{left:40px;bottom:-30px;transform:rotate(4deg)}
+    .poly.p4{right:44px;bottom:-20px;transform:rotate(-5deg)}
+    @media(max-width:1120px){.poly{display:none}}
+
+    /* ---- sections ---- */
+    .sec{padding:56px 0}
+    .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:30px}
+    .sec-head .tt{display:flex;flex-direction:column;gap:10px}
+    .chip{align-self:flex-start;border-radius:9999px;padding:4px 12px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+    .chip.mint{background:var(--mint);color:var(--mint-ink)}
+    .chip.sky{background:var(--sky);color:var(--sky-ink)}
+    .chip.peach{background:var(--peach);color:var(--peach-ink)}
+    .sec-head h2{font-family:var(--display);font-weight:600;font-size:clamp(1.95rem,4vw,2.8rem);letter-spacing:-.03em;line-height:1.05}
+    .sec-head p{color:var(--helper);max-width:54ch;font-size:15.5px;line-height:1.5}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .card{background:#fff;border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s}
+    .card:hover{transform:translateY(-5px);box-shadow:var(--sh-hover)}
+    .thumb{position:relative;aspect-ratio:16/10;display:grid;place-items:center;overflow:hidden}
+    .thumb .em{font-size:2.6rem;filter:saturate(1.05)}
+    .thumb.mint{background:var(--mint)}.thumb.sky{background:var(--sky)}.thumb.peach{background:var(--peach)}
+    .badge{position:absolute;top:13px;left:13px;background:rgba(255,255,255,.92);color:var(--ink);border-radius:9999px;padding:4px 11px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 0 1px rgba(8,48,76,.05)}
+    .cbody{padding:17px 19px 19px;display:flex;flex-direction:column;flex:1}
+    .cbody h3{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-.01em}
+    .cbody .role{color:var(--sky-ink);font-size:12px;font-weight:600;margin-top:4px}
+    .cbody p{color:var(--body);font-size:14px;line-height:1.55;margin-top:11px;flex:1}
+    .cbody .stack{color:var(--helper);font-size:11.5px;margin-top:13px;padding-top:12px;border-top:1px solid var(--mist)}
+    .visit{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--ink);margin-top:13px;transition:gap .2s,color .2s}
+    .visit:hover{color:var(--teal);gap:11px}
+
+    .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .tcardp{background:#fff;border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;transition:transform .3s,box-shadow .3s}
+    .tcardp:hover{transform:translateY(-5px);box-shadow:var(--sh-hover)}
+    .tcardp .thumb{aspect-ratio:4/3}
+    .tcardp .tb{padding:14px 16px 16px}
+    .tcardp h4{font-family:var(--display);font-weight:600;font-size:16px}
+    .tcardp span{color:var(--helper);font-size:12px;display:block;margin-top:2px}
+
+    .note{margin-top:22px;padding:15px 18px;background:var(--sky);border-radius:16px;color:var(--sky-ink);font-size:13.5px;line-height:1.5;max-width:84ch}
+
+    /* bottom CTA */
+    .promo{max-width:820px;margin:24px auto 0;text-align:center;background:var(--sky);border-radius:28px;padding:56px 28px;box-shadow:var(--sh-card)}
+    .promo h2{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.03em}
+    .promo h2 .rw{font-style:italic;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .promo p{color:var(--body);max-width:46ch;margin:14px auto 26px;font-size:16px}
+
+    footer.pf{padding:56px 0 46px;text-align:center;color:var(--helper);font-size:14px}
+    footer.pf a{color:var(--ink);font-weight:500}
+    footer.pf .fl{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+    .reveal.in{opacity:1;transform:none}
+    @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+  </style>
 </head>
 <body>
-  <a class="skip-link" href="#work">Skip to work</a>
-
-  <header class="site-header subpage" id="siteHeader">
-    <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design &amp; App Development" height="68"></a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/#services">Services</a></li>
-        <li><a href="/#plans">Plans</a></li>
-        <li><a href="/portfolio" aria-current="page">Portfolio</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/#contact">Contact</a></li>
-      </ul>
-      <a class="btn btn-primary nav-cta" href="/#contact">Start Your Project</a>
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-  </header>
+  <!-- floating pill nav -->
+  <nav class="pnav" aria-label="Main">
+    <div class="pnav-in">
+      <a class="brand" href="/"><span class="sq" aria-hidden="true"></span> Billy Digitals</a>
+      <span class="announce"><b>Work</b> Live sites, redesigns &amp; templates</span>
+      <span class="sp"></span>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <a class="ghost" href="/#contact">Contact</a>
+      <a class="rbtn" href="/#contact">Start a project</a>
+    </div>
+  </nav>
 
   <main>
-    <header class="pf-hero">
-      <div class="orb o1" aria-hidden="true"></div>
-      <div class="orb o2" aria-hidden="true"></div>
-      <div class="container">
-        <p class="tag reveal in">Our work</p>
-        <h1 class="reveal in">Websites and apps that <span class="grad">sell, rank &amp; last.</span></h1>
-        <p class="lede reveal in">Billy Digitals is a UK web studio with seven years of commerce craft behind it — headless storefronts, brand sites and custom software for high-growth brands. Every build is designed, engineered and shipped end to end by one focused team.</p>
-        <div class="pf-actions reveal in">
-          <a class="btn btn-primary" href="/#contact">Start Your Project</a>
-          <a class="btn btn-ghost" href="#work">See the work</a>
+    <!-- hero -->
+    <header class="hero">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="poly p1"><div class="pic mint" style="background:var(--mint)">✈️</div><div class="cap">ATB Premier Travel</div></div>
+      <div class="poly p2"><div class="pic sky" style="background:var(--sky)">🔥</div><div class="cap">Heat On</div></div>
+      <div class="poly p3"><div class="pic peach" style="background:var(--peach)">💎</div><div class="cap">Aurum</div></div>
+      <div class="poly p4"><div class="pic sky" style="background:var(--sky)">🏭</div><div class="cap">RackPilot</div></div>
+      <div class="wrap">
+        <span class="eyebrow">Our work</span>
+        <h1 class="display">Websites built to last <span class="rw">forever</span>.</h1>
+        <p class="lede">Billy Digitals is a UK web studio — live client sites, redesign studies and premium templates, each designed, engineered and shipped end to end by one focused team.</p>
+        <div class="hero-cta">
+          <a class="rbtn" href="/#contact">Start a project</a>
+          <a class="ghost" href="#live">See the work ↓</a>
         </div>
-        <div class="pf-stats reveal in">
-          <div><div class="n" data-count="200" data-suffix="+">0</div><div class="l">Websites shipped</div></div>
-          <div><div class="n" data-count="7" data-suffix=" yrs">0</div><div class="l">Commerce experience</div></div>
-          <div><div class="n">Shopify · WP</div><div class="l">E-commerce specialists</div></div>
+        <div class="hstats">
+          <div><div class="n">200+</div><div class="l">Websites shipped</div></div>
+          <div><div class="n">7 yrs</div><div class="l">Commerce craft</div></div>
           <div><div class="n">UK</div><div class="l">Based &amp; hosted</div></div>
         </div>
       </div>
     </header>
 
-    <!-- BUILT & LAUNCHED -->
-    <section class="p-sec" id="work">
-      <div class="container">
-        <div class="p-head reveal">
-          <p class="tag">Built &amp; launched</p>
-          <h2>Projects we've <span class="grad">built and shipped</span></h2>
-          <p>Live sites and products we designed, built and deployed end to end — from first wireframe to launch day.</p>
+    <!-- LIVE WEBSITES -->
+    <section class="sec" id="live">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="tt"><span class="chip mint">Live &amp; launched</span><h2>Live websites</h2></div>
+          <p>Real sites we designed, built and deployed end to end — from first wireframe to launch day.</p>
         </div>
-        <div class="pgrid">
-          <article class="pcard reveal">
-            <div class="pshot brand" style="background:linear-gradient(135deg,#0284c7,#0891b2)"><span class="ptag built">Built · Live</span><span class="bn">✈️ ATB Premier Travel</span></div>
-            <div class="pbody">
-              <h3>ATB Premier Travel</h3>
-              <div class="role">Full build · Travel &amp; tourism</div>
-              <p>A hand-coded, lightning-fast site for a premier UK travel agency — 17 pages, glass UI, 3D scroll effects and a built-in "Book with Simon" assistant. We rebuilt a slow, ageing WordPress site into a static build that loads instantly and ranks.</p>
-              <div class="stack">HTML/CSS · Vanilla JS · SEO · Managed hosting</div>
-              <a class="visit" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener">Visit site →</a>
-            </div>
+        <div class="grid">
+          <article class="card reveal">
+            <div class="thumb mint"><span class="badge">Live</span><span class="em">✈️</span></div>
+            <div class="cbody"><h3>ATB Premier Travel</h3><div class="role">Full build · Travel &amp; tourism</div><p>A hand-coded, lightning-fast site for a premier UK travel agency — 17 pages, glass UI, scroll effects and a built-in “Book with Simon” assistant, rebuilt from an ageing WordPress site.</p><div class="stack">HTML/CSS · Vanilla JS · SEO · Hosting</div><a class="visit" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener">Visit site →</a></div>
           </article>
-
-          <article class="pcard reveal d1">
-            <div class="pshot brand" style="background:linear-gradient(135deg,#12233a,#0d1620)"><span class="ptag built">Built · Live</span><span class="bn">🔥 Heat On</span></div>
-            <div class="pbody">
-              <h3>Heat On — Heating &amp; Plumbing</h3>
-              <div class="role">Full build · Local service</div>
-              <p>A local service site with technical SEO, structured data and local-search optimisation built in — engineered to rank across Manchester and turn visitors into booked jobs. Now carrying genuine 5-star reviews.</p>
-              <div class="stack">HTML/CSS · SEO · Schema · Managed hosting</div>
-              <a class="visit" href="https://heaton247.com" target="_blank" rel="noopener">Visit site →</a>
-            </div>
+          <article class="card reveal">
+            <div class="thumb sky"><span class="badge">Live</span><span class="em">🔥</span></div>
+            <div class="cbody"><h3>Heat On — Heating &amp; Plumbing</h3><div class="role">Full build · Local service</div><p>A local service site with technical SEO, structured data and local-search optimisation — engineered to rank across Manchester and turn visitors into booked jobs, now carrying genuine 5-star reviews.</p><div class="stack">HTML/CSS · SEO · Schema · Hosting</div><a class="visit" href="https://heaton247.com" target="_blank" rel="noopener">Visit site →</a></div>
           </article>
-
-          <article class="pcard reveal d2">
-            <div class="pshot brand" style="background:linear-gradient(135deg,#1a2233,#0f141b)"><span class="ptag built">Built · Live</span><span class="bn">📰 Pakistan Observer</span></div>
-            <div class="pbody">
-              <h3>Pakistan Observer</h3>
-              <div class="role">Full build · News &amp; media</div>
-              <p>A national news and media platform — custom theme, article layouts, category architecture and a publishing workflow the editorial team runs every day at scale.</p>
-              <div class="stack">WordPress · Custom theme · CMS</div>
-              <a class="visit" href="https://pakobserver.net" target="_blank" rel="noopener">Visit site →</a>
-            </div>
+          <article class="card reveal">
+            <div class="thumb peach"><span class="badge">Live</span><span class="em">📰</span></div>
+            <div class="cbody"><h3>Pakistan Observer</h3><div class="role">Full build · News &amp; media</div><p>A national news platform — custom theme, article layouts, category architecture and a publishing workflow the editorial team runs every day at scale.</p><div class="stack">WordPress · Custom theme · CMS</div><a class="visit" href="https://pakobserver.net" target="_blank" rel="noopener">Visit site →</a></div>
           </article>
-
-          <article class="pcard reveal">
-            <div class="pshot brand" style="background:linear-gradient(135deg,#0f2a2e,#0d1620)"><span class="ptag built">Built · Product</span><span class="bn">🏭 RackPilot</span></div>
-            <div class="pbody">
-              <h3>RackPilot</h3>
-              <div class="role">Full build · Our SaaS product</div>
-              <p>A shop-floor operations platform we designed and built from scratch — live rack &amp; pallet management, picking, batch moves, operator line-locking and an integrated AI assistant, all in one dashboard.</p>
-              <div class="stack">Full-stack · Web app · AI</div>
-              <a class="visit" href="https://billyrackpilot.com" target="_blank" rel="noopener">Visit site →</a>
-            </div>
+          <article class="card reveal">
+            <div class="thumb sky"><span class="badge">Product</span><span class="em">🏭</span></div>
+            <div class="cbody"><h3>RackPilot</h3><div class="role">Full build · Our SaaS product</div><p>A shop-floor operations platform we built from scratch — live rack &amp; pallet management, picking, batch moves, operator line-locking and an integrated AI assistant, all in one dashboard.</p><div class="stack">Full-stack · Web app · AI</div><a class="visit" href="https://billyrackpilot.com" target="_blank" rel="noopener">Visit site →</a></div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- E-COMMERCE DEMOS -->
-    <section class="p-sec" id="stores">
-      <div class="container">
-        <div class="p-head reveal">
-          <p class="tag">Online stores</p>
-          <h2>E-commerce that <span class="grad">actually sells</span></h2>
-          <p>Premium, Shopify-grade storefronts we've designed and built — live cart, product pages, reviews and mobile-perfect checkout. Open any one and try the "Add to bag" button.</p>
+    <!-- REDESIGNS -->
+    <section class="sec" id="redesigns">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="tt"><span class="chip peach">Rebuild &amp; redesign</span><h2>Redesigns</h2></div>
+          <p>Rebuild and redesign studies of established commerce and brand sites — recreating storefronts and interactions to show the calibre we build to.</p>
         </div>
-        <div class="store-strip">
-          <a class="sd reveal" style="--sdbg:linear-gradient(150deg,#c9a24b,#131316)" href="templates/store-fashion.html" target="_blank" rel="noopener"><span class="live">Live demo</span><span class="em">🧥</span><div><h4>Atelier Noir</h4><span class="c">Fashion &amp; apparel</span></div></a>
-          <a class="sd reveal d1" style="--sdbg:linear-gradient(150deg,#ec4899,#f9a8d4)" href="templates/store-beauty.html" target="_blank" rel="noopener"><span class="live">Live demo</span><span class="em">💄</span><div><h4>Lume Beauty</h4><span class="c">Beauty &amp; cosmetics</span></div></a>
-          <a class="sd reveal d2" style="--sdbg:linear-gradient(150deg,#22c55e,#a3e635)" href="templates/store-supplements.html" target="_blank" rel="noopener"><span class="live">Live demo</span><span class="em">💪</span><div><h4>Forge Labs</h4><span class="c">Supplements &amp; fitness</span></div></a>
-          <a class="sd reveal d3" style="--sdbg:linear-gradient(150deg,#b45309,#d9a066)" href="templates/store-home.html" target="_blank" rel="noopener"><span class="live">Live demo</span><span class="em">🛋️</span><div><h4>Maison &amp; Co</h4><span class="c">Homeware &amp; interiors</span></div></a>
+        <div class="grid">
+          <article class="card reveal"><div class="thumb sky"><span class="badge">Study</span><span class="em">👟</span></div><div class="cbody"><h3>Kith</h3><div class="role">Front-end rebuild · Shopify Plus</div><p>A high-traffic luxury streetwear storefront — flash-sale-ready grids, complex catalogue layouts and local-currency support on a headless architecture.</p><div class="stack">Shopify Plus · Headless</div></div></article>
+          <article class="card reveal"><div class="thumb mint"><span class="badge">Study</span><span class="em">🧥</span></div><div class="cbody"><h3>Aether Apparel</h3><div class="role">Headless build · Next.js + Sanity</div><p>A headless storefront with dynamic product pages, modular content blocks, gallery sliders and real-time stock and variant checking.</p><div class="stack">Next.js · React · Sanity</div></div></article>
+          <article class="card reveal"><div class="thumb peach"><span class="badge">Study</span><span class="em">🕶️</span></div><div class="cbody"><h3>Randolph</h3><div class="role">Redesign · Shopify</div><p>A high-converting storefront redesign built around limited-edition collaborations for a heritage eyewear catalogue.</p><div class="stack">Shopify · Front-end · UI</div></div></article>
+          <article class="card reveal"><div class="thumb sky"><span class="badge">Study</span><span class="em">📈</span></div><div class="cbody"><h3>Boom</h3><div class="role">Front-end &amp; UX · Nuxt/Vue</div><p>A front-end modernisation for an online brokerage — accessible component libraries, structured data and behaviour funnels wired into analytics.</p><div class="stack">Nuxt · Vue · Analytics</div></div></article>
+          <article class="card reveal"><div class="thumb mint"><span class="badge">Study</span><span class="em">💡</span></div><div class="cbody"><h3>Lupine</h3><div class="role">Storefront build · Shopify</div><p>A full storefront with multi-language routing, an integrated B2B channel portal and marketing automation.</p><div class="stack">Shopify · i18n · B2B</div></div></article>
+          <article class="card reveal"><div class="thumb peach"><span class="badge">Study</span><span class="em">🏕️</span></div><div class="cbody"><h3>Wilderness Ranch</h3><div class="role">Redesign &amp; build · Webflow</div><p>An immersive booking experience for an outdoor resort — built around a “Reserve Now” funnel for lodging, cabins and rentals.</p><div class="stack">Webflow · UX</div></div></article>
+          <article class="card reveal"><div class="thumb sky"><span class="badge">Study</span><span class="em">🏍️</span></div><div class="cbody"><h3>Arch Motorcycle</h3><div class="role">Redesign · WordPress</div><p>A redesigned brand showcase for a bespoke motorcycle maker — premium imagery sliders, SEO foundations and lead routing.</p><div class="stack">WordPress · CRM</div></div></article>
+          <article class="card reveal"><div class="thumb mint"><span class="badge">Study</span><span class="em">🏙️</span></div><div class="cbody"><h3>277 Fifth Avenue</h3><div class="role">Redesign &amp; build · WordPress</div><p>A redesigned front-end for a luxury Manhattan residential tower — structural typography and clean imagery grids showcasing availability and amenities.</p><div class="stack">WordPress · Front-end</div></div></article>
         </div>
+        <p class="note reveal">The brands above are independent, each with their own teams. This work consists of redesign and rebuild studies created to demonstrate technical and design capability — not delivered on behalf of those companies.</p>
       </div>
     </section>
 
-    <!-- STOREFRONT STUDIES -->
-    <section class="p-sec" id="studies" style="background:var(--bg-2);border-block:1px solid var(--border)">
-      <div class="container">
-        <div class="p-head reveal">
-          <p class="tag">Rebuild &amp; redesign studies</p>
-          <h2>Storefront craft at a <span class="grad">premium level</span></h2>
-          <p>Rebuild and redesign studies of established commerce and brand sites — recreating storefronts, interactions and technical architecture to show the calibre we build to. These are craft demonstrations of what we can build, not client engagements with the brands shown.</p>
+    <!-- TEMPLATES -->
+    <section class="sec" id="templates">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="tt"><span class="chip sky">Ready to launch</span><h2>Templates</h2></div>
+          <p>Premium, fully-built demo sites across industries — open any one to explore it live, then we tailor it to your brand.</p>
         </div>
-        <div class="pgrid">
-          <article class="pcard reveal">
-            <div class="pshot"><img src="assets/portfolio/kith.jpg" alt="Kith storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Kith</h3><div class="role">Front-end rebuild · Shopify Plus</div><p>A high-traffic luxury streetwear storefront — flash-sale-ready product grids, complex catalogue layouts and local-currency support on a custom Shopify Plus / headless architecture.</p><div class="stack">Shopify Plus · Headless · Front-end</div><a class="visit" href="https://kith.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal d1">
-            <div class="pshot"><img src="assets/portfolio/aether.jpg" alt="Aether Apparel storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Aether Apparel</h3><div class="role">Headless build · Next.js + Sanity</div><p>A headless storefront with dynamic product pages, modular content blocks, advanced image-gallery sliders and real-time stock and variant checking.</p><div class="stack">Next.js · React · Sanity</div><a class="visit" href="https://aetherapparel.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal d2">
-            <div class="pshot"><img src="assets/portfolio/randolph.jpg" alt="Randolph storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Randolph</h3><div class="role">Redesign · Shopify</div><p>A high-converting storefront redesign built around limited-edition collaborations — custom interactive header and responsive product navigation for a heritage eyewear catalogue.</p><div class="stack">Shopify · Front-end · UI</div><a class="visit" href="https://www.randolphusa.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal">
-            <div class="pshot"><img src="assets/portfolio/boom.jpg" alt="Boom storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Boom</h3><div class="role">Front-end &amp; UI/UX · Nuxt/Vue</div><p>A front-end modernisation for an online brokerage — accessible component libraries, structured data and user-behaviour funnels wired into analytics and CRM.</p><div class="stack">Nuxt · Vue · Analytics</div><a class="visit" href="https://www.boom.com/en/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal d1">
-            <div class="pshot"><img src="assets/portfolio/lupine.jpg" alt="Lupine storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Lupine</h3><div class="role">Storefront build · Shopify</div><p>A full storefront with multi-language / localisation routing, an integrated B2B channel portal and marketing automation via Klaviyo and Tag Manager.</p><div class="stack">Shopify · i18n · B2B · Klaviyo</div><a class="visit" href="https://www.lupinelights.com/en" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal d2">
-            <div class="pshot"><img src="assets/portfolio/wilderness.jpg" alt="Wilderness Ranch storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Wilderness Ranch</h3><div class="role">Redesign &amp; build · Webflow</div><p>An immersive, responsive booking experience for an outdoor resort — built around a "Reserve Now" funnel for lodging, cabins and rentals.</p><div class="stack">Webflow Ecommerce · UX</div><a class="visit" href="https://www.wilderness.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal">
-            <div class="pshot"><img src="assets/portfolio/arch.jpg" alt="Arch Motorcycle storefront — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>Arch Motorcycle</h3><div class="role">Redesign · WordPress</div><p>A redesigned brand showcase for a bespoke motorcycle maker — premium imagery sliders, SEO foundations and lead routing into CRM.</p><div class="stack">WordPress · PHP · CRM</div><a class="visit" href="https://archmotorcycle.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-          <article class="pcard reveal d1">
-            <div class="pshot"><img src="assets/portfolio/fifth.jpg" alt="277 Fifth Avenue site — rebuild study" loading="lazy"><span class="ptag study">Redesign study</span></div>
-            <div class="pbody"><h3>277 Fifth Avenue</h3><div class="role">Redesign &amp; build · WordPress</div><p>A redesigned front-end for a luxury Manhattan residential tower — structural typography and clean imagery grids showcasing availability, amenities and inquiry funnels.</p><div class="stack">WordPress · Front-end</div><a class="visit" href="https://277fifthnomad.com/" target="_blank" rel="noopener">View live site →</a></div>
-          </article>
-        </div>
-        <p class="p-note reveal">Kith, Aether Apparel, Randolph, Boom, Lupine, Wilderness Ranch, Arch Motorcycle and 277 Fifth Avenue are independent brands, each with their own teams. The work above consists of redesign and rebuild studies created to demonstrate technical and design capability — not delivered on behalf of those companies.</p>
-      </div>
-    </section>
-
-    <!-- TOOLKIT -->
-    <section class="p-sec" id="toolkit">
-      <div class="container">
-        <div class="p-head reveal">
-          <p class="tag">Toolkit</p>
-          <h2>What we <span class="grad">build with</span></h2>
-        </div>
-        <div class="caps reveal">
-          <div class="cap">Shopify &amp; Shopify Plus</div>
-          <div class="cap">Headless (Next.js / React)</div>
-          <div class="cap">WordPress</div>
-          <div class="cap">Webflow</div>
-          <div class="cap">Sanity CMS</div>
-          <div class="cap">Vue / Nuxt</div>
-          <div class="cap">Technical SEO</div>
-          <div class="cap">Structured data</div>
-          <div class="cap">Klaviyo · GA4</div>
-          <div class="cap">Multi-currency &amp; i18n</div>
-          <div class="cap">AI integration</div>
-          <div class="cap">Managed hosting</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BACKGROUND -->
-    <section class="p-sec" id="experience">
-      <div class="container">
-        <div class="p-head reveal">
-          <p class="tag">Background</p>
-          <h2>Where our <span class="grad">craft comes from</span></h2>
-          <p>Seven years developing commerce and brand platforms inside leading agencies — before bringing that standard to Billy Digitals.</p>
-        </div>
-        <div class="exp-wrap">
-          <div class="exp reveal">
-            <div class="co">Pact</div>
-            <div class="meta">Luxury lifestyle digital agency</div>
-            <p>Developed and optimised Shopify and WordPress stores for high-growth fashion, beauty, home and lifestyle brands — brand-led commerce focused on conversion and craft.</p>
-          </div>
-          <div class="exp reveal d1">
-            <div class="co">Pattern</div>
-            <div class="meta">NYC creative agency</div>
-            <p>Built websites and brand platforms connecting brands with their audiences through differentiated, creative digital experiences — brand systems, identity and digital-native platforms.</p>
-          </div>
+        <div class="tgrid">
+          <a class="tcardp reveal" href="/templates/altair" target="_blank" rel="noopener"><div class="thumb sky"><span class="em">✈️</span></div><div class="tb"><h4>Altair</h4><span>Private jet charter</span></div></a>
+          <a class="tcardp reveal" href="/templates/azura" target="_blank" rel="noopener"><div class="thumb mint"><span class="em">⛵</span></div><div class="tb"><h4>Azura</h4><span>Luxury yacht charter</span></div></a>
+          <a class="tcardp reveal" href="/templates/elysee" target="_blank" rel="noopener"><div class="thumb peach"><span class="em">🌍</span></div><div class="tb"><h4>Élysée</h4><span>Luxury travel &amp; concierge</span></div></a>
+          <a class="tcardp reveal" href="/templates/aurum" target="_blank" rel="noopener"><div class="thumb peach"><span class="em">💎</span></div><div class="tb"><h4>Aurum</h4><span>Fine jewellery</span></div></a>
+          <a class="tcardp reveal" href="/templates/lumiere" target="_blank" rel="noopener"><div class="thumb sky"><span class="em">✨</span></div><div class="tb"><h4>Lumière</h4><span>Beauty &amp; skincare</span></div></a>
+          <a class="tcardp reveal" href="/templates/restaurant" target="_blank" rel="noopener"><div class="thumb mint"><span class="em">🍽️</span></div><div class="tb"><h4>Restaurant</h4><span>Dining &amp; bookings</span></div></a>
+          <a class="tcardp reveal" href="/templates/salon-luxe" target="_blank" rel="noopener"><div class="thumb peach"><span class="em">💇</span></div><div class="tb"><h4>Salon Luxe</h4><span>Hair &amp; beauty salon</span></div></a>
+          <a class="tcardp reveal" href="/templates/barber" target="_blank" rel="noopener"><div class="thumb sky"><span class="em">💈</span></div><div class="tb"><h4>Barber</h4><span>Barbershop &amp; grooming</span></div></a>
+          <a class="tcardp reveal" href="/templates/fitness" target="_blank" rel="noopener"><div class="thumb mint"><span class="em">🏋️</span></div><div class="tb"><h4>Fitness</h4><span>Gym &amp; personal training</span></div></a>
+          <a class="tcardp reveal" href="/templates/store-fashion" target="_blank" rel="noopener"><div class="thumb sky"><span class="em">🧥</span></div><div class="tb"><h4>Atelier Noir</h4><span>Fashion e-commerce</span></div></a>
+          <a class="tcardp reveal" href="/templates/store-beauty" target="_blank" rel="noopener"><div class="thumb peach"><span class="em">💄</span></div><div class="tb"><h4>Lume Beauty</h4><span>Beauty e-commerce</span></div></a>
+          <a class="tcardp reveal" href="/templates/corporate" target="_blank" rel="noopener"><div class="thumb mint"><span class="em">🏢</span></div><div class="tb"><h4>Corporate</h4><span>Business &amp; professional</span></div></a>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="p-sec" id="contact">
-      <div class="container">
-        <div class="p-cta reveal">
-          <p class="tag" style="display:inline-block">Let's work together</p>
-          <h2>Got a project <span class="grad">in mind?</span></h2>
+    <section class="sec">
+      <div class="wrap">
+        <div class="promo reveal">
+          <h2>Let's build yours <span class="rw">next</span>.</h2>
           <p>Tell us what you're building and we'll come back within 24 hours with a tailored quote. We reply to every enquiry personally.</p>
-          <div class="methods">
-            <a class="btn btn-primary" href="/#contact">Start Your Project</a>
-            <a class="btn btn-ghost" data-wa-link href="#" target="_blank" rel="noopener">💬 WhatsApp us</a>
-          </div>
+          <a class="rbtn" href="/#contact">Start a project</a>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-bottom">
+  <footer class="pf">
+    <div class="wrap">
+      <div class="fl">
+        <a href="/">Home</a><a href="/#services">Services</a><a href="/blog">Blog</a>
+        <a href="https://wa.me/447519022117" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
       <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
-      <p><a href="/">Home</a> &nbsp;·&nbsp; <a href="/blog">Blog</a> &nbsp;·&nbsp; <a data-wa-link href="#" target="_blank" rel="noopener">WhatsApp us</a></p>
     </div>
   </footer>
 
-  <a class="wa-float" href="https://wa.me/447519022117?text=Hi%20Billy%20Digitals!%20I'd%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-  </a>
-
-  <script src="assets/js/main.js"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
-    const io = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, { threshold: 0.14 });
-    document.querySelectorAll(".reveal:not(.in)").forEach((el) => io.observe(el));
-    const cu = new IntersectionObserver((es) => {
-      es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        const el = e.target, t = +el.dataset.count, sfx = el.dataset.suffix || "";
-        let st = performance.now();
-        const dur = 1100;
-        function tick(now) {
-          let p = Math.min((now - st) / dur, 1);
-          p = 1 - Math.pow(1 - p, 3);
-          el.textContent = Math.round(t * p) + sfx;
-          if (p < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-        cu.unobserve(el);
-      });
-    }, { threshold: 0.6 });
-    document.querySelectorAll("[data-count]").forEach((el) => cu.observe(el));
+    var io = new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.12});
+    document.querySelectorAll(".reveal").forEach(function(el){io.observe(el);});
   </script>
 </body>
 </html>
