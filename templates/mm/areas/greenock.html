@@ -21,6 +21,7 @@
 </script>
 </head>
 <body>
+<canvas id="molecules" aria-hidden="true"></canvas>
 <nav class="nav">
   <div class="wrap">
     <div class="nav-in">
@@ -176,5 +177,6 @@ const _b=document.getElementById('bg'),_m=document.getElementById('mm');_b.oncli
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:0,rootMargin:"0px 0px -8% 0px"});
 document.querySelectorAll('.rv:not(.in)').forEach(el=>io.observe(el));
 </script>
+<script src="../molecules.js" defer></script>
 </body>
 </html>

@@ -76,7 +76,8 @@ h1,h2,h3{font-family:var(--ser);font-weight:600;line-height:1.14;letter-spacing:
 .hero-cta .btn{flex:1 1 auto;justify-content:center}
 @media(min-width:520px){.hero-cta .btn{flex:0 0 auto}}
 .trustrow{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:28px}
-@media(min-width:900px){.trustrow{display:flex;gap:22px;flex-wrap:wrap}}
+@media(min-width:900px){.trustrow{gap:11px 26px;max-width:520px}
+  .trustrow span{white-space:nowrap;font-size:13px}}
 .trustrow span{display:flex;align-items:flex-start;gap:7px;color:var(--mut);font-size:13.2px;line-height:1.45}
 .trustrow span::before{content:"✓";color:var(--teal);font-weight:800;flex-shrink:0}
 .trustrow b{color:var(--ink);font-weight:600}
@@ -234,3 +235,23 @@ footer a:hover{color:var(--teal)}
   #about .portrait{max-width:320px;margin:0 auto}
   #about .portrait img{aspect-ratio:1/1;max-height:none;object-position:center 14%}
 }
+
+/* ---------- chemistry molecule background ---------- */
+#molecules{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body>nav,body>header,body>section,body>footer,body>.wafloat,body>.prog{position:relative;z-index:2}
+.hero,.areahero{background:transparent!important}
+.hero::before,.areahero::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(120% 90% at 82% 6%,rgba(232,247,255,.86) 0%,transparent 58%),
+             radial-gradient(100% 80% at 6% 96%,rgba(228,251,246,.86) 0%,transparent 60%),
+             linear-gradient(180deg,rgba(252,254,254,.60),rgba(243,250,251,.66))}
+.alt{background:rgba(243,250,250,.82);backdrop-filter:blur(2px)}
+section:not(.alt){background:rgba(255,255,255,.72);backdrop-filter:blur(2px)}
+footer{background:rgba(233,245,246,.92);backdrop-filter:blur(2px)}
+
+/* chemistry flourishes */
+.bond-rule{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 14px;max-width:200px}
+.bond-rule i{height:2px;flex:1;background:linear-gradient(90deg,transparent,var(--teal))}
+.bond-rule i:last-child{background:linear-gradient(90deg,var(--violet),transparent)}
+.bond-rule b{width:9px;height:9px;border-radius:50%;background:var(--grad);flex:0 0 auto}
+.hexmark{position:absolute;pointer-events:none;opacity:.07;z-index:0}
+.hexmark svg{width:100%;height:100%}
