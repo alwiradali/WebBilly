@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Book Chemistry Tuition — Molecular Miracles | Scotland</title>
+<meta name="description" content="Book a place in a small-group SQA Chemistry class — National 5, Higher or Advanced Higher. Maximum 5 pupils. Enquire for current rates.">
+<meta name="theme-color" content="#0B1A24">
+<link rel="icon" type="image/png" href="../../assets/mm/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .bk{display:grid;gap:34px}
+  @media(min-width:960px){.bk{grid-template-columns:1.05fr .95fr;gap:48px;align-items:start}}
+  .form{background:var(--base2);border:1px solid var(--line);border-radius:22px;padding:32px 28px}
+  .fld{margin-bottom:15px}
+  .fld label{display:block;font-size:13.4px;font-weight:500;color:#BEDBE0;margin-bottom:6px}
+  .fld input,.fld select,.fld textarea{width:100%;padding:13px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.04);color:#fff;font-size:15px;font-family:inherit}
+  .fld textarea{min-height:110px;resize:vertical}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(20,184,166,.16)}
+  .fld select option{background:#10242F}
+  .form .btn{width:100%;justify-content:center;margin-top:6px}
+  .fine{font-size:12.4px;color:#7FA3AB;text-align:center;margin-top:12px}
+  .side .card{margin-bottom:16px}
+  .step{display:flex;gap:14px;margin-bottom:20px}
+  .step .n{width:34px;height:34px;border-radius:10px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:600;flex-shrink:0;font-size:15px}
+  .step p{color:var(--mut);font-size:.93rem}
+  .step b{color:#DCEEF0;display:block;font-size:.98rem;margin-bottom:2px}
+  .hp{position:absolute;left:-9999px;opacity:0}
+  .ok{display:none;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.4);border-radius:16px;padding:26px;text-align:center}
+  .ok.on{display:block}
+  .ok h3{font-size:1.4rem;margin-bottom:8px}
+  .ok p{color:#BFE9E4;font-size:.95rem}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-in">
+      <a href="index.html"><img class="logo" src="../../assets/mm/logo.png" alt="Molecular Miracles"></a>
+      <span class="sp"></span>
+      <div class="nlinks">
+        <a href="index.html#about">About</a><a href="index.html#levels">Courses</a>
+        <a href="index.html#reviews">Reviews</a><a href="areas.html">Areas</a>
+      </div>
+      <a class="btn btn-wa" href="https://wa.me/447708907247" target="_blank" rel="noopener">💬 WhatsApp</a>
+      <div class="burger" id="bg"><span></span><span></span><span></span></div>
+    </div>
+    <div class="mobmenu" id="mm">
+      <a href="index.html#about">About</a><a href="index.html#levels">Courses</a>
+      <a href="index.html#reviews">Reviews</a><a href="areas.html">Areas We Cover</a>
+    </div>
+  </div>
+</nav>
+
+<section class="areahero">
+  <div class="orb a"></div><div class="orb b"></div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div style="text-align:center;max-width:660px;margin:0 auto 46px" class="rv in">
+      <span class="eyebrow">Book a Place</span>
+      <h1 style="font-size:clamp(2rem,4.6vw,3.1rem);margin:18px 0 14px">Reserve your spot in a <span class="g">small group</span></h1>
+      <p style="color:var(--mut)">Classes are capped at five pupils, so places go quickly. Tell me a little about your child and I'll come back with availability and current rates.</p>
+    </div>
+
+    <div class="bk">
+      <div class="rv">
+        <div class="form">
+          <div class="ok" id="ok">
+            <h3>Thank you! 🎉</h3>
+            <p>Your enquiry has been sent. I'll get back to you personally within 24 hours with availability and rates.</p>
+          </div>
+          <form id="bkForm" novalidate>
+            <div class="fld"><label for="pname">Parent / guardian name *</label><input type="text" id="pname" required></div>
+            <div class="fld"><label for="email">Email address *</label><input type="email" id="email" required></div>
+            <div class="fld"><label for="phone">Phone / WhatsApp</label><input type="tel" id="phone"></div>
+            <div class="fld"><label for="sname">Pupil's first name</label><input type="text" id="sname"></div>
+            <div class="fld"><label for="level">Which course? *</label>
+              <select id="level" required>
+                <option value="">Please choose…</option>
+                <option>National 5 Chemistry</option>
+                <option>Higher Chemistry</option>
+                <option>Advanced Higher Chemistry</option>
+                <option>Not sure yet — please advise</option>
+              </select>
+            </div>
+            <div class="fld"><label for="mode">Preference</label>
+              <select id="mode">
+                <option>Online (Zoom)</option>
+                <option>Face to face</option>
+                <option>Either is fine</option>
+              </select>
+            </div>
+            <div class="fld"><label for="area">Where are you based?</label><input type="text" id="area" placeholder="e.g. Glasgow, Edinburgh, Aberdeen…"></div>
+            <div class="fld"><label for="msg">Anything I should know?</label><textarea id="msg" placeholder="Current grade, topics they struggle with, any additional support needs…"></textarea></div>
+            <input type="checkbox" class="hp" id="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit" class="btn btn-p">Send My Enquiry →</button>
+            <p class="fine">Goes straight to Lynsey · reply within 24 hours · no obligation</p>
+          </form>
+        </div>
+      </div>
+
+      <div class="side rv d1">
+        <div class="card">
+          <h3 style="margin-bottom:18px">How booking works</h3>
+          <div class="step"><span class="n">1</span><div><b>Send your enquiry</b><p>Tell me the level and a little about your child.</p></div></div>
+          <div class="step"><span class="n">2</span><div><b>I reply personally</b><p>Within 24 hours with group availability, times and current rates.</p></div></div>
+          <div class="step"><span class="n">3</span><div><b>Free chat first</b><p>Happy to answer questions before you commit to anything.</p></div></div>
+          <div class="step" style="margin-bottom:0"><span class="n">4</span><div><b>Start learning</b><p>Your child joins a small group of no more than five pupils.</p></div></div>
+        </div>
+        <div class="card">
+          <div class="ic">💬</div>
+          <h3>Prefer to message?</h3>
+          <p style="margin-bottom:16px">WhatsApp is often the quickest way to reach me.</p>
+          <a class="btn btn-wa" href="https://wa.me/447708907247?text=Hi%20Lynsey%2C%20I'd%20like%20to%20ask%20about%20Chemistry%20tuition." target="_blank" rel="noopener">WhatsApp Lynsey</a>
+        </div>
+        <div class="card">
+          <div class="ic">✉️</div>
+          <h3>Email directly</h3>
+          <p style="margin-bottom:16px">molecularmiracletutoring@gmail.com</p>
+          <a class="btn btn-g" href="mailto:molecularmiracletutoring@gmail.com">Send an Email</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fbot" style="border:none;padding-top:0">© <span id="yr"></span> Molecular Miracles Chemistry Tuition · Glasgow, serving all of Scotland &nbsp;·&nbsp; <a href="index.html">Home</a> · <a href="areas.html">Areas</a> &nbsp;·&nbsp; Website by <a href="https://www.billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></div>
+  </div>
+</footer>
+
+<a class="wafloat" href="https://wa.me/447708907247" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.89-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.43 9.89-9.88 9.89m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41Z"/></svg>
+</a>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+document.getElementById('bg').onclick=()=>document.getElementById('mm').classList.toggle('on');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:0,rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll('.rv:not(.in)').forEach(el=>io.observe(el));
+
+document.getElementById('bkForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(document.getElementById('botcheck').checked)return;
+  const v=id=>document.getElementById(id).value.trim();
+  if(!v('pname')||!v('email')||!v('level')){alert('Please fill in your name, email and the course.');return;}
+  const body=`Parent/Guardian: ${v('pname')}%0D%0AEmail: ${v('email')}%0D%0APhone: ${v('phone')}%0D%0APupil: ${v('sname')}%0D%0ACourse: ${v('level')}%0D%0APreference: ${v('mode')}%0D%0ALocation: ${v('area')}%0D%0A%0D%0ANotes:%0D%0A${encodeURIComponent(v('msg'))}`;
+  window.location.href=`mailto:molecularmiracletutoring@gmail.com?subject=${encodeURIComponent('Chemistry tuition enquiry — '+v('level'))}&body=${body}`;
+  this.style.display='none';
+  document.getElementById('ok').classList.add('on');
+});
+</script>
+</body>
+</html>
