@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Mumbai2London — Nationwide Rickshaw Hire | Weddings · Parties · Events</title>
-<meta name="description" content="Authentic Mumbai-style auto rickshaw hire across the UK — weddings, Mehndi nights, Sangeets, parties, photo booths and films. Book your desi ride.">
+<title>Rickshaw Hire London &amp; Nationwide | Mumbai2London — Weddings, Proms &amp; Parties</title>
+<meta name="description" content="Mumbai-style tuk tuk and auto rickshaw hire across London and nationwide — weddings, baraat entrances, mehndi nights, sangeets, proms, parties, photo booths and film shoots. Decorations, lights and speakers included. Check your date online.">
 <meta name="theme-color" content="#0f0a07">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +27,43 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
 ::selection{background:var(--saffron);color:#231204}
+
+/* ---------- welcome band + London areas ---------- */
+.welc{position:relative;overflow:hidden}
+.welc-in{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,4vw,58px);align-items:center}
+.welc-pic{position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(240,178,67,.28);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.95)}
+.welc-pic img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
+.welc-pic::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(15,10,7,.62))}
+.namaste{font-family:var(--ser);font-style:italic;font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.25;color:var(--marigold)}
+.namaste small{display:block;font-family:var(--ui);font-style:normal;font-size:12px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.welc h2{margin:14px 0 4px}
+.welc p{color:#dcc9b0;font-weight:300;margin-top:14px}
+.welc p b{color:var(--cream);font-weight:600}
+.gujwords{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.gujwords span{border:1px solid rgba(240,178,67,.3);border-radius:999px;padding:8px 15px;font-size:12.5px;
+  font-weight:600;letter-spacing:.06em;color:var(--marigold);background:rgba(255,201,60,.07)}
+@media(max-width:860px){.welc-in{grid-template-columns:1fr}.welc-pic{order:-1}.welc-pic img{aspect-ratio:16/11}}
+
+.areas{border-top:1px solid rgba(240,178,67,.16);padding-top:clamp(30px,5vw,52px);margin-top:clamp(40px,6vw,72px)}
+.areas summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;
+  font-family:var(--dis);font-weight:700;font-size:clamp(1.05rem,2.2vw,1.3rem);color:var(--cream)}
+.areas summary::-webkit-details-marker{display:none}
+.areas summary .chev{margin-left:auto;width:32px;height:32px;flex:0 0 32px;border:1px solid rgba(240,178,67,.34);
+  border-radius:50%;display:grid;place-items:center;color:var(--marigold);transition:transform .3s}
+.areas[open] summary .chev{transform:rotate(180deg)}
+.areas summary:hover .chev{border-color:var(--marigold)}
+.areas .why{color:var(--muted);font-size:13.5px;font-weight:300;margin-top:8px}
+.areas .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 30px;margin-top:24px}
+@media(max-width:900px){.areas .cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}}
+@media(max-width:560px){.areas .cols{grid-template-columns:1fr}}
+.areas h4{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--marigold);margin-bottom:9px}
+.areas ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px 10px}
+.areas li{color:#d6c2a8;font-size:13.6px;font-weight:300}
+.areas li::after{content:"·";margin-left:10px;color:rgba(240,178,67,.4)}
+.areas li:last-child::after{content:""}
+.areas .close{color:#dcc9b0;font-weight:300;font-size:14.4px;margin-top:26px;max-width:75ch}
 
 /* ---------- colour-burst canvas (holi explosion) ---------- */
 #holi{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
@@ -181,32 +218,28 @@ footer .fl a{min-height:40px;display:inline-flex;align-items:center;padding:0 4p
 
 /* ---------- reel: bridal video, 3D scroll-scrubbed ---------- */
 .reel{perspective:1500px;overflow:hidden}
-.reel-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(20px,4vw,48px);align-items:center;margin-top:46px}
-@media(max-width:920px){.reel-wrap{grid-template-columns:1fr;gap:26px}}
-.reel-card{position:relative;width:min(320px,74vw);margin:0 auto;border-radius:34px;overflow:hidden;
+.reel-stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,1.8vw,24px);
+  align-items:start;margin:46px auto 0;max-width:860px}
+@media(max-width:800px){.reel-stack{grid-template-columns:1fr;gap:24px;max-width:360px}}
+.reel-card{position:relative;width:100%;border-radius:34px;overflow:hidden;
   border:3px solid rgba(240,178,67,.5);background:#160d07;
   box-shadow:0 44px 96px -30px rgba(0,0,0,.95),0 0 70px -20px rgba(255,138,31,.55);
   transform:rotateY(var(--ry,-16deg)) rotateX(var(--rx,7deg)) scale(var(--rs,.88)) translateY(var(--ty,40px));
   will-change:transform}
 .reel-card video{display:block;width:100%;aspect-ratio:640/1124;object-fit:cover;background:#160d07}
 .reel-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:31px;
-  background:linear-gradient(to top,rgba(12,7,3,.5),transparent 34%)}
+  background:linear-gradient(to top,rgba(9,5,2,.94) 2%,rgba(9,5,2,.72) 22%,rgba(9,5,2,.12) 46%,transparent 62%)}
+.reel-cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:clamp(18px,2.6vw,26px) clamp(18px,2.4vw,24px)}
+.reel-cap h3{font-family:var(--dis);font-weight:700;font-size:clamp(1.18rem,2.1vw,1.5rem);color:#fff;
+  margin-bottom:6px;line-height:1.16;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.reel-cap h3 span{background:var(--holi);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.reel-cap p{color:#e8d7bf;font-weight:300;font-size:.94rem;line-height:1.45;text-shadow:0 2px 14px rgba(0,0,0,.8)}
 .reel-badge{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:8px;
   background:rgba(10,6,3,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   border:1px solid rgba(240,178,67,.42);border-radius:999px;padding:6px 13px;
   font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--marigold)}
 .reel-badge i{width:7px;height:7px;border-radius:50%;background:#ff3b30;animation:reelPulse 1.9s ease-in-out infinite}
 @keyframes reelPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
-.reel-side{opacity:0;transform:translateY(34px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
-.reel-side.in{opacity:1;transform:none}
-.reel-side.r{transition-delay:.14s}
-.reel-side h3{font-family:var(--dis);font-weight:700;font-size:clamp(1.25rem,2.4vw,1.6rem);color:#fff;margin-bottom:9px}
-.reel-side h3 span{background:var(--holi);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.reel-side p{color:#d8c4ab;font-weight:300;font-size:.98rem}
-.reel-side .l-in{max-width:34ch;margin-left:auto}
-.reel-side .r-in{max-width:34ch}
-@media(min-width:921px){.reel-side.l{text-align:right}}
-@media(max-width:920px){.reel-side .l-in,.reel-side .r-in{max-width:44ch;margin:0 auto;text-align:center}}
 
 .addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px;margin-top:4px}
 .ad{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.28);border:1px solid rgba(240,178,67,.22);
@@ -370,7 +403,7 @@ footer small{color:#9b8468;font-size:12.5px}
   .rv,.fcard,.scard{opacity:1!important;transform:none!important}
   .pin{height:auto}.pin-stage{position:relative;height:auto;padding:60px 0}
   .pin-img{position:relative;transform:none}.pin-copy{opacity:1!important}
-  .reel-card{transform:none!important}.reel-side{opacity:1!important;transform:none!important}
+  .reel-card{transform:none!important}
 }
 </style>
 </head>
@@ -403,40 +436,40 @@ footer small{color:#9b8468;font-size:12.5px}
 <header class="hero" id="top">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="fparea">
-  <div class="fp a"><img src="../assets/mumbai2london/rickshaw-market.webp" alt="Decorated rickshaw at a street market"></div>
-  <div class="fp b"><img src="../assets/mumbai2london/carnival-duo.webp" alt="Carnival dancers"></div>
-  <div class="fp c"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Marigold garlands inside the rickshaw"></div>
-  <div class="fp d"><img src="../assets/mumbai2london/rickshaw-manor.webp" alt="Rickshaw at Bhaktivedanta Manor"></div>
+  <div class="fp a"><img src="../assets/mumbai2london/night-glow.webp" alt="Mumbai2London rickshaw lit with blue underglow at night"></div>
+  <div class="fp b"><img src="../assets/mumbai2london/london-street.webp" alt="Rickshaw outside a hotel in central London"></div>
+  <div class="fp c"><img src="../assets/mumbai2london/barn-wedding.webp" alt="Rickshaw decorated with marigolds at a barn wedding"></div>
+  <div class="fp d"><img src="../assets/mumbai2london/colour-smoke.webp" alt="Colour smoke flares around the rickshaw at a baraat"></div>
   </div>
   <div class="wrap">
     <img class="hero-logo" src="../assets/mumbai2london/logo.webp" alt="Mumbai2London">
     <span class="kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16v-5a5 5 0 0 1 5-5h3l4 5h2.5A3.5 3.5 0 0 1 21 14.5V16"/><path d="M3 16h1.8m4.4 0h5.6m3.4 0H21"/><circle cx="6.6" cy="17.6" r="2.3"/><circle cx="17.4" cy="17.6" r="2.3"/><path d="M11 6v5"/></svg> Nationwide Rickshaw Hire</span>
     <h1>Time for a <span class="grad">desi ride</span>.</h1>
-    <p class="sub">Authentic Mumbai-style auto rickshaws for weddings, Mehndi nights, Sangeets, parties, films and photo booths — decked in marigolds and delivered anywhere in the UK.</p>
+    <p class="sub">The UK’s premier nationwide rickshaw hire. Fully kitted out with vibrant decorations, dynamic lights and powerful speakers — tailored to your theme, delivered anywhere in the UK.</p>
     <div class="hero-cta">
       <a class="btn btn-p" href="#book">Check your date →</a>
       <a class="btn btn-wa" href="https://wa.me/447940762404" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg> WhatsApp us</a>
       <a class="btn btn-g" href="#gallery">See the rickshaw</a>
     </div>
-    <div class="trust"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg>Weddings &amp; Mehndi</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8v4.1M12 17.1v4.1M2.8 12h4.1M17.1 12h4.1M5.5 5.5l2.9 2.9M15.6 15.6l2.9 2.9M18.5 5.5l-2.9 2.9M8.4 15.6l-2.9 2.9"/></svg>Parties &amp; Sangeets</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.8A2.6 2.6 0 0 1 5.6 6.2h1.7l1.2-2.1h7l1.2 2.1h1.7A2.6 2.6 0 0 1 21 8.8v7.6a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 16.4V8.8z"/><circle cx="12" cy="12.4" r="3.5"/></svg>Photo Booth</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2h18v9.3A1.5 1.5 0 0 1 19.5 20h-15A1.5 1.5 0 0 1 3 18.5V9.2z"/><path d="M3.4 9.2 6 4.8l3.5 4.4M9.5 9.2 12.9 4.8l3.5 4.4M16.4 9.2 19.8 5.2"/></svg>Films &amp; TV</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6.8-5.4 6.8-11a6.8 6.8 0 1 0-13.6 0C5.2 15.6 12 21 12 21z"/><circle cx="12" cy="9.9" r="2.6"/></svg>Nationwide</span></div>
+    <div class="trust"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg>Weddings &amp; Mehndi</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8v4.1M12 17.1v4.1M2.8 12h4.1M17.1 12h4.1M5.5 5.5l2.9 2.9M15.6 15.6l2.9 2.9M18.5 5.5l-2.9 2.9M8.4 15.6l-2.9 2.9"/></svg>Parties &amp; Sangeets</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.8A2.6 2.6 0 0 1 5.6 6.2h1.7l1.2-2.1h7l1.2 2.1h1.7A2.6 2.6 0 0 1 21 8.8v7.6a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 16.4V8.8z"/><circle cx="12" cy="12.4" r="3.5"/></svg>Photo Booth</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.1l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8z"/></svg>Proms</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2h18v9.3A1.5 1.5 0 0 1 19.5 20h-15A1.5 1.5 0 0 1 3 18.5V9.2z"/><path d="M3.4 9.2 6 4.8l3.5 4.4M9.5 9.2 12.9 4.8l3.5 4.4M16.4 9.2 19.8 5.2"/></svg>Films &amp; TV</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6.8-5.4 6.8-11a6.8 6.8 0 1 0-13.6 0C5.2 15.6 12 21 12 21z"/><circle cx="12" cy="9.9" r="2.6"/></svg>Nationwide</span></div>
   </div>
   <div class="scroll-hint">Scroll</div>
 </header>
 
 <div class="mq" aria-hidden="true">
   <div class="mq-t">
-    <span>Weddings <i aria-hidden="true"></i> Mehndi Night <i aria-hidden="true"></i> Sangeet <i aria-hidden="true"></i> Parties <i aria-hidden="true"></i> Photo Booth <i aria-hidden="true"></i> Films <i aria-hidden="true"></i> Birthdays <i aria-hidden="true"></i> Corporate <i aria-hidden="true"></i> Festivals <i aria-hidden="true"></i></span>
-    <span>Weddings <i aria-hidden="true"></i> Mehndi Night <i aria-hidden="true"></i> Sangeet <i aria-hidden="true"></i> Parties <i aria-hidden="true"></i> Photo Booth <i aria-hidden="true"></i> Films <i aria-hidden="true"></i> Birthdays <i aria-hidden="true"></i> Corporate <i aria-hidden="true"></i> Festivals <i aria-hidden="true"></i></span>
+    <span>Weddings <i aria-hidden="true"></i> Mehndi Night <i aria-hidden="true"></i> Sangeet <i aria-hidden="true"></i> Parties <i aria-hidden="true"></i> Photo Booth <i aria-hidden="true"></i> Proms <i aria-hidden="true"></i> Films <i aria-hidden="true"></i> Birthdays <i aria-hidden="true"></i> Corporate <i aria-hidden="true"></i> Festivals <i aria-hidden="true"></i></span>
+    <span>Weddings <i aria-hidden="true"></i> Mehndi Night <i aria-hidden="true"></i> Sangeet <i aria-hidden="true"></i> Parties <i aria-hidden="true"></i> Photo Booth <i aria-hidden="true"></i> Proms <i aria-hidden="true"></i> Films <i aria-hidden="true"></i> Birthdays <i aria-hidden="true"></i> Corporate <i aria-hidden="true"></i> Festivals <i aria-hidden="true"></i></span>
   </div>
 </div>
 
 <!-- PINNED RICKSHAW ZOOM -->
 <section class="pin" id="events" aria-label="The rickshaw">
   <div class="pin-stage">
-    <div class="pin-img" id="pinImg"><img src="../assets/mumbai2london/rickshaw-market.webp" alt="Mumbai2London rickshaw decorated with marigolds"></div>
+    <div class="pin-img" id="pinImg"><img src="../assets/mumbai2london/rickshaw-drive.webp" alt="Mumbai2London rickshaw decorated with marigolds and tassels"></div>
     <div class="pin-copy" id="pinCopy">
       <h2>Straight out of<br>Mumbai.</h2>
-      <p>A real Bajaj auto rickshaw — hand-decorated with marigolds, bells and Bollywood colour.</p>
+      <p>A real Bajaj auto rickshaw — hand-decorated with marigolds, bells and Bollywood colour. Guaranteed to make a statement.</p>
     </div>
   </div>
 </section>
@@ -450,9 +483,20 @@ footer small{color:#9b8468;font-size:12.5px}
       <p class="lede">From seafront festivals to temple weddings — here's the rickshaw doing what it does best.</p>
     </div>
     <div class="fgrid">
-      <figure class="fcard tall"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Garlands and bells inside" loading="lazy"><figcaption class="cap"><small>Detail</small>Marigolds &amp; brass bells</figcaption></figure>
+      <figure class="fcard tall"><img src="../assets/mumbai2london/night-glow.webp" alt="Rickshaw lit with blue underglow at night" loading="lazy"><figcaption class="cap"><small>After dark</small>Lights on, party started</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/london-street.webp" alt="Rickshaw outside a hotel in central London" loading="lazy"><figcaption class="cap"><small>London</small>Westminster to Wembley</figcaption></figure>
+      <figure class="fcard wide"><img src="../assets/mumbai2london/colour-smoke.webp" alt="Colour smoke flares around the rickshaw at a baraat" loading="lazy"><figcaption class="cap"><small>Baraat</small>Smoke, drums, chaos</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/barn-wedding.webp" alt="Rickshaw at a barn wedding entrance" loading="lazy"><figcaption class="cap"><small>Weddings</small>The grand entrance</figcaption></figure>
+      <figure class="fcard tall"><img src="../assets/mumbai2london/marquee-banner.webp" alt="Rickshaw and parasols inside a marquee" loading="lazy"><figcaption class="cap"><small>Marquees</small>Parasols &amp; parathas</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/dusk-glow.webp" alt="Rickshaw with green underglow at dusk" loading="lazy"><figcaption class="cap"><small>Evening</small>Glow up at golden hour</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/baraat-arrival.webp" alt="Wedding guests gathered around the arriving rickshaw" loading="lazy"><figcaption class="cap"><small>Arrivals</small>Everybody turns round</figcaption></figure>
+      <figure class="fcard tall"><img src="../assets/mumbai2london/street-festival.webp" alt="Rickshaw at a street festival" loading="lazy"><figcaption class="cap"><small>Festivals</small>Horn OK Please</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/padharo-sign.webp" alt="Rickshaw beside a Padharo Mhare Des welcome board" loading="lazy"><figcaption class="cap"><small>Welcome</small>Padharo Mhare Des</figcaption></figure>
+      <figure class="fcard wide"><img src="../assets/mumbai2london/seafront-gazebo.webp" alt="Rickshaw on the seafront under the Rikshawala gazebo" loading="lazy"><figcaption class="cap"><small>Nationwide</small>Seafront to city centre</figcaption></figure>
+      <figure class="fcard tall"><img src="../assets/mumbai2london/marquee-side.webp" alt="Garlanded rickshaw under a marquee awning" loading="lazy"><figcaption class="cap"><small>Detail</small>Dressed top to bottom</figcaption></figure>
+      <figure class="fcard"><img src="../assets/mumbai2london/rickshaw-drive.webp" alt="Decorated rickshaw on a gravel drive" loading="lazy"><figcaption class="cap"><small>Set up</small>There before you are</figcaption></figure>
+      <figure class="fcard tall"><img src="../assets/mumbai2london/interior-garlands.webp" alt="Garlands and bells inside" loading="lazy"><figcaption class="cap"><small>Inside</small>Marigolds &amp; brass bells</figcaption></figure>
       <figure class="fcard"><img src="../assets/mumbai2london/carnival-duo.webp" alt="Carnival dancers in costume" loading="lazy"><figcaption class="cap"><small>Festivals</small>Carnival energy</figcaption></figure>
-      <figure class="fcard wide"><img src="../assets/mumbai2london/seafront-wide.webp" alt="Rickshaw at the seafront" loading="lazy"><figcaption class="cap"><small>Nationwide</small>Seafront to city centre</figcaption></figure>
       <figure class="fcard"><img src="../assets/mumbai2london/carnival-gujarati.webp" alt="Dancer in traditional Gujarati dress" loading="lazy"><figcaption class="cap"><small>Culture</small>Garba &amp; folk dance</figcaption></figure>
       <figure class="fcard tall"><img src="../assets/mumbai2london/rickshaw-manor.webp" alt="Rickshaw at Bhaktivedanta Manor" loading="lazy"><figcaption class="cap"><small>Venues</small>Bhaktivedanta Manor</figcaption></figure>
       <figure class="fcard tall"><img src="../assets/mumbai2london/interior-dash.webp" alt="Decorated rickshaw dashboard" loading="lazy"><figcaption class="cap"><small>Photo booth</small>Every angle a picture</figcaption></figure>
@@ -470,27 +514,33 @@ footer small{color:#9b8468;font-size:12.5px}
     <div class="head-c rv">
       <span class="eyebrow">The moment</span>
       <h2>Made for the <em>big entrance</em></h2>
-      <p class="lede">Real footage from a real booking — the rickshaw dressed in marigolds, waiting for the bride.</p>
+      <p class="lede">Real footage from real bookings — the bride steps out, the colour goes up, and the whole party turns round.</p>
     </div>
-    <div class="reel-wrap">
-      <div class="reel-side l"><div class="l-in">
-        <h3>Dressed <span>head to toe</span></h3>
-        <p>Fresh garlands, bells and tassels arranged on the day — so every photograph is already styled.</p>
-      </div></div>
-
-      <div class="reel-card" id="reelCard">
+    <div class="reel-stack">
+      <div class="reel-card" data-reel>
         <span class="reel-badge"><i></i> Real booking</span>
-        <video id="reelVid" poster="../assets/mumbai2london/bride-reel-poster.webp"
-               muted loop playsinline preload="metadata" aria-label="Bride beside the decorated Mumbai2London rickshaw">
-          <source src="../assets/mumbai2london/bride-reel.mp4" type="video/mp4">
+        <video class="reel-vid" poster="../assets/mumbai2london/bride-reel-poster.webp"
+               muted loop playsinline preload="metadata" aria-label="The bride arriving beside the decorated Mumbai2London rickshaw">
           <source src="../assets/mumbai2london/bride-reel.webm" type="video/webm">
+          <source src="../assets/mumbai2london/bride-reel.mp4" type="video/mp4">
         </video>
+        <div class="reel-cap">
+          <h3>Lights <span>and sound</span></h3>
+          <p>Dynamic lights and powerful speakers on board — from elegant and romantic to bold and energetic.</p>
+        </div>
       </div>
-
-      <div class="reel-side r"><div class="r-in">
-        <h3>Turns up <span>anywhere</span></h3>
-        <p>Delivered and set up nationwide — venues, temples, hotels, gardens and city streets.</p>
-      </div></div>
+      <div class="reel-card" data-reel data-flip>
+        <span class="reel-badge"><i></i> Real booking</span>
+        <video class="reel-vid" poster="../assets/mumbai2london/colour-smoke-poster.webp"
+               muted loop playsinline preload="metadata" aria-label="Colour smoke flares beside the decorated Mumbai2London rickshaw">
+          <source src="../assets/mumbai2london/colour-smoke.webm" type="video/webm">
+          <source src="../assets/mumbai2london/colour-smoke.mp4" type="video/mp4">
+        </video>
+        <div class="reel-cap">
+          <h3>Turns up <span>anywhere</span></h3>
+          <p>Delivered and set up nationwide — venues, temples, hotels, gardens and London city streets.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -501,16 +551,67 @@ footer small{color:#9b8468;font-size:12.5px}
     <div class="head-c rv">
       <span class="eyebrow">What we do</span>
       <h2>One rickshaw, <em>every occasion</em></h2>
-      <p class="lede">Hired nationwide and delivered ready to go — decorated, photogenic and always a talking point.</p>
+      <p class="lede">Whatever the occasion, the rickshaw turns up decorated, lit and ready — and it is guaranteed to make a statement.</p>
     </div>
     <div class="svc">
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/rickshaw-manor.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="14.4" r="4.9"/><circle cx="15.2" cy="10.4" r="4.9"/></svg></div><h3>Weddings</h3><p>Baraat entrances, couple portraits and a send-off nobody forgets.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/interior-garlands.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2c1.6 2 2.4 3.3 2.4 4.5A2.4 2.4 0 0 1 12 10a2.4 2.4 0 0 1-2.4-2.3c0-1.2.8-2.5 2.4-4.5z"/><path d="M3.8 13.6h16.4l-2.2 4.3a3 3 0 0 1-2.7 1.6H8.7a3 3 0 0 1-2.7-1.6l-2.2-4.3z"/></svg></div><h3>Mehndi &amp; Sangeet</h3><p>The perfect backdrop for henna nights, dancing and family photos.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/live-music.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8v4.1M12 17.1v4.1M2.8 12h4.1M17.1 12h4.1M5.5 5.5l2.9 2.9M15.6 15.6l2.9 2.9M18.5 5.5l-2.9 2.9M8.4 15.6l-2.9 2.9"/></svg></div><h3>Parties</h3><p>Birthdays, anniversaries and celebrations that need a showstopper.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/interior-dash.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.8A2.6 2.6 0 0 1 5.6 6.2h1.7l1.2-2.1h7l1.2 2.1h1.7A2.6 2.6 0 0 1 21 8.8v7.6a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 16.4V8.8z"/><circle cx="12" cy="12.4" r="3.5"/></svg></div><h3>Photo Booth</h3><p>Guests queue for it all night — garlands, props and pure colour.</p></article>
+      <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/night-glow.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.1l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8z"/></svg></div><h3>Proms</h3><p>Beat every limo on the drive — lights on, speakers up, phones out.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/rickshaw-market.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2h18v9.3A1.5 1.5 0 0 1 19.5 20h-15A1.5 1.5 0 0 1 3 18.5V9.2z"/><path d="M3.4 9.2 6 4.8l3.5 4.4M9.5 9.2 12.9 4.8l3.5 4.4M16.4 9.2 19.8 5.2"/></svg></div><h3>Films &amp; TV</h3><p>Authentic Mumbai styling for productions, shoots and music videos.</p></article>
       <article class="scard"><span class="ph" aria-hidden="true" style="background-image:url(../assets/mumbai2london/rickshaw-seafront.webp)"></span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6.4A1.4 1.4 0 0 1 5.4 5h6.2A1.4 1.4 0 0 1 13 6.4V20"/><path d="M13 10.8h5.6A1.4 1.4 0 0 1 20 12.2V20"/><path d="M2.4 20h19.2M7 8.8h2M7 12.6h2M16.2 14.6h1.8"/></svg></div><h3>Corporate &amp; Brand</h3><p>Launches, activations and festivals — a rolling brand moment.</p></article>
     </div>
+  </div>
+</section>
+
+<!-- WELCOME + LONDON AREAS -->
+<section class="sec welc" id="about">
+  <div class="wrap">
+    <div class="welc-in">
+      <div class="rv">
+        <span class="eyebrow">Namaste</span>
+        <div class="namaste">“Padharo Mhare Des”<small>Welcome to our land</small></div>
+        <h2>Ride in style with <em>Mumbai2London</em></h2>
+        <p>Bring colour, charm and excitement to your next celebration with Mumbai2London — <b>the UK’s premier
+          nationwide rickshaw hire service</b>. Whether it’s a wedding, mehndi night, birthday party, prom,
+          corporate event, photo booth feature or a grand wedding entrance, our rickshaw is guaranteed to make
+          a statement.</p>
+        <p>It comes fully kitted out with <b>vibrant decorations, dynamic lights and powerful speakers</b>,
+          tailored to suit your theme and event style. From elegant and romantic to bold and energetic — we make
+          every ride unforgettable, with a reliable, friendly and professional service from start to finish.</p>
+        <p>Our goal is to make every celebration unforgettable. By combining vibrant Indian culture with
+          exceptional presentation, we create unique experiences that bring people together, make lasting
+          impressions, and become one of the highlights of every event.</p>
+        <div class="gujwords">
+          <span>Padharo Mhare Des</span><span>Khadi Khamma</span><span>Aavo</span>
+          <span>Horn OK Please</span><span>The Rikshawala</span>
+        </div>
+      </div>
+      <figure class="welc-pic rv">
+        <img src="../assets/mumbai2london/london-street.webp" alt="Mumbai2London rickshaw parked outside a hotel in central London" loading="lazy">
+      </figure>
+    </div>
+
+    <details class="areas rv" id="areas">
+      <summary>
+        Rickshaw hire across London and the Home Counties
+        <span class="chev"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      </summary>
+      <p class="why">Tap to see everywhere we deliver. Same rickshaw, same service, wherever your venue is.</p>
+      <div class="cols">
+        <div><h4>Central London</h4><ul><li>Westminster</li><li>the City of London</li><li>Mayfair</li><li>Marylebone</li><li>Soho</li><li>Covent Garden</li><li>Bloomsbury</li><li>Kensington</li><li>Chelsea</li><li>Knightsbridge</li><li>Belgravia</li><li>Paddington</li><li>Camden</li><li>Islington</li><li>Shoreditch</li><li>Clerkenwell</li><li>Southwark</li><li>Lambeth</li><li>Waterloo</li><li>Pimlico</li><li>Fitzrovia</li><li>Holborn</li></ul></div>
+        <div><h4>North London</h4><ul><li>Wembley</li><li>Harrow</li><li>Brent</li><li>Barnet</li><li>Edgware</li><li>Kingsbury</li><li>Finchley</li><li>Hendon</li><li>Golders Green</li><li>Enfield</li><li>Haringey</li><li>Tottenham</li><li>Wood Green</li><li>Southgate</li><li>Stanmore</li><li>Pinner</li><li>Ruislip</li><li>Northwood</li><li>Watford</li><li>Borehamwood</li></ul></div>
+        <div><h4>West London</h4><ul><li>Ealing</li><li>Southall</li><li>Hounslow</li><li>Hayes</li><li>Uxbridge</li><li>Greenford</li><li>Acton</li><li>Chiswick</li><li>Hammersmith</li><li>Fulham</li><li>Richmond</li><li>Twickenham</li><li>Kingston upon Thames</li><li>Surbiton</li><li>Feltham</li><li>Heathrow</li><li>Brentford</li><li>Wembley Park</li><li>Northolt</li><li>Hillingdon</li></ul></div>
+        <div><h4>East London</h4><ul><li>Ilford</li><li>Redbridge</li><li>Barking</li><li>Dagenham</li><li>Romford</li><li>Newham</li><li>Stratford</li><li>East Ham</li><li>Walthamstow</li><li>Leyton</li><li>Hackney</li><li>Bethnal Green</li><li>Whitechapel</li><li>Canary Wharf</li><li>Woodford</li><li>Chigwell</li><li>Upminster</li><li>Hornchurch</li><li>Havering</li><li>Loughton</li></ul></div>
+        <div><h4>South London</h4><ul><li>Croydon</li><li>Wimbledon</li><li>Merton</li><li>Mitcham</li><li>Tooting</li><li>Streatham</li><li>Clapham</li><li>Brixton</li><li>Wandsworth</li><li>Battersea</li><li>Greenwich</li><li>Lewisham</li><li>Bromley</li><li>Sutton</li><li>Carshalton</li><li>Kingston</li><li>Morden</li><li>Thornton Heath</li><li>Purley</li><li>Dulwich</li></ul></div>
+        <div><h4>Home Counties</h4><ul><li>Slough</li><li>Reading</li><li>Watford</li><li>St Albans</li><li>Luton</li><li>Milton Keynes</li><li>Hemel Hempstead</li><li>Woking</li><li>Guildford</li><li>Epsom</li><li>Dartford</li><li>Gravesend</li><li>Brentwood</li><li>Chelmsford</li><li>Basildon</li><li>Southend-on-Sea</li><li>Windsor</li><li>Maidenhead</li><li>Aylesbury</li><li>High Wycombe</li></ul></div>
+      </div>
+      <p class="close">Mumbai2London provides Indian wedding rickshaw hire, baraat entrances, mehndi and sangeet
+        night hire, prom cars, photo booth hire and tuk tuk hire for parties, corporate events and film and TV
+        productions right across Greater London — and nationwide beyond it. If your venue isn’t listed, ask
+        anyway: we deliver, set up and collect wherever the celebration is.</p>
+    </details>
   </div>
 </section>
 
@@ -546,7 +647,7 @@ footer small{color:#9b8468;font-size:12.5px}
             <select id="ev" name="eventType" required>
               <option value="">Choose…</option>
               <option>Wedding</option><option>Mehndi night</option><option>Sangeet</option>
-              <option>Birthday / party</option><option>Photo booth</option><option>Film / TV shoot</option>
+              <option>Birthday / party</option><option>Prom</option><option>Photo booth</option><option>Film / TV shoot</option>
               <option>Corporate / brand event</option><option>Festival</option><option>Other</option>
             </select></div>
           <div class="two">
@@ -734,33 +835,33 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   })();
 })();
 
-/* ---------- bridal reel: 3D scrub + play only while visible ---------- */
+/* ---------- reel: 3D scrub on each card, play only while visible ---------- */
 (function(){
-  var card=document.getElementById('reelCard'), vid=document.getElementById('reelVid');
-  if(!card||!vid) return;
-  document.querySelectorAll('.reel-side').forEach(function(el){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.25});
-    io.observe(el);
-  });
+  var cards=[].slice.call(document.querySelectorAll('.reel-card[data-reel]'));
+  if(!cards.length) return;
+  /* each clip plays only while it is on screen, so phones aren't decoding two at once */
   var vo=new IntersectionObserver(function(es){
     es.forEach(function(e){
-      if(e.isIntersecting){ var q=vid.play(); if(q&&q.catch) q.catch(function(){}); }
-      else { vid.pause(); }
+      if(e.isIntersecting){ var q=e.target.play(); if(q&&q.catch) q.catch(function(){}); }
+      else { e.target.pause(); }
     });
   },{threshold:.2});
-  vo.observe(vid);
+  cards.forEach(function(c){ var v=c.querySelector('video'); if(v) vo.observe(v); });
   if(reduce) return;
   var raf=0;
   function upd(){
-    var r=card.getBoundingClientRect(), vh=innerHeight;
-    // p: 0 when the card is entering from below, 1 when it has left the top
-    var p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
-    var e=(p-0.5)*2;                       // -1 .. 1
-    var k=innerWidth<=920?0.5:1;           // gentler tilt on phones
-    card.style.setProperty('--ry',(e*-15*k).toFixed(2)+'deg');
-    card.style.setProperty('--rx',(Math.abs(e)*7*k).toFixed(2)+'deg');
-    card.style.setProperty('--rs',(1-Math.abs(e)*0.12*k).toFixed(3));
-    card.style.setProperty('--ty',(e*26*k).toFixed(1)+'px');
+    var vh=innerHeight, k=innerWidth<=920?0.5:1;   // gentler tilt on phones
+    cards.forEach(function(card){
+      var r=card.getBoundingClientRect();
+      // p: 0 when the card is entering from below, 1 when it has left the top
+      var p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
+      var e=(p-0.5)*2;                             // -1 .. 1
+      var f=card.hasAttribute('data-flip')?-1:1;   // the pair lean opposite ways
+      card.style.setProperty('--ry',(e*-15*k*f).toFixed(2)+'deg');
+      card.style.setProperty('--rx',(Math.abs(e)*7*k).toFixed(2)+'deg');
+      card.style.setProperty('--rs',(1-Math.abs(e)*0.12*k).toFixed(3));
+      card.style.setProperty('--ty',(e*26*k).toFixed(1)+'px');
+    });
     raf=0;
   }
   addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
@@ -780,7 +881,7 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!fab||!panel) return;
 
   var data={source:'chat', addons:[]}, step=0, started=false;
-  var EVENTS=['Wedding','Mehndi night','Sangeet','Birthday party','Photo booth','Film / TV shoot','Corporate / brand','Festival','Other'];
+  var EVENTS=['Wedding','Mehndi night','Sangeet','Birthday party','Prom','Photo booth','Film / TV shoot','Corporate / brand','Festival','Other'];
   var ADDONS=['Extra marigold garlands','Fairy lights / LED','Flower canopy','Personalised name board','Just Married sign','Red carpet'];
 
   function say(text,who){
