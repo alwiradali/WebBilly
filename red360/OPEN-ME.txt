@@ -1,0 +1,39 @@
+360RED PRODUCTIONS — Interactive Enterprise Virtual Tour Platform
+================================================================
+
+TO VIEW IT
+----------
+Just double-click  index.html.  That's it — no server, no install, no build.
+
+If you'd rather run it from VS Code:
+  1. Open this folder in VS Code
+  2. Install the "Live Server" extension
+  3. Right-click index.html → "Open with Live Server"
+
+WHAT'S HERE
+-----------
+  index.html   the shell — three screens in one page
+  app.css      the design system
+  app.js       the application (router, panels, search, guided tour, studio)
+  engine.js    the WebGL engine (no dependencies)
+  tour.js      THE TOUR — the only file you change per client
+  README.md    full technical documentation
+
+FIRST FIVE THINGS TO TRY
+------------------------
+  1. Start the tour, then click a glowing ring to walk through a doorway
+  2. Press Cmd+K (Mac) or Ctrl+K (Windows) and search for "board room"
+  3. Reception → left panel → "Flat panorama"
+  4. Studio → Branding → drag the accent colour picker
+  5. Studio → Hotspots → "Place a hotspot" → click inside the panorama
+
+IF THE SCREEN STAYS DARK
+------------------------
+The tour renders in 3D, so the browser needs hardware acceleration:
+  Edge/Chrome → Settings → System → "Use graphics acceleration when available"
+Turn it on, restart the browser, reopen. The page will tell you if something
+else is wrong — it never just hangs.
+
+Add ?q=lo to the address for a lighter render on older machines.
+
+Built by Billy Digitals.
