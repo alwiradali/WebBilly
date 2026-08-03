@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
-<title>VERTEX 360 — Charnwood House interactive tour · Billy Digitals</title>
-<meta name="description" content="A working 360° virtual tour platform: photosphere viewer, hotspot navigation, live floor plan, guided tour, deep links and a browser hotspot editor that exports the whole tour as JSON.">
+<title>360RED PRODUCTIONS — Charnwood House · interactive 360° tour</title>
+<meta name="description" content="An interactive 360° tour of an 18,500 sq ft two-floor office: photosphere viewer, hotspot navigation, live floor plan, guided tour, deep links and a browser hotspot editor that exports the whole tour as JSON. White-labelled for 360RED PRODUCTIONS.">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#04060f">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +23,8 @@
   --line:rgba(120,170,255,.16); --line2:rgba(120,170,255,.30);
   --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
   --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,monospace;
+  --g-soft:rgba(56,189,248,.24); --g-mid:rgba(34,211,238,.5);
+  --g-strong:rgba(34,211,238,.7); --g-tint:rgba(43,127,255,.18);
   --ease:cubic-bezier(.16,1,.3,1);
   --pad:clamp(12px,1.6vw,22px);
 }
@@ -31,7 +33,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidd
   overscroll-behavior:none;text-rendering:optimizeLegibility}
 button,input,select{font:inherit;color:inherit}
 a{color:inherit;text-decoration:none}
-::selection{background:rgba(34,211,238,.3)}
+::selection{background:var(--g-mid)}
 
 #vxApp{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;background:var(--bg);overflow:hidden}
 
@@ -65,7 +67,7 @@ a{color:inherit;text-decoration:none}
 .vx-brand{display:flex;align-items:center;gap:11px;flex:0 0 auto}
 .vx-orb{position:relative;width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center}
 .vx-orb::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c3);box-shadow:0 0 14px var(--c3)}
-.vx-orb::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(34,211,238,.35);
+.vx-orb::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--g-mid);
   border-top-color:transparent;border-left-color:transparent;animation:vxspin 3.6s linear infinite}
 @keyframes vxspin{to{transform:rotate(360deg)}}
 .vx-wordmark{font-family:var(--disp);font-weight:700;font-size:.86rem;letter-spacing:.24em;line-height:1}
@@ -83,7 +85,7 @@ a{color:inherit;text-decoration:none}
   background:rgba(9,14,28,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer;
   transition:border-color .25s,background .25s,color .25s,transform .25s var(--ease)}
 .vx-tool svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.vx-tool:hover{border-color:var(--line2);background:rgba(43,127,255,.16);transform:translateY(-1px)}
+.vx-tool:hover{border-color:var(--line2);background:var(--g-tint);transform:translateY(-1px)}
 .vx-tool.is-on{color:#04060f;background:linear-gradient(135deg,var(--c2),var(--c3));border-color:transparent}
 .vx-tool:focus-visible{outline:2px solid var(--c3);outline-offset:2px}
 #vxIdx{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--faint);padding-right:4px}
@@ -111,16 +113,16 @@ a{color:inherit;text-decoration:none}
   display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .25s}
 .vx-hot-ring{position:relative;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
   border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.09);backdrop-filter:blur(3px);
-  box-shadow:0 6px 26px rgba(0,0,0,.45),inset 0 0 22px rgba(56,189,248,.22);transition:transform .3s var(--ease),background .3s}
-.vx-hot-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(34,211,238,.55);
+  box-shadow:0 6px 26px rgba(0,0,0,.45),inset 0 0 22px var(--g-soft);transition:transform .3s var(--ease),background .3s}
+.vx-hot-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid var(--g-strong);
   animation:vxpulse 2.6s ease-out infinite}
 @keyframes vxpulse{0%{transform:scale(.82);opacity:.85}100%{transform:scale(1.28);opacity:0}}
 .vx-hot-arrow{width:12px;height:12px;border-right:2px solid #fff;border-top:2px solid #fff;transform:rotate(-45deg) translate(-2px,2px)}
-.vx-hot:hover .vx-hot-ring{transform:scale(1.12);background:rgba(56,189,248,.28)}
+.vx-hot:hover .vx-hot-ring{transform:scale(1.12);background:var(--g-mid)}
 .vx-hot-dot{position:relative;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 18px rgba(34,211,238,.5)}
+  background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 18px var(--g-mid)}
 .vx-hot-dot i{width:3px;height:3px;border-radius:50%;background:#04060f;box-shadow:0 -6px 0 #04060f}
-.vx-hot-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(34,211,238,.5);
+.vx-hot-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid var(--g-mid);
   animation:vxpulse 2.8s ease-out infinite}
 .vx-hot-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;
   padding:5px 10px;border-radius:7px;background:rgba(4,6,15,.72);border:1px solid var(--line);
@@ -148,7 +150,7 @@ a{color:inherit;text-decoration:none}
 .vx-thumb canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .5s}
 .vx-thumb.is-ready canvas{opacity:1}
 .vx-thumb::after{content:"";position:absolute;inset:0;border-radius:10px;box-shadow:inset 0 -28px 30px -18px rgba(4,6,15,.95)}
-.vx-card.is-on .vx-thumb{border-color:var(--c3);box-shadow:0 0 0 1px var(--c3),0 12px 30px rgba(34,211,238,.22)}
+.vx-card.is-on .vx-thumb{border-color:var(--c3);box-shadow:0 0 0 1px var(--c3),0 12px 30px var(--g-soft)}
 .vx-cardname{display:block;font-size:.76rem;font-weight:500;margin-top:8px;color:var(--dim);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .vx-card.is-on .vx-cardname{color:var(--ink)}
@@ -200,7 +202,7 @@ a{color:inherit;text-decoration:none}
 .vx-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:11px;font-size:.82rem;font-weight:500;
   border:1px solid var(--line);cursor:pointer;background:rgba(9,14,28,.6);transition:.28s var(--ease)}
 .vx-btn--go{background:linear-gradient(135deg,var(--c1),var(--c3));color:#04060f;border-color:transparent;font-weight:600}
-.vx-btn--go:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(43,127,255,.35)}
+.vx-btn--go:hover{transform:translateY(-2px);box-shadow:0 14px 34px var(--g-tint)}
 #vxDrawerClose{position:absolute;top:calc(var(--pad) + 6px);right:20px;width:34px;height:34px;border-radius:9px;
   border:1px solid var(--line);background:rgba(9,14,28,.6);cursor:pointer;color:var(--dim);font-size:1rem;line-height:1}
 #vxDrawerClose:hover{color:var(--ink);border-color:var(--line2)}
@@ -248,7 +250,7 @@ a{color:inherit;text-decoration:none}
 .vx-loadbar{position:relative;height:2px;margin:34px 0 12px;background:rgba(120,170,255,.16);border-radius:2px;overflow:hidden}
 #vxBar{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);
   background:linear-gradient(90deg,var(--c1),var(--c3));transition:transform .3s linear;
-  box-shadow:0 0 18px rgba(34,211,238,.7)}
+  box-shadow:0 0 18px var(--g-strong)}
 .vx-loadrow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:var(--faint)}
 .vx-loadfoot{margin-top:30px;font-size:.72rem;color:var(--faint);line-height:1.7}
 
@@ -292,8 +294,8 @@ a{color:inherit;text-decoration:none}
       <div class="vx-brand">
         <span class="vx-orb" aria-hidden="true"></span>
         <span>
-          <span class="vx-wordmark">VERTEX<span>360</span></span>
-          <span class="vx-sub">BILLY DIGITALS</span>
+          <span class="vx-wordmark" id="vxMark">360<span>RED</span></span>
+          <span class="vx-sub" id="vxSubMark">PRODUCTIONS</span>
         </span>
       </div>
 
@@ -383,7 +385,7 @@ a{color:inherit;text-decoration:none}
     <!-- loader -->
     <div id="vxLoad">
       <div class="vx-loadin">
-        <p class="vx-loadmark">VERTEX<span>360</span></p>
+        <p class="vx-loadmark" id="vxLoadMark">360<span>RED</span></p>
         <p class="vx-loadproj">Charnwood House · Leicester · 18,500 sq ft</p>
         <div class="vx-loadbar"><span id="vxBar"></span></div>
         <div class="vx-loadrow"><span id="vxLoadStage">Calibrating optics</span><span id="vxPct">0%</span></div>
@@ -399,6 +401,13 @@ a{color:inherit;text-decoration:none}
    Swap any scene to a real stitched capture with one line:  pano:"panos/x.jpg"
    ═══════════════════════════════════════════════════════════════════════════ */
 window.VERTEX_TOUR = {
+  /* WHITE LABEL — this block is the only thing that has to change to put the
+     viewer in someone else's colours. Every accent in the UI derives from it. */
+  brand: {
+    name: "360", nameAccent: "RED", sub: "PRODUCTIONS",
+    c1: "#b3121f", c2: "#ff2f3f", c3: "#ff6a45",
+    credit: "Tour engine by Billy Digitals"
+  },
   project: { name:"Charnwood House", slug:"charnwood-house", location:"Leicester, LE1", size:"18,500 sq ft" },
   autoDwell: 11000,
   autoOrder: ["arrival","atrium","cafe","event","board","studio","soar","focus","terrace"],
@@ -610,7 +619,10 @@ document.getElementById("vxAbout").addEventListener("click", function () {
   b.innerHTML = "<p>" + t.body + "</p>" + t.lists.map(function (l) {
     return "<h4>" + l[0] + "</h4><ul>" + l[1].map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul>";
   }).join("") +
-    '<a class="vx-btn vx-btn--go" style="margin-top:22px" href="/virtual-tour-360">What this costs →</a>';
+    '<h4>Credit</h4><p style="margin-top:-2px">' + (window.VERTEX_TOUR.brand.credit || "") +
+    ' — white-labelled for ' + window.VERTEX_TOUR.brand.name + window.VERTEX_TOUR.brand.nameAccent +
+    ' ' + window.VERTEX_TOUR.brand.sub + '. The brand block in tour.json is the only thing that changed.</p>' +
+    '<a class="vx-btn vx-btn--go" style="margin-top:14px" href="/virtual-tour-360">What this costs →</a>';
   d.classList.add("is-open");
   d.setAttribute("aria-hidden", "false");
 });

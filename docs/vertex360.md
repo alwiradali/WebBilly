@@ -26,6 +26,23 @@ window.VERTEX_TOUR = {
 };
 ```
 
+### Branding (white label)
+
+```js
+brand: {
+  name: "360", nameAccent: "RED", sub: "PRODUCTIONS",
+  c1: "#b3121f", c2: "#ff2f3f", c3: "#ff6a45",
+  credit: "Tour engine by Billy Digitals"
+}
+```
+
+That block is the only thing that changes to put the viewer in someone else's
+colours. The engine writes `--c1/--c2/--c3` onto `:root` and derives every
+accent glow (`--g-soft`, `--g-mid`, `--g-strong`, `--g-tint`) from them, so
+hotspots, the plan radar, the active thumbnail, tabs, the progress bar and the
+loader all follow. Omit `credit` for no attribution at all. The demo tour ships
+white-labelled for 360RED PRODUCTIONS.
+
 ### A scene
 
 ```js

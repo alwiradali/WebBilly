@@ -1552,6 +1552,37 @@
      ═════════════════════════════════════════════════════════════════════════ */
 
   var bootStart = now();
+
+  /* ── white label ────────────────────────────────────────────────────────
+     One block in tour.json repaints the entire viewer. Accent glows are
+     derived from the brand colours so nothing has to be kept in sync. */
+  (function brand() {
+    var B = CFG.brand || {}, root = document.documentElement.style;
+    function rgba(hex, a) {
+      hex = String(hex || "").replace("#", "");
+      if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      var n = parseInt(hex, 16);
+      if (isNaN(n)) return null;
+      return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+    }
+    if (B.c1) { root.setProperty("--c1", B.c1); root.setProperty("--g-tint", rgba(B.c1, .26)); }
+    if (B.c2) { root.setProperty("--c2", B.c2); root.setProperty("--g-soft", rgba(B.c2, .24)); }
+    if (B.c3) {
+      root.setProperty("--c3", B.c3);
+      root.setProperty("--g-mid", rgba(B.c3, .5));
+      root.setProperty("--g-strong", rgba(B.c3, .7));
+    }
+    if (B.name != null) {
+      var mark = B.name + (B.nameAccent ? "<span>" + B.nameAccent + "</span>" : "");
+      ["#vxMark", "#vxLoadMark"].forEach(function (sel) { var n = $(sel); if (n) n.innerHTML = mark; });
+    }
+    var sub = $("#vxSubMark"); if (sub && B.sub != null) sub.textContent = B.sub;
+    var proj = $(".vx-loadproj");
+    if (proj && CFG.project) {
+      proj.textContent = [CFG.project.name, CFG.project.location, CFG.project.size].filter(Boolean).join(" · ");
+    }
+  })();
+
   buildRail();
   buildPlan();
 
