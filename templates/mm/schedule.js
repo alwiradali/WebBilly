@@ -82,6 +82,15 @@
   }
 
   function render() {
+    // With nothing in the calendar at all, a grid of empty cells above four
+    // greyed-out filters reads as broken rather than as "no classes yet".
+    if (!events.length) {
+      msg('No classes are scheduled at the moment. ' +
+          '<a href="#booking">Send an enquiry</a> and I\'ll let you know as soon as the ' +
+          'next group runs, and what\'s left in it.');
+      return;
+    }
+
     var shown = visible();
     var byDay = {};
     shown.forEach(function (e) {
@@ -95,9 +104,10 @@
     LEVELS.forEach(function (l) {
       var n = l.key === 'all' ? events.length
             : events.filter(function (e) { return e.level.key === l.key; }).length;
+      // "All classes" stays clickable even when a level filter is active
       html += '<button class="cal-fil ' + l.cls + (filter === l.key ? ' on' : '') +
               '" data-level="' + l.key + '" role="tab"' +
-              (n ? '' : ' disabled') + '>' + l.label +
+              (n || l.key === 'all' ? '' : ' disabled') + '>' + l.label +
               '<span class="cal-n">' + n + '</span></button>';
     });
     html += '</div>';
