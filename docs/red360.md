@@ -101,6 +101,29 @@ buttons, hotspots, the radar cone, focus rings, progress bars, the plan
 glazing line — derives from them. There is no hard-coded brand colour in the
 CSS. Studio → Branding edits it live.
 
+## Three renderers
+
+Some integrated GPUs — Intel HD through ANGLE and Direct3D in particular —
+cannot link the full shader. The link fails and takes the GL context with it.
+So the engine tries three renderers in order, remembers the one that worked,
+and never shows the same machine a failure twice:
+
+| tier | what it is | when |
+|---|---|---|
+| 0 `full` | ray-marched, gloss reflections, soft shadows | any modern GPU |
+| 1 `compact` | ray-marched, no secondary marches, shorter loops | older integrated graphics |
+| 2 `lite` | one analytic ray/box intersection, **no loops at all** | anything that can run WebGL |
+
+Each furniture set is compiled as its own program rather than eleven inside
+one shader, which cuts the instruction count at every march site by roughly an
+order of magnitude. Force a tier with `?tier=0|1|2`; `?compat=1` is shorthand
+for tier 1.
+
+At tier 2 the synthesised rooms lose their furniture. Nothing else changes —
+tour, hotspots, floor plans, navigation, Studio and **real captured
+panoramas** are all unaffected, because a photographed tour never touches this
+shader.
+
 ## Performance
 
 Previews for every room bake first (1024 × 512), then the active room bakes to

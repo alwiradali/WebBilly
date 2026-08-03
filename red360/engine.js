@@ -102,7 +102,7 @@
   ].join("\n");
 
   /* ── 1a · the baker: ray-marches a room into equirectangular space ─────── */
-  var BAKE_FS = [
+  var BAKE_BODY = [
     "precision highp float;",
     "uniform vec2  uRes;",       // panorama size
     "uniform vec3  uRoom;",      // interior w,h,d (metres)
@@ -193,7 +193,8 @@
     "  float L=uLayout;",
 
     /* 0 — reception */
-    "  if(L<0.5){",
+    "#if LAYOUT==0",
+    "  {",
     "    vec3 dp=p-vec3(0.0,0.0,-d+1.35);",
     "    r=um(r, vec2(sdRBox(dp-vec3(0.0,0.52,0.0), vec3(1.75,0.52,0.34), 0.05), MD));",
     "    r=um(r, vec2(sdRBox(dp-vec3(0.0,1.06,0.03), vec3(1.86,0.03,0.42), 0.02), MT));",
@@ -215,7 +216,9 @@
     "  }",
 
     /* 1 — atrium + social stair */
-    "  else if(L<1.5){",
+    "#endif",
+    "#if LAYOUT==1",
+    "  {",
     "    float k=clamp(floor((p.z+d-0.5)/0.42), 0.0, 8.0);",
     "    vec3 sp=p-vec3(0.0,0.0,-d+0.5+k*0.42+0.21);",
     "    float hgt=0.20+(8.0-k)*0.20;",
@@ -257,7 +260,9 @@
     "  }",
 
     /* 2 — café / kitchen */
-    "  else if(L<2.5){",
+    "#endif",
+    "#if LAYOUT==2",
+    "  {",
     "    vec3 cp=p-vec3(0.0,0.0,-d+1.1);",
     "    r=um(r, vec2(sdRBox(cp-vec3(0.0,0.50,0.0), vec3(2.5,0.50,0.36),0.04), MA));",
     "    r=um(r, vec2(sdRBox(cp-vec3(0.0,1.02,0.02), vec3(2.6,0.03,0.42),0.02), MT));",
@@ -280,7 +285,9 @@
     "  }",
 
     /* 3 — event hall */
-    "  else if(L<3.5){",
+    "#endif",
+    "#if LAYOUT==3",
+    "  {",
     "    r=um(r, vec2(sdBox(p-vec3(0.0,0.22,-d+1.6), vec3(w*0.66,0.22,1.5)), MD));",
     "    r=um(r, vec2(sdBox(p-vec3(0.0,2.15,-d+0.10), vec3(w*0.52,1.05,0.05)), MS));",
     "    r=um(r, vec2(sdBox(p-vec3(0.0,2.15,-d+0.17), vec3(w*0.50,1.0,0.01)), ME));",
@@ -297,7 +304,9 @@
     "  }",
 
     /* 4 — boardroom */
-    "  else if(L<4.5){",
+    "#endif",
+    "#if LAYOUT==4",
+    "  {",
     "    vec3 tp=p; tp.x*=0.52;",
     "    r=um(r, vec2(sdRBox(tp-vec3(0.0,0.74,0.0), vec3(0.62,0.03,1.05),0.03), MD));",
     "    r=um(r, vec2(sdBox(p-vec3(0.0,0.36,0.0), vec3(0.9,0.36,0.28)), MM));",
@@ -318,7 +327,9 @@
     "  }",
 
     /* 5 — open studio floor */
-    "  else if(L<5.5){",
+    "#endif",
+    "#if LAYOUT==5",
+    "  {",
     "    vec3 dp=p; dp.x=rep1(dp.x,3.2,1.0); dp.z=rep1(dp.z,2.6,1.0);",
     "    vec3 db=dp; db.z=abs(db.z)-0.42;",
     "    r=um(r, vec2(desk(db, vec2(1.35,0.40)), MD));",
@@ -340,7 +351,9 @@
     "  }",
 
     /* 6 — meeting room */
-    "  else if(L<6.5){",
+    "#endif",
+    "#if LAYOUT==6",
+    "  {",
     "    r=um(r, vec2(sdRBox(p-vec3(0.0,0.73,0.0), vec3(1.25,0.03,0.55),0.03), MD));",
     "    vec3 lg=vec3(abs(p.x)-0.95,p.y,p.z);",
     "    r=um(r, vec2(sdBox(lg-vec3(0.0,0.36,0.0), vec3(0.05,0.36,0.42)), MM));",
@@ -358,7 +371,9 @@
     "  }",
 
     /* 7 — focus booths */
-    "  else if(L<7.5){",
+    "#endif",
+    "#if LAYOUT==7",
+    "  {",
     "    vec3 bp=p-vec3(0.0,0.0,-d+1.0); bp.x=rep1(bp.x,2.05,1.0);",
     "    float back=sdBox(bp-vec3(0.0,1.15,-0.62), vec3(0.92,1.15,0.06));",
     "    float side=sdBox(vec3(abs(bp.x)-0.92,bp.y,bp.z)-vec3(0.0,1.15,0.0), vec3(0.06,1.15,0.62));",
@@ -376,7 +391,9 @@
     "  }",
 
     /* 8 — terrace lounge */
-    "  else if(L<8.5){",
+    "#endif",
+    "#if LAYOUT==8",
+    "  {",
     "    vec3 sp=p-vec3(-1.2,0.0,0.6);",
     "    r=um(r, vec2(sdRBox(sp-vec3(0.0,0.22,0.0), vec3(1.5,0.20,0.45),0.10), MB));",
     "    r=um(r, vec2(sdRBox(sp-vec3(0.0,0.48,-0.34), vec3(1.5,0.24,0.10),0.08), MB));",
@@ -396,7 +413,9 @@
     "  }",
 
     /* 9 — hallway */
-    "  else if(L<9.5){",
+    "#endif",
+    "#if LAYOUT==9",
+    "  {",
     "    vec3 dp=p; dp.z=rep1(dp.z,3.2,2.0);",
     "    vec3 sd=vec3(dp.x-(w-0.05), dp.y, dp.z);",
     "    r=um(r, vec2(sdBox(sd-vec3(0.0,1.06,0.0), vec3(0.055,1.06,0.58)), MM));",
@@ -415,7 +434,9 @@
     "  }",
 
     /* 10 — lounge */
-    "  else {",
+    "#endif",
+    "#if LAYOUT==10",
+    "  {",
     "    r=um(r, vec2(sdBox(p-vec3(0.0,0.005,0.3), vec3(2.4,0.005,1.85)), MR));",
     "    r=um(r, vec2(sofa(p-vec3(0.0,0.0,-1.45),1.45), MB));",
     "    vec3 s2=p-vec3(0.0,0.0,2.05); s2.z=-s2.z;",
@@ -440,6 +461,7 @@
     "    r=um(r, vec2(sdSph(pd,0.115), ME));",
     "    r=um(r, vec2(sdCyl(pd-vec3(0.0,0.40,0.0),0.40,0.006), MM));",
     "  }",
+    "#endif",
     "  return r;",
     "}",
 
@@ -451,7 +473,7 @@
     "}",
     "vec2 march(vec3 ro, vec3 rd, float mx){",
     "  float t=0.02, m=0.0;",
-    "  for(int i=0;i<128;i++){",
+    "  for(int i=0;i<STEPS;i++){",
     "    vec3 p=ro+rd*t; vec2 h=map(p);",
     "    if(abs(h.x)<0.0012*t+0.0006){ m=h.y; break; }",
     "    t+=h.x*0.92; if(t>mx){ m=0.0; break; }",
@@ -460,7 +482,7 @@
     "}",
     "float shadow(vec3 ro, vec3 rd, float mx){",
     "  float res=1.0, t=0.05;",
-    "  for(int i=0;i<28;i++){",
+    "  for(int i=0;i<SHSTEPS;i++){",
     "    float h=map(ro+rd*t).x;",
     "    if(h<0.002) return 0.06;",
     "    res=min(res, 9.0*h/t); t+=clamp(h,0.03,0.5);",
@@ -470,7 +492,7 @@
     "}",
     "float ao(vec3 p, vec3 n){",
     "  float s=0.0, sca=1.0;",
-    "  for(int i=0;i<5;i++){",
+    "  for(int i=0;i<AOTAPS;i++){",
     "    float hh=0.014+0.11*float(i);",
     "    s+=(hh-map(p+n*hh).x)*sca; sca*=0.72;",
     "  }",
@@ -624,11 +646,16 @@
     "      return lightAt(p,n,rd,alb,rough,vec3(0.0),MM,ao(p,n),true);",
     "    }",
     "    vec3 out1 = sky(refract(rd,-n,1.0)==vec3(0.0)?rd:rd);",
+    "#if COMPAT==0",
     "    vec3 refl = render_cheap_flag(p,n,rd);",
+    "#else",
+    "    vec3 refl = sky(reflect(rd,n));",
+    "#endif",
     "    return mix(out1, refl, 0.10) * (0.94+0.06*uWarm);",
     "  }",
     "  vec3 col = lightAt(p,n,rd,alb,rough,emis,m,ao(p,n),true);",
     /* one gloss bounce for polished floors / stone / screens */
+    "#if COMPAT==0",
     "  if(rough<0.34 && m!=MG){",
     "    vec3 R=reflect(rd,n);",
     "    vec2 h2=march(p+n*0.02,R,40.0);",
@@ -642,6 +669,7 @@
     "    float fres=0.04+0.5*pow(1.0-max(dot(-rd,n),0.0),4.0);",
     "    col=mix(col, rc, clamp(fres*(1.0-rough*2.2),0.0,0.55));",
     "  }",
+    "#endif",
     "  return col;",
     "}",
 
@@ -669,6 +697,105 @@
         "else { vec3 pr=p+n*0.03+R*hr.x; vec3 nr=normal(pr); vec3 ar,er; float rr;",
         "surf(pr,nr,hr.y,ar,rr,er); refl=lightAt(pr,nr,R,ar,rr,er,hr.y,ao(pr,nr),false); }"].join("\n"))
     .replace("vec3 out1 = sky(refract(rd,-n,1.0)==vec3(0.0)?rd:rd);", "vec3 out1 = sky(rd);");
+
+  /* One program per furniture set, not one program containing all eleven.
+     ANGLE/Direct3D rejects the combined shader on older integrated graphics —
+     it links past the driver's instruction budget and takes the GL context
+     with it. Specialising by layout cuts the compiled size by roughly an
+     order of magnitude; COMPAT drops the two secondary ray-marches for the
+     drivers that still can't take it. */
+  function bakeSource(layout, compat) {
+    return "#define LAYOUT " + (layout | 0) + "\n" +
+      "#define COMPAT " + (compat ? 1 : 0) + "\n" +
+      "#define STEPS " + (compat ? 88 : 128) + "\n" +
+      "#define SHSTEPS " + (compat ? 12 : 28) + "\n" +
+      "#define AOTAPS " + (compat ? 3 : 5) + "\n" +
+      BAKE_BODY;
+  }
+
+
+  /* ── 1c · the lite renderer ────────────────────────────────────────────
+     No ray-marching, no loops, no SDFs — one analytic ray/box intersection
+     and a face shade. It is the shader that compiles when nothing else will,
+     on hardware a decade old. Rooms lose their furniture; the tour, the
+     hotspots, the plan, the navigation and any real captured panorama are
+     completely unaffected. */
+  var LITE_FS = [
+    "precision mediump float;",
+    "uniform vec2  uRes;",
+    "uniform vec3  uRoom, uCam, uWall, uFlr, uAcc, uLit;",
+    "uniform float uGlazeA, uGlazeB, uWarm, uOpen, uExpo, uSeed, uCity;",
+    "float hash21(vec2 p){ vec3 p3=fract(vec3(p.xyx)*0.1031); p3+=dot(p3,p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }",
+    "vec3 sky(vec3 rd){",
+    "  float t=clamp(rd.y*0.5+0.5,0.0,1.0);",
+    "  vec3 zen=mix(vec3(0.26,0.44,0.86), vec3(0.16,0.30,0.72), uWarm);",
+    "  vec3 hz =mix(vec3(0.86,0.90,0.97), vec3(1.00,0.86,0.72), uWarm);",
+    "  vec3 c=mix(hz, zen, smoothstep(0.5,0.94,t));",
+    "  vec3 sun=normalize(vec3(0.55,0.30,-0.78));",
+    "  float sd=max(dot(rd,sun),0.0);",
+    "  c+=vec3(1.0,0.88,0.70)*pow(sd,900.0)*7.0 + vec3(1.0,0.82,0.62)*pow(sd,10.0)*0.20;",
+    "  if(rd.y<0.06){",
+    "    float ang=atan(rd.x,rd.z);",
+    "    float hgt=(0.02+hash21(vec2(floor(ang*8.0),1.0))*0.10)*uCity;",
+    "    vec3 bc=mix(hz*0.9, vec3(0.13,0.16,0.24), 0.7);",
+    "    c=mix(c, bc, step(rd.y,hgt)*0.9);",
+    "    c=mix(c, vec3(0.16,0.18,0.19), smoothstep(0.0,-0.10,rd.y)*0.92);",
+    "  }",
+    "  return c;",
+    "}",
+    "vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }",
+    "void main(){",
+    "  vec2 uv = gl_FragCoord.xy / uRes;",
+    "  float lon=(uv.x-0.5)*6.2831853, lat=(uv.y-0.5)*3.14159265;",
+    "  vec3 rd = vec3(cos(lat)*sin(lon), sin(lat), -cos(lat)*cos(lon));",
+    "  vec3 ro = uCam;",
+    "  vec3 bmin = vec3(-uRoom.x*0.5, 0.0, -uRoom.z*0.5);",
+    "  vec3 bmax = vec3( uRoom.x*0.5, uRoom.y,  uRoom.z*0.5);",
+    "  vec3 sd = sign(rd) * max(abs(rd), vec3(1e-5));",
+    "  vec3 tm = (mix(bmin, bmax, step(0.0, sd)) - ro) / sd;",
+    "  float t = min(min(tm.x, tm.y), tm.z);",
+    "  vec3 p = ro + rd * t;",
+    "  vec3 col;",
+    "  bool up = (t == tm.y) && rd.y > 0.0;",
+    "  bool dn = (t == tm.y) && rd.y <= 0.0;",
+    "  if(up && uOpen > 0.5) { col = sky(rd); }",
+    "  else if(dn){",                                   /* floor */
+    "    vec2 g = p.xz;",
+    "    float seam = min(abs(fract(g.x/1.2)-0.5), abs(fract(g.y/1.2)-0.5));",
+    "    float fall = 1.0 - clamp(length(g)/max(uRoom.x,uRoom.z), 0.0, 0.55);",
+    "    col = uFlr * (0.42 + 0.42*fall);",
+    "    col *= mix(0.55, 1.0, smoothstep(0.0, 0.035, seam));",
+    "    col += uLit * 0.10 * pow(max(0.0, 1.0 - abs(fract(g.x/2.6)-0.5)*3.4), 6.0);",
+    "  }",
+    "  else if(up){",                                   /* ceiling + light lines */
+    "    float strip = abs(fract(p.x/(uRoom.x*0.33))-0.5)*(uRoom.x*0.33);",
+    "    float inRun = step(abs(p.z), uRoom.z*0.36);",
+    "    col = uWall * 0.16;",
+    "    col += uLit * 3.2 * step(strip, 0.08) * inRun;",
+    "  }",
+    "  else {",                                         /* walls + glazing */
+    "    bool xf = (t == tm.x);",
+    "    float face = xf ? (rd.x < 0.0 ? 2.0 : 3.0) : (rd.z < 0.0 ? 0.0 : 1.0);",
+    "    bool glazed = abs(face-uGlazeA) < 0.5 || abs(face-uGlazeB) < 0.5;",
+    "    if(glazed){",
+    "      float u = xf ? p.z : p.x;",
+    "      float bar = min(abs(fract(u/1.55)-0.5)*1.55, abs(fract(p.y/2.3)-0.5)*2.3);",
+    "      col = bar < 0.035 ? vec3(0.05,0.055,0.065) : sky(rd)*0.96;",
+    "    } else {",
+    "      col = uWall * (0.40 + 0.42*smoothstep(0.0, uRoom.y, p.y));",
+    "      col *= mix(0.55, 1.0, smoothstep(0.0, 0.02, abs(p.y-2.42)));",
+    "      if(p.y < 0.10) col = uWall * 0.34;",
+    "      if(abs(face-0.0) < 0.5) col = mix(col, uAcc, 0.55*step(abs(p.x), uRoom.x*0.22)*step(1.0, p.y)*step(p.y, 2.9));",
+    "      col += uLit * 0.16 * smoothstep(uRoom.y*0.62, uRoom.y, p.y);",
+    "    }",
+    "  }",
+    "  col *= uExpo * 0.92;",
+    "  col = aces(col);",
+    "  col = pow(col, vec3(1.0/2.2));",
+    "  col += (hash21(gl_FragCoord.xy+uSeed)-0.5)*0.014;",
+    "  gl_FragColor = vec4(col, 1.0);",
+    "}"
+  ].join("\n");
 
   /* ── 1b · the viewer: equirect → perspective, with cross-dissolve ─────── */
   var VIEW_FS = [
@@ -747,12 +874,72 @@
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    var progBake = program(BAKE_FS), progView = program(VIEW_FS);
-    if (!progBake || !progView) {
+    var progView = program(VIEW_FS);
+    if (!progView) {
       on.error({
         title: "This GPU couldn't compile the renderer",
-        message: "Each space is built by a shader, and the graphics driver rejected it. Updating the driver " +
-          "usually resolves it — or open the tour on another machine.",
+        message: "The viewer is built by a shader and the graphics driver rejected it. Updating the graphics " +
+          "driver usually resolves it — or open the tour on another machine.",
+        detail: shaderLog, diag: diag.join("\n")
+      });
+      return null;
+    }
+
+    /* Three renderers, hardest first. Some integrated GPUs — Intel HD through
+       ANGLE and Direct3D especially — cannot link the full shader; the link
+       fails and takes the GL context with it. So each tier is tried in turn,
+       the working one is remembered, and a machine that needs a lower tier
+       never sees a failure twice.
+
+         0  full     ray-marched, reflections, soft shadows
+         1  compact  ray-marched, no secondary marches, shorter loops
+         2  lite     analytic ray/box — no loops at all, compiles anywhere */
+    var TIERS = ["full", "compact", "lite"];
+    var TIER = 0, bakeProgs = {}, shaderFailed = false;
+    try { TIER = Math.min(2, Math.max(0, parseInt(localStorage.getItem("red360:tier"), 10) || 0)); } catch (e) { }
+    var tq = /[?&]tier=([0-2])/.exec(location.search);
+    if (tq) TIER = +tq[1];
+    if (/[?&]compat=1/.test(location.search)) TIER = Math.max(TIER, 1);
+    if (TIER) diag.push("starting on the " + TIERS[TIER] + " renderer");
+
+    function rememberTier(t) { try { localStorage.setItem("red360:tier", String(t)); } catch (e) { } }
+    function reloadOnce() {
+      var done = false;
+      try { done = sessionStorage.getItem("red360:tier-reload") === "1"; } catch (e) { }
+      if (done) return false;
+      try { sessionStorage.setItem("red360:tier-reload", "1"); } catch (e) { }
+      location.reload();
+      return true;
+    }
+
+    function bakeProgram(layout) {
+      layout = layout | 0;
+      if (bakeProgs[layout + ":" + TIER]) return bakeProgs[layout + ":" + TIER];
+      if (shaderFailed) return null;
+      for (var t = TIER; t <= 2; t++) {
+        shaderLog = "";
+        var prog = (t === 2) ? program(LITE_FS) : program(bakeSource(layout, t));
+        if (prog) {
+          if (t !== TIER) { TIER = t; rememberTier(t); diag.push("renderer → " + TIERS[t]); }
+          bakeProgs[layout + ":" + t] = prog;
+          return prog;
+        }
+        diag.push("the " + TIERS[t] + " renderer was rejected: " + ((shaderLog || "no log").split("\n")[0]));
+        /* a failed link often loses the context — reload straight into the
+           next tier rather than limping on a dead one */
+        if (gl.isContextLost()) {
+          rememberTier(Math.min(2, t + 1));
+          shaderFailed = true;
+          if (reloadOnce()) return null;
+          break;
+        }
+      }
+      shaderFailed = true;
+      on.error({
+        title: "This GPU couldn't compile the renderer",
+        message: "Each space is drawn by a shader, and this graphics driver rejected every version of it — " +
+          "including the one written for older hardware. Updating the graphics driver almost always resolves " +
+          "it. A tour built from real captured panoramas does not use this shader at all and would still run.",
         detail: shaderLog, diag: diag.join("\n")
       });
       return null;
@@ -817,8 +1004,8 @@
     }
     var GLAZE = { "-z": 0, "+z": 1, "-x": 2, "+x": 3, "": -1, none: -1 };
 
-    function bakeUniforms(room, w, h) {
-      var R = room.space || {}, P = R.palette || {}, u = progBake.u;
+    function bakeUniforms(room, prog, w, h) {
+      var R = room.space || {}, P = R.palette || {}, u = prog.u;
       gl.uniform2f(u.uRes, w, h);
       gl.uniform3f(u.uRoom, R.w || 10, R.h || 3, R.d || 10);
       gl.uniform3f(u.uCam, (R.cam && R.cam[0]) || 0, R.eye || 1.62, (R.cam && R.cam[1]) || 0);
@@ -879,12 +1066,14 @@
       }
       var room = byId[job.id];
       if (!room) { job.done = true; return; }
+      var progBake = bakeProgram((room.space && room.space.layout) || 0);
+      if (!progBake) { job.done = true; return; }
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, job.target.tex, 0);
       gl.useProgram(progBake.p);
       gl.bindBuffer(gl.ARRAY_BUFFER, quad);
       gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-      bakeUniforms(room, job.w, job.h);
+      bakeUniforms(room, progBake, job.w, job.h);
       gl.viewport(0, 0, job.w, job.h);
       var band = Math.ceil(job.h / job.rows), t0 = now();
       gl.enable(gl.SCISSOR_TEST);
@@ -1288,6 +1477,7 @@
         cam.pitch = cam.tPitch = s.pitch || 0;
         cam.fov = cam.tFov = s.fov || 75;
         cam.yaw -= 22; cam.fov = Math.min(100, cam.fov + 8);   // settle into the opening view
+        if (room.space && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
         needLo(room, true); needHi(room, true);
         (room.links || []).forEach(function (l) { needLo(byId[l.to || l]); });
         on.room(room, null);
@@ -1378,6 +1568,7 @@
       transitioning: function () { return trans.t < 1; },
       resize: resize,
       diagnostics: function () { return diag.join("\n"); },
+      renderer: function () { return TIERS[TIER]; },
       destroy: function () {
         destroyed = true;
         host.removeEventListener("pointerdown", down);

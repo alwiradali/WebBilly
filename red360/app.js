@@ -1445,10 +1445,17 @@
       "<h2>" + esc(e.title) + "</h2>" +
       "<p>" + e.message + "</p>" +
       '<p class="failure-act">' +
-      '<button class="btn btn--primary" id="failLo">Try it in low quality</button>' +
+      '<button class="btn btn--primary" id="failCompat">Use the compatibility renderer</button>' +
+      '<button class="btn" id="failLo">Try it in low quality</button>' +
       '<button class="btn" id="failDetail">Show technical detail</button></p>' +
       '<pre id="failPre" hidden>' + esc((e.detail || "") + "\n" + (e.diag || "")) + "</pre>";
     $("#app").appendChild(box);
+    $("#failCompat").onclick = function () {
+      try { localStorage.setItem("red360:tier", "2"); sessionStorage.removeItem("red360:tier-reload"); } catch (e) { }
+      var u = new URL(location.href);
+      u.searchParams.set("tier", "2");
+      location.href = u.toString();
+    };
     $("#failLo").onclick = function () {
       var u = new URL(location.href);
       u.searchParams.set("q", "lo");

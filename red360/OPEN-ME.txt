@@ -27,13 +27,20 @@ FIRST FIVE THINGS TO TRY
   4. Studio → Branding → drag the accent colour picker
   5. Studio → Hotspots → "Place a hotspot" → click inside the panorama
 
-IF THE SCREEN STAYS DARK
-------------------------
-The tour renders in 3D, so the browser needs hardware acceleration:
-  Edge/Chrome → Settings → System → "Use graphics acceleration when available"
-Turn it on, restart the browser, reopen. The page will tell you if something
-else is wrong — it never just hangs.
+IF SOMETHING GOES WRONG
+-----------------------
+The page always tells you what happened — it never just hangs.
 
-Add ?q=lo to the address for a lighter render on older machines.
+Older graphics chips can't compile the full 3D renderer. The engine detects
+that and drops to a simpler one automatically, remembering the choice. You can
+also force it by adding to the address:
+
+  ?tier=1   simpler renderer
+  ?tier=2   simplest renderer — works on anything that runs WebGL
+  ?q=lo     smaller panoramas, for slower machines
+
+If the screen stays black, hardware acceleration is switched off:
+  Edge/Chrome → Settings → System → "Use graphics acceleration when available"
+Turn it on and restart the browser.
 
 Built by Billy Digitals.
