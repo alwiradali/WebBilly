@@ -29,6 +29,39 @@ img{max-width:100%;display:block}
 .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
 ::selection{background:var(--saffron);color:#231204}
 
+/* ---------- floating reviews ---------- */
+.revs{position:relative;overflow:hidden}
+.revs.empty{display:none}
+.rv-rail{display:flex;gap:clamp(14px,2vw,22px);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;padding:34px 0 40px;margin-top:14px;cursor:grab}
+.rv-rail::-webkit-scrollbar{display:none}
+.rv-rail.drag{cursor:grabbing;scroll-snap-type:none}
+.rv-card{scroll-snap-align:center;flex:0 0 min(340px,80vw);position:relative;
+  background:linear-gradient(165deg,rgba(46,28,13,.96),rgba(26,15,7,.96));
+  border:1px solid rgba(240,178,67,.26);border-radius:24px;padding:26px 24px 22px;
+  box-shadow:0 30px 70px -34px rgba(0,0,0,.95);
+  animation:rvFloat 7s ease-in-out infinite;will-change:transform}
+.rv-card:nth-child(2n){animation-duration:8.4s;animation-delay:-1.6s}
+.rv-card:nth-child(3n){animation-duration:9.2s;animation-delay:-3.1s}
+@keyframes rvFloat{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-13px) rotate(.5deg)}}
+.rv-card .qm{position:absolute;top:10px;right:20px;font-family:var(--ser);font-size:64px;line-height:1;
+  color:rgba(240,178,67,.16);pointer-events:none}
+.rv-stars{display:flex;gap:3px;margin-bottom:12px}
+.rv-stars svg{width:16px;height:16px;color:var(--marigold)}
+.rv-card p{color:#eadcc6;font-weight:300;font-size:15px;line-height:1.6;min-height:96px}
+.rv-who{display:flex;align-items:center;gap:11px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(240,178,67,.16)}
+.rv-who .rv-av{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;
+  background:var(--grad);color:#231204;font-weight:800;font-size:16px;line-height:1;font-family:var(--dis)}
+.rv-who b{display:block;font-size:14.4px;font-weight:600}
+.rv-who span{display:block;color:var(--muted);font-size:12.4px;font-weight:300}
+.rv-nav{display:flex;gap:9px;justify-content:center;margin-top:2px}
+.rv-nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(240,178,67,.3);
+  background:rgba(0,0,0,.3);color:var(--marigold);cursor:pointer;display:grid;place-items:center}
+.rv-nav button:hover{border-color:var(--marigold);background:rgba(255,201,60,.12)}
+.rv-nav button svg{width:17px;height:17px}
+.rv-hint{text-align:center;color:var(--muted);font-size:12.5px;font-weight:300;margin-top:10px}
+@media(prefers-reduced-motion:reduce){.rv-card{animation:none}}
+
 /* ---------- location autocomplete ---------- */
 .ac{position:relative}
 .ac-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;display:none;
@@ -606,6 +639,23 @@ footer small{color:#9b8468;font-size:12.5px}
 </section>
 
 <!-- WELCOME + LONDON AREAS -->
+<!-- REVIEWS -->
+<section class="sec revs empty" id="reviews">
+  <div class="wrap">
+    <div class="head-c rv">
+      <span class="eyebrow">Kind words</span>
+      <h2>What our <em>customers say</em></h2>
+      <p class="lede">Real reviews from real bookings — swipe to read more.</p>
+    </div>
+    <div class="rv-rail" id="rvRail"></div>
+    <div class="rv-nav">
+      <button type="button" id="rvPrev" aria-label="Previous review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button type="button" id="rvNext" aria-label="Next review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <p class="rv-hint">Swipe or drag to see more</p>
+  </div>
+</section>
+
 <section class="sec welc" id="about">
   <div class="wrap">
     <div class="welc-in">
@@ -948,6 +998,84 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('resize',upd,{passive:true}); upd();
 })();
 
+/* ---------- floating reviews ----------------------------------------
+   REVIEWS is empty on purpose. Nothing invented goes on a live client
+   site — paste Himansu's real reviews in below and the section appears
+   by itself; leave it empty and the whole section stays hidden.
+
+     {name:"Priya S.", where:"Wedding, Bhaktivedanta Manor", stars:5,
+      text:"..." }
+
+   Or pull his Google reviews in automatically: set GPLACE_ID to his
+   Google Business Profile place ID and reuse the Places key from the
+   location autocomplete above.
+--------------------------------------------------------------------- */
+(function(){
+  var REVIEWS = [];
+  var GPLACE_ID = "";          /* <-- his Google place ID, optional */
+
+  var sec=document.getElementById('reviews'), rail=document.getElementById('rvRail');
+  if(!sec||!rail) return;
+
+  function esc(x){ return String(x==null?'':x).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+  var STAR='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.4-5.8-3-5.8 3 1.1-6.4L2.6 9.4l6.5-.9z"/></svg>';
+
+  function draw(list){
+    if(!list.length){ sec.classList.add('empty'); return; }
+    rail.innerHTML = list.map(function(r){
+      var n=Math.max(1,Math.min(5,r.stars||5));
+      var initial=(r.name||'?').trim().charAt(0).toUpperCase();
+      return '<article class="rv-card"><span class="qm" aria-hidden="true">&rdquo;</span>'+
+        '<div class="rv-stars" aria-label="'+n+' out of 5">'+new Array(n+1).join(STAR)+'</div>'+
+        '<p>'+esc(r.text)+'</p>'+
+        '<div class="rv-who"><span class="rv-av" aria-hidden="true">'+esc(initial)+'</span>'+
+        '<div><b>'+esc(r.name)+'</b>'+(r.where?'<span>'+esc(r.where)+'</span>':'')+'</div></div></article>';
+    }).join('');
+    sec.classList.remove('empty');
+    wire();
+  }
+
+  function wire(){
+    var step=function(){ var c=rail.querySelector('.rv-card'); return c?c.getBoundingClientRect().width+18:320; };
+    document.getElementById('rvPrev').onclick=function(){ rail.scrollBy({left:-step(),behavior:'smooth'}); };
+    document.getElementById('rvNext').onclick=function(){ rail.scrollBy({left: step(),behavior:'smooth'}); };
+    /* drag with a mouse; touch swiping is native overflow scrolling */
+    var down=false,x0=0,l0=0,moved=0;
+    rail.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='touch') return;
+      down=true;moved=0;x0=e.clientX;l0=rail.scrollLeft;rail.classList.add('drag');rail.setPointerCapture(e.pointerId);
+    });
+    rail.addEventListener('pointermove',function(e){
+      if(!down) return; var d=e.clientX-x0; moved=Math.max(moved,Math.abs(d)); rail.scrollLeft=l0-d;
+    });
+    ['pointerup','pointercancel'].forEach(function(ev){
+      rail.addEventListener(ev,function(){ down=false; rail.classList.remove('drag'); });
+    });
+    rail.addEventListener('click',function(e){ if(moved>6) e.preventDefault(); },true);
+  }
+
+  /* real Google reviews, if a place ID and key are configured */
+  function fromGoogle(){
+    if(!GPLACE_ID || !window.google || !google.maps || !google.maps.importLibrary) return false;
+    try{
+      google.maps.importLibrary('places').then(function(lib){
+        var place=new lib.Place({id:GPLACE_ID});
+        place.fetchFields({fields:['reviews']}).then(function(){
+          var rows=(place.reviews||[]).map(function(r){
+            return { name:(r.authorAttribution&&r.authorAttribution.displayName)||'Google reviewer',
+                     where:'Google review', stars:r.rating, text:r.text };
+          }).filter(function(r){ return r.text; }).slice(0,8);
+          if(rows.length) draw(rows);
+        }).catch(function(){});
+      }).catch(function(){});
+      return true;
+    }catch(e){ return false; }
+  }
+
+  draw(REVIEWS);
+  if(GPLACE_ID) setTimeout(fromGoogle, 1200);
+})();
+
 /* ---------- keep the booking shortcut out of the form's way ---------- */
 (function(){
   var fab=document.getElementById('chatFab'), book=document.getElementById('book');
@@ -1212,6 +1340,34 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   fab.addEventListener('click',open_);
   x.addEventListener('click',close_);
   addEventListener('keydown',function(e){ if(e.key==='Escape'&&panel.classList.contains('on')) close_(); });
+
+  /* Open by itself after 15 seconds — but only once per visit, only if the
+     visitor hasn't already opened or closed it, and never while they're
+     filling the booking form or reading with the tab in the background. */
+  (function(){
+    var KEY='m2l_chat_auto';
+    try{ if(sessionStorage.getItem(KEY)) return; }catch(e){}
+    var cancelled=false;
+    function stop(){ cancelled=true; }
+    fab.addEventListener('click',stop); x.addEventListener('click',stop);
+
+    var waited=0;
+    var tick=setInterval(function(){
+      if(cancelled||panel.classList.contains('on')){ clearInterval(tick); return; }
+      if(document.hidden) return;                 /* don't burn the timer in a background tab */
+      waited++;
+      if(waited<15) return;
+      clearInterval(tick);
+      var book=document.getElementById('book');
+      if(book){                                    /* they're already booking — leave them alone */
+        var r=book.getBoundingClientRect();
+        if(r.top<innerHeight*0.85 && r.bottom>0) return;
+      }
+      try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+      open_();
+      if(document.activeElement===input) input.blur();   /* don't force a keyboard up on a phone */
+    },1000);
+  })();
 })();
 
 /* ---------- calendar ---------- */
