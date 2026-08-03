@@ -426,6 +426,8 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
       access_key:W3F_KEY,
       subject:'Chemistry tuition enquiry — '+v('level'),
       from_name:'Molecular Miracles website',
+      // so hitting reply in Gmail answers the parent, not the form service
+      replyto:v('email'),
       name:v('pname'), email:v('email'), phone:v('phone'),
       'Pupil':v('sname'), 'Course':v('level'), 'Preferred days':v('mode'),
       'Location':v('area'), 'Notes':v('msg')
