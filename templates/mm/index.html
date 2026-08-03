@@ -302,6 +302,7 @@
             <div class="fld"><label for="msg">Anything I should know?</label><textarea id="msg" placeholder="Current grade, topics they struggle with, any additional support needs…"></textarea></div>
             <input type="checkbox" class="hp" id="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
             <button type="submit" class="btn btn-p">Send My Enquiry →</button>
+            <p class="err" id="bkErr">Sorry — that didn't send. Please email <a href="mailto:molecularmiracletutoring@gmail.com">molecularmiracletutoring@gmail.com</a> or <a href="https://wa.me/447708907247" target="_blank" rel="noopener">message on WhatsApp</a> and I'll come straight back to you.</p>
             <p class="fine">Goes straight to Lynsey · reply within 24 hours · no obligation</p>
           </form>
         </div>
@@ -400,15 +401,47 @@ addEventListener('scroll',()=>{
   prog.style.transform='scaleX('+p+')';
 },{passive:true});
 
+/* Booking enquiries go through Web3Forms — a hosted form endpoint, so the
+   site stays static and needs no Worker of its own. It replaces a mailto:
+   link that opened the visitor's own mail app and relied on them pressing
+   send; on desktops with no mail client configured it did nothing at all,
+   while the form still claimed the enquiry had been sent. */
+var W3F_KEY = 'PASTE_WEB3FORMS_ACCESS_KEY_HERE';
+
 document.getElementById('bkForm').addEventListener('submit',function(e){
   e.preventDefault();
   if(document.getElementById('botcheck').checked)return;
-  const v=id=>document.getElementById(id).value.trim();
+  var form=this, v=function(id){return document.getElementById(id).value.trim();};
   if(!v('pname')||!v('email')||!v('level')){alert('Please fill in your name, email and the course.');return;}
-  const body=`Parent/Guardian: ${v('pname')}%0D%0AEmail: ${v('email')}%0D%0APhone: ${v('phone')}%0D%0APupil: ${v('sname')}%0D%0ACourse: ${v('level')}%0D%0APreferred days: ${v('mode')}%0D%0ALocation: ${v('area')}%0D%0A%0D%0ANotes:%0D%0A${encodeURIComponent(v('msg'))}`;
-  window.location.href=`mailto:molecularmiracletutoring@gmail.com?subject=${encodeURIComponent('Chemistry tuition enquiry — '+v('level'))}&body=${body}`;
-  this.style.display='none';
-  document.getElementById('ok').classList.add('on');
+
+  var btn=form.querySelector('button[type=submit]');
+  var label=btn.textContent;
+  btn.disabled=true; btn.textContent='Sending…';
+  var err=document.getElementById('bkErr'); err.classList.remove('on');
+
+  fetch('https://api.web3forms.com/submit',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body:JSON.stringify({
+      access_key:W3F_KEY,
+      subject:'Chemistry tuition enquiry — '+v('level'),
+      from_name:'Molecular Miracles website',
+      name:v('pname'), email:v('email'), phone:v('phone'),
+      'Pupil':v('sname'), 'Course':v('level'), 'Preferred days':v('mode'),
+      'Location':v('area'), 'Notes':v('msg')
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(!d.success) throw new Error(d.message||'failed');
+    form.style.display='none';
+    document.getElementById('ok').classList.add('on');
+  })
+  .catch(function(){
+    // Never claim an enquiry was sent when it was not — give them a route out.
+    btn.disabled=false; btn.textContent=label;
+    err.classList.add('on');
+  });
 });
 </script>
 <script src="schedule.js" defer></script>
