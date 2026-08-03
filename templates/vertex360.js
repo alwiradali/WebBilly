@@ -1030,6 +1030,7 @@
   var planFloor = null, planNodes = {};
   function buildPlan() {
     var floors = CFG.floors || [];
+    var coneCol = (CFG.brand && CFG.brand.c3) || "#22d3ee";
     var tabs = $("#vxPlanTabs");
     floors.forEach(function (f) {
       var b = el("button", "vx-ptab", f.short || f.name);
@@ -1043,7 +1044,7 @@
       svgWrap.innerHTML =
         '<svg viewBox="0 0 100 72" aria-hidden="true">' +
         '<defs><radialGradient id="vxcone' + f.id + '" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox">' +
-        '<stop offset="0" stop-color="#22d3ee" stop-opacity=".85"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>' +
+        '<stop offset="0" stop-color="' + coneCol + '" stop-opacity=".85"/><stop offset="1" stop-color="' + coneCol + '" stop-opacity="0"/>' +
         '</radialGradient></defs>' +
         '<g class="vx-plangeo">' + (f.plan || "") + '</g>' +
         '<g class="vx-planpins"></g></svg>';
