@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<title>360RED PRODUCTIONS · Interactive Enterprise Virtual Tours</title>
+<meta name="description" content="An interactive enterprise virtual tour platform: immersive 360° walkthrough of an 18,500 sq ft two-floor office, live floor plans, hotspot media, guided tour and a built-in content studio.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#08080B">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ══ icon set ══ -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="2.4"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M6 5l9 7-9 7z" fill="currentColor" stroke="none"/><path d="M18 5v14"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M18 5l-9 7 9 7z" fill="currentColor" stroke="none"/><path d="M6 5v14"/></symbol>
+  <symbol id="i-gyro" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="3.6" ry="8.5"/><path d="M3.5 12h17"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M10 13.6a4 4 0 0 0 6 .5l2.6-2.6a4 4 0 0 0-5.7-5.7L11.6 7"/><path d="M14 10.4a4 4 0 0 0-6-.5L5.4 12.5a4 4 0 0 0 5.7 5.7L12.4 17"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 11v5.4"/><circle cx="12" cy="7.9" r=".95" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.4"/><circle cx="9" cy="10" r="1.6"/><path d="m4.5 17 4.6-4.3 3.4 3 3-2.6 4 3.9"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3.5h7.5L18 8v12.5H6z"/><path d="M13.5 3.5V8H18M9 12.5h6M9 16h6"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 11 13"/><path d="M18 14.5v4a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6h4"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.5l-1.9-5.7L4.5 11 10.1 9z"/><path d="M18.5 3.5v3M20 5h-3"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M12.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5 3.5 7v12.5L9 17l6 2.5 5.5-2.5V4.5L15 7z"/><path d="M9 4.5V17M15 7v12.5"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.2"/><path d="M9.5 4.5v15"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.6 2.6 0 0 0-3.7-3.7L4.3 16.3z"/><path d="m14.5 6.5 3.4 3.4"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4.5M7.5 9 12 4.5 16.5 9"/><path d="M4.5 15v3.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V15"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.5V16M7.5 11.5 12 16l4.5-4.5"/><path d="M4.5 15v3.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V15"/></symbol>
+  <symbol id="i-rooms" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.6"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.6"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.6"/><rect x="13" y="13" width="7.5" height="7.5" rx="1.6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6.5-6.1 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 14.9 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.4"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.3 0 1.9-.9 1.9-1.8 0-1.5-1.2-1.7-1.2-2.8 0-.9.7-1.6 1.7-1.6h1.7a4.4 4.4 0 0 0 4.4-4.4c0-3.6-3.8-6.4-8.5-6.4z"/><circle cx="8" cy="10" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-publish" viewBox="0 0 24 24"><path d="M12 19V5.5M7 10.5 12 5.5l5 5"/><path d="M4.5 20h15"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4.8h4V7M6.5 7l.8 12.2h9.4L17.5 7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.6 4.5L19 7.5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M9.5 20v-6h5v6"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></symbol>
+  <symbol id="i-speed" viewBox="0 0 24 24"><path d="M12 13.5V8"/><path d="M4.2 17a8.8 8.8 0 1 1 15.6 0z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 14a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V20a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H10a1.6 1.6 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V10a1.6 1.6 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.1"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+</svg>
+
+<div id="app">
+
+  <!-- ══════════════════ DASHBOARD ══════════════════ -->
+  <section class="view view--dash is-active" id="viewDash" aria-label="Project overview">
+    <div class="dash scroll grain" id="dashScroll">
+      <div class="dash-bg" aria-hidden="true"></div>
+      <div class="dash-inner">
+
+        <header class="topbar">
+          <div class="brand">
+            <span class="brand-orb" id="brandOrbDash" aria-hidden="true"></span>
+            <span>
+              <span class="brand-word" id="brandWordDash"></span>
+              <span class="brand-sub" id="brandSubDash"></span>
+            </span>
+          </div>
+          <nav class="topbar-nav">
+            <button class="navlink is-on" data-nav="dash">Overview</button>
+            <button class="navlink" data-nav="tour">Tour</button>
+            <button class="navlink" data-nav="studio">Studio</button>
+          </nav>
+        </header>
+
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="t-eyebrow" id="heroEyebrow"></p>
+            <h1 class="t-display t-h1" id="heroTitle"></h1>
+            <p class="t-lead" id="heroSummary"></p>
+            <div class="hero-actions">
+              <button class="btn btn--primary btn--lg" id="btnStart">
+                <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
+                Start the tour
+              </button>
+              <button class="btn btn--lg" id="btnGuided">
+                <svg viewBox="0 0 24 24"><use href="#i-map"/></svg>
+                Guided walkthrough
+              </button>
+            </div>
+            <div class="hero-meta" id="heroMeta"></div>
+          </div>
+
+          <div class="preview" id="previewBox">
+            <div id="stageDash"><canvas id="gl"></canvas></div>
+            <div class="preview-chrome">
+              <div class="preview-top"><i></i><span id="previewProject"></span></div>
+              <div class="preview-bottom">
+                <div class="preview-room">
+                  <span id="previewRoom">—</span>
+                  <span id="previewMeta"></span>
+                </div>
+                <button class="btn btn--sm preview-play" id="btnPreviewEnter">
+                  Enter <svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="preview-loading" id="previewLoading">
+              <div class="loader-in" style="width:min(280px,70%)">
+                <div class="loader-bar"><span class="loader-fill" id="previewFill"></span></div>
+                <div class="loader-row"><span id="previewStage">Calibrating optics</span><span id="previewPct">0%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="t-eyebrow">Project</p>
+              <h2 class="t-h2" style="margin-top:8px" id="projName"></h2>
+            </div>
+            <p class="t-mono" id="projCaptured"></p>
+          </div>
+          <div class="statgrid" id="statGrid"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="t-eyebrow">Positions</p>
+              <h2 class="t-h2" style="margin-top:8px">Every space we captured</h2>
+            </div>
+            <div class="segmented" id="dashFloors"></div>
+          </div>
+          <div class="roomgrid" id="roomGrid"></div>
+        </section>
+
+        <footer class="dash-foot">
+          <span id="creditDash"></span>
+          <span class="t-mono" id="buildInfo"></span>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ TOUR ══════════════════ -->
+  <section class="view view--tour" id="viewTour" aria-label="Virtual tour">
+    <div id="stageTour"></div>
+    <div id="hotspots"></div>
+
+    <header class="tour-ui" id="tourTop">
+      <button class="icon-btn" id="btnHome" title="Overview" aria-label="Back to overview">
+        <svg viewBox="0 0 24 24"><use href="#i-home"/></svg>
+      </button>
+      <div class="brand" style="margin-right:4px">
+        <span class="brand-orb" id="brandOrbTour" aria-hidden="true"></span>
+        <span><span class="brand-word" id="brandWordTour"></span></span>
+      </div>
+      <div class="tour-title">
+        <h2 id="roomName">—</h2>
+        <p id="roomMeta"></p>
+      </div>
+      <div class="tour-tools">
+        <button class="searchbtn" id="btnSearch" aria-label="Search rooms">
+          <svg viewBox="0 0 24 24"><use href="#i-search"/></svg>
+          <span>Search rooms…</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <button class="icon-btn" id="btnPlay" title="Guided tour  ·  Space" aria-label="Guided tour" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
+        </button>
+        <button class="icon-btn hide-xs" id="btnGyro" title="Motion control" aria-label="Motion control" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><use href="#i-gyro"/></svg>
+        </button>
+        <button class="icon-btn hide-sm" id="btnShot" title="Export a still" aria-label="Export still">
+          <svg viewBox="0 0 24 24"><use href="#i-camera"/></svg>
+        </button>
+        <button class="icon-btn hide-sm" id="btnShare" title="Copy a link to this view" aria-label="Share this view">
+          <svg viewBox="0 0 24 24"><use href="#i-share"/></svg>
+        </button>
+        <button class="icon-btn hide-sm" id="btnPanels" title="Hide panels  ·  Tab" aria-label="Toggle panels">
+          <svg viewBox="0 0 24 24"><use href="#i-panel"/></svg>
+        </button>
+        <button class="icon-btn hide-sm" id="btnStudio" title="Content studio" aria-label="Content studio">
+          <svg viewBox="0 0 24 24"><use href="#i-edit"/></svg>
+        </button>
+        <button class="icon-btn" id="btnFull" title="Fullscreen  ·  F" aria-label="Fullscreen">
+          <svg viewBox="0 0 24 24"><use href="#i-expand"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <aside class="panel side side--left" id="panelLeft" aria-label="Room information">
+      <div class="side-head">
+        <h3 id="sideTitle">—</h3>
+        <button class="icon-btn icon-btn--sm" id="btnCloseLeft" aria-label="Close panel">
+          <svg viewBox="0 0 24 24"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <div class="side-body scroll">
+        <div class="roommeta" id="sideChips"></div>
+        <p class="side-desc" id="sideDesc"></p>
+        <dl class="dl" id="sideStats" style="margin-top:16px"></dl>
+        <p class="side-label">In this space</p>
+        <div class="hslist" id="sideHotspots"></div>
+        <p class="side-label">Move to</p>
+        <div class="hslist" id="sideLinks"></div>
+      </div>
+    </aside>
+
+    <aside class="panel side side--right" id="panelRight" aria-label="Floor plan">
+      <div class="side-head">
+        <h3>Floor plan</h3>
+        <button class="icon-btn icon-btn--sm" id="btnCloseRight" aria-label="Close panel">
+          <svg viewBox="0 0 24 24"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <div class="side-body">
+        <div class="floorswitch" id="floorSwitch"></div>
+        <div class="plan" id="planHost"></div>
+        <div class="plan-legend"><span><i></i>You are here</span><span id="planFloorName"></span></div>
+      </div>
+    </aside>
+
+    <div class="transport panel is-off" id="transport">
+      <button class="icon-btn icon-btn--sm" id="btnPrev" title="Previous  ·  ←" aria-label="Previous space">
+        <svg viewBox="0 0 24 24"><use href="#i-prev"/></svg>
+      </button>
+      <button class="icon-btn icon-btn--sm is-on" id="btnPlayPause" title="Pause" aria-label="Pause guided tour">
+        <svg viewBox="0 0 24 24"><use href="#i-pause"/></svg>
+      </button>
+      <button class="icon-btn icon-btn--sm" id="btnNext" title="Next  ·  →" aria-label="Next space">
+        <svg viewBox="0 0 24 24"><use href="#i-next"/></svg>
+      </button>
+      <div class="transport-track"><span class="transport-fill" id="transportFill"></span></div>
+      <button class="transport-speed" id="btnSpeed" title="Playback speed">1.0×</button>
+    </div>
+
+    <p class="telemetry" id="telemetry">AZ 000°  EL +0°  FOV 75°</p>
+    <p class="sharpen" id="sharpen">SHARPENING · FULL RESOLUTION</p>
+
+    <div class="hint panel" id="hint">
+      <svg viewBox="0 0 24 24"><use href="#i-drag"/></svg>
+      <span class="hint-full">Drag to look around · scroll to zoom · click a ring to walk through</span>
+      <span class="hint-short">Drag to look · tap a ring to walk through</span>
+    </div>
+
+    <div class="mobile-dock" id="mobileDock">
+      <button class="btn btn--sm" id="dockInfo"><svg viewBox="0 0 24 24"><use href="#i-info"/></svg> Details</button>
+      <button class="btn btn--sm" id="dockMap"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg> Plan</button>
+      <button class="btn btn--sm" id="dockMore"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg> More</button>
+    </div>
+
+    <nav class="tour-ui" id="filmstrip" aria-label="All positions">
+      <div class="strip-wrap scroll" id="stripWrap"></div>
+    </nav>
+  </section>
+
+  <!-- ══════════════════ STUDIO ══════════════════ -->
+  <section class="view view--studio" id="viewStudio" aria-label="Content studio">
+    <div class="studio">
+      <div class="studio-rail" id="studioRail">
+        <div class="studio-rail-head">
+          <div class="brand">
+            <span class="brand-orb" id="brandOrbStudio" aria-hidden="true"></span>
+            <span>
+              <span class="brand-word" id="brandWordStudio"></span>
+              <span class="brand-sub">CONTENT STUDIO</span>
+            </span>
+          </div>
+        </div>
+        <nav class="studio-nav" id="studioNav">
+          <button data-tab="rooms" class="is-on"><svg viewBox="0 0 24 24"><use href="#i-rooms"/></svg> Rooms</button>
+          <button data-tab="hotspots"><svg viewBox="0 0 24 24"><use href="#i-pin"/></svg> Hotspots</button>
+          <button data-tab="plans"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg> Floor plans</button>
+          <button data-tab="brand"><svg viewBox="0 0 24 24"><use href="#i-palette"/></svg> Branding</button>
+          <button data-tab="publish"><svg viewBox="0 0 24 24"><use href="#i-publish"/></svg> Publish</button>
+        </nav>
+        <div class="studio-rail-foot">
+          <button class="btn btn--sm btn--block" id="btnStudioExit">
+            <svg viewBox="0 0 24 24"><use href="#i-eye"/></svg> Back to tour
+          </button>
+        </div>
+      </div>
+
+      <div class="studio-main">
+        <header class="studio-top">
+          <button class="icon-btn icon-btn--sm" id="btnRailToggle" aria-label="Menu" style="display:none">
+            <svg viewBox="0 0 24 24"><use href="#i-panel"/></svg>
+          </button>
+          <div>
+            <h2 id="studioTitle">Rooms</h2>
+            <p id="studioSub">Every position in the tour</p>
+          </div>
+          <div class="studio-top-act">
+            <span class="chip" id="saveState"><i></i> Saved</span>
+            <button class="btn btn--sm btn--primary" id="btnStudioPublish">
+              <svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Publish
+            </button>
+          </div>
+        </header>
+        <div class="studio-body scroll" id="studioBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ OVERLAYS ══════════════════ -->
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="panel sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head">
+      <div style="flex:1;min-width:0">
+        <p class="t-eyebrow" id="sheetKind"></p>
+        <h3 id="sheetTitle"></h3>
+      </div>
+      <button class="icon-btn icon-btn--sm" id="btnSheetClose" aria-label="Close">
+        <svg viewBox="0 0 24 24"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body scroll" id="sheetBody"></div>
+    <div class="sheet-foot" id="sheetFoot"></div>
+  </aside>
+
+  <div class="panel palette" id="palette" role="dialog" aria-modal="true" aria-label="Search">
+    <div class="palette-input">
+      <svg viewBox="0 0 24 24"><use href="#i-search"/></svg>
+      <input id="paletteInput" type="text" placeholder="Search rooms, hotspots and actions…" autocomplete="off" spellcheck="false">
+      <span class="kbd">esc</span>
+    </div>
+    <div class="palette-list scroll" id="paletteList"></div>
+    <div class="palette-foot">
+      <span><span class="kbd">↑</span><span class="kbd">↓</span> navigate</span>
+      <span><span class="kbd">↵</span> open</span>
+      <span style="margin-left:auto" id="paletteCount"></span>
+    </div>
+  </div>
+
+  <p class="panel" id="toast" role="status" aria-live="polite"></p>
+
+  <div id="loader">
+    <div class="loader-in">
+      <div class="loader-mark">
+        <span class="brand-orb" id="brandOrbLoad" aria-hidden="true"></span>
+        <span>
+          <span class="brand-word" id="brandWordLoad"></span>
+          <span class="brand-sub" id="brandSubLoad"></span>
+        </span>
+      </div>
+      <div class="loader-bar"><span class="loader-fill" id="loadFill"></span></div>
+      <div class="loader-row"><span id="loadStage">Calibrating optics</span><span id="loadPct">0%</span></div>
+      <p class="t-body" style="margin-top:26px;font-size:.8rem" id="loadNote"></p>
+    </div>
+  </div>
+</div>
+
+<script src="tour.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
