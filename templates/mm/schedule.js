@@ -25,8 +25,12 @@
 
 (function () {
   var CONFIG = {
-    calendarId: '',   // e.g. 'abc123@group.calendar.google.com'
-    apiKey: '',       // e.g. 'AIzaSy...'
+    // Lynsey's "Molecular Miracles Classes" calendar, public, on her own
+    // Google account. The key is restricted to her two domains and to the
+    // Calendar API only — it is safe in this public repo, but it is the
+    // referrer restriction doing that work, so do not remove it.
+    calendarId: 'bef34ce678f5a10579ef6f74060abe0cacbaa9f29f84514995989f3dec11e180@group.calendar.google.com',
+    apiKey: 'AIzaSyAd9k2Aa3bHjRVxIJ6WnK6jP9ER6de99dg',
     weeksAhead: 6,
     maxEvents: 12
   };
