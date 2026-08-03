@@ -49,12 +49,87 @@
   var stage = $("#vxStage"), canvas = $("#vxGL");
   if (!stage || !canvas) return;
 
+  /* ── white label ────────────────────────────────────────────────────────
+     One block in tour.json repaints the entire viewer. Accent glows are
+     derived from the brand colours so nothing has to be kept in sync. */
+  (function brand() {
+    var B = CFG.brand || {}, root = document.documentElement.style;
+    function rgba(hex, a) {
+      hex = String(hex || "").replace("#", "");
+      if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      var n = parseInt(hex, 16);
+      if (isNaN(n)) return null;
+      return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+    }
+    if (B.c1) { root.setProperty("--c1", B.c1); root.setProperty("--g-tint", rgba(B.c1, .26)); }
+    if (B.c2) { root.setProperty("--c2", B.c2); root.setProperty("--g-soft", rgba(B.c2, .24)); }
+    if (B.c3) {
+      root.setProperty("--c3", B.c3);
+      root.setProperty("--g-mid", rgba(B.c3, .5));
+      root.setProperty("--g-strong", rgba(B.c3, .7));
+    }
+    if (B.name != null) {
+      var mark = B.name + (B.nameAccent ? "<span>" + B.nameAccent + "</span>" : "");
+      ["#vxMark", "#vxLoadMark"].forEach(function (sel) { var n = $(sel); if (n) n.innerHTML = mark; });
+    }
+    var sub = $("#vxSubMark"); if (sub && B.sub != null) sub.textContent = B.sub;
+    var proj = $(".vx-loadproj");
+    if (proj && CFG.project) {
+      proj.textContent = [CFG.project.name, CFG.project.location, CFG.project.size].filter(Boolean).join(" · ");
+    }
+  })();
+
+
+  /* Anything that stops the engine has to SAY so. A loading bar that never
+     moves is the worst possible error message. */
+  var diag = [];
+  function fail(title, why, detail) {
+    var load = document.getElementById("vxLoad");
+    if (load) load.style.display = "none";
+    var box = document.createElement("div");
+    box.className = "vx-fail";
+    var esc = function (s) { return String(s).replace(/[<&]/g, function (c) { return c === "<" ? "&lt;" : "&amp;"; }); };
+    box.innerHTML = "<h2>" + esc(title) + "</h2><p>" + why + "</p>" +
+      '<p class="vx-fail-act"><button type="button" id="vxFailLo">Try it in low quality</button>' +
+      '<button type="button" id="vxFailDiag">Show technical detail</button></p>' +
+      '<pre id="vxFailPre" hidden>' + esc((detail || "") + "\n" + diag.join("\n")) + "</pre>";
+    stage.appendChild(box);
+    var lo = box.querySelector("#vxFailLo");
+    lo.onclick = function () {
+      var u = new URL(location.href); u.searchParams.set("q", "lo"); location.href = u.toString();
+    };
+    box.querySelector("#vxFailDiag").onclick = function () {
+      var p = box.querySelector("#vxFailPre"); p.hidden = !p.hidden;
+    };
+    console.error("VERTEX360 — " + title, detail || "", diag.join("\n"));
+  }
+
   var gl = null;
+  var tries = [
+    { antialias: false, alpha: false, preserveDrawingBuffer: true, powerPreference: "high-performance" },
+    { antialias: false, alpha: false, preserveDrawingBuffer: true },
+    {}
+  ];
+  for (var ti = 0; ti < tries.length && !gl; ti++) {
+    try { gl = canvas.getContext("webgl", tries[ti]) || canvas.getContext("experimental-webgl", tries[ti]); }
+    catch (e) { diag.push("getContext " + ti + ": " + e.message); }
+  }
+  if (!gl) {
+    stage.classList.add("vx-nogl");
+    fail("This browser can't start WebGL",
+      "The tour renders in 3D, so it needs hardware acceleration switched on. In Edge or Chrome open " +
+      "<b>Settings → System → Use graphics acceleration when available</b>, turn it on and restart the browser. " +
+      "If it's already on, your graphics driver may need updating — or open this link in a different browser.",
+      "canvas.getContext('webgl') returned null on all three attempts.");
+    return;
+  }
   try {
-    gl = canvas.getContext("webgl", { antialias: false, alpha: false, preserveDrawingBuffer: true, powerPreference: "high-performance" })
-      || canvas.getContext("experimental-webgl", { antialias: false, alpha: false, preserveDrawingBuffer: true });
-  } catch (e) { /* handled below */ }
-  if (!gl) { stage.classList.add("vx-nogl"); return; }
+    var dbg = gl.getExtension("WEBGL_debug_renderer_info");
+    diag.push("renderer: " + (dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)));
+    diag.push("vendor: " + (dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR)));
+    diag.push("version: " + gl.getParameter(gl.VERSION));
+    diag.push("max texture: " + gl.getParameter(gl.MAX_TEXTURE_SIZE));
+  } catch (e) { }
 
   /* ═════════════════════════════════════════════════════════════════════════
      1 · SHADERS
@@ -631,11 +706,12 @@
      2 · GL PLUMBING
      ═════════════════════════════════════════════════════════════════════════ */
 
+  var shaderLog = "";
   function compile(type, src) {
     var s = gl.createShader(type);
     gl.shaderSource(s, src); gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-      console.error("VERTEX360 shader:", gl.getShaderInfoLog(s));
+      shaderLog += (gl.getShaderInfoLog(s) || "unknown compile error") + "\n";
       return null;
     }
     return s;
@@ -647,7 +723,7 @@
     gl.attachShader(p, v); gl.attachShader(p, f);
     gl.bindAttribLocation(p, 0, "aP");
     gl.linkProgram(p);
-    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { console.error("VERTEX360 link:", gl.getProgramInfoLog(p)); return null; }
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { shaderLog += (gl.getProgramInfoLog(p) || "unknown link error") + "\n"; return null; }
     var u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
     for (var i = 0; i < n; i++) { var nm = gl.getActiveUniform(p, i).name; u[nm] = gl.getUniformLocation(p, nm); }
     return { p: p, u: u };
@@ -660,7 +736,13 @@
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
   var progBake = program(BAKE_FS), progView = program(VIEW_FS);
-  if (!progBake || !progView) { stage.classList.add("vx-nogl"); return; }
+  if (!progBake || !progView) {
+    stage.classList.add("vx-nogl");
+    fail("This GPU couldn't compile the renderer",
+      "The tour builds each space with a shader, and your graphics driver rejected it. Updating the driver " +
+      "usually fixes it — or open the link on another machine or in Chrome.", shaderLog);
+    return;
+  }
 
   /* Panorama sizes are kept power-of-two: WebGL1 only wraps POT textures, and
      a panorama that can't wrap has a black seam — or is black outright. */
@@ -1554,35 +1636,16 @@
 
   var bootStart = now();
 
-  /* ── white label ────────────────────────────────────────────────────────
-     One block in tour.json repaints the entire viewer. Accent glows are
-     derived from the brand colours so nothing has to be kept in sync. */
-  (function brand() {
-    var B = CFG.brand || {}, root = document.documentElement.style;
-    function rgba(hex, a) {
-      hex = String(hex || "").replace("#", "");
-      if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-      var n = parseInt(hex, 16);
-      if (isNaN(n)) return null;
-      return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
-    }
-    if (B.c1) { root.setProperty("--c1", B.c1); root.setProperty("--g-tint", rgba(B.c1, .26)); }
-    if (B.c2) { root.setProperty("--c2", B.c2); root.setProperty("--g-soft", rgba(B.c2, .24)); }
-    if (B.c3) {
-      root.setProperty("--c3", B.c3);
-      root.setProperty("--g-mid", rgba(B.c3, .5));
-      root.setProperty("--g-strong", rgba(B.c3, .7));
-    }
-    if (B.name != null) {
-      var mark = B.name + (B.nameAccent ? "<span>" + B.nameAccent + "</span>" : "");
-      ["#vxMark", "#vxLoadMark"].forEach(function (sel) { var n = $(sel); if (n) n.innerHTML = mark; });
-    }
-    var sub = $("#vxSubMark"); if (sub && B.sub != null) sub.textContent = B.sub;
-    var proj = $(".vx-loadproj");
-    if (proj && CFG.project) {
-      proj.textContent = [CFG.project.name, CFG.project.location, CFG.project.size].filter(Boolean).join(" · ");
-    }
-  })();
+  /* If not a single panorama has appeared after 25 s, something is wrong that
+     no error event reported — say so rather than spinning forever. */
+  setTimeout(function () {
+    if (booted) return;
+    diag.push("no panorama after 25s; queue=" + queue.length +
+      (queue[0] ? " job=" + queue[0].kind + " " + queue[0].w + "x" + queue[0].h + " row " + queue[0].row + "/" + queue[0].rows : ""));
+    fail("This is taking longer than it should",
+      "The first panorama hasn't finished rendering. On older graphics hardware the full-resolution pass can " +
+      "stall — low quality mode renders a smaller panorama and usually runs fine.");
+  }, 25000);
 
   buildRail();
   buildPlan();
