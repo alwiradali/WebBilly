@@ -139,6 +139,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.billydigitals.com/virtual-tour-360</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.billydigitals.com/web-app-development</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>

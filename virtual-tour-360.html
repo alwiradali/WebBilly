@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals</title>
+  <meta name="description" content="Turnkey 360° virtual tours for offices, event spaces and workspaces: on-site capture, flawless stitching, hotspot navigation, hosting — and the software handed over to you. Flat commercial rate for the full footprint.">
+  <meta name="theme-color" content="#06070d">
+  <meta property="og:title" content="360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals">
+  <meta property="og:description" content="Capture, stitch, hotspot, host — and hand over. Turnkey interactive 360° tours for offices, event spaces and multi-floor buildings.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.billydigitals.com/virtual-tour-360">
+  <meta property="og:site_name" content="Billy Digitals">
+  <meta property="og:image" content="https://www.billydigitals.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.billydigitals.com/assets/og-image.png">
+  <link rel="canonical" href="https://www.billydigitals.com/virtual-tour-360">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/scroll-fx.css">
+  <script src="assets/js/analytics.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"360° Virtual Tours","serviceType":"Virtual Tour Photography and Interactive Tour Development","provider":{"@type":"ProfessionalService","name":"Billy Digitals","url":"https://www.billydigitals.com/"},"areaServed":"United Kingdom","url":"https://www.billydigitals.com/virtual-tour-360","description":"Turnkey 360° virtual tours: on-site capture, stitching, hotspot integration, hosting and software transfer. Flat commercial rate for the full footprint."},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.billydigitals.com/"},{"@type":"ListItem","position":2,"name":"360° Virtual Tours","item":"https://www.billydigitals.com/virtual-tour-360"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How long does a 360° capture take?","acceptedAnswer":{"@type":"Answer","text":"A typical 18,000 sq ft office over two floors is captured in one day. We shoot around your working hours — early mornings, evenings or weekends — so nobody has to clear a floor."}},{"@type":"Question","name":"Do I own the tour?","acceptedAnswer":{"@type":"Answer","text":"Yes. The finished tour is a folder of static files — the viewer, the tour configuration and your panoramas. We hand it over with a licence to host it wherever you like, including your own domain or intranet, for as long as you like."}},{"@type":"Question","name":"Can visitors book or enquire from inside the tour?","acceptedAnswer":{"@type":"Answer","text":"Yes. Hotspots can open information panels, video, floor plans, downloadable packs, booking forms or a link into your existing room-booking system."}},{"@type":"Question","name":"Does it work on phones?","acceptedAnswer":{"@type":"Answer","text":"Yes — it runs in the browser on phones, tablets and desktops with no app or plugin. On phones you can also move the handset to look around."}},{"@type":"Question","name":"Can you re-shoot one room later?","acceptedAnswer":{"@type":"Answer","text":"Yes. Because each space is a separate panorama, a single room can be re-captured and dropped in without rebuilding the tour."}}]}]}</script>
+  <style>
+    /* ── hero ─────────────────────────────────────────────────────────── */
+    .vt-hero{position:relative;padding:132px 0 70px;overflow:hidden}
+    .vt-orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:.55;pointer-events:none}
+    .vt-orb.a{width:520px;height:520px;background:rgba(43,127,255,.30);top:-190px;left:-140px}
+    .vt-orb.b{width:420px;height:420px;background:rgba(34,211,238,.16);bottom:-180px;right:-120px}
+    .vt-grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+      background:linear-gradient(rgba(120,180,255,.05) 1px,transparent 1px) 0 0/100% 54px,
+                 linear-gradient(90deg,rgba(120,180,255,.05) 1px,transparent 1px) 0 0/54px 100%;
+      -webkit-mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent 76%);
+      mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent 76%)}
+    .vt-hero .inner{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+    .vt-hero h1{font-size:clamp(2.3rem,5.2vw,3.8rem);letter-spacing:-.035em;line-height:1.03;margin:16px 0 20px}
+    .vt-hero .sub{color:var(--muted);font-size:1.12rem;line-height:1.68;max-width:52ch}
+    .vt-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .vt-keys{display:flex;gap:26px;flex-wrap:wrap;margin-top:34px;padding-top:26px;border-top:1px solid var(--border)}
+    .vt-keys div{min-width:0}
+    .vt-keys b{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:-.02em}
+    .vt-keys span{font-size:.76rem;color:var(--muted);letter-spacing:.04em}
+
+    /* ── the console mock ─────────────────────────────────────────────── */
+    .vt-console{position:relative;border:1px solid var(--border);border-radius:20px;overflow:hidden;
+      background:linear-gradient(160deg,#0a1226,#060b1a);box-shadow:var(--shadow)}
+    .vt-console::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:repeating-linear-gradient(180deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px)}
+    .vt-cbar{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);
+      font-family:ui-monospace,Menlo,monospace;font-size:.6rem;letter-spacing:.18em;color:#5a6b8c}
+    .vt-cbar i{width:7px;height:7px;border-radius:50%;background:#22d3ee;box-shadow:0 0 10px #22d3ee}
+    .vt-cbar span{margin-left:auto;color:#38bdf8}
+    .vt-cstage{position:relative;aspect-ratio:16/11;background:
+      radial-gradient(120% 90% at 50% 22%,rgba(56,189,248,.13),transparent 62%),
+      linear-gradient(180deg,#0d1730 0%,#0a1224 52%,#070d1c 100%)}
+    .vt-cstage svg{position:absolute;inset:0;width:100%;height:100%}
+    .vt-ring{position:absolute;left:34%;top:56%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;
+      border:1px solid rgba(255,255,255,.6);background:rgba(56,189,248,.16);display:grid;place-items:center}
+    .vt-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(34,211,238,.5);
+      animation:vtpulse 2.6s ease-out infinite}
+    .vt-ring i{width:11px;height:11px;border-right:2px solid #fff;border-top:2px solid #fff;transform:rotate(-45deg) translate(-2px,2px)}
+    @keyframes vtpulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.3);opacity:0}}
+    .vt-dot{position:absolute;right:26%;top:34%;width:20px;height:20px;border-radius:50%;
+      background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 16px rgba(34,211,238,.55)}
+    .vt-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(34,211,238,.5);
+      animation:vtpulse 2.9s ease-out infinite}
+    .vt-tele{position:absolute;left:14px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:.58rem;
+      letter-spacing:.14em;color:#5a6b8c}
+    .vt-mini{position:absolute;right:14px;bottom:12px;width:110px;padding:8px;border-radius:10px;
+      border:1px solid var(--border);background:rgba(6,11,26,.8)}
+    .vt-mini svg{position:static;width:100%;height:auto;display:block}
+    .vt-cone{transform-origin:50px 44px;animation:vtsweep 9s ease-in-out infinite}
+    @keyframes vtsweep{0%,100%{transform:rotate(-32deg)}50%{transform:rotate(34deg)}}
+
+    /* ── shared blocks ────────────────────────────────────────────────── */
+    .vt-lede{color:var(--muted);font-size:1.06rem;line-height:1.75;max-width:66ch}
+    .vt-deliver{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+    .vt-deliver li{display:flex;gap:12px;align-items:flex-start;color:#dbe7ff;font-size:1rem;line-height:1.5}
+    .vt-deliver svg{flex:0 0 auto;width:19px;height:19px;margin-top:2px;stroke:var(--c3);fill:none;stroke-width:2}
+    .vt-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:vt}
+    .vt-step{position:relative;padding:24px 20px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+    .vt-step::before{counter-increment:vt;content:"0" counter(vt);display:block;font-family:ui-monospace,Menlo,monospace;
+      font-size:.66rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
+    .vt-step h3{font-size:1rem;margin-bottom:8px}
+    .vt-step p{color:var(--muted);font-size:.88rem;line-height:1.6}
+    .vt-feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .vt-spec{width:100%;border-collapse:collapse;margin-top:8px;font-size:.94rem}
+    .vt-spec th,.vt-spec td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+    .vt-spec th{width:33%;color:#dbe7ff;font-weight:600}
+    .vt-spec td{color:var(--muted)}
+    .vt-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+    .vt-plan{display:flex;flex-direction:column;padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--card)}
+    .vt-plan.is-featured{border-color:rgba(56,189,248,.5);background:rgba(43,127,255,.08);
+      box-shadow:0 20px 50px rgba(43,127,255,.16)}
+    .vt-plan .pf{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
+    .vt-plan h3{font-size:1.22rem;margin-bottom:6px}
+    .vt-plan .pp{font-family:var(--font-display);font-size:2rem;letter-spacing:-.03em;margin:14px 0 4px}
+    .vt-plan .pp small{font-size:.8rem;color:var(--muted);font-family:'Inter',sans-serif;letter-spacing:0}
+    .vt-plan ul{list-style:none;padding:0;margin:18px 0 22px;display:grid;gap:10px}
+    .vt-plan li{display:flex;gap:10px;color:var(--muted);font-size:.9rem;line-height:1.5}
+    .vt-plan li::before{content:"";flex:0 0 auto;width:5px;height:5px;border-radius:50%;background:var(--c3);margin-top:8px}
+    .vt-plan .btn{margin-top:auto}
+    .vt-note{margin-top:20px;font-size:.84rem;color:var(--muted);text-align:center}
+    .vt-faq{display:grid;gap:12px;max-width:820px;margin:0 auto}
+    .vt-faq details{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:18px 20px}
+    .vt-faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+    .vt-faq summary::-webkit-details-marker{display:none}
+    .vt-faq summary::after{content:"+";color:var(--c3);font-size:1.2rem;line-height:1}
+    .vt-faq details[open] summary::after{content:"–"}
+    .vt-faq p{color:var(--muted);font-size:.94rem;line-height:1.7;margin-top:12px}
+    .vt-final{text-align:center;padding:64px 28px;border:1px solid var(--border);border-radius:22px;
+      background:radial-gradient(90% 120% at 50% 0%,rgba(43,127,255,.16),transparent 68%),var(--card)}
+    .vt-final h2{font-size:clamp(1.7rem,4vw,2.5rem);letter-spacing:-.03em;margin-bottom:14px}
+    .vt-final p{color:var(--muted);max-width:56ch;margin:0 auto 28px;line-height:1.7}
+
+    @media (max-width:960px){
+      .vt-hero .inner{grid-template-columns:1fr;gap:38px}
+      .vt-steps{grid-template-columns:repeat(2,1fr)}
+      .vt-feat{grid-template-columns:repeat(2,1fr)}
+      .vt-plans{grid-template-columns:1fr}
+    }
+    @media (max-width:620px){
+      .vt-deliver{grid-template-columns:1fr}
+      .vt-steps{grid-template-columns:1fr}
+      .vt-feat{grid-template-columns:1fr}
+      .vt-hero{padding-top:112px}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header subpage" id="siteHeader">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design &amp; App Development" height="68"></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/#services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+      <a class="btn btn-primary nav-cta" href="/#contact">Start Your Project</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="vt-hero">
+      <div class="vt-orb a" aria-hidden="true"></div>
+      <div class="vt-orb b" aria-hidden="true"></div>
+      <div class="vt-grid" aria-hidden="true"></div>
+      <div class="container inner">
+        <div>
+          <span class="tag">360° Virtual Tours</span>
+          <h1>Let people <span class="grad">walk the building</span> before they visit</h1>
+          <p class="sub">Full on-site 360° capture, flawless stitching, hotspot navigation and hosting — delivered
+            as a tour you can send in a link. Offices, event spaces, showrooms and multi-floor buildings.
+            One flat commercial rate for the whole footprint.</p>
+          <div class="vt-cta">
+            <a class="btn btn-primary" href="/templates/vertex360" target="_blank" rel="noopener">Open a live tour →</a>
+            <a class="btn btn-ghost" href="#pricing">See what it costs</a>
+          </div>
+          <div class="vt-keys" data-fx="stagger" data-fx-step="90">
+            <div><b>1 day</b><span>to capture 18,000 sq ft</span></div>
+            <div><b>7 days</b><span>capture to live link</span></div>
+            <div><b>0</b><span>apps or plugins to install</span></div>
+          </div>
+        </div>
+
+        <!-- console mock: the real UI, drawn in CSS -->
+        <div class="vt-console" data-fx="reveal" data-fx-variant="scale" aria-hidden="true">
+          <div class="vt-cbar"><i></i>VERTEX 360 · CHARNWOOD HOUSE<span>LIVE</span></div>
+          <div class="vt-cstage">
+            <svg viewBox="0 0 400 275" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="vtf" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1b2a4d"/><stop offset="1" stop-color="#0a1020"/>
+                </linearGradient>
+                <linearGradient id="vtw" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#2b7fff" stop-opacity=".30"/><stop offset="1" stop-color="#22d3ee" stop-opacity=".06"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 150 L400 150 L400 275 L0 275 Z" fill="url(#vtf)"/>
+              <path d="M40 150 L118 275 M140 150 L168 275 M260 150 L232 275 M360 150 L282 275" stroke="rgba(120,180,255,.14)" stroke-width="1"/>
+              <path d="M0 186 L400 186 M0 214 L400 214 M0 246 L400 246" stroke="rgba(120,180,255,.09)" stroke-width="1"/>
+              <rect x="286" y="52" width="104" height="98" fill="url(#vtw)" stroke="rgba(120,180,255,.35)"/>
+              <path d="M286 84 L390 84 M286 118 L390 118 M338 52 L338 150" stroke="rgba(120,180,255,.3)" stroke-width="1"/>
+              <rect x="16" y="60" width="120" height="90" fill="rgba(255,255,255,.03)" stroke="rgba(120,180,255,.16)"/>
+              <rect x="34" y="96" width="84" height="34" rx="3" fill="rgba(43,127,255,.35)"/>
+              <rect x="150" y="112" width="118" height="38" rx="4" fill="rgba(255,255,255,.06)" stroke="rgba(120,180,255,.2)"/>
+              <rect x="150" y="104" width="118" height="9" rx="3" fill="rgba(34,211,238,.22)"/>
+              <path d="M0 44 L400 44" stroke="rgba(120,180,255,.10)" stroke-width="26"/>
+              <path d="M60 44 L180 44 M240 44 L340 44" stroke="rgba(255,240,214,.55)" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <span class="vt-ring"><i></i></span>
+            <span class="vt-dot"></span>
+            <span class="vt-tele">AZ 042°&nbsp; EL −06°&nbsp; FOV 78°</span>
+            <div class="vt-mini">
+              <svg viewBox="0 0 100 60">
+                <rect x="6" y="6" width="88" height="48" fill="none" stroke="rgba(120,180,255,.45)" stroke-width="1.2"/>
+                <rect x="6" y="6" width="40" height="26" fill="rgba(120,180,255,.07)" stroke="rgba(120,180,255,.25)" stroke-width=".8"/>
+                <rect x="46" y="6" width="48" height="26" fill="rgba(120,180,255,.07)" stroke="rgba(120,180,255,.25)" stroke-width=".8"/>
+                <rect x="6" y="32" width="88" height="22" fill="rgba(120,180,255,.07)" stroke="rgba(120,180,255,.25)" stroke-width=".8"/>
+                <g class="vt-cone"><path d="M50 44 L38 26 A20 20 0 0 0 62 26 Z" fill="rgba(34,211,238,.28)"/></g>
+                <circle cx="50" cy="44" r="2.6" fill="#22d3ee"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ DELIVERABLE ═══════════════ -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 data-fx="reveal" style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.025em;margin-bottom:20px">
+          Turnkey, end to end — <span class="grad">nothing left to you</span>
+        </h2>
+        <p class="vt-lede" data-fx="reveal" data-fx-delay="80">You give us access and a date. We come back with a link.
+          Capture, stitching, retouching, hotspot design, the tour build, hosting and the hand-over are all one
+          quote and one point of contact — no separate photographer, developer and platform bill.</p>
+        <ul class="vt-deliver" data-fx="stagger" data-fx-step="70">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Full on-site capture</strong> — every space, shot at a consistent 1.62 m eye height on a levelled horizon.</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Flawless stitching</strong> — seams removed, tripod nadir patched, exposure and white balance matched room to room.</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Hotspot integration</strong> — walk-through arrows, info panels, video, downloads, booking links.</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Floor-plan navigation</strong> — a live plan per floor showing where you're standing and which way you're facing.</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Hosting, fixed price</strong> — on our edge network on your own subdomain, or self-hosted on yours.</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Software transfer</strong> — the whole tour as a folder of static files, licensed to you, yours to keep.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════ PROCESS ═══════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">The process</span>
+          <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.025em;margin-top:12px">Capture to live link in a week</h2>
+        </div>
+        <div class="vt-steps" data-fx="stagger" data-fx-step="90">
+          <div class="vt-step"><h3>Scope</h3><p>A short call and a floor plan. We agree the shot list, the route through the building and what each hotspot needs to do.</p></div>
+          <div class="vt-step"><h3>Capture</h3><p>One shoot day for a typical two-floor office. Early, late or weekend so nobody has to clear a desk.</p></div>
+          <div class="vt-step"><h3>Stitch</h3><p>Panoramas stitched, levelled, colour-matched and retouched. Nadir patched, reflections and rigging removed.</p></div>
+          <div class="vt-step"><h3>Build</h3><p>Spaces linked into a walk-through graph, floor plans drawn, hotspots written, brand applied. You review a private link.</p></div>
+          <div class="vt-step"><h3>Hand over</h3><p>Live on your domain, plus the source folder, the editor and a 30-minute walkthrough so your team can edit it.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ THE PLATFORM ═══════════════ -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">The software</span>
+          <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.025em;margin-top:12px">Built by us, owned by you</h2>
+          <p style="color:var(--muted);margin-top:14px;line-height:1.7">Most tour platforms rent you a viewer and hold your
+            panoramas hostage behind a monthly seat fee. Ours is a single JavaScript file and a JSON file. It runs on any
+            static host, works offline on an intranet, and keeps working the day you stop paying anyone.</p>
+        </div>
+        <div class="vt-feat" data-fx="stagger" data-fx-step="70">
+          <div class="card"><h3>True photosphere viewer</h3><p>Inertial drag, pinch and scroll zoom, keyboard control, and a walk-through transition that dollies you into the next space instead of cutting.</p></div>
+          <div class="card"><h3>Hotspot graph</h3><p>Navigate, info, media and form hotspots. Spaces link the way the building actually works, not as a slideshow.</p></div>
+          <div class="card"><h3>Live floor plan</h3><p>Per-floor plan with a radar cone showing exactly which way the visitor is facing. Click the plan to teleport.</p></div>
+          <div class="card"><h3>Guided tour</h3><p>An auto-play route for reception screens and pitch decks. It runs unattended and picks up wherever a visitor takes over.</p></div>
+          <div class="card"><h3>Deep links</h3><p>Every angle has its own URL. Send a link that opens on the exact corner of the exact room you're talking about.</p></div>
+          <div class="card"><h3>Phone-native</h3><p>Move the handset to look around, tap to walk, pinch to zoom. No app, no plugin, no download.</p></div>
+          <div class="card"><h3>Progressive loading</h3><p>A preview panorama appears immediately and sharpens to full resolution behind it, so the tour opens instantly on any connection.</p></div>
+          <div class="card"><h3>In-browser editor</h3><p>Your team clicks to place a hotspot, aims it, labels it, links it — then exports the tour as one file. No developer needed.</p></div>
+          <div class="card"><h3>Accessible &amp; measured</h3><p>Keyboard navigable, honours reduced-motion, and reports which spaces and hotspots visitors actually use.</p></div>
+        </div>
+        <p style="text-align:center;margin-top:34px">
+          <a class="btn btn-primary" href="/templates/vertex360" target="_blank" rel="noopener">Try all of it in a live tour →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SPEC ═══════════════ -->
+    <section class="section">
+      <div class="container" style="max-width:920px">
+        <h2 data-fx="reveal" style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-.025em;margin-bottom:22px">Technical specification</h2>
+        <table class="vt-spec" data-fx="reveal" data-fx-delay="80">
+          <tbody>
+            <tr><th>Capture</th><td>Full 360° × 180° spherical, HDR bracketed, levelled horizon, consistent 1.62 m tripod height throughout.</td></tr>
+            <tr><th>Delivery resolution</th><td>Up to 8K equirectangular per space (8192 × 4096), served progressively — preview first, full resolution behind it.</td></tr>
+            <tr><th>Formats</th><td>WebP and JPEG panoramas, plus the raw equirectangular masters on hand-over.</td></tr>
+            <tr><th>Viewer</th><td>WebGL, no dependencies, ~30 KB of JavaScript. Chrome, Safari, Firefox and Edge, desktop and mobile. Graceful fallback where WebGL is unavailable.</td></tr>
+            <tr><th>Hosting</th><td>Cloudflare edge on your own subdomain (tour.yourdomain.co.uk) with TLS, or a folder you host yourself — including a private intranet with no internet access.</td></tr>
+            <tr><th>Integrations</th><td>Room booking, enquiry forms, CRM, video, PDF packs and floor-plan downloads, attached per hotspot.</td></tr>
+            <tr><th>Analytics</th><td>Space-by-space visit counts, dwell time, hotspot clicks and enquiry conversions. Cookieless.</td></tr>
+            <tr><th>Hand-over pack</th><td>Viewer, tour configuration, panorama masters, editor access, written licence and a recorded walkthrough.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════ PRICING ═══════════════ -->
+    <section class="section section-alt" id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Pricing</span>
+          <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.025em;margin-top:12px">One flat rate for the full footprint</h2>
+          <p style="color:var(--muted);margin-top:14px;line-height:1.7">No per-panorama pricing, no per-seat licence, no
+            surprise charges for a second floor. One fee covers capture, stitching, the build and the hand-over.</p>
+        </div>
+        <div class="vt-plans" data-fx="stagger" data-fx-step="90">
+          <div class="vt-plan">
+            <span class="pf">UP TO 5,000 SQ FT</span>
+            <h3>Single floor</h3>
+            <p style="color:var(--muted);font-size:.92rem;line-height:1.6">Studios, clinics, showrooms, one-floor offices.</p>
+            <p class="pp">from £1,200<br><small>one-off, ex VAT</small></p>
+            <ul>
+              <li>Half-day capture, up to 12 spaces</li>
+              <li>Stitching, retouching, nadir patch</li>
+              <li>Hotspot navigation + info panels</li>
+              <li>Live in 5 working days</li>
+            </ul>
+            <a class="btn btn-ghost" href="/#contact">Get a fixed quote</a>
+          </div>
+          <div class="vt-plan is-featured">
+            <span class="pf">5,000 – 20,000 SQ FT</span>
+            <h3>Multi-floor building</h3>
+            <p style="color:var(--muted);font-size:.92rem;line-height:1.6">Offices, event venues, workspaces over two or three floors.</p>
+            <p class="pp">from £2,600<br><small>one-off, ex VAT</small></p>
+            <ul>
+              <li>Full shoot day, up to 30 spaces</li>
+              <li>Per-floor plan navigation</li>
+              <li>Meeting, social and event spaces detailed</li>
+              <li>Guided tour mode + deep links</li>
+              <li>Live in 7 working days</li>
+            </ul>
+            <a class="btn btn-primary" href="/#contact">Get a fixed quote</a>
+          </div>
+          <div class="vt-plan">
+            <span class="pf">20,000 SQ FT +</span>
+            <h3>Estate &amp; multi-site</h3>
+            <p style="color:var(--muted);font-size:.92rem;line-height:1.6">Campuses, portfolios, repeat capture across sites.</p>
+            <p class="pp">Scoped<br><small>fixed before booking</small></p>
+            <ul>
+              <li>Multi-day capture, unlimited spaces</li>
+              <li>Site switcher across buildings</li>
+              <li>Seasonal or time-of-day re-shoots</li>
+              <li>Booking-system and CRM integration</li>
+            </ul>
+            <a class="btn btn-ghost" href="/#contact">Talk it through</a>
+          </div>
+        </div>
+
+        <div class="vt-plans" style="margin-top:18px" data-fx="stagger" data-fx-step="90">
+          <div class="vt-plan">
+            <span class="pf">HOSTING · OPTION A</span>
+            <h3>Hosted by us</h3>
+            <p class="pp">£15<small> / month</small></p>
+            <ul><li>Your own subdomain and TLS</li><li>Global edge delivery</li><li>Analytics dashboard</li><li>Content edits included</li></ul>
+          </div>
+          <div class="vt-plan">
+            <span class="pf">HOSTING · OPTION B</span>
+            <h3>Hosted by you</h3>
+            <p class="pp">£0<small> / month</small></p>
+            <ul><li>Static folder on your own hosting</li><li>Works on a closed intranet</li><li>No licence, no seat fees</li><li>Setup support included</li></ul>
+          </div>
+          <div class="vt-plan">
+            <span class="pf">SOFTWARE TRANSFER</span>
+            <h3>Full hand-over</h3>
+            <p class="pp">Included<small> in every tour</small></p>
+            <ul><li>Viewer + tour configuration files</li><li>Panorama masters</li><li>In-browser hotspot editor</li><li>Perpetual licence, in writing</li></ul>
+          </div>
+        </div>
+        <p class="vt-note">Figures are indicative and confirmed in writing after a 15-minute scoping call — the quote you
+          receive is the price you pay, whatever the shoot turns up on the day.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════ FAQ ═══════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Questions</span>
+          <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.025em;margin-top:12px">The things people ask first</h2>
+        </div>
+        <div class="vt-faq">
+          <details open><summary>How long does a 360° capture take?</summary><p>A typical 18,000 sq ft office over two floors is captured in one day. We shoot around your working hours — early mornings, evenings or weekends — so nobody has to clear a floor.</p></details>
+          <details><summary>Do I own the tour?</summary><p>Yes. The finished tour is a folder of static files — the viewer, the tour configuration and your panoramas. We hand it over with a perpetual licence to host it wherever you like, including your own domain or a closed intranet, for as long as you like.</p></details>
+          <details><summary>Can visitors book or enquire from inside the tour?</summary><p>Yes. Hotspots can open information panels, video, floor plans, downloadable packs, booking forms, or link straight into your existing room-booking system.</p></details>
+          <details><summary>Does it work on phones?</summary><p>Yes — it runs in the browser on phones, tablets and desktops with no app or plugin. On a phone you can also just move the handset to look around.</p></details>
+          <details><summary>Can you re-shoot one room later?</summary><p>Yes. Each space is a separate panorama, so a single room can be re-captured and dropped in without rebuilding the tour — useful after a refit, or to add a golden-hour version of a terrace.</p></details>
+          <details><summary>What do you need from us on the day?</summary><p>Access, a contact on site, and rooms tidy and lit the way you'd want them photographed. We work room by room and it's silent — no lighting rigs, no cables across the floor.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ CTA ═══════════════ -->
+    <section class="section">
+      <div class="container">
+        <div class="vt-final" data-fx="reveal">
+          <h2>Send us the floor plan</h2>
+          <p>Tell us the footprint, the floors and what the tour has to do. You'll get a fixed price, a shoot date
+            and a link to a live example of the same build — usually the same day.</p>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+            <a class="btn btn-primary" href="/#contact">Get your fixed quote →</a>
+            <a class="btn btn-ghost" href="/templates/vertex360" target="_blank" rel="noopener">Walk a live tour</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
+      <p><a href="/">Home</a> &nbsp;·&nbsp; <a href="/portfolio">Portfolio</a> &nbsp;·&nbsp; <a href="/blog">Blog</a> &nbsp;·&nbsp; <a data-wa-link href="#" target="_blank" rel="noopener">WhatsApp us</a></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/scroll-fx.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+<title>VERTEX 360 — Charnwood House interactive tour · Billy Digitals</title>
+<meta name="description" content="A working 360° virtual tour platform: photosphere viewer, hotspot navigation, live floor plan, guided tour, deep links and a browser hotspot editor that exports the whole tour as JSON.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#04060f">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   VERTEX 360 — tour shell
+   Control-room chrome over a live photosphere. Brand palette, glass panels,
+   nothing loaded that isn't used.
+   ═══════════════════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#04060f; --ink:#eaf2ff; --dim:#93a4c4; --faint:#5a6b8c;
+  --c1:#2b7fff; --c2:#38bdf8; --c3:#22d3ee;
+  --glass:rgba(10,16,32,.72); --glass2:rgba(8,13,26,.86);
+  --line:rgba(120,170,255,.16); --line2:rgba(120,170,255,.30);
+  --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(12px,1.6vw,22px);
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;text-rendering:optimizeLegibility}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(34,211,238,.3)}
+
+#vxApp{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;background:var(--bg);overflow:hidden}
+
+/* ── stage ──────────────────────────────────────────────────────────────── */
+#vxStage{position:relative;grid-row:1/-1;grid-column:1;overflow:hidden;cursor:grab;touch-action:none;
+  background:radial-gradient(120% 90% at 50% 40%,#0b1226,#04060f)}
+#vxStage.is-grabbing{cursor:grabbing}
+#vxStage.is-editing{cursor:crosshair}
+#vxGL{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vx-nogl::after{content:"This tour needs WebGL. Try a current browser or another device.";
+  position:absolute;inset:0;display:grid;place-items:center;padding:40px;text-align:center;color:var(--dim);font-size:.95rem}
+/* corner brackets + scan sweep: instrument, not decoration */
+.vx-frame{position:absolute;inset:0;pointer-events:none;z-index:3}
+.vx-frame i{position:absolute;width:26px;height:26px;border:1px solid var(--line2);opacity:.7}
+.vx-frame i:nth-child(1){top:var(--pad);left:var(--pad);border-right:0;border-bottom:0}
+.vx-frame i:nth-child(2){top:var(--pad);right:var(--pad);border-left:0;border-bottom:0}
+.vx-frame i:nth-child(3){bottom:var(--pad);left:var(--pad);border-right:0;border-top:0}
+.vx-frame i:nth-child(4){bottom:var(--pad);right:var(--pad);border-left:0;border-top:0}
+.vx-frame::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+
+/* ── overlay grid (everything sits on the stage) ────────────────────────── */
+.vx-ui{position:absolute;z-index:6}
+.pane{background:var(--glass);backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);
+  border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+
+/* topbar */
+#vxTop{top:0;left:0;right:0;display:flex;align-items:center;gap:16px;padding:calc(var(--pad) + env(safe-area-inset-top)) var(--pad) var(--pad);
+  background:linear-gradient(180deg,rgba(4,6,15,.88),rgba(4,6,15,0));pointer-events:none}
+#vxTop>*{pointer-events:auto}
+.vx-brand{display:flex;align-items:center;gap:11px;flex:0 0 auto}
+.vx-orb{position:relative;width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center}
+.vx-orb::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c3);box-shadow:0 0 14px var(--c3)}
+.vx-orb::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(34,211,238,.35);
+  border-top-color:transparent;border-left-color:transparent;animation:vxspin 3.6s linear infinite}
+@keyframes vxspin{to{transform:rotate(360deg)}}
+.vx-wordmark{font-family:var(--disp);font-weight:700;font-size:.86rem;letter-spacing:.24em;line-height:1}
+.vx-wordmark span{color:var(--c3)}
+.vx-sub{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;color:var(--faint);margin-top:4px}
+
+.vx-titleblock{min-width:0;flex:1 1 auto;text-align:center}
+#vxTitle{font-family:var(--disp);font-weight:600;font-size:clamp(.95rem,2.1vw,1.3rem);letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#vxMeta{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.vx-tools{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.vx-tool{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;border:1px solid var(--line);
+  background:rgba(9,14,28,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer;
+  transition:border-color .25s,background .25s,color .25s,transform .25s var(--ease)}
+.vx-tool svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.vx-tool:hover{border-color:var(--line2);background:rgba(43,127,255,.16);transform:translateY(-1px)}
+.vx-tool.is-on{color:#04060f;background:linear-gradient(135deg,var(--c2),var(--c3));border-color:transparent}
+.vx-tool:focus-visible{outline:2px solid var(--c3);outline-offset:2px}
+#vxIdx{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--faint);padding-right:4px}
+
+/* telemetry + hint */
+#vxTele{left:var(--pad);bottom:calc(var(--pad) + 2px);font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+  color:var(--faint);pointer-events:none;text-shadow:0 1px 10px #04060f}
+#vxSharp{left:var(--pad);bottom:calc(var(--pad) + 22px);font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;
+  color:var(--c3);opacity:0;transition:opacity .3s;pointer-events:none}
+#vxSharp.is-on{opacity:.85}
+#vxSharp::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--c3);
+  margin-right:7px;vertical-align:middle;animation:vxblink 1.1s ease-in-out infinite}
+@keyframes vxblink{50%{opacity:.15}}
+#vxHint{left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:11px;padding:12px 20px;border-radius:999px;
+  font-size:.8rem;letter-spacing:.02em;color:var(--ink);opacity:0;pointer-events:none;transition:opacity .6s;
+  background:rgba(8,13,26,.66);border:1px solid var(--line);backdrop-filter:blur(12px)}
+#vxHint.is-on{opacity:1}
+#vxHint.is-gone{opacity:0!important}
+#vxHint svg{width:18px;height:18px;fill:none;stroke:var(--c3);stroke-width:1.6;animation:vxswipe 2.4s ease-in-out infinite}
+@keyframes vxswipe{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+
+/* ── hotspots ───────────────────────────────────────────────────────────── */
+#vxHots{position:absolute;inset:0;z-index:5;pointer-events:none}
+.vx-hot{position:absolute;top:0;left:0;background:none;border:0;padding:0;cursor:pointer;will-change:transform;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .25s}
+.vx-hot-ring{position:relative;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.09);backdrop-filter:blur(3px);
+  box-shadow:0 6px 26px rgba(0,0,0,.45),inset 0 0 22px rgba(56,189,248,.22);transition:transform .3s var(--ease),background .3s}
+.vx-hot-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(34,211,238,.55);
+  animation:vxpulse 2.6s ease-out infinite}
+@keyframes vxpulse{0%{transform:scale(.82);opacity:.85}100%{transform:scale(1.28);opacity:0}}
+.vx-hot-arrow{width:12px;height:12px;border-right:2px solid #fff;border-top:2px solid #fff;transform:rotate(-45deg) translate(-2px,2px)}
+.vx-hot:hover .vx-hot-ring{transform:scale(1.12);background:rgba(56,189,248,.28)}
+.vx-hot-dot{position:relative;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 18px rgba(34,211,238,.5)}
+.vx-hot-dot i{width:3px;height:3px;border-radius:50%;background:#04060f;box-shadow:0 -6px 0 #04060f}
+.vx-hot-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(34,211,238,.5);
+  animation:vxpulse 2.8s ease-out infinite}
+.vx-hot-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;
+  padding:5px 10px;border-radius:7px;background:rgba(4,6,15,.72);border:1px solid var(--line);
+  opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .25s var(--ease)}
+.vx-hot:hover .vx-hot-tag,.vx-hot--nav .vx-hot-tag{opacity:1;transform:none}
+.vx-hot--info .vx-hot-tag{opacity:0}
+.vx-hot:focus-visible .vx-hot-tag{opacity:1}
+.is-editing .vx-hot{outline:1px dashed rgba(255,255,255,.35);outline-offset:6px;border-radius:12px}
+
+/* ── space rail ─────────────────────────────────────────────────────────── */
+#vxRailWrap{left:0;right:0;bottom:0;padding:0 var(--pad) calc(var(--pad) + env(safe-area-inset-bottom));
+  display:flex;gap:22px;align-items:flex-end;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+  background:linear-gradient(0deg,rgba(4,6,15,.9),rgba(4,6,15,0));padding-top:64px}
+#vxRailWrap::-webkit-scrollbar{display:none}
+#vxRail{display:flex;gap:22px}
+.vx-railgroup{flex:0 0 auto}
+.vx-railname{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 8px 2px}
+.vx-railrow{display:flex;gap:9px}
+.vx-card{flex:0 0 auto;width:132px;text-align:left;background:none;border:0;padding:0;cursor:pointer;
+  transition:transform .3s var(--ease);display:block}
+.vx-card:hover{transform:translateY(-3px)}
+.vx-thumb{display:block;position:relative;width:132px;height:84px;border-radius:11px;overflow:hidden;
+  border:1px solid var(--line);background:#0a1024}
+.vx-thumb canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .5s}
+.vx-thumb.is-ready canvas{opacity:1}
+.vx-thumb::after{content:"";position:absolute;inset:0;border-radius:10px;box-shadow:inset 0 -28px 30px -18px rgba(4,6,15,.95)}
+.vx-card.is-on .vx-thumb{border-color:var(--c3);box-shadow:0 0 0 1px var(--c3),0 12px 30px rgba(34,211,238,.22)}
+.vx-cardname{display:block;font-size:.76rem;font-weight:500;margin-top:8px;color:var(--dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vx-card.is-on .vx-cardname{color:var(--ink)}
+.vx-cardmeta{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;color:var(--faint);margin-top:2px}
+
+/* ── floor plan ─────────────────────────────────────────────────────────── */
+#vxPlanCard{right:var(--pad);bottom:calc(var(--pad) + 132px);width:min(280px,38vw);padding:12px 12px 8px;z-index:7}
+.vx-planhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.vx-planhead b{font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:400}
+#vxPlanTabs{display:flex;gap:5px}
+.vx-ptab{padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:transparent;cursor:pointer;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;color:var(--dim);transition:.25s}
+.vx-ptab.is-on{background:linear-gradient(135deg,var(--c2),var(--c3));color:#04060f;border-color:transparent}
+#vxPlan{position:relative}
+.vx-planfloor{display:none}
+.vx-planfloor.is-on{display:block}
+.vx-planfloor svg{width:100%;height:auto;display:block;overflow:visible}
+.vx-plangeo .rm{fill:rgba(120,170,255,.055);stroke:rgba(120,170,255,.30);stroke-width:.4}
+.vx-plangeo .core{fill:rgba(120,170,255,.11);stroke:rgba(120,170,255,.22);stroke-width:.35}
+.vx-plangeo .out{fill:none;stroke:rgba(120,170,255,.55);stroke-width:.7}
+.vx-plangeo .gz{stroke:var(--c3);stroke-width:1.1;opacity:.75}
+.vx-plangeo .lb{fill:rgba(147,164,196,.62);font-size:2.5px;font-family:'Inter',sans-serif;letter-spacing:.16px}
+.vx-pin{cursor:pointer}
+.vx-pindot{fill:#7f93b8;transition:fill .3s}
+.vx-pin:hover .vx-pindot{fill:var(--c2)}
+.vx-cone{opacity:0;transition:opacity .4s}
+.vx-pin.is-on .vx-cone{opacity:1}
+.vx-pin.is-on .vx-pindot{fill:var(--c3);filter:drop-shadow(0 0 4px var(--c3))}
+.vx-pinlabel{fill:transparent;font-size:2.6px;text-anchor:middle;font-family:var(--mono);letter-spacing:.2px;transition:fill .3s}
+.vx-pin:hover .vx-pinlabel,.vx-pin.is-on .vx-pinlabel{fill:#cfe0ff}
+
+/* ── drawer ─────────────────────────────────────────────────────────────── */
+#vxDrawer{top:0;right:0;bottom:0;width:min(400px,92vw);z-index:9;transform:translateX(102%);
+  transition:transform .55s var(--ease);border-radius:0;border-top:0;border-right:0;border-bottom:0;
+  padding:calc(var(--pad) + 46px) 26px 26px;overflow-y:auto;background:var(--glass2)}
+#vxDrawer.is-open{transform:none}
+#vxDrawerTitle{font-family:var(--disp);font-weight:600;font-size:1.4rem;letter-spacing:-.02em;margin-bottom:14px;padding-right:40px}
+#vxDrawerBody p{color:var(--dim);font-size:.93rem;line-height:1.72;margin-bottom:16px}
+#vxDrawerBody h4{font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--c3);
+  margin:22px 0 10px}
+#vxDrawerBody ul{list-style:none;display:grid;gap:9px;margin-bottom:8px}
+#vxDrawerBody li{display:flex;gap:10px;font-size:.86rem;color:var(--dim);line-height:1.55}
+#vxDrawerBody li::before{content:"";flex:0 0 auto;width:5px;height:5px;border-radius:50%;background:var(--c3);margin-top:8px;
+  box-shadow:0 0 8px var(--c3)}
+.vx-stats{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;margin:4px 0 18px;
+  border-top:1px solid var(--line);padding-top:14px}
+.vx-stats dt{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);align-self:center}
+.vx-stats dd{font-size:.9rem;color:var(--ink);text-align:right}
+.vx-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:11px;font-size:.82rem;font-weight:500;
+  border:1px solid var(--line);cursor:pointer;background:rgba(9,14,28,.6);transition:.28s var(--ease)}
+.vx-btn--go{background:linear-gradient(135deg,var(--c1),var(--c3));color:#04060f;border-color:transparent;font-weight:600}
+.vx-btn--go:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(43,127,255,.35)}
+#vxDrawerClose{position:absolute;top:calc(var(--pad) + 6px);right:20px;width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--line);background:rgba(9,14,28,.6);cursor:pointer;color:var(--dim);font-size:1rem;line-height:1}
+#vxDrawerClose:hover{color:var(--ink);border-color:var(--line2)}
+
+/* ── editor ─────────────────────────────────────────────────────────────── */
+#vxEditor{top:0;left:0;bottom:0;width:min(460px,94vw);z-index:9;transform:translateX(-102%);
+  transition:transform .55s var(--ease);border-radius:0;border-left:0;border-top:0;border-bottom:0;
+  padding:calc(var(--pad) + 46px) 22px 22px;overflow-y:auto;background:var(--glass2)}
+#vxEditor.is-open{transform:none}
+.vx-ehead{font-family:var(--disp);font-weight:600;font-size:1.12rem;margin-bottom:4px}
+.vx-enote{font-size:.8rem;color:var(--dim);line-height:1.6;margin-bottom:16px}
+.vx-enote b{color:var(--c3);font-weight:500}
+.vx-erow{display:grid;grid-template-columns:1fr 1.3fr 1fr auto auto;gap:6px;align-items:center;margin-bottom:7px}
+.vx-esel,.vx-einp{width:100%;padding:8px 9px;border-radius:8px;border:1px solid var(--line);background:rgba(4,6,15,.7);
+  font-size:.74rem;min-width:0}
+.vx-erow.is-sel .vx-einp{border-color:var(--c3)}
+.vx-ebtn{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(4,6,15,.7);cursor:pointer;
+  font-size:.7rem;color:var(--dim);transition:.25s}
+.vx-ebtn:hover{color:var(--ink);border-color:var(--line2)}
+.vx-ebtn--x{color:#ff7a8a}
+.vx-eactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+#vxEditClose{position:absolute;top:calc(var(--pad) + 6px);right:20px;width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--line);background:rgba(9,14,28,.6);cursor:pointer;color:var(--dim)}
+.vx-ecode{margin-top:16px;font-family:var(--mono);font-size:.62rem;line-height:1.7;color:var(--faint);
+  background:rgba(4,6,15,.6);border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre-wrap}
+
+/* ── toast ──────────────────────────────────────────────────────────────── */
+#vxToast{left:50%;bottom:calc(var(--pad) + 148px);transform:translate(-50%,14px);padding:11px 20px;border-radius:999px;
+  font-size:.78rem;background:rgba(8,13,26,.92);border:1px solid var(--line2);opacity:0;pointer-events:none;
+  transition:opacity .35s,transform .35s var(--ease);z-index:12;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#vxToast.is-on{opacity:1;transform:translate(-50%,0)}
+
+/* ── loader ─────────────────────────────────────────────────────────────── */
+#vxLoad{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:#04060f;
+  transition:opacity .9s var(--ease)}
+#vxLoad.is-gone{opacity:0;pointer-events:none}
+#vxLoad::before{content:"";position:absolute;inset:0;opacity:.5;
+  background:linear-gradient(rgba(120,170,255,.06) 1px,transparent 1px) 0 0/100% 42px,
+             linear-gradient(90deg,rgba(120,170,255,.06) 1px,transparent 1px) 0 0/42px 100%;
+  mask-image:radial-gradient(60% 60% at 50% 50%,#000,transparent 78%)}
+.vx-loadin{position:relative;text-align:center;width:min(420px,86vw)}
+.vx-loadmark{font-family:var(--disp);font-weight:700;font-size:1.5rem;letter-spacing:.36em;margin-bottom:6px}
+.vx-loadmark span{color:var(--c3)}
+.vx-loadproj{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.vx-loadbar{position:relative;height:2px;margin:34px 0 12px;background:rgba(120,170,255,.16);border-radius:2px;overflow:hidden}
+#vxBar{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--c1),var(--c3));transition:transform .3s linear;
+  box-shadow:0 0 18px rgba(34,211,238,.7)}
+.vx-loadrow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:var(--faint)}
+.vx-loadfoot{margin-top:30px;font-size:.72rem;color:var(--faint);line-height:1.7}
+
+/* ── responsive ─────────────────────────────────────────────────────────── */
+@media (max-width:900px){
+  #vxPlanCard{width:180px;bottom:calc(var(--pad) + 126px)}
+  .vx-card{width:104px}.vx-thumb{width:104px;height:66px}
+  #vxTele{font-size:.55rem}
+  .vx-titleblock{text-align:left}
+  #vxMeta{display:none}
+}
+@media (max-width:620px){
+  #vxTop{gap:9px;flex-wrap:wrap}
+  .vx-wordmark{font-size:.72rem;letter-spacing:.18em}.vx-sub{display:none}
+  #vxIdx{display:none}
+  .vx-tools{gap:5px;margin-left:auto}
+  .vx-tool{width:34px;height:34px;border-radius:10px}
+  .vx-titleblock{order:3;flex:0 0 100%;text-align:left;margin-top:2px}
+  #vxMeta{display:block;margin-top:3px}
+  #vxHint{max-width:78vw;text-align:center;font-size:.76rem;padding:11px 16px}
+  #vxPlanCard{width:150px;padding:9px 9px 5px}
+  .vx-pinlabel{display:none}
+  #vxRailWrap{padding-top:40px}
+  .vx-erow{grid-template-columns:1fr 1fr;gap:5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+
+<div id="vxApp">
+  <div id="vxStage">
+    <canvas id="vxGL"></canvas>
+    <div class="vx-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div id="vxHots"></div>
+
+    <!-- topbar -->
+    <header class="vx-ui" id="vxTop">
+      <div class="vx-brand">
+        <span class="vx-orb" aria-hidden="true"></span>
+        <span>
+          <span class="vx-wordmark">VERTEX<span>360</span></span>
+          <span class="vx-sub">BILLY DIGITALS</span>
+        </span>
+      </div>
+
+      <div class="vx-titleblock">
+        <h1 id="vxTitle">Loading</h1>
+        <p id="vxMeta"></p>
+      </div>
+
+      <div class="vx-tools">
+        <span id="vxIdx">01 / 09</span>
+        <button class="vx-tool" id="vxAuto" type="button" title="Guided tour (A)" aria-label="Guided tour" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M5 3.5v17l14-8.5z"/></svg>
+        </button>
+        <button class="vx-tool" id="vxGyro" type="button" title="Move your phone to look around" aria-label="Motion control">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="3.6" ry="8.5"/><path d="M3.5 12h17"/></svg>
+        </button>
+        <button class="vx-tool" id="vxShot" type="button" title="Export a still" aria-label="Export still">
+          <svg viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>
+        </button>
+        <button class="vx-tool" id="vxShare" type="button" title="Copy a link to this exact view" aria-label="Share this view">
+          <svg viewBox="0 0 24 24"><path d="M10 13.6a4 4 0 0 0 6 .5l2.6-2.6a4 4 0 0 0-5.7-5.7L11.6 7"/><path d="M14 10.4a4 4 0 0 0-6-.5L5.4 12.5a4 4 0 0 0 5.7 5.7L12.4 17"/></svg>
+        </button>
+        <button class="vx-tool" id="vxEdit" type="button" title="Hotspot editor (E)" aria-label="Hotspot editor" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.6 2.6 0 0 0-3.7-3.7L4.3 16.3z"/><path d="M14.5 6.5l3.4 3.4"/></svg>
+        </button>
+        <button class="vx-tool" id="vxAbout" type="button" title="About this build" aria-label="About this build">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 10.6v6"/><circle cx="12" cy="7.7" r=".9" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="vx-tool" id="vxFull" type="button" title="Fullscreen (F)" aria-label="Fullscreen">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <p class="vx-ui" id="vxSharp">SHARPENING · FULL RESOLUTION</p>
+    <p class="vx-ui" id="vxTele">AZ 000°  EL +0°  FOV 75°</p>
+
+    <div class="vx-ui" id="vxHint">
+      <svg viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg>
+      Drag to look around · scroll to zoom · click a ring to walk through
+    </div>
+
+    <!-- floor plan -->
+    <aside class="vx-ui pane" id="vxPlanCard">
+      <div class="vx-planhead">
+        <b>Floor plan</b>
+        <div id="vxPlanTabs"></div>
+      </div>
+      <div id="vxPlan"></div>
+    </aside>
+
+    <!-- space rail -->
+    <nav class="vx-ui" id="vxRailWrap" aria-label="Spaces">
+      <div id="vxRail"></div>
+    </nav>
+
+    <p class="vx-ui" id="vxToast"></p>
+
+    <!-- info drawer -->
+    <aside class="vx-ui pane" id="vxDrawer" aria-hidden="true" aria-label="Space information">
+      <button id="vxDrawerClose" type="button" aria-label="Close">✕</button>
+      <h2 id="vxDrawerTitle"></h2>
+      <div id="vxDrawerBody"></div>
+    </aside>
+
+    <!-- hotspot editor -->
+    <aside class="vx-ui pane" id="vxEditor" aria-label="Hotspot editor">
+      <button id="vxEditClose" type="button" aria-label="Close editor">✕</button>
+      <h2 class="vx-ehead">Hotspot editor</h2>
+      <p class="vx-enote">Editing <b id="vxEditWhere">—</b>. Click anywhere in the space to drop a hotspot,
+        then set what it does. <b>Aim</b> snaps a hotspot to wherever you're looking. Everything you change
+        exports as one <b>tour.json</b> — that file, plus these two static files, <em>is</em> the tour.</p>
+      <div id="vxEditList"></div>
+      <div class="vx-eactions">
+        <button class="vx-btn" id="vxEditStart" type="button">Set opening view</button>
+        <button class="vx-btn vx-btn--go" id="vxEditExport" type="button">Export tour.json</button>
+      </div>
+      <p class="vx-ecode">/tour
+  ├── index.html      · shell + tour.json
+  ├── vertex360.js    · engine (no dependencies)
+  └── panos/*.jpg     · your stitched captures
+
+  Drop it on any static host. No licence, no seat fees,
+  no monthly platform bill — you own the folder.</p>
+    </aside>
+
+    <!-- loader -->
+    <div id="vxLoad">
+      <div class="vx-loadin">
+        <p class="vx-loadmark">VERTEX<span>360</span></p>
+        <p class="vx-loadproj">Charnwood House · Leicester · 18,500 sq ft</p>
+        <div class="vx-loadbar"><span id="vxBar"></span></div>
+        <div class="vx-loadrow"><span id="vxLoadStage">Calibrating optics</span><span id="vxPct">0%</span></div>
+        <p class="vx-loadfoot">Nine spaces across two floors, rendered live in your browser.<br>No plugin, no app, no download.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOUR DEFINITION — the entire tour is this object.
+   Swap any scene to a real stitched capture with one line:  pano:"panos/x.jpg"
+   ═══════════════════════════════════════════════════════════════════════════ */
+window.VERTEX_TOUR = {
+  project: { name:"Charnwood House", slug:"charnwood-house", location:"Leicester, LE1", size:"18,500 sq ft" },
+  autoDwell: 11000,
+  autoOrder: ["arrival","atrium","cafe","event","board","studio","soar","focus","terrace"],
+
+  floors: [
+    { id:"g", name:"Ground floor", short:"G", plan:
+      '<rect class="out" x="8" y="6" width="84" height="60" rx="1.5"/>'+
+      '<rect class="rm" x="8" y="44" width="30" height="22"/>'+
+      '<rect class="rm" x="38" y="36" width="26" height="30"/>'+
+      '<rect class="rm" x="64" y="44" width="28" height="22"/>'+
+      '<rect class="rm" x="8" y="6" width="40" height="38"/>'+
+      '<rect class="rm" x="64" y="6" width="28" height="38"/>'+
+      '<rect class="core" x="48" y="6" width="16" height="30"/>'+
+      '<path class="gz" d="M8 66h84"/>'+
+      '<text class="lb" x="11" y="49">RECEPTION</text>'+
+      '<text class="lb" x="41" y="41">ATRIUM</text>'+
+      '<text class="lb" x="67" y="49">THE KITCHEN</text>'+
+      '<text class="lb" x="11" y="11">EVENT HALL</text>'+
+      '<text class="lb" x="67" y="11">BOARDROOM</text>'+
+      '<text class="lb" x="50" y="11">CORE</text>' },
+    { id:"f1", name:"First floor", short:"01", plan:
+      '<rect class="out" x="8" y="6" width="84" height="60" rx="1.5"/>'+
+      '<rect class="rm" x="8" y="6" width="48" height="42"/>'+
+      '<rect class="rm" x="56" y="6" width="36" height="24"/>'+
+      '<rect class="rm" x="56" y="30" width="36" height="18"/>'+
+      '<rect class="rm" x="8" y="48" width="84" height="18"/>'+
+      '<path class="gz" d="M8 66h84M92 6v60"/>'+
+      '<text class="lb" x="11" y="11">STUDIO FLOOR</text>'+
+      '<text class="lb" x="59" y="11">SOAR · MEETING</text>'+
+      '<text class="lb" x="59" y="35">FOCUS BOOTHS</text>'+
+      '<text class="lb" x="11" y="53">SKYLINE TERRACE</text>' }
+  ],
+
+  scenes: [
+    /* ── GROUND ───────────────────────────────────────────────────────── */
+    {
+      id:"arrival", name:"Arrival & Reception", short:"Reception", floor:"g",
+      area:"1,240 sq ft", capacity:"Host desk + 8 seated", plan:[23,55], north:-90,
+      start:{ yaw:24, pitch:-6, fov:78 },
+      room:{ w:11.5, h:3.6, d:9.5, eye:1.62, cam:[0,0.2], layout:0, glaze:"+z",
+             seed:3.1, exposure:1.06, city:1, warm:0,
+             palette:{ wall:"#dfe3ea", floor:"#8e9198", accent:"#16325f", light:"#ffe6c4", wood:"#b78448", fabric:"#44506a" } },
+      hotspots:[
+        { type:"nav",  yaw:172, pitch:-13, to:"atrium", label:"Atrium" },
+        { type:"nav",  yaw:-118, pitch:-12, to:"event", label:"Event hall" },
+        { type:"info", yaw:-4,  pitch:14,  label:"Brand wall",
+          body:"The reception headwall is the first hotspot most visitors click. In a live tour this is where a video loop, a downloadable brochure or a 'book a viewing' form is attached.",
+          stats:[["Hotspot types","Nav · Info · Media · Form"],["Load","1 panorama, ~1.4 MB"]] },
+        { type:"info", yaw:96, pitch:-6, label:"Capture note",
+          body:"Shot from a single tripod position at 1.62 m — eye height. Every space in this tour uses the same height and the same horizon so the walk-through never lurches.",
+          stats:[["Tripod height","1.62 m"],["Nadir","Patched"],["Horizon","Levelled"]] }
+      ]
+    },
+    {
+      id:"atrium", name:"Atrium & Social Stair", short:"Atrium", floor:"g",
+      area:"2,150 sq ft", capacity:"120 standing", plan:[51,51], north:-90,
+      start:{ yaw:12, pitch:-7, fov:84 },
+      room:{ w:14, h:6.6, d:12.5, eye:1.62, cam:[0,2.4], layout:1, glaze:"+z",
+             seed:11.7, exposure:1.02, city:1, warm:0,
+             palette:{ wall:"#e4e7ec", floor:"#7f8288", accent:"#1b3a6b", light:"#ffe8cb", wood:"#b0783f", fabric:"#455873" } },
+      hotspots:[
+        { type:"nav",  yaw:178, pitch:-14, to:"arrival", label:"Reception" },
+        { type:"nav",  yaw:-72, pitch:-12, to:"cafe",   label:"The Kitchen" },
+        { type:"nav",  yaw:20,  pitch:11,  to:"studio", label:"Studio floor" },
+        { type:"info", yaw:0, pitch:-24, label:"Social stair",
+          body:"Tiered seating doubles as an all-hands space. Because the tour is a graph rather than a slideshow, the stair links straight up to the first floor — visitors travel the way the building actually works.",
+          stats:[["Void height","6.6 m"],["All-hands","120 standing"],["Links","3 spaces"]] }
+      ]
+    },
+    {
+      id:"cafe", name:"The Kitchen", short:"Kitchen", floor:"g",
+      area:"1,480 sq ft", capacity:"48 seated", plan:[78,55], north:-90,
+      start:{ yaw:-26, pitch:-7, fov:80 },
+      room:{ w:12.5, h:3.4, d:10.5, eye:1.62, cam:[0.4,1.9], layout:2, glaze:"+z",
+             seed:5.4, exposure:1.05, city:1, warm:0.15,
+             palette:{ wall:"#e7e2da", floor:"#8a7f72", accent:"#1f4d43", light:"#ffdfb2", wood:"#b8813f", fabric:"#3c5c52" } },
+      hotspots:[
+        { type:"nav",  yaw:150, pitch:-13, to:"atrium",  label:"Atrium" },
+        { type:"nav",  yaw:-96, pitch:-12, to:"board",   label:"Boardroom" },
+        { type:"info", yaw:2, pitch:2, label:"Servery",
+          body:"Barista counter, two coffee stations and a servery that opens for events. Info hotspots like this one carry copy, specs and a call to action — the same panel the client edits in the browser.",
+          stats:[["Covers","48 seated"],["Servery","Opens to event hall"],["Power","12 × twin sockets"]] }
+      ]
+    },
+    {
+      id:"event", name:"Event Hall", short:"Events", floor:"g",
+      area:"3,400 sq ft", capacity:"180 theatre · 120 cabaret", plan:[28,25], north:-90,
+      start:{ yaw:18, pitch:-5, fov:84 },
+      room:{ w:17, h:4.8, d:15, eye:1.62, cam:[0,5.0], layout:3, glaze:"+x",
+             seed:21.3, exposure:0.98, city:1, warm:0,
+             palette:{ wall:"#cfd5df", floor:"#6f7480", accent:"#14224a", light:"#ffe3bd", wood:"#96612f", fabric:"#25344f" } },
+      hotspots:[
+        { type:"nav",  yaw:168, pitch:-13, to:"arrival", label:"Reception" },
+        { type:"nav",  yaw:-86, pitch:-12, to:"atrium",  label:"Atrium" },
+        { type:"info", yaw:0, pitch:8, label:"Stage & LED wall",
+          body:"The dedicated event space: 5 m LED wall, rigged truss, blackout glazing. Tours of event spaces earn their keep — organisers can walk the room, check sightlines and count the rig without a site visit.",
+          stats:[["Theatre","180"],["Cabaret","120"],["Ceiling","4.8 m"],["Rig","2 × truss lines"]] },
+        { type:"info", yaw:-150, pitch:-8, label:"Bar & catering",
+          body:"Catering bar rolls in from the Kitchen servery. Attach a PDF layout pack or a booking form to this hotspot and the enquiry lands in the client's inbox from inside the tour.",
+          stats:[["Bar","4 m mobile"],["Catering","From servery"]] }
+      ]
+    },
+    {
+      id:"board", name:"The Boardroom", short:"Boardroom", floor:"g",
+      area:"640 sq ft", capacity:"12 around the table", plan:[78,25], north:-90,
+      start:{ yaw:20, pitch:-8, fov:76 },
+      room:{ w:9, h:3.2, d:11, eye:1.62, cam:[0,3.0], layout:4, glaze:"+z",
+             seed:8.8, exposure:1.03, city:1, warm:0.1,
+             palette:{ wall:"#dcd7cf", floor:"#7a6f62", accent:"#2a1f3d", light:"#ffdcae", wood:"#7d5029", fabric:"#3f3a56" } },
+      hotspots:[
+        { type:"nav",  yaw:176, pitch:-14, to:"cafe", label:"The Kitchen" },
+        { type:"info", yaw:0, pitch:6, label:"AV & acoustics",
+          body:"98\" display, ceiling array mics, oak acoustic battens on the return wall. Everything a facilities team asks about, answered before the viewing.",
+          stats:[["Seats","12"],["Display","98\""],["Acoustic","NRC 0.75 battens"]] }
+      ]
+    },
+
+    /* ── FIRST ────────────────────────────────────────────────────────── */
+    {
+      id:"studio", name:"Studio Floor", short:"Studio", floor:"f1",
+      area:"6,100 sq ft", capacity:"96 desks", plan:[32,27], north:-90,
+      start:{ yaw:-24, pitch:-7, fov:84 },
+      room:{ w:19, h:3.5, d:15, eye:1.62, cam:[1.6,1.3], layout:5, glaze:"+z",
+             seed:2.2, exposure:1.04, city:1, warm:0,
+             palette:{ wall:"#e2e6ec", floor:"#87837c", accent:"#14356e", light:"#ffe8c8", wood:"#c19a6d", fabric:"#42536b" } },
+      hotspots:[
+        { type:"nav",  yaw:170, pitch:-13, to:"atrium",  label:"Down to atrium" },
+        { type:"nav",  yaw:-74, pitch:-12, to:"soar",    label:"Soar" },
+        { type:"nav",  yaw:-118, pitch:-12, to:"focus",  label:"Focus booths" },
+        { type:"nav",  yaw:74,  pitch:-12, to:"terrace", label:"Terrace" },
+        { type:"info", yaw:0, pitch:10, label:"Floor spec",
+          body:"96 sit-stand desks on a 1,500 mm grid, raised floor, 2.9 m clear. Measurements taken from the survey — the tour and the drawing pack agree, which is the whole point.",
+          stats:[["Desks","96"],["Clear height","2.9 m"],["Grid","1.5 m"],["Raised floor","150 mm"]] }
+      ]
+    },
+    {
+      id:"soar", name:"Meeting Room · Soar", short:"Soar", floor:"f1",
+      area:"320 sq ft", capacity:"8 seated", plan:[74,18], north:-90,
+      start:{ yaw:22, pitch:-8, fov:76 },
+      room:{ w:6.6, h:3.0, d:7.8, eye:1.62, cam:[0,2.2], layout:6, glaze:"+z",
+             seed:14.2, exposure:1.05, city:1, warm:0.08,
+             palette:{ wall:"#e6e1d8", floor:"#8b8078", accent:"#213f5c", light:"#ffe1b6", wood:"#a96f38", fabric:"#365070" } },
+      hotspots:[
+        { type:"nav",  yaw:176, pitch:-14, to:"studio", label:"Studio floor" },
+        { type:"nav",  yaw:-100, pitch:-13, to:"focus", label:"Focus booths" },
+        { type:"info", yaw:0, pitch:4, label:"Room booking",
+          body:"One of six meeting rooms, all named after Leicestershire rivers. In a live deployment this hotspot is wired to the room-booking system so a visitor can hold the room from inside the tour.",
+          stats:[["Seats","8"],["Display","75\""],["Glazed","Full height"]] }
+      ]
+    },
+    {
+      id:"focus", name:"Focus Booths", short:"Focus", floor:"f1",
+      area:"520 sq ft", capacity:"4 booths + lounge", plan:[74,39], north:-90,
+      start:{ yaw:-18, pitch:-6, fov:80 },
+      room:{ w:10.5, h:3.2, d:8.5, eye:1.62, cam:[0,2.1], layout:7, glaze:"+x",
+             seed:19.6, exposure:1.05, city:1, warm:0.1,
+             palette:{ wall:"#e3ded6", floor:"#867c74", accent:"#3d2f52", light:"#ffe2ba", wood:"#a46c37", fabric:"#46405e" } },
+      hotspots:[
+        { type:"nav",  yaw:170, pitch:-13, to:"studio",  label:"Studio floor" },
+        { type:"nav",  yaw:-88, pitch:-12, to:"terrace", label:"Terrace" },
+        { type:"info", yaw:0, pitch:2, label:"Acoustic pods",
+          body:"Four upholstered booths for calls and heads-down work, plus a soft lounge. Small spaces are exactly where flat photography fails and 360 earns its fee — you can feel the enclosure.",
+          stats:[["Booths","4"],["Absorption","Class C"],["Power","USB-C at every seat"]] }
+      ]
+    },
+    {
+      id:"terrace", name:"Skyline Terrace", short:"Terrace", floor:"f1",
+      area:"1,150 sq ft", capacity:"70 standing", plan:[50,57], north:-90,
+      start:{ yaw:158, pitch:-4, fov:86 },
+      room:{ w:15, h:3.1, d:9.5, eye:1.62, cam:[0,1.6], layout:8, open:true, glaze:"+z", glaze2:"+x",
+             seed:27.4, exposure:1.10, city:1, warm:1,
+             palette:{ wall:"#d8cfc4", floor:"#7d7268", accent:"#5a2f24", light:"#ffcf8f", wood:"#9c6531", fabric:"#4a4038" } },
+      hotspots:[
+        { type:"nav",  yaw:176, pitch:-14, to:"focus",  label:"Focus booths" },
+        { type:"nav",  yaw:-120, pitch:-13, to:"studio", label:"Studio floor" },
+        { type:"info", yaw:0, pitch:6, label:"Golden hour",
+          body:"The same space can be captured twice — daylight and golden hour — and switched from the same hotspot. Terraces and event spaces sell on atmosphere, so we shoot them when they look their best.",
+          stats:[["Standing","70"],["Capture","2 × time of day"],["Pergola","Heated"]] }
+      ]
+    }
+  ],
+
+  about: {
+    title: "About this build",
+    body: "Everything on screen is running live: nine 360° environments rendered in your browser by a single WebGL engine, tied together by a hotspot graph, a floor plan and a deep-link router. Swap any scene's <code>pano</code> to a stitched capture from site and nothing else changes.",
+    lists: [
+      ["Runtime", ["Photosphere viewer with inertial drag, pinch and scroll zoom",
+                   "Walk-through transition — the old view dollies past you",
+                   "Nav, info, media and form hotspots on a scene graph",
+                   "Live floor plan with a view-direction radar per space",
+                   "Guided tour, motion control on phones, fullscreen",
+                   "Deep links: every angle has its own URL",
+                   "Still export straight from the viewer"]],
+      ["Hand-over", ["In-browser hotspot editor — click to place, aim, label, link",
+                     "Whole tour exports as one tour.json",
+                     "Two static files plus your panoramas. No platform, no seat fees",
+                     "Hosts anywhere: your domain, our edge, or an intranet"]]
+    ]
+  }
+};
+</script>
+<script src="/templates/vertex360.js"></script>
+<script>
+/* about panel — reuses the drawer the engine already owns */
+document.getElementById("vxAbout").addEventListener("click", function () {
+  var t = window.VERTEX_TOUR.about, d = document.getElementById("vxDrawer");
+  document.getElementById("vxDrawerTitle").textContent = t.title;
+  var b = document.getElementById("vxDrawerBody");
+  b.innerHTML = "<p>" + t.body + "</p>" + t.lists.map(function (l) {
+    return "<h4>" + l[0] + "</h4><ul>" + l[1].map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul>";
+  }).join("") +
+    '<a class="vx-btn vx-btn--go" style="margin-top:22px" href="/virtual-tour-360">What this costs →</a>';
+  d.classList.add("is-open");
+  d.setAttribute("aria-hidden", "false");
+});
+</script>
+</body></html>
