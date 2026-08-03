@@ -19,6 +19,7 @@
   --gold:#f0b243; --muted:#c9b49c;
   --dis:'Baloo 2',system-ui,sans-serif; --ser:'Playfair Display',Georgia,serif; --ui:'Inter',system-ui,sans-serif;
   --holi:linear-gradient(90deg,#ff3b30,#ff8a1f 18%,#ffc93c 36%,#00b451 54%,#12a4d9 72%,#8b3ffd 88%,#e6007e);
+  --grad:linear-gradient(135deg,#ff8a1f,#ffc93c);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -27,6 +28,23 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
 ::selection{background:var(--saffron);color:#231204}
+
+/* ---------- location autocomplete ---------- */
+.ac{position:relative}
+.ac-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;display:none;
+  max-height:264px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:#1d1208;border:1px solid rgba(240,178,67,.34);border-radius:14px;
+  box-shadow:0 30px 70px -24px rgba(0,0,0,.95)}
+.ac-list.on{display:block}
+.ac-list li{list-style:none;display:flex;align-items:flex-start;gap:10px;padding:11px 14px;cursor:pointer;
+  font-size:14.4px;color:var(--cream);border-bottom:1px solid rgba(240,178,67,.1)}
+.ac-list li:last-child{border-bottom:0}
+.ac-list li.sel,.ac-list li:hover{background:rgba(255,201,60,.13)}
+.ac-list li svg{width:15px;height:15px;flex:0 0 15px;margin-top:3px;color:var(--marigold)}
+.ac-list li b{font-weight:600}
+.ac-list li span{display:block;color:var(--muted);font-size:12.4px;font-weight:300}
+.ac-list .ac-note{padding:9px 14px;font-size:11.5px;color:#8f7a5e;letter-spacing:.04em;cursor:default;border-top:1px solid rgba(240,178,67,.12)}
+.ac-list .ac-note:hover{background:none}
 
 /* ---------- welcome band + London areas ---------- */
 .welc{position:relative;overflow:hidden}
@@ -70,11 +88,21 @@ img{max-width:100%;display:block}
 .page{position:relative;z-index:1}
 
 /* ---------- nav ---------- */
-.nav{position:sticky;top:14px;z-index:70;padding:0 14px;margin-top:14px}
+.nav{position:sticky;top:14px;z-index:70;padding:0 14px;margin-top:14px;transition:top .3s ease}
+.nav.stuck{top:8px}
 .nav-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px;
   background:rgba(23,14,8,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border:1px solid rgba(240,178,67,.28);border-radius:999px;padding:8px 10px 8px 14px;
-  box-shadow:0 18px 44px -18px rgba(0,0,0,.8)}
+  box-shadow:0 18px 44px -18px rgba(0,0,0,.8);
+  transition:background .35s ease,border-color .35s ease,padding .3s ease,box-shadow .35s ease}
+/* once you scroll, the bar goes translucent and frosted so the page shows through */
+.nav.stuck .nav-in{background:rgba(20,12,6,.46);border-color:rgba(240,178,67,.2);
+  backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);
+  padding:5px 8px 5px 12px;box-shadow:0 14px 40px -22px rgba(0,0,0,.9)}
+.nav.stuck .nav-in .logo{height:38px;transition:height .3s ease}
+.nav.stuck .wm{font-size:clamp(15px,4vw,18px)}
+.nav.stuck .wm small{opacity:.75}
+.nav-in .logo,.wm{transition:height .3s ease,font-size .3s ease}
 .nav-in .logo{height:44px;width:auto;border-radius:50%}
 .brandlink{display:flex;align-items:center;gap:11px;min-width:0}
 .wm{font-family:var(--dis);font-weight:700;font-size:clamp(17px,4.6vw,21px);line-height:1;
@@ -285,8 +313,11 @@ footer .fl a{min-height:40px;display:inline-flex;align-items:center;padding:0 4p
 /* chat assistant */
 .chat-fab{position:fixed;right:18px;bottom:84px;z-index:70;height:52px;padding:0 20px;border:0;border-radius:999px;
   background:var(--grad);color:#231204;font-family:var(--ui);font-weight:800;font-size:14.5px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:9px;box-shadow:0 14px 34px -12px rgba(255,138,31,.9);transition:transform .25s}
+  display:inline-flex;align-items:center;gap:9px;box-shadow:0 14px 34px -12px rgba(255,138,31,.9);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .25s}
 .chat-fab:hover{transform:translateY(-2px)}
+/* once the booking form is on screen the shortcut is in the way, so it steps aside */
+.chat-fab.away{transform:translateY(140%);opacity:0;pointer-events:none}
 .chat-fab svg{width:19px;height:19px}
 @media(max-width:640px){.chat-fab{right:14px;bottom:18px;height:48px;padding:0 17px;font-size:13.5px}}
 .chat-panel{position:fixed;right:18px;bottom:18px;z-index:80;width:min(370px,calc(100vw - 28px));
@@ -666,7 +697,7 @@ footer small{color:#9b8468;font-size:12.5px}
           <div class="two">
             <div class="fld"><label for="hrs">Hours needed</label>
               <select id="hrs" name="hours"><option value="">Not sure yet</option><option>2 hours</option><option>3 hours</option><option>4 hours</option><option>Half day</option><option>Full day</option><option>Multiple days</option></select></div>
-            <div class="fld"><label for="loc">Location / venue</label><input id="loc" name="location" type="text" placeholder="City or venue"></div>
+            <div class="fld ac"><label for="loc">Location / venue</label><input id="loc" name="location" type="text" placeholder="Start typing a town, city or venue" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="locList"><ul class="ac-list" id="locList" role="listbox"></ul></div>
           </div>
           <div class="two">
             <div class="fld"><label for="nm">Your name <span class="req">required</span></label><input id="nm" name="name" type="text" required placeholder="Full name"></div>
@@ -705,7 +736,7 @@ footer small{color:#9b8468;font-size:12.5px}
 <a class="wa-float" href="https://wa.me/447940762404" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21A9.9 9.9 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.4 1.3-1.94 1.34-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.94-4.69-4.12-.14-.18-1.12-1.49-1.12-2.84 0-1.35.71-2.02.96-2.29a1 1 0 0 1 .73-.34h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.1.18-.15.29-.29.45l-.43.48c-.14.14-.29.29-.12.57.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.28.38-.23.64-.14.26.1 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.17 1.36z"/></svg></a>
 <button class="chat-fab" id="chatFab" type="button">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.3 9.3 0 0 1-2.9-.4L3 21l1.5-5.1A8.2 8.2 0 0 1 3.6 11.5a8.4 8.4 0 0 1 9-8.4 8.4 8.4 0 0 1 8.4 8.4z"/></svg>
-  Ask us anything
+  Book with Himansu
 </button>
 <section class="chat-panel" id="chatPanel" aria-label="Booking assistant">
   <div class="chat-head">
@@ -915,6 +946,156 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
   addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
   addEventListener('resize',upd,{passive:true}); upd();
+})();
+
+/* ---------- keep the booking shortcut out of the form's way ---------- */
+(function(){
+  var fab=document.getElementById('chatFab'), book=document.getElementById('book');
+  if(!fab||!book||!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){ fab.classList.toggle('away', e.isIntersecting); });
+  },{threshold:.12}).observe(book);
+})();
+
+/* ---------- nav goes translucent once you scroll ---------- */
+(function(){
+  var nav=document.querySelector('.nav'); if(!nav) return;
+  var raf=0;
+  function upd(){ nav.classList.toggle('stuck', (scrollY||pageYOffset) > 40); raf=0; }
+  addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
+  upd();
+})();
+
+/* ---------- location autocomplete -------------------------------------
+   Uses Google Places when a key is set in MAPS_KEY below; without one it
+   falls back to a built-in list of London areas and UK towns, so the field
+   always works and costs nothing until the key is added.
+
+   To turn Google on:
+     1. console.cloud.google.com -> enable "Places API (New)"
+     2. create an API key, restrict it to HTTP referrers for the live domain
+     3. paste it into MAPS_KEY
+--------------------------------------------------------------------- */
+(function(){
+  var MAPS_KEY = "";          /* <-- paste the Google Places key here */
+
+  var LOCAL = [
+    "Westminster","City of London","Mayfair","Marylebone","Soho","Covent Garden","Bloomsbury","Kensington",
+    "Chelsea","Knightsbridge","Belgravia","Paddington","Camden","Islington","Shoreditch","Clerkenwell",
+    "Southwark","Lambeth","Waterloo","Pimlico","Fitzrovia","Holborn",
+    "Wembley","Harrow","Brent","Barnet","Edgware","Kingsbury","Finchley","Hendon","Golders Green","Enfield",
+    "Haringey","Tottenham","Wood Green","Southgate","Stanmore","Pinner","Ruislip","Northwood",
+    "Ealing","Southall","Hounslow","Hayes","Uxbridge","Greenford","Acton","Chiswick","Hammersmith","Fulham",
+    "Richmond","Twickenham","Kingston upon Thames","Surbiton","Feltham","Heathrow","Brentford","Northolt","Hillingdon",
+    "Ilford","Redbridge","Barking","Dagenham","Romford","Newham","Stratford","East Ham","Walthamstow","Leyton",
+    "Hackney","Bethnal Green","Whitechapel","Canary Wharf","Woodford","Chigwell","Upminster","Hornchurch","Loughton",
+    "Croydon","Wimbledon","Merton","Mitcham","Tooting","Streatham","Clapham","Brixton","Wandsworth","Battersea",
+    "Greenwich","Lewisham","Bromley","Sutton","Carshalton","Morden","Thornton Heath","Purley","Dulwich",
+    "Slough","Reading","Watford","St Albans","Luton","Milton Keynes","Hemel Hempstead","Woking","Guildford",
+    "Epsom","Dartford","Gravesend","Brentwood","Chelmsford","Basildon","Southend-on-Sea","Windsor","Maidenhead",
+    "Aylesbury","High Wycombe","Borehamwood",
+    "Birmingham","Coventry","Wolverhampton","Leicester","Nottingham","Derby","Northampton","Peterborough",
+    "Manchester","Salford","Stockport","Bolton","Oldham","Rochdale","Blackburn","Preston","Bradford","Leeds",
+    "Huddersfield","Wakefield","Sheffield","Liverpool","Wigan","Warrington","Chester","Stoke-on-Trent",
+    "Newcastle upon Tyne","Sunderland","Middlesbrough","York","Hull","Lincoln","Norwich","Ipswich","Cambridge",
+    "Oxford","Bristol","Bath","Swindon","Gloucester","Cardiff","Newport","Swansea","Southampton","Portsmouth",
+    "Brighton","Eastbourne","Hastings","Canterbury","Maidstone","Ashford","Bournemouth","Exeter","Plymouth",
+    "Glasgow","Edinburgh","Aberdeen","Dundee","Belfast"
+  ];
+
+  var PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s6.8-5.4 6.8-11a6.8 6.8 0 1 0-13.6 0C5.2 15.6 12 21 12 21z"/><circle cx="12" cy="9.9" r="2.6"/></svg>';
+
+  var input=document.getElementById('loc'), list=document.getElementById('locList');
+  if(!input||!list) return;
+  var items=[], cur=-1, google_=null, token=null, timer=0;
+
+  function esc(x){ return String(x).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+
+  function render(rows, note){
+    items=rows;
+    if(!rows.length){ close(); return; }
+    list.innerHTML = rows.map(function(r,i){
+      return '<li role="option" data-i="'+i+'">'+PIN+'<div><b>'+esc(r.main)+'</b>'+
+             (r.sub?'<span>'+esc(r.sub)+'</span>':'')+'</div></li>';
+    }).join('') + (note?'<li class="ac-note">'+esc(note)+'</li>':'');
+    list.classList.add('on'); input.setAttribute('aria-expanded','true'); cur=-1;
+  }
+  function close(){ list.classList.remove('on'); input.setAttribute('aria-expanded','false'); cur=-1; }
+  function choose(i){
+    var r=items[i]; if(!r) return;
+    input.value = r.full || (r.sub ? r.main+', '+r.sub : r.main);
+    close(); input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
+  function localMatches(q){
+    q=q.toLowerCase();
+    var starts=[], has=[];
+    LOCAL.forEach(function(n){
+      var l=n.toLowerCase();
+      if(l.indexOf(q)===0) starts.push(n); else if(l.indexOf(q)>-1) has.push(n);
+    });
+    return starts.concat(has).slice(0,7).map(function(n){ return {main:n, sub:'United Kingdom', full:n}; });
+  }
+
+  /* Google Places (New) — loaded lazily on first keystroke, never on page load */
+  function loadGoogle(){
+    if(!MAPS_KEY || google_ !== null) return;
+    google_ = false;                                   /* in flight */
+    var sc=document.createElement('script');
+    sc.async=true;
+    sc.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(MAPS_KEY)+'&libraries=places&loading=async&v=weekly';
+    sc.onerror=function(){ google_=false; };
+    sc.onload=function(){
+      try{
+        google.maps.importLibrary('places').then(function(lib){
+          google_=lib;
+          token=new lib.AutocompleteSessionToken();
+        }).catch(function(){ google_=false; });
+      }catch(e){ google_=false; }
+    };
+    document.head.appendChild(sc);
+  }
+
+  function query(q){
+    if(google_ && google_.AutocompleteSuggestion){
+      google_.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input:q, sessionToken:token, includedRegionCodes:['gb'], language:'en-GB'
+      }).then(function(res){
+        var rows=(res.suggestions||[]).map(function(sg){
+          var pp=sg.placePrediction; if(!pp) return null;
+          return { main:pp.mainText?pp.mainText.text:pp.text.text,
+                   sub: pp.secondaryText?pp.secondaryText.text:'',
+                   full:pp.text.text };
+        }).filter(Boolean).slice(0,7);
+        if(rows.length) render(rows); else render(localMatches(q));
+      }).catch(function(){ render(localMatches(q)); });
+    } else {
+      render(localMatches(q));
+    }
+  }
+
+  input.addEventListener('focus', loadGoogle);
+  input.addEventListener('input', function(){
+    var q=input.value.trim();
+    clearTimeout(timer);
+    if(q.length<2){ close(); return; }
+    timer=setTimeout(function(){ query(q); }, 180);
+  });
+  input.addEventListener('keydown', function(e){
+    if(!list.classList.contains('on')) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault();
+      var n=list.querySelectorAll('li[data-i]').length;
+      cur=(cur+(e.key==='ArrowDown'?1:-1)+n)%n;
+      list.querySelectorAll('li[data-i]').forEach(function(li,i){ li.classList.toggle('sel',i===cur); });
+    } else if(e.key==='Enter'){ if(cur>-1){ e.preventDefault(); choose(cur); } }
+    else if(e.key==='Escape'){ close(); }
+  });
+  list.addEventListener('mousedown', function(e){
+    var li=e.target.closest('li[data-i]'); if(!li) return;
+    e.preventDefault(); choose(+li.getAttribute('data-i'));
+  });
+  document.addEventListener('click', function(e){ if(!e.target.closest('.ac')) close(); });
 })();
 
 /* ---------- booking assistant ----------
