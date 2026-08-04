@@ -438,9 +438,7 @@ function needClient(inv){
   if (!inv.items.length){ toast('Add at least one line with a price'); return false; }
   return true;
 }
-function makePdf(inv){
-  return HF.logo(LOGO_PATH).then(function(buf){ return HF.buildPdf(inv, buf); });
-}
+function makePdf(inv){ return HF.buildPdf(inv, HF.logoBuf()); }
 function fileName(inv){
   return 'Invoice-' + (inv.number || 'HF') + '-' + (inv.client || '').replace(/[^\w]+/g, '-') + '.pdf';
 }
@@ -452,24 +450,24 @@ function download(blob, name){
 
 $('bPdf').onclick = function(){
   var inv = gather(); if (!needClient(inv)) return;
-  makePdf(inv).then(function(b){ download(b, fileName(inv)); saveHistory(inv); toast('PDF saved'); });
+  download(makePdf(inv), fileName(inv)); saveHistory(inv); toast('PDF saved');
 };
 
 $('bShare').onclick = function(){
   var inv = gather(); if (!needClient(inv)) return;
-  makePdf(inv).then(function(blob){
-    var f = new File([blob], fileName(inv), { type:'application/pdf' });
-    var link = VIEW_BASE + '#' + HF.encode(inv);
-    if (navigator.canShare && navigator.canShare({ files:[f] })){
-      navigator.share({ files:[f], title:'Invoice ' + inv.number, text:HF.message(inv, link) })
-        .then(function(){ saveHistory(inv); })
-        .catch(function(){});
-    } else {
-      download(blob, fileName(inv));
-      saveHistory(inv);
-      toast('PDF saved — attach it in WhatsApp');
-    }
-  });
+  /* everything below is synchronous — iOS only permits share() inside the tap */
+  var blob = makePdf(inv);
+  var f = new File([blob], fileName(inv), { type:'application/pdf' });
+  var link = VIEW_BASE + '#' + HF.encode(inv);
+  if (navigator.canShare && navigator.canShare({ files:[f] })){
+    navigator.share({ files:[f], title:'Invoice ' + inv.number, text:HF.message(inv, link) })
+      .then(function(){ saveHistory(inv); })
+      .catch(function(){});
+  } else {
+    download(blob, fileName(inv));
+    saveHistory(inv);
+    toast('PDF saved — attach it in WhatsApp');
+  }
 };
 
 $('bWa').onclick = function(){

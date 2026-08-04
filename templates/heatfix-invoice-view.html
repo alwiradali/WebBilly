@@ -152,14 +152,12 @@ if (!inv || !inv.items){
     'https://wa.me/' + c.intl + '?text=' + encodeURIComponent('Hi, about invoice ' + (inv.number || '') + ' — ');
   document.getElementById('dl').onclick = function(){
     var b = this; b.disabled = true; b.textContent = 'Building…';
-    HF.logo(LOGO_PATH).then(function(buf){
-      var blob = HF.buildPdf(inv, buf);
-      var u = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = u; a.download = 'Invoice-' + (inv.number || 'HF') + '.pdf';
-      document.body.appendChild(a); a.click();
-      setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 1500);
-      b.disabled = false; b.textContent = 'Download PDF';
-    });
+    var blob = HF.buildPdf(inv, HF.logoBuf());
+    var u = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = u; a.download = 'Invoice-' + (inv.number || 'HF') + '.pdf';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 1500);
+    b.disabled = false; b.textContent = 'Download PDF';
   };
 }
 </script>
