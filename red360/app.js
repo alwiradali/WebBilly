@@ -1614,19 +1614,25 @@
 
     /* phone dock */
     var dockInfo = $("#dockInfo"), dockMap = $("#dockMap"), dockMore = $("#dockMore");
+    function syncDock() {
+      var l = $("#panelLeft"), r = $("#panelRight");
+      var any = l.classList.contains("is-open") || r.classList.contains("is-open");
+      dockInfo.classList.toggle("btn--primary", l.classList.contains("is-open"));
+      dockMap.classList.toggle("btn--primary", r.classList.contains("is-open"));
+      $("#mobileDock").classList.toggle("is-raised", any);
+    }
     function sheetToggle(which) {
       var l = $("#panelLeft"), r = $("#panelRight");
       var open = which === "left" ? l : r, other = which === "left" ? r : l;
       other.classList.remove("is-open");
       open.classList.toggle("is-open");
-      dockInfo.classList.toggle("btn--primary", l.classList.contains("is-open"));
-      dockMap.classList.toggle("btn--primary", r.classList.contains("is-open"));
+      syncDock();
     }
     dockInfo.onclick = function () { sheetToggle("left"); };
     dockMap.onclick = function () { sheetToggle("right"); };
     dockMore.onclick = openPalette;
-    $("#btnCloseLeft").addEventListener("click", function () { $("#panelLeft").classList.remove("is-open"); dockInfo.classList.remove("btn--primary"); });
-    $("#btnCloseRight").addEventListener("click", function () { $("#panelRight").classList.remove("is-open"); dockMap.classList.remove("btn--primary"); });
+    $("#btnCloseLeft").addEventListener("click", function () { $("#panelLeft").classList.remove("is-open"); syncDock(); });
+    $("#btnCloseRight").addEventListener("click", function () { $("#panelRight").classList.remove("is-open"); syncDock(); });
   }
 
   /* ═══════════════════════════════════════════════════════════════════════

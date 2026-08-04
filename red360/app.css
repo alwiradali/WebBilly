@@ -869,3 +869,27 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
   .sheet-body { padding: 0 16px 20px; }
   .sheet-foot { padding: 14px 16px 18px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLL CONTAINMENT
+   A flex or grid item defaults to min-height:auto, so a child with
+   overflow:auto grows to fit its content instead of scrolling — the panel
+   silently spills past the viewport and nothing moves. Every scroll container
+   in the product needs its track floored at zero.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.studio { min-height: 0; overflow: hidden; }
+.studio-main { min-height: 0; min-width: 0; overflow: hidden; }
+.studio-body { flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.studio-rail { min-height: 0; overflow-y: auto; }
+.side { min-height: 0; }
+.side-body { flex: 1 1 auto; min-height: 0; }
+.sheet { min-height: 0; }
+.sheet-body { flex: 1 1 auto; min-height: 0; }
+.palette { min-height: 0; }
+.palette-list { flex: 1 1 auto; min-height: 0; }
+.view, #app { min-height: 0; }
+
+/* the dock has to outrank the sheets it opens, and step above them when one
+   is up, so Details ⇄ Plan is one tap rather than close-then-open */
+.mobile-dock { z-index: 26; transition: bottom var(--t-3) var(--e), opacity var(--t-2) var(--e); }
+.mobile-dock.is-raised { bottom: calc(62vh + 12px); }
