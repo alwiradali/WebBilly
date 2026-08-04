@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Your invoice — Heat Fix Mcr Limited</title>
+<meta name="theme-color" content="#0a0d11">
+<link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/heatfix/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/heatfix.css">
+<style>
+body::before{opacity:.28}
+.vwrap{max-width:840px;margin:0 auto;padding:26px 16px 120px}
+.vtop{display:flex;align-items:center;gap:13px;margin-bottom:22px}
+.vtop .logo-plate{padding:6px 9px}.vtop .logo-plate img{height:38px}
+.vtop b{font-family:var(--dis);font-weight:800;font-size:1.05rem;display:block;line-height:1.15}
+.vtop small{font-size:.64rem;letter-spacing:.17em;text-transform:uppercase;color:var(--gold2);font-weight:700}
+
+.paper{
+  background:#fff;color:#111820;border-radius:14px;overflow:hidden;line-height:1.5;
+  box-shadow:0 40px 90px -34px rgba(0,0,0,1);font-size:14px;
+}
+.paper *{box-sizing:border-box}
+.p-head{background:#fbfcfd;padding:26px 26px 20px;border-bottom:4px solid #0d2a63;position:relative}
+.p-head::after{content:"";position:absolute;bottom:-6px;left:0;right:0;height:2px;background:#c9a24a}
+.p-head-in{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.p-head img{height:64px;width:auto}
+.p-co b{display:block;font-family:var(--dis);font-weight:800;font-size:18px;color:#0d2a63;line-height:1.2}
+.p-co span{display:block;color:#5b6675;font-size:12px}
+.p-right{margin-left:auto;text-align:right}
+.p-right b{font-family:var(--dis);font-weight:900;font-size:32px;color:#0d2a63;letter-spacing:-.02em;display:block;line-height:1}
+.p-right span{display:block;color:#5b6675;font-size:12px;margin-top:3px}
+.p-body{padding:26px}
+.p-meta{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:24px}
+.p-meta .bill{margin-left:auto;text-align:right}
+.p-lab{font-family:var(--dis);font-weight:700;font-size:9px;letter-spacing:.14em;color:#7a8593;text-transform:uppercase}
+.p-val{font-family:var(--dis);font-weight:700;font-size:15px;margin-top:3px}
+.p-sm{color:#5b6675;font-size:12.5px}
+.p-rule{height:1px;background:#c9a24a;margin:8px 0 18px}
+table.p-t{width:100%;border-collapse:collapse}
+table.p-t th{font-family:var(--dis);font-weight:700;font-size:9.5px;letter-spacing:.12em;color:#7a8593;
+  text-transform:uppercase;text-align:right;padding:9px 0;background:#f5f7f9}
+table.p-t th:first-child{text-align:left;padding-left:10px}
+table.p-t th:last-child{padding-right:10px}
+table.p-t td{padding:12px 0;border-bottom:1px solid #e6e9ed;text-align:right;font-size:14px;vertical-align:top}
+table.p-t td:first-child{text-align:left;padding-left:10px}
+table.p-t td:last-child{padding-right:10px;font-weight:700}
+.p-tot{margin-left:auto;max-width:340px;margin-top:16px}
+.p-tot div{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;color:#5b6675}
+.p-tot div.big{background:#f5f7f9;margin-top:9px;padding:14px 12px;border-top:2px solid #c9a24a;
+  color:#0d2a63;font-family:var(--dis);font-weight:800;font-size:19px}
+.p-pay{background:#f5f7f9;border-top:2px solid #c9a24a;padding:16px;margin-top:26px;white-space:pre-line;font-size:13px}
+.p-foot{background:#0d2a63;color:#fff;padding:14px 26px;font-size:11.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vacts{display:grid;gap:10px;grid-template-columns:1fr;margin-top:22px}
+@media(min-width:560px){.vacts{grid-template-columns:1fr 1fr 1fr}}
+.vacts .btn{width:100%}
+.empty{text-align:center;padding:70px 20px}
+.empty h1{font-size:1.6rem;margin-bottom:12px}
+@media print{
+  body{background:#fff}
+  body::before,.vtop,.vacts,.vnote{display:none!important}
+  .vwrap{padding:0;max-width:none}
+  .paper{box-shadow:none;border-radius:0}
+}
+</style>
+</head>
+<body>
+<div class="vwrap">
+  <div class="vtop">
+    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
+    <span><b>Heat Fix Mcr Limited</b><small>Heating &amp; Plumbing · Manchester</small></span>
+  </div>
+
+  <div id="out"></div>
+
+  <div class="vacts" id="acts" style="display:none">
+    <button class="btn gold" id="dl">Download PDF</button>
+    <a class="btn ghost" id="callBtn" href="tel:+447890452629">Call about this invoice</a>
+    <a class="btn ghost" id="waBtn" href="https://wa.me/447890452629" target="_blank" rel="noopener">WhatsApp us</a>
+  </div>
+  <p class="vnote" style="text-align:center;color:var(--dim);font-size:.8rem;margin-top:16px">
+    Heat Fix Mcr Limited · 07890 452629 · heatfixmcr@hotmail.com · heatfixmcrlimited.co.uk
+  </p>
+</div>
+
+<script src="../assets/js/heatfix-invoice.js"></script>
+<script>
+var LOGO_PATH = '../assets/heatfix/logo-invoice.jpg';
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+var inv = HF.decode(location.hash);
+var out = document.getElementById('out');
+
+if (!inv || !inv.items){
+  out.innerHTML =
+    '<div class="empty"><h1>No invoice on this link</h1>' +
+    '<p class="lede" style="margin:0 auto">The link may have been cut short when it was copied. ' +
+    'Ask us to send it again, or ring 07890 452629 and we will read it out.</p>' +
+    '<p style="margin-top:24px"><a class="btn gold" href="tel:+447890452629">Call 07890 452629</a></p></div>';
+} else {
+  document.title = 'Invoice ' + (inv.number || '') + ' — Heat Fix Mcr Limited';
+  var t = HF.totals(inv), c = HF.company;
+  var rows = inv.items.map(function(it){
+    return '<tr><td>' + esc(it.desc) + '</td><td>' + it.qty + '</td><td>£' + HF.money(it.price) +
+           '</td><td>£' + HF.money(it.qty * it.price) + '</td></tr>';
+  }).join('');
+  out.innerHTML =
+  '<div class="paper">' +
+  '<div class="p-head"><div class="p-head-in">' +
+    '<img src="' + LOGO_PATH + '" alt="Heat Fix Mcr Limited">' +
+    '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span><span>Gas Safe registered engineer</span></div>' +
+    '<div class="p-right"><b>INVOICE</b><span>' + c.phone + '</span><span>' + c.email + '</span><span>' + c.web + '</span></div>' +
+  '</div></div>' +
+  '<div class="p-body">' +
+    '<div class="p-meta">' +
+      '<div><div class="p-lab">Invoice no.</div><div class="p-val">' + esc(inv.number || '—') + '</div></div>' +
+      '<div><div class="p-lab">Date</div><div class="p-val">' + HF.fmtDate(inv.date || HF.isoDate(new Date())) + '</div></div>' +
+      '<div><div class="p-lab">Due</div><div class="p-val">' + (inv.due ? HF.fmtDate(inv.due) : 'On receipt') + '</div></div>' +
+      '<div class="bill"><div class="p-lab">Bill to</div><div class="p-val">' + (esc(inv.client) || '—') + '</div>' +
+        (inv.caddress ? '<div class="p-sm">' + esc(inv.caddress) + '</div>' : '') +
+        (inv.cpostcode ? '<div class="p-sm">' + esc(inv.cpostcode) + '</div>' : '') +
+        (inv.cphone ? '<div class="p-sm">' + esc(inv.cphone) + '</div>' : '') +
+      '</div>' +
+    '</div><div class="p-rule"></div>' +
+    '<table class="p-t"><thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead><tbody>' +
+      rows + '</tbody></table>' +
+    '<div class="p-tot">' +
+      '<div><span>Subtotal</span><span>£' + HF.money(t.sub) + '</span></div>' +
+      (t.disc ? '<div><span>Discount</span><span>-£' + HF.money(t.disc) + '</span></div>' : '') +
+      (inv.vat ? '<div><span>VAT ' + (inv.vatRate || 20) + '%</span><span>£' + HF.money(t.vat) + '</span></div>' : '') +
+      '<div class="big"><span>TOTAL</span><span>£' + HF.money(t.total) + '</span></div>' +
+      (t.paid ? '<div style="margin-top:6px"><span>Paid</span><span>-£' + HF.money(t.paid) + '</span></div>' +
+                '<div style="font-weight:700;color:#0d2a63"><span>Balance due</span><span>£' + HF.money(t.due) + '</span></div>' : '') +
+    '</div>' +
+    (inv.work ? '<div style="margin-top:22px"><div class="p-lab">Work carried out</div><div style="margin-top:5px">' + esc(inv.work) + '</div></div>' : '') +
+    (inv.notes ? '<div style="margin-top:16px"><div class="p-lab">Notes</div><div class="p-sm" style="margin-top:5px">' + esc(inv.notes) + '</div></div>' : '') +
+    '<div class="p-pay"><div class="p-lab" style="margin-bottom:6px">How to pay</div>' +
+      (esc(inv.payto) || 'Bank details on request — call ' + c.phone + '.') +
+      (inv.gassafe ? '<div class="p-sm" style="margin-top:8px">Gas Safe reg. ' + esc(inv.gassafe) + '</div>' : '') +
+    '</div>' +
+  '</div>' +
+  '<div class="p-foot"><span>' + c.name + ' · ' + c.person + ' · ' + c.phone + '</span><span>' + c.web + '</span></div>' +
+  '</div>';
+
+  document.getElementById('acts').style.display = '';
+  document.getElementById('waBtn').href =
+    'https://wa.me/' + c.intl + '?text=' + encodeURIComponent('Hi, about invoice ' + (inv.number || '') + ' — ');
+  document.getElementById('dl').onclick = function(){
+    var b = this; b.disabled = true; b.textContent = 'Building…';
+    HF.logo(LOGO_PATH).then(function(buf){
+      var blob = HF.buildPdf(inv, buf);
+      var u = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = u; a.download = 'Invoice-' + (inv.number || 'HF') + '.pdf';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 1500);
+      b.disabled = false; b.textContent = 'Download PDF';
+    });
+  };
+}
+</script>
+</body>
+</html>

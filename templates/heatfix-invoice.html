@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Invoice builder — Heat Fix Mcr Limited</title>
+<meta name="theme-color" content="#0a0d11">
+<link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/heatfix/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/heatfix.css">
+<style>
+body::before{opacity:.3}
+.top{
+  position:sticky;top:0;z-index:60;background:rgba(10,13,17,.86);
+  backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--line);
+}
+.top::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--goldline);opacity:.7}
+.top-in{max-width:1400px;margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:14px}
+.top .logo-plate{padding:5px 8px}.top .logo-plate img{height:30px}
+.top b{font-family:var(--dis);font-weight:800;font-size:.98rem;line-height:1.1;display:block}
+.top small{font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:var(--gold2);font-weight:700}
+.top .sp{margin-left:auto}
+
+.shell{max-width:1400px;margin:0 auto;padding:22px 18px 232px;display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:1080px){.shell{grid-template-columns:minmax(0,1fr) minmax(0,.94fr);align-items:start;padding-bottom:130px}}
+
+.card{
+  border-radius:var(--rl);background:var(--panel);border:1px solid var(--line);
+  padding:22px;position:relative;overflow:hidden;box-shadow:var(--shadow);
+}
+.card::before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:var(--goldline)}
+.card + .card{margin-top:18px}
+.card h2{font-size:1.05rem;margin-bottom:3px}
+.card .sub{color:var(--muted);font-size:.83rem;margin-bottom:18px}
+.field{margin-bottom:12px}
+.field input,.field select,.field textarea{padding:12px 14px;font-size:.95rem;border-radius:12px}
+.field textarea{min-height:80px}
+.grid3{display:grid;gap:0 12px;grid-template-columns:1fr}
+@media(min-width:560px){.grid3{grid-template-columns:1fr 1fr 1fr}}
+
+/* line items */
+.lines{display:grid;gap:10px}
+.line{
+  display:grid;gap:8px;grid-template-columns:1fr;padding:12px;border-radius:14px;
+  background:rgba(255,255,255,.035);border:1px solid var(--line);position:relative;
+}
+@media(min-width:620px){.line{grid-template-columns:1fr 74px 108px 118px 38px;align-items:end}}
+.line .field{margin:0}
+.line .amt{
+  font-family:var(--dis);font-weight:800;font-size:1.02rem;text-align:right;padding:12px 0;
+  color:var(--gold2);white-space:nowrap;
+}
+.line .del{
+  width:38px;height:44px;border-radius:12px;background:rgba(255,90,60,.12);
+  border:1px solid rgba(255,90,60,.3);color:#ff9c88;cursor:pointer;font-size:1.05rem;
+}
+.line .del:hover{background:rgba(255,90,60,.22)}
+.addline{
+  margin-top:12px;width:100%;padding:13px;border-radius:13px;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1px dashed var(--line);color:var(--muted);
+  font-family:var(--dis);font-weight:700;font-size:.88rem;transition:.2s;
+}
+.addline:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* quick amount chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chips button{
+  padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  cursor:pointer;font-size:.82rem;font-weight:600;transition:.2s;color:#c3ccd7;
+}
+.chips button:hover{border-color:var(--gold);color:var(--gold2);transform:translateY(-1px)}
+
+.toggle{display:flex;align-items:center;gap:11px;padding:11px 0;cursor:pointer;user-select:none}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle i{
+  width:44px;height:26px;border-radius:100px;background:rgba(255,255,255,.1);position:relative;
+  transition:.25s;flex:none;border:1px solid var(--line);
+}
+.toggle i::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:#fff;transition:.25s cubic-bezier(.2,.8,.2,1)}
+.toggle input:checked + i{background:var(--blue);border-color:var(--sky)}
+.toggle input:checked + i::after{transform:translateX(18px)}
+.toggle span{font-size:.92rem}
+
+/* ---- preview ---- */
+.prevwrap{position:static}
+@media(min-width:1080px){.prevwrap{position:sticky;top:82px}}
+.paper{
+  background:#fff;color:#111820;border-radius:12px;overflow:hidden;
+  box-shadow:0 40px 90px -34px rgba(0,0,0,1);font-size:12px;line-height:1.45;
+  aspect-ratio:1/1.414;overflow-y:auto;
+}
+.paper *{box-sizing:border-box}
+.p-head{background:#fbfcfd;padding:20px 22px 16px;border-bottom:4px solid #0d2a63;position:relative}
+.p-head::after{content:"";position:absolute;bottom:-6px;left:0;right:0;height:2px;background:#c9a24a}
+.p-head-in{display:flex;gap:14px;align-items:flex-start}
+.p-head img{height:54px;width:auto}
+.p-co b{display:block;font-family:var(--dis);font-weight:800;font-size:15px;color:#0d2a63;line-height:1.2}
+.p-co span{display:block;color:#5b6675;font-size:10.5px}
+.p-right{margin-left:auto;text-align:right}
+.p-right b{font-family:var(--dis);font-weight:900;font-size:26px;color:#0d2a63;letter-spacing:-.02em;display:block;line-height:1}
+.p-right span{display:block;color:#5b6675;font-size:10.5px;margin-top:3px}
+.p-body{padding:20px 22px}
+.p-meta{display:flex;gap:22px;margin-bottom:22px}
+.p-meta > div{flex:none}
+.p-meta .bill{margin-left:auto;text-align:right;max-width:44%}
+.p-lab{font-family:var(--dis);font-weight:700;font-size:8px;letter-spacing:.14em;color:#7a8593;text-transform:uppercase}
+.p-val{font-family:var(--dis);font-weight:700;font-size:12.5px;margin-top:3px}
+.p-sm{color:#5b6675;font-size:10.5px}
+.p-rule{height:1px;background:#c9a24a;margin:6px 0 16px}
+table.p-t{width:100%;border-collapse:collapse}
+table.p-t th{
+  font-family:var(--dis);font-weight:700;font-size:8px;letter-spacing:.12em;color:#7a8593;
+  text-transform:uppercase;text-align:right;padding:7px 0;background:#f5f7f9;
+}
+table.p-t th:first-child{text-align:left;padding-left:8px}
+table.p-t th:last-child{padding-right:8px}
+table.p-t td{padding:9px 0;border-bottom:1px solid #e6e9ed;text-align:right;font-size:11.5px;vertical-align:top}
+table.p-t td:first-child{text-align:left;padding-left:8px}
+table.p-t td:last-child{padding-right:8px;font-weight:700}
+.p-tot{margin-left:auto;width:56%;margin-top:14px}
+.p-tot div{display:flex;justify-content:space-between;padding:5px 0;font-size:11.5px;color:#5b6675}
+.p-tot div.big{
+  background:#f5f7f9;margin-top:8px;padding:11px 10px;border-top:2px solid #c9a24a;
+  color:#0d2a63;font-family:var(--dis);font-weight:800;font-size:15px;
+}
+.p-pay{background:#f5f7f9;border-top:2px solid #c9a24a;padding:13px;margin-top:22px;white-space:pre-line;font-size:11px}
+.p-foot{background:#0d2a63;color:#fff;padding:11px 22px;font-size:9.5px;display:flex;justify-content:space-between;gap:10px}
+
+/* action bar */
+.actions{
+  position:fixed;left:0;right:0;bottom:0;z-index:65;padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(10,13,17,.9);backdrop-filter:blur(20px);border-top:1px solid var(--line);
+}
+.actions::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--goldline)}
+.act-in{max-width:1400px;margin:0 auto;display:grid;gap:9px;grid-template-columns:1fr 1fr}
+@media(min-width:760px){.act-in{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:759px){.act-in .btn{padding:13px 8px;font-size:.84rem}}
+.act-in .btn{width:100%;padding:14px 12px;font-size:.88rem}
+.wa{background:linear-gradient(135deg,#1faa54,#25d366)!important;color:#04220f!important;
+  box-shadow:0 14px 30px -14px rgba(37,211,102,.8)!important}
+
+.hist{display:grid;gap:8px;max-height:220px;overflow:auto}
+.hist button{
+  display:flex;justify-content:space-between;gap:12px;text-align:left;width:100%;
+  padding:11px 13px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);
+  cursor:pointer;font-size:.86rem;transition:.2s;
+}
+.hist button:hover{border-color:var(--gold);color:var(--gold2)}
+.hist b{font-family:var(--dis);font-weight:800}
+.toast{
+  position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:90;
+  background:rgba(20,26,34,.96);border:1px solid var(--gold);color:var(--gold2);
+  padding:12px 22px;border-radius:100px;font-weight:600;font-size:.9rem;
+  opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow);
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
+    <span><b>Invoice builder</b><small>Heat Fix Mcr Limited</small></span>
+    <span class="sp"></span>
+    <a class="btn ghost sm" href="/">Website</a>
+  </div>
+</div>
+
+<div class="shell">
+  <!-- ================= FORM ================= -->
+  <div>
+    <div class="card">
+      <h2>Who's it for?</h2>
+      <p class="sub">The phone number is what the one-tap WhatsApp button uses.</p>
+      <div class="grid2">
+        <label class="field"><span>Customer name <em>*</em></span><input id="client" placeholder="Mrs J Smith"></label>
+        <label class="field"><span>Phone <em>*</em></span><input id="cphone" type="tel" inputmode="tel" placeholder="07…"></label>
+      </div>
+      <label class="field"><span>Email</span><input id="cemail" type="email" inputmode="email" placeholder="them@example.com"></label>
+      <div class="grid2">
+        <label class="field"><span>Address</span><input id="caddress" placeholder="12 Example Road, Manchester"></label>
+        <label class="field"><span>Postcode</span><input id="cpostcode" placeholder="M1 1AA" style="text-transform:uppercase"></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>What did you do?</h2>
+      <p class="sub">One line is plenty. Tap a chip to fill it in fast.</p>
+      <div class="chips" id="workChips">
+        <button type="button" data-w="Boiler service and safety check">Boiler service</button>
+        <button type="button" data-w="Boiler repair — diagnosed and replaced faulty part">Boiler repair</button>
+        <button type="button" data-w="Supply and installation of new combi boiler, commissioned to Benchmark">New boiler</button>
+        <button type="button" data-w="Landlord gas safety certificate (CP12)">CP12</button>
+        <button type="button" data-w="Unvented cylinder service">Cylinder service</button>
+        <button type="button" data-w="Gas cooker disconnect, fit and test">Cooker fit</button>
+        <button type="button" data-w="Emergency leak repair">Leak repair</button>
+        <button type="button" data-w="Supply and fit new shower">Shower fit</button>
+      </div>
+      <label class="field"><span>Work carried out</span><input id="work" placeholder="Boiler repair — replaced diverter valve"></label>
+
+      <div class="lines" id="lines"></div>
+      <button type="button" class="addline" id="addLine">+ Add another line</button>
+
+      <div class="grid3" style="margin-top:16px">
+        <label class="field"><span>Discount £</span><input id="discount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></label>
+        <label class="field"><span>Deposit already paid £</span><input id="paid" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></label>
+        <label class="field"><span>Due date</span><input id="due" type="date"></label>
+      </div>
+      <label class="toggle"><input type="checkbox" id="vat"><i></i><span>Add VAT at 20%</span></label>
+      <label class="field" style="margin-top:8px"><span>Notes on the invoice</span><textarea id="notes" placeholder="Parts guaranteed 12 months. Boiler warranty registered with the manufacturer."></textarea></label>
+    </div>
+
+    <div class="card">
+      <h2>Your details</h2>
+      <p class="sub">Saved on this device only — never uploaded, never in the website's code.</p>
+      <label class="field"><span>How to pay (shown on the invoice)</span>
+        <textarea id="payto" placeholder="Bank transfer&#10;Heat Fix Mcr Limited&#10;Sort code 00-00-00 · Account 00000000"></textarea></label>
+      <div class="grid2">
+        <label class="field"><span>Gas Safe registration no.</span><input id="gassafe" placeholder="123456"></label>
+        <label class="field"><span>Next invoice number</span><input id="number" placeholder="HF-1001"></label>
+      </div>
+      <button type="button" class="btn ghost sm" id="saveDefaults">Save my details on this device</button>
+    </div>
+
+    <div class="card">
+      <h2>Recent invoices</h2>
+      <p class="sub">Stored on this phone or laptop so you can resend one later.</p>
+      <div class="hist" id="hist"><p class="sub" style="margin:0">Nothing saved yet.</p></div>
+    </div>
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+  <div class="prevwrap">
+    <div class="paper" id="paper"></div>
+    <p class="sub" style="margin-top:12px;text-align:center;color:var(--dim);font-size:.8rem">
+      This is exactly what the customer gets as a PDF.
+    </p>
+  </div>
+</div>
+
+<div class="actions">
+  <div class="act-in">
+    <button class="btn wa" id="bWa">WhatsApp it</button>
+    <button class="btn gold" id="bShare">Share PDF</button>
+    <button class="btn ghost" id="bPdf">Download PDF</button>
+    <button class="btn ghost" id="bMail">Email it</button>
+    <button class="btn ghost" id="bNew">New invoice</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../assets/js/heatfix-invoice.js"></script>
+<script>
+var $ = function(id){ return document.getElementById(id); };
+var LOGO_PATH = '../assets/heatfix/logo-invoice.jpg';
+var VIEW_BASE = (location.pathname.indexOf('/templates/') === 0)
+  ? location.origin + '/templates/heatfix-invoice-view.html'
+  : location.origin + '/i';
+
+function toast(t){
+  var el = $('toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 2600);
+}
+
+/* ---------------- line items ---------------- */
+var items = [];
+function lineRow(it, i){
+  var d = document.createElement('div'); d.className = 'line';
+  d.innerHTML =
+    '<label class="field"><span>Description</span><input data-k="desc" placeholder="Labour, parts, call-out…"></label>' +
+    '<label class="field"><span>Qty</span><input data-k="qty" type="number" step="1" min="0" inputmode="numeric"></label>' +
+    '<label class="field"><span>Price £</span><input data-k="price" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></label>' +
+    '<div class="amt" data-amt>£0.00</div>' +
+    '<button type="button" class="del" title="Remove line">✕</button>';
+  d.querySelector('[data-k=desc]').value  = it.desc || '';
+  d.querySelector('[data-k=qty]').value   = it.qty;
+  d.querySelector('[data-k=price]').value = it.price === '' ? '' : it.price;
+  d.addEventListener('input', function(e){
+    var k = e.target.dataset.k; if (!k) return;
+    items[i][k] = (k === 'desc') ? e.target.value : e.target.value;
+    render();
+  });
+  d.querySelector('.del').onclick = function(){
+    if (items.length === 1) { items[0] = {desc:'', qty:1, price:''}; }
+    else items.splice(i, 1);
+    drawLines(); render();
+  };
+  return d;
+}
+function drawLines(){
+  var box = $('lines'); box.innerHTML = '';
+  items.forEach(function(it, i){ box.appendChild(lineRow(it, i)); });
+}
+$('addLine').onclick = function(){ items.push({desc:'', qty:1, price:''}); drawLines(); render(); };
+
+/* ---------------- gather + render ---------------- */
+function gather(){
+  return {
+    number: $('number').value.trim() || 'HF-1001',
+    date:   HF.isoDate(new Date()),
+    due:    $('due').value || '',
+    client: $('client').value.trim(),
+    cphone: $('cphone').value.trim(),
+    cemail: $('cemail').value.trim(),
+    caddress: $('caddress').value.trim(),
+    cpostcode: $('cpostcode').value.trim().toUpperCase(),
+    work:   $('work').value.trim(),
+    notes:  $('notes').value.trim(),
+    payto:  $('payto').value.trim(),
+    gassafe:$('gassafe').value.trim(),
+    vat:    $('vat').checked, vatRate: 20,
+    discount: $('discount').value, paid: $('paid').value,
+    items: items.filter(function(i){ return (i.desc || '').trim() || Number(i.price); })
+                .map(function(i){ return { desc:i.desc || 'Work carried out', qty:Number(i.qty)||1, price:Number(i.price)||0 }; })
+  };
+}
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+function render(){
+  document.querySelectorAll('#lines .line').forEach(function(row, i){
+    var it = items[i]; if (!it) return;
+    row.querySelector('[data-amt]').textContent = '£' + HF.money((Number(it.qty)||0) * (Number(it.price)||0));
+  });
+  var inv = gather(), t = HF.totals(inv), c = HF.company;
+  var rows = (inv.items.length ? inv.items : [{desc:'—', qty:1, price:0}]).map(function(it){
+    return '<tr><td>' + esc(it.desc) + '</td><td>' + it.qty + '</td><td>£' + HF.money(it.price) +
+           '</td><td>£' + HF.money(it.qty * it.price) + '</td></tr>';
+  }).join('');
+  $('paper').innerHTML =
+  '<div class="p-head"><div class="p-head-in">' +
+    '<img src="' + LOGO_PATH + '" alt="">' +
+    '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span><span>Gas Safe registered engineer</span></div>' +
+    '<div class="p-right"><b>INVOICE</b><span>' + c.phone + '</span><span>' + c.email + '</span><span>' + c.web + '</span></div>' +
+  '</div></div>' +
+  '<div class="p-body">' +
+    '<div class="p-meta">' +
+      '<div><div class="p-lab">Invoice no.</div><div class="p-val">' + esc(inv.number) + '</div></div>' +
+      '<div><div class="p-lab">Date</div><div class="p-val">' + HF.fmtDate(inv.date) + '</div></div>' +
+      '<div><div class="p-lab">Due</div><div class="p-val">' + (inv.due ? HF.fmtDate(inv.due) : 'On receipt') + '</div></div>' +
+      '<div class="bill"><div class="p-lab">Bill to</div><div class="p-val">' + (esc(inv.client) || '—') + '</div>' +
+        (inv.caddress ? '<div class="p-sm">' + esc(inv.caddress) + '</div>' : '') +
+        (inv.cpostcode ? '<div class="p-sm">' + esc(inv.cpostcode) + '</div>' : '') +
+        (inv.cphone ? '<div class="p-sm">' + esc(inv.cphone) + '</div>' : '') +
+        (inv.cemail ? '<div class="p-sm">' + esc(inv.cemail) + '</div>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="p-rule"></div>' +
+    '<table class="p-t"><thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table>' +
+    '<div class="p-tot">' +
+      '<div><span>Subtotal</span><span>£' + HF.money(t.sub) + '</span></div>' +
+      (t.disc ? '<div><span>Discount</span><span>-£' + HF.money(t.disc) + '</span></div>' : '') +
+      (inv.vat ? '<div><span>VAT 20%</span><span>£' + HF.money(t.vat) + '</span></div>' : '') +
+      '<div class="big"><span>TOTAL</span><span>£' + HF.money(t.total) + '</span></div>' +
+      (t.paid ? '<div style="margin-top:6px"><span>Paid</span><span>-£' + HF.money(t.paid) + '</span></div>' +
+                '<div style="font-weight:700;color:#0d2a63"><span>Balance due</span><span>£' + HF.money(t.due) + '</span></div>' : '') +
+    '</div>' +
+    (inv.work ? '<div style="margin-top:20px"><div class="p-lab">Work carried out</div><div style="font-size:11.5px;margin-top:4px">' + esc(inv.work) + '</div></div>' : '') +
+    (inv.notes ? '<div style="margin-top:14px"><div class="p-lab">Notes</div><div class="p-sm" style="margin-top:4px">' + esc(inv.notes) + '</div></div>' : '') +
+    '<div class="p-pay"><div class="p-lab" style="margin-bottom:5px">How to pay</div>' +
+      (esc(inv.payto) || 'Bank details on request — call ' + c.phone + '.') +
+      (inv.gassafe ? '<div class="p-sm" style="margin-top:7px">Gas Safe reg. ' + esc(inv.gassafe) + '</div>' : '') +
+    '</div>' +
+  '</div>' +
+  '<div class="p-foot"><span>' + c.name + ' · ' + c.person + ' · ' + c.phone + '</span><span>' + c.web + '</span></div>';
+}
+
+/* ---------------- persistence ---------------- */
+var DKEY = 'hf_inv_defaults', HKEY = 'hf_inv_history';
+function loadDefaults(){
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(DKEY) || '{}'); } catch (e) {}
+  $('payto').value   = d.payto   || '';
+  $('gassafe').value = d.gassafe || '';
+  $('number').value  = d.number  || 'HF-1001';
+}
+$('saveDefaults').onclick = function(){
+  localStorage.setItem(DKEY, JSON.stringify({
+    payto: $('payto').value, gassafe: $('gassafe').value, number: $('number').value
+  }));
+  toast('Saved on this device');
+};
+function bumpNumber(n){
+  var m = String(n).match(/^(.*?)(\d+)$/);
+  if (!m) return n;
+  return m[1] + String(Number(m[2]) + 1).padStart(m[2].length, '0');
+}
+function saveHistory(inv){
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem(HKEY) || '[]'); } catch (e) {}
+  h = h.filter(function(x){ return x.number !== inv.number; });
+  h.unshift(inv); h = h.slice(0, 25);
+  localStorage.setItem(HKEY, JSON.stringify(h));
+  var d = {}; try { d = JSON.parse(localStorage.getItem(DKEY) || '{}'); } catch (e) {}
+  d.number = bumpNumber(inv.number); d.payto = inv.payto; d.gassafe = inv.gassafe;
+  localStorage.setItem(DKEY, JSON.stringify(d));
+  drawHistory();
+}
+function drawHistory(){
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem(HKEY) || '[]'); } catch (e) {}
+  var box = $('hist');
+  if (!h.length){ box.innerHTML = '<p class="sub" style="margin:0">Nothing saved yet.</p>'; return; }
+  box.innerHTML = '';
+  h.forEach(function(inv){
+    var b = document.createElement('button');
+    b.innerHTML = '<span><b>' + esc(inv.number) + '</b> · ' + esc(inv.client || '—') +
+                  '<br><span style="color:var(--dim);font-size:.78rem">' + HF.fmtDate(inv.date) + '</span></span>' +
+                  '<b>£' + HF.money(HF.totals(inv).total) + '</b>';
+    b.onclick = function(){ fill(inv); toast('Loaded ' + inv.number); };
+    box.appendChild(b);
+  });
+}
+function fill(inv){
+  ['number','client','cphone','cemail','caddress','cpostcode','work','notes','payto','gassafe','due']
+    .forEach(function(k){ if ($(k)) $(k).value = inv[k] || ''; });
+  $('discount').value = inv.discount || '';
+  $('paid').value = inv.paid || '';
+  $('vat').checked = !!inv.vat;
+  items = (inv.items && inv.items.length ? inv.items : [{desc:'', qty:1, price:''}])
+          .map(function(i){ return { desc:i.desc, qty:i.qty, price:i.price }; });
+  drawLines(); render();
+  scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ---------------- actions ---------------- */
+function needClient(inv){
+  if (!inv.client){ toast('Add the customer name first'); $('client').focus(); return false; }
+  if (!inv.items.length){ toast('Add at least one line with a price'); return false; }
+  return true;
+}
+function makePdf(inv){
+  return HF.logo(LOGO_PATH).then(function(buf){ return HF.buildPdf(inv, buf); });
+}
+function fileName(inv){
+  return 'Invoice-' + (inv.number || 'HF') + '-' + (inv.client || '').replace(/[^\w]+/g, '-') + '.pdf';
+}
+function download(blob, name){
+  var u = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = u; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 1500);
+}
+
+$('bPdf').onclick = function(){
+  var inv = gather(); if (!needClient(inv)) return;
+  makePdf(inv).then(function(b){ download(b, fileName(inv)); saveHistory(inv); toast('PDF saved'); });
+};
+
+$('bShare').onclick = function(){
+  var inv = gather(); if (!needClient(inv)) return;
+  makePdf(inv).then(function(blob){
+    var f = new File([blob], fileName(inv), { type:'application/pdf' });
+    var link = VIEW_BASE + '#' + HF.encode(inv);
+    if (navigator.canShare && navigator.canShare({ files:[f] })){
+      navigator.share({ files:[f], title:'Invoice ' + inv.number, text:HF.message(inv, link) })
+        .then(function(){ saveHistory(inv); })
+        .catch(function(){});
+    } else {
+      download(blob, fileName(inv));
+      saveHistory(inv);
+      toast('PDF saved — attach it in WhatsApp');
+    }
+  });
+};
+
+$('bWa').onclick = function(){
+  var inv = gather(); if (!needClient(inv)) return;
+  var link = VIEW_BASE + '#' + HF.encode(inv);
+  var num = HF.waNumber(inv.cphone);
+  var url = 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(HF.message(inv, link));
+  saveHistory(inv);
+  window.open(url, '_blank');
+  toast(num ? 'Opening WhatsApp' : 'No number — pick the contact in WhatsApp');
+};
+
+$('bMail').onclick = function(){
+  var inv = gather(); if (!needClient(inv)) return;
+  var link = VIEW_BASE + '#' + HF.encode(inv);
+  saveHistory(inv);
+  location.href = 'mailto:' + encodeURIComponent(inv.cemail || '') +
+    '?subject=' + encodeURIComponent('Invoice ' + inv.number + ' — Heat Fix Mcr Limited') +
+    '&body=' + encodeURIComponent(HF.message(inv, link));
+};
+
+$('bNew').onclick = function(){
+  if (!confirm('Start a fresh invoice? Anything unsaved on screen is cleared.')) return;
+  ['client','cphone','cemail','caddress','cpostcode','work','notes','discount','paid','due']
+    .forEach(function(k){ $(k).value = ''; });
+  $('vat').checked = false;
+  items = [{ desc:'', qty:1, price:'' }];
+  loadDefaults(); drawLines(); render();
+  toast('New invoice');
+};
+
+/* work chips fill the description + first line */
+$('workChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-w]'); if (!b) return;
+  $('work').value = b.dataset.w;
+  if (!items[0].desc) { items[0].desc = b.dataset.w; drawLines(); }
+  render();
+});
+
+document.addEventListener('input', function(e){
+  if (e.target.closest('.card')) render();
+});
+document.addEventListener('change', function(e){
+  if (e.target.closest('.card')) render();
+});
+
+/* boot */
+items = [{ desc:'', qty:1, price:'' }];
+loadDefaults(); drawLines(); drawHistory(); render();
+if (location.hash.length > 1){ var inv = HF.decode(location.hash); if (inv) fill(inv); }
+</script>
+</body>
+</html>

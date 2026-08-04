@@ -56,6 +56,11 @@ export default {
     // at clean root URLs, and is indexable.
     if (isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
 
+    // Heat Fix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
+    if (isClientHost(url.hostname, env, "HEATFIX_HOST")) {
+      return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
+    }
+
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
@@ -127,14 +132,71 @@ async function serveM2L(request, url, env) {
   return rw.transform(new Response(res.body, res));
 }
 
+/* ------------------------------------------------------------------
+   Heat Fix Mcr Limited — heatfixmcrlimited.co.uk
+
+   Set HEATFIX_HOST in wrangler.toml (or as a secret) to the client's own
+   hostnames, comma separated. Requests to those hosts get:
+       /         -> the Heat Fix website          (indexed)
+       /book     -> the booking page + calendar   (indexed)
+       /invoice  -> the invoice builder (his tool, noindex)
+       /i        -> the customer's invoice view   (noindex)
+------------------------------------------------------------------- */
+const HEATFIX_PAGES = {
+  "/": "/templates/heatfixmcr.html",
+  "/book": "/templates/heatfix-book.html",
+  "/invoice": "/templates/heatfix-invoice.html",
+  "/i": "/templates/heatfix-invoice-view.html",
+};
+const HEATFIX_PUBLIC = ["/", "/book"];
+
+function clientHosts(env, key) {
+  return String((env && env[key]) || "")
+    .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+}
+function isClientHost(hostname, env, key) {
+  return clientHosts(env, key).includes(String(hostname || "").toLowerCase());
+}
+
+/* Generic version of serveM2L for any client domain. */
+async function serveClient(request, url, env, PAGES, PUBLIC) {
+  let p = url.pathname.replace(/\/+$/, "") || "/";
+
+  if (p.startsWith("/assets/") || p === "/favicon.ico" || p === "/robots.txt" || p === "/sitemap.xml") {
+    return env.ASSETS.fetch(request);
+  }
+
+  const target = PAGES[p];
+  if (!target) {
+    return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
+  }
+
+  const res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
+  if (!res.ok) return res;
+
+  const publicPage = PUBLIC.indexOf(p) !== -1;
+  const canonical = "https://" + url.hostname + (p === "/" ? "/" : p);
+
+  let rw = new HTMLRewriter().on('meta[name="robots"]', {
+    element: (el) => (publicPage ? el.remove() : el.setAttribute("content", "noindex,nofollow")),
+  });
+  if (publicPage) {
+    rw = rw
+      .on('link[rel="canonical"]', { element: (el) => el.setAttribute("href", canonical) })
+      .on('meta[property="og:url"]', { element: (el) => el.setAttribute("content", canonical) });
+  }
+  return rw.transform(new Response(res.body, res));
+}
+
 /* Same-origin guard: accept posts from our own site, and from the client
-   domains listed in M2L_HOST once their site is pointed at this worker. */
+   domains listed in M2L_HOST / HEATFIX_HOST once their sites point here. */
 function originOk(request, env) {
   const origin = request.headers.get("origin") || "";
   if (!origin) return true;
   if (/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) return true;
   try {
-    return isM2LHost(new URL(origin).hostname, env);
+    const h = new URL(origin).hostname;
+    return isM2LHost(h, env) || isClientHost(h, env, "HEATFIX_HOST");
   } catch (_) {
     return false;
   }
