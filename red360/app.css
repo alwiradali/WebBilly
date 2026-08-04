@@ -893,3 +893,8 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
    is up, so Details ⇄ Plan is one tap rather than close-then-open */
 .mobile-dock { z-index: 26; transition: bottom var(--t-3) var(--e), opacity var(--t-2) var(--e); }
 .mobile-dock.is-raised { bottom: calc(62vh + 12px); }
+
+/* the Studio header carries its own way out — the rail is a menu, not a
+   navigation trail, and on a phone it isn't obvious there is anything behind it */
+#btnStudioBack { display: grid; flex: 0 0 auto; }
+.studio-top { gap: 10px; }

@@ -56,6 +56,7 @@
   var selectedHotspot = null;
   var studioRoomId = null;
   var studioTab = "rooms";
+  var cameFrom = "dash";
   var dirty = false;
 
   function loadTour() {
@@ -185,6 +186,7 @@
     opts = opts || {};
     if (next === view && !opts.force) return;
     var prev = view;
+    if (next === "studio" && prev !== "studio") cameFrom = prev;
     view = next;
     $$(".view").forEach(function (v) { v.classList.toggle("is-active", v.id === "view" + cap(next)); });
     $$("[data-nav]").forEach(function (n) { n.classList.toggle("is-on", n.getAttribute("data-nav") === next); });
@@ -1579,6 +1581,10 @@
       $("#studioRail").classList.toggle("is-on", on);
       $("#studioScrim").classList.toggle("is-on", on);
     }
+    $("#btnStudioBack").onclick = function () {
+      railOpen(false);
+      setView(cameFrom === "dash" ? "dash" : "tour");
+    };
     $("#btnRailToggle").onclick = function () { railOpen(!$("#studioRail").classList.contains("is-on")); };
     $("#studioScrim").onclick = function () { railOpen(false); };
     $("#btnStudioHome").onclick = function () { railOpen(false); setView("dash"); };
