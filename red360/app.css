@@ -762,3 +762,110 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
     transition-duration: .06s !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOUCH & MOTION
+   Hover is a lie on a touchscreen — iOS latches :hover after a tap, which is
+   why a tapped drop-zone stayed lit. Everything hover-driven is neutralised
+   below the (hover: none) query and replaced with press feedback.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (hover: none) {
+  .btn:hover { background: var(--btn-bg); border-color: var(--btn-line); transform: none; box-shadow: none; filter: none; }
+  .btn--primary:hover { box-shadow: var(--sh-accent); }
+  .icon-btn:hover { background: var(--surface); border-color: var(--line); color: var(--ink-2); transform: none; }
+  .icon-btn.is-on:hover { background: var(--accent); border-color: transparent; color: var(--accent-ink); }
+  .card:hover, .roomcard:hover { background: var(--surface); border-color: var(--line); transform: none; }
+  .strip-item:hover .strip-thumb { transform: none; border-color: var(--line); }
+  .strip-item.is-on:hover .strip-thumb { border-color: var(--accent); }
+  .hsrow:hover { background: none; color: var(--ink-2); border-color: transparent; transform: none; }
+  .roomlist-item:hover { background: none; border-color: transparent; }
+  .roomlist-item.is-on:hover { background: var(--surface-2); border-color: var(--line-2); }
+  .studio-nav button:hover { background: none; color: var(--ink-3); }
+  .studio-nav button.is-on:hover { background: var(--surface-2); color: var(--ink); }
+  .navlink:hover { background: none; color: var(--ink-3); }
+  .navlink.is-on:hover { background: var(--surface-2); color: var(--ink); }
+  .searchbtn:hover { background: var(--surface); border-color: var(--line); color: var(--ink-3); }
+  .drop:hover { border-color: var(--line-2); background: none; color: var(--ink-3); }
+  .drop.is-over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .hs:hover .hs-mark { transform: none; }
+  .hs--nav:hover .hs-mark { background: rgba(255,255,255,.1); }
+  .pin:hover .pin-dot { fill: var(--ink-3); }
+  .pin.is-on:hover .pin-dot { fill: var(--accent); }
+  .input:hover, .select:hover, .textarea:hover { border-color: var(--line); }
+
+  /* press states carry the feedback instead */
+  .btn:active { transform: scale(.97); filter: brightness(1.12); }
+  .icon-btn:active { transform: scale(.9); background: var(--surface-2); }
+  .card:active, .roomcard:active { transform: scale(.985); background: var(--surface-2); }
+  .hsrow:active, .roomlist-item:active, .studio-nav button:active { background: var(--surface-2); }
+  .strip-item:active .strip-thumb { transform: scale(.96); }
+  .drop:active { border-color: var(--accent); background: var(--accent-soft); }
+}
+
+/* ── scrolling ───────────────────────────────────────────────────────────── */
+.scroll, .dash, .strip-wrap, .studio-body, .sheet-body, .side-body, .palette-list {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+/* scroll-behavior stays off: it only affects programmatic scrolls, where it
+   makes scrollIntoView lag. Wheel and touch smoothness comes from keeping
+   paint and layout work off the scroll, below. */
+.dash { scroll-padding-top: 80px; scrollbar-gutter: stable; }
+/* keep long lists off the main thread and out of layout when far away */
+.roomgrid, .strip-wrap, .roomlist { contain: layout paint; }
+/* promote to their own layer WITHOUT touching transform — .sheet, .side and
+   .palette are hidden by a transform, and overwriting it leaves them on
+   screen swallowing clicks */
+.panel, .side, .sheet, .palette, .preview { will-change: transform, opacity; backface-visibility: hidden; }
+.strip-item, .roomcard, .hs { will-change: transform; }
+
+/* iOS: the layout viewport is taller than the visible one, and focusing an
+   input scrolls the whole fixed shell out of view. dvh + a resizing keyboard
+   pins it. */
+#app { height: 100vh; height: 100dvh; }
+@supports (-webkit-touch-callout: none) {
+  #app { min-height: -webkit-fill-available; }
+}
+
+/* blur is the most expensive thing on a phone GPU — halve it there */
+@media (max-width: 900px) {
+  .panel { backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%); }
+  .icon-btn, .mobile-dock .btn { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .grain::after { display: none; }
+  .dash-bg::after { opacity: .6; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STUDIO ON A PHONE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.studio-scrim {
+  position: absolute; inset: 0; z-index: 4; background: rgba(4,4,6,.6);
+  opacity: 0; visibility: hidden; transition: opacity var(--t-3) var(--e), visibility 0s linear var(--t-3);
+}
+.studio-scrim.is-on { opacity: 1; visibility: visible; transition-delay: 0s; }
+.studio-top {
+  position: sticky; top: 0; z-index: 3;
+  background: linear-gradient(180deg, var(--bg-1) 82%, rgba(11,12,16,.86));
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+#btnRailToggle { display: none; }
+@media (max-width: 1000px) {
+  #btnRailToggle { display: grid; }
+  .studio-rail { width: min(268px, 84vw); }
+}
+@media (max-width: 620px) {
+  .studio-body { padding: 14px; }
+  .studio-panel { padding: 14px; }
+  .form-row { grid-template-columns: 1fr; }
+  .hs-edit { grid-template-columns: 1fr; gap: 8px; }
+  .hs-edit > div { justify-content: flex-end; }
+  .studio-top { padding: 12px 14px; gap: 10px; }
+  .studio-top h2 { font-size: .98rem; }
+  .studio-top p { display: none; }
+  .studio-top-act #saveState { display: none; }
+  .studio-preview { aspect-ratio: 4/3; }
+  .dl { grid-template-columns: 1fr auto; }
+  .sheet-head { padding: 18px 16px 12px; }
+  .sheet-body { padding: 0 16px 20px; }
+  .sheet-foot { padding: 14px 16px 18px; }
+}

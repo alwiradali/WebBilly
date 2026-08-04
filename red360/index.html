@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5,interactive-widget=resizes-content">
 <title>360RED PRODUCTIONS · Interactive Enterprise Virtual Tours</title>
 <meta name="description" content="An interactive enterprise virtual tour platform: immersive 360° walkthrough of an 18,500 sq ft two-floor office, live floor plans, hotspot media, guided tour and a built-in content studio.">
 <meta name="robots" content="noindex,nofollow">
@@ -264,6 +264,7 @@
   <!-- ══════════════════ STUDIO ══════════════════ -->
   <section class="view view--studio" id="viewStudio" aria-label="Content studio">
     <div class="studio">
+      <div class="studio-scrim" id="studioScrim"></div>
       <div class="studio-rail" id="studioRail">
         <div class="studio-rail-head">
           <div class="brand">
@@ -282,6 +283,9 @@
           <button data-tab="publish"><svg viewBox="0 0 24 24"><use href="#i-publish"/></svg> Publish</button>
         </nav>
         <div class="studio-rail-foot">
+          <button class="btn btn--sm btn--block" id="btnStudioHome">
+            <svg viewBox="0 0 24 24"><use href="#i-home"/></svg> Overview
+          </button>
           <button class="btn btn--sm btn--block" id="btnStudioExit">
             <svg viewBox="0 0 24 24"><use href="#i-eye"/></svg> Back to tour
           </button>
@@ -290,7 +294,7 @@
 
       <div class="studio-main">
         <header class="studio-top">
-          <button class="icon-btn icon-btn--sm" id="btnRailToggle" aria-label="Menu" style="display:none">
+          <button class="icon-btn icon-btn--sm" id="btnRailToggle" aria-label="Studio menu">
             <svg viewBox="0 0 24 24"><use href="#i-panel"/></svg>
           </button>
           <div>

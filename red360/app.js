@@ -51,6 +51,7 @@
   var currentRoom = null;
   var hotEls = [];
   var panelsHidden = false;
+  var lastRead = "";
   var placing = false;              // studio: click-to-place a hotspot
   var selectedHotspot = null;
   var studioRoomId = null;
@@ -192,7 +193,7 @@
       mountStage($("#stageTour"));
       engine && engine.autoRotate(false);
       engine && engine.inputs(true);
-      layoutHotspots();
+      layoutHotspots(true);
       if (!sessionStorage.getItem("red360:hinted")) {
         setTimeout(function () { $("#hint").classList.add("is-on"); }, 700);
       }
@@ -461,11 +462,20 @@
       layer.appendChild(b);
       hotEls.push({ el: b, h: h });
     });
-    layoutHotspots();
+    layoutHotspots(true);
   }
 
-  function layoutHotspots() {
+  /* Re-projecting the hotspot layer is a DOM write per hotspot. Skipping it
+     when the camera hasn't actually moved keeps drags, scrolls and idle
+     frames free of layout work. */
+  var lastLayout = { yaw: 1e9, pitch: 1e9, fov: 0, n: -1, w: 0 };
+  function layoutHotspots(force) {
     if (!engine) return;
+    var c = engine.camera(), W = window.innerWidth;
+    if (!force && hotEls.length === lastLayout.n && W === lastLayout.w &&
+      Math.abs(c.yaw - lastLayout.yaw) < 0.02 && Math.abs(c.pitch - lastLayout.pitch) < 0.02 &&
+      Math.abs(c.fov - lastLayout.fov) < 0.02) return;
+    lastLayout = { yaw: c.yaw, pitch: c.pitch, fov: c.fov, n: hotEls.length, w: W };
     for (var i = 0; i < hotEls.length; i++) {
       var it = hotEls[i], pr = engine.project(it.h.yaw, it.h.pitch);
       if (!pr || pr[2] > 2.9) { it.el.style.opacity = 0; it.el.style.pointerEvents = "none"; continue; }
@@ -1126,7 +1136,7 @@
     setTimeout(function () {
       mountStage($("#studioStage"));
       $("#studioStage").classList.toggle("is-placing", placing);
-      layoutHotspots();
+      layoutHotspots(true);
     }, 0);
   }
 
@@ -1559,13 +1569,24 @@
     $("#btnSheetClose").onclick = closeSheet;
     $("#scrim").onclick = function () { closeSheet(); closePalette(); };
     $("#paletteInput").oninput = function () { filterPalette($("#paletteInput").value); };
-    $("#btnStudioExit").onclick = function () { setView("tour"); };
+    $("#btnStudioExit").onclick = function () {
+      $("#studioRail").classList.remove("is-on");
+      $("#studioScrim").classList.remove("is-on");
+      setView("tour");
+    };
     $("#btnStudioPublish").onclick = function () { saveTour(); };
-    $("#btnRailToggle").onclick = function () { $("#studioRail").classList.toggle("is-on"); };
+    function railOpen(on) {
+      $("#studioRail").classList.toggle("is-on", on);
+      $("#studioScrim").classList.toggle("is-on", on);
+    }
+    $("#btnRailToggle").onclick = function () { railOpen(!$("#studioRail").classList.contains("is-on")); };
+    $("#studioScrim").onclick = function () { railOpen(false); };
+    $("#btnStudioHome").onclick = function () { railOpen(false); setView("dash"); };
     $$("#studioNav button").forEach(function (b) {
       b.onclick = function () {
         studioTab = b.getAttribute("data-tab");
         $("#studioRail").classList.remove("is-on");
+        $("#studioScrim").classList.remove("is-on");
         renderStudio();
         location.hash = "#/studio/" + studioTab;
       };
@@ -1648,9 +1669,12 @@
           if (cone) cone.setAttribute("transform", "rotate(" + (cam.yaw + (room.north || 0)) + ")");
         }
         var t = $("#telemetry");
-        if (t) t.textContent = "AZ " + String(Math.round((cam.yaw % 360 + 360) % 360)).padStart(3, "0") +
-          "°  EL " + (cam.pitch >= 0 ? "+" : "") + Math.round(cam.pitch) +
-          "°  FOV " + Math.round(cam.fov) + "°";
+        if (t) {
+          var read = "AZ " + String(Math.round((cam.yaw % 360 + 360) % 360)).padStart(3, "0") +
+            "°  EL " + (cam.pitch >= 0 ? "+" : "") + Math.round(cam.pitch) +
+            "°  FOV " + Math.round(cam.fov) + "°";
+          if (read !== lastRead) { t.textContent = read; lastRead = read; }
+        }
       },
       onSharpen: function (on) { $("#sharpen").classList.toggle("is-on", on); },
       onThumb: function (id) { paintThumb(id); },

@@ -1283,7 +1283,8 @@
     host.addEventListener("wheel", function (e) {
       if (!inputsOn) return;
       e.preventDefault();
-      cam.tFov = clamp(cam.tFov + e.deltaY * 0.05, 30, 100);
+      var step = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+      cam.tFov = clamp(cam.tFov + clamp(step, -90, 90) * 0.045, 30, 100);
       idleSince = now();
       if (opts.onInteract) opts.onInteract();
     }, { passive: false });
@@ -1326,7 +1327,7 @@
     var lastT = now(), lastW = 0, lastH = 0, dpr = 1;
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2);
       var w = Math.max(2, host.clientWidth), h = Math.max(2, host.clientHeight);
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       canvas.style.width = w + "px"; canvas.style.height = h + "px";
@@ -1336,7 +1337,7 @@
 
     function bakeBudget() {
       if (!queue.length) return;
-      var start = now(), budget = coarse ? 10 : 14;
+      var start = now(), budget = (drag || pinch) ? 4 : (coarse ? 8 : 12);
       while (queue.length && now() - start < budget) {
         var job = queue[0];
         bakeStep(job);
@@ -1362,7 +1363,8 @@
       if (destroyed) return;
       var dt = Math.min(64, t - lastT); lastT = t;
 
-      var k = 1 - Math.pow(0.0016, dt / 1000);
+      /* frame-rate independent damping: the same feel at 30 fps and 120 */
+      var k = drag ? 1 - Math.pow(0.00002, dt / 1000) : 1 - Math.pow(0.0016, dt / 1000);
       cam.yaw = lerp(cam.yaw, cam.tYaw, k);
       cam.pitch = lerp(cam.pitch, cam.tPitch, k);
       cam.fov = lerp(cam.fov, cam.tFov, 1 - Math.pow(0.002, dt / 1000));
