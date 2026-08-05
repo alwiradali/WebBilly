@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Boiler Repairs, New Boilers &amp; Plumbing in Manchester | Heat Fix Mcr Limited — Gas Safe</title>
 <meta name="description" content="Cold house today, warm house tonight. Heat Fix Mcr Limited — Gas Safe registered gas engineer in Manchester. Boiler breakdowns, new boilers, servicing, cylinders, cookers, bathrooms and emergency leaks. Free written quotes, same-day where we can. Call 07890 452629.">
-<meta name="theme-color" content="#0a0d11">
+<meta name="theme-color" content="#151b24">
 <link rel="canonical" href="https://heatfixmcrlimited.co.uk/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Heat Fix Mcr Limited — Cold house today, warm house tonight">
@@ -24,9 +24,9 @@
 /* ===================== HERO ===================== */
 .hero{position:relative;padding:130px 0 70px;overflow:hidden;isolation:isolate}
 .hero-bg{position:absolute;inset:0;z-index:-2;background:
-  radial-gradient(900px 620px at 78% 10%,rgba(14,83,142,.42),transparent 62%),
-  radial-gradient(700px 500px at 8% 82%,rgba(247,148,30,.14),transparent 65%),
-  linear-gradient(180deg,#0a0d11,#0d1218 55%,#0a0d11)}
+  radial-gradient(900px 620px at 78% 10%,rgba(19,100,168,.46),transparent 62%),
+  radial-gradient(700px 500px at 8% 82%,rgba(247,154,43,.17),transparent 65%),
+  linear-gradient(180deg,#151b24,#1a2230 55%,#151b24)}
 .hero-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;
   background:conic-gradient(from 200deg at 72% 22%,transparent,rgba(47,159,214,.20),transparent 42%)}
 .hero-in{display:grid;gap:clamp(38px,6vw,62px);grid-template-columns:minmax(0,1fr);align-items:center}
@@ -92,12 +92,13 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
 }
 /* floating spec chip on the wall */
 .wchip{
-  position:absolute;z-index:9;right:0;top:-3%;transform:translateZ(250px);
+  /* a sibling of .wall, not a child — inside it, it floated over the hero copy */
+  position:absolute;z-index:9;right:0;top:-4%;transform:translateZ(150px);
   display:flex;align-items:center;gap:12px;
-  background:linear-gradient(150deg,#fff,#e7ebf0);color:#0c1218;border-radius:16px;padding:12px 18px 12px 14px;
-  box-shadow:0 30px 60px -22px rgba(0,0,0,1);animation:wfloat 7s ease-in-out infinite;--z:250px;
+  background:linear-gradient(150deg,#fff,#e7ebf0);color:#0c1218;border-radius:16px;padding:11px 18px 11px 14px;
+  box-shadow:0 30px 60px -24px rgba(0,0,0,.9);
 }
-.wchip .gs-mark{width:48px;height:43px}
+.wchip .gs-mark{width:44px}
 .wchip b{display:block;font-family:var(--dis);font-weight:900;font-size:1.3rem;line-height:1;color:var(--navy)}
 .wchip i{display:block;font-style:normal;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
   font-weight:700;color:#5b6675;margin-top:3px;white-space:nowrap}
@@ -106,7 +107,9 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
   .wall{transform:rotateX(calc(6deg + var(--px,0)*-3deg)) rotateY(calc(-8deg + var(--py,0)*4deg)) translateZ(-20px) translateX(3%)}
 }
 @media(max-width:979px){body{padding-bottom:84px}.stage{min-height:390px}.wall{height:390px}
-  .wchip{right:2%;top:-2%;padding:10px 13px}.wchip b{font-size:1.05rem}.wchip .gs-mark{width:40px;height:36px}}
+  /* on a phone it sits in the flow above the tiles — nothing to overlap */
+  .wchip{position:static;transform:none;margin:0 auto 16px;width:max-content;padding:10px 16px 10px 12px}
+  .wchip b{font-size:1.02rem}.wchip .gs-mark{width:36px}}
 
 /* ===================== MARQUEE ===================== */
 .mq{background:var(--gunmetal);border-block:1px solid rgba(255,255,255,.08);padding:16px 0;overflow:hidden;position:relative}
@@ -337,7 +340,7 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
   <div class="hero-bg"></div><div class="hero-glow"></div>
   <div class="wrap hero-in">
     <div>
-      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg> Gas Safe registered · Manchester's own gas engineer</span>
+      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg> Gas Safe registered · Manchester's own gas engineer</span>
       <h1 class="hh" data-fx="text" data-fx-step="60">
         Cold house today. <em>Warm house tonight.</em>
       </h1>
@@ -377,7 +380,8 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
         <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="" loading="lazy"><span class="wt-tag">Pump swap</span><i></i></figure>
         <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="" loading="lazy"><span class="wt-tag">Showers</span><i></i></figure>
         <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
-        <div class="wchip"><svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg><span><b>Gas Safe</b><i>Registered engineer</i></span></div></div>
+        </div>
+        <div class="wchip"><svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span><b>Gas Safe</b><i>Registered engineer</i></span></div>
     </div>
   </div>
 </header>
@@ -586,7 +590,7 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
         <div><b>Local</b><span>Manchester, not a call centre</span></div>
       </div>
         <div class="gs-plate" data-fx="reveal" data-fx-delay="60" style="margin-top:26px;max-width:430px">
-          <svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg>
+          <svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg>
           <span>
             <b>Gas Safe Registered</b>
             <small>Heat Fix Mcr Limited<span id="gsNo"></span><br>
@@ -941,7 +945,7 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
       </p>
       <p class="serif" style="color:var(--gold2);margin-top:14px;font-size:1.05rem">Domestic Gas Engineer</p>
       <div class="gs-line" style="margin-top:18px">
-        <svg class="gs-mark" viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg>
+        <svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg>
         <span><b>Gas Safe Registered</b><span id="gsNoFoot">Manchester</span></span>
       </div>
       <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">

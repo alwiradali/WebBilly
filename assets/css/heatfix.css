@@ -3,12 +3,14 @@
    Gunmetal + gold, taken from the business card. Logo untouched.
    ============================================================ */
 :root{
-  --ink:#0a0d11; --ink2:#0f141a; --panel:#141a22; --steel:#1b222c; --line:#242c37;
-  --gun1:#454b54; --gun2:#252a31; --gun3:#171b21;
-  --gold:#c9a24a; --gold2:#f2e2ae; --gold3:#8a6d29;
-  --navy:#0d2a63; --blue:#0e538e; --sky:#2f9fd6; --ice:#8ad6f5;
-  --flame:#f7941e; --flame2:#ffc93c; --safe:#ffd200;
-  --text:#e9eef5; --muted:#94a0b0; --dim:#66707d;
+  /* Lifted a stop and a half off near-black — still the card's gunmetal,
+     just no longer a void. Change these five and the whole site follows. */
+  --ink:#151b24; --ink2:#1b2230; --panel:#212a37; --steel:#28323f; --line:#36414f;
+  --gun1:#5f6774; --gun2:#3a4351; --gun3:#2a3340;
+  --gold:#d3ac57; --gold2:#f6e8bd; --gold3:#9a7c33;
+  --navy:#0d2a63; --blue:#1364a8; --sky:#43aee0; --ice:#a3e0f7;
+  --flame:#f79a2b; --flame2:#ffd04f; --safe:#ffd200;
+  --text:#f1f5fa; --muted:#a9b4c2; --dim:#7d8898;
   --dis:'Montserrat',system-ui,-apple-system,sans-serif;
   --ui:'Inter',system-ui,-apple-system,sans-serif;
   --ser:'Playfair Display',Georgia,serif;
@@ -17,7 +19,7 @@
   --water:linear-gradient(135deg,var(--navy),var(--blue) 55%,var(--sky));
   --fire:linear-gradient(135deg,var(--flame),var(--flame2));
   --r:18px; --rl:26px;
-  --shadow:0 24px 60px -20px rgba(0,0,0,.85);
+  --shadow:0 24px 60px -22px rgba(0,0,0,.6);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -27,7 +29,7 @@ body{
 }
 /* dotted gunmetal texture, as on the card */
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
   background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);
   background-size:6px 6px;
 }
@@ -247,11 +249,11 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.01em}
    with the file from the Gas Safe Licence Centre; nothing else
    needs changing.
    ============================================================ */
-.gs-mark{flex:none;display:block;width:40px;height:36px}   /* default so an unsized one can never blow up */
+.gs-mark{flex:none;display:block;width:38px;height:auto}   /* width only — the lockup sets its own height */
 .gs-mark polygon{fill:var(--safe);stroke:var(--safe)}
 
 /* small inline triangle, e.g. in the hero pill */
-.gs-sm{width:30px;height:27px}
+.gs-sm{width:27px}
 
 /* the plate — white, like the panel the logo sits in on the card */
 .gs-plate{
@@ -266,7 +268,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.01em}
   transform:translateX(-130%);
 }
 .gs-plate:hover::after{transform:translateX(130%);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
-.gs-plate .gs-mark{width:60px;height:54px}
+.gs-plate .gs-mark{width:56px}
 .gs-plate b{
   display:block;font-family:var(--dis);font-weight:900;font-size:.94rem;letter-spacing:.03em;
   text-transform:uppercase;color:#0d2a63;line-height:1.15;
@@ -277,7 +279,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.01em}
 
 /* footer / compact variant, sits on the dark background */
 .gs-line{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.86rem}
-.gs-line .gs-mark{width:42px;height:38px}
+.gs-line .gs-mark{width:38px}
 .gs-line b{display:block;font-family:var(--dis);font-weight:800;font-size:.82rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--text)}
 
