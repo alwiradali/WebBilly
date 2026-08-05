@@ -268,6 +268,19 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 .side-row b{font-family:var(--dis);font-weight:800;font-size:1.02rem;word-break:break-word;color:var(--navy)}
 
 /* ===================== AREAS ===================== */
+.areapic{position:relative;margin-top:30px;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--line);box-shadow:var(--shadow-lg);aspect-ratio:16/7;background:var(--card2)}
+.areapic img{width:100%;height:100%;object-fit:cover;display:block}
+.areapic::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(30,37,48,.62),rgba(30,37,48,.06) 55%,transparent)}
+.areapic-tag{position:absolute;left:20px;bottom:18px;z-index:2;
+  font-family:var(--dis);font-weight:800;font-size:.82rem;letter-spacing:.04em;color:#fff;
+  background:rgba(30,37,48,.55);border:1px solid rgba(255,255,255,.22);
+  padding:9px 15px;border-radius:999px;backdrop-filter:blur(6px)}
+@media(max-width:620px){.areapic{aspect-ratio:16/10}.areapic-tag{left:14px;bottom:14px;font-size:.74rem}}
+.photocred{margin:9px 2px 0;font-size:.68rem;color:var(--dim);letter-spacing:.01em}
+.photocred a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
+.photocred a:hover{color:var(--blue)}
 .areas{margin-top:34px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);
   overflow:hidden;box-shadow:var(--shadow)}
 .areas summary{
@@ -372,12 +385,12 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
     <!-- 3D tile wall -->
     <div class="stage" aria-hidden="true">
       <div class="wall" id="wall">
-        <figure class="wt wt1"><img src="../assets/heatfix/hero-1.webp" alt="" loading="eager" fetchpriority="high"><span class="wt-tag">Combi install</span><i></i></figure>
-        <figure class="wt wt2"><img src="../assets/heatfix/hero-2-sm.webp" alt="" loading="lazy"><span class="wt-tag">Cylinder</span><i></i></figure>
-        <figure class="wt wt3"><img src="../assets/heatfix/hero-3.webp" alt="" loading="eager"><span class="wt-tag">Strip &amp; service</span><i></i></figure>
-        <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="" loading="lazy"><span class="wt-tag">Pump swap</span><i></i></figure>
-        <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="" loading="lazy"><span class="wt-tag">Showers</span><i></i></figure>
-        <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
+        <figure class="wt wt1"><img src="../assets/heatfix/hero-1.webp" alt="Gas engineer checking the pump inside a boiler" loading="eager" fetchpriority="high"><span class="wt-tag">Boiler service</span><i></i></figure>
+        <figure class="wt wt2"><img src="../assets/heatfix/hero-2-sm.webp" alt="Wall-hung combi boiler in a modern kitchen" loading="lazy"><span class="wt-tag">Combi install</span><i></i></figure>
+        <figure class="wt wt3"><img src="../assets/heatfix/hero-3.webp" alt="Copper and steel heating pipework" loading="eager"><span class="wt-tag">Pipework</span><i></i></figure>
+        <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="White panel radiator close up" loading="lazy"><span class="wt-tag">Radiators</span><i></i></figure>
+        <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="Adjustable spanner and pipe wrench" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
+        <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="Bathroom with heated towel rail and basin" loading="lazy"><span class="wt-tag">Bathrooms</span><i></i></figure>
         </div>
         <div class="wchip"><svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span><b>Gas Safe</b><i>Registered engineer</i></span></div>
     </div>
@@ -443,7 +456,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-install.webp" alt="New combi boiler installed in a kitchen cupboard by Heat Fix Mcr" loading="lazy">
+            <img src="../assets/heatfix/svc-install.webp" alt="Gas engineer building up new boiler pipework and valves" loading="lazy">
             <span class="svc-n">01</span>
           </div>
           <div class="svc-body">
@@ -461,7 +474,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal" data-fx-delay="80">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-repair.webp" alt="Boiler fault diagnosis with a multimeter" loading="lazy">
+            <img src="../assets/heatfix/svc-repair.webp" alt="Gas engineer working inside a wall-hung boiler" loading="lazy">
             <span class="svc-n">02</span>
           </div>
           <div class="svc-body">
@@ -479,7 +492,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal" data-fx-delay="160">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-cylinder.webp" alt="Unvented hot water cylinder installed with new copper pipework" loading="lazy">
+            <img src="../assets/heatfix/svc-cylinder.webp" alt="Heating system manifold with pump and isolation valves" loading="lazy">
             <span class="svc-n">03</span>
           </div>
           <div class="svc-body">
@@ -497,7 +510,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-cooker.webp" alt="Range cooker installed and connected to gas" loading="lazy">
+            <img src="../assets/heatfix/svc-cooker.webp" alt="Hand turning the control on a gas hob" loading="lazy">
             <span class="svc-n">04</span>
           </div>
           <div class="svc-body">
@@ -514,7 +527,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal" data-fx-delay="80">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-bathroom.webp" alt="Chrome shower riser and mixer fitted onto tiled wall" loading="lazy">
+            <img src="../assets/heatfix/svc-bathroom.webp" alt="Modern bathroom with bath, basin and heated towel rail" loading="lazy">
             <span class="svc-n">05</span>
           </div>
           <div class="svc-body">
@@ -531,7 +544,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal" data-fx-delay="160">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-plumbing.webp" alt="Old stop tap on copper and blue MDPE mains pipe" loading="lazy">
+            <img src="../assets/heatfix/svc-plumbing.webp" alt="Fitting a chrome mixer tap onto a basin" loading="lazy">
             <span class="svc-n">06</span>
           </div>
           <div class="svc-body">
@@ -682,7 +695,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         If yours isn't here, ring and ask. You'll get a straight answer whether or not
         it turns into a job.
       </p>
-      <img src="../assets/heatfix/faq-1-sm.webp" alt="Combi boiler opened up in a kitchen cupboard"
+      <img src="../assets/heatfix/faq-1-sm.webp" alt="Gas engineer working on boiler pipework"
            loading="lazy" data-fx="reveal" data-fx-variant="scale"
            style="border-radius:var(--rl);margin-top:28px;border:1px solid var(--line);max-height:420px;object-fit:cover;width:100%">
     </div>
@@ -864,6 +877,14 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       is what makes same-day call-outs possible and keeps travel off your bill —
       36 areas, all of them a short drive.
     </p>
+    <div class="areapic" data-fx="reveal" data-fx-delay="170">
+      <img src="/assets/heatfix/mcr-1.webp"
+           srcset="/assets/heatfix/mcr-1-sm.webp 800w, /assets/heatfix/mcr-1.webp 1600w"
+           sizes="(max-width:900px) 92vw, 1100px"
+           alt="A red-brick terraced street in Manchester" loading="lazy" decoding="async" width="1600" height="1067">
+      <span class="areapic-tag">Manchester &amp; surrounding areas</span>
+    </div>
+    <p class="photocred">Manchester photo by <a href="https://unsplash.com/@gregwillson?utm_source=heatfixmcr&amp;utm_medium=referral" rel="noopener nofollow" target="_blank">Greg Willson</a> on <a href="https://unsplash.com/?utm_source=heatfixmcr&amp;utm_medium=referral" rel="noopener nofollow" target="_blank">Unsplash</a></p>
     <details class="areas" data-fx="reveal" data-fx-delay="200" open>
       <summary>The 36 areas we cover</summary>
       <div class="arealist">
