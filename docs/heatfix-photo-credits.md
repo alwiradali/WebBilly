@@ -39,14 +39,18 @@ its download endpoint was triggered when it was pulled.
 | `svc-plumbing` | Pexels | Castorly Stock | https://www.pexels.com/photo/person-washing-shaver-on-sink-3944863/ |
 | `svc-repair` | Pexels | МОБО Модульные Котельные | https://www.pexels.com/photo/technician-repairing-heating-system-in-workshop-34938439/ |
 
-## Video loops
+## Video loop
 
-Both are Pexels video, downloaded and re-encoded here (H.264 mp4 + VP9 webm,
-no audio track, poster frame as WebP). They are lazy: `preload="none"`, started
-by an IntersectionObserver when they scroll in, paused when they leave, and
-skipped entirely under `prefers-reduced-motion`, Save-Data or a 2G connection.
+One loop, on the hero. Pexels video, downloaded and re-encoded here as H.264
+mp4 only — Safari's WebM support is patchy and it will pick a source it then
+fails to play. No audio track; the poster frame is a WebP.
+
+It is lazy and polite: `preload="metadata"`, paused by an IntersectionObserver
+once the hero scrolls away, and skipped entirely under `prefers-reduced-motion`,
+Save-Data or a 2G connection. iOS Low Power Mode blocks video autoplay outright
+whatever the page does — there the poster frame stands in, the native
+play-button overlay is hidden, and the first tap starts it.
 
 | File | Shot | Photographer | Original |
 |---|---|---|---|
-| `hero-rad.mp4/webm` | Smart valve on a white radiator — hero backdrop | Jakub Bukowski | https://www.pexels.com/video/adjusting-smart-thermostat-on-radiator-35999366/ |
-| `tile-flame.mp4/webm` | Blue gas flame — live tile in the hero wall | Monsieur  Sylvain | https://www.pexels.com/video/close-up-video-of-blue-flame-5571796/ |
+| `hero-rad.mp4` | Smart valve on a white radiator | Jakub Bukowski | https://www.pexels.com/video/adjusting-smart-thermostat-on-radiator-35999366/ |

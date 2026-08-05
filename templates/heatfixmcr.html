@@ -31,6 +31,8 @@
   will-change:transform;pointer-events:none;
   -webkit-mask-image:radial-gradient(128% 118% at 78% 12%,#000 0%,rgba(0,0,0,.9) 34%,rgba(0,0,0,.45) 60%,transparent 84%);
   mask-image:radial-gradient(128% 118% at 78% 12%,#000 0%,rgba(0,0,0,.9) 34%,rgba(0,0,0,.45) 60%,transparent 84%)}
+.hero-video video::-webkit-media-controls-start-playback-button,
+.hero-video video::-webkit-media-controls{display:none!important;-webkit-appearance:none}
 .hero-video video,.hero-video img{width:100%;height:100%;object-fit:cover;object-position:56% 46%;
   display:block;opacity:.5;filter:blur(2px) saturate(.62) brightness(1.16) contrast(.9)}
 @media(min-width:1000px){
@@ -93,15 +95,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
   transition:box-shadow .45s;
 }
 .wt:hover{box-shadow:0 40px 74px -28px rgba(13,42,99,.5)}
-.wt img,.wt video{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.06) contrast(1.03)}
-.wt-live{background:#0d1420}
-.wt-live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;
-  margin-left:7px;vertical-align:middle;box-shadow:0 0 0 0 rgba(74,222,128,.7);
-  animation:livepulse 2.2s ease-out infinite}
-@keyframes livepulse{
-  0%{box-shadow:0 0 0 0 rgba(74,222,128,.65)}
-  70%{box-shadow:0 0 0 7px rgba(74,222,128,0)}
-  100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+.wt img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.06) contrast(1.03)}
 .wt::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 46%,rgba(9,20,38,.62))}
 .wt i{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--goldline);z-index:3}
@@ -396,7 +390,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
   <div class="nav-in">
     <a class="brandlink" href="#top" aria-label="Heat Fix Mcr Limited — home">
       <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
-      <span class="brandtxt"><b>Heat Fix Mcr Ltd</b><small>Heating &amp; Plumbing</small></span>
+      <span class="brandtxt"><b>Heat Fix Mcr Limited</b><small>Heating &amp; Plumbing</small></span>
     </a>
     <div class="navlinks">
       <a href="#services">Services</a>
@@ -427,9 +421,9 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
   <div class="hero-video" aria-hidden="true" data-fx="parallax" data-fx-speed="0.18">
-    <video id="heroVid" autoplay muted loop playsinline preload="none"
-           poster="../assets/heatfix/hero-rad.webp" disablepictureinpicture>
-      <source src="../assets/heatfix/hero-rad.webm" type="video/webm">
+    <video id="heroVid" autoplay muted defaultmuted loop playsinline webkit-playsinline
+           preload="metadata" poster="../assets/heatfix/hero-rad.webp"
+           disablepictureinpicture disableremoteplayback>
       <source src="../assets/heatfix/hero-rad.mp4" type="video/mp4">
     </video>
   </div>
@@ -473,11 +467,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         <figure class="wt wt1"><img src="../assets/heatfix/hero-1.webp" alt="Gas engineer checking the pump inside a boiler" loading="eager" fetchpriority="high"><span class="wt-tag">Boiler service</span><i></i></figure>
         <figure class="wt wt2"><img src="../assets/heatfix/hero-2-sm.webp" alt="Wall-hung combi boiler in a modern kitchen" loading="lazy"><span class="wt-tag">Combi install</span><i></i></figure>
         <figure class="wt wt3"><img src="../assets/heatfix/hero-3.webp" alt="Copper and steel heating pipework" loading="eager"><span class="wt-tag">Pipework</span><i></i></figure>
-        <figure class="wt wt4 wt-live"><video id="tileVid" autoplay muted loop playsinline preload="none"
-                 poster="../assets/heatfix/tile-flame.webp" disablepictureinpicture>
-            <source src="../assets/heatfix/tile-flame.webm" type="video/webm">
-            <source src="../assets/heatfix/tile-flame.mp4" type="video/mp4">
-          </video><span class="wt-tag">Gas work <b class="wt-live-dot"></b></span><i></i></figure>
+        <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="White panel radiator close up" loading="lazy"><span class="wt-tag">Radiators</span><i></i></figure>
         <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="Adjustable spanner and pipe wrench" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
         <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="Bathroom with heated towel rail and basin" loading="lazy"><span class="wt-tag">Bathrooms</span><i></i></figure>
         </div>
@@ -692,10 +682,9 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         <div class="gs-plate" data-fx="reveal" data-fx-delay="60" style="margin-top:26px;max-width:430px">
           <svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg>
           <span>
-            <b>Gas Safe Registered</b>
-            <small>Heat Fix Mcr Limited<span id="gsNo"></span><br>
-              Verify at <a href="https://www.gassaferegister.co.uk/find-an-engineer-or-check-the-register/"
-                 target="_blank" rel="noopener">gassaferegister.co.uk</a></small>
+            <b>Gas Safe registered</b>
+            <small>By law, only a Gas Safe registered engineer may work on your
+              gas appliances. Heat Fix Mcr Limited is one.<span id="gsNo"></span></small>
           </span>
         </div>
       <p style="margin-top:20px;font-size:.86rem;color:var(--dim)">
@@ -794,7 +783,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
            style="border-radius:var(--rl);margin-top:28px;border:1px solid var(--line);max-height:420px;object-fit:cover;width:100%">
     </div>
     <div class="faqs" data-fx="stagger" data-fx-step="60">
-      <details class="faq"><summary>How much is a boiler repair?</summary><div class="a"><p>There's no call-out fee to find out. Most repairs land between £80 and £180 including the part, and you get the figure in writing before anything comes apart. If the part is expensive enough that a new boiler makes better sense, we'll say so rather than sell you the repair.</p></div></details>
+      <details class="faq"><summary>How much is a boiler repair?</summary><div class="a"><p>There's no call-out fee to find out. You get the figure in writing before anything comes apart, parts and labour together, and it doesn't move afterwards. If a part costs enough that a new boiler makes better sense, we'll say so rather than sell you the repair.</p></div></details>
       <details class="faq"><summary>Can you come out today?</summary><div class="a"><p>Often, yes. Ring rather than fill the form if you've no heat, no hot water or water coming through a ceiling — the phone gets answered, the form gets read. Online slots are for planned work like services, quotes and installs.</p></div></details>
       <details class="faq"><summary>Are you Gas Safe registered?</summary><div class="a"><p>Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card.</p></div></details>
       <details class="faq"><summary>Do you do landlord gas safety certificates?</summary><div class="a"><p>Yes — CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy.</p></div></details>
@@ -1059,7 +1048,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <p class="serif" style="color:var(--gold2);margin-top:14px;font-size:1.05rem">Domestic Gas Engineer</p>
       <div class="gs-line" style="margin-top:18px">
         <svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg>
-        <span><b>Gas Safe Registered</b><span id="gsNoFoot">Manchester</span></span>
+        <span><b>Gas Safe registered</b><span id="gsNoFoot">Manchester</span></span>
       </div>
       <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
         <a class="btn fire sm" href="/#quote">Get a free quote</a>
@@ -1141,12 +1130,11 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 "description":"Gas Safe registered domestic gas engineer in Manchester. Boiler installation, repair and servicing, unvented cylinders, gas cookers, bathrooms and emergency plumbing.",
 "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressRegion":"Greater Manchester","addressCountry":"GB"},
 "areaServed":["Manchester","Salford","Stockport","Oldham","Bury","Bolton","Rochdale","Tameside","Trafford","Wigan"],
-"priceRange":"££",
 "knowsAbout":["Boiler installation","Boiler repair","Gas safety certificate","Unvented hot water cylinder","Gas cooker installation","Emergency plumbing"]}
 </script>
 
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much is a boiler repair?", "acceptedAnswer": {"@type": "Answer", "text": "There's no call-out fee to find out. Most repairs land between £80 and £180 including the part, and you get the figure in writing before anything comes apart. If the part is expensive enough that a new boiler makes better sense, we'll say so rather than sell you the repair."}}, {"@type": "Question", "name": "Can you come out today?", "acceptedAnswer": {"@type": "Answer", "text": "Often, yes. Ring rather than fill the form if you've no heat, no hot water or water coming through a ceiling — the phone gets answered, the form gets read. Online slots are for planned work like services, quotes and installs."}}, {"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it — it's worth getting looked at."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester and everywhere within about five miles of the city centre — Salford, Chorlton, Didsbury, Prestwich, Droylsden, Eccles, Stretford and the rest. If you're a bit outside that, ring and ask; the answer is usually yes."}}, {"@type": "Question", "name": "How do I pay, and will I get an invoice?", "acceptedAnswer": {"@type": "Answer", "text": "Bank transfer or cash on completion. Your invoice comes straight to your WhatsApp or email as a PDF before we leave, with the work and the price itemised, plus any certificates."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much is a boiler repair?", "acceptedAnswer": {"@type": "Answer", "text": "There's no call-out fee to find out. You get the figure in writing before anything comes apart, parts and labour together, and it doesn't move afterwards. If a part costs enough that a new boiler makes better sense, we'll say so rather than sell you the repair."}}, {"@type": "Question", "name": "Can you come out today?", "acceptedAnswer": {"@type": "Answer", "text": "Often, yes. Ring rather than fill the form if you've no heat, no hot water or water coming through a ceiling — the phone gets answered, the form gets read. Online slots are for planned work like services, quotes and installs."}}, {"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it — it's worth getting looked at."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester and everywhere within about five miles of the city centre — Salford, Chorlton, Didsbury, Prestwich, Droylsden, Eccles, Stretford and the rest. If you're a bit outside that, ring and ask; the answer is usually yes."}}, {"@type": "Question", "name": "How do I pay, and will I get an invoice?", "acceptedAnswer": {"@type": "Answer", "text": "Bank transfer or cash on completion. Your invoice comes straight to your WhatsApp or email as a PDF before we leave, with the work and the price itemised, plus any certificates."}}]}
 </script>
 
 <script src="../assets/js/scroll-fx.js" defer></script>
@@ -1175,7 +1163,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 (function(){
   var n = (HF_GAS_SAFE_NO || '').trim();
   if (!n) return;
-  var a = document.getElementById('gsNo');   if (a) a.textContent = ' \u00b7 Reg. no. ' + n;
+  var a = document.getElementById('gsNo');   if (a) a.textContent = ' Registration number ' + n + '.';
   var b = document.getElementById('gsNoFoot'); if (b) b.textContent = 'Reg. no. ' + n;
 })();
 
@@ -1252,37 +1240,39 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 /* ---------- marquee: duplicate for a seamless loop ---------- */
 (function(){var t=document.getElementById('mqt'); if(t) t.innerHTML+=t.innerHTML;})();
 
-/* ---------- video: only play what is on screen, and only if wanted ----------
-   preload="none" keeps the loops off the critical path; an IntersectionObserver
-   starts them when they scroll in and pauses them when they leave, so a phone
-   never decodes video it isn't showing.                                        */
+/* ---------- hero video ----------
+   H.264 mp4 only — Safari's WebM support is patchy and it will happily pick a
+   source it then fails to play. iOS also needs muted + inline + real data, so
+   preload is "metadata", not "none". iOS Low Power Mode refuses autoplay
+   outright whatever you do: the poster frame stands in, the native play-button
+   overlay is hidden in CSS, and the first tap on the page starts it.          */
 (function(){
-  var vids = [].slice.call(document.querySelectorAll('video[playsinline]'));
-  if (!vids.length) return;
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var v = document.getElementById('heroVid');
+  if (!v) return;
   var conn = navigator.connection || {};
-  var thrifty = reduce || conn.saveData === true || /2g/.test(conn.effectiveType || '');
-  if (thrifty){
-    vids.forEach(function(v){ v.removeAttribute('autoplay'); v.pause(); });
-    return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      conn.saveData === true || /2g/.test(conn.effectiveType || '')) {
+    v.removeAttribute('autoplay'); v.pause(); return;
   }
+  v.muted = true; v.defaultMuted = true; v.playsInline = true;
+  function go(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  function once(){
+    document.removeEventListener('touchstart', once);
+    document.removeEventListener('click', once);
+    go();
+  }
+  v.addEventListener('loadeddata', go);
+  go();
+  document.addEventListener('touchstart', once, { passive:true, once:true });
+  document.addEventListener('click', once, { once:true });
+
+  /* stop decoding once the hero has scrolled away, start again when it returns */
   var io = new IntersectionObserver(function(rows){
-    rows.forEach(function(r){
-      var v = r.target;
-      if (r.isIntersecting){
-        if (v.preload === 'none'){ v.preload = 'auto'; v.load(); }
-        var p = v.play(); if (p && p.catch) p.catch(function(){});
-      } else { v.pause(); }
-    });
-  }, { rootMargin: '160px' });
-  vids.forEach(function(v){ io.observe(v); });
+    rows.forEach(function(r){ if (r.isIntersecting) go(); else v.pause(); });
+  }, { rootMargin: '120px' });
+  io.observe(v);
   document.addEventListener('visibilitychange', function(){
-    vids.forEach(function(v){
-      if (document.hidden) v.pause();
-      else if (v.getBoundingClientRect().top < innerHeight && v.getBoundingClientRect().bottom > 0){
-        var p = v.play(); if (p && p.catch) p.catch(function(){});
-      }
-    });
+    if (document.hidden) v.pause(); else go();
   });
 })();
 
