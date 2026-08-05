@@ -145,10 +145,21 @@ async function serveM2L(request, url, env) {
 const HEATFIX_PAGES = {
   "/": "/templates/heatfixmcr.html",
   "/book": "/templates/heatfix-book.html",
+  "/about": "/templates/heatfix-about.html",
+  "/faqs": "/templates/heatfix-faqs.html",
+  "/blog": "/templates/heatfix-blog.html",
+  "/safety-tips": "/templates/heatfix-safety-tips.html",
+  "/manufacturers-warranty": "/templates/heatfix-manufacturers-warranty.html",
+  "/privacy": "/templates/heatfix-privacy.html",
+  "/terms": "/templates/heatfix-terms.html",
   "/invoice": "/templates/heatfix-invoice.html",
   "/i": "/templates/heatfix-invoice-view.html",
 };
-const HEATFIX_PUBLIC = ["/", "/book"];
+/* Everything except the two back-office tools should be indexable. */
+const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips",
+                        "/manufacturers-warranty", "/privacy", "/terms"];
+/* Blog articles live at /blog/<slug>. */
+const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
 
 function clientHosts(env, key) {
   return String((env && env[key]) || "")
@@ -166,7 +177,13 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
     return env.ASSETS.fetch(request);
   }
 
-  const target = PAGES[p];
+  let target = PAGES[p], publicPage = PUBLIC.indexOf(p) !== -1;
+
+  // Blog articles: /blog/<slug> -> /templates/heatfix-blog-<slug>.html
+  if (!target && PAGES === HEATFIX_PAGES) {
+    const m = HEATFIX_BLOG.exec(p);
+    if (m) { target = "/templates/heatfix-blog-" + m[1] + ".html"; publicPage = true; }
+  }
   if (!target) {
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
   }
@@ -174,7 +191,6 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
   const res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
   if (!res.ok) return res;
 
-  const publicPage = PUBLIC.indexOf(p) !== -1;
   const canonical = "https://" + url.hostname + (p === "/" ? "/" : p);
 
   let rw = new HTMLRewriter().on('meta[name="robots"]', {

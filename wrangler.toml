@@ -66,4 +66,8 @@ binding = "ASSETS"
 #
 # The rest let a client domain serve its site at "/" instead of the Billy
 # Digitals homepage. If wrangler is too old for the array form, use `true`.
-run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i"]
+run_worker_first = [
+  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i",
+  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
+  "/manufacturers-warranty", "/privacy", "/terms",
+]
