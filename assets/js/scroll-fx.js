@@ -120,7 +120,11 @@
             if (tok.trim() === "") { el.appendChild(doc.createTextNode(tok)); return; }
             el.appendChild(makeWord(tok, base + wi * step)); wi++;
           });
-        } else if (n.nodeType === 1) {              // keep child elements as one unit
+        } else if (n.nodeType === 1) {
+          // a line break has to stay a line break — wrapping it in an
+          // inline-block would swallow it and run the two lines together
+          if (n.tagName === "BR") { el.appendChild(n); return; }
+          // any other child element travels as one unit
           var w = doc.createElement("span"); w.className = "fx-word";
           var inner = doc.createElement("span"); inner.className = "fx-word-inner";
           inner.appendChild(n); inner.style.transitionDelay = (base + wi * step) + "s";

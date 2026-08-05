@@ -60,3 +60,10 @@ subfolders, e.g. `../assets/…` inside `templates/`.)
 
 **Convention:** whenever new scroll effects / animations are requested, use this
 `data-fx` system rather than hand-rolling per-page one-offs.
+
+## Fixed: `<br>` inside `data-fx="text"`
+
+The word splitter used to wrap every child element — including `<br>` — in an
+`inline-block` span, which swallowed the line break and ran the two lines
+together. `<br>` is now appended straight to the heading and left alone. Any
+heading written as `Line one<br>Line two` breaks where it says it does.

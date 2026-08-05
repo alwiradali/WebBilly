@@ -39,18 +39,17 @@ its download endpoint was triggered when it was pulled.
 | `svc-plumbing` | Pexels | Castorly Stock | https://www.pexels.com/photo/person-washing-shaver-on-sink-3944863/ |
 | `svc-repair` | Pexels | МОБО Модульные Котельные | https://www.pexels.com/photo/technician-repairing-heating-system-in-workshop-34938439/ |
 
-## Video loop
+## Background animation
 
-One loop, on the hero. Pexels video, downloaded and re-encoded here as H.264
-mp4 only — Safari's WebM support is patchy and it will pick a source it then
-fails to play. No audio track; the poster frame is a WebP.
+No stock video. The hero background is drawn in the browser by
+`assets/js/heatfix-bg.js`: an orthogonal pipe network in pale navy with pulses
+of flow running through it — cool blue on the way out, warm amber on the way
+back. Nothing to license, nothing to download, about 4KB gzipped.
 
-It is lazy and polite: `preload="metadata"`, paused by an IntersectionObserver
-once the hero scrolls away, and skipped entirely under `prefers-reduced-motion`,
-Save-Data or a 2G connection. iOS Low Power Mode blocks video autoplay outright
-whatever the page does — there the poster frame stands in, the native
-play-button overlay is hidden, and the first tap starts it.
+Two stacked canvases: the pipework is painted once and never touched again, so
+the frame loop only clears and strokes the pulse layer. Capped at 30fps, paused
+when the hero scrolls out of view or the tab is hidden, and reduced to a single
+still frame under `prefers-reduced-motion`. The ambient glow behind it is CSS,
+not canvas.
 
-| File | Shot | Photographer | Original |
-|---|---|---|---|
-| `hero-rad.mp4` | Smart valve on a white radiator | Jakub Bukowski | https://www.pexels.com/video/adjusting-smart-thermostat-on-radiator-35999366/ |
+The same effect runs behind every page hero via `<div data-heatfx="circuit">`.

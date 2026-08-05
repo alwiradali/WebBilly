@@ -24,36 +24,33 @@
 /* ===================== HERO ===================== */
 .hero{position:relative;padding:130px 0 70px;overflow:hidden;isolation:isolate}
 /* live flame plate, deepest layer — a lit atmosphere, never a distraction */
-/* Live plate behind the hero: a white radiator and a smart valve, softened right
-   down so it reads as daylight in a real house rather than footage competing
-   with the headline. Light footage on a light page — nothing goes muddy. */
-.hero-video{position:absolute;inset:-14% -4%;z-index:-3;overflow:hidden;
-  will-change:transform;pointer-events:none;
-  -webkit-mask-image:radial-gradient(128% 118% at 78% 12%,#000 0%,rgba(0,0,0,.9) 34%,rgba(0,0,0,.45) 60%,transparent 84%);
-  mask-image:radial-gradient(128% 118% at 78% 12%,#000 0%,rgba(0,0,0,.9) 34%,rgba(0,0,0,.45) 60%,transparent 84%)}
-.hero-video video::-webkit-media-controls-start-playback-button,
-.hero-video video::-webkit-media-controls{display:none!important;-webkit-appearance:none}
-.hero-video video,.hero-video img{width:100%;height:100%;object-fit:cover;object-position:56% 46%;
-  display:block;opacity:.5;filter:blur(2px) saturate(.62) brightness(1.16) contrast(.9)}
-@media(min-width:1000px){
-  .hero-video video,.hero-video img{opacity:.76;filter:saturate(.72) brightness(1.1) contrast(.95)}
-}
-.hero-bg{position:absolute;inset:0;z-index:-4;background:
-  radial-gradient(980px 640px at 80% 6%,rgba(47,159,214,.2),transparent 62%),
-  radial-gradient(760px 520px at 4% 86%,rgba(234,124,18,.11),transparent 66%),
-  linear-gradient(180deg,#ffffff,#eef3fa 58%,#f6f8fc)}
-/* wash: solid where the words live, clearing towards the tile wall */
+/* Animated hero background — a live heating circuit drawn on canvas by
+   assets/js/heatfix-bg.js. Pipe runs in pale navy with pulses of flow moving
+   through them: cool blue going out, warm amber coming back. */
+.hero-fx{position:absolute;inset:0;z-index:-3;overflow:hidden;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.35) 88%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.35) 88%,transparent 100%)}
+.hero-bg{position:absolute;inset:0;z-index:-4;overflow:hidden;
+  background:linear-gradient(180deg,#ffffff,#eef3fa 58%,#f6f8fc)}
+/* ambient blooms drift in CSS so the canvas never has to fill the whole
+   surface — two compositor-only transforms instead of gradients per frame */
+.hero-bg::before,.hero-bg::after{content:"";position:absolute;inset:-10%;
+  will-change:transform;animation:bloomdrift 30s ease-in-out infinite alternate}
+.hero-bg::before{background:radial-gradient(980px 640px at 78% 20%,rgba(47,159,214,.24),transparent 62%)}
+.hero-bg::after{background:radial-gradient(760px 520px at 20% 78%,rgba(234,124,18,.13),transparent 66%);
+  animation-duration:34s;animation-direction:alternate-reverse}
+@keyframes bloomdrift{from{transform:translate3d(-1.4%,-1.2%,0)}to{transform:translate3d(1.4%,1.4%,0)}}
+@media(prefers-reduced-motion:reduce){.hero-bg::before,.hero-bg::after{animation:none}}
+/* keeps the circuit off the words without washing it out on the tile side */
 .hero-wash{position:absolute;inset:0;z-index:-2;pointer-events:none;background:
-  linear-gradient(180deg,rgba(250,252,255,.74),rgba(246,249,253,.5) 44%,rgba(246,248,252,.8))}
+  linear-gradient(180deg,rgba(248,251,255,.9) 0%,rgba(248,251,255,.92) 44%,
+                  rgba(248,251,255,.52) 66%,rgba(248,251,255,0) 88%)}
 @media(min-width:1000px){
   .hero-wash{background:
-    linear-gradient(100deg,rgba(250,252,255,.94) 0%,rgba(248,251,254,.82) 32%,
-      rgba(245,249,253,.28) 58%,rgba(244,248,253,.02) 84%),
-    radial-gradient(70% 60% at 78% 24%,rgba(47,159,214,.1),transparent 70%)}
+    radial-gradient(78% 92% at 2% 46%,rgba(249,252,255,.96),rgba(249,252,255,.52) 52%,transparent 82%)}
 }
 .hero-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.6;
   background:conic-gradient(from 200deg at 74% 20%,transparent,rgba(19,100,168,.10),transparent 44%)}
-@media(prefers-reduced-motion:reduce){.hero-video video{display:none}}
 .hero-in{display:grid;gap:clamp(38px,6vw,62px);grid-template-columns:minmax(0,1fr);align-items:center}
 @media(min-width:1000px){.hero-in{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr)}.hero{padding:154px 0 96px}}
 
@@ -420,13 +417,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
-  <div class="hero-video" aria-hidden="true" data-fx="parallax" data-fx-speed="0.18">
-    <video id="heroVid" autoplay muted defaultmuted loop playsinline webkit-playsinline
-           preload="metadata" poster="../assets/heatfix/hero-rad.webp"
-           disablepictureinpicture disableremoteplayback>
-      <source src="../assets/heatfix/hero-rad.mp4" type="video/mp4">
-    </video>
-  </div>
+  <div class="hero-fx" data-heatfx="circuit" aria-hidden="true"></div>
   <div class="hero-bg"></div><div class="hero-wash"></div><div class="hero-glow"></div>
   <div class="wrap hero-in">
     <div>
@@ -1138,6 +1129,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 </script>
 
 <script src="../assets/js/scroll-fx.js" defer></script>
+<script src="../assets/js/heatfix-bg.js" defer></script>
 <script>
 /* ---------- config ----------
    Web3Forms: create a free access key at https://web3forms.com (it emails the
@@ -1239,42 +1231,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
 /* ---------- marquee: duplicate for a seamless loop ---------- */
 (function(){var t=document.getElementById('mqt'); if(t) t.innerHTML+=t.innerHTML;})();
-
-/* ---------- hero video ----------
-   H.264 mp4 only — Safari's WebM support is patchy and it will happily pick a
-   source it then fails to play. iOS also needs muted + inline + real data, so
-   preload is "metadata", not "none". iOS Low Power Mode refuses autoplay
-   outright whatever you do: the poster frame stands in, the native play-button
-   overlay is hidden in CSS, and the first tap on the page starts it.          */
-(function(){
-  var v = document.getElementById('heroVid');
-  if (!v) return;
-  var conn = navigator.connection || {};
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      conn.saveData === true || /2g/.test(conn.effectiveType || '')) {
-    v.removeAttribute('autoplay'); v.pause(); return;
-  }
-  v.muted = true; v.defaultMuted = true; v.playsInline = true;
-  function go(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
-  function once(){
-    document.removeEventListener('touchstart', once);
-    document.removeEventListener('click', once);
-    go();
-  }
-  v.addEventListener('loadeddata', go);
-  go();
-  document.addEventListener('touchstart', once, { passive:true, once:true });
-  document.addEventListener('click', once, { once:true });
-
-  /* stop decoding once the hero has scrolled away, start again when it returns */
-  var io = new IntersectionObserver(function(rows){
-    rows.forEach(function(r){ if (r.isIntersecting) go(); else v.pause(); });
-  }, { rootMargin: '120px' });
-  io.observe(v);
-  document.addEventListener('visibilitychange', function(){
-    if (document.hidden) v.pause(); else go();
-  });
-})();
 
 /* ---------- hero wall: scroll depth ----------
    Each tile gets its own drift rate, written into --sy, which the wfloat
