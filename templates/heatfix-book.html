@@ -310,7 +310,7 @@
     </div>
 
     <div class="side-card" style="margin-top:22px">
-      <h4 style="font-family:var(--dis);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);margin-bottom:14px;position:relative;z-index:2">Good to know</h4>
+      <div class="gs-line" style="margin-bottom:16px;position:relative;z-index:2"><svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg><span><b>Gas Safe Registered</b><span id="gsNoBook">Manchester</span></span></div><h4 style="font-family:var(--dis);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);margin-bottom:14px;position:relative;z-index:2">Good to know</h4>
       <ul style="list-style:none;display:grid;gap:11px;position:relative;z-index:2">
         <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>Gas Safe registered — ask to see the ID card at the door.</li>
         <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>A written price before any work starts.</li>
@@ -338,7 +338,12 @@
 var W3F_KEY = "";                       /* paste your Web3Forms access key here */
 var HF_PHONE = "447890452629";
 var HF_EMAIL = "heatfixmcr@hotmail.com";
+var HF_GAS_SAFE_NO = "";   /* Ejaz's Gas Safe registration number */
 document.getElementById('yr').textContent = new Date().getFullYear();
+(function(){
+  var el = document.getElementById('gsNoBook'), n = (HF_GAS_SAFE_NO || '').trim();
+  if (el && n) el.textContent = 'Reg. no. ' + n;
+})();
 
 /* nav + dock */
 (function(){

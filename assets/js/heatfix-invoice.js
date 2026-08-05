@@ -183,6 +183,21 @@ HF.buildPdf = function (inv, logoBuf) {
   function rect(x, yy, w, h, colour){ ops.push(colour + ' rg ' + x.toFixed(2) + ' ' + yy.toFixed(2) + ' ' + w.toFixed(2) + ' ' + h.toFixed(2) + ' re f'); }
   function rule(x, yy, w, colour, th){ ops.push((colour||LINE) + ' RG ' + (th||0.7) + ' w ' + x.toFixed(2) + ' ' + yy.toFixed(2) + ' m ' + (x+w).toFixed(2) + ' ' + yy.toFixed(2) + ' l S'); }
 
+  /* The Gas Safe Register triangle, drawn as vectors so it stays crisp at
+     any zoom and adds nothing to the file size. Bottom-left corner at x,yy. */
+  function gasSafe(x, yy, w){
+    var h = w * 0.9, cx = x + w / 2, r = w * 0.11;
+    ops.push('q 1 0.824 0 rg 1 0.824 0 RG ' + r.toFixed(2) + ' w 1 j ' +
+      (x + r).toFixed(2) + ' ' + (yy + r).toFixed(2) + ' m ' +
+      (x + w - r).toFixed(2) + ' ' + (yy + r).toFixed(2) + ' l ' +
+      cx.toFixed(2) + ' ' + (yy + h - r * 0.4).toFixed(2) + ' l h B Q');
+    var g = 'GAS', sf = 'safe';
+    var gs = w * 0.175, ss = w * 0.27;
+    txt(g,  cx - textWidth(g, gs, true) / 2,  yy + h * 0.40, +gs.toFixed(2), true, '0.07 0.07 0.07');
+    txt(sf, cx - textWidth(sf, ss, true) / 2, yy + h * 0.14, +ss.toFixed(2), true, '0.07 0.07 0.07');
+    return h;
+  }
+
   /* --- header band --- */
   rect(0, A4.h - 132, A4.w, 132, '0.984 0.988 0.992');
   rect(0, A4.h - 136, A4.w, 4, NAVY);
@@ -196,7 +211,10 @@ HF.buildPdf = function (inv, logoBuf) {
   var hy = A4.h - 44 - (logoBuf ? 0 : 10);
   txt(c.name, M + (lw ? lw + 16 : 0), hy - 14, 15, true, NAVY);
   txt(c.role, M + (lw ? lw + 16 : 0), hy - 30, 9.5, false, GREY);
-  txt('Gas Safe registered engineer', M + (lw ? lw + 16 : 0), hy - 43, 9.5, false, GREY);
+  var gx = M + (lw ? lw + 16 : 0);
+  gasSafe(gx, hy - 54, 22);
+  txt('GAS SAFE REGISTERED', gx + 29, hy - 44, 8, true, NAVY);
+  txt(inv.gassafe ? ('Reg. no. ' + inv.gassafe) : 'Registered business', gx + 29, hy - 54, 7.5, false, GREY);
 
   var xr = A4.w - M;
   right('INVOICE', xr, hy - 12, 26, true, NAVY);
@@ -313,7 +331,7 @@ HF.buildPdf = function (inv, logoBuf) {
     txt('Bank details on request — call ' + c.phone + '.', M, pln, 10, false, GREY);
   }
   right('Please quote invoice ' + (inv.number || ''), xr, py - 10, 9, false, GREY);
-  if (inv.gassafe) right('Gas Safe reg. ' + inv.gassafe, xr, py - 24, 9, false, GREY);
+
 
   /* --- footer --- */
   rect(0, 0, A4.w, 44, '0.051 0.165 0.388');

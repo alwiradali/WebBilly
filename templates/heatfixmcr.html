@@ -93,17 +93,20 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
 /* floating spec chip on the wall */
 .wchip{
   position:absolute;z-index:9;right:0;top:-3%;transform:translateZ(250px);
-  background:linear-gradient(150deg,#fff,#e7ebf0);color:#0c1218;border-radius:16px;padding:12px 16px;
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(150deg,#fff,#e7ebf0);color:#0c1218;border-radius:16px;padding:12px 18px 12px 14px;
   box-shadow:0 30px 60px -22px rgba(0,0,0,1);animation:wfloat 7s ease-in-out infinite;--z:250px;
 }
-.wchip b{display:block;font-family:var(--dis);font-weight:900;font-size:1.5rem;line-height:1;color:var(--navy)}
-.wchip span{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#5b6675}
+.wchip .gs-mark{width:48px;height:43px}
+.wchip b{display:block;font-family:var(--dis);font-weight:900;font-size:1.3rem;line-height:1;color:var(--navy)}
+.wchip i{display:block;font-style:normal;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+  font-weight:700;color:#5b6675;margin-top:3px;white-space:nowrap}
 
 @media(max-width:999px){
   .wall{transform:rotateX(calc(6deg + var(--px,0)*-3deg)) rotateY(calc(-8deg + var(--py,0)*4deg)) translateZ(-20px) translateX(3%)}
 }
 @media(max-width:979px){body{padding-bottom:84px}.stage{min-height:390px}.wall{height:390px}
-  .wchip{right:2%;top:-2%;padding:10px 13px}.wchip b{font-size:1.2rem}}
+  .wchip{right:2%;top:-2%;padding:10px 13px}.wchip b{font-size:1.05rem}.wchip .gs-mark{width:40px;height:36px}}
 
 /* ===================== MARQUEE ===================== */
 .mq{background:var(--gunmetal);border-block:1px solid rgba(255,255,255,.08);padding:16px 0;overflow:hidden;position:relative}
@@ -329,7 +332,7 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
   <div class="hero-bg"></div><div class="hero-glow"></div>
   <div class="wrap hero-in">
     <div>
-      <span class="h-badge"><span class="gs-tri"><b>GAS</b></span> Gas Safe registered · Manchester's own gas engineer</span>
+      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg> Gas Safe registered · Manchester's own gas engineer</span>
       <h1 class="hh" data-fx="text" data-fx-step="60">
         Cold house today. <em>Warm house tonight.</em>
       </h1>
@@ -369,8 +372,7 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
         <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="" loading="lazy"><span class="wt-tag">Pump swap</span><i></i></figure>
         <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="" loading="lazy"><span class="wt-tag">Showers</span><i></i></figure>
         <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
-        <div class="wchip"><b>Gas Safe</b><span>Registered · Ask at the door</span></div>
-      </div>
+        <div class="wchip"><svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg><span><b>Gas Safe</b><i>Registered engineer</i></span></div></div>
     </div>
   </div>
 </header>
@@ -530,7 +532,16 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
         <div><b>Tidy</b><span>Sheets down, every visit</span></div>
         <div><b>Local</b><span>Manchester, not a call centre</span></div>
       </div>
-      <p style="margin-top:24px;font-size:.86rem;color:var(--dim)">
+        <div class="gs-plate" data-fx="reveal" data-fx-delay="60" style="margin-top:26px;max-width:430px">
+          <svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg>
+          <span>
+            <b>Gas Safe Registered</b>
+            <small>Heat Fix Mcr Limited<span id="gsNo"></span><br>
+              Verify at <a href="https://www.gassaferegister.co.uk/find-an-engineer-or-check-the-register/"
+                 target="_blank" rel="noopener">gassaferegister.co.uk</a></small>
+          </span>
+        </div>
+      <p style="margin-top:20px;font-size:.86rem;color:var(--dim)">
         Ask to see the Gas Safe ID card on the doorstep. A genuine engineer will hand it over before you ask.
       </p>
     </div>
@@ -733,6 +744,10 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
         engineer who answers his own phone.
       </p>
       <p class="serif" style="color:var(--gold2);margin-top:14px;font-size:1.05rem">Domestic Gas Engineer</p>
+      <div class="gs-line" style="margin-top:18px">
+        <svg class="gs-mark " viewBox="0 0 100 92" aria-hidden="true" focusable="false"><polygon points="50,13 89,80 11,80" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,'Arial Black',Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg>
+        <span><b>Gas Safe Registered</b><span id="gsNoFoot">Manchester</span></span>
+      </div>
     </div>
     <div>
       <h4>Services</h4>
@@ -797,9 +812,21 @@ h1.hh em{font-style:normal;background:linear-gradient(120deg,#a8e4fb,var(--sky) 
    Until then the form falls back to WhatsApp + email so it is never dead.      */
 var W3F_KEY = "";
 var HF_PHONE = "447890452629";
+/* Ejaz's Gas Safe registration number. Gas Safe require it to be shown
+   wherever the logo appears — put the 6 digits between the quotes. */
+var HF_GAS_SAFE_NO = "";
 var HF_EMAIL = "heatfixmcr@hotmail.com";
 
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* Gas Safe registration number — Gas Safe require it wherever the logo
+   appears. Nothing shows until HF_GAS_SAFE_NO is filled in. */
+(function(){
+  var n = (HF_GAS_SAFE_NO || '').trim();
+  if (!n) return;
+  var a = document.getElementById('gsNo');   if (a) a.textContent = ' \u00b7 Reg. no. ' + n;
+  var b = document.getElementById('gsNoFoot'); if (b) b.textContent = 'Reg. no. ' + n;
+})();
 
 /* ---------- nav ---------- */
 (function(){

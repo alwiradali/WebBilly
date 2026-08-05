@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 92" role="img" aria-label="Gas Safe Register">
+  <title>Gas Safe Register</title>
+  <polygon points="50,13 89,80 11,80" fill="#FFD200" stroke="#FFD200" stroke-width="15" stroke-linejoin="round"/>
+  <g fill="#111111" font-family="Montserrat,'Arial Black',Arial,Helvetica,sans-serif" text-anchor="middle">
+    <text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text>
+    <text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-0.5">safe</text>
+    <text x="76" y="66" font-size="8" font-weight="700">®</text>
+  </g>
+</svg>

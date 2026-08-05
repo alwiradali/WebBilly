@@ -236,3 +236,46 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.01em}
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
 }
+
+/* ============================================================
+   Gas Safe Register mark
+   Displayed because Heat Fix Mcr Limited is a registered
+   business. Gas Safe require the registration number to be
+   shown alongside the logo — set it in HF_GAS_SAFE_NO.
+   To use the official artwork, replace assets/heatfix/gas-safe.svg
+   with the file from the Gas Safe Licence Centre; nothing else
+   needs changing.
+   ============================================================ */
+.gs-mark{flex:none;display:block;width:40px;height:36px}   /* default so an unsized one can never blow up */
+.gs-mark polygon{fill:var(--safe);stroke:var(--safe)}
+
+/* small inline triangle, e.g. in the hero pill */
+.gs-sm{width:30px;height:27px}
+
+/* the plate — white, like the panel the logo sits in on the card */
+.gs-plate{
+  display:flex;align-items:center;gap:16px;padding:16px 22px 16px 18px;border-radius:18px;
+  background:linear-gradient(150deg,#ffffff,#e8ecf1);color:#0c1218;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.9),inset 0 1px 0 #fff;
+  position:relative;overflow:hidden;
+}
+.gs-plate::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.75) 50%,transparent 58%);
+  transform:translateX(-130%);
+}
+.gs-plate:hover::after{transform:translateX(130%);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.gs-plate .gs-mark{width:60px;height:54px}
+.gs-plate b{
+  display:block;font-family:var(--dis);font-weight:900;font-size:.94rem;letter-spacing:.03em;
+  text-transform:uppercase;color:#0d2a63;line-height:1.15;
+}
+.gs-plate small{display:block;font-size:.78rem;color:#4d5866;font-weight:500;margin-top:2px}
+.gs-plate small b{display:inline;font-size:.78rem;letter-spacing:0;text-transform:none;color:#0c1218}
+.gs-plate a{color:#0d2a63;text-decoration:underline;text-underline-offset:2px}
+
+/* footer / compact variant, sits on the dark background */
+.gs-line{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.86rem}
+.gs-line .gs-mark{width:42px;height:38px}
+.gs-line b{display:block;font-family:var(--dis);font-weight:800;font-size:.82rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text)}

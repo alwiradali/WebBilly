@@ -101,6 +101,11 @@ body::before{opacity:.3}
 .p-head-in{display:flex;gap:14px;align-items:flex-start}
 .p-head img{height:54px;width:auto}
 .p-co b{display:block;font-family:var(--dis);font-weight:800;font-size:15px;color:#0d2a63;line-height:1.2}
+.p-gsrow{display:flex;align-items:center;gap:8px;margin-top:5px}
+.p-gs{width:30px;height:auto;flex:none}
+.p-gsrow b{font-family:var(--dis);font-weight:800;font-size:9px;letter-spacing:.09em;
+  text-transform:uppercase;color:#0d2a63;display:block;line-height:1.25}
+.p-gsrow span{display:block;color:#5b6675;font-size:9.5px}
 .p-co span{display:block;color:#5b6675;font-size:10.5px}
 .p-right{margin-left:auto;text-align:right}
 .p-right b{font-family:var(--dis);font-weight:900;font-size:26px;color:#0d2a63;letter-spacing:-.02em;display:block;line-height:1}
@@ -338,7 +343,9 @@ function render(){
   $('paper').innerHTML =
   '<div class="p-head"><div class="p-head-in">' +
     '<img src="' + LOGO_PATH + '" alt="">' +
-    '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span><span>Gas Safe registered engineer</span></div>' +
+    '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span>' +
+      '<div class="p-gsrow"><svg class="p-gs" viewBox="0 0 100 92" aria-label="Gas Safe Register"><polygon points="50,13 89,80 11,80" fill="#FFD200" stroke="#FFD200" stroke-width="15" stroke-linejoin="round"/><g fill="#111" font-family="Montserrat,Arial,sans-serif" text-anchor="middle"><text x="50" y="58" font-size="15" font-weight="800" letter-spacing="1.2">GAS</text><text x="48" y="79" font-size="24" font-weight="800" letter-spacing="-.5">safe</text><text x="76" y="66" font-size="8" font-weight="700">®</text></g></svg><span><b>Gas Safe Registered</b>' +
+        (inv.gassafe ? ('Reg. no. ' + esc(inv.gassafe)) : 'Registered business') + '</span></div></div>' +
     '<div class="p-right"><b>INVOICE</b><span>' + c.phone + '</span><span>' + c.email + '</span><span>' + c.web + '</span></div>' +
   '</div></div>' +
   '<div class="p-body">' +
