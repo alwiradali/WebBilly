@@ -18,8 +18,8 @@
 <style>
 .bhero{padding:128px 0 30px;position:relative;overflow:hidden}
 .bhero::before{content:"";position:absolute;inset:0;z-index:-1;background:
-  radial-gradient(800px 500px at 20% -10%,rgba(14,83,142,.4),transparent 62%),
-  radial-gradient(600px 380px at 92% 8%,rgba(247,148,30,.13),transparent 66%)}
+  radial-gradient(860px 520px at 16% -12%,rgba(47,159,214,.24),transparent 64%),
+  radial-gradient(640px 400px at 94% 4%,rgba(234,124,18,.12),transparent 66%)}
 .bhero h1{font-size:clamp(2.1rem,6vw,3.5rem);letter-spacing:-.03em;margin-top:16px}
 .bhero p.lede{margin-top:16px}
 
@@ -29,10 +29,10 @@
 @media(min-width:1020px){.bgrid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px}}
 
 .pane{
-  border-radius:var(--rl);background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--rl);background:var(--card);border:1px solid var(--line);
   padding:clamp(20px,3vw,30px);position:relative;overflow:hidden;box-shadow:var(--shadow);
 }
-.pane::before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:var(--goldline)}
+.pane::before{content:"";position:absolute;top:0;left:22px;right:22px;height:2px;background:var(--goldline)}
 .pane + .pane{margin-top:22px}
 .pane h2{font-size:1.22rem;letter-spacing:-.01em;margin-bottom:4px}
 .pane .sub{color:var(--muted);font-size:.88rem;margin-bottom:20px}
@@ -41,90 +41,93 @@
 .rail{display:flex;gap:8px;margin-bottom:26px;flex-wrap:wrap}
 .rail div{
   display:flex;align-items:center;gap:9px;padding:8px 15px;border-radius:100px;font-size:.79rem;
-  font-family:var(--dis);font-weight:700;background:rgba(255,255,255,.04);
+  font-family:var(--dis);font-weight:700;background:var(--card);
   border:1px solid var(--line);color:var(--muted);transition:.35s;
 }
-.rail div.on{border-color:rgba(201,162,74,.55);color:var(--gold2);background:rgba(201,162,74,.08)}
-.rail div.done{border-color:rgba(52,199,89,.4);color:#8fe6a8;background:rgba(52,199,89,.07)}
+.rail div.on{border-color:var(--gold);color:#7a5712;background:#fdf6e6}
+.rail div.done{border-color:#8ad3a2;color:#146b32;background:#eefaf1}
 .rail b{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.66rem;
-  background:rgba(255,255,255,.1)}
-.rail div.on b{background:var(--gold);color:#1a1200}
-.rail div.done b{background:#34c759;color:#04220f}
+  background:var(--paper2);color:var(--muted)}
+.rail div.on b{background:var(--gold);color:#1d1400}
+.rail div.done b{background:#1c9147;color:#fff}
 
 /* ---- calendar (3D card) ---- */
-.calwrap{perspective:1200px}
+.calwrap{position:relative}
 .cal{
-  border-radius:22px;background:var(--gunmetal);border:1px solid rgba(255,255,255,.1);
-  padding:20px 18px 22px;position:relative;overflow:hidden;transform-style:preserve-3d;
-  box-shadow:0 32px 64px -30px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.1);
-  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  border-radius:22px;background:var(--card2);border:1px solid var(--line);
+  padding:20px 18px 22px;position:relative;overflow:hidden;
+  box-shadow:0 14px 34px -22px rgba(13,42,99,.35);
 }
-.cal::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:5px 5px}
+.cal::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background-image:radial-gradient(rgba(13,42,99,.05) 1px,transparent 1px);background-size:6px 6px}
 .cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative;z-index:2}
-.cal-top b{font-family:var(--dis);font-weight:800;font-size:1.05rem}
+.cal-top b{font-family:var(--dis);font-weight:800;font-size:1.05rem;color:var(--navy)}
 .cal-nav{display:flex;gap:7px}
 .cal-nav button{
-  width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.13);cursor:pointer;font-size:1.05rem;line-height:1;
+  width:38px;height:38px;border-radius:12px;background:#fff;color:var(--navy);
+  border:1px solid var(--line2);cursor:pointer;font-size:1.05rem;line-height:1;
   transition:.2s;
 }
-.cal-nav button:hover:not(:disabled){background:rgba(201,162,74,.22);border-color:var(--gold)}
+.cal-nav button:hover:not(:disabled){background:#fdf6e6;border-color:var(--gold)}
 .cal-nav button:disabled{opacity:.28;cursor:not-allowed}
 .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px;position:relative;z-index:2}
 .dow span{text-align:center;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;
   color:var(--muted);font-weight:700}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;position:relative;z-index:2}
 .day{
-  aspect-ratio:1;border-radius:12px;border:1px solid transparent;background:rgba(255,255,255,.045);
-  display:grid;place-items:center;cursor:pointer;font-weight:600;font-size:.92rem;
-  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s,color .2s;
+  aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;cursor:pointer;font-weight:700;font-size:.92rem;color:var(--navy);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s,color .2s,box-shadow .2s;
   position:relative;
 }
-.day:hover:not(.off):not(.sel){background:rgba(255,255,255,.11);transform:translateY(-2px) scale(1.04)}
-.day.off{opacity:.22;cursor:not-allowed;background:transparent}
+.day:hover:not(.off):not(.sel){background:#eef5fc;border-color:var(--sky);
+  transform:translateY(-2px);box-shadow:0 8px 16px -10px rgba(13,42,99,.4)}
+.day.off{opacity:.35;cursor:not-allowed;background:var(--paper2);border-color:transparent;color:var(--dim)}
 .day.blank{background:transparent;cursor:default;border:0}
 .day.today::after{content:"";position:absolute;bottom:6px;width:4px;height:4px;border-radius:50%;background:var(--gold)}
 .day.sel{
-  background:var(--water);color:#fff;border-color:rgba(255,255,255,.35);
-  box-shadow:0 12px 24px -10px rgba(14,83,142,1);transform:translateY(-3px) scale(1.06);
+  background:var(--water);color:#fff;border-color:transparent;
+  box-shadow:0 12px 24px -10px rgba(19,100,168,.8);transform:translateY(-3px);
 }
 .cal-key{display:flex;gap:16px;margin-top:16px;font-size:.7rem;color:var(--muted);position:relative;z-index:2;flex-wrap:wrap}
-.cal-key i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.cal-key i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px;
+  box-shadow:inset 0 0 0 1px rgba(13,42,99,.12)}
 
 /* ---- slots ---- */
 .slots{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:6px}
 .slot{
-  padding:15px 14px;border-radius:15px;background:rgba(255,255,255,.045);border:1px solid var(--line);
+  padding:15px 14px;border-radius:15px;background:#fff;border:1px solid var(--line);
   cursor:pointer;text-align:left;transition:.25s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 6px 16px -14px rgba(13,42,99,.4);
 }
-.slot:hover{border-color:rgba(201,162,74,.5);transform:translateY(-2px)}
-.slot.sel{background:var(--water);border-color:rgba(255,255,255,.32);
-  box-shadow:0 14px 28px -12px rgba(14,83,142,1);transform:translateY(-3px)}
-.slot b{display:block;font-family:var(--dis);font-weight:800;font-size:.98rem}
+.slot:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--shadow)}
+.slot.sel{background:var(--water);border-color:transparent;
+  box-shadow:0 14px 28px -12px rgba(19,100,168,.8);transform:translateY(-3px)}
+.slot b{display:block;font-family:var(--dis);font-weight:800;font-size:.98rem;color:var(--navy)}
 .slot span{font-size:.76rem;color:var(--muted)}
-.slot.sel span{color:rgba(255,255,255,.78)}
+.slot.sel b,.slot.sel span{color:#fff}
+.slot.sel span{color:rgba(255,255,255,.82)}
 
 /* ---- summary ---- */
 .summary{
   border-radius:var(--rl);overflow:hidden;
-  border:1px solid rgba(255,255,255,.1);background:var(--gunmetal);box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.12);background:var(--gunmetal);box-shadow:var(--shadow-lg);
 }
 .summary::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;z-index:1;
-  background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:5px 5px}
-.sum-head{padding:20px 22px;border-bottom:1px solid rgba(255,255,255,.09);position:relative;z-index:2;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);background-size:6px 6px}
+.sum-head{padding:20px 22px;border-bottom:1px solid rgba(255,255,255,.11);position:relative;z-index:2;
   display:flex;align-items:center;gap:13px}
 .sum-head .logo-plate{padding:5px 8px}
 .sum-head .logo-plate img{height:34px}
-.sum-head b{font-family:var(--dis);font-weight:800;font-size:1rem;display:block}
+.sum-head b{font-family:var(--dis);font-weight:800;font-size:1rem;display:block;color:#fff}
 .sum-head small{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2);font-weight:700}
 .sum-body{padding:20px 22px;position:relative;z-index:2}
 .sum-row{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.07);font-size:.92rem}
+  border-bottom:1px solid rgba(255,255,255,.1);font-size:.92rem;color:#e7edf5}
 .sum-row:last-of-type{border:0}
-.sum-row span{color:var(--muted);flex:none}
-.sum-row b{font-family:var(--dis);font-weight:700;text-align:right;word-break:break-word}
-.sum-row b.pend{color:var(--dim);font-weight:500;font-family:var(--ui)}
+.sum-row span{color:#a9b7c9;flex:none}
+.sum-row b{font-family:var(--dis);font-weight:700;text-align:right;word-break:break-word;color:#fff}
+.sum-row b.pend{color:#93a2b5;font-weight:500;font-family:var(--ui)}
 .sum-foot{padding:0 22px 22px;position:relative;z-index:2}
 
 /* ---- done state ---- */
@@ -289,7 +292,7 @@
 
   <!-- ================= RIGHT: live summary ================= -->
   <aside>
-    <div class="summary">
+    <div class="summary on-dark">
       <div class="sum-head">
         <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
         <span><b>Your booking</b><small>Heat Fix Mcr Limited</small></span>
