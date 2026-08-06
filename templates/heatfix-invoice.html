@@ -230,7 +230,7 @@ table.p-t td:last-child{padding-right:8px;font-weight:700}
       <label class="field"><span>How to pay (shown on the invoice)</span>
         <textarea id="payto" placeholder="Bank transfer&#10;Heat Fix Mcr Limited&#10;Sort code 00-00-00 · Account 00000000"></textarea></label>
       <div class="grid2">
-        <label class="field"><span>Gas Safe registration no.</span><input id="gassafe" placeholder="123456"></label>
+        <label class="field"><span>Gas Safe registration no.</span><input id="gassafe" placeholder="627019"></label>
         <label class="field"><span>Next invoice number</span><input id="number" placeholder="HF-1001"></label>
       </div>
       <button type="button" class="btn ghost sm" id="saveDefaults">Save my details on this device</button>
@@ -385,11 +385,15 @@ function render(){
 
 /* ---------------- persistence ---------------- */
 var DKEY = 'hf_inv_defaults', HKEY = 'hf_inv_history';
+/* Gas Safe want the registration number shown wherever the mark appears, and
+   the mark is on every invoice. Default it in so it can only be missing if
+   someone deliberately clears the field. */
+var HF_GAS_SAFE_NO = "627019";
 function loadDefaults(){
   var d = {};
   try { d = JSON.parse(localStorage.getItem(DKEY) || '{}'); } catch (e) {}
   $('payto').value   = d.payto   || '';
-  $('gassafe').value = d.gassafe || '';
+  $('gassafe').value = d.gassafe || HF_GAS_SAFE_NO;
   $('number').value  = d.number  || 'HF-1001';
 }
 $('saveDefaults').onclick = function(){
@@ -432,6 +436,7 @@ function drawHistory(){
 function fill(inv){
   ['number','client','cphone','cemail','caddress','cpostcode','work','notes','payto','gassafe','due']
     .forEach(function(k){ if ($(k)) $(k).value = inv[k] || ''; });
+  if (!$('gassafe').value) $('gassafe').value = HF_GAS_SAFE_NO;
   $('discount').value = inv.discount || '';
   $('paid').value = inv.paid || '';
   $('vat').checked = !!inv.vat;

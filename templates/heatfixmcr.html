@@ -52,6 +52,10 @@
 .hero-in{display:grid;gap:clamp(38px,6vw,62px);grid-template-columns:minmax(0,1fr);align-items:center}
 @media(min-width:1000px){.hero-in{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr)}.hero{padding:154px 0 96px}}
 
+.gsno{white-space:nowrap;opacity:.85;font-variant-numeric:tabular-nums}
+.h-badge-t{display:block}
+/* on a phone the credential matters more than the strapline */
+@media(max-width:620px){.h-badge-x{display:none}}
 .h-badge{
   display:inline-flex;align-items:center;gap:11px;padding:6px 16px 6px 8px;border-radius:100px;
   background:#fff;border:1px solid var(--line);
@@ -419,7 +423,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
   <div class="hero-bg"></div><div class="hero-wash"></div><div class="hero-glow"></div>
   <div class="wrap hero-in">
     <div>
-      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg> Gas Safe registered · Manchester's own gas engineer</span>
+      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span class="h-badge-t">Gas Safe registered<span class="gsno" data-gsno="no"></span><span class="h-badge-x"> · Manchester's own gas engineer</span></span></span>
       <h1 class="hh" data-fx="text" data-fx-step="60">
         Cold house today. <em>Warm house tonight.</em>
       </h1>
@@ -461,7 +465,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="Adjustable spanner and pipe wrench" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
         <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="Bathroom with heated towel rail and basin" loading="lazy"><span class="wt-tag">Bathrooms</span><i></i></figure>
         </div>
-        <div class="wchip"><svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span><b>Gas Safe</b><i>Registered engineer</i></span></div>
+        <div class="wchip"><svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span><b>Gas Safe</b><i>Registered engineer<span class="gsno" data-gsno="reg"></span></i></span></div>
     </div>
   </div>
 </header>
@@ -664,7 +668,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         hand to a landlord, a buyer or an insurer.
       </p>
       <div class="kv" data-fx="stagger" data-fx-step="90">
-        <div><b>Gas Safe</b><span>Registered engineer</span></div>
+        <div><b>Gas Safe</b><span>Registered engineer<span class="gsno" data-gsno="reg"></span></span></div>
         <div><b>Free</b><span>Written quotes</span></div>
         <div><b>Tidy</b><span>Sheets down, every visit</span></div>
         <div><b>Local</b><span>Manchester, not a call centre</span></div>
@@ -1204,6 +1208,12 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   if (!n) return;
   var a = document.getElementById('gsNo');   if (a) a.textContent = ' Registration number ' + n + '.';
   var b = document.getElementById('gsNoFoot'); if (b) b.textContent = 'Reg. no. ' + n;
+  /* Gas Safe want the number shown wherever the mark is. Every badge carries a
+     .gsno slot so a new one can never quietly ship without it. */
+  var FMT = { no: ' No. ' + n, reg: ' · Reg. ' + n, plain: n };
+  [].forEach.call(document.querySelectorAll('.gsno'), function (el) {
+    el.textContent = FMT[el.getAttribute('data-gsno')] || FMT.plain;
+  });
 })();
 
 /* Insurance wording. Only the amount is variable — "insured" stands on its own

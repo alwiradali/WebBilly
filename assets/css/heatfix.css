@@ -339,6 +339,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .gs-plate small b{display:inline;font-size:.78rem;letter-spacing:0;text-transform:none;color:#0d1726}
 .gs-plate a{color:var(--navy);text-decoration:underline;text-underline-offset:2px}
 
+.gsno{white-space:nowrap;opacity:.85;font-variant-numeric:tabular-nums}
 .gs-line{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.86rem}
 .gs-line .gs-mark{width:38px}
 .gs-line b{display:block;font-family:var(--dis);font-weight:800;font-size:.82rem;letter-spacing:.12em;

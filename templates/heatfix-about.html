@@ -192,8 +192,13 @@
 var HF_GAS_SAFE_NO = "627019";
 document.getElementById('yr').textContent = new Date().getFullYear();
 (function(){
-  var n = (HF_GAS_SAFE_NO || '').trim(), el = document.getElementById('gsNoFoot');
-  if (el && n) el.textContent = 'Reg. no. ' + n;
+  var n = (HF_GAS_SAFE_NO || '').trim();
+  if (!n) return;
+  var el = document.getElementById('gsNoFoot');
+  if (el) el.textContent = 'Reg. no. ' + n;
+  [].forEach.call(document.querySelectorAll('.gsno'), function (g) {
+    g.textContent = g.getAttribute('data-gsno') === 'no' ? ' No. ' + n : ' \u00b7 Reg. ' + n;
+  });
 })();
 (function(){
   var nav=document.getElementById('nav'),b=document.getElementById('burger'),
