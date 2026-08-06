@@ -228,7 +228,9 @@
 
   msg('Loading class times…');
 
-  fetch(url)
+  // no-store, so a browser can never serve a stale copy of the calendar and
+  // make it look as though Lynsey's edits have not taken effect
+  fetch(url, { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function (data) {
       var parsed = (data.items || []).map(function (it) {
