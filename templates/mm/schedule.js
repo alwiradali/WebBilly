@@ -45,13 +45,16 @@
   var minMonth, maxMonth;
 
   /* Advanced Higher has to be tested before Higher, since "advanced higher"
-     contains "higher" and would otherwise match the wrong level. */
+     contains "higher" and would otherwise match the wrong level. Returns null
+     for anything that is not a class — Lynsey also keeps "Off" days and the
+     occasional untitled entry in this calendar, and those are not timetable
+     entries a parent should see. */
   function levelOf(title) {
     var t = (title || '').toLowerCase();
     if (t.indexOf('advanced higher') > -1) return LEVELS[3];
     if (t.indexOf('national 5') > -1 || t.indexOf('nat 5') > -1 || /\bn5\b/.test(t)) return LEVELS[1];
     if (t.indexOf('higher') > -1) return LEVELS[2];
-    return { key: 'other', label: 'Chemistry', cls: 'gen' };
+    return null;
   }
 
   function noteOf(title) {
@@ -225,11 +228,16 @@
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function (data) {
       events = (data.items || []).map(function (it) {
-        var s = it.start && (it.start.dateTime || it.start.date);
+        // all-day entries carry start.date with no time; those are her "Off"
+        // days rather than classes, and are dropped along with anything whose
+        // title does not name a level.
+        var s = it.start && it.start.dateTime;
         if (!s) return null;
         var d = new Date(s);
         if (isNaN(d)) return null;
-        return { start: d, title: it.summary || '', level: levelOf(it.summary), note: noteOf(it.summary) };
+        var lv = levelOf(it.summary);
+        if (!lv) return null;
+        return { start: d, title: it.summary || '', level: lv, note: noteOf(it.summary) };
       }).filter(Boolean);
       render();
     })
