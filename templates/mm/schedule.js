@@ -40,6 +40,7 @@
                 'August', 'September', 'October', 'November', 'December'];
 
   var events = [];
+  var offDays = {};      // ymd -> true, days Lynsey has marked Off
   var filter = 'all';
   var view;            // first day of the month currently shown
   var minMonth, maxMonth;
@@ -139,8 +140,11 @@
       var date = new Date(view.getFullYear(), view.getMonth(), day);
       var list = byDay[ymd(date)] || [];
       var isToday = ymd(date) === ymd(today);
-      html += '<div class="cal-cell' + (isToday ? ' today' : '') + (list.length ? ' has' : '') + '">' +
+      var isOff = offDays[ymd(date)];
+      html += '<div class="cal-cell' + (isToday ? ' today' : '') +
+              (list.length ? ' has' : '') + (isOff ? ' off' : '') + '">' +
               '<span class="cal-num">' + day + '</span>';
+      if (isOff) html += '<span class="cal-off">Off</span>';
       list.sort(function (a, b) { return a.start - b.start; }).forEach(function (e) {
         html += '<button class="cal-ev ' + e.level.cls + '" data-level="' + e.level.label + '"' +
                 ' title="' + fmtTime(e.start) + ' ' + e.level.label +
@@ -227,18 +231,29 @@
   fetch(url)
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function (data) {
-      events = (data.items || []).map(function (it) {
-        // all-day entries carry start.date with no time; those are her "Off"
-        // days rather than classes, and are dropped along with anything whose
-        // title does not name a level.
-        var s = it.start && it.start.dateTime;
-        if (!s) return null;
-        var d = new Date(s);
+      var parsed = (data.items || []).map(function (it) {
+        var st = it.start || {};
+
+        // All-day "Off" entries mark days Lynsey is not teaching. They are not
+        // classes, so they get their own marker rather than a class chip — an
+        // earlier version rendered them as "00:00 Chemistry", which read as a
+        // midnight class.
+        if (!st.dateTime && st.date && /^\s*off\b/i.test(it.summary || '')) {
+          var od = new Date(st.date + 'T00:00:00');
+          return isNaN(od) ? null : { off: true, start: od };
+        }
+
+        if (!st.dateTime) return null;          // any other all-day entry
+        var d = new Date(st.dateTime);
         if (isNaN(d)) return null;
         var lv = levelOf(it.summary);
-        if (!lv) return null;
+        if (!lv) return null;                   // untitled or not a class
         return { start: d, title: it.summary || '', level: lv, note: noteOf(it.summary) };
       }).filter(Boolean);
+
+      events = parsed.filter(function (e) { return !e.off; });
+      offDays = {};
+      parsed.forEach(function (e) { if (e.off) offDays[ymd(e.start)] = true; });
       render();
     })
     .catch(function () {
