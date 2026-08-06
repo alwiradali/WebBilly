@@ -351,3 +351,8 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
 .incl p{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
   text-align:center;font-size:.89rem;color:var(--mut)}
 @media(max-width:640px){.incl{padding:22px 18px;margin-top:26px}}
+
+/* days Lynsey has marked Off in her calendar */
+.cal-cell.off{background:repeating-linear-gradient(135deg,var(--tint2),var(--tint2) 6px,#fff 6px,#fff 12px)}
+.cal-off{display:block;font-size:.62rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--mut);background:rgba(255,255,255,.75);border-radius:5px;padding:2px 5px;margin-top:2px;text-align:center}
