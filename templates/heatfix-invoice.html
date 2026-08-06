@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Invoice builder — Heat Fix Mcr Limited</title>
+<title>Invoice builder — HeatFix Mcr Limited</title>
 <meta name="theme-color" content="#151b24">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/heatfix/icon-180.png">
@@ -173,8 +173,8 @@ table.p-t td:last-child{padding-right:8px;font-weight:700}
 
 <div class="top">
   <div class="top-in">
-    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
-    <span><b>Invoice builder</b><small>Heat Fix Mcr Limited</small></span>
+    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="HeatFix Mcr Limited"></span>
+    <span><b>Invoice builder</b><small>HeatFix Mcr Limited</small></span>
     <span class="sp"></span>
     <a class="btn ghost sm" href="/">Website</a>
   </div>
@@ -228,7 +228,7 @@ table.p-t td:last-child{padding-right:8px;font-weight:700}
       <h2>Your details</h2>
       <p class="sub">Saved on this device only — never uploaded, never in the website's code.</p>
       <label class="field"><span>How to pay (shown on the invoice)</span>
-        <textarea id="payto" placeholder="Bank transfer&#10;Heat Fix Mcr Limited&#10;Sort code 00-00-00 · Account 00000000"></textarea></label>
+        <textarea id="payto" placeholder="Bank transfer&#10;HeatFix Mcr Limited&#10;Sort code 00-00-00 · Account 00000000"></textarea></label>
       <div class="grid2">
         <label class="field"><span>Gas Safe registration no.</span><input id="gassafe" placeholder="627019"></label>
         <label class="field"><span>Next invoice number</span><input id="number" placeholder="HF-1001"></label>
@@ -499,7 +499,7 @@ $('bMail').onclick = function(){
   var link = VIEW_BASE + '#' + HF.encode(inv);
   saveHistory(inv);
   location.href = 'mailto:' + encodeURIComponent(inv.cemail || '') +
-    '?subject=' + encodeURIComponent('Invoice ' + inv.number + ' — Heat Fix Mcr Limited') +
+    '?subject=' + encodeURIComponent('Invoice ' + inv.number + ' — HeatFix Mcr Limited') +
     '&body=' + encodeURIComponent(HF.message(inv, link));
 };
 

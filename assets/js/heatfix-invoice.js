@@ -1,5 +1,5 @@
 /* ============================================================
-   Heat Fix Mcr Limited — invoice engine
+   HeatFix Mcr Limited — invoice engine
    Shared by /invoice (the builder) and /i (the customer's view).
    No dependencies, no build step: writes a real PDF byte-for-byte.
    ============================================================ */
@@ -8,7 +8,7 @@
 
 var HF = {
   company: {
-    name:   'Heat Fix Mcr Limited',
+    name:   'HeatFix Mcr Limited',
     person: 'Mohammad Ejaz',
     role:   'Domestic Gas Engineer',
     phone:  '07890 452629',

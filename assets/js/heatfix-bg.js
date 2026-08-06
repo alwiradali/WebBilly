@@ -1,4 +1,4 @@
-/* Heat Fix — animated hero background: a live heating circuit.
+/* HeatFix — animated hero background: a live heating circuit.
  *
  * Draws an orthogonal pipe network in very pale navy, then sends pulses of
  * flow along it: cool blue on the way out, warm amber on the way back. It is

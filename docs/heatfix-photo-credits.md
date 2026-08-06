@@ -1,6 +1,6 @@
-# Heat Fix Mcr — stock photo credits
+# HeatFix Mcr — stock photo credits
 
-Every decorative photo on the Heat Fix site is licensed stock, downloaded to
+Every decorative photo on the HeatFix site is licensed stock, downloaded to
 `assets/heatfix/` and served from our own origin (no hotlinking). Photos of
 actual jobs — `work-01` … `work-12` — are Mohammad Ejaz's own and are not
 listed here.

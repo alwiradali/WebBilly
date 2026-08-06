@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Your invoice — Heat Fix Mcr Limited</title>
+<title>Your invoice — HeatFix Mcr Limited</title>
 <meta name="theme-color" content="#151b24">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/heatfix/icon-180.png">
@@ -77,8 +77,8 @@ table.p-t td:last-child{padding-right:10px;font-weight:700}
 <div class="site-fx" data-heatfx="circuit" aria-hidden="true"></div>
 <div class="vwrap">
   <div class="vtop">
-    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="Heat Fix Mcr Limited"></span>
-    <span><b>Heat Fix Mcr Limited</b><small>Heating &amp; Plumbing · Manchester</small></span>
+    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="HeatFix Mcr Limited"></span>
+    <span><b>HeatFix Mcr Limited</b><small>Heating &amp; Plumbing · Manchester</small></span>
   </div>
 
   <div id="out"></div>
@@ -89,7 +89,7 @@ table.p-t td:last-child{padding-right:10px;font-weight:700}
     <a class="btn ghost" id="waBtn" href="https://wa.me/447890452629" target="_blank" rel="noopener">WhatsApp us</a>
   </div>
   <p class="vnote" style="text-align:center;color:var(--dim);font-size:.8rem;margin-top:16px">
-    Heat Fix Mcr Limited · 07890 452629 · heatfixmcr@hotmail.com · heatfixmcrlimited.co.uk
+    HeatFix Mcr Limited · 07890 452629 · heatfixmcr@hotmail.com · heatfixmcrlimited.co.uk
   </p>
 </div>
 
@@ -110,7 +110,7 @@ if (!inv || !inv.items){
     'Ask us to send it again, or ring 07890 452629 and we will read it out.</p>' +
     '<p style="margin-top:24px"><a class="btn gold" href="tel:+447890452629">Call 07890 452629</a></p></div>';
 } else {
-  document.title = 'Invoice ' + (inv.number || '') + ' — Heat Fix Mcr Limited';
+  document.title = 'Invoice ' + (inv.number || '') + ' — HeatFix Mcr Limited';
   var t = HF.totals(inv), c = HF.company;
   var rows = inv.items.map(function(it){
     return '<tr><td>' + esc(it.desc) + '</td><td>' + it.qty + '</td><td>£' + HF.money(it.price) +
@@ -119,7 +119,7 @@ if (!inv || !inv.items){
   out.innerHTML =
   '<div class="paper">' +
   '<div class="p-head"><div class="p-head-in">' +
-    '<img src="' + LOGO_PATH + '" alt="Heat Fix Mcr Limited">' +
+    '<img src="' + LOGO_PATH + '" alt="HeatFix Mcr Limited">' +
     '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span>' +
       '<div class="p-gsrow"><svg class="p-gs" viewBox="0 0 100 118" aria-label="Gas Safe Register"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,\'Arial Black\',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="#0d2a63">REGISTER</text></svg><span><b>Gas Safe registered</b>' +
         (inv.gassafe ? ('Reg. no. ' + esc(inv.gassafe)) : 'Registered business') + '</span></div></div>' +
