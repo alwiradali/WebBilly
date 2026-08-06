@@ -21,8 +21,8 @@
 
   var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var PIPE    = 'rgba(13,42,99,';       /* --navy */
-  var COOL    = ['#4fb4e6', '#1364a8']; /* head, tail */
-  var WARM    = ['#ffc35e', '#e07c12'];
+  var COOL    = ['#2f9fd6', '#0f4f86']; /* head, tail */
+  var WARM    = ['#f5a52e', '#c2620a'];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[(Math.random() * a.length) | 0]; }
@@ -116,8 +116,8 @@
       sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
 
       var small = W < 700;
-      var cell  = small ? 58 : 78;
-      var count = small ? 5 : 9;
+      var cell  = small ? 62 : 88;
+      var count = small ? 7 : 13;
 
       paths = [];
       for (var i = 0; i < count; i++) paths.push(makePath(W, H, cell));
@@ -129,22 +129,22 @@
       paths.forEach(function (p) {
         sctx.beginPath();
         p.pts.forEach(function (q, i) { i ? sctx.lineTo(q.x, q.y) : sctx.moveTo(q.x, q.y); });
-        sctx.lineWidth = 7;    sctx.strokeStyle = PIPE + '0.05)';  sctx.stroke();
-        sctx.lineWidth = 2.1;  sctx.strokeStyle = PIPE + '0.13)';  sctx.stroke();
+        sctx.lineWidth = 8;    sctx.strokeStyle = PIPE + '0.075)'; sctx.stroke();
+        sctx.lineWidth = 2.3;  sctx.strokeStyle = PIPE + '0.24)';  sctx.stroke();
       });
       paths.forEach(function (p) {
         p.corners.forEach(function (c) {
           if (c.x < -20 || c.x > W + 20 || c.y < -20 || c.y > H + 20) return;
           sctx.beginPath();
           sctx.arc(c.x, c.y, 3.1, 0, 6.2832);
-          sctx.fillStyle = PIPE + '0.2)';
+          sctx.fillStyle = PIPE + '0.34)';
           sctx.fill();
         });
       });
 
       /* pulses — about one in three carries heat back */
       pulses = [];
-      var n = small ? 7 : 13;
+      var n = small ? 9 : 18;
       for (var j = 0; j < n; j++) {
         var p = paths[j % paths.length];
         var warm = Math.random() < 0.34;
@@ -179,21 +179,21 @@
       ctx.beginPath();
       ctx.moveTo(tp.x, tp.y);
       for (var i = t0i + 1; i <= mid; i++) ctx.lineTo(pts[i].x, pts[i].y);
-      ctx.strokeStyle = col[1] + '3d';
+      ctx.strokeStyle = col[1] + '5c';
       ctx.lineWidth = p.w * 0.8;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.moveTo(pts[mid].x, pts[mid].y);
       for (var k2 = mid + 1; k2 <= h0; k2++) ctx.lineTo(pts[k2].x, pts[k2].y);
-      ctx.strokeStyle = col[0] + 'd9';
+      ctx.strokeStyle = col[0] + 'ff';
       ctx.lineWidth = p.w;
       ctx.stroke();
 
       /* the bright head — two flat arcs, no gradient allocation per frame */
       ctx.beginPath();
       ctx.arc(hp.x, hp.y, p.w * 2.6, 0, 6.2832);
-      ctx.fillStyle = col[0] + '2e';
+      ctx.fillStyle = col[0] + '47';
       ctx.fill();
       ctx.beginPath();
       ctx.arc(hp.x, hp.y, p.w * 0.85, 0, 6.2832);

@@ -37,9 +37,26 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{background:var(--paper)}
 body{
-  background:var(--paper);color:var(--text);font-family:var(--ui);line-height:1.65;
+  background:transparent;color:var(--text);font-family:var(--ui);line-height:1.65;
   overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+/* The heating circuit, fixed behind the whole page. Masked into a vignette so
+   it stays strong out in the gutters — where you actually notice it — and
+   settles down through the middle, where the words are. */
+.site-fx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,
+    rgba(0,0,0,.2) 0%,rgba(0,0,0,.34) 40%,rgba(0,0,0,.72) 72%,#000 100%);
+  mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,
+    rgba(0,0,0,.2) 0%,rgba(0,0,0,.34) 40%,rgba(0,0,0,.72) 72%,#000 100%)}
+@media(max-width:900px){
+  /* no gutters to hide in on a phone, so hold it back a little further */
+  .site-fx{
+    -webkit-mask-image:radial-gradient(ellipse 118% 56% at 50% 46%,
+      rgba(0,0,0,.14) 0%,rgba(0,0,0,.24) 44%,rgba(0,0,0,.55) 76%,rgba(0,0,0,.8) 100%);
+    mask-image:radial-gradient(ellipse 118% 56% at 50% 46%,
+      rgba(0,0,0,.14) 0%,rgba(0,0,0,.24) 44%,rgba(0,0,0,.55) 76%,rgba(0,0,0,.8) 100%)}
 }
 /* the card's dot texture, inverted for paper — barely there, but there */
 body::before{
@@ -65,7 +82,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .sect{padding:clamp(70px,9vw,124px) 0;position:relative}
 .hair{height:1px;background:var(--goldline);opacity:.8}
 /* alternating tint so the page has rhythm instead of one flat sheet */
-.sect.tint{background:var(--paper2)}
+.sect.tint{background:rgba(238,242,248,.66)}
 .sect.tint::before,.sect.tint::after{content:"";position:absolute;left:0;right:0;height:1px;background:var(--line)}
 .sect.tint::before{top:0}.sect.tint::after{bottom:0}
 
@@ -468,11 +485,8 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   animation:bloomdrift 30s ease-in-out infinite alternate}
 @keyframes bloomdrift{from{transform:translate3d(-1.4%,-1.2%,0)}to{transform:translate3d(1.4%,1.4%,0)}}
 @media(prefers-reduced-motion:reduce){.phero::before{animation:none}}
-.phero-fx{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 62%,transparent 100%);
-  mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 62%,transparent 100%)}
 .phero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(246,249,253,.72),rgba(246,249,253,.5) 55%,rgba(246,248,252,.9))}
+  background:linear-gradient(180deg,rgba(246,249,253,.5),rgba(246,249,253,.26) 55%,rgba(246,248,252,.6))}
 .phero h1{font-size:clamp(2.1rem,6vw,3.4rem);letter-spacing:-.03em;margin-top:16px}
 .phero p.lede{margin-top:16px}
 .prose{max-width:74ch;padding-bottom:clamp(80px,10vw,130px)}

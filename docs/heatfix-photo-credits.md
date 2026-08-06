@@ -41,15 +41,27 @@ its download endpoint was triggered when it was pulled.
 
 ## Background animation
 
-No stock video. The hero background is drawn in the browser by
+No stock video. The background is drawn in the browser by
 `assets/js/heatfix-bg.js`: an orthogonal pipe network in pale navy with pulses
 of flow running through it — cool blue on the way out, warm amber on the way
-back. Nothing to license, nothing to download, about 4KB gzipped.
+back. Nothing to license, nothing to download, about 4KB gzipped, and the
+paths are generated fresh on every load so no two visits are identical.
+
+It is one fixed layer behind the whole page (`<div class="site-fx"
+data-heatfx="circuit">`, first thing in the body), not a per-section effect.
+That means the paper colour lives on `<html>` rather than `<body>` — while it
+sits on `<body>` it propagates to the root canvas and paints over any
+`z-index:-1` child, so the layer would never be visible.
+
+A radial mask keeps it strong out in the gutters and settles it down through
+the middle, where the words are; the phone breakpoint holds it back further
+still because there are no gutters to hide in.
 
 Two stacked canvases: the pipework is painted once and never touched again, so
-the frame loop only clears and strokes the pulse layer. Capped at 30fps, paused
-when the hero scrolls out of view or the tab is hidden, and reduced to a single
-still frame under `prefers-reduced-motion`. The ambient glow behind it is CSS,
-not canvas.
+the frame loop only clears and strokes the pulse layer — measured at 0.002ms of
+2D work per frame. Capped at 30fps, paused when scrolled out of view or the tab
+is hidden, and one still frame under `prefers-reduced-motion`.
 
-The same effect runs behind every page hero via `<div data-heatfx="circuit">`.
+Every page carries it except the invoice builder, which is the tool Ejaz fills
+in on a job — motion behind form fields is noise. The customer-facing `/i` view
+does have it.

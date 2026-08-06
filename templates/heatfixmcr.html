@@ -27,11 +27,9 @@
 /* Animated hero background — a live heating circuit drawn on canvas by
    assets/js/heatfix-bg.js. Pipe runs in pale navy with pulses of flow moving
    through them: cool blue going out, warm amber coming back. */
-.hero-fx{position:absolute;inset:0;z-index:-3;overflow:hidden;pointer-events:none;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.35) 88%,transparent 100%);
-  mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.35) 88%,transparent 100%)}
+/* translucent so the page-wide circuit shows through the hero as well */
 .hero-bg{position:absolute;inset:0;z-index:-4;overflow:hidden;
-  background:linear-gradient(180deg,#ffffff,#eef3fa 58%,#f6f8fc)}
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(238,243,250,.3) 58%,rgba(246,248,252,.5))}
 /* ambient blooms drift in CSS so the canvas never has to fill the whole
    surface — two compositor-only transforms instead of gradients per frame */
 .hero-bg::before,.hero-bg::after{content:"";position:absolute;inset:-10%;
@@ -43,11 +41,11 @@
 @media(prefers-reduced-motion:reduce){.hero-bg::before,.hero-bg::after{animation:none}}
 /* keeps the circuit off the words without washing it out on the tile side */
 .hero-wash{position:absolute;inset:0;z-index:-2;pointer-events:none;background:
-  linear-gradient(180deg,rgba(248,251,255,.9) 0%,rgba(248,251,255,.92) 44%,
-                  rgba(248,251,255,.52) 66%,rgba(248,251,255,0) 88%)}
+  linear-gradient(180deg,rgba(248,251,255,.76) 0%,rgba(248,251,255,.78) 44%,
+                  rgba(248,251,255,.36) 68%,rgba(248,251,255,0) 90%)}
 @media(min-width:1000px){
   .hero-wash{background:
-    radial-gradient(78% 92% at 2% 46%,rgba(249,252,255,.96),rgba(249,252,255,.52) 52%,transparent 82%)}
+    radial-gradient(76% 90% at 0% 46%,rgba(249,252,255,.9),rgba(249,252,255,.4) 54%,transparent 84%)}
 }
 .hero-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.6;
   background:conic-gradient(from 200deg at 74% 20%,transparent,rgba(19,100,168,.10),transparent 44%)}
@@ -379,6 +377,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 </style>
 </head>
 <body>
+<div class="site-fx" data-heatfx="circuit" aria-hidden="true"></div>
 
 <div data-fx="progressbar" style="color:#c9a24a"></div>
 
@@ -417,7 +416,6 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
-  <div class="hero-fx" data-heatfx="circuit" aria-hidden="true"></div>
   <div class="hero-bg"></div><div class="hero-wash"></div><div class="hero-glow"></div>
   <div class="wrap hero-in">
     <div>
