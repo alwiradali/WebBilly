@@ -64,8 +64,14 @@
       .trim();
   }
 
+  /* Always render UK time. Without the explicit zone this used the visitor's
+     own timezone, so a parent abroad — or anyone whose machine is set to UTC —
+     saw class times shifted by an hour or more. These are Scottish classes;
+     the time on the page has to be the time in Scotland. */
   function fmtTime(d) {
-    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString('en-GB', {
+      hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London'
+    });
   }
   function ymd(d) {
     return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
