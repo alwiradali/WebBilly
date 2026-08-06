@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Book a Gas Safe Engineer Online | Heat Fix Mcr Limited, Manchester</title>
-<meta name="description" content="Pick a day, pick a two-hour window, get your heat back. Book a Gas Safe registered engineer online with Heat Fix Mcr Limited — Manchester and every town round it. Free written quote, confirmed by phone.">
+<title>Request a Visit | Heat Fix Mcr Limited, Gas Safe Engineer in Manchester</title>
+<meta name="description" content="Tell us what is wrong and roughly when suits, and Mohammad rings back to fix a time. Gas Safe registered engineer covering Manchester and everywhere within five miles. Free written quote, no call-out fee.">
 <meta name="theme-color" content="#151b24">
 <link rel="canonical" href="https://heatfixmcrlimited.co.uk/book">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
@@ -51,49 +51,6 @@
 .rail div.on b{background:var(--gold);color:#1d1400}
 .rail div.done b{background:#1c9147;color:#fff}
 
-/* ---- calendar (3D card) ---- */
-.calwrap{position:relative}
-.cal{
-  border-radius:22px;background:var(--card2);border:1px solid var(--line);
-  padding:20px 18px 22px;position:relative;overflow:hidden;
-  box-shadow:0 14px 34px -22px rgba(13,42,99,.35);
-}
-.cal::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
-  background-image:radial-gradient(rgba(13,42,99,.05) 1px,transparent 1px);background-size:6px 6px}
-.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative;z-index:2}
-.cal-top b{font-family:var(--dis);font-weight:800;font-size:1.05rem;color:var(--navy)}
-.cal-nav{display:flex;gap:7px}
-.cal-nav button{
-  width:38px;height:38px;border-radius:12px;background:#fff;color:var(--navy);
-  border:1px solid var(--line2);cursor:pointer;font-size:1.05rem;line-height:1;
-  transition:.2s;
-}
-.cal-nav button:hover:not(:disabled){background:#fdf6e6;border-color:var(--gold)}
-.cal-nav button:disabled{opacity:.28;cursor:not-allowed}
-.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px;position:relative;z-index:2}
-.dow span{text-align:center;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);font-weight:700}
-.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;position:relative;z-index:2}
-.day{
-  aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:#fff;
-  display:grid;place-items:center;cursor:pointer;font-weight:700;font-size:.92rem;color:var(--navy);
-  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s,color .2s,box-shadow .2s;
-  position:relative;
-}
-.day:hover:not(.off):not(.sel){background:#eef5fc;border-color:var(--sky);
-  transform:translateY(-2px);box-shadow:0 8px 16px -10px rgba(13,42,99,.4)}
-.day.off{opacity:.35;cursor:not-allowed;background:var(--paper2);border-color:transparent;color:var(--dim)}
-.day.blank{background:transparent;cursor:default;border:0}
-.day.today::after{content:"";position:absolute;bottom:6px;width:4px;height:4px;border-radius:50%;background:var(--gold)}
-.day.sel{
-  background:var(--water);color:#fff;border-color:transparent;
-  box-shadow:0 12px 24px -10px rgba(19,100,168,.8);transform:translateY(-3px);
-}
-.cal-key{display:flex;gap:16px;margin-top:16px;font-size:.7rem;color:var(--muted);position:relative;z-index:2;flex-wrap:wrap}
-.cal-key i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px;
-  box-shadow:inset 0 0 0 1px rgba(13,42,99,.12)}
-
-/* ---- slots ---- */
 .slots{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:6px}
 .slot{
   padding:15px 14px;border-radius:15px;background:#fff;border:1px solid var(--line);
@@ -171,12 +128,12 @@
 
 <header class="bhero">
   <div class="wrap">
-    <span class="eyebrow">Book online</span>
-    <h1 data-fx="text" data-fx-step="55">Pick a day. Pick a slot.<br>Get your heat back.</h1>
+    <span class="eyebrow">Request a visit</span>
+    <h1 data-fx="text" data-fx-step="55">Tell us what's wrong.<br>We'll sort a time.</h1>
     <p class="lede">
-      Choose the day and the window that suits you. Mohammad rings to confirm,
-      usually within the hour. Booking costs nothing, and you'll have the price in
-      writing before anyone picks up a tool.
+      No date grids to wrestle with — say roughly when suits and Mohammad rings you
+      back to fix a time, usually within the hour. It costs nothing to ask, and
+      you'll have the price in writing before anyone picks up a tool.
     </p>
   </div>
 </header>
@@ -186,45 +143,23 @@
   <div>
     <div id="flow">
       <div class="rail" id="rail">
-        <div class="on" data-r="1"><b>1</b>Date</div>
-        <div data-r="2"><b>2</b>Time</div>
-        <div data-r="3"><b>3</b>The job</div>
-        <div data-r="4"><b>4</b>Your details</div>
+        <div class="on" data-r="1"><b>1</b>When suits</div>
+        <div data-r="2"><b>2</b>The job</div>
+        <div data-r="3"><b>3</b>Your details</div>
       </div>
 
-      <!-- 1. calendar -->
+      <!-- 1. when suits -->
       <section class="pane">
-        <h2>Choose a date</h2>
-        <p class="sub">Monday to Saturday. Sundays are emergency call-outs only — for those, ring straight through.</p>
-        <div class="calwrap"><div class="cal" id="cal">
-          <div class="cal-top">
-            <b id="calLabel">—</b>
-            <div class="cal-nav">
-              <button type="button" id="calPrev" aria-label="Previous month">‹</button>
-              <button type="button" id="calNext" aria-label="Next month">›</button>
-            </div>
-          </div>
-          <div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-          <div class="days" id="days"></div>
-          <div class="cal-key">
-            <span><i style="background:var(--blue)"></i>Selected</span>
-            <span><i style="background:var(--gold)"></i>Today</span>
-            <span><i style="background:rgba(255,255,255,.12)"></i>Available</span>
-          </div>
-        </div></div>
-      </section>
-
-      <!-- 2. slots -->
-      <section class="pane">
-        <h2>Choose a time slot</h2>
-        <p class="sub">Two-hour windows, and a text when he sets off. No &ldquo;sometime between eight and six&rdquo;.</p>
+        <h2>When suits you?</h2>
+        <p class="sub">Roughly is fine — Mohammad rings back to pin it down. No heat, no hot water or
+           water coming through a ceiling? Ring straight through instead.</p>
         <div class="slots" id="slots">
-          <button type="button" class="slot" data-slot="08:00–10:00" data-h="8"><b>08:00 – 10:00</b><span>Early morning</span></button>
-          <button type="button" class="slot" data-slot="10:00–12:00" data-h="10"><b>10:00 – 12:00</b><span>Late morning</span></button>
-          <button type="button" class="slot" data-slot="12:00–14:00" data-h="12"><b>12:00 – 14:00</b><span>Early afternoon</span></button>
-          <button type="button" class="slot" data-slot="14:00–16:00" data-h="14"><b>14:00 – 16:00</b><span>Afternoon</span></button>
-          <button type="button" class="slot" data-slot="16:00–18:00" data-h="16"><b>16:00 – 18:00</b><span>After school run</span></button>
-          <button type="button" class="slot" data-slot="18:00–20:00" data-h="18"><b>18:00 – 20:00</b><span>After work</span></button>
+          <button type="button" class="slot" data-slot="As soon as you can"><b>As soon as you can</b><span>First free gap</span></button>
+          <button type="button" class="slot" data-slot="Weekday morning"><b>Weekday morning</b><span>Before dinner time</span></button>
+          <button type="button" class="slot" data-slot="Weekday afternoon"><b>Weekday afternoon</b><span>After dinner time</span></button>
+          <button type="button" class="slot" data-slot="Weekday evening"><b>Weekday evening</b><span>After work, from 5</span></button>
+          <button type="button" class="slot" data-slot="Saturday"><b>Saturday</b><span>Weekend visit</span></button>
+          <button type="button" class="slot" data-slot="I'm flexible"><b>I'm flexible</b><span>Whatever suits you</span></button>
         </div>
       </section>
 
@@ -266,8 +201,8 @@
           <label class="field"><span>Anything else we should know?</span>
             <textarea name="details" placeholder="Boiler make and model, fault code, parking, access, pets, whether you're in all day…"></textarea></label>
           <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-          <button class="btn fire" type="submit" style="width:100%" id="bbtn">Hold this slot for me</button>
-          <p class="formnote">This holds the slot. It's confirmed once you've spoken to Mohammad — he rings to check the job and agree the price first.</p>
+          <button class="btn fire" type="submit" style="width:100%" id="bbtn">Ask Mohammad to ring me</button>
+          <p class="formnote">This puts you on the list. Mohammad rings to check the job, fix a time and agree the price before anything is booked in.</p>
           <div class="formmsg" id="bmsg"></div>
         </form>
       </section>
@@ -276,16 +211,14 @@
     <!-- confirmation -->
     <section class="pane done" id="done" style="text-align:center">
       <div class="done-tick"><svg viewBox="0 0 24 24"><path d="M4 12.5l5.5 5.5L20 7"/></svg></div>
-      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem)">Slot requested</h2>
+      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem)">Request sent</h2>
       <p class="lede" style="margin:12px auto 0;font-size:1rem" id="doneLine">—</p>
       <p style="color:var(--muted);font-size:.92rem;margin-top:14px">
-        Mohammad will ring the number you gave to confirm the job and the price.
-        Need us sooner? Call <a href="tel:+447890452629" style="color:var(--gold2)">07890 452629</a>.
+        Mohammad will ring the number you gave to fix a time, check the job and agree the price.
+        Need someone today? Call <a href="tel:+447890452629" style="color:var(--gold2)">07890 452629</a>.
       </p>
       <div class="done-acts">
-        <a class="btn gold" id="icsBtn" download="heat-fix-visit.ics" href="#">Add to my calendar</a>
-        <a class="btn ghost" id="gcalBtn" target="_blank" rel="noopener" href="#">Add to Google Calendar</a>
-        <a class="btn ghost" id="waBtn" target="_blank" rel="noopener" href="#">Send on WhatsApp too</a>
+        <a class="btn gold" id="waBtn" target="_blank" rel="noopener" href="#">Send on WhatsApp too</a>
         <a class="btn ghost" href="/">Back to the website</a>
       </div>
     </section>
@@ -299,8 +232,7 @@
         <span><b>Your booking</b><small>Heat Fix Mcr Limited</small></span>
       </div>
       <div class="sum-body">
-        <div class="sum-row"><span>Date</span><b class="pend" id="sDate">Not chosen yet</b></div>
-        <div class="sum-row"><span>Time</span><b class="pend" id="sTime">Not chosen yet</b></div>
+        <div class="sum-row"><span>When</span><b class="pend" id="sTime">Not chosen yet</b></div>
         <div class="sum-row"><span>Job</span><b class="pend" id="sJob">Not chosen yet</b></div>
         <div class="sum-row"><span>Where</span><b class="pend" id="sWhere">Not given yet</b></div>
         <div class="sum-row"><span>Call-out</span><b>Free, no obligation</b></div>
@@ -319,7 +251,7 @@
         <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>Gas Safe registered — ask to see the ID card at the door.</li>
         <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>A written price before any work starts.</li>
         <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>Invoice and certificates straight to your phone.</li>
-        <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>Need it today? Ring instead — online slots are for planned work.</li>
+        <li style="display:flex;gap:11px;font-size:.9rem;color:#c3ccd7"><span class="tick" style="width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none"><path d="M4 12l5 5L20 6"/></svg></span>Need someone today? Ring instead — the form is for planned work.</li>
       </ul>
     </div>
   </aside>
@@ -343,7 +275,7 @@
 var W3F_KEY = "";                       /* paste your Web3Forms access key here */
 var HF_PHONE = "447890452629";
 var HF_EMAIL = "heatfixmcr@hotmail.com";
-var HF_GAS_SAFE_NO = "";   /* Ejaz's Gas Safe registration number */
+var HF_GAS_SAFE_NO = "627019";   /* Ejaz's Gas Safe registration number */
 document.getElementById('yr').textContent = new Date().getFullYear();
 (function(){
   var el = document.getElementById('gsNoBook'), n = (HF_GAS_SAFE_NO || '').trim();
@@ -360,55 +292,13 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   d.onclick=function(e){if(e.target.tagName==='A'){d.classList.remove('on');b.classList.remove('on');document.body.style.overflow='';}};
 })();
 
-/* ============ calendar ============ */
-var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var DAYSL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var today=new Date(); today.setHours(0,0,0,0);
-var view=new Date(today.getFullYear(),today.getMonth(),1);
-var maxMonth=new Date(today.getFullYear(),today.getMonth()+4,1);
-var picked=null, slot=null, slotH=null;
+/* ============ when-suits chips ============ */
+var slot = null;
 
-function fmtLong(d){return DAYSL[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
-function pad(n){return (n<10?'0':'')+n;}
-
-function buildCal(){
-  var y=view.getFullYear(), m=view.getMonth();
-  document.getElementById('calLabel').textContent=MONTHS[m]+' '+y;
-  var first=new Date(y,m,1), lead=(first.getDay()+6)%7;      /* Monday-first */
-  var total=new Date(y,m+1,0).getDate();
-  var box=document.getElementById('days'); box.innerHTML='';
-  for(var i=0;i<lead;i++){var b=document.createElement('div');b.className='day blank';box.appendChild(b);}
-  for(var dn=1;dn<=total;dn++){
-    var dt=new Date(y,m,dn); dt.setHours(0,0,0,0);
-    var el=document.createElement('button');
-    el.type='button'; el.className='day'; el.textContent=dn;
-    var isPast = dt<today, isSun = dt.getDay()===0;
-    if(isPast||isSun){ el.classList.add('off'); el.disabled=true;
-      el.setAttribute('aria-label', isSun?'Sunday — emergency call-outs only':'Past date'); }
-    else { el.setAttribute('aria-label','Book '+fmtLong(dt)); el.dataset.iso=y+'-'+pad(m+1)+'-'+pad(dn); }
-    if(+dt===+today) el.classList.add('today');
-    if(picked && +dt===+picked) el.classList.add('sel');
-    box.appendChild(el);
-  }
-  document.getElementById('calPrev').disabled = (y===today.getFullYear() && m===today.getMonth());
-  document.getElementById('calNext').disabled = (y===maxMonth.getFullYear() && m===maxMonth.getMonth());
-}
-document.getElementById('calPrev').onclick=function(){view.setMonth(view.getMonth()-1);buildCal();};
-document.getElementById('calNext').onclick=function(){view.setMonth(view.getMonth()+1);buildCal();};
-document.getElementById('days').addEventListener('click',function(e){
-  var el=e.target.closest('.day'); if(!el||el.disabled||!el.dataset.iso) return;
-  var p=el.dataset.iso.split('-');
-  picked=new Date(+p[0],+p[1]-1,+p[2]); picked.setHours(0,0,0,0);
-  buildCal(); sync();
-  document.querySelector('#slots').scrollIntoView({behavior:'smooth',block:'center'});
-});
-buildCal();
-
-/* ============ slots ============ */
 document.getElementById('slots').addEventListener('click',function(e){
   var b=e.target.closest('.slot'); if(!b) return;
   [].forEach.call(this.children,function(c){c.classList.remove('sel')});
-  b.classList.add('sel'); slot=b.dataset.slot; slotH=+b.dataset.h; sync();
+  b.classList.add('sel'); slot=b.dataset.slot; sync();
 });
 
 /* ============ live summary + rail ============ */
@@ -420,9 +310,8 @@ function set(id,val){
   if(val) el.textContent=val;
 }
 function sync(){
-  var sD=document.getElementById('sDate'), sT=document.getElementById('sTime'),
+  var sT=document.getElementById('sTime'),
       sJ=document.getElementById('sJob'), sW=document.getElementById('sWhere');
-  sD.textContent = picked? fmtLong(picked) : 'Not chosen yet'; sD.classList.toggle('pend',!picked);
   sT.textContent = slot || 'Not chosen yet'; sT.classList.toggle('pend',!slot);
   var j=f.job.value; sJ.textContent = j || 'Not chosen yet'; sJ.classList.toggle('pend',!j);
   var w=[f.town.value.trim(), f.postcode.value.trim().toUpperCase()].filter(Boolean).join(' · ');
@@ -430,44 +319,13 @@ function sync(){
 
   var haveDet = f.name.value.trim() && f.phone.value.trim() && f.email.value.trim()
              && f.address.value.trim() && f.postcode.value.trim();
-  var st=[!!picked, !!slot, !!j, !!haveDet];
+  var st=[!!slot, !!j, !!haveDet];
   [].forEach.call(document.querySelectorAll('#rail div'),function(el,i){
     el.classList.toggle('done', st[i]);
     el.classList.toggle('on', !st[i] && st.slice(0,i).every(Boolean));
   });
 }
 f.addEventListener('input',sync); f.addEventListener('change',sync); sync();
-
-/* ============ calendar file helpers ============ */
-function icsStamp(d){
-  return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'
-        +pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';
-}
-function buildEvent(d){
-  var start=new Date(picked); start.setHours(slotH,0,0,0);
-  var end=new Date(start); end.setHours(slotH+2);
-  var title='Heat Fix Mcr — '+d.job;
-  var where=[d.address,d.town,d.postcode].filter(Boolean).join(', ');
-  var desc='Heat Fix Mcr Limited visit ('+slot+').\\nEngineer: Mohammad Ejaz, 07890 452629.\\nJob: '+d.job
-          +(d.details?('\\nNotes: '+d.details):'')+'\\nThis slot is confirmed by phone.';
-  return {start:start,end:end,title:title,where:where,desc:desc};
-}
-function icsFile(ev){
-  var body=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Heat Fix Mcr Limited//Booking//EN','CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT','UID:'+Date.now()+'@heatfixmcrlimited.co.uk','DTSTAMP:'+icsStamp(new Date()),
-    'DTSTART:'+icsStamp(ev.start),'DTEND:'+icsStamp(ev.end),
-    'SUMMARY:'+ev.title,'LOCATION:'+ev.where,'DESCRIPTION:'+ev.desc,
-    'BEGIN:VALARM','TRIGGER:-PT2H','ACTION:DISPLAY','DESCRIPTION:Heat Fix Mcr visit today','END:VALARM',
-    'END:VEVENT','END:VCALENDAR'].join('\r\n');
-  return 'data:text/calendar;charset=utf-8,'+encodeURIComponent(body);
-}
-function gcalLink(ev){
-  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-    +'&text='+encodeURIComponent(ev.title)
-    +'&dates='+icsStamp(ev.start)+'/'+icsStamp(ev.end)
-    +'&location='+encodeURIComponent(ev.where)
-    +'&details='+encodeURIComponent(ev.desc.replace(/\\n/g,'\n'));
-}
 
 /* ============ submit ============ */
 (function(){
@@ -476,9 +334,7 @@ function gcalLink(ev){
   f.addEventListener('submit',function(e){
     e.preventDefault();
     if(f.botcheck.value) return;
-    if(!picked){ say('Please pick a date first.','err');
-      document.getElementById('cal').scrollIntoView({behavior:'smooth',block:'center'}); return; }
-    if(!slot){ say('Please pick a time slot.','err');
+    if(!slot){ say('Please tell us roughly when suits you.','err');
       document.getElementById('slots').scrollIntoView({behavior:'smooth',block:'center'}); return; }
     var bad=null;
     [].slice.call(f.querySelectorAll('[required]')).forEach(function(el){if(!el.value.trim()&&!bad)bad=el;});
@@ -490,15 +346,12 @@ function gcalLink(ev){
     var d={name:f.name.value.trim(),phone:f.phone.value.trim(),email:em,
       address:f.address.value.trim(),town:f.town.value.trim(),
       postcode:f.postcode.value.trim().toUpperCase(),job:f.job.value,details:f.details.value.trim()};
-    var when=fmtLong(picked)+', '+slot;
-    var lines=['NEW BOOKING REQUEST — heatfixmcrlimited.co.uk','',
-      'When: '+when,'Job: '+d.job,'','Name: '+d.name,'Phone: '+d.phone,'Email: '+d.email,
+    var when=slot;
+    var lines=['NEW VISIT REQUEST — heatfixmcrlimited.co.uk','',
+      'When suits: '+when,'Job: '+d.job,'','Name: '+d.name,'Phone: '+d.phone,'Email: '+d.email,
       'Address: '+d.address,'Town: '+d.town,'Postcode: '+d.postcode,
       d.details?('Notes: '+d.details):''].filter(Boolean).join('\n');
 
-    var ev=buildEvent(d);
-    document.getElementById('icsBtn').href=icsFile(ev);
-    document.getElementById('gcalBtn').href=gcalLink(ev);
     document.getElementById('waBtn').href='https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines);
     document.getElementById('doneLine').textContent=when+' — '+d.job+', '+d.postcode+'.';
 
@@ -514,8 +367,8 @@ function gcalLink(ev){
     }
     fetch('https://api.web3forms.com/submit',{
       method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({access_key:W3F_KEY,subject:'BOOKING — '+when+' — '+d.name+' ('+d.postcode+')',
-        from_name:'Heat Fix Mcr booking',replyto:d.email,when:when,...d,message:lines})
+      body:JSON.stringify({access_key:W3F_KEY,subject:'VISIT REQUEST — '+when+' — '+d.name+' ('+d.postcode+')',
+        from_name:'Heat Fix Mcr website',replyto:d.email,when:when,...d,message:lines})
     }).then(function(r){return r.json()}).then(function(j){
       if(j.success){ finish(); }
       else { window.open('https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines),'_blank'); finish(); }

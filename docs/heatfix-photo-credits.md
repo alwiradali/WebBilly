@@ -65,3 +65,25 @@ is hidden, and one still frame under `prefers-reduced-motion`.
 Every page carries it except the invoice builder, which is the tool Ejaz fills
 in on a job — motion behind form fields is noise. The customer-facing `/i` view
 does have it.
+
+## Reviews
+
+The reviews live on Ejaz's Yell profile:
+https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/
+
+There is no public Yell reviews API, so nothing on the page fetches them. Two
+ways to get them onto the site:
+
+1. **Live (what he asked for).** Yell's own widget, from the Yell account:
+   Reputation Manager → Reviews → Widgets → Create. Paste the embed code Yell
+   gives you inside `<div id="yellWidget">` on the home page and it takes over
+   the section — the hand-typed list below it is suppressed automatically. Note
+   the widget caps at five reviews per page. Reputation Manager is part of a
+   paid Yell package, so check the account has it.
+
+2. **By hand, until then.** Copy real Yell reviews word for word into the
+   `HF_REVIEWS` array near the bottom of `templates/heatfixmcr.html`. A "Reviews
+   from our Yell profile" line appears under them automatically.
+
+Nothing is ever invented, and the star rating is not hard-coded anywhere — a
+number typed into the page goes stale silently and becomes a false claim.

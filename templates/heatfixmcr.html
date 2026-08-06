@@ -524,7 +524,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-install.webp" alt="Gas engineer building up new boiler pipework and valves" loading="lazy">
+            <img src="../assets/heatfix/svc-install.webp" alt="New combi boiler fitted, controls and copper pipework" loading="lazy">
             <span class="svc-n">01</span>
           </div>
           <div class="svc-body">
@@ -560,7 +560,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <article class="t3d svc" data-fx="reveal" data-fx-delay="160">
         <div class="t3d-face">
           <div class="svc-img">
-            <img src="../assets/heatfix/svc-cylinder.webp" alt="Heating system manifold with pump and isolation valves" loading="lazy">
+            <img src="../assets/heatfix/svc-cylinder.webp" alt="Unvented hot water cylinder with expansion vessel and tundish" loading="lazy">
             <span class="svc-n">03</span>
           </div>
           <div class="svc-body">
@@ -743,17 +743,26 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
     <span class="eyebrow" data-fx="reveal">What people say</span>
     <h2 data-fx="reveal" data-fx-delay="80" style="margin-top:16px">Word of mouth,<br>written down.</h2>
     <p class="lede" data-fx="reveal" data-fx-delay="140" style="margin-top:18px">
-      Most of our work comes from someone telling a neighbour. If we've been out to you,
-      a couple of lines on Google helps more than you'd think.
+      Most of our work comes from someone telling a neighbour. Every review we have is on
+      Yell, written by a real customer after a real job — read them all over there.
     </p>
+
+    <!-- Live Yell feed drops in here. In the Yell account: Reputation Manager →
+         Reviews → Widgets → Create, then paste the embed code Yell gives you
+         inside this div. Anything in here takes over from the block below. -->
+    <div id="yellWidget" class="yell-live" data-fx="reveal" data-fx-delay="180"></div>
+
     <div class="revs" id="revs" hidden></div>
     <div class="revs-empty" id="revsEmpty">
-      <h3>No reviews on here yet</h3>
-      <p>We'd rather show none than make them up. If Mohammad has been out to your place,
-         you'd be doing him a real favour.</p>
-      <a class="btn gold" id="revLink" href="#" target="_blank" rel="noopener">Leave a review</a>
+      <h3>Read the reviews on Yell</h3>
+      <p>They live on Ejaz's Yell profile rather than being retyped here, so what you read
+         is what the customer actually wrote — nothing picked out or tidied up.</p>
+      <a class="btn gold" id="revLink" href="#" target="_blank" rel="noopener">See the reviews on Yell</a>
     </div>
     <div class="swipehint" id="revHint" hidden>← Swipe for more →</div>
+    <p class="revs-src" id="revsSrc" hidden>
+      Reviews from <a id="revsSrcLink" href="#" target="_blank" rel="noopener">our Yell profile</a>.
+    </p>
   </div>
 </section>
 
@@ -1119,6 +1128,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 "description":"Gas Safe registered domestic gas engineer in Manchester. Boiler installation, repair and servicing, unvented cylinders, gas cookers, bathrooms and emergency plumbing.",
 "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressRegion":"Greater Manchester","addressCountry":"GB"},
 "areaServed":["Manchester","Salford","Stockport","Oldham","Bury","Bolton","Rochdale","Tameside","Trafford","Wigan"],
+"sameAs":["https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/"],
 "knowsAbout":["Boiler installation","Boiler repair","Gas safety certificate","Unvented hot water cylinder","Gas cooker installation","Emergency plumbing"]}
 </script>
 
@@ -1137,11 +1147,15 @@ var W3F_KEY = "";
 var HF_PHONE = "447890452629";
 /* Ejaz's Gas Safe registration number. Gas Safe require it to be shown
    wherever the logo appears — put the 6 digits between the quotes. */
-var HF_GAS_SAFE_NO = "";
-/* Google review link — paste the "share review" URL from the Google Business
-   Profile here and the Reviews section will point people straight at it. */
-var HF_REVIEW_URL = "https://www.google.com/search?q=Heat+Fix+Mcr+Limited+Manchester";
-/* Real reviews only. Paste them in as they come, oldest last:
+var HF_GAS_SAFE_NO = "627019";
+/* Yell profile — where the reviews actually live. The Reviews section links
+   here, and Yell's own widget (Reputation Manager → Reviews → Widgets) can be
+   pasted into #yellWidget to show them live on the page. */
+var HF_YELL_URL = "https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/";
+var HF_REVIEW_URL = HF_YELL_URL;
+/* Real reviews only, and only ones actually left on Yell — copy them across
+   word for word, oldest last. The moment the Yell widget is pasted into
+   #yellWidget this list stops being used.
    { name:"Mrs J Smith", area:"Chorlton", stars:5, text:"..." }                */
 var HF_REVIEWS = [];
 var HF_EMAIL = "heatfixmcr@hotmail.com";
@@ -1184,8 +1198,18 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 /* ---------- reviews ---------- */
 (function(){
   var box = document.getElementById('revs'), empty = document.getElementById('revsEmpty'),
-      hint = document.getElementById('revHint'), link = document.getElementById('revLink');
+      hint = document.getElementById('revHint'), link = document.getElementById('revLink'),
+      live = document.getElementById('yellWidget'),
+      src  = document.getElementById('revsSrc'), srcLink = document.getElementById('revsSrcLink');
   if (link) link.href = HF_REVIEW_URL;
+  if (srcLink) srcLink.href = HF_YELL_URL;
+  /* If Yell's own widget has been pasted in, it is the live feed and it wins —
+     nothing typed out by hand gets shown underneath it. */
+  if (live && live.children.length) {
+    if (empty) empty.hidden = true;
+    if (box) box.hidden = true;
+    return;
+  }
   if (!box) return;
   if (!HF_REVIEWS.length) return;                        /* keep the honest empty state */
   var star = '<svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .8-5.2 4.8 1.4 7L12 17.8 5.8 21.2l1.4-7L2 9.4l7-.8z"/></svg>';
@@ -1201,6 +1225,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }).join('');
   box.hidden = false; empty.hidden = true;
   if (hint && HF_REVIEWS.length > 1) hint.hidden = false;
+  if (src) src.hidden = false;
   if (window.ScrollFXKit) window.ScrollFXKit.refresh(box);
 })();
 
