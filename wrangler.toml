@@ -14,8 +14,9 @@ routes = [
   { pattern = "billydigitals.com", custom_domain = true },
   { pattern = "www.billydigitals.com", custom_domain = true }
   # Client sites on their own domains — uncomment and set the real hostname
-  # once the domain's nameservers point at Cloudflare, then add the same
-  # hostnames to M2L_HOST below.
+  # once the domain's nameservers point at Cloudflare.
+  # Mumbai2London is parked (M2L_PARKED in worker.js); its routes stay
+  # commented out until it is brought back.
   # ,{ pattern = "mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "heatfixmcrlimited.co.uk", custom_domain = true }
@@ -25,7 +26,7 @@ routes = [
 [vars]
 # Comma-separated hostnames that should serve ONLY the Mumbai2London site,
 # at clean root URLs (/, /admin, /invoice, /sign) and indexable by Google.
-# Leave empty and everything stays as it is on billydigitals.com.
+# Has no effect while M2L_PARKED is true in worker.js.
 M2L_HOST = ""
 
 # Comma-separated hostnames for Heat Fix Mcr Limited. Set these once the

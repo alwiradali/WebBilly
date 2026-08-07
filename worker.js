@@ -31,22 +31,26 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
-    if (url.pathname === "/api/m2l-book") {
-      return handleM2LBook(request, env);
-    }
-    if (url.pathname === "/api/m2l/availability") {
-      return handleAvailability(request, env);
-    }
-    if (url.pathname.startsWith("/api/m2l/admin/")) {
-      return handleM2LAdmin(request, env, url);
-    }
-    if (url.pathname === "/api/m2l-invoice/send") {
-      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleInvoiceSend(request, env);
-    }
-    if (url.pathname === "/api/m2l-invoice/sign") {
-      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleInvoiceSign(request, env);
+    // Mumbai2London is parked — see M2L_PARKED below. The code all still
+    // works; flip the flag and the pages come back with it.
+    if (!M2L_PARKED) {
+      if (url.pathname === "/api/m2l-book") {
+        return handleM2LBook(request, env);
+      }
+      if (url.pathname === "/api/m2l/availability") {
+        return handleAvailability(request, env);
+      }
+      if (url.pathname.startsWith("/api/m2l/admin/")) {
+        return handleM2LAdmin(request, env, url);
+      }
+      if (url.pathname === "/api/m2l-invoice/send") {
+        if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+        return handleInvoiceSend(request, env);
+      }
+      if (url.pathname === "/api/m2l-invoice/sign") {
+        if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+        return handleInvoiceSign(request, env);
+      }
     }
     if (url.pathname === "/api/book") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -54,7 +58,7 @@ export default {
     }
     // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
     // at clean root URLs, and is indexable.
-    if (isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
+    if (!M2L_PARKED && isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
 
     // Heat Fix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
     if (isClientHost(url.hostname, env, "HEATFIX_HOST")) {
@@ -65,6 +69,15 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
+
+/* Mumbai2London is parked.
+   The whole build — pages, booking diary, invoice signing, the lot — is kept
+   in this repository and still compiles, but nothing of it is served: the
+   pages are excluded from the asset upload in .assetsignore and every /api/m2l
+   route is switched off below.
+   To bring it back: set this to false and delete the four M2L lines from
+   .assetsignore. Nothing else needs changing. */
+const M2L_PARKED = true;
 
 /* ------------------------------------------------------------------
    Client-domain hosting
