@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · APPLICATION
+   BILLY360 · APPLICATION
    Three screens over one WebGL context:
 
      Overview   project dashboard with a live preview of the building
@@ -43,7 +43,7 @@
 
   /* ── state ────────────────────────────────────────────────────────────── */
 
-  var CFG = window.RED360_CONFIG || {};
+  var CFG = window.BILLY360_CONFIG || {};
   var PORTFOLIO = CFG.portfolio || {};
   var ADMIN_CFG = CFG.admin || {};
   var EMBED_CFG = CFG.embed || {};
@@ -52,12 +52,12 @@
 
   /* Every tour file registers itself, so a deployment can carry as many
      properties as you like — add the file, add one <script> line, done. A file
-     that only sets window.RED360_TOUR (the original single-tour shape) still
+     that only sets window.BILLY360_TOUR (the original single-tour shape) still
      works. A file may also register a *stub* — id, project block and floors,
      plus src — so a portfolio of hundreds does not parse every room at boot. */
-  var SHIPPED = (window.RED360_TOURS && window.RED360_TOURS.length
-    ? window.RED360_TOURS
-    : [window.RED360_TOUR]).filter(Boolean).map(function (t) {
+  var SHIPPED = (window.BILLY360_TOURS && window.BILLY360_TOURS.length
+    ? window.BILLY360_TOURS
+    : [window.BILLY360_TOUR]).filter(Boolean).map(function (t) {
       var c = JSON.parse(JSON.stringify(t));
       c.id = c.id || (c.project && c.project.slug) || slug((c.project && c.project.name) || "tour");
       return c;
@@ -73,7 +73,7 @@
     var sc = document.createElement("script");
     sc.src = stub.src;
     sc.onload = function () {
-      var full = null, all = window.RED360_TOURS || [];
+      var full = null, all = window.BILLY360_TOURS || [];
       for (var i = 0; i < all.length; i++) if (all[i] && all[i].id === id && all[i].rooms) full = all[i];
       if (full) {
         for (var j = 0; j < SHIPPED.length; j++) {
@@ -492,7 +492,7 @@
       n.innerHTML = "";
       if (b.logo) { var im = new Image(); im.src = b.logo; im.alt = ""; n.appendChild(im); }
     });
-    document.title = (b.name || "RED360") + " · " + (b.tagline || "Virtual Tours");
+    document.title = (b.name || "BILLY360") + " · " + (b.tagline || "Virtual Tours");
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -2800,7 +2800,7 @@
     code.textContent =
       "1.  Studio → Publish → Export tour.json\n" +
       "2.  Save it into the folder as  tour-<name>.js  and wrap it:\n\n" +
-      "      (window.RED360_TOURS = window.RED360_TOURS || []).push(\n" +
+      "      (window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(\n" +
       "        { …the exported JSON… }\n" +
       "      );\n\n" +
       "3.  Add one line to index.html, next to the others:\n\n" +
@@ -2812,7 +2812,7 @@
       "loads at once and the rooms only when someone opens it:"));
     var code2 = el("pre", "code");
     code2.textContent =
-      "(window.RED360_TOURS = window.RED360_TOURS || []).push({\n" +
+      "(window.BILLY360_TOURS = window.BILLY360_TOURS || []).push({\n" +
       '  id: "willow-lane-12",\n' +
       '  src: "tours/willow-lane-12.js",   // pulled in on demand\n' +
       "  project: { name: …, price: …, beds: … },\n" +
@@ -3254,8 +3254,8 @@
     share.appendChild(el("h4", null, "Share this property"));
     var shareUrl = origin + "?site=" + PROJECT;
     var srow = el("div", "share-row");
-    if (window.RED360QR) {
-      var qc = window.RED360QR.canvas(shareUrl, 5, 3);
+    if (window.BILLY360QR) {
+      var qc = window.BILLY360QR.canvas(shareUrl, 5, 3);
       if (qc) {
         var qwrap = el("div", "qr-wrap");
         qwrap.appendChild(qc);
@@ -3279,7 +3279,7 @@
     dlq.appendChild(icon("download"));
     dlq.appendChild(document.createTextNode("Download the QR (PNG)"));
     dlq.onclick = function () {
-      var c2 = window.RED360QR && window.RED360QR.canvas(shareUrl, 12, 4);
+      var c2 = window.BILLY360QR && window.BILLY360QR.canvas(shareUrl, 12, 4);
       if (!c2) { toast("QR couldn't be generated."); return; }
       var a2 = el("a");
       a2.download = slug((TOUR.project && TOUR.project.name) || PROJECT) + "-qr.png";
@@ -3665,7 +3665,7 @@
       }, 2600);
     }
 
-    engine = window.RED360.createEngine({
+    engine = window.BILLY360.createEngine({
       canvas: $("#gl"),
       host: $("#stageDash"),
       quality: quality,
@@ -3760,7 +3760,7 @@
   else boot();
 
   /* a small public surface, for embedding hosts */
-  window.RED360App = {
+  window.BILLY360App = {
     go: function (id) { enterTour(id); },
     view: function (v) { setView(v); },
     tour: function () { return TOUR; },

@@ -84,7 +84,7 @@ A NEW SPACE in the property you are looking at:
     1. Studio → Publish → "Export tour.json"
     2. Save it into this folder as  tour-<name>.js  and wrap it:
 
-         (window.RED360_TOURS = window.RED360_TOURS || []).push(
+         (window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(
            { ...the exported JSON... }
          );
 
@@ -99,7 +99,7 @@ PUTTING IT ON A WEBSITE THAT ALREADY EXISTS
   Upload this folder to the agency's own site — FTP is fine — then paste
   one line onto a property page:
 
-      <div data-red360="willow-lane-12" data-height="16:9"></div>
+      <div data-billy360="willow-lane-12" data-height="16:9"></div>
       <script src="/tours/embed.js"></script>
 
   Or the whole portfolio in one block:

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · QR
+   BILLY360 · QR
    A complete QR encoder — byte mode, error-correction level M, versions 1–10
    (213 bytes of URL, far more than any tour link). No dependencies; output is
    a plain canvas. Ported from the ISO 18004 procedure: Reed–Solomon over
@@ -281,5 +281,5 @@
     return c;
   }
 
-  window.RED360QR = { matrix: matrix, canvas: canvas };
+  window.BILLY360QR = { matrix: matrix, canvas: canvas };
 })();

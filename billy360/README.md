@@ -1,4 +1,4 @@
-# RED360 — interactive enterprise virtual tour platform
+# billy360 — interactive enterprise virtual tour platform
 
 A complete tour product in one folder. Vanilla JS, raw WebGL, no dependencies,
 no build step, no server runtime.
@@ -17,7 +17,7 @@ red360/
   tour-homes.js   a residential portfolio — six listings from one table
 ```
 
-Live at `/red360/`. Runs identically from a file:// path, an S3 bucket, a
+Live at `/billy360/`. Runs identically from a file:// path, an S3 bucket, a
 closed intranet or a memory stick.
 
 ## Three screens, one GPU context
@@ -93,7 +93,7 @@ no nav link, no toolbar button, no `E` shortcut, no palette entries, and the
 admin: {
   enabled: true,
   hash: "b1908d99",     // fnv1a("red360:" + passcode) — the passcode is never stored
-  hint: "Ask 360RED for the studio passcode.",
+  hint: "Ask billy360 for the studio passcode.",
   rememberDays: 14,     // 0 = until the tab closes
   verifyUrl: null       // POST {code} → {ok:true}, checked on your server
 }
@@ -127,7 +127,7 @@ fine — and paste one of four things onto a page:
 <iframe src="/tours/#/sites" width="100%" height="900" loading="lazy"></iframe>
 
 <!-- a listing template: one line per property -->
-<div data-red360="willow-lane-12" data-height="16:9"></div>
+<div data-billy360="willow-lane-12" data-height="16:9"></div>
 <script src="/tours/embed.js"></script>
 
 <!-- or just a link, for a slow listing page -->
@@ -136,9 +136,9 @@ fine — and paste one of four things onto a page:
 
 `embed.js` builds the iframe from the attribute, only when the element scrolls
 into view, so a listing page with twenty tours on it loads like a page with
-none. `data-height` takes pixels or an aspect ratio (`16:9`). `data-red360="*"`
+none. `data-height` takes pixels or an aspect ratio (`16:9`). `data-billy360="*"`
 embeds the portfolio instead of one property. The host page can call
-`RED360Embed.scan()` after it injects more listings.
+`BILLY360Embed.scan()` after it injects more listings.
 
 `?embed=1` drops the portfolio chrome so the tour fills the frame. Studio →
 Publish generates all of these with the right ids already filled in.
@@ -149,7 +149,7 @@ A deployment carries as many buildings as you like. Every tour file ends with
 the same line, so it registers itself on load:
 
 ```js
-(window.RED360_TOURS = window.RED360_TOURS || []).push(window.RED360_TOUR);
+(window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(window.BILLY360_TOUR);
 ```
 
 Shipping another building is two steps and no build:
@@ -176,7 +176,7 @@ the listing block at once, and the rooms are pulled in only when someone opens
 that property:
 
 ```js
-(window.RED360_TOURS = window.RED360_TOURS || []).push({
+(window.BILLY360_TOURS = window.BILLY360_TOURS || []).push({
   id: "willow-lane-12",
   src: "tours/willow-lane-12.js",     // fetched on demand
   project: { name: "12 Willow Lane", price: "£465,000", beds: 4, … },
@@ -383,5 +383,5 @@ restored with Studio → Publish → *Reset to shipped demo*. **Publish** saves;
 **Export tour.json** writes the whole project to a file, which goes back into
 the folder as `tour-<name>.js` (see **Projects** above).
 
-`window.RED360App` exposes `go(roomId)`, `site(id)`, `sites()`, `view(name)`,
+`window.BILLY360App` exposes `go(roomId)`, `site(id)`, `sites()`, `view(name)`,
 `tour()`, `isAdmin()`, `signOut()` and `engine()` for embedding hosts.

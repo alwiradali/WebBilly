@@ -313,6 +313,6 @@
   ];
 
   HOMES.forEach(function (h) {
-    (window.RED360_TOURS = window.RED360_TOURS || []).push(buildHome(h));
+    (window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(buildHome(h));
   });
 })();

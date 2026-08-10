@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · TOUR DEFINITION
+   BILLY360 · TOUR DEFINITION
    The entire product is driven by this one object. Nothing about the building,
    the branding or the content lives in the code.
 
@@ -14,7 +14,7 @@
    is one line.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-window.RED360_TOUR = {
+window.BILLY360_TOUR = {
   id: "charnwood-house",
   version: 2,
 
@@ -479,4 +479,4 @@ window.RED360_TOUR = {
 };
 
 /* Register on the project list. Every project file ends with this line. */
-(window.RED360_TOURS = window.RED360_TOURS || []).push(window.RED360_TOUR);
+(window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(window.BILLY360_TOUR);

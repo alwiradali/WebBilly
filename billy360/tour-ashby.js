@@ -5,7 +5,7 @@
    index.html. No build step, no database, no rebuild of anything else.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-(window.RED360_TOURS = window.RED360_TOURS || []).push({
+(window.BILLY360_TOURS = window.BILLY360_TOURS || []).push({
   id: "ashby-retail",
   version: 2,
 

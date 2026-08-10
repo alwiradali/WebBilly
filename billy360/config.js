@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · DEPLOYMENT CONFIG
+   BILLY360 · DEPLOYMENT CONFIG
    One file per deployment. It decides how the portfolio behaves and who is
    allowed to see the editing tools. Nothing here is per-property — properties
    live in their own tour-*.js files.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-window.RED360_CONFIG = {
+window.BILLY360_CONFIG = {
 
   /* ── PORTFOLIO ────────────────────────────────────────────────────────────
      The listing screen: every property in one grid, with search and filters.

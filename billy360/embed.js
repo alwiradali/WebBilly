@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · DROP-IN EMBED
+   BILLY360 · DROP-IN EMBED
    For the website the agency already has. Put this on the page once and mark
    up each spot you want a tour in:
 
-     <div data-red360="willow-lane-12"></div>
+     <div data-billy360="willow-lane-12"></div>
      <script src="/tours/embed.js"></script>
 
    Options, all optional, as data- attributes on the div:
@@ -12,7 +12,7 @@
      data-chrome="1"       keep the portfolio chrome inside the frame
      data-lazy="0"         load immediately instead of on scroll
 
-   Use data-red360="*" for the whole portfolio rather than one property.
+   Use data-billy360="*" for the whole portfolio rather than one property.
 
    It writes a plain <iframe>. No stylesheet, no globals, no dependency on the
    host page's framework — it works the same in WordPress, Wix, Squarespace,
@@ -35,10 +35,10 @@
   })();
 
   function build(host) {
-    if (host.getAttribute("data-red360-done")) return;
-    host.setAttribute("data-red360-done", "1");
+    if (host.getAttribute("data-billy360-done")) return;
+    host.setAttribute("data-billy360-done", "1");
 
-    var id = host.getAttribute("data-red360") || "";
+    var id = host.getAttribute("data-billy360") || "";
     var room = host.getAttribute("data-room") || "";
     var chrome = host.getAttribute("data-chrome") === "1";
     var h = host.getAttribute("data-height") || "640";
@@ -73,7 +73,7 @@
   }
 
   function scan() {
-    var hosts = document.querySelectorAll("[data-red360]:not([data-red360-done])");
+    var hosts = document.querySelectorAll("[data-billy360]:not([data-billy360-done])");
     for (var i = 0; i < hosts.length; i++) {
       var host = hosts[i];
       if (host.getAttribute("data-lazy") === "0" || !("IntersectionObserver" in window)) {
@@ -97,5 +97,5 @@
   else scan();
 
   /* the host page can add tours later — infinite scroll, a filter, a modal */
-  window.RED360Embed = { scan: scan, mount: build, base: here };
+  window.BILLY360Embed = { scan: scan, mount: build, base: here };
 })();

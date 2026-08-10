@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RED360 · ENGINE
+   BILLY360 · ENGINE
    The rendering core of the virtual tour platform. Raw WebGL, no dependencies.
 
    It does four things:
@@ -12,7 +12,7 @@
      4. Projects world angles to screen coordinates so the interface can hang
         DOM hotspots in the scene, and inverts that so the CMS can place them.
 
-   Public API — RED360.createEngine({ host, canvas, on… }) returns:
+   Public API — BILLY360.createEngine({ host, canvas, on… }) returns:
      load(tour)            adopt a tour definition
      mount(el)             move the canvas into another container (live)
      go(id, opts)          travel to a room
@@ -33,7 +33,7 @@
 (function (global) {
   "use strict";
 
-  var RED360 = global.RED360 = global.RED360 || {};
+  var BILLY360 = global.BILLY360 = global.BILLY360 || {};
 
   var TAU = Math.PI * 2, D2R = Math.PI / 180, R2D = 180 / Math.PI;
   var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
@@ -44,11 +44,11 @@
   var easeOut = function (t) { return 1 - Math.pow(1 - t, 3); };
   var easeInOut = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
-  RED360.easing = { out: easeOut, inOut: easeInOut };
-  RED360.clamp = clamp;
-  RED360.lerp = lerp;
+  BILLY360.easing = { out: easeOut, inOut: easeInOut };
+  BILLY360.clamp = clamp;
+  BILLY360.lerp = lerp;
 
-  RED360.createEngine = function (opts) {
+  BILLY360.createEngine = function (opts) {
     opts = opts || {};
     var canvas = opts.canvas, host = opts.host || (canvas && canvas.parentNode);
     var on = {
