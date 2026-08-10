@@ -440,14 +440,17 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
       'Location':v('area'), 'Notes':v('msg')
     })
   })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    if(!d.success) throw new Error(d.message||'failed');
+  .then(function(r){return r.json().then(function(d){return{status:r.status,body:d};});})
+  .then(function(res){
+    if(!res.body.success) throw new Error('Web3Forms '+res.status+': '+(res.body.message||'no message'));
     form.style.display='none';
     document.getElementById('ok').classList.add('on');
   })
-  .catch(function(){
+  .catch(function(e){
     // Never claim an enquiry was sent when it was not — give them a route out.
+    // The real reason goes to the console: the visitor gets a friendly message,
+    // but a generic failure with no detail is impossible to diagnose later.
+    console.error('[booking form] enquiry not sent —', e && e.message ? e.message : e);
     btn.disabled=false; btn.textContent=label;
     err.classList.add('on');
   });
