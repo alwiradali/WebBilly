@@ -1033,13 +1033,24 @@
        ───────────────────────────────────────────────────────────────────── */
     var tour = null, rooms = [], byId = {}, store = {}, thumbSrc = {};
     var queue = [], hiPool = [], HI_KEEP = coarse ? 2 : 3;
+    /* measured GPU cost, ms per pixel. GL submits return immediately, so the
+       CPU clock says nothing about what the GPU is being asked to chew — on a
+       slow chip an unpaced queue can back the driver up past its watchdog and
+       freeze the whole browser. One honest measurement, then every frame's
+       submissions are capped by *estimated GPU milliseconds*. */
+    /* previews start banded — 8 small draws instead of one big one — because
+       the first draw happens before anything is known about the GPU, and one
+       oversize draw on a weak chip can trip the driver watchdog and take the
+       whole browser with it. Fast GPUs collapse back to single-draw previews
+       the moment the first band has been measured. */
+    var perPx = 0, gpuMeasured = false, LO_ROWS = 8;
 
     function enqueue(id, kind, priority) {
       for (var i = 0; i < queue.length; i++) if (queue[i].id === id && queue[i].kind === kind) return queue[i];
       var job = {
         id: id, kind: kind,
         w: kind === "hi" ? HI_W : LO_W, h: kind === "hi" ? HI_H : LO_H,
-        rows: kind === "hi" ? (coarse ? 8 : 16) : 1, row: 0, target: null, done: false
+        rows: kind === "hi" ? (coarse ? 8 : 16) : LO_ROWS, row: 0, target: null, done: false
       };
       var pos = 0;
       while (pos < queue.length && queue[pos].row > 0) pos++;          // never interrupt live work
@@ -1081,11 +1092,22 @@
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.disable(gl.SCISSOR_TEST);
       job.row++;
-      if (tiersLeft > 0 && job.kind === "lo" && job.row >= job.rows) {
+      if (!gpuMeasured && job.kind === "lo") {
+        /* one synchronous read of the true GPU cost of a raymarched band */
         gl.finish();
-        var perPx = Math.max(now() - t0, 0.5) / (job.w * job.h);
+        perPx = Math.max(now() - t0, 0.5) / (job.w * band);
+        gpuMeasured = true;
         var hiRows = coarse ? 8 : 16;
         while (tiersLeft > 0 && perPx * (HI_W * HI_H / hiRows) > 110) downshift();
+        if (perPx * LO_W * LO_H < 12) {
+          /* fast GPU — collapse untouched previews back to one draw each */
+          LO_ROWS = 1;
+          for (var qi = 0; qi < queue.length; qi++) {
+            if (queue[qi].kind === "lo" && queue[qi].row === 0) queue[qi].rows = 1;
+          }
+        } else {
+          diag.push("slow GPU · previews stay banded (" + perPx.toFixed(4) + " ms/px)");
+        }
       }
       if (job.row >= job.rows) {
         job.done = true;
@@ -1106,8 +1128,8 @@
         c.width = job.w; c.height = job.h;
         var ctx = c.getContext("2d"), img = ctx.createImageData(job.w, job.h);
         for (var y = 0; y < job.h; y++) {
-          var s = (job.h - 1 - y) * job.w * 4, d = y * job.w * 4;
-          for (var x = 0; x < job.w * 4; x++) img.data[d + x] = px[s + x];
+          var srow = (job.h - 1 - y) * job.w * 4;
+          img.data.set(px.subarray(srow, srow + job.w * 4), y * job.w * 4);
         }
         ctx.putImageData(img, 0, 0);
         thumbSrc[job.id] = c;
@@ -1336,14 +1358,20 @@
     }
     window.addEventListener("resize", function () { resize(); });
 
-    function bakeBudget() {
+    function bakeBudget(loOnly) {
       if (!queue.length) return;
       var start = now(), budget = (drag || pinch) ? 4 : (coarse ? 8 : 12);
+      /* until the GPU is measured, exactly one band per frame — conservative
+         start-up beats a frozen laptop */
+      var gpuBudget = gpuMeasured ? 28 : 0, gpuSpent = 0;
       while (queue.length && now() - start < budget) {
         var job = queue[0];
+        if (loOnly && job.kind === "hi") break;          // portfolio open: previews only
         bakeStep(job);
+        gpuSpent += gpuMeasured ? perPx * (job.w * job.h / job.rows) : 1e9;
         if (job.done) queue.shift();
         if (job.kind === "hi" && !job.done) break;      // one full-res band per frame keeps it silky
+        if (gpuSpent > gpuBudget) break;                 // the GPU queue is deep enough
       }
     }
 
@@ -1368,7 +1396,7 @@
          math, no callbacks. Baking continues so previews finish while the
          viewer browses, and the loop stays armed so waking is one frame. */
       if (asleep && booted && !once && !incoming && trans.t >= 1) {
-        bakeBudget();
+        bakeBudget(true);
         requestAnimationFrame(frame);
         return;
       }

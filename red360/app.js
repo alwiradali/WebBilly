@@ -2876,10 +2876,34 @@
     }
     if (!route.view) route.view = SITES_ON ? "sites" : "dash";
 
+    /* ── crash sentinel ──────────────────────────────────────────────────
+       If the last visit never reached "ready" — a GPU driver reset, a frozen
+       tab, a rage-quit during first render — this visit finds the flag still
+       set and boots in low quality automatically. On the visit after that,
+       the third strike also remembers the simplest renderer for next time.
+       A healthy visit clears the flag, so quality returns by itself. */
+    var CRASH_KEY = "red360:boot-crash";
+    var crashes = 0;
+    try {
+      crashes = parseInt(localStorage.getItem(CRASH_KEY), 10) || 0;
+      localStorage.setItem(CRASH_KEY, String(crashes + 1));
+    } catch (e) { }
+    function bootHealthy() {
+      try { localStorage.removeItem(CRASH_KEY); } catch (e) { }
+    }
+    window.addEventListener("pagehide", bootHealthy);   // a clean exit is not a crash
+    if (crashes >= 2) { try { localStorage.setItem("red360:tier", "2"); } catch (e) { } }
+    var quality = params.get("q") || (crashes >= 1 ? "lo" : "auto");
+    if (crashes >= 1 && !params.get("q")) {
+      setTimeout(function () {
+        toast("Last visit didn't finish loading, so this one runs in low quality. It resets by itself.");
+      }, 2600);
+    }
+
     engine = window.RED360.createEngine({
       canvas: $("#gl"),
       host: $("#stageDash"),
-      quality: params.get("q") || "auto",
+      quality: quality,
       onProgress: function (p, label) {
         var pct = Math.round(p * 100) + "%";
         $("#loadFill").style.transform = "scaleX(" + p.toFixed(3) + ")";
@@ -2890,6 +2914,8 @@
         $("#previewStage").textContent = label;
       },
       onReady: function () {
+        /* alive for 12 s after first paint = a healthy machine */
+        setTimeout(bootHealthy, 12000);
         $("#loader").classList.add("is-done");
         $("#previewLoading").classList.add("is-done");
         setTimeout(function () { $("#loader").style.display = "none"; }, 800);
