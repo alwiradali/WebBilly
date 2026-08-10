@@ -12,7 +12,7 @@
   /* branding is per project — a different end client can have their own
      colours and wordmark without touching a line of code */
   brand: {
-    name: "360RED", mark: "360", markAccent: "RED", sub: "PRODUCTIONS",
+    name: "billy360", mark: "billy", markAccent: "360", sub: "VIRTUAL TOURS",
     tagline: "Interactive Enterprise Virtual Tours",
     logo: null,
     accent: "#FF2D46", accent2: "#FF7A45", bg: "#08080B", ink: "#F2F3F5",

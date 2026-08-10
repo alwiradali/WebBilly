@@ -22,10 +22,10 @@ window.RED360_TOUR = {
      Every colour, name and typeface in the interface resolves from here.
      Nothing is hard-coded. Edit it here, or in Studio → Branding. */
   brand: {
-    name: "360RED",
-    mark: "360",                 // the part before the accent
-    markAccent: "RED",           // the part painted in the accent colour
-    sub: "PRODUCTIONS",
+    name: "billy360",
+    mark: "billy",               // the part before the accent
+    markAccent: "360",           // the part painted in the accent colour
+    sub: "VIRTUAL TOURS",
     tagline: "Interactive Enterprise Virtual Tours",
     logo: null,                  // data URL or path — replaces the wordmark when set
     accent: "#FF2D46",

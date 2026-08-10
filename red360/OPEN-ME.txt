@@ -1,4 +1,4 @@
-360RED PRODUCTIONS — Interactive Virtual Tour Platform
+billy360 — Interactive Virtual Tour Platform
 ======================================================
 One portfolio, as many properties as you like, editing tools behind a
 passcode, and a folder you can drop onto a website that already exists.

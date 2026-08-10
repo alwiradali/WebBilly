@@ -42,7 +42,7 @@ window.RED360_CONFIG = {
     /* fnv1a("red360:" + passcode) — the passcode itself is never stored.
        This one is:  redadmin                                                 */
     hash: "b1908d99",
-    hint: "Ask 360RED for the studio passcode.",
+    hint: "Ask billy360 for the studio passcode.",
     /* let a signed-in device stay signed in for this many days (0 = until the
        tab closes) */
     rememberDays: 14,

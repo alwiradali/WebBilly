@@ -15,7 +15,7 @@
 
 (function () {
 
-  /* the agency's own branding — nothing to do with 360RED's */
+  /* the agency's own branding — nothing to do with billy360's */
   var AGENCY = {
     name: "MERIDIAN", mark: "MERI", markAccent: "DIAN", sub: "RESIDENTIAL",
     tagline: "Virtual viewings, any hour",

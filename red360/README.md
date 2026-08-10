@@ -93,7 +93,7 @@ no nav link, no toolbar button, no `E` shortcut, no palette entries, and the
 admin: {
   enabled: true,
   hash: "b1908d99",     // fnv1a("red360:" + passcode) — the passcode is never stored
-  hint: "Ask 360RED for the studio passcode.",
+  hint: "Ask billy360 for the studio passcode.",
   rememberDays: 14,     // 0 = until the tab closes
   verifyUrl: null       // POST {code} → {ok:true}, checked on your server
 }
