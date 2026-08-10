@@ -166,11 +166,6 @@ footer a:hover{color:var(--teal)}
 .fbot{border-top:1px solid var(--line);padding-top:18px;text-align:center;font-size:.8rem}
 .fbot a{color:var(--teal)}
 
-/* whatsapp float */
-.wafloat{position:fixed;right:16px;bottom:16px;z-index:90;width:54px;height:54px;border-radius:50%;background:#25D366;
-  display:grid;place-items:center;box-shadow:0 12px 30px -10px rgba(37,211,102,.9);transition:transform .3s}
-.wafloat:hover{transform:scale(1.08)}
-.wafloat svg{width:28px;height:28px;fill:#fff}
 
 /* area page bits */
 .areahero{padding:44px 0 40px;position:relative;overflow:hidden;
@@ -239,7 +234,7 @@ footer a:hover{color:var(--teal)}
 
 /* ---------- chemistry molecule background ---------- */
 #molecules{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-body>nav,body>header,body>section,body>footer,body>.wafloat,body>.prog{position:relative;z-index:2}
+body>nav,body>header,body>section,body>footer,body>.prog{position:relative;z-index:2}
 .hero,.areahero{background:transparent!important}
 .hero::before,.areahero::before{content:"";position:absolute;inset:0;z-index:-1;
   background:radial-gradient(120% 90% at 82% 6%,rgba(232,247,255,.86) 0%,transparent 58%),
