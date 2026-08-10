@@ -59,6 +59,22 @@ A NEW PROPERTY:
   status, bedrooms, bathrooms, type, tenure, EPC, your reference, the
   agent's phone and email, and a photo for the card if you have one.
 
+PHOTOS, 360s AND EVERYTHING ELSE PER ROOM:
+  Studio → Rooms:
+    - "Photographs" takes a whole batch at once. Photos are compressed on
+      your machine before they're stored. Captions, reorder, delete inline.
+    - Drop a 2:1 image anywhere and it's OFFERED as the room's 360° —
+      detected by real measurement, never forced.
+    - "How to shoot a 360° panorama" is right there in the panel.
+  Studio → Floor plans: upload a plan image, then CLICK the plan to place
+      each room's pin.
+  Studio → Publish: the TOUR HEALTH score (every warning names the exact
+      room to fix), the QR code for boards and brochures, engagement on
+      this device, embed codes.
+  Everything autosaves. Ctrl+Z undoes, Ctrl+Shift+Z redoes.
+  Viewers get: photo galleries in every room (G opens them), "Book a
+      viewing" enquiries straight to the agent, and the tour itself.
+
 A NEW SPACE in the property you are looking at:
   Studio → Rooms → "Add space".  Name it, pick the floor, pick the type.
   It appears on the dashboard, on the floor plan and in the tour straight

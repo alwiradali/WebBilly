@@ -51,6 +51,25 @@ window.RED360_CONFIG = {
     verifyUrl: null
   },
 
+  /* ── LEADS ────────────────────────────────────────────────────────────────
+     Where "Book a viewing" goes. With an endpoint set, every enquiry is
+     POSTed there as JSON ({property, ref, name, email, phone, date, message}).
+     Without one, the form opens a pre-filled email to the listing's agent —
+     the button only appears when one of the two routes exists.               */
+  leads: {
+    endpoint: null
+  },
+
+  /* ── ANALYTICS ────────────────────────────────────────────────────────────
+     Events (tour opens, room visits, hotspot taps, gallery opens, enquiries)
+     are always recorded to the viewer's own browser so the Studio can show an
+     honest "on this device" picture. To count every visitor, set an endpoint:
+     each event is POSTed there as a small JSON beacon. No endpoint, no
+     network — nothing is sent anywhere by default.                           */
+  analytics: {
+    endpoint: null
+  },
+
   /* ── EMBED ────────────────────────────────────────────────────────────────
      What a tour looks like when it is running inside someone else's page.   */
   embed: {

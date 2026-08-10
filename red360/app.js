@@ -193,9 +193,78 @@
       return false;
     }
   }
+  /* ═══════════════════════════════════════════════════════════════════════
+     AUTOSAVE + HISTORY
+     Nobody should lose work to a forgotten Save. Every change autosaves to
+     this browser a moment after typing stops, and the state *before* each
+     burst of changes goes on an undo stack — Ctrl Z walks back through it,
+     Ctrl Shift Z walks forward. Rapid keystrokes group into one step.
+     ═══════════════════════════════════════════════════════════════════════ */
+  var undoStack = [], redoStack = [], lastSnap = null, lastDirtyAt = 0;
+  var autoT = null, snapT = null;
+
+  function historyReset() {
+    undoStack = []; redoStack = [];
+    lastSnap = JSON.stringify(TOUR);
+    syncHistoryUI();
+  }
+  function syncHistoryUI() {
+    var u = $("#btnUndo"), r = $("#btnRedo");
+    if (u) u.disabled = !undoStack.length;
+    if (r) r.disabled = !redoStack.length;
+  }
   function markDirty() {
     dirty = true;
     markSaved("Unsaved changes", true);
+    var now2 = Date.now();
+    /* a new burst of editing: bank the state we started from */
+    if (lastSnap != null && now2 - lastDirtyAt > 800) {
+      undoStack.push(lastSnap);
+      if (undoStack.length > 60) undoStack.shift();
+      redoStack = [];
+      syncHistoryUI();
+    }
+    lastDirtyAt = now2;
+    clearTimeout(snapT);
+    snapT = setTimeout(function () { lastSnap = JSON.stringify(TOUR); }, 700);
+    /* autosave — quietly, once typing settles */
+    clearTimeout(autoT);
+    autoT = setTimeout(function () {
+      if (!dirty) return;
+      if (saveTour(true)) markSaved("Saved automatically");
+    }, 1400);
+  }
+  function applySnap(json) {
+    try { TOUR = JSON.parse(json); } catch (e) { return; }
+    lastSnap = json;
+    indexRooms();
+    forgetMeta(PROJECT);
+    applyBrand();
+    engine.load(TOUR);
+    buildDash(); buildFilmstrip(); buildPlan();
+    if (SITES_ON) buildSites();
+    renderProjectSwitch();
+    var keep = currentRoom && roomsById[currentRoom.id] ? currentRoom.id : TOUR.rooms[0].id;
+    engine.go(keep, { force: true });
+    if (!roomsById[studioRoomId]) studioRoomId = TOUR.rooms[0].id;
+    selectedHotspot = null;
+    dirty = true;
+    clearTimeout(autoT);
+    autoT = setTimeout(function () { if (dirty) { saveTour(true); markSaved("Saved automatically"); } }, 1000);
+    if (view === "studio") renderStudio();
+    syncHistoryUI();
+  }
+  function undo() {
+    if (!undoStack.length) { toast("Nothing to undo."); return; }
+    redoStack.push(JSON.stringify(TOUR));
+    applySnap(undoStack.pop());
+    toast("Undone.");
+  }
+  function redo() {
+    if (!redoStack.length) { toast("Nothing to redo."); return; }
+    undoStack.push(JSON.stringify(TOUR));
+    applySnap(redoStack.pop());
+    toast("Redone.");
   }
   function markSaved(label, warn) {
     var n = $("#saveState");
@@ -326,6 +395,53 @@
     setView("studio", { force: view === "studio" });
     return true;
   }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     IMAGE INTAKE
+     Every image that enters the product goes through here: decoded, measured,
+     downscaled and recompressed on the visitor's own machine, and checked for
+     what it actually is. A 2:1 frame at panorama resolution is offered as a
+     360° — never forced. All of it is real measurement; nothing is guessed.
+     ═══════════════════════════════════════════════════════════════════════ */
+  function intakeImage(file, opts, cb) {
+    opts = opts || {};
+    var maxEdge = opts.maxEdge || 1920, quality = opts.quality || 0.82;
+    if (!/^image\//.test(file.type || "") && !/\.(jpe?g|png|webp|avif)$/i.test(file.name || "")) {
+      cb({ error: "\u201C" + (file.name || "That file") + "\u201D isn't an image. JPEG, PNG or WebP." });
+      return;
+    }
+    var fr = new FileReader();
+    fr.onerror = function () { cb({ error: "That file couldn't be read — it may be corrupted." }); };
+    fr.onload = function () {
+      var im = new Image();
+      im.onerror = function () { cb({ error: "\u201C" + (file.name || "That image") + "\u201D couldn't be decoded — it may be corrupted." }); };
+      im.onload = function () {
+        var w = im.width, h = im.height, ratio = w / h;
+        var isPano = ratio > 1.9 && ratio < 2.1 && w >= 1024;
+        var edge = isPano ? Math.max(opts.panoEdge || 4096, maxEdge) : maxEdge;
+        var scale = Math.min(1, edge / Math.max(w, h));
+        var ow = Math.round(w * scale), oh = Math.round(h * scale);
+        var c = document.createElement("canvas");
+        c.width = ow; c.height = oh;
+        c.getContext("2d").drawImage(im, 0, 0, ow, oh);
+        var src;
+        try { src = c.toDataURL("image/jpeg", quality); }
+        catch (e) { cb({ error: "That image couldn't be processed." }); return; }
+        var notes = [];
+        if (isPano && w < 4096) notes.push("On the low side for a 360° — 4096\u00D72048 or better looks sharpest.");
+        if (!isPano && w < 1200 && h < 1200) notes.push("Low resolution — it will look soft on large screens.");
+        cb({
+          src: src, w: w, h: h, outW: ow, outH: oh,
+          isPano: isPano, name: file.name || "",
+          savedKB: Math.max(0, Math.round((file.size - src.length * 0.75) / 1024)),
+          notes: notes
+        });
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  function photosOf(room) { return (room && room.photos) || []; }
 
   function indexRooms() {
     roomsById = {};
@@ -684,9 +800,24 @@
       meta.appendChild(d);
     });
 
+    var fc = $("#heroFeatures");
+    if (fc) {
+      fc.innerHTML = "";
+      var feats = (p.features || []).filter(Boolean).slice(0, 8);
+      fc.hidden = !feats.length;
+      feats.forEach(function (f) { fc.appendChild(el("span", "chip", f)); });
+    }
+    var lb = $("#btnLead");
+    if (lb) lb.hidden = !leadRoute();
+
     var sg = $("#statGrid");
     sg.innerHTML = "";
-    (p.facts || []).forEach(function (f) {
+    var facts = (p.facts || []).slice();
+    var have = {};
+    facts.forEach(function (f) { have[String(f[0]).toLowerCase()] = 1; });
+    if (p.councilTax && !have["council tax"]) facts.push(["Council tax", "Band " + p.councilTax]);
+    if (p.availability && !have["availability"]) facts.push(["Availability", p.availability]);
+    facts.forEach(function (f) {
       var d = el("div");
       d.appendChild(el("b", null, f[1]));
       d.appendChild(el("span", null, f[0]));
@@ -816,8 +947,8 @@
     $("#planFloorName").textContent = floorOf(id).name;
   }
 
-  var HS_LABEL = { nav: "Walk through", info: "Information", image: "Image", video: "Video", doc: "Document", link: "External link" };
-  var HS_ICON = { nav: "arrow", info: "info", image: "image", video: "play", doc: "doc", link: "link", sparkle: "sparkle" };
+  var HS_LABEL = { nav: "Walk through", info: "Information", image: "Image", video: "Video", doc: "Document", link: "External link", cta: "Book a viewing" };
+  var HS_ICON = { nav: "arrow", info: "info", image: "image", video: "play", doc: "doc", link: "link", sparkle: "sparkle", cta: "check" };
 
   function setRoom(room, prev) {
     currentRoom = room;
@@ -833,6 +964,31 @@
       chips.appendChild(el("span", "chip" + (i === 0 ? " chip--accent" : ""), c));
     });
     $("#sideDesc").textContent = room.description || "";
+
+    /* the room's photographs, right where a viewer is already reading */
+    var sp = $("#sidePhotos");
+    if (sp) {
+      sp.innerHTML = "";
+      var pics = photosOf(room);
+      if (pics.length) {
+        var lab = el("p", "side-label", "Photographs \u00B7 " + pics.length);
+        sp.appendChild(lab);
+        var strip = el("div", "photostrip");
+        pics.forEach(function (photo, i) {
+          var b = el("button", "photostrip-item");
+          var im = el("img");
+          im.src = photo.src; im.alt = photo.caption || room.name + " photo " + (i + 1);
+          im.loading = "lazy";
+          b.appendChild(im);
+          b.onclick = function () { openGallery(room, i); };
+          strip.appendChild(b);
+        });
+        sp.appendChild(strip);
+      }
+    }
+    var gbtn = $("#btnGallery"), dph = $("#dockPhotos");
+    if (gbtn) gbtn.hidden = !photosOf(room).length;
+    if (dph) dph.hidden = !photosOf(room).length;
 
     var stats = $("#sideStats");
     stats.innerHTML = "";
@@ -921,6 +1077,8 @@
 
   function activateHotspot(h, fromPanel) {
     if (h.type === "nav" && roomsById[h.to]) { engine.go(h.to); return; }
+    track("hotspot", { room: currentRoom ? currentRoom.id : "", kind: h.type });
+    if (h.type === "cta") { openLeadForm("hotspot"); return; }
     if (fromPanel && h.yaw != null) engine.look(h.yaw, h.pitch);
     openSheet(h);
   }
@@ -1032,8 +1190,227 @@
     if (!paletteOpen) $("#scrim").classList.remove("is-on");
     $("#sheetBody").innerHTML = "";
     sheetOpen = false;
+    gallery.open = false;
     engine && engine.inputs(view !== "dash" || !coarse);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     EVENTS
+     Every meaningful interaction is recorded to this browser's storage (a
+     bounded ring, oldest dropped first). That gives the Studio an honest
+     "on this device" picture. Cross-visitor analytics need a server: set
+     analytics.endpoint in config.js and every event is also POSTed there
+     as JSON via sendBeacon — nothing is invented in between.
+     ═══════════════════════════════════════════════════════════════════════ */
+  function track(ev, data) {
+    var rec = { t: Date.now(), ev: ev, site: PROJECT };
+    if (data) for (var k in data) rec[k] = data[k];
+    try {
+      var key = "red360:events:" + PROJECT;
+      var log = JSON.parse(localStorage.getItem(key) || "[]");
+      log.push(rec);
+      if (log.length > 400) log = log.slice(log.length - 400);
+      localStorage.setItem(key, JSON.stringify(log));
+    } catch (e) { }
+    var a = CFG.analytics;
+    if (a && a.endpoint && navigator.sendBeacon) {
+      try { navigator.sendBeacon(a.endpoint, JSON.stringify(rec)); } catch (e) { }
+    }
+  }
+  function deviceStats() {
+    var log = [];
+    try { log = JSON.parse(localStorage.getItem("red360:events:" + PROJECT) || "[]"); } catch (e) { }
+    var byRoom = {}, opens = 0, hs = 0, cta = 0, gal = 0;
+    log.forEach(function (r) {
+      if (r.ev === "open") opens++;
+      else if (r.ev === "room") byRoom[r.room] = (byRoom[r.room] || 0) + 1;
+      else if (r.ev === "hotspot") hs++;
+      else if (r.ev === "cta") cta++;
+      else if (r.ev === "gallery") gal++;
+    });
+    var top = Object.keys(byRoom).sort(function (a, b) { return byRoom[b] - byRoom[a]; }).slice(0, 3)
+      .map(function (id) { return [(roomsById[id] && roomsById[id].name) || id, byRoom[id]]; });
+    return { total: log.length, opens: opens, topRooms: top, hotspots: hs, cta: cta, gallery: gal };
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     LEAD CAPTURE — "Book a viewing"
+     Real submission or nothing: POSTs to leads.endpoint when the deployment
+     has one, otherwise opens a pre-filled email to the listing's agent. The
+     button only exists when one of those two routes exists.
+     ═══════════════════════════════════════════════════════════════════════ */
+  function leadRoute() {
+    if (CFG.leads && CFG.leads.endpoint) return "endpoint";
+    var ag = TOUR.project && TOUR.project.agent;
+    if (ag && ag.email) return "email";
+    return null;
+  }
+  function openLeadForm(source) {
+    var route = leadRoute();
+    if (!route) { toast("No contact route is configured for this property."); return; }
+    lastFocus = document.activeElement;
+    var p = TOUR.project || {}, ag = p.agent || {};
+    $("#sheetKind").textContent = ag.name || "Enquiry";
+    $("#sheetTitle").textContent = "Book a viewing";
+    var body = $("#sheetBody"), foot = $("#sheetFoot");
+    body.innerHTML = ""; foot.innerHTML = "";
+    body.appendChild(el("p", "t-body", "About " + (p.name || "this property") +
+      (p.location ? ", " + p.location : "") + ". " +
+      (route === "email" ? "This opens an email to " + (ag.name || "the agent") + " with your details filled in." :
+        "Your details go straight to " + (ag.name || "the agency") + ".")));
+    var g = el("div", "form-grid");
+    g.style.marginTop = "14px";
+    function fld(label, type, ph) {
+      var i = el("input", "input");
+      i.type = type; if (ph) i.placeholder = ph;
+      g.appendChild(field(label, i));
+      return i;
+    }
+    var nm = fld("Your name", "text", "Full name");
+    var em = fld("Email", "email", "you@example.com");
+    var phn = fld("Phone", "tel", "Optional");
+    var when = fld("Preferred viewing date", "date", "");
+    var msg = el("textarea", "textarea");
+    msg.placeholder = "Anything the agent should know\u2026";
+    g.appendChild(field("Message", msg));
+    body.appendChild(g);
+    var err = el("p", "lock-err");
+    err.hidden = true;
+    body.appendChild(err);
+
+    var send = el("button", "btn btn--primary", route === "email" ? "Open the email" : "Send enquiry");
+    send.id = "btnLeadSend";
+    send.onclick = function () {
+      if (!nm.value.trim() || !/.+@.+\..+/.test(em.value)) {
+        err.textContent = "A name and a valid email are needed so the agent can reply.";
+        err.hidden = false;
+        return;
+      }
+      err.hidden = true;
+      var payload = {
+        property: p.name || PROJECT, ref: p.ref || "", site: PROJECT,
+        name: nm.value.trim(), email: em.value.trim(), phone: phn.value.trim(),
+        date: when.value, message: msg.value.trim(),
+        room: currentRoom ? currentRoom.id : "", source: source || "button", url: location.href
+      };
+      track("cta", { room: payload.room });
+      if (route === "endpoint") {
+        send.disabled = true; send.textContent = "Sending\u2026";
+        fetch(CFG.leads.endpoint, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(function (r) {
+          if (!r.ok) throw new Error("bad status");
+          closeSheet();
+          toast("Sent — " + (ag.name || "the agency") + " will be in touch.");
+        })["catch"](function () {
+          send.disabled = false; send.textContent = "Send enquiry";
+          err.textContent = "That didn't send. Check your connection and try again" +
+            (ag.email ? ", or email " + ag.email + " directly." : ".");
+          err.hidden = false;
+        });
+      } else {
+        var subject = "Viewing enquiry \u00B7 " + (p.name || "") + (p.ref ? " \u00B7 " + p.ref : "");
+        var lines = ["Property: " + (p.name || "") + (p.location ? ", " + p.location : ""),
+          "Name: " + payload.name, "Email: " + payload.email];
+        if (payload.phone) lines.push("Phone: " + payload.phone);
+        if (payload.date) lines.push("Preferred date: " + payload.date);
+        if (payload.message) lines.push("", payload.message);
+        location.href = "mailto:" + ag.email + "?subject=" + encodeURIComponent(subject) +
+          "&body=" + encodeURIComponent(lines.join("\n"));
+        closeSheet();
+      }
+    };
+    foot.appendChild(send);
+    var back = el("button", "btn", "Cancel");
+    back.onclick = closeSheet;
+    foot.appendChild(back);
+    $("#sheet").classList.add("is-on");
+    $("#scrim").classList.add("is-on");
+    sheetOpen = true;
+    engine && engine.inputs(false);
+    setTimeout(function () { nm.focus(); }, 80);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     PHOTO GALLERY — full-screen, swipeable, keyboard-driven
+     ═══════════════════════════════════════════════════════════════════════ */
+  var gallery = { open: false, room: null, i: 0 };
+
+  function openGallery(room, i) {
+    room = room || currentRoom;
+    var pics = photosOf(room);
+    if (!pics.length) { toast("No photographs in " + (room ? room.name : "this room") + " yet."); return; }
+    gallery.open = true; gallery.room = room; gallery.i = Math.max(0, Math.min(i || 0, pics.length - 1));
+    track("gallery", { room: room.id });
+    lastFocus = document.activeElement;
+    $("#sheetKind").textContent = "Photographs";
+    renderGallery();
+    $("#sheet").classList.add("is-on");
+    $("#scrim").classList.add("is-on");
+    sheetOpen = true;
+    engine && engine.inputs(false);
+    setTimeout(function () { $("#btnSheetClose").focus(); }, 60);
+  }
+  function renderGallery() {
+    var room = gallery.room, pics = photosOf(room), i = gallery.i, photo = pics[i];
+    if (!photo) return;
+    $("#sheetTitle").textContent = room.name + "  \u00B7  " + (i + 1) + " / " + pics.length;
+    var body = $("#sheetBody"), foot = $("#sheetFoot");
+    body.innerHTML = ""; foot.innerHTML = "";
+
+    var main = el("div", "gal-main");
+    var img = el("img");
+    img.src = photo.src;
+    img.alt = photo.caption || room.name + " photograph " + (i + 1);
+    main.appendChild(img);
+    if (pics.length > 1) {
+      var mk = function (ic, cls, d) {
+        var b = el("button", "icon-btn gal-nav " + cls);
+        b.appendChild(icon(ic));
+        b.setAttribute("aria-label", d > 0 ? "Next photo" : "Previous photo");
+        b.onclick = function (e) { e.stopPropagation(); galStep(d); };
+        return b;
+      };
+      main.appendChild(mk("back", "gal-nav--prev", -1));
+      main.appendChild(mk("arrow", "gal-nav--next", 1));
+    }
+    /* swipe */
+    var sx = null;
+    main.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    main.addEventListener("touchend", function (e) {
+      if (sx == null) return;
+      var dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 44) galStep(dx < 0 ? 1 : -1);
+      sx = null;
+    }, { passive: true });
+    body.appendChild(main);
+    if (photo.caption) body.appendChild(el("p", "gal-cap", photo.caption));
+
+    if (pics.length > 1) {
+      var thumbs = el("div", "gal-thumbs");
+      pics.forEach(function (t, ti) {
+        var b = el("button", "gal-thumb" + (ti === i ? " is-on" : ""));
+        var im = el("img");
+        im.src = t.src; im.alt = ""; im.loading = "lazy";
+        b.appendChild(im);
+        b.onclick = function () { gallery.i = ti; renderGallery(); };
+        thumbs.appendChild(b);
+      });
+      body.appendChild(thumbs);
+      var on = thumbs.children[i];
+      if (on && on.scrollIntoView) setTimeout(function () { on.scrollIntoView({ block: "nearest", inline: "center" }); }, 40);
+    }
+    var back = el("button", "btn", "Close");
+    back.onclick = closeSheet;
+    foot.appendChild(back);
+  }
+  function galStep(d) {
+    var n = photosOf(gallery.room).length;
+    if (!n) return;
+    gallery.i = (gallery.i + d + n) % n;
+    renderGallery();
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -1478,15 +1855,21 @@
     };
     file.onchange = function () { if (file.files[0]) readPano(file.files[0]); };
     function readPano(f) {
-      var fr = new FileReader();
-      fr.onload = function () {
-        room.pano = fr.result;
-        engine.setPano(room.id, fr.result);
+      dtxt.textContent = "Checking the image\u2026";
+      intakeImage(f, { maxEdge: 4096, panoEdge: 4096, quality: 0.86 }, function (r) {
+        if (r.error) { dtxt.textContent = "Couldn't use that file."; toast(r.error); return; }
+        if (!r.isPano && !confirm(
+          "This image is " + r.w + "\u00D7" + r.h + " — not the 2:1 shape of an equirectangular 360\u00B0 " +
+          "panorama, so it will look stretched in the viewer.\n\nUse it anyway?")) {
+          dtxt.textContent = room.pano ? "Capture attached — click to replace" : "Drop an equirectangular capture here, or click to choose.";
+          return;
+        }
+        room.pano = r.src;
+        engine.setPano(room.id, r.src);
         dtxt.textContent = "Capture attached — click to replace";
         markDirty();
-        toast("Panorama attached to " + room.name + ".");
-      };
-      fr.readAsDataURL(f);
+        toast(r.notes.length ? r.notes[0] : "Panorama attached to " + room.name + " — looks right for a 360\u00B0.");
+      });
     }
     panoBox.appendChild(drop);
     panoBox.appendChild(file);
@@ -1503,6 +1886,145 @@
     }
     grid.appendChild(panoBox);
     main.appendChild(grid);
+
+    /* ── photographs — the ordinary photos of this room ──────────────────── */
+    var ph = el("div", "studio-panel card");
+    ph.style.marginTop = "16px";
+    var phHead = el("div");
+    phHead.style.cssText = "display:flex;align-items:baseline;gap:10px;margin-bottom:10px";
+    phHead.appendChild(el("h4", null, "Photographs"));
+    phHead.appendChild(el("span", "t-mono", photosOf(room).length + " in this room"));
+    ph.appendChild(phHead);
+    ph.appendChild(el("p", "t-body", "Standard photography — as many per room as you like. They're compressed " +
+      "on your machine before they're stored, and they appear in the room's gallery in the tour."));
+
+    var pdrop = el("div", "drop");
+    pdrop.id = "photoDrop";
+    pdrop.appendChild(icon("upload"));
+    pdrop.appendChild(el("p", null, "Drop photos here — several at once is fine — or click to choose"));
+    var pfile = el("input");
+    pfile.id = "photoFile";
+    pfile.type = "file"; pfile.accept = "image/*"; pfile.multiple = true; pfile.style.display = "none";
+    pdrop.onclick = function () { pfile.click(); };
+    pdrop.ondragover = function (e) { e.preventDefault(); pdrop.classList.add("is-over"); };
+    pdrop.ondragleave = function () { pdrop.classList.remove("is-over"); };
+    pdrop.ondrop = function (e) {
+      e.preventDefault(); pdrop.classList.remove("is-over");
+      addPhotos(Array.prototype.slice.call(e.dataTransfer.files));
+    };
+    pfile.onchange = function () { addPhotos(Array.prototype.slice.call(pfile.files)); pfile.value = ""; };
+
+    function addPhotos(files) {
+      files = files.filter(Boolean);
+      if (!files.length) return;
+      var left = files.length, added = 0, panosOffered = 0;
+      toast(files.length === 1 ? "Processing the photo\u2026" : "Processing " + files.length + " photos\u2026");
+      files.forEach(function (f) {
+        intakeImage(f, {}, function (r) {
+          left--;
+          if (r.error) { toast(r.error); if (!left) done(); return; }
+          if (r.isPano && !room.pano && !panosOffered) {
+            panosOffered++;
+            if (confirm("\u201C" + (r.name || "This image") + "\u201D looks like a 360\u00B0 panorama (" +
+              r.w + "\u00D7" + r.h + ").\n\nUse it as this room's 360\u00B0 image instead of a photo?")) {
+              room.pano = r.src;
+              engine.setPano(room.id, r.src);
+              markDirty();
+              if (!left) done(); return;
+            }
+          }
+          room.photos = room.photos || [];
+          room.photos.push({ src: r.src, caption: "", w: r.w, h: r.h });
+          added++;
+          if (r.notes.length) toast(r.notes[0]);
+          if (!left) done();
+        });
+      });
+      function done() {
+        markDirty();
+        if (added) toast(added === 1 ? "Photo added." : added + " photos added.");
+        renderStudio();
+      }
+    }
+
+    ph.appendChild(pdrop);
+    ph.appendChild(pfile);
+
+    if (photosOf(room).length) {
+      var pgrid = el("div", "photo-grid");
+      pgrid.id = "photoGrid";
+      photosOf(room).forEach(function (photo, i) {
+        var cell = el("div", "photo-cell");
+        cell.setAttribute("draggable", "true");
+        cell.setAttribute("data-pi", i);
+        var img = el("img");
+        img.src = photo.src; img.alt = photo.caption || room.name + " photo " + (i + 1);
+        img.loading = "lazy";
+        cell.appendChild(img);
+        var cap = el("input", "photo-cap");
+        cap.value = photo.caption || "";
+        cap.placeholder = "Caption\u2026";
+        cap.oninput = function () { photo.caption = cap.value; markDirty(); };
+        cell.appendChild(cap);
+        var acts = el("div", "photo-acts");
+        var mkBtn = function (ic, title, fn) {
+          var b = el("button", "icon-btn icon-btn--sm");
+          b.appendChild(icon(ic)); b.title = title;
+          b.onclick = function (e) { e.stopPropagation(); fn(); };
+          return b;
+        };
+        acts.appendChild(mkBtn("prev", "Move earlier", function () {
+          if (i === 0) return;
+          room.photos.splice(i - 1, 0, room.photos.splice(i, 1)[0]);
+          markDirty(); renderStudio();
+        }));
+        acts.appendChild(mkBtn("next", "Move later", function () {
+          if (i >= room.photos.length - 1) return;
+          room.photos.splice(i + 1, 0, room.photos.splice(i, 1)[0]);
+          markDirty(); renderStudio();
+        }));
+        acts.appendChild(mkBtn("trash", "Remove", function () {
+          room.photos.splice(i, 1);
+          markDirty(); renderStudio();
+        }));
+        cell.appendChild(acts);
+        /* drag to reorder */
+        cell.ondragstart = function (e) { e.dataTransfer.setData("text/plain", String(i)); cell.classList.add("is-drag"); };
+        cell.ondragend = function () { cell.classList.remove("is-drag"); };
+        cell.ondragover = function (e) { e.preventDefault(); cell.classList.add("is-over"); };
+        cell.ondragleave = function () { cell.classList.remove("is-over"); };
+        cell.ondrop = function (e) {
+          e.preventDefault(); cell.classList.remove("is-over");
+          var from = parseInt(e.dataTransfer.getData("text/plain"), 10);
+          if (isNaN(from) || from === i) return;
+          room.photos.splice(i, 0, room.photos.splice(from, 1)[0]);
+          markDirty(); renderStudio();
+        };
+        pgrid.appendChild(cell);
+      });
+      ph.appendChild(pgrid);
+    }
+    main.appendChild(ph);
+
+    /* ── how to shoot it — plain-English capture guidance ─────────────────── */
+    var guide = el("details", "guide card");
+    var gsum = el("summary", null, "\uD83D\uDCF7  How to shoot a 360\u00B0 panorama — the short guide");
+    guide.appendChild(gsum);
+    var gbody = el("div", "guide-body");
+    gbody.innerHTML =
+      "<p><b>Where to stand.</b> The centre of the room, or just off-centre towards the door. " +
+      "Keep at least a metre from walls and furniture — anything very close smears.</p>" +
+      "<p><b>Camera height.</b> About 1.5\u20131.6\u00A0m — chest to eye height. That's the height " +
+      "this viewer assumes, so rooms feel natural.</p>" +
+      "<p><b>Direction.</b> Start facing the room's best feature — that becomes the opening view. " +
+      "You can change it later under \u201COpening view\u201D.</p>" +
+      "<p><b>Format.</b> Export equirectangular — one seamless frame exactly twice as wide as tall " +
+      "(4096\u00D72048 or better). Insta360, Ricoh Theta and Matterport all export this.</p>" +
+      "<p><b>Avoid:</b> people in frame \u00B7 your own reflection in mirrors \u00B7 harsh direct " +
+      "sunlight blowing out windows \u00B7 the tripod shadow \u00B7 moving the camera mid-capture " +
+      "\u00B7 dim rooms (turn every light on).</p>";
+    guide.appendChild(gbody);
+    main.appendChild(guide);
 
     /* opening view */
     var vbox = el("div", "studio-panel card");
@@ -1561,6 +2083,7 @@
     selectedHotspot = null;
     studioRoomId = null;
     dashFloor = "all";        // the old floor id may not exist in this building
+    historyReset();
     forgetMeta();
     indexRooms();
     applyBrand();
@@ -1759,7 +2282,7 @@
     list.appendChild(el("h4", null, room.name + " · " + (room.hotspots || []).length + " hotspots"));
     (room.hotspots || []).forEach(function (h, i) {
       var row = el("div", "hs-edit" + (selectedHotspot === h ? " is-sel" : ""));
-      row.appendChild(select([["nav", "Walk to"], ["info", "Info"], ["image", "Image"], ["video", "Video"], ["doc", "Document"], ["link", "Link"]],
+      row.appendChild(select([["nav", "Walk to"], ["info", "Info"], ["image", "Image"], ["video", "Video"], ["doc", "Document"], ["link", "Link"], ["cta", "Book a viewing"]],
         h.type, function (v) { h.type = v; renderStudio(); refreshHotspotsOnly(room); }));
       row.appendChild(input(h.label, function (v) { h.label = v; refreshHotspotsOnly(room); }, "Label"));
       var acts = el("div");
@@ -1806,7 +2329,7 @@
       } else {
         g.appendChild(field("Body copy", textarea(h.body, function (v) { h.body = v; })));
         if (h.type === "link") g.appendChild(field("URL", input(h.href, function (v) { h.href = v; }, "https://…")));
-        else if (h.type !== "info") {
+        else if (h.type !== "info" && h.type !== "cta") {
           g.appendChild(field(h.type === "video" ? "Video URL (MP4, YouTube or Vimeo)" : h.type === "doc" ? "PDF URL" : "Image URL",
             input(h.src === "@equirect" ? "" : h.src, function (v) { h.src = v || null; }, h.type === "video" ? "https://youtu.be/…" : "https://…")));
           var upl = el("div", "field");
@@ -1890,10 +2413,44 @@
       r.appendChild(field("Short label", input(f.short, function (v) { f.short = v; buildPlan(); })));
       g.appendChild(r);
 
-      var prev = el("div");
-      prev.style.cssText = "border:1px solid var(--line);border-radius:var(--r);padding:12px;background:rgba(0,0,0,.25)";
-      prev.innerHTML = '<svg viewBox="0 0 120 80" style="width:100%;height:auto"><g class="fp-geo">' + (f.plan || "") + "</g></svg>";
-      g.appendChild(field("Current plan", prev));
+      /* the live preview doubles as the placement surface: pick a room below,
+         click the plan, and its pin lands exactly there */
+      var floorRooms = TOUR.rooms.filter(function (r) { return r.floor === f.id; });
+      var placing2 = floorRooms.length ? floorRooms[0].id : null;
+      var prev = el("div", "plan-editor");
+      function drawPrev() {
+        var pinsSvg = floorRooms.map(function (r) {
+          var x = r.plan ? r.plan[0] : 60, y = r.plan ? r.plan[1] : 40;
+          var on = r.id === placing2;
+          return '<g transform="translate(' + x + "," + y + ')">' +
+            '<circle r="' + (on ? 3.4 : 2.6) + '" class="pe-dot' + (on ? " is-on" : "") + '"/>' +
+            '<text y="6.4" class="pe-lbl">' + esc(r.short || r.name) + "</text></g>";
+        }).join("");
+        prev.innerHTML = '<svg viewBox="0 0 120 80" style="width:100%;height:auto;display:block">' +
+          '<g class="fp-geo">' + (f.plan || "") + "</g><g>" + pinsSvg + "</g></svg>";
+      }
+      drawPrev();
+      prev.onclick = function (e) {
+        if (!placing2) return;
+        var svg = prev.querySelector("svg");
+        var box = svg.getBoundingClientRect();
+        /* viewBox 120×80 with meet scaling — map the click through the letterbox */
+        var sc = Math.min(box.width / 120, box.height / 80);
+        var ox = (box.width - 120 * sc) / 2, oy = (box.height - 80 * sc) / 2;
+        var x = (e.clientX - box.left - ox) / sc, y = (e.clientY - box.top - oy) / sc;
+        if (x < 0 || y < 0 || x > 120 || y > 80) return;
+        var r = roomsById[placing2];
+        r.plan = [+x.toFixed(1), +y.toFixed(1)];
+        markDirty(); buildPlan(); drawPrev();
+        toast(r.name + " placed.");
+      };
+      g.appendChild(field("Plan — click to place the selected room", prev));
+      if (floorRooms.length) {
+        var pick = select(floorRooms.map(function (r) { return [r.id, r.name]; }), placing2,
+          function (v) { placing2 = v; drawPrev(); });
+        pick.setAttribute("data-place", f.id);
+        g.appendChild(field("Room to place", pick));
+      }
 
       var drop = el("div", "drop");
       drop.appendChild(icon("upload"));
@@ -2071,6 +2628,20 @@
     r5.appendChild(field("Your reference", input(p.ref, function (v) { p.ref = v; afterSiteEdit(); }, "MER-1042")));
     g.appendChild(r5);
 
+    var r5b = el("div", "form-row");
+    r5b.appendChild(field("Council tax band", input(p.councilTax, function (v) { p.councilTax = v; afterSiteEdit(); }, "D")));
+    r5b.appendChild(field("Availability", input(p.availability, function (v) { p.availability = v; afterSiteEdit(); }, "Available now \u00B7 Chain free")));
+    g.appendChild(r5b);
+
+    var featBox = el("textarea", "textarea");
+    featBox.value = (p.features || []).join("\n");
+    featBox.placeholder = "South-facing garden\nRecently rewired\nOff-street parking";
+    featBox.oninput = function () {
+      p.features = featBox.value.split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+      afterSiteEdit();
+    };
+    g.appendChild(field("Key features — one per line, shown as chips on the listing", featBox));
+
     g.appendChild(field("Summary", textarea(p.summary, function (v) { p.summary = v; afterSiteEdit(); })));
 
     /* card artwork: a photo if they have one, otherwise the floor plan */
@@ -2148,7 +2719,13 @@
         m.shipped ? null : "created here", m.project.hidden ? "draft" : null
       ].filter(Boolean).join(" · ")));
       b.appendChild(dot); b.appendChild(tx);
-      if (id === PROJECT) b.appendChild(el("span", "chip chip--accent", "Open"));
+      if (id === PROJECT) {
+        var hl = tourHealth();
+        var hc = el("span", "chip" + (hl.score >= 90 ? " chip--accent" : ""), hl.score + "%");
+        hc.title = "Tour health";
+        b.appendChild(hc);
+        b.appendChild(el("span", "chip chip--accent", "Open"));
+      }
       b.onclick = function () { openSite(id, { view: "studio" }); };
       rows.appendChild(b);
     });
@@ -2398,12 +2975,115 @@
     body.appendChild(cols);
   }
 
+  /* ═══════════════════════════════════════════════════════════════════════
+     TOUR HEALTH
+     Every check reads the actual tour data. The score is the fraction of
+     weighted checks that pass — no invented numbers, and every warning names
+     the exact room or field that needs attention.
+     ═══════════════════════════════════════════════════════════════════════ */
+  function tourHealth() {
+    var p = TOUR.project || {}, checks = [];
+    function add(ok, w, label, tab) { checks.push({ ok: !!ok, w: w, label: label, tab: tab || "rooms" }); }
+
+    add(p.name && p.location, 2, p.name && p.location ? "Property name and address set"
+      : "Give the property its name and address", "sites");
+    add((p.summary || "").length >= 40, 1, (p.summary || "").length >= 40 ? "Summary written"
+      : "Write a short summary — two or three sentences sell the listing", "sites");
+    if (p.beds != null || p.price) {
+      add(p.price, 1, p.price ? "Price set" : "Add the price", "sites");
+      add(p.beds, 1, p.beds ? "Bedrooms and bathrooms filled in" : "Fill in bedrooms and bathrooms", "sites");
+    }
+
+    var noVisual = TOUR.rooms.filter(function (r) { return !r.pano && !photosOf(r).length && !r.space; });
+    add(!noVisual.length, 3, noVisual.length
+      ? noVisual.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (noVisual.length > 3 ? " +" + (noVisual.length - 3) : "") + " ha" + (noVisual.length === 1 ? "s" : "ve") + " no imagery at all"
+      : "Every room has imagery");
+
+    var noPano = TOUR.rooms.filter(function (r) { return !r.pano && !r.space; });
+    var placeholders = TOUR.rooms.filter(function (r) { return !r.pano && r.space; });
+    add(!placeholders.length, 2, placeholders.length
+      ? placeholders.length + " room" + (placeholders.length === 1 ? " is" : "s are") + " still the placeholder — add real 360\u00B0 captures ("
+        + placeholders.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (placeholders.length > 3 ? "\u2026" : "") + ")"
+      : "Every room has a real 360\u00B0 capture");
+
+    var thinPhotos = TOUR.rooms.filter(function (r) { return photosOf(r).length === 0; });
+    add(!thinPhotos.length, 1, thinPhotos.length
+      ? thinPhotos.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (thinPhotos.length > 3 ? " +" + (thinPhotos.length - 3) : "") + " ha" + (thinPhotos.length === 1 ? "s" : "ve") + " no photographs yet"
+      : "Every room has photographs");
+
+    var noDesc = TOUR.rooms.filter(function (r) { return !(r.description || "").trim(); });
+    add(!noDesc.length, 1, noDesc.length
+      ? noDesc.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (noDesc.length > 3 ? " +" + (noDesc.length - 3) : "") + " need" + (noDesc.length === 1 ? "s" : "") + " a description"
+      : "Every room is described");
+
+    /* can a visitor actually walk everywhere? breadth-first over nav hotspots */
+    var reach = {}, q = [TOUR.rooms[0].id];
+    reach[TOUR.rooms[0].id] = true;
+    while (q.length) {
+      var r0 = roomsById[q.shift()];
+      (r0 && r0.hotspots || []).forEach(function (h) {
+        if (h.type === "nav" && roomsById[h.to] && !reach[h.to]) { reach[h.to] = true; q.push(h.to); }
+      });
+    }
+    var cut = TOUR.rooms.filter(function (r) { return !reach[r.id]; });
+    add(!cut.length, 2, cut.length
+      ? cut.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (cut.length > 3 ? " +" + (cut.length - 3) : "") + " can't be walked to — add a doorway hotspot"
+      : "Every room can be walked to from the start", "hotspots");
+
+    var unplaced = TOUR.rooms.filter(function (r) { return !r.plan; });
+    add(!unplaced.length, 1, unplaced.length
+      ? unplaced.length + " room" + (unplaced.length === 1 ? "" : "s") + " not yet placed on the floor plan"
+      : "Every room is placed on the floor plan", "plans");
+
+    add(leadRoute(), 1, leadRoute() ? "Viewers can book a viewing"
+      : "Add the agent's email (or a leads endpoint) so viewers can enquire", "sites");
+
+    var wsum = 0, wok = 0;
+    checks.forEach(function (c) { wsum += c.w; if (c.ok) wok += c.w; });
+    return { score: wsum ? Math.round(100 * wok / wsum) : 100, checks: checks };
+  }
+
+  function healthCard() {
+    var h = tourHealth();
+    var card = el("div", "studio-panel card health");
+    var ringWrap = el("div", "health-ring");
+    var R = 26, C = 2 * Math.PI * R;
+    ringWrap.innerHTML =
+      '<svg viewBox="0 0 64 64" aria-hidden="true">' +
+      '<circle cx="32" cy="32" r="' + R + '" class="hr-track"/>' +
+      '<circle cx="32" cy="32" r="' + R + '" class="hr-fill" stroke-dasharray="' + C + '" ' +
+      'stroke-dashoffset="' + (C * (1 - h.score / 100)).toFixed(1) + '" transform="rotate(-90 32 32)"/>' +
+      '</svg><b>' + h.score + '</b>';
+    var side = el("div", "health-copy");
+    side.appendChild(el("h4", null, "Tour health"));
+    side.appendChild(el("p", "t-body",
+      h.score >= 90 ? "Excellent — this listing is ready to show."
+        : h.score >= 70 ? "Good — a few things would lift it further."
+          : "Needs work before it represents the property well."));
+    var head = el("div", "health-head");
+    head.appendChild(ringWrap); head.appendChild(side);
+    card.appendChild(head);
+    var list = el("div", "health-list");
+    h.checks.forEach(function (c) {
+      var row = el("button", "health-row " + (c.ok ? "is-ok" : "is-warn"));
+      row.appendChild(el("i", null, c.ok ? "\u2713" : "\u26A0"));
+      row.appendChild(el("span", null, c.label));
+      row.onclick = function () { studioTab = c.tab; renderStudio(); };
+      list.appendChild(row);
+    });
+    card.appendChild(list);
+    return card;
+  }
+
   /* ── Studio · publish ──────────────────────────────────────────────────── */
   function studioPublish(body) {
     var cols = el("div", "studio-cols");
     var main = el("div");
 
+    main.appendChild(healthCard());
+
     var save = el("div", "studio-panel card");
+    save.style.marginTop = "16px";
     save.appendChild(el("h4", null, "Publish"));
     save.appendChild(el("p", "t-body", "Publishing writes the tour to this browser so the change is live for you immediately. " +
       "Export the file to move it onto the server, into a repository, or across to another machine."));
@@ -2548,6 +3228,69 @@
     embed.appendChild(cp);
     main.appendChild(embed);
 
+    var an = el("div", "studio-panel card");
+    an.style.marginTop = "16px";
+    an.appendChild(el("h4", null, "Engagement \u00B7 on this device"));
+    var ds = deviceStats();
+    if (ds.total) {
+      var dl2 = el("dl", "dl");
+      [["Tour opens", String(ds.opens)],
+       ["Rooms visited", ds.topRooms.length ? ds.topRooms.map(function (t) { return t[0] + " \u00D7" + t[1]; }).join("  \u00B7  ") : "\u2014"],
+       ["Hotspot taps", String(ds.hotspots)],
+       ["Gallery opens", String(ds.gallery)],
+       ["Viewing enquiries", String(ds.cta)]]
+        .forEach(function (x) { dl2.appendChild(el("dt", null, x[0])); dl2.appendChild(el("dd", null, x[1])); });
+      an.appendChild(dl2);
+    } else {
+      an.appendChild(el("p", "t-body", "Nothing recorded yet on this device."));
+    }
+    an.appendChild(el("p", "t-body", "These numbers are recorded in this browser only — honest, but local. " +
+      "To collect from every visitor, set analytics.endpoint in config.js: each event is POSTed there as JSON " +
+      "and your server counts them."));
+    main.appendChild(an);
+
+    var share = el("div", "studio-panel card");
+    share.style.marginTop = "16px";
+    share.appendChild(el("h4", null, "Share this property"));
+    var shareUrl = origin + "?site=" + PROJECT;
+    var srow = el("div", "share-row");
+    if (window.RED360QR) {
+      var qc = window.RED360QR.canvas(shareUrl, 5, 3);
+      if (qc) {
+        var qwrap = el("div", "qr-wrap");
+        qwrap.appendChild(qc);
+        srow.appendChild(qwrap);
+      }
+    }
+    var sacts = el("div", "share-acts");
+    sacts.appendChild(el("p", "t-body", "The QR opens this property's tour on any phone camera — " +
+      "for window cards, brochures and For Sale boards."));
+    var cpl = el("button", "btn btn--sm");
+    cpl.id = "btnCopyShare";
+    cpl.appendChild(icon("share"));
+    cpl.appendChild(document.createTextNode("Copy the link"));
+    cpl.onclick = function () {
+      navigator.clipboard && navigator.clipboard.writeText(shareUrl);
+      toast("Link copied.");
+    };
+    sacts.appendChild(cpl);
+    var dlq = el("button", "btn btn--sm");
+    dlq.id = "btnQrDownload";
+    dlq.appendChild(icon("download"));
+    dlq.appendChild(document.createTextNode("Download the QR (PNG)"));
+    dlq.onclick = function () {
+      var c2 = window.RED360QR && window.RED360QR.canvas(shareUrl, 12, 4);
+      if (!c2) { toast("QR couldn't be generated."); return; }
+      var a2 = el("a");
+      a2.download = slug((TOUR.project && TOUR.project.name) || PROJECT) + "-qr.png";
+      a2.href = c2.toDataURL("image/png");
+      a2.click();
+    };
+    sacts.appendChild(dlq);
+    srow.appendChild(sacts);
+    share.appendChild(srow);
+    main.appendChild(share);
+
     var links = el("div", "studio-panel card");
     links.style.marginTop = "16px";
     links.appendChild(el("h4", null, "Links worth keeping"));
@@ -2634,6 +3377,14 @@
       return;
     }
     if (mod && e.key.toLowerCase() === "k") { e.preventDefault(); paletteOpen ? closePalette() : openPalette(); return; }
+    if (mod && !typing && view === "studio" && isAdmin() && e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      e.shiftKey ? redo() : undo();
+      return;
+    }
+    if (mod && !typing && view === "studio" && isAdmin() && e.key.toLowerCase() === "y") {
+      e.preventDefault(); redo(); return;
+    }
 
     if (paletteOpen) {
       if (e.key === "Escape") { e.preventDefault(); closePalette(); }
@@ -2641,6 +3392,10 @@
       else if (e.key === "ArrowUp") { e.preventDefault(); selectPal(palSel - 1); }
       else if (e.key === "Enter") { e.preventDefault(); if (palItems[palSel]) palItems[palSel].run(); }
       return;
+    }
+    if (sheetOpen && gallery.open) {
+      if (e.key === "ArrowRight") { e.preventDefault(); galStep(1); return; }
+      if (e.key === "ArrowLeft") { e.preventDefault(); galStep(-1); return; }
     }
     if (e.key === "Escape") {
       if (sheetOpen) { closeSheet(); return; }
@@ -2664,6 +3419,7 @@
     else if (k === "f") toggleFull();
     else if (k === "tab") { e.preventDefault(); togglePanels(); }
     else if (k === "m") $("#panelRight").classList.toggle("is-hidden");
+    else if (k === "g") openGallery(currentRoom, 0);
     else if (k === "e") { if (isAdmin() || adminLocked()) gotoStudio(); }
     else if (k === "b") setView(SITES_ON ? "sites" : "dash");
     else if (k === "h" || k === "escape") setView("dash");
@@ -2733,6 +3489,12 @@
     $("#btnPreviewEnter").onclick = function () { enterTour(currentRoom && currentRoom.id); };
     $("#btnGuided").onclick = function () { enterTour(TOUR.rooms[0].id); setTimeout(guidedStart, 400); };
     $("#btnHome").onclick = function () { setView("dash"); };
+    var gbtn = $("#btnGallery");
+    if (gbtn) gbtn.onclick = function () { openGallery(currentRoom, 0); };
+    var dph = $("#dockPhotos");
+    if (dph) dph.onclick = function () { openGallery(currentRoom, 0); };
+    var lb = $("#btnLead");
+    if (lb) lb.onclick = function () { openLeadForm("dashboard"); };
     $("#btnSearch").onclick = function () { openPalette(); };
     $("#btnPlay").onclick = function () { guided.on ? guidedStop() : guidedStart(); };
     $("#btnPlayPause").onclick = guidedPause;
@@ -2768,6 +3530,9 @@
       setView("tour");
     };
     $("#btnStudioPublish").onclick = function () { saveTour(); };
+    var bu = $("#btnUndo"), br = $("#btnRedo");
+    if (bu) bu.onclick = undo;
+    if (br) br.onclick = redo;
     function railOpen(on) {
       $("#studioRail").classList.toggle("is-on", on);
       $("#studioScrim").classList.toggle("is-on", on);
@@ -2921,7 +3686,7 @@
         setTimeout(function () { $("#loader").style.display = "none"; }, 800);
         paintAllThumbs();
       },
-      onRoom: function (room) { setRoom(room); },
+      onRoom: function (room) { setRoom(room); if (view === "tour") track("room", { room: room.id }); },
       onFrame: function (cam, room) {
         if (view === "dash" || view === "sites") return;
         layoutHotspots();
@@ -2947,6 +3712,7 @@
     if (!engine) return;
 
     engine.load(TOUR);
+    historyReset();
     buildDash();
     buildFilmstrip();
     buildPlan();
@@ -2964,6 +3730,7 @@
     }
     engine.start(startRoom, startView);
     engine.autoRotate(route.view === "dash", 0.0016);
+    track("open", { view: route.view || "dash", embed: EMBED ? 1 : 0 });
 
     /* ?admin=<passcode> — a bookmark the agency can keep, so they never type it */
     var qadmin = params.get("admin");

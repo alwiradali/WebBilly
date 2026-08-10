@@ -109,6 +109,21 @@
     return rooms;
   }
 
+  /* per-home room descriptions — the flagship listing reads like a real one */
+  var DESCRIPTIONS = {
+    "willow-lane-12": {
+      hall: "A proper arrival: original tiled floor, stairs ahead, doors off to both receptions.",
+      living: "Through living room with a log burner in the chimney breast and a bay to the front.",
+      kitchen: "Rear kitchen-diner across the full width, with bifold doors onto the garden.",
+      study: "The old garage, converted \u2014 now a quiet home office with garden views.",
+      master: "Principal bedroom over the bay, with fitted wardrobes along one wall.",
+      bed2: "A generous double to the rear, currently a guest room.",
+      bath: "Family bathroom with a separate walk-in shower and a heated floor.",
+      garden: "West-facing and about ninety feet, mostly lawn, patio by the house.",
+      landing: "Galleried landing with the airing cupboard and loft access."
+    }
+  };
+
   function buildHome(h) {
     var gl = planLabels(h.rooms, "g");
     var floors = [{
@@ -125,7 +140,10 @@
 
     var upstairsKeys = { master: 1, bed2: 1, bath: 1, landing: 1 };
     var rooms = linkRooms(h.rooms.map(function (key, i) {
-      return makeRoom(key, i, h.seed, (h.upstairs && upstairsKeys[key]) ? "f1" : "g");
+      var room = makeRoom(key, i, h.seed, (h.upstairs && upstairsKeys[key]) ? "f1" : "g");
+      var d = DESCRIPTIONS[h.id];
+      if (d && d[key]) room.description = d[key];
+      return room;
     }));
 
     return {
@@ -151,6 +169,9 @@
         epc: h.epc,
         ref: h.ref,
         cover: h.cover || "living",
+        features: h.features || [],
+        councilTax: h.councilTax || "",
+        availability: h.availability || "",
         agent: AGENT,
         hidden: !!h.hidden,
         facts: [
@@ -224,6 +245,9 @@
       price: "£465,000", status: "For sale", beds: 4, baths: 2, receptions: 2,
       type: "Detached house", tenure: "Freehold", epc: "C", ref: "MER-1042",
       area: "1,640 sq ft", seed: 3, upstairs: true, cover: "living",
+      councilTax: "E", availability: "Chain free",
+      features: ["West-facing 90ft garden", "Converted garage office", "Log burner",
+        "Bifold doors to garden", "Off-street parking for two", "Walk to Stoneygate shops"],
       captured: "Captured 4 Aug · 8 positions",
       summary: "A four-bedroom detached on a quiet lane, with a through living room, " +
         "a rear kitchen-diner opening onto the garden, and a converted study off the hall.",
@@ -245,6 +269,9 @@
       price: "£729,950", status: "For sale", beds: 5, baths: 3, receptions: 3,
       type: "Detached house", tenure: "Freehold", epc: "B", ref: "MER-1088",
       area: "2,410 sq ft", seed: 2, upstairs: true, cover: "kitchen",
+      councilTax: "G", availability: "Available now",
+      features: ["Third of an acre plot", "Triple-aspect kitchen-diner", "Home office",
+        "West-facing garden", "Double garage", "Catchment for Thurnby primaries"],
       captured: "Captured 1 Aug · 10 positions",
       summary: "A five-bedroom family house on a third of an acre. Triple-aspect kitchen-diner, " +
         "separate dining room, home office, and a west-facing garden that holds the sun until late.",

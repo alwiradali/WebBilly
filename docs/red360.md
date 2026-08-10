@@ -11,6 +11,7 @@ red360/
   app.js          application — router, portfolio, panels, search, studio
   engine.js       WebGL engine — panorama rendering, camera, projection
   embed.js        drop-in for the client's existing website
+  qr.js           QR encoder — byte mode, ECC M, v1–10, zero dependencies
   tour.js         a building  ← the only kind of file that changes per client
   tour-ashby.js   a second building
   tour-homes.js   a residential portfolio — six listings from one table
@@ -195,6 +196,73 @@ Rooms → Panorama replaces it and the type stops mattering.
 panel. Deleting also strips every `nav` hotspot that pointed at the room, so a
 tour can never link to a position that is gone.
 
+## Photographs
+
+Every room carries ordinary photography alongside its 360°:
+
+```js
+photos: [{ src, caption, w, h }, …]
+```
+
+Studio → Rooms → **Photographs** takes a whole batch at once — drag-drop or
+file picker, phone camera included. Each image is decoded, measured, downscaled
+and recompressed *on the agent's own machine* before it is stored, so nothing
+huge ever enters the tour. Captions, drag-to-reorder and delete are inline.
+
+Every upload is really analysed, and only what is measured is claimed:
+
+- A frame within 5% of 2:1 at panorama resolution is **offered** as the room's
+  360° — "Looks like a panorama. Use it as this room's 360°?" — never forced.
+- A non-2:1 image dropped on the Panorama slot gets a plain-English warning
+  before it is accepted.
+- Low-resolution images get a note ("it will look soft on large screens"),
+  not a rejection.
+
+In the tour, photographs appear as a strip in the room panel and open into a
+full-screen gallery — swipe on touch, arrow keys on desktop, thumbnail rail,
+captions. `G` opens it; phones get a **Photos** dock button.
+
+## Tour health
+
+Studio → Publish opens with a health score — the weighted fraction of real
+checks that pass, each one naming the exact room or field that needs work:
+listing basics, imagery per room, real captures vs placeholders, photographs,
+descriptions, **walkability** (a breadth-first walk over the nav hotspots — a
+room you can't reach from the start is flagged), plan placement, and whether a
+viewer can actually enquire. Clicking a warning jumps to the tab that fixes
+it. Nothing in the score is invented.
+
+## Autosave, undo, redo
+
+Every Studio change autosaves to the browser a moment after typing stops —
+the "Saved automatically" chip is the confirmation. The state before each
+burst of changes goes on an undo stack: `Ctrl Z` walks back, `Ctrl Shift Z`
+(or `Ctrl Y`) walks forward, sixty steps deep, and the toolbar has matching
+buttons. Switching property resets the history.
+
+## Booking a viewing
+
+"Book a viewing" appears on the listing hero and as a `cta` hotspot type. The
+form (name, email, phone, preferred date, message) submits to
+`leads.endpoint` when config.js has one — a JSON POST — and otherwise opens a
+pre-filled email to the listing's agent. No route, no button: it never
+pretends to send.
+
+## Events
+
+Tour opens, room visits, hotspot taps, gallery opens and enquiries are
+recorded to the viewer's own browser (a bounded ring), which gives Studio →
+Publish an honest "on this device" card. Set `analytics.endpoint` and every
+event is also POSTed as a JSON beacon so a server can count all visitors.
+By default nothing leaves the machine.
+
+## QR codes
+
+Studio → Publish generates a QR for the property's link — window cards,
+brochures, For Sale boards — with a PNG download at print resolution. The
+encoder is in-house (`qr.js`): byte mode, error-correction M, versions 1–10,
+verified against an independent decoder.
+
 ## Panoramas
 
 Each room resolves its panorama from one of two sources:
@@ -301,7 +369,7 @@ background, so opening a property later is still instant.
 
 ## Keyboard
 
-`⌘K`/`Ctrl K` search · arrows look · `+`/`−` zoom · `1`–`9` jump · `Space`
+`⌘K`/`Ctrl K` search · `G` photo gallery · `Ctrl Z` undo (Studio) · arrows look · `+`/`−` zoom · `1`–`9` jump · `Space`
 guided tour · `N`/`P` next / previous · `Tab` panels · `M` plan · `F`
 fullscreen · `B` portfolio · `E` studio (admin) · `H` overview · `S` still ·
 `Esc` back.
