@@ -16,7 +16,8 @@ WHAT'S HERE
   app.css      the design system
   app.js       the application (router, panels, search, guided tour, studio)
   engine.js    the WebGL engine (no dependencies)
-  tour.js      THE TOUR — the only file you change per client
+  tour.js      A BUILDING — Charnwood House, the 18,500 sq ft example
+  tour-ashby.js  a second building, to show it carries more than one
   README.md    full technical documentation
 
 FIRST FIVE THINGS TO TRY
@@ -26,6 +27,32 @@ FIRST FIVE THINGS TO TRY
   3. Reception → left panel → "Flat panorama"
   4. Studio → Branding → drag the accent colour picker
   5. Studio → Hotspots → "Place a hotspot" → click inside the panorama
+
+ADDING MORE PLACES AND MORE BUILDINGS
+-------------------------------------
+A NEW SPACE in the building you are looking at:
+  Studio → Rooms → "Add space".  Name it, pick the floor, pick the type.
+  It appears on the dashboard, on the floor plan and in the tour straight
+  away.  Duplicate and Delete are at the bottom of the same panel.
+
+A NEW BUILDING:
+  Studio → Projects → "New project"  (or "Duplicate this project", or
+  "Import a tour.json").  Switch between buildings from the button at the
+  top of the dashboard, or with Cmd+K.
+
+  Those live in your browser.  To ship one to everybody:
+    1. Studio → Publish → "Export tour.json"
+    2. Save it into this folder as  tour-<name>.js  and wrap it:
+
+         (window.RED360_TOURS = window.RED360_TOURS || []).push(
+           { ...the exported JSON... }
+         );
+
+    3. Add one line to index.html, next to the others:
+
+         <script src="tour-<name>.js"></script>
+
+  That is the whole deployment step. No build, no database, no rebuild.
 
 IF SOMETHING GOES WRONG
 -----------------------

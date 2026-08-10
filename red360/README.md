@@ -9,7 +9,8 @@ red360/
   app.css      design system — every colour derives from the brand block
   app.js       application — router, panels, search, guided tour, studio
   engine.js    WebGL engine — panorama rendering, camera, projection
-  tour.js      the tour  ← the only file that changes per client
+  tour.js      a building  ← the only kind of file that changes per client
+  tour-ashby.js  a second building — proof the platform is multi-project
 ```
 
 Live at `/red360/`. Runs identically from a file:// path, an S3 bucket, a
@@ -31,6 +32,45 @@ second loading bar.
 Because the Studio re-renders its whole body, `parkStage()` moves the live
 canvas back onto the tour stage first. Removing that call takes the WebGL
 context down with the DOM.
+
+## Projects — more than one building
+
+A deployment carries as many buildings as you like. Every tour file ends with
+the same line, so it registers itself on load:
+
+```js
+(window.RED360_TOURS = window.RED360_TOURS || []).push(window.RED360_TOUR);
+```
+
+Shipping another building is two steps and no build:
+
+```
+1.  add  red360/tour-<name>.js   (a tour object ending with the push line)
+2.  add  <script src="tour-<name>.js"></script>  to index.html
+```
+
+Everything else is automatic: the dashboard header grows a project switcher,
+`⌘K` gains a **Projects** group, Studio gains a **Projects** tab, and
+`?p=<id>` deep-links straight to one. Each project carries its own `brand`
+block, so two clients can share one deployment and neither sees the other's
+colours.
+
+Projects can also be made in the browser — Studio → Projects → *New project*,
+*Duplicate this project* or *Import a tour.json*. Those live in `localStorage`
+for whoever made them; **Export tour.json** plus the two steps above is how one
+becomes permanent for everybody.
+
+## Adding a space to a building
+
+Studio → Rooms → **Add space**. Name it, pick the floor and pick a space type,
+and it renders immediately — a synthesised room, navigable, editable, with its
+own pin on the plan and its own card on the dashboard. The space type only
+decides what the placeholder looks like; dropping a real capture onto Studio →
+Rooms → Panorama replaces it and the type stops mattering.
+
+*Duplicate this space* and *Delete this space* sit at the bottom of the same
+panel. Deleting also strips every `nav` hotspot that pointed at the room, so a
+tour can never link to a position that is gone.
 
 ## Panoramas
 
@@ -142,10 +182,12 @@ fullscreen · `E` studio · `H` overview · `S` still · `Esc` back.
 
 ## Persistence and hand-over
 
-Studio edits live in `localStorage` under `red360:tour:v2`. **Publish** saves
-them there; **Export tour.json** writes the whole tour to a file. Drop that
-file in as `tour.js` (assigned to `window.RED360_TOUR`) and the tour is
-permanent for everyone.
+Studio edits live in `localStorage`, one key per project —
+`red360:tour:<project-id>` — with `red360:project` remembering which one was
+open. A saved edit always wins over the shipped file, so the demo can be
+restored with Studio → Publish → *Reset to shipped demo*. **Publish** saves;
+**Export tour.json** writes the whole project to a file, which goes back into
+the folder as `tour-<name>.js` (see **Projects** above).
 
 `window.RED360App` exposes `go(id)`, `view(name)`, `tour()` and `engine()` for
 embedding hosts.

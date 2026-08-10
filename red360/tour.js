@@ -15,6 +15,7 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 window.RED360_TOUR = {
+  id: "charnwood-house",
   version: 2,
 
   /* ── WHITE LABEL ────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ window.RED360_TOUR = {
   /* ── PROJECT ─────────────────────────────────────────────────────────── */
   project: {
     name: "Charnwood House",
+    slug: "charnwood-house",
     client: "Confidential · commercial office",
     location: "Leicester, LE1",
     area: "18,500 sq ft",
@@ -475,3 +477,6 @@ window.RED360_TOUR = {
     }
   ]
 };
+
+/* Register on the project list. Every project file ends with this line. */
+(window.RED360_TOURS = window.RED360_TOURS || []).push(window.RED360_TOUR);
