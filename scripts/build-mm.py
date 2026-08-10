@@ -128,8 +128,12 @@ def main():
     os.makedirs(OUT)
 
     shutil.copytree(ASSETS, os.path.join(OUT, 'assets'))
-    for f in ('shared.css', 'molecules.js', 'schedule.js'):
-        shutil.copy(os.path.join(SRC, f), os.path.join(OUT, f))
+    # copy every stylesheet and script, rather than naming them: a hardcoded
+    # list silently dropped reviews.js when it was added, and the page failed
+    # with a 404 that only showed up in the console.
+    for f in sorted(os.listdir(SRC)):
+        if f.endswith(('.css', '.js')):
+            shutil.copy(os.path.join(SRC, f), os.path.join(OUT, f))
 
     # Walk every page rather than naming the sections, so adding a new folder
     # under templates/mm is picked up without touching this script.
