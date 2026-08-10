@@ -4,7 +4,7 @@ A complete tour product in one folder. Vanilla JS, raw WebGL, no dependencies,
 no build step, no server runtime.
 
 ```
-red360/
+billy360/
   index.html      shell — four screens, one canvas
   config.js       deployment config — portfolio behaviour, studio passcode
   app.css         design system — every colour derives from the brand block
@@ -92,7 +92,7 @@ no nav link, no toolbar button, no `E` shortcut, no palette entries, and the
 ```js
 admin: {
   enabled: true,
-  hash: "b1908d99",     // fnv1a("red360:" + passcode) — the passcode is never stored
+  hash: "b1908d99",     // fnv1a("billy360:" + passcode) — the passcode is never stored
   hint: "Ask billy360 for the studio passcode.",
   rememberDays: 14,     // 0 = until the tab closes
   verifyUrl: null       // POST {code} → {ok:true}, checked on your server
@@ -155,7 +155,7 @@ the same line, so it registers itself on load:
 Shipping another building is two steps and no build:
 
 ```
-1.  add  red360/tour-<name>.js   (a tour object ending with the push line)
+1.  add  billy360/tour-<name>.js   (a tour object ending with the push line)
 2.  add  <script src="tour-<name>.js"></script>  to index.html
 ```
 
@@ -377,7 +377,7 @@ fullscreen · `B` portfolio · `E` studio (admin) · `H` overview · `S` still �
 ## Persistence and hand-over
 
 Studio edits live in `localStorage`, one key per project —
-`red360:tour:<project-id>` — with `red360:project` remembering which one was
+`billy360:tour:<project-id>` — with `billy360:project` remembering which one was
 open. A saved edit always wins over the shipped file, so the demo can be
 restored with Studio → Publish → *Reset to shipped demo*. **Publish** saves;
 **Export tour.json** writes the whole project to a file, which goes back into

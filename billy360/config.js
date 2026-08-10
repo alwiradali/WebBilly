@@ -39,9 +39,9 @@ window.BILLY360_CONFIG = {
      It prints the new line to paste back in here.                            */
   admin: {
     enabled: true,
-    /* fnv1a("red360:" + passcode) — the passcode itself is never stored.
+    /* fnv1a("billy360:" + passcode) — the passcode itself is never stored.
        This one is:  redadmin                                                 */
-    hash: "b1908d99",
+    hash: "213b628e",
     hint: "Ask billy360 for the studio passcode.",
     /* let a signed-in device stay signed in for this many days (0 = until the
        tab closes) */

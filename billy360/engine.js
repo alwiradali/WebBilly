@@ -896,18 +896,18 @@
          2  lite     analytic ray/box — no loops at all, compiles anywhere */
     var TIERS = ["full", "compact", "lite"];
     var TIER = 0, bakeProgs = {}, shaderFailed = false;
-    try { TIER = Math.min(2, Math.max(0, parseInt(localStorage.getItem("red360:tier"), 10) || 0)); } catch (e) { }
+    try { TIER = Math.min(2, Math.max(0, parseInt(localStorage.getItem("billy360:tier"), 10) || 0)); } catch (e) { }
     var tq = /[?&]tier=([0-2])/.exec(location.search);
     if (tq) TIER = +tq[1];
     if (/[?&]compat=1/.test(location.search)) TIER = Math.max(TIER, 1);
     if (TIER) diag.push("starting on the " + TIERS[TIER] + " renderer");
 
-    function rememberTier(t) { try { localStorage.setItem("red360:tier", String(t)); } catch (e) { } }
+    function rememberTier(t) { try { localStorage.setItem("billy360:tier", String(t)); } catch (e) { } }
     function reloadOnce() {
       var done = false;
-      try { done = sessionStorage.getItem("red360:tier-reload") === "1"; } catch (e) { }
+      try { done = sessionStorage.getItem("billy360:tier-reload") === "1"; } catch (e) { }
       if (done) return false;
-      try { sessionStorage.setItem("red360:tier-reload", "1"); } catch (e) { }
+      try { sessionStorage.setItem("billy360:tier-reload", "1"); } catch (e) { }
       location.reload();
       return true;
     }

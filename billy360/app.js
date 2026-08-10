@@ -50,6 +50,27 @@
   var QS = new URLSearchParams(location.search);
   var EMBED = QS.get("embed") === "1";
 
+  /* One-time key migration. Earlier builds stored everything under a "red360:"
+     prefix; the product is billy360 now. Copy any old keys across on first
+     load so a saved tour, a published edit or a signed-in session survives the
+     rename, then drop the originals. Runs at most once per browser. */
+  (function migrateKeys() {
+    try {
+      if (localStorage.getItem("billy360:migrated")) return;
+      var moved = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("red360:") === 0) moved.push(k);
+      }
+      moved.forEach(function (k) {
+        var nk = "billy360:" + k.slice(7);
+        if (localStorage.getItem(nk) == null) localStorage.setItem(nk, localStorage.getItem(k));
+        localStorage.removeItem(k);
+      });
+      localStorage.setItem("billy360:migrated", "1");
+    } catch (e) { }
+  })();
+
   /* Every tour file registers itself, so a deployment can carry as many
      properties as you like — add the file, add one <script> line, done. A file
      that only sets window.BILLY360_TOUR (the original single-tour shape) still
@@ -93,13 +114,13 @@
   function slug(s) {
     return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tour";
   }
-  function storeKey(id) { return "red360:tour:" + id; }
+  function storeKey(id) { return "billy360:tour:" + id; }
   function projectIds() {
     var ids = SHIPPED.map(function (t) { return t.id; });
     try {
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
-        if (k && k.indexOf("red360:tour:") === 0) {
+        if (k && k.indexOf("billy360:tour:") === 0) {
           var id = k.slice(12);
           if (id !== "v2" && ids.indexOf(id) < 0) ids.push(id);
         }
@@ -132,16 +153,16 @@
     var ids = projectIds();
     if (q && ids.indexOf(q) >= 0) return q;
     var last = null;
-    try { last = localStorage.getItem("red360:project"); } catch (e) { }
+    try { last = localStorage.getItem("billy360:project"); } catch (e) { }
     return (last && ids.indexOf(last) >= 0) ? last : ids[0];
   })();
   var TOUR = loadTour(PROJECT);
   (function migrate() {
     try {
-      var old = localStorage.getItem("red360:tour:v2");
+      var old = localStorage.getItem("billy360:tour:v2");
       if (old && !localStorage.getItem(storeKey(SHIPPED[0].id))) {
         localStorage.setItem(storeKey(SHIPPED[0].id), old);
-        localStorage.removeItem("red360:tour:v2");
+        localStorage.removeItem("billy360:tour:v2");
         if (PROJECT === SHIPPED[0].id) TOUR = loadTour(PROJECT);
       }
     } catch (e) { }
@@ -181,7 +202,7 @@
   function saveTour(silent) {
     try {
       localStorage.setItem(storeKey(PROJECT), JSON.stringify(TOUR));
-      localStorage.setItem("red360:project", PROJECT);
+      localStorage.setItem("billy360:project", PROJECT);
       forgetMeta(PROJECT);
       dirty = false;
       markSaved("Saved");
@@ -286,12 +307,12 @@
      listings themselves are confidential, put the folder behind the server's
      own login, or set admin.verifyUrl and check the code server-side.
      ═══════════════════════════════════════════════════════════════════════ */
-  var ADMIN_KEY = "red360:admin";
+  var ADMIN_KEY = "billy360:admin";
   var adminOpen = false, adminAfter = null;
 
   function fnv(str) {
     var h = 0x811c9dc5;
-    str = "red360:" + String(str);
+    str = "billy360:" + String(str);
     for (var i = 0; i < str.length; i++) {
       h ^= str.charCodeAt(i);
       h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
@@ -546,7 +567,7 @@
       engine && engine.autoRotate(false);
       engine && engine.inputs(true);
       layoutHotspots(true);
-      if (!sessionStorage.getItem("red360:hinted")) {
+      if (!sessionStorage.getItem("billy360:hinted")) {
         setTimeout(function () { $("#hint").classList.add("is-on"); }, 700);
       }
       location.hash = "#/tour/" + (currentRoom ? currentRoom.id : "");
@@ -1207,7 +1228,7 @@
     var rec = { t: Date.now(), ev: ev, site: PROJECT };
     if (data) for (var k in data) rec[k] = data[k];
     try {
-      var key = "red360:events:" + PROJECT;
+      var key = "billy360:events:" + PROJECT;
       var log = JSON.parse(localStorage.getItem(key) || "[]");
       log.push(rec);
       if (log.length > 400) log = log.slice(log.length - 400);
@@ -1220,7 +1241,7 @@
   }
   function deviceStats() {
     var log = [];
-    try { log = JSON.parse(localStorage.getItem("red360:events:" + PROJECT) || "[]"); } catch (e) { }
+    try { log = JSON.parse(localStorage.getItem("billy360:events:" + PROJECT) || "[]"); } catch (e) { }
     var byRoom = {}, opens = 0, hs = 0, cta = 0, gal = 0;
     log.forEach(function (r) {
       if (r.ev === "open") opens++;
@@ -1659,7 +1680,7 @@
   }
   function hideHint() {
     $("#hint").classList.remove("is-on");
-    sessionStorage.setItem("red360:hinted", "1");
+    sessionStorage.setItem("billy360:hinted", "1");
   }
   function togglePanels(force) {
     panelsHidden = force != null ? force : !panelsHidden;
@@ -2078,7 +2099,7 @@
     if (dirty) saveTour(true);
     PROJECT = id;
     TOUR = next;
-    try { localStorage.setItem("red360:project", id); } catch (e) { }
+    try { localStorage.setItem("billy360:project", id); } catch (e) { }
     dirty = false;
     selectedHotspot = null;
     studioRoomId = null;
@@ -3192,7 +3213,7 @@
       ["One line per listing", function () {
         note.textContent = "For a listing template: put the property id in the attribute and embed.js " +
           "builds the iframe. Add the script once, anywhere on the page.";
-        return '<div data-red360="' + PROJECT + '" data-height="640"></div>\n' +
+        return '<div data-billy360="' + PROJECT + '" data-height="640"></div>\n' +
           '<script src="' + origin + 'embed.js"><\/script>';
       }],
       ["A button, not a frame", function () {
@@ -3349,7 +3370,7 @@
       '<pre id="failPre" hidden>' + esc((e.detail || "") + "\n" + (e.diag || "")) + "</pre>";
     $("#app").appendChild(box);
     $("#failCompat").onclick = function () {
-      try { localStorage.setItem("red360:tier", "2"); sessionStorage.removeItem("red360:tier-reload"); } catch (e) { }
+      try { localStorage.setItem("billy360:tier", "2"); sessionStorage.removeItem("billy360:tier-reload"); } catch (e) { }
       var u = new URL(location.href);
       u.searchParams.set("tier", "2");
       location.href = u.toString();
@@ -3647,7 +3668,7 @@
        set and boots in low quality automatically. On the visit after that,
        the third strike also remembers the simplest renderer for next time.
        A healthy visit clears the flag, so quality returns by itself. */
-    var CRASH_KEY = "red360:boot-crash";
+    var CRASH_KEY = "billy360:boot-crash";
     var crashes = 0;
     try {
       crashes = parseInt(localStorage.getItem(CRASH_KEY), 10) || 0;
@@ -3657,7 +3678,7 @@
       try { localStorage.removeItem(CRASH_KEY); } catch (e) { }
     }
     window.addEventListener("pagehide", bootHealthy);   // a clean exit is not a crash
-    if (crashes >= 2) { try { localStorage.setItem("red360:tier", "2"); } catch (e) { } }
+    if (crashes >= 2) { try { localStorage.setItem("billy360:tier", "2"); } catch (e) { } }
     var quality = params.get("q") || (crashes >= 1 ? "lo" : "auto");
     if (crashes >= 1 && !params.get("q")) {
       setTimeout(function () {
