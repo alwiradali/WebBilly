@@ -42,9 +42,71 @@
   var isMac = /Mac|iPhone|iPad/.test(navigator.platform || "");
 
   /* ── state ────────────────────────────────────────────────────────────── */
-  var STORE_KEY = "red360:tour:v2";
-  var SHIPPED = JSON.parse(JSON.stringify(window.RED360_TOUR));
-  var TOUR = loadTour();
+
+  /* Every tour file registers itself, so a deployment can carry as many
+     buildings as you like — add the file, add one <script> line, done. A file
+     that only sets window.RED360_TOUR (the original single-tour shape) still
+     works. */
+  var SHIPPED = (window.RED360_TOURS && window.RED360_TOURS.length
+    ? window.RED360_TOURS
+    : [window.RED360_TOUR]).filter(Boolean).map(function (t) {
+      var c = JSON.parse(JSON.stringify(t));
+      c.id = c.id || (c.project && c.project.slug) || slug((c.project && c.project.name) || "tour");
+      return c;
+    });
+  function slug(s) {
+    return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tour";
+  }
+  function storeKey(id) { return "red360:tour:" + id; }
+  function projectIds() {
+    var ids = SHIPPED.map(function (t) { return t.id; });
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("red360:tour:") === 0) {
+          var id = k.slice(12);
+          if (id !== "v2" && ids.indexOf(id) < 0) ids.push(id);
+        }
+      }
+    } catch (e) { }
+    return ids;
+  }
+  /* the command palette rebuilds on every keystroke, so the summary of each
+     project is cached rather than re-parsing every stored tour each time */
+  var metaCache = {};
+  function projectMeta(id) {
+    var live = id === PROJECT;
+    if (!live && metaCache[id]) return metaCache[id];
+    var t = live ? TOUR : loadTour(id);
+    if (!t) return null;
+    var m = {
+      id: id, name: (t.project && t.project.name) || id, rooms: (t.rooms || []).length,
+      location: (t.project && t.project.location) || "", brand: t.brand
+    };
+    /* the open project is read straight off TOUR — it changes as you edit */
+    return live ? m : (metaCache[id] = m);
+  }
+  function forgetMeta(id) { if (id) delete metaCache[id]; else metaCache = {}; }
+  var PROJECT = (function () {
+    var q = new URLSearchParams(location.search).get("p");
+    var ids = projectIds();
+    if (q && ids.indexOf(q) >= 0) return q;
+    var last = null;
+    try { last = localStorage.getItem("red360:project"); } catch (e) { }
+    return (last && ids.indexOf(last) >= 0) ? last : ids[0];
+  })();
+  var TOUR = loadTour(PROJECT);
+  (function migrate() {
+    try {
+      var old = localStorage.getItem("red360:tour:v2");
+      if (old && !localStorage.getItem(storeKey(SHIPPED[0].id))) {
+        localStorage.setItem(storeKey(SHIPPED[0].id), old);
+        localStorage.removeItem("red360:tour:v2");
+        if (PROJECT === SHIPPED[0].id) TOUR = loadTour(PROJECT);
+      }
+    } catch (e) { }
+  })();
+
   var engine = null;
   var view = "dash";
   var roomsById = {};
@@ -59,19 +121,28 @@
   var cameFrom = "dash";
   var dirty = false;
 
-  function loadTour() {
+  function shippedTour(id) {
+    for (var i = 0; i < SHIPPED.length; i++) if (SHIPPED[i].id === id) return SHIPPED[i];
+    return null;
+  }
+  /* a saved edit wins over the shipped file; a project that only exists in
+     storage (made in Studio) loads from there alone */
+  function loadTour(id) {
     try {
-      var raw = localStorage.getItem(STORE_KEY);
+      var raw = localStorage.getItem(storeKey(id));
       if (raw) {
         var t = JSON.parse(raw);
-        if (t && t.rooms && t.rooms.length) return t;
+        if (t && t.rooms && t.rooms.length) { t.id = t.id || id; return t; }
       }
     } catch (e) { }
-    return JSON.parse(JSON.stringify(window.RED360_TOUR));
+    var ship = shippedTour(id);
+    return ship ? JSON.parse(JSON.stringify(ship)) : null;
   }
   function saveTour(silent) {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(TOUR));
+      localStorage.setItem(storeKey(PROJECT), JSON.stringify(TOUR));
+      localStorage.setItem("red360:project", PROJECT);
+      forgetMeta(PROJECT);
       dirty = false;
       markSaved("Saved");
       if (!silent) toast("Changes saved to this browser.");
@@ -609,7 +680,8 @@
   /* ═══════════════════════════════════════════════════════════════════════
      COMMAND PALETTE
      ═══════════════════════════════════════════════════════════════════════ */
-  var paletteOpen = false, palItems = [], palSel = 0;
+  var paletteOpen = false, palItems = [], palSel = 0, palOnly = null;
+  var palPlaceholder = "Search rooms, hotspots, actions…";
 
   function paletteData() {
     var out = [];
@@ -637,8 +709,23 @@
         });
       });
     });
+    /* every building in this deployment, so ⌘K switches project as easily as
+       it switches room */
+    projectIds().forEach(function (id) {
+      var m = projectMeta(id);
+      if (!m) return;
+      out.push({
+        group: "Projects", kind: "project", icon: "rooms",
+        title: "Open " + m.name + (id === PROJECT ? " · current" : ""),
+        sub: m.rooms + " spaces" + (m.location ? " · " + m.location : ""),
+        terms: ("open project building " + m.name + " " + m.location).toLowerCase(),
+        run: function () { closePalette(); setView("dash"); switchProject(id); }
+      });
+    });
     [
       { title: "Start guided walkthrough", sub: "Play the automatic tour", ic: "play", run: function () { closePalette(); setView("tour"); guidedStart(); } },
+      { title: "New project", sub: "Add another building to this deployment", ic: "plus", run: function () { closePalette(); setView("studio"); studioTab = "projects"; renderStudio(); } },
+      { title: "Add a space", sub: "New position in this building", ic: "plus", run: function () { closePalette(); setView("studio"); studioTab = "rooms"; renderStudio(); openAddRoom(); } },
       { title: "Open content studio", sub: "Rooms, hotspots, branding, publish", ic: "edit", run: function () { closePalette(); setView("studio"); } },
       { title: "Export a still", sub: "PNG of the current view", ic: "camera", run: function () { closePalette(); shot(); } },
       { title: "Copy link to this view", sub: "Deep link with the exact angle", ic: "share", run: function () { closePalette(); share(); } },
@@ -653,11 +740,15 @@
     return out;
   }
 
-  function openPalette() {
+  /* opts.only narrows the palette to one kind — the project switcher opens
+     straight onto the list of buildings instead of everything in the tour */
+  function openPalette(opts) {
     paletteOpen = true;
+    palOnly = (opts && opts.only) || null;
     $("#palette").classList.add("is-on");
     $("#scrim").classList.add("is-on");
     $("#paletteInput").value = "";
+    $("#paletteInput").placeholder = (opts && opts.placeholder) || palPlaceholder;
     filterPalette("");
     engine && engine.inputs(false);
     setTimeout(function () { $("#paletteInput").focus(); }, 40);
@@ -665,6 +756,8 @@
   function closePalette() {
     if (!paletteOpen) return;
     paletteOpen = false;
+    palOnly = null;
+    $("#paletteInput").placeholder = palPlaceholder;
     $("#palette").classList.remove("is-on");
     if (!sheetOpen) $("#scrim").classList.remove("is-on");
     engine && engine.inputs(view !== "dash" || !coarse);
@@ -672,6 +765,7 @@
   function filterPalette(q) {
     q = (q || "").trim().toLowerCase();
     var all = paletteData();
+    if (palOnly) all = all.filter(function (i) { return i.kind === palOnly; });
     palItems = q ? all.filter(function (i) { return i.terms.indexOf(q) >= 0 || i.title.toLowerCase().indexOf(q) >= 0; }) : all;
     palSel = 0;
     var list = $("#paletteList");
@@ -837,6 +931,7 @@
     hotspots: ["Hotspots", "Click inside the panorama to place one"],
     plans: ["Floor plans", "The interactive minimap"],
     brand: ["Branding", "One block drives the entire interface"],
+    projects: ["Projects", "Every building in this deployment"],
     publish: ["Publish", "Save, export and embed"]
   };
 
@@ -851,6 +946,7 @@
     else if (studioTab === "hotspots") studioHotspots(body);
     else if (studioTab === "plans") studioPlans(body);
     else if (studioTab === "brand") studioBrand(body);
+    else if (studioTab === "projects") studioProjects(body);
     else studioPublish(body);
     markSaved(dirty ? "Unsaved changes" : "Saved", dirty);
   }
@@ -887,7 +983,18 @@
   }
   function roomListPanel(onPick) {
     var wrap = el("div", "studio-panel card");
-    wrap.appendChild(el("h4", null, "Positions"));
+    var head = el("div");
+    head.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:14px";
+    var h = el("h4", null, "Positions");
+    h.style.margin = "0";
+    var add = el("button", "btn btn--sm btn--primary");
+    add.id = "btnAddRoom";
+    add.style.marginLeft = "auto";
+    add.appendChild(icon("plus"));
+    add.appendChild(document.createTextNode("Add space"));
+    add.onclick = openAddRoom;
+    head.appendChild(h); head.appendChild(add);
+    wrap.appendChild(head);
     var list = el("div", "roomlist");
     TOUR.rooms.forEach(function (r) {
       var b = el("button", "roomlist-item" + (r.id === studioRoomId ? " is-on" : ""));
@@ -905,6 +1012,47 @@
     });
     wrap.appendChild(list);
     return wrap;
+  }
+
+  /* inline "add a space" form — name, floor, and which furniture set the
+     synthesised room should use until a real capture replaces it */
+  function openAddRoom() {
+    var box = $("#addRoomForm");
+    if (box) { box.parentNode.removeChild(box); return; }
+    var wrap = el("div", "studio-panel card");
+    wrap.id = "addRoomForm";
+    wrap.style.marginBottom = "14px";
+    wrap.appendChild(el("h4", null, "Add a space"));
+    var g = el("div", "form-grid");
+    var nameI = el("input", "input");
+    nameI.id = "addRoomName";
+    nameI.placeholder = "e.g. Meeting Room · Trent";
+    g.appendChild(field("Name", nameI));
+    var row = el("div", "form-row");
+    var floorS = select(TOUR.floors.map(function (f) { return [f.id, f.name]; }), TOUR.floors[0].id, function () { });
+    var layoutS = select(LAYOUTS.map(function (l) { return [String(l[0]), l[1]]; }), "0", function () { });
+    floorS.id = "addRoomFloor";
+    layoutS.id = "addRoomLayout";
+    row.appendChild(field("Floor", floorS));
+    row.appendChild(field("Space type", layoutS));
+    g.appendChild(row);
+    g.appendChild(el("p", "t-body", "The space type only decides what the placeholder room looks like. " +
+      "Drop a real capture on it afterwards and the type stops mattering."));
+    var act = el("div");
+    act.style.cssText = "display:flex;gap:8px";
+    var go = el("button", "btn btn--sm btn--primary", "Create space");
+    go.id = "btnAddRoomGo";
+    go.onclick = function () {
+      addRoom(nameI.value.trim() || "New space", floorS.value, +layoutS.value);
+    };
+    var cancel = el("button", "btn btn--sm", "Cancel");
+    cancel.onclick = function () { wrap.parentNode.removeChild(wrap); };
+    act.appendChild(go); act.appendChild(cancel);
+    g.appendChild(act);
+    wrap.appendChild(g);
+    var body = $("#studioBody");
+    body.insertBefore(wrap, body.firstChild);
+    nameI.focus();
   }
 
   /* ── Studio · rooms ────────────────────────────────────────────────────── */
@@ -1000,10 +1148,185 @@
     vbox.appendChild(setView2);
     main.appendChild(vbox);
 
+    var danger = el("div");
+    danger.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:16px";
+    var dup = el("button", "btn btn--sm");
+    dup.id = "btnRoomDuplicate";
+    dup.appendChild(icon("rooms"));
+    dup.appendChild(document.createTextNode("Duplicate this space"));
+    dup.onclick = function () { duplicateRoom(room); };
+    var del = el("button", "btn btn--sm btn--danger");
+    del.id = "btnRoomDelete";
+    del.appendChild(icon("trash"));
+    del.appendChild(document.createTextNode("Delete this space"));
+    del.onclick = function () { deleteRoom(room); };
+    danger.appendChild(dup); danger.appendChild(del);
+    main.appendChild(danger);
+
     cols.appendChild(main);
     var side = roomListPanel(function () { renderStudio(); });
     cols.appendChild(side);
     body.appendChild(cols);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     PROJECTS
+     ═══════════════════════════════════════════════════════════════════════ */
+  function switchProject(id, opts) {
+    if (id === PROJECT && !(opts && opts.force)) return;
+    var next = loadTour(id);
+    if (!next) { toast("That project couldn't be loaded."); return; }
+    if (dirty) saveTour(true);
+    PROJECT = id;
+    TOUR = next;
+    try { localStorage.setItem("red360:project", id); } catch (e) { }
+    dirty = false;
+    selectedHotspot = null;
+    studioRoomId = null;
+    dashFloor = "all";        // the old floor id may not exist in this building
+    forgetMeta();
+    indexRooms();
+    applyBrand();
+    engine.load(TOUR);
+    buildDash(); buildFilmstrip(); buildPlan();
+    engine.go(TOUR.rooms[0].id, { force: true });
+    renderProjectSwitch();
+    var u = new URL(location.href);
+    u.searchParams.set("p", id);
+    history.replaceState(null, "", u);
+    toast("Opened " + ((TOUR.project && TOUR.project.name) || id) + ".");
+  }
+
+  function renderProjectSwitch() {
+    var host = $("#projectSwitch");
+    if (!host) return;
+    var ids = projectIds();
+    host.style.display = ids.length > 1 ? "" : "none";
+    host.innerHTML = "";
+    var label = el("span", null, (TOUR.project && TOUR.project.name) || PROJECT);
+    host.appendChild(icon("rooms"));
+    host.appendChild(label);
+    host.appendChild(icon("arrow"));
+    host.onclick = function () {
+      openPalette({ only: "project", placeholder: "Switch project…" });
+    };
+    host.title = ids.length + " projects — click to switch";
+  }
+
+  function blankTour(name) {
+    var b = JSON.parse(JSON.stringify(TOUR.brand || {}));
+    var id = slug(name) + "-" + Math.random().toString(36).slice(2, 6);
+    return {
+      id: id, version: 2, brand: b,
+      project: { name: name, slug: id, location: "", area: "", floors: 1, duration: "2 min",
+        captured: "", summary: "A new project. Add spaces in Studio → Rooms.",
+        facts: [["Positions", "1"], ["Floors", "1"]] },
+      guided: { dwell: 9000, order: ["space-1"] },
+      floors: [{
+        id: "g", name: "Ground Floor", short: "G",
+        plan: '<rect class="fp-out" x="6" y="6" width="108" height="68" rx="2"/>' +
+              '<rect class="fp-rm" x="6" y="6" width="108" height="68"/>' +
+              '<path class="fp-glaze" d="M6 74h108"/>'
+      }],
+      rooms: [newRoom("Space 1", "g", 0)]
+    };
+  }
+
+  var LAYOUTS = [
+    [0, "Reception"], [1, "Atrium / social"], [2, "Café"], [3, "Event hall"],
+    [4, "Board room"], [5, "Open workspace"], [6, "Meeting room"], [7, "Focus booths"],
+    [8, "Terrace (open roof)"], [9, "Hallway"], [10, "Lounge"]
+  ];
+  var LAYOUT_SPACE = {
+    0: { w: 11.5, h: 3.6, d: 9.5, cam: [0, 0.2] },
+    1: { w: 14, h: 6.6, d: 12.5, cam: [0, 2.4] },
+    2: { w: 12.5, h: 3.4, d: 10.5, cam: [0.4, 1.9] },
+    3: { w: 17, h: 4.8, d: 15, cam: [0, 5.0] },
+    4: { w: 9, h: 3.2, d: 11, cam: [0, 3.0] },
+    5: { w: 19, h: 3.5, d: 15, cam: [1.6, 1.3] },
+    6: { w: 6.6, h: 3.0, d: 7.8, cam: [0, 2.2] },
+    7: { w: 10.5, h: 3.2, d: 8.5, cam: [0, 2.1] },
+    8: { w: 15, h: 3.1, d: 9.5, cam: [0, 1.6], open: true, glaze2: "+x", warm: 1 },
+    9: { w: 3.4, h: 2.9, d: 16, cam: [0, 1.2] },
+    10: { w: 9, h: 3.2, d: 8.5, cam: [0, 2.2], warm: 0.35 }
+  };
+
+  function newRoom(name, floorId, layout) {
+    var base = LAYOUT_SPACE[layout] || LAYOUT_SPACE[0];
+    var id = slug(name) + "-" + Math.random().toString(36).slice(2, 5);
+    return {
+      id: id, name: name, short: name, kind: (LAYOUTS[layout] || LAYOUTS[0])[1], floor: floorId,
+      area: "", capacity: "", ceiling: "", description: "",
+      plan: [60, 40], north: -90,
+      view: { yaw: 0, pitch: -6, fov: 80 },
+      pano: null,
+      space: {
+        w: base.w, h: base.h, d: base.d, eye: 1.62, cam: base.cam.slice(),
+        layout: layout, glaze: "+z", glaze2: base.glaze2, open: !!base.open,
+        seed: +(Math.random() * 30).toFixed(1), exposure: 1.04, city: 1, warm: base.warm || 0,
+        palette: JSON.parse(JSON.stringify(
+          (TOUR.rooms && TOUR.rooms[0] && TOUR.rooms[0].space && TOUR.rooms[0].space.palette) ||
+          { wall: "#e2e6ec", floor: "#87837c", accent: "#7a1220", light: "#ffe8c8", wood: "#b78448", fabric: "#42536b" }))
+      },
+      hotspots: []
+    };
+  }
+
+  function addRoom(name, floorId, layout) {
+    var room = newRoom(name || "New space", floorId || TOUR.floors[0].id, layout || 0);
+    TOUR.rooms.push(room);
+    (TOUR.guided = TOUR.guided || {}).order = (TOUR.guided.order || []).concat([room.id]);
+    indexRooms();
+    engine.load(TOUR);
+    studioRoomId = room.id;
+    markDirty();
+    buildDash(); buildFilmstrip(); buildPlan();
+    engine.go(room.id, { force: true });
+    renderStudio();
+    toast(room.name + " added — it renders as soon as you open it.");
+    return room;
+  }
+
+  function deleteRoom(room) {
+    if (TOUR.rooms.length < 2) { toast("A tour needs at least one space."); return; }
+    if (!confirm("Delete " + room.name + "? Hotspots pointing at it will be removed too.")) return;
+    TOUR.rooms = TOUR.rooms.filter(function (r) { return r !== room; });
+    TOUR.rooms.forEach(function (r) {
+      r.hotspots = (r.hotspots || []).filter(function (h) { return h.to !== room.id; });
+    });
+    if (TOUR.guided) TOUR.guided.order = (TOUR.guided.order || []).filter(function (i) { return i !== room.id; });
+    indexRooms();
+    engine.load(TOUR);
+    studioRoomId = TOUR.rooms[0].id;
+    markDirty();
+    buildDash(); buildFilmstrip(); buildPlan();
+    engine.go(TOUR.rooms[0].id, { force: true });
+    renderStudio();
+    toast("Deleted.");
+  }
+
+  function duplicateRoom(room) {
+    var copy = JSON.parse(JSON.stringify(room));
+    copy.id = slug(room.name) + "-" + Math.random().toString(36).slice(2, 5);
+    copy.name = room.name + " (copy)";
+    copy.short = (room.short || room.name) + " (copy)";
+    /* nudge the pin so the copy isn't hidden underneath the original */
+    copy.plan = [Math.min(114, (room.plan || [60, 40])[0] + 5), Math.min(74, (room.plan || [60, 40])[1] + 5)];
+    copy.space = copy.space || null;
+    if (copy.space) copy.space.seed = +(Math.random() * 30).toFixed(1);
+    copy.hotspots = (copy.hotspots || []).map(function (h) {
+      h.id = "h" + Math.random().toString(36).slice(2, 7);
+      return h;
+    });
+    TOUR.rooms.splice(TOUR.rooms.indexOf(room) + 1, 0, copy);
+    indexRooms();
+    engine.load(TOUR);
+    studioRoomId = copy.id;
+    markDirty();
+    buildDash(); buildFilmstrip(); buildPlan();
+    engine.go(copy.id, { force: true });
+    renderStudio();
+    toast("Duplicated.");
   }
 
   function refreshAfterEdit() {
@@ -1319,6 +1642,124 @@
     body.appendChild(cols);
   }
 
+  /* ── Studio · projects ─────────────────────────────────────────────────── */
+  function studioProjects(body) {
+    var cols = el("div", "studio-cols");
+    var main = el("div", "studio-panel card");
+    main.appendChild(el("h4", null, "Projects in this deployment"));
+    main.appendChild(el("p", "t-body", "Each project is a separate building with its own rooms, floor plans, " +
+      "hotspots and branding. Switching is instant — they share one viewer."));
+    var list = el("div", "roomlist");
+    list.style.marginTop = "14px";
+    projectIds().forEach(function (id) {
+      var m = projectMeta(id);
+      if (!m) return;
+      var b = el("button", "roomlist-item projrow" + (id === PROJECT ? " is-on" : ""));
+      b.setAttribute("data-project", id);
+      var dot = el("span");
+      dot.style.cssText = "width:10px;height:10px;border-radius:3px;flex:0 0 auto;background:" +
+        esc((m.brand && m.brand.accent) || "var(--accent)");
+      var tx = el("span", "roomlist-txt");
+      tx.appendChild(el("b", null, m.name));
+      tx.appendChild(el("span", null, m.rooms + " spaces" + (m.location ? " · " + m.location : "") +
+        (shippedTour(id) ? "" : " · created here")));
+      b.appendChild(dot); b.appendChild(tx);
+      if (id === PROJECT) {
+        var now = el("span", "chip chip--accent", "Open");
+        b.appendChild(now);
+      }
+      b.onclick = function () { switchProject(id); renderStudio(); };
+      list.appendChild(b);
+    });
+    main.appendChild(list);
+
+    var act = el("div");
+    act.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:16px";
+    var mk = el("button", "btn btn--sm btn--primary");
+    mk.id = "btnNewProject";
+    mk.appendChild(icon("plus"));
+    mk.appendChild(document.createTextNode("New project"));
+    mk.onclick = function () {
+      var name = prompt("Project name", "New building");
+      if (!name) return;
+      var t = blankTour(name);
+      try { localStorage.setItem(storeKey(t.id), JSON.stringify(t)); } catch (e) {
+        toast("Browser storage is full — export a project first."); return;
+      }
+      switchProject(t.id, { force: true });
+      studioTab = "rooms";
+      renderStudio();
+    };
+    var dup = el("button", "btn btn--sm");
+    dup.appendChild(icon("rooms"));
+    dup.appendChild(document.createTextNode("Duplicate this project"));
+    dup.onclick = function () {
+      var copy = JSON.parse(JSON.stringify(TOUR));
+      copy.id = slug(TOUR.project.name) + "-" + Math.random().toString(36).slice(2, 6);
+      copy.project.name = TOUR.project.name + " (copy)";
+      copy.project.slug = copy.id;
+      try { localStorage.setItem(storeKey(copy.id), JSON.stringify(copy)); } catch (e) {
+        toast("Browser storage is full."); return;
+      }
+      switchProject(copy.id, { force: true });
+      renderStudio();
+    };
+    var imp = el("button", "btn btn--sm");
+    imp.appendChild(icon("upload"));
+    imp.appendChild(document.createTextNode("Import a tour.json"));
+    var impF = el("input");
+    impF.type = "file"; impF.accept = "application/json,.json"; impF.style.display = "none";
+    imp.onclick = function () { impF.click(); };
+    impF.onchange = function () {
+      if (!impF.files[0]) return;
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var t = JSON.parse(fr.result);
+          if (!t.rooms || !t.rooms.length) throw new Error("no rooms");
+          t.id = t.id || slug((t.project && t.project.name) || "imported") + "-" + Math.random().toString(36).slice(2, 5);
+          localStorage.setItem(storeKey(t.id), JSON.stringify(t));
+          switchProject(t.id, { force: true });
+          renderStudio();
+        } catch (e) { toast("That file isn't a valid tour.json."); }
+      };
+      fr.readAsText(impF.files[0]);
+    };
+    act.appendChild(mk); act.appendChild(dup); act.appendChild(imp); act.appendChild(impF);
+    if (!shippedTour(PROJECT)) {
+      var rm = el("button", "btn btn--sm btn--danger");
+      rm.appendChild(icon("trash"));
+      rm.appendChild(document.createTextNode("Delete this project"));
+      rm.onclick = function () {
+        if (!confirm("Delete " + TOUR.project.name + "? This cannot be undone.")) return;
+        try { localStorage.removeItem(storeKey(PROJECT)); } catch (e) { }
+        switchProject(projectIds()[0], { force: true });
+        renderStudio();
+      };
+      act.appendChild(rm);
+    }
+    main.appendChild(act);
+
+    var how = el("div", "studio-panel card");
+    how.appendChild(el("h4", null, "Adding a project permanently"));
+    how.appendChild(el("p", "t-body", "Projects made here live in this browser. To ship one to everybody, " +
+      "export it and drop it in the folder as its own file:"));
+    var code = el("pre", "code");
+    code.textContent =
+      "1.  Studio → Publish → Export tour.json\n" +
+      "2.  Save it into the folder as  tour-<name>.js  and wrap it:\n\n" +
+      "      (window.RED360_TOURS = window.RED360_TOURS || []).push(\n" +
+      "        { …the exported JSON… }\n" +
+      "      );\n\n" +
+      "3.  Add one line to index.html, next to the others:\n\n" +
+      '      <script src="tour-<name>.js"><\/script>\n\n' +
+      "That is the whole deployment step. No build, no database.";
+    how.appendChild(code);
+    cols.appendChild(main);
+    cols.appendChild(how);
+    body.appendChild(cols);
+  }
+
   /* ── Studio · publish ──────────────────────────────────────────────────── */
   function studioPublish(body) {
     var cols = el("div", "studio-cols");
@@ -1366,8 +1807,12 @@
     reset.appendChild(document.createTextNode("Reset to shipped demo"));
     reset.onclick = function () {
       if (!confirm("Discard every change and restore the demo tour?")) return;
-      localStorage.removeItem(STORE_KEY);
-      TOUR = JSON.parse(JSON.stringify(SHIPPED));
+      var ship = shippedTour(PROJECT);
+      try { localStorage.removeItem(storeKey(PROJECT)); } catch (e) { }
+      /* a project that only ever existed in this browser has nothing to
+         restore to — fall back to the first project that ships in the folder */
+      if (!ship) { switchProject(SHIPPED[0].id, { force: true }); renderStudio(); return; }
+      TOUR = JSON.parse(JSON.stringify(ship));
       indexRooms(); applyBrand();
       engine.load(TOUR);
       buildDash(); buildFilmstrip(); buildPlan();
@@ -1542,7 +1987,7 @@
     $("#btnPreviewEnter").onclick = function () { enterTour(currentRoom && currentRoom.id); };
     $("#btnGuided").onclick = function () { enterTour(TOUR.rooms[0].id); setTimeout(guidedStart, 400); };
     $("#btnHome").onclick = function () { setView("dash"); };
-    $("#btnSearch").onclick = openPalette;
+    $("#btnSearch").onclick = function () { openPalette(); };
     $("#btnPlay").onclick = function () { guided.on ? guidedStop() : guidedStart(); };
     $("#btnPlayPause").onclick = guidedPause;
     $("#btnNext").onclick = function () { guidedGo(1); };
@@ -1636,7 +2081,7 @@
     }
     dockInfo.onclick = function () { sheetToggle("left"); };
     dockMap.onclick = function () { sheetToggle("right"); };
-    dockMore.onclick = openPalette;
+    dockMore.onclick = function () { openPalette(); };
     $("#btnCloseLeft").addEventListener("click", function () { $("#panelLeft").classList.remove("is-open"); syncDock(); });
     $("#btnCloseRight").addEventListener("click", function () { $("#panelRight").classList.remove("is-open"); syncDock(); });
   }
@@ -1700,6 +2145,7 @@
     buildDash();
     buildFilmstrip();
     buildPlan();
+    renderProjectSwitch();
 
     var startRoom = (route.room && roomsById[route.room]) ? route.room : TOUR.rooms[0].id;
     var startView = null;
