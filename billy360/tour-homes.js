@@ -62,6 +62,35 @@
     landing: ["Landing", "Landing", "Circulation"]
   };
 
+  /* ── real photography per room type ─────────────────────────────────────
+     Two genuine interior photographs for each kind of room, served from
+     Unsplash's CDN. Every listing's gallery is real imagery from day one;
+     when the agency's own shoot lands these are replaced per room in
+     Studio → Photos. Rotated by property seed so six houses don't share
+     one identical gallery order. */
+  function U(id) {
+    return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=1600&q=80";
+  }
+  var STOCK = {
+    hall: ["1558904541-efa843a96f01", "1584622650111-993a426fbf0a"],
+    living: ["1522708323590-d24dbb6b0267", "1560448204-e02f11c3d0e2"],
+    kitchen: ["1556909114-f6e7ad7d3136", "1556909212-d5b604d0c90d"],
+    dining: ["1617806118233-18e1de247200", "1595526114035-0d45ed16cfbf"],
+    master: ["1522444195799-478538b28823", "1560185127-6ed189bf02f4"],
+    bed2: ["1598928506311-c55ded91a20c", "1560184897-ae75f418493e"],
+    bath: ["1620626011761-996317b8d101", "1600210491369-e753d80a41f3"],
+    study: ["1593476550610-87baa860004a", "1600494603989-9650cf6ddd3d"],
+    garden: ["1600210492486-724fe5c67fb0", "1523301343968-6a6ebf63c672"],
+    landing: ["1600607688969-a5bfcd646154", "1616137466211-f939a420be84"]
+  };
+  function stockPhotos(key, i, roomName) {
+    var ids = STOCK[key];
+    if (!ids) return [];
+    return ids.slice(i % 2).concat(ids.slice(0, i % 2)).map(function (id, n) {
+      return { src: U(id), caption: roomName + (n ? " — alternate view" : "") };
+    });
+  }
+
   /* a warm domestic palette, varied a little per property so the placeholder
      tours do not all look like the same house */
   var WARM = [
@@ -86,6 +115,7 @@
       plan: pos, north: -90,
       view: { yaw: (i * 37) % 360 - 180, pitch: -6, fov: 82 },
       pano: null,                      /* ← the real capture goes here */
+      photos: stockPhotos(key, seedBase | 0, l[0]),
       space: {
         w: r[1], h: r[2], d: r[3], eye: 1.55, cam: [0, 0],
         layout: r[0], glaze: r[4] === "none" ? "none" : r[4],

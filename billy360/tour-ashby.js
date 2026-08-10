@@ -164,3 +164,21 @@
     }
   ]
 });
+
+/* Real photography for the retail unit — replaced per room from Studio → Photos
+   when the client's own shoot lands. */
+(function () {
+  function U(id) { return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=1600&q=80"; }
+  var P = {
+    shopfloor: [
+      { src: U("1441986300917-64674bd600d8"), caption: "The shop floor, front of house" },
+      { src: U("1567401893414-76b7b1e5a7a5"), caption: "Display and rail runs" }
+    ],
+    run: [{ src: U("1604719312566-8912e9227c6a"), caption: "Rear circulation run" }],
+    stock: [{ src: U("1553413077-190dd305871c"), caption: "Racked stockroom" }],
+    staff: [{ src: U("1556740738-b6a63e27c4df"), caption: "Staff room and kitchenette" }],
+    mezz: [{ src: U("1497366216548-37526070297c"), caption: "Mezzanine office" }]
+  };
+  var T = window.BILLY360_TOURS[window.BILLY360_TOURS.length - 1];
+  (T.rooms || []).forEach(function (r) { if (P[r.id]) r.photos = P[r.id]; });
+})();

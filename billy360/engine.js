@@ -1326,20 +1326,68 @@
     }, { passive: true });
     host.addEventListener("touchend", function (e) { if (e.touches.length < 2) pinch = null; }, { passive: true });
 
+    /* Device-orientation look-around. The naive alpha/beta mapping falls apart
+       the moment the phone is turned to landscape — which is exactly how people
+       hold a phone to look around a room. So we build the full device
+       quaternion (à la three.js DeviceOrientationControls), correct it for the
+       current screen-orientation angle, then read yaw + pitch off the resulting
+       forward vector. Yaw is captured relative to the live view on engage so
+       switching gyro on never snaps the camera. */
+    function screenOrient() {
+      var a = (screen.orientation && typeof screen.orientation.angle === "number")
+        ? screen.orientation.angle
+        : (typeof window.orientation === "number" ? window.orientation : 0);
+      return (a || 0) * D2R;
+    }
     function gyroToggle(want) {
       if (gyro && !want) { window.removeEventListener("deviceorientation", gyro); gyro = null; return false; }
       if (gyro || !want) return !!gyro;
-      var base = null;
+
+      var yawOffset = null;                       // captured on the first sample
+      // q1 = −90° about X: the camera looks out through the back of the device.
+      var Q1X = -Math.SQRT1_2, Q1W = Math.SQRT1_2;
+
+      function fromEulerYXZ(x, y, z) {            // returns [x,y,z,w]
+        var c1 = Math.cos(x / 2), c2 = Math.cos(y / 2), c3 = Math.cos(z / 2);
+        var s1 = Math.sin(x / 2), s2 = Math.sin(y / 2), s3 = Math.sin(z / 2);
+        return [
+          s1 * c2 * c3 + c1 * s2 * s3,
+          c1 * s2 * c3 - s1 * c2 * s3,
+          c1 * c2 * s3 - s1 * s2 * c3,
+          c1 * c2 * c3 + s1 * s2 * s3
+        ];
+      }
+      function mul(a, b) {                        // a * b, quaternions as [x,y,z,w]
+        return [
+          a[0] * b[3] + a[3] * b[0] + a[1] * b[2] - a[2] * b[1],
+          a[1] * b[3] + a[3] * b[1] + a[2] * b[0] - a[0] * b[2],
+          a[2] * b[3] + a[3] * b[2] + a[0] * b[1] - a[1] * b[0],
+          a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2]
+        ];
+      }
+
       var handler = function (e) {
         if (e.alpha == null) return;
-        if (base == null) base = e.alpha + cam.tYaw;
-        cam.tYaw = base - e.alpha;
-        cam.tPitch = clamp((e.beta || 0) - 90, -88, 88);
+        var q = fromEulerYXZ((e.beta || 0) * D2R, (e.alpha || 0) * D2R, -(e.gamma || 0) * D2R);
+        q = mul(q, [Q1X, 0, 0, Q1W]);                             // out the back
+        var o = -screenOrient() / 2;                              // screen-angle fix, about Z
+        q = mul(q, [0, 0, Math.sin(o), Math.cos(o)]);
+        // forward = q · (0,0,-1), expanded (t = 2·cross(q.xyz, v))
+        var qx = q[0], qy = q[1], qz = q[2], qw = q[3];
+        var tx = -2 * qy, ty = 2 * qx;                            // t.z is 0 for v=(0,0,-1)
+        var fx = qw * tx - qz * ty;
+        var fy = qw * ty + qz * tx;
+        var fz = -1 + (qx * ty - qy * tx);
+        var yaw = -Math.atan2(fx, -fz) * R2D;
+        var pitch = Math.asin(clamp(fy, -1, 1)) * R2D;
+        if (yawOffset == null) yawOffset = cam.tYaw - yaw;         // engage without a jump
+        cam.tYaw = yaw + yawOffset;
+        cam.tPitch = clamp(pitch, -88, 88);
         idleSince = now();
       };
       var start = function () { gyro = handler; window.addEventListener("deviceorientation", handler); };
       if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
-        DeviceOrientationEvent.requestPermission().then(function (r) { if (r === "granted") start(); });
+        DeviceOrientationEvent.requestPermission().then(function (r) { if (r === "granted") start(); }).catch(function () { });
       } else if (window.DeviceOrientationEvent) start();
       return true;
     }
@@ -1357,6 +1405,11 @@
       lastW = w; lastH = h;
     }
     window.addEventListener("resize", function () { resize(); });
+    // iOS/Android can report stale dimensions the instant an orientation flips,
+    // so re-fit the canvas on the change and again once layout has settled.
+    window.addEventListener("orientationchange", function () {
+      resize(); setTimeout(resize, 250); setTimeout(resize, 600);
+    });
 
     function bakeBudget(loOnly) {
       if (!queue.length) return;

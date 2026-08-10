@@ -478,5 +478,78 @@ window.BILLY360_TOUR = {
   ]
 };
 
+/* ── PHOTOGRAPHY ──────────────────────────────────────────────────────────
+   Real photographs for every position — the browsable gallery a viewer opens
+   from a room, and the cover art on each dashboard card. In production an
+   agency drops its own shoot in here (or via Studio → Photos); for the demo
+   these are real interior photographs served from Unsplash's CDN.
+   One line per position keeps the capture list readable. */
+(function attachPhotos(T) {
+  function U(id) {
+    return "https://images.unsplash.com/photo-" + id +
+      "?auto=format&fit=crop&w=1600&q=80";
+  }
+  function set() {
+    var out = [], i;
+    for (i = 0; i < arguments.length; i += 2) out.push({ src: U(arguments[i]), caption: arguments[i + 1] });
+    return out;
+  }
+  var P = {
+    reception: set(
+      "1497215728101-856f4ea42174", "Arrival desk and double-height lobby",
+      "1524758631624-e2822e304c36", "Waiting lounge off reception",
+      "1497366754035-f200968a6e72", "Glazed frontage and signage wall"),
+    "hall-g": set(
+      "1497366811353-6870744d04b2", "Ground-floor circulation spine",
+      "1600607687939-ce8a6c25118c", "Corridor detailing",
+      "1600607687920-4e2a09cf159d", "Doorways off the hallway"),
+    atrium: set(
+      "1600585154340-be6161a56a0c", "The social atrium under rooflight",
+      "1502672260266-1c1ef2d93688", "Feature stair and breakout seating",
+      "1560448204-e02f11c3d0e2", "Soft-seating cluster"),
+    cafe: set(
+      "1554995207-c18c203602cb", "Servery and coffee bar",
+      "1556909212-d5b604d0c90d", "Café seating",
+      "1531973576160-7125cd663d86", "Communal bench and pendants"),
+    lounge: set(
+      "1560185007-cde436f6a4d0", "The breakout lounge",
+      "1616486338812-3dadae4b4ace", "Warm lounge corner",
+      "1583847268964-b28dc8f51f92", "Reading nook"),
+    event: set(
+      "1541746972996-4e0b0f43e02a", "Event hall set theatre-style",
+      "1493809842364-78817add7ffb", "Stage and LED wall",
+      "1600880292203-757bb62b4baf", "Cabaret layout"),
+    board: set(
+      "1600880292203-757bb62b4baf", "The board room",
+      "1497366811353-6870744d04b2", "Boardroom table and AV",
+      "1524758631624-e2822e304c36", "Acoustic wall treatment"),
+    "hall-1": set(
+      "1600607688969-a5bfcd646154", "First-floor landing",
+      "1600566752355-35792bedcfea", "Upper circulation",
+      "1600607687939-ce8a6c25118c", "Meeting-room doors"),
+    studio: set(
+      "1497366754035-f200968a6e72", "Open studio floor",
+      "1524758631624-e2822e304c36", "Desking and collaboration zones",
+      "1541746972996-4e0b0f43e02a", "Corner of the studio"),
+    soar: set(
+      "1497366811353-6870744d04b2", "Meeting Room · Soar",
+      "1600880292203-757bb62b4baf", "Set for a workshop",
+      "1493809842364-78817add7ffb", "Video-call end"),
+    wreake: set(
+      "1524758631624-e2822e304c36", "Meeting Room · Wreake",
+      "1497366754035-f200968a6e72", "Breakout configuration",
+      "1600880292203-757bb62b4baf", "Presentation set-up"),
+    focus: set(
+      "1600566753086-00f18fb6b3ea", "Focus booth",
+      "1600210492486-724fe5c67fb0", "Quiet single-person pod",
+      "1502672260266-1c1ef2d93688", "Booth cluster"),
+    terrace: set(
+      "1600585154340-be6161a56a0c", "Skyline terrace at golden hour",
+      "1531973576160-7125cd663d86", "Heated pergola seating",
+      "1583847268964-b28dc8f51f92", "Balustrade and city view")
+  };
+  (T.rooms || []).forEach(function (r) { if (P[r.id]) r.photos = P[r.id]; });
+})(window.BILLY360_TOUR);
+
 /* Register on the project list. Every project file ends with this line. */
 (window.BILLY360_TOURS = window.BILLY360_TOURS || []).push(window.BILLY360_TOUR);

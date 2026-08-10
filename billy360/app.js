@@ -865,6 +865,16 @@
       var cv = el("canvas");
       cv.width = 456; cv.height = 285;
       img.appendChild(cv);
+      /* When the room has real photography, its first frame is the cover —
+         the ray-marched thumbnail sits underneath as an instant placeholder
+         while the photo streams in. */
+      var pics = photosOf(r);
+      if (pics.length) {
+        var cover = el("img", "roomcard-photo");
+        cover.src = pics[0].src; cover.alt = ""; cover.loading = "lazy";
+        cover.onload = function () { img.classList.add("has-photo"); };
+        img.appendChild(cover);
+      }
       var chip = el("span", "chip roomcard-floor", floorOf(r.floor).short || "");
       var body = el("span", "roomcard-body");
       body.appendChild(el("h4", null, r.name));
