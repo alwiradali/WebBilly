@@ -25,10 +25,11 @@
 
 (function () {
   var CONFIG = {
-    placeId: '',
-    apiKey: '',
-    // shown in the header link even before the API is wired up
-    profileUrl: ''
+    // Molecular Miracles Chemistry Tuition on Google Maps, confirmed to
+    // resolve via https://www.google.com/maps/place/?q=place_id:<this>
+    placeId: 'ChIJs-VC4edkcQwRBBdecMMkvN8',
+    apiKey: '',   // Places API (New) key, restricted to this site's domains
+    profileUrl: 'https://www.google.com/maps/place/?q=place_id:ChIJs-VC4edkcQwRBBdecMMkvN8'
   };
 
   var track = document.getElementById('reviews-track');
@@ -44,7 +45,29 @@
     perView = w >= 1080 ? 3 : (w >= 720 ? 2 : 1);
     slides.forEach(function (s) { s.style.flex = '0 0 ' + (100 / perView) + '%'; });
     index = Math.min(index, Math.max(0, slides.length - perView));
+    buildDots();
     apply();
+  }
+
+  /* One dot per page, not per slide. Rebuilt on every measure() because the
+     page count changes both with the viewport and when Google reviews are
+     appended after load — an earlier version built them once from the initial
+     slides, so late arrivals were unreachable and the active dot desynced. */
+  function buildDots() {
+    var pages = Math.max(1, Math.ceil(slides.length / perView));
+    if (dots.length === pages) return;
+    dotWrap.innerHTML = '';
+    dots = [];
+    for (var i = 0; i < pages; i++) {
+      (function (page) {
+        var d = document.createElement('button');
+        d.className = 'rev-dot';
+        d.setAttribute('aria-label', 'Reviews page ' + (page + 1) + ' of ' + pages);
+        d.addEventListener('click', function () { go(page * perView); });
+        dotWrap.appendChild(d);
+        dots.push(d);
+      })(i);
+    }
   }
 
   function apply() {
@@ -52,7 +75,8 @@
     var max = Math.max(0, slides.length - perView);
     prev.disabled = index <= 0;
     next.disabled = index >= max;
-    dots.forEach(function (d, i) { d.classList.toggle('on', i === index); });
+    var page = Math.round(index / perView);
+    dots.forEach(function (d, i) { d.classList.toggle('on', i === page); });
   }
 
   function go(i) {
@@ -72,14 +96,7 @@
   next.setAttribute('aria-label', 'More reviews');
   var dotWrap = document.createElement('div');
   dotWrap.className = 'rev-dots';
-  var dots = slides.map(function (_, i) {
-    var d = document.createElement('button');
-    d.className = 'rev-dot';
-    d.setAttribute('aria-label', 'Go to review ' + (i + 1));
-    d.addEventListener('click', function () { go(i); });
-    dotWrap.appendChild(d);
-    return d;
-  });
+  var dots = [];   // filled by buildDots(), which runs on every measure()
   nav.appendChild(prev); nav.appendChild(dotWrap); nav.appendChild(next);
   track.parentNode.parentNode.appendChild(nav);
 
