@@ -43,10 +43,18 @@
 
   /* ── state ────────────────────────────────────────────────────────────── */
 
+  var CFG = window.RED360_CONFIG || {};
+  var PORTFOLIO = CFG.portfolio || {};
+  var ADMIN_CFG = CFG.admin || {};
+  var EMBED_CFG = CFG.embed || {};
+  var QS = new URLSearchParams(location.search);
+  var EMBED = QS.get("embed") === "1";
+
   /* Every tour file registers itself, so a deployment can carry as many
-     buildings as you like — add the file, add one <script> line, done. A file
+     properties as you like — add the file, add one <script> line, done. A file
      that only sets window.RED360_TOUR (the original single-tour shape) still
-     works. */
+     works. A file may also register a *stub* — id, project block and floors,
+     plus src — so a portfolio of hundreds does not parse every room at boot. */
   var SHIPPED = (window.RED360_TOURS && window.RED360_TOURS.length
     ? window.RED360_TOURS
     : [window.RED360_TOUR]).filter(Boolean).map(function (t) {
@@ -54,6 +62,34 @@
       c.id = c.id || (c.project && c.project.slug) || slug((c.project && c.project.name) || "tour");
       return c;
     });
+  function isStub(t) { return !!(t && t.src && !(t.rooms && t.rooms.length)); }
+  /* pull a stub's real file in on demand, then swap it into the registry */
+  var loadingSrc = {};
+  function fetchStub(id, cb) {
+    var stub = shippedTour(id);
+    if (!stub || !isStub(stub)) { cb(loadTour(id)); return; }
+    if (loadingSrc[id]) { loadingSrc[id].push(cb); return; }
+    loadingSrc[id] = [cb];
+    var sc = document.createElement("script");
+    sc.src = stub.src;
+    sc.onload = function () {
+      var full = null, all = window.RED360_TOURS || [];
+      for (var i = 0; i < all.length; i++) if (all[i] && all[i].id === id && all[i].rooms) full = all[i];
+      if (full) {
+        for (var j = 0; j < SHIPPED.length; j++) {
+          if (SHIPPED[j].id === id) SHIPPED[j] = JSON.parse(JSON.stringify(full));
+        }
+      }
+      done(full ? loadTour(id) : null);
+    };
+    sc.onerror = function () { done(null); };
+    document.head.appendChild(sc);
+    function done(t) {
+      var q = loadingSrc[id] || [];
+      delete loadingSrc[id];
+      q.forEach(function (f) { f(t); });
+    }
+  }
   function slug(s) {
     return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tour";
   }
@@ -79,16 +115,20 @@
     if (!live && metaCache[id]) return metaCache[id];
     var t = live ? TOUR : loadTour(id);
     if (!t) return null;
+    var p = t.project || {};
     var m = {
-      id: id, name: (t.project && t.project.name) || id, rooms: (t.rooms || []).length,
-      location: (t.project && t.project.location) || "", brand: t.brand
+      id: id, name: p.name || id, rooms: (t.rooms || []).length,
+      location: p.location || "", brand: t.brand, project: p,
+      plan: (t.floors && t.floors[0] && t.floors[0].plan) || "",
+      stub: isStub(t), shipped: !!shippedTour(id)
     };
     /* the open project is read straight off TOUR — it changes as you edit */
     return live ? m : (metaCache[id] = m);
   }
   function forgetMeta(id) { if (id) delete metaCache[id]; else metaCache = {}; }
   var PROJECT = (function () {
-    var q = new URLSearchParams(location.search).get("p");
+    /* ?site=<id>. Deliberately not ?p= — that is the pitch angle in a share link. */
+    var q = QS.get("site") || QS.get("property");
     var ids = projectIds();
     if (q && ids.indexOf(q) >= 0) return q;
     var last = null;
@@ -164,6 +204,127 @@
     n.appendChild(el("i"));
     n.appendChild(document.createTextNode(" " + label));
     n.style.color = warn ? "var(--warn)" : "";
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ADMIN ACCESS
+     The Studio is the agency's back office. A visitor should never see it, so
+     every route and every control into it goes through isAdmin().
+
+     Be straight with the client about what this is: it hides the tools, it
+     does not protect the data. The whole app is static files — anyone who
+     opens the JavaScript can get past a passcode that lives in it. When the
+     listings themselves are confidential, put the folder behind the server's
+     own login, or set admin.verifyUrl and check the code server-side.
+     ═══════════════════════════════════════════════════════════════════════ */
+  var ADMIN_KEY = "red360:admin";
+  var adminOpen = false, adminAfter = null;
+
+  function fnv(str) {
+    var h = 0x811c9dc5;
+    str = "red360:" + String(str);
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return ("0000000" + h.toString(16)).slice(-8);
+  }
+  function adminLocked() {
+    return ADMIN_CFG.enabled !== false && !!(ADMIN_CFG.hash || ADMIN_CFG.verifyUrl);
+  }
+  function adminToken() {
+    return fnv("session:" + (ADMIN_CFG.hash || ADMIN_CFG.verifyUrl || ""));
+  }
+  var adminUnlocked = (function () {
+    if (!adminLocked()) return true;
+    try {
+      if (sessionStorage.getItem(ADMIN_KEY) === adminToken()) return true;
+      var raw = localStorage.getItem(ADMIN_KEY);
+      if (raw) {
+        var v = JSON.parse(raw);
+        if (v && v.t === adminToken() && v.exp > Date.now()) return true;
+        localStorage.removeItem(ADMIN_KEY);
+      }
+    } catch (e) { }
+    return false;
+  })();
+  function isAdmin() { return !adminLocked() || adminUnlocked; }
+
+  function adminGrant(remember) {
+    adminUnlocked = true;
+    try {
+      sessionStorage.setItem(ADMIN_KEY, adminToken());
+      var days = +ADMIN_CFG.rememberDays || 0;
+      if (remember && days > 0) {
+        localStorage.setItem(ADMIN_KEY, JSON.stringify({ t: adminToken(), exp: Date.now() + days * 864e5 }));
+      }
+    } catch (e) { }
+    syncAdminUI();
+  }
+  function adminSignOut() {
+    adminUnlocked = false;
+    try { sessionStorage.removeItem(ADMIN_KEY); localStorage.removeItem(ADMIN_KEY); } catch (e) { }
+    syncAdminUI();
+    if (view === "studio") setView(SITES_ON ? "sites" : "dash");
+    toast("Signed out of the Studio.");
+  }
+  /* returns a promise-ish: cb(true|false) */
+  function adminCheck(code, cb) {
+    if (ADMIN_CFG.verifyUrl) {
+      var done = false;
+      var to = setTimeout(function () { if (!done) { done = true; cb(false, "The server didn't answer."); } }, 8000);
+      fetch(ADMIN_CFG.verifyUrl, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (done) return; done = true; clearTimeout(to);
+        cb(!!(j && j.ok), j && j.error);
+      })["catch"](function () {
+        if (done) return; done = true; clearTimeout(to);
+        cb(false, "Couldn't reach the sign-in service.");
+      });
+      return;
+    }
+    cb(fnv(code) === ADMIN_CFG.hash);
+  }
+
+  /* every control that leads into the Studio hides itself when locked */
+  function syncAdminUI() {
+    var on = isAdmin();
+    document.body.classList.toggle("is-admin", on);
+    $$(".admin-only").forEach(function (n) { n.hidden = !on; });
+    var b = $("#btnAdmin");
+    if (b) {
+      b.hidden = !adminLocked();
+      b.classList.toggle("is-on", on);
+      b.title = on ? "Signed in — sign out of the Studio" : "Studio access";
+      var u = $("use", b);
+      if (u) u.setAttribute("href", on ? "#i-key" : "#i-lock");
+    }
+  }
+
+  function openLock(after) {
+    if (isAdmin()) { if (after) after(); return; }
+    adminOpen = true; adminAfter = after || null;
+    $("#lock").classList.add("is-on");
+    $("#lockHint").textContent = ADMIN_CFG.hint || "Enter the passcode to open the editing tools.";
+    $("#lockErr").hidden = true;
+    $("#lockCode").value = "";
+    $("#lockRemember").parentNode.style.display = (+ADMIN_CFG.rememberDays > 0) ? "" : "none";
+    engine && engine.inputs(false);
+    setTimeout(function () { $("#lockCode").focus(); }, 60);
+  }
+  function closeLock() {
+    adminOpen = false; adminAfter = null;
+    $("#lock").classList.remove("is-on");
+    engine && engine.inputs(view === "tour");
+  }
+  /* the single door into the Studio — used by every button, key and route */
+  function gotoStudio(tab) {
+    if (tab) studioTab = tab;
+    if (!isAdmin()) { openLock(function () { setView("studio", { force: true }); }); return false; }
+    setView("studio", { force: view === "studio" });
+    return true;
   }
 
   function indexRooms() {
@@ -255,6 +416,8 @@
 
   function setView(next, opts) {
     opts = opts || {};
+    if (next === "studio" && !isAdmin()) { openLock(function () { setView("studio", { force: true }); }); return; }
+    if (next === "sites" && !SITES_ON) next = "dash";
     if (next === view && !opts.force) return;
     var prev = view;
     if (next === "studio" && prev !== "studio") cameFrom = prev;
@@ -281,6 +444,13 @@
       renderStudio();
       guidedStop(true);
       location.hash = "#/studio/" + studioTab;
+    } else if (next === "sites") {
+      parkStage();
+      engine && engine.autoRotate(false);
+      engine && engine.inputs(false);
+      guidedStop(true);
+      buildSites();
+      location.hash = "#/sites";
     }
     if (prev === "studio" && next !== "studio") { placing = false; $("#stageTour").classList.remove("is-placing"); }
     closePalette(); closeSheet();
@@ -292,7 +462,187 @@
     var parts = h.split("/");
     if (parts[0] === "tour") return { view: "tour", room: parts[1] || null };
     if (parts[0] === "studio") return { view: "studio", tab: parts[1] || "rooms" };
-    return { view: "dash" };
+    if (parts[0] === "sites") return { view: "sites" };
+    if (parts[0] === "site" && parts[1]) return { view: "dash", site: parts[1] };
+    return { view: h === "" ? null : "dash" };
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     PORTFOLIO — every property in the deployment, in one grid
+     ═══════════════════════════════════════════════════════════════════════ */
+  var siteQuery = "", siteFilter = "all", siteSort = "default";
+
+  /* the portfolio is the landing screen only when there is something to
+     choose between; a single-property deployment never sees it */
+  var SITES_ON = (function () {
+    var mode = PORTFOLIO.mode || "auto";
+    if (EMBED && !EMBED_CFG.chrome) return false;
+    if (mode === "never") return false;
+    if (mode === "always") return true;
+    return projectIds().length > 1;
+  })();
+
+  /* a draft listing is visible to the agency and to a direct link, never in
+     the public grid */
+  function visibleSites() {
+    return projectIds().map(projectMeta).filter(function (m) {
+      return m && (isAdmin() || !m.project.hidden);
+    });
+  }
+  function priceValue(p) {
+    var n = parseFloat(String(p || "").replace(/[^0-9.]/g, ""));
+    if (!isFinite(n)) return -1;
+    if (/pcm|pw|per\s*(week|month|calendar)/i.test(String(p))) n *= 240;   // rent → rough sale scale
+    return n;
+  }
+  function sortSites(list) {
+    var by = {
+      "price-desc": function (a, b) { return priceValue(b.project.price) - priceValue(a.project.price); },
+      "price-asc": function (a, b) { return priceValue(a.project.price) - priceValue(b.project.price); },
+      "beds-desc": function (a, b) { return (+b.project.beds || 0) - (+a.project.beds || 0); },
+      "name": function (a, b) { return a.name.localeCompare(b.name); }
+    }[siteSort];
+    return by ? list.slice().sort(by) : list;
+  }
+  function siteTerms(m) {
+    var p = m.project;
+    return [m.name, p.location, p.ref, p.status, p.propertyType, p.price, p.summary,
+      p.beds ? p.beds + " bed" : ""].join(" ").toLowerCase();
+  }
+
+  function buildSites() {
+    var b = TOUR.brand || {};
+    $("#sitesEyebrow").textContent = PORTFOLIO.eyebrow || "Portfolio";
+    $("#sitesTitle").textContent = PORTFOLIO.title || "Every property, walkable";
+    $("#sitesBlurb").textContent = PORTFOLIO.blurb || "";
+    $("#creditSites").innerHTML = b.credit
+      ? '<a href="' + esc(b.creditHref || "#") + '" style="color:var(--ink-3)">' + esc(b.credit) + "</a>"
+      : "";
+
+    /* filter chips — only statuses that actually occur, so the bar never lies */
+    var all = visibleSites();
+    var present = {};
+    all.forEach(function (m) { if (m.project.status) present[m.project.status] = 1; });
+    var order = (PORTFOLIO.statuses || []).filter(function (st) { return present[st]; });
+    Object.keys(present).forEach(function (st) { if (order.indexOf(st) < 0) order.push(st); });
+
+    var fs = $("#siteFilters");
+    fs.innerHTML = "";
+    [["all", "All"]].concat(order.map(function (st) { return [st, st]; })).forEach(function (f) {
+      var btn = el("button", f[0] === siteFilter ? "is-on" : "", f[1]);
+      btn.onclick = function () { siteFilter = f[0]; buildSites(); };
+      fs.appendChild(btn);
+    });
+    $("#siteSort").value = siteSort;
+    renderSiteGrid(all);
+  }
+
+  function renderSiteGrid(all) {
+    all = all || visibleSites();
+    var q = siteQuery.trim().toLowerCase();
+    var list = all.filter(function (m) {
+      if (siteFilter !== "all" && m.project.status !== siteFilter) return false;
+      if (q && siteTerms(m).indexOf(q) < 0) return false;
+      return true;
+    });
+    list = sortSites(list);
+
+    var g = $("#siteGrid");
+    g.innerHTML = "";
+    list.forEach(function (m) { g.appendChild(siteCard(m)); });
+    $("#sitesEmpty").hidden = list.length > 0;
+    $("#siteCount").textContent = list.length + " of " + all.length + (all.length === 1 ? " property" : " properties");
+    $("#sitesInfo").textContent = all.length + " properties · " +
+      all.reduce(function (a, m) { return a + m.rooms; }, 0) + " positions · WebGL";
+  }
+
+  function siteCard(m) {
+    var p = m.project;
+    var card = el("button", "card sitecard" + (p.hidden ? " is-draft" : ""));
+    card.setAttribute("data-site", m.id);
+
+    var art = el("span", "sitecard-art");
+    if (p.coverImage) {
+      var im = el("span", "sitecard-photo");
+      im.style.backgroundImage = "url(" + JSON.stringify(String(p.coverImage)) + ")";
+      art.appendChild(im);
+    } else if (m.id === PROJECT) {
+      /* the open property can show a real frame from the engine */
+      var cv = el("canvas"); cv.width = 456; cv.height = 285;
+      art.appendChild(cv);
+      art.className += " sitecard-art--live";
+      setTimeout(function () { paintSiteThumb(m, cv); }, 0);
+    }
+    if (!p.coverImage) {
+      /* otherwise the floor plan itself is the card art — real data, and it
+         costs nothing to draw */
+      var plan = el("span", "sitecard-plan");
+      plan.innerHTML = '<svg viewBox="0 0 120 80" aria-hidden="true">' + (m.plan || "") + "</svg>";
+      art.appendChild(plan);
+    }
+    /* the card carries its own client's accent, so a mixed portfolio does not
+       paint every chip in whichever brand happens to be loaded */
+    var accent = (m.brand && m.brand.accent) || "#FF2D46";
+    card.style.setProperty("--card-accent", accent);
+    card.style.setProperty("--card-tint", rgba(accent, .3) || "rgba(255,255,255,.16)");
+    card.appendChild(art);
+
+    if (p.status) {
+      var st = el("span", "chip sitecard-status", p.status);
+      st.setAttribute("data-status", slug(p.status));
+      card.appendChild(st);
+    }
+    if (p.hidden) card.appendChild(el("span", "chip sitecard-draft", "Draft"));
+
+    var body = el("span", "sitecard-body");
+    var price = el("span", "sitecard-price");
+    price.appendChild(el("b", null, p.price || ""));
+    if (p.priceQualifier) price.appendChild(el("span", null, p.priceQualifier));
+    if (p.price) body.appendChild(price);
+    body.appendChild(el("h4", null, m.name));
+    body.appendChild(el("p", null, p.location || ""));
+
+    var facts = el("span", "sitecard-facts");
+    if (p.beds) facts.appendChild(fact("bed", p.beds));
+    if (p.baths) facts.appendChild(fact("bath", p.baths));
+    if (p.area) facts.appendChild(fact("building", p.area));
+    facts.appendChild(fact("pin", m.rooms + (m.stub ? "+" : "") + " positions"));
+    body.appendChild(facts);
+    card.appendChild(body);
+
+    card.onclick = function () { openSite(m.id); };
+    return card;
+  }
+  function fact(ic, txt) {
+    var f = el("span", "sitefact");
+    f.appendChild(icon(ic));
+    f.appendChild(el("span", null, String(txt)));
+    return f;
+  }
+  function paintSiteThumb(m, cv) {
+    if (!engine || m.id !== PROJECT) return;
+    var room = (m.project.cover && roomsById[m.project.cover]) || currentRoom || TOUR.rooms[0];
+    if (!room) return;
+    var src = engine.thumbnail(room.id, cv.width, cv.height);
+    if (!src) return;
+    cv.getContext("2d").drawImage(src, 0, 0, cv.width, cv.height);
+    if (cv.parentNode) cv.parentNode.classList.add("is-ready");
+  }
+
+  /* open a property: pull its file if it is a stub, then land on its overview */
+  function openSite(id, opts) {
+    opts = opts || {};
+    if (id === PROJECT) { setView(opts.view || "dash"); return; }
+    var meta = projectMeta(id);
+    if (meta && meta.stub) {
+      toast("Opening " + meta.name + "…");
+      fetchStub(id, function (t) {
+        if (!t) { toast("That property's file couldn't be loaded."); return; }
+        switchProject(id, { force: true, view: opts.view || "dash" });
+      });
+      return;
+    }
+    switchProject(id, { view: opts.view || "dash" });
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -303,7 +653,9 @@
   function buildDash() {
     var b = TOUR.brand || {}, p = TOUR.project || {};
     $("#heroEyebrow").textContent = [b.tagline, p.name].filter(Boolean).join("  ·  ");
-    $("#heroTitle").innerHTML = "Walk the building<br><em>before you visit</em>";
+    $("#heroTitle").innerHTML = p.beds
+      ? esc(p.name || "") + "<br><em>" + esc(p.location || "walk it before you visit") + "</em>"
+      : "Walk the building<br><em>before you visit</em>";
     $("#heroSummary").textContent = p.summary || "";
     $("#projName").textContent = p.name || "";
     $("#projCaptured").textContent = p.captured || "";
@@ -316,8 +668,13 @@
 
     var meta = $("#heroMeta");
     meta.innerHTML = "";
-    [[p.area, "Footprint"], [String(p.floors || TOUR.floors.length), "Floors"],
-    [String(TOUR.rooms.length), "Positions"], [p.duration, "Walkthrough"]].forEach(function (m) {
+    var facts = p.beds
+      ? [[p.price, p.priceQualifier || (p.status || "Price")], [String(p.beds), "Bedrooms"],
+         [p.baths ? String(p.baths) : "", "Bathrooms"], [p.area, "Floor area"],
+         [String(TOUR.rooms.length), "Positions"]]
+      : [[p.area, "Footprint"], [String(p.floors || TOUR.floors.length), "Floors"],
+         [String(TOUR.rooms.length), "Positions"], [p.duration, "Walkthrough"]];
+    facts.forEach(function (m) {
       if (!m[0]) return;
       var d = el("div", "stat");
       d.appendChild(el("b", null, m[0]));
@@ -709,32 +1066,41 @@
         });
       });
     });
-    /* every building in this deployment, so ⌘K switches project as easily as
+    /* every property in this deployment, so ⌘K switches building as easily as
        it switches room */
-    projectIds().forEach(function (id) {
-      var m = projectMeta(id);
-      if (!m) return;
+    visibleSites().forEach(function (m) {
+      var id = m.id, p = m.project;
       out.push({
-        group: "Projects", kind: "project", icon: "rooms",
+        group: "Properties", kind: "project", icon: "building",
         title: "Open " + m.name + (id === PROJECT ? " · current" : ""),
-        sub: m.rooms + " spaces" + (m.location ? " · " + m.location : ""),
-        terms: ("open project building " + m.name + " " + m.location).toLowerCase(),
-        run: function () { closePalette(); setView("dash"); switchProject(id); }
+        sub: [p.price, p.location, m.rooms + " positions"].filter(Boolean).join(" · "),
+        terms: ("open property building " + siteTerms(m)),
+        run: function () { closePalette(); openSite(id); }
       });
     });
-    [
+    var acts = [
       { title: "Start guided walkthrough", sub: "Play the automatic tour", ic: "play", run: function () { closePalette(); setView("tour"); guidedStart(); } },
-      { title: "New project", sub: "Add another building to this deployment", ic: "plus", run: function () { closePalette(); setView("studio"); studioTab = "projects"; renderStudio(); } },
-      { title: "Add a space", sub: "New position in this building", ic: "plus", run: function () { closePalette(); setView("studio"); studioTab = "rooms"; renderStudio(); openAddRoom(); } },
-      { title: "Open content studio", sub: "Rooms, hotspots, branding, publish", ic: "edit", run: function () { closePalette(); setView("studio"); } },
       { title: "Export a still", sub: "PNG of the current view", ic: "camera", run: function () { closePalette(); shot(); } },
       { title: "Copy link to this view", sub: "Deep link with the exact angle", ic: "share", run: function () { closePalette(); share(); } },
-      { title: "Back to overview", sub: "Project dashboard", ic: "home", run: function () { closePalette(); setView("dash"); } },
+      { title: "Back to overview", sub: "This property's dashboard", ic: "home", run: function () { closePalette(); setView("dash"); } },
       { title: "Toggle fullscreen", sub: "Immersive mode", ic: "expand", run: function () { closePalette(); toggleFull(); } },
       { title: "Rendering quality · High", sub: "4K panoramas — best on a dedicated GPU", ic: "settings", run: function () { closePalette(); engine.quality("hi"); toast("Rendering at full resolution."); } },
       { title: "Rendering quality · Balanced", sub: "Matches the panorama size to your hardware", ic: "settings", run: function () { closePalette(); engine.quality("auto"); toast("Quality set to automatic."); } },
       { title: "Rendering quality · Low", sub: "Smaller panoramas — for older machines", ic: "settings", run: function () { closePalette(); engine.quality("lo"); toast("Rendering at low quality."); } }
-    ].forEach(function (a) {
+    ];
+    if (SITES_ON) {
+      acts.unshift({ title: "All properties", sub: "Back to the portfolio", ic: "building", run: function () { closePalette(); setView("sites"); } });
+    }
+    if (isAdmin()) {
+      acts.splice(1, 0,
+        { title: "Add a property", sub: "A new building in this deployment", ic: "plus", run: function () { closePalette(); gotoStudio("sites"); } },
+        { title: "Add a space", sub: "New position in this property", ic: "plus", run: function () { closePalette(); if (gotoStudio("rooms")) openAddRoom(); } },
+        { title: "Open content studio", sub: "Rooms, hotspots, branding, publish", ic: "edit", run: function () { closePalette(); gotoStudio(); } },
+        { title: "Sign out of the Studio", sub: "Hide the editing tools again", ic: "lock", run: function () { closePalette(); adminSignOut(); } });
+    } else if (adminLocked()) {
+      acts.push({ title: "Studio sign-in", sub: "For the agency, not for visitors", ic: "lock", run: function () { closePalette(); openLock(function () { setView("studio", { force: true }); }); } });
+    }
+    acts.forEach(function (a) {
       out.push({ group: "Actions", kind: "action", icon: a.ic, title: a.title, sub: a.sub, terms: (a.title + " " + a.sub).toLowerCase(), run: a.run });
     });
     return out;
@@ -931,11 +1297,13 @@
     hotspots: ["Hotspots", "Click inside the panorama to place one"],
     plans: ["Floor plans", "The interactive minimap"],
     brand: ["Branding", "One block drives the entire interface"],
-    projects: ["Projects", "Every building in this deployment"],
+    sites: ["Properties", "Every building in this deployment"],
+    access: ["Access", "Who can open the Studio"],
     publish: ["Publish", "Save, export and embed"]
   };
 
   function renderStudio() {
+    if (!STUDIO_TITLES[studioTab]) studioTab = "rooms";
     $$("#studioNav button").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-tab") === studioTab); });
     $("#studioTitle").textContent = STUDIO_TITLES[studioTab][0];
     $("#studioSub").textContent = STUDIO_TITLES[studioTab][1];
@@ -946,9 +1314,16 @@
     else if (studioTab === "hotspots") studioHotspots(body);
     else if (studioTab === "plans") studioPlans(body);
     else if (studioTab === "brand") studioBrand(body);
-    else if (studioTab === "projects") studioProjects(body);
+    else if (studioTab === "sites") studioSites(body);
+    else if (studioTab === "access") studioAccess(body);
     else studioPublish(body);
     markSaved(dirty ? "Unsaved changes" : "Saved", dirty);
+    /* the tab can change without going through the router — keep the address
+       bar honest so a deep link always reopens what you were looking at */
+    if (view === "studio") {
+      var want = "#/studio/" + studioTab;
+      if (location.hash !== want) location.hash = want;
+    }
   }
 
   function field(label, node) {
@@ -1192,9 +1567,12 @@
     engine.go(TOUR.rooms[0].id, { force: true });
     renderProjectSwitch();
     var u = new URL(location.href);
-    u.searchParams.set("p", id);
+    u.searchParams["delete"]("p");
+    u.searchParams.set("site", id);
     history.replaceState(null, "", u);
-    toast("Opened " + ((TOUR.project && TOUR.project.name) || id) + ".");
+    if (opts && opts.view) setView(opts.view, { force: true });
+    else if (view === "sites") setView("dash", { force: true });
+    if (!(opts && opts.silent)) toast("Opened " + ((TOUR.project && TOUR.project.name) || id) + ".");
   }
 
   function renderProjectSwitch() {
@@ -1204,13 +1582,16 @@
     host.style.display = ids.length > 1 ? "" : "none";
     host.innerHTML = "";
     var label = el("span", null, (TOUR.project && TOUR.project.name) || PROJECT);
-    host.appendChild(icon("rooms"));
+    host.appendChild(icon(SITES_ON ? "building" : "rooms"));
     host.appendChild(label);
     host.appendChild(icon("arrow"));
     host.onclick = function () {
-      openPalette({ only: "project", placeholder: "Switch project…" });
+      if (SITES_ON) setView("sites");
+      else openPalette({ only: "project", placeholder: "Switch property…" });
     };
-    host.title = ids.length + " projects — click to switch";
+    host.title = SITES_ON ? "Back to all " + ids.length + " properties"
+      : ids.length + " properties — click to switch";
+    $$(".sites-only").forEach(function (n) { n.hidden = !SITES_ON; });
   }
 
   function blankTour(name) {
@@ -1219,7 +1600,10 @@
     return {
       id: id, version: 2, brand: b,
       project: { name: name, slug: id, location: "", area: "", floors: 1, duration: "2 min",
-        captured: "", summary: "A new project. Add spaces in Studio → Rooms.",
+        captured: "", summary: "A new property. Add spaces in Studio → Rooms.",
+        price: "", status: (PORTFOLIO.statuses || ["For sale"])[0], beds: null, baths: null,
+        propertyType: "", tenure: "", epc: "", ref: "", cover: "space-1", hidden: true,
+        agent: JSON.parse(JSON.stringify((TOUR.project && TOUR.project.agent) || {})),
         facts: [["Positions", "1"], ["Floors", "1"]] },
       guided: { dwell: 9000, order: ["space-1"] },
       floors: [{
@@ -1643,14 +2027,110 @@
   }
 
   /* ── Studio · projects ─────────────────────────────────────────────────── */
-  function studioProjects(body) {
+  /* ── Studio · properties ───────────────────────────────────────────────── */
+  function studioSites(body) {
     var cols = el("div", "studio-cols");
-    var main = el("div", "studio-panel card");
-    main.appendChild(el("h4", null, "Projects in this deployment"));
-    main.appendChild(el("p", "t-body", "Each project is a separate building with its own rooms, floor plans, " +
-      "hotspots and branding. Switching is instant — they share one viewer."));
-    var list = el("div", "roomlist");
-    list.style.marginTop = "14px";
+    var main = el("div");
+
+    /* ══ the listing details of the property that is currently open ══ */
+    var p = TOUR.project = TOUR.project || {};
+    var det = el("div", "studio-panel card");
+    det.appendChild(el("h4", null, "Listing · " + (p.name || PROJECT)));
+    det.appendChild(el("p", "t-body", "What a viewer sees on the portfolio card and across the top of the " +
+      "property. Leave a field empty and it simply does not appear."));
+    var g = el("div", "form-grid");
+
+    var r1 = el("div", "form-row");
+    r1.appendChild(field("Property name", input(p.name, function (v) { p.name = v; afterSiteEdit(); }, "12 Willow Lane")));
+    r1.appendChild(field("Address / area", input(p.location, function (v) { p.location = v; afterSiteEdit(); }, "Stoneygate, Leicester LE2")));
+    g.appendChild(r1);
+
+    var r2 = el("div", "form-row");
+    r2.appendChild(field("Price", input(p.price, function (v) { p.price = v; afterSiteEdit(); }, "£465,000  ·  £1,250 pcm")));
+    r2.appendChild(field("Status", select(
+      (PORTFOLIO.statuses || ["For sale"]).map(function (x) { return [x, x]; }).concat([["", "— none —"]]),
+      p.status || "", function (v) { p.status = v; afterSiteEdit(); })));
+    g.appendChild(r2);
+
+    var r3 = el("div", "form-row form-row--3");
+    r3.appendChild(field("Bedrooms", input(p.beds, function (v) { p.beds = v ? +v : null; afterSiteEdit(); }, "4")));
+    r3.appendChild(field("Bathrooms", input(p.baths, function (v) { p.baths = v ? +v : null; afterSiteEdit(); }, "2")));
+    r3.appendChild(field("Receptions", input(p.receptions, function (v) { p.receptions = v ? +v : null; afterSiteEdit(); }, "2")));
+    g.appendChild(r3);
+
+    var r4 = el("div", "form-row form-row--3");
+    r4.appendChild(field("Type", input(p.propertyType, function (v) { p.propertyType = v; afterSiteEdit(); }, "Detached house")));
+    r4.appendChild(field("Tenure", input(p.tenure, function (v) { p.tenure = v; afterSiteEdit(); }, "Freehold")));
+    r4.appendChild(field("EPC", input(p.epc, function (v) { p.epc = v; afterSiteEdit(); }, "C")));
+    g.appendChild(r4);
+
+    var r5 = el("div", "form-row");
+    r5.appendChild(field("Floor area", input(p.area, function (v) { p.area = v; afterSiteEdit(); }, "1,640 sq ft")));
+    r5.appendChild(field("Your reference", input(p.ref, function (v) { p.ref = v; afterSiteEdit(); }, "MER-1042")));
+    g.appendChild(r5);
+
+    g.appendChild(field("Summary", textarea(p.summary, function (v) { p.summary = v; afterSiteEdit(); })));
+
+    /* card artwork: a photo if they have one, otherwise the floor plan */
+    var cov = el("div", "field");
+    cov.appendChild(el("label", null, "Portfolio card image"));
+    var covDrop = el("div", "drop");
+    covDrop.appendChild(icon("upload"));
+    var covTxt = el("p", null, p.coverImage ? "Photo set — click to replace" : "Click to add a photo (optional — the floor plan is used otherwise)");
+    covDrop.appendChild(covTxt);
+    var covF = el("input"); covF.type = "file"; covF.accept = "image/*"; covF.style.display = "none";
+    covDrop.onclick = function () { covF.click(); };
+    covF.onchange = function () {
+      if (!covF.files[0]) return;
+      var fr = new FileReader();
+      fr.onload = function () { p.coverImage = fr.result; afterSiteEdit(); renderStudio(); toast("Card image set."); };
+      fr.readAsDataURL(covF.files[0]);
+    };
+    cov.appendChild(covDrop); cov.appendChild(covF);
+    if (p.coverImage) {
+      var clr = el("button", "btn btn--sm", "Remove the photo");
+      clr.style.marginTop = "8px";
+      clr.onclick = function () { p.coverImage = null; afterSiteEdit(); renderStudio(); };
+      cov.appendChild(clr);
+    }
+    g.appendChild(cov);
+
+    var r6 = el("div", "form-row");
+    r6.appendChild(field("Opening room on the card", select(
+      TOUR.rooms.map(function (r) { return [r.id, r.name]; }), p.cover || TOUR.rooms[0].id,
+      function (v) { p.cover = v; afterSiteEdit(); })));
+    /* visibility is an action, not an edit — going live has to survive closing
+       the tab, so it saves itself rather than waiting for Publish */
+    r6.appendChild(field("Visibility", select(
+      [["live", "Live — shown in the portfolio"], ["draft", "Draft — hidden from visitors"]],
+      p.hidden ? "draft" : "live",
+      function (v) {
+        p.hidden = v === "draft";
+        afterSiteEdit();
+        saveTour(true);
+        toast(p.hidden ? "Hidden from visitors — saved." : "Live in the portfolio — saved.");
+        renderStudio();
+      })));
+    g.appendChild(r6);
+
+    var ag = p.agent = p.agent || {};
+    var r7 = el("div", "form-row form-row--3");
+    r7.appendChild(field("Agent", input(ag.name, function (v) { ag.name = v; afterSiteEdit(); }, "Meridian Residential")));
+    r7.appendChild(field("Phone", input(ag.phone, function (v) { ag.phone = v; afterSiteEdit(); }, "0116 000 0000")));
+    r7.appendChild(field("Email", input(ag.email, function (v) { ag.email = v; afterSiteEdit(); }, "viewings@…")));
+    g.appendChild(r7);
+
+    det.appendChild(g);
+    main.appendChild(det);
+
+    /* ══ everything else in the deployment ══ */
+    var list = el("div", "studio-panel card");
+    list.style.marginTop = "16px";
+    list.appendChild(el("h4", null, "All properties"));
+    list.appendChild(el("p", "t-body", "Each one is a separate building with its own rooms, plans, hotspots " +
+      "and branding. Switching is instant — they share one viewer."));
+    var rows = el("div", "roomlist");
+    rows.style.marginTop = "14px";
     projectIds().forEach(function (id) {
       var m = projectMeta(id);
       if (!m) return;
@@ -1661,47 +2141,37 @@
         esc((m.brand && m.brand.accent) || "var(--accent)");
       var tx = el("span", "roomlist-txt");
       tx.appendChild(el("b", null, m.name));
-      tx.appendChild(el("span", null, m.rooms + " spaces" + (m.location ? " · " + m.location : "") +
-        (shippedTour(id) ? "" : " · created here")));
+      tx.appendChild(el("span", null, [
+        m.project.price, m.rooms + " positions", m.location,
+        m.shipped ? null : "created here", m.project.hidden ? "draft" : null
+      ].filter(Boolean).join(" · ")));
       b.appendChild(dot); b.appendChild(tx);
-      if (id === PROJECT) {
-        var now = el("span", "chip chip--accent", "Open");
-        b.appendChild(now);
-      }
-      b.onclick = function () { switchProject(id); renderStudio(); };
-      list.appendChild(b);
+      if (id === PROJECT) b.appendChild(el("span", "chip chip--accent", "Open"));
+      b.onclick = function () { openSite(id, { view: "studio" }); };
+      rows.appendChild(b);
     });
-    main.appendChild(list);
+    list.appendChild(rows);
 
     var act = el("div");
     act.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:16px";
     var mk = el("button", "btn btn--sm btn--primary");
     mk.id = "btnNewProject";
     mk.appendChild(icon("plus"));
-    mk.appendChild(document.createTextNode("New project"));
-    mk.onclick = function () {
-      var name = prompt("Project name", "New building");
-      if (!name) return;
-      var t = blankTour(name);
-      try { localStorage.setItem(storeKey(t.id), JSON.stringify(t)); } catch (e) {
-        toast("Browser storage is full — export a project first."); return;
-      }
-      switchProject(t.id, { force: true });
-      studioTab = "rooms";
-      renderStudio();
-    };
+    mk.appendChild(document.createTextNode("New property"));
+    mk.onclick = function () { openNewSite(); };
     var dup = el("button", "btn btn--sm");
-    dup.appendChild(icon("rooms"));
-    dup.appendChild(document.createTextNode("Duplicate this project"));
+    dup.id = "btnDupProject";
+    dup.appendChild(icon("building"));
+    dup.appendChild(document.createTextNode("Duplicate this property"));
     dup.onclick = function () {
       var copy = JSON.parse(JSON.stringify(TOUR));
       copy.id = slug(TOUR.project.name) + "-" + Math.random().toString(36).slice(2, 6);
       copy.project.name = TOUR.project.name + " (copy)";
       copy.project.slug = copy.id;
-      try { localStorage.setItem(storeKey(copy.id), JSON.stringify(copy)); } catch (e) {
-        toast("Browser storage is full."); return;
-      }
-      switchProject(copy.id, { force: true });
+      copy.project.ref = "";
+      copy.project.hidden = true;
+      if (!storeSite(copy)) return;
+      switchProject(copy.id, { force: true, view: "studio" });
       renderStudio();
     };
     var imp = el("button", "btn btn--sm");
@@ -1718,8 +2188,8 @@
           var t = JSON.parse(fr.result);
           if (!t.rooms || !t.rooms.length) throw new Error("no rooms");
           t.id = t.id || slug((t.project && t.project.name) || "imported") + "-" + Math.random().toString(36).slice(2, 5);
-          localStorage.setItem(storeKey(t.id), JSON.stringify(t));
-          switchProject(t.id, { force: true });
+          if (!storeSite(t)) return;
+          switchProject(t.id, { force: true, view: "studio" });
           renderStudio();
         } catch (e) { toast("That file isn't a valid tour.json."); }
       };
@@ -1728,22 +2198,25 @@
     act.appendChild(mk); act.appendChild(dup); act.appendChild(imp); act.appendChild(impF);
     if (!shippedTour(PROJECT)) {
       var rm = el("button", "btn btn--sm btn--danger");
+      rm.id = "btnDeleteProject";
       rm.appendChild(icon("trash"));
-      rm.appendChild(document.createTextNode("Delete this project"));
+      rm.appendChild(document.createTextNode("Delete this property"));
       rm.onclick = function () {
         if (!confirm("Delete " + TOUR.project.name + "? This cannot be undone.")) return;
         try { localStorage.removeItem(storeKey(PROJECT)); } catch (e) { }
-        switchProject(projectIds()[0], { force: true });
+        forgetMeta();
+        switchProject(projectIds()[0], { force: true, view: "studio" });
         renderStudio();
       };
       act.appendChild(rm);
     }
-    main.appendChild(act);
+    list.appendChild(act);
+    main.appendChild(list);
 
     var how = el("div", "studio-panel card");
-    how.appendChild(el("h4", null, "Adding a project permanently"));
-    how.appendChild(el("p", "t-body", "Projects made here live in this browser. To ship one to everybody, " +
-      "export it and drop it in the folder as its own file:"));
+    how.appendChild(el("h4", null, "Putting a property on the server"));
+    how.appendChild(el("p", "t-body", "Properties made here live in this browser, which is right for drafting. " +
+      "To publish one to every visitor, export it and drop it in the folder as its own file:"));
     var code = el("pre", "code");
     code.textContent =
       "1.  Studio → Publish → Export tour.json\n" +
@@ -1753,10 +2226,173 @@
       "      );\n\n" +
       "3.  Add one line to index.html, next to the others:\n\n" +
       '      <script src="tour-<name>.js"><\/script>\n\n' +
-      "That is the whole deployment step. No build, no database.";
+      "No build, no database, no rebuild of anything else.";
     how.appendChild(code);
+    how.appendChild(el("h4", null, "A portfolio with hundreds of listings"));
+    how.appendChild(el("p", "t-body", "Past about fifty properties, register a stub instead — the listing card " +
+      "loads at once and the rooms only when someone opens it:"));
+    var code2 = el("pre", "code");
+    code2.textContent =
+      "(window.RED360_TOURS = window.RED360_TOURS || []).push({\n" +
+      '  id: "willow-lane-12",\n' +
+      '  src: "tours/willow-lane-12.js",   // pulled in on demand\n' +
+      "  project: { name: …, price: …, beds: … },\n" +
+      "  floors: [{ id: \"g\", plan: \"…\" }]\n" +
+      "});";
+    how.appendChild(code2);
+
     cols.appendChild(main);
     cols.appendChild(how);
+    body.appendChild(cols);
+  }
+
+  /* a listing edit changes the card, the hero and the switcher all at once */
+  function afterSiteEdit() {
+    markDirty();
+    forgetMeta(PROJECT);
+    buildDash();
+    renderProjectSwitch();
+    if (SITES_ON) buildSites();
+  }
+  function storeSite(t) {
+    try { localStorage.setItem(storeKey(t.id), JSON.stringify(t)); }
+    catch (e) { toast("Browser storage is full — export a property first."); return false; }
+    forgetMeta();
+    return true;
+  }
+
+  /* new property: name it, say what it is, and it exists */
+  function openNewSite() {
+    var boxOld = $("#newSiteForm");
+    if (boxOld) { boxOld.parentNode.removeChild(boxOld); return; }
+    var wrap = el("div", "studio-panel card");
+    wrap.id = "newSiteForm";
+    wrap.style.marginBottom = "14px";
+    wrap.appendChild(el("h4", null, "New property"));
+    var g = el("div", "form-grid");
+    var nameI = el("input", "input");
+    nameI.id = "newSiteName";
+    nameI.placeholder = "e.g. 12 Willow Lane";
+    g.appendChild(field("Property name", nameI));
+    var row = el("div", "form-row");
+    var locI = el("input", "input");
+    locI.id = "newSiteLocation";
+    locI.placeholder = "Stoneygate, Leicester LE2";
+    var priceI = el("input", "input");
+    priceI.id = "newSitePrice";
+    priceI.placeholder = "£465,000";
+    row.appendChild(field("Address / area", locI));
+    row.appendChild(field("Price", priceI));
+    g.appendChild(row);
+    var row2 = el("div", "form-row");
+    var statusS = select((PORTFOLIO.statuses || ["For sale"]).map(function (x) { return [x, x]; }),
+      (PORTFOLIO.statuses || ["For sale"])[0], function () { });
+    statusS.id = "newSiteStatus";
+    var bedsI = el("input", "input");
+    bedsI.id = "newSiteBeds";
+    bedsI.placeholder = "3";
+    row2.appendChild(field("Status", statusS));
+    row2.appendChild(field("Bedrooms", bedsI));
+    g.appendChild(row2);
+    g.appendChild(el("p", "t-body", "It starts as a draft with one space, so nothing half-finished ever shows " +
+      "in the portfolio. Add the rest in Rooms, then switch it to Live."));
+    var act = el("div");
+    act.style.cssText = "display:flex;gap:8px";
+    var go = el("button", "btn btn--sm btn--primary", "Create property");
+    go.id = "btnNewSiteGo";
+    go.onclick = function () {
+      var t = blankTour(nameI.value.trim() || "New property");
+      t.project.location = locI.value.trim();
+      t.project.price = priceI.value.trim();
+      t.project.status = statusS.value;
+      t.project.beds = bedsI.value ? +bedsI.value : null;
+      t.project.hidden = true;
+      if (!storeSite(t)) return;
+      switchProject(t.id, { force: true, view: "studio" });
+      studioTab = "rooms";
+      renderStudio();
+      toast(t.project.name + " created as a draft.");
+    };
+    var cancel = el("button", "btn btn--sm", "Cancel");
+    cancel.onclick = function () { wrap.parentNode.removeChild(wrap); };
+    act.appendChild(go); act.appendChild(cancel);
+    g.appendChild(act);
+    wrap.appendChild(g);
+    var host = $("#studioBody");
+    host.insertBefore(wrap, host.firstChild);
+    nameI.focus();
+  }
+
+  /* ── Studio · access ───────────────────────────────────────────────────── */
+  function studioAccess(body) {
+    var cols = el("div", "studio-cols");
+    var main = el("div");
+
+    var state = el("div", "studio-panel card");
+    state.appendChild(el("h4", null, "Studio access"));
+    state.appendChild(el("p", "t-body", adminLocked()
+      ? "The Studio is hidden from visitors. The portfolio, the property pages and the tours are all public; " +
+        "everything on this side of the passcode is not."
+      : "No passcode is set, so the Studio is visible to anyone who opens this page. Set one below."));
+    var dl = el("dl", "dl");
+    [["Lock", adminLocked() ? "On" : "Off"],
+    ["Checked", ADMIN_CFG.verifyUrl ? "On your server" : "In the browser"],
+    ["This device", isAdmin() ? "Signed in" : "Signed out"],
+    ["Stays signed in", (+ADMIN_CFG.rememberDays > 0) ? ADMIN_CFG.rememberDays + " days" : "Until the tab closes"]]
+      .forEach(function (x) { dl.appendChild(el("dt", null, x[0])); dl.appendChild(el("dd", null, x[1])); });
+    state.appendChild(dl);
+    var out = el("button", "btn btn--sm");
+    out.style.marginTop = "12px";
+    out.appendChild(icon("lock"));
+    out.appendChild(document.createTextNode("Sign out on this device"));
+    out.onclick = function () { adminSignOut(); };
+    state.appendChild(out);
+    main.appendChild(state);
+
+    var ch = el("div", "studio-panel card");
+    ch.style.marginTop = "16px";
+    ch.appendChild(el("h4", null, "Change the passcode"));
+    ch.appendChild(el("p", "t-body", "The passcode itself is never stored anywhere. Type a new one and this gives " +
+      "you the line to paste into config.js — that is what makes it permanent for everybody."));
+    var g = el("div", "form-grid");
+    var np = el("input", "input");
+    np.id = "newPass"; np.type = "text"; np.placeholder = "a new passcode";
+    g.appendChild(field("New passcode", np));
+    var outLine = el("pre", "code");
+    outLine.id = "newPassLine";
+    outLine.textContent = 'hash: "' + esc(ADMIN_CFG.hash || "") + '"      // current';
+    var mk = el("button", "btn btn--sm btn--primary", "Generate the line");
+    mk.id = "btnMakeHash";
+    mk.onclick = function () {
+      var v = np.value.trim();
+      if (v.length < 4) { toast("Use at least four characters."); return; }
+      outLine.textContent =
+        "// in config.js → admin:\n" +
+        'hash: "' + fnv(v) + '",';
+      toast("Paste that into config.js to make it permanent.");
+    };
+    g.appendChild(mk);
+    ch.appendChild(g);
+    ch.appendChild(outLine);
+    main.appendChild(ch);
+
+    var real = el("div", "studio-panel card");
+    real.appendChild(el("h4", null, "What this lock is, honestly"));
+    real.appendChild(el("p", "t-body", "It keeps the editing tools out of a visitor's way and off a shared screen. " +
+      "It is not a security boundary. The whole product is static files, so anyone who reads the JavaScript can " +
+      "get past a passcode that lives inside it."));
+    real.appendChild(el("p", "t-body", "If the listings themselves are confidential — anything unpublished, " +
+      "anything with a vendor's name on it — put the folder behind the server's own login instead:"));
+    var code = el("pre", "code");
+    code.textContent =
+      "Cloudflare       Zero Trust → Access → self-hosted app on /studio\n" +
+      "Apache / cPanel  .htpasswd on the folder\n" +
+      "Nginx            auth_basic on the location block\n" +
+      "Anything else    set admin.verifyUrl in config.js to an endpoint\n" +
+      "                 that takes {code} and answers {ok:true}";
+    real.appendChild(code);
+    cols.appendChild(main);
+    cols.appendChild(real);
     body.appendChild(cols);
   }
 
@@ -1831,38 +2467,98 @@
       "an S3 bucket, a closed intranet — or straight off a memory stick."));
     var tree = el("pre", "code");
     tree.textContent =
-      "/tour\n" +
-      "  ├── index.html      shell\n" +
-      "  ├── app.css         design system\n" +
-      "  ├── app.js          application\n" +
-      "  ├── engine.js       WebGL engine · no dependencies\n" +
-      "  ├── tour.js         this tour  ← the only file that changes\n" +
-      "  └── panos/          your stitched captures\n\n" +
-      "No build step. No server runtime. No licence key.";
+      "/tours                         ← anywhere on your existing site\n" +
+      "  ├── index.html               shell\n" +
+      "  ├── config.js                portfolio + studio passcode\n" +
+      "  ├── app.css / app.js         the product\n" +
+      "  ├── engine.js                WebGL engine · no dependencies\n" +
+      "  ├── embed.js                 drop-in for your other pages\n" +
+      "  ├── tour-<property>.js       one file per property\n" +
+      "  └── panos/                   your stitched captures\n\n" +
+      "No build step. No server runtime. No database. No licence key.\n" +
+      "Upload the folder by FTP and it works.";
     host.appendChild(tree);
     main.appendChild(host);
 
+    var origin = location.origin + location.pathname.replace(/index\.html$/, "");
     var embed = el("div", "studio-panel card");
     embed.style.marginTop = "16px";
-    embed.appendChild(el("h4", null, "Embed"));
-    embed.appendChild(el("p", "t-body", "Drop the tour into any page — a website, an intranet, a Notion doc, a listing portal."));
+    embed.appendChild(el("h4", null, "Put it on the website you already have"));
+    embed.appendChild(el("p", "t-body", "Nothing here replaces the agency's site. Upload this folder to it, then " +
+      "paste one of these onto a property page, a listing template or the homepage."));
+
+    var tabs = el("div", "segmented");
+    tabs.style.margin = "4px 0 12px";
     var code = el("pre", "code");
-    var origin = location.origin + location.pathname.replace(/index\.html$/, "");
-    code.textContent =
-      '<iframe\n  src="' + origin + '#/tour/' + (currentRoom ? currentRoom.id : "reception") + '"\n' +
-      '  width="100%" height="640"\n  style="border:0;border-radius:16px"\n' +
-      '  allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"\n' +
-      '  title="' + esc(TOUR.project.name) + ' virtual tour"></iframe>';
+    var note = el("p", "t-body");
+    var SNIPPETS = [
+      ["This property", function () {
+        note.textContent = "Goes on the page for " + (TOUR.project.name || "this property") + ".";
+        return '<iframe\n  src="' + origin + '?site=' + PROJECT + '&embed=1#/tour/' +
+          (currentRoom ? currentRoom.id : TOUR.rooms[0].id) + '"\n' +
+          '  width="100%" height="640" loading="lazy"\n  style="border:0;border-radius:16px"\n' +
+          '  allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"\n' +
+          '  title="' + esc(TOUR.project.name) + ' — virtual tour"></iframe>';
+      }],
+      ["The whole portfolio", function () {
+        note.textContent = "One block that lists every live property, with the search and filters.";
+        return '<iframe\n  src="' + origin + '#/sites"\n' +
+          '  width="100%" height="900" loading="lazy"\n  style="border:0;border-radius:16px"\n' +
+          '  allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"\n' +
+          '  title="Virtual tours — every property"></iframe>';
+      }],
+      ["One line per listing", function () {
+        note.textContent = "For a listing template: put the property id in the attribute and embed.js " +
+          "builds the iframe. Add the script once, anywhere on the page.";
+        return '<div data-red360="' + PROJECT + '" data-height="640"></div>\n' +
+          '<script src="' + origin + 'embed.js"><\/script>';
+      }],
+      ["A button, not a frame", function () {
+        note.textContent = "Opens the walkthrough full-screen in a new tab — the lightest option, and the " +
+          "one to use on a slow listing page.";
+        return '<a href="' + origin + '?site=' + PROJECT + '&embed=1#/tour/' +
+          (currentRoom ? currentRoom.id : TOUR.rooms[0].id) + '"\n' +
+          '   target="_blank" rel="noopener">View the 360° tour</a>';
+      }]
+    ];
+    var picked = 0;
+    function drawSnippet() {
+      $$("button", tabs).forEach(function (b, i) { b.classList.toggle("is-on", i === picked); });
+      code.textContent = SNIPPETS[picked][1]();
+    }
+    SNIPPETS.forEach(function (sn, i) {
+      var b = el("button", null, sn[0]);
+      b.onclick = function () { picked = i; drawSnippet(); };
+      tabs.appendChild(b);
+    });
+    embed.appendChild(tabs);
     embed.appendChild(code);
+    embed.appendChild(note);
+    drawSnippet();
     var cp = el("button", "btn btn--sm");
+    cp.id = "btnCopyEmbed";
     cp.style.marginTop = "10px";
-    cp.textContent = "Copy embed code";
+    cp.textContent = "Copy this snippet";
     cp.onclick = function () {
       navigator.clipboard && navigator.clipboard.writeText(code.textContent);
-      toast("Embed code copied.");
+      toast("Copied — paste it into the page.");
     };
     embed.appendChild(cp);
     main.appendChild(embed);
+
+    var links = el("div", "studio-panel card");
+    links.style.marginTop = "16px";
+    links.appendChild(el("h4", null, "Links worth keeping"));
+    var lt = el("pre", "code");
+    lt.textContent =
+      origin + "#/sites                     the portfolio\n" +
+      origin + "#/site/" + PROJECT + "\n" +
+      "                                     straight to this property\n" +
+      origin + "?site=" + PROJECT + "&embed=1\n" +
+      "                                     the same, with no portfolio chrome\n" +
+      origin + "?admin=<passcode>            signs the agency in and opens the Studio";
+    links.appendChild(lt);
+    main.appendChild(links);
 
     var stats = el("div", "studio-panel card");
     stats.appendChild(el("h4", null, "This tour"));
@@ -1931,6 +2627,10 @@
     var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
     var mod = isMac ? e.metaKey : e.ctrlKey;
 
+    if (adminOpen) {
+      if (e.key === "Escape") { e.preventDefault(); closeLock(); }
+      return;
+    }
     if (mod && e.key.toLowerCase() === "k") { e.preventDefault(); paletteOpen ? closePalette() : openPalette(); return; }
 
     if (paletteOpen) {
@@ -1942,7 +2642,7 @@
     }
     if (e.key === "Escape") {
       if (sheetOpen) { closeSheet(); return; }
-      if (view === "studio") { setView("tour"); return; }
+      if (view === "studio") { setView(cameFrom === "sites" ? "sites" : "tour"); return; }
       if (view === "tour" && document.fullscreenElement) return;
     }
     if (typing) return;
@@ -1962,7 +2662,8 @@
     else if (k === "f") toggleFull();
     else if (k === "tab") { e.preventDefault(); togglePanels(); }
     else if (k === "m") $("#panelRight").classList.toggle("is-hidden");
-    else if (k === "e") setView("studio");
+    else if (k === "e") { if (isAdmin() || adminLocked()) gotoStudio(); }
+    else if (k === "b") setView(SITES_ON ? "sites" : "dash");
     else if (k === "h" || k === "escape") setView("dash");
     else if (k === "s") shot();
     else if (guided.on && k === "n") guidedGo(1);
@@ -1980,9 +2681,52 @@
       b.onclick = function () {
         var t = b.getAttribute("data-nav");
         if (t === "tour") enterTour(currentRoom && currentRoom.id);
+        else if (t === "studio") gotoStudio();
         else setView(t);
       };
     });
+
+    /* ── portfolio ── */
+    var search = $("#siteSearch");
+    if (search) {
+      search.oninput = function () { siteQuery = search.value; renderSiteGrid(); };
+      search.onkeydown = function (e) { if (e.key === "Escape") { search.value = ""; siteQuery = ""; renderSiteGrid(); } };
+    }
+    $("#siteSort").onchange = function () { siteSort = $("#siteSort").value; renderSiteGrid(); };
+
+    /* ── studio access ── */
+    $("#btnAdmin").onclick = function () {
+      if (isAdmin()) adminSignOut();
+      else openLock(function () { gotoStudio("sites"); });
+    };
+    $("#lockCancel").onclick = closeLock;
+    $("#lockForm").onsubmit = function (e) {
+      e.preventDefault();
+      var code = $("#lockCode").value;
+      var go = $("#lockGo");
+      go.disabled = true;
+      adminCheck(code, function (ok, why) {
+        go.disabled = false;
+        if (!ok) {
+          var err = $("#lockErr");
+          err.textContent = why || "That passcode isn't right.";
+          err.hidden = false;
+          $("#lockCode").select();
+          return;
+        }
+        adminGrant($("#lockRemember").checked);
+        var after = adminAfter;
+        closeLock();
+        toast("Signed in — the Studio is open.");
+        if (after) after();
+      });
+    };
+    $("#lock").onclick = function (e) { if (e.target === $("#lock")) closeLock(); };
+    $("#btnStudioSites").onclick = function () {
+      $("#studioRail").classList.remove("is-on");
+      $("#studioScrim").classList.remove("is-on");
+      setView(SITES_ON ? "sites" : "dash");
+    };
     $("#btnStart").onclick = function () { enterTour(currentRoom ? currentRoom.id : TOUR.rooms[0].id); };
     $("#btnPreviewEnter").onclick = function () { enterTour(currentRoom && currentRoom.id); };
     $("#btnGuided").onclick = function () { enterTour(TOUR.rooms[0].id); setTimeout(guidedStart, 400); };
@@ -2009,7 +2753,7 @@
     $("#btnShot").onclick = shot;
     $("#btnShare").onclick = share;
     $("#btnPanels").onclick = function () { togglePanels(); };
-    $("#btnStudio").onclick = function () { setView("studio"); };
+    $("#btnStudio").onclick = function () { gotoStudio(); };
     $("#btnFull").onclick = toggleFull;
     $("#btnCloseLeft").onclick = function () { $("#panelLeft").classList.add("is-hidden"); };
     $("#btnCloseRight").onclick = function () { $("#panelRight").classList.add("is-hidden"); };
@@ -2035,6 +2779,7 @@
     $("#btnStudioHome").onclick = function () { railOpen(false); setView("dash"); };
     $$("#studioNav button").forEach(function (b) {
       b.onclick = function () {
+        if (!isAdmin()) { openLock(); return; }
         studioTab = b.getAttribute("data-tab");
         $("#studioRail").classList.remove("is-on");
         $("#studioScrim").classList.remove("is-on");
@@ -2048,9 +2793,14 @@
     });
     window.addEventListener("hashchange", function () {
       var r = readHash();
-      if (r.view !== view) setView(r.view);
+      if (r.site && r.site !== PROJECT) { openSite(r.site); return; }
+      /* the tab has to be set before the view switches, or entering the Studio
+         renders the old tab and then rewrites the hash back to it */
+      var tabMoved = r.view === "studio" && r.tab && r.tab !== studioTab;
+      if (tabMoved) studioTab = r.tab;
+      if (r.view && r.view !== view) setView(r.view);
+      else if (tabMoved) renderStudio();
       if (r.view === "tour" && r.room && roomsById[r.room] && (!currentRoom || currentRoom.id !== r.room)) engine.go(r.room);
-      if (r.view === "studio" && r.tab && r.tab !== studioTab) { studioTab = r.tab; renderStudio(); }
     });
     window.addEventListener("beforeunload", function (e) {
       if (!dirty) return;
@@ -2090,12 +2840,39 @@
      BOOT
      ═══════════════════════════════════════════════════════════════════════ */
   function boot() {
+    /* a stub property has no rooms until its file is pulled in — resolve the
+       one we are about to open before anything touches the engine */
+    if (!TOUR || !(TOUR.rooms && TOUR.rooms.length)) {
+      var want = PROJECT;
+      fetchStub(want, function (t) {
+        if (t && t.rooms && t.rooms.length) { TOUR = t; bootReady(); return; }
+        /* fall back to the first property that does carry its rooms */
+        for (var i = 0; i < SHIPPED.length; i++) {
+          if (SHIPPED[i].rooms && SHIPPED[i].rooms.length) {
+            PROJECT = SHIPPED[i].id; TOUR = loadTour(PROJECT); bootReady(); return;
+          }
+        }
+        showFailure({ title: "No property could be loaded", message: "Every tour file in this deployment is empty or missing." });
+      });
+      return;
+    }
+    bootReady();
+  }
+
+  function bootReady() {
     indexRooms();
     applyBrand();
     wire();
+    syncAdminUI();
+    if (EMBED) document.body.classList.add("is-embed");
 
-    var params = new URLSearchParams(location.search);
+    var params = QS;
     var route = readHash();
+    if (route.site && projectMeta(route.site)) {
+      /* #/site/<id> — a link straight to one listing */
+      if (route.site !== PROJECT) { PROJECT = route.site; TOUR = loadTour(PROJECT) || TOUR; indexRooms(); applyBrand(); }
+    }
+    if (!route.view) route.view = SITES_ON ? "sites" : "dash";
 
     engine = window.RED360.createEngine({
       canvas: $("#gl"),
@@ -2146,6 +2923,7 @@
     buildFilmstrip();
     buildPlan();
     renderProjectSwitch();
+    if (SITES_ON) buildSites();
 
     var startRoom = (route.room && roomsById[route.room]) ? route.room : TOUR.rooms[0].id;
     var startView = null;
@@ -2159,10 +2937,25 @@
     engine.start(startRoom, startView);
     engine.autoRotate(route.view === "dash", 0.0016);
 
+    /* ?admin=<passcode> — a bookmark the agency can keep, so they never type it */
+    var qadmin = params.get("admin");
+    if (qadmin && adminLocked() && !isAdmin()) {
+      adminCheck(qadmin, function (ok) {
+        if (!ok) return;
+        adminGrant(true);
+        toast("Signed in — the Studio is open.");
+        var u = new URL(location.href);
+        u.searchParams["delete"]("admin");
+        history.replaceState(null, "", u);
+      });
+    }
+
+    if (route.view === "studio" && !isAdmin()) route.view = SITES_ON ? "sites" : "dash";
     if (route.view !== "dash") {
       if (route.view === "studio" && route.tab) studioTab = route.tab;
       setView(route.view, { force: true });
     } else {
+      setView("dash", { force: true });
       engine.inputs(!coarse);
     }
     $("#btnSpeed").textContent = "1×";
@@ -2176,6 +2969,10 @@
     go: function (id) { enterTour(id); },
     view: function (v) { setView(v); },
     tour: function () { return TOUR; },
+    site: function (id, opts) { if (id) openSite(id, opts); return PROJECT; },
+    sites: function () { return visibleSites().map(function (m) { return { id: m.id, name: m.name, project: m.project }; }); },
+    isAdmin: isAdmin,
+    signOut: adminSignOut,
     engine: function () { return engine; }
   };
 })();

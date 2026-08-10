@@ -1,5 +1,7 @@
-360RED PRODUCTIONS — Interactive Enterprise Virtual Tour Platform
-================================================================
+360RED PRODUCTIONS — Interactive Virtual Tour Platform
+======================================================
+One portfolio, as many properties as you like, editing tools behind a
+passcode, and a folder you can drop onto a website that already exists.
 
 TO VIEW IT
 ----------
@@ -12,33 +14,55 @@ If you'd rather run it from VS Code:
 
 WHAT'S HERE
 -----------
-  index.html   the shell — three screens in one page
-  app.css      the design system
-  app.js       the application (router, panels, search, guided tour, studio)
-  engine.js    the WebGL engine (no dependencies)
-  tour.js      A BUILDING — Charnwood House, the 18,500 sq ft example
-  tour-ashby.js  a second building, to show it carries more than one
-  README.md    full technical documentation
+  index.html     the shell — four screens in one page
+  app.css        the design system
+  app.js         the application (portfolio, viewer, search, studio)
+  engine.js      the WebGL engine (no dependencies)
+  config.js      the portfolio settings and the Studio passcode
+  tour.js        A BUILDING — Charnwood House, the 18,500 sq ft example
+  tour-ashby.js  a second building
+  tour-homes.js  a residential portfolio — six listings from one table
+  embed.js       the drop-in for a website you already have
+  README.md      full technical documentation
 
-FIRST FIVE THINGS TO TRY
-------------------------
-  1. Start the tour, then click a glowing ring to walk through a doorway
-  2. Press Cmd+K (Mac) or Ctrl+K (Windows) and search for "board room"
-  3. Reception → left panel → "Flat panorama"
-  4. Studio → Branding → drag the accent colour picker
-  5. Studio → Hotspots → "Place a hotspot" → click inside the panorama
+FIRST THINGS TO TRY
+-------------------
+  1. You land on the PORTFOLIO — every property in one grid. Search it,
+     filter it, sort it by price.
+  2. Open one. You are inside the building in about a second.
+  3. Click a glowing ring to walk through a doorway.
+  4. Press Cmd+K (Mac) or Ctrl+K (Windows) — it searches rooms, hotspots
+     AND properties.
+  5. Click the padlock, top right. Passcode:  redadmin
+     That is the only door into the Studio — a visitor never sees it.
+  6. Studio → Hotspots → "Place a hotspot" → click inside the panorama.
 
-ADDING MORE PLACES AND MORE BUILDINGS
+THE PASSCODE
+------------
+  redadmin      ← change it: Studio → Access → Change passcode
+
+  Be straight with the client about what the lock is. It hides the editing
+  tools from visitors. It is NOT security — this is a folder of static
+  files, so anyone who reads the JavaScript can get past it. If the
+  listings themselves are confidential, put the folder behind the
+  server's own login as well. Studio → Access spells out how.
+
+ADDING MORE PROPERTIES AND MORE ROOMS
 -------------------------------------
-A NEW SPACE in the building you are looking at:
+A NEW PROPERTY:
+  Studio → Properties → "New property".  Name it, give it a price and a
+  status.  It is created as a DRAFT — it exists for you, and visitors
+  cannot see it — so nothing half-finished ever appears on the portfolio.
+  Fill it in, then switch Visibility to Live.
+
+  Everything a viewer sees on the card is on that same screen: price,
+  status, bedrooms, bathrooms, type, tenure, EPC, your reference, the
+  agent's phone and email, and a photo for the card if you have one.
+
+A NEW SPACE in the property you are looking at:
   Studio → Rooms → "Add space".  Name it, pick the floor, pick the type.
   It appears on the dashboard, on the floor plan and in the tour straight
   away.  Duplicate and Delete are at the bottom of the same panel.
-
-A NEW BUILDING:
-  Studio → Projects → "New project"  (or "Duplicate this project", or
-  "Import a tour.json").  Switch between buildings from the button at the
-  top of the dashboard, or with Cmd+K.
 
   Those live in your browser.  To ship one to everybody:
     1. Studio → Publish → "Export tour.json"
@@ -54,6 +78,22 @@ A NEW BUILDING:
 
   That is the whole deployment step. No build, no database, no rebuild.
 
+PUTTING IT ON A WEBSITE THAT ALREADY EXISTS
+-------------------------------------------
+  Upload this folder to the agency's own site — FTP is fine — then paste
+  one line onto a property page:
+
+      <div data-red360="willow-lane-12" data-height="16:9"></div>
+      <script src="/tours/embed.js"></script>
+
+  Or the whole portfolio in one block:
+
+      <iframe src="/tours/#/sites" width="100%" height="900"></iframe>
+
+  Studio → Publish writes all of these out with the right ids already in
+  them, ready to copy.  Nothing replaces the site they have; this sits
+  inside it.
+
 IF SOMETHING GOES WRONG
 -----------------------
 The page always tells you what happened — it never just hangs.
@@ -62,6 +102,9 @@ Older graphics chips can't compile the full 3D renderer. The engine detects
 that and drops to a simpler one automatically, remembering the choice. You can
 also force it by adding to the address:
 
+  ?site=<id>   open one property
+  ?embed=1     no portfolio chrome — for an iframe
+  ?admin=<passcode>   signs you in and opens the Studio
   ?tier=1   simpler renderer
   ?tier=2   simplest renderer — works on anything that runs WebGL
   ?q=lo     smaller panoramas, for slower machines

@@ -52,10 +52,76 @@
   <symbol id="i-speed" viewBox="0 0 24 24"><path d="M12 13.5V8"/><path d="M4.2 17a8.8 8.8 0 1 1 15.6 0z"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 14a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V20a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H10a1.6 1.6 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V10a1.6 1.6 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/><circle cx="12" cy="15.2" r="1.15" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h8M17.5 12v3M20 12v2.5"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3.5 18v-9M3.5 13.5h17V18M20.5 18v-3"/><path d="M7 13.5v-2.6h4.4v2.6"/></symbol>
+  <symbol id="i-bath" viewBox="0 0 24 24"><path d="M3.5 12.5h17v2A4.5 4.5 0 0 1 16 19H8a4.5 4.5 0 0 1-4.5-4.5z"/><path d="M6 12.5V6.2A1.7 1.7 0 0 1 9.4 6"/><path d="M7 19l-1 1.8M17 19l1 1.8"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16l-6.2 7.2V19l-3.6-2v-3.8z"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 20V6.5L12 3.5l8 3V20"/><path d="M8 20v-4.5h8V20"/><path d="M8 9h2M14 9h2M8 12.5h2M14 12.5h2"/></symbol>
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
 </svg>
 
 <div id="app">
+
+  <!-- ══════════════════ PORTFOLIO ══════════════════ -->
+  <section class="view view--sites" id="viewSites" aria-label="Property portfolio">
+    <div class="dash scroll grain" id="sitesScroll">
+      <div class="dash-bg" aria-hidden="true"></div>
+      <div class="dash-inner">
+
+        <header class="topbar">
+          <div class="brand">
+            <span class="brand-orb" id="brandOrbSites" aria-hidden="true"></span>
+            <span>
+              <span class="brand-word" id="brandWordSites"></span>
+              <span class="brand-sub" id="brandSubSites"></span>
+            </span>
+          </div>
+          <nav class="topbar-nav">
+            <button class="navlink is-on" data-nav="sites">Portfolio</button>
+            <button class="navlink admin-only" data-nav="studio">Studio</button>
+            <button class="icon-btn icon-btn--sm" id="btnAdmin" title="Studio access" aria-label="Studio access">
+              <svg viewBox="0 0 24 24"><use href="#i-lock"/></svg>
+            </button>
+          </nav>
+        </header>
+
+        <div class="sites-head">
+          <div>
+            <p class="t-eyebrow" id="sitesEyebrow">Portfolio</p>
+            <h1 class="t-display t-h1" id="sitesTitle">Every property, walkable</h1>
+            <p class="t-lead" id="sitesBlurb"></p>
+          </div>
+          <div class="sites-search">
+            <svg viewBox="0 0 24 24"><use href="#i-search"/></svg>
+            <input id="siteSearch" type="search" placeholder="Search by name, street, town or reference…" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="sites-bar">
+          <div class="segmented" id="siteFilters"></div>
+          <div class="sites-bar-right">
+            <select class="input input--sm" id="siteSort" aria-label="Sort properties">
+              <option value="default">Newest first</option>
+              <option value="price-desc">Price · high to low</option>
+              <option value="price-asc">Price · low to high</option>
+              <option value="beds-desc">Most bedrooms</option>
+              <option value="name">Name A–Z</option>
+            </select>
+            <span class="t-mono" id="siteCount"></span>
+          </div>
+        </div>
+
+        <div class="sitegrid" id="siteGrid"></div>
+        <p class="sites-empty" id="sitesEmpty" hidden>Nothing matches that search.</p>
+
+        <footer class="dash-foot">
+          <span id="creditSites"></span>
+          <span class="t-mono" id="sitesInfo"></span>
+        </footer>
+      </div>
+    </div>
+  </section>
 
   <!-- ══════════════════ DASHBOARD ══════════════════ -->
   <section class="view view--dash is-active" id="viewDash" aria-label="Project overview">
@@ -71,11 +137,12 @@
               <span class="brand-sub" id="brandSubDash"></span>
             </span>
           </div>
-          <button class="projectswitch" id="projectSwitch" aria-label="Switch project"></button>
+          <button class="projectswitch" id="projectSwitch" aria-label="Switch property"></button>
           <nav class="topbar-nav">
+            <button class="navlink sites-only" data-nav="sites">Portfolio</button>
             <button class="navlink is-on" data-nav="dash">Overview</button>
             <button class="navlink" data-nav="tour">Tour</button>
-            <button class="navlink" data-nav="studio">Studio</button>
+            <button class="navlink admin-only" data-nav="studio">Studio</button>
           </nav>
         </header>
 
@@ -188,7 +255,7 @@
         <button class="icon-btn hide-sm" id="btnPanels" title="Hide panels  ·  Tab" aria-label="Toggle panels">
           <svg viewBox="0 0 24 24"><use href="#i-panel"/></svg>
         </button>
-        <button class="icon-btn hide-sm" id="btnStudio" title="Content studio" aria-label="Content studio">
+        <button class="icon-btn hide-sm admin-only" id="btnStudio" title="Content studio" aria-label="Content studio">
           <svg viewBox="0 0 24 24"><use href="#i-edit"/></svg>
         </button>
         <button class="icon-btn" id="btnFull" title="Fullscreen  ·  F" aria-label="Fullscreen">
@@ -282,10 +349,14 @@
           <button data-tab="hotspots"><svg viewBox="0 0 24 24"><use href="#i-pin"/></svg> Hotspots</button>
           <button data-tab="plans"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg> Floor plans</button>
           <button data-tab="brand"><svg viewBox="0 0 24 24"><use href="#i-palette"/></svg> Branding</button>
-          <button data-tab="projects"><svg viewBox="0 0 24 24"><use href="#i-rooms"/></svg> Projects</button>
+          <button data-tab="sites"><svg viewBox="0 0 24 24"><use href="#i-building"/></svg> Properties</button>
+          <button data-tab="access"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg> Access</button>
           <button data-tab="publish"><svg viewBox="0 0 24 24"><use href="#i-publish"/></svg> Publish</button>
         </nav>
         <div class="studio-rail-foot">
+          <button class="btn btn--sm btn--block" id="btnStudioSites">
+            <svg viewBox="0 0 24 24"><use href="#i-building"/></svg> All properties
+          </button>
           <button class="btn btn--sm btn--block" id="btnStudioHome">
             <svg viewBox="0 0 24 24"><use href="#i-home"/></svg> Overview
           </button>
@@ -350,6 +421,21 @@
     </div>
   </div>
 
+  <div class="lock" id="lock" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+    <form class="lock-in panel" id="lockForm">
+      <span class="lock-ico"><svg viewBox="0 0 24 24"><use href="#i-key"/></svg></span>
+      <h3 id="lockTitle">Studio access</h3>
+      <p class="t-body" id="lockHint">Enter the passcode to open the editing tools.</p>
+      <input class="input" id="lockCode" type="password" placeholder="Passcode" autocomplete="current-password" spellcheck="false">
+      <label class="lock-remember"><input type="checkbox" id="lockRemember" checked> Keep me signed in on this device</label>
+      <p class="lock-err" id="lockErr" hidden></p>
+      <div class="lock-act">
+        <button class="btn btn--primary" type="submit" id="lockGo">Sign in</button>
+        <button class="btn" type="button" id="lockCancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+
   <p class="panel" id="toast" role="status" aria-live="polite"></p>
 
   <div id="loader">
@@ -368,8 +454,10 @@
   </div>
 </div>
 
+<script src="config.js"></script>
 <script src="tour.js"></script>
 <script src="tour-ashby.js"></script>
+<script src="tour-homes.js"></script>
 <script src="engine.js"></script>
 <script src="app.js"></script>
 </body>

@@ -233,13 +233,17 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
    APP SHELL
    ═══════════════════════════════════════════════════════════════════════════ */
 #app { position: fixed; inset: 0; overflow: hidden; }
+/* the admin-only controls and the portfolio links are switched with the
+   hidden attribute, which has to beat the component's own display rule */
+[hidden] { display: none !important; }
+
 .view {
   position: absolute; inset: 0;
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity var(--t-3) var(--e), transform var(--t-4) var(--e), filter var(--t-3) var(--e), visibility 0s linear var(--t-3);
 }
 .view.is-active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; filter: none; transition-delay: 0s; }
-.view--dash { transform: scale(1.03); filter: blur(6px); }
+.view--dash, .view--sites { transform: scale(1.03); filter: blur(6px); }
 .view--tour { transform: scale(.985); }
 .view--studio { transform: translateY(14px); }
 
@@ -911,3 +915,147 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
 .projectswitch svg:last-child { opacity: .5; width: 12px; height: 12px; }
 .projectswitch:hover { background: var(--surface-2); border-color: var(--line-2); color: var(--ink); }
 @media (max-width: 700px) { .projectswitch { max-width: 120px; margin-left: 8px; } .projectswitch svg:last-child { display: none; } }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PORTFOLIO — the listing grid
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.sites-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; flex-wrap: wrap;
+  margin: clamp(30px, 6vh, 64px) 0 26px;
+}
+.sites-head > div { max-width: 620px; }
+.sites-head .t-lead { margin-top: 14px; }
+
+.sites-search {
+  position: relative; flex: 1 1 300px; max-width: 420px; display: flex; align-items: center;
+}
+.sites-search svg {
+  position: absolute; left: 13px; width: 16px; height: 16px; pointer-events: none;
+  stroke: var(--ink-4); fill: none; stroke-width: 1.7; stroke-linecap: round;
+}
+.sites-search input {
+  width: 100%; height: 44px; padding: 0 14px 0 38px; border-radius: var(--r-sm);
+  background: rgba(0,0,0,.3); border: 1px solid var(--line); color: var(--ink); font-size: .88rem;
+  transition: border-color var(--t-2) var(--e), background var(--t-2) var(--e);
+}
+.sites-search input::placeholder { color: var(--ink-4); }
+.sites-search input:hover { border-color: var(--line-2); }
+.sites-search input:focus { outline: none; border-color: var(--accent); background: rgba(0,0,0,.45); }
+.sites-search input::-webkit-search-cancel-button { filter: invert(1) opacity(.4); }
+
+.sites-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  flex-wrap: wrap; margin-bottom: 20px;
+}
+.sites-bar .segmented { flex-wrap: wrap; }
+.sites-bar-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.input--sm { width: auto; height: 34px; font-size: .78rem; padding: 0 30px 0 11px; }
+#siteCount { font-size: .68rem; letter-spacing: .1em; color: var(--ink-4); white-space: nowrap; }
+
+.sitegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.sites-empty { margin-top: 40px; text-align: center; color: var(--ink-3); font-size: .9rem; }
+
+.sitecard {
+  display: block; width: 100%; position: relative; text-align: left; padding: 0;
+  overflow: hidden; border-radius: var(--r-md);
+}
+.sitecard:hover { transform: translateY(-4px); }
+.sitecard.is-draft { opacity: .78; border-style: dashed; }
+.sitecard.is-draft:hover { opacity: 1; }
+
+.sitecard-art {
+  display: block; position: relative; aspect-ratio: 16/10; overflow: hidden;
+  background:
+    radial-gradient(130% 100% at 80% 4%, var(--card-tint, rgba(255,255,255,.16)), transparent 60%),
+    linear-gradient(158deg, #1b1d22, #101116);
+}
+.sitecard-art::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(8,8,11,.72), transparent 58%);
+}
+.sitecard-photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.sitecard-plan { position: absolute; inset: 0; display: grid; place-items: center; padding: 14px 18px; }
+.sitecard-plan svg { width: 100%; height: 100%; overflow: visible; }
+/* the plan is the artwork here, not a minimap — it has to carry the card */
+.sitecard-plan .fp-out { stroke: rgba(255,255,255,.42); stroke-width: 1; }
+.sitecard-plan .fp-rm { fill: rgba(255,255,255,.05); stroke: rgba(255,255,255,.2); stroke-width: .55; }
+.sitecard-plan .fp-hall { fill: rgba(255,255,255,.11); }
+.sitecard-plan .fp-stair { stroke: rgba(255,255,255,.22); }
+.sitecard-plan .fp-glaze { stroke: var(--card-accent, var(--accent)); stroke-width: 1.8; opacity: .9; }
+.sitecard-plan .fp-lb { fill: rgba(255,255,255,.5); font-size: 3px; letter-spacing: .18px; }
+.sitecard:hover .sitecard-plan .fp-rm { fill: rgba(255,255,255,.075); }
+.sitecard-art canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  opacity: 0; transform: scale(1.04);
+  transition: opacity var(--t-4) var(--e), transform var(--t-4) var(--e);
+}
+.sitecard-art.is-ready canvas { opacity: 1; transform: none; }
+.sitecard-art.is-ready .sitecard-plan { opacity: 0; }
+
+.sitecard-status { position: absolute; top: 11px; left: 11px; z-index: 2; background: rgba(10,11,14,.78); backdrop-filter: blur(10px); }
+.sitecard-status[data-status="for-sale"], .sitecard-status[data-status="to-let"] {
+  color: var(--card-accent, var(--accent));
+  border-color: color-mix(in srgb, var(--card-accent, var(--accent)) 45%, transparent);
+}
+.sitecard-status[data-status="sold-stc"], .sitecard-status[data-status="let-agreed"], .sitecard-status[data-status="under-offer"] { color: var(--ink-3); }
+.sitecard-draft { position: absolute; top: 11px; right: 11px; z-index: 2; background: rgba(10,11,14,.78); color: var(--warn); }
+
+.sitecard-body { display: block; padding: 15px 17px 17px; }
+.sitecard-price { display: flex; align-items: baseline; gap: 8px; }
+.sitecard-price b { font-size: 1.16rem; font-weight: 600; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.sitecard-price span { font-size: .66rem; color: var(--ink-4); }
+.sitecard-body h4 { font-size: .95rem; font-weight: 600; letter-spacing: -.015em; margin-top: 5px; }
+.sitecard-body > p { font-size: .78rem; color: var(--ink-3); margin-top: 3px; }
+.sitecard-facts {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--line);
+}
+.sitefact { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; color: var(--ink-3); }
+.sitefact svg { width: 14px; height: 14px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
+
+@media (max-width: 700px) {
+  .sitegrid { grid-template-columns: 1fr; gap: 14px; }
+  .sites-head { margin-top: 22px; }
+  .sites-bar-right { margin-left: 0; width: 100%; }
+  .sites-bar .segmented { overflow-x: auto; max-width: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STUDIO ACCESS — the passcode screen
+   ═══════════════════════════════════════════════════════════════════════════ */
+.lock {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px;
+  background: rgba(4,5,7,.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; pointer-events: none; transition: opacity var(--t-3) var(--e);
+}
+.lock.is-on { opacity: 1; pointer-events: auto; }
+.lock-in {
+  width: min(400px, 100%); padding: 30px 30px 26px; display: grid; gap: 13px;
+  border-radius: var(--r-lg); transform: translateY(10px) scale(.98);
+  transition: transform var(--t-4) var(--e-spring);
+}
+.lock.is-on .lock-in { transform: none; }
+.lock-ico {
+  width: 42px; height: 42px; display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent);
+}
+.lock-ico svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.lock-in h3 { font-size: 1.16rem; font-weight: 600; letter-spacing: -.02em; }
+.lock-in .t-body { margin: -4px 0 4px; font-size: .84rem; }
+.lock-remember { display: flex; align-items: center; gap: 9px; font-size: .78rem; color: var(--ink-3); cursor: pointer; }
+.lock-remember input { width: 15px; height: 15px; accent-color: var(--accent); }
+.lock-err { font-size: .8rem; color: var(--warn); }
+.lock-act { display: flex; gap: 9px; margin-top: 4px; }
+.lock-act .btn { flex: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EMBEDDED — running inside somebody else's page
+   ═══════════════════════════════════════════════════════════════════════════ */
+body.is-embed .topbar-nav .navlink[data-nav="sites"],
+body.is-embed .projectswitch { display: none !important; }
+body.is-embed .dash-inner { padding-top: 20px; }
+
+/* three across, for the listing fields */
+.form-row--3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 700px) { .form-row--3 { grid-template-columns: 1fr; } }

@@ -5,12 +5,15 @@ no build step, no server runtime.
 
 ```
 red360/
-  index.html   shell — three screens, one canvas
-  app.css      design system — every colour derives from the brand block
-  app.js       application — router, panels, search, guided tour, studio
-  engine.js    WebGL engine — panorama rendering, camera, projection
-  tour.js      a building  ← the only kind of file that changes per client
-  tour-ashby.js  a second building — proof the platform is multi-project
+  index.html      shell — four screens, one canvas
+  config.js       deployment config — portfolio behaviour, studio passcode
+  app.css         design system — every colour derives from the brand block
+  app.js          application — router, portfolio, panels, search, studio
+  engine.js       WebGL engine — panorama rendering, camera, projection
+  embed.js        drop-in for the client's existing website
+  tour.js         a building  ← the only kind of file that changes per client
+  tour-ashby.js   a second building
+  tour-homes.js   a residential portfolio — six listings from one table
 ```
 
 Live at `/red360/`. Runs identically from a file:// path, an S3 bucket, a
@@ -18,11 +21,12 @@ closed intranet or a memory stick.
 
 ## Three screens, one GPU context
 
-| Screen | Route | What it is |
-|---|---|---|
-| Overview | `#/` | Project dashboard with a **live** preview of the building |
-| Tour | `#/tour/<room>` | The immersive viewer |
-| Studio | `#/studio/<tab>` | The CMS |
+| Screen | Route | What it is | Who sees it |
+|---|---|---|---|
+| Portfolio | `#/sites` | Every property, with search, filters and sort | everyone |
+| Overview | `#/` · `#/site/<id>` | One property's dashboard, with a **live** preview | everyone |
+| Tour | `#/tour/<room>` | The immersive viewer | everyone |
+| Studio | `#/studio/<tab>` | The CMS | signed-in admin only |
 
 The canvas is never re-created. `mountStage()` re-parents it between screens,
 so the context, the baked panoramas and the camera survive navigation —
@@ -32,6 +36,111 @@ second loading bar.
 Because the Studio re-renders its whole body, `parkStage()` moves the live
 canvas back onto the tour stage first. Removing that call takes the WebGL
 context down with the DOM.
+
+## The portfolio
+
+An agency does not have one building, it has a list that changes every week.
+The portfolio is the landing screen whenever a deployment carries more than one
+property: a card per listing with price, status, beds, baths, floor area and
+position count, plus search across name, street, postcode, reference and
+summary, status filters and four sort orders.
+
+`config.js` decides how it behaves:
+
+```js
+portfolio: {
+  mode: "auto",        // auto · always · never
+  eyebrow, title, blurb,
+  statuses: ["For sale", "To let", "Under offer", "Sold STC", …]
+}
+```
+
+`mode: "auto"` skips the portfolio entirely for a single-property deployment,
+so nothing changes for a one-building client.
+
+### The listing block
+
+Everything the card shows lives on `project`, editable in Studio → Properties:
+
+```js
+project: {
+  name, location, summary, area,
+  price, priceQualifier, status,
+  beds, baths, receptions, propertyType, tenure, epc, ref,
+  cover,          // which room the card frame comes from
+  coverImage,     // or a photo, if the agency has one
+  hidden,         // draft — the agency sees it, visitors don't
+  agent: { name, phone, email, url }
+}
+```
+
+`hidden: true` is the one that matters day to day: a property being built out
+is invisible in the public grid and in search, and becomes live the moment its
+visibility is switched in the Studio.
+
+Card artwork falls back gracefully: `coverImage` if set, a live frame from the
+engine for the property that is open, and otherwise the property's own floor
+plan drawn as artwork — real data, no GPU, no photography.
+
+## Admin access
+
+The Studio is the agency's back office and is hidden from visitors entirely —
+no nav link, no toolbar button, no `E` shortcut, no palette entries, and the
+`#/studio` route bounces to the portfolio.
+
+```js
+admin: {
+  enabled: true,
+  hash: "b1908d99",     // fnv1a("red360:" + passcode) — the passcode is never stored
+  hint: "Ask 360RED for the studio passcode.",
+  rememberDays: 14,     // 0 = until the tab closes
+  verifyUrl: null       // POST {code} → {ok:true}, checked on your server
+}
+```
+
+Sign in from the lock icon in the portfolio header, or bookmark
+`?admin=<passcode>` — it signs in and then strips itself out of the URL.
+Studio → Access changes the passcode and prints the line to paste back into
+`config.js`.
+
+**Say this to the client in plain words.** It is a front-of-house lock: it
+keeps the editing tools out of a visitor's way and off a shared screen. It is
+not a security boundary — the whole product is static files, so anyone who
+reads the JavaScript can get past a passcode that lives in it. Where the
+listings themselves are confidential, put the folder behind the server's own
+login (Cloudflare Access, `.htpasswd`, `auth_basic`) or point `verifyUrl` at an
+endpoint that checks the code server-side.
+
+## Putting it on a website that already exists
+
+Nothing here replaces the client's site. Upload the folder to it — FTP is
+fine — and paste one of four things onto a page:
+
+```html
+<!-- one property -->
+<iframe src="/tours/?site=willow-lane-12&embed=1#/tour/living"
+        width="100%" height="640" loading="lazy" style="border:0"
+        allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"></iframe>
+
+<!-- the whole portfolio -->
+<iframe src="/tours/#/sites" width="100%" height="900" loading="lazy"></iframe>
+
+<!-- a listing template: one line per property -->
+<div data-red360="willow-lane-12" data-height="16:9"></div>
+<script src="/tours/embed.js"></script>
+
+<!-- or just a link, for a slow listing page -->
+<a href="/tours/?site=willow-lane-12&embed=1">View the 360° tour</a>
+```
+
+`embed.js` builds the iframe from the attribute, only when the element scrolls
+into view, so a listing page with twenty tours on it loads like a page with
+none. `data-height` takes pixels or an aspect ratio (`16:9`). `data-red360="*"`
+embeds the portfolio instead of one property. The host page can call
+`RED360Embed.scan()` after it injects more listings.
+
+`?embed=1` drops the portfolio chrome so the tour fills the frame. Studio →
+Publish generates all of these with the right ids already filled in.
 
 ## Projects — more than one building
 
@@ -49,18 +158,32 @@ Shipping another building is two steps and no build:
 2.  add  <script src="tour-<name>.js"></script>  to index.html
 ```
 
-Everything else is automatic: the dashboard header grows a project switcher,
-`⌘K` gains a **Projects** group, Studio gains a **Projects** tab, and
-`?p=<id>` deep-links straight to one. Each project carries its own `brand`
-block, so two clients can share one deployment and neither sees the other's
-colours.
+Everything else is automatic: the portfolio grows a card, `⌘K` gains a
+**Properties** group, and `?site=<id>` or `#/site/<id>` deep-links straight to
+one. Each property carries its own `brand` block, so two clients can share one
+deployment and neither sees the other's colours.
 
-Projects can also be made in the browser — Studio → Projects → *New project*,
-*Duplicate this project* or *Import a tour.json*. Those live in `localStorage`
-for whoever made them; **Export tour.json** plus the two steps above is how one
-becomes permanent for everybody.
+Properties can also be made in the browser — Studio → Properties → *New
+property*, *Duplicate* or *Import a tour.json*. Those live in `localStorage`
+for whoever made them, and start as drafts; **Export tour.json** plus the two
+steps above is how one becomes permanent for everybody.
 
-## Adding a space to a building
+### A portfolio with hundreds of listings
+
+Past about fifty properties, register a **stub** instead. The card renders from
+the listing block at once, and the rooms are pulled in only when someone opens
+that property:
+
+```js
+(window.RED360_TOURS = window.RED360_TOURS || []).push({
+  id: "willow-lane-12",
+  src: "tours/willow-lane-12.js",     // fetched on demand
+  project: { name: "12 Willow Lane", price: "£465,000", beds: 4, … },
+  floors: [{ id: "g", plan: "…" }]    // so the card still has its artwork
+});
+```
+
+## Adding a space to a property
 
 Studio → Rooms → **Add space**. Name it, pick the floor and pick a space type,
 and it renders immediately — a synthesised room, navigable, editable, with its
@@ -178,7 +301,8 @@ same control.
 
 `⌘K`/`Ctrl K` search · arrows look · `+`/`−` zoom · `1`–`9` jump · `Space`
 guided tour · `N`/`P` next / previous · `Tab` panels · `M` plan · `F`
-fullscreen · `E` studio · `H` overview · `S` still · `Esc` back.
+fullscreen · `B` portfolio · `E` studio (admin) · `H` overview · `S` still ·
+`Esc` back.
 
 ## Persistence and hand-over
 
@@ -189,5 +313,5 @@ restored with Studio → Publish → *Reset to shipped demo*. **Publish** saves;
 **Export tour.json** writes the whole project to a file, which goes back into
 the folder as `tour-<name>.js` (see **Projects** above).
 
-`window.RED360App` exposes `go(id)`, `view(name)`, `tour()` and `engine()` for
-embedding hosts.
+`window.RED360App` exposes `go(roomId)`, `site(id)`, `sites()`, `view(name)`,
+`tour()`, `isAdmin()`, `signOut()` and `engine()` for embedding hosts.
