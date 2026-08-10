@@ -356,3 +356,21 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
 .cal-cell.off{background:repeating-linear-gradient(135deg,var(--tint2),var(--tint2) 6px,#fff 6px,#fff 12px)}
 .cal-off{display:block;font-size:.62rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
   color:var(--mut);background:rgba(255,255,255,.75);border-radius:5px;padding:2px 5px;margin-top:2px;text-align:center}
+
+/* floating WhatsApp button, every page */
+.wa-float{position:fixed;right:18px;bottom:18px;z-index:90;display:flex;align-items:center;gap:0;
+  height:56px;width:56px;border-radius:999px;background:#25D366;color:#fff;
+  box-shadow:0 10px 26px -8px rgba(37,211,102,.7),0 2px 8px rgba(0,0,0,.14);
+  overflow:hidden;transition:width .32s cubic-bezier(.2,.7,.2,1),transform .25s,box-shadow .25s}
+.wa-float svg{width:56px;height:56px;padding:15px;flex-shrink:0;display:block}
+.wa-float span{white-space:nowrap;font-weight:600;font-size:.92rem;padding-right:20px;opacity:0;
+  transition:opacity .22s}
+.wa-float:hover,.wa-float:focus-visible{transform:translateY(-2px);
+  box-shadow:0 16px 34px -10px rgba(37,211,102,.85),0 2px 8px rgba(0,0,0,.16)}
+@media(hover:hover) and (min-width:721px){
+  .wa-float:hover,.wa-float:focus-visible{width:214px}
+  .wa-float:hover span,.wa-float:focus-visible span{opacity:1}
+}
+@media(max-width:720px){.wa-float{right:14px;bottom:14px;height:52px;width:52px}
+  .wa-float svg{width:52px;height:52px;padding:14px}}
+@media(prefers-reduced-motion:reduce){.wa-float{transition:none}}
