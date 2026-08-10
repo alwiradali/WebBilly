@@ -1171,6 +1171,7 @@
     var current = null, incoming = null;
     var trans = { t: 1, dur: 1100 };
     var drift = 0, driftSpeed = 0.0022, idleSince = now(), inputsOn = true;
+    var asleep = false;   // canvas parked in a hidden view — skip the draw, keep baking
     var flash = 0, booted = false, bootStart = now(), destroyed = false;
 
     function camDir(yawDeg, pitchDeg) {
@@ -1363,6 +1364,15 @@
       if (destroyed) return;
       var dt = Math.min(64, t - lastT); lastT = t;
 
+      /* nobody can see the canvas (portfolio screen) — no draw, no camera
+         math, no callbacks. Baking continues so previews finish while the
+         viewer browses, and the loop stays armed so waking is one frame. */
+      if (asleep && booted && !once && !incoming && trans.t >= 1) {
+        bakeBudget();
+        requestAnimationFrame(frame);
+        return;
+      }
+
       /* frame-rate independent damping: the same feel at 30 fps and 120 */
       var k = drag ? 1 - Math.pow(0.00002, dt / 1000) : 1 - Math.pow(0.0016, dt / 1000);
       cam.yaw = lerp(cam.yaw, cam.tYaw, k);
@@ -1507,6 +1517,7 @@
       gyro: gyroToggle,
       gyroOn: function () { return !!gyro; },
       inputs: function (v) { inputsOn = !!v; },
+      sleep: function (v) { asleep = !!v; },
       setPano: function (id, src) {
         var room = byId[id];
         if (!room) return;

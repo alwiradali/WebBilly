@@ -295,7 +295,9 @@ frames, so the main thread is never blocked. Full-resolution panoramas are
 held in an LRU of three — a thirteen-room building never holds thirteen 4K
 textures in video memory. The first bake times itself and drops a quality tier
 on slow hardware; `?q=lo|md|hi` pins it, and the command palette exposes the
-same control.
+same control. While the portfolio is on screen the render loop sleeps — no
+draw, no camera math, no per-frame DOM work — and previews keep baking in the
+background, so opening a property later is still instant.
 
 ## Keyboard
 

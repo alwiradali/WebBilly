@@ -453,6 +453,8 @@
       location.hash = "#/sites";
     }
     if (prev === "studio" && next !== "studio") { placing = false; $("#stageTour").classList.remove("is-placing"); }
+    /* on the portfolio the canvas is invisible — put the render loop to sleep */
+    if (engine && engine.sleep) engine.sleep(next === "sites");
     closePalette(); closeSheet();
   }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -2895,7 +2897,7 @@
       },
       onRoom: function (room) { setRoom(room); },
       onFrame: function (cam, room) {
-        if (view === "dash") return;
+        if (view === "dash" || view === "sites") return;
         layoutHotspots();
         var pin = room && planPins[room.id];
         if (pin) {
