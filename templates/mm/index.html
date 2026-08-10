@@ -236,6 +236,16 @@
       <h2>What families across Scotland <span class="g">say</span></h2>
     </div>
     <div class="rev-google" id="reviews-google"></div>
+
+    <!-- Live Google reviews. Trustindex syncs them from her Business Profile,
+         so new reviews appear without anyone touching the site. Loaded defer
+         async: if it fails or is blocked, her own testimonials below are still
+         there and the section never looks empty. -->
+    <div class="ti-wrap rv">
+      <script defer async src='https://cdn.trustindex.io/loader.js?324d43b782f690974e96e220b3a'></script>
+    </div>
+
+    <h3 class="rev-sub rv">More from parents and pupils</h3>
     <div class="rev-view rv" tabindex="0" aria-roledescription="carousel" aria-label="Parent and pupil reviews">
       <div class="rev-track" id="reviews-track">
       <div class="quote"><div class="stars">★★★★★</div><p>"Lynsey is excellent at explaining difficult chemistry concepts in a clear, straightforward way, while checking understanding in a friendly and inclusive manner. Her tutorials really helped my son gain confidence in answering exam questions effectively and understanding how to secure the marks examiners are looking for. We are so happy we found Lynsey."</p><div class="who">— Parent, Higher Chemistry</div></div>
