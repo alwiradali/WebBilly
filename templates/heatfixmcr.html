@@ -117,22 +117,9 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
   padding:5px 11px;border-radius:100px;background:rgba(9,20,38,.7);backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.22);
 }
-/* Gas Safe plate — a sibling of .wall, so it can never sit on the copy */
-.wchip{
-  position:absolute;z-index:9;right:0;top:-4%;
-  display:flex;align-items:center;gap:12px;
-  background:#fff;color:#0d1726;border:1px solid var(--line);border-radius:16px;padding:11px 18px 11px 14px;
-  box-shadow:var(--shadow-lg);
-}
-.wchip .gs-mark{width:44px}
-.wchip b{display:block;font-family:var(--dis);font-weight:900;font-size:1.3rem;line-height:1;color:var(--navy)}
-.wchip i{display:block;font-style:normal;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
-  font-weight:700;color:#55657a;margin-top:3px;white-space:nowrap}
-
-@media(max-width:979px){body{padding-bottom:84px}.stage{min-height:390px}.wall{height:390px}
-  /* on a phone it sits in the flow above the tiles — nothing to overlap */
-  .wchip{position:static;margin:0 auto 16px;width:max-content;padding:10px 16px 10px 12px}
-  .wchip b{font-size:1.02rem}.wchip .gs-mark{width:36px}}
+/* The Gas Safe credential lives in the badge at the top of the copy —
+   once was enough, so the duplicate plate over the tiles is gone. */
+@media(max-width:979px){body{padding-bottom:84px}.stage{min-height:390px}.wall{height:390px}}
 
 /* ===================== MARQUEE ===================== */
 .mq{background:var(--gunmetal);border-block:1px solid rgba(255,255,255,.08);padding:16px 0;overflow:hidden;position:relative}
@@ -455,17 +442,16 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       </div>
     </div>
 
-    <!-- 3D tile wall -->
+    <!-- 3D tile wall — every frame is one of Ejaz's own jobs, labelled as shot -->
     <div class="stage" aria-hidden="true">
       <div class="wall" id="wall">
-        <figure class="wt wt1"><img src="../assets/heatfix/hero-1.webp" alt="Gas engineer checking the pump inside a boiler" loading="eager" fetchpriority="high"><span class="wt-tag">Boiler service</span><i></i></figure>
-        <figure class="wt wt2"><img src="../assets/heatfix/hero-2-sm.webp" alt="Wall-hung combi boiler in a modern kitchen" loading="lazy"><span class="wt-tag">Combi install</span><i></i></figure>
-        <figure class="wt wt3"><img src="../assets/heatfix/hero-3.webp" alt="Copper and steel heating pipework" loading="eager"><span class="wt-tag">Pipework</span><i></i></figure>
-        <figure class="wt wt4"><img src="../assets/heatfix/hero-4-sm.webp" alt="White panel radiator close up" loading="lazy"><span class="wt-tag">Radiators</span><i></i></figure>
-        <figure class="wt wt5"><img src="../assets/heatfix/hero-5-sm.webp" alt="Adjustable spanner and pipe wrench" loading="lazy"><span class="wt-tag">Repairs</span><i></i></figure>
-        <figure class="wt wt6"><img src="../assets/heatfix/hero-6-sm.webp" alt="Bathroom with heated towel rail and basin" loading="lazy"><span class="wt-tag">Bathrooms</span><i></i></figure>
+        <figure class="wt wt1"><img src="../assets/heatfix/tile-install.webp" alt="New Main Eco Compact combi on the wall, commissioning checklist still on the case" loading="eager" fetchpriority="high"><span class="wt-tag">Combi install</span><i></i></figure>
+        <figure class="wt wt2"><img src="../assets/heatfix/tile-cylinder.webp" alt="Megaflo unvented hot water cylinder installed" loading="lazy"><span class="wt-tag">Unvented cylinder</span><i></i></figure>
+        <figure class="wt wt3"><img src="../assets/heatfix/tile-gasvalve.webp" alt="New gas valve held up beside the old one during a swap" loading="eager"><span class="wt-tag">Gas valve swap</span><i></i></figure>
+        <figure class="wt wt4"><img src="../assets/heatfix/tile-plumbing.webp" alt="Toilet cistern opened up, new fill and flush valves going in" loading="lazy"><span class="wt-tag">Cistern rebuild</span><i></i></figure>
+        <figure class="wt wt5"><img src="../assets/heatfix/tile-pipework.webp" alt="Copper pipework, valve group and expansion vessel at a Tempest cylinder" loading="lazy"><span class="wt-tag">Pipework</span><i></i></figure>
+        <figure class="wt wt6"><img src="../assets/heatfix/tile-cupboard.webp" alt="Boiler in a kitchen wall cupboard with the case off for work" loading="lazy"><span class="wt-tag">Boiler in cupboard</span><i></i></figure>
         </div>
-        <div class="wchip"><svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span><b>Gas Safe</b><i>Registered engineer<span class="gsno" data-gsno="reg"></span></i></span></div>
     </div>
   </div>
 </header>
@@ -701,12 +687,12 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
   </div>
   <div class="wrap" style="max-width:1220px">
     <div class="gal" id="gal">
-      <figure class="gi"><img src="../assets/heatfix/work-01-sm.webp" data-full="../assets/heatfix/work-01.webp" alt="Combi boiler opened up for service in a fitted kitchen" loading="lazy"><b><i>Kitchen</i>Combi service</b></figure>
+      <figure class="gi"><img src="../assets/heatfix/work-01-sm.webp" data-full="../assets/heatfix/work-01.webp" alt="Combi boiler with the case off in a fitted kitchen" loading="lazy"><b><i>Kitchen</i>Combi opened up</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-02-sm.webp" data-full="../assets/heatfix/work-02.webp" alt="New wall-mounted combi boiler above tiled splashback" loading="lazy"><b><i>Install</i>New combi fitted</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-03-sm.webp" data-full="../assets/heatfix/work-03.webp" alt="Boiler relocated into a kitchen wall cupboard" loading="lazy"><b><i>Relocation</i>Boiler into cupboard</b></figure>
-      <figure class="gi"><img src="../assets/heatfix/work-05-sm.webp" data-full="../assets/heatfix/work-05.webp" alt="Unvented hot water cylinder installed in an airing cupboard" loading="lazy"><b><i>Hot water</i>Unvented cylinder</b></figure>
+      <figure class="gi"><img src="../assets/heatfix/work-05-sm.webp" data-full="../assets/heatfix/work-05.webp" alt="Megaflo unvented hot water cylinder installed and piped up" loading="lazy"><b><i>Hot water</i>Unvented cylinder</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-06-sm.webp" data-full="../assets/heatfix/work-06.webp" alt="Tempest cylinder with new copper pipework and expansion vessel" loading="lazy"><b><i>Pipework</i>Cylinder &amp; vessel</b></figure>
-      <figure class="gi"><img src="../assets/heatfix/work-08-sm.webp" data-full="../assets/heatfix/work-08.webp" alt="Basin with new chrome pillar taps" loading="lazy"><b><i>Bathroom</i>Basin taps</b></figure>
+      <figure class="gi"><img src="../assets/heatfix/work-08-sm.webp" data-full="../assets/heatfix/work-08.webp" alt="Bathroom basin refitted with crosshead pillar taps" loading="lazy"><b><i>Bathroom</i>Basin taps</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-09-sm.webp" data-full="../assets/heatfix/work-09.webp" alt="Toilet cistern rebuilt with new fill and flush valves" loading="lazy"><b><i>Cistern</i>Valves replaced</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-12-sm.webp" data-full="../assets/heatfix/work-12.webp" alt="Replacement gas valve held before fitting" loading="lazy"><b><i>Parts</i>Gas valve swap</b></figure>
     </div>
@@ -778,7 +764,7 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
         If yours isn't here, ring and ask. You'll get a straight answer whether or not
         it turns into a job.
       </p>
-      <img src="../assets/heatfix/faq-1-sm.webp" alt="Inside a combi boiler mid-service — fan, heat exchanger and burner cover off"
+      <img src="../assets/heatfix/faq-1-sm.webp" alt="Combi boiler opened up — combustion cover, fan and controls on show"
            loading="lazy" data-fx="reveal" data-fx-variant="scale"
            style="border-radius:var(--rl);margin-top:28px;border:1px solid var(--line);max-height:420px;object-fit:cover;width:100%">
     </div>

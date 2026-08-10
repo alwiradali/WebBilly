@@ -23,12 +23,6 @@ its download endpoint was triggered when it was pulled.
 | `blog-3` | Pexels | BOOM 💥 Photography | https://www.pexels.com/photo/hand-of-a-person-turning-the-radiator-valve-12644994/ |
 | `blog-4` | Pexels | Vidal Balielo Jr. | https://www.pexels.com/photo/black-gas-stove-on-kitchen-counter-11295908/ |
 | `faq-1` | Ejaz's own job photo (crop of `work-01`) | — | — |
-| `hero-1` | Pexels | Heiko Ruth | https://www.pexels.com/photo/plumber-repairing-power-source-7859953/ |
-| `hero-2` | Pexels | Max Vakhtbovych | https://www.pexels.com/photo/brown-and-white-counter-in-the-kitchen-8146322/ |
-| `hero-3` | Pexels | Sonny Sixteen | https://www.pexels.com/photo/close-up-of-pipes-14845870/ |
-| `hero-4` | Pexels | Skylar Kang | https://www.pexels.com/photo/finned-white-radiator-near-wall-6045338/ |
-| `hero-5` | Pexels | Nishant Aneja | https://www.pexels.com/photo/close-up-of-wrench-and-tools-12105083/ |
-| `hero-6` | Pexels | Max Vakhtbovych | https://www.pexels.com/photo/toilet-and-sink-in-modern-light-bathroom-6890406/ |
 | `mcr-1` | Unsplash | Greg Willson | https://unsplash.com/photos/brown-concrete-building-during-daytime-fFUBw5bF38s |
 | `safety-1` | Pexels | Cnordic Nordic | https://www.pexels.com/photo/man-holding-a-handheld-air-quality-analyzer-device-30428330/ |
 | `safety-2` | Pexels | Pavel Danilyuk | https://www.pexels.com/photo/man-in-gray-overall-standing-in-front-of-woman-7190862/ |
