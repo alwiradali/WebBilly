@@ -60,7 +60,7 @@ export default {
     // at clean root URLs, and is indexable.
     if (!M2L_PARKED && isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
 
-    // Heat Fix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
+    // HeatFix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
     if (isClientHost(url.hostname, env, "HEATFIX_HOST")) {
       return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
     }
@@ -146,12 +146,12 @@ async function serveM2L(request, url, env) {
 }
 
 /* ------------------------------------------------------------------
-   Heat Fix Mcr Limited — heatfixmcrlimited.co.uk
+   HeatFix Mcr Limited — heatfixmcrlimited.co.uk
 
    Set HEATFIX_HOST in wrangler.toml (or as a secret) to the client's own
    hostnames, comma separated. Requests to those hosts get:
-       /         -> the Heat Fix website          (indexed)
-       /book     -> the booking page + calendar   (indexed)
+       /         -> the HeatFix website          (indexed)
+       /book     -> the request-a-visit page      (indexed)
        /invoice  -> the invoice builder (his tool, noindex)
        /i        -> the customer's invoice view   (noindex)
 ------------------------------------------------------------------- */

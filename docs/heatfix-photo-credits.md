@@ -22,7 +22,7 @@ its download endpoint was triggered when it was pulled.
 | `blog-2` | Pexels | Zulfugar Karimov | https://www.pexels.com/photo/chrome-faucet-against-marble-background-34295404/ |
 | `blog-3` | Pexels | BOOM 💥 Photography | https://www.pexels.com/photo/hand-of-a-person-turning-the-radiator-valve-12644994/ |
 | `blog-4` | Pexels | Vidal Balielo Jr. | https://www.pexels.com/photo/black-gas-stove-on-kitchen-counter-11295908/ |
-| `faq-1` | Pexels | МОБО Модульные Котельные | https://www.pexels.com/photo/engineer-adjusting-industrial-pipes-in-factory-34938441/ |
+| `faq-1` | Ejaz's own job photo (crop of `work-01`) | — | — |
 | `hero-1` | Pexels | Heiko Ruth | https://www.pexels.com/photo/plumber-repairing-power-source-7859953/ |
 | `hero-2` | Pexels | Max Vakhtbovych | https://www.pexels.com/photo/brown-and-white-counter-in-the-kitchen-8146322/ |
 | `hero-3` | Pexels | Sonny Sixteen | https://www.pexels.com/photo/close-up-of-pipes-14845870/ |
@@ -37,7 +37,7 @@ its download endpoint was triggered when it was pulled.
 | `svc-cylinder` | Pexels | Pavel Danilyuk | https://www.pexels.com/photo/steel-underground-heating-manifolds-7937299/ |
 | `svc-install` | Pexels | МОБО Модульные Котельные | https://www.pexels.com/photo/engineer-assembling-industrial-heating-unit-34938443/ |
 | `svc-plumbing` | Pexels | Castorly Stock | https://www.pexels.com/photo/person-washing-shaver-on-sink-3944863/ |
-| `svc-repair` | Pexels | МОБО Модульные Котельные | https://www.pexels.com/photo/technician-repairing-heating-system-in-workshop-34938439/ |
+| `svc-repair` | Ejaz's own job photo (crop of `work-04`) | — | — |
 
 ## Background animation
 
