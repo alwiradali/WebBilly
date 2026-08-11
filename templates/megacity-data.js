@@ -248,6 +248,22 @@
       "#/tour/" + encodeURIComponent(room || p.tourRoom || "living");
   }
 
+  /* ── Studio overlay ───────────────────────────────────────────
+     Edits made in the Megacity Studio (/templates/megacity-admin)
+     are saved to this browser and win over the shipped file — the
+     same model as the billy360 Studio. Everyone else keeps seeing
+     the shipped data until the Studio's exported file is deployed. */
+  try {
+    var saved = JSON.parse(localStorage.getItem("megacity:data") || "null");
+    if (saved && saved.properties && saved.properties.length) {
+      PROPERTIES.length = 0;
+      Array.prototype.push.apply(PROPERTIES, saved.properties);
+    }
+    if (saved && saved.biz) {
+      for (var k in saved.biz) if (Object.prototype.hasOwnProperty.call(saved.biz, k)) BIZ[k] = saved.biz[k];
+    }
+  } catch (e) { /* corrupted save — fall back to the shipped data */ }
+
   window.MEGACITY = {
     biz: BIZ,
     properties: PROPERTIES,

@@ -61,6 +61,21 @@
     /* referencing rule of thumb: annual income ≥ 30 × monthly rent */
     affordability: { incomeMultiple: 30, guarantorMultiple: 36 }
   };
+
+  /* Studio overlay — rates edited in /templates/megacity-admin win over
+     the shipped block on this browser (see megacity-data.js for the model) */
+  try {
+    var savedRates = JSON.parse(localStorage.getItem("megacity:rates") || "null");
+    if (savedRates) {
+      ["councilTaxBandD", "rents", "mortgage", "affordability"].forEach(function (k) {
+        if (savedRates[k]) {
+          for (var kk in savedRates[k]) if (Object.prototype.hasOwnProperty.call(savedRates[k], kk)) RATES[k][kk] = savedRates[k][kk];
+        }
+      });
+      if (savedRates.houseFactor) RATES.houseFactor = savedRates.houseFactor;
+      if (savedRates.asOf) RATES.asOf = savedRates.asOf;
+    }
+  } catch (e) { /* corrupted save — shipped rates stand */ }
   window.MEGACITY_RATES = RATES;
 
   /* ── helpers ─────────────────────────────────────────────────── */
