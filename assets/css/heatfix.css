@@ -1,5 +1,5 @@
 /* ============================================================
-   Heat Fix Mcr Limited — shared design system
+   HeatFix Mcr Limited — shared design system
 
    LIGHT. Paper-white surfaces, deep navy type, and the business
    card's gunmetal kept for the three anchor bands (marquee, call
@@ -136,16 +136,22 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   box-shadow:0 4px 14px -8px rgba(13,42,99,.45),inset 0 0 0 1px rgba(13,42,99,.07);
 }
 .logo-plate img{height:32px;width:auto}
-.brandtxt{display:block;line-height:1.06;min-width:0}
-.brandtxt b{font-family:var(--dis);font-weight:800;font-size:1rem;letter-spacing:-.015em;display:block;
+/* In the bar the droplet carries the brand and the type beside it spells the
+   name, so the mark is set on its own and set large — the full stacked lockup
+   shrinks to an unreadable 23px wide at this height. */
+.nav .logo-plate{padding:6px 10px;border-radius:15px}
+.nav .logo-plate img{height:38px}
+.brandtxt{display:block;line-height:1.08;min-width:0}
+.brandtxt b{font-family:var(--dis);font-weight:800;font-size:1.06rem;letter-spacing:-.015em;display:block;
   white-space:nowrap;color:var(--navy)}
-.brandtxt small{display:block;font-size:.58rem;letter-spacing:.17em;text-transform:uppercase;color:var(--gold);
+.brandtxt small{display:block;font-size:.6rem;letter-spacing:.17em;text-transform:uppercase;color:var(--gold);
   font-weight:800;white-space:nowrap}
 @media(max-width:420px){
-  .brandtxt b{font-size:.92rem}
-  .brandtxt small{font-size:.5rem;letter-spacing:.13em}
+  .brandtxt b{font-size:.95rem}
+  .brandtxt small{font-size:.51rem;letter-spacing:.13em}
   .logo-plate{padding:4px 6px}.logo-plate img{height:29px}
-  .nav-in{gap:10px;padding:9px}
+  .nav .logo-plate{padding:5px 7px;border-radius:13px}.nav .logo-plate img{height:33px}
+  .nav-in{gap:10px;padding:8px}
 }
 .navlinks{display:none;gap:2px;align-items:center}
 .navlinks a{
@@ -307,7 +313,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 
 /* ============================================================
    Gas Safe Register mark
-   Displayed because Heat Fix Mcr Limited is a registered
+   Displayed because HeatFix Mcr Limited is a registered
    business. Gas Safe require the registration number to be
    shown alongside the logo — set it in HF_GAS_SAFE_NO.
    To use the official artwork, replace assets/heatfix/gas-safe.svg
