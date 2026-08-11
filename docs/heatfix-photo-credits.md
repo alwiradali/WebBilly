@@ -15,14 +15,11 @@ its download endpoint was triggered when it was pulled.
 
 | File | Source | Photographer | Original |
 |---|---|---|---|
-| `about-1` | Pexels | Max Vakhtbovych | https://www.pexels.com/photo/white-counter-top-on-gray-kitchen-cabinets-8146317/ |
 | `about-2` | Pexels | Daniel  Wells | https://www.pexels.com/photo/charming-brick-homes-on-shrewsbury-street-35578889/ |
-| `band-1` | Pexels | Torsten Dettlaff | https://www.pexels.com/photo/close-up-photography-of-stove-fire-195029/ |
 | `blog-1` | Pexels | Pavel Danilyuk | https://www.pexels.com/photo/steel-pipes-with-pressure-gauge-7937300/ |
 | `blog-2` | Pexels | Zulfugar Karimov | https://www.pexels.com/photo/chrome-faucet-against-marble-background-34295404/ |
 | `blog-3` | Pexels | BOOM 💥 Photography | https://www.pexels.com/photo/hand-of-a-person-turning-the-radiator-valve-12644994/ |
 | `blog-4` | Pexels | Vidal Balielo Jr. | https://www.pexels.com/photo/black-gas-stove-on-kitchen-counter-11295908/ |
-| `faq-1` | Ejaz's own job photo (crop of `work-01`) | — | — |
 | `mcr-1` | Unsplash | Greg Willson | https://unsplash.com/photos/brown-concrete-building-during-daytime-fFUBw5bF38s |
 | `safety-1` | Pexels | Cnordic Nordic | https://www.pexels.com/photo/man-holding-a-handheld-air-quality-analyzer-device-30428330/ |
 | `safety-2` | Pexels | Pavel Danilyuk | https://www.pexels.com/photo/man-in-gray-overall-standing-in-front-of-woman-7190862/ |
