@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>Megacity Properties — Exceptional homes in Manchester &amp; Salford</title>
+  <meta name="description" content="Lettings and property management in Manchester &amp; Salford. Exceptional properties, expert service, and 360° tours you can walk before you visit. A redesign concept by Billy Digitals.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#12100C">
+  <meta property="og:title" content="Megacity Properties — Find your place. In Manchester.">
+  <meta property="og:description" content="Exceptional properties. Expert service. A smarter way to move.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="loader" aria-hidden="true">
+    <div class="loader-in">
+      <div class="loader-word">Mega<b>city</b></div>
+      <div class="loader-sub">Properties · Manchester</div>
+      <div class="loader-bar"><i></i></div>
+    </div>
+  </div>
+
+  <header class="nav on-media">
+    <a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="megacity-properties">Properties</a>
+      <a href="megacity-landlords">Landlords</a>
+      <a href="megacity-tenants">Tenants</a>
+      <a href="megacity-tours">360° Tours</a>
+      <a href="megacity-about">About</a>
+      <a href="megacity-contact">Contact</a>
+    </nav>
+    <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+
+    <!-- ══ hero ══ -->
+    <section class="hero" aria-label="Welcome">
+      <div class="hero-media" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=80" alt="" fetchpriority="high">
+      </div>
+      <div class="hero-inner wrap">
+        <p class="hero-eyebrow eyebrow" data-hero-fade>Lettings &amp; property management · Manchester &amp; Salford</p>
+        <h1 class="t-hero">
+          <span class="ln"><span>Find your place.</span></span>
+          <span class="ln"><span>In <em>Manchester</em>.</span></span>
+        </h1>
+        <div class="hero-foot">
+          <div>
+            <p data-hero-fade>Exceptional properties. Expert service. A smarter way to move — walk through your next home in 360° before you ever book a viewing.</p>
+            <div class="hero-actions" data-hero-fade>
+              <a class="btn btn--solid btn--lg magnetic" href="megacity-properties">Explore properties
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+              <a class="btn btn--ghost btn--lg" href="megacity-valuation">Request a valuation</a>
+            </div>
+          </div>
+          <span class="scroll-cue">Scroll <i></i></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ quick search ══ -->
+    <section class="search-band" aria-label="Search properties">
+      <div class="wrap">
+        <div class="search-panel" data-fx="fade">
+          <p class="eyebrow" style="margin-bottom:22px">Find your next home</p>
+          <form action="megacity-properties" method="get">
+            <div class="field">
+              <label for="qs-area">Location</label>
+              <select id="qs-area" name="area">
+                <option value="">Anywhere</option>
+                <option>Ancoats</option><option>Castlefield</option><option>Northern Quarter</option>
+                <option>Salford</option><option>Salford Quays</option><option>West Didsbury</option>
+                <option>Chorlton</option><option>Prestwich</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qs-type">Property type</label>
+              <select id="qs-type" name="type">
+                <option value="">Any type</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Loft">Loft</option>
+                <option value="Penthouse">Penthouse</option>
+                <option value="house">House</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qs-min">Min rent</label>
+              <select id="qs-min" name="min">
+                <option value="">No min</option>
+                <option value="1000">£1,000 pcm</option><option value="1250">£1,250 pcm</option>
+                <option value="1500">£1,500 pcm</option><option value="2000">£2,000 pcm</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qs-max">Max rent</label>
+              <select id="qs-max" name="max">
+                <option value="">No max</option>
+                <option value="1250">£1,250 pcm</option><option value="1500">£1,500 pcm</option>
+                <option value="2000">£2,000 pcm</option><option value="3000">£3,000 pcm</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qs-beds">Bedrooms</label>
+              <select id="qs-beds" name="beds">
+                <option value="">Any</option>
+                <option value="1">1+</option><option value="2">2+</option>
+                <option value="3">3+</option><option value="4">4+</option>
+              </select>
+            </div>
+            <button class="btn btn--solid magnetic" type="submit" style="align-self:end">Search
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <div class="field field--check" style="grid-column:1/-1">
+              <input type="checkbox" id="qs-tours" name="tours" value="1">
+              <label for="qs-tours">Only homes with a 360° tour</label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ featured properties ══ -->
+    <section class="section" aria-label="Featured properties">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-fx="fade">Now letting</p>
+            <h2 class="t-1" data-fx="fade">Homes worth<br><em>moving</em> for.</h2>
+          </div>
+          <a class="tlink" href="megacity-properties" data-fx="fade">All properties
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="prop-grid" id="mcFeatured" data-ids="foundry-loft,quay-house-27,beech-house" data-fx="stagger"></div>
+      </div>
+    </section>
+
+    <!-- ══ 360 — the differentiator ══ -->
+    <section class="s360 dark" aria-label="360 degree tours">
+      <div class="s360-media" aria-hidden="true" data-fx="parallax" data-amount="6">
+        <img src="/billy360/panos/lythwood_lounge.jpg" alt="" loading="lazy">
+      </div>
+      <div class="wrap">
+        <div class="s360-inner">
+          <div class="s360-ring" data-fx="fade"><i></i><span>360° virtual tours</span></div>
+          <h2 class="t-1" data-fx="fade">See it <em>before</em><br>you visit.</h2>
+          <p class="lead" data-fx="fade" style="margin-top:24px">Step inside selected properties and explore them from wherever you are — every room, every angle, any hour. Then book the viewing already knowing it's the one.</p>
+          <div class="hero-actions" data-fx="fade">
+            <button class="btn btn--solid btn--lg magnetic" data-cursor="360°" data-tour="foundry-loft">Enter 360° tour
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <a class="tlink" href="megacity-tours" style="align-self:center">All 360° homes
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ landlords ══ -->
+    <section class="section" aria-label="For landlords">
+      <div class="wrap split split--wide-media">
+        <div class="split-media split-media--land" data-fx="mask">
+          <div class="mask" aria-hidden="true"></div>
+          <img src="https://images.unsplash.com/photo-1481253127861-534498168948?auto=format&fit=crop&w=1800&q=80" alt="Modern apartment building — properties under Megacity management" loading="lazy">
+        </div>
+        <div>
+          <p class="eyebrow" data-fx="fade">For landlords</p>
+          <h2 class="t-2" data-fx="fade" style="margin-top:18px">Your property<br>deserves <em>more</em>.</h2>
+          <p class="lead" data-fx="fade" style="margin-top:22px">Not another letting agency — a professional partner. Megacity manages your property as an asset: presented exceptionally, let quickly, looked after properly.</p>
+          <ul class="svc-list" data-fx="stagger">
+            <li><i>01</i><b>Property management</b><span>Day-to-day care, inspections, compliance</span></li>
+            <li><i>02</i><b>Lettings</b><span>Marketing, viewings, referencing, move-in</span></li>
+            <li><i>03</i><b>360° presentation</b><span>Every managed home walkable online</span></li>
+            <li><i>04</i><b>Maintenance</b><span>Reported, tracked and resolved</span></li>
+          </ul>
+          <div class="hero-actions" data-fx="fade">
+            <a class="btn btn--lg magnetic" href="megacity-landlords">For landlords
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--ghost btn--lg" href="megacity-valuation">Request a valuation</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Manchester ══ -->
+    <section class="city dark" aria-label="Manchester">
+      <div class="city-word" aria-hidden="true">MCR</div>
+      <div class="wrap city-inner">
+        <p class="eyebrow" data-fx="fade">Local, and proud of it</p>
+        <h2 class="t-1" data-fx="fade" style="margin-top:20px">Manchester.<br>Your city. <em>Your home.</em></h2>
+        <p class="lead" data-fx="fade" style="margin-top:24px">From Ancoats mills to Didsbury avenues, we let and manage homes in the neighbourhoods we walk every day — from our own office in Manchester M8.</p>
+        <div class="city-grid">
+          <figure class="city-fig" data-fx="parallax" data-amount="7">
+            <img src="https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80" alt="Dark brick new-build apartments" loading="lazy">
+            <figcaption>Ancoats</figcaption>
+          </figure>
+          <figure class="city-fig" data-fx="parallax" data-amount="10">
+            <img src="https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1000&q=80" alt="Apartment balconies at dusk" loading="lazy">
+            <figcaption>Salford</figcaption>
+          </figure>
+          <figure class="city-fig" data-fx="parallax" data-amount="13">
+            <img src="https://images.unsplash.com/photo-1487452066049-a710f7296400?auto=format&fit=crop&w=900&q=80" alt="Street art in a city underpass" loading="lazy">
+            <figcaption>Northern Quarter</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ trust ══ -->
+    <section class="section" aria-label="Accreditations">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-fx="fade">Why trust Megacity</p>
+            <h2 class="t-2" data-fx="fade">Regulated. Protected.<br><em>Accountable.</em></h2>
+          </div>
+          <p class="lead" data-fx="fade" style="max-width:38ch">Your tenancy, your deposit and your property are all covered by the industry's own safeguards — not just our word.</p>
+        </div>
+        <div class="trust-grid" data-fx="stagger">
+          <div class="trust-cell"><b>ARLA Propertymark</b><span>Regulated letting agent</span></div>
+          <div class="trust-cell"><b>The Property Ombudsman</b><span>Membership T06217</span></div>
+          <div class="trust-cell"><b>Tenancy Deposit Scheme</b><span>Every deposit protected</span></div>
+          <div class="trust-cell"><b>NRLA</b><span>National Residential Landlords Association</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ tenants strip ══ -->
+    <section class="section section--tight" style="border-top:1px solid var(--line)" aria-label="For tenants">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow" data-fx="fade">For tenants</p>
+          <h2 class="t-2" data-fx="fade" style="margin-top:18px">Your next home<br><em>starts here</em>.</h2>
+        </div>
+        <ul class="contact-rows" data-fx="stagger" style="margin-top:0">
+          <li><a href="megacity-properties"><i>Search</i><b>Browse every home to let</b><span>→</span></a></li>
+          <li><a href="megacity-tours"><i>Walk</i><b>Tour homes in 360°</b><span>→</span></a></li>
+          <li><a href="megacity-tenants"><i>Register</i><b>Tell us what you're looking for</b><span>→</span></a></li>
+          <li><a href="megacity-contact"><i>Talk</i><b>Book a viewing with the team</b><span>→</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="mcFooter"></div>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="megacity-data.js" defer></script>
+  <script src="megacity.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>360° Property Tours — Megacity Properties</title>
+  <meta name="description" content="Walk through your next home online. Every Megacity property with a 360° virtual tour, ready to explore room by room.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#12100C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav on-media">
+    <a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="megacity-properties">Properties</a>
+      <a href="megacity-landlords">Landlords</a>
+      <a href="megacity-tenants">Tenants</a>
+      <a href="megacity-tours">360° Tours</a>
+      <a href="megacity-about">About</a>
+      <a href="megacity-contact">Contact</a>
+    </nav>
+    <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+
+    <!-- hero — backdrop is a real frame from the 360 platform itself -->
+    <section class="hero hero--short" aria-label="360 degree tours">
+      <div class="hero-media" aria-hidden="true">
+        <img src="/billy360/panos/wooden_lounge.jpg" alt="" fetchpriority="high">
+      </div>
+      <div class="hero-inner wrap">
+        <div class="s360-ring" data-hero-fade style="margin-bottom:18px"><i></i><span>360° virtual tours</span></div>
+        <h1 class="t-hero">
+          <span class="ln"><span>Walk through</span></span>
+          <span class="ln"><span>your <em>next home</em>.</span></span>
+        </h1>
+        <div class="hero-foot">
+          <p data-hero-fade>Every home below has been captured room-by-room in 360°. Look around, move between rooms, open the floor plan — from wherever you are, at any hour.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Homes with 360 tours">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-fx="fade">Ready to explore</p>
+            <h2 class="t-1" data-fx="fade">Open the door<br><em>from here</em>.</h2>
+          </div>
+          <a class="tlink" href="megacity-properties" data-fx="fade">All properties
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="prop-grid" id="mcToursGrid" data-fx="stagger"></div>
+      </div>
+    </section>
+
+    <section class="section section--tight dark" aria-label="How it works">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow" data-fx="fade">How it works</p>
+          <h2 class="t-2" data-fx="fade" style="margin-top:18px">Viewings, <em>reinvented</em>.</h2>
+          <p class="lead" data-fx="fade" style="margin-top:22px">The tour runs in your browser — no app, no download. On your phone, you can even look around by moving it.</p>
+        </div>
+        <ul class="svc-list" data-fx="stagger" style="margin-top:0">
+          <li><i>01</i><b>Open a tour</b><span>It loads in about a second</span></li>
+          <li><i>02</i><b>Walk the rooms</b><span>Drag to look, tap a ring to move</span></li>
+          <li><i>03</i><b>Check the plan</b><span>Live floor plan shows where you stand</span></li>
+          <li><i>04</i><b>Book the real thing</b><span>Already knowing it's the one</span></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="mcFooter"></div>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="megacity-data.js" defer></script>
+  <script src="megacity.js" defer></script>
+</body>
+</html>
