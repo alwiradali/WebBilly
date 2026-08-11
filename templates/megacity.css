@@ -545,6 +545,75 @@ em{font-style:italic;font-weight:320}
 .page-head{padding-top:clamp(150px,18vh,210px);padding-bottom:clamp(36px,5vw,64px)}
 .page-head .lead{margin-top:24px}
 
+/* ── property tools / calculators ──────────────────────────────── */
+.tool-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+.tool-chips a{display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:inherit;
+  border:1px solid var(--line-strong);border-radius:2px;padding:11px 16px;
+  font:600 10.5px/1 var(--ff-body);letter-spacing:.16em;text-transform:uppercase;
+  transition:background-color .25s,color .25s}
+.tool-chips a:hover{background:var(--ink);color:var(--paper)}
+.tool{scroll-margin-top:90px}
+.tool-panel{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);align-items:start;
+  margin-top:clamp(30px,4vw,50px)}
+@media (max-width:860px){.tool-panel{grid-template-columns:1fr}}
+.tool-form{display:grid;gap:26px}
+.tool-form .field input,.tool-form .field select{
+  border:0;border-bottom:1px solid var(--line-strong);background:transparent;color:inherit;
+  font:500 17px/1.4 var(--ff-body);padding:10px 2px;border-radius:0;width:100%;appearance:none}
+.dark .tool-form .field input,.dark .tool-form .field select{border-bottom-color:var(--line-dark)}
+.tool-form .field input:focus,.tool-form .field select:focus{outline:none;border-bottom-color:var(--bronze)}
+.dark .tool-form .field select option{color:var(--ink)}
+.tool-form .field label{color:var(--ink-2)}
+.dark .tool-form .field label{color:var(--on-dark-2)}
+.tool-form .field--row{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:2px;overflow:hidden}
+.dark .seg{border-color:var(--line-dark)}
+.seg button{background:transparent;border:0;color:inherit;cursor:pointer;padding:12px 16px;
+  font:600 10.5px/1 var(--ff-body);letter-spacing:.14em;text-transform:uppercase;
+  transition:background-color .25s,color .25s}
+.seg button.is-on{background:var(--ink);color:var(--paper)}
+.dark .seg button.is-on{background:var(--on-dark);color:var(--ink)}
+input[type=range].slider{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:none;
+  border:0!important;padding:0 !important;cursor:pointer}
+input[type=range].slider::-webkit-slider-runnable-track{height:2px;background:var(--line-strong);border-radius:1px}
+input[type=range].slider::-moz-range-track{height:2px;background:var(--line-strong)}
+.dark input[type=range].slider::-webkit-slider-runnable-track{background:var(--line-dark)}
+input[type=range].slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-8px;
+  border-radius:50%;background:var(--bronze);border:3px solid var(--paper)}
+.dark input[type=range].slider::-webkit-slider-thumb{border-color:var(--dark)}
+input[type=range].slider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--bronze);border:3px solid var(--paper)}
+.slider-row output{font:600 12px/1 var(--ff-body);letter-spacing:.08em;color:var(--bronze)}
+
+.tool-result{border:1px solid var(--line);border-radius:4px;background:var(--paper-2);
+  padding:clamp(26px,3.4vw,46px);position:sticky;top:100px}
+.dark .tool-result{background:var(--dark-2);border-color:var(--line-dark)}
+@media (max-width:860px){.tool-result{position:static}}
+.tool-result .eyebrow{display:block;margin-bottom:14px}
+.tool-figure{font:340 clamp(40px,4.6vw,62px)/1.05 var(--ff-display);letter-spacing:-.01em}
+.tool-figure small{font:600 12px/1 var(--ff-body);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-2);margin-left:8px}
+.dark .tool-figure small{color:var(--on-dark-2)}
+.tool-rows{list-style:none;margin-top:24px;border-top:1px solid var(--line)}
+.dark .tool-rows{border-color:var(--line-dark)}
+.tool-rows li{display:flex;justify-content:space-between;gap:20px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.dark .tool-rows li{border-color:var(--line-dark)}
+.tool-rows li span:first-child{color:var(--ink-2)}
+.dark .tool-rows li span:first-child{color:var(--on-dark-2)}
+.tool-rows li b{font:420 17px/1.3 var(--ff-display);font-weight:420;text-align:right}
+.tool-note{margin-top:20px;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.dark .tool-note{color:var(--on-dark-2)}
+.tool-result .btn{margin-top:24px}
+
+/* compact instant-estimate widget (valuation page) */
+.inst{border:1px solid var(--line);border-left:3px solid var(--bronze);border-radius:4px;
+  background:var(--paper-2);padding:clamp(22px,3vw,34px);margin-bottom:40px}
+.inst-grid{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:18px;align-items:end;margin-top:18px}
+@media (max-width:760px){.inst-grid{grid-template-columns:1fr 1fr}}
+.inst-out{margin-top:22px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.inst-out b{font:340 clamp(30px,3.4vw,44px)/1 var(--ff-display)}
+.inst-out span{color:var(--ink-2);font-size:13px}
+
 /* reduced motion: no parallax mask leftovers, everything visible */
 @media (prefers-reduced-motion:reduce){
   .mask{display:none}

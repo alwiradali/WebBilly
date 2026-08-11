@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>Property Tools &amp; Calculators — Megacity Properties</title>
+  <meta name="description" content="Instant rental valuation, mortgage calculator, council tax by band, stamp duty, rent affordability and gross yield — the numbers behind your next move, in one place.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#12100C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="megacity-properties">Properties</a>
+      <a href="megacity-landlords">Landlords</a>
+      <a href="megacity-tenants">Tenants</a>
+      <a href="megacity-tours">360° Tours</a>
+      <a href="megacity-tools">Tools</a>
+      <a href="megacity-contact">Contact</a>
+    </nav>
+    <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+
+    <header class="page-head wrap">
+      <p class="eyebrow" data-fx="fade">Property tools</p>
+      <h1 class="t-1" data-fx="fade" style="margin-top:18px">Know your <em>numbers</em>.</h1>
+      <p class="lead" data-fx="fade">Six honest calculators — what your property could let for, what a mortgage really costs each month, what the council will charge, and what the taxman takes. Guides, not quotes: for exact figures, talk to the team.</p>
+      <nav class="tool-chips" data-fx="stagger" aria-label="Jump to a tool">
+        <a href="#toolValuation">Instant valuation</a>
+        <a href="#toolMortgage">Mortgage</a>
+        <a href="#toolCouncil">Council tax</a>
+        <a href="#toolSdlt">Stamp duty</a>
+        <a href="#toolAfford">Affordability</a>
+        <a href="#toolYield">Yield</a>
+      </nav>
+      <p class="small" data-fx="fade" style="margin-top:22px">Figures: <span id="ratesAsOf"></span></p>
+    </header>
+
+    <!-- ══ 1 · instant rental valuation ══ -->
+    <section class="section section--tight tool" id="toolValuation" aria-label="Instant rental valuation">
+      <div class="wrap" data-inst>
+        <p class="eyebrow" data-fx="fade">01 — Instant rental valuation</p>
+        <h2 class="t-2" data-fx="fade" style="margin-top:16px">What could it <em>let</em> for?</h2>
+        <div class="tool-panel">
+          <div class="tool-form" data-fx="fade">
+            <div class="field">
+              <label for="ivArea">Area</label>
+              <select id="ivArea" data-i-area>
+                <option>Ancoats</option><option>Northern Quarter</option><option>Castlefield</option>
+                <option>Salford</option><option>Salford Quays</option><option>West Didsbury</option>
+                <option>Chorlton</option><option>Prestwich</option>
+              </select>
+            </div>
+            <div class="field--row">
+              <div class="field">
+                <label for="ivBeds">Bedrooms</label>
+                <select id="ivBeds" data-i-beds>
+                  <option value="1">1</option><option value="2" selected>2</option>
+                  <option value="3">3</option><option value="4">4+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="ivType">Property type</label>
+                <select id="ivType" data-i-type>
+                  <option>Apartment</option><option>House</option>
+                </select>
+              </div>
+            </div>
+            <p class="tool-note">Based on typical asking rents for the area and size. Condition, outlook and finish move the real figure — that's what the full valuation pins down.</p>
+          </div>
+          <div class="tool-result" data-fx="fade">
+            <span class="eyebrow">Estimated monthly rent</span>
+            <div class="tool-figure"><span data-i-lo>£0</span> <small data-i-hi></small></div>
+            <ul class="tool-rows">
+              <li><span>Over a year</span><b data-i-year style="font-size:14.5px;font-family:var(--ff-body)"></b></li>
+            </ul>
+            <p class="tool-note">Want the exact number, evidenced from lets we've agreed nearby?</p>
+            <a class="btn magnetic" href="megacity-valuation">Get the full valuation
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 2 · mortgage ══ -->
+    <section class="section tool dark" id="toolMortgage" aria-label="Mortgage calculator">
+      <div class="wrap">
+        <p class="eyebrow" data-fx="fade">02 — Mortgage calculator</p>
+        <h2 class="t-2" data-fx="fade" style="margin-top:16px">The monthly <em>truth</em>.</h2>
+        <div class="tool-panel">
+          <div class="tool-form" data-fx="fade">
+            <div class="field slider-row">
+              <label for="mgPrice">Property price — <output id="mgPriceOut"></output></label>
+              <input class="slider" type="range" id="mgPrice" min="60000" max="1000000" step="5000" value="250000">
+            </div>
+            <div class="field slider-row">
+              <label for="mgDeposit">Deposit — <output id="mgDepOut"></output></label>
+              <input class="slider" type="range" id="mgDeposit" min="0" max="500000" step="2500" value="62500">
+            </div>
+            <div class="field--row">
+              <div class="field">
+                <label for="mgRate">Interest rate % a year</label>
+                <input type="number" id="mgRate" value="5.0" min="0.1" max="15" step="0.1" inputmode="decimal">
+              </div>
+              <div class="field">
+                <label for="mgTerm">Term in years</label>
+                <input type="number" id="mgTerm" value="25" min="5" max="40" step="1" inputmode="numeric">
+              </div>
+            </div>
+            <div class="field">
+              <label id="mgModeLabel">Repayment type</label>
+              <div class="seg" id="mgMode" role="group" aria-labelledby="mgModeLabel">
+                <button type="button" class="is-on" data-v="rep">Repayment</button>
+                <button type="button" data-v="io">Interest only</button>
+              </div>
+            </div>
+            <p class="tool-note">The rate is pre-set to a typical 5-year fix at 75% loan-to-value — change it to match a real quote. Interest-only is how most buy-to-let mortgages run.</p>
+          </div>
+          <div class="tool-result" data-fx="fade">
+            <span class="eyebrow">Monthly payment</span>
+            <div class="tool-figure"><span id="mgMonthly">£0</span><small>per month</small></div>
+            <ul class="tool-rows">
+              <li><span>Loan amount</span><b id="mgLoan">—</b></li>
+              <li><span>Loan-to-value</span><b id="mgLtv">—</b></li>
+              <li><span>Cost of borrowing</span><b id="mgTotal" style="font-size:14.5px;font-family:var(--ff-body)">—</b></li>
+            </ul>
+            <p class="tool-note">A guide, not a quote or advice — your rate depends on your circumstances. Your home may be repossessed if you do not keep up repayments on your mortgage.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3 · council tax ══ -->
+    <section class="section tool" id="toolCouncil" aria-label="Council tax calculator">
+      <div class="wrap">
+        <p class="eyebrow" data-fx="fade">03 — Council tax</p>
+        <h2 class="t-2" data-fx="fade" style="margin-top:16px">The bill nobody<br><em>budgets</em> for.</h2>
+        <div class="tool-panel">
+          <div class="tool-form" data-fx="fade">
+            <div class="field">
+              <label for="ctCouncil">Billing council</label>
+              <select id="ctCouncil">
+                <option>Manchester</option><option>Salford</option><option>Trafford</option>
+                <option>Stockport</option><option>Bury</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ctBand">Council tax band</label>
+              <select id="ctBand">
+                <option>A</option><option>B</option><option selected>C</option><option>D</option>
+                <option>E</option><option>F</option><option>G</option><option>H</option>
+              </select>
+            </div>
+            <p class="tool-note">Every Megacity listing shows its band — you'll find it in the property details. Single occupants get 25% off; students usually pay nothing.</p>
+          </div>
+          <div class="tool-result" data-fx="fade">
+            <span class="eyebrow">Works out at</span>
+            <div class="tool-figure"><span id="ctMonthly">£0</span><small>per month</small></div>
+            <ul class="tool-rows">
+              <li><span>Full year</span><b id="ctAnnual">—</b></li>
+              <li><span>Usual billing</span><b id="ctTen" style="font-size:14.5px;font-family:var(--ff-body)">—</b></li>
+            </ul>
+            <p class="tool-note">Standard charge before any discounts, from each council's published Band D rate. Check your exact address on the council's own site before you commit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4 · stamp duty ══ -->
+    <section class="section tool dark" id="toolSdlt" aria-label="Stamp duty calculator">
+      <div class="wrap">
+        <p class="eyebrow" data-fx="fade">04 — Stamp duty</p>
+        <h2 class="t-2" data-fx="fade" style="margin-top:16px">What the taxman<br>takes at the <em>door</em>.</h2>
+        <div class="tool-panel">
+          <div class="tool-form" data-fx="fade">
+            <div class="field slider-row">
+              <label for="sdPrice">Purchase price — <output id="sdPriceOut"></output></label>
+              <input class="slider" type="range" id="sdPrice" min="60000" max="1500000" step="5000" value="250000">
+            </div>
+            <div class="field">
+              <label id="sdBuyerLabel">I'm buying as</label>
+              <div class="seg" id="sdBuyer" role="group" aria-labelledby="sdBuyerLabel">
+                <button type="button" class="is-on" data-v="home">Home mover</button>
+                <button type="button" data-v="ftb">First-time buyer</button>
+                <button type="button" data-v="btl">Landlord / 2nd home</button>
+              </div>
+            </div>
+            <p class="tool-note">England residential SDLT. Landlords and second-home buyers pay the additional-dwellings surcharge on the whole price — factor it into your yield sums below.</p>
+          </div>
+          <div class="tool-result" data-fx="fade">
+            <span class="eyebrow">Stamp duty due</span>
+            <div class="tool-figure"><span id="sdTax">£0</span></div>
+            <ul class="tool-rows">
+              <li><span>Effective rate</span><b id="sdRate">—</b></li>
+              <li><span>Price + duty</span><b id="sdTotal">—</b></li>
+            </ul>
+            <p class="tool-note">A guide from the published bands — completion dates, leases and company purchases can change the sum. Your solicitor gives the binding figure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5 + 6 · affordability & yield ══ -->
+    <section class="section tool" id="toolAfford" aria-label="Affordability and yield">
+      <div class="wrap">
+        <div class="split" style="align-items:start">
+          <div>
+            <p class="eyebrow" data-fx="fade">05 — Rent affordability</p>
+            <h2 class="t-3" data-fx="fade" style="margin-top:16px">Will referencing say yes?</h2>
+            <div class="tool-form" data-fx="fade" style="margin-top:26px">
+              <div class="field">
+                <label for="afRent">Monthly rent</label>
+                <input type="number" id="afRent" value="1300" min="0" step="25" inputmode="numeric">
+              </div>
+            </div>
+            <div class="tool-result" data-fx="fade" style="position:static;margin-top:26px">
+              <span class="eyebrow">Household income needed</span>
+              <div class="tool-figure" style="font-size:clamp(32px,3.6vw,46px)"><span id="afIncome">£0</span><small>a year</small></div>
+              <ul class="tool-rows">
+                <li><span>Or</span><b id="afGuarantor" style="font-size:14.5px;font-family:var(--ff-body)">—</b></li>
+                <li><span>Sharing?</span><b id="afShare" style="font-size:14.5px;font-family:var(--ff-body)">—</b></li>
+              </ul>
+              <p class="tool-note">The standard referencing rule: gross annual income of at least 30× the monthly rent.</p>
+            </div>
+          </div>
+          <div id="toolYield" class="tool">
+            <p class="eyebrow" data-fx="fade">06 — Gross yield</p>
+            <h2 class="t-3" data-fx="fade" style="margin-top:16px">Is the numbers side working?</h2>
+            <div class="tool-form" data-fx="fade" style="margin-top:26px">
+              <div class="field--row">
+                <div class="field">
+                  <label for="ylPrice">Property value</label>
+                  <input type="number" id="ylPrice" value="220000" min="0" step="5000" inputmode="numeric">
+                </div>
+                <div class="field">
+                  <label for="ylRent">Monthly rent</label>
+                  <input type="number" id="ylRent" value="1300" min="0" step="25" inputmode="numeric">
+                </div>
+              </div>
+            </div>
+            <div class="tool-result" data-fx="fade" style="position:static;margin-top:26px">
+              <span class="eyebrow">Gross annual yield</span>
+              <div class="tool-figure" style="font-size:clamp(32px,3.6vw,46px)"><span id="ylFigure">0%</span></div>
+              <ul class="tool-rows">
+                <li><span>Rental income</span><b id="ylAnnual">—</b></li>
+              </ul>
+              <p class="tool-note">Before mortgage, management, maintenance and voids. Want the net picture for a specific property? Ask us — we manage these streets.</p>
+              <a class="btn magnetic" href="megacity-valuation">Talk to the team
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="mcFooter"></div>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="megacity-data.js" defer></script>
+  <script src="megacity.js" defer></script>
+  <script src="megacity-tools.js" defer></script>
+</body>
+</html>

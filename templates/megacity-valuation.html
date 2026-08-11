@@ -25,7 +25,7 @@
       <a href="megacity-landlords">Landlords</a>
       <a href="megacity-tenants">Tenants</a>
       <a href="megacity-tours">360° Tours</a>
-      <a href="megacity-about">About</a>
+      <a href="megacity-tools">Tools</a>
       <a href="megacity-contact">Contact</a>
     </nav>
     <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
@@ -41,6 +41,41 @@
     </header>
 
     <section class="section section--tight" aria-label="Valuation request">
+      <div class="wrap">
+        <div class="inst" data-inst data-fx="fade">
+          <p class="eyebrow">Want a number right now?</p>
+          <div class="inst-grid">
+            <div class="field">
+              <label for="qvArea">Area</label>
+              <select id="qvArea" data-i-area>
+                <option>Ancoats</option><option>Northern Quarter</option><option>Castlefield</option>
+                <option>Salford</option><option>Salford Quays</option><option>West Didsbury</option>
+                <option>Chorlton</option><option>Prestwich</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qvBeds">Bedrooms</label>
+              <select id="qvBeds" data-i-beds>
+                <option value="1">1</option><option value="2" selected>2</option>
+                <option value="3">3</option><option value="4">4+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qvType">Type</label>
+              <select id="qvType" data-i-type>
+                <option>Apartment</option><option>House</option>
+              </select>
+            </div>
+            <a class="tlink" href="megacity-tools" style="align-self:center">All tools
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="inst-out">
+            <b><span data-i-lo>£0</span> <span data-i-hi style="font-size:.55em;color:var(--ink-2)"></span></b>
+            <span data-i-year></span>
+          </div>
+          <p class="tool-note" style="margin-top:14px">A typical-asking-rent guide for the area and size. The form below gets you the exact figure, evidenced from lets we've agreed nearby.</p>
+        </div>
+      </div>
       <div class="wrap split split--wide-media" style="align-items:start">
         <div>
           <form class="form" style="margin-top:0" data-mailto data-subject="Valuation request — megacityproperties.co.uk">
@@ -109,5 +144,6 @@
   <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="megacity-data.js" defer></script>
   <script src="megacity.js" defer></script>
+  <script src="megacity-tools.js" defer></script>
 </body>
 </html>

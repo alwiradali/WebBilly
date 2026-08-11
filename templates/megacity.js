@@ -30,6 +30,7 @@
     ["megacity-landlords", "Landlords"],
     ["megacity-tenants", "Tenants"],
     ["megacity-tours", "360° Tours"],
+    ["megacity-tools", "Tools"],
     ["megacity-about", "About"],
     ["megacity-contact", "Contact"]
   ];
@@ -79,7 +80,7 @@
         '<div class="wrap footer-grid">' +
         '<div class="footer-brand"><a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>' +
         "<p>" + D.biz.strap + ". Every managed home presented properly — photography, floor plans and a 360° tour you can walk before you visit.</p></div>" +
-        '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
+        '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="megacity-tools">Tools &amp; calculators</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
         '<div><h4>With us</h4><ul><li><a href="megacity-landlords">Landlords</a></li><li><a href="megacity-tenants">Tenants</a></li><li><a href="megacity-valuation">Valuation</a></li></ul></div>' +
         '<div><h4>Office</h4><ul>' +
         '<li><a href="' + D.biz.mapsHref + '" target="_blank" rel="noopener">' + D.biz.office + "</a></li>" +
