@@ -42,6 +42,52 @@
     return t.content.firstChild;
   }
   var svgArrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>';
+  var svgHeart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 20.3S4 15 4 9.6C4 6.9 6.1 5 8.4 5c1.5 0 2.8.8 3.6 2 .8-1.2 2.1-2 3.6-2C17.9 5 20 6.9 20 9.6c0 5.4-8 10.7-8 10.7z"/></svg>';
+
+  /* the visitor's shortlist — hearts, kept on their own device */
+  var saved = (function () {
+    var KEY = "megacity:saved", list = [];
+    try { list = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) {}
+    function persist() { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+    return {
+      has: function (id) { return list.indexOf(id) !== -1; },
+      all: function () { return list.slice(); },
+      toggle: function (id) {
+        var i = list.indexOf(id);
+        if (i === -1) list.push(id); else list.splice(i, 1);
+        persist();
+        return i === -1;
+      }
+    };
+  })();
+
+  /* recently viewed — recorded by property pages */
+  var viewed = (function () {
+    var KEY = "megacity:viewed";
+    function all() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+    return {
+      all: all,
+      add: function (id) {
+        var list = all().filter(function (x) { return x !== id; });
+        list.unshift(id);
+        try { localStorage.setItem(KEY, JSON.stringify(list.slice(0, 8))); } catch (e) {}
+      }
+    };
+  })();
+
+  /* the wordmark everywhere follows the Studio's brand fields */
+  function applyBrand() {
+    if (!D || !D.biz.brandName) return;
+    $$b(".nav-brand").forEach(function (a) {
+      a.innerHTML = esc(D.biz.brandName) + "<small>" + esc(D.biz.brandSub || "") + "</small>";
+    });
+    var lw = document.querySelector(".loader-word");
+    if (lw) lw.innerHTML = "<b>" + esc(D.biz.brandName) + "</b>";
+    var ls = document.querySelector(".loader-sub");
+    if (ls) ls.textContent = (D.biz.brandSub || "") + " · Manchester";
+  }
+  function $$b(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
   function buildChrome() {
     var body = document.body;
@@ -59,7 +105,7 @@
     }).join("");
     body.appendChild(el(
       '<nav class="menu" id="mcMenu" aria-label="Menu" aria-hidden="true">' +
-      '<div class="menu-top"><a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>' +
+      '<div class="menu-top"><a class="nav-brand" href="megacity">' + esc(D ? D.biz.brandName : "Megacity") + "<small>" + esc(D ? D.biz.brandSub : "Properties") + "</small></a>" +
       '<button class="menu-close" aria-label="Close menu">&#10005;</button></div>' +
       '<ul class="menu-links">' + links + "</ul>" +
       '<div class="menu-foot"><a class="btn btn--solid" href="megacity-valuation">Request a valuation</a>' +
@@ -78,7 +124,7 @@
         '<div class="hero-actions" data-fx="fade"><a class="btn btn--solid btn--lg magnetic" href="megacity-valuation">Request a valuation ' + svgArrow + "</a>" +
         '<a class="btn btn--ghost btn--lg" href="' + D.biz.phoneHref + '">Call ' + D.biz.phone + "</a></div></div>" +
         '<div class="wrap footer-grid">' +
-        '<div class="footer-brand"><a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>' +
+        '<div class="footer-brand"><a class="nav-brand" href="megacity">' + esc(D.biz.brandName) + "<small>" + esc(D.biz.brandSub) + "</small></a>" +
         "<p>" + D.biz.strap + ". Every managed home presented properly — photography, floor plans and a 360° tour you can walk before you visit.</p></div>" +
         '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="megacity-tools">Tools &amp; calculators</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
         '<div><h4>With us</h4><ul><li><a href="megacity-landlords">Landlords</a></li><li><a href="megacity-tenants">Tenants</a></li><li><a href="megacity-valuation">Valuation</a></li></ul></div>' +
@@ -88,10 +134,10 @@
         '<li><a href="mailto:' + D.biz.email + '">' + D.biz.email + "</a></li>" +
         '<li><a href="' + D.biz.facebook + '" target="_blank" rel="noopener">Facebook</a></li>' +
         '<li><a href="' + D.biz.linkedin + '" target="_blank" rel="noopener">LinkedIn</a></li></ul></div></div>' +
-        '<div class="wrap footer-legal"><span>© <span id="mcYear"></span> Megacity Properties · Company no. ' + D.biz.companyNo + "</span>" +
+        '<div class="wrap footer-legal"><span>© <span id="mcYear"></span> ' + esc(D.biz.brandName + " " + D.biz.brandSub) + " · Company no. " + D.biz.companyNo + "</span>" +
         "<span>ARLA Propertymark · The Property Ombudsman T06217 · TDS · NRLA</span>" +
         '<span style="margin-left:auto">Redesign concept by <a href="/" target="_blank" rel="noopener">Billy Digitals</a></span></div>' +
-        '<div class="wrap"><div class="footer-word" aria-hidden="true" data-fx="footer-word">MEGACITY</div></div></footer>';
+        '<div class="wrap"><div class="footer-word" aria-hidden="true" data-fx="footer-word">' + esc((D.biz.brandName || "MEGACITY").toUpperCase()) + "</div></div></footer>";
       var y = document.getElementById("mcYear");
       if (y) y.textContent = new Date().getFullYear();
     }
@@ -335,14 +381,40 @@
   function cardHTML(p) {
     var badge360 = p.tour
       ? '<span class="badge badge--360"><i></i>360° tour</span>' : "";
-    return '<a class="prop-card" data-cursor="View" href="megacity-property?id=' + p.id + '" aria-label="' + p.name + ", " + p.area + ", " + p.priceLabel + '">' +
+    return '<div class="prop-shell">' +
+      '<a class="prop-card" data-cursor="View" href="megacity-property?id=' + p.id + '" aria-label="' + p.name + ", " + p.area + ", " + p.priceLabel + '">' +
       '<span class="prop-media"><img src="' + p.cover + '" alt="' + p.name + " — " + p.type + " in " + p.area + '" loading="lazy" decoding="async">' +
       '<span class="prop-flags"><span class="badge badge--' + p.status + '">' + p.statusLabel + "</span>" + badge360 + "</span>" +
       '<span class="prop-cta">View home ' + svgArrow + "</span></span>" +
       '<span class="prop-info"><span class="prop-price">£' + p.price.toLocaleString("en-GB") + "<small>pcm</small></span>" +
       '<span class="prop-where">' + p.area + " · " + p.postcode + "</span></span>" +
       '<span class="prop-meta"><i>' + p.beds + " bed</i><i>" + p.baths + " bath</i><i>" + p.type + "</i></span>" +
-      '<span class="prop-name">' + p.name + "</span></a>";
+      '<span class="prop-name">' + p.name + "</span></a>" +
+      '<button class="prop-save' + (saved.has(p.id) ? " is-on" : "") + '" data-save="' + p.id +
+      '" aria-label="Save ' + p.name + ' to your shortlist" aria-pressed="' + saved.has(p.id) + '">' + svgHeart + "</button></div>";
+  }
+
+  /* hearts: toggle everywhere, refresh any saved-counts on the page */
+  function bindSaves() {
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("[data-save]");
+      if (!b) return;
+      var on = saved.toggle(b.getAttribute("data-save"));
+      $$b('[data-save="' + b.getAttribute("data-save") + '"]').forEach(function (x) {
+        x.classList.toggle("is-on", on);
+        x.setAttribute("aria-pressed", String(on));
+      });
+      if (motion) gsap.fromTo(b, { scale: 0.8 }, { scale: 1, duration: 0.4, ease: "back.out(3)" });
+      updateSavedCount();
+      document.dispatchEvent(new CustomEvent("mc:saved-changed"));
+    });
+  }
+  function updateSavedCount() {
+    $$b("[data-saved-count]").forEach(function (el) {
+      var n = saved.all().length;
+      el.textContent = n ? "Saved · " + n : "Saved";
+      el.classList.toggle("has-saves", n > 0);
+    });
   }
 
   /* a card plus its own "enter the tour" action — for the 360 directory */
@@ -362,6 +434,31 @@
     }
     var tg = document.getElementById("mcToursGrid");
     if (tg) tg.innerHTML = D.withTours().map(tourCardHTML).join("");
+
+    /* "similar homes" — same area, or within 20% of the price */
+    $$b("[data-similar]").forEach(function (grid) {
+      var base = D.byId(grid.getAttribute("data-similar"));
+      var section = grid.closest("[data-similar-section]");
+      if (!base) { if (section) section.hidden = true; return; }
+      var list = D.properties.filter(function (p) {
+        if (p.id === base.id) return false;
+        return p.area === base.area || Math.abs(p.price - base.price) <= base.price * 0.2;
+      }).slice(0, 3);
+      if (!list.length) { if (section) section.hidden = true; return; }
+      if (section) section.hidden = false;
+      grid.innerHTML = list.map(cardHTML).join("");
+    });
+
+    /* recently-viewed strips — hidden until the visitor has a history */
+    $$b("[data-recent]").forEach(function (grid) {
+      var exclude = grid.getAttribute("data-exclude");
+      var list = viewed.all().filter(function (id) { return id !== exclude; })
+        .map(D.byId).filter(Boolean).slice(0, 3);
+      var section = grid.closest("[data-recent-section]");
+      if (!list.length) { if (section) section.hidden = true; return; }
+      if (section) section.hidden = false;
+      grid.innerHTML = list.map(cardHTML).join("");
+    });
   }
 
   /* ── discovery: filters, chips, count, empty state ────────────── */
@@ -382,6 +479,20 @@
       if (q.has(k)) { if (c.type === "checkbox") c.checked = q.get(k) === "1"; else c.value = q.get(k); }
     });
 
+    /* shortlist-only toggle */
+    var savedToggle = document.getElementById("mcSavedToggle");
+    var savedOnly = q.get("saved") === "1";
+    function syncSavedToggle() {
+      if (!savedToggle) return;
+      savedToggle.classList.toggle("is-on", savedOnly);
+      savedToggle.setAttribute("aria-pressed", String(savedOnly));
+    }
+    if (savedToggle) {
+      savedToggle.addEventListener("click", function () { savedOnly = !savedOnly; syncSavedToggle(); apply(); });
+      document.addEventListener("mc:saved-changed", function () { if (savedOnly) apply(); });
+      syncSavedToggle();
+    }
+
     function current() {
       var f = {};
       controls.forEach(function (c) {
@@ -392,7 +503,9 @@
     }
     function apply() {
       var f = current();
+      var shortlist = saved.all();
       var list = D.properties.filter(function (p) {
+        if (savedOnly && shortlist.indexOf(p.id) === -1) return false;
         if (f.area && p.area !== f.area) return false;
         if (f.type && p.type.indexOf(f.type) === -1) return false;
         if (f.beds && p.beds < +f.beds) return false;
@@ -610,9 +723,12 @@
   /* ── boot ─────────────────────────────────────────────────────── */
   function boot() {
     buildChrome();
+    applyBrand();
     cursor();
     navigation();
     tour.bind();
+    bindSaves();
+    updateSavedCount();
     forms();
     if (!motion) {
       var l = document.querySelector(".loader"); if (l) l.style.display = "none";
@@ -627,7 +743,7 @@
     if (motion) ScrollTrigger.refresh();
   }
 
-  window.MC = { fx: fx, cardHTML: cardHTML, tour: tour, gallery: gallery, scrollFx: scrollFx, arrow: svgArrow };
+  window.MC = { fx: fx, cardHTML: cardHTML, tour: tour, gallery: gallery, scrollFx: scrollFx, arrow: svgArrow, saved: saved, viewed: viewed };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();

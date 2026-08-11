@@ -55,7 +55,12 @@
     try {
       localStorage.setItem(KEY_DATA, JSON.stringify({ biz: state.biz, properties: state.properties }));
       localStorage.setItem(KEY_RATES, JSON.stringify(state.rates));
-    } catch (e) {}
+    } catch (e) {
+      alert("This browser's storage is full — uploaded photos take room. Remove a photo or two (or use image URLs for some rooms), then it will save again.");
+      var chipErr = $("#mcaSaved span");
+      if (chipErr) chipErr.textContent = "Not saved — storage full";
+      return;
+    }
     var chip = $("#mcaSaved span");
     if (chip) { chip.textContent = "Saved"; }
     var json = $("#mcaJson");
@@ -120,7 +125,10 @@
       field("EPC", inp(base + "epc", p.epc)) +
       field("Council tax band", inp(base + "councilTaxBand", p.councilTaxBand)) +
       field("360° tour id (blank = none)", inp(base + "tour", p.tour || "")) +
-      field("Cover image URL", inp(base + "cover", p.cover), "f-3") +
+      '<div class="field f-3"><label>Cover photo — paste a URL or upload</label>' +
+      '<div class="mca-uprow"><img class="mca-thumb" alt="" src="' + esc(p.cover) + '">' +
+      inp(base + "cover", p.cover) +
+      '<button type="button" class="btn btn--ghost mca-up" data-upload="' + base + 'cover">Upload</button></div></div>' +
       field("Card summary", area(base + "summary", p.summary), "f-3") +
       field("Description — blank line between paragraphs", area(base + "descriptionText", (p.description || []).join("\n\n")), "f-3") +
       field("Key features — one per line", area(base + "featuresText", (p.features || []).join("\n")), "f-3") +
@@ -128,10 +136,12 @@
       (p.story || []).map(function (s, si) {
         var sb = base + "story." + si + ".";
         return '<div class="mca-story-row">' +
-          '<input data-path="' + sb + 'room" value="' + esc(s.room) + '" placeholder="Room" aria-label="Room">' +
+          '<div class="mca-uprow" style="min-width:0"><img class="mca-thumb" alt="" src="' + esc(s.src) + '">' +
+          '<input data-path="' + sb + 'room" value="' + esc(s.room) + '" placeholder="Room" aria-label="Room"></div>' +
           '<input data-path="' + sb + 'caption" value="' + esc(s.caption) + '" placeholder="Caption" aria-label="Caption">' +
-          '<input data-path="' + sb + 'src" value="' + esc(s.src) + '" placeholder="Image URL" aria-label="Image URL">' +
-          '<button type="button" data-story-del="' + si + '">×</button></div>';
+          '<div class="mca-uprow"><input data-path="' + sb + 'src" value="' + esc(s.src) + '" placeholder="Image URL" aria-label="Image URL">' +
+          '<button type="button" class="mca-up" data-upload="' + sb + 'src">Upload</button></div>' +
+          '<button type="button" data-story-del="' + si + '" aria-label="Remove room">×</button></div>';
       }).join("") +
       '<button type="button" class="btn btn--ghost" data-story-add style="align-self:start;padding:10px 16px">＋ Add room</button></div>' +
       '<div class="mca-actions">' +
@@ -143,6 +153,8 @@
   function renderBiz() {
     var b = state.biz;
     $("#mcaBizForm").innerHTML =
+      field("Company name — large", inp("biz.brandName", b.brandName || "Megacity"), "f-2") +
+      field("Company name — small line", inp("biz.brandSub", b.brandSub || "Properties")) +
       field("Strapline", inp("biz.strap", b.strap), "f-3") +
       field("Phone", inp("biz.phone", b.phone)) +
       field("Email", inp("biz.email", b.email, "email")) +
@@ -178,8 +190,51 @@
       }).join("") + "</div>";
   }
 
+  /* ── photo uploads ────────────────────────────────────────────────
+     Files never leave the machine: each photo is decoded, downscaled
+     and recompressed right here (max 1400px, JPEG), then stored with
+     the listing — the same approach the billy360 Studio takes. */
+  var pendingUploadPath = null;
+  function uploadInput() {
+    var f = $("#mcaFile");
+    if (f) return f;
+    f = document.createElement("input");
+    f.type = "file"; f.accept = "image/*"; f.id = "mcaFile"; f.hidden = true;
+    document.body.appendChild(f);
+    f.addEventListener("change", function () {
+      var file = f.files && f.files[0];
+      f.value = "";
+      if (!file || !pendingUploadPath) return;
+      var img = new Image();
+      img.onload = function () {
+        var MAX = 1400;
+        var scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        var dataUrl = c.toDataURL("image/jpeg", 0.78);
+        URL.revokeObjectURL(img.src);
+        setPath(state, pendingUploadPath, dataUrl);
+        pendingUploadPath = null;
+        renderPropForm();
+        queueSave();
+      };
+      img.onerror = function () { alert("That file doesn't look like an image this browser can read."); };
+      img.src = URL.createObjectURL(file);
+    });
+    return f;
+  }
+
   /* ── events ───────────────────────────────────────────────────── */
   function bind() {
+    /* photo uploads — any Upload button routes through one file picker */
+    document.addEventListener("click", function (e) {
+      var up = e.target.closest && e.target.closest("[data-upload]");
+      if (!up) return;
+      pendingUploadPath = up.getAttribute("data-upload");
+      uploadInput().click();
+    });
     /* editor forms never navigate — Enter just blurs politely */
     document.addEventListener("submit", function (e) {
       if (e.target.closest(".mca-form")) e.preventDefault();

@@ -107,6 +107,20 @@
       '<div><span>Reference</span><b>MCP-' + p.id.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6) + "</b></div>" +
       "</div></div></section>" +
 
+      /* the real monthly number — rent + council tax from the live rates */
+      '<section class="section section--tight" style="padding-top:0" aria-label="Monthly costs" id="ppCost" hidden><div class="wrap"><div class="tool-panel" style="margin-top:0">' +
+      '<div><p class="eyebrow" data-fx="fade">The real monthly number</p>' +
+      '<h2 class="t-3" data-fx="fade" style="margin-top:14px">What this home actually costs a month — something the portals never tell you.</h2>' +
+      '<p class="tool-note" style="max-width:44ch">Rent plus council tax at the current published rate for this band. Utilities, broadband and contents insurance sit on top.</p>' +
+      '<a class="tlink" href="megacity-tools" style="margin-top:18px">All the calculators ' + A + "</a></div>" +
+      '<div class="tool-result" data-fx="fade" style="position:static"><span class="eyebrow">Rent + council tax</span>' +
+      '<div class="tool-figure"><span id="ppCostTotal">—</span><small>per month</small></div>' +
+      '<ul class="tool-rows">' +
+      '<li><span>Rent</span><b>' + p.priceLabel + "</b></li>" +
+      '<li><span id="ppCostCtLabel">Council tax</span><b id="ppCostCt">—</b></li>' +
+      '<li><span>Income referencing looks for</span><b id="ppCostIncome">—</b></li></ul>' +
+      '<p class="tool-note" id="ppCostNote"></p></div></div></div></section>' +
+
       /* the walkthrough story */
       '<section class="section section--tight" style="padding-top:0" aria-label="Room by room"><div class="wrap">' +
       '<p class="eyebrow" data-fx="fade">Room by room</p>' +
@@ -163,7 +177,17 @@
       '<div class="form-actions"><button class="btn btn--lg magnetic" type="submit">Request this viewing ' + A + "</button>" +
       '<p class="form-note">Submitting opens a pre-filled email to our lettings team — nothing is sent until you press send.</p></div>' +
       '<div class="form-done" hidden><b>Almost there.</b>Your email draft is open — press send and we’ll come back to you the same working day.</div>' +
-      "</form></div></div></section>";
+      "</form></div></div></section>" +
+
+      /* keep looking */
+      '<section class="section section--tight" style="border-top:1px solid var(--line)" data-similar-section aria-label="Similar homes"><div class="wrap">' +
+      '<div class="section-head" style="margin-bottom:34px"><div><p class="eyebrow">Keep looking</p>' +
+      '<h2 class="t-2">Similar <em>homes</em>.</h2></div></div>' +
+      '<div class="prop-grid" data-similar="' + p.id + '"></div></div></section>' +
+      '<section class="section section--tight" style="padding-top:0" data-recent-section hidden aria-label="Recently viewed"><div class="wrap">' +
+      '<div class="section-head" style="margin-bottom:34px"><div><p class="eyebrow">Your trail</p>' +
+      '<h2 class="t-2">Recently <em>viewed</em>.</h2></div></div>' +
+      '<div class="prop-grid" data-recent data-exclude="' + p.id + '"></div></div></section>';
 
     document.getElementById("ppMount").innerHTML = html;
 
@@ -189,11 +213,44 @@
       if (!b || !window.MC) return;
       window.MC.gallery.open(p.story.map(function (s) { return { src: s.src, room: s.room, caption: s.caption }; }), +b.getAttribute("data-gal"));
     });
+
+    /* remember this home for the recently-viewed strips */
+    try {
+      var vlist = JSON.parse(localStorage.getItem("megacity:viewed") || "[]").filter(function (x) { return x !== p.id; });
+      vlist.unshift(p.id);
+      localStorage.setItem("megacity:viewed", JSON.stringify(vlist.slice(0, 8)));
+    } catch (e) {}
+
+    /* the real monthly number — filled once the rates engine has loaded */
+    document.addEventListener("DOMContentLoaded", function () {
+      var R = window.MEGACITY_RATES;
+      var box = document.getElementById("ppCost");
+      if (!R || !box) return;
+      var councilFor = {
+        "Ancoats": "Manchester", "Northern Quarter": "Manchester", "Castlefield": "Manchester",
+        "West Didsbury": "Manchester", "Chorlton": "Manchester",
+        "Salford": "Salford", "Salford Quays": "Salford", "Prestwich": "Bury"
+      };
+      var council = councilFor[p.area] || "Manchester";
+      var band = (p.councilTaxBand || "C").toUpperCase();
+      var bandD = R.councilTaxBandD[council];
+      var ratio = R.bandRatio[band];
+      if (!bandD || !ratio) return;
+      var ct = bandD * ratio / 12;
+      var fmt = function (n) { return "£" + Math.round(n).toLocaleString("en-GB"); };
+      document.getElementById("ppCostTotal").textContent = fmt(p.price + ct);
+      document.getElementById("ppCostCtLabel").textContent = "Council tax — Band " + band + ", " + council;
+      document.getElementById("ppCostCt").textContent = fmt(ct);
+      document.getElementById("ppCostIncome").textContent = fmt(p.price * R.affordability.incomeMultiple) + " a year";
+      document.getElementById("ppCostNote").textContent = "Council tax from the published " + council + " rates (" + R.asOf + "). Single occupants get 25% off.";
+      box.hidden = false;
+    });
   })();
   </script>
 
   <script src="vendor/gsap.min.js" defer></script>
   <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="megacity.js" defer></script>
+  <script src="megacity-tools.js" defer></script>
 </body>
 </html>

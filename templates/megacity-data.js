@@ -14,6 +14,10 @@
 
   var BIZ = {
     name: "Megacity Properties",
+    /* the two-line wordmark shown in the nav, menu, loader and footer —
+       editable in the Studio, so the whole site can be re-branded */
+    brandName: "Megacity",
+    brandSub: "Properties",
     strap: "Lettings & property management, Manchester & Salford",
     phone: "0161 220 1763",
     phoneHref: "tel:+441612201763",

@@ -56,12 +56,17 @@
     .f-2{grid-column:span 2}.f-3{grid-column:1/-1}
     .mca-actions{grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap;padding-top:6px}
     .mca-story{grid-column:1/-1;display:flex;flex-direction:column;gap:10px}
-    .mca-story-row{display:grid;grid-template-columns:130px 1fr 1.4fr auto;gap:10px}
+    .mca-story-row{display:grid;grid-template-columns:1fr 1fr 1.6fr auto;gap:10px;align-items:center}
     @media (max-width:760px){.mca-story-row{grid-template-columns:1fr}}
     .mca-story-row input{border:0;border-bottom:1px solid var(--line-strong);background:transparent;
       font:500 13.5px/1.4 var(--ff-body);padding:7px 2px;width:100%}
     .mca-story-row button{background:none;border:1px solid var(--line-strong);border-radius:2px;
       cursor:pointer;padding:4px 12px;font-size:13px;color:var(--ink-2)}
+    .mca-uprow{display:flex;align-items:center;gap:10px;min-width:0}
+    .mca-uprow input{flex:1;min-width:0}
+    .mca-thumb{width:52px;height:36px;object-fit:cover;border-radius:2px;border:1px solid var(--line);
+      background:var(--paper);flex:none}
+    .mca-up{white-space:nowrap;padding:8px 14px !important;font-size:11px !important}
     .rates-grid{display:grid;grid-template-columns:auto repeat(4,1fr);gap:8px 14px;align-items:center;
       grid-column:1/-1}
     .rates-grid .rg-h{font:600 9.5px/1 var(--ff-body);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}

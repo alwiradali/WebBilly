@@ -107,6 +107,10 @@
           </div>
         </div>
 
+        <button class="chip-toggle" id="mcSavedToggle" aria-pressed="false" title="Show only your saved homes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 20.3S4 15 4 9.6C4 6.9 6.1 5 8.4 5c1.5 0 2.8.8 3.6 2 .8-1.2 2.1-2 3.6-2C17.9 5 20 6.9 20 9.6c0 5.4-8 10.7-8 10.7z"/></svg>
+          <span data-saved-count>Saved</span>
+        </button>
         <div class="field" style="min-width:170px">
           <label for="mcSort">Sort</label>
           <select id="mcSort">
@@ -130,6 +134,18 @@
           <p>Try widening the rent range or looking at a neighbouring area — new homes are listed every week.</p>
           <button class="btn magnetic" data-clear-all>Clear filters</button>
         </div>
+      </div>
+    </section>
+
+    <section class="section section--tight" style="border-top:1px solid var(--line)" data-recent-section hidden aria-label="Recently viewed">
+      <div class="wrap">
+        <div class="section-head" style="margin-bottom:34px">
+          <div>
+            <p class="eyebrow">Pick up where you left off</p>
+            <h2 class="t-2">Recently <em>viewed</em>.</h2>
+          </div>
+        </div>
+        <div class="prop-grid" data-recent></div>
       </div>
     </section>
 

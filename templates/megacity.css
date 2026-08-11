@@ -190,6 +190,24 @@ em{font-style:italic;font-weight:320}
 @media (max-width:1080px){.prop-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.prop-grid{grid-template-columns:1fr;gap:40px}}
 
+.prop-shell{position:relative}
+.prop-save{position:absolute;right:12px;top:12px;z-index:3;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:rgba(245,241,233,.92);border:0;border-radius:50%;color:var(--ink);
+  transition:transform .25s var(--ease),color .25s}
+.prop-save svg{width:19px;height:19px}
+.prop-save:hover{transform:scale(1.1)}
+.prop-save.is-on{color:#B03A48}
+.prop-save.is-on svg path{fill:currentColor}
+.prop-shell .prop-flags{right:64px}
+.chip-toggle{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line-strong);
+  border-radius:2px;background:transparent;color:var(--ink);cursor:pointer;
+  font:600 10.5px/1 var(--ff-body);letter-spacing:.16em;text-transform:uppercase;padding:12px 16px;
+  transition:background-color .25s,color .25s}
+.chip-toggle svg{width:15px;height:15px}
+.chip-toggle.is-on{background:var(--ink);color:var(--paper)}
+.chip-toggle.is-on svg path{fill:#B03A48;stroke:#B03A48}
+
 .prop-card{position:relative;text-decoration:none;color:inherit;display:block}
 .prop-media{display:block;position:relative;overflow:hidden;border-radius:3px;aspect-ratio:4/3;background:var(--paper-2)}
 .prop-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);
