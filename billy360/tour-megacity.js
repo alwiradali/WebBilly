@@ -186,6 +186,9 @@
         councilTax: h.councilTax || "",
         availability: h.availability || "",
         agent: AGENT,
+        /* draft: reachable by the Megacity site's direct links, invisible in
+           the public billy360 portfolio — the shared demo stays as it was */
+        hidden: true,
         facts: [
           ["Rent", h.price],
           ["Bedrooms", String(h.beds)],
