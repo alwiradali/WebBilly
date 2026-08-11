@@ -16,7 +16,7 @@
 
 window.BILLY360_TOUR = {
   id: "charnwood-house",
-  version: 2,
+  version: 3,
 
   /* ── WHITE LABEL ────────────────────────────────────────────────────────
      Every colour, name and typeface in the interface resolves from here.
@@ -549,6 +549,31 @@ window.BILLY360_TOUR = {
       "1583847268964-b28dc8f51f92", "Balustrade and city view")
   };
   (T.rooms || []).forEach(function (r) { if (P[r.id]) r.photos = P[r.id]; });
+})(window.BILLY360_TOUR);
+
+/* ── REAL 360° CAPTURES ───────────────────────────────────────────────────
+   Every position is a genuine photographic panorama (equirectangular 2:1,
+   CC0, from Poly Haven), served from this deployment's own /panos folder.
+   The synthesised `space` blocks stay in place underneath as the automatic
+   fallback if a capture ever fails to load — swap any room back by setting
+   its pano to null. */
+(function attachPanos(T) {
+  var P = {
+    reception: "entrance_hall",
+    "hall-g": "large_corridor",
+    atrium: "newman_lobby",
+    cafe: "comfy_cafe",
+    lounge: "lythwood_lounge",
+    event: "dancing_hall",
+    board: "church_meeting_room",
+    "hall-1": "old_apartments_walkway",
+    studio: "blender_institute",
+    soar: "combination_room",
+    wreake: "reading_room",
+    focus: "small_empty_room_2",
+    terrace: "roof_garden"
+  };
+  (T.rooms || []).forEach(function (r) { if (P[r.id]) r.pano = "panos/" + P[r.id] + ".jpg"; });
 })(window.BILLY360_TOUR);
 
 /* Register on the project list. Every project file ends with this line. */

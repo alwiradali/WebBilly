@@ -120,8 +120,8 @@
     try {
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
-        if (k && k.indexOf("billy360:tour:") === 0) {
-          var id = k.slice(12);
+        if (k && k.indexOf(storeKey("")) === 0) {
+          var id = k.slice(storeKey("").length);
           if (id !== "v2" && ids.indexOf(id) < 0) ids.push(id);
         }
       }
@@ -187,16 +187,23 @@
     return null;
   }
   /* a saved edit wins over the shipped file; a project that only exists in
-     storage (made in Studio) loads from there alone */
+     storage (made in Studio) loads from there alone. The one exception: when
+     the shipped file has moved to a NEWER content version (real captures
+     replacing placeholders, say), the stale save steps aside — otherwise a
+     browser that once pressed Publish would never see a content update. */
   function loadTour(id) {
+    var ship = shippedTour(id);
     try {
       var raw = localStorage.getItem(storeKey(id));
       if (raw) {
         var t = JSON.parse(raw);
-        if (t && t.rooms && t.rooms.length) { t.id = t.id || id; return t; }
+        if (t && t.rooms && t.rooms.length) {
+          t.id = t.id || id;
+          if (!ship || (t.version || 0) >= (ship.version || 0)) return t;
+          localStorage.removeItem(storeKey(id));   // superseded by the shipped update
+        }
       }
     } catch (e) { }
-    var ship = shippedTour(id);
     return ship ? JSON.parse(JSON.stringify(ship)) : null;
   }
   function saveTour(silent) {

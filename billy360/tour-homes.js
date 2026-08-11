@@ -91,6 +91,22 @@
     });
   }
 
+  /* real 360° captures per room type (equirectangular, CC0, self-hosted) —
+     the walkable views are genuine photography from day one. The synthesised
+     space stays underneath as the fallback if a capture fails to load. */
+  var PANO = {
+    hall: "small_empty_house",
+    living: "wooden_lounge",
+    kitchen: "kiara_interior",
+    dining: "bush_restaurant",
+    master: "hotel_room",
+    bed2: "cabin",
+    bath: "modern_bathroom",
+    study: "provence_studio",
+    garden: "suburban_garden",
+    landing: "lythwood_room"
+  };
+
   /* a warm domestic palette, varied a little per property so the placeholder
      tours do not all look like the same house */
   var WARM = [
@@ -114,7 +130,7 @@
       description: "",
       plan: pos, north: -90,
       view: { yaw: (i * 37) % 360 - 180, pitch: -6, fov: 82 },
-      pano: null,                      /* ← the real capture goes here */
+      pano: PANO[key] ? "panos/" + PANO[key] + ".jpg" : null,
       photos: stockPhotos(key, seedBase | 0, l[0]),
       space: {
         w: r[1], h: r[2], d: r[3], eye: 1.55, cam: [0, 0],
@@ -178,7 +194,7 @@
 
     return {
       id: h.id,
-      version: 2,
+      version: 3,
       brand: AGENCY,
       project: {
         name: h.name, slug: h.id,

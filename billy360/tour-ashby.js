@@ -7,7 +7,7 @@
 
 (window.BILLY360_TOURS = window.BILLY360_TOURS || []).push({
   id: "ashby-retail",
-  version: 2,
+  version: 3,
 
   /* branding is per project — a different end client can have their own
      colours and wordmark without touching a line of code */
@@ -179,6 +179,18 @@
     staff: [{ src: U("1556740738-b6a63e27c4df"), caption: "Staff room and kitchenette" }],
     mezz: [{ src: U("1497366216548-37526070297c"), caption: "Mezzanine office" }]
   };
+  /* real 360° captures (equirectangular, CC0, self-hosted) — the synthesised
+     space stays underneath as the fallback if a capture fails to load */
+  var PANO = {
+    shopfloor: "decor_shop",
+    run: "gym_entrance",
+    stock: "empty_warehouse_01",
+    staff: "newman_cafeteria",
+    mezz: "unfinished_office"
+  };
   var T = window.BILLY360_TOURS[window.BILLY360_TOURS.length - 1];
-  (T.rooms || []).forEach(function (r) { if (P[r.id]) r.photos = P[r.id]; });
+  (T.rooms || []).forEach(function (r) {
+    if (P[r.id]) r.photos = P[r.id];
+    if (PANO[r.id]) r.pano = "panos/" + PANO[r.id] + ".jpg";
+  });
 })();

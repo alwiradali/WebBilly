@@ -20,6 +20,13 @@ billy360/
 Live at `/billy360/`. Runs identically from a file:// path, an S3 bucket, a
 closed intranet or a memory stick.
 
+The shipped demos are real photography end to end: every walkable position is
+a genuine 360° capture (equirectangular 2:1, CC0, from Poly Haven, resampled
+to 2048×1024 and self-hosted in `panos/`), and every room's gallery carries
+real interior photographs served from Unsplash. The synthesised `space` block
+each room also carries is the automatic fallback if a capture fails to load —
+and what a brand-new room shows before its capture is dropped in.
+
 ## Three screens, one GPU context
 
 | Screen | Route | What it is | Who sees it |
