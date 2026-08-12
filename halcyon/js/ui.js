@@ -191,7 +191,7 @@
     var badges = (p.badges || []).map(function (b) {
       return '<span class="badge badge--' + b + '">' + (b === "sponsored" ? "Sponsored" : b === "new" ? "New" : "Featured") + "</span>";
     });
-    if (p.tour) badges.push('<span class="badge badge--tour">360 Tour</span>');
+    if (p.tour) badges.push('<a class="badge badge--tour" href="' + BASE + "property?id=" + p.id + '#tour" aria-label="Open the 360 tour of ' + esc(p.title) + '">360 Tour</a>');
     return '<article class="prop-card" data-fx="reveal"' + (opts.delay ? ' data-fx-delay="' + opts.delay + '"' : "") + ' data-prop="' + p.id + '">' +
       '<figure class="card-media">' +
       '<img class="primary" loading="lazy" src="' + api.img(p.hero, 800) + '" srcset="' + api.srcset(p.hero) + '" sizes="(max-width:680px) 92vw, 30vw" alt="' + esc(p.title) + ", " + esc(p.addr) + '">' +
@@ -202,8 +202,8 @@
       "</figure>" +
       '<div class="card-body">' +
       '<div class="card-top"><span class="price">' + api.fmt.price(p.price, p.status) + "</span>" +
-      '<button class="chip" style="padding:6px 12px;font-size:11px" data-compare-id="' + p.id + '">Compare</button></div>' +
-      '<h3 class="card-title" style="position:relative"><a href="' + BASE + "property?id=" + p.id + '">' + esc(p.title) + "</a></h3>" +
+      '<button class="chip" style="padding:6px 12px;font-size:11px;position:relative;z-index:2" data-compare-id="' + p.id + '">Compare</button></div>' +
+      '<h3 class="card-title"><a href="' + BASE + "property?id=" + p.id + '">' + esc(p.title) + "</a></h3>" +
       '<p class="card-addr">' + esc(p.addr) + "</p>" +
       '<p class="card-specs">' + specs.map(function (s) { return "<span>" + s + "</span>"; }).join("") + "</p>" +
       '<div class="card-foot"><span>' + esc(p.type) + "</span><span>EPC " + esc(p.epc) + (p.status === "rent" && p.availableFrom ? " · " + esc(p.availableFrom) : "") + "</span></div>" +
