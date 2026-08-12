@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png?v=4">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png?v=4">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=4">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+  <title>Divine Rising — Yoga · Reiki · Women's Circles</title>
+  <meta name="description" content="Divine Rising — yoga, reiki training, chakra journeys and women's circles in Manchester. A sample experience by Billy Digitals.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f3ecdf">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="divine-rising.css">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+
+  <!-- living sky — Three.js starfield / aurora / 3D sigil -->
+  <canvas class="gl-sky" aria-hidden="true"></canvas>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <div class="page-progress" aria-hidden="true"><i></i></div>
+
+  <!-- loader -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <svg class="loader-sigil" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+        <path class="sig-tri" d="M28 32 L92 32 L60 92 Z"/>
+        <path class="sig-moon" d="M38 84 a26 26 0 0 0 44 0 a20 20 0 0 1 -44 0 Z"/>
+      </svg>
+      <div class="loader-num">0</div>
+      <span class="loader-word">Divine Rising · breathe in</span>
+    </div>
+  </div>
+
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Divine Rising — home">
+      <svg class="brand-sigil" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+        <path d="M28 32 L92 32 L60 92 Z"/>
+        <path d="M38 84 a26 26 0 0 0 44 0 a20 20 0 0 1 -44 0 Z"/>
+      </svg>
+      <span>Divine <b>Rising</b></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a href="#offerings">Offerings</a>
+      <a href="#journey">The Journey</a>
+      <a href="#classes">Classes</a>
+      <a href="#events">Events</a>
+      <a href="#love">Client Love</a>
+      <a href="#journal">Journal</a>
+    </nav>
+    <button class="nav-cta magnetic" type="button" data-book>Book a class</button>
+    <button class="nav-burg" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <!-- ///////////////////////////////// HERO -->
+  <section class="hero void" id="top">
+    <div class="hero-inner">
+      <p class="hero-eyebrow eyebrow">Yoga · Reiki · Women's Circles — Manchester</p>
+      <h1>
+        <span class="ln"><span>Rise into</span></span>
+        <span class="ln"><span><em>your light</em>.</span></span>
+      </h1>
+      <div class="hero-foot">
+        <p class="hero-sub">A space held for women to slow down, breathe deep and remember who they are — through movement, energy and one another.</p>
+        <div class="hero-actions">
+          <button class="btn btn-fill magnetic" type="button" data-book>Book a class</button>
+          <a class="btn btn-ghost magnetic" href="#offerings">Explore offerings</a>
+        </div>
+      </div>
+      <span class="scroll-cue">Scroll to begin <i></i></span>
+    </div>
+    <div class="hero-media" aria-hidden="true"></div>
+  </section>
+
+  <!-- marquee -->
+  <div class="band">
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-in">
+        <span>Breathe</span><span>·</span><span>Move</span><span>·</span><span>Heal</span><span>·</span><span>Rise</span><span>·</span>
+        <span>Breathe</span><span>·</span><span>Move</span><span>·</span><span>Heal</span><span>·</span><span>Rise</span><span>·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- manifesto -->
+  <section class="section manifesto wrap panel">
+    <p data-words>Divine Rising was born from one belief — that every woman carries her own <em>light</em>, and sometimes she simply needs a space soft enough, and a circle strong enough, to let it <em>rise</em>.</p>
+  </section>
+
+  <!-- ///////////////////////////////// OFFERINGS — horizontal pinned gallery -->
+  <section class="h-scroll panel" id="offerings">
+    <div class="h-pin">
+      <div class="h-track">
+        <div class="h-intro">
+          <p class="eyebrow">The Offerings</p>
+          <h2>Six paths,<br>one <em>rising</em>.</h2>
+          <p class="h-hint" aria-hidden="true">Keep scrolling →</p>
+        </div>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">01</span><img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=900&q=80" alt="Deep yoga backbend silhouetted against the sunset"></figure>
+          <div class="h-meta"><h3>Yoga Classes</h3><span>Slow flow · Vinyasa · Yin — from £10</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">02</span><img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=900&q=80" alt="Hot stone healing treatment in a calm therapy room"></figure>
+          <div class="h-meta"><h3>Reiki Training</h3><span>Usui Shiki Ryoho · Levels 1 &amp; 2 — from £180</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">03</span><img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80" alt="Woman meditating cross-legged at golden hour"></figure>
+          <div class="h-meta"><h3>The Ascension Course</h3><span>A six-month chakra journey — £44/mo</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">04</span><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=900&q=80" alt="Group of women practising yoga together by the sea"></figure>
+          <div class="h-meta"><h3>Goddess Gatherings</h3><span>Women's circles · monthly — £22.22</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">05</span><img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=900&q=80" alt="Striking a singing bowl during a sound ceremony"></figure>
+          <div class="h-meta"><h3>Sound &amp; Cacao Ceremonies</h3><span>Drum journeys · full-moon sound baths — £25</span></div>
+        </article>
+        <article class="h-card">
+          <figure class="h-figure"><span class="h-num">06</span><img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80" alt="Warm oil poured for a healing massage treatment"></figure>
+          <div class="h-meta"><h3>1:1 Energy Healing</h3><span>Private reiki under a starlit ceiling — £45</span></div>
+        </article>
+      </div>
+    </div>
+    <div class="h-progress" aria-hidden="true"><i></i></div>
+  </section>
+
+  <!-- ///////////////////////////////// CHAKRA JOURNEY — pinned scrub -->
+  <section class="journey void" id="journey" data-sky="night">
+    <div class="j-pin">
+      <div class="j-sky" aria-hidden="true"></div>
+      <div class="wrap j-grid">
+        <div class="j-orbwrap" aria-hidden="true">
+          <div class="j-halo"></div>
+          <div class="j-orb"></div>
+          <div class="j-ring"></div>
+          <span class="j-sanskrit">मूल</span>
+        </div>
+        <div class="j-copy">
+          <p class="eyebrow light">The Ascension Course · a six-month journey</p>
+          <h2>Seven centres.<br>One <em>ascension</em>.</h2>
+          <div class="j-steps">
+            <div class="j-step is-on" data-hue="#e05646"><h3><i>01</i> Root — Muladhara</h3><p>We begin at the ground. Safety, belonging and the quiet strength of being held — by the earth, and by the circle.</p></div>
+            <div class="j-step" data-hue="#ec8b3f"><h3><i>02</i> Sacral — Svadhisthana</h3><p>Creativity and feeling return to the body. Movement gets softer, breath gets braver.</p></div>
+            <div class="j-step" data-hue="#e8b84b"><h3><i>03</i> Solar Plexus — Manipura</h3><p>Your fire. Boundaries, confidence and the warmth of a woman who knows her own worth.</p></div>
+            <div class="j-step" data-hue="#5fb877"><h3><i>04</i> Heart — Anahata</h3><p>The turning point. Grief moves, gratitude lands, and the chest learns to stay open.</p></div>
+            <div class="j-step" data-hue="#5aa7d6"><h3><i>05</i> Throat — Vishuddha</h3><p>Your voice, spoken and sung. Truth said out loud in a room that wants to hear it.</p></div>
+            <div class="j-step" data-hue="#7d6bd9"><h3><i>06</i> Third Eye — Ajna</h3><p>Intuition sharpens. You start trusting the knowing that was always there.</p></div>
+            <div class="j-step" data-hue="#b48fe0"><h3><i>07</i> Crown — Sahasrara</h3><p>Connection to something greater. You leave lighter than you came — and you keep rising.</p></div>
+          </div>
+          <div class="j-dots" role="presentation"><i class="is-on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <button class="btn btn-gold magnetic" type="button" data-book data-class="The Ascension Course">Join the Ascension Course</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// SCHEDULE -->
+  <section class="section wrap panel" id="classes">
+    <div class="sec-head">
+      <p class="eyebrow" data-fade>The Weekly Rhythm</p>
+      <h2 data-fade>Find your <em>hour</em>.</h2>
+    </div>
+    <div class="sched" data-fade>
+      <div class="sched-tabs" role="tablist" aria-label="Day of the week">
+        <button class="is-on" role="tab" aria-selected="true" data-day="mon">Mon</button>
+        <button role="tab" aria-selected="false" data-day="tue">Tue</button>
+        <button role="tab" aria-selected="false" data-day="wed">Wed</button>
+        <button role="tab" aria-selected="false" data-day="thu">Thu</button>
+        <button role="tab" aria-selected="false" data-day="fri">Fri</button>
+        <button role="tab" aria-selected="false" data-day="sat">Sat</button>
+        <button role="tab" aria-selected="false" data-day="sun">Sun</button>
+      </div>
+      <div class="sched-days">
+        <div class="sched-day is-on" data-day="mon">
+          <div class="row"><span class="t">07:00</span><div class="c"><b>Sunrise Salutations</b><small>Vinyasa · 60 min · Lindsey</small></div><span class="sp">6 spaces</span><button class="btn btn-line" data-book data-class="Sunrise Salutations — Mon 07:00">Book</button></div>
+          <div class="row"><span class="t">18:15</span><div class="c"><b>Slow Flow &amp; Unwind</b><small>All levels · 75 min · Lindsey</small></div><span class="sp">4 spaces</span><button class="btn btn-line" data-book data-class="Slow Flow &amp; Unwind — Mon 18:15">Book</button></div>
+          <div class="row"><span class="t">20:00</span><div class="c"><b>Yin + Yoga Nidra</b><small>Deep rest · 60 min · Lindsey</small></div><span class="sp">8 spaces</span><button class="btn btn-line" data-book data-class="Yin + Yoga Nidra — Mon 20:00">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="tue">
+          <div class="row"><span class="t">09:30</span><div class="c"><b>Mama &amp; Baby Yoga</b><small>Postnatal · 45 min · Lindsey</small></div><span class="sp">5 spaces</span><button class="btn btn-line" data-book data-class="Mama &amp; Baby Yoga — Tue 09:30">Book</button></div>
+          <div class="row"><span class="t">18:30</span><div class="c"><b>Vinyasa Rise</b><small>Strong flow · 60 min · Lindsey</small></div><span class="sp">3 spaces</span><button class="btn btn-line" data-book data-class="Vinyasa Rise — Tue 18:30">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="wed">
+          <div class="row"><span class="t">12:15</span><div class="c"><b>Lunchtime Reset</b><small>Breath + stretch · 30 min</small></div><span class="sp">9 spaces</span><button class="btn btn-line" data-book data-class="Lunchtime Reset — Wed 12:15">Book</button></div>
+          <div class="row"><span class="t">18:15</span><div class="c"><b>Breath &amp; Bowls</b><small>Breathwork + sound · 75 min</small></div><span class="sp">2 spaces</span><button class="btn btn-line" data-book data-class="Breath &amp; Bowls — Wed 18:15">Book</button></div>
+          <div class="row"><span class="t">19:45</span><div class="c"><b>Restorative + Reiki</b><small>Hands-on rest · 60 min</small></div><span class="sp">Waitlist</span><button class="btn btn-line" data-book data-class="Restorative + Reiki — Wed 19:45">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="thu">
+          <div class="row"><span class="t">07:00</span><div class="c"><b>Sunrise Salutations</b><small>Vinyasa · 60 min · Lindsey</small></div><span class="sp">7 spaces</span><button class="btn btn-line" data-book data-class="Sunrise Salutations — Thu 07:00">Book</button></div>
+          <div class="row"><span class="t">16:15</span><div class="c"><b>Kids Yoga</b><small>Ages 5–11 · 45 min</small></div><span class="sp">6 spaces</span><button class="btn btn-line" data-book data-class="Kids Yoga — Thu 16:15">Book</button></div>
+          <div class="row"><span class="t">18:30</span><div class="c"><b>Slow Burn Vinyasa</b><small>Strength · 60 min</small></div><span class="sp">5 spaces</span><button class="btn btn-line" data-book data-class="Slow Burn Vinyasa — Thu 18:30">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="fri">
+          <div class="row"><span class="t">09:30</span><div class="c"><b>Gentle Morning Flow</b><small>All levels · 60 min</small></div><span class="sp">8 spaces</span><button class="btn btn-line" data-book data-class="Gentle Morning Flow — Fri 09:30">Book</button></div>
+          <div class="row is-event"><span class="t">19:15</span><div class="c"><b>Goddess Gathering ✦</b><small>Women's circle · monthly · 105 min</small></div><span class="sp">£22.22</span><button class="btn btn-line" data-book data-class="Goddess Gathering — Fri 19:15">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="sat">
+          <div class="row"><span class="t">09:00</span><div class="c"><b>Weekend Vinyasa</b><small>All levels · 75 min</small></div><span class="sp">4 spaces</span><button class="btn btn-line" data-book data-class="Weekend Vinyasa — Sat 09:00">Book</button></div>
+          <div class="row"><span class="t">11:00</span><div class="c"><b>Reiki Share Circle</b><small>Students &amp; graduates · 90 min</small></div><span class="sp">6 spaces</span><button class="btn btn-line" data-book data-class="Reiki Share Circle — Sat 11:00">Book</button></div>
+        </div>
+        <div class="sched-day" data-day="sun">
+          <div class="row"><span class="t">10:00</span><div class="c"><b>Slow Sunday Flow</b><small>All levels · 60 min</small></div><span class="sp">5 spaces</span><button class="btn btn-line" data-book data-class="Slow Sunday Flow — Sun 10:00">Book</button></div>
+          <div class="row is-event"><span class="t">19:30</span><div class="c"><b>Moon Flow ☾</b><small>Full &amp; new moon only · 75 min</small></div><span class="sp">9 spaces</span><button class="btn btn-line" data-book data-class="Moon Flow — Sun 19:30">Book</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// MEMBERSHIP -->
+  <section class="section wrap panel" id="membership">
+    <div class="sec-head">
+      <p class="eyebrow" data-fade>Membership</p>
+      <h2 data-fade>Practice, <em>your</em> way.</h2>
+    </div>
+    <div class="price-toggle" data-fade role="group" aria-label="Billing period">
+      <button class="is-on" type="button" data-period="monthly">Monthly</button>
+      <button type="button" data-period="yearly">Yearly <em>— 2 months free</em></button>
+    </div>
+    <div class="price-grid" data-fade>
+      <article class="price-card">
+        <h3>Drop In</h3>
+        <p class="price"><b>£12</b><span>/class</span></p>
+        <ul>
+          <li>Any studio class</li>
+          <li>Mat &amp; props included</li>
+          <li>Book up to 2 weeks ahead</li>
+        </ul>
+        <button class="btn btn-line magnetic" data-book data-class="Drop In class">Book a class</button>
+      </article>
+      <article class="price-card is-hero">
+        <span class="tag">Most loved</span>
+        <h3>Rise Unlimited</h3>
+        <p class="price"><b data-monthly="£49" data-yearly="£490">£49</b><span class="per" data-monthly="/month" data-yearly="/year">/month</span></p>
+        <ul>
+          <li>Unlimited studio classes</li>
+          <li>On-demand practice library</li>
+          <li>Priority booking for circles &amp; ceremonies</li>
+          <li>10% off trainings &amp; retreats</li>
+        </ul>
+        <button class="btn btn-gold magnetic" data-book data-class="Rise Unlimited membership">Start 7 days free</button>
+      </article>
+      <article class="price-card">
+        <h3>Inner Circle</h3>
+        <p class="price"><b data-monthly="£77" data-yearly="£770">£77</b><span class="per" data-monthly="/month" data-yearly="/year">/month</span></p>
+        <ul>
+          <li>Everything in Rise Unlimited</li>
+          <li>Monthly Goddess Gathering included</li>
+          <li>One 1:1 reiki session each season</li>
+        </ul>
+        <button class="btn btn-line magnetic" data-book data-class="Inner Circle membership">Join the circle</button>
+      </article>
+    </div>
+    <p class="price-note" data-fade>Online-only? The on-demand library is <b>£12/month</b> — practise with Lindsey from anywhere.</p>
+  </section>
+
+  <!-- ///////////////////////////////// EVENTS — on the starfield -->
+  <section class="section void events" id="events" data-sky="night">
+    <div class="wrap">
+      <div class="sec-head light">
+        <p class="eyebrow light" data-fade>Gatherings &amp; Trainings</p>
+        <h2 data-fade>Under this <em>moon</em>.</h2>
+      </div>
+      <div class="ev-grid">
+        <article class="ev-card" data-fade>
+          <figure><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=900&q=80" alt="Women in a circle practising together outdoors" loading="lazy"></figure>
+          <div class="ev-date"><b>13</b><span>Mar</span></div>
+          <div class="ev-body">
+            <h3>Goddess Gathering — Finding Your Tribe</h3>
+            <p>Yoga, breathwork, drumming, cacao and cord-cutting. Friday 7:15–9pm · FC United, M40.</p>
+            <div class="ev-foot"><span>£22.22</span><button class="btn btn-line light" data-book data-class="Goddess Gathering — 13 Mar">Reserve a space</button></div>
+          </div>
+        </article>
+        <article class="ev-card" data-fade>
+          <figure><img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=900&q=80" alt="Healing hands-on treatment on a therapy couch" loading="lazy"></figure>
+          <div class="ev-date"><b>11</b><span>Jul</span></div>
+          <div class="ev-body">
+            <h3>Reiki Level 1 — Certification Weekend</h3>
+            <p>Usui Shiki Ryoho with Lindsey, Reiki Master/Teacher. Manuals, attunements &amp; certificate. 11–12 July.</p>
+            <div class="ev-foot"><span>£180</span><button class="btn btn-line light" data-book data-class="Reiki Level 1 — 11–12 Jul">Reserve a space</button></div>
+          </div>
+        </article>
+        <article class="ev-card" data-fade>
+          <figure><img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=900&q=80" alt="Singing bowl played during a sound bath" loading="lazy"></figure>
+          <div class="ev-date"><b>02</b><span>Oct</span></div>
+          <div class="ev-body">
+            <h3>Full Moon Sound Ceremony</h3>
+            <p>Bowls, drum journey and deep rest under the harvest moon. Bring a blanket, leave lighter.</p>
+            <div class="ev-foot"><span>£25</span><button class="btn btn-line light" data-book data-class="Full Moon Sound Ceremony — 2 Oct">Reserve a space</button></div>
+          </div>
+        </article>
+      </div>
+      <p class="ev-more" data-fade>Lakeside retreat days &amp; International Women's Day workshops announced on <a href="#instagram">Instagram</a> first.</p>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// ABOUT LINDSEY -->
+  <section class="section wrap panel" id="about">
+    <div class="feature">
+      <figure class="feature-fig">
+        <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=1000&q=80" alt="Arms open to the sunset across still water">
+        <span class="mask" aria-hidden="true"></span>
+      </figure>
+      <div class="feature-copy">
+        <p class="eyebrow" data-fade>Your guide</p>
+        <h2 data-fade>Held by <em>Lindsey</em>.</h2>
+        <p data-fade>Yoga teacher, Reiki Master and holder of very good space. Lindsey built Divine Rising so that the women of Manchester would have somewhere to land — a starlit treatment room, a warm studio, a circle that says <i>you belong here</i>.</p>
+        <p data-fade>Trained in Usui Shiki Ryoho reiki and hatha &amp; vinyasa yoga, she teaches the way she lives: gently, honestly, and with the kettle always on.</p>
+        <div class="stats-grid">
+          <div class="stat" data-fade><h3><span data-count="1200" data-suffix="+">0</span></h3><p>Hours of space held</p></div>
+          <div class="stat" data-fade><h3><span data-count="140" data-suffix="+">0</span></h3><p>Women through circles</p></div>
+          <div class="stat" data-fade><h3><span data-count="38">0</span></h3><p>Reiki students certified</p></div>
+          <div class="stat" data-fade><h3><span data-count="7">0</span></h3><p>Chakras, one journey</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// CLIENT LOVE -->
+  <section class="section love panel-blush" id="love">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow" data-fade>Client Love</p>
+        <h2 data-fade>Words from the <em>circle</em>.</h2>
+      </div>
+      <div class="love-slider" data-fade>
+        <div class="love-track">
+          <blockquote class="love-slide is-on">
+            <div class="stars" aria-hidden="true">★★★★★</div>
+            <p>“I recently completed Reiki Level 1 with Lindsey and I can't recommend it highly enough. From start to finish the experience was incredible — she creates such a warm, welcoming environment that immediately puts you at ease.”</p>
+            <footer>— Reiki Level 1 graduate</footer>
+          </blockquote>
+          <blockquote class="love-slide">
+            <div class="stars" aria-hidden="true">★★★★★</div>
+            <p>“The course was a perfect mix of theory and practical. Lindsey is so approachable and gave me full confidence in my reiki abilities — I feel ready to practise on myself, my friends and my family.”</p>
+            <footer>— Reiki training student</footer>
+          </blockquote>
+          <blockquote class="love-slide">
+            <div class="stars" aria-hidden="true">★★★★★</div>
+            <p>“I loved that the Ascension course was held once a month for six months — it gave me time to really focus on each part of the body. It has given me a toolbox to look within whenever I'm not feeling right.”</p>
+            <footer>— Ascension course member</footer>
+          </blockquote>
+        </div>
+        <div class="love-nav">
+          <button class="love-btn prev" aria-label="Previous testimonial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="love-dots"><button class="is-on" aria-label="Testimonial 1"></button><button aria-label="Testimonial 2"></button><button aria-label="Testimonial 3"></button></div>
+          <button class="love-btn next" aria-label="Next testimonial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// JOURNAL -->
+  <section class="section wrap panel" id="journal">
+    <div class="sec-head">
+      <p class="eyebrow" data-fade>The Journal</p>
+      <h2 data-fade>Slow <em>reading</em>.</h2>
+    </div>
+    <div class="jr-grid">
+      <a class="jr-card" href="#journal" data-fade>
+        <figure><img src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=800&q=80" alt="Sunlight breaking through forest trees" loading="lazy"></figure>
+        <small>Energy · 4 min read</small>
+        <h3>Let's talk energetic cords</h3>
+        <p>What they are, how they form, and a gentle cord-cutting ritual you can do tonight.</p>
+        <span class="jr-more">Read →</span>
+      </a>
+      <a class="jr-card" href="#journal" data-fade>
+        <figure><img src="https://images.unsplash.com/photo-1474418397713-7ede21d49118?auto=format&fit=crop&w=800&q=80" alt="Meditating on a ledge above the valley at dusk" loading="lazy"></figure>
+        <small>Breath · 6 min read</small>
+        <h3>A beginner's guide to breathwork</h3>
+        <p>Three rounds, one blanket, zero experience needed. Start where your breath already is.</p>
+        <span class="jr-more">Read →</span>
+      </a>
+      <a class="jr-card" href="#journal" data-fade>
+        <figure><img src="https://images.unsplash.com/photo-1573590330099-d6c7355ec595?auto=format&fit=crop&w=800&q=80" alt="Sunset ritual at the water's edge" loading="lazy"></figure>
+        <small>Ceremony · 5 min read</small>
+        <h3>What actually happens at a cacao ceremony</h3>
+        <p>No, it's not just hot chocolate. What to expect the first time you sit in circle.</p>
+        <span class="jr-more">Read →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// INSTAGRAM -->
+  <section class="section wrap panel ig" id="instagram">
+    <div class="ig-head">
+      <div>
+        <p class="eyebrow" data-fade>@d.i.v.i.n.e_r.i.s.i.n.g</p>
+        <h2 data-fade>Life at the <em>studio</em>.</h2>
+      </div>
+      <a class="btn btn-line magnetic" href="#instagram" data-fade>Follow along</a>
+    </div>
+    <div class="ig-grid" data-fade>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=520&q=75" alt="Seated meditation on a studio mat" loading="lazy"></a>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=520&q=75" alt="Mountain peaks rising above the clouds" loading="lazy"></a>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1602192509154-0b900ee1f851?auto=format&fit=crop&w=520&q=75" alt="Meditation with prayer hands on a hillside lawn" loading="lazy"></a>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1532693322450-2cb5c511067d?auto=format&fit=crop&w=520&q=75" alt="Full moon glowing in a dark sky" loading="lazy"></a>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=520&q=75" alt="Practising yoga at home on a mat" loading="lazy"></a>
+      <a href="#instagram" aria-label="Instagram post"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=520&q=75" alt="Golden sunrise over a misty field" loading="lazy"></a>
+    </div>
+  </section>
+
+  <!-- ///////////////////////////////// CTA -->
+  <section class="section void cta" id="begin" data-sky="night">
+    <div class="wrap cta-in">
+      <p class="eyebrow light" data-fade>Begin</p>
+      <h2 data-fade>Your rising<br>starts <em>here</em>.</h2>
+      <div class="cta-actions" data-fade>
+        <button class="btn btn-gold magnetic" type="button" data-book>Book your first class — £10</button>
+        <a class="btn btn-ghost light magnetic" href="#classes">See the timetable</a>
+      </div>
+      <form class="newsletter" data-fade autocomplete="off">
+        <label for="nl-email">New moon letters — intentions, events &amp; early-bird spaces. Once a month, no noise.</label>
+        <div class="nl-row">
+          <input id="nl-email" type="email" required placeholder="you@example.com">
+          <button class="btn btn-fill" type="submit">Subscribe</button>
+        </div>
+        <p class="nl-ok" hidden>☾ Welcome to the circle — check your inbox.</p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-top wrap">
+      <div class="foot-brand">
+        <svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M28 32 L92 32 L60 92 Z"/><path d="M38 84 a26 26 0 0 0 44 0 a20 20 0 0 1 -44 0 Z"/></svg>
+        <span>Divine Rising</span>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col"><h4>Practice</h4><a href="#classes">Timetable</a><a href="#membership">Membership</a><a href="#offerings">Offerings</a><a href="#journey">Ascension Course</a></div>
+        <div class="foot-col"><h4>Gather</h4><a href="#events">Events</a><a href="#love">Client Love</a><a href="#journal">Journal</a><a href="#instagram">Instagram</a></div>
+        <div class="foot-col"><h4>Find us</h4><p>Manchester, M40</p><p>hello@divinerising.co.uk</p><p>WhatsApp 07000 000000</p></div>
+      </div>
+    </div>
+    <div class="foot-bar wrap">
+      <span>© <span id="year">2026</span> Divine Rising — a sample experience</span>
+      <span>Designed &amp; built by Billy Digitals</span>
+    </div>
+  </footer>
+
+  <!-- ///////////////////////////////// BOOKING MODAL -->
+  <div class="modal" id="bookModal" role="dialog" aria-modal="true" aria-labelledby="bmTitle" hidden>
+    <div class="modal-veil" data-close></div>
+    <div class="modal-card">
+      <button class="modal-x" type="button" data-close aria-label="Close booking form">✕</button>
+      <div class="modal-form">
+        <p class="eyebrow">Reserve your space</p>
+        <h3 id="bmTitle">Book with <em>Divine Rising</em></h3>
+        <form id="bookForm" autocomplete="off">
+          <label>Your name<input type="text" name="name" required placeholder="First name"></label>
+          <label>Email<input type="email" name="email" required placeholder="you@example.com"></label>
+          <label>What are you booking?
+            <select id="bookClass" name="class">
+              <option>A yoga class</option>
+              <option>Goddess Gathering — women's circle</option>
+              <option>Reiki Level 1 training</option>
+              <option>The Ascension Course</option>
+              <option>1:1 Energy Healing</option>
+              <option>Full Moon Sound Ceremony</option>
+              <option>Rise Unlimited membership</option>
+            </select>
+          </label>
+          <label>Anything Lindsey should know? <textarea name="note" rows="2" placeholder="Injuries, first time, nerves — all welcome"></textarea></label>
+          <button class="btn btn-gold wide" type="submit">Confirm booking</button>
+          <small>Demo form — no payment taken in this preview.</small>
+        </form>
+      </div>
+      <div class="modal-done" hidden>
+        <svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M28 32 L92 32 L60 92 Z"/><path d="M38 84 a26 26 0 0 0 44 0 a20 20 0 0 1 -44 0 Z"/></svg>
+        <h3>You're booked in ✦</h3>
+        <p>Lindsey will confirm by email. Arrive ten minutes early, bring water — the kettle's already on.</p>
+        <button class="btn btn-line" type="button" data-close>Back to the site</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script>
+    /* expose the Lenis instance atelier.js creates, so page code can smooth-scroll anchors */
+    (function () {
+      var L = window.Lenis;
+      if (!L) return;
+      window.Lenis = function (opts) { var i = new L(opts); window.__lenis = i; return i; };
+      window.Lenis.prototype = L.prototype;
+    })();
+  </script>
+  <script src="atelier.js" defer></script>
+  <script src="divine-rising.js" defer></script>
+  <script type="module" src="divine-gl.js"></script>
+  <script src="backbar.js" defer></script>
+</body>
+</html>
