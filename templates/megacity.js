@@ -85,6 +85,16 @@
     if (lw) lw.innerHTML = "<b>" + esc(D.biz.brandName) + "</b>";
     var ls = document.querySelector(".loader-sub");
     if (ls) ls.textContent = (D.biz.brandSub || "") + " · Manchester";
+    fitFooterWord();
+    addEventListener("resize", fitFooterWord);
+  }
+  /* the giant closing word always shows in full — whatever the brand is renamed to */
+  function fitFooterWord() {
+    var fw = document.querySelector(".footer-word");
+    if (!fw || !fw.parentElement) return;
+    fw.style.fontSize = "";
+    var ratio = fw.parentElement.clientWidth / Math.max(1, fw.scrollWidth);
+    if (ratio < 1) fw.style.fontSize = (parseFloat(getComputedStyle(fw).fontSize) * ratio * 0.97) + "px";
   }
   function $$b(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
@@ -365,6 +375,14 @@
     root.querySelectorAll('[data-fx="mask"]').forEach(fx.revealImage);
     root.querySelectorAll('[data-fx="parallax"]').forEach(function (e) {
       fx.parallaxImage(e, parseFloat(e.getAttribute("data-amount")) || 8);
+    });
+    /* a slow, always-on breath so cinematic imagery is never frozen —
+       composes with the scroll parallax (scale vs. translate) */
+    root.querySelectorAll(".city-fig img, .s360-media img").forEach(function (img, i) {
+      gsap.fromTo(img, { scale: 1.02 }, {
+        scale: 1.08, duration: 11 + i * 2.3, ease: "sine.inOut",
+        yoyo: true, repeat: -1, delay: i * 1.4
+      });
     });
     root.querySelectorAll('[data-fx="scale"]').forEach(fx.scaleOnScroll);
     root.querySelectorAll('[data-fx="stagger"]').forEach(fx.staggerChildren);

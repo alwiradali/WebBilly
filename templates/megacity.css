@@ -527,10 +527,10 @@ em{font-style:italic;font-weight:320}
 .footer-legal{display:flex;flex-wrap:wrap;gap:12px 30px;align-items:center;
   padding:26px 0 34px;border-top:1px solid var(--line-dark);color:var(--on-dark-2);font-size:12.5px}
 .footer-legal a{color:inherit}
-.footer-word{font:600 clamp(64px,13.5vw,210px)/0.95 var(--ff-display);letter-spacing:-.02em;
+.footer-word{font:600 clamp(64px,13.5vw,210px)/1 var(--ff-display);letter-spacing:-.02em;
   color:transparent;-webkit-text-stroke:1px rgba(245,241,233,.14);
   white-space:nowrap;user-select:none;pointer-events:none;text-align:center;
-  margin-bottom:-.18em}
+  padding-bottom:30px}
 
 /* responsive nav breakpoint */
 @media (max-width:1060px){
