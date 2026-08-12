@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>Megacity Studio — Content &amp; Rates</title>
+  <meta name="description" content="The Megacity Properties back office — listings, business details and calculator rates.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#12100C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+  <style>
+    /* studio-only chrome — everything else comes from the site's design system */
+    body{background:var(--paper)}
+    .mca-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:20px;
+      padding:16px var(--gutter);background:rgba(245,241,233,.92);backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line)}
+    .mca-top .chip-saved{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+      font:600 10.5px/1 var(--ff-body);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+    .mca-top .chip-saved i{width:7px;height:7px;border-radius:50%;background:var(--ok);font-style:normal}
+    .mca-shell{display:grid;grid-template-columns:210px 1fr;gap:clamp(24px,3vw,54px);
+      max-width:var(--maxw);margin:0 auto;padding:34px var(--gutter) 90px}
+    @media (max-width:900px){.mca-shell{grid-template-columns:1fr}}
+    .mca-nav{display:flex;flex-direction:column;gap:4px;position:sticky;top:86px;align-self:start}
+    @media (max-width:900px){.mca-nav{flex-direction:row;flex-wrap:wrap;position:static}}
+    .mca-nav button{text-align:left;background:none;border:0;cursor:pointer;color:var(--ink-2);
+      font:600 12px/1 var(--ff-body);letter-spacing:.14em;text-transform:uppercase;
+      padding:13px 14px;border-left:2px solid transparent;transition:color .2s,border-color .2s}
+    .mca-nav button.is-on{color:var(--ink);border-left-color:var(--bronze)}
+    .mca-pane{display:none}.mca-pane.is-on{display:block}
+    .mca-h{font:340 clamp(26px,3vw,38px)/1.1 var(--ff-display);margin-bottom:8px}
+    .mca-sub{color:var(--ink-2);font-size:14px;max-width:62ch;margin-bottom:28px}
+    .mca-cols{display:grid;grid-template-columns:250px 1fr;gap:clamp(20px,3vw,44px);align-items:start}
+    @media (max-width:1000px){.mca-cols{grid-template-columns:1fr}}
+    .mca-list{display:flex;flex-direction:column;gap:8px}
+    .mca-list button{text-align:left;background:var(--paper-2);border:1px solid var(--line);
+      border-radius:3px;cursor:pointer;padding:13px 15px;color:var(--ink);transition:border-color .2s}
+    .mca-list button.is-on{border-color:var(--bronze)}
+    .mca-list b{display:block;font:420 15px/1.3 var(--ff-display);font-weight:420}
+    .mca-list span{font:600 10px/1.6 var(--ff-body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+    .mca-form{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 24px;
+      background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:clamp(20px,3vw,36px)}
+    @media (max-width:760px){.mca-form{grid-template-columns:1fr 1fr}}
+    .mca-form .field input,.mca-form .field select,.mca-form .field textarea{
+      border:0;border-bottom:1px solid var(--line-strong);background:transparent;color:var(--ink);
+      font:500 15px/1.5 var(--ff-body);padding:8px 2px;width:100%;border-radius:0;appearance:none}
+    .mca-form .field textarea{min-height:86px;resize:vertical}
+    .mca-form .field input:focus,.mca-form .field select:focus,.mca-form .field textarea:focus{
+      outline:none;border-bottom-color:var(--bronze)}
+    .mca-form .field label{color:var(--ink-2)}
+    .f-2{grid-column:span 2}.f-3{grid-column:1/-1}
+    .mca-actions{grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap;padding-top:6px}
+    .mca-story{grid-column:1/-1;display:flex;flex-direction:column;gap:10px}
+    .mca-story-row{display:grid;grid-template-columns:1fr 1fr 1.6fr auto;gap:10px;align-items:center}
+    @media (max-width:760px){.mca-story-row{grid-template-columns:1fr}}
+    .mca-story-row input{border:0;border-bottom:1px solid var(--line-strong);background:transparent;
+      font:500 13.5px/1.4 var(--ff-body);padding:7px 2px;width:100%}
+    .mca-story-row button{background:none;border:1px solid var(--line-strong);border-radius:2px;
+      cursor:pointer;padding:4px 12px;font-size:13px;color:var(--ink-2)}
+    .mca-uprow{display:flex;align-items:center;gap:10px;min-width:0}
+    .mca-uprow input{flex:1;min-width:0}
+    .mca-thumb{width:52px;height:36px;object-fit:cover;border-radius:2px;border:1px solid var(--line);
+      background:var(--paper);flex:none}
+    .mca-up{white-space:nowrap;padding:8px 14px !important;font-size:11px !important}
+    .rates-grid{display:grid;grid-template-columns:auto repeat(4,1fr);gap:8px 14px;align-items:center;
+      grid-column:1/-1}
+    .rates-grid .rg-h{font:600 9.5px/1 var(--ff-body);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+    .rates-grid input{border:0;border-bottom:1px solid var(--line-strong);background:transparent;
+      font:500 14px/1.4 var(--ff-body);padding:6px 2px;width:100%}
+    .mca-json{grid-column:1/-1;width:100%;min-height:200px;font:12px/1.5 ui-monospace,monospace;
+      background:var(--dark);color:var(--on-dark);border:0;border-radius:4px;padding:18px}
+    .mca-note{border-left:3px solid var(--bronze);background:var(--paper-2);border-radius:3px;
+      padding:16px 20px;font-size:13.5px;color:var(--ink-2);margin-bottom:24px;line-height:1.6}
+  </style>
+</head>
+<body>
+  <!-- passcode gate -->
+  <div class="lightbox is-open" id="mcaGate" role="dialog" aria-modal="true" aria-label="Studio access" style="z-index:300">
+    <form id="mcaGateForm" style="margin:auto;width:min(400px,90vw);text-align:center">
+      <p class="eyebrow" style="color:var(--bronze-2)">Megacity Studio</p>
+      <h1 style="color:var(--on-dark);font-size:clamp(26px,4vw,36px);margin-top:14px">The back office.</h1>
+      <p style="color:var(--on-dark-2);font-size:14px;margin:14px 0 26px">Enter the Studio passcode to edit listings, business details and calculator rates.</p>
+      <input id="mcaCode" type="password" placeholder="Passcode" autocomplete="current-password"
+        style="width:100%;background:transparent;border:0;border-bottom:1px solid var(--line-dark);color:var(--on-dark);font:500 17px/1.4 var(--ff-body);padding:11px 2px;text-align:center">
+      <p id="mcaGateErr" hidden style="color:#E58B8B;font-size:13px;margin-top:12px">That's not it — try again.</p>
+      <div style="margin-top:26px;display:flex;gap:12px;justify-content:center">
+        <button class="btn btn--solid" type="submit" style="background:var(--on-dark);color:var(--ink)">Sign in</button>
+        <a class="btn btn--ghost" href="megacity" style="color:var(--on-dark);border-color:var(--line-dark)">Back to site</a>
+      </div>
+    </form>
+  </div>
+
+  <div id="mcaApp" hidden>
+    <header class="mca-top">
+      <a class="nav-brand" href="megacity">Megacity<small>Studio</small></a>
+      <span class="chip-saved" id="mcaSaved"><i></i> <span>Saved</span></span>
+      <a class="tlink" href="megacity" target="_blank" rel="noopener">View site
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <button class="btn btn--ghost" id="mcaSignOut" style="padding:11px 16px">Sign out</button>
+    </header>
+
+    <div class="mca-shell">
+      <nav class="mca-nav" aria-label="Studio sections">
+        <button data-pane="props" class="is-on">Properties</button>
+        <button data-pane="biz">Business</button>
+        <button data-pane="rates">Rates</button>
+        <button data-pane="publish">Publish</button>
+      </nav>
+
+      <div>
+        <!-- ══ properties ══ -->
+        <section class="mca-pane is-on" id="pane-props">
+          <h1 class="mca-h">Listings</h1>
+          <p class="mca-sub">Everything a property page, card and search filter shows. Changes appear across the whole site the moment they save — on this browser. Use Publish to make them permanent for everyone.</p>
+          <div class="mca-cols">
+            <div>
+              <div class="mca-list" id="mcaPropList"></div>
+              <button class="btn btn--ghost" id="mcaPropNew" style="margin-top:14px;width:100%">＋ New property</button>
+            </div>
+            <form class="mca-form" id="mcaPropForm" autocomplete="off"></form>
+          </div>
+        </section>
+
+        <!-- ══ business ══ -->
+        <section class="mca-pane" id="pane-biz">
+          <h1 class="mca-h">Business details</h1>
+          <p class="mca-sub">Contact details and links used in the navigation, footer, contact page and every enquiry form.</p>
+          <form class="mca-form" id="mcaBizForm" autocomplete="off"></form>
+        </section>
+
+        <!-- ══ rates ══ -->
+        <section class="mca-pane" id="pane-rates">
+          <h1 class="mca-h">Calculator rates</h1>
+          <p class="mca-sub">The figures behind the Tools page — council tax, mortgage averages and the area rents that power the instant valuation. Update them each tax year, or whenever the market moves.</p>
+          <form class="mca-form" id="mcaRatesForm" autocomplete="off"></form>
+        </section>
+
+        <!-- ══ publish ══ -->
+        <section class="mca-pane" id="pane-publish">
+          <h1 class="mca-h">Publish</h1>
+          <div class="mca-note">
+            Edits save automatically <b>to this browser</b> and win over the shipped site here — perfect for previewing.
+            To make them live for every visitor, download the content file and send it to Billy Digitals — it drops
+            straight into the next deploy. (In full production this Studio talks to the CRM instead, and this step disappears.)
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px">
+            <button class="btn magnetic" id="mcaExport">Download content file</button>
+            <button class="btn btn--ghost" id="mcaCopy">Copy as JSON</button>
+            <button class="btn btn--ghost" id="mcaReset">Reset to shipped data</button>
+          </div>
+          <textarea class="mca-json" id="mcaJson" readonly aria-label="Current content as JSON"></textarea>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="megacity-data.js" defer></script>
+  <script src="megacity-tools.js" defer></script>
+  <script src="megacity-admin.js" defer></script>
+</body>
+</html>

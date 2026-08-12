@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>Property — Megacity Properties</title>
+  <meta name="description" content="An exceptional home to let with Megacity Properties, Manchester &amp; Salford.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#12100C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+  <!-- the data loads un-deferred here so the page can render itself during parse -->
+  <script src="megacity-data.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav on-media">
+    <a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="megacity-properties">Properties</a>
+      <a href="megacity-landlords">Landlords</a>
+      <a href="megacity-tenants">Tenants</a>
+      <a href="megacity-tours">360° Tours</a>
+      <a href="megacity-tools">Tools</a>
+      <a href="megacity-contact">Contact</a>
+    </nav>
+    <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+    <div id="ppMount"></div>
+  </main>
+
+  <div id="mcFooter"></div>
+  <nav class="stickybar" id="ppSticky" aria-label="Property actions"></nav>
+
+  <script>
+  /* ── the editorial property page, rendered from the shared data ── */
+  (function () {
+    "use strict";
+    var D = window.MEGACITY;
+    var q = new URLSearchParams(location.search);
+    var p = D.byId(q.get("id")) || D.withTours()[0] || D.properties[0];
+    var A = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>';
+
+    document.title = p.name + ", " + p.area + " — " + p.priceLabel + " — Megacity Properties";
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute("content", p.summary);
+
+    var tourBtn = p.tour
+      ? '<button class="btn btn--solid btn--lg magnetic" data-cursor="360°" data-tour="' + p.id + '">Enter 360° tour ' + A + "</button>"
+      : "";
+    var heroCtas = tourBtn + '<a class="btn btn--ghost btn--lg" href="#enquire">Book a viewing</a>';
+
+    var html =
+      /* cinematic head */
+      '<section class="hero p-hero" aria-label="' + p.name + '">' +
+      '<div class="hero-media" aria-hidden="true"><img src="' + p.cover.replace("w=1600", "w=2400") + '" alt="" fetchpriority="high"></div>' +
+      '<div class="hero-inner wrap">' +
+      '<div class="p-hero-title">' +
+      '<p class="hero-eyebrow eyebrow" data-hero-fade>' + p.type + " · " + p.area + " " + p.postcode + '</p>' +
+      '<h1 class="t-1"><span class="ln"><span>' + p.name + "</span></span></h1>" +
+      '<div style="display:flex;gap:10px;margin-top:20px" data-hero-fade>' +
+      '<span class="badge badge--' + p.status + '">' + p.statusLabel + "</span>" +
+      (p.tour ? '<span class="badge badge--360"><i></i>360° tour available</span>' : "") +
+      "</div></div>" +
+      '<div class="p-hero-side" data-hero-fade>' +
+      '<span class="p-hero-price">£' + p.price.toLocaleString("en-GB") + "<small>per month</small></span>" +
+      '<div class="hero-actions" style="margin-top:4px">' + heroCtas + "</div></div></div></section>" +
+
+      /* fact bar */
+      '<section class="factbar" aria-label="Key facts"><div class="wrap factbar-in" data-fx="stagger">' +
+      '<div class="fact"><span>Bedrooms</span><b>' + p.beds + "</b></div>" +
+      '<div class="fact"><span>Bathrooms</span><b>' + p.baths + "</b></div>" +
+      '<div class="fact"><span>Type</span><b>' + p.type + "</b></div>" +
+      '<div class="fact"><span>Furnishing</span><b>' + p.furnishing + "</b></div>" +
+      '<div class="fact"><span>Availability</span><b>' + p.availableFrom + "</b></div>" +
+      '<div class="fact"><span>EPC</span><b>' + p.epc + "</b></div>" +
+      "</div></section>" +
+
+      /* about + features */
+      '<section class="section" aria-label="About this home"><div class="wrap split">' +
+      "<div>" +
+      '<p class="eyebrow" data-fx="fade">The home</p>' +
+      '<h2 class="t-2" data-fx="fade" style="margin-top:18px">' + p.summary + "</h2>" +
+      "</div><div>" +
+      p.description.map(function (par) { return '<p class="lead" data-fx="fade" style="margin-bottom:20px">' + par + "</p>"; }).join("") +
+      "</div></div>" +
+      '<div class="wrap" style="margin-top:clamp(40px,6vw,80px)">' +
+      '<p class="eyebrow" data-fx="fade">Key features</p>' +
+      '<ul class="feature-cols" data-fx="stagger">' +
+      p.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") + "</ul>" +
+      '<p class="eyebrow" style="margin-top:60px" data-fx="fade">Property details</p>' +
+      '<div class="details-grid" data-fx="stagger">' +
+      '<div><span>Rent</span><b>' + p.priceLabel + "</b></div>" +
+      '<div><span>Deposit</span><b>' + p.deposit + "</b></div>" +
+      '<div><span>Council tax band</span><b>' + p.councilTaxBand + "</b></div>" +
+      '<div><span>Furnishing</span><b>' + p.furnishing + "</b></div>" +
+      '<div><span>EPC rating</span><b>' + p.epc + "</b></div>" +
+      '<div><span>Reference</span><b>MCP-' + p.id.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6) + "</b></div>" +
+      "</div></div></section>" +
+
+      /* the real monthly number — rent + council tax from the live rates */
+      '<section class="section section--tight" style="padding-top:0" aria-label="Monthly costs" id="ppCost" hidden><div class="wrap"><div class="tool-panel" style="margin-top:0">' +
+      '<div><p class="eyebrow" data-fx="fade">The real monthly number</p>' +
+      '<h2 class="t-3" data-fx="fade" style="margin-top:14px">What this home actually costs a month — something the portals never tell you.</h2>' +
+      '<p class="tool-note" style="max-width:44ch">Rent plus council tax at the current published rate for this band. Utilities, broadband and contents insurance sit on top.</p>' +
+      '<a class="tlink" href="megacity-tools" style="margin-top:18px">All the calculators ' + A + "</a></div>" +
+      '<div class="tool-result" data-fx="fade" style="position:static"><span class="eyebrow">Rent + council tax</span>' +
+      '<div class="tool-figure"><span id="ppCostTotal">—</span><small>per month</small></div>' +
+      '<ul class="tool-rows">' +
+      '<li><span>Rent</span><b>' + p.priceLabel + "</b></li>" +
+      '<li><span id="ppCostCtLabel">Council tax</span><b id="ppCostCt">—</b></li>' +
+      '<li><span>Income referencing looks for</span><b id="ppCostIncome">—</b></li></ul>' +
+      '<p class="tool-note" id="ppCostNote"></p></div></div></div></section>' +
+
+      /* the walkthrough story */
+      '<section class="section section--tight" style="padding-top:0" aria-label="Room by room"><div class="wrap">' +
+      '<p class="eyebrow" data-fx="fade">Room by room</p>' +
+      p.story.map(function (s, i) {
+        return '<article class="story-item"><div class="story-copy">' +
+          '<span class="eyebrow">0' + (i + 1) + " — " + s.room + "</span>" +
+          "<p>" + s.caption + "</p></div>" +
+          '<figure class="story-fig" data-fx="mask"><div class="mask" aria-hidden="true"></div>' +
+          '<img src="' + s.src + '" alt="' + s.room + " — " + p.name + '" loading="lazy" decoding="async"></figure></article>';
+      }).join("") + "</div></section>" +
+
+      /* the 360 moment */
+      (p.tour
+        ? '<section class="s360 dark" aria-label="360 tour"><div class="s360-media" aria-hidden="true" data-fx="parallax" data-amount="6">' +
+          '<img src="/billy360/panos/lythwood_lounge.jpg" alt="" loading="lazy"></div>' +
+          '<div class="wrap"><div class="s360-inner" style="padding:clamp(90px,11vw,150px) 0">' +
+          '<div class="s360-ring" data-fx="fade"><i></i><span>360° experience</span></div>' +
+          '<h2 class="t-2" data-fx="fade">Now <em>walk</em> it yourself.</h2>' +
+          '<p class="lead" data-fx="fade" style="margin-top:20px">Every room of ' + p.name + " has been captured in 360°. Look around, move between rooms, check the floor plan — then book the real thing.</p>" +
+          '<div class="hero-actions" data-fx="fade">' + tourBtn + "</div></div></div></section>"
+        : "") +
+
+      /* gallery */
+      '<section class="section" aria-label="Gallery"><div class="wrap">' +
+      '<div class="section-head"><div><p class="eyebrow" data-fx="fade">Gallery</p>' +
+      '<h2 class="t-2" data-fx="fade">Every angle, <em>honestly</em>.</h2></div></div>' +
+      '<div class="gal-strip" data-fx="stagger">' +
+      p.story.map(function (s, i) {
+        return '<button data-gal="' + i + '" data-cursor="View" aria-label="Open photo — ' + s.room + '">' +
+          '<img src="' + s.src.replace("w=1600", "w=900") + '" alt="' + s.room + '" loading="lazy"></button>';
+      }).join("") + "</div></div></section>" +
+
+      /* location + enquiry */
+      '<section class="section section--tight" style="border-top:1px solid var(--line)" id="enquire" aria-label="Location and viewings"><div class="wrap split">' +
+      "<div>" +
+      '<p class="eyebrow" data-fx="fade">Location</p>' +
+      '<h2 class="t-2" data-fx="fade" style="margin-top:18px">' + p.area + ", " + p.postcode + "</h2>" +
+      '<p class="lead" data-fx="fade" style="margin-top:20px">Viewings are accompanied by the Megacity team and arranged around you — evenings and weekends included.</p>' +
+      '<ul class="contact-rows" data-fx="stagger">' +
+      '<li><a href="https://maps.google.com/?q=' + encodeURIComponent(p.area + " " + p.postcode + " Manchester") + '" target="_blank" rel="noopener"><i>Map</i><b>Open the area in Maps</b><span>→</span></a></li>' +
+      '<li><a href="' + D.biz.phoneHref + '"><i>Call</i><b>' + D.biz.phone + "</b><span>→</span></a></li>" +
+      '<li><a href="mailto:' + D.biz.email + '"><i>Email</i><b>' + D.biz.email + "</b><span>→</span></a></li></ul></div>" +
+      "<div>" +
+      '<p class="eyebrow" data-fx="fade">Book a viewing</p>' +
+      '<h2 class="t-3" data-fx="fade" style="margin-top:16px">Tell us when suits — we’ll confirm the rest.</h2>' +
+      '<form class="form" data-mailto data-subject="Viewing request — ' + p.name + ", " + p.area + '">' +
+      '<div class="field"><label for="v-name">Your name</label><input id="v-name" name="Name" required autocomplete="name"></div>' +
+      '<div class="field"><label for="v-phone">Phone</label><input id="v-phone" name="Phone" type="tel" autocomplete="tel"></div>' +
+      '<div class="field field--full"><label for="v-email">Email</label><input id="v-email" name="Email" type="email" required autocomplete="email"></div>' +
+      '<div class="field"><label for="v-date">Preferred day</label><input id="v-date" name="Preferred day" type="date"></div>' +
+      '<div class="field"><label for="v-time">Preferred time</label><select id="v-time" name="Preferred time"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Weekend</option></select></div>' +
+      '<div class="field field--full"><label for="v-msg">Anything we should know?</label><textarea id="v-msg" name="Message"></textarea></div>' +
+      '<input type="hidden" name="Property" value="' + p.name + " — " + p.area + " (" + p.id + ')">' +
+      '<div class="form-actions"><button class="btn btn--lg magnetic" type="submit">Request this viewing ' + A + "</button>" +
+      '<p class="form-note">Submitting opens a pre-filled email to our lettings team — nothing is sent until you press send.</p></div>' +
+      '<div class="form-done" hidden><b>Almost there.</b>Your email draft is open — press send and we’ll come back to you the same working day.</div>' +
+      "</form></div></div></section>" +
+
+      /* keep looking */
+      '<section class="section section--tight" style="border-top:1px solid var(--line)" data-similar-section aria-label="Similar homes"><div class="wrap">' +
+      '<div class="section-head" style="margin-bottom:34px"><div><p class="eyebrow">Keep looking</p>' +
+      '<h2 class="t-2">Similar <em>homes</em>.</h2></div></div>' +
+      '<div class="prop-grid" data-similar="' + p.id + '"></div></div></section>' +
+      '<section class="section section--tight" style="padding-top:0" data-recent-section hidden aria-label="Recently viewed"><div class="wrap">' +
+      '<div class="section-head" style="margin-bottom:34px"><div><p class="eyebrow">Your trail</p>' +
+      '<h2 class="t-2">Recently <em>viewed</em>.</h2></div></div>' +
+      '<div class="prop-grid" data-recent data-exclude="' + p.id + '"></div></div></section>';
+
+    document.getElementById("ppMount").innerHTML = html;
+
+    /* sticky mobile actions */
+    document.getElementById("ppSticky").innerHTML =
+      (p.tour ? '<a href="#" data-tour="' + p.id + '">360° tour</a>' : "") +
+      '<a class="is-primary" href="#enquire">Book a viewing</a>';
+
+    /* structured data */
+    var ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org", "@type": "Apartment",
+      name: p.name, description: p.summary,
+      address: { "@type": "PostalAddress", addressLocality: p.area + ", Manchester", postalCode: p.postcode, addressCountry: "GB" },
+      numberOfBedrooms: p.beds, numberOfBathroomsTotal: p.baths, image: p.cover
+    });
+    document.head.appendChild(ld);
+
+    /* gallery clicks — delegated so it works whenever the toolkit is ready */
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("[data-gal]");
+      if (!b || !window.MC) return;
+      window.MC.gallery.open(p.story.map(function (s) { return { src: s.src, room: s.room, caption: s.caption }; }), +b.getAttribute("data-gal"));
+    });
+
+    /* remember this home for the recently-viewed strips */
+    try {
+      var vlist = JSON.parse(localStorage.getItem("megacity:viewed") || "[]").filter(function (x) { return x !== p.id; });
+      vlist.unshift(p.id);
+      localStorage.setItem("megacity:viewed", JSON.stringify(vlist.slice(0, 8)));
+    } catch (e) {}
+
+    /* the real monthly number — filled once the rates engine has loaded */
+    document.addEventListener("DOMContentLoaded", function () {
+      var R = window.MEGACITY_RATES;
+      var box = document.getElementById("ppCost");
+      if (!R || !box) return;
+      var councilFor = {
+        "Ancoats": "Manchester", "Northern Quarter": "Manchester", "Castlefield": "Manchester",
+        "West Didsbury": "Manchester", "Chorlton": "Manchester",
+        "Salford": "Salford", "Salford Quays": "Salford", "Prestwich": "Bury"
+      };
+      var council = councilFor[p.area] || "Manchester";
+      var band = (p.councilTaxBand || "C").toUpperCase();
+      var bandD = R.councilTaxBandD[council];
+      var ratio = R.bandRatio[band];
+      if (!bandD || !ratio) return;
+      var ct = bandD * ratio / 12;
+      var fmt = function (n) { return "£" + Math.round(n).toLocaleString("en-GB"); };
+      document.getElementById("ppCostTotal").textContent = fmt(p.price + ct);
+      document.getElementById("ppCostCtLabel").textContent = "Council tax — Band " + band + ", " + council;
+      document.getElementById("ppCostCt").textContent = fmt(ct);
+      document.getElementById("ppCostIncome").textContent = fmt(p.price * R.affordability.incomeMultiple) + " a year";
+      document.getElementById("ppCostNote").textContent = "Council tax from the published " + council + " rates (" + R.asOf + "). Single occupants get 25% off.";
+      box.hidden = false;
+    });
+  })();
+  </script>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="megacity.js" defer></script>
+  <script src="megacity-tools.js" defer></script>
+</body>
+</html>

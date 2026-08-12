@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Area guides — Halcyon</title>
+<meta name="description" content="Neighbourhood guides written street by street: Manchester, Cheshire and London markets with live pricing context.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .area-hero { position: relative; min-height: 62vh; display: flex; align-items: flex-end; color: var(--ink-inv); background: var(--night); overflow: clip; }
+  .area-hero img { position: absolute; inset: 0; width: 100%; height: 110%; object-fit: cover; }
+  .area-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,14,.45), rgba(10,10,14,.15) 45%, rgba(10,10,14,.86)); }
+  .area-hero .container { position: relative; z-index: 2; padding-block: clamp(40px, 6vw, 80px); }
+  .area-stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; background: #fff; }
+  .area-stats > div { padding: 26px; border-right: 1px solid var(--line-soft); }
+  .area-stats > div:last-child { border-right: 0; }
+  @media (max-width: 680px) { .area-stats { grid-template-columns: 1fr; } .area-stats > div { border-right: 0; border-bottom: 1px solid var(--line-soft); } }
+  .area-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.4vw, 36px); }
+  @media (max-width: 900px) { .area-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main id="main"></main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui;
+  var areaId = new URLSearchParams(location.search).get("area");
+  ui.chrome({ page: "areas", dark: !!areaId });
+  var main = document.getElementById("main");
+
+  if (areaId) {
+    api.areas.get(areaId).then(function (a) {
+      if (!a) { location.replace("areas"); return; }
+      document.title = a.name + " area guide — Halcyon";
+      main.innerHTML =
+        '<header class="area-hero"><img src="' + api.img(a.image, 2000) + '" alt="" data-fx="parallax" data-fx-speed="0.15"><div class="container">' +
+        '<nav class="crumbs" style="color:var(--ink-inv-2);margin-bottom:16px"><a href="./">Halcyon</a><span class="sep">/</span><a href="areas">Areas</a><span class="sep">/</span><span>' + ui.esc(a.name) + "</span></nav>" +
+        '<p class="eyebrow" style="color:var(--champagne)">' + ui.esc(a.city) + ' · Area guide</p>' +
+        '<h1 class="h-display" data-fx="text" style="color:var(--paper);margin-top:14px">' + ui.esc(a.name) + "</h1>" +
+        '<p class="lede" style="color:var(--ink-inv-2);margin-top:16px;max-width:52ch">' + ui.esc(a.strap) + "</p>" +
+        "</div></header>" +
+        '<section class="section"><div class="container">' +
+        '<div class="area-stats" data-fx="reveal">' +
+        '<div><p class="h-label" style="margin-bottom:10px">Average sale price</p><span class="stat-num" style="font-size:2rem"><span data-count="' + a.avgPrice + '" data-count-prefix="£">0</span></span></div>' +
+        '<div><p class="h-label" style="margin-bottom:10px">Average rent</p><span class="stat-num" style="font-size:2rem"><span data-count="' + a.avgRent + '" data-count-prefix="£" data-count-suffix=" pcm">0</span></span></div>' +
+        '<div><p class="h-label" style="margin-bottom:10px">5-year growth</p><span class="stat-num" style="font-size:2rem"><span data-count="' + a.growth5y + '" data-count-prefix="+" data-count-suffix="%">0</span></span></div>' +
+        "</div>" +
+        '<div class="grid-2" style="margin-top:clamp(40px,6vw,80px);align-items:start">' +
+        '<div><p class="eyebrow" data-fx="reveal">The read</p><h2 class="h-2" data-fx="reveal" style="margin:14px 0 20px">Living in ' + ui.esc(a.name) + '</h2><p class="lede" data-fx="reveal">' + ui.esc(a.blurb) + "</p>" +
+        '<div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap" data-fx="reveal"><a class="btn" href="search?area=' + a.id + '&status=sale">For sale here <span class="btn-arrow">→</span></a><a class="btn btn--ghost" href="search?area=' + a.id + '&status=rent">To rent here</a></div></div>' +
+        '<div data-fx="reveal" data-fx-delay="120"><p class="h-label" style="margin-bottom:16px">On the market in ' + ui.esc(a.name) + '</p><div id="area-props" style="display:grid;gap:24px"></div></div>' +
+        "</div></div></section>";
+      api.properties.list({ area: a.id }).then(function (rows) {
+        var box = document.getElementById("area-props");
+        box.innerHTML = rows.length ? rows.slice(0, 2).map(function (p) { return ui.propCard(p); }).join("")
+          : ui.emptyState("Nothing live right now.", "Stock here moves privately — register and we'll call before the portal sees it.", '<a class="btn btn--outline" href="account">Register interest</a>');
+        ui.hydrate(main);
+        HAL.motion.counters();
+      });
+    });
+  } else {
+    api.areas.list().then(function (areas) {
+      main.innerHTML =
+        '<section class="section" style="padding-top:calc(var(--nav-h) + clamp(32px,5vw,64px))"><div class="container">' +
+        '<p class="eyebrow" data-fx="reveal">Where we work</p>' +
+        '<h1 class="h-1" data-fx="text" style="margin:16px 0 12px">Neighbourhoods, known personally</h1>' +
+        '<p class="lede" data-fx="reveal" style="margin-bottom:48px">Guides written by the people who sell there — with the numbers that matter alongside the character that doesn\'t show up in data.</p>' +
+        '<div class="area-row" data-fx="stagger" data-fx-step="90">' +
+        areas.map(function (a) {
+          return '<a class="area-card" href="areas?area=' + a.id + '">' +
+            '<img loading="lazy" src="' + api.img(a.image, 900) + '" alt="' + ui.esc(a.name) + '">' +
+            '<span class="badge ac-stat" style="position:absolute;top:18px;right:18px;z-index:2">+' + a.growth5y + "% / 5yr</span>" +
+            '<span class="ac-body" style="position:relative;z-index:2;padding:26px;width:100%"><h3 style="font:500 1.6rem/1.1 var(--serif);margin-bottom:6px">' + ui.esc(a.name) + '</h3><p style="font-size:13px;color:var(--ink-inv-2)">' + ui.esc(a.city) + " — avg £" + a.avgPrice.toLocaleString() + "</p></span></a>";
+        }).join("") +
+        "</div></div></section>";
+      /* area-card styles come from the homepage section; replicate the essentials */
+      var st = document.createElement("style");
+      st.textContent = ".area-card{position:relative;overflow:hidden;border-radius:var(--r-s);aspect-ratio:3/4;display:flex;align-items:flex-end;color:var(--ink-inv)}.area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}.area-card:hover img{transform:scale(1.06)}.area-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(10,10,14,.82))}";
+      document.head.appendChild(st);
+      ui.hydrate(main);
+    });
+  }
+})();
+</script>
+</body>
+</html>

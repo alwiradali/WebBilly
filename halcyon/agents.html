@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our people — Halcyon</title>
+<meta name="description" content="The Halcyon team — sales, lettings and new homes specialists across Manchester, Cheshire and London.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .agent-card { border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; padding: clamp(24px, 3vw, 40px); display: grid; gap: 18px; transition: transform .45s var(--ease), box-shadow .45s var(--ease); }
+  .agent-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+  .agent-card .ag-top { display: flex; gap: 18px; align-items: center; }
+  .agent-card .ag-stats { display: flex; gap: 28px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+</style>
+</head>
+<body>
+<main id="main" class="section" style="padding-top:calc(var(--nav-h) + clamp(32px,5vw,64px))">
+  <div class="container">
+    <p class="eyebrow" data-fx="reveal">Our people</p>
+    <h1 class="h-1" data-fx="text" style="margin:16px 0 12px">Small team. Deep patch.</h1>
+    <p class="lede" data-fx="reveal" style="margin-bottom:48px">Every Halcyon agent owns a territory small enough to know personally — the streets, the schools, the vendors who might sell if the right buyer knocked.</p>
+    <div class="grid-2" id="agents-grid"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui, S = HAL.seed;
+  ui.chrome({ page: "agents" });
+  api.agents.list().then(function (rows) {
+    var grid = document.getElementById("agents-grid");
+    grid.innerHTML = rows.map(function (a, i) {
+      var ini = a.name.split(" ").map(function (w) { return w[0]; }).join("");
+      return '<article class="agent-card" data-fx="reveal" data-fx-delay="' + i * 90 + '">' +
+        '<div class="ag-top"><span class="avatar" style="width:64px;height:64px;font-size:18px">' + ini + "</span>" +
+        '<div><h2 class="h-3">' + ui.esc(a.name) + '</h2><p class="muted" style="font-size:13px">' + ui.esc(a.role) + "</p></div></div>" +
+        '<p style="font-size:14.5px;color:var(--ink-2)">' + ui.esc(a.bio) + "</p>" +
+        '<div class="ag-stats">' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.5rem">' + Math.round(a.responseRate * 100) + '%</span><span class="stat-label">Response rate</span></div>' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.5rem">~' + a.avgResponseMins + 'm</span><span class="stat-label">Median reply</span></div>' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.5rem">' + ui.esc(a.patch) + '</span><span class="stat-label">Patch</span></div>' +
+        "</div>" +
+        '<div style="display:flex;gap:12px;flex-wrap:wrap">' +
+        '<a class="btn btn--sm" href="tel:' + a.phone.replace(/\s/g, "") + '">Call</a>' +
+        '<a class="btn btn--ghost btn--sm" href="mailto:' + a.email + '">Email</a>' +
+        '<a class="btn btn--ghost btn--sm" href="' + S.BIZ.whatsapp + '" rel="noopener">WhatsApp</a>' +
+        '<a class="btn btn--ghost btn--sm" href="search?q=' + encodeURIComponent(a.patch) + '">Their listings</a>' +
+        "</div></article>";
+    }).join("");
+    ui.hydrate(grid);
+  });
+})();
+</script>
+</body>
+</html>

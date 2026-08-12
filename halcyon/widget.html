@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halcyon widget</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f5f2ea; --ink:#16150f; --ink3:#7d7a6c; --line:#d8d1c0; --bronze:#a07c48; }
+  [data-theme=dark] { --paper:#101014; --ink:#f2efe6; --ink3:#a7a69c; --line:#2b2b34; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:400 14px/1.55 Inter,system-ui,sans-serif; padding:8px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; }
+  .card { border:1px solid var(--line); border-radius:8px; overflow:hidden; background:transparent; display:block; color:inherit; text-decoration:none; }
+  .card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+  .card .b { padding:12px 14px; display:grid; gap:3px; }
+  .price { font:600 15px/1.2 "Space Grotesk",sans-serif; }
+  .t { font-weight:600; font-size:13.5px; }
+  .a { color:var(--ink3); font-size:12px; }
+  .tour { display:inline-flex; gap:6px; align-items:center; margin-top:6px; font:600 10px/1 "Space Grotesk"; letter-spacing:.12em; text-transform:uppercase; color:var(--bronze); }
+  .foot { text-align:center; padding:14px 0 4px; font:600 10px/1 "Space Grotesk"; letter-spacing:.24em; text-transform:uppercase; color:var(--ink3); }
+  .foot a { color:var(--bronze); text-decoration:none; }
+  form { display:flex; gap:8px; flex-wrap:wrap; }
+  input,select,button { font:inherit; padding:10px 12px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; }
+  button { background:var(--bronze); border-color:var(--bronze); color:#fff; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<p class="foot">Powered by <a href="./" target="_blank" rel="noopener">HALCYON</a></p>
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api;
+  var q = new URLSearchParams(location.search);
+  var kind = q.get("kind") || "featured", max = +(q.get("max") || 6);
+  if (q.get("theme") === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  var root = document.getElementById("root");
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function card(p) {
+    return '<a class="card" href="property?id=' + p.id + '" target="_blank" rel="noopener">' +
+      '<img loading="lazy" src="' + api.img(p.hero, 700) + '" alt="' + esc(p.title) + '">' +
+      '<span class="b"><span class="price">' + api.fmt.price(p.price, p.status) + '</span>' +
+      '<span class="t">' + esc(p.title) + '</span><span class="a">' + esc(p.addr) + "</span>" +
+      (p.tour ? '<span class="tour">◉ 360 tour available</span>' : "") + "</span></a>";
+  }
+  function post() { parent.postMessage({ halcyonHeight: document.body.scrollHeight + 8 }, "*"); }
+
+  if (kind.indexOf("property:") === 0) {
+    api.properties.get(kind.slice(9)).then(function (p) {
+      root.innerHTML = p ? '<div class="grid" style="grid-template-columns:1fr">' + card(p) + "</div>" : "Property not found.";
+      setTimeout(post, 300);
+    });
+  } else if (kind === "search") {
+    root.innerHTML = '<form target="_blank" action="search">' +
+      '<input name="q" placeholder="Where?" style="flex:2;min-width:120px">' +
+      '<select name="status"><option value="sale">Buy</option><option value="rent">Rent</option></select>' +
+      '<select name="minBeds"><option value="">Beds</option><option>1</option><option>2</option><option>3</option><option>4</option></select>' +
+      "<button>Search</button></form>";
+    setTimeout(post, 100);
+  } else {
+    api.properties.list({}, "curated").then(function (rows) {
+      root.innerHTML = '<div class="grid">' + rows.slice(0, max).map(card).join("") + "</div>";
+      setTimeout(post, 400);
+      addEventListener("load", post);
+    });
+  }
+})();
+</script>
+</body>
+</html>

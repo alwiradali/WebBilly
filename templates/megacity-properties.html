@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <title>Properties to let in Manchester &amp; Salford — Megacity Properties</title>
+  <meta name="description" content="Browse every Megacity home to let across Manchester and Salford — with prices, photography and 360° tours you can walk before you visit.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#12100C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <link rel="stylesheet" href="megacity.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="nav-brand" href="megacity">Megacity<small>Properties</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="megacity-properties">Properties</a>
+      <a href="megacity-landlords">Landlords</a>
+      <a href="megacity-tenants">Tenants</a>
+      <a href="megacity-tours">360° Tours</a>
+      <a href="megacity-tools">Tools</a>
+      <a href="megacity-contact">Contact</a>
+    </nav>
+    <a class="btn btn--ghost btn--nav" href="megacity-valuation">Request a valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+
+    <header class="page-head wrap">
+      <p class="eyebrow" data-fx="fade">Properties to let</p>
+      <h1 class="t-1" data-fx="fade" style="margin-top:18px">Find your <em>next</em> home.</h1>
+      <p class="lead" data-fx="fade">Every home we manage, in one place — filter by neighbourhood, rent and bedrooms, or show only the homes you can walk in 360° right now.</p>
+    </header>
+
+    <section class="wrap" aria-label="Search and filters">
+      <div class="filterbar">
+        <button class="btn btn--ghost drawer-toggle" id="mcDrawerOpen">Filters
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+
+        <div class="drawer" id="mcDrawer">
+          <div class="drawer-head">
+            <h2 class="t-3">Filters</h2>
+            <button class="menu-close" data-drawer-close aria-label="Close filters" style="border-color:var(--line-strong)">&#10005;</button>
+          </div>
+          <div class="field" style="min-width:190px">
+            <label for="f-q">Search</label>
+            <input type="search" id="f-q" name="q" data-filter="q" placeholder="Name, area or postcode…" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="f-area">Location</label>
+            <select id="f-area" name="area" data-filter="area">
+              <option value="">Anywhere</option>
+              <option>Ancoats</option><option>Castlefield</option><option>Northern Quarter</option>
+              <option>Salford</option><option>Salford Quays</option><option>West Didsbury</option>
+              <option>Chorlton</option><option>Prestwich</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-type">Type</label>
+            <select id="f-type" name="type" data-filter="type">
+              <option value="">Any type</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Loft">Loft</option>
+              <option value="Penthouse">Penthouse</option>
+              <option value="house">House</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-beds">Bedrooms</label>
+            <select id="f-beds" name="beds" data-filter="beds">
+              <option value="">Any</option>
+              <option value="1">1+</option><option value="2">2+</option>
+              <option value="3">3+</option><option value="4">4+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-min">Min rent</label>
+            <select id="f-min" name="min" data-filter="min">
+              <option value="">No min</option>
+              <option value="1000">£1,000</option><option value="1250">£1,250</option>
+              <option value="1500">£1,500</option><option value="2000">£2,000</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-max">Max rent</label>
+            <select id="f-max" name="max" data-filter="max">
+              <option value="">No max</option>
+              <option value="1250">£1,250</option><option value="1500">£1,500</option>
+              <option value="2000">£2,000</option><option value="3000">£3,000</option>
+            </select>
+          </div>
+          <div class="field field--check">
+            <input type="checkbox" id="f-tours" name="tours" value="1" data-filter="tours">
+            <label for="f-tours">360° tour</label>
+          </div>
+          <div class="drawer-actions">
+            <button class="btn btn--solid" data-drawer-close style="flex:1">Show homes</button>
+            <button class="btn btn--ghost" data-clear-all>Clear</button>
+          </div>
+        </div>
+
+        <button class="chip-toggle" id="mcSavedToggle" aria-pressed="false" title="Show only your saved homes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 20.3S4 15 4 9.6C4 6.9 6.1 5 8.4 5c1.5 0 2.8.8 3.6 2 .8-1.2 2.1-2 3.6-2C17.9 5 20 6.9 20 9.6c0 5.4-8 10.7-8 10.7z"/></svg>
+          <span data-saved-count>Saved</span>
+        </button>
+        <div class="field" style="min-width:170px">
+          <label for="mcSort">Sort</label>
+          <select id="mcSort">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Rent · low to high</option>
+            <option value="price-desc">Rent · high to low</option>
+            <option value="beds">Most bedrooms</option>
+          </select>
+        </div>
+        <span class="filterbar-count" id="mcCount"></span>
+      </div>
+      <div class="chips" id="mcChips" aria-label="Active filters"></div>
+      <p class="sr-status" id="mcStatus" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="section section--tight" aria-label="Property results">
+      <div class="wrap">
+        <div class="prop-grid" id="mcGrid"></div>
+        <div class="empty" id="mcEmpty" hidden>
+          <h3>No properties match your search.</h3>
+          <p>Try widening the rent range or looking at a neighbouring area — new homes are listed every week.</p>
+          <button class="btn magnetic" data-clear-all>Clear filters</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight" style="border-top:1px solid var(--line)" data-recent-section hidden aria-label="Recently viewed">
+      <div class="wrap">
+        <div class="section-head" style="margin-bottom:34px">
+          <div>
+            <p class="eyebrow">Pick up where you left off</p>
+            <h2 class="t-2">Recently <em>viewed</em>.</h2>
+          </div>
+        </div>
+        <div class="prop-grid" data-recent></div>
+      </div>
+    </section>
+
+    <section class="s360 dark" aria-label="360 tours">
+      <div class="s360-media" aria-hidden="true" data-fx="parallax" data-amount="6">
+        <img src="/billy360/panos/hotel_room.jpg" alt="" loading="lazy">
+      </div>
+      <div class="wrap">
+        <div class="s360-inner" style="padding:clamp(70px,9vw,120px) 0">
+          <div class="s360-ring" data-fx="fade"><i></i><span>360° virtual tours</span></div>
+          <h2 class="t-2" data-fx="fade">Shortlist from your <em>sofa</em>.</h2>
+          <p class="lead" data-fx="fade" style="margin-top:20px">Homes marked 360° can be walked room-by-room online — so the viewings you book are the ones that matter.</p>
+          <div class="hero-actions" data-fx="fade">
+            <a class="btn btn--solid magnetic" href="megacity-tours">See all 360° homes
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="mcFooter"></div>
+
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="megacity-data.js" defer></script>
+  <script src="megacity.js" defer></script>
+</body>
+</html>

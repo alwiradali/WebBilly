@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halcyon Studio — property operating system</title>
+<meta name="description" content="The Halcyon back office: properties, CRM, viewings, advertising, analytics, CMS and the 360 Tour Studio.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/studio.css">
+</head>
+<body>
+
+<div class="os">
+  <aside class="os-side" id="side" aria-label="Studio navigation">
+    <div class="os-brand">
+      <span class="ob-mark">H</span>
+      <div><strong>HALCYON</strong><small id="brand-sub">Studio</small></div>
+    </div>
+    <nav class="os-nav" id="nav" aria-label="Sections"></nav>
+    <div class="role-switch" id="roles">
+      <p>Workspace</p>
+      <button data-role="admin" class="is-on">Admin — full studio</button>
+      <button data-role="agent">Agent — Amara Okafor</button>
+      <button data-role="landlord">Landlord — Hartley Estates</button>
+    </div>
+  </aside>
+
+  <div class="os-main">
+    <header class="os-top">
+      <button class="os-burger" id="burger" aria-label="Menu">☰</button>
+      <span class="os-crumb" id="crumb">Halcyon Studio <span>/ Dashboard</span></span>
+      <label class="os-search" id="searchbox">
+        <span aria-hidden="true">⌕</span>
+        <input placeholder="Jump anywhere…" id="jump" autocomplete="off" aria-label="Command palette">
+        <kbd>⌘K</kbd>
+      </label>
+      <a class="btn btn--sm" href="../" target="_blank" rel="noopener">View site ↗</a>
+    </header>
+    <main class="os-view" id="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="os-drawer-overlay" id="drawer-overlay"></div>
+<aside class="os-drawer" id="drawer" aria-label="Editor"></aside>
+<div class="os-toasts" id="toasts" role="status" aria-live="polite"></div>
+<div class="cmdk" id="cmdk"><div class="ck-box"><input id="ck-input" placeholder="Type a section, property or action…"><div class="ck-list" id="ck-list"></div></div></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/api.js"></script>
+<script src="studio.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Halcyon — saved homes, searches & your property journey</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .acct-head { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .journey { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; background: #fff; }
+  .journey .j-step { padding: 22px 18px; border-right: 1px solid var(--line-soft); position: relative; }
+  .journey .j-step:last-child { border-right: 0; }
+  .journey .j-step.is-active { background: var(--night); color: var(--ink-inv); }
+  .journey .j-step.is-active .h-label { color: var(--champagne); }
+  .journey .j-num { font: 500 1.9rem/1 var(--serif); display: block; margin-top: 10px; }
+  @media (max-width: 860px) { .journey { grid-template-columns: 1fr; } .journey .j-step { border-right: 0; border-bottom: 1px solid var(--line-soft); } }
+  .ss-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); flex-wrap: wrap; }
+  .switch { position: relative; width: 42px; height: 24px; border-radius: 999px; background: var(--line); transition: background .3s; flex: 0 0 auto; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .3s var(--ease); }
+  .switch.is-on { background: var(--bronze); }
+  .switch.is-on::after { transform: translateX(18px); }
+</style>
+</head>
+<body>
+<main id="main" class="section" style="padding-top:calc(var(--nav-h) + clamp(32px,5vw,64px))">
+  <div class="container">
+    <div class="acct-head" data-fx="reveal">
+      <span class="avatar" id="acct-avatar" style="width:64px;height:64px;font-size:19px">☺</span>
+      <div>
+        <p class="eyebrow">My Halcyon</p>
+        <h1 class="h-1" id="acct-title" style="margin-top:10px">Your property world</h1>
+      </div>
+      <form id="signin" style="margin-left:auto;display:flex;gap:14px;align-items:end;flex-wrap:wrap">
+        <div class="field"><label for="si-name">Name</label><input id="si-name" autocomplete="name" style="min-width:150px"></div>
+        <div class="field"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="email" style="min-width:190px"></div>
+        <button class="btn btn--sm" type="submit">Sign in</button>
+      </form>
+      <button class="lnk" id="signout" hidden data-nomag>Sign out</button>
+    </div>
+
+    <!-- journey -->
+    <section class="section--tight" id="journey-sec">
+      <p class="h-label" data-fx="reveal" style="margin-bottom:16px">My property journey</p>
+      <div class="journey" data-fx="reveal" id="journey"></div>
+    </section>
+
+    <!-- saved -->
+    <section class="section--tight" id="saved" style="padding-top:0">
+      <div class="section-head" style="margin-bottom:30px">
+        <div><p class="eyebrow" data-fx="reveal">Collection</p><h2 class="h-2" data-fx="reveal">Saved properties</h2></div>
+        <a class="lnk desktop-only" href="compare">Compare saved <span class="btn-arrow">→</span></a>
+      </div>
+      <div class="grid-3" id="saved-grid"></div>
+    </section>
+
+    <!-- saved searches -->
+    <section class="section--tight" style="padding-top:0">
+      <div class="section-head" style="margin-bottom:20px">
+        <div><p class="eyebrow" data-fx="reveal">Alerts</p><h2 class="h-2" data-fx="reveal">Saved searches</h2></div>
+      </div>
+      <div id="searches"></div>
+    </section>
+
+    <!-- recently viewed -->
+    <section class="section--tight" style="padding-top:0">
+      <div class="section-head" style="margin-bottom:30px">
+        <div><p class="eyebrow" data-fx="reveal">History</p><h2 class="h-2" data-fx="reveal">Recently viewed</h2></div>
+      </div>
+      <div class="rail" id="recent-rail"></div>
+    </section>
+
+    <!-- viewing requests -->
+    <section class="section--tight" style="padding-top:0">
+      <div class="section-head" style="margin-bottom:20px">
+        <div><p class="eyebrow" data-fx="reveal">Diary</p><h2 class="h-2" data-fx="reveal">Your viewing requests</h2></div>
+      </div>
+      <div id="my-viewings"></div>
+    </section>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui;
+  ui.chrome({ page: "account" });
+
+  function initials(n) { return n.split(" ").map(function (w) { return w[0] || ""; }).join("").slice(0, 2).toUpperCase(); }
+
+  api.user.get().then(function (u) {
+    if (u.name) {
+      document.getElementById("acct-title").textContent = "Welcome back, " + u.name.split(" ")[0];
+      document.getElementById("acct-avatar").textContent = initials(u.name);
+      document.getElementById("signin").hidden = true;
+      document.getElementById("signout").hidden = false;
+    }
+  });
+  document.getElementById("signin").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var n = document.getElementById("si-name").value.trim(), m = document.getElementById("si-email").value.trim();
+    if (!n || !/.+@.+\..+/.test(m)) { ui.toast("Name and a valid email, please"); return; }
+    api.user.signIn(n, m).then(function () { location.reload(); });
+  });
+  document.getElementById("signout").addEventListener("click", function () { api.user.signOut().then(function () { location.reload(); }); });
+
+  /* journey */
+  var STEPS = [["saved", "Saved"], ["viewed", "Viewed"], ["enquiry", "Enquiry"], ["viewing", "Viewing"], ["offer", "Offer"]];
+  api.user.journey().then(function (j) {
+    var counts = {};
+    j.forEach(function (e) { counts[e.step] = (counts[e.step] || 0) + 1; });
+    document.getElementById("journey").innerHTML = STEPS.map(function (s, i) {
+      var n = counts[s[0]] || 0;
+      return '<div class="j-step' + (n ? " is-active" : "") + '"><p class="h-label">' + (i + 1) + " · " + s[1] + '</p><span class="j-num">' + n + "</span></div>";
+    }).join("");
+  });
+
+  /* saved */
+  api.user.saved().then(function (ids) {
+    var grid = document.getElementById("saved-grid");
+    if (!ids.length) {
+      grid.outerHTML = ui.emptyState("No saved properties yet.",
+        "Tap the heart on any home and it lands here — synced to your alerts.",
+        '<a class="btn" href="search">Start browsing</a>');
+      return;
+    }
+    Promise.all(ids.map(api.properties.get)).then(function (props) {
+      grid.innerHTML = props.filter(Boolean).map(function (p, i) { return ui.propCard(p, { delay: i * 80 }); }).join("");
+      ui.hydrate(grid);
+      ui.refreshSavedCount();
+    });
+  });
+
+  /* searches */
+  function renderSearches() {
+    api.search.saved().then(function (rows) {
+      var box = document.getElementById("searches");
+      if (!rows.length) {
+        box.innerHTML = ui.emptyState("No saved searches.", "Save a search from the results page and we'll watch the market for you.", '<a class="btn btn--outline" href="search">Open search</a>');
+        return;
+      }
+      box.innerHTML = rows.map(function (s) {
+        return '<div class="ss-row"><div><strong style="font:600 14.5px/1.5 var(--sans)">' + ui.esc(s.label || "Saved search") + "</strong>" +
+          '<br><span class="muted" style="font-size:12.5px">Alerts ' + (s.alerts ? "on — email when new matches arrive" : "paused") + "</span></div>" +
+          '<div style="display:flex;gap:14px;align-items:center">' +
+          '<button class="switch' + (s.alerts ? " is-on" : "") + '" data-alert="' + s.id + '" role="switch" aria-checked="' + s.alerts + '" aria-label="Toggle alerts"></button>' +
+          '<button class="chip" data-run="' + s.id + '">Run</button>' +
+          '<button class="chip" data-del="' + s.id + '">Delete</button></div></div>';
+      }).join("");
+      box.querySelectorAll("[data-alert]").forEach(function (b) {
+        b.addEventListener("click", function () { api.search.toggleAlerts(b.getAttribute("data-alert")).then(renderSearches); });
+      });
+      box.querySelectorAll("[data-run]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var s = rows.filter(function (r) { return r.id === b.getAttribute("data-run"); })[0];
+          var q = new URLSearchParams();
+          Object.keys(s.filters).forEach(function (k) { if (s.filters[k]) q.set(k, s.filters[k] === true ? "1" : s.filters[k]); });
+          location.href = "search?" + q.toString();
+        });
+      });
+      box.querySelectorAll("[data-del]").forEach(function (b) {
+        b.addEventListener("click", function () { api.search.removeSaved(b.getAttribute("data-del")).then(function () { ui.toast("Search deleted"); renderSearches(); }); });
+      });
+    });
+  }
+  renderSearches();
+
+  /* recent */
+  api.user.recent().then(function (ids) {
+    var rail = document.getElementById("recent-rail");
+    if (!ids.length) { rail.outerHTML = ui.emptyState("Nothing viewed yet.", "Homes you open will queue up here for a second look."); return; }
+    Promise.all(ids.map(api.properties.get)).then(function (props) {
+      rail.innerHTML = props.filter(Boolean).map(function (p) { return ui.propCard(p); }).join("");
+      ui.hydrate(rail);
+    });
+  });
+
+  /* viewings */
+  api.viewings.list().then(function (rows) {
+    var mine = rows.filter(function (v) { return v.t; }); /* requested this browser */
+    var box = document.getElementById("my-viewings");
+    if (!mine.length) { box.innerHTML = ui.emptyState("No viewings requested.", "Request one from any property page — in person or a live video walkthrough."); return; }
+    Promise.all(mine.map(function (v) { return api.properties.get(v.propertyId); })).then(function (props) {
+      box.innerHTML = mine.map(function (v, i) {
+        var p = props[i];
+        return '<div class="ss-row"><div><strong style="font:600 14.5px/1.5 var(--sans)">' + (p ? ui.esc(p.title) : v.propertyId) + "</strong>" +
+          '<br><span class="muted" style="font-size:12.5px">' + ui.esc(v.date || "") + " at " + ui.esc(v.time || "") + " · " + (v.kind === "virtual" ? "Virtual" : "In person") + " · " + ui.esc(v.status) + "</span></div>" +
+          '<span class="badge badge--epc">' + ui.esc(v.status) + "</span></div>";
+      }).join("");
+    });
+  });
+})();
+</script>
+</body>
+</html>
