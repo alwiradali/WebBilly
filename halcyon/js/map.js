@@ -22,8 +22,8 @@
     var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     var COL = {
-      ground: "#101014", block: "#16161d", street: "#1f1f28", streetLite: "#26262f",
-      water: "#0b1220", parkFill: "#111813", label: "#8b8878",
+      ground: "#101014", block: "#16161d", street: "#232330", streetLite: "#2e2e3b",
+      water: "#0c1526", parkFill: "#131c15", label: "#98957f",
       pin: "#f5f2ea", pinInk: "#16150f", accent: "#d5b98e", hover: "#a07c48", ring: "rgba(213,185,142,.35)"
     };
 
@@ -106,6 +106,7 @@
     }
 
     /* ── clustering ─────────────────────────────────────────────────────── */
+    var pops = {};   /* pop-in progress per marker key — survives rebuilds */
     function buildMarkers() {
       markers = [];
       var pts = props.map(function (p) {
@@ -124,9 +125,9 @@
         if (group.length > 1 && cam.zoom < 10.5) {
           var cx = 0, cy = 0;
           group.forEach(function (g) { cx += g.x; cy += g.y; });
-          markers.push({ cluster: group.map(function (g) { return g.p; }), x: cx / group.length, y: cy / group.length });
+          markers.push({ cluster: group.map(function (g) { return g.p; }), x: cx / group.length, y: cy / group.length, key: "c:" + group.map(function (g) { return g.p.id; }).sort().join(",") });
         } else {
-          group.forEach(function (g) { markers.push({ p: g.p, x: g.x, y: g.y }); });
+          group.forEach(function (g) { markers.push({ p: g.p, x: g.x, y: g.y, key: g.p.id }); });
         }
       });
     }
@@ -142,9 +143,8 @@
       markers.forEach(function (m) {
         var hovered = m.p && (m.p.id === hoverId);
         var selected = m.p && (m.p.id === selectedId);
-        var pop = m.__pop == null ? (m.__pop = 0) : m.__pop;
-        m.__pop = Math.min(1, pop + 0.12);
-        var k = reduced ? 1 : (1 - Math.pow(1 - m.__pop, 3));
+        pops[m.key] = Math.min(1, (pops[m.key] || 0) + 0.1);
+        var k = reduced ? 1 : (1 - Math.pow(1 - pops[m.key], 3));
         if (m.cluster) {
           var r = 16 + Math.min(14, m.cluster.length * 1.6);
           ctx.beginPath(); ctx.arc(m.x, m.y, (r + 6) * k, 0, 7); ctx.fillStyle = COL.ring; ctx.fill();
@@ -193,7 +193,7 @@
     function frame() {
       raf = null;
       drawGround(); buildMarkers(); drawMarkers(performance.now() - t0);
-      if (!reduced && markers.some(function (m) { return m.__pop < 1; })) schedule();
+      if (!reduced && markers.some(function (m) { return pops[m.key] < 1; })) schedule();
     }
     function schedule() { if (!raf) raf = requestAnimationFrame(frame); }
 
@@ -305,7 +305,7 @@
 
     /* ── public surface ─────────────────────────────────────────────────── */
     return {
-      setData: function (rows) { props = rows || []; markers.forEach(function (m) { m.__pop = 0; }); schedule(); },
+      setData: function (rows) { props = rows || []; pops = {}; schedule(); },
       on: function (ev, fn) { (handlers[ev] = handlers[ev] || []).push(fn); },
       hover: function (id) { if (id !== hoverId) { hoverId = id; schedule(); } },
       select: function (id) { selectedId = id; schedule(); },
@@ -318,7 +318,7 @@
         var la = (Math.min.apply(0, lats) + Math.max.apply(0, lats)) / 2;
         var ln = (Math.min.apply(0, lngs) + Math.max.apply(0, lngs)) / 2;
         var span = Math.max(Math.max.apply(0, lats) - Math.min.apply(0, lats), (Math.max.apply(0, lngs) - Math.min.apply(0, lngs)) * 0.62, 0.02);
-        flyTo(la, ln, clamp(Math.log2((H / 2.6) / span) - 0.35, 5.4, 12.2), true);
+        flyTo(la, ln, clamp(Math.log2((H / 2.6) / (span * 1.55)), 5.4, 12.2), true);
       },
       drawStart: function () { drawMode = true; drawPts = []; polygon = null; canvas.style.cursor = "crosshair"; schedule(); },
       drawFinish: function () {

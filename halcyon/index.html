@@ -60,7 +60,11 @@
   .hs-nl { margin-top: 16px; font-size: 13px; color: var(--ink-3); }
   .hs-nl button { color: var(--bronze-deep); font-weight: 600; border-bottom: 1px solid currentColor; }
   @media (max-width: 1000px) { .hs-row { grid-template-columns: 1fr 1fr; } .hs-row .btn { grid-column: 1 / -1; } }
-  @media (max-width: 560px) { .hs-row { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) {
+    .hs-row { grid-template-columns: 1fr; }
+    .hero-search .seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .hero-search .seg button { border-top: 1px solid var(--line); border-right: 1px solid var(--line); padding: 13px 10px; }
+  }
 
   .scroll-cue { position: absolute; right: clamp(20px, 4vw, 60px); bottom: 190px; z-index: 3; display: grid; justify-items: center; gap: 10px; color: var(--ink-inv-2); font: 600 9.5px/1 var(--grot); letter-spacing: .3em; text-transform: uppercase; writing-mode: vertical-rl; }
   .scroll-cue::after { content: ""; width: 1px; height: 54px; background: linear-gradient(var(--champagne), transparent); animation: cueDrop 2.2s var(--ease) infinite; }
