@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare properties — Halcyon</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .cmp-head-card { display: grid; gap: 10px; min-width: 220px; }
+  .cmp-head-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--r-s); }
+  .cmp-bar { height: 8px; border-radius: 999px; background: var(--paper-3); overflow: hidden; }
+  .cmp-bar i { display: block; height: 100%; background: var(--bronze); border-radius: 999px; transition: width .8s var(--ease); }
+  .cmp-table td { min-width: 220px; }
+  .cmp-tick { color: var(--good); font-weight: 700; }
+  .cmp-cross { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<main id="main" class="section" style="padding-top:calc(var(--nav-h) + clamp(32px,5vw,64px))">
+  <div class="container">
+    <p class="eyebrow" data-fx="reveal">Side by side</p>
+    <h1 class="h-1" data-fx="text" style="margin:16px 0 40px">Compare properties</h1>
+    <div id="body"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui;
+  ui.chrome({ page: "compare" });
+
+  function money(v) { return "£" + Number(v).toLocaleString(); }
+
+  function render() {
+    api.user.compare.list().then(function (ids) {
+      var box = document.getElementById("body");
+      if (!ids.length) {
+        box.innerHTML = ui.emptyState("Nothing to compare yet.",
+          "Tap “Compare” on any property card — up to four homes, side by side.",
+          '<a class="btn" href="search">Browse properties</a>');
+        return;
+      }
+      Promise.all(ids.map(api.properties.get)).then(function (props) {
+        props = props.filter(Boolean);
+        var maxPrice = Math.max.apply(0, props.map(function (p) { return p.price; }));
+        var minPPSF = Math.min.apply(0, props.map(function (p) { return p.status === "sale" ? p.price / p.sqft : Infinity; }));
+        var maxSqft = Math.max.apply(0, props.map(function (p) { return p.sqft || 0; }));
+
+        function row(label, cells, bestIdx) {
+          return "<tr><th scope='row'>" + label + "</th>" + cells.map(function (c, i) {
+            return "<td" + (i === bestIdx ? ' class="is-best"' : "") + ">" + c + "</td>";
+          }).join("") + "</tr>";
+        }
+        function flag(v) { return v ? '<span class="cmp-tick">✓</span>' : '<span class="cmp-cross">—</span>'; }
+        function best(arr, mode) {
+          var idx = -1, bestV = mode === "min" ? Infinity : -Infinity;
+          arr.forEach(function (v, i) {
+            if (v == null || isNaN(v)) return;
+            if (mode === "min" ? v < bestV : v > bestV) { bestV = v; idx = i; }
+          });
+          return idx;
+        }
+
+        var prices = props.map(function (p) { return p.price; });
+        var ppsf = props.map(function (p) { return p.status === "sale" ? Math.round(p.price / p.sqft) : null; });
+        var sqfts = props.map(function (p) { return p.sqft || 0; });
+        var epcs = props.map(function (p) { return "ABCDEFG".indexOf(p.epc); });
+
+        box.innerHTML = '<div class="table-scroll"><table class="cmp-table"><thead><tr><th></th>' +
+          props.map(function (p) {
+            return "<td><div class='cmp-head-card'><img src='" + api.img(p.hero, 700) + "' alt=''>" +
+              "<strong style='font:600 15px/1.35 var(--sans)'><a href='property?id=" + p.id + "'>" + ui.esc(p.title) + "</a></strong>" +
+              "<span class='muted' style='font-size:12.5px'>" + ui.esc(p.addr) + "</span>" +
+              "<button class='chip' style='justify-content:center' data-uncompare='" + p.id + "'>Remove</button></div></td>";
+          }).join("") + "</tr></thead><tbody>" +
+          row("Price", props.map(function (p, i) {
+            return "<strong class='price' style='font-size:1.1rem'>" + api.fmt.price(p.price, p.status) + "</strong>" +
+              "<div class='cmp-bar' style='margin-top:8px'><i style='width:" + Math.round(p.price / maxPrice * 100) + "%'></i></div>";
+          }), best(prices, "min")) +
+          row("£ / sq ft", ppsf.map(function (v) { return v ? money(v) : "—"; }), best(ppsf, "min")) +
+          row("Bedrooms", props.map(function (p) { return p.beds || "—"; }), best(props.map(function (p) { return p.beds; }), "max")) +
+          row("Bathrooms", props.map(function (p) { return p.baths || "—"; }), best(props.map(function (p) { return p.baths; }), "max")) +
+          row("Size", props.map(function (p) {
+            return api.fmt.sqft(p.sqft) + "<div class='cmp-bar' style='margin-top:8px'><i style='width:" + Math.round((p.sqft || 0) / maxSqft * 100) + "%'></i></div>";
+          }), best(sqfts, "max")) +
+          row("EPC", props.map(function (p) { return p.epc; }), best(epcs, "min")) +
+          row("Tenure", props.map(function (p) { return ui.esc(p.tenure); }), -1) +
+          row("Council tax", props.map(function (p) { return "Band " + p.councilTax; }), -1) +
+          row("Location", props.map(function (p) { return ui.esc(p.city) + " · " + ui.esc(p.postcode); }), -1) +
+          row("Garden", props.map(function (p) { return flag(p.garden); }), -1) +
+          row("Parking", props.map(function (p) { return flag(p.parking || p.garage); }), -1) +
+          row("Virtual tour", props.map(function (p) { return flag(p.tour); }), -1) +
+          row("Chain-free", props.map(function (p) { return flag(p.chainFree); }), -1) +
+          "</tbody></table></div>" +
+          "<p class='muted' style='margin-top:18px;font-size:12.5px'>Bronze highlights the best value in each measurable row.</p>";
+
+        box.querySelectorAll("[data-uncompare]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            api.user.compare.toggle(b.getAttribute("data-uncompare")).then(function () { render(); ui.refreshTray(); });
+          });
+        });
+        ui.hydrate(box);
+      });
+    });
+  }
+  render();
+})();
+</script>
+</body>
+</html>

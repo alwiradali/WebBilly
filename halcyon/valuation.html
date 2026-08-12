@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is your property worth? — Halcyon</title>
+<meta name="description" content="A premium, guided property valuation — address to figure in under two minutes, then a real appraisal from a local partner.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .val-app { min-height: 100svh; display: grid; grid-template-columns: 1fr 1fr; }
+  .val-side { position: relative; background: var(--night); overflow: clip; }
+  .val-side img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .74; }
+  .val-side::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(10,10,14,.2), rgba(10,10,14,.85)); }
+  .val-side .vs-body { position: absolute; inset: auto 0 0 0; z-index: 2; padding: clamp(28px, 4vw, 60px); color: var(--ink-inv); }
+  .val-main { display: flex; flex-direction: column; padding: calc(var(--nav-h) + clamp(24px, 4vh, 56px)) clamp(24px, 5vw, 96px) 48px; }
+  .val-step { flex: 1; display: none; flex-direction: column; justify-content: center; gap: 28px; max-width: 560px; }
+  .val-step.is-on { display: flex; animation: stepIn .55s var(--ease-out); }
+  @keyframes stepIn { from { opacity: 0; transform: translateY(26px); } }
+  .val-foot { display: flex; justify-content: space-between; align-items: center; max-width: 560px; padding-top: 28px; }
+  .val-num { font: 500 clamp(2.6rem, 4.5vw, 4.2rem)/1 var(--serif); }
+  .est-band { position: relative; height: 10px; border-radius: 999px; background: linear-gradient(90deg, var(--paper-3), var(--champagne), var(--paper-3)); margin: 18px 0 6px; }
+  .est-band i { position: absolute; top: -5px; width: 2px; height: 20px; background: var(--ink); }
+  @media (max-width: 900px) { .val-app { grid-template-columns: 1fr; } .val-side { min-height: 30vh; order: -1; } .val-main { padding-top: 24px; } }
+</style>
+</head>
+<body>
+
+<main id="main" class="val-app">
+  <section class="val-main" aria-label="Valuation walkthrough">
+    <div class="steps" style="max-width:560px;margin-bottom:14px" id="steps"></div>
+    <p class="h-label" id="step-label">Step 1 of 7</p>
+
+    <!-- 1: address -->
+    <div class="val-step is-on" data-step="0">
+      <h1 class="h-1">Where is the property?</h1>
+      <div class="field"><label for="v-addr">Address or postcode</label><input id="v-addr" placeholder="e.g. 48 Beech Road, M21" autocomplete="street-address"></div>
+      <div class="field"><label for="v-region">Region</label>
+        <select id="v-region"><option value="manchester">Greater Manchester</option><option value="cheshire">Cheshire</option><option value="london">London</option></select></div>
+    </div>
+
+    <!-- 2: type -->
+    <div class="val-step" data-step="1">
+      <h2 class="h-1">What kind of home?</h2>
+      <div class="opt-grid" data-pick="type">
+        <button class="opt-card" data-v="detached">Detached</button>
+        <button class="opt-card" data-v="semi">Semi-detached</button>
+        <button class="opt-card" data-v="terraced">Terraced</button>
+        <button class="opt-card" data-v="apartment">Apartment</button>
+        <button class="opt-card" data-v="bungalow">Bungalow</button>
+      </div>
+    </div>
+
+    <!-- 3: beds -->
+    <div class="val-step" data-step="2">
+      <h2 class="h-1">Bedrooms?</h2>
+      <div class="opt-grid" data-pick="beds">
+        <button class="opt-card" data-v="1">1</button><button class="opt-card" data-v="2">2</button>
+        <button class="opt-card" data-v="3">3</button><button class="opt-card" data-v="4">4</button>
+        <button class="opt-card" data-v="5">5+</button>
+      </div>
+    </div>
+
+    <!-- 4: baths -->
+    <div class="val-step" data-step="3">
+      <h2 class="h-1">Bathrooms?</h2>
+      <div class="opt-grid" data-pick="baths">
+        <button class="opt-card" data-v="1">1</button><button class="opt-card" data-v="2">2</button><button class="opt-card" data-v="3">3+</button>
+      </div>
+    </div>
+
+    <!-- 5: condition -->
+    <div class="val-step" data-step="4">
+      <h2 class="h-1">Honest condition?</h2>
+      <div class="opt-grid" data-pick="condition">
+        <button class="opt-card" data-v="excellent">Excellent<small>Nothing to do</small></button>
+        <button class="opt-card" data-v="good">Good<small>Lived-in, cared for</small></button>
+        <button class="opt-card" data-v="needs-work">Needs work<small>Project potential</small></button>
+      </div>
+    </div>
+
+    <!-- 6: extras -->
+    <div class="val-step" data-step="5">
+      <h2 class="h-1">Anything that adds?</h2>
+      <div class="opt-grid" data-pick-multi="extras">
+        <button class="opt-card" data-v="garden">Garden</button>
+        <button class="opt-card" data-v="garage">Garage</button>
+        <button class="opt-card" data-v="extension">Extension</button>
+        <button class="opt-card" data-v="loft">Loft conversion</button>
+        <button class="opt-card" data-v="parking">Off-street parking</button>
+        <button class="opt-card" data-v="view">A view</button>
+      </div>
+    </div>
+
+    <!-- 7: contact -->
+    <div class="val-step" data-step="6">
+      <h2 class="h-1">Where do we send it?</h2>
+      <div class="field"><label for="v-name">Name</label><input id="v-name" autocomplete="name"><span class="field-error">We need a name</span></div>
+      <div class="field"><label for="v-email">Email</label><input id="v-email" type="email" autocomplete="email"><span class="field-error">A valid email, so the figure reaches you</span></div>
+      <div class="field"><label for="v-intent">You're thinking of…</label>
+        <select id="v-intent"><option value="sell">Selling</option><option value="let">Letting</option><option value="curious">Just curious</option></select></div>
+    </div>
+
+    <!-- result -->
+    <div class="val-step" data-step="7">
+      <p class="eyebrow">Our working estimate</p>
+      <p class="val-num" id="v-result">£—</p>
+      <div>
+        <div class="est-band"><i style="left:18%"></i><i style="left:82%"></i></div>
+        <div style="display:flex;justify-content:space-between;font:600 13px/1 var(--grot)"><span id="v-low">£—</span><span id="v-high">£—</span></div>
+      </div>
+      <p class="lede" id="v-outro">A Halcyon partner will confirm in person — the walkthrough usually moves this number, and usually upward.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn btn--bronze" href="agents">Book the in-person visit <span class="btn-arrow">→</span></a>
+        <a class="btn btn--ghost" href="./">Back to Halcyon</a>
+      </div>
+    </div>
+
+    <div class="val-foot" id="val-foot">
+      <button class="lnk" id="v-back" style="visibility:hidden" data-nomag>← Back</button>
+      <button class="btn" id="v-next" data-nomag>Continue <span class="btn-arrow">→</span></button>
+    </div>
+  </section>
+
+  <aside class="val-side" aria-hidden="true">
+    <img id="v-img" alt="">
+    <div class="vs-body">
+      <p class="eyebrow" style="color:var(--champagne)">Valuation</p>
+      <p class="review-quote" style="font:400 clamp(1.3rem,2vw,1.8rem)/1.5 var(--serif);font-style:italic;color:var(--ink-inv);max-width:30ch;margin-top:14px">
+        “The figure was within 2% of what we achieved — and the walkthrough felt like private banking, not a form.”
+      </p>
+      <p style="color:var(--ink-inv-2);font-size:13px;margin-top:12px">D. Craven-Moore — sold in Hale</p>
+    </div>
+  </aside>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui, S = HAL.seed;
+  ui.chrome({ page: "valuation", footer: false });
+  document.getElementById("v-img").src = api.img(S.IMG.extClassic[0], 1400);
+
+  var TOTAL = 7, step = 0;
+  var data = { extras: [] };
+  if (new URLSearchParams(location.search).get("intent") === "let") data.intent = "let";
+
+  var stepsBox = document.getElementById("steps");
+  for (var i = 0; i < TOTAL; i++) stepsBox.innerHTML += '<span class="step-dot"></span>';
+
+  function show(n) {
+    step = n;
+    document.querySelectorAll(".val-step").forEach(function (s) { s.classList.toggle("is-on", +s.getAttribute("data-step") === n); });
+    document.querySelectorAll(".step-dot").forEach(function (d, i) {
+      d.classList.toggle("is-done", i < n); d.classList.toggle("is-current", i === n);
+    });
+    document.getElementById("step-label").textContent = n >= TOTAL ? "Your estimate" : "Step " + (n + 1) + " of " + TOTAL;
+    document.getElementById("v-back").style.visibility = n > 0 && n < TOTAL ? "visible" : "hidden";
+    document.getElementById("val-foot").style.display = n >= TOTAL ? "none" : "flex";
+    document.getElementById("v-next").innerHTML = n === TOTAL - 1 ? 'Get my estimate <span class="btn-arrow">→</span>' : 'Continue <span class="btn-arrow">→</span>';
+  }
+
+  /* option pickers */
+  document.querySelectorAll("[data-pick]").forEach(function (grid) {
+    grid.addEventListener("click", function (e) {
+      var b = e.target.closest(".opt-card"); if (!b) return;
+      grid.querySelectorAll(".opt-card").forEach(function (o) { o.classList.remove("is-on"); });
+      b.classList.add("is-on");
+      data[grid.getAttribute("data-pick")] = b.getAttribute("data-v");
+      setTimeout(next, 240); /* auto-advance feels premium */
+    });
+  });
+  document.querySelectorAll("[data-pick-multi]").forEach(function (grid) {
+    grid.addEventListener("click", function (e) {
+      var b = e.target.closest(".opt-card"); if (!b) return;
+      b.classList.toggle("is-on");
+      data.extras = Array.prototype.map.call(grid.querySelectorAll(".is-on"), function (o) { return o.getAttribute("data-v"); });
+    });
+  });
+
+  function validate() {
+    if (step === 0) {
+      data.address = document.getElementById("v-addr").value.trim();
+      data.region = document.getElementById("v-region").value;
+      if (!data.address) { document.getElementById("v-addr").closest(".field").classList.add("is-invalid"); return false; }
+      return true;
+    }
+    if (step >= 1 && step <= 4) {
+      var keys = ["type", "beds", "baths", "condition"];
+      if (!data[keys[step - 1]]) { ui.toast("Pick one to continue"); return false; }
+      return true;
+    }
+    if (step === 6) {
+      var name = document.getElementById("v-name"), email = document.getElementById("v-email");
+      var ok = true;
+      [[name, name.value.trim()], [email, /.+@.+\..+/.test(email.value)]].forEach(function (p) {
+        p[0].closest(".field").classList.toggle("is-invalid", !p[1]); if (!p[1]) ok = false;
+      });
+      if (!ok) return false;
+      data.name = name.value.trim(); data.email = email.value.trim();
+      data.intent = document.getElementById("v-intent").value;
+      return true;
+    }
+    return true;
+  }
+
+  function next() {
+    if (!validate()) return;
+    if (step === TOTAL - 1) {
+      var btn = document.getElementById("v-next");
+      btn.disabled = true; btn.textContent = "Calculating…";
+      data.beds = +data.beds; data.baths = +data.baths;
+      api.valuations.create(data).then(function (res) {
+        btn.disabled = false;
+        show(TOTAL);
+        var out = document.getElementById("v-result");
+        var t0 = performance.now(), dur = 1200, target = res.estimate.mid;
+        (function tick(t) {
+          var k = Math.min(1, (t - t0) / dur); k = 1 - Math.pow(1 - k, 3);
+          out.textContent = "£" + Math.round(target * k).toLocaleString();
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+        document.getElementById("v-low").textContent = "£" + res.estimate.low.toLocaleString();
+        document.getElementById("v-high").textContent = "£" + res.estimate.high.toLocaleString();
+        if (data.intent === "let") document.getElementById("v-outro").textContent =
+          "As a monthly let this suggests roughly £" + Math.round(res.estimate.mid * 0.0045).toLocaleString() + " pcm. A lettings partner will confirm and talk management options.";
+      });
+      return;
+    }
+    show(step + 1);
+  }
+  document.getElementById("v-next").addEventListener("click", next);
+  document.getElementById("v-back").addEventListener("click", function () { show(Math.max(0, step - 1)); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Enter" && step < TOTAL && !e.target.closest("select")) { e.preventDefault(); next(); } });
+  show(0);
+})();
+</script>
+</body>
+</html>

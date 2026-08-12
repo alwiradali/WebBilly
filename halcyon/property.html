@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property — Halcyon</title>
+<meta name="description" content="An immersive property experience: cinematic gallery, room-by-room navigation, 360 tour, floor plans, mortgage and stamp duty tools.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  /* ── cinematic hero ── */
+  .p-hero { position: relative; height: 100svh; min-height: 560px; color: var(--ink-inv); overflow: clip; background: var(--night); }
+  .p-hero .ph-media { position: absolute; inset: 0; }
+  .p-hero .ph-media img { width: 100%; height: 112%; object-fit: cover; }
+  .p-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,14,.5), rgba(10,10,14,.08) 40%, rgba(10,10,14,.82) 92%); }
+  .p-hero .ph-body { position: absolute; inset: auto 0 0 0; z-index: 2; padding-bottom: clamp(36px, 6vh, 72px); }
+  .p-hero .ph-price { font: 600 clamp(2rem, 4.4vw, 3.6rem)/1 var(--grot); letter-spacing: -.02em; color: var(--paper); }
+  .p-hero .ph-specs { margin: 14px 0 6px; font: 500 clamp(.95rem, 1.4vw, 1.15rem)/1.6 var(--grot); color: var(--champagne); letter-spacing: .04em; }
+  .p-hero .ph-addr { color: var(--ink-inv-2); font-size: 15px; }
+  .p-hero .ph-ctas { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+
+  /* sticky action bar after hero */
+  .p-bar { position: sticky; top: var(--nav-h); z-index: 60; background: rgba(245,242,234,.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-soft); }
+  .p-bar .container--wide { display: flex; align-items: center; gap: 18px; padding-block: 12px; }
+  .p-bar .pb-price { font: 600 17px/1 var(--grot); }
+  .p-bar nav { display: flex; gap: 20px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .p-bar nav a { font: 600 11px/1 var(--grot); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; padding: 8px 0; }
+  .p-bar nav a:hover { color: var(--ink); }
+
+  /* layout: content + sticky enquiry panel */
+  .p-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: clamp(32px, 4vw, 72px); align-items: start; }
+  .p-side { position: sticky; top: calc(var(--nav-h) + 70px); display: grid; gap: 20px; }
+  .side-card { border: 1px solid var(--line); border-radius: var(--r-m); padding: 26px; background: #fff; display: grid; gap: 16px; }
+  @media (max-width: 1020px) { .p-layout { grid-template-columns: 1fr; } .p-side { position: static; } }
+
+  /* immersive gallery */
+  .g-band { margin-block: clamp(28px, 4vw, 56px); }
+  .g-full { border-radius: var(--r-s); overflow: hidden; }
+  .g-full img { width: 100%; aspect-ratio: 21/10; object-fit: cover; }
+  .g-pair { display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(14px, 1.6vw, 24px); margin-top: clamp(14px, 1.6vw, 24px); }
+  .g-pair img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-s); aspect-ratio: 4/3; }
+  @media (max-width: 680px) { .g-pair { grid-template-columns: 1fr; } }
+
+  /* explore the home */
+  .rooms { background: var(--night); color: var(--ink-inv); border-radius: var(--r-m); overflow: clip; }
+  .rooms .rm-stage { position: relative; aspect-ratio: 16/9; background: var(--night-2); }
+  .rooms .rm-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s var(--ease), transform 1.4s var(--ease); transform: scale(1.04); }
+  .rooms .rm-stage img.is-on { opacity: 1; transform: scale(1); }
+  .rooms .rm-note { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px 28px 22px; background: linear-gradient(transparent, rgba(10,10,14,.85)); font-size: 14px; color: var(--ink-inv-2); }
+  .rooms .rm-nav { padding: 20px 24px 24px; display: grid; gap: 14px; }
+  .rooms .rm-floor { font: 600 10px/1 var(--grot); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-inv-2); }
+  .rooms .rm-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rooms .rm-tabs button { padding: 10px 18px; border: 1px solid var(--line-inv); border-radius: 999px; color: var(--ink-inv-2); font: 500 13px/1 var(--sans); transition: all .3s var(--ease); }
+  .rooms .rm-tabs button:hover { color: var(--paper); border-color: var(--paper); }
+  .rooms .rm-tabs button.is-on { background: var(--champagne); border-color: var(--champagne); color: var(--night); }
+
+  /* feature list */
+  .feat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
+  .feat-list li { display: flex; gap: 12px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; }
+  .feat-list li::before { content: "—"; color: var(--bronze); }
+  @media (max-width: 680px) { .feat-list { grid-template-columns: 1fr; } }
+
+  /* floorplan */
+  .plan { border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; padding: clamp(18px, 3vw, 36px); }
+  .plan svg { width: 100%; height: auto; }
+
+  /* calculators */
+  .calc { border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; padding: 26px; display: grid; gap: 18px; }
+  .calc output { font: 600 clamp(1.5rem, 2.4vw, 2rem)/1.1 var(--grot); }
+  .calc .field input[type=range] { width: 100%; accent-color: var(--bronze); padding: 8px 0; border: 0; }
+
+  /* nearby */
+  .near-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.6vw, 44px); }
+  .near-cols dl { display: grid; gap: 0; }
+  .near-cols .near-row { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+  .near-cols .near-row dd { color: var(--ink-3); text-align: right; }
+  @media (max-width: 860px) { .near-cols { grid-template-columns: 1fr; } }
+
+  /* tour overlay */
+  .tour-overlay { position: fixed; inset: 0; z-index: 250; background: rgba(10,10,14,.96); display: none; }
+  .tour-overlay.is-open { display: block; }
+  .tour-overlay iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .tour-overlay .to-close { position: absolute; top: 18px; right: 18px; z-index: 2; background: var(--paper); }
+
+  .epc-note { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+
+  /* mobile sticky enquiry */
+  .m-enquire { display: none; }
+  @media (max-width: 860px) {
+    .m-enquire { display: flex; gap: 10px; position: fixed; z-index: 125; left: 12px; right: 12px; bottom: 76px; }
+    .m-enquire .btn { flex: 1; box-shadow: var(--shadow-2); }
+  }
+</style>
+</head>
+<body>
+
+<main id="main">
+  <!-- ═══ CINEMATIC HERO ═══ -->
+  <header class="p-hero" id="hero">
+    <div class="ph-media" data-fx="parallax" data-fx-speed="0.14"><img id="hero-img" alt="" fetchpriority="high"></div>
+    <div class="ph-body">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb" style="color:var(--ink-inv-2);margin-bottom:18px" id="crumbs"></nav>
+        <p class="ph-price" id="h-price">—</p>
+        <p class="ph-specs" id="h-specs">—</p>
+        <p class="ph-addr" id="h-addr">—</p>
+        <div class="ph-ctas">
+          <button class="btn btn--bronze btn--lg" id="cta-viewing">Arrange viewing <span class="btn-arrow">→</span></button>
+          <button class="btn btn--inv-outline btn--lg" id="cta-tour" hidden>◉&nbsp; Enter virtual tour</button>
+          <button class="icon-btn save-btn" id="hero-save" style="width:56px;height:56px;background:transparent;border-color:rgba(242,239,230,.4);color:var(--ink-inv)" aria-label="Save this property"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ STICKY BAR ═══ -->
+  <div class="p-bar">
+    <div class="container--wide">
+      <span class="pb-price" id="bar-price">—</span>
+      <span class="muted desktop-only" id="bar-title" style="font-size:13px">—</span>
+      <nav aria-label="On this page">
+        <a href="#gallery">Gallery</a><a href="#rooms">Explore</a><a href="#details">Details</a><a href="#plan">Floor plan</a><a href="#money">Costs</a><a href="#location">Location</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container section--tight" style="padding-top:clamp(32px,4vw,56px)">
+    <div class="p-layout">
+      <!-- ═══ MAIN COLUMN ═══ -->
+      <article>
+        <div id="desc" style="display:grid;gap:18px;max-width:68ch">
+          <p class="eyebrow" data-fx="reveal" id="type-eyebrow">—</p>
+          <h1 class="h-1" data-fx="text" id="title">—</h1>
+          <div id="desc-body" class="lede" style="display:grid;gap:16px"></div>
+        </div>
+
+        <!-- immersive gallery -->
+        <section class="g-band" id="gallery" aria-label="Gallery"></section>
+
+        <!-- explore the home -->
+        <section class="rooms" id="rooms" aria-label="Explore the home">
+          <div class="rm-stage" id="rm-stage"></div>
+          <div class="rm-nav">
+            <p class="eyebrow eyebrow--bare" style="color:var(--champagne)">Explore the home</p>
+            <div id="rm-floors"></div>
+          </div>
+        </section>
+
+        <!-- key features -->
+        <section class="g-band" id="details">
+          <h2 class="h-2" data-fx="reveal" style="margin-bottom:26px">The particulars</h2>
+          <ul class="feat-list" id="features" data-fx="stagger" data-fx-step="60"></ul>
+          <div class="grid-4" style="margin-top:34px;gap:0;border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden" id="fact-strip"></div>
+        </section>
+
+        <!-- floor plan -->
+        <section class="g-band" id="plan">
+          <h2 class="h-2" data-fx="reveal" style="margin-bottom:26px">Floor plan</h2>
+          <div class="plan" data-fx="reveal" id="plan-box"></div>
+        </section>
+
+        <!-- money -->
+        <section class="g-band" id="money">
+          <h2 class="h-2" data-fx="reveal" style="margin-bottom:26px">The numbers</h2>
+          <div class="grid-2" style="align-items:start">
+            <div class="calc" data-fx="reveal">
+              <p class="h-label">Mortgage estimate</p>
+              <output id="mc-out">—</output>
+              <p class="muted" style="font-size:12.5px;margin-top:-8px">per month · repayment</p>
+              <div class="field"><label>Deposit — <span id="mc-dep-l">10%</span></label><input type="range" id="mc-dep" min="5" max="60" value="10"></div>
+              <div class="field"><label>Term — <span id="mc-term-l">30 years</span></label><input type="range" id="mc-term" min="10" max="35" value="30"></div>
+              <div class="field"><label>Rate — <span id="mc-rate-l">4.5%</span></label><input type="range" id="mc-rate" min="20" max="80" value="45"></div>
+            </div>
+            <div style="display:grid;gap:20px">
+              <div class="calc" data-fx="reveal" data-fx-delay="100" id="sdlt-box">
+                <p class="h-label">Stamp duty</p>
+                <output id="sd-out">—</output>
+                <p class="muted" style="font-size:13px" id="sd-note">Standard residential rates, England.</p>
+                <label class="check"><input type="checkbox" id="sd-add"><span class="box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m4.5 12.5 5 5 10-11"/></svg>
+                </span>Additional property (+5% surcharge)</label>
+              </div>
+              <div class="calc" data-fx="reveal" data-fx-delay="160">
+                <p class="h-label">Energy — EPC</p>
+                <div class="epc-scale" id="epc-scale"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- location -->
+        <section class="g-band" id="location">
+          <h2 class="h-2" data-fx="reveal" style="margin-bottom:8px">Around the address</h2>
+          <p class="muted" data-fx="reveal" id="loc-line" style="margin-bottom:30px">—</p>
+          <div class="near-cols" data-fx="stagger" data-fx-step="100">
+            <div><p class="h-label" style="margin-bottom:8px">Schools</p><dl id="near-schools"></dl></div>
+            <div><p class="h-label" style="margin-bottom:8px">Transport</p><dl id="near-transport"></dl></div>
+            <div><p class="h-label" style="margin-bottom:8px">Around the corner</p><dl id="near-amenities"></dl></div>
+          </div>
+        </section>
+      </article>
+
+      <!-- ═══ SIDE PANEL ═══ -->
+      <aside class="p-side">
+        <div class="side-card" data-fx="reveal">
+          <div style="display:flex;gap:16px;align-items:center">
+            <span class="avatar" id="ag-avatar">—</span>
+            <span><strong id="ag-name" style="font:600 15px/1.3 var(--sans)">—</strong><br><span class="muted" style="font-size:12.5px" id="ag-role">—</span></span>
+          </div>
+          <p class="muted" style="font-size:13px" id="ag-meta">—</p>
+          <button class="btn btn--bronze" id="side-viewing">Arrange viewing</button>
+          <form id="enq-form" style="display:grid;gap:14px" novalidate>
+            <div class="field"><label for="enq-name">Name</label><input id="enq-name" required></div>
+            <div class="field"><label for="enq-email">Email</label><input id="enq-email" type="email" required></div>
+            <div class="field"><label for="enq-msg">Message</label><textarea id="enq-msg" rows="3">I'd like more information about this property.</textarea></div>
+            <button class="btn btn--outline" type="submit">Make enquiry</button>
+          </form>
+          <div style="display:flex;gap:10px;justify-content:center;font-size:12.5px" class="muted">
+            <a id="ag-call" href="#" style="text-decoration:underline">Call</a> ·
+            <a id="ag-email" href="#" style="text-decoration:underline">Email</a> ·
+            <a id="ag-wa" href="#" rel="noopener" style="text-decoration:underline">WhatsApp</a>
+          </div>
+        </div>
+        <div class="side-card" data-fx="reveal" data-fx-delay="120" style="gap:10px">
+          <p class="h-label">Quick facts</p>
+          <dl id="side-facts" style="display:grid;gap:0"></dl>
+          <button class="chip" style="justify-content:center" id="side-compare">Add to comparison</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- similar -->
+    <section class="section--tight" style="padding-bottom:0">
+      <div class="section-head" style="margin-bottom:36px">
+        <div><p class="eyebrow" data-fx="reveal">Keep looking</p><h2 class="h-2" data-fx="reveal">Similar homes</h2></div>
+      </div>
+      <div class="grid-3" id="similar"></div>
+    </section>
+  </div>
+</main>
+
+<!-- 360 overlay -->
+<div class="tour-overlay" id="tour-overlay" role="dialog" aria-modal="true" aria-label="360 virtual tour">
+  <button class="icon-btn to-close" id="tour-close" aria-label="Close tour">✕</button>
+</div>
+
+<!-- mobile CTA -->
+<div class="m-enquire">
+  <button class="btn btn--bronze" id="m-viewing" data-nomag>Arrange viewing</button>
+  <button class="btn" id="m-tour" hidden data-nomag>◉ Tour</button>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui, S = HAL.seed;
+  ui.chrome({ page: "property", dark: true });
+
+  var id = new URLSearchParams(location.search).get("id") ||
+           (location.pathname.match(/property\/([a-z0-9-]+)/) || [])[1] || "king-street-penthouse";
+
+  api.properties.get(id).then(function (p) {
+    if (!p) {
+      document.getElementById("main").innerHTML = '<div class="container section">' +
+        ui.emptyState("This property has moved on.", "It may have been sold, let, or unpublished. The search has plenty more.",
+          '<a class="btn" href="search">Back to search</a>') + "</div>";
+      return;
+    }
+    render(p);
+    api.user.recent(p.id);
+    api.analytics.track("property.view", { id: p.id });
+  });
+
+  function render(p) {
+    document.title = p.title + " — " + api.fmt.price(p.price, p.status) + " — Halcyon";
+
+    /* schema.org Residence + Offer */
+    var ld = document.createElement("script"); ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org", "@type": p.type.indexOf("Apartment") >= 0 || p.type.indexOf("Penthouse") >= 0 ? "Apartment" : "House",
+      name: p.title, numberOfRooms: p.beds,
+      floorSize: { "@type": "QuantitativeValue", value: p.sqft, unitText: "sq ft" },
+      address: { "@type": "PostalAddress", streetAddress: p.addr, addressCountry: "GB" },
+      offers: { "@type": "Offer", price: p.price, priceCurrency: "GBP" }
+    });
+    document.head.appendChild(ld);
+
+    /* hero */
+    document.getElementById("hero-img").src = api.img(p.hero, 2000);
+    document.getElementById("hero-img").alt = p.title;
+    document.getElementById("h-price").textContent = api.fmt.price(p.price, p.status);
+    document.getElementById("h-specs").textContent =
+      (p.beds ? p.beds + " Bedrooms · " : "") + (p.baths ? p.baths + " Bathrooms · " : "") + Number(p.sqft).toLocaleString() + " sq ft";
+    document.getElementById("h-addr").textContent = p.addr;
+    document.getElementById("crumbs").innerHTML =
+      '<a href="./">Halcyon</a><span class="sep">/</span><a href="search?status=' + p.status + '">' + (p.status === "rent" ? "To rent" : p.status === "commercial" ? "Commercial" : "For sale") + "</a>" +
+      '<span class="sep">/</span><a href="areas?area=' + p.area + '">' + ui.esc(p.city) + "</a>";
+    document.getElementById("bar-price").textContent = api.fmt.price(p.price, p.status);
+    document.getElementById("bar-title").textContent = p.title + " — " + p.addr;
+
+    var save = document.getElementById("hero-save");
+    save.setAttribute("data-id", p.id);
+    save.innerHTML = ui.ICON.heartLine + ui.ICON.heartFill;
+    ui.refreshSavedCount();
+
+    /* description */
+    document.getElementById("type-eyebrow").textContent = p.type + " · " + p.city;
+    document.getElementById("title").textContent = p.title;
+    document.getElementById("desc-body").innerHTML = (p.desc || []).map(function (t) { return "<p>" + ui.esc(t) + "</p>"; }).join("");
+
+    /* gallery: full-bleed band + pairs */
+    var g = p.gallery || [];
+    var out = "";
+    if (g[1]) out += '<figure class="g-full" data-fx="reveal" data-fx-variant="scale"><img loading="lazy" src="' + api.img(g[1], 2000) + '" srcset="' + api.srcset(g[1]) + '" sizes="92vw" alt="Interior view of ' + ui.esc(p.title) + '"></figure>';
+    for (var i = 2; i + 1 < g.length; i += 2) {
+      out += '<div class="g-pair"><figure data-fx="reveal"><img loading="lazy" src="' + api.img(g[i], 1200) + '" alt="View ' + i + '"></figure>' +
+             '<figure data-fx="reveal" data-fx-delay="120"><img loading="lazy" src="' + api.img(g[i + 1], 900) + '" alt="View ' + (i + 1) + '"></figure></div>';
+    }
+    document.getElementById("gallery").innerHTML = out;
+
+    /* explore the home */
+    var stage = document.getElementById("rm-stage");
+    var floors = {};
+    (p.rooms || []).forEach(function (r, i) { (floors[r.floor] = floors[r.floor] || []).push({ r: r, i: i }); });
+    stage.innerHTML = (p.rooms || []).map(function (r, i) {
+      return '<img data-i="' + i + '" ' + (i ? 'loading="lazy" ' : "") + 'src="' + api.img(r.image, 1600) + '" alt="' + ui.esc(r.name) + '" class="' + (i === 0 ? "is-on" : "") + '">';
+    }).join("") + '<p class="rm-note" id="rm-note"></p>';
+    document.getElementById("rm-floors").innerHTML = Object.keys(floors).map(function (fl) {
+      return '<div style="display:grid;gap:8px;margin-bottom:12px"><p class="rm-floor">' + ui.esc(fl) + '</p><div class="rm-tabs">' +
+        floors[fl].map(function (x) { return '<button data-room="' + x.i + '"' + (x.i === 0 ? ' class="is-on"' : "") + ">" + ui.esc(x.r.name) + "</button>"; }).join("") +
+        "</div></div>";
+    }).join("");
+    function setRoom(i) {
+      stage.querySelectorAll("img").forEach(function (im) { im.classList.toggle("is-on", +im.getAttribute("data-i") === i); });
+      document.querySelectorAll(".rm-tabs button").forEach(function (b) { b.classList.toggle("is-on", +b.getAttribute("data-room") === i); });
+      document.getElementById("rm-note").textContent = p.rooms[i].note || "";
+    }
+    setRoom(0);
+    document.getElementById("rm-floors").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-room]"); if (b) setRoom(+b.getAttribute("data-room"));
+    });
+
+    /* features + fact strip */
+    document.getElementById("features").innerHTML = (p.features || []).map(function (f) { return "<li>" + ui.esc(f) + "</li>"; }).join("");
+    var facts = [["Type", p.type], ["Tenure", p.tenure], ["Council tax", "Band " + p.councilTax], ["EPC", p.epc]];
+    document.getElementById("fact-strip").innerHTML = facts.map(function (f) {
+      return '<div style="padding:20px;border-right:1px solid var(--line-soft)"><p class="h-label" style="margin-bottom:6px">' + f[0] + '</p><p style="font:600 14px/1.4 var(--sans)">' + ui.esc(f[1]) + "</p></div>";
+    }).join("");
+
+    /* floor plan — generated SVG */
+    document.getElementById("plan-box").innerHTML = planSVG(p.floorplan || []);
+
+    /* money */
+    var mc = { dep: 10, term: 30, rate: 4.5 };
+    function mortgage() {
+      if (p.status === "rent") {
+        document.getElementById("money").querySelector(".calc").innerHTML =
+          '<p class="h-label">Renting costs</p><output>' + api.fmt.pcm(p.price) + "</output>" +
+          '<p class="muted" style="font-size:13px">Deposit: 5 weeks\' rent (£' + Math.round(p.price * 12 / 52 * 5).toLocaleString() + '). Holding deposit: one week. No tenant fees.</p>';
+        return;
+      }
+      var loan = p.price * (1 - mc.dep / 100), r = mc.rate / 100 / 12, n = mc.term * 12;
+      var pay = loan * r / (1 - Math.pow(1 + r, -n));
+      document.getElementById("mc-out").textContent = "£" + Math.round(pay).toLocaleString();
+      document.getElementById("mc-dep-l").textContent = mc.dep + "% (£" + Math.round(p.price * mc.dep / 100).toLocaleString() + ")";
+      document.getElementById("mc-term-l").textContent = mc.term + " years";
+      document.getElementById("mc-rate-l").textContent = mc.rate.toFixed(1) + "%";
+    }
+    ["dep", "term", "rate"].forEach(function (k) {
+      var elx = document.getElementById("mc-" + k);
+      if (elx) elx.addEventListener("input", function () { mc[k] = k === "rate" ? +this.value / 10 : +this.value; mortgage(); });
+    });
+    mortgage();
+
+    function sdlt() {
+      if (p.status !== "sale") { document.getElementById("sdlt-box").style.display = "none"; return; }
+      var v = p.price, extra = document.getElementById("sd-add").checked;
+      var bands = [[125000, 0], [250000, .02], [925000, .05], [1500000, .10], [Infinity, .12]];
+      var tax = 0, prev = 0;
+      bands.forEach(function (b) { if (v > prev) { tax += (Math.min(v, b[0]) - prev) * b[1]; prev = b[0]; } });
+      if (extra) tax += v * 0.05;
+      document.getElementById("sd-out").textContent = "£" + Math.round(tax).toLocaleString();
+    }
+    document.getElementById("sd-add").addEventListener("change", sdlt);
+    sdlt();
+
+    /* EPC scale */
+    var EPC = [["A", "#2e7d43", 100], ["B", "#4c9e52", 88], ["C", "#8fb742", 76], ["D", "#e3c035", 64], ["E", "#e59c33", 52], ["F", "#dd6f2c", 40], ["G", "#c8442c", 30]];
+    document.getElementById("epc-scale").innerHTML = EPC.map(function (r) {
+      return '<div class="epc-row"><span class="epc-bar" style="background:' + r[1] + ";width:" + r[2] + '%">' + r[0] + "</span>" +
+        (r[0] === p.epc ? '<span class="epc-you" title="This property">' + p.epc + "</span>" : "<span></span>") + "</div>";
+    }).join("");
+
+    /* location */
+    document.getElementById("loc-line").textContent = p.addr + " — " + p.postcode;
+    function nearRows(list, elId) {
+      document.getElementById(elId).innerHTML = (list || []).map(function (r) {
+        return '<div class="near-row"><dt>' + ui.esc(r[0]) + "</dt><dd>" + ui.esc(r[1]) + (r[2] ? "<br><span style='font-size:11.5px'>" + ui.esc(r[2]) + "</span>" : "") + "</dd></div>";
+      }).join("") || '<div class="near-row"><dt class="muted">Ask us — we know the street.</dt></div>';
+    }
+    nearRows(p.nearby.schools, "near-schools");
+    nearRows(p.nearby.transport, "near-transport");
+    nearRows(p.nearby.amenities, "near-amenities");
+
+    /* agent panel */
+    api.agents.get(p.agent).then(function (a) {
+      if (!a) return;
+      document.getElementById("ag-avatar").textContent = a.name.split(" ").map(function (w) { return w[0]; }).join("");
+      document.getElementById("ag-name").textContent = a.name;
+      document.getElementById("ag-role").textContent = a.role;
+      document.getElementById("ag-meta").textContent = "Replies in ~" + a.avgResponseMins + " min · " + Math.round(a.responseRate * 100) + "% response rate";
+      document.getElementById("ag-call").href = "tel:" + a.phone.replace(/\s/g, "");
+      document.getElementById("ag-email").href = "mailto:" + a.email;
+      document.getElementById("ag-wa").href = S.BIZ.whatsapp;
+    });
+    var sf = [["Price", api.fmt.price(p.price, p.status)], ["Bedrooms", p.beds || "—"], ["Bathrooms", p.baths || "—"], ["Size", api.fmt.sqft(p.sqft)], ["£/sq ft", p.status === "sale" ? "£" + Math.round(p.price / p.sqft) : "—"], ["Tenure", p.tenure], ["EPC", p.epc]];
+    document.getElementById("side-facts").innerHTML = sf.map(function (r) {
+      return '<div class="near-row"><dt class="muted">' + r[0] + "</dt><dd style='font-weight:600'>" + ui.esc(String(r[1])) + "</dd></div>";
+    }).join("");
+    document.getElementById("side-compare").setAttribute("data-compare-id", p.id);
+
+    /* enquiry form */
+    document.getElementById("enq-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = document.getElementById("enq-name"), email = document.getElementById("enq-email");
+      var ok = true;
+      [[name, name.value.trim()], [email, /.+@.+\..+/.test(email.value)]].forEach(function (pair) {
+        pair[0].closest(".field").classList.toggle("is-invalid", !pair[1]); if (!pair[1]) ok = false;
+      });
+      if (!ok) return;
+      api.enquiries.create({ propertyId: p.id, name: name.value, email: email.value, message: document.getElementById("enq-msg").value })
+        .then(function () { ui.toast("Enquiry sent — " + document.getElementById("ag-name").textContent + " will come back to you.", "good"); e.target.reset(); });
+    });
+
+    /* viewings */
+    ["cta-viewing", "side-viewing", "m-viewing"].forEach(function (bid) {
+      document.getElementById(bid).addEventListener("click", function () { ui.viewingModal(p); });
+    });
+
+    /* 360 tour — launches the existing billy360 platform in an overlay */
+    api.tours.forProperty(p.id).then(function (t) {
+      if (!t) return;
+      ["cta-tour", "m-tour"].forEach(function (bid) {
+        var b = document.getElementById(bid); b.hidden = false;
+        b.addEventListener("click", function () { openTour(t); });
+      });
+      if (location.hash === "#tour") openTour(t);
+    });
+    function openTour(t) {
+      var ov = document.getElementById("tour-overlay");
+      if (!ov.querySelector("iframe")) {
+        var fr = document.createElement("iframe");
+        fr.src = api.tours.launchUrl(t);
+        fr.allow = "fullscreen; gyroscope; accelerometer; xr-spatial-tracking";
+        fr.setAttribute("allowfullscreen", "");
+        fr.title = "360 virtual tour of " + p.title;
+        ov.appendChild(fr);
+      }
+      ov.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+      api.analytics.track("tour.session", { id: t.tourId, from: "property" });
+    }
+    document.getElementById("tour-close").addEventListener("click", function () {
+      document.getElementById("tour-overlay").classList.remove("is-open");
+      document.body.style.overflow = "";
+    });
+
+    /* similar */
+    api.properties.similar(p.id, 3).then(function (sim) {
+      var box = document.getElementById("similar");
+      box.innerHTML = sim.map(function (s, i) { return ui.propCard(s, { delay: i * 90 }); }).join("");
+      ui.hydrate(box);
+    });
+
+    ui.hydrate(document.body);
+  }
+
+  /* minimalist architectural floor plan SVG */
+  function planSVG(floors) {
+    if (!floors.length) return '<p class="muted">Floor plan available on request.</p>';
+    var w = 720, pad = 10, y = 0, out = "";
+    floors.forEach(function (rooms, fi) {
+      var rowH = 120, x = pad;
+      var weights = rooms.map(function (r) { var m = r.match(/([\d.]+)×/); return m ? +m[1] : 4; });
+      var total = weights.reduce(function (a, b) { return a + b; }, 0);
+      out += '<text x="' + pad + '" y="' + (y + 24) + '" font-family="Space Grotesk,sans-serif" font-size="11" letter-spacing="3" fill="#a07c48">FLOOR ' + (fi + 1) + "</text>";
+      rooms.forEach(function (r, ri) {
+        var rw = (w - pad * 2) * weights[ri] / total;
+        out += '<rect x="' + x + '" y="' + (y + 34) + '" width="' + (rw - 4) + '" height="' + rowH + '" fill="none" stroke="#16150f" stroke-width="1.2"/>';
+        var label = r.replace(/\s[\d.]+×[\d.]+m/, ""), dims = (r.match(/[\d.]+×[\d.]+m/) || [""])[0];
+        out += '<text x="' + (x + 10) + '" y="' + (y + 56) + '" font-family="Inter,sans-serif" font-size="12" fill="#16150f">' + label + "</text>";
+        if (dims) out += '<text x="' + (x + 10) + '" y="' + (y + 72) + '" font-family="Space Grotesk,sans-serif" font-size="10" fill="#7d7a6c">' + dims + "</text>";
+        x += rw;
+      });
+      y += rowH + 48;
+    });
+    return '<svg viewBox="0 0 ' + w + " " + y + '" role="img" aria-label="Indicative floor plan">' + out + "</svg>";
+  }
+})();
+</script>
+</body>
+</html>

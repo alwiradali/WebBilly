@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New developments — Halcyon</title>
+<meta name="description" content="New homes and developments marketed by Halcyon across Manchester and Cheshire.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  .dev-block { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(24px, 4vw, 72px); align-items: center; padding-block: clamp(40px, 6vw, 88px); border-bottom: 1px solid var(--line-soft); }
+  .dev-block:nth-child(even) { direction: rtl; }
+  .dev-block:nth-child(even) > * { direction: ltr; }
+  .dev-block figure { border-radius: var(--r-s); overflow: hidden; aspect-ratio: 4/3; }
+  .dev-block figure img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .dev-block:hover figure img { transform: scale(1.04); }
+  .dev-facts { display: flex; gap: clamp(20px, 3vw, 48px); margin-top: 26px; flex-wrap: wrap; }
+  @media (max-width: 860px) { .dev-block { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main id="main" class="section" style="padding-top:calc(var(--nav-h) + clamp(32px,5vw,64px))">
+  <div class="container">
+    <p class="eyebrow" data-fx="reveal">New homes</p>
+    <h1 class="h-1" data-fx="text" style="margin:16px 0 12px">Developments worth the hoarding</h1>
+    <p class="lede" data-fx="reveal">We market a handful of schemes at a time — the ones we would buy into ourselves — and represent them from first fix to final unit.</p>
+    <div id="devs"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui;
+  ui.chrome({ page: "developments" });
+  api.developments.list().then(function (devs) {
+    document.getElementById("devs").innerHTML = devs.map(function (d) {
+      return '<article class="dev-block" id="' + d.id + '">' +
+        '<figure data-fx="reveal" data-fx-variant="scale"><img loading="lazy" src="' + api.img(d.hero, 1400) + '" alt="' + ui.esc(d.name) + '"></figure>' +
+        '<div data-fx="reveal" data-fx-delay="120">' +
+        '<p class="eyebrow">' + ui.esc(d.developer) + " · " + ui.esc(d.city) + "</p>" +
+        '<h2 class="h-1" style="margin:14px 0 12px">' + ui.esc(d.name) + "</h2>" +
+        '<p class="lede">' + ui.esc(d.strap) + ".</p>" +
+        '<ul style="margin-top:20px;display:grid;gap:8px;font-size:14.5px;color:var(--ink-2)">' +
+        d.highlights.map(function (h) { return '<li style="display:flex;gap:10px"><span style="color:var(--bronze)">—</span>' + ui.esc(h) + "</li>"; }).join("") + "</ul>" +
+        '<div class="dev-facts">' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.7rem">' + api.fmt.price(d.priceFrom) + '</span><span class="stat-label">From</span></div>' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.7rem">' + d.units + '</span><span class="stat-label">Residences</span></div>' +
+        '<div class="stat"><span class="stat-num" style="font-size:1.7rem">' + ui.esc(d.completion) + '</span><span class="stat-label">Completion</span></div>' +
+        "</div>" +
+        '<div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="search?area=' + d.area + '">Available units <span class="btn-arrow">→</span></a><a class="btn btn--ghost" href="agents">Talk to the team</a></div>' +
+        "</div></article>";
+    }).join("");
+    ui.hydrate(document.getElementById("devs"));
+    if (location.hash) { var t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+  });
+})();
+</script>
+</body>
+</html>

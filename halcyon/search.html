@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search properties — Halcyon</title>
+<meta name="description" content="Search Halcyon's curated portfolio across Manchester, Cheshire and London — split-screen results and map, intelligent filters, saved searches.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="css/halcyon.css">
+<style>
+  body { overflow: hidden; }
+  .search-app { display: grid; grid-template-columns: minmax(560px, 46%) 1fr; height: 100dvh; padding-top: var(--nav-h); }
+  .results-pane { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--line-soft); }
+
+  .results-bar { padding: 16px clamp(16px, 2.4vw, 32px); border-bottom: 1px solid var(--line-soft); display: grid; gap: 14px; background: var(--paper); }
+  .rb-top { display: flex; gap: 12px; align-items: center; }
+  .rb-top .field { flex: 1; }
+  .rb-top .field input { padding: 12px 2px; }
+  .rb-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .rb-chips::-webkit-scrollbar { display: none; }
+  .rb-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .rb-meta .count { font: 600 13px/1 var(--grot); letter-spacing: .06em; }
+  .rb-meta select { border: 0; background: transparent; font: 600 12px/1 var(--grot); letter-spacing: .08em; color: var(--ink-2); cursor: pointer; }
+
+  .results-scroll { flex: 1; overflow-y: auto; padding: clamp(16px, 2.4vw, 32px); }
+  .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px, 2vw, 28px); }
+  @media (max-width: 1450px) { .results-grid { grid-template-columns: 1fr 1fr; } }
+  .prop-card.is-hot .card-media { outline: 2px solid var(--bronze); outline-offset: 3px; }
+
+  .map-pane { position: relative; background: var(--night); min-width: 0; }
+  .map-pane canvas { position: absolute; inset: 0; cursor: grab; }
+  .map-tools { position: absolute; top: 18px; right: 18px; display: grid; gap: 8px; z-index: 5; }
+  .map-tools .icon-btn { background: rgba(22,22,28,.9); border-color: var(--line-inv); color: var(--ink-inv); backdrop-filter: blur(6px); }
+  .map-tools .icon-btn:hover { color: var(--champagne); border-color: var(--bronze); }
+  .map-tools .icon-btn.is-on { background: var(--champagne); color: var(--night); border-color: var(--champagne); }
+  .map-hint { position: absolute; top: 18px; left: 18px; z-index: 5; background: rgba(22,22,28,.88); color: var(--ink-inv-2); padding: 10px 16px; border-radius: 999px; font: 500 12px/1.4 var(--sans); backdrop-filter: blur(6px); border: 1px solid var(--line-inv); }
+
+  /* map hover preview card */
+  .map-preview { position: absolute; z-index: 6; left: 18px; bottom: 18px; width: min(360px, calc(100% - 36px)); background: var(--paper); border-radius: var(--r-m); overflow: hidden; box-shadow: var(--shadow-2); transform: translateY(16px); opacity: 0; pointer-events: none; transition: all .35s var(--ease); }
+  .map-preview.is-live { transform: none; opacity: 1; pointer-events: auto; }
+  .map-preview img { width: 100%; aspect-ratio: 16/8; object-fit: cover; }
+  .map-preview .mp-body { padding: 16px 18px; display: grid; gap: 4px; }
+
+  /* filters drawer content */
+  .filters-body { display: grid; gap: 28px; }
+  .filters-body .fb-group { display: grid; gap: 14px; }
+  .filters-body .fb-group > .h-label { padding-bottom: 4px; border-bottom: 1px solid var(--line-soft); }
+  .fb-flags { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+
+  /* mobile: stacked panes with toggle */
+  .view-toggle { display: none; }
+  @media (max-width: 1020px) {
+    .search-app { grid-template-columns: 1fr; }
+    .map-pane { display: none; position: fixed; inset: var(--nav-h) 0 0 0; z-index: 90; }
+    body.map-view .map-pane { display: block; }
+    body.map-view .results-pane { visibility: hidden; }
+    .view-toggle { display: inline-flex; position: fixed; z-index: 95; bottom: 84px; left: 50%; transform: translateX(-50%); }
+    .results-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) { body { overflow: auto; } .search-app { height: auto; min-height: 100dvh; } .results-scroll { overflow: visible; } }
+</style>
+</head>
+<body>
+
+<main id="main" class="search-app">
+  <!-- ═══ RESULTS ═══ -->
+  <section class="results-pane" aria-label="Search results">
+    <div class="results-bar">
+      <div class="rb-top">
+        <div class="field">
+          <label class="visually-hidden" for="q">Search location or describe what you want</label>
+          <input id="q" placeholder="Search a place — or describe it: “2 bed loft in Ancoats with parking”" autocomplete="off">
+        </div>
+        <button class="btn btn--sm" id="open-filters">Filters <span class="nav-count is-live" id="filter-count" style="position:static;transform:scale(1)">0</span></button>
+      </div>
+      <div class="rb-chips" id="chips"></div>
+      <div class="rb-meta">
+        <span class="count" id="count" aria-live="polite">Searching…</span>
+        <span style="display:flex;gap:18px;align-items:center">
+          <button class="lnk" style="padding-bottom:2px;font-size:11px" id="save-search">Save search</button>
+          <label class="visually-hidden" for="sort">Sort</label>
+          <select id="sort">
+            <option value="curated">Curated</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="size">Size</option>
+          </select>
+        </span>
+      </div>
+    </div>
+    <div class="results-scroll" id="scroll">
+      <div class="results-grid" id="grid"></div>
+      <div id="state"></div>
+    </div>
+  </section>
+
+  <!-- ═══ MAP ═══ -->
+  <section class="map-pane" aria-label="Property map">
+    <canvas id="map"></canvas>
+    <p class="map-hint" id="map-hint">Drag to explore · scroll to zoom · click a price</p>
+    <div class="map-tools">
+      <button class="icon-btn" id="zoom-in" aria-label="Zoom in">+</button>
+      <button class="icon-btn" id="zoom-out" aria-label="Zoom out">−</button>
+      <button class="icon-btn" id="fit" aria-label="Fit all results" title="Fit results">⌂</button>
+      <button class="icon-btn" id="draw" aria-label="Draw a search area" title="Draw search area">✎</button>
+    </div>
+    <a class="map-preview" id="preview" href="#" aria-hidden="true">
+      <img alt="" id="pv-img">
+      <span class="mp-body">
+        <span class="price" id="pv-price">—</span>
+        <strong style="font:600 15px/1.4 var(--sans)" id="pv-title">—</strong>
+        <span class="muted" style="font-size:13px" id="pv-specs">—</span>
+      </span>
+    </a>
+  </section>
+
+  <button class="btn view-toggle" id="view-toggle" data-nomag>Map</button>
+</main>
+
+<!-- filters drawer -->
+<div class="drawer-overlay" id="filters-overlay"></div>
+<aside class="drawer" id="filters" aria-label="Filters">
+  <div class="drawer-head">
+    <strong style="font:600 14px/1 var(--grot);letter-spacing:.14em;text-transform:uppercase">Refine</strong>
+    <button class="icon-btn" data-close-filters aria-label="Close filters">✕</button>
+  </div>
+  <div class="drawer-body filters-body">
+    <div class="fb-group">
+      <p class="h-label">Market</p>
+      <div class="seg" id="f-status">
+        <button data-v="sale" class="is-on">Buy</button><button data-v="rent">Rent</button><button data-v="commercial">Commercial</button>
+      </div>
+    </div>
+    <div class="fb-group">
+      <p class="h-label">Price</p>
+      <div style="display:flex;justify-content:space-between;font:600 13px/1 var(--grot)"><span id="price-lo">£0</span><span id="price-hi">No max</span></div>
+      <div class="range-wrap">
+        <span class="range-track"><span class="range-active" id="price-active"></span></span>
+        <input type="range" id="f-min" min="0" max="100" value="0" aria-label="Minimum price">
+        <input type="range" id="f-max" min="0" max="100" value="100" aria-label="Maximum price">
+      </div>
+    </div>
+    <div class="fb-group">
+      <p class="h-label">Home</p>
+      <div class="grid-2" style="gap:16px">
+        <div class="field"><label for="f-type">Type</label><select id="f-type"><option value="">Any</option><option>House</option><option>Apartment</option><option>Penthouse</option><option>Loft</option><option>Townhouse</option><option>Bungalow</option><option>Barn</option></select></div>
+        <div class="field"><label for="f-beds">Min beds</label><select id="f-beds"><option value="">Any</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="field"><label for="f-baths">Min baths</label><select id="f-baths"><option value="">Any</option><option>1</option><option>2</option><option>3</option></select></div>
+        <div class="field"><label for="f-sqft">Min sq ft</label><select id="f-sqft"><option value="">Any</option><option value="500">500</option><option value="1000">1,000</option><option value="2000">2,000</option><option value="3000">3,000</option></select></div>
+      </div>
+    </div>
+    <div class="fb-group">
+      <p class="h-label">Must have</p>
+      <div class="fb-flags" id="f-flags">
+        <!-- populated by JS -->
+      </div>
+    </div>
+    <div class="fb-group">
+      <p class="h-label">Energy</p>
+      <div class="field"><label for="f-epc">Minimum EPC rating</label><select id="f-epc"><option value="">Any</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn--ghost" id="f-clear" data-nomag>Clear all</button>
+    <button class="btn btn--bronze" id="f-apply" data-nomag>Show results</button>
+  </div>
+</aside>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/map.js"></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var api = HAL.api, ui = HAL.ui;
+  ui.chrome({ page: "search", footer: false });
+
+  var PRICE_STOPS = [0, 100000, 200000, 300000, 400000, 500000, 650000, 800000, 1000000, 1500000, 2000000, 3000000, 5000000, Infinity];
+  var RENT_STOPS = [0, 750, 1000, 1250, 1500, 2000, 2500, 3000, 4000, Infinity];
+  var FLAGS = [["garden", "Garden"], ["parking", "Parking"], ["garage", "Garage"], ["balcony", "Balcony"], ["furnished", "Furnished"], ["pets", "Pets allowed"], ["newBuild", "New build"], ["chainFree", "Chain-free"], ["sharedOwnership", "Shared ownership"], ["retirement", "Retirement"], ["investment", "Investment"], ["tour", "Virtual tour"], ["video", "Video"]];
+
+  var f = { status: "sale" };           /* live filter state */
+  var sort = "curated";
+  var rows = [];                        /* current results */
+  var map = HAL.map.create(document.getElementById("map"));
+  var mapMoved = false;
+
+  /* ── url → state ── */
+  var qs = new URLSearchParams(location.search);
+  if (qs.get("nl")) {
+    f = api.search.parse(qs.get("nl"));
+    document.getElementById("q").value = qs.get("nl");
+    if (!f.status) f.status = "sale";
+  } else {
+    qs.forEach(function (v, k) {
+      if (["status", "q", "type", "area", "city", "epc"].indexOf(k) >= 0) f[k] = v;
+      else if (["maxPrice", "minPrice", "minBeds", "minBaths", "minSqft", "maxDays"].indexOf(k) >= 0) f[k] = +v;
+      else f[k] = true; /* boolean flags like garden=1, tour=1, newBuild=1 */
+    });
+    if (!f.status) f.status = "sale";
+    if (f.q) document.getElementById("q").value = f.q;
+  }
+
+  /* ── filter drawer wiring ── */
+  var drawer = document.getElementById("filters"), overlay = document.getElementById("filters-overlay");
+  document.getElementById("open-filters").addEventListener("click", function () {
+    syncDrawer();
+    drawer.classList.add("is-open"); overlay.classList.add("is-open");
+  });
+  function closeDrawer() { drawer.classList.remove("is-open"); overlay.classList.remove("is-open"); }
+  overlay.addEventListener("click", closeDrawer);
+  drawer.querySelector("[data-close-filters]").addEventListener("click", closeDrawer);
+
+  var flagsBox = document.getElementById("f-flags");
+  flagsBox.innerHTML = FLAGS.map(function (fl) {
+    return '<label class="check"><input type="checkbox" data-flag="' + fl[0] + '"><span class="box">' + ui.ICON.tick + "</span>" + fl[1] + "</label>";
+  }).join("");
+
+  document.getElementById("f-status").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    this.querySelectorAll("button").forEach(function (x) { x.classList.remove("is-on"); });
+    b.classList.add("is-on");
+    syncPriceLabels();
+  });
+
+  var fMin = document.getElementById("f-min"), fMax = document.getElementById("f-max");
+  function stops() { return drawerStatus() === "rent" ? RENT_STOPS : PRICE_STOPS; }
+  function drawerStatus() { return document.querySelector("#f-status .is-on").getAttribute("data-v"); }
+  function stopLabel(v, i, st) {
+    if (v === 0) return "£0";
+    if (v === Infinity) return "No max";
+    return drawerStatus() === "rent" ? "£" + v.toLocaleString() + " pcm" : (v >= 1e6 ? "£" + (v / 1e6) + "m" : "£" + (v / 1000) + "k");
+  }
+  function syncPriceLabels() {
+    var st = stops();
+    fMin.max = fMax.max = st.length - 1;
+    if (+fMin.value >= st.length) fMin.value = 0;
+    if (+fMax.value >= st.length) fMax.value = st.length - 1;
+    if (+fMin.value >= +fMax.value) fMin.value = Math.max(0, fMax.value - 1);
+    document.getElementById("price-lo").textContent = stopLabel(st[fMin.value]);
+    document.getElementById("price-hi").textContent = stopLabel(st[fMax.value]);
+    var act = document.getElementById("price-active");
+    act.style.left = (fMin.value / (st.length - 1) * 100) + "%";
+    act.style.right = (100 - fMax.value / (st.length - 1) * 100) + "%";
+  }
+  fMin.addEventListener("input", syncPriceLabels);
+  fMax.addEventListener("input", syncPriceLabels);
+
+  function syncDrawer() {
+    document.querySelectorAll("#f-status button").forEach(function (b) {
+      b.classList.toggle("is-on", b.getAttribute("data-v") === f.status);
+    });
+    var st = stops();
+    fMin.max = fMax.max = st.length - 1;
+    fMin.value = f.minPrice ? nearestStop(f.minPrice) : 0;
+    fMax.value = f.maxPrice ? nearestStop(f.maxPrice) : st.length - 1;
+    document.getElementById("f-type").value = cap(f.type || "");
+    document.getElementById("f-beds").value = f.minBeds || "";
+    document.getElementById("f-baths").value = f.minBaths || "";
+    document.getElementById("f-sqft").value = f.minSqft || "";
+    document.getElementById("f-epc").value = f.epc || "";
+    flagsBox.querySelectorAll("input").forEach(function (c) { c.checked = !!f[c.getAttribute("data-flag")]; });
+    syncPriceLabels();
+  }
+  function nearestStop(v) {
+    var st = stops(), best = 0;
+    st.forEach(function (s, i) { if (Math.abs(s - v) < Math.abs(st[best] - v)) best = i; });
+    return best;
+  }
+  function cap(s) { return s ? s[0].toUpperCase() + s.slice(1) : ""; }
+
+  document.getElementById("f-apply").addEventListener("click", function () {
+    var st = stops();
+    var nf = { status: drawerStatus() };
+    if (f.q) nf.q = f.q;
+    if (+fMin.value > 0) nf.minPrice = st[fMin.value];
+    if (+fMax.value < st.length - 1) nf.maxPrice = st[fMax.value];
+    var type = document.getElementById("f-type").value; if (type) nf.type = type;
+    var beds = document.getElementById("f-beds").value; if (beds) nf.minBeds = +beds;
+    var baths = document.getElementById("f-baths").value; if (baths) nf.minBaths = +baths;
+    var sqft = document.getElementById("f-sqft").value; if (sqft) nf.minSqft = +sqft;
+    var epc = document.getElementById("f-epc").value; if (epc) nf.epc = epc;
+    flagsBox.querySelectorAll("input").forEach(function (c) { if (c.checked) nf[c.getAttribute("data-flag")] = true; });
+    f = nf; closeDrawer(); run(true);
+  });
+  document.getElementById("f-clear").addEventListener("click", function () {
+    f = { status: drawerStatus() }; syncDrawer();
+  });
+
+  /* ── chips (removable active filters) ── */
+  function chipLabel(k, v) {
+    var names = { q: '"' + v + '"', type: cap(String(v)), minBeds: v + "+ beds", minBaths: v + "+ baths", minSqft: v.toLocaleString() + "+ sq ft", epc: "EPC " + v + "+", area: cap(String(v)).replace(/-/g, " "), city: v, maxDays: "Added ≤" + v + "d", minPrice: "From " + money(v), maxPrice: "To " + money(v) };
+    if (names[k]) return names[k];
+    var fl = FLAGS.filter(function (x) { return x[0] === k; })[0];
+    return fl ? fl[1] : k;
+  }
+  function money(v) { return v >= 1e6 ? "£" + (v / 1e6) + "m" : v >= 1000 ? "£" + Math.round(v / 1000) + "k" : "£" + v; }
+  function renderChips() {
+    var box = document.getElementById("chips");
+    var keys = Object.keys(f).filter(function (k) { return k !== "status" && f[k]; });
+    box.innerHTML = keys.map(function (k) {
+      return '<button class="chip is-on" data-unchip="' + k + '">' + ui.esc(chipLabel(k, f[k])) + ' <span class="chip-x">×</span></button>';
+    }).join("") || '<span class="muted" style="font-size:12.5px;padding:6px 0">No filters — showing the full ' + (f.status === "rent" ? "rental" : f.status === "commercial" ? "commercial" : "sales") + " portfolio</span>";
+    document.getElementById("filter-count").textContent = keys.length;
+    box.querySelectorAll("[data-unchip]").forEach(function (b) {
+      b.addEventListener("click", function () { delete f[b.getAttribute("data-unchip")]; run(true); });
+    });
+  }
+
+  /* ── search box: free text or natural language ── */
+  var qEl = document.getElementById("q"), qT = null;
+  qEl.addEventListener("input", function () {
+    clearTimeout(qT);
+    qT = setTimeout(function () {
+      var text = qEl.value.trim();
+      if (!text) { delete f.q; run(true); return; }
+      if (/\d|under|over|bed|garden|parking|pet|furnish|rent|buy|balcon|tour/i.test(text) && text.split(" ").length > 2) {
+        var parsed = api.search.parse(text);
+        parsed.status = parsed.status || f.status;
+        f = parsed;
+        ui.toast("Translated to " + Object.keys(parsed).length + " filters");
+      } else { f.q = text; }
+      run(true);
+    }, 450);
+  });
+
+  document.getElementById("sort").addEventListener("change", function () { sort = this.value; run(false); });
+
+  /* ── save search ── */
+  document.getElementById("save-search").addEventListener("click", function () {
+    var label = (f.q ? '"' + f.q + '" — ' : "") + (f.status === "rent" ? "Rentals" : f.status === "commercial" ? "Commercial" : "For sale") +
+      (f.minBeds ? ", " + f.minBeds + "+ beds" : "") + (f.maxPrice ? ", to " + money(f.maxPrice) : "");
+    api.search.save(f, label).then(function () { ui.toast("Search saved — alerts on. Manage in My Halcyon.", "good"); });
+  });
+
+  /* ── run search ── */
+  var runToken = 0;
+  function run(resetMap) {
+    var token = ++runToken;
+    renderChips();
+    document.getElementById("grid").innerHTML = ui.skeletonCards(6);
+    document.getElementById("state").innerHTML = "";
+    document.getElementById("count").textContent = "Searching…";
+    var qf = Object.assign({}, f);
+    if (mapMoved && !resetMap) qf.bounds = map.bounds();
+    api.search.run(qf, sort).then(function (res) {
+      if (token !== runToken) return;
+      rows = res.results.filter(function (p) { return map.inPolygon(p); });
+      var grid = document.getElementById("grid");
+      document.getElementById("count").textContent = rows.length + (rows.length === 1 ? " property" : " properties") + (map.hasPolygon() ? " in your area" : "");
+      if (!rows.length) {
+        grid.innerHTML = "";
+        document.getElementById("state").innerHTML = ui.emptyState(
+          "Nothing matches — yet.",
+          "Loosen a filter or two, or save this search and we'll alert you the moment something arrives.",
+          '<button class="btn btn--outline" id="es-clear">Clear filters</button>');
+        var b = document.getElementById("es-clear");
+        if (b) b.addEventListener("click", function () { f = { status: f.status }; map.drawClear(); run(true); });
+      } else {
+        grid.innerHTML = rows.map(function (p, i) { return ui.propCard(p, { delay: Math.min(i * 60, 300) }); }).join("");
+        ui.hydrate(grid);
+        wireCardHover();
+      }
+      ui.refreshSavedCount();
+      map.setData(rows);
+      if (resetMap && rows.length) { mapMoved = false; map.fit(rows); }
+      var url = new URLSearchParams();
+      Object.keys(f).forEach(function (k) { if (f[k]) url.set(k, f[k] === true ? "1" : f[k]); });
+      history.replaceState(null, "", "search?" + url.toString());
+    });
+  }
+
+  /* ── card ↔ map sync ── */
+  function wireCardHover() {
+    document.querySelectorAll("#grid .prop-card").forEach(function (c) {
+      c.addEventListener("pointerenter", function () { map.hover(c.getAttribute("data-prop")); });
+      c.addEventListener("pointerleave", function () { map.hover(null); });
+    });
+  }
+  var preview = document.getElementById("preview");
+  map.on("hover", function (id) {
+    document.querySelectorAll("#grid .prop-card").forEach(function (c) {
+      c.classList.toggle("is-hot", c.getAttribute("data-prop") === id);
+    });
+    if (!id) { preview.classList.remove("is-live"); preview.setAttribute("aria-hidden", "true"); return; }
+    var p = rows.filter(function (r) { return r.id === id; })[0];
+    if (!p) return;
+    document.getElementById("pv-img").src = api.img(p.hero, 700);
+    document.getElementById("pv-price").textContent = api.fmt.price(p.price, p.status);
+    document.getElementById("pv-title").textContent = p.title;
+    document.getElementById("pv-specs").textContent = (p.beds ? p.beds + " bed · " : "") + p.type + " · " + p.addr;
+    preview.href = "property?id=" + p.id;
+    preview.classList.add("is-live"); preview.setAttribute("aria-hidden", "false");
+  });
+  map.on("select", function (id) {
+    if (!id) return;
+    var card = document.querySelector('#grid .prop-card[data-prop="' + id + '"]');
+    if (card) card.scrollIntoView({ behavior: HAL.motion.reduced ? "auto" : "smooth", block: "center" });
+    map.hover(id);
+  });
+  var moveT = null;
+  map.on("move", function () {
+    mapMoved = true;
+    clearTimeout(moveT); moveT = setTimeout(function () { run(false); }, 350);
+  });
+
+  /* ── map tools ── */
+  document.getElementById("zoom-in").addEventListener("click", function () { map.zoomBy(0.8); });
+  document.getElementById("zoom-out").addEventListener("click", function () { map.zoomBy(-0.8); });
+  document.getElementById("fit").addEventListener("click", function () { map.drawClear(); mapMoved = false; run(true); });
+  var drawBtn = document.getElementById("draw");
+  drawBtn.addEventListener("click", function () {
+    if (drawBtn.classList.contains("is-on")) {
+      drawBtn.classList.remove("is-on");
+      map.drawFinish();
+      document.getElementById("map-hint").textContent = map.hasPolygon() ? "Showing homes inside your drawn area — ⌂ to clear" : "Drag to explore · scroll to zoom · click a price";
+      run(false);
+    } else {
+      drawBtn.classList.add("is-on");
+      map.drawStart();
+      document.getElementById("map-hint").textContent = "Click points around your area, then press ✎ again to finish";
+    }
+  });
+
+  /* ── mobile view toggle ── */
+  var vt = document.getElementById("view-toggle");
+  vt.addEventListener("click", function () {
+    var on = document.body.classList.toggle("map-view");
+    vt.textContent = on ? "List" : "Map";
+  });
+
+  run(true);
+})();
+</script>
+</body>
+</html>
