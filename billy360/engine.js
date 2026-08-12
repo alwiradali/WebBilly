@@ -1137,12 +1137,28 @@
       } catch (e) { /* a nicety, never a blocker */ }
     }
 
-    function loadPano(room, kind, cb) {
-      var im = new Image();
-      im.crossOrigin = "anonymous";
-      im.onload = function () {
-        /* captures arrive at any size — square them to POT so 360° wraps */
-        var tw = Math.min(pot(im.width), MAXTEX), th = tw / 2, src = im;
+    /* Real captures arrive together, and each one costs a JPEG decode plus a
+       full-frame GPU upload. Fire them all at once and a modest laptop locks
+       up in exactly the way the bake scheduler was built to prevent — so
+       captures get the same treatment: one at a time, decoded off the main
+       thread where the browser can, resampled down to what the tier can
+       afford, with a breather between each so input and rendering stay
+       alive. The room being walked into jumps the queue. */
+    var panoQ = [], panoBusy = false, panoLoading = {};
+
+    function panoCap() {
+      /* full desktop tier takes the capture as shipped; touch devices,
+         downshifted tiers and explicit low-quality modes take a quarter of
+         the pixels (half the edge) — indistinguishable at phone FOVs,
+         and a quarter of the decode, upload and VRAM */
+      var cap = (TIER > 0 || coarse || qualityMode === "lo" || qualityMode === "md") ? 1024 : 2048;
+      return Math.max(512, Math.min(cap, HI_W, MAXTEX));
+    }
+
+    function panoStep(job) {
+      var room = job.room, im = job.im;
+      try {
+        var tw = Math.min(pot(im.width), panoCap()), th = tw / 2, src = im;
         if (im.width !== tw || im.height !== th) {
           var c = document.createElement("canvas");
           c.width = tw; c.height = th;
@@ -1165,18 +1181,51 @@
         tc.getContext("2d").drawImage(im, 0, 0, 640, 320);
         thumbSrc[room.id] = tc;
         if (opts.onThumb) opts.onThumb(room.id);
-        if (cb) cb();
+        if (job.cb) job.cb();
+      } catch (e) {
+        diag.push("panorama upload failed: " + room.pano);
+        if (room.space) enqueue(room.id, "lo", true);
+      }
+    }
+
+    function panoPump() {
+      if (panoBusy || !panoQ.length || destroyed) return;
+      panoBusy = true;
+      var job = panoQ.shift();
+      var im = new Image();
+      im.crossOrigin = "anonymous";
+      var done = function (ok) {
+        if (ok) { job.im = im; panoStep(job); }
+        delete panoLoading[job.room.id];
+        /* a breather between captures — frames, scroll and clicks get
+           serviced before the next decode+upload lands */
+        setTimeout(function () { panoBusy = false; panoPump(); }, job.priority ? 30 : 150);
+      };
+      im.onload = function () {
+        /* decode() moves the JPEG decode off the main thread; drawing an
+           undecoded image forces a synchronous decode right in the handler */
+        if (im.decode) im.decode().then(function () { done(true); }, function () { done(true); });
+        else done(true);
       };
       im.onerror = function () {
-        diag.push("panorama failed to load: " + room.pano);
-        if (room.space) enqueue(room.id, "lo", true);
+        diag.push("panorama failed to load: " + job.room.pano);
+        if (job.room.space) enqueue(job.room.id, "lo", true);
+        done(false);
       };
-      im.src = room.pano;
+      im.src = job.room.pano;
+    }
+
+    function loadPano(room, kind, cb, priority) {
+      if (panoLoading[room.id]) return;
+      panoLoading[room.id] = true;
+      var job = { room: room, cb: cb, priority: !!priority };
+      if (priority) panoQ.unshift(job); else panoQ.push(job);
+      panoPump();
     }
 
     function needLo(room, priority) {
       if (!room || store[room.id].lo) return;
-      if (room.pano) loadPano(room, "lo");
+      if (room.pano) loadPano(room, "lo", null, priority);
       else enqueue(room.id, "lo", priority);
     }
     function needHi(room, priority) {
@@ -1605,7 +1654,7 @@
         room.pano = src;
         if (store[id].lo && store[id].lo.tex) { try { gl.deleteTexture(store[id].lo.tex); } catch (e) { } }
         store[id] = { lo: null, hi: null };
-        loadPano(room, "lo", function () { if (opts.onThumb) opts.onThumb(id); });
+        loadPano(room, "lo", function () { if (opts.onThumb) opts.onThumb(id); }, true);
       },
       rebake: function (id) {
         var room = byId[id];

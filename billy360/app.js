@@ -470,6 +470,15 @@
     fr.readAsDataURL(file);
   }
   function photosOf(room) { return (room && room.photos) || []; }
+  /* thumbnails should not pay full-frame decode costs — when a photo comes
+     from a CDN that resizes by URL (Unsplash does), ask for the size the
+     slot actually needs; anything else passes through untouched */
+  function sizedSrc(src, w) {
+    if (/images\.unsplash\.com/.test(String(src))) {
+      return src.replace(/([?&])w=\d+/, "$1w=" + w).replace(/([?&])q=\d+/, "$1q=70");
+    }
+    return src;
+  }
 
   function indexRooms() {
     roomsById = {};
@@ -878,7 +887,8 @@
       var pics = photosOf(r);
       if (pics.length) {
         var cover = el("img", "roomcard-photo");
-        cover.src = pics[0].src; cover.alt = ""; cover.loading = "lazy";
+        cover.src = sizedSrc(pics[0].src, 900);
+        cover.alt = ""; cover.loading = "lazy"; cover.decoding = "async";
         cover.onload = function () { img.classList.add("has-photo"); };
         img.appendChild(cover);
       }
@@ -1015,8 +1025,9 @@
         pics.forEach(function (photo, i) {
           var b = el("button", "photostrip-item");
           var im = el("img");
-          im.src = photo.src; im.alt = photo.caption || room.name + " photo " + (i + 1);
-          im.loading = "lazy";
+          im.src = sizedSrc(photo.src, 400);
+          im.alt = photo.caption || room.name + " photo " + (i + 1);
+          im.loading = "lazy"; im.decoding = "async";
           b.appendChild(im);
           b.onclick = function () { openGallery(room, i); };
           strip.appendChild(b);
@@ -1431,7 +1442,7 @@
       pics.forEach(function (t, ti) {
         var b = el("button", "gal-thumb" + (ti === i ? " is-on" : ""));
         var im = el("img");
-        im.src = t.src; im.alt = ""; im.loading = "lazy";
+        im.src = sizedSrc(t.src, 400); im.alt = ""; im.loading = "lazy"; im.decoding = "async";
         b.appendChild(im);
         b.onclick = function () { gallery.i = ti; renderGallery(); };
         thumbs.appendChild(b);
