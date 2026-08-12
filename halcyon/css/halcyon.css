@@ -421,12 +421,17 @@ body.menu-open .menu-main a { animation: menuIn .7s var(--ease-out) forwards; an
 
 /* ── compare tray ───────────────────────────────────────────────────────── */
 .compare-tray {
-  position: fixed; z-index: 140; bottom: 20px; left: 50%; transform: translate(-50%, 140%);
+  position: fixed; z-index: 140; bottom: 24px; right: 24px;
+  transform: translateY(16px); opacity: 0; visibility: hidden; pointer-events: none;
   display: flex; align-items: center; gap: 18px; padding: 12px 14px 12px 22px;
   background: var(--night); color: var(--ink-inv); border-radius: 999px; box-shadow: var(--shadow-2);
-  transition: transform .5s var(--ease-out); white-space: nowrap;
+  transition: transform .5s var(--ease-out), opacity .4s var(--ease), visibility 0s .4s; white-space: nowrap;
 }
-.compare-tray.is-live { transform: translate(-50%, 0); }
+.compare-tray.is-live { transform: none; opacity: 1; visibility: visible; pointer-events: auto; transition: transform .5s var(--ease-out), opacity .4s var(--ease); }
+@media (max-width: 860px) {
+  /* clear of the bottom nav and the property page's sticky enquiry bar */
+  .compare-tray { right: 12px; bottom: 140px; }
+}
 .compare-tray .tray-thumbs { display: flex; }
 .compare-tray .tray-thumbs img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--night); margin-left: -10px; }
 .compare-tray .tray-thumbs img:first-child { margin-left: 0; }
