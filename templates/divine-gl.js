@@ -217,7 +217,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
   scene.add(sigil);
 
   function placeSigil () {
-    if (mobile) { sigil.position.set(0, 1.55, 0); goldMat.opacity = 0.4; }
+    if (mobile) { sigil.position.set(0, 2.05, 0); sigil.scale.setScalar(0.5); goldMat.opacity = 0.3; }
     else { sigil.position.set(2.35, 0.25, 0); }
   }
   placeSigil();
@@ -292,12 +292,12 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
     var heroP = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.85)));
     sigil.visible = heroP < 1;
     if (sigil.visible) {
-      var base = mobile ? 0.62 : 0.92;
+      var base = mobile ? 0.5 : 0.92;
       sigil.scale.setScalar(base * (1 - heroP * 0.25));
-      sigil.position.y = (mobile ? 1.55 : 0.25) + Math.sin(t * 0.6) * 0.08 + heroP * 2.4;
+      sigil.position.y = (mobile ? 2.05 : 0.25) + Math.sin(t * 0.6) * 0.08 + heroP * 2.4;
       sigil.rotation.y = Math.sin(t * 0.22) * 0.5 + pointer.x * 0.35;
       sigil.rotation.x = Math.cos(t * 0.19) * 0.16 + pointer.y * 0.22;
-      goldMat.opacity = (mobile ? 0.4 : 1) * (1 - heroP);
+      goldMat.opacity = (mobile ? 0.3 : 1) * (1 - heroP);
     }
 
     camera.position.x = pointer.x * 0.25;
