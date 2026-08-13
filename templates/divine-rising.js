@@ -57,8 +57,7 @@
     if (!section) return;
     var steps = section.querySelectorAll(".j-step");
     var dots = section.querySelectorAll(".j-dots i");
-    var sanskrit = section.querySelector(".j-sanskrit");
-    var bija = ["लं", "वं", "रं", "यं", "हं", "ॐ", "✦"];
+    var numeral = section.querySelector(".j-sanskrit");
     var current = -1;
 
     function setStep (i) {
@@ -67,13 +66,36 @@
       var hue = steps[i].getAttribute("data-hue");
       steps.forEach(function (s, k) { s.classList.toggle("is-on", k === i); });
       dots.forEach(function (d, k) { d.classList.toggle("is-on", k <= i); });
-      if (sanskrit) sanskrit.textContent = bija[i];
+      if (numeral) numeral.textContent = "0" + (i + 1);
       document.documentElement.style.setProperty("--jc", hue);
       BRIDGE.hue = hue;
     }
     setStep(0);
 
     if (!hasGSAP || reduce) { section.classList.add("static"); return; }
+
+    var isMobile = window.matchMedia && matchMedia("(max-width: 820px)").matches;
+    if (isMobile) {
+      // no pinning on phones — steps flow naturally, the orb rides along
+      // sticky, and each step recolours the sky as it scrolls into view.
+      section.classList.add("flow");
+      steps.forEach(function (s, i) {
+        ScrollTrigger.create({
+          trigger: s, start: "top 68%",
+          onEnter: function () { setStep(i); },
+          onEnterBack: function () { setStep(i); }
+        });
+      });
+      ScrollTrigger.create({
+        trigger: section, start: "top 80%", end: "bottom 20%",
+        onLeave: function () { BRIDGE.hue = null; },
+        onLeaveBack: function () { BRIDGE.hue = null; },
+        onEnter: function () { BRIDGE.hue = steps[current].getAttribute("data-hue"); },
+        onEnterBack: function () { BRIDGE.hue = steps[current].getAttribute("data-hue"); }
+      });
+      return;
+    }
+
     ScrollTrigger.create({
       trigger: section, start: "top top", end: "+=520%",
       pin: true, scrub: 0.4,
@@ -195,17 +217,6 @@
       if (ok) ok.hidden = false;
       if (input) input.value = "";
     });
-  })();
-
-  /* ---------- nav sigil spins with page scroll ---------- */
-  (function sigilSpin () {
-    if (reduce) return;
-    var svg = document.querySelector(".brand-sigil");
-    if (!svg) return;
-    addEventListener("scroll", function () {
-      var h = document.documentElement.scrollHeight - innerHeight;
-      svg.style.transform = "rotate(" + (h > 0 ? (scrollY / h) * 360 : 0) + "deg)";
-    }, { passive: true });
   })();
 
   /* ---------- cursor star-dust (desktop only) ---------- */

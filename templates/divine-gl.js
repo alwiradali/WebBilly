@@ -29,7 +29,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
   var BRIDGE = (window.DIVINE = window.DIVINE || { hue: null });
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.3 : 1.8));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.15 : 1.8));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -60,7 +60,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
         "float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);",
         "  return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y); }",
         "float fbm(vec2 p){ float v = 0.0, a = 0.5;",
-        "  for(int k=0;k<4;k++){ v += a*noise(p); p = p*2.03 + 11.7; a *= 0.5; } return v; }",
+        "  for(int k=0;k<" + (mobile ? 3 : 4) + ";k++){ v += a*noise(p); p = p*2.03 + 11.7; a *= 0.5; } return v; }",
         "void main(){",
         "  vec2 uv = vUv;",
         "  vec2 drift = uPointer * 0.03;",
@@ -99,7 +99,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
   scene.add(sky);
 
   /* ---------- starfield (wakes with the night) ---------- */
-  var starCount = mobile ? 650 : 1500;
+  var starCount = mobile ? 420 : 1500;
   var starGeo = new THREE.BufferGeometry();
   var pos = new Float32Array(starCount * 3);
   var seed = new Float32Array(starCount);
@@ -137,7 +137,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
   scene.add(stars);
 
   /* ---------- gold incense motes (always drifting) ---------- */
-  var moteCount = mobile ? 40 : 90;
+  var moteCount = mobile ? 26 : 90;
   var moteGeo = new THREE.BufferGeometry();
   var mpos = new Float32Array(moteCount * 3);
   var mseed = new Float32Array(moteCount);
@@ -291,7 +291,7 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
     moteMat.uniforms.uNight.value = night;
 
     // sigil floats over the hero, bows out as you scroll past it
-    var heroP = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.85)));
+    var heroP = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.6)));
     sigil.visible = heroP < 1;
     if (sigil.visible) {
       var base = mobile ? 0.5 : 1;
@@ -308,9 +308,13 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
     renderer.render(scene, camera);
   }
 
+  var skip = false;
   function loop () {
     if (hidden || reduce) return;
-    frame(clock.getElapsedTime());
+    // phones render every other frame — the sky moves slowly enough that
+    // 30fps is invisible, and it halves GPU load under the native scroll
+    skip = mobile && !skip;
+    if (!skip) frame(clock.getElapsedTime());
     requestAnimationFrame(loop);
   }
 

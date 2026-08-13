@@ -23,7 +23,7 @@
 html{scroll-behavior:auto}
 body{
   font-family:var(--sans); font-weight:300; color:var(--ink);
-  background:var(--night); line-height:1.6; overflow-x:hidden;
+  background:#0e0b1c; line-height:1.6; overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
 img{max-width:100%; display:block}
@@ -195,7 +195,7 @@ body.nav-open{overflow:hidden}
 .j-ring{position:absolute; width:78%; aspect-ratio:1; border-radius:50%; border:1px dashed color-mix(in srgb,var(--jc) 60%,#fff);
   opacity:.5; animation:spin 40s linear infinite; transition:border-color 1s}
 @keyframes spin{to{transform:rotate(360deg)}}
-.j-sanskrit{position:relative; z-index:2; font-family:var(--serif); font-size:clamp(3rem,6vw,4.6rem); color:rgba(255,255,255,.92); text-shadow:0 2px 26px rgba(0,0,0,.35)}
+.j-sanskrit{position:relative; z-index:2; font-family:var(--serif); font-style:italic; letter-spacing:.06em; font-size:clamp(2.6rem,5vw,4rem); color:rgba(255,255,255,.94); text-shadow:0 2px 26px rgba(0,0,0,.35); font-variant-numeric:tabular-nums}
 .j-copy{color:var(--cream)}
 .j-copy h2{margin-top:1rem; color:var(--cream)}
 .j-steps{position:relative; margin-top:2.2rem; min-height:9.5em}
@@ -210,6 +210,23 @@ body.nav-open{overflow:hidden}
 .journey.static .j-pin{height:auto; padding-block:6rem}
 .journey.static .j-steps{min-height:0}
 .journey.static .j-step{position:static; opacity:1; transform:none; margin-bottom:1.6rem; pointer-events:auto}
+/* phone layout: no pinning — the orb sits under the heading, the steps
+   flow naturally, and the sky recolours as each one scrolls by */
+.journey.flow .j-pin{height:auto; overflow:visible; display:block; padding-block:5rem 4rem}
+.journey.flow .j-grid{display:block}
+.journey.flow .j-orbwrap{max-width:180px; margin:0 auto 2.4rem}
+.journey.flow .j-steps{min-height:0; margin-top:1.8rem}
+.journey.flow .j-step{position:static; opacity:.35; transform:none; pointer-events:auto; margin-bottom:2.6rem; transition:opacity .5s}
+.journey.flow .j-step.is-on{opacity:1}
+.journey.flow .j-sky{position:absolute}
+
+/* soft bridges where the paper panels meet the night sky
+   (the pinned desktop journey keeps hard scene cuts — a bridge would
+   ride along with the pin and hang cream light over the night) */
+.journey.flow::before,.events::before,.cta::before,
+.journey.flow::after,.events::after{content:""; position:absolute; left:0; right:0; height:110px; z-index:3; pointer-events:none}
+.journey.flow::before,.events::before,.cta::before{top:0; background:linear-gradient(180deg,var(--cream),transparent)}
+.journey.flow::after,.events::after{bottom:0; background:linear-gradient(0deg,var(--cream),transparent)}
 
 /* ---- section heads ---- */
 .sec-head{display:flex; flex-direction:column; gap:.7rem; margin-bottom:clamp(2.4rem,5vh,4rem)}
@@ -412,6 +429,7 @@ body.nav-open{overflow:hidden}
 @media (max-width:820px){
   .nav-links,.nav .nav-cta{display:none}
   .nav-burg{display:flex}
+  .nav.solid{background:rgba(244,237,224,.97); backdrop-filter:none}
   body.nav-open .nav-links{display:flex}
   .h-pin{height:auto; overflow:visible; padding-block:4.5rem}
   .h-track{flex-direction:column; align-items:stretch; width:100%; gap:3rem}
