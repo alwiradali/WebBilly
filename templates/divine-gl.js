@@ -192,32 +192,34 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
     envMapIntensity: 1.25, transparent: true, opacity: 1
   });
 
+  // thin outline triangle — matches the letterhead mark, not a solid slab
   function triangleRing () {
     var s = new THREE.Shape();
     s.moveTo(-1.18, 0.92); s.lineTo(1.18, 0.92); s.lineTo(0, -1.28); s.closePath();
     var hole = new THREE.Path();
-    hole.moveTo(-0.96, 0.78); hole.lineTo(0.96, 0.78); hole.lineTo(0, -1.02); hole.closePath();
+    hole.moveTo(-1.04, 0.83); hole.lineTo(1.04, 0.83); hole.lineTo(0, -1.13); hole.closePath();
     s.holes.push(hole);
-    return new THREE.ExtrudeGeometry(s, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 3, curveSegments: 8 });
-  }
-  function crescent () {
-    var s = new THREE.Shape();
-    s.absarc(0, 0, 0.78, 0, Math.PI * 2, false);
-    var hole = new THREE.Path();
-    hole.absarc(0, 0.3, 0.72, 0, Math.PI * 2, true);
-    s.holes.push(hole);
-    return new THREE.ExtrudeGeometry(s, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, curveSegments: 48 });
+    return new THREE.ExtrudeGeometry(s, { depth: 0.1, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, curveSegments: 8 });
   }
   var sigil = new THREE.Group();
   var tri = new THREE.Mesh(triangleRing(), goldMat);
-  var moon = new THREE.Mesh(crescent(), goldMat);
-  moon.position.set(0, -1.28, -0.02);
-  sigil.add(tri); sigil.add(moon);
-  sigil.scale.setScalar(mobile ? 0.62 : 0.92);
+  sigil.add(tri);
+  // true crescent: a thin torus arc cupping the triangle's tip, rounded ends
+  var ARC = Math.PI * 1.15;
+  var moon = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.05, 16, 72, ARC), goldMat);
+  moon.rotation.z = -Math.PI / 2 - ARC / 2;
+  moon.position.set(0, -0.9, 0);
+  sigil.add(moon);
+  [1, -1].forEach(function (side) {
+    var cap = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), goldMat);
+    cap.position.set(side * 0.603, -0.755, 0);
+    sigil.add(cap);
+  });
+  sigil.scale.setScalar(mobile ? 0.5 : 1);
   scene.add(sigil);
 
   function placeSigil () {
-    if (mobile) { sigil.position.set(0, 2.05, 0); sigil.scale.setScalar(0.5); goldMat.opacity = 0.3; }
+    if (mobile) { sigil.position.set(0, 1.1, 0); sigil.scale.setScalar(0.5); goldMat.opacity = 0.5; }
     else { sigil.position.set(2.35, 0.25, 0); }
   }
   placeSigil();
@@ -292,12 +294,12 @@ import { RoomEnvironment } from "./vendor/jsm/environments/RoomEnvironment.js";
     var heroP = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.85)));
     sigil.visible = heroP < 1;
     if (sigil.visible) {
-      var base = mobile ? 0.5 : 0.92;
+      var base = mobile ? 0.5 : 1;
       sigil.scale.setScalar(base * (1 - heroP * 0.25));
-      sigil.position.y = (mobile ? 2.05 : 0.25) + Math.sin(t * 0.6) * 0.08 + heroP * 2.4;
+      sigil.position.y = (mobile ? 1.1 : 0.25) + Math.sin(t * 0.6) * 0.08 + heroP * 2.4;
       sigil.rotation.y = Math.sin(t * 0.22) * 0.5 + pointer.x * 0.35;
       sigil.rotation.x = Math.cos(t * 0.19) * 0.16 + pointer.y * 0.22;
-      goldMat.opacity = (mobile ? 0.3 : 1) * (1 - heroP);
+      goldMat.opacity = (mobile ? 0.5 : 1) * (1 - heroP);
     }
 
     camera.position.x = pointer.x * 0.25;
