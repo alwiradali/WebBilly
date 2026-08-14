@@ -34,7 +34,7 @@
     if (!target) return;
     if (window.__lenis) {
       e.preventDefault();
-      window.__lenis.scrollTo(target, { offset: -64, duration: 1.4 });
+      window.__lenis.scrollTo(target, { duration: 1.4 });
     }
     if (document.body.classList.contains("nav-open")) closeNav();
   });
@@ -219,6 +219,25 @@
     });
   })();
 
+  /* ---------- transparent nav that reads the world beneath it ---------- */
+  (function navTone () {
+    var nav = document.querySelector(".nav");
+    if (!nav) return;
+    var zones = document.querySelectorAll('[data-sky="night"], .foot');
+    function tone () {
+      var mid = 36; // the nav's midline decides which world it's over
+      var dark = false;
+      for (var i = 0; i < zones.length; i++) {
+        var r = zones[i].getBoundingClientRect();
+        if (r.top < mid && r.bottom > mid) { dark = true; break; }
+      }
+      nav.classList.toggle("on-dark", dark);
+    }
+    addEventListener("scroll", tone, { passive: true });
+    addEventListener("resize", tone);
+    tone();
+  })();
+
   /* ---------- cursor star-dust (desktop only) ---------- */
   (function stardust () {
     if (reduce || !(window.matchMedia && matchMedia("(hover:hover) and (pointer:fine)").matches)) return;
@@ -317,8 +336,48 @@
 
   /* ---------- hero dissolves upward into the sky ---------- */
   gsap.to(".hero-inner", {
-    y: -70, autoAlpha: 0, ease: "none",
+    y: -70, scale: 0.96, autoAlpha: 0, transformOrigin: "left top", ease: "none",
     scrollTrigger: { trigger: ".hero", start: "35% top", end: "95% top", scrub: true }
+  });
+
+  /* ---------- scroll-linked motion: the page moves with the thumb ---------- */
+  // every card photo drifts through its frame as it crosses the viewport
+  gsap.utils.toArray(".jr-card figure img, .ev-card figure img").forEach(function (img) {
+    gsap.fromTo(img, { yPercent: -9, scale: 1.18 }, {
+      yPercent: 9, scale: 1.18, ease: "none",
+      scrollTrigger: { trigger: img.closest("figure"), start: "top bottom", end: "bottom top", scrub: true }
+    });
+  });
+  // membership cards float at different depths
+  gsap.utils.toArray(".price-card").forEach(function (card, i) {
+    var deep = card.classList.contains("is-hero");
+    gsap.fromTo(card, { y: deep ? 54 : 26 }, {
+      y: deep ? -30 : -10, ease: "none",
+      scrollTrigger: { trigger: ".price-grid", start: "top bottom", end: "bottom top", scrub: true }
+    });
+  });
+  // instagram tiles drift in offset columns
+  gsap.utils.toArray(".ig-grid a").forEach(function (a, i) {
+    var amp = 10 + (i % 3) * 12;
+    gsap.fromTo(a, { y: amp }, {
+      y: -amp, ease: "none",
+      scrollTrigger: { trigger: ".ig-grid", start: "top bottom", end: "bottom top", scrub: true }
+    });
+  });
+  // footer rises to meet you
+  gsap.fromTo(".foot-top", { y: 64 }, {
+    y: 0, ease: "none",
+    scrollTrigger: { trigger: ".foot", start: "top bottom", end: "top 35%", scrub: true }
+  });
+  // eyebrows slide in, tied directly to scroll position
+  gsap.utils.toArray(".sec-head .eyebrow").forEach(function (eb) {
+    gsap.killTweensOf(eb);
+    eb.removeAttribute("data-fade");
+    gsap.set(eb, { clearProps: "all", opacity: 1 });
+    gsap.fromTo(eb, { x: -28, opacity: 0.1 }, {
+      x: 0, opacity: 1, ease: "none",
+      scrollTrigger: { trigger: eb, start: "top 96%", end: "top 68%", scrub: true }
+    });
   });
 
   /* ---------- marquee reacts to scroll velocity ---------- */
@@ -345,11 +404,14 @@
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
         var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-        el.style.transform = "perspective(900px) rotateX(" + ((y - 0.5) * -7).toFixed(2) + "deg) rotateY(" + ((x - 0.5) * 7).toFixed(2) + "deg) translateY(-6px)";
+        var drift = gsap.getProperty(el, "y") || 0; // keep the scroll-depth drift under the tilt
+        el.style.transform = "translateY(" + (drift - 6) + "px) perspective(900px) rotateX(" + ((y - 0.5) * -7).toFixed(2) + "deg) rotateY(" + ((x - 0.5) * 7).toFixed(2) + "deg)";
         el.style.setProperty("--gx", (x * 100).toFixed(1) + "%");
         el.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
       });
-      el.addEventListener("pointerleave", function () { el.style.transform = ""; });
+      el.addEventListener("pointerleave", function () {
+        el.style.transform = "translateY(" + (gsap.getProperty(el, "y") || 0) + "px)";
+      });
     });
   })();
 
@@ -359,11 +421,11 @@
     scrollTrigger: { trigger: ".sched", start: "top 80%" }
   });
   gsap.from(".ig-grid a", {
-    y: 24, scale: 0.86, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.07,
+    scale: 0.86, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.07,
     scrollTrigger: { trigger: ".ig-grid", start: "top 86%" }
   });
   gsap.from(".foot-brand", {
-    y: 34, opacity: 0, duration: 1, ease: "power3.out",
+    opacity: 0, duration: 1.2, ease: "power3.out",
     scrollTrigger: { trigger: ".foot", start: "top 88%" }
   });
 
