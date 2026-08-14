@@ -61,11 +61,16 @@
         frag: frag,
         x: Math.random() * W,
         y: Math.random() * H,
-        vx: rand(-0.20, 0.20),
-        vy: rand(-0.20, 0.20),
+        vx: rand(-0.52, 0.52),
+        vy: rand(-0.52, 0.52),
         s: frag ? rand(13, 19) : rand(16, 34),
         a: rand(-0.24, 0.24),          // resting tilt
-        va: rand(-0.0016, 0.0016),     // slow spin
+        va: rand(-0.0052, 0.0052),     // spin
+        // a slow sway on top of the drift, so nothing travels in a dead
+        // straight line — this is what reads as "floating" rather than "sliding"
+        ph: Math.random() * Math.PI * 2,
+        fq: rand(0.006, 0.014),
+        am: rand(3, 10),
         o: frag ? rand(0.20, 0.34) : rand(0.26, 0.50),
         c: pick(PALETTE)
       });
@@ -81,9 +86,12 @@
         y: Math.random() * H,
         s: rand(46, 82),
         a: rand(-0.3, 0.3),
-        va: rand(-0.0013, 0.0013),
-        vx: rand(-0.12, 0.12),
-        vy: rand(-0.10, 0.10),
+        va: rand(-0.0040, 0.0040),
+        vx: rand(-0.34, 0.34),
+        vy: rand(-0.30, 0.30),
+        ph: Math.random() * Math.PI * 2,
+        fq: rand(0.004, 0.009),
+        am: rand(4, 11),
         c: pick(PALETTE)
       });
     }
@@ -109,7 +117,7 @@
   function drawTile(g) {
     var s = g.s;
     ctx.save();
-    ctx.translate(g.x, g.y);
+    ctx.translate(g.x + (g.dx || 0), g.y + (g.dy || 0));
     ctx.rotate(g.a);
 
     ctx.globalAlpha = 0.30;
@@ -139,7 +147,7 @@
 
   function drawGlyph(p) {
     ctx.save();
-    ctx.translate(p.x, p.y);
+    ctx.translate(p.x + (p.dx || 0), p.y + (p.dy || 0));
     ctx.rotate(p.a);
     ctx.globalAlpha = p.o;
     ctx.fillStyle = p.c;
@@ -150,12 +158,21 @@
     ctx.restore();
   }
 
+  var clock = 0;
+
+  function sway(p) {
+    p.dx = Math.cos(clock * p.fq * 0.72 + p.ph) * p.am * 0.6;
+    p.dy = Math.sin(clock * p.fq + p.ph) * p.am;
+  }
+
   function frame() {
     ctx.clearRect(0, 0, W, H);
+    clock++;
 
     for (var t = 0; t < tiles.length; t++) {
       var g = tiles[t];
       g.x += g.vx; g.y += g.vy; g.a += g.va;
+      sway(g);
       wrap(g, g.s);
       drawTile(g);
     }
@@ -165,11 +182,14 @@
     for (var i = 0; i < glyphs.length; i++) {
       var a = glyphs[i];
       a.x += a.vx; a.y += a.vy; a.a += a.va;
+      sway(a);
       wrap(a, 40);
 
       for (var k = i + 1; k < glyphs.length; k++) {
         var b = glyphs[k];
-        var dx = a.x - b.x, dy = a.y - b.y;
+        // bonds are drawn between the swayed positions, so a line never
+        // detaches from the letter it is joined to
+        var dx = (a.x + a.dx) - (b.x + b.dx), dy = (a.y + a.dy) - (b.y + b.dy);
         var d2 = dx * dx + dy * dy;
         if (d2 < maxD * maxD) {
           var d = Math.sqrt(d2);
@@ -177,8 +197,8 @@
           ctx.strokeStyle = a.c;
           ctx.lineWidth = 1.25;
           ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
+          ctx.moveTo(a.x + a.dx, a.y + a.dy);
+          ctx.lineTo(b.x + b.dx, b.y + b.dy);
           ctx.stroke();
         }
       }
@@ -195,6 +215,7 @@
 
   function paintStatic() {
     resize();
+    glyphs.forEach(sway); tiles.forEach(sway);
     ctx.clearRect(0, 0, W, H);
     for (var t = 0; t < tiles.length; t++) drawTile(tiles[t]);
     for (var n = 0; n < glyphs.length; n++) drawGlyph(glyphs[n]);
