@@ -72,3 +72,30 @@ run_worker_first = [
   "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
   "/manufacturers-warranty", "/privacy", "/terms",
 ]
+
+# ---------------------------------------------------------------------------
+# HeatFix Mcr Limited on the client's own Cloudflare account.
+# Deploy with:  CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
+#               npx wrangler deploy --env heatfix
+# Envs do not inherit routes/vars/assets, so everything is declared again.
+[env.heatfix]
+name = "heatfixmcr"
+account_id = "c6db9dcf342f60c2fd1959a44386342d"
+routes = [
+  { pattern = "heatfixmcrlimited.co.uk", custom_domain = true },
+  { pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
+]
+
+[env.heatfix.vars]
+M2L_HOST = ""
+HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"
+
+[env.heatfix.assets]
+directory = "."
+not_found_handling = "404-page"
+binding = "ASSETS"
+run_worker_first = [
+  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i",
+  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
+  "/manufacturers-warranty", "/privacy", "/terms",
+]
