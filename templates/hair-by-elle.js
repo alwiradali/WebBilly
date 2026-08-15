@@ -349,15 +349,18 @@
     } else words.forEach(function (w) { w.classList.add("on"); });
   })();
 
-  /* ---------- gallery: pinned horizontal (desktop) ---------- */
+  /* ---------- gallery: scroll-driven horizontal on every viewport ----------
+     Falls back to a native swipe carousel (CSS) without GSAP / reduced motion. */
   (function gallery() {
-    if (!hasGSAP || reduce || !matchMedia("(min-width:1024px)").matches) return;
+    if (!hasGSAP || reduce) return;
+    var section = document.querySelector(".gallery");
     var track = document.querySelector(".gal-track"), pin = document.querySelector(".gal-pin");
-    if (!track) return;
-    var getDist = function () { return Math.max(0, track.scrollWidth - innerWidth + 100); };
+    if (!section || !track) return;
+    section.classList.add("gal-pinned");
+    var getDist = function () { return Math.max(0, track.scrollWidth - innerWidth + 60); };
     gsap.to(track, {
       x: function () { return -getDist(); }, ease: "none",
-      scrollTrigger: { trigger: ".gallery", start: "top top", end: function () { return "+=" + getDist(); }, pin: pin, scrub: 0.6, invalidateOnRefresh: true }
+      scrollTrigger: { trigger: section, start: "top top", end: function () { return "+=" + getDist(); }, pin: pin, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true }
     });
   })();
 

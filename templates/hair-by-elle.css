@@ -220,7 +220,8 @@ h2 em{color:var(--red)}
 
 /* ---------- gallery ---------- */
 .gallery{overflow:hidden}
-.gal-pin{padding:clamp(80px,12vh,130px) 0 clamp(80px,12vh,130px) clamp(18px,6vw,84px)}
+.gal-pin{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:clamp(56px,8vh,100px) 0 clamp(40px,6vh,80px) clamp(18px,6vw,84px)}
+.gal-pin .sec-label{margin-bottom:clamp(16px,3vh,34px)}
 .gal-track{display:flex;gap:clamp(18px,3vw,40px);align-items:stretch;will-change:transform;width:max-content;padding-right:10vw}
 .gal-intro{flex:0 0 auto;max-width:420px;display:flex;flex-direction:column;justify-content:center;gap:16px;padding-right:2vw}
 .gal-intro p{color:var(--ink-70);font-style:italic}
@@ -233,9 +234,15 @@ h2 em{color:var(--red)}
 .gal-todo{flex:0 0 auto;width:clamp(230px,26vw,340px);display:flex;flex-direction:column;justify-content:center;gap:12px;border:2px dotted var(--ink-45);border-radius:12px;padding:26px;font-style:italic;color:var(--ink-70)}
 .gal-todo-tag{font-family:var(--grotesk);font-style:normal;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--red)}
 @media (max-width:1023px){
-  .gal-pin{padding-right:0}
-  .gal-track{width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;-webkit-overflow-scrolling:touch}
-  .gal-card,.gal-intro,.gal-todo{scroll-snap-align:start}
+  .gal-pin{padding-left:clamp(16px,4vw,40px)}
+  .gal-track{gap:16px}
+  .gal-intro{max-width:min(70vw,380px);padding-right:4vw}
+  .gal-intro h2{font-size:clamp(1.5rem,6.4vw,2.3rem)}
+  .gal-card,.gal-todo{width:min(76vw,340px)}
+  /* fallback swipe carousel only when the scroll-driven pin isn't running */
+  .gallery:not(.gal-pinned) .gal-pin{padding-right:0}
+  .gallery:not(.gal-pinned) .gal-track{width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;-webkit-overflow-scrolling:touch}
+  .gallery:not(.gal-pinned) .gal-card,.gallery:not(.gal-pinned) .gal-intro,.gallery:not(.gal-pinned) .gal-todo{scroll-snap-align:start}
 }
 
 /* ---------- booking ---------- */
@@ -336,9 +343,9 @@ body.no-motion .wstep.on{animation:none}
 .copy-send:hover{color:var(--red)}
 
 /* ---------- floating book bar (mobile) ---------- */
-.bookbar{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:9000;display:none;align-items:center;gap:12px;padding:15px 26px;border-radius:999px;background:var(--ink);color:var(--paper);font-family:var(--grotesk);font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;box-shadow:0 14px 34px rgba(61,63,94,.35);transition:transform .5s var(--ease-out)}
-.bookbar svg{width:18px;height:18px;fill:var(--amber)}
-.bookbar.show{transform:translate(-50%,0)}
+.bookbar{position:fixed;right:12px;bottom:16px;transform:translateY(150%);z-index:9000;display:none;align-items:center;gap:9px;padding:13px 18px;border-radius:999px;background:var(--ink);color:var(--paper);font-family:var(--grotesk);font-weight:600;font-size:12px;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;white-space:nowrap;box-shadow:0 14px 34px rgba(61,63,94,.35);transition:transform .5s var(--ease-out)}
+.bookbar svg{width:17px;height:17px;flex:none;fill:var(--amber)}
+.bookbar.show{transform:translateY(0)}
 @media (max-width:767px){.bookbar{display:inline-flex}}
 
 /* ---------- footer ---------- */
