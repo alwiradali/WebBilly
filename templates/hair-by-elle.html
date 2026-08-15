@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png?v=4">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png?v=4">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=4">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
+  <title>Hair by Elle — home hair studio, Oldham</title>
+  <meta name="description" content="Hair by Elle — hair ups, half up half down and pin curls from a warm little home studio in Oldham. A sample experience by Billy Digitals.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#EFEDE8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="hair-by-elle.css">
+  <link rel="stylesheet" href="../assets/css/mobile-polish.css">
+  <link rel="stylesheet" href="../assets/css/premium.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+  <!-- Brand rule (client brief §12): the real "hair by elle" wordmarks are artwork
+       and must be dropped in as supplied image/SVG assets, never re-typeset.
+       TODO(elle): supply logo files (SVG/PNG, transparent) — every element marked
+       .wordmark below is a clearly-labelled typeset PLACEHOLDER until then.
+       Also needed: 12–20 portfolio photos, 2–3 studio photos, WhatsApp number,
+       business email, confirmation of Instagram URL. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "name": "Hair by Elle",
+    "foundingDate": "2026",
+    "priceRange": "££",
+    "areaServed": ["Oldham", "Greater Manchester"],
+    "address": { "@type": "PostalAddress", "addressLocality": "Oldham", "addressRegion": "Greater Manchester", "addressCountry": "GB" },
+    "sameAs": ["https://www.instagram.com/hairbyelle21"],
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "14:00", "closes": "19:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "15:00", "closes": "19:00" }
+    ],
+    "makesOffer": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hair ups" }, "price": "20", "priceCurrency": "GBP" },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Half up half down" }, "price": "20", "priceCurrency": "GBP" },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Curls / pin curls" }, "price": "15", "priceCurrency": "GBP" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="paper" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <div class="page-progress" aria-hidden="true"><i></i></div>
+
+  <!-- first-load curtain (session-stored; ≤1.6s) -->
+  <div class="curtain" aria-hidden="true">
+    <div class="curtain-inner">
+      <span class="curtain-word wordmark" data-letters>hair by elle</span>
+      <span class="curtain-sub">estd 2026 · oldham</span>
+    </div>
+  </div>
+
+  <header class="nav">
+    <a class="brand wordmark" href="#top">hair <b>by</b> elle</a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="menu"><span class="roll"><span>menu</span><span aria-hidden="true">menu</span></span></button>
+  </header>
+
+  <!-- full-screen overlay menu -->
+  <nav class="menu" id="menu" aria-label="Menu" hidden>
+    <div class="menu-links">
+      <a href="#services"><em>01</em><span>the services</span></a>
+      <a href="#hours"><em>02</em><span>when i'm free</span></a>
+      <a href="#studio"><em>03</em><span>the studio</span></a>
+      <a href="#gallery"><em>04</em><span>the work</span></a>
+      <a href="#book" class="menu-book"><em>05</em><span>book in x</span></a>
+    </div>
+    <div class="menu-foot">
+      <p class="menu-hours">mon–fri 14:00–19:00<br>sat 15:00–19:00 · sun closed</p>
+      <a class="menu-ig" href="https://www.instagram.com/hairbyelle21" target="_blank" rel="noopener">@hairbyelle21</a>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- ============ HERO — strand field ============ -->
+    <section class="hero" id="top">
+      <!-- static poster: shown when WebGL is unavailable or motion is reduced -->
+      <div class="hero-poster" aria-hidden="true">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="hpGlow" cx="32%" cy="18%" r="75%">
+              <stop offset="0" stop-color="#F2C48A" stop-opacity=".5"/>
+              <stop offset="1" stop-color="#F2C48A" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="1200" height="800" fill="url(#hpGlow)"/>
+          <g fill="none" stroke="#3D3F5E" stroke-linecap="round">
+            <path stroke-width="2.4" opacity=".55" d="M140,-20 C120,220 210,340 150,560 C120,670 170,760 150,820"/>
+            <path stroke-width="1.6" opacity=".4"  d="M235,-20 C265,180 195,380 245,540 C285,660 235,740 255,820"/>
+            <path stroke-width="2.8" opacity=".6"  d="M340,-20 C300,200 400,360 330,560 C300,680 350,770 335,820"/>
+            <path stroke-width="1.4" opacity=".35" d="M430,-20 C470,160 390,340 450,520 C500,650 440,750 460,820"/>
+            <path stroke-width="2.2" opacity=".5"  d="M760,-20 C800,190 710,350 780,540 C830,660 770,750 790,820"/>
+            <path stroke-width="1.5" opacity=".38" d="M860,-20 C830,210 930,360 860,560 C820,680 880,770 860,820"/>
+            <path stroke-width="2.6" opacity=".58" d="M960,-20 C1000,200 910,380 975,560 C1020,680 960,760 980,820"/>
+            <path stroke-width="1.8" opacity=".42" d="M1060,-20 C1030,180 1120,340 1050,540 C1010,660 1070,750 1055,820"/>
+            <path stroke-width="1.3" opacity=".3"  d="M545,-20 C575,120 520,240 560,340"/>
+            <path stroke-width="1.3" opacity=".3"  d="M655,-20 C625,120 690,240 645,340"/>
+          </g>
+          <g fill="none" stroke="#F2C48A" stroke-linecap="round" opacity=".7">
+            <path stroke-width="1" d="M338,-20 C298,200 398,360 328,560"/>
+            <path stroke-width="1" d="M958,-20 C998,200 908,380 973,560"/>
+          </g>
+        </svg>
+      </div>
+      <canvas class="strands" aria-hidden="true"></canvas>
+
+      <div class="hero-center">
+        <!-- placeholder wordmark — swap for the supplied asset, untouched -->
+        <h1 class="hero-mark wordmark" data-letters>hair by elle</h1>
+        <p class="hero-estd">ESTD 2026 &nbsp;·&nbsp; OLDHAM</p>
+        <a class="cta magnetic" href="#book"><span class="roll"><span>book in x</span><span aria-hidden="true">book in x</span></span></a>
+      </div>
+      <span class="scroll-cue" aria-hidden="true">have a little scroll <i></i></span>
+    </section>
+
+    <!-- ============ SERVICES — pinned beats + curl morph ============ -->
+    <section class="services" id="services">
+      <div class="svc-pin">
+        <p class="sec-label">the services</p>
+        <div class="svc-grid">
+          <div class="svc-curl" aria-hidden="true">
+            <svg viewBox="0 0 200 260">
+              <path class="curl-hi" d="" fill="none"></path>
+              <path class="curl-main" d="" fill="none"></path>
+              <circle class="curl-dot" r="3.4" cx="0" cy="0"></circle>
+            </svg>
+          </div>
+          <div class="svc-beats">
+            <article class="svc-beat" data-beat="0">
+              <h2 class="svc-name">hair <em>ups</em></h2>
+              <p class="svc-copy">the classic — swept up, pinned and finished so it stays put all night x</p>
+              <div class="lead"><span class="lead-label">hair ups</span><span class="dots"></span><span class="price" data-price="20">£20</span></div>
+            </article>
+            <article class="svc-beat" data-beat="1">
+              <h2 class="svc-name">half up<br><em>half down</em></h2>
+              <p class="svc-copy">the best of both — soft lengths left down, all the pretty detail up top x</p>
+              <div class="lead"><span class="lead-label">half up half down</span><span class="dots"></span><span class="price" data-price="20">£20</span></div>
+            </article>
+            <article class="svc-beat" data-beat="2">
+              <h2 class="svc-name">curls &amp;<br><em>pin curls</em></h2>
+              <p class="svc-copy">bouncy or vintage — curls with proper shape and hold x</p>
+              <div class="lead"><span class="lead-label">curls / pin curls</span><span class="dots"></span><span class="price" data-price="15">£15</span></div>
+            </article>
+          </div>
+        </div>
+        <ol class="svc-steps" aria-hidden="true"><li></li><li></li><li></li></ol>
+      </div>
+    </section>
+
+    <!-- ============ HOURS — scrubbed timeline ============ -->
+    <section class="hours" id="hours">
+      <p class="sec-label">when i'm free</p>
+      <h2 class="hours-title">evenings, <em>mostly</em> — and weekends x</h2>
+      <div class="hours-scale" aria-hidden="true"><span>14:00</span><span>15:00</span><span>16:00</span><span>17:00</span><span>18:00</span><span>19:00</span></div>
+      <div class="hours-rows">
+        <div class="hrow" data-open="0" data-span="1">
+          <span class="hday">monday – friday</span>
+          <div class="htrack"><i class="hfill"></i></div>
+          <span class="htime"><time datetime="14:00">14:00</time> – <time datetime="19:00">19:00</time></span>
+        </div>
+        <div class="hrow" data-open="0.2" data-span="0.8">
+          <span class="hday">saturday</span>
+          <div class="htrack"><i class="hfill"></i></div>
+          <span class="htime"><time datetime="15:00">15:00</time> – <time datetime="19:00">19:00</time></span>
+        </div>
+        <div class="hrow hrow-closed">
+          <span class="hday">sunday</span>
+          <div class="htrack"><s>unavailable</s></div>
+          <span class="htime">—</span>
+        </div>
+      </div>
+      <p class="hours-note">last booking starts at <strong>18:00</strong> — and if none of these work, just ask x</p>
+    </section>
+
+    <!-- ============ THE NOTE — her words, word by word ============ -->
+    <section class="note" id="note">
+      <div class="note-glow" aria-hidden="true"></div>
+      <p class="sec-label">a little note from me</p>
+      <blockquote class="note-quote" data-words>Hi! Just a quick note to let you know that I work a full-time job alongside my business, so my usual appointment times are in the evenings. However, please don't hesitate to ask me for a specific time or day as my job is very flexible and 90% of the time I will be able to make it work for you! I'll always do my best to work around your schedule! Thank you</blockquote>
+      <p class="note-sign">— elle <span class="kiss">x</span></p>
+    </section>
+
+    <!-- ============ STUDIO + LOCATION ============ -->
+    <section class="studio" id="studio">
+      <p class="sec-label">the studio</p>
+      <div class="studio-grid">
+        <figure class="studio-visual img-rv">
+          <!-- stock stand-in (Pexels 5731891) until her real studio photo arrives -->
+          <img src="https://images.pexels.com/photos/5731891/pexels-photo-5731891.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=1000&amp;fit=crop" alt="A softly lit vanity mirror glowing with warm bulbs" loading="lazy" decoding="async">
+          <div class="lamp-glow" aria-hidden="true"></div>
+          <figcaption>TODO(elle): her real studio photo drops in here x</figcaption>
+        </figure>
+        <div class="studio-copy">
+          <h2>one chair, warm light,<br><em>zero salon rush</em>.</h2>
+          <p>a little home studio in oldham — a backlit round mirror, lamp light, pampas and a candle or two. just you and me, no queue behind you x</p>
+          <div class="loc-card">
+            <div class="lead"><span class="lead-label">location</span><span class="dots"></span><span class="lead-val">oldham</span></div>
+            <div class="lead"><span class="lead-label">based</span><span class="dots"></span><span class="lead-val">at home</span></div>
+            <div class="lead"><span class="lead-label">parking</span><span class="dots"></span><span class="lead-val">on the drive / street</span></div>
+            <p class="loc-privacy"><svg class="loc-underline" viewBox="0 0 220 10" aria-hidden="true"><path d="M4,7 C60,3 150,3 216,6" fill="none"/></svg>Full address sent once your appointment's confirmed <span class="kiss">x</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALLERY — horizontal ============ -->
+    <section class="gallery" id="gallery">
+      <div class="gal-pin">
+        <p class="sec-label">the work</p>
+        <div class="gal-track">
+          <div class="gal-intro">
+            <h2>done with <em>love</em>,<br>photographed badly<br>on a phone x</h2>
+            <p>her real portfolio slots straight in here.</p>
+          </div>
+          <!-- Demo imagery: Pexels free licence (stock stand-ins until Elle's own
+               photos arrive) — 16976882, 3065171 (Engin Akyurt), 4355995, 9941096,
+               10561323 (Jonathan Borba), 5731891; video 7440196 (cottonbro studio). -->
+          <figure class="gal-card"><div class="gal-art img-rv"><img src="https://images.pexels.com/photos/16976882/pexels-photo-16976882.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" alt="Elegant twisted low bun hair up, seen from behind" loading="lazy" decoding="async"></div><figcaption><em>01</em> hair ups</figcaption></figure>
+          <figure class="gal-card"><div class="gal-art img-rv"><img src="https://images.pexels.com/photos/3065171/pexels-photo-3065171.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" alt="Curls pinned half up with soft lengths left down" loading="lazy" decoding="async"></div><figcaption><em>02</em> half up half down</figcaption></figure>
+          <figure class="gal-card"><div class="gal-art img-rv"><img src="https://images.pexels.com/photos/4355995/pexels-photo-4355995.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" alt="Vintage set waves with glossy pin-curl shape" loading="lazy" decoding="async"></div><figcaption><em>03</em> pin curls</figcaption></figure>
+          <figure class="gal-card"><div class="gal-art img-rv"><img src="https://images.pexels.com/photos/9941096/pexels-photo-9941096.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" alt="Curled updo finished with crystal hair pins" loading="lazy" decoding="async"></div><figcaption><em>04</em> prom season</figcaption></figure>
+          <figure class="gal-card"><div class="gal-art img-rv"><img src="https://images.pexels.com/photos/10561323/pexels-photo-10561323.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" alt="Wedding updo dressed with roses and greenery" loading="lazy" decoding="async"></div><figcaption><em>05</em> wedding day</figcaption></figure>
+          <figure class="gal-card"><div class="gal-art img-rv gal-motion">
+            <video muted loop playsinline preload="none" poster="https://images.pexels.com/photos/30005366/pexels-photo-30005366.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=640&amp;h=854&amp;fit=crop" aria-label="Close-up of hair being curled, in motion">
+              <source src="https://videos.pexels.com/video-files/7440196/7440196-hd_720_1366_25fps.mp4" type="video/mp4">
+            </video>
+          </div><figcaption><em>06</em> in motion x</figcaption></figure>
+          <div class="gal-todo">
+            <p class="gal-todo-tag">stock for now</p>
+            <p>TODO(elle): supply 12–20 portfolio images — these stock stand-ins swap out exactly as they are x</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BOOKING ============ -->
+    <section class="book" id="book">
+      <div class="book-head">
+        <svg class="braid" viewBox="0 0 120 300" aria-hidden="true">
+          <path class="b1" d="M45,0 C75,40 45,80 75,120 C105,160 75,200 60,240 C52,262 58,285 60,300" fill="none"/>
+          <path class="b2" d="M75,0 C45,40 75,80 45,120 C15,160 45,200 60,240 C68,262 62,285 60,300" fill="none"/>
+          <path class="b3" d="M60,0 C60,45 60,85 60,125 C60,170 60,205 60,240 C60,264 60,286 60,300" fill="none"/>
+        </svg>
+        <p class="sec-label">book in</p>
+        <h2>right — let's get you <em>booked in</em> x</h2>
+        <p class="book-sub">takes about a minute. elle confirms everything herself on whatsapp.</p>
+      </div>
+
+      <form class="wizard" novalidate>
+        <ol class="wiz-progress" aria-hidden="true">
+          <li class="on">service</li><li>date</li><li>time</li><li>details</li><li>confirm</li>
+        </ol>
+        <p class="wiz-live" aria-live="polite"></p>
+
+        <!-- step 1 · service -->
+        <fieldset class="wstep on" data-step="0">
+          <legend tabindex="-1">what are we doing? <span class="wiz-hint">pick as many as you like x</span></legend>
+          <div class="svc-pick">
+            <label class="pick"><input type="checkbox" name="service" value="hair ups" data-cost="20"><span class="pick-card"><svg viewBox="0 0 40 52" aria-hidden="true"><path d="M20,50 C18,38 22,32 20,24 M20,24 C12,22 12,10 20,8 C28,6 30,16 22,18 C16,19 14,14 18,12" fill="none"/></svg><b>hair ups</b><i class="dots"></i><em>£20</em></span></label>
+            <label class="pick"><input type="checkbox" name="service" value="half up half down" data-cost="20"><span class="pick-card"><svg viewBox="0 0 40 52" aria-hidden="true"><path d="M14,6 C10,14 16,18 20,22 C24,18 30,14 26,6 M20,22 C18,32 22,40 19,50 M20,22 C24,34 18,42 22,50" fill="none"/></svg><b>half up half down</b><i class="dots"></i><em>£20</em></span></label>
+            <label class="pick"><input type="checkbox" name="service" value="curls / pin curls" data-cost="15"><span class="pick-card"><svg viewBox="0 0 40 52" aria-hidden="true"><path d="M20,4 C10,10 12,20 20,22 C28,24 30,34 20,38 C12,41 10,48 16,50" fill="none"/></svg><b>curls / pin curls</b><i class="dots"></i><em>£15</em></span></label>
+          </div>
+          <div class="wiz-total lead"><span class="lead-label">so far</span><span class="dots"></span><span class="price wiz-total-val">£0</span></div>
+          <div class="wiz-nav"><span></span><button type="button" class="wnext magnetic">pick a date →</button></div>
+        </fieldset>
+
+        <!-- step 2 · date -->
+        <fieldset class="wstep" data-step="1">
+          <legend tabindex="-1">when suits you? <span class="wiz-hint">next 8 weeks — sundays are my day off x</span></legend>
+          <div class="cal" role="group" aria-label="Choose a date"></div>
+          <div class="wiz-nav"><button type="button" class="wback">← back</button><button type="button" class="wnext magnetic">pick a time →</button></div>
+        </fieldset>
+
+        <!-- step 3 · time -->
+        <fieldset class="wstep" data-step="2">
+          <legend tabindex="-1">what time? <span class="wiz-hint">evenings are my usual x</span></legend>
+          <label class="custom-time">
+            <input type="radio" name="slot" value="custom">
+            <span class="custom-card">
+              <b>none of these work? ask me for a custom time</b>
+              <small>my job's really flexible — 90% of the time i can make it work for you x</small>
+              <input type="text" class="custom-when" placeholder="e.g. saturday morning before 11" aria-label="Tell Elle what time would suit you">
+            </span>
+          </label>
+          <div class="slots" role="group" aria-label="Available start times"></div>
+          <div class="wiz-nav"><button type="button" class="wback">← back</button><button type="button" class="wnext magnetic">nearly there →</button></div>
+        </fieldset>
+
+        <!-- step 4 · details -->
+        <fieldset class="wstep" data-step="3">
+          <legend tabindex="-1">last bits <span class="wiz-hint">so i can plan your appointment x</span></legend>
+          <div class="fields">
+            <label>your name<input type="text" name="name" autocomplete="name" required></label>
+            <label>phone<input type="tel" name="phone" autocomplete="tel" inputmode="tel" required></label>
+            <label>hair length &amp; thickness <small>(optional)</small>
+              <select name="hair"><option value="">choose…</option><option>short · fine</option><option>short · thick</option><option>shoulder length · fine</option><option>shoulder length · thick</option><option>long · fine</option><option>long · thick</option><option>extra long</option></select>
+            </label>
+            <label>the occasion <small>(optional)</small>
+              <select name="occasion"><option value="">choose…</option><option>wedding</option><option>prom</option><option>night out</option><option>other</option></select>
+            </label>
+            <label class="wide">anything i should know? <small>(optional)</small><textarea name="notes" rows="3" placeholder="inspo, allergies, running late — anything x"></textarea></label>
+          </div>
+          <p class="wiz-hint">got inspo photos? brilliant — send them in the whatsapp chat x</p>
+          <div class="wiz-nav"><button type="button" class="wback">← back</button><button type="button" class="wnext magnetic">check it over →</button></div>
+        </fieldset>
+
+        <!-- step 5 · confirm -->
+        <fieldset class="wstep" data-step="4">
+          <legend tabindex="-1">look right to you? <span class="wiz-hint">nothing's booked until elle confirms x</span></legend>
+          <div class="summary"></div>
+          <p class="loc-privacy summary-privacy">Full address sent once your appointment's confirmed <span class="kiss">x</span></p>
+          <div class="wiz-nav wiz-send">
+            <button type="button" class="wback">← back</button>
+            <div class="send-btns">
+              <a class="wa-send magnetic" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4.1.1.1.7-.2 1.5Z" fill="currentColor" stroke="none"/></svg>send it to elle on whatsapp</a>
+              <button type="button" class="copy-send">or copy the message</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <!-- floating mobile booking bar -->
+  <a class="bookbar" href="#book" aria-label="Book — from £15"><span>book in — from £15</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z" fill="currentColor" stroke="none"/></svg></a>
+
+  <footer class="foot">
+    <div class="foot-mark wordmark" aria-hidden="true">hair by elle</div>
+    <div class="foot-grid">
+      <div class="foot-col">
+        <h3>find me</h3>
+        <a href="https://www.instagram.com/hairbyelle21" target="_blank" rel="noopener">instagram — @hairbyelle21</a>
+        <a href="#book">whatsapp — via booking x</a>
+        <p>oldham, greater manchester</p>
+      </div>
+      <div class="foot-col">
+        <h3>hours</h3>
+        <p>mon–fri · 14:00–19:00</p>
+        <p>sat · 15:00–19:00</p>
+        <p>sun · that's my day off x</p>
+      </div>
+      <div class="foot-col foot-news">
+        <h3>first dibs on prom &amp; wedding season slots, plus the odd hair tip x</h3>
+        <form class="news" novalidate>
+          <label class="visually-hidden" for="newsEmail">Email address</label>
+          <input id="newsEmail" type="email" placeholder="your email" autocomplete="email" required>
+          <button type="submit" class="magnetic">count me in</button>
+          <svg class="news-tick" viewBox="0 0 40 40" aria-hidden="true"><path d="M8,21 L17,30 L33,11" fill="none"/></svg>
+        </form>
+        <p class="news-msg" aria-live="polite"></p>
+        <p class="news-gdpr">just emails from me — no spam, unsubscribe whenever x</p>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span>© 2026 hair by elle — a sample experience · made with love in oldham <span class="kiss">x</span></span>
+      <span>demo imagery — pexels</span>
+      <span>designed &amp; built by Billy Digitals</span>
+    </div>
+  </footer>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="hair-by-elle.js" defer></script>
+  <script type="module" src="hair-by-elle-gl.js"></script>
+  <script src="backbar.js" defer></script>
+</body>
+</html>
