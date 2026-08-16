@@ -2078,7 +2078,9 @@
         engine.setPano(room.id, r.src);
         dtxt.textContent = "Capture attached — click to replace";
         markDirty();
-        toast(r.notes.length ? r.notes[0] : "Panorama attached to " + room.name + " — looks right for a 360\u00B0.");
+        saveTour(true);
+        markSaved("Saved automatically");
+        toast(r.notes.length ? r.notes[0] : "Panorama attached to " + room.name + " — saved automatically.");
       });
     }
     panoBox.appendChild(drop);
@@ -2152,7 +2154,9 @@
       });
       function done() {
         markDirty();
-        if (added) toast(added === 1 ? "Photo added." : added + " photos added.");
+        saveTour(true);
+        markSaved("Saved automatically");
+        if (added) toast(added === 1 ? "Photo added — saved automatically." : added + " photos added — saved automatically.");
         renderStudio();
       }
     }
@@ -2490,7 +2494,9 @@
       refreshAfterEdit();
       engine.go(created[0].id, { force: true });
       renderStudio();
-      var msg = created.length + " room" + (created.length === 1 ? "" : "s") + " created from your photos — the tour is walkable right now.";
+      saveTour(true);
+      markSaved("Saved automatically");
+      var msg = created.length + " room" + (created.length === 1 ? "" : "s") + " created and saved — the tour is walkable right now.";
       if (TOUR.rooms.length > 1) msg += " Next: aim each door at its real doorway.";
       toast(msg);
       if (skipped.length) setTimeout(function () { toast(skipped[0]); }, 3000);

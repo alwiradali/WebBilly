@@ -218,7 +218,9 @@
         setPath(state, pendingUploadPath, dataUrl);
         pendingUploadPath = null;
         renderPropForm();
-        queueSave();
+        /* an upload is a big moment — save it right now, no debounce,
+           so the "Saved" chip confirms before anyone looks for a button */
+        persist();
       };
       img.onerror = function () { alert("That file doesn't look like an image this browser can read."); };
       img.src = URL.createObjectURL(file);
