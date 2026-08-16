@@ -176,6 +176,7 @@
   var panelsHidden = false;
   var lastRead = "";
   var placing = false;              // studio: click-to-place a hotspot
+  var placingSpec = null;           // what the next placed hotspot becomes — a door, a window, or free
   var selectedHotspot = null;
   var studioRoomId = null;
   var studioTab = "rooms";
@@ -854,6 +855,11 @@
     facts.forEach(function (f) { have[String(f[0]).toLowerCase()] = 1; });
     if (p.councilTax && !have["council tax"]) facts.push(["Council tax", "Band " + p.councilTax]);
     if (p.availability && !have["availability"]) facts.push(["Availability", p.availability]);
+    if (p.deposit && !have["deposit"]) facts.push(["Deposit", p.deposit]);
+    if (p.furnished && !have["furnished"]) facts.push(["Furnished", p.furnished]);
+    if (p.availableFrom && !have["available from"]) facts.push(["Available from", p.availableFrom]);
+    if (p.minTerm && !have["minimum term"]) facts.push(["Minimum term", p.minTerm]);
+    if (p.pets && !have["pets"]) facts.push(["Pets", p.pets]);
     facts.forEach(function (f) {
       var d = el("div");
       d.appendChild(el("b", null, f[1]));
@@ -1730,6 +1736,157 @@
     publish: ["Publish", "Save, export and embed"]
   };
 
+  /* ── the set-up guide — the Studio tells you what to do next ───────────── */
+  function tourUrl() {
+    return location.origin + location.pathname.replace(/index\.html$/, "") + "?site=" + PROJECT;
+  }
+  function copyText(txt, doneMsg) {
+    var done = function () { toast(doneMsg || "Copied."); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { prompt("Copy this:", txt); });
+    else prompt("Copy this:", txt);
+  }
+  function guideSteps() {
+    var p = TOUR.project || {};
+    var rooms = TOUR.rooms;
+    var starter = rooms.length === 1 && !rooms[0].pano && !photosOf(rooms[0]).length;
+    var noPano = rooms.filter(function (r) { return !r.pano; });
+    var reach = {}, q = [rooms[0].id];
+    reach[rooms[0].id] = true;
+    while (q.length) {
+      var r0 = roomsById[q.shift()];
+      (r0 && r0.hotspots || []).forEach(function (h) {
+        if (h.type === "nav" && roomsById[h.to] && !reach[h.to]) { reach[h.to] = true; q.push(h.to); }
+      });
+    }
+    var cut = rooms.filter(function (r) { return !reach[r.id]; });
+    var autoDoors = 0;
+    rooms.forEach(function (r) { (r.hotspots || []).forEach(function (h) { if (h.auto) autoDoors++; }); });
+    var withPhotos = rooms.filter(function (r) { return photosOf(r).length; }).length;
+
+    return [
+      { id: "name", label: "Name & address", tab: "sites",
+        done: !!(p.name && p.location),
+        tip: "Give the property its name and address. Its permanent link already exists — it was created with the property.",
+        cta: "Open listing details" },
+      { id: "rooms", label: "Add the rooms", tab: "rooms",
+        done: !starter && (rooms.length > 1 || !!rooms[0].pano),
+        tip: "Drop every 360° photo in at once — one room is created per photo, named from its file, and the doors link themselves so the tour walks immediately.",
+        cta: "Add the rooms" },
+      { id: "capture", label: "360° in every room", tab: "rooms",
+        done: !starter && rooms.length > 0 && !noPano.length,
+        tip: noPano.length ? "Next room to photograph: " + noPano[0].name +
+          (noPano.length > 1 ? " — then " + (noPano.length - 1) + " more." : " — the last one.") : "",
+        room: noPano.length ? noPano[0].id : null,
+        cta: noPano.length ? "Open " + noPano[0].name : "Open rooms" },
+      { id: "doors", label: "Doors where they belong", tab: "hotspots",
+        done: rooms.length < 2 || (!cut.length && !autoDoors),
+        tip: cut.length ? cut[0].name + " can't be walked to yet — open a neighbouring room and add a door that leads to it."
+          : autoDoors ? autoDoors + " auto-placed door" + (autoDoors === 1 ? "" : "s") + " to aim: open the room, face the real doorway, press the target button next to the door."
+            : "Walk the tour and check every doorway leads the right way.",
+        cta: "Open doors & windows" },
+      { id: "letting", label: "Rent & details", tab: "sites",
+        done: !!(p.price && p.beds != null),
+        tip: "The rent, bedrooms, deposit and details a tenant filters by — the same facts as the CRM record, shown on the listing.",
+        cta: "Fill in the listing" },
+      { id: "photos", label: "Photographs", tab: "rooms", optional: true,
+        done: rooms.length > 0 && withPhotos >= Math.ceil(rooms.length / 2),
+        tip: "Ordinary photos alongside the 360° — drag a whole batch onto a room. Optional, but listings with photos let better.",
+        cta: "Add photos" },
+      { id: "live", label: "Go live", tab: "sites", live: true,
+        done: !p.hidden,
+        tip: "One switch. The property appears in the portfolio, and its link starts showing the finished tour.",
+        cta: "Make it live now" }
+    ];
+  }
+  function guideCard() {
+    var steps = guideSteps();
+    var doneN = steps.filter(function (s) { return s.done; }).length;
+    var allDone = doneN === steps.length;
+    var current = null;
+    for (var i = 0; i < steps.length; i++) { if (!steps[i].done) { current = steps[i]; break; } }
+    var minKey = "billy360:guide:min";
+    var min = false;
+    try { min = localStorage.getItem(minKey) === "1"; } catch (e) { }
+
+    var card = el("div", "studio-panel card guide-wiz" + (allDone ? " is-done" : ""));
+    card.id = "guideWiz";
+
+    var head = el("div", "gw-head");
+    var title = el("div", "gw-title");
+    title.appendChild(el("h4", null, allDone ? "This property is complete" : "Set-up guide"));
+    title.appendChild(el("span", "t-mono", allDone ? "every step done" : doneN + " of " + steps.length + " steps done"));
+    head.appendChild(title);
+
+    var link = el("button", "gw-link");
+    link.title = "The property's permanent link — created automatically. Click to copy.";
+    link.appendChild(el("span", "t-mono", tourUrl().replace(/^https?:\/\//, "")));
+    link.appendChild(icon("link"));
+    link.onclick = function () { copyText(tourUrl(), "Link copied — paste it into 10ninety, WhatsApp, anywhere."); };
+    head.appendChild(link);
+
+    var tog = el("button", "icon-btn icon-btn--sm gw-tog");
+    tog.appendChild(icon(min ? "arrow" : "close"));
+    tog.title = min ? "Open the guide" : "Minimise the guide";
+    tog.onclick = function () {
+      try { localStorage.setItem(minKey, min ? "0" : "1"); } catch (e) { }
+      renderStudio();
+    };
+    head.appendChild(tog);
+    card.appendChild(head);
+
+    var barWrap = el("div", "gw-bar");
+    var bar = el("i");
+    bar.style.width = Math.round(100 * doneN / steps.length) + "%";
+    barWrap.appendChild(bar);
+    card.appendChild(barWrap);
+
+    if (!min) {
+      var pills = el("div", "gw-steps");
+      steps.forEach(function (s, i) {
+        var b = el("button", "gw-step" + (s.done ? " is-done" : "") + (s === current ? " is-now" : ""));
+        b.appendChild(el("i", null, s.done ? "✓" : String(i + 1)));
+        b.appendChild(el("span", null, s.label + (s.optional && !s.done ? " (optional)" : "")));
+        b.onclick = function () {
+          if (s.room) studioRoomId = s.room;
+          studioTab = s.tab;
+          renderStudio();
+        };
+        pills.appendChild(b);
+      });
+      card.appendChild(pills);
+
+      if (current) {
+        var now = el("div", "gw-now");
+        var txt = el("p", "t-body", current.tip);
+        now.appendChild(txt);
+        var go = el("button", "btn btn--sm btn--primary", current.cta);
+        go.onclick = function () {
+          if (current.live) {
+            (TOUR.project = TOUR.project || {}).hidden = false;
+            afterSiteEdit();
+            saveTour(true);
+            toast("Live — the property is in the portfolio and the link shows the tour.");
+            renderStudio();
+            return;
+          }
+          if (current.room) studioRoomId = current.room;
+          studioTab = current.tab;
+          renderStudio();
+        };
+        now.appendChild(go);
+        card.appendChild(now);
+      } else {
+        var doneRow = el("div", "gw-now");
+        doneRow.appendChild(el("p", "t-body", "Live, walkable and complete. Paste the link into the 10ninety record, print its QR from Publish, or share it anywhere."));
+        var qrB = el("button", "btn btn--sm", "Open Publish · QR & embed");
+        qrB.onclick = function () { studioTab = "publish"; renderStudio(); };
+        doneRow.appendChild(qrB);
+        card.appendChild(doneRow);
+      }
+    }
+    return card;
+  }
+
   function renderStudio() {
     if (!STUDIO_TITLES[studioTab]) studioTab = "rooms";
     $$("#studioNav button").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-tab") === studioTab); });
@@ -1738,6 +1895,7 @@
     var body = $("#studioBody");
     parkStage();
     body.innerHTML = "";
+    if (studioTab !== "access" && isAdmin()) body.appendChild(guideCard());
     if (studioTab === "rooms") studioRooms(body);
     else if (studioTab === "hotspots") studioHotspots(body);
     else if (studioTab === "plans") studioPlans(body);
@@ -1854,7 +2012,8 @@
     g.appendChild(act);
     wrap.appendChild(g);
     var body = $("#studioBody");
-    body.insertBefore(wrap, body.firstChild);
+    var gw = $("#guideWiz");
+    body.insertBefore(wrap, gw && gw.parentNode === body ? gw.nextSibling : body.firstChild);
     nameI.focus();
   }
 
@@ -1863,6 +2022,8 @@
     if (!studioRoomId) studioRoomId = (currentRoom || TOUR.rooms[0]).id;
     var room = roomsById[studioRoomId] || TOUR.rooms[0];
     var cols = el("div", "studio-cols");
+    var mainCol = el("div");
+    mainCol.appendChild(bulkPanoCard());
     var main = el("div", "studio-panel card");
     main.appendChild(el("h4", null, "Room detail"));
 
@@ -2111,7 +2272,8 @@
     danger.appendChild(dup); danger.appendChild(del);
     main.appendChild(danger);
 
-    cols.appendChild(main);
+    mainCol.appendChild(main);
+    cols.appendChild(mainCol);
     var side = roomListPanel(function () { renderStudio(); });
     cols.appendChild(side);
     body.appendChild(cols);
@@ -2171,22 +2333,23 @@
   function blankTour(name) {
     var b = JSON.parse(JSON.stringify(TOUR.brand || {}));
     var id = slug(name) + "-" + Math.random().toString(36).slice(2, 6);
+    var first = newRoom("First room", "g", 10);
     return {
       id: id, version: 2, brand: b,
       project: { name: name, slug: id, location: "", area: "", floors: 1, duration: "2 min",
-        captured: "", summary: "A new property. Add spaces in Studio → Rooms.",
+        captured: "", summary: "",
         price: "", status: (PORTFOLIO.statuses || ["For sale"])[0], beds: null, baths: null,
-        propertyType: "", tenure: "", epc: "", ref: "", cover: "space-1", hidden: true,
+        propertyType: "", tenure: "", epc: "", ref: "", cover: first.id, hidden: true,
         agent: JSON.parse(JSON.stringify((TOUR.project && TOUR.project.agent) || {})),
-        facts: [["Positions", "1"], ["Floors", "1"]] },
-      guided: { dwell: 9000, order: ["space-1"] },
+        facts: [] },
+      guided: { dwell: 9000, order: [first.id] },
       floors: [{
         id: "g", name: "Ground Floor", short: "G",
         plan: '<rect class="fp-out" x="6" y="6" width="108" height="68" rx="2"/>' +
               '<rect class="fp-rm" x="6" y="6" width="108" height="68"/>' +
               '<path class="fp-glaze" d="M6 74h108"/>'
       }],
-      rooms: [newRoom("Space 1", "g", 0)]
+      rooms: [first]
     };
   }
 
@@ -2243,6 +2406,121 @@
     renderStudio();
     toast(room.name + " added — it renders as soon as you open it.");
     return room;
+  }
+
+  /* ── bulk 360° intake — every photo becomes a room, the tour links itself ── */
+  function prettyName(fn) {
+    var s = String(fn || "").replace(/\.[a-z0-9]+$/i, "").replace(/^[\s\d_.-]+/, "").replace(/[_-]+/g, " ").trim();
+    if (!s) return "";
+    return s.split(" ").map(function (w) { return w ? w.charAt(0).toUpperCase() + w.slice(1) : ""; }).join(" ");
+  }
+  function roomKind(name) {
+    var n = String(name || "").toLowerCase();
+    if (/kitchen/.test(n)) return "Kitchen";
+    if (/bed/.test(n)) return "Bedroom";
+    if (/bath|ensuite|en-suite|shower|wc|toilet/.test(n)) return "Bathroom";
+    if (/living|lounge|sitting|reception/.test(n)) return "Living";
+    if (/dining/.test(n)) return "Dining";
+    if (/hall|landing|entrance|porch/.test(n)) return "Hallway";
+    if (/garden|terrace|balcony|patio|yard/.test(n)) return "Outside";
+    if (/office|study/.test(n)) return "Office";
+    if (/garage|utility|cellar|basement|loft|attic/.test(n)) return "Utility";
+    return "";
+  }
+  function hasNav(from, to) {
+    return (from.hotspots || []).some(function (h) { return h.type === "nav" && h.to === to.id; });
+  }
+  /* chain the rooms in order, both directions, so a fresh tour is walkable
+     end to end the moment it exists — every auto door is tagged for re-aiming */
+  function autoLinkRooms() {
+    for (var i = 0; i < TOUR.rooms.length - 1; i++) {
+      var a = TOUR.rooms[i], b = TOUR.rooms[i + 1];
+      if (!hasNav(a, b)) (a.hotspots = a.hotspots || []).push({
+        id: "h" + Math.random().toString(36).slice(2, 8),
+        type: "nav", to: b.id, yaw: 35, pitch: -4, label: "To " + b.name, auto: true
+      });
+      if (!hasNav(b, a)) (b.hotspots = b.hotspots || []).push({
+        id: "h" + Math.random().toString(36).slice(2, 8),
+        type: "nav", to: a.id, yaw: -145, pitch: -4, label: "Back to " + a.name, auto: true
+      });
+    }
+  }
+  function autoBuildFromFiles(files) {
+    files = Array.prototype.slice.call(files || []).filter(Boolean);
+    if (!files.length) return;
+    toast(files.length === 1 ? "Reading the photo…" : "Building rooms from " + files.length + " photos…");
+    var made = [], skipped = [], left = files.length;
+    files.forEach(function (f, idx) {
+      intakeImage(f, { maxEdge: 4096, panoEdge: 4096, quality: 0.86 }, function (r) {
+        left--;
+        if (r.error) skipped.push(r.error);
+        else if (!r.isPano) skipped.push("“" + (r.name || "One image") + "” isn't a 2:1 360° — add it to a room's Photographs instead.");
+        else made.push({ name: prettyName(r.name) || "Room " + (idx + 1), src: r.src, order: idx });
+        if (!left) done();
+      });
+    });
+    function done() {
+      if (!made.length) { toast(skipped[0] || "No 360° images in that drop."); return; }
+      made.sort(function (a, b) { return a.order - b.order; });
+      var starter = TOUR.rooms.length === 1 && !TOUR.rooms[0].pano && !photosOf(TOUR.rooms[0]).length;
+      var created = [];
+      made.forEach(function (m, i) {
+        var room;
+        if (i === 0 && starter) {
+          room = TOUR.rooms[0];
+          room.name = m.name; room.short = m.name;
+        } else {
+          room = newRoom(m.name, TOUR.floors[0].id, 10);
+          TOUR.rooms.push(room);
+        }
+        room.kind = roomKind(m.name);
+        room.pano = m.src;
+        created.push(room);
+      });
+      TOUR.rooms.forEach(function (r, i) { r.plan = [16 + (i % 4) * 29, 18 + Math.floor(i / 4) * 22]; });
+      (TOUR.guided = TOUR.guided || {}).order = TOUR.rooms.map(function (r) { return r.id; });
+      autoLinkRooms();
+      indexRooms();
+      engine.load(TOUR);
+      /* hand each capture to the engine directly — the same hot path the
+         single-room uploader uses, so the panorama shows without a reload */
+      created.forEach(function (r) { engine.setPano(r.id, r.pano); });
+      studioRoomId = created[0].id;
+      markDirty();
+      refreshAfterEdit();
+      engine.go(created[0].id, { force: true });
+      renderStudio();
+      var msg = created.length + " room" + (created.length === 1 ? "" : "s") + " created from your photos — the tour is walkable right now.";
+      if (TOUR.rooms.length > 1) msg += " Next: aim each door at its real doorway.";
+      toast(msg);
+      if (skipped.length) setTimeout(function () { toast(skipped[0]); }, 3000);
+    }
+  }
+  function bulkPanoCard() {
+    var fresh = TOUR.rooms.length < 2 && !(TOUR.rooms[0] && TOUR.rooms[0].pano);
+    var wrap = el("div", "studio-panel card");
+    wrap.style.marginBottom = "16px";
+    wrap.appendChild(el("h4", null, fresh ? "Build the whole tour in one drop" : "Add more rooms from 360° photos"));
+    wrap.appendChild(el("p", "t-body", "Drop every 360° capture at once — kitchen.jpg, bedroom-1.jpg, hallway.jpg… " +
+      "One room is created per photo, named from its file, and the doors link themselves so the tour walks immediately."));
+    var drop = el("div", "drop drop--big");
+    drop.id = "bulkDrop";
+    drop.appendChild(icon("upload"));
+    drop.appendChild(el("p", null, "Drop all the 360° photos here — or click to choose them"));
+    var file = el("input");
+    file.id = "bulkFile";
+    file.type = "file"; file.accept = "image/*"; file.multiple = true; file.style.display = "none";
+    drop.onclick = function () { file.click(); };
+    drop.ondragover = function (e) { e.preventDefault(); drop.classList.add("is-over"); };
+    drop.ondragleave = function () { drop.classList.remove("is-over"); };
+    drop.ondrop = function (e) {
+      e.preventDefault(); drop.classList.remove("is-over");
+      autoBuildFromFiles(e.dataTransfer.files);
+    };
+    file.onchange = function () { autoBuildFromFiles(file.files); file.value = ""; };
+    wrap.appendChild(drop);
+    wrap.appendChild(file);
+    return wrap;
   }
 
   function deleteRoom(room) {
@@ -2309,12 +2587,48 @@
     main.appendChild(pv);
 
     var bar = el("div");
-    bar.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin:14px 0";
-    var place = el("button", "btn btn--sm" + (placing ? " btn--primary" : ""));
+    bar.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0";
+
+    /* doors first — the tool people actually need, in their words */
+    var others = TOUR.rooms.filter(function (r) { return r.id !== room.id; });
+    if (others.length) {
+      var doorSel = select(others.map(function (r) { return [r.id, r.name]; }), others[0].id, function () { });
+      doorSel.style.maxWidth = "180px";
+      var doorBtn = el("button", "btn btn--sm btn--primary" + (placing && placingSpec && placingSpec.type === "nav" ? " is-on" : ""));
+      doorBtn.appendChild(icon("pin"));
+      doorBtn.appendChild(document.createTextNode(placing && placingSpec && placingSpec.type === "nav"
+        ? "Click the doorway…" : "Add a door →"));
+      doorBtn.onclick = function () {
+        var target = roomsById[doorSel.value];
+        if (!target) return;
+        placing = true;
+        placingSpec = { type: "nav", to: target.id, label: "To " + target.name };
+        $("#studioStage").classList.add("is-placing");
+        renderStudio();
+        toast("Face the doorway that leads to " + target.name + ", then click on it.");
+      };
+      bar.appendChild(doorBtn);
+      bar.appendChild(doorSel);
+    }
+    var winBtn = el("button", "btn btn--sm" + (placing && placingSpec && placingSpec.window ? " btn--primary" : ""));
+    winBtn.appendChild(icon("eye"));
+    winBtn.appendChild(document.createTextNode(placing && placingSpec && placingSpec.window
+      ? "Click the window…" : "Mark a window"));
+    winBtn.onclick = function () {
+      placing = true;
+      placingSpec = { type: "info", label: "Window", window: true };
+      $("#studioStage").classList.add("is-placing");
+      renderStudio();
+      toast("Click on the window in the panorama.");
+    };
+    bar.appendChild(winBtn);
+
+    var place = el("button", "btn btn--sm" + (placing && !placingSpec ? " btn--primary" : ""));
     place.appendChild(icon("plus"));
-    place.appendChild(document.createTextNode(placing ? "Click in the panorama…" : "Place a hotspot"));
+    place.appendChild(document.createTextNode(placing && !placingSpec ? "Click in the panorama…" : "Place a hotspot"));
     place.onclick = function () {
-      placing = !placing;
+      placing = !(placing && !placingSpec);
+      placingSpec = null;
       $("#studioStage").classList.toggle("is-placing", placing);
       renderStudio();
       if (placing) toast("Click anywhere in the panorama to drop a hotspot.");
@@ -2333,7 +2647,16 @@
       var row = el("div", "hs-edit" + (selectedHotspot === h ? " is-sel" : ""));
       row.appendChild(select([["nav", "Walk to"], ["info", "Info"], ["image", "Image"], ["video", "Video"], ["doc", "Document"], ["link", "Link"], ["cta", "Book a viewing"]],
         h.type, function (v) { h.type = v; renderStudio(); refreshHotspotsOnly(room); }));
-      row.appendChild(input(h.label, function (v) { h.label = v; refreshHotspotsOnly(room); }, "Label"));
+      var lblWrap = el("span");
+      lblWrap.style.cssText = "display:flex;align-items:center;gap:6px;min-width:0";
+      lblWrap.appendChild(input(h.label, function (v) { h.label = v; refreshHotspotsOnly(room); }, "Label"));
+      if (h.auto) {
+        var au = el("span", "chip", "auto — re-aim me");
+        au.title = "This door was placed automatically. Face the real doorway, then press the target button.";
+        au.style.flex = "0 0 auto";
+        lblWrap.appendChild(au);
+      }
+      row.appendChild(lblWrap);
       var acts = el("div");
       acts.style.cssText = "display:flex;gap:5px";
       var pick = el("button", "icon-btn icon-btn--sm");
@@ -2346,8 +2669,11 @@
       aim.onclick = function () {
         var c = engine.camera();
         h.yaw = +c.yaw.toFixed(2); h.pitch = +c.pitch.toFixed(2);
+        var wasAuto = h.auto;
+        delete h.auto;
         refreshHotspotsOnly(room); markDirty();
-        toast("Hotspot re-aimed.");
+        if (wasAuto) renderStudio();
+        toast(wasAuto ? "Door re-aimed — it now sits where you're looking." : "Hotspot re-aimed.");
       };
       var del = el("button", "icon-btn icon-btn--sm");
       del.appendChild(icon("trash"));
@@ -2415,9 +2741,12 @@
     }));
     body.appendChild(cols);
 
-    /* mount the live engine into the placement surface */
+    /* mount the live engine into the placement surface — and make sure it
+       accepts input: arriving from the portfolio leaves inputs switched off */
     setTimeout(function () {
       mountStage($("#studioStage"));
+      engine && engine.autoRotate(false);
+      engine && engine.inputs(true);
       $("#studioStage").classList.toggle("is-placing", placing);
       layoutHotspots(true);
     }, 0);
@@ -2434,18 +2763,30 @@
   function placeHotspotAt(e) {
     if (!placing || !currentRoom) return;
     var a = engine.angleAt(e.clientX, e.clientY);
+    var spec = placingSpec || {};
     var h = {
       id: "h" + Date.now().toString(36),
-      type: "info", yaw: +a.yaw.toFixed(2), pitch: +a.pitch.toFixed(2),
-      label: "New hotspot", body: ""
+      type: spec.type || "info", yaw: +a.yaw.toFixed(2), pitch: +a.pitch.toFixed(2),
+      label: spec.label || "New hotspot"
     };
+    if (spec.type === "nav") h.to = spec.to;
+    else h.body = spec.body || "";
+    if (spec.window) h.window = true;
     currentRoom.hotspots = currentRoom.hotspots || [];
     currentRoom.hotspots.push(h);
     selectedHotspot = h;
+    /* doors and windows are one click each — placement mode ends itself */
+    if (spec.type) {
+      placing = false; placingSpec = null;
+      var st = $("#studioStage");
+      if (st) st.classList.remove("is-placing");
+    }
     renderHotspots(currentRoom);
     markDirty();
     renderStudio();
-    toast("Hotspot placed — set what it does on the right.");
+    toast(spec.type === "nav" ? "Door placed — it walks to " + ((roomsById[h.to] || {}).name || "that room") + "."
+      : spec.window ? "Window marked — add what's outside in the editor."
+        : "Hotspot placed — set what it does on the right.");
   }
 
   /* ── Studio · plans ────────────────────────────────────────────────────── */
@@ -2644,6 +2985,14 @@
     var p = TOUR.project = TOUR.project || {};
     var det = el("div", "studio-panel card");
     det.appendChild(el("h4", null, "Listing · " + (p.name || PROJECT)));
+    var urlRow = el("div");
+    urlRow.style.cssText = "display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 10px";
+    var urlTx = el("span", "t-mono", tourUrl().replace(/^https?:\/\//, ""));
+    urlTx.style.cssText = "font-size:12px;opacity:.8;word-break:break-all";
+    var urlCp = el("button", "btn btn--sm", "Copy link");
+    urlCp.onclick = function () { copyText(tourUrl(), "Link copied — paste it into 10ninety, WhatsApp, anywhere."); };
+    urlRow.appendChild(urlTx); urlRow.appendChild(urlCp);
+    det.appendChild(urlRow);
     det.appendChild(el("p", "t-body", "What a viewer sees on the portfolio card and across the top of the " +
       "property. Leave a field empty and it simply does not appear."));
     var g = el("div", "form-grid");
@@ -2681,6 +3030,22 @@
     r5b.appendChild(field("Council tax band", input(p.councilTax, function (v) { p.councilTax = v; afterSiteEdit(); }, "D")));
     r5b.appendChild(field("Availability", input(p.availability, function (v) { p.availability = v; afterSiteEdit(); }, "Available now \u00B7 Chain free")));
     g.appendChild(r5b);
+
+    /* the lettings record \u2014 the same facts as the CRM, shown on the listing */
+    var r5c = el("div", "form-row form-row--3");
+    r5c.appendChild(field("Deposit", input(p.deposit, function (v) { p.deposit = v; afterSiteEdit(); }, "\u00A31,150")));
+    r5c.appendChild(field("Furnished", select(
+      [["", "\u2014 not said \u2014"], ["Furnished", "Furnished"], ["Part furnished", "Part furnished"], ["Unfurnished", "Unfurnished"]],
+      p.furnished || "", function (v) { p.furnished = v; afterSiteEdit(); })));
+    r5c.appendChild(field("Minimum term", input(p.minTerm, function (v) { p.minTerm = v; afterSiteEdit(); }, "12 months")));
+    g.appendChild(r5c);
+
+    var r5d = el("div", "form-row");
+    r5d.appendChild(field("Available from", input(p.availableFrom, function (v) { p.availableFrom = v; afterSiteEdit(); }, "1 September")));
+    r5d.appendChild(field("Pets", select(
+      [["", "\u2014 not said \u2014"], ["Pets considered", "Pets considered"], ["No pets", "No pets"]],
+      p.pets || "", function (v) { p.pets = v; afterSiteEdit(); })));
+    g.appendChild(r5d);
 
     var featBox = el("textarea", "textarea");
     featBox.value = (p.features || []).join("\n");
@@ -2901,45 +3266,31 @@
     var nameI = el("input", "input");
     nameI.id = "newSiteName";
     nameI.placeholder = "e.g. 12 Willow Lane";
-    g.appendChild(field("Property name", nameI));
-    var row = el("div", "form-row");
-    var locI = el("input", "input");
-    locI.id = "newSiteLocation";
-    locI.placeholder = "Stoneygate, Leicester LE2";
-    var priceI = el("input", "input");
-    priceI.id = "newSitePrice";
-    priceI.placeholder = "£465,000";
-    row.appendChild(field("Address / area", locI));
-    row.appendChild(field("Price", priceI));
-    g.appendChild(row);
-    var row2 = el("div", "form-row");
-    var statusS = select((PORTFOLIO.statuses || ["For sale"]).map(function (x) { return [x, x]; }),
-      (PORTFOLIO.statuses || ["For sale"])[0], function () { });
-    statusS.id = "newSiteStatus";
-    var bedsI = el("input", "input");
-    bedsI.id = "newSiteBeds";
-    bedsI.placeholder = "3";
-    row2.appendChild(field("Status", statusS));
-    row2.appendChild(field("Bedrooms", bedsI));
-    g.appendChild(row2);
-    g.appendChild(el("p", "t-body", "It starts as a draft with one space, so nothing half-finished ever shows " +
-      "in the portfolio. Add the rest in Rooms, then switch it to Live."));
+    g.appendChild(field("Property name — the only thing needed now", nameI));
+    var urlP = el("p", "t-mono");
+    urlP.style.cssText = "font-size:12px;opacity:.75;word-break:break-all";
+    var urlBase = location.origin + location.pathname.replace(/index\.html$/, "") + "?site=";
+    function paintUrl() {
+      urlP.textContent = "Its permanent link, created with it: " + urlBase.replace(/^https?:\/\//, "") +
+        (slug(nameI.value.trim() || "new-property")) + "-····";
+    }
+    paintUrl();
+    nameI.oninput = paintUrl;
+    g.appendChild(urlP);
+    g.appendChild(el("p", "t-body", "It starts empty, hidden from visitors, and the guide walks you through " +
+      "the rest — rooms, 360° photos, doors, rent, live."));
     var act = el("div");
     act.style.cssText = "display:flex;gap:8px";
     var go = el("button", "btn btn--sm btn--primary", "Create property");
     go.id = "btnNewSiteGo";
     go.onclick = function () {
       var t = blankTour(nameI.value.trim() || "New property");
-      t.project.location = locI.value.trim();
-      t.project.price = priceI.value.trim();
-      t.project.status = statusS.value;
-      t.project.beds = bedsI.value ? +bedsI.value : null;
       t.project.hidden = true;
       if (!storeSite(t)) return;
       switchProject(t.id, { force: true, view: "studio" });
       studioTab = "rooms";
       renderStudio();
-      toast(t.project.name + " created as a draft.");
+      toast(t.project.name + " created — its link exists already. The guide takes it from here.");
     };
     var cancel = el("button", "btn btn--sm", "Cancel");
     cancel.onclick = function () { wrap.parentNode.removeChild(wrap); };
@@ -2947,7 +3298,8 @@
     g.appendChild(act);
     wrap.appendChild(g);
     var host = $("#studioBody");
-    host.insertBefore(wrap, host.firstChild);
+    var gw = $("#guideWiz");
+    host.insertBefore(wrap, gw && gw.parentNode === host ? gw.nextSibling : host.firstChild);
     nameI.focus();
   }
 

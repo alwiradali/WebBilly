@@ -1165,3 +1165,37 @@ body.is-embed .dash-inner { padding-top: 20px; }
 .qr-wrap { background: #fff; border-radius: var(--r-sm); padding: 6px; line-height: 0; flex: 0 0 auto; }
 .qr-wrap canvas { display: block; width: 148px; height: 148px; image-rendering: pixelated; }
 .share-acts { display: grid; gap: 9px; align-content: start; flex: 1 1 220px; }
+
+/* ── the set-up guide — the Studio's own next-step wizard ────────────────── */
+.guide-wiz { margin-bottom: 16px; border-color: var(--accent-line); }
+.guide-wiz.is-done { border-color: var(--line); }
+.gw-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gw-title { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.gw-title h4 { margin: 0; }
+.gw-link { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; max-width: 100%;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 12px; cursor: pointer; color: var(--ink-2); transition: border-color .15s, color .15s; min-width: 0; }
+.gw-link:hover { border-color: var(--accent); color: var(--ink); }
+.gw-link .t-mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; }
+.gw-link svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.7; flex: 0 0 auto; }
+.gw-tog { flex: 0 0 auto; }
+.gw-bar { height: 4px; border-radius: 999px; background: var(--surface-2); margin: 12px 0 0; overflow: hidden; }
+.gw-bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .35s ease; }
+.gw-steps { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 13px; }
+.gw-step { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 6px 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  color: var(--ink-3); font-size: .74rem; cursor: pointer; transition: border-color .15s, color .15s; }
+.gw-step i { display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%;
+  background: var(--surface-2); font-style: normal; font-size: .66rem; color: var(--ink-2); }
+.gw-step:hover { border-color: var(--line-3); color: var(--ink-2); }
+.gw-step.is-done { color: var(--ink-3); }
+.gw-step.is-done i { background: var(--accent-soft); color: var(--accent); }
+.gw-step.is-now { border-color: var(--accent); color: var(--ink); }
+.gw-step.is-now i { background: var(--accent); color: #fff; }
+.gw-now { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 13px;
+  padding-top: 13px; border-top: 1px solid var(--line); }
+.gw-now .t-body { margin: 0; flex: 1 1 300px; }
+.gw-now .btn { flex: 0 0 auto; }
+
+/* bulk 360° intake */
+.drop--big { padding: 34px 18px; }

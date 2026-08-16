@@ -1652,6 +1652,9 @@
         var room = byId[id];
         if (!room) return;
         room.pano = src;
+        /* a preview bake already queued for this room would land after the
+           capture and overwrite it — purge it, exactly as rebake does */
+        for (var i = queue.length - 1; i >= 0; i--) if (queue[i].id === id) queue.splice(i, 1);
         if (store[id].lo && store[id].lo.tex) { try { gl.deleteTexture(store[id].lo.tex); } catch (e) { } }
         store[id] = { lo: null, hi: null };
         loadPano(room, "lo", function () { if (opts.onThumb) opts.onThumb(id); }, true);
