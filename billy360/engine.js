@@ -900,6 +900,9 @@
     var tq = /[?&]tier=([0-2])/.exec(location.search);
     if (tq) TIER = +tq[1];
     if (/[?&]compat=1/.test(location.search)) TIER = Math.max(TIER, 1);
+    /* ?safe=1 — the one switch for a struggling machine: lite renderer,
+       remembered, so the same laptop never tries the heavy shader again */
+    if (/[?&]safe=1/.test(location.search)) { TIER = 2; rememberTier(2); }
     if (TIER) diag.push("starting on the " + TIERS[TIER] + " renderer");
 
     function rememberTier(t) { try { localStorage.setItem("billy360:tier", String(t)); } catch (e) { } }

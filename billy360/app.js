@@ -641,8 +641,10 @@
       location.hash = "#/sites";
     }
     if (prev === "studio" && next !== "studio") { placing = false; $("#stageTour").classList.remove("is-placing"); }
-    /* on the portfolio the canvas is invisible — put the render loop to sleep */
-    if (engine && engine.sleep) engine.sleep(next === "sites");
+    /* wherever the canvas is invisible — the portfolio, and every Studio tab
+       except Hotspots — put the render loop to sleep. On integrated graphics
+       this is the difference between a smooth Studio and a hung tab. */
+    if (engine && engine.sleep) engine.sleep(next === "sites" || (next === "studio" && studioTab !== "hotspots"));
     closePalette(); closeSheet();
   }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -2284,6 +2286,9 @@
     else if (studioTab === "access") studioAccess(body);
     else studioPublish(body);
     markSaved(dirty ? "Unsaved changes" : "Saved", dirty);
+    /* only the Hotspots tab shows the live canvas — everywhere else the
+       draw loop sleeps so weak machines stay responsive while editing */
+    if (view === "studio" && engine && engine.sleep) engine.sleep(studioTab !== "hotspots");
     /* the tab can change without going through the router — keep the address
        bar honest so a deep link always reopens what you were looking at */
     if (view === "studio") {
