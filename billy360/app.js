@@ -1992,7 +1992,27 @@
      command. Everything it says it did, it actually did — it calls the
      same functions the buttons do, nothing more.
      ═══════════════════════════════════════════════════════════════════════ */
-  var AS = { log: [], state: "idle", draft: null };
+  var AS = { log: [], state: "idle", draft: null, capHint: null };
+
+  /* the conversation is about ONE property — switching, importing or
+     resetting the tour must clear it, or stale chips act on the wrong one */
+  function asReset() {
+    /* when the assistant itself initiated the switch (it just created the
+       property), the conversation continues — only the machinery resets */
+    var keep = AS._keep;
+    AS._keep = false;
+    AS.state = "idle";
+    AS.draft = null;
+    AS.capHint = null;
+    if (!keep) AS.log = [];
+  }
+  /* save + reflect the truth of whether it worked — a full browser must
+     never be reported as "saved" */
+  function saveNow() {
+    var ok = saveTour(true);
+    if (ok) markSaved("Saved automatically");
+    return ok;
+  }
 
   function asPush(who, text, chips) {
     AS.log.push({ who: who, text: text, chips: chips || null });
@@ -2072,8 +2092,8 @@
   function asFiles(files) {
     var list = Array.prototype.slice.call(files || []).filter(Boolean);
     if (!list.length) return;
-    if (!asMissing().length) {
-      asSay("Every room already has its 360°. To add ordinary photographs, open Rooms and drop them onto a room's Photographs.");
+    if (/^np_/.test(AS.state)) {
+      asSay("One thing at a time — let's finish creating the property first (or say “cancel”). Then drop the photos.");
       return;
     }
     asPush("you", list.length === 1 ? "📷 " + (list[0].name || "photo") : "📷 " + list.length + " photos");
@@ -2087,25 +2107,28 @@
           asSay("“" + (r.name || "That image") + "” isn't a 2:1 360° — I've left it out. Ordinary photos go on a room's Photographs in the Rooms screen.");
           next(); return;
         }
-        /* a file named after an empty room fills that room; otherwise the next one waiting */
-        var room = null;
+        /* a file named after a room goes to THAT room — replacing its 360°
+           if it already has one (a re-shoot must never be misfiled).
+           Un-named files go to the room the assistant asked for, then the
+           next one waiting. */
+        var room = null, replacing = false;
         var guess = slug(prettyName(r.name));
         for (var k = 0; k < TOUR.rooms.length; k++) {
-          if (!TOUR.rooms[k].pano && slug(TOUR.rooms[k].name) === guess) { room = TOUR.rooms[k]; break; }
+          if (slug(TOUR.rooms[k].name) === guess) { room = TOUR.rooms[k]; replacing = !!room.pano; break; }
         }
         if (!room && AS.capHint && roomsById[AS.capHint] && !roomsById[AS.capHint].pano) room = roomsById[AS.capHint];
         if (!room) room = asNextTarget();
-        if (!room) { asSay("Every room is photographed — “" + (r.name || "the extra image") + "” wasn't needed."); next(); return; }
+        if (!room) { asSay("Every room is photographed — “" + (r.name || "the extra image") + "” wasn't filed. Name it after a room (kitchen.jpg) to replace that room's 360°."); next(); return; }
         AS.capHint = null;
         room.pano = r.src;
         rememberPanoStats(room, r);
         engine.setPano(room.id, r.src);
         studioRoomId = room.id;
         markDirty();
-        saveTour(true);
-        markSaved("Saved automatically");
+        var ok = saveNow();
         var note = r.notes.length ? "  (" + r.notes[0] + ")" : "";
-        asSay("✓ " + room.name + " — saved." + note);
+        asSay(ok ? "✓ " + room.name + (replacing ? " — 360° replaced and saved." : " — saved.") + note
+          : "⚠ " + room.name + " — the photo is in place but could NOT be saved: this browser's storage is full. Free some space (Publish → export, or delete a photo), then drop it again.");
         next();
       });
     }
@@ -2116,6 +2139,14 @@
     var t = String(text || "").trim();
     if (!t) return;
     var lc = t.toLowerCase();
+
+    /* the interview can always be abandoned */
+    if (/^np_/.test(AS.state) && /^(cancel|stop|quit|never ?mind|nevermind|forget it|abort)/.test(lc)) {
+      AS.state = "idle";
+      AS.draft = null;
+      asSay("Cancelled — nothing was created. Say “new property” whenever you're ready.");
+      return;
+    }
 
     /* the property-creation conversation */
     if (AS.state === "np_name") {
@@ -2159,6 +2190,7 @@
       if (!storeSite(tour)) { AS.state = "idle"; asSay("This browser's storage is full — export a property in Publish first, then try again."); return; }
       AS.state = "idle";
       AS.draft = null;
+      AS._keep = true;
       switchProject(tour.id, { force: true, silent: true });
       studioTab = "assistant";
       renderStudio();
@@ -2170,13 +2202,12 @@
 
     /* capture-state words */
     if (AS.state === "capture" && /^skip/i.test(lc)) {
-      var cur = asNextTarget();
       var m = asMissing();
+      var cur = (AS.capHint && roomsById[AS.capHint] && !roomsById[AS.capHint].pano)
+        ? roomsById[AS.capHint] : asNextTarget();
       if (m.length > 1 && cur) {
         var idx = m.indexOf(cur);
         var nxt = m[(idx + 1) % m.length];
-        /* rotate: move current to the back by filling order — simplest is to
-           just prompt for the next one; drops still match by filename */
         studioRoomId = nxt.id;
         AS.capHint = nxt.id;
         asSay("Skipped " + cur.name + " for now. Next: drop the " + nxt.name + " 360° here.");
@@ -2195,13 +2226,14 @@
     /* commands, any time */
     if (/new prop|create|another prop|add a prop|start a prop|build a prop/.test(lc)) { asStartNew(); return; }
     if (/missing|what's left|whats left|ready|score|quality|check/.test(lc)) { asQuality(); return; }
-    if (/go live|make it live|publish|put it live/.test(lc)) { asGoLive(); return; }
+    /* hide before publish — "unpublish" contains "publish" and must win */
     if (/hide|unpublish|take.*down|let agreed/.test(lc)) {
       (TOUR.project = TOUR.project || {}).hidden = true;
       afterSiteEdit(); saveTour(true);
       asSay("Hidden from visitors. The link stops showing it in the portfolio; flick it back with “make it live” — the link never changes.");
       return;
     }
+    if (/go live|make it live|publish|put it live/.test(lc)) { asGoLive(); return; }
     if (/photo|picture|360|capture/.test(lc)) {
       if (asMissing().length) asCapturePrompt();
       else asSay("Every room has its 360° already. Ordinary photographs go on each room in the Rooms screen.");
@@ -2476,9 +2508,9 @@
         engine.setPano(room.id, r.src);
         dtxt.textContent = "Capture attached — click to replace";
         markDirty();
-        saveTour(true);
-        markSaved("Saved automatically");
-        toast(r.notes.length ? r.notes[0] : "Panorama attached to " + room.name + " — saved automatically.");
+        var ok1 = saveNow();
+        toast(!ok1 ? "Storage is full — the capture is in place but NOT saved. Free some space, then re-drop it."
+          : r.notes.length ? r.notes[0] : "Panorama attached to " + room.name + " — saved automatically.");
       });
     }
     panoBox.appendChild(drop);
@@ -2558,9 +2590,9 @@
       });
       function done() {
         markDirty();
-        saveTour(true);
-        markSaved("Saved automatically");
-        if (added) toast(added === 1 ? "Photo added — saved automatically." : added + " photos added — saved automatically.");
+        var ok = saveNow();
+        if (added) toast(!ok ? "Storage is full — the photos are showing but NOT saved. Remove something, then re-add them."
+          : added === 1 ? "Photo added — saved automatically." : added + " photos added — saved automatically.");
         renderStudio();
       }
     }
@@ -2703,6 +2735,7 @@
     studioRoomId = null;
     dashFloor = "all";        // the old floor id may not exist in this building
     historyReset();
+    asReset();                // the assistant's conversation was about the old property
     forgetMeta();
     indexRooms();
     applyBrand();
@@ -2988,8 +3021,7 @@
       refreshAfterEdit();
       engine.go(touched[0].id, { force: true });
       renderStudio();
-      saveTour(true);
-      markSaved("Saved automatically");
+      var okB = saveNow();
       var bits = [];
       if (filled) bits.push(filled + " room" + (filled === 1 ? "" : "s") + " photographed");
       if (added) bits.push(added + " new room" + (added === 1 ? "" : "s") + " created");
@@ -2998,7 +3030,7 @@
       msg += stillEmpty.length ? " Still to photograph: " + stillEmpty[0].name +
         (stillEmpty.length > 1 ? " +" + (stillEmpty.length - 1) + " more." : ".")
         : " Every room has its 360° — next: aim the doors.";
-      toast(msg);
+      toast(okB ? msg : "Storage is full — the rooms are built but NOT saved. Free some space (Publish → export), then Publish.");
       if (skipped.length) setTimeout(function () { toast(skipped[0]); }, 3000);
     }
   }
@@ -3055,8 +3087,8 @@
         rememberPanoStats(target, r);
         engine.setPano(target.id, r.src);
         markDirty();
-        saveTour(true);
-        markSaved("Saved automatically");
+        var okC = saveNow();
+        if (!okC) toast("Storage is full — " + target.name + " is showing but NOT saved. Free some space, then re-drop it.");
         var next = nextMissingAfter(target);
         if (next) {
           studioRoomId = next.id;
@@ -4189,6 +4221,7 @@
           var t = JSON.parse(fr.result);
           if (!t.rooms || !t.rooms.length) throw new Error("no rooms");
           TOUR = t;
+          asReset();
           indexRooms(); applyBrand();
           engine.load(TOUR);
           buildDash(); buildFilmstrip(); buildPlan();
@@ -4210,6 +4243,7 @@
          restore to — fall back to the first project that ships in the folder */
       if (!ship) { switchProject(SHIPPED[0].id, { force: true }); renderStudio(); return; }
       TOUR = JSON.parse(JSON.stringify(ship));
+      asReset();
       indexRooms(); applyBrand();
       engine.load(TOUR);
       buildDash(); buildFilmstrip(); buildPlan();
