@@ -456,12 +456,46 @@
         var src;
         try { src = c.toDataURL("image/jpeg", quality); }
         catch (e) { cb({ error: "That image couldn't be processed." }); return; }
+        /* honest, on-device media intelligence — brightness, sharpness and a
+           small perceptual hash for duplicate detection. Measured from the
+           pixels, never guessed; only ever a warning, never a block. */
+        var luma = 0, sharp = 0, hash = "";
+        try {
+          var an = document.createElement("canvas");
+          an.width = 64; an.height = 32;
+          var actx = an.getContext("2d");
+          actx.drawImage(im, 0, 0, 64, 32);
+          var apx = actx.getImageData(0, 0, 64, 32).data;
+          var lumArr = new Float32Array(2048), sumL = 0, pi;
+          for (pi = 0; pi < 2048; pi++) {
+            var L = 0.299 * apx[pi * 4] + 0.587 * apx[pi * 4 + 1] + 0.114 * apx[pi * 4 + 2];
+            lumArr[pi] = L; sumL += L;
+          }
+          luma = sumL / 2048;
+          var lsum = 0, lsq = 0, lapN = 0, ax, ay, av;
+          for (ay = 1; ay < 31; ay++) for (ax = 1; ax < 63; ax++) {
+            av = 4 * lumArr[ay * 64 + ax] - lumArr[ay * 64 + ax - 1] - lumArr[ay * 64 + ax + 1] -
+              lumArr[(ay - 1) * 64 + ax] - lumArr[(ay + 1) * 64 + ax];
+            lsum += av; lsq += av * av; lapN++;
+          }
+          var lmn = lsum / lapN;
+          sharp = lsq / lapN - lmn * lmn;
+          for (var hy = 0; hy < 8; hy++) for (var hx = 0; hx < 8; hx++) {
+            var acc = 0;
+            for (var yy = 0; yy < 4; yy++) for (var xx = 0; xx < 8; xx++) acc += lumArr[(hy * 4 + yy) * 64 + hx * 8 + xx];
+            hash += (acc / 32 > luma ? "1" : "0");
+          }
+        } catch (e2) { /* analysis is a nicety — never a blocker */ }
+
         var notes = [];
         if (isPano && w < 4096) notes.push("On the low side for a 360° — 4096\u00D72048 or better looks sharpest.");
         if (!isPano && w < 1200 && h < 1200) notes.push("Low resolution — it will look soft on large screens.");
+        if (luma && luma < 58) notes.push("“" + (file.name || "This image") + "” is quite dark — lights on and re-shoot if you can.");
+        if (sharp && sharp < 8 && luma > 30) notes.push("“" + (file.name || "This image") + "” looks soft or blurred — worth checking the focus.");
         cb({
           src: src, w: w, h: h, outW: ow, outH: oh,
           isPano: isPano, name: file.name || "",
+          luma: Math.round(luma), sharp: Math.round(sharp), hash: hash,
           savedKB: Math.max(0, Math.round((file.size - src.length * 0.75) / 1024)),
           notes: notes
         });
@@ -1002,7 +1036,36 @@
   }
 
   var HS_LABEL = { nav: "Walk through", info: "Information", image: "Image", video: "Video", doc: "Document", link: "External link", cta: "Book a viewing" };
-  var HS_ICON = { nav: "arrow", info: "info", image: "image", video: "play", doc: "doc", link: "link", sparkle: "sparkle", cta: "check" };
+  var HS_ICON = { nav: "arrow", info: "info", image: "image", video: "play", doc: "doc", link: "link", sparkle: "sparkle", cta: "check", call: "phone", whatsapp: "wa", contact: "home" };
+
+  function phoneDigits(n) {
+    var d = String(n || "").replace(/[^0-9+]/g, "").replace(/^\+/, "");
+    if (d.charAt(0) === "0") d = "44" + d.slice(1);
+    return d;
+  }
+  /* perceptual-hash distance — small means "these are the same picture" */
+  function hashDist(a, b) {
+    if (!a || !b || a.length !== b.length) return 99;
+    var d = 0;
+    for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) d++;
+    return d;
+  }
+  function panoTwin(hash, exceptId) {
+    if (!hash) return null;
+    for (var i = 0; i < TOUR.rooms.length; i++) {
+      var r = TOUR.rooms[i];
+      if (r.id !== exceptId && r.panoHash && hashDist(r.panoHash, hash) <= 5) return r;
+    }
+    return null;
+  }
+  function rememberPanoStats(room, r) {
+    room.panoHash = r.hash || null;
+    room.panoDark = !!(r.luma && r.luma < 58);
+    var twin = panoTwin(r.hash, room.id);
+    if (twin) setTimeout(function () {
+      toast("Heads up: the " + room.name + " 360° looks identical to " + twin.name + "'s — same photo twice?");
+    }, 1600);
+  }
 
   function setRoom(room, prev) {
     currentRoom = room;
@@ -1134,6 +1197,28 @@
     if (h.type === "nav" && roomsById[h.to]) { engine.go(h.to); return; }
     track("hotspot", { room: currentRoom ? currentRoom.id : "", kind: h.type });
     if (h.type === "cta") { openLeadForm("hotspot"); return; }
+    var ag = (TOUR.project && TOUR.project.agent) || {};
+    if (h.type === "call") {
+      var tel = String(h.num || ag.phone || "").replace(/[^0-9+]/g, "");
+      if (tel) location.href = "tel:" + tel;
+      else toast("No phone number set — add one in the hotspot editor or the listing's agent details.");
+      return;
+    }
+    if (h.type === "whatsapp") {
+      var wa = phoneDigits(h.num || ag.phone);
+      if (wa) window.open("https://wa.me/" + wa + "?text=" +
+        encodeURIComponent("Hi — I'm looking at " + ((TOUR.project && TOUR.project.name) || "a property") + ": " + tourUrl()), "_blank");
+      else toast("No phone number set — add one in the hotspot editor or the listing's agent details.");
+      return;
+    }
+    if (h.type === "contact") {
+      openSheet({
+        type: "info", label: ag.name || "Contact the agent",
+        body: h.body || "",
+        stats: [["Phone", ag.phone || "—"], ["Email", ag.email || "—"]]
+      });
+      return;
+    }
     if (fromPanel && h.yaw != null) engine.look(h.yaw, h.pitch);
     openSheet(h);
   }
@@ -2077,6 +2162,7 @@
           return;
         }
         room.pano = r.src;
+        rememberPanoStats(room, r);
         engine.setPano(room.id, r.src);
         dtxt.textContent = "Capture attached — click to replace";
         markDirty();
@@ -2148,7 +2234,13 @@
             }
           }
           room.photos = room.photos || [];
-          room.photos.push({ src: r.src, caption: "", w: r.w, h: r.h });
+          var twin = null;
+          for (var pj = 0; pj < room.photos.length; pj++) {
+            if (room.photos[pj].ph && hashDist(room.photos[pj].ph, r.hash) <= 4) { twin = pj; break; }
+          }
+          if (twin != null && !confirm("“" + (r.name || "This photo") + "” looks identical to photo " + (twin + 1) +
+            " already in this room.\n\nAdd it anyway?")) { if (!left) done(); return; }
+          room.photos.push({ src: r.src, caption: "", w: r.w, h: r.h, ph: r.hash || null });
           added++;
           if (r.notes.length) toast(r.notes[0]);
           if (!left) done();
@@ -2539,7 +2631,7 @@
         left--;
         if (r.error) skipped.push(r.error);
         else if (!r.isPano) skipped.push("“" + (r.name || "One image") + "” isn't a 2:1 360° — add it to a room's Photographs instead.");
-        else made.push({ name: prettyName(r.name) || "Room " + (idx + 1), src: r.src, order: idx });
+        else made.push({ name: prettyName(r.name) || "Room " + (idx + 1), src: r.src, order: idx, hash: r.hash, luma: r.luma });
         if (!left) done();
       });
     });
@@ -2571,6 +2663,8 @@
           added++;
         }
         room.pano = m.src;
+        room.panoHash = m.hash || null;
+        room.panoDark = !!(m.luma && m.luma < 58);
         touched.push(room);
       });
       autoLinkRooms();
@@ -2648,6 +2742,7 @@
           "This image is " + r.w + "×" + r.h + " — not the 2:1 shape of a 360° panorama, " +
           "so it will look stretched in the viewer.\n\nUse it for the " + target.name + " anyway?")) return;
         target.pano = r.src;
+        rememberPanoStats(target, r);
         engine.setPano(target.id, r.src);
         markDirty();
         saveTour(true);
@@ -2836,7 +2931,7 @@
     list.appendChild(el("h4", null, room.name + " · " + (room.hotspots || []).length + " hotspots"));
     (room.hotspots || []).forEach(function (h, i) {
       var row = el("div", "hs-edit" + (selectedHotspot === h ? " is-sel" : ""));
-      row.appendChild(select([["nav", "Walk to"], ["info", "Info"], ["image", "Image"], ["video", "Video"], ["doc", "Document"], ["link", "Link"], ["cta", "Book a viewing"]],
+      row.appendChild(select([["nav", "Walk to"], ["info", "Info"], ["image", "Image"], ["video", "Video"], ["doc", "Document"], ["link", "Link"], ["cta", "Book a viewing"], ["contact", "Contact card"], ["call", "Call the agent"], ["whatsapp", "WhatsApp"]],
         h.type, function (v) { h.type = v; renderStudio(); refreshHotspotsOnly(room); }));
       var lblWrap = el("span");
       lblWrap.style.cssText = "display:flex;align-items:center;gap:6px;min-width:0";
@@ -2892,6 +2987,9 @@
       if (h.type === "nav") {
         g.appendChild(field("Walks to", select(TOUR.rooms.map(function (r) { return [r.id, r.name]; }), h.to,
           function (v) { h.to = v; refreshHotspotsOnly(room); })));
+      } else if (h.type === "call" || h.type === "whatsapp") {
+        g.appendChild(field("Phone number — leave empty to use the listing agent's",
+          input(h.num, function (v) { h.num = v; }, (TOUR.project.agent || {}).phone || "07…")));
       } else {
         g.appendChild(field("Body copy", textarea(h.body, function (v) { h.body = v; })));
         if (h.type === "link") g.appendChild(field("URL", input(h.href, function (v) { h.href = v; }, "https://…")));
@@ -3669,6 +3767,34 @@
       ? cut.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (cut.length > 3 ? " +" + (cut.length - 3) : "") + " can't be walked to — add a doorway hotspot"
       : "Every room can be walked to from the start", "hotspots");
 
+    /* dead ends — a viewer can walk in but never out */
+    if (TOUR.rooms.length > 1) {
+      var dead = TOUR.rooms.filter(function (r) {
+        return !(r.hotspots || []).some(function (h) { return h.type === "nav" && roomsById[h.to]; });
+      });
+      add(!dead.length, 2, dead.length
+        ? dead.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (dead.length > 3 ? " +" + (dead.length - 3) : "") +
+          (dead.length === 1 ? " is" : " are") + " a dead end — viewers can walk in but not out"
+        : "No dead ends — every room walks somewhere", "hotspots");
+    }
+
+    /* the media intelligence measured at upload */
+    var dupPair = null, di, dj;
+    for (di = 0; di < TOUR.rooms.length && !dupPair; di++) {
+      for (dj = di + 1; dj < TOUR.rooms.length; dj++) {
+        var ra = TOUR.rooms[di], rb = TOUR.rooms[dj];
+        if (ra.panoHash && rb.panoHash && hashDist(ra.panoHash, rb.panoHash) <= 5) { dupPair = [ra, rb]; break; }
+      }
+    }
+    add(!dupPair, 1, dupPair
+      ? dupPair[0].name + " and " + dupPair[1].name + " look like the same 360° — the same photo twice?"
+      : "No duplicate 360s detected");
+    var darkR = TOUR.rooms.filter(function (r) { return r.pano && r.panoDark; });
+    add(!darkR.length, 1, darkR.length
+      ? darkR.slice(0, 3).map(function (r) { return r.name; }).join(", ") + (darkR.length === 1 ? " looks" : " look") +
+        " dark — lights on and a re-shoot would lift the tour"
+      : "No dark 360s detected");
+
     var unplaced = TOUR.rooms.filter(function (r) { return !r.plan; });
     add(!unplaced.length, 1, unplaced.length
       ? unplaced.length + " room" + (unplaced.length === 1 ? "" : "s") + " not yet placed on the floor plan"
@@ -3694,7 +3820,11 @@
       'stroke-dashoffset="' + (C * (1 - h.score / 100)).toFixed(1) + '" transform="rotate(-90 32 32)"/>' +
       '</svg><b>' + h.score + '</b>';
     var side = el("div", "health-copy");
-    side.appendChild(el("h4", null, "Tour health"));
+    var ht = el("div");
+    ht.style.cssText = "display:flex;align-items:center;gap:10px;flex-wrap:wrap";
+    ht.appendChild(el("h4", null, "Property quality score"));
+    if (h.score >= 90) ht.appendChild(el("span", "chip chip--accent", "Ready to publish"));
+    side.appendChild(ht);
     side.appendChild(el("p", "t-body",
       h.score >= 90 ? "Excellent — this listing is ready to show."
         : h.score >= 70 ? "Good — a few things would lift it further."
@@ -3780,6 +3910,46 @@
     acts.appendChild(pub); acts.appendChild(exp); acts.appendChild(imp); acts.appendChild(impF); acts.appendChild(reset);
     save.appendChild(acts);
     main.appendChild(save);
+
+    /* ── send it everywhere — one link, every channel ────────────────────── */
+    var shareCard = el("div", "studio-panel card");
+    shareCard.style.marginTop = "16px";
+    shareCard.appendChild(el("h4", null, "Send it everywhere"));
+    shareCard.appendChild(el("p", "t-body", "The property's link, ready for every channel — and the QR below for boards and print."));
+    var sRow = el("div");
+    sRow.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:12px";
+    var shareUrl = tourUrl();
+    var shareTxt = ((TOUR.project && TOUR.project.name) || "A property") + " — walk it in 360°: ";
+    function shareBtn(label, fn) {
+      var b = el("button", "btn btn--sm", label);
+      b.onclick = fn;
+      sRow.appendChild(b);
+    }
+    shareBtn("Copy link", function () { copyText(shareUrl, "Link copied."); });
+    shareBtn("WhatsApp", function () { window.open("https://wa.me/?text=" + encodeURIComponent(shareTxt + shareUrl), "_blank"); });
+    shareBtn("Email", function () { location.href = "mailto:?subject=" + encodeURIComponent((TOUR.project && TOUR.project.name) || "Property tour") + "&body=" + encodeURIComponent(shareTxt + shareUrl); });
+    shareBtn("Facebook", function () { window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(shareUrl), "_blank"); });
+    shareBtn("LinkedIn", function () { window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(shareUrl), "_blank"); });
+    shareBtn("X", function () { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareTxt) + "&url=" + encodeURIComponent(shareUrl), "_blank"); });
+    shareCard.appendChild(sRow);
+    main.appendChild(shareCard);
+
+    /* ── see it as a visitor will — phone-sized, the real public viewer ──── */
+    var prevCard = el("div", "studio-panel card");
+    prevCard.style.marginTop = "16px";
+    prevCard.appendChild(el("h4", null, "Preview on a phone"));
+    prevCard.appendChild(el("p", "t-body", "The real public viewer at phone size — what a Rightmove or WhatsApp visitor sees. Drag inside it."));
+    var frameWrap = el("div");
+    frameWrap.style.cssText = "margin-top:12px;width:300px;max-width:100%;border:1px solid var(--line-2);border-radius:22px;padding:10px;background:var(--bg-1)";
+    var fr = el("iframe");
+    fr.src = tourUrl() + "&embed=1";
+    fr.loading = "lazy";
+    fr.style.cssText = "width:100%;height:520px;border:0;border-radius:14px;display:block";
+    fr.setAttribute("title", ((TOUR.project && TOUR.project.name) || "Property") + " — phone preview");
+    fr.setAttribute("allow", "fullscreen; accelerometer; gyroscope");
+    frameWrap.appendChild(fr);
+    prevCard.appendChild(frameWrap);
+    main.appendChild(prevCard);
 
     var host = el("div", "studio-panel card");
     host.style.marginTop = "16px";
