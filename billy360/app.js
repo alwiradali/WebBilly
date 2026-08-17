@@ -250,6 +250,16 @@
     if (lastSnap != null && now2 - lastDirtyAt > 800) {
       undoStack.push(lastSnap);
       if (undoStack.length > 60) undoStack.shift();
+      /* photos and panoramas ride in these snapshots as base64 — cap the
+         stack by bytes as well as depth, or a modest laptop drowns in
+         hundreds of megabytes of history strings and reads as hung */
+      var hb = 0, hkeep = 0;
+      for (var hi = undoStack.length - 1; hi >= 0; hi--) {
+        hb += undoStack[hi].length;
+        hkeep++;
+        if (hb > 48e6) break;
+      }
+      if (hkeep < undoStack.length) undoStack.splice(0, undoStack.length - hkeep);
       redoStack = [];
       syncHistoryUI();
     }

@@ -1448,6 +1448,7 @@
        FRAME
        ───────────────────────────────────────────────────────────────────── */
     var lastT = now(), lastW = 0, lastH = 0, dpr = 1;
+    var slowStrikes = 0;   // consecutive multi-second frames while bakes were pending
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2);
@@ -1495,7 +1496,31 @@
 
     function frame(t, once) {
       if (destroyed) return;
-      var dt = Math.min(64, t - lastT); lastT = t;
+      var rawGap = t - lastT;
+      var dt = Math.min(64, rawGap); lastT = t;
+
+      /* Watchdog for GPUs where the shader compiles but crawls — the
+         link-failure fallback never catches those, and each bake band can
+         take seconds, which reads as a hung tab. Three consecutive
+         multi-second frames with bakes pending = this tier is beyond the
+         machine: remember the next tier down and reload once (the same
+         path a failed link takes). At the bottom tier, abandon the
+         background previews instead — the current room is all that bakes. */
+      if (rawGap > 900 && queue.length && booted) {
+        slowStrikes++;
+        if (slowStrikes >= 3) {
+          slowStrikes = 0;
+          if (TIER < 2) {
+            diag.push("GPU too slow for the " + TIERS[TIER] + " renderer — dropping a tier");
+            rememberTier(TIER + 1);
+            if (reloadOnce()) return;
+          }
+          diag.push("background previews abandoned — this GPU bakes on demand only");
+          for (var qi = queue.length - 1; qi >= 0; qi--) {
+            if (!(current && queue[qi].id === current.id)) queue.splice(qi, 1);
+          }
+        }
+      } else if (rawGap < 400) slowStrikes = 0;
 
       /* nobody can see the canvas (portfolio screen) — no draw, no camera
          math, no callbacks. Baking continues so previews finish while the
