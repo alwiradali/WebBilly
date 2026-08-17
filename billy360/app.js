@@ -1812,6 +1812,7 @@
      STUDIO (CMS)
      ═══════════════════════════════════════════════════════════════════════ */
   var STUDIO_TITLES = {
+    assistant: ["Assistant", "Say what you want — it does the clicking"],
     rooms: ["Rooms", "Every position in the tour"],
     hotspots: ["Hotspots", "Click inside the panorama to place one"],
     plans: ["Floor plans", "The interactive minimap"],
@@ -1972,6 +1973,299 @@
     return card;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════════
+     THE ASSISTANT — a conversation that drives the real Studio.
+     It creates properties from a few questions, takes photo drops straight
+     in the chat, reads the measured quality checks, and publishes on
+     command. Everything it says it did, it actually did — it calls the
+     same functions the buttons do, nothing more.
+     ═══════════════════════════════════════════════════════════════════════ */
+  var AS = { log: [], state: "idle", draft: null };
+
+  function asPush(who, text, chips) {
+    AS.log.push({ who: who, text: text, chips: chips || null });
+    var host = $("#asLog");
+    if (host) { asRenderMsg(host, AS.log[AS.log.length - 1]); host.scrollTop = host.scrollHeight; }
+  }
+  function asSay(text, chips) { asPush("bot", text, chips); }
+  function asRenderMsg(host, m) {
+    var row = el("div", "as-msg" + (m.who === "you" ? " as-msg--you" : ""));
+    row.appendChild(el("p", null, m.text));
+    if (m.chips && m.chips.length) {
+      var cr = el("div", "as-chips");
+      m.chips.forEach(function (c) {
+        var b = el("button", "btn btn--sm", c.label);
+        b.onclick = function () {
+          if (c.run) c.run();
+          else if (c.cmd) { asPush("you", c.label); asRoute(c.cmd); }
+        };
+        cr.appendChild(b);
+      });
+      row.appendChild(cr);
+    }
+    host.appendChild(row);
+  }
+  function asNum(t) {
+    var m = String(t).match(/\d+/);
+    if (m) return Math.max(0, Math.min(9, +m[0]));
+    var words = { none: 0, no: 0, zero: 0, one: 1, a: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9 };
+    var w = String(t).toLowerCase().match(/[a-z]+/g) || [];
+    for (var i = 0; i < w.length; i++) if (words[w[i]] != null) return words[w[i]];
+    return null;
+  }
+  function asMissing() { return TOUR.rooms.filter(function (r) { return !r.pano; }); }
+  function asNextTarget() { var m = asMissing(); return m.length ? m[0] : null; }
+
+  function asStartNew() {
+    AS.state = "np_name";
+    AS.draft = {};
+    asSay("Let's build it. What's the property called? (e.g. 12 Willow Lane)");
+  }
+  function asQuality() {
+    var h = tourHealth();
+    var warns = h.checks.filter(function (c) { return !c.ok; });
+    if (!warns.length) {
+      asSay("Quality score " + h.score + "/100 — nothing left to fix. Ready to publish.",
+        TOUR.project.hidden ? [{ label: "Make it live", cmd: "make it live" }] : null);
+    } else {
+      asSay("Quality score " + h.score + "/100. To fix:\n" +
+        warns.slice(0, 8).map(function (c) { return "• " + c.label; }).join("\n") +
+        (warns.length > 8 ? "\n…and " + (warns.length - 8) + " more in Publish." : ""));
+    }
+  }
+  function asGoLive() {
+    var h = tourHealth();
+    (TOUR.project = TOUR.project || {}).hidden = false;
+    afterSiteEdit();
+    saveTour(true);
+    asSay("Live. " + (TOUR.project.name || "The property") + " is in the portfolio and its link shows the finished tour:\n" +
+      tourUrl().replace(/^https?:\/\//, "") +
+      (h.score < 80 ? "\n\nWorth knowing: the quality score is " + h.score + "/100 — say “what's missing” to see what would lift it." : ""),
+      [{ label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } }]);
+  }
+  function asCapturePrompt() {
+    var next = asNextTarget();
+    if (!next) {
+      asSay("Every room has its 360°. Next: aim each door at the real doorway — say “doors” and I'll open that screen. Then “make it live” when you're happy.",
+        [{ label: "Open the doors screen", cmd: "doors" }]);
+      AS.state = "idle";
+      return;
+    }
+    AS.state = "capture";
+    var m = asMissing();
+    asSay("Now the photos — " + m.length + " room" + (m.length === 1 ? "" : "s") + " to go. Drop the " + next.name +
+      " 360° straight into this chat (or use the 📎 button). Several at once is fine if the files are named after the rooms. Say “skip” to come back to it.");
+  }
+
+  function asFiles(files) {
+    var list = Array.prototype.slice.call(files || []).filter(Boolean);
+    if (!list.length) return;
+    if (!asMissing().length) {
+      asSay("Every room already has its 360°. To add ordinary photographs, open Rooms and drop them onto a room's Photographs.");
+      return;
+    }
+    asPush("you", list.length === 1 ? "📷 " + (list[0].name || "photo") : "📷 " + list.length + " photos");
+    var i = 0;
+    function next() {
+      if (i >= list.length) { asCapturePrompt(); return; }
+      var f = list[i++];
+      intakeImage(f, { maxEdge: 4096, panoEdge: 4096, quality: 0.86 }, function (r) {
+        if (r.error) { asSay(r.error); next(); return; }
+        if (!r.isPano) {
+          asSay("“" + (r.name || "That image") + "” isn't a 2:1 360° — I've left it out. Ordinary photos go on a room's Photographs in the Rooms screen.");
+          next(); return;
+        }
+        /* a file named after an empty room fills that room; otherwise the next one waiting */
+        var room = null;
+        var guess = slug(prettyName(r.name));
+        for (var k = 0; k < TOUR.rooms.length; k++) {
+          if (!TOUR.rooms[k].pano && slug(TOUR.rooms[k].name) === guess) { room = TOUR.rooms[k]; break; }
+        }
+        if (!room && AS.capHint && roomsById[AS.capHint] && !roomsById[AS.capHint].pano) room = roomsById[AS.capHint];
+        if (!room) room = asNextTarget();
+        if (!room) { asSay("Every room is photographed — “" + (r.name || "the extra image") + "” wasn't needed."); next(); return; }
+        AS.capHint = null;
+        room.pano = r.src;
+        rememberPanoStats(room, r);
+        engine.setPano(room.id, r.src);
+        studioRoomId = room.id;
+        markDirty();
+        saveTour(true);
+        markSaved("Saved automatically");
+        var note = r.notes.length ? "  (" + r.notes[0] + ")" : "";
+        asSay("✓ " + room.name + " — saved." + note);
+        next();
+      });
+    }
+    next();
+  }
+
+  function asRoute(text) {
+    var t = String(text || "").trim();
+    if (!t) return;
+    var lc = t.toLowerCase();
+
+    /* the property-creation conversation */
+    if (AS.state === "np_name") {
+      AS.draft.name = t;
+      AS.state = "np_rent";
+      asSay("Its link will be " + (location.origin + location.pathname.replace(/index\.html$/, "")).replace(/^https?:\/\//, "") +
+        "?site=" + uniqueSiteId(t) + " — made from the name, automatically.\n\nWhat's the rent or price? (or say “skip”)");
+      return;
+    }
+    if (AS.state === "np_rent") {
+      AS.draft.rent = /^skip/i.test(lc) ? "" : t;
+      AS.state = "np_beds";
+      asSay("How many bedrooms?");
+      return;
+    }
+    if (AS.state === "np_beds") {
+      var b = asNum(lc);
+      if (b == null) { asSay("Just a number — how many bedrooms?"); return; }
+      AS.draft.beds = b;
+      AS.state = "np_baths";
+      asSay("And bathrooms / toilets?");
+      return;
+    }
+    if (AS.state === "np_baths") {
+      var ba = asNum(lc);
+      if (ba == null) { asSay("Just a number — how many bathrooms?"); return; }
+      AS.draft.baths = ba;
+      AS.state = "np_have";
+      asSay("Which of these does it have — garden, driveway, stairs? Say them (“garden and stairs”) or “none”. A living room and kitchen are assumed unless you say “no kitchen” or “no living room”.");
+      return;
+    }
+    if (AS.state === "np_have") {
+      var d = AS.draft;
+      d.garden = /garden|yard|patio/.test(lc);
+      d.driveway = /drive|parking/.test(lc);
+      d.stairs = /stair|two floor|2 floor|upstairs|first floor/.test(lc);
+      d.living = !/no living/.test(lc);
+      d.kitchen = !/no kitchen/.test(lc);
+      var tour = blankTour(d.name, { rent: d.rent, beds: d.beds, baths: d.baths, living: d.living, kitchen: d.kitchen, garden: d.garden, driveway: d.driveway, stairs: d.stairs });
+      tour.project.hidden = true;
+      if (!storeSite(tour)) { AS.state = "idle"; asSay("This browser's storage is full — export a property in Publish first, then try again."); return; }
+      AS.state = "idle";
+      AS.draft = null;
+      switchProject(tour.id, { force: true, silent: true });
+      studioTab = "assistant";
+      renderStudio();
+      asSay("Done — " + tour.project.name + " exists: " + TOUR.rooms.length + " rooms created and door-linked, walkable already, hidden from visitors until you say so.\nPermanent link: " + tourUrl().replace(/^https?:\/\//, ""),
+        [{ label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } }]);
+      asCapturePrompt();
+      return;
+    }
+
+    /* capture-state words */
+    if (AS.state === "capture" && /^skip/i.test(lc)) {
+      var cur = asNextTarget();
+      var m = asMissing();
+      if (m.length > 1 && cur) {
+        var idx = m.indexOf(cur);
+        var nxt = m[(idx + 1) % m.length];
+        /* rotate: move current to the back by filling order — simplest is to
+           just prompt for the next one; drops still match by filename */
+        studioRoomId = nxt.id;
+        AS.capHint = nxt.id;
+        asSay("Skipped " + cur.name + " for now. Next: drop the " + nxt.name + " 360° here.");
+      } else if (cur) asSay(cur.name + " is the last one — drop it here when you have it, or say “done”.");
+      return;
+    }
+    if (AS.state === "capture" && /^(done|stop|later|finish)/i.test(lc)) {
+      AS.state = "idle";
+      var left = asMissing();
+      asSay(left.length ? "No problem — " + left.length + " room" + (left.length === 1 ? " still needs" : "s still need") +
+        " a 360° (" + left.slice(0, 4).map(function (r) { return r.name; }).join(", ") + (left.length > 4 ? "…" : "") +
+        "). Drop them here any time." : "All photographed.");
+      return;
+    }
+
+    /* commands, any time */
+    if (/new prop|create|another prop|add a prop|start a prop|build a prop/.test(lc)) { asStartNew(); return; }
+    if (/missing|what's left|whats left|ready|score|quality|check/.test(lc)) { asQuality(); return; }
+    if (/go live|make it live|publish|put it live/.test(lc)) { asGoLive(); return; }
+    if (/hide|unpublish|take.*down|let agreed/.test(lc)) {
+      (TOUR.project = TOUR.project || {}).hidden = true;
+      afterSiteEdit(); saveTour(true);
+      asSay("Hidden from visitors. The link stops showing it in the portfolio; flick it back with “make it live” — the link never changes.");
+      return;
+    }
+    if (/photo|picture|360|capture/.test(lc)) {
+      if (asMissing().length) asCapturePrompt();
+      else asSay("Every room has its 360° already. Ordinary photographs go on each room in the Rooms screen.");
+      return;
+    }
+    if (/door|hotspot|aim/.test(lc)) {
+      studioTab = "hotspots"; renderStudio();
+      return;
+    }
+    if (/link|url|share/.test(lc)) {
+      asSay("This property's permanent link:\n" + tourUrl().replace(/^https?:\/\//, ""),
+        [{ label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } }]);
+      return;
+    }
+    if (/qr|embed|poster/.test(lc)) { studioTab = "publish"; renderStudio(); return; }
+    if (/help|what can|how do/.test(lc)) {
+      asSay("I can:\n• build a new property from a few questions — say “new property”\n• take the 360° photos — drop them straight into this chat\n• tell you what's missing — “what's missing?”\n• put it live or hide it — “make it live” / “hide it”\n• give you the link or QR — “copy the link” / “qr”\n• open the doors screen — “doors”");
+      return;
+    }
+    asSay("I didn't catch that. Try “new property”, “what's missing?”, “make it live”, or drop 360° photos straight into this chat. “Help” lists everything.");
+  }
+
+  function studioAssistant(body) {
+    var card = el("div", "studio-panel card as-card");
+    if (!AS.log.length) {
+      asPush("bot", "Hi — I'm the Studio assistant. Tell me what you want and I'll do the clicking:\n• “new property” — I ask a few questions and build the whole tour skeleton\n• drop 360° photos here — I put each one in its room and save\n• “what's missing?” — the measured quality checks, in plain English\n• “make it live” — publishes this property",
+        [{ label: "New property", cmd: "new property" }, { label: "What's missing?", cmd: "what's missing" }]);
+    }
+    var log = el("div", "as-log");
+    log.id = "asLog";
+    AS.log.forEach(function (m) { asRenderMsg(log, m); });
+    card.appendChild(log);
+
+    var row = el("div", "as-row");
+    var attach = el("button", "icon-btn");
+    attach.title = "Add 360° photos";
+    attach.appendChild(icon("camera"));
+    var file = el("input");
+    file.id = "asFile";
+    file.type = "file"; file.accept = "image/*"; file.multiple = true; file.style.display = "none";
+    attach.onclick = function () { file.click(); };
+    file.onchange = function () { asFiles(file.files); file.value = ""; };
+    var inp = el("input", "input");
+    inp.id = "asInput";
+    inp.placeholder = "Say what you want…  e.g. “new property”";
+    inp.setAttribute("autocomplete", "off");
+    function send() {
+      var v = inp.value.trim();
+      if (!v) return;
+      inp.value = "";
+      asPush("you", v);
+      asRoute(v);
+    }
+    inp.onkeydown = function (e) { if (e.key === "Enter") send(); };
+    var go = el("button", "btn btn--primary", "Send");
+    go.id = "asSend";
+    go.onclick = send;
+    row.appendChild(attach); row.appendChild(file); row.appendChild(inp); row.appendChild(go);
+    card.appendChild(row);
+
+    /* the whole conversation is a drop zone */
+    card.ondragover = function (e) { e.preventDefault(); card.classList.add("is-over"); };
+    card.ondragleave = function () { card.classList.remove("is-over"); };
+    card.ondrop = function (e) {
+      e.preventDefault(); card.classList.remove("is-over");
+      asFiles(e.dataTransfer.files);
+    };
+
+    body.appendChild(card);
+    setTimeout(function () {
+      var h = $("#asLog");
+      if (h) h.scrollTop = h.scrollHeight;
+      inp.focus();
+    }, 0);
+  }
+
   function renderStudio() {
     if (!STUDIO_TITLES[studioTab]) studioTab = "rooms";
     $$("#studioNav button").forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-tab") === studioTab); });
@@ -1980,8 +2274,9 @@
     var body = $("#studioBody");
     parkStage();
     body.innerHTML = "";
-    if (studioTab !== "access" && isAdmin()) body.appendChild(guideCard());
-    if (studioTab === "rooms") studioRooms(body);
+    if (studioTab !== "access" && studioTab !== "assistant" && isAdmin()) body.appendChild(guideCard());
+    if (studioTab === "assistant") studioAssistant(body);
+    else if (studioTab === "rooms") studioRooms(body);
     else if (studioTab === "hotspots") studioHotspots(body);
     else if (studioTab === "plans") studioPlans(body);
     else if (studioTab === "brand") studioBrand(body);

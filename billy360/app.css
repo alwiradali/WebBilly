@@ -1199,3 +1199,18 @@ body.is-embed .dash-inner { padding-top: 20px; }
 
 /* bulk 360° intake */
 .drop--big { padding: 34px 18px; }
+
+/* ── the Studio assistant — a conversation that drives the Studio ────────── */
+.as-card { display: flex; flex-direction: column; max-width: 760px; }
+.as-card.is-over { border-color: var(--accent); background: var(--accent-soft); }
+.as-log { display: flex; flex-direction: column; gap: 10px; overflow-y: auto;
+  max-height: min(56vh, 560px); min-height: 220px; padding: 4px 2px 12px; }
+.as-msg { max-width: 86%; background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 14px 14px 14px 4px; padding: 10px 14px; align-self: flex-start; }
+.as-msg p { margin: 0; font-size: .84rem; line-height: 1.55; white-space: pre-line; color: var(--ink); }
+.as-msg--you { align-self: flex-end; border-radius: 14px 14px 4px 14px;
+  background: var(--accent-soft); border-color: var(--accent-line); }
+.as-msg--you p { color: var(--ink); }
+.as-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
+.as-row { display: flex; gap: 8px; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); }
+.as-row .input { flex: 1; }
