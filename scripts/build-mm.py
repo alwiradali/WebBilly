@@ -70,7 +70,7 @@ def rewrite(html, domain, canonical_path):
     html = re.sub(r'(?:\.\./)+assets/mm/', '/assets/', html)
 
     # shared css/js, referenced as ../x from areas and bare x from the root
-    html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js)"',
+    html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js|reviews\.js|content\.js)"',
                   lambda m: m.group(0).split('=')[0] + '="/' + m.group(1) + '"', html)
 
     # Internal links -> absolute clean URLs, so the host serves them without a
