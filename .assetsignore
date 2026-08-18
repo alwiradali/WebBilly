@@ -14,11 +14,10 @@ docs
 mm-brand-kit.html
 assets/mm-brand
 
-# Mumbai2London — parked. The files stay in the repository but are not
-# uploaded to Cloudflare, so nothing of the site is reachable on the web.
-# Delete these four lines and set M2L_PARKED = false in worker.js to restore.
-templates/mumbai2london.html
+# Mumbai2London — the showcase page and its images are published again as a
+# template demo (noindex). The admin, invoice and API layer stay parked:
+# these three files are not uploaded, and M2L_PARKED in worker.js keeps
+# every /api/m2l route switched off.
 templates/m2l-admin.html
 templates/m2l-invoice-admin.html
 templates/m2l-invoice.html
-assets/mumbai2london
