@@ -1647,7 +1647,10 @@
         cam.pitch = cam.tPitch = s.pitch || 0;
         cam.fov = cam.tFov = s.fov || 75;
         cam.yaw -= 22; cam.fov = Math.min(100, cam.fov + 8);   // settle into the opening view
-        if (room.space && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
+        /* only compile the space shader when the starting room will actually
+           draw it — a real captured panorama never touches it, and on some
+           laptop drivers this compile alone stalls the tab for seconds */
+        if (room.space && !room.pano && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
         needLo(room, true); needHi(room, true);
         (room.links || []).forEach(function (l) { needLo(byId[l.to || l]); });
         on.room(room, null);
