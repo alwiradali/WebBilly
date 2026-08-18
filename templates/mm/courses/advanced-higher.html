@@ -169,6 +169,7 @@
   </div>
 </footer>
 <script src="../molecules.js" defer></script>
+<script src="../content.js" defer></script>
 <script>
   document.getElementById('bg').onclick=function(){this.classList.toggle('on');document.getElementById('mm').classList.toggle('on')};
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
