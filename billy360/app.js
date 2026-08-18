@@ -455,6 +455,12 @@
       var im = new Image();
       im.onerror = function () { cb({ error: "\u201C" + (file.name || "That image") + "\u201D couldn't be decoded — it may be corrupted." }); };
       im.onload = function () {
+        /* decode off the main thread where the browser can — drawing an
+           undecoded image forces a synchronous decode right here */
+        if (im.decode) im.decode().then(process, process);
+        else process();
+      };
+      function process() {
         var w = im.width, h = im.height, ratio = w / h;
         var isPano = ratio > 1.9 && ratio < 2.1 && w >= 1024;
         var edge = isPano ? Math.max(opts.panoEdge || 4096, maxEdge) : maxEdge;
@@ -462,10 +468,26 @@
         var ow = Math.round(w * scale), oh = Math.round(h * scale);
         var c = document.createElement("canvas");
         c.width = ow; c.height = oh;
-        c.getContext("2d").drawImage(im, 0, 0, ow, oh);
-        var src;
-        try { src = c.toDataURL("image/jpeg", quality); }
+        try { c.getContext("2d").drawImage(im, 0, 0, ow, oh); }
         catch (e) { cb({ error: "That image couldn't be processed." }); return; }
+        /* the JPEG encode is the expensive part — toBlob runs it off the
+           main thread, so a batch of uploads no longer freezes the page.
+           (Profiled: toDataURL was seconds of main-thread time per batch.) */
+        if (c.toBlob) {
+          c.toBlob(function (blob) {
+            if (!blob) { finish(null); return; }
+            var fr2 = new FileReader();
+            fr2.onerror = function () { finish(null); };
+            fr2.onload = function () { finish(fr2.result); };
+            fr2.readAsDataURL(blob);
+          }, "image/jpeg", quality);
+        } else finish(fallbackEncode());
+        function fallbackEncode() {
+          try { return c.toDataURL("image/jpeg", quality); } catch (e) { return null; }
+        }
+        function finish(src) {
+        if (src == null) src = fallbackEncode();
+        if (src == null) { cb({ error: "That image couldn't be processed." }); return; }
         /* honest, on-device media intelligence — brightness, sharpness and a
            small perceptual hash for duplicate detection. Measured from the
            pixels, never guessed; only ever a warning, never a block. */
@@ -509,7 +531,8 @@
           savedKB: Math.max(0, Math.round((file.size - src.length * 0.75) / 1024)),
           notes: notes
         });
-      };
+        }
+      }
       im.src = fr.result;
     };
     fr.readAsDataURL(file);
