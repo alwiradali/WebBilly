@@ -409,3 +409,10 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
 #mm-notice p+p{margin-top:6px}
 #mm-notice b,#mm-notice strong{color:#5E430A}
 #mm-notice a{color:#0B7F72;font-weight:600;text-decoration:underline}
+
+/* Google profile link where the Trustindex widget used to sit */
+.rev-glink{text-align:center;margin:-6px 0 30px}
+.rev-glink a{display:inline-block;padding:12px 22px;border:1.5px solid var(--line);border-radius:999px;
+  background:#fff;color:var(--ink);font-weight:600;font-size:.95rem;
+  transition:border-color .25s,color .25s,transform .25s,box-shadow .25s}
+.rev-glink a:hover{border-color:var(--gold);color:#8a6100;transform:translateY(-2px);box-shadow:var(--sh)}
