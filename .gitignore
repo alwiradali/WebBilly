@@ -9,3 +9,7 @@ skills-lock.json
 
 # Generated deployable client builds (see scripts/build-mm.py)
 dist/
+
+# Python bytecode from running the scripts/ helpers
+__pycache__/
+*.pyc
