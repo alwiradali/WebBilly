@@ -36,10 +36,31 @@ the account holding administrator with `add_users`/`promote_users` — so the
 editor is being recreated under Lynsey's own WordPress account instead, where
 she needs no invitation at all.
 
+### Abilities the connector needs first
+
+The rebuild runs through the WordPress.com MCP connector signed in as Lynsey
+(`larobinson21@hotmail.com`). That connector ships with most abilities **off**,
+and two of the steps below fail flat without them. Turn these on at
+<https://wordpress.com/me/mcp> before starting:
+
+| Ability | Needed for |
+| --- | --- |
+| Create Site (`wpcom-mcp/site-create-from-spec`) | step 1 |
+| Site → `settings.update` | step 2 (`blog_public`, timezone) |
+| `wpcom/user-sites` | confirming the new site and its id |
+
+Content Authoring is on by default, so steps 3–4 (`pages.create`,
+`pages.delete`) work once the site exists. A disabled ability returns
+`The '<name>' ability is not enabled in your MCP settings` — that is a settings
+toggle, not a permissions problem, and no amount of retrying gets past it.
+
 To rebuild on a fresh account:
 
 1. `wpcom-mcp-create-site` — title "Molecular Miracles Editor". Note the new
-   subdomain; it will differ from the old one.
+   subdomain; it will differ from the old one. `molecularmiracleseditor` is
+   still held by the old site on Billy's account, so WordPress.com appends a
+   numeric suffix at provision time — read the real subdomain out of the
+   `site_url` it returns rather than assuming one.
 2. `settings.update` — `blog_public: 0` (reachable by the API, hidden from
    search engines), `timezone_string: Europe/London`.
 3. `pages.create` for every file here except `ids.json` (40 pages), plus an
