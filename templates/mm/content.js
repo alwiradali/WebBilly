@@ -1,11 +1,12 @@
 /* Molecular Miracles — self-service content bridge (full-site mirror)
    ------------------------------------------------------------------
    Every page of this site has a same-named page on Lynsey's hidden
-   editor site (molecularmiracleseditor.wordpress.com — free, public
-   API on, search engines off) holding that page's headings, paragraphs,
-   lists and images in reading order. She edits there, usually from the
-   WordPress app on her phone; this script fetches the edited version on
-   page load and swaps it into the design. No deploys, no backend.
+   editor site (molecularmiraclesmysite.wordpress.com — her own free
+   WordPress account, public API on, search engines off) holding that
+   page's headings, paragraphs, lists and images in reading order. She
+   edits there, usually from the WordPress app on her phone; this script
+   fetches the edited version on page load and swaps it into the design.
+   No deploys, no backend.
 
    Same pattern as the timetable (Google Calendar) and strictly
    progressive enhancement: the shipped copy stays baked into the HTML,
@@ -23,7 +24,7 @@
    below, so what gets exported is BY CONSTRUCTION what gets replaced.  */
 
 (function () {
-  var API = 'https://public-api.wordpress.com/wp/v2/sites/molecularmiracleseditor.wordpress.com/pages';
+  var API = 'https://public-api.wordpress.com/wp/v2/sites/molecularmiraclesmysite.wordpress.com/pages';
 
   /* editable elements, and the zones that must never be editable */
   var SELECT = 'h1,h2,h3,p,ul,img';
