@@ -239,11 +239,15 @@
     </div>
     <div class="rev-google" id="reviews-google"></div>
 
-    <!-- Trustindex widget removed: its free trial expired and it started
-         showing a "check our subscription plans" nag on the live section.
-         The testimonials below carry the section, and the Google header link
-         still points visitors at her full profile. -->
-    <p class="rev-glink rv"><a href="https://www.google.com/maps/place/?q=place_id:ChIJs-VC4edkcQwRBBdecMMkvN8" target="_blank" rel="noopener">★★★★★ &nbsp;Rated 5.0 on Google — read her reviews →</a></p>
+    <!-- Live Google reviews via Featurable (free plan, no card, no trial to
+         expire — replaced Trustindex after its trial lapsed into a nag box).
+         Pulls every review from her Business Profile and picks up new ones
+         automatically. If the CDN is blocked or down, the testimonials below
+         still carry the section. -->
+    <div class="ti-wrap rv">
+      <div id="featurable-675ae71f-294d-495e-a0dd-b1851a7ef66d" data-featurable-async></div>
+      <script src="https://cdn.featurable.com/widget/v2/embed.js" defer charset="UTF-8"></script>
+    </div>
 
     <h3 class="rev-sub rv">More from parents and pupils</h3>
     <div class="rev-view rv" tabindex="0" aria-roledescription="carousel" aria-label="Parent and pupil reviews">
