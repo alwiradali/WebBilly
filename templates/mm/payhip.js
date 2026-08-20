@@ -84,10 +84,16 @@
     })
     .then(function (data) {
       var products = (data && data.products) || [];
-      // Only ever trust Payhip's own product URLs — this is what a link on
-      // her site is allowed to point at.
+      // A link on her site may only point at the store's own product pages:
+      // payhip.com, or the custom domain the storefront resolved to, which
+      // the Worker reports back. Checked here as well as there.
+      var allowed = ['https://payhip.com/b/'];
+      if (data && typeof data.origin === 'string' && /^https:\/\/[a-z0-9.-]+$/i.test(data.origin)) {
+        allowed.push(data.origin + '/b/');
+      }
       products = products.filter(function (p) {
-        return p && p.name && /^https:\/\/payhip\.com\/b\//.test(p.url || '');
+        if (!p || !p.name || !p.url) return false;
+        return allowed.some(function (prefix) { return p.url.indexOf(prefix) === 0; });
       });
       if (!products.length) return;      // nothing for sale yet: keep the copy
 

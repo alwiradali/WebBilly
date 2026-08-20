@@ -285,8 +285,8 @@ async function handlePayhip(request, url) {
   }
 
   try {
-    const products = await scrapePayhip(store);
-    return new Response(JSON.stringify({ store, count: products.length, products }),
+    const { origin, products } = await scrapePayhip(store);
+    return new Response(JSON.stringify({ store, origin, count: products.length, products }),
                         { status: 200, headers: payhipHeaders(PAYHIP_TTL) });
   } catch (e) {
     return new Response(JSON.stringify({ error: String((e && e.message) || e) }),
@@ -314,6 +314,13 @@ async function scrapePayhip(store) {
     cf: { cacheTtl: PAYHIP_TTL, cacheEverything: true },
   });
   if (!res.ok) throw new Error("payhip returned HTTP " + res.status);
+
+  // A store with a custom domain redirects payhip.com/<slug> to that domain,
+  // and its product links are then on the custom domain rather than
+  // payhip.com. Take the origin we actually landed on, so connecting a domain
+  // later does not silently empty the shop.
+  var origin = "https://payhip.com";
+  try { origin = new URL(res.url).origin; } catch (e) { /* keep the default */ }
 
   // Each product on the storefront is one .grid-item carrying its name,
   // price, image and link. Tags arrive in document order, so a child always
@@ -345,7 +352,7 @@ async function scrapePayhip(store) {
     .transform(res)
     .arrayBuffer();   // consuming the body is what actually runs the handlers
 
-  return items
+  const products = items
     .map((p) => ({
       name: payhipText(p.name),
       price: payhipText(p.price),
@@ -353,9 +360,19 @@ async function scrapePayhip(store) {
       url: p.url,
     }))
     // A storefront has decorative grid items too; a real product is the one
-    // with a name and a link to a Payhip product page.
-    .filter((p) => p.name && /^https:\/\/payhip\.com\/b\//.test(p.url))
+    // with a name and a link to a product page on the store's own origin.
+    .filter((p) => p.name && isPayhipProduct(p.url, origin))
     .slice(0, PAYHIP_MAX);
+
+  return { origin, products };
+}
+
+function isPayhipProduct(url, origin) {
+  // Only ever the store's own product pages: payhip.com itself, or the custom
+  // domain the storefront redirected to. Anything else is not linkable from
+  // her site.
+  return url.indexOf("https://payhip.com/b/") === 0 ||
+         (origin !== "https://payhip.com" && url.indexOf(origin + "/b/") === 0);
 }
 
 function payhipThumb(src) {
