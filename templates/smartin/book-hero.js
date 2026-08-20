@@ -191,6 +191,11 @@
   var running = false;
 
   function frame() {
+    /* Sample the scroll position every frame rather than trusting scroll
+       events: iOS coalesces them during momentum, so an event-driven
+       target arrives in bursts and the turn stutters even though the
+       lerp below is perfectly smooth. */
+    read();
     current += (target - current) * EASE;
     if (Math.abs(target - current) < 0.0004) current = target;
     render();
@@ -267,8 +272,6 @@
 
   /* ---- wiring ---------------------------------------------------- */
 
-  function onScroll() { read(); }
-
   var rt;
   function onResize() {
     clearTimeout(rt);
@@ -280,7 +283,6 @@
   current = target;
   render();
 
-  window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onResize);
   window.addEventListener('orientationchange', onResize);
 

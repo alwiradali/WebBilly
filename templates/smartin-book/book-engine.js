@@ -39,9 +39,44 @@
   var book = document.getElementById('book');
   if (!book) return;
 
-  var leaves = [].slice.call(book.querySelectorAll('.leaf'));
-  var N = leaves.length;
-  if (!N) return;
+  /* The pages ship wrapped two-to-a-leaf, which is what a sheet of paper
+     is and what the flat fallback wants. How many a leaf actually carries
+     depends on the screen, so the leaves are reassembled here. */
+  var faces = [].slice.call(book.querySelectorAll('.face'));
+  if (!faces.length) return;
+
+  var leaves = [], N = 0;
+  var single = false, built = null;
+
+  /* One page at a time means one page per leaf. Left as two, every verso
+     is face-down at every resting position and half the book is simply
+     unreachable on a phone. */
+  function build(one) {
+    if (built === one) return;
+    built = one;
+
+    faces.forEach(function (f) { f.classList.remove('front', 'back'); });
+    while (book.firstChild) book.removeChild(book.firstChild);
+
+    var per = one ? 1 : 2;
+    for (var i = 0; i < faces.length; i += per) {
+      var leaf = document.createElement('article');
+      leaf.className = 'leaf';
+      faces[i].classList.add('front');
+      leaf.appendChild(faces[i]);
+      if (!one && faces[i + 1]) {
+        faces[i + 1].classList.add('back');
+        leaf.appendChild(faces[i + 1]);
+      }
+      book.appendChild(leaf);
+    }
+
+    leaves = [].slice.call(book.querySelectorAll('.leaf'));
+    N = leaves.length;
+    root.style.setProperty('--n', N);   // fore-edge and progress bar scale off this
+    leaves.forEach(function (l) { l._t = null; });
+    render._spread = null;
+  }
 
   var scroller = document.getElementById('scroller');
   var chapters = [].slice.call(document.querySelectorAll('[data-goto]'));
@@ -67,9 +102,14 @@
   var maxScroll = 1;
 
   function measure() {
+    single = window.matchMedia('(max-width: 900px)').matches;
+    build(single);
+
     // +1.15 gives the closed cover a moment before it starts to lift,
     // and the back cover somewhere to rest without a hard stop.
-    scroller.style.height = ((N + 1.15) * VH_PER_LEAF * 100) + 'vh';
+    // A turn costs less scroll when there are twice as many of them.
+    var step = single ? VH_PER_LEAF * 62 : VH_PER_LEAF * 100;
+    scroller.style.height = ((N + 1.15) * step) + 'vh';
     maxScroll = Math.max(1, scroller.offsetHeight - window.innerHeight);
     /* visualViewport, not innerHeight: iOS counts the strip behind the
        address bar in innerHeight and in `100vh`, so sizing the stage
@@ -78,7 +118,6 @@
     var vv = window.visualViewport;
     var vh = Math.round((vv && vv.height) || window.innerHeight);
     root.style.setProperty('--vh', vh * 0.01 + 'px');
-    single = window.matchMedia('(max-width: 900px)').matches;
     buildSnaps();
   }
 
@@ -92,11 +131,36 @@
      that the reader stays in control. */
   function buildSnaps() { /* native snapping is off — see book.css */ }
 
+  /* Within one leaf's scroll range: flat across the first and last
+     REST of it, turning through the middle. On a touch screen this
+     replaces snapping entirely — a page still never rests on edge, but
+     nothing ever grabs the scroll back off the reader. */
+  var REST = 0.18;
+
+  function shape(x) {
+    var t = (x - REST) / (1 - REST * 2);
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    return t * t * (3 - 2 * t);
+  }
+
   function readScroll() {
     var y = window.pageYOffset || root.scrollTop || 0;
-    target = (y / maxScroll) * N;
-    if (target < 0) target = 0;
-    if (target > N) target = N;
+    var raw = (y / maxScroll) * N;
+    if (raw < 0) raw = 0;
+    if (raw > N) raw = N;
+
+    if (coarse) {
+      /* No programmatic settle on touch. Calling scrollTo() while iOS is
+         running its own momentum fights the inertia and reads as the page
+         snatching itself away; the rest curve above does the same job
+         without ever moving the scroll position. */
+      var i = Math.floor(raw);
+      target = i >= N ? N : i + shape(raw - i);
+      return;
+    }
+
+    target = raw;
     queueSettle();
   }
 
@@ -138,6 +202,11 @@
   var EASE_SPINE = 0.14;          // how quickly current chases target
 
   function frame() {
+    /* Read the scroll position every frame rather than trusting scroll
+       events: iOS coalesces them during momentum, so an event-driven
+       target arrives in bursts and the turn stutters even though the
+       lerp below is perfectly smooth. */
+    readScroll();
     stepSettle();
     var prev = current;
     current += (target - current) * EASE_SPINE;
@@ -233,7 +302,11 @@
 
   function onSpreadChange(spread) {
     chapters.forEach(function (c) {
-      var on = parseInt(c.getAttribute('data-goto'), 10) === spread;
+      var i = parseInt(c.getAttribute('data-goto'), 10);
+      // in single-page mode a chapter covers the two pages of its spread
+      var on = single
+        ? (spread === Math.max(0, i * 2 - 1) || spread === i * 2)
+        : spread === i;
       c.classList.toggle('on', on);
       c.setAttribute('aria-current', on ? 'true' : 'false');
     });
@@ -243,8 +316,10 @@
     // reveal the spread's own content once it has settled
     leaves.forEach(function (leaf, i) {
       var showsLeft = i === spread - 1, showsRight = i === spread;
-      leaf.querySelector('.back').classList.toggle('live', showsLeft);
-      leaf.querySelector('.front').classList.toggle('live', showsRight);
+      var back = leaf.querySelector('.back');       // absent when one page per leaf
+      var front = leaf.querySelector('.front');
+      if (back) back.classList.toggle('live', showsLeft);
+      if (front) front.classList.toggle('live', showsRight);
     });
   }
 
@@ -254,6 +329,10 @@
      chapter's offset lets the same engine drive the turns, so the book
      riffles through the intervening pages exactly as a drag would. */
   function goTo(leafIndex) {
+    /* Chapter tabs are numbered in spreads. A spread's first page in
+       reading order is its LEFT one, which is the page before the leaf
+       the spread is named after — hence the -1. */
+    if (single) leafIndex = Math.max(0, leafIndex * 2 - 1);
     var y = (leafIndex / N) * maxScroll;
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
@@ -344,7 +423,7 @@
   render();
   onSpreadChange(Math.round(current));
 
-  window.addEventListener('scroll', readScroll, { passive: true });
+  // scroll is sampled in the rAF loop above, so no scroll listener here
   window.addEventListener('resize', function () {
     measure(); readScroll();
   }, { passive: true });

@@ -147,8 +147,14 @@
 /* the shadow a lifting sheet throws on the spread beneath it */
 .bh-on .bh-leaf::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:var(--cast,0);
-  background:linear-gradient(90deg, rgba(6,20,34,.5), rgba(6,20,34,0) 62%);
-  filter:blur(9px);
+  /* NO filter here. A filter anywhere inside a preserve-3d subtree makes
+     WebKit flatten the entire 3D rendering context: every page paints in
+     the same plane, backfaces stop being culled, and all eighteen pages'
+     text lands on top of each other. A multi-stop gradient gives the same
+     soft falloff without touching the compositor. */
+  background:linear-gradient(90deg,
+    rgba(6,20,34,.46) 0%, rgba(6,20,34,.30) 14%, rgba(6,20,34,.16) 30%,
+    rgba(6,20,34,.06) 46%, rgba(6,20,34,0) 64%);
 }
 
 /* ---------------- the cover ---------------- */

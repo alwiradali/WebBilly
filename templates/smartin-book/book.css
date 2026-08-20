@@ -86,7 +86,8 @@ a{color:inherit}
 #book{
   position:relative;pointer-events:auto;
   width:calc(var(--page-w) * 2);height:var(--page-h);
-  transform-style:preserve-3d;will-change:transform;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+  will-change:transform;
 }
 
 /* the block of pages, thinning on the right as it thickens on the left */
@@ -97,21 +98,23 @@ a{color:inherit}
 }
 #book::after{ /* unturned block, right fore-edge */
   right:calc(var(--page-w) * 0 - 1px);
-  width:calc(13px * (1 - var(--p,0) / 9));
+  width:calc(13px * (1 - var(--p,0) / var(--n,9)));
   transform:translateX(100%);
 }
 #book::before{ /* turned block, left fore-edge */
-  left:-1px;width:calc(13px * (var(--p,0) / 9));transform:translateX(-100%);
+  left:-1px;width:calc(13px * (var(--p,0) / var(--n,9)));transform:translateX(-100%);
 }
 
 /* ---------------- leaves ---------------- */
 .leaf{
   position:absolute;top:0;right:0;width:50%;height:100%;
-  transform-origin:left center;transform-style:preserve-3d;
+  transform-origin:left center;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
   will-change:transform;
 }
 .face{
-  position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;
+  position:absolute;inset:0;overflow:hidden;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
   background:var(--paper);
   display:flex;flex-direction:column;
   /* margins in page-widths, so the text block keeps its proportion */
@@ -155,8 +158,14 @@ a{color:inherit}
 .leaf::after{
   content:"";position:absolute;top:0;left:0;width:100%;height:100%;
   pointer-events:none;z-index:-1;opacity:var(--cast,0);
-  background:linear-gradient(90deg, rgba(6,20,34,.5), rgba(6,20,34,0) 62%);
-  filter:blur(9px);
+  /* NO filter here. A filter anywhere inside a preserve-3d subtree makes
+     WebKit flatten the entire 3D rendering context: every page paints in
+     the same plane, backfaces stop being culled, and all eighteen pages'
+     text lands on top of each other. A multi-stop gradient gives the same
+     soft falloff without touching the compositor. */
+  background:linear-gradient(90deg,
+    rgba(6,20,34,.46) 0%, rgba(6,20,34,.30) 14%, rgba(6,20,34,.16) 30%,
+    rgba(6,20,34,.06) 46%, rgba(6,20,34,0) 64%);
 }
 
 /* ---------------- the cover ---------------- */
@@ -375,7 +384,7 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
 @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,13px)}}
 
 #prog{position:fixed;left:0;bottom:0;height:2px;z-index:60;background:var(--lime);
-  width:calc(var(--p,0) / 9 * 100%);transition:width .12s linear}
+  width:calc(var(--p,0) / var(--n,9) * 100%);transition:width .12s linear}
 
 /* ---------------- cursor ---------------- */
 #cursor{position:fixed;top:0;left:0;z-index:150;pointer-events:none;mix-blend-mode:difference;
