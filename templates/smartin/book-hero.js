@@ -78,6 +78,7 @@
     leaves = [].slice.call(book.querySelectorAll('.bh-leaf'));
     N = leaves.length;
     TURNS = N - 1;                // the last page stays open, never shuts
+    sec.style.setProperty('--bh-turns', TURNS || 1);   // fore-edge scales off this
     leaves.forEach(function (l) { l._t = null; });
     render._s = null;
   }
@@ -144,10 +145,11 @@
        A turn costs less on a phone: the same gesture covers less of the
        page, and a hero that takes four thumb-flicks to get past is a
        hero people leave. */
-    /* One page at a time means more turns, so each one costs less
-       scroll — otherwise the hero takes half a dozen thumb-flicks to
-       get past, and a hero like that is one people leave. */
-    STEP = single ? v.h * 0.62 : v.h;
+    /* Cost per turn. With nine pages a full screen of scroll each would
+       make the hero six screens deep before the site below it even
+       starts, so a turn costs a little less than a screen — and less
+       again on a phone, where there are twice as many turns. */
+    STEP = single ? v.h * 0.52 : v.h * 0.8;
     sec.style.height = Math.round(v.h + (TURNS + LEAD + TAIL) * STEP) + 'px';
   }
 
