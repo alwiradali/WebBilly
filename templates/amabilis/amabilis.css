@@ -7,25 +7,21 @@
    =========================================================================== */
 
 /* ---------- faces --------------------------------------------------------
-   Fraunces for display — a soft serif with enough character to read as a
+   Playfair Display for headings — the same high-contrast serif voice as her
    working bakery rather than a fashion house, and variable so one file covers
    the range. Inter carries everything functional. Self-hosted latin subsets, so
    the critical path never leaves this origin. */
 @font-face{
-  font-family:"Fraunces";font-style:normal;font-weight:400 700;font-display:swap;
-  src:url("../../assets/amabilis/fonts/fraunces-latin.woff2") format("woff2");
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
-    U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  font-family:"Playfair Display";font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(../../assets/amabilis/fonts/playfair-normal-latin.woff2) format("woff2");
 }
 @font-face{
-  font-family:"Dancing Script";font-style:normal;font-weight:400 700;font-display:swap;
-  src:url(../../assets/amabilis/fonts/dancing-script-latin.woff2) format("woff2");
+  font-family:"Pacifico";font-style:normal;font-weight:400;font-display:swap;
+  src:url(../../assets/amabilis/fonts/pacifico-latin.woff2) format("woff2");
 }
 @font-face{
-  font-family:"Fraunces";font-style:italic;font-weight:400 700;font-display:swap;
-  src:url("../../assets/amabilis/fonts/fraunces-italic-latin.woff2") format("woff2");
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
-    U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  font-family:"Playfair Display";font-style:italic;font-weight:400 700;font-display:swap;
+  src:url(../../assets/amabilis/fonts/playfair-italic-latin.woff2) format("woff2");
 }
 
 /* ---------- tokens ------------------------------------------------------- */
@@ -65,9 +61,9 @@
   --dark-line:rgba(246,233,238,.16);
 
   /* type */
-  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --display:"Playfair Display",Georgia,"Times New Roman",serif;
   --sans:"Jost",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  --script:"Dancing Script","Brush Script MT",cursive;
+  --script:"Pacifico","Brush Script MT",cursive;
 
   /* rhythm */
   --pad:clamp(20px,5vw,80px);
@@ -107,7 +103,7 @@ input,select,textarea{font:inherit;color:inherit}
 
 /* ---------- type --------------------------------------------------------- */
 figure,blockquote,dl,dd,ul,ol,pre{margin:0}
-h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:400;line-height:.98;letter-spacing:-.018em}
+h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:400;line-height:1.04;letter-spacing:-.012em}
 p{margin:0}
 
 .d1{font-size:clamp(2.5rem,6.6vw,6.1rem)}
@@ -350,7 +346,7 @@ p{margin:0}
 
 .hero-type{position:relative;z-index:2}
 .hero h1{margin:.22em 0 0}
-.hero h1 .ln{display:block;overflow:hidden;padding:.14em .15em .22em;margin:-.14em -.15em -.22em}
+.hero h1 .ln{display:block;overflow:hidden;padding:.2em .3em .34em;margin:-.2em -.3em -.34em}
 .hero h1 .ln>span{display:block;will-change:transform}
 .hero h1 .ind{padding-left:clamp(20px,6vw,120px)}
 .hero-sub{margin-top:clamp(22px,3vw,34px);max-width:40ch;opacity:0}
@@ -905,7 +901,7 @@ p{margin:0}
    ========================================================================= */
 [data-fade]{opacity:0;transform:translateY(26px)}
 [data-fade-x]{opacity:0}
-.split .ln{display:block;overflow:hidden;padding:.16em .15em .22em;margin:-.16em -.15em -.22em}
+.split .ln{display:block;overflow:hidden;padding:.22em .3em .34em;margin:-.22em -.3em -.34em}
 .split .ln>span{display:block}
 
 .no-js [data-fade],.no-js [data-fade-x]{opacity:1;transform:none}
@@ -978,10 +974,10 @@ p{margin:0}
    The palette above, used on the words that carry the meaning. Kept to one
    coloured phrase per heading so it reads as emphasis, not decoration.
    ========================================================================= */
-/* the italic highlight words go hand-written — Caveat on the Fraunces baseline */
+/* the highlight words go hand-written — Pacifico on the Playfair baseline */
 h1 em,h2 em,.d1 em,.d2 em,.pull-quote em{
-  font-family:var(--script);font-style:normal;font-weight:700;
-  font-size:1.06em;letter-spacing:0;line-height:.9;padding-inline:.04em;
+  font-family:var(--script);font-style:normal;font-weight:400;
+  font-size:.9em;letter-spacing:.01em;line-height:1;padding-inline:.05em;
 }
 .hl-rose{color:var(--rose-deep)}
 .hl-merlot{color:var(--merlot)}
