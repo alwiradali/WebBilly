@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Hobberry Deliveries Ltd — Man &amp; Van Furniture Delivery, Stoke-on-Trent</title>
+<meta name="description" content="Hobberry Deliveries Ltd — man and van furniture delivery specialists in Stoke-on-Trent. Sofas, beds, wardrobes, marketplace pickups. One item or a full load. Call Karl or Josh.">
+<meta name="theme-color" content="#122c57">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hobberry Deliveries — we move the big stuff.">
+<meta property="og:description" content="Man &amp; van furniture delivery specialists, Stoke-on-Trent and the whole of the Potteries. One item or a full load — call Karl or Josh.">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="icon" href="../assets/hobberry/icon-32.png" sizes="32x32">
+<link rel="preload" href="../assets/hobberry/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/hobberry/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* self-hosted type — no third-party requests, loads with the page */
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
+  src:url(../assets/hobberry/fonts/anton.woff2) format('woff2')}
+@font-face{font-family:'Permanent Marker';font-style:normal;font-weight:400;font-display:swap;
+  src:url(../assets/hobberry/fonts/marker.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(../assets/hobberry/fonts/inter-var.woff2) format('woff2')}
+/* ============================================================
+   HOBBERRY DELIVERIES — the comic world.
+   Saturday-morning cartoon energy: hard ink outlines, offset
+   pop shadows, navy sky with halftone dots, grass-green hills,
+   gold lightning, and Stoke's bottle kilns on the horizon.
+   Nothing borrowed from any other template on this repo.
+   ============================================================ */
+:root{
+  --ink:#0e1b33;            /* outline navy-black          */
+  --navy:#14315e; --navy2:#0d2246; --navy3:#1c4179;
+  --green:#2f9e44; --green2:#37b24d; --grass:#57b34e; --grass2:#3f8f3d;
+  --gold:#ffd23f; --gold2:#f5b301; --goldpale:#ffe89a;
+  --paper:#fff7e8; --paper2:#fdefd3; --cream:#fffdf6;
+  --sky:#a9d7f5; --sky2:#7fc2ee;
+  --orange:#ff8c42;
+  --dis:'Anton', Impact, 'Arial Black', sans-serif;
+  --mark:'Permanent Marker', cursive;
+  --ui:'Inter', system-ui, -apple-system, sans-serif;
+  --line:3px solid var(--ink);
+  --pop:8px 8px 0 var(--ink);
+  --pop-sm:5px 5px 0 var(--ink);
+  --r:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--navy2)}
+body{
+  background:transparent;color:var(--ink);font-family:var(--ui);line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+::selection{background:var(--gold);color:var(--ink)}
+
+/* the parcel sky — one fixed canvas behind the whole page */
+.parcel-sky{position:fixed;inset:0;z-index:-2;pointer-events:none}
+/* deep-space navy + subtle halftone dots behind the canvas */
+.backdrop{position:fixed;inset:0;z-index:-3;background:
+  radial-gradient(1200px 700px at 80% -10%,#1d4079 0%,transparent 55%),
+  radial-gradient(900px 600px at 10% 110%,#0f2a55 0%,transparent 60%),
+  var(--navy2)}
+.backdrop::after{content:"";position:absolute;inset:0;opacity:.16;
+  background-image:radial-gradient(rgba(255,255,255,.5) 1.1px,transparent 1.1px);
+  background-size:22px 22px}
+
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px;position:relative}
+
+h1,h2,h3{font-family:var(--dis);font-weight:400;letter-spacing:.01em;line-height:.98;text-transform:uppercase}
+h2{font-size:clamp(2.2rem,5.6vw,3.9rem)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;font-family:var(--mark);font-size:1.05rem;
+  color:var(--gold);transform:rotate(-1.5deg);margin-bottom:14px;
+}
+.kicker::before{content:"★";font-family:var(--ui);font-size:.9rem}
+.on-paper .kicker{color:var(--green)}
+.lede{font-size:clamp(1rem,1.7vw,1.15rem);max-width:58ch;font-weight:500}
+
+/* ---------- comic buttons ---------- */
+.cbtn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--dis);font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;
+  padding:16px 26px;border:var(--line);border-radius:16px;cursor:pointer;
+  background:var(--gold);color:var(--ink);box-shadow:var(--pop-sm);
+  transition:transform .16s ease,box-shadow .16s ease;white-space:nowrap;
+}
+.cbtn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.cbtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.cbtn.green{background:var(--green2);color:#fff}
+.cbtn.white{background:var(--cream)}
+.cbtn svg{width:20px;height:20px;flex:none}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:14px;left:0;right:0;z-index:90}
+.nav-in{
+  max-width:1200px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:14px;
+  background:var(--cream);border:var(--line);border-radius:20px;box-shadow:var(--pop-sm);
+}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.badge{
+  width:52px;height:52px;flex:none;border:var(--line);border-radius:50%;
+  background:conic-gradient(from 180deg at 50% 40%,var(--sky2) 0 25%,var(--sky) 0 50%,var(--sky2) 0 75%,var(--sky) 0);
+  position:relative;overflow:hidden;
+}
+.badge::before{content:"";position:absolute;left:-20%;right:-20%;bottom:-8%;height:55%;
+  background:var(--grass);border-radius:50% 50% 0 0;border-top:3px solid var(--ink)}
+.badge b{
+  position:absolute;inset:auto 0 16%;text-align:center;font-family:var(--dis);
+  font-size:1.5rem;color:var(--gold);-webkit-text-stroke:1px var(--ink);letter-spacing:0;
+}
+.brand-t{line-height:1}
+.brand-t b{display:block;font-family:var(--dis);font-size:1.25rem;letter-spacing:.02em}
+.brand-t small{display:block;font-family:var(--mark);font-size:.72rem;color:var(--green);margin-top:2px}
+.navlinks{display:none;gap:4px}
+.navlinks a{font-weight:700;font-size:.9rem;padding:9px 13px;border-radius:12px;border:3px solid transparent}
+.navlinks a:hover{border-color:var(--ink);background:var(--goldpale)}
+.nav .cbtn{padding:11px 18px;font-size:.9rem}
+@media(min-width:940px){.navlinks{display:flex}}
+@media(max-width:520px){.brand-t small{display:none}.nav .cbtn{font-size:.8rem;padding:10px 13px}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:150px 0 0;overflow:hidden;isolation:isolate}
+.sunball{
+  position:absolute;top:110px;right:6%;width:130px;height:130px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle at 38% 34%,#ffe98f,var(--gold) 62%,var(--gold2));
+  border:var(--line);box-shadow:0 0 0 14px rgba(255,210,63,.14),0 0 0 30px rgba(255,210,63,.07);
+  animation:sunspin 40s linear infinite;
+}
+.sunball::before{content:"";position:absolute;inset:-26px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,210,63,.32) 0 6deg,transparent 6deg 18deg);z-index:-1}
+@keyframes sunspin{to{transform:rotate(360deg)}}
+@media(max-width:700px){
+  .sunball{width:84px;height:84px;top:96px;right:-26px;
+    box-shadow:0 0 0 10px rgba(255,210,63,.13),0 0 0 20px rgba(255,210,63,.06)}
+  .sunball::before{inset:-16px}
+}
+.hero-grid{display:grid;gap:clamp(30px,5vw,54px);grid-template-columns:minmax(0,1fr);align-items:center;padding-bottom:56px}
+@media(min-width:980px){.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
+.hero h1{
+  font-size:clamp(3rem,9vw,6.2rem);color:#fff;
+  text-shadow:4px 4px 0 var(--ink);
+}
+.hero h1 .gold{color:var(--gold)}
+.hero h1 .green{color:#6fd06a}
+.hero .lede{color:#dce9fb;margin:20px 0 26px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px}
+.hero-note{margin-top:22px;font-family:var(--mark);color:var(--goldpale);font-size:1.05rem;transform:rotate(-1deg)}
+.hero-note s{text-decoration:none;color:#8ee08a}
+
+/* hero comic panel stack */
+.stage{position:relative;min-height:420px}
+.panel{
+  position:absolute;border:var(--line);border-radius:var(--r);overflow:hidden;background:var(--cream);
+  box-shadow:var(--pop);transform:rotate(var(--tilt,0deg));
+}
+.panel img{width:100%;height:100%;object-fit:cover}
+.panel .tag{
+  position:absolute;left:12px;bottom:12px;font-family:var(--dis);font-size:.8rem;letter-spacing:.06em;
+  background:var(--gold);border:var(--line);border-radius:10px;padding:5px 12px;text-transform:uppercase;
+}
+.p1{--tilt:-3deg;left:0;top:4%;width:62%;height:56%;z-index:2;animation:bob 7s ease-in-out infinite}
+.p2{--tilt:2.4deg;right:0;top:0;width:44%;height:40%;z-index:1;animation:bob 9s ease-in-out -3s infinite}
+.p3{--tilt:-1.6deg;left:22%;bottom:0;width:56%;height:42%;z-index:3;animation:bob 8s ease-in-out -5s infinite}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -12px}}
+
+/* the spinning 3D parcel */
+.cube-slot{position:absolute;right:4%;bottom:16%;z-index:4;width:110px;height:110px;perspective:700px}
+.cube{position:absolute;inset:0;transform-style:preserve-3d;animation:cubespin 14s linear infinite}
+.cube i{
+  position:absolute;inset:0;border:var(--line);background:#d9a05b;border-radius:8px;
+  background-image:linear-gradient(90deg,transparent 44%,#b9834a 44% 56%,transparent 56%);
+}
+.cube i:nth-child(1){transform:translateZ(55px)}
+.cube i:nth-child(2){transform:rotateY(90deg) translateZ(55px)}
+.cube i:nth-child(3){transform:rotateY(180deg) translateZ(55px)}
+.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(55px)}
+.cube i:nth-child(5){transform:rotateX(90deg) translateZ(55px);background-image:
+  linear-gradient(90deg,transparent 44%,#b9834a 44% 56%,transparent 56%),
+  linear-gradient(0deg,transparent 44%,#b9834a 44% 56%,transparent 56%)}
+.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(55px)}
+@keyframes cubespin{to{transform:rotateX(360deg) rotateY(720deg)}}
+.sticker{
+  position:absolute;font-family:var(--mark);font-size:.95rem;padding:7px 14px;border:var(--line);
+  border-radius:12px;background:var(--cream);box-shadow:var(--pop-sm);z-index:5;
+}
+.st1{top:-4%;left:48%;transform:rotate(4deg);background:var(--gold)}
+.st2{bottom:34%;left:-2%;transform:rotate(-5deg)}
+@media(max-width:560px){.cube-slot{width:80px;height:80px}.cube i{border-radius:6px}
+  .cube i:nth-child(1){transform:translateZ(40px)}.cube i:nth-child(2){transform:rotateY(90deg) translateZ(40px)}
+  .cube i:nth-child(3){transform:rotateY(180deg) translateZ(40px)}.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(40px)}
+  .cube i:nth-child(5){transform:rotateX(90deg) translateZ(40px)}.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(40px)}}
+
+/* kiln skyline — Stoke's bottle ovens, drawn once, reused flipped */
+.skyline{display:block;width:100%;height:auto;margin-bottom:-2px}
+
+/* ---------- gold marquee ---------- */
+.mq{background:var(--gold);border-block:var(--line);padding:13px 0;overflow:hidden}
+.mq-t{display:flex;width:max-content;animation:mq 30s linear infinite}
+.mq:hover .mq-t{animation-play-state:paused}
+.mq-t span{font-family:var(--dis);font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;padding:0 22px;white-space:nowrap}
+.mq-t span::after{content:"◆";margin-left:44px;font-size:.7rem;vertical-align:2px}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- paper sections ---------- */
+.paper{background:var(--paper);position:relative}
+.paper.alt{background:var(--paper2)}
+.sect{padding:clamp(64px,8vw,110px) 0}
+
+/* ---------- horizontal "what we shift" ---------- */
+.shift-head{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.swipe-note{font-family:var(--mark);color:var(--green);transform:rotate(-1deg)}
+.fx-h-track{display:flex;gap:26px;padding:44px 22px 56px;width:max-content}
+.card{
+  width:min(340px,78vw);flex:none;border:var(--line);border-radius:var(--r);background:var(--cream);
+  box-shadow:var(--pop);overflow:hidden;transform:rotate(var(--tilt,0deg));
+  transition:transform .25s ease;
+}
+.card:hover{transform:rotate(0deg) translateY(-8px)}
+.card:nth-child(odd){--tilt:-1.4deg}
+.card:nth-child(even){--tilt:1.3deg}
+.card .ph{height:210px;border-bottom:var(--line);position:relative;overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.card:hover .ph img{transform:scale(1.07)}
+.card .num{
+  position:absolute;top:12px;left:12px;font-family:var(--dis);background:var(--navy);color:var(--gold);
+  border:var(--line);border-radius:10px;padding:3px 11px;font-size:.9rem;
+}
+.card .bd{padding:20px 22px 24px}
+.card h3{font-size:1.5rem;margin-bottom:8px}
+.card p{font-size:.92rem;font-weight:500;color:#31405e}
+
+/* ---------- the delivery run (road + van) ---------- */
+.run{position:relative}
+.roadwrap{position:absolute;inset:0;pointer-events:none;z-index:0}
+.roadwrap svg{width:100%;height:100%}
+.road-base{fill:none;stroke:var(--ink);stroke-width:46;stroke-linecap:round}
+.road-tar{fill:none;stroke:#3c4763;stroke-width:38;stroke-linecap:round}
+.road-dash{fill:none;stroke:var(--gold);stroke-width:4;stroke-dasharray:26 22}
+#vanG{will-change:transform}
+.steps{position:relative;z-index:1;display:grid;gap:clamp(60px,10vw,120px)}
+.step{
+  max-width:430px;background:var(--cream);border:var(--line);border-radius:var(--r);
+  box-shadow:var(--pop);padding:26px 28px;position:relative;transform:rotate(var(--tilt,0deg));
+}
+.step:nth-child(1){--tilt:-1.2deg}
+.step:nth-child(2){--tilt:1.4deg;margin-left:auto}
+.step:nth-child(3){--tilt:-.8deg}
+.step .n{
+  position:absolute;top:-24px;left:22px;width:52px;height:52px;border:var(--line);border-radius:50%;
+  background:var(--gold);display:grid;place-items:center;font-family:var(--dis);font-size:1.5rem;
+  box-shadow:var(--pop-sm);
+}
+.step h3{font-size:1.6rem;margin:14px 0 8px}
+.step p{font-weight:500;color:#31405e}
+.step .mk{font-family:var(--mark);color:var(--green);display:block;margin-top:10px;transform:rotate(-.6deg)}
+
+/* ---------- team ---------- */
+.team{display:grid;gap:26px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:820px){.team{grid-template-columns:1fr 1fr}}
+.mate{
+  border:var(--line);border-radius:var(--r);box-shadow:var(--pop);overflow:hidden;background:var(--cream);
+  transform:rotate(var(--tilt));transition:transform .25s ease;
+}
+.mate:hover{transform:rotate(0)}
+.mate .top{padding:26px 26px 20px;display:flex;gap:18px;align-items:center;border-bottom:var(--line)}
+.mate.karl{--tilt:-1deg}.mate.karl .top{background:linear-gradient(135deg,var(--sky),var(--sky2))}
+.mate.josh{--tilt:1.1deg}.mate.josh .top{background:linear-gradient(135deg,#8ee08a,var(--grass))}
+.avatar{
+  width:76px;height:76px;flex:none;border:var(--line);border-radius:50%;display:grid;place-items:center;
+  font-family:var(--dis);font-size:2rem;background:var(--gold);box-shadow:var(--pop-sm);
+}
+.mate .top b{display:block;font-family:var(--dis);font-size:1.9rem;text-transform:uppercase}
+.mate .top i{font-family:var(--mark);font-style:normal;font-size:.95rem}
+.mate .bd{padding:20px 26px 26px}
+.mate .bd p{font-weight:500;color:#31405e;font-size:.95rem}
+.mate .bd a{
+  display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-family:var(--dis);
+  font-size:1.15rem;letter-spacing:.03em;border-bottom:3px solid var(--gold2);
+}
+.teamline{
+  margin-top:34px;text-align:center;font-family:var(--dis);font-size:clamp(1.3rem,3.4vw,2rem);
+  text-transform:uppercase;color:var(--navy);
+}
+.teamline em{font-style:normal;color:var(--green)}
+
+/* why chips */
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.chip{
+  display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border:var(--line);border-radius:100px;
+  background:var(--cream);font-weight:700;font-size:.92rem;box-shadow:3px 3px 0 var(--ink);
+}
+.chip b{color:var(--green)}
+
+/* ---------- areas ---------- */
+.towns{display:flex;flex-wrap:wrap;gap:11px;margin-top:30px}
+.town{
+  padding:9px 17px;border:var(--line);border-radius:100px;background:var(--cream);
+  font-weight:700;font-size:.9rem;box-shadow:3px 3px 0 var(--ink);
+  transition:transform .15s ease,background .15s ease;
+}
+.town:hover{transform:translate(-1px,-2px);background:var(--goldpale)}
+.town.six{background:var(--gold)}
+.six-note{margin-top:18px;font-family:var(--mark);color:var(--green);transform:rotate(-.8deg);display:inline-block}
+
+/* ---------- contact ---------- */
+.contact{background:var(--navy);position:relative;overflow:hidden}
+.contact::before{content:"";position:absolute;inset:0;opacity:.13;
+  background-image:radial-gradient(rgba(255,255,255,.6) 1.1px,transparent 1.1px);background-size:20px 20px}
+.contact h2{color:#fff;text-shadow:3px 3px 0 var(--ink)}
+.contact .lede{color:#d7e5fa}
+.ctiles{display:grid;gap:20px;margin-top:40px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:700px){.ctiles{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.ctiles{grid-template-columns:repeat(4,1fr)}}
+.ct{
+  border:var(--line);border-radius:var(--r);background:var(--cream);box-shadow:var(--pop);
+  padding:24px 22px;display:block;transition:transform .18s ease;position:relative;z-index:1;
+}
+.ct:hover{transform:translate(-3px,-3px)}
+.ct small{font-family:var(--mark);color:var(--green);font-size:.9rem}
+.ct b{display:block;font-family:var(--dis);font-size:1.3rem;margin-top:6px;text-transform:uppercase;letter-spacing:.02em;word-break:break-word}
+.ct span{display:block;margin-top:8px;font-weight:600;font-size:.9rem;color:#31405e}
+.ct.gold{background:var(--gold)}
+.freebie{margin-top:30px;font-family:var(--mark);color:var(--goldpale);font-size:1.1rem;transform:rotate(-.8deg);position:relative;z-index:1}
+
+/* ---------- footer ---------- */
+footer{background:var(--navy2);color:#c9d8ef;padding:46px 0 120px;position:relative}
+.foot{display:flex;flex-wrap:wrap;gap:26px;align-items:center;justify-content:space-between}
+.foot .brand-t b{color:#fff}
+.foot p{font-size:.85rem}
+.foot a{border-bottom:2px solid var(--gold2)}
+.socials{display:flex;gap:12px}
+.socials a{
+  width:48px;height:48px;border:var(--line);border-radius:14px;background:var(--cream);color:var(--ink);
+  display:grid;place-items:center;box-shadow:var(--pop-sm);transition:transform .15s ease;
+}
+.socials a:hover{transform:translate(-2px,-2px)}
+.socials svg{width:22px;height:22px}
+
+/* grass strip that vans drive on at the very bottom */
+.grassline{position:absolute;left:0;right:0;bottom:0;height:64px;background:var(--grass);
+  border-top:var(--line)}
+.grassline::after{content:"";position:absolute;inset:0;opacity:.25;
+  background-image:radial-gradient(var(--grass2) 2px,transparent 2px);background-size:16px 12px}
+#footVan{position:absolute;bottom:34px;left:-220px;width:170px;z-index:2}
+
+@media(prefers-reduced-motion:reduce){
+  .cube,.sunball,.p1,.p2,.p3,.mq-t{animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<canvas class="parcel-sky" id="sky" aria-hidden="true"></canvas>
+<div data-fx="progressbar" style="color:#ffd23f"></div>
+
+<!-- ================= NAV ================= -->
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Hobberry Deliveries — top">
+      <span class="badge" aria-hidden="true"><b>H</b></span>
+      <span class="brand-t"><b>Hobberry Deliveries</b><small>man &amp; van • Stoke-on-Trent</small></span>
+    </a>
+    <div class="navlinks">
+      <a href="#shift">What we shift</a>
+      <a href="#how">How it works</a>
+      <a href="#team">The lads</a>
+      <a href="#areas">Areas</a>
+    </div>
+    <a class="cbtn" href="tel:+447974976721">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>
+      Call us
+    </a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="sunball" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">Man &amp; van furniture delivery specialists</span>
+      <h1 data-fx="text" data-fx-step="70">We move <span class="gold">the big</span> <span class="green">stuff.</span></h1>
+      <p class="lede" data-fx="reveal" data-fx-delay="260">
+        Hobberry Deliveries Ltd — two lads, one van, based in Stoke-on-Trent.
+        Sofas, beds, wardrobes, marketplace wins. One item or a full load,
+        carried like it's ours and put in the room you actually want it in.
+      </p>
+      <div class="hero-cta" data-fx="reveal" data-fx-delay="380">
+        <a class="cbtn" href="tel:+447974976721">☎ Call Karl</a>
+        <a class="cbtn green" href="tel:+447376976847">☎ Call Josh</a>
+        <a class="cbtn white" href="https://www.instagram.com/hobberrydeliveriesltd" target="_blank" rel="noopener">DM the van</a>
+      </div>
+      <p class="hero-note" data-fx="reveal" data-fx-delay="480">Reliable <s>✓</s> Fast <s>✓</s> Affordable <s>✓</s> — quotes are free, just tell us what &amp; where.</p>
+    </div>
+
+    <div class="stage" aria-hidden="true" data-fx="reveal" data-fx-variant="scale" data-fx-delay="200">
+      <figure class="panel p1"><img src="../assets/hobberry/hero-sofa.webp" alt="" loading="eager" fetchpriority="high"><span class="tag">Sofa aboard</span></figure>
+      <figure class="panel p2"><img src="../assets/hobberry/van-inside-sm.webp" alt="" loading="lazy"><span class="tag">Packed</span></figure>
+      <figure class="panel p3"><img src="../assets/hobberry/into-home-sm.webp" alt="" loading="lazy"><span class="tag">In the room</span></figure>
+      <span class="sticker st1">THIS WAY UP ↑</span>
+      <span class="sticker st2">handled with care!</span>
+      <div class="cube-slot"><div class="cube"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    </div>
+  </div>
+
+  <!-- Stoke's bottle kilns on the horizon -->
+  <svg class="skyline" viewBox="0 0 1440 130" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#0a1c3a" d="M0 130V96h48l10-38 10 38h30V70c0-26 34-26 34 0v26h56l8-30 8 30h44V58c0-30 40-30 40 0v38h70l12-44 12 44h36V78c0-24 32-24 32 0v18h64V62c0-28 38-28 38 0v34h52l9-32 9 32h40V74c0-22 30-22 30 0v22h68V54c0-32 42-32 42 0v42h46l11-40 11 40h34V80c0-20 28-20 28 0v16h60V66c0-26 36-26 36 0v30h50l10-36 10 36h38V76c0-22 30-22 30 0v20h58V60c0-28 38-28 38 0v36h44l12-42 12 42h30v34z"/>
+    <path fill="#57b34e" d="M0 130v-14c60-14 150-22 240-18s180 20 280 22 210-14 320-16 220 12 320 14 200-6 280-12v24z" stroke="#0e1b33" stroke-width="3"/>
+  </svg>
+</header>
+
+<!-- ================= MARQUEE ================= -->
+<div class="mq" aria-hidden="true">
+  <div class="mq-t" id="mqt">
+    <span>Sofas</span><span>Beds &amp; mattresses</span><span>Wardrobes</span><span>Appliances</span>
+    <span>Marketplace pickups</span><span>Store collections</span><span>Full loads</span>
+    <span>Stoke-on-Trent &amp; beyond</span><span>Careful handling</span><span>On time</span>
+  </div>
+</div>
+
+<!-- ================= WHAT WE SHIFT ================= -->
+<section class="paper" id="shift">
+  <div class="sect on-paper" style="padding-bottom:0">
+    <div class="wrap shift-head">
+      <div>
+        <span class="kicker">What fits in the van (nearly everything)</span>
+        <h2 data-fx="reveal">What we shift</h2>
+      </div>
+      <span class="swipe-note" data-fx="reveal" data-fx-delay="150">scroll → the van keeps going</span>
+    </div>
+  </div>
+  <div data-fx="horizontal" style="height:300vh">
+    <div class="fx-h-sticky">
+      <div class="fx-h-track">
+        <article class="card"><div class="ph"><img src="../assets/hobberry/carry-sofa-sm.webp" alt="Two movers carrying a sofa along a street" loading="lazy"><span class="num">01</span></div>
+          <div class="bd"><h3>Sofas &amp; armchairs</h3><p>The classic. Through the door, round the bend in the stairs, in front of the telly. No scuffed frames, no drama.</p></div></article>
+        <article class="card"><div class="ph"><img src="../assets/hobberry/into-home-sm.webp" alt="Movers carrying a sofa into a brick house" loading="lazy"><span class="num">02</span></div>
+          <div class="bd"><h3>Beds &amp; mattresses</h3><p>Divans, frames, mattresses that fight back. We bring the muscle and the patience — you keep the walls unmarked.</p></div></article>
+        <article class="card"><div class="ph"><img src="../assets/hobberry/table-carry-sm.webp" alt="Man carrying a wooden table" loading="lazy"><span class="num">03</span></div>
+          <div class="bd"><h3>Tables &amp; the big flatpack</h3><p>Dining tables, dressers, wardrobes, that giant box from the retail park. Two pairs of hands beat one every time.</p></div></article>
+        <article class="card"><div class="ph"><img src="../assets/hobberry/van-boxes-sm.webp" alt="Loading boxes into a delivery van" loading="lazy"><span class="num">04</span></div>
+          <div class="bd"><h3>Marketplace pickups</h3><p>Won it on Facebook Marketplace, eBay or an auction? Send us the listing — we collect, pay-on-collect if agreed, and deliver.</p></div></article>
+        <article class="card"><div class="ph"><img src="../assets/hobberry/van-open-sm.webp" alt="Open van loaded with boxes" loading="lazy"><span class="num">05</span></div>
+          <div class="bd"><h3>Store collections</h3><p>Sofa outlet says "collection only"? We're your collection. Straight from the store floor to your front room.</p></div></article>
+        <article class="card"><div class="ph"><img src="../assets/hobberry/wrap-sofa-sm.webp" alt="Sofa being wrapped in protective material" loading="lazy"><span class="num">06</span></div>
+          <div class="bd"><h3>Part &amp; full loads</h3><p>A single chair or a vanful — blankets, straps and wrap as standard, so everything arrives the way it left.</p></div></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS — the delivery run ================= -->
+<section class="paper alt run" id="how">
+  <div class="roadwrap" aria-hidden="true">
+    <svg id="roadSvg" viewBox="0 0 1200 1400" preserveAspectRatio="xMidYMid slice">
+      <path id="roadPath" class="road-base" d="M1040 -40 C 1040 350, 250 330, 250 660 C 250 960, 950 900, 950 1200 C 950 1360, 660 1430, 560 1480"/>
+      <path class="road-tar"  d="M1040 -40 C 1040 350, 250 330, 250 660 C 250 960, 950 900, 950 1200 C 950 1360, 660 1430, 560 1480"/>
+      <path class="road-dash" d="M1040 -40 C 1040 350, 250 330, 250 660 C 250 960, 950 900, 950 1200 C 950 1360, 660 1430, 560 1480"/>
+      <g id="vanG">
+        <g id="vanSprite" transform="translate(-70,-46)">
+          <!-- the Hobberry van, drawn in-house -->
+          <rect x="6" y="10" width="86" height="52" rx="10" fill="#14315e" stroke="#0e1b33" stroke-width="4"/>
+          <path d="M92 26h22c8 0 14 5 17 12l7 16c1 3-1 8-6 8H92z" fill="#14315e" stroke="#0e1b33" stroke-width="4"/>
+          <path d="M97 30h15c5 0 9 3 11 8l4 9H97z" fill="#a9d7f5" stroke="#0e1b33" stroke-width="3.4"/>
+          <rect x="6" y="48" width="126" height="14" rx="7" fill="#37b24d" stroke="#0e1b33" stroke-width="4"/>
+          <path d="M52 14l-11 17h13l-11 17" fill="none" stroke="#ffd23f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="76" cy="30" r="9" fill="#ffd23f" stroke="#0e1b33" stroke-width="3"/>
+          <g class="wheel"><circle cx="34" cy="66" r="13" fill="#0e1b33"/><circle cx="34" cy="66" r="6" fill="#c9d8ef"/><path d="M34 60v12M28 66h12" stroke="#0e1b33" stroke-width="2.4"/></g>
+          <g class="wheel"><circle cx="106" cy="66" r="13" fill="#0e1b33"/><circle cx="106" cy="66" r="6" fill="#c9d8ef"/><path d="M106 60v12M100 66h12" stroke="#0e1b33" stroke-width="2.4"/></g>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <div class="sect on-paper">
+    <div class="wrap">
+      <span class="kicker">Easier than assembling the flatpack</span>
+      <h2 data-fx="reveal">How a Hobberry<br>run works</h2>
+      <div class="steps" style="margin-top:60px">
+        <article class="step" data-fx="reveal">
+          <span class="n">1</span>
+          <h3>Message the lads</h3>
+          <p>Ring, text or DM. Tell us what it is, where it's coming from and where it's going. A photo of the item helps loads.</p>
+          <span class="mk">"it's a two-seater in Longton, going to Meir" — perfect.</span>
+        </article>
+        <article class="step" data-fx="reveal">
+          <span class="n">2</span>
+          <h3>We come get it</h3>
+          <p>Straps, blankets and two pairs of hands. We load it like it's going in our own front room — because that's the standard.</p>
+          <span class="mk">no "it'll be fine loose in the back" round here.</span>
+        </article>
+        <article class="step" data-fx="reveal">
+          <span class="n">3</span>
+          <h3>In the room you want</h3>
+          <p>Not dumped at the kerb — carried in, placed where you point, packaging tidied if you want rid of it. Job done, kettle on.</p>
+          <span class="mk">tea: milk, two sugars (Josh), none for Karl.</span>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= THE LADS ================= -->
+<section class="paper" id="team">
+  <div class="sect on-paper">
+    <div class="wrap">
+      <span class="kicker">Two lads, one standard</span>
+      <h2 data-fx="reveal">Meet Karl &amp; Josh</h2>
+      <div class="team" style="margin-top:44px" data-fx="stagger" data-fx-step="140">
+        <article class="mate karl">
+          <div class="top"><span class="avatar">K</span><span><b>Karl</b><i>the steady pair of hands</i></span></div>
+          <div class="bd">
+            <p>Lifting, strapping, reversing into spaces that shouldn't be possible. If it's awkward, heavy or "won't fit" — Karl's already worked out how it fits.</p>
+            <a href="tel:+447974976721">☎ 07974 976721</a>
+          </div>
+        </article>
+        <article class="mate josh">
+          <div class="top"><span class="avatar">J</span><span><b>Josh</b><i>answering calls, getting things done</i></span></div>
+          <div class="bd">
+            <p>Quotes, bookings, timings, updates on the day. The one who actually replies to messages — and then turns up with the van when he said he would.</p>
+            <a href="tel:+447376976847">☎ 07376 976847</a>
+          </div>
+        </article>
+      </div>
+      <p class="teamline" data-fx="reveal">Different jobs. Same team. <em>Always delivering.</em></p>
+      <div class="chips" data-fx="stagger" data-fx-step="80" style="justify-content:center">
+        <span class="chip"><b>✓</b> Careful handling</span>
+        <span class="chip"><b>✓</b> On time</span>
+        <span class="chip"><b>✓</b> Straps &amp; blankets as standard</span>
+        <span class="chip"><b>✓</b> Local lads, local knowledge</span>
+        <span class="chip"><b>✓</b> Proper communication</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AREAS ================= -->
+<section class="paper alt" id="areas">
+  <div class="sect on-paper">
+    <div class="wrap">
+      <span class="kicker">Kiln country and beyond</span>
+      <h2 data-fx="reveal">Stoke-on-Trent<br>&amp; surrounding areas</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="120" style="margin-top:18px;color:#31405e">
+        Based in the Potteries, at home in all six towns — and happy to stretch
+        the legs for the right job.
+      </p>
+      <div class="towns" data-fx="stagger" data-fx-step="40">
+        <span class="town six">Tunstall</span><span class="town six">Burslem</span><span class="town six">Hanley</span>
+        <span class="town six">Stoke</span><span class="town six">Fenton</span><span class="town six">Longton</span>
+        <span class="town">Newcastle-under-Lyme</span><span class="town">Trentham</span><span class="town">Meir</span>
+        <span class="town">Blurton</span><span class="town">Bentilee</span><span class="town">Kidsgrove</span>
+        <span class="town">Biddulph</span><span class="town">Stone</span><span class="town">Leek</span>
+        <span class="town">Cheadle</span><span class="town">Uttoxeter</span><span class="town">Stafford</span>
+        <span class="town">Crewe</span><span class="town">Congleton</span>
+      </div>
+      <span class="six-note">gold ones are the six towns — that's home turf.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact" style="border-top:3px solid var(--ink)">
+  <div class="sect">
+    <div class="wrap">
+      <span class="kicker">Free quotes, no faff</span>
+      <h2 data-fx="reveal">Get the van booked</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="120" style="margin-top:16px">
+        Tell us what it is, where it's coming from and where it's going.
+        Photos welcome. We'll come back with a straight answer, fast.
+      </p>
+      <div class="ctiles" data-fx="stagger" data-fx-step="100">
+        <a class="ct gold" href="tel:+447974976721"><small>ring Karl</small><b>07974 976721</b><span>Loading, lifting &amp; logistics</span></a>
+        <a class="ct gold" href="tel:+447376976847"><small>ring Josh</small><b>07376 976847</b><span>Quotes, bookings &amp; timings</span></a>
+        <a class="ct" href="mailto:Hobberrydeliveries@gmail.com?subject=Delivery%20quote"><small>email us</small><b style="font-size:.98rem;text-transform:none;font-family:var(--ui);font-weight:800">hobberrydeliveries<br>@gmail.com</b><span>Send the listing or a photo</span></a>
+        <a class="ct" href="https://www.instagram.com/hobberrydeliveriesltd" target="_blank" rel="noopener"><small>DM us</small><b style="font-size:.98rem;text-transform:none;font-family:var(--ui);font-weight:800">@hobberry<br>deliveriesltd</b><span>Instagram &amp; Facebook</span></a>
+      </div>
+      <p class="freebie">Booked a sofa for Saturday? Send the listing over — we'll do the rest. 📦</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top">
+      <span class="badge" aria-hidden="true"><b>H</b></span>
+      <span class="brand-t"><b>Hobberry Deliveries Ltd</b><small style="color:#8ee08a">man &amp; van • Stoke-on-Trent</small></span>
+    </a>
+    <p>© <span id="yr">2026</span> Hobberry Deliveries Ltd · Man &amp; van furniture delivery, Stoke-on-Trent<br>
+       Photography via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a> — full credits in the studio archive.</p>
+    <div class="socials">
+      <a href="https://www.instagram.com/hobberrydeliveriesltd" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="mailto:Hobberrydeliveries@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 8l9 6 9-6"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="grassline" aria-hidden="true"></div>
+  <svg id="footVan" viewBox="0 0 140 80" aria-hidden="true">
+    <rect x="4" y="8" width="86" height="52" rx="10" fill="#14315e" stroke="#0e1b33" stroke-width="4"/>
+    <path d="M90 24h22c8 0 14 5 17 12l7 16c1 3-1 8-6 8H90z" fill="#14315e" stroke="#0e1b33" stroke-width="4"/>
+    <path d="M95 28h15c5 0 9 3 11 8l4 9H95z" fill="#a9d7f5" stroke="#0e1b33" stroke-width="3.4"/>
+    <rect x="4" y="46" width="132" height="14" rx="7" fill="#37b24d" stroke="#0e1b33" stroke-width="4"/>
+    <text x="47" y="38" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="17" fill="#ffd23f" stroke="#0e1b33" stroke-width=".8">HOBBERRY</text>
+    <circle cx="32" cy="64" r="12" fill="#0e1b33"/><circle cx="32" cy="64" r="5" fill="#c9d8ef"/>
+    <circle cx="104" cy="64" r="12" fill="#0e1b33"/><circle cx="104" cy="64" r="5" fill="#c9d8ef"/>
+  </svg>
+</footer>
+
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ============ the parcel sky — floating parcels in three depths ======== */
+  var cv = document.getElementById('sky'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, parcels = [], raf = 0, lastPaint = 0, scrollY = 0, mx = 0;
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function makeParcel(depth) {
+    var s = depth * rnd(26, 44);
+    return {
+      x: rnd(0, 1), y: rnd(0, 1), s: s, depth: depth,
+      rot: rnd(0, 6.28), spin: rnd(-0.15, 0.15),
+      vx: rnd(-2.2, 2.2) * depth, vy: rnd(-1.4, 1.4) * depth,
+      kind: Math.random() < 0.82 ? 'box' : 'cloud'
+    };
+  }
+  function build() {
+    W = innerWidth; H = innerHeight;
+    var dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    parcels = [];
+    var n = W < 700 ? 14 : 26;
+    for (var i = 0; i < n; i++) parcels.push(makeParcel([0.45, 0.7, 1][i % 3]));
+  }
+
+  function drawBox(p) {
+    var s = p.s;
+    ctx.save();
+    ctx.translate(p.px, p.py);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = 0.16 + p.depth * 0.22;
+    /* body */
+    ctx.fillStyle = '#d9a05b';
+    ctx.strokeStyle = '#0e1b33';
+    ctx.lineWidth = Math.max(1.6, s * 0.07);
+    rr(-s / 2, -s / 2, s, s, s * 0.12); ctx.fill(); ctx.stroke();
+    /* tape */
+    ctx.fillStyle = '#b9834a';
+    ctx.fillRect(-s * 0.08, -s / 2, s * 0.16, s);
+    /* lid line */
+    ctx.beginPath(); ctx.moveTo(-s / 2, -s * 0.14); ctx.lineTo(s / 2, -s * 0.14); ctx.stroke();
+    ctx.restore();
+  }
+  function drawCloud(p) {
+    var s = p.s * 1.5;
+    ctx.save();
+    ctx.translate(p.px, p.py);
+    ctx.globalAlpha = 0.10 + p.depth * 0.10;
+    ctx.fillStyle = '#eaf4ff';
+    ctx.beginPath();
+    ctx.arc(-s * 0.4, 0, s * 0.34, 0, 6.2832);
+    ctx.arc(0, -s * 0.16, s * 0.44, 0, 6.2832);
+    ctx.arc(s * 0.42, 0, s * 0.3, 0, 6.2832);
+    ctx.fill();
+    ctx.restore();
+  }
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  var FRAME = 1000 / 30;
+  function frame(ms) {
+    raf = 0;
+    if (ms - lastPaint < FRAME) { raf = requestAnimationFrame(frame); return; }
+    lastPaint = ms;
+    ctx.clearRect(0, 0, W, H);
+    var t = ms / 1000;
+    for (var i = 0; i < parcels.length; i++) {
+      var p = parcels[i];
+      /* base drift + scroll parallax by depth + light pointer sway */
+      var px = ((p.x * W + p.vx * t + mx * 30 * p.depth) % (W + 160) + (W + 160)) % (W + 160) - 80;
+      var py = ((p.y * H + p.vy * t - scrollY * 0.12 * p.depth) % (H + 160) + (H + 160)) % (H + 160) - 80;
+      p.px = px; p.py = py;
+      p.rot += p.spin * 0.02;
+      (p.kind === 'box' ? drawBox : drawCloud)(p);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function still() {
+    ctx.clearRect(0, 0, W, H);
+    parcels.forEach(function (p, i) {
+      p.px = p.x * W; p.py = p.y * H;
+      (p.kind === 'box' ? drawBox : drawCloud)(p);
+    });
+  }
+  build();
+  if (REDUCED) { still(); }
+  else {
+    raf = requestAnimationFrame(frame);
+    addEventListener('scroll', function () { scrollY = pageYOffset; }, { passive: true });
+    addEventListener('pointermove', function (e) { mx = (e.clientX / W - 0.5) * 2; }, { passive: true });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (raf) cancelAnimationFrame(raf), raf = 0; }
+      else if (!raf) { lastPaint = 0; raf = requestAnimationFrame(frame); }
+    });
+  }
+  addEventListener('resize', function () { build(); if (REDUCED) still(); }, { passive: true });
+
+  /* ============ the delivery run — van follows the road on scroll ======== */
+  var run = document.querySelector('.run'), path = document.getElementById('roadPath');
+  var vanG = document.getElementById('vanG'), roadSvg = document.getElementById('roadSvg');
+  if (run && path && vanG) {
+    var LEN = path.getTotalLength(), ticking = false;
+    function place() {
+      ticking = false;
+      var r = run.getBoundingClientRect(), vh = innerHeight;
+      var prog = Math.min(1, Math.max(0, (vh * 0.7 - r.top) / (r.height + vh * 0.4)));
+      var pt = path.getPointAtLength(prog * LEN);
+      var pt2 = path.getPointAtLength(Math.min(LEN, prog * LEN + 6));
+      var ang = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI;
+      /* keep the van upright-ish: flip when driving right-to-left */
+      var flip = (ang > 90 || ang < -90) ? -1 : 1;
+      var shownAng = flip === -1 ? ang + 180 : ang;
+      vanG.setAttribute('transform',
+        'translate(' + pt.x + ',' + pt.y + ') rotate(' + shownAng.toFixed(1) + ') scale(' + flip + ',1)');
+    }
+    function onS() { if (!ticking) { ticking = true; requestAnimationFrame(place); } }
+    if (!REDUCED) {
+      addEventListener('scroll', onS, { passive: true });
+      addEventListener('resize', onS, { passive: true });
+    }
+    place();
+  }
+
+  /* ============ footer van drives across the grass ======================= */
+  var fv = document.getElementById('footVan'), foot = document.querySelector('footer');
+  if (fv && foot && !REDUCED) {
+    var fTick = false;
+    function driveFoot() {
+      fTick = false;
+      var r = foot.getBoundingClientRect(), vh = innerHeight;
+      var p = Math.min(1, Math.max(0, (vh - r.top) / (r.height + vh * 0.4)));
+      fv.style.left = (-220 + p * (innerWidth + 300)) + 'px';
+    }
+    addEventListener('scroll', function () { if (!fTick) { fTick = true; requestAnimationFrame(driveFoot); } }, { passive: true });
+    driveFoot();
+  }
+})();
+</script>
+</body>
+</html>
