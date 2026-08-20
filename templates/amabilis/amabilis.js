@@ -40,7 +40,7 @@
       slots.forEach(function (s) {
         s.innerHTML = '<img class="mark-img" src="' + esc(D.studio.logo) +
                       '" alt="' + esc(D.studio.name) + ' — ' + esc(D.studio.tagline) + '"' +
-                      (s.classList.contains("badge") ? ' style="width:86%;height:86%;border-radius:50%;object-fit:contain"' : '') + '>';
+                      (s.classList.contains("badge") ? ' style="width:100%;height:100%;border-radius:50%;object-fit:cover"' : '') + '>';
       });
     };
     probe.src = D.studio.logo;
