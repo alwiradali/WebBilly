@@ -145,11 +145,17 @@
        A turn costs less on a phone: the same gesture covers less of the
        page, and a hero that takes four thumb-flicks to get past is a
        hero people leave. */
-    /* Cost per turn. With nine pages a full screen of scroll each would
-       make the hero six screens deep before the site below it even
-       starts, so a turn costs a little less than a screen — and less
-       again on a phone, where there are twice as many turns. */
-    STEP = single ? v.h * 0.52 : v.h * 0.8;
+    /* Cost per turn, derived rather than fixed. What matters is how much
+       scroll the WHOLE book costs before the site below it starts, so
+       that total is the constant and the per-turn cost falls out of it.
+       Pages can be added without the hero quietly growing a screen
+       deeper each time, and a phone — which turns one page at a time and
+       so has twice as many turns — lands in the same place. */
+    var span = TURNS + LEAD + TAIL;
+    var per = span > 0 ? TRAVEL_SCREENS / span : 1;
+    if (per > 0.9) per = 0.9;
+    if (per < 0.3) per = 0.3;
+    STEP = v.h * per;
     sec.style.height = Math.round(v.h + (TURNS + LEAD + TAIL) * STEP) + 'px';
   }
 
@@ -165,6 +171,7 @@
   }
 
   var target = 0, current = 0, STEP = 100;
+  var TRAVEL_SCREENS = 4.4;       // screens of scroll the whole book costs
 
   function read() {
     var box = sec.getBoundingClientRect();
