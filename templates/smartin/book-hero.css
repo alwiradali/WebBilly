@@ -1,0 +1,358 @@
+/* ==================================================================
+   SMARTin SCIENCE — the hero, as a book
+   ------------------------------------------------------------------
+   The hero is the same content it always was — eyebrow, headline,
+   promise, the four-week panel, the two buttons — set as a GCSE
+   exercise book that opens page by page as you scroll past it. The
+   drifting-letters canvas keeps running behind it, so the hero still
+   sits in the same world as the rest of the page.
+
+   Everything is namespaced `bh-` and nothing here touches a selector
+   the rest of the site uses. The section below the hero is untouched.
+
+   PROGRESSIVE ENHANCEMENT
+   The markup ships as an ordinary stacked hero: faces are static
+   blocks in reading order, and the page works with JavaScript off,
+   with reduced motion, and for anything that indexes it. book-hero.js
+   adds `.bh-on` to the section, and only then does any of the 3D
+   below apply.
+   ================================================================== */
+
+.bookhero{
+  --paper:#FCFDFE;
+  --grid:#DCE9F4;
+  --rule:#E3AFAA;          /* the printed margin rule — the school signal */
+  --pen:#2FA968;           /* marking pen: brand green at ink weight */
+  --bink:#16283D;
+  --bink-soft:#4A6076;
+  --read:'Literata',Georgia,'Iowan Old Style','Times New Roman',serif;
+  --hand:'Caveat','Bradley Hand',cursive;
+
+  position:relative;
+  padding:0;
+  overflow:visible;        /* the sticky stage must not be clipped */
+}
+
+/* The section can't clip (that would kill the sticky stage), so the
+   drifting background orbs carry their own clip. */
+.bh-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+
+/* ------------------------------------------------------------------
+   FLAT (no JS / reduced motion) — a normal hero, stacked, readable.
+   ------------------------------------------------------------------ */
+.bh-stage{position:relative}
+.bh-book{max-width:760px;margin:0 auto;padding:38px 20px 20px}
+.bh-leaf{display:block}
+.bh-face{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:34px 30px 40px;
+  margin-bottom:16px;
+  box-shadow:var(--sh);
+}
+.bh-shadow,.bh-hint{display:none}
+
+/* ==================================================================
+   BOOK MODE — everything from here needs .bh-on
+   ================================================================== */
+
+.bh-on{ }
+
+/* The section is tall; the stage inside it sticks for the whole of
+   that height, which is what buys the scroll range for the turns. */
+/* Height comes from --bh-vh, which JS measures off visualViewport.
+   `100vh` on iOS counts the area behind the address bar, so the book
+   ends up centred in a box taller than the screen and its bottom third
+   is posted off the display. */
+.bh-on .bh-stage{
+  position:sticky;top:0;height:var(--bh-vh,100vh);
+  /* the site's nav is sticky and opaque, so the book has to be centred
+     in the space below it, not in the whole screen */
+  padding-top:var(--bh-nav,92px);
+  display:grid;place-items:center;
+  perspective:2400px;perspective-origin:50% 47%;
+  pointer-events:none;
+}
+
+.bh-on .bh-book{
+  position:relative;margin:0;padding:0;max-width:none;pointer-events:auto;
+  width:calc(var(--bh-pw) * 2);height:var(--bh-ph);
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+  will-change:transform;
+}
+
+/* page block: thickens on the left as it thins on the right */
+.bh-on .bh-book::before,
+.bh-on .bh-book::after{
+  content:"";position:absolute;top:1.2%;height:97.6%;border-radius:2px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,#E7EEF5 0 1px,#FBFDFF 1px 3px);
+  box-shadow:0 16px 44px -24px rgba(4,50,92,.55);
+}
+/* --bh-turns, not a literal: the number of leaves changes with the page
+   count and again between spread and single-page mode. */
+.bh-on .bh-book::after{right:-1px;width:calc(9px * (1 - var(--bh-p,0) / var(--bh-turns,2)));transform:translateX(100%)}
+.bh-on .bh-book::before{left:-1px;width:calc(9px * (var(--bh-p,0) / var(--bh-turns,2)));transform:translateX(-100%)}
+
+/* The weight under the book. It CANNOT be a filter on .bh-book — a
+   filter forces preserve-3d to flatten, which collapses the page
+   rotation and lets the pages show through one another. */
+.bh-on .bh-shadow{
+  display:block;position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+  width:calc(var(--bh-pw) * (1 + var(--bh-open,0)));height:calc(var(--bh-ph) * .97);
+  border-radius:6px;pointer-events:none;z-index:-1;
+  box-shadow:0 42px 70px -30px rgba(4,50,92,.40), 0 10px 24px -12px rgba(4,50,92,.20);
+}
+
+.bh-on .bh-leaf{
+  position:absolute;top:0;right:0;width:50%;height:100%;
+  transform-origin:left center;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+  will-change:transform;
+}
+
+.bh-on .bh-face{
+  position:absolute;inset:0;overflow:hidden;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+  border:none;border-radius:0;margin:0;
+  box-shadow:inset 0 0 0 1px rgba(4,50,92,.05);
+  display:flex;flex-direction:column;justify-content:center;
+  /* margins in page-widths, so the text block keeps its proportion */
+  padding:calc(var(--bh-u) * 7) calc(var(--bh-u) * 8.4) calc(var(--bh-u) * 9.6);
+}
+.bh-on .bh-face.bh-back{transform:rotateY(180deg)}
+
+/* squared paper */
+.bh-on .bh-face::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:calc(var(--bh-u)*3.45) calc(var(--bh-u)*3.45);opacity:.6;
+}
+.bh-on .bh-face > *{position:relative;z-index:1}
+
+/* spine shading + the specular that travels across a turning sheet */
+.bh-on .bh-face.bh-front::after,
+.bh-on .bh-face.bh-back::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3}
+.bh-on .bh-face.bh-front::after{
+  background:
+    linear-gradient(90deg, rgba(11,35,58,calc(.20 + var(--shade-front,0) * .5)) 0%, rgba(11,35,58,0) 26%),
+    linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,255,255,calc(var(--bow,0) * .5)) 50%, rgba(255,255,255,0) 65%);
+}
+.bh-on .bh-face.bh-back::after{
+  background:
+    linear-gradient(270deg, rgba(11,35,58,calc(.18 + var(--shade-back,0) * .46)) 0%, rgba(11,35,58,0) 26%),
+    linear-gradient(255deg, rgba(255,255,255,0) 35%, rgba(255,255,255,calc(var(--bow,0) * .44)) 50%, rgba(255,255,255,0) 65%);
+}
+
+/* the shadow a lifting sheet throws on the spread beneath it */
+.bh-on .bh-leaf::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:var(--cast,0);
+  /* NO filter here. A filter anywhere inside a preserve-3d subtree makes
+     WebKit flatten the entire 3D rendering context: every page paints in
+     the same plane, backfaces stop being culled, and all eighteen pages'
+     text lands on top of each other. A multi-stop gradient gives the same
+     soft falloff without touching the compositor. */
+  background:linear-gradient(90deg,
+    rgba(6,20,34,.46) 0%, rgba(6,20,34,.30) 14%, rgba(6,20,34,.16) 30%,
+    rgba(6,20,34,.06) 46%, rgba(6,20,34,0) 64%);
+}
+
+/* ---------------- the cover ---------------- */
+.bh-face.bh-cover{
+  background:
+    radial-gradient(120% 100% at 78% 8%, #1268C4 0%, transparent 55%),
+    radial-gradient(100% 90% at 8% 96%, #2A8C7E 0%, transparent 58%),
+    linear-gradient(150deg,#053C7E, #0457ac 52%, #0B6FA8);
+  color:#fff;border:none;
+}
+.bh-on .bh-face.bh-cover{justify-content:space-between;padding:calc(var(--bh-u)*8)}
+.bh-on .bh-face.bh-cover::before,.bh-face.bh-cover::before{
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  opacity:1;
+}
+.bh-on .bh-face.bh-cover::after{
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 16%),
+    linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,calc(var(--bow,0) * .34)) 50%, rgba(255,255,255,0) 62%);
+}
+.bh-face.bh-cover .bh-eyebrow{
+  display:block;font-family:var(--dis);font-weight:600;color:#A9DFF3;
+  font-size:clamp(9px,calc(var(--bh-u,3px)*2),13px);letter-spacing:.34em;text-transform:uppercase;
+}
+.bh-face.bh-cover .bh-mark{width:calc(var(--bh-u,3px)*21);min-width:64px;margin-bottom:calc(var(--bh-u,3px)*4)}
+.bh-face.bh-cover h1{
+  font-family:var(--dis);font-weight:700;color:#fff;line-height:.96;letter-spacing:-.03em;
+  font-size:clamp(28px,calc(var(--bh-u,3px)*10),74px);margin:0;
+}
+.bh-face.bh-cover h1 i{font-style:normal;color:var(--lime)}
+.bh-face.bh-cover .bh-tag{
+  font-family:var(--dis);font-weight:500;color:#BFE6F5;line-height:1.34;
+  font-size:clamp(13px,calc(var(--bh-u,3px)*3.5),26px);margin-top:calc(var(--bh-u,3px)*3.4);
+}
+.bh-face.bh-cover .bh-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.bh-face.bh-cover .bh-who{font-family:var(--dis);color:#fff;font-weight:600;
+  font-size:clamp(12.5px,calc(var(--bh-u,3px)*2.95),21px)}
+.bh-face.bh-cover .bh-who span{display:block;color:#9CD6EC;font-weight:400;font-size:.82em;margin-top:3px}
+.bh-face.bh-cover .bh-ed{font-family:var(--dis);color:#7FC6E4;text-align:right;
+  font-size:clamp(8.5px,calc(var(--bh-u,3px)*1.9),12px);letter-spacing:.3em;text-transform:uppercase}
+
+/* ---------------- page furniture ---------------- */
+.bh-chap{display:flex;align-items:baseline;gap:calc(var(--bh-u,3px)*2.4);margin-bottom:calc(var(--bh-u,3px)*3.2)}
+.bh-chap i{font-family:var(--dis);font-style:normal;font-weight:700;line-height:1;
+  font-size:clamp(24px,calc(var(--bh-u,3px)*7.6),58px);color:var(--blue);opacity:.2;letter-spacing:-.03em}
+.bh-chap b{font-family:var(--dis);font-weight:600;color:var(--teal);
+  font-size:clamp(9.5px,calc(var(--bh-u,3px)*2.15),13.5px);letter-spacing:.32em;text-transform:uppercase}
+
+.bh-on .bh-face > .bh-pageno{position:absolute}
+.bh-pageno{bottom:calc(var(--bh-u,3px)*2.9);font-family:var(--dis);
+  font-size:clamp(9.5px,calc(var(--bh-u,3px)*2.1),13px);letter-spacing:.22em;color:var(--mut);opacity:.7;z-index:2}
+.bh-pageno::before{content:"";position:absolute;bottom:1.5em;height:1px;opacity:.75;
+  background:linear-gradient(90deg,transparent,var(--rule) 14%,var(--rule) 86%,transparent);
+  width:calc(var(--bh-pw) - var(--bh-u) * 16.8)}
+.bh-face.bh-front .bh-pageno{right:calc(var(--bh-u)*8.4)}
+.bh-face.bh-front .bh-pageno::before{right:0}
+.bh-face.bh-back .bh-pageno{left:calc(var(--bh-u)*8.4)}
+.bh-face.bh-back .bh-pageno::before{left:0}
+.bookhero:not(.bh-on) .bh-pageno{display:none}
+/* nothing opens in the flat fallback, so don't tell anyone to open it */
+.bookhero:not(.bh-on) .bh-ed{display:none}
+
+/* ---------------- reading text ---------------- */
+.bh-face h2{font-family:var(--dis);font-weight:700;color:var(--bink);letter-spacing:-.022em;line-height:1.06;
+  font-size:clamp(22px,calc(var(--bh-u,3px)*6.8),54px);margin-bottom:calc(var(--bh-u,3px)*2.6)}
+.bh-face h2 em{font-style:normal;color:var(--blue)}
+.bh-face p{font-family:var(--read);color:var(--bink-soft);line-height:1.54;max-width:46ch;
+  font-size:clamp(13px,calc(var(--bh-u,3px)*3.02),24px);margin-bottom:calc(var(--bh-u,3px)*2.1)}
+.bh-face p b,.bh-face p strong{color:var(--bink);font-weight:600}
+.bh-face .bh-lede{font-size:clamp(15px,calc(var(--bh-u,3px)*3.85),30px);line-height:1.42;
+  color:var(--bink);max-width:38ch;letter-spacing:-.004em}
+
+.bh-ticks{display:grid;gap:calc(var(--bh-u,3px)*1.5);margin:calc(var(--bh-u,3px)*2.4) 0}
+.bh-ticks li{font-family:var(--read);position:relative;padding-left:calc(var(--bh-u,3px)*4.6);
+  padding-left:max(22px,calc(var(--bh-u,3px)*4.6));line-height:1.45;color:var(--bink-soft);
+  font-size:clamp(12.5px,calc(var(--bh-u,3px)*2.98),23px)}
+.bh-ticks li::before{content:"";position:absolute;left:0;top:.42em;
+  width:max(11px,calc(var(--bh-u,3px)*2.3));height:max(6px,calc(var(--bh-u,3px)*1.25));
+  border-left:2px solid var(--pen);border-bottom:2px solid var(--pen);
+  transform:rotate(-45deg);border-radius:1px}
+.bh-ticks li b{color:var(--bink);font-weight:600}
+
+/* the marking pen — the page's signature, written on when it settles */
+.bh-face .bh-note{
+  font-family:var(--hand);color:var(--pen);font-weight:600;margin:0;max-width:none;
+  font-size:clamp(17px,calc(var(--bh-u,3px)*4.75),36px);line-height:1.16;
+  transform:rotate(-2.6deg);transform-origin:left center;
+  opacity:0;translate:0 6px;
+  transition:opacity .55s ease, translate .55s cubic-bezier(.22,1,.36,1);
+}
+.bh-live .bh-note{opacity:1;translate:0 0;transition-delay:.4s}
+.bookhero:not(.bh-on) .bh-note{opacity:1;translate:none}
+.bh-face .bh-note::before{content:"";display:inline-block;width:14px;height:2px;background:var(--pen);
+  margin-right:7px;vertical-align:middle;border-radius:2px;opacity:.8}
+
+/* ---------------- the four-week panel, on paper ---------------- */
+.bh-ptop{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:calc(var(--bh-u,3px)*3)}
+.bh-ptop span{font-family:var(--dis);font-size:clamp(9.5px,calc(var(--bh-u,3px)*2.1),13px);
+  letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.bh-ring{position:relative;width:min(100%,calc(var(--bh-u,3px)*40));aspect-ratio:1;
+  margin:calc(var(--bh-u,3px)*2) auto calc(var(--bh-u,3px)*3)}
+.bh-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.bh-ring .bg{stroke:#E7F1F9}
+.bh-ring .fg{stroke:url(#bhrg);stroke-linecap:round;stroke-dasharray:502;stroke-dashoffset:502}
+.bh-live .bh-ring .fg{animation:bhfill 2.2s cubic-bezier(.22,1,.36,1) .3s forwards}
+.bookhero:not(.bh-on) .bh-ring .fg{stroke-dashoffset:34}
+@keyframes bhfill{to{stroke-dashoffset:34}}
+.bh-ring .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.bh-ring .mid b{font-family:var(--dis);font-weight:700;line-height:1;
+  font-size:clamp(34px,calc(var(--bh-u,3px)*13),86px);
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bh-ring .mid span{display:block;font-family:var(--dis);color:var(--mut);margin-top:5px;
+  font-size:clamp(9.5px,calc(var(--bh-u,3px)*2.1),13px);letter-spacing:.28em;text-transform:uppercase}
+
+.bh-weeks{display:grid;gap:calc(var(--bh-u,3px)*2.1)}
+.bh-wk{display:flex;gap:calc(var(--bh-u,3px)*2.4);align-items:flex-start}
+.bh-wk i{flex:0 0 auto;border-radius:7px;color:#fff;font-style:normal;font-family:var(--dis);font-weight:700;
+  width:max(26px,calc(var(--bh-u,3px)*6.2));height:max(26px,calc(var(--bh-u,3px)*6.2));
+  font-size:clamp(11px,calc(var(--bh-u,3px)*2.7),17px);
+  display:grid;place-items:center;background:var(--grad)}
+.bh-wk:nth-child(2) i{background:linear-gradient(112deg,#308fac,#37bd79)}
+.bh-wk:nth-child(3) i{background:linear-gradient(112deg,#37bd79,#a7e237)}
+.bh-wk:nth-child(4) i{background:linear-gradient(112deg,#ffba53,#37bd79)}
+/* ---------------- the biography card ----------------
+   The site introduces Rod with an RM monogram rather than a photo, so
+   the book does the same: on paper it reads as the name written at the
+   head of the chapter, which is where a book would put it anyway. */
+.bh-bio{display:flex;align-items:center;gap:calc(var(--bh-u,3px)*3.4);
+  margin-bottom:calc(var(--bh-u,3px)*3.2)}
+.bh-mono{
+  flex:0 0 auto;display:grid;place-items:center;border-radius:50%;
+  width:calc(var(--bh-u,3px)*13);height:calc(var(--bh-u,3px)*13);
+  min-width:52px;min-height:52px;
+  background:var(--grad);color:#fff;font-family:var(--dis);font-weight:700;
+  letter-spacing:.04em;font-size:clamp(15px,calc(var(--bh-u,3px)*4),28px);
+  box-shadow:0 10px 24px -12px rgba(4,87,172,.75);
+}
+.bh-bioname b{display:block;font-family:var(--dis);color:var(--bink);font-weight:700;
+  letter-spacing:-.02em;line-height:1.06;
+  font-size:clamp(19px,calc(var(--bh-u,3px)*5.6),40px)}
+.bh-bioname em{display:block;font-style:normal;color:var(--teal);font-family:var(--dis);
+  margin-top:calc(var(--bh-u,3px)*.9);letter-spacing:.02em;
+  font-size:clamp(10.5px,calc(var(--bh-u,3px)*2.5),17px)}
+
+/* the six-beat list runs two past the four weeks — keep the ramp going
+   rather than letting 05 and 06 drop back to flat blue */
+.bh-wk:nth-child(5) i{background:linear-gradient(112deg,#0457ac,#308fac)}
+.bh-wk:nth-child(6) i{background:linear-gradient(112deg,#308fac,#a7e237)}
+.bh-wk b{display:block;font-family:var(--dis);font-weight:600;color:var(--bink);
+  font-size:clamp(13px,calc(var(--bh-u,3px)*3.24),25px)}
+.bh-wk em{display:block;font-style:normal;font-family:var(--read);color:var(--mut);
+  font-size:clamp(11.5px,calc(var(--bh-u,3px)*2.6),19px);margin-top:2px}
+
+.bh-cta{display:flex;gap:11px;flex-wrap:wrap;margin:calc(var(--bh-u,3px)*3) 0 calc(var(--bh-u,3px)*3)}
+.bh-cta .btn{font-size:clamp(13px,calc(var(--bh-u,3px)*2.95),20px);padding:.68em 1.4em}
+
+/* ---------------- the scroll cue ---------------- */
+.bh-on .bh-hint{
+  display:block;position:absolute;left:50%;bottom:max(14px,2.2vh);transform:translateX(-50%);
+  text-align:center;color:var(--mut);pointer-events:none;z-index:4;
+  transition:opacity .5s ease;
+}
+.bh-on.bh-open .bh-hint{opacity:0}
+.bh-hint .k{font-family:var(--dis);font-size:10.5px;letter-spacing:.32em;text-transform:uppercase}
+.bh-hint .m{width:20px;height:30px;border:1.6px solid rgba(99,110,114,.42);border-radius:12px;
+  margin:8px auto 0;position:relative}
+.bh-hint .m::after{content:"";position:absolute;left:50%;top:6px;width:3px;height:6px;border-radius:2px;
+  background:var(--green);transform:translateX(-50%);animation:bhwheel 1.7s ease-in-out infinite}
+@keyframes bhwheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,13px)}}
+
+/* ==================================================================
+   MOBILE — one page at a time, not a shrunken spread
+   ================================================================== */
+/* ==================================================================
+   SINGLE PAGE — one page at a time, not a shrunken spread.
+   `.bh-single` is set by book-hero.js from the space it actually
+   measured. It is deliberately NOT a media query: when the stylesheet
+   and the script each decided this for themselves, a phone reporting a
+   wider layout viewport than its screen could put CSS on one path and
+   JS on the other, and the result was half a page of blank paper.
+   ================================================================== */
+.bh-on.bh-single .bh-stage{perspective:1500px}
+.bh-on.bh-single .bh-book{width:var(--bh-pw)}
+.bh-on.bh-single .bh-leaf{width:100%}
+.bh-on.bh-single .bh-book::before,
+.bh-on.bh-single .bh-book::after{display:none}
+.bh-on.bh-single .bh-face{padding:calc(var(--bh-u)*6) calc(var(--bh-u)*6.4) calc(var(--bh-u)*9.6)}
+.bh-single .bh-cta{flex-direction:column;align-items:stretch}
+.bh-single .bh-cta .btn{justify-content:center}
+/* the cover already says "Scroll to open"; a second cue below it is
+   noise at this size, and there is no room for it anyway */
+.bh-on.bh-single .bh-hint{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .bh-note,.bh-ring .fg{transition:none!important;animation:none!important}
+}
