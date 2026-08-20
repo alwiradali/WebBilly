@@ -154,7 +154,12 @@
     var span = TURNS + LEAD + TAIL;
     var per = span > 0 ? TRAVEL_SCREENS / span : 1;
     if (per > 0.9) per = 0.9;
-    if (per < 0.3) per = 0.3;
+    /* A phone flick carries about a screen of momentum, so a turn has
+       to cost about that much or one swipe riffles through three or
+       four pages at once. The floor makes the hero deeper on a phone —
+       that is the honest price of one-swipe-one-page. */
+    var floor = single ? 0.74 : 0.55;
+    if (per < floor) per = floor;
     STEP = v.h * per;
     sec.style.height = Math.round(v.h + (TURNS + LEAD + TAIL) * STEP) + 'px';
   }
@@ -281,13 +286,24 @@
 
   /* ---- wiring ---------------------------------------------------- */
 
-  var rt;
+  var rt, lastW = 0, lastH = 0;
   function onResize() {
     clearTimeout(rt);
-    rt = setTimeout(function () { measure(); read(); }, 120);
+    rt = setTimeout(function () {
+      /* iOS collapses the URL bar as you scroll, which fires resize
+         with a slightly taller viewport. Re-measuring then rewrites
+         the section height and every page's geometry mid-scroll — the
+         layout jumps under the reader's thumb and things appear and
+         vanish. Only a real change (rotation, a window actually
+         resized) gets a re-measure. */
+      var v = viewport();
+      if (v.w === lastW && Math.abs(v.h - lastH) < 150) return;
+      measure(); read();
+    }, 120);
   }
 
   measure();
+  (function () { var v = viewport(); lastW = v.w; lastH = v.h; })();
   read();
   current = target;
   render();
