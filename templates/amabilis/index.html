@@ -18,7 +18,9 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/amabilis/fonts/fraunces-latin.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/amabilis/fonts/inter-latin.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/fonts/jost-latin.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/fonts/caveat-latin.woff2">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
 <link rel="stylesheet" href="amabilis.css">
 <link rel="preload" as="image" href="../../assets/amabilis/stock/hero-drip-poster.webp" fetchpriority="high">
 
@@ -63,7 +65,13 @@
 
 <!-- ── nav ──────────────────────────────────────────────────────────────── -->
 <header class="nav" id="nav">
-  <a class="mark" data-mark href="#top" aria-label="Bakedwith Amabilis — top of page"><span class="mark-type"><span class="mark-name">Bakedwith Amabilis</span><span class="mark-sub">with love</span></span></a>
+  <!-- The badge is a stand-in lockup. When her logo file arrives, save it as
+       assets/amabilis/brand/logo.png and swap the three spans for one <img>. -->
+  <a class="badge" href="#top" aria-label="Bakedwith Amabilis — top of page">
+    <span class="badge-mono" aria-hidden="true">BA</span>
+    <span class="badge-name" aria-hidden="true">Bakedwith Amabilis</span>
+    <span class="badge-sub" aria-hidden="true">with love</span>
+  </a>
   <nav class="nav-links" aria-label="Primary">
     <a href="#cakes">Cakes</a>
     <a href="#craft">Craft</a>
@@ -144,6 +152,24 @@
     <span class="hero-scrim" aria-hidden="true"></span>
   </div>
   <div class="hero-wash" aria-hidden="true"></div>
+
+  <!-- pieces of the counter flying past as you scroll out of the hero -->
+  <div class="hero-fly" aria-hidden="true">
+    <span class="fly" data-fly=".9"  style="--x:2%;  --y:32%; --w:clamp(64px,8vw,120px); --d:7s">
+      <img src="../../assets/amabilis/stock/cookie-stack-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly" data-fly=".55" style="--x:13%; --y:76%; --w:clamp(52px,6vw,92px);  --d:9s">
+      <img src="../../assets/amabilis/stock/brownie-dusted-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly" data-fly="1.2" style="--x:83%; --y:20%; --w:clamp(70px,9vw,140px); --d:8s">
+      <img src="../../assets/amabilis/stock/cake-rose-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly" data-fly=".7"  style="--x:88%; --y:58%; --w:clamp(56px,7vw,104px); --d:10s">
+      <img src="../../assets/amabilis/stock/cake-bloom-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly fly--wide" data-fly=".45" style="--x:30%; --y:12%; --w:clamp(48px,5.4vw,84px); --d:11s">
+      <img src="../../assets/amabilis/stock/cookie-dark-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly fly--wide" data-fly="1.05" style="--x:68%; --y:74%; --w:clamp(60px,7.4vw,116px); --d:8.5s">
+      <img src="../../assets/amabilis/stock/brownie-drizzle-sm.webp" alt="" loading="lazy" decoding="async"></span>
+    <span class="fly fly--wide" data-fly=".35" style="--x:60%; --y:10%; --w:clamp(44px,5vw,76px); --d:12s">
+      <img src="../../assets/amabilis/stock/cake-petal-sm.webp" alt="" loading="lazy" decoding="async"></span>
+  </div>
 
   <div class="hero-inner">
     <div class="hero-type">

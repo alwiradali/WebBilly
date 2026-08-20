@@ -34,12 +34,13 @@
      can't be mistaken for the real signature artwork.
      ====================================================================== */
   function mark () {
-    var slots = $$("[data-mark]");     /* the stand-in is already in the markup */
+    var slots = $$("[data-mark], .badge");   /* stand-ins are already in the markup */
     var probe = new Image();
     probe.onload = function () {
       slots.forEach(function (s) {
         s.innerHTML = '<img class="mark-img" src="' + esc(D.studio.logo) +
-                      '" alt="' + esc(D.studio.name) + ' — ' + esc(D.studio.tagline) + '">';
+                      '" alt="' + esc(D.studio.name) + ' — ' + esc(D.studio.tagline) + '"' +
+                      (s.classList.contains("badge") ? ' style="width:86%;height:86%;border-radius:50%;object-fit:contain"' : '') + '>';
       });
     };
     probe.src = D.studio.logo;
@@ -945,7 +946,9 @@
         .to(".hero-meta", { opacity: 1, duration: .9 }, 1)
         .to(".hero-plate figcaption", { opacity: 1, duration: .8 }, 1)
         .to(".cue", { opacity: 1, duration: .8 }, 1.05)
-        .from(".seal", { opacity: 0, scale: .8, duration: 1.1 }, .8);
+        .from(".seal", { opacity: 0, scale: .8, duration: 1.1 }, .8)
+        .from(".badge", { y: -60, opacity: 0, duration: .9, ease: "back.out(1.6)", clearProps: "all" }, .2)
+        .from(".fly", { scale: 0, opacity: 0, duration: .8, ease: "back.out(2)", stagger: .07, clearProps: "opacity,scale" }, .5);
     }
 
     /* -- hero scroll: layers drift apart --------------------------------- */
@@ -954,6 +957,17 @@
       .to(".hero-plate", { yPercent: -34, ease: "none" }, 0)
       .to(".hero-frame img", { scale: 1.16, ease: "none" }, 0)
       .to(".seal", { rotate: 55, opacity: 0, ease: "none" }, 0);
+
+    /* the floating pieces fly past the camera on the way out */
+    $$(".fly").forEach(function (piece, i) {
+      var f = parseFloat(piece.getAttribute("data-fly")) || .6;
+      var dir = i % 2 ? 1 : -1;
+      gsap.to(piece, {
+        yPercent: -180 * f - 60, xPercent: dir * 90 * f,
+        scale: 1 + f * .7, rotation: dir * 10 * f, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: .4 }
+      });
+    });
 
     /* -- generic reveals --------------------------------------------------- */
     $$("[data-fade]").forEach(function (n) {
@@ -990,21 +1004,27 @@
         scrollTrigger: { trigger: ".about-fig", start: "top bottom", end: "bottom top", scrub: true } });
     }
 
-    /* -- signature: pinned horizontal run --------------------------------- */
+    /* -- signature: the rail moves because the page moves ------------------ */
     (function horizontal () {
       var section = $(".h-scroll"), track = $(".h-track"), rail = $(".h-rail i");
-      if (!section || !track || narrow.matches) return;
+      if (!section || !track) return;
+      section.classList.add("h-on");
       var amount = function () { return Math.max(0, track.scrollWidth - innerWidth + 40); };
-      section.style.height = "auto";
+      /* CSS sticky does the pinning, so this works the same on a phone as on
+         a desktop — the section is tall, the sticky viewport rides inside it,
+         and scroll progress drives the x. No GSAP pin, no touch jank. */
+      var size = function () { section.style.height = (amount() + innerHeight) + "px"; };
+      size();
       var tween = gsap.to(track, {
         x: function () { return -amount(); }, ease: "none",
         scrollTrigger: {
-          trigger: section, start: "top top",
-          end: function () { return "+=" + amount(); },
-          pin: true, scrub: .8, invalidateOnRefresh: true, anticipatePin: 1,
+          trigger: section, start: "top top", end: "bottom bottom",
+          scrub: .6, invalidateOnRefresh: true,
+          onRefreshInit: size,
           onUpdate: function (self) { if (rail) rail.style.transform = "scaleX(" + self.progress + ")"; }
         }
       });
+      addEventListener("resize", size);
       /* depth: each photo drifts against its card */
       $$(".cake-fig img", track).forEach(function (img) {
         gsap.fromTo(img, { xPercent: 4 }, { xPercent: -4, ease: "none",

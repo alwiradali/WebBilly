@@ -23,12 +23,6 @@
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
     U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
-@font-face{
-  font-family:"Inter";font-style:normal;font-weight:400 500;font-display:swap;
-  src:url("../../assets/amabilis/fonts/inter-latin.woff2") format("woff2");
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
-    U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}
 
 /* ---------- tokens ------------------------------------------------------- */
 :root{
@@ -68,7 +62,8 @@
 
   /* type */
   --display:"Fraunces",Georgia,"Times New Roman",serif;
-  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --sans:"Jost",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --script:"Caveat","Bradley Hand",cursive;
 
   /* rhythm */
   --pad:clamp(20px,5vw,80px);
@@ -86,7 +81,7 @@
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:var(--paper);color:var(--ink);
-  font-family:var(--sans);font-size:16px;line-height:1.65;
+  font-family:var(--sans);font-size:17px;line-height:1.62;letter-spacing:.006em;
   font-synthesis-weight:none;-webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
@@ -224,8 +219,34 @@ p{margin:0}
 /* The supplied logo file is authoritative and is used untouched the moment it
    exists at studio.logo. Until then `.mark-type` stands in — set in the site's
    own faces so it can never be mistaken for the real signature artwork. */
+.badge{
+  position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:2;
+  width:96px;height:96px;border-radius:50%;background:#fff;
+  display:grid;place-items:center;align-content:center;gap:2px;text-align:center;
+  box-shadow:0 14px 34px -16px rgba(40,20,15,.5);
+  transition:transform .5s var(--ease);
+}
+.badge-mono{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--display);font-size:44px;letter-spacing:.02em;
+  color:var(--blush-2);opacity:.9;
+}
+.badge-name{
+  position:relative;font-family:var(--script);font-weight:600;font-size:15px;
+  color:#241511;max-width:82px;line-height:.95;
+}
+.badge-sub{
+  position:relative;font-size:6.5px;letter-spacing:.34em;text-transform:uppercase;
+  color:#241511;opacity:.75;padding-left:.34em;
+}
+.nav.solid .badge{transform:translateX(-50%) scale(.72)}
+@media(max-width:640px){
+  .badge{width:78px;height:78px}
+  .badge-mono{font-size:34px}
+  .badge-name{font-size:12.5px;max-width:66px}
+}
+/* the loader still uses the old lockup */
 .mark{display:inline-flex;align-items:center;gap:12px;line-height:1}
-.mark-img{height:var(--mark-h,54px);width:auto;object-fit:contain}
 .mark-type{display:grid;gap:5px;justify-items:center}
 .mark-name{
   font-family:var(--display);font-style:italic;font-weight:400;
@@ -235,7 +256,6 @@ p{margin:0}
   font-size:var(--mark-s,8.5px);letter-spacing:.42em;text-transform:uppercase;
   color:var(--ink-3);padding-left:.42em;
 }
-.on-dark .mark-sub{color:var(--dark-ink-2)}
 
 /* ---------- nav ---------------------------------------------------------- */
 .nav{
@@ -403,13 +423,20 @@ p{margin:0}
 /* =========================================================================
    SIGNATURE — horizontal pinned showcase
    ========================================================================= */
-.sig{background:var(--paper);position:relative;overflow:hidden}
+.sig{background:var(--paper);position:relative;overflow:clip}
 .sig-head{padding:var(--sec) 0 clamp(30px,4vw,54px)}
 .sig-head .wrapx{max-width:var(--max);margin-inline:auto;padding-inline:var(--pad)}
 .h-scroll{position:relative}
-.h-sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
-.h-track{display:flex;gap:clamp(18px,2.4vw,40px);padding-inline:var(--edge);will-change:transform}
-
+/* Default (no-JS, reduced motion): a swipeable snap rail on every size.
+   With GSAP running, .h-on switches to the sticky scroll-driven run — phones
+   included, which is the point: the cakes move because the page moves. */
+.h-sticky{display:block}
+.h-track{
+  display:flex;gap:clamp(18px,2.4vw,40px);padding-inline:var(--edge);
+  overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:26px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;will-change:transform;
+}
+.h-track::-webkit-scrollbar{display:none}
 .cake{
   position:relative;flex:0 0 auto;width:clamp(250px,26vw,390px);
   display:grid;gap:16px;align-content:start;
@@ -442,26 +469,16 @@ p{margin:0}
   border-top:1px solid var(--line);font-size:11px;letter-spacing:.1em;color:var(--ink-3);
 }
 .cake--tall{align-self:flex-start;margin-top:clamp(20px,5vh,64px)}
-
+.h-track .cake{scroll-snap-align:center}
+@media(max-width:640px){.cake{width:min(72vw,300px)}.cake--tall{margin-top:24px}}
+.h-on .h-sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
+.h-on .h-track{overflow:visible;scroll-snap-type:none;padding-bottom:0}
 .h-rail{
   position:absolute;left:var(--edge);right:var(--edge);bottom:clamp(24px,5vh,54px);
   height:1px;background:var(--line);
 }
 .h-rail i{display:block;height:100%;background:var(--ink);transform-origin:left;transform:scaleX(0)}
 
-/* fallback: no pin on narrow screens — a swipeable rail instead */
-@media(max-width:820px){
-  .h-scroll{height:auto!important}
-  .h-sticky{position:static;height:auto;display:block}
-  .h-track{
-    overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:26px;
-    transform:none!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;
-  }
-  .h-track::-webkit-scrollbar{display:none}
-  .cake{width:min(74vw,320px);scroll-snap-align:center}
-  .cake--tall{margin-top:0}
-  .h-rail{display:none}
-}
 
 /* =========================================================================
    DARK CHAPTER — feature + craft
@@ -957,6 +974,11 @@ p{margin:0}
    The palette above, used on the words that carry the meaning. Kept to one
    coloured phrase per heading so it reads as emphasis, not decoration.
    ========================================================================= */
+/* the italic highlight words go hand-written — Caveat on the Fraunces baseline */
+h1 em,h2 em,.d1 em,.d2 em,.pull-quote em{
+  font-family:var(--script);font-style:normal;font-weight:600;
+  font-size:1.18em;letter-spacing:0;line-height:.8;
+}
 .hl-rose{color:var(--rose-deep)}
 .hl-merlot{color:var(--merlot)}
 .hl-caramel{color:var(--caramel)}
@@ -1041,6 +1063,29 @@ p{margin:0}
 .gl-on [data-gl="blush"]{background:rgba(245,231,234,.74)}
 .gl-on .fine[data-gl="paper"]{background:rgba(252,248,247,.72)}
 .gl-on .cta[data-gl="blush"]{background:rgba(236,216,221,.72)}
+
+/* pieces of the counter drifting in the hero, flown out by the scroll */
+.hero-fly{position:absolute;inset:0;z-index:2;pointer-events:none}
+.fly{
+  position:absolute;left:var(--x);top:var(--y);width:var(--w);aspect-ratio:1;
+  border-radius:50%;overflow:hidden;border:2px solid rgba(255,250,244,.9);
+  box-shadow:0 22px 44px -18px rgba(15,6,4,.6);
+  will-change:transform;
+}
+.fly img{
+  width:100%;height:100%;object-fit:cover;
+  animation:fly-idle var(--d,9s) ease-in-out infinite alternate;
+}
+@keyframes fly-idle{
+  from{transform:translateY(-6px) scale(1.12) rotate(-2deg)}
+  to{transform:translateY(7px) scale(1.12) rotate(2deg)}
+}
+@media(max-width:760px){
+  .fly--wide{display:none}
+  .fly[data-fly=".9"]{display:none}          /* sat on the headline */
+  .fly[data-fly=".55"]{--x:72%;--y:84%}       /* clear of the notice row */
+}
+@media(prefers-reduced-motion:reduce){.fly img{animation:none}}
 
 /* the CSS hero wash is only a stand-in for the canvas */
 .gl-on .hero-wash{opacity:0}
