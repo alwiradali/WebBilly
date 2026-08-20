@@ -17,3 +17,12 @@
   Cache-Control: public, max-age=2592000
 /favicon.ico
   Cache-Control: public, max-age=2592000
+
+# Bakedwith Amabilis — self-hosted faces never change; photography and reels
+# change only when the studio sends new ones.
+/assets/amabilis/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/amabilis/cakes/*
+  Cache-Control: public, max-age=2592000
+/assets/amabilis/video/*
+  Cache-Control: public, max-age=2592000
