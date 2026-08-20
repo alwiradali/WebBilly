@@ -24,11 +24,11 @@ window.AmabilisGL = (function () {
   /* Palettes are the CSS tokens, so the canvas reproduces the ground exactly.
      base/accent drive the fold; pearl/alpha/size/fold drive the field. */
   var TONES = {
-    paper: { base: [0.969, 0.945, 0.941], accent: [0.925, 0.847, 0.867],
-             pearl: [0.816, 0.612, 0.522], alpha: 0.155, size: 2.30, fold: 0.10 },
-    blush: { base: [0.925, 0.847, 0.867], accent: [0.980, 0.949, 0.953],
+    paper: { base: [0.953, 0.886, 0.910], accent: [0.925, 0.796, 0.839],
+             pearl: [0.784, 0.510, 0.588], alpha: 0.155, size: 2.30, fold: 0.10 },
+    blush: { base: [0.914, 0.816, 0.851], accent: [0.973, 0.925, 0.941],
              pearl: [1.000, 0.976, 0.949], alpha: 0.230, size: 1.95, fold: 0.11 },
-    dark:  { base: [0.071, 0.051, 0.051], accent: [0.180, 0.128, 0.235],
+    dark:  { base: [0.082, 0.043, 0.063], accent: [0.180, 0.090, 0.135],
              pearl: [0.902, 0.875, 0.894], alpha: 0.280, size: 1.05, fold: 0.20 }
   };
 

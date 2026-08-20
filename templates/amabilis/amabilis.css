@@ -27,16 +27,16 @@
 /* ---------- tokens ------------------------------------------------------- */
 :root{
   /* ground + ink */
-  --paper:#f7f1f0;          /* warm off-white, the card the price list sits on */
-  --paper-2:#fcf8f7;
-  --paper-3:#efe4e4;
-  --blush:#ecd8dd;          /* the price-list pink */
-  --blush-2:#f5e7ea;
+  --paper:#f3e2e8;          /* the story pink her price lists sit on */
+  --paper-2:#f8ecf0;
+  --paper-3:#ecd6de;
+  --blush:#e9d0d9;          /* one shade deeper, for the pink chapters */
+  --blush-2:#f1dde4;
   --ink:#191211;            /* the signature's black, warmed */
   --ink-2:#3c2f2e;
   --ink-3:#7b6b69;
-  --line:rgba(25,18,17,.14);
-  --line-2:rgba(25,18,17,.07);
+  --line:rgba(72,32,46,.16);
+  --line-2:rgba(72,32,46,.08);
 
   /* accents lifted from the cakes */
   --rose:#c07f90;
@@ -54,11 +54,11 @@
   --cream:#f6e7cf;
 
   /* dark chapter */
-  --dark:#120d0d;
-  --dark-2:#1d1516;
-  --dark-ink:#f3e9e8;
-  --dark-ink-2:#b4a09f;
-  --dark-line:rgba(243,233,232,.16);
+  --dark:#150b10;
+  --dark-2:#211219;
+  --dark-ink:#f6e9ee;
+  --dark-ink-2:#b7a0a9;
+  --dark-line:rgba(246,233,238,.16);
 
   /* type */
   --display:"Fraunces",Georgia,"Times New Roman",serif;
@@ -228,12 +228,12 @@ p{margin:0}
 }
 .badge-mono{
   position:absolute;inset:0;display:grid;place-items:center;
-  font-family:var(--display);font-size:44px;letter-spacing:.02em;
-  color:var(--blush-2);opacity:.9;
+  font-family:var(--display);font-size:58px;letter-spacing:.04em;
+  color:#f4cbd8;opacity:.85;
 }
 .badge-name{
   position:relative;font-family:var(--script);font-weight:600;font-size:15px;
-  color:#241511;max-width:82px;line-height:.95;
+  color:#1c1114;max-width:82px;line-height:.95;
 }
 .badge-sub{
   position:relative;font-size:6.5px;letter-spacing:.34em;text-transform:uppercase;
@@ -242,7 +242,7 @@ p{margin:0}
 .nav.solid .badge{transform:translateX(-50%) scale(.72)}
 @media(max-width:640px){
   .badge{width:78px;height:78px}
-  .badge-mono{font-size:34px}
+  .badge-mono{font-size:46px}
   .badge-name{font-size:12.5px;max-width:66px}
 }
 /* the loader still uses the old lockup */
@@ -266,7 +266,7 @@ p{margin:0}
              padding .5s var(--ease),box-shadow .5s var(--ease),color .5s var(--ease);
 }
 .nav.solid{
-  background:rgba(247,241,240,.82);backdrop-filter:blur(16px) saturate(1.3);
+  background:rgba(243,226,232,.82);backdrop-filter:blur(16px) saturate(1.3);
   padding-block:clamp(10px,1.2vw,14px);box-shadow:0 1px 0 var(--line);
 }
 .nav.dark{color:var(--dark-ink)}
@@ -653,7 +653,7 @@ p{margin:0}
   transform:scaleY(0);transform-origin:bottom;transition:transform .55s var(--ease);
 }
 @media(hover:hover){.svc:hover{color:var(--paper)}.svc:hover::before{transform:scaleY(1);transform-origin:top}}
-.svc:hover .svc-note{color:rgba(247,241,240,.7)}
+.svc:hover .svc-note{color:rgba(243,226,232,.7)}
 .svc-n{font-size:10.5px;letter-spacing:.2em;opacity:.55;font-variant-numeric:tabular-nums}
 .svc-mid{display:grid;gap:4px}
 .svc h3{font-size:clamp(1.35rem,3vw,2.15rem)}
@@ -1059,10 +1059,10 @@ h1 em,h2 em,.d1 em,.d2 em,.pull-quote em{
    depending on the canvas matching a hex value. */
 .gl-on body{background:transparent}
 .gl-on [data-gl="dark"]{background:transparent}
-.gl-on [data-gl="paper"]{background:rgba(247,241,240,.72)}
-.gl-on [data-gl="blush"]{background:rgba(245,231,234,.74)}
-.gl-on .fine[data-gl="paper"]{background:rgba(252,248,247,.72)}
-.gl-on .cta[data-gl="blush"]{background:rgba(236,216,221,.72)}
+.gl-on [data-gl="paper"]{background:rgba(243,226,232,.72)}
+.gl-on [data-gl="blush"]{background:rgba(233,208,217,.74)}
+.gl-on .fine[data-gl="paper"]{background:rgba(248,236,240,.72)}
+.gl-on .cta[data-gl="blush"]{background:rgba(228,197,208,.72)}
 
 /* pieces of the counter drifting in the hero, flown out by the scroll */
 .hero-fly{position:absolute;inset:0;z-index:2;pointer-events:none}
