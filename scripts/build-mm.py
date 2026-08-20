@@ -32,6 +32,17 @@ ASSETS = os.path.join(os.path.dirname(__file__), '..', 'assets', 'mm')
 OUT = os.path.join(os.path.dirname(__file__), '..', 'dist', 'molecular-miracles')
 
 
+
+
+def shared_assets():
+    """Every stylesheet and script that sits at the root of the source folder.
+
+    These are copied to the root of the build, so each reference to one has to
+    become a root-absolute path regardless of how deep the page linking to it
+    sits.
+    """
+    return sorted(f for f in os.listdir(SRC) if f.endswith(('.css', '.js')))
+
 def breadcrumb_jsonld(html, domain, canonical_path):
     """Build BreadcrumbList markup from the page's own visible breadcrumb.
 
@@ -69,8 +80,11 @@ def rewrite(html, domain, canonical_path):
     # assets: ../../assets/mm/x (root page) and ../../../assets/mm/x (area page)
     html = re.sub(r'(?:\.\./)+assets/mm/', '/assets/', html)
 
-    # shared css/js, referenced as ../x from areas and bare x from the root
-    html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js|reviews\.js|content\.js)"',
+    # shared css/js, referenced as ../x from areas and bare x from the root.
+    # The names are read from the source folder rather than listed here: a
+    # hardcoded list is what silently left reviews.js — and later payhip.js —
+    # pointing at a path that only happened to resolve from the site root.
+    html = re.sub(r'(?:href|src)="(?:\.\./)?(%s)"' % '|'.join(re.escape(f) for f in shared_assets()),
                   lambda m: m.group(0).split('=')[0] + '="/' + m.group(1) + '"', html)
 
     # Internal links -> absolute clean URLs, so the host serves them without a
