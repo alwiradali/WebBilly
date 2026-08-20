@@ -144,9 +144,21 @@
        half a page and slides back as the cover opens — the book appears
        to settle into its spread rather than jump sideways. */
     var open = p < 1 ? p : 1;
+
+    /* And it closes the same way at the other end. Past the last leaf
+       there is no paper on the right, so the book has to settle back
+       onto its own half instead of leaving a page-shaped ghost of
+       shadow floating beside the back cover. */
+    var shut = p > N - 1 ? p - (N - 1) : 0;
+    if (shut > 1) shut = 1;
+    open *= 1 - shut;
+
     var eased = open * open * (3 - 2 * open);           // smoothstep
+    // closed at the front, the visible half is the right one (-25%);
+    // closed at the back it is the left one (+25%); open, neither (0).
+    var slide = shut > 0 ? 25 * (1 - eased) : -25 + 25 * eased;
     book.style.transform =
-      'translateX(' + (-25 + 25 * eased) + '%) ' +
+      'translateX(' + slide + '%) ' +
       'rotateX(' + (7 - 3.5 * eased) + 'deg) ' +
       'scale(' + (0.94 + 0.06 * eased) + ')';
 

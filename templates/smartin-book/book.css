@@ -21,14 +21,28 @@
   --lime:#a7e237; --amber:#ffba53; --grey:#636e72;
   --pen:#2FA968;            /* the marking pen: brand green, ink-weight */
 
-  /* Futura and Century Gothic where installed, else the closest free
-     revivals; Caveat is the marking hand. */
-  --dis:'Futura','Futura PT','Jost','Century Gothic',system-ui,sans-serif;
-  --ui:'Century Gothic','Questrial','Jost','Avenir Next',system-ui,sans-serif;
+  /* Three voices, one for each job a textbook page does.
+     Jost is the Futura of the brand guide — geometric, confident, used
+     for anything that behaves like signage: headings, labels, buttons.
+     Literata is the reading face: a book serif drawn for screens, with
+     a real bold, so a paragraph on squared paper reads like a printed
+     textbook rather than a UI. Caveat is the marking pen. */
+  --dis:'Jost','Futura','Futura PT','Century Gothic',system-ui,sans-serif;
+  --ui:'Jost','Century Gothic','Avenir Next',system-ui,sans-serif;
+  --read:'Literata',Georgia,'Iowan Old Style','Times New Roman',serif;
   --hand:'Caveat','Bradley Hand',cursive;
 
-  --page-w:min(46vw, calc(var(--vh,8px) * 62));
-  --page-h:calc(var(--page-w) * 1.27);
+  /* A textbook page, not a novel's: wider in proportion so a line of
+     18-20px type carries a proper measure and the block reaches the
+     foot of the page instead of stranding white space under it. */
+  --page-w:min(45vw, calc(var(--vh,8px) * 71));
+  --page-h:calc(var(--page-w) * 1.17);
+
+  /* Type scales off the PAGE, not the viewport. A book's text block is
+     a fixed proportion of its paper — 1u is 1% of a page width — so the
+     spread reads identically on a laptop and a 4K monitor instead of
+     shrinking to nothing on one and ballooning on the other. */
+  --u:calc(var(--page-w) / 100);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -99,9 +113,16 @@ a{color:inherit}
   position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;
   background:var(--paper);
   display:flex;flex-direction:column;
-  padding:clamp(20px,2.6vw,42px) clamp(20px,2.8vw,46px) clamp(34px,3vw,48px);
+  /* margins in page-widths, so the text block keeps its proportion */
+  padding:calc(var(--u) * 6.8) calc(var(--u) * 8.2) calc(var(--u) * 9.4);
 }
 .face.back{transform:rotateY(180deg)}
+
+/* Short pages are a fact of books, not a bug — but all the slack falling
+   at the foot reads as an accident. Centring the text block splits it
+   top and bottom, which is what a compositor would do, and the page
+   numbers stay pinned so the running element still holds the corner. */
+.face:not(.cover):not(.backcover){justify-content:center}
 
 /* squared paper + the ruled margin. The margin sits on the outer edge
    of the right-hand page and mirrors on the left, as in a real book. */
@@ -110,7 +131,7 @@ a{color:inherit}
   background-image:
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size:22px 22px;opacity:.55;
+  background-size:calc(var(--u)*3.45) calc(var(--u)*3.45);opacity:.6;
 }
 .face > *{position:relative;z-index:1}
 
@@ -144,79 +165,83 @@ a{color:inherit}
     radial-gradient(100% 90% at 8% 96%, #2A8C7E 0%, transparent 58%),
     linear-gradient(150deg,#053C7E, #0457ac 52%, #0B6FA8);
   color:#fff;justify-content:space-between;
-  padding:clamp(26px,3.4vw,52px);
+  padding:calc(var(--u)*8);
 }
 .face.cover::before{ /* embossed grid, barely there */
   background-image:
     linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
-  background-size:22px 22px;opacity:1;
+  background-size:calc(var(--u)*3.45) calc(var(--u)*3.45);opacity:1;
 }
 .face.cover::after{
   background:
     linear-gradient(90deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,0) 16%),
     linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,calc(var(--bow,0) * .34)) 50%, rgba(255,255,255,0) 62%);
 }
-.cover .band{font-family:var(--dis);font-size:clamp(9px,.72vw,11.5px);letter-spacing:.38em;
+.cover .band{font-family:var(--dis);font-size:clamp(9px,calc(var(--u)*2),13px);letter-spacing:.38em;
   text-transform:uppercase;color:#A9DFF3}
 .cover .mid{text-align:left}
-.cover .mark{width:clamp(74px,7.6vw,124px);margin-bottom:clamp(18px,2vw,30px)}
+.cover .mark{width:calc(var(--u)*23);margin-bottom:calc(var(--u)*5)}
 .cover h1{font-family:var(--dis);font-weight:700;line-height:.94;letter-spacing:-.03em;
-  font-size:clamp(2.1rem,4.6vw,4.1rem)}
+  font-size:clamp(28px,calc(var(--u)*10.3),78px)}
 .cover h1 i{font-style:normal;color:var(--lime)}
-.cover .tag{font-family:var(--dis);font-weight:500;color:#BFE6F5;margin-top:clamp(14px,1.6vw,22px);
-  font-size:clamp(.86rem,1.25vw,1.22rem);line-height:1.32;letter-spacing:.01em}
+.face .cover .tag,.cover .tag{font-family:var(--dis);font-weight:500;color:#BFE6F5;
+  margin-top:calc(var(--u)*3.4);
+  font-size:clamp(13px,calc(var(--u)*3.55),27px);line-height:1.34;letter-spacing:.01em}
 .cover .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
-.cover .foot .who{font-family:var(--dis);color:#fff;font-size:clamp(.8rem,1.05vw,1rem);font-weight:600}
+.cover .foot .who{font-family:var(--dis);color:#fff;font-size:clamp(12.5px,calc(var(--u)*2.95),22px);font-weight:600}
 .cover .foot .who span{display:block;color:#9CD6EC;font-weight:400;font-size:.82em;margin-top:3px}
-.cover .ed{font-family:var(--dis);font-size:clamp(8.5px,.66vw,10.5px);letter-spacing:.3em;
+.cover .ed{font-family:var(--dis);font-size:clamp(8.5px,calc(var(--u)*1.9),12px);letter-spacing:.3em;
   text-transform:uppercase;color:#7FC6E4;text-align:right}
 
 .face.backcover{
   background:linear-gradient(150deg,#04305F,#0457ac 60%,#2A7FA8);color:#fff;
-  justify-content:center;align-items:center;text-align:center;gap:22px;
-  padding:clamp(26px,3.4vw,52px);
+  justify-content:center;align-items:center;text-align:center;gap:calc(var(--u)*4);
+  padding:calc(var(--u)*8);
 }
 .face.backcover::before{opacity:.5}
-.backcover .mark{width:clamp(60px,6vw,92px);margin:0 auto}
+.backcover .mark{width:calc(var(--u)*17);margin:0 auto}
 .backcover h2{font-family:var(--dis);font-weight:700;color:#fff;letter-spacing:-.02em;
-  font-size:clamp(1.4rem,2.5vw,2.3rem);line-height:1.1}
-.backcover p{color:#BCE3F3;max-width:34ch;margin:0 auto;font-size:clamp(.82rem,1vw,1rem)}
+  font-size:clamp(20px,calc(var(--u)*6.4),50px);line-height:1.12}
+.face.backcover p{font-family:var(--read);color:#BCE3F3;max-width:34ch;margin:0 auto;
+  font-size:clamp(13px,calc(var(--u)*3.2),24px);line-height:1.5}
 .backcover .cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
 
 /* ---------------- page furniture ---------------- */
-.chap{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(12px,1.5vw,22px)}
-.chap .no{font-family:var(--dis);font-weight:700;font-size:clamp(1.5rem,2.6vw,2.5rem);
+.chap{display:flex;align-items:baseline;gap:calc(var(--u)*2.4);margin-bottom:calc(var(--u)*3.4)}
+.chap .no{font-family:var(--dis);font-weight:700;font-size:clamp(24px,calc(var(--u)*7.9),60px);
   line-height:1;color:var(--blue);opacity:.22;letter-spacing:-.03em}
-.chap .ttl{font-family:var(--dis);font-size:clamp(8.5px,.68vw,10.5px);letter-spacing:.34em;
+.chap .ttl{font-family:var(--dis);font-size:clamp(9.5px,calc(var(--u)*2.15),13.5px);letter-spacing:.34em;
   text-transform:uppercase;color:var(--teal)}
-.pageno{position:absolute;bottom:clamp(12px,1.3vw,20px);font-family:var(--dis);
-  font-size:clamp(9px,.7vw,11px);letter-spacing:.22em;color:var(--grey);opacity:.7;z-index:2}
+.pageno{position:absolute;bottom:calc(var(--u)*2.9);font-family:var(--dis);
+  font-size:clamp(9.5px,calc(var(--u)*2.1),13px);letter-spacing:.22em;color:var(--grey);opacity:.7;z-index:2}
 /* running rule at the foot of every page — the thing that stops a
    short page reading as unfinished, and what a real book does anyway */
-.pageno::before{content:"";position:absolute;bottom:1.35em;height:1px;
-  background:linear-gradient(90deg,transparent,var(--grid) 18%,var(--grid) 82%,transparent);
-  width:calc(var(--page-w) - clamp(40px,5.6vw,92px))}
+.pageno::before{content:"";position:absolute;bottom:1.5em;height:1px;
+  background:linear-gradient(90deg,transparent,var(--rule) 14%,var(--rule) 86%,transparent);
+  opacity:.75;
+  width:calc(var(--page-w) - var(--u) * 16.4)}
 .face.front .pageno::before{right:0}
 .face.back  .pageno::before{left:0}
-.face.front .pageno{right:clamp(20px,2.8vw,46px)}
-.face.back .pageno{left:clamp(20px,2.8vw,46px)}
+.face.front .pageno{right:calc(var(--u)*8.2)}
+.face.back .pageno{left:calc(var(--u)*8.2)}
 
 h2.head{font-family:var(--dis);font-weight:700;color:var(--ink);letter-spacing:-.022em;
-  font-size:clamp(1.15rem,2.05vw,2.05rem);line-height:1.08;margin-bottom:clamp(8px,1vw,14px)}
+  font-size:clamp(22px,calc(var(--u)*6.8),56px);line-height:1.06;margin-bottom:calc(var(--u)*2.6)}
 h2.head em{font-style:normal;color:var(--blue)}
-h3.sub{font-family:var(--dis);font-weight:600;color:var(--blue);
-  font-size:clamp(.85rem,1.1vw,1.08rem);margin:clamp(12px,1.4vw,20px) 0 6px}
-.face p{font-size:clamp(.72rem,.86vw,.95rem);line-height:1.62;color:var(--ink-soft);
-  margin-bottom:clamp(7px,.85vw,12px);max-width:44ch}
+h3.sub{font-family:var(--dis);font-weight:600;color:var(--blue);letter-spacing:-.005em;
+  font-size:clamp(14px,calc(var(--u)*3.5),27px);margin:calc(var(--u)*3.4) 0 calc(var(--u)*1.2)}
+.face p{font-family:var(--read);font-size:clamp(13px,calc(var(--u)*3.02),25px);
+  line-height:1.54;color:var(--ink-soft);
+  margin-bottom:calc(var(--u)*2.1);max-width:46ch}
 .face p b,.face p strong{color:var(--ink);font-weight:600}
-.lede{font-family:var(--dis);font-size:clamp(.82rem,1.05vw,1.14rem)!important;
-  line-height:1.44!important;color:var(--ink)!important}
+.face .lede{font-family:var(--read);font-size:clamp(15px,calc(var(--u)*3.85),31px);
+  line-height:1.42;color:var(--ink);max-width:38ch;letter-spacing:-.004em}
 
-ul.tick{display:grid;gap:clamp(5px,.6vw,9px);margin:clamp(8px,1vw,14px) 0}
-ul.tick li{list-style:none;position:relative;padding-left:22px;
-  font-size:clamp(.7rem,.84vw,.92rem);line-height:1.5;color:var(--ink-soft)}
-ul.tick li::before{content:"";position:absolute;left:0;top:.44em;width:11px;height:6px;
+ul.tick{display:grid;gap:calc(var(--u)*1.5);margin:calc(var(--u)*2.4) 0}
+ul.tick li{font-family:var(--read);list-style:none;position:relative;padding-left:calc(var(--u)*4.6);
+  font-size:clamp(12.5px,calc(var(--u)*2.98),24px);line-height:1.45;color:var(--ink-soft)}
+ul.tick li::before{content:"";position:absolute;left:0;top:.42em;width:calc(var(--u)*2.3);height:calc(var(--u)*1.25);
   border-left:2px solid var(--pen);border-bottom:2px solid var(--pen);
   transform:rotate(-45deg);border-radius:1px}
 ul.tick li b{color:var(--ink);font-weight:600}
@@ -224,9 +249,10 @@ ul.tick li b{color:var(--ink);font-weight:600}
 /* ---------------- the marking pen ---------------- */
 /* Annotations are the signature: they write themselves on when the
    spread settles, in the green pen a teacher would actually use. */
-.note{
+.face .note,.note{
   font-family:var(--hand);color:var(--pen);
-  font-size:clamp(.95rem,1.35vw,1.42rem);line-height:1.16;
+  font-size:clamp(17px,calc(var(--u)*4.75),38px);line-height:1.16;font-weight:600;
+  max-width:none;margin-bottom:0;
   transform:rotate(-3deg);transform-origin:left center;
   opacity:0;translate:0 6px;
   transition:opacity .55s ease, translate .55s cubic-bezier(.22,1,.36,1);
@@ -235,12 +261,12 @@ ul.tick li b{color:var(--ink);font-weight:600}
 .note.r{transform:rotate(2.4deg)}
 .note::before{content:"";display:inline-block;width:14px;height:2px;background:var(--pen);
   margin-right:7px;vertical-align:middle;border-radius:2px;opacity:.8}
-.note-side{position:absolute;right:clamp(10px,1.1vw,18px);width:clamp(88px,9vw,140px);
+.note-side{position:absolute;right:calc(var(--u)*2.2);width:calc(var(--u)*26);
   text-align:left;z-index:2}
 
 /* hand-drawn underline that draws itself */
 .uline{position:relative;display:inline-block}
-.uline svg{position:absolute;left:-2%;bottom:-.42em;width:104%;height:.5em;overflow:visible}
+.uline svg{position:absolute;left:-2%;bottom:-.26em;width:104%;height:.36em;overflow:visible}
 .uline path{fill:none;stroke:var(--lime);stroke-width:6;stroke-linecap:round;
   stroke-dasharray:300;stroke-dashoffset:300;opacity:.85}
 .live .uline path{animation:draw .85s cubic-bezier(.22,1,.36,1) .5s forwards}
@@ -251,58 +277,66 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
   color:inherit;padding:0 2px}
 
 /* ---------------- content blocks ---------------- */
-.figure{border:1.6px solid var(--grid);border-radius:6px;padding:clamp(10px,1.2vw,18px);
-  background:rgba(255,255,255,.7);margin:clamp(10px,1.2vw,16px) 0}
-.figure figcaption{font-family:var(--dis);font-size:clamp(8px,.62vw,10px);letter-spacing:.24em;
+.figure{border:1.6px solid var(--grid);border-radius:6px;padding:calc(var(--u)*2.8);
+  background:rgba(255,255,255,.7);margin:calc(var(--u)*2.8) 0}
+.figure figcaption{font-family:var(--dis);font-size:clamp(9px,calc(var(--u)*2),12.5px);letter-spacing:.24em;
   text-transform:uppercase;color:var(--grey);margin-top:8px}
 .figure svg{width:100%;height:auto;display:block}
 .figure .dr{stroke-dasharray:400;stroke-dashoffset:400}
 .live .figure .dr{animation:draw 1.1s ease .55s forwards}
 
-.tbl{width:100%;border-collapse:collapse;font-size:clamp(.65rem,.78vw,.86rem);margin:clamp(8px,1vw,14px) 0}
+.tbl{width:100%;border-collapse:collapse;font-family:var(--read);
+  font-size:clamp(11.5px,calc(var(--u)*2.7),21px);margin:calc(var(--u)*2.4) 0}
 .tbl th{font-family:var(--dis);text-align:left;font-weight:600;color:var(--blue);
-  border-bottom:2px solid var(--blue);padding:6px 8px 5px;font-size:.92em}
-.tbl td{padding:6px 8px;border-bottom:1px solid var(--grid);color:var(--ink-soft);vertical-align:top}
+  border-bottom:2px solid var(--blue);padding:calc(var(--u)*1.4) calc(var(--u)*1.7) calc(var(--u)*1.1);
+  font-size:.9em;letter-spacing:.01em}
+.tbl td{padding:calc(var(--u)*1.5) calc(var(--u)*1.7);border-bottom:1px solid var(--grid);
+  color:var(--ink-soft);vertical-align:top;line-height:1.42}
 .tbl td:first-child{font-family:var(--dis);color:var(--ink);font-weight:600}
 
-.weeks{display:grid;gap:clamp(7px,.85vw,12px)}
-.wk{display:flex;gap:11px;align-items:flex-start}
-.wk i{flex:0 0 auto;width:26px;height:26px;border-radius:6px;background:var(--blue);color:#fff;
-  font-family:var(--dis);font-style:normal;font-weight:700;font-size:11px;
+.weeks{display:grid;gap:calc(var(--u)*2.1)}
+.wk{display:flex;gap:calc(var(--u)*2.4);align-items:flex-start}
+.wk i{flex:0 0 auto;width:calc(var(--u)*6.2);height:calc(var(--u)*6.2);border-radius:6px;
+  background:var(--blue);color:#fff;
+  font-family:var(--dis);font-style:normal;font-weight:700;font-size:clamp(11px,calc(var(--u)*2.7),16px);
   display:grid;place-items:center;margin-top:2px}
 .wk:nth-child(2) i{background:var(--teal)} .wk:nth-child(3) i{background:var(--green)}
 .wk:nth-child(4) i{background:var(--amber);color:#5A3B00}
-.wk b{display:block;font-family:var(--dis);font-size:clamp(.76rem,.92vw,1rem);color:var(--ink)}
-.wk p{margin:2px 0 0;font-size:clamp(.66rem,.78vw,.86rem)}
+.wk b{display:block;font-family:var(--dis);font-weight:600;
+  font-size:clamp(13px,calc(var(--u)*3.24),25px);color:var(--ink)}
+.wk p{margin:calc(var(--u)*.5) 0 0;font-size:clamp(12px,calc(var(--u)*2.84),22px)}
 
-.stat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1vw,14px);margin:clamp(10px,1.2vw,16px) 0}
-.stat div{border-left:3px solid var(--lime);padding-left:10px}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.6);margin:calc(var(--u)*2.8) 0}
+.stat div{border-left:3px solid var(--lime);padding-left:calc(var(--u)*2.2)}
 .stat b{display:block;font-family:var(--dis);font-weight:700;color:var(--blue);
-  font-size:clamp(1.3rem,2.2vw,2rem);line-height:1}
-.stat span{font-size:clamp(.62rem,.72vw,.8rem);color:var(--grey)}
+  font-size:clamp(22px,calc(var(--u)*6.7),52px);line-height:1;letter-spacing:-.02em}
+.stat span{font-size:clamp(10.5px,calc(var(--u)*2.42),18px);color:var(--grey);line-height:1.34;display:block}
 
-.qa{margin-bottom:clamp(9px,1.1vw,15px)}
-.qa b{display:block;font-family:var(--dis);color:var(--ink);font-size:clamp(.74rem,.88vw,.95rem);margin-bottom:3px}
+.qa{margin-bottom:calc(var(--u)*2.6)}
+.qa b{display:block;font-family:var(--dis);font-weight:600;color:var(--ink);
+  font-size:clamp(13px,calc(var(--u)*3.2),24px);margin-bottom:calc(var(--u)*.7)}
 .qa p{margin:0}
 
-.fld{margin-bottom:clamp(6px,.75vw,10px)}
-.fld label{display:block;font-family:var(--dis);font-size:clamp(.6rem,.7vw,.78rem);
-  color:var(--ink);margin-bottom:3px;letter-spacing:.02em}
-.fld input,.fld select,.fld textarea{width:100%;padding:7px 10px;border:none;border-bottom:1.6px solid var(--grid);
-  background:transparent;font-family:var(--ui);font-size:clamp(.7rem,.82vw,.9rem);color:var(--ink)}
-.fld textarea{resize:none;height:clamp(38px,4vw,58px)}
+.fld{margin-bottom:calc(var(--u)*1.9)}
+.fld label{display:block;font-family:var(--dis);font-size:clamp(10.5px,calc(var(--u)*2.42),18px);
+  color:var(--ink);margin-bottom:calc(var(--u)*.7);letter-spacing:.02em}
+.fld input,.fld select,.fld textarea{width:100%;padding:calc(var(--u)*1.5) calc(var(--u)*.4);border:none;border-bottom:1.6px solid var(--grid);
+  background:transparent;font-family:var(--read);font-size:clamp(12.5px,calc(var(--u)*2.95),22px);color:var(--ink)}
+.fld textarea{resize:none;height:calc(var(--u)*12);line-height:1.4}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-bottom-color:var(--green)}
 .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;
-  font-family:var(--dis);font-weight:600;font-size:clamp(.7rem,.82vw,.9rem);
-  padding:10px 20px;border-radius:999px;background:var(--blue);color:#fff;
+  font-family:var(--dis);font-weight:600;font-size:clamp(12.5px,calc(var(--u)*2.95),22px);
+  padding:.62em 1.35em;border-radius:999px;background:var(--blue);color:#fff;
   transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, background .25s;
   box-shadow:0 10px 22px -12px rgba(4,87,172,.9)}
 .btn:hover{transform:translateY(-2px);background:#0361c4}
 .btn.lime{background:var(--lime);color:#26380A;box-shadow:0 10px 22px -12px rgba(167,226,55,.9)}
 .btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);box-shadow:none}
-.fine{font-size:clamp(.58rem,.68vw,.74rem);color:var(--grey);margin-top:7px}
-.ok{display:none;font-family:var(--dis);color:var(--pen);font-size:clamp(.76rem,.9vw,1rem)}
-.ok.on{display:block}
+.face .fine{font-size:clamp(10.5px,calc(var(--u)*2.42),18px);color:var(--grey);
+  margin-top:calc(var(--u)*1.6);line-height:1.4;max-width:none}
+.face .ok{display:none;font-family:var(--dis);color:var(--pen);
+  font-size:clamp(13px,calc(var(--u)*3.24),24px)}
+.face .ok.on{display:block}
 
 /* ---------------- chapter tabs ---------------- */
 #tabs{
@@ -315,11 +349,13 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
   font-family:var(--dis);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
   transition:color .3s, transform .3s cubic-bezier(.22,1,.36,1);
 }
-#tabs button span{opacity:0;transform:translateX(6px);transition:opacity .3s, transform .3s;white-space:nowrap}
+#tabs button span{opacity:0;transform:translateX(6px);transition:opacity .3s, transform .3s;
+  white-space:nowrap;background:rgba(255,255,255,.92);padding:3px 8px;border-radius:99px;
+  box-shadow:0 6px 18px -10px rgba(4,50,92,.5)}
 #tabs button i{display:block;width:20px;height:3px;border-radius:2px;background:currentColor;
   opacity:.45;transition:width .3s cubic-bezier(.22,1,.36,1), opacity .3s;flex:0 0 auto}
 #tabs button:hover,#tabs button.on{color:var(--lime)}
-#tabs button:hover span,#tabs button.on span{opacity:1;transform:none}
+#tabs button:hover span{opacity:1;transform:none}
 #tabs button.on i{width:34px;opacity:1}
 #tabs:hover button span{opacity:1;transform:none}
 
@@ -363,13 +399,19 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
    flattened so mid-range phones stay at 60fps — the metaphor survives
    because the paper, the margin rule and the pen do the work. */
 @media (max-width:900px){
-  :root{--page-w:min(88vw, 460px);--page-h:calc(var(--page-w) * 1.34)}
+  /* A phone page is a phone shape: tall and narrow, filling the screen
+     rather than floating as a postcard. Type is sized against a smaller
+     divisor so it stays comfortably readable at arm's length. */
+  :root{
+    --page-w:min(90vw, 470px);
+    --page-h:min(calc(var(--page-w) * 1.62), 76vh);
+    --u:calc(var(--page-w) / 80);
+  }
   #stage{perspective:1600px}
   #book{width:var(--page-w)}
   .leaf{width:100%}
   #book::before,#book::after{display:none}
-  .face{padding:22px 20px 34px}
-  .face::before{background-size:19px 19px}
+  .face{padding:calc(var(--u)*6) calc(var(--u)*6.4) calc(var(--u)*9.6)}
   .note-side{position:static;width:auto;margin-top:10px}
   #tabs{right:auto;left:50%;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
     transform:translateX(-50%);flex-direction:row;gap:7px;
@@ -382,8 +424,20 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
   .stat{grid-template-columns:1fr 1fr}
 }
 @media (max-width:420px){
-  :root{--page-w:92vw}
-  .face{padding:18px 16px 30px}
+  :root{--page-w:93vw}
+}
+/* Short phones (SE-class, and anything in landscape-ish letterbox): the
+   page can't get taller, so the type steps down and the margins close up
+   rather than letting a spread clip. */
+@media (max-width:900px) and (max-height:720px){
+  :root{--page-h:min(calc(var(--page-w) * 1.62), 86vh);--u:calc(var(--page-w) / 84)}
+  .face{padding:calc(var(--u)*5.4) calc(var(--u)*5.8) calc(var(--u)*8.6)}
+  .face.cover h1{font-size:clamp(24px,calc(var(--u)*10.3),78px)}
+  .face.cover .tag{font-size:clamp(11.5px,calc(var(--u)*3.55),27px)}
+  .face p{font-size:clamp(13px,calc(var(--u)*3.02),25px)}
+  ul.tick li{font-size:clamp(12.5px,calc(var(--u)*2.98),24px)}
+  h2.head{font-size:clamp(19px,calc(var(--u)*6.8),56px)}
+  #hint{display:none}
 }
 
 /* ---------------- reduced motion: the editorial fallback ---------- */
@@ -391,7 +445,8 @@ mark{background:linear-gradient(180deg,transparent 52%, rgba(167,226,55,.55) 52%
    paper — read straight down, with no transforms at all. */
 .is-flat #stage{position:static;perspective:none;display:block;pointer-events:auto}
 .is-flat #scroller{display:none}
-.is-flat #book{width:min(760px,92vw);height:auto;margin:40px auto 80px;transform:none!important}
+.is-flat{--page-w:min(760px,92vw)}
+.is-flat #book{width:var(--page-w);height:auto;margin:40px auto 80px;transform:none!important}
 .is-flat #book::before,.is-flat #book::after{display:none}
 .is-flat .leaf{position:static;width:100%;height:auto;transform:none!important}
 .is-flat .face{position:static;transform:none!important;height:auto;min-height:0;
