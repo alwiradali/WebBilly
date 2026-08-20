@@ -349,13 +349,23 @@ async function scrapePayhip(store) {
     .map((p) => ({
       name: payhipText(p.name),
       price: payhipText(p.price),
-      image: /^https:\/\//.test(p.image) ? p.image : "",
+      image: /^https:\/\//.test(p.image) ? payhipThumb(p.image) : "",
       url: p.url,
     }))
     // A storefront has decorative grid items too; a real product is the one
     // with a name and a link to a Payhip product page.
     .filter((p) => p.name && /^https:\/\/payhip\.com\/b\//.test(p.url))
     .slice(0, PAYHIP_MAX);
+}
+
+function payhipThumb(src) {
+  // Storefront images come through at full size — routinely a couple of
+  // megabytes each, which is a lot to send a phone for a card thumbnail.
+  // They already sit behind Cloudflare's image resizer, so asking for a
+  // card-sized variant is just a longer path and saves around 20x the bytes.
+  // Anything not served through that resizer is passed along untouched.
+  return src.replace("/cdn-cgi/image/format=auto/",
+                     "/cdn-cgi/image/format=auto,width=600,fit=scale-down/");
 }
 
 function payhipText(s) {
