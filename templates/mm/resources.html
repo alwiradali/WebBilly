@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Revision Resources | SQA Chemistry Notes &amp; Practice — Molecular Miracles</title>
+<meta name="description" content="Downloadable SQA Chemistry revision resources from Lynsey Robinson — notes, practice questions and exam technique for National 5, Higher and Advanced Higher.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="../../assets/mm/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<canvas id="molecules" aria-hidden="true"></canvas>
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-in">
+      <a href="index.html"><img class="logo" src="../../assets/mm/logo.png" alt="Molecular Miracles"></a>
+      <span class="sp"></span>
+      <div class="nlinks">
+        <a href="index.html#about">About</a><a href="courses/index.html">Courses</a>
+        <a href="index.html#timetable">Timetable</a><a href="resources.html">Resources</a><a href="areas/index.html">Areas</a>
+      </div>
+      <a class="btn btn-p" href="index.html#booking">Book a Place</a>
+      <div class="burger" id="bg"><span></span><span></span><span></span></div>
+    </div>
+    <div class="mobmenu" id="mm">
+      <a href="index.html#about">About</a><a href="courses/index.html">Courses</a>
+      <a href="index.html#timetable">Timetable</a><a href="index.html#reviews">Reviews</a>
+      <a href="resources.html">Revision Resources</a>
+      <a href="areas/index.html">Areas</a><a href="index.html#booking">Booking</a>
+    </div>
+  </div>
+</nav>
+
+<div id="mm-notice" role="status" aria-live="polite"></div>
+
+<section class="areahero">
+  <div class="orb a"></div><div class="orb b"></div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <p class="crumb rv in"><a href="index.html">Home</a> &rsaquo; Revision Resources</p>
+    <div style="max-width:780px" class="rv in">
+      <span class="eyebrow">SQA Chemistry · Downloads</span>
+      <h1 style="font-size:clamp(2rem,4.6vw,3.2rem);margin:18px 0 16px">Revision resources, written by <span class="g">an SQA marker</span></h1>
+      <p style="color:var(--mut);font-size:1.06rem">Notes, practice questions and exam-technique guides for National 5, Higher and Advanced Higher — written by Lynsey Robinson, who marks these papers for the SQA and knows exactly where the marks go.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>Available to download</h2>
+      <p>Instant download after checkout, handled securely by Payhip.</p>
+    </div>
+
+    <!-- Products are pulled live from Lynsey's Payhip storefront by payhip.js,
+         so anything she adds or reprices there shows up here on its own.
+         data-store is her Payhip store slug — the bit after payhip.com/ .
+         Leave it empty and the page simply keeps the copy below, which is also
+         what a visitor sees if the shop cannot be reached. This block is in
+         content.js's EXCLUDE list, so the WordPress editor never touches it. -->
+    <div id="shop"
+         data-store=""
+         data-api="https://www.billydigitals.com/api/payhip">
+      <p class="shop-note">Lynsey's downloadable revision resources are on their way. In the meantime, everything is covered in class — <a href="index.html#booking" style="color:var(--teal);font-weight:600">enquire about a place</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>Prefer to be taught it?</h2>
+      <p>Resources help, but nothing replaces being asked the question out loud and having to answer it.</p>
+    </div>
+    <div style="text-align:center" class="rv">
+      <a class="btn btn-p" href="index.html#booking">Book a Place</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <img src="../../assets/mm/logo.png" alt="Molecular Miracles" style="height:56px;margin-bottom:14px">
+        <p style="color:var(--mut);font-size:.92rem;max-width:34ch">Small-group SQA Chemistry tuition across Scotland with Lynsey Robinson.</p>
+      </div>
+      <div>
+        <h4>Courses</h4>
+        <ul>
+          <li><a href="courses/national-5.html">National 5 Chemistry</a></li>
+          <li><a href="courses/higher.html">Higher Chemistry</a></li>
+          <li><a href="courses/advanced-higher.html">Advanced Higher Chemistry</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Molecular Miracles</h4>
+        <ul>
+          <li><a href="index.html#about">About Lynsey</a></li>
+          <li><a href="index.html#timetable">Class Timetable</a></li>
+          <li><a href="resources.html">Revision Resources</a></li>
+          <li><a href="faq.html">Questions</a></li>
+          <li><a href="areas/index.html">Areas We Cover</a></li>
+          <li><a href="index.html#booking">Booking &amp; Enquiries</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">© Molecular Miracles Chemistry Tuition · GTCS registered · PVG checked</div>
+  </div>
+</footer>
+<script src="molecules.js" defer></script>
+<script src="content.js" defer></script>
+<script src="payhip.js" defer></script>
+<script>
+  document.getElementById('bg').onclick=function(){this.classList.toggle('on');document.getElementById('mm').classList.toggle('on')};
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(e){io.observe(e)});
+</script>
+</body>
+</html>

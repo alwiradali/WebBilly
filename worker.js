@@ -31,6 +31,9 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
+    if (url.pathname === "/api/payhip") {
+      return handlePayhip(request, url);
+    }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
     if (!M2L_PARKED) {
@@ -236,6 +239,135 @@ function json(obj, status = 200) {
     status,
     headers: { "content-type": "application/json", "cache-control": "no-store" },
   });
+}
+
+/* ============================================================
+   Molecular Miracles — Payhip shop mirror   GET /api/payhip?store=<slug>
+
+   Lynsey sells revision resources through Payhip, and her site is a static
+   Cloudflare Pages upload with no backend of its own. Payhip publishes no
+   products API — theirs covers coupons and licence keys only — and serves no
+   CORS header, so her own browser cannot read her own storefront.
+
+   This route reads the storefront server-side and hands back the product
+   cards as JSON, so her /resources page renders them in her own design and
+   picks up anything she adds on Payhip without a redeploy.
+
+   Parsed with HTMLRewriter rather than a regex: it walks real tags, so
+   unrelated markup changes on Payhip's side are far less likely to break it.
+   The storefront is fetched through Cloudflare's cache, so a rush of
+   visitors costs Payhip one request rather than one each.
+
+   Failing to reach or parse Payhip answers 502 on purpose. The page treats
+   that as "keep showing what was built in", which is different from a
+   successful read of a store that genuinely has no products yet — that
+   answers 200 with an empty list and the page says so.
+   ============================================================ */
+
+const PAYHIP_TTL = 600;   // seconds; a newly added product appears within this
+const PAYHIP_MAX = 60;    // products; a sanity bound on whatever we parse
+
+async function handlePayhip(request, url) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: payhipHeaders(0) });
+  }
+  if (request.method !== "GET") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }),
+                        { status: 405, headers: payhipHeaders(0) });
+  }
+
+  // A storefront slug and nothing else. This is what keeps the route from
+  // becoming an open proxy that will fetch any URL a caller names.
+  const store = url.searchParams.get("store") || "";
+  if (!/^[A-Za-z0-9_-]{1,60}$/.test(store)) {
+    return new Response(JSON.stringify({ error: "bad store slug" }),
+                        { status: 400, headers: payhipHeaders(0) });
+  }
+
+  try {
+    const products = await scrapePayhip(store);
+    return new Response(JSON.stringify({ store, count: products.length, products }),
+                        { status: 200, headers: payhipHeaders(PAYHIP_TTL) });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: String((e && e.message) || e) }),
+                        { status: 502, headers: payhipHeaders(0) });
+  }
+}
+
+function payhipHeaders(ttl) {
+  return {
+    "content-type": "application/json",
+    // Public product data, and her site sits on a different domain from this
+    // Worker, so it has to be readable cross-origin.
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET, OPTIONS",
+    "cache-control": ttl ? "public, max-age=" + ttl : "no-store",
+  };
+}
+
+async function scrapePayhip(store) {
+  const res = await fetch("https://payhip.com/" + store, {
+    headers: {
+      "user-agent": "Mozilla/5.0 (compatible; BillyDigitals/1.0; +https://billydigitals.com)",
+      accept: "text/html",
+    },
+    cf: { cacheTtl: PAYHIP_TTL, cacheEverything: true },
+  });
+  if (!res.ok) throw new Error("payhip returned HTTP " + res.status);
+
+  // Each product on the storefront is one .grid-item carrying its name,
+  // price, image and link. Tags arrive in document order, so a child always
+  // belongs to the item most recently opened.
+  const items = [];
+  const open = () => (items.length ? items[items.length - 1] : null);
+
+  await new HTMLRewriter()
+    .on("div.grid-item", {
+      element() { items.push({ name: "", price: "", image: "", url: "" }); },
+    })
+    .on("div.grid-item h4.name", {
+      text(t) { const p = open(); if (p) p.name += t.text; },
+    })
+    .on("div.grid-item div.price", {
+      text(t) { const p = open(); if (p) p.price += t.text; },
+    })
+    .on("div.grid-item img.section-image", {
+      element(el) {
+        const p = open();
+        // Payhip lazy-loads these, so the real URL is on data-src and src is
+        // a placeholder until their script runs.
+        if (p && !p.image) p.image = el.getAttribute("data-src") || el.getAttribute("src") || "";
+      },
+    })
+    .on("div.grid-item a.grid-item-link", {
+      element(el) { const p = open(); if (p && !p.url) p.url = el.getAttribute("href") || ""; },
+    })
+    .transform(res)
+    .arrayBuffer();   // consuming the body is what actually runs the handlers
+
+  return items
+    .map((p) => ({
+      name: payhipText(p.name),
+      price: payhipText(p.price),
+      image: /^https:\/\//.test(p.image) ? p.image : "",
+      url: p.url,
+    }))
+    // A storefront has decorative grid items too; a real product is the one
+    // with a name and a link to a Payhip product page.
+    .filter((p) => p.name && /^https:\/\/payhip\.com\/b\//.test(p.url))
+    .slice(0, PAYHIP_MAX);
+}
+
+function payhipText(s) {
+  return s
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 async function handleSendReview(request, env) {

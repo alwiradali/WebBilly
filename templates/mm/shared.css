@@ -416,3 +416,23 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
   background:#fff;color:var(--ink);font-weight:600;font-size:.95rem;
   transition:border-color .25s,color .25s,transform .25s,box-shadow .25s}
 .rev-glink a:hover{border-color:var(--gold);color:#8a6100;transform:translateY(-2px);box-shadow:var(--sh)}
+
+/* shop — Payhip products, rendered by payhip.js into /resources.
+   Cards are built from her live storefront, so the styling has to hold up for
+   anything from one product to a couple of dozen, with or without a price
+   (free and tiered products come back without one). */
+.shop-grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:620px){.shop-grid{grid-template-columns:1fr 1fr;gap:22px}}
+@media(min-width:1000px){.shop-grid{grid-template-columns:repeat(3,1fr)}}
+.shop-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .35s,box-shadow .35s}
+.shop-card:hover{transform:translateY(-6px);border-color:#B9EBE3;box-shadow:var(--sh)}
+.shop-thumb{aspect-ratio:4/3;background:var(--tint2);overflow:hidden}
+.shop-thumb img{width:100%;height:100%;object-fit:cover}
+.shop-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:11px;flex:1}
+.shop-name{font-family:var(--ser);font-weight:600;color:var(--ink);font-size:1.06rem;line-height:1.26}
+.shop-price{font-weight:600;color:var(--teal);font-size:1.02rem}
+.shop-card .btn{margin-top:auto;justify-content:center}
+/* the states that are not a grid of products: loading, empty, unreachable */
+.shop-note{text-align:center;color:var(--mut);font-size:.985rem;padding:34px 0}
