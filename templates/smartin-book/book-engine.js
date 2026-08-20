@@ -71,7 +71,13 @@
     // and the back cover somewhere to rest without a hard stop.
     scroller.style.height = ((N + 1.15) * VH_PER_LEAF * 100) + 'vh';
     maxScroll = Math.max(1, scroller.offsetHeight - window.innerHeight);
-    root.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+    /* visualViewport, not innerHeight: iOS counts the strip behind the
+       address bar in innerHeight and in `100vh`, so sizing the stage
+       that way centres the book in a box taller than the screen and
+       posts its bottom third off the display. */
+    var vv = window.visualViewport;
+    var vh = Math.round((vv && vv.height) || window.innerHeight);
+    root.style.setProperty('--vh', vh * 0.01 + 'px');
     single = window.matchMedia('(max-width: 900px)').matches;
     buildSnaps();
   }

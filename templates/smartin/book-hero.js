@@ -38,45 +38,117 @@
   if (!sec) return;
 
   var book = sec.querySelector('.bh-book');
-  var leaves = [].slice.call(sec.querySelectorAll('.bh-leaf'));
-  var N = leaves.length;
-  if (!book || N < 2) return;
+  if (!book) return;
+
+  /* The markup ships as a flat list of pages in reading order — which is
+     what the no-JS fallback wants anyway. The leaves are assembled here,
+     because how many pages a leaf carries depends on the screen. */
+  var faces = [].slice.call(book.querySelectorAll('.bh-face'));
+  if (faces.length < 3) return;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var TURNS = N - 1;              // p runs 0 → TURNS; the last spread stays open
+  var leaves = [], N = 0, TURNS = 0;
+  var built = null;               // which mode the current leaves were built for
+
+  /* A sheet of paper has two sides, so on a spread each leaf carries two
+     pages. One page at a time, it carries one — otherwise every verso is
+     face-down at every resting position and half the book is unreadable
+     on a phone, which is exactly what was happening. */
+  function build(one) {
+    if (built === one) return;
+    built = one;
+
+    faces.forEach(function (f) { f.classList.remove('bh-front', 'bh-back'); });
+    while (book.firstChild) book.removeChild(book.firstChild);
+
+    var per = one ? 1 : 2;
+    for (var i = 0; i < faces.length; i += per) {
+      var leaf = document.createElement('div');
+      leaf.className = 'bh-leaf';
+      faces[i].classList.add('bh-front');
+      leaf.appendChild(faces[i]);
+      if (!one && faces[i + 1]) {
+        faces[i + 1].classList.add('bh-back');
+        leaf.appendChild(faces[i + 1]);
+      }
+      book.appendChild(leaf);
+    }
+
+    leaves = [].slice.call(book.querySelectorAll('.bh-leaf'));
+    N = leaves.length;
+    TURNS = N - 1;                // the last page stays open, never shuts
+    leaves.forEach(function (l) { l._t = null; });
+    render._s = null;
+  }
   var LEAD = 0.24;                // a beat on the closed cover before it lifts
   var TAIL = 0.45;                // and a beat on the last spread before release
   var REST = 0.19;                // share of each leaf's range spent lying flat
 
   sec.classList.add('bh-on');
 
-  /* ---- geometry -------------------------------------------------- */
+  /* ---- geometry --------------------------------------------------
+     ONE source of truth. The stylesheet used to decide single-page vs
+     spread with its own `@media (max-width:900px)` while this file
+     decided it again from window.innerWidth. On a phone whose layout
+     viewport reports wider than it really is, both took the desktop
+     path: a two-page book wider than the screen, shifted half a page
+     left, so what you saw was one blank half of a page. Now JS
+     measures, JS decides, and CSS only reacts to the class it sets.
+
+     Everything is in measured pixels rather than vh, because iOS
+     counts the area behind the address bar in `100vh` — sizing the
+     stage that way centres the book in a box taller than the screen
+     and posts the bottom third of it off the display.
+     ------------------------------------------------------------------ */
+
+  function viewport() {
+    var vv = window.visualViewport;
+    return {
+      w: Math.round((vv && vv.width) || window.innerWidth || document.documentElement.clientWidth),
+      h: Math.round((vv && vv.height) || window.innerHeight || document.documentElement.clientHeight)
+    };
+  }
+
+  var single = false;
 
   function measure() {
-    var vh = window.innerHeight;
-    var vw = window.innerWidth;
+    var v = viewport();
+    var nav = document.querySelector('.nav');
+    var navH = nav ? Math.round(nav.getBoundingClientRect().height) : 92;
+    var boxW = v.w;
+    var boxH = Math.max(320, v.h - navH);
 
-    /* The page has to clear the sticky nav and leave room for the
-       scroll cue, so it is sized against the viewport height first and
-       only then capped by width. */
-    var pw = vw > 900
-      ? Math.min(vw * 0.42, (vh - 150) / 1.17)
-      : Math.min(vw * 0.9, 470, (vh - 130) / 1.62);
+    /* A spread only earns its place when each page is still wide enough
+       to hold a line of type. Below that it is one page at a time —
+       decided from the space actually available, not from a breakpoint. */
+    single = boxW < 900 || boxW / 2 < 330;
 
-    var ph = vw > 900 ? pw * 1.17 : Math.min(pw * 1.62, vh - 130);
+    var ratio = single ? 1.52 : 1.17;
+    var pw = single ? boxW * 0.9 : boxW * 0.44;
+    if (pw > boxH / ratio) pw = boxH / ratio;          // must fit vertically
+    if (!single && pw * 2 > boxW - 40) pw = (boxW - 40) / 2;
+    if (single && pw > 470) pw = 470;
+    pw = Math.max(200, Math.floor(pw));
+    var ph = Math.floor(pw * ratio);
 
+    build(single);
+    sec.classList.toggle('bh-single', single);
     sec.style.setProperty('--bh-pw', pw + 'px');
     sec.style.setProperty('--bh-ph', ph + 'px');
-    sec.style.setProperty('--bh-u', (pw / (vw > 900 ? 100 : 80)) + 'px');
+    sec.style.setProperty('--bh-u', (pw / (single ? 82 : 100)) + 'px');
+    sec.style.setProperty('--bh-vh', v.h + 'px');
+    sec.style.setProperty('--bh-nav', navH + 'px');
 
-    /* One viewport for the sticky stage, plus the travel the turns need.
+    /* One screen for the pinned stage, plus the travel the turns need.
        A turn costs less on a phone: the same gesture covers less of the
        page, and a hero that takes four thumb-flicks to get past is a
        hero people leave. */
-    single = vw <= 900;
-    STEP = single ? 76 : 100;
-    sec.style.height = (100 + (TURNS + LEAD + TAIL) * STEP) + 'vh';
+    /* One page at a time means more turns, so each one costs less
+       scroll — otherwise the hero takes half a dozen thumb-flicks to
+       get past, and a hero like that is one people leave. */
+    STEP = single ? v.h * 0.62 : v.h;
+    sec.style.height = Math.round(v.h + (TURNS + LEAD + TAIL) * STEP) + 'px';
   }
 
   /* ---- scroll → p ------------------------------------------------ */
@@ -91,9 +163,6 @@
   }
 
   var target = 0, current = 0, STEP = 100;
-  /* Below 900px the book shows one page at a time and the leaf already
-     fills it, so there is no second half to slide off-centre for. */
-  var single = false;
 
   function read() {
     var box = sec.getBoundingClientRect();
@@ -188,12 +257,12 @@
      and only once — a note that rewrote itself on every pass would be
      a tic rather than a flourish. */
   function markLive(spread) {
-    var faces = [];
-    if (spread > 0) {
-      if (leaves[spread - 1]) faces.push(leaves[spread - 1].querySelector('.bh-face.bh-back'));
-    }
-    if (leaves[spread]) faces.push(leaves[spread].querySelector('.bh-face.bh-front'));
-    faces.forEach(function (f) { if (f) f.classList.add('bh-live'); });
+    [leaves[spread - 1], leaves[spread]].forEach(function (leaf) {
+      if (!leaf) return;
+      [].forEach.call(leaf.querySelectorAll('.bh-face'), function (f) {
+        f.classList.add('bh-live');
+      });
+    });
   }
 
   /* ---- wiring ---------------------------------------------------- */

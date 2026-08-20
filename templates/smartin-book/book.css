@@ -79,7 +79,8 @@ a{color:inherit}
 /* ---------------- stage ---------------- */
 #scroller{position:relative;z-index:1}
 #stage{
-  position:fixed;inset:0;z-index:2;display:grid;place-items:center;
+  position:fixed;top:0;left:0;right:0;z-index:2;display:grid;place-items:center;
+  height:calc(var(--vh, 1vh) * 100);
   perspective:2600px;perspective-origin:50% 46%;pointer-events:none;
 }
 #book{
