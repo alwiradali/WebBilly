@@ -61,8 +61,15 @@
 
 /* The section is tall; the stage inside it sticks for the whole of
    that height, which is what buys the scroll range for the turns. */
+/* Height comes from --bh-vh, which JS measures off visualViewport.
+   `100vh` on iOS counts the area behind the address bar, so the book
+   ends up centred in a box taller than the screen and its bottom third
+   is posted off the display. */
 .bh-on .bh-stage{
-  position:sticky;top:0;height:100vh;
+  position:sticky;top:0;height:var(--bh-vh,100vh);
+  /* the site's nav is sticky and opaque, so the book has to be centred
+     in the space below it, not in the whole screen */
+  padding-top:var(--bh-nav,92px);
   display:grid;place-items:center;
   perspective:2400px;perspective-origin:50% 47%;
   pointer-events:none;
@@ -71,7 +78,8 @@
 .bh-on .bh-book{
   position:relative;margin:0;padding:0;max-width:none;pointer-events:auto;
   width:calc(var(--bh-pw) * 2);height:var(--bh-ph);
-  transform-style:preserve-3d;will-change:transform;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+  will-change:transform;
 }
 
 /* page block: thickens on the left as it thins on the right */
@@ -96,11 +104,14 @@
 
 .bh-on .bh-leaf{
   position:absolute;top:0;right:0;width:50%;height:100%;
-  transform-origin:left center;transform-style:preserve-3d;will-change:transform;
+  transform-origin:left center;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+  will-change:transform;
 }
 
 .bh-on .bh-face{
-  position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;
+  position:absolute;inset:0;overflow:hidden;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
   border:none;border-radius:0;margin:0;
   box-shadow:inset 0 0 0 1px rgba(4,50,92,.05);
   display:flex;flex-direction:column;justify-content:center;
@@ -289,18 +300,25 @@
 /* ==================================================================
    MOBILE — one page at a time, not a shrunken spread
    ================================================================== */
-@media (max-width:900px){
-  .bh-on .bh-stage{perspective:1500px}
-  .bh-on .bh-book{width:var(--bh-pw)}
-  .bh-on .bh-leaf{width:100%}
-  .bh-on .bh-book::before,.bh-on .bh-book::after{display:none}
-  .bh-on .bh-face{padding:calc(var(--bh-u)*6) calc(var(--bh-u)*6.4) calc(var(--bh-u)*9.6)}
-  .bh-cta{flex-direction:column;align-items:stretch}
-  .bh-cta .btn{justify-content:center}
-  /* the cover already says "Scroll to open" — a second cue below it is
-     just noise on a screen this size, and there is no room for it */
-  .bh-on .bh-hint{display:none}
-}
+/* ==================================================================
+   SINGLE PAGE — one page at a time, not a shrunken spread.
+   `.bh-single` is set by book-hero.js from the space it actually
+   measured. It is deliberately NOT a media query: when the stylesheet
+   and the script each decided this for themselves, a phone reporting a
+   wider layout viewport than its screen could put CSS on one path and
+   JS on the other, and the result was half a page of blank paper.
+   ================================================================== */
+.bh-on.bh-single .bh-stage{perspective:1500px}
+.bh-on.bh-single .bh-book{width:var(--bh-pw)}
+.bh-on.bh-single .bh-leaf{width:100%}
+.bh-on.bh-single .bh-book::before,
+.bh-on.bh-single .bh-book::after{display:none}
+.bh-on.bh-single .bh-face{padding:calc(var(--bh-u)*6) calc(var(--bh-u)*6.4) calc(var(--bh-u)*9.6)}
+.bh-single .bh-cta{flex-direction:column;align-items:stretch}
+.bh-single .bh-cta .btn{justify-content:center}
+/* the cover already says "Scroll to open"; a second cue below it is
+   noise at this size, and there is no room for it anyway */
+.bh-on.bh-single .bh-hint{display:none}
 
 @media (prefers-reduced-motion:reduce){
   .bh-note,.bh-ring .fg{transition:none!important;animation:none!important}
