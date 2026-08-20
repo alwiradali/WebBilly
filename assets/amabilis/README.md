@@ -86,17 +86,42 @@ A portrait of the baker is the other useful addition — save it as
 
 ---
 
-## 3. Fonts
+## 3. Stock imagery and film
 
-`fonts/*.woff2` are the latin subsets of Playfair Display and Inter (Google
-Fonts, SIL Open Font Licence), self-hosted so the critical path never leaves
-this origin — the page makes no third-party requests at all. They are variable
-files, so one download covers both weights. `@font-face` rules live at the top
-of `templates/amabilis/amabilis.css`.
+`stock/` is **not her work** and is never presented as it. Everything in there
+is Pexels-licensed (free for commercial use, modification allowed, no
+attribution required) and is used for two jobs only:
+
+- **`hero-drip.mp4` / `.webm` / `-poster.webp`** — the full-bleed hero film: a
+  white cake having its drip poured on a turntable. Trimmed to a 7.3s loop with
+  the tail cross-faded back over the head so it does not visibly reset. Swap the
+  three paths in `data.js` -> `hero` for one of her own reels and the hero uses
+  it instead, no markup change.
+- **atmosphere and process stills** — the ingredients band, and the three middle
+  frames of the craft sequence (`The build`, `The piping`, `The finish`). She has
+  no photographs of her own kitchen mid-bake yet; the first and last frames of
+  that sequence are her actual cakes.
+
+Every stock surface on the page carries a visible "stock photography" flag.
+Replace `stock/*.webp` with her own kitchen and delete the flag from the
+`#ingredients` section in `index.html`.
+
+Rebuild or re-source with `scripts/amabilis-assets.sh` for her own media; the
+stock files were fetched directly from the Pexels CDN.
 
 ---
 
-## 4. Rebuilding from the source clips
+## 4. Fonts
+
+`fonts/*.woff2` are the latin subsets of Fraunces (display) and Inter (body),
+both Google Fonts under the SIL Open Font Licence, self-hosted so the critical
+path never leaves this origin — the page makes no third-party requests at all.
+They are variable files, so one download covers the whole weight range.
+`@font-face` rules live at the top of `templates/amabilis/amabilis.css`.
+
+---
+
+## 5. Rebuilding from the source clips
 
 ```bash
 FF=/path/to/ffmpeg SRC=/folder/holding/the/five/mp4s bash scripts/amabilis-assets.sh
@@ -106,7 +131,7 @@ The script documents where the watermark sits and why each crop is where it is.
 
 ---
 
-## 5. What is real and what is placeholder
+## 6. What is real and what is placeholder
 
 Real, taken from the studio's own price list, order card and policy card:
 
@@ -120,6 +145,7 @@ Placeholder, and flagged as such on the page itself:
 
 - the four **cake pricing tiers** (£45 / £65 / £85 / £120) — `data.js` → `pricing`
 - the four **reviews** — `data.js` → `testimonials`
+- the **hero film** and everything in `stock/` — `data.js` → `hero`, `atmosphere`
 - per-cake `serves` and `from` figures on the showcase cards — `data.js` → `cakes`
 
 Set `pricingIsDemo` / `testimonialsAreDemo` to `false` in `data.js` once real

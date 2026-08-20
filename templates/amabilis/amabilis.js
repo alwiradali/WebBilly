@@ -97,25 +97,42 @@
     $("[data-feat-occ]").textContent = f.occasion;
   }
 
-  var CRAFT_SHOTS = ["bloom-detail", "texture-build", "texture-pipe", "texture-finish", "heirloom"];
-  var CRAFT_ALT = [
-    "A finished blush cake crowned with fresh roses and hydrangea",
-    "Macro view of combed buttercream ruffles set with sugar pearls",
-    "Macro view of piped shell borders in aubergine buttercream, silver pearls between them",
-    "Macro view of merlot buttercream shells finished with gilded pearls",
-    "A finished blush cake boxed under clear organza and tied with ribbon, ready for collection"
+  /* The first and last frames are her own work. The three in between are stock
+     process shots — she has no photographs of her own kitchen mid-bake yet, and
+     they are listed as replaceable in assets/amabilis/README.md. */
+  var CRAFT_SHOTS = [
+    { src: "../../assets/amabilis/cakes/bloom-detail.webp",
+      alt: "A finished blush cake crowned with fresh roses and hydrangea" },
+    { src: "../../assets/amabilis/stock/mix-cocoa.webp",
+      alt: "Cocoa powder and flour sifted together in a glass bowl beside cracked eggs" },
+    { src: "../../assets/amabilis/stock/pipe-kisses.webp",
+      alt: "A piping bag setting rows of buttercream kisses onto a cake" },
+    { src: "../../assets/amabilis/stock/drip-pour.webp",
+      alt: "Ganache being poured over the edge of a pink buttercream cake" },
+    { src: "../../assets/amabilis/cakes/heirloom.webp",
+      alt: "A finished blush cake boxed under clear organza and tied with ribbon" }
   ];
   function renderCraft () {
     var stage = $("[data-craft-stage]");
     if (!stage) return;
-    CRAFT_SHOTS.forEach(function (slug, i) {
+    CRAFT_SHOTS.forEach(function (shot, i) {
       var img = el("img");
-      img.src = "../../assets/amabilis/cakes/" + slug + ".webp";
-      img.alt = CRAFT_ALT[i];
-      img.loading = "lazy";
-      img.decoding = "async";
+      img.src = shot.src; img.alt = shot.alt;
+      img.loading = "lazy"; img.decoding = "async";
       if (i === 0) img.className = "on";
       stage.appendChild(img);
+    });
+  }
+
+  function renderAtmosphere () {
+    var box = $("[data-atmos]");
+    if (!box || !D.atmosphere) return;
+    D.atmosphere.forEach(function (a) {
+      var f = el("figure", "atmos-i");
+      f.innerHTML = '<img src="' + esc(a.img) + '" alt="' + esc(a.alt) +
+                    '" loading="lazy" decoding="async">' +
+                    "<figcaption>" + esc(a.cap) + "</figcaption>";
+      box.appendChild(f);
     });
   }
 
@@ -395,7 +412,7 @@
     var last = 0;
 
     /* dark chapters: the nav inverts while one is behind it */
-    var darks = $$(".dark");
+    var darks = $$('.dark, [data-gl="dark"]');
     function tick () {
       var y = scrollY;
       if (nav) {
@@ -465,82 +482,104 @@
   }
 
   /* =========================================================================
-     5. HERO BACKDROP — a slow buttercream fold, in the brand's own pinks
+     5. THE CHOCOLATE DRIP
+     A band of couverture poured over the edge of the chapter above, running
+     down into the one below. The edge is generated per instance so no two
+     bands repeat, and a few beads let go and fall.
      ====================================================================== */
-  function heroGL () {
-    var cv = $(".hero-gl");
-    if (!cv || reduce) return;
-    var gl = cv.getContext("webgl2", { antialias: false, alpha: false, powerPreference: "low-power" });
-    if (!gl) return;                                   /* the CSS wash stands in */
+  function rng (seed) {                       /* mulberry32 — small and stable */
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
 
-    var vs = "#version 300 es\nin vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
-    var fs = "#version 300 es\nprecision highp float;out vec4 o;uniform vec2 r;uniform float t;uniform vec2 m;" +
-      "float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}" +
-      "float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);" +
-      "return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}" +
-      "float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n(p);p*=2.03;a*=.5;}return s;}" +
-      "void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=uv;p.x*=r.x/r.y;" +
-      "vec2 q=vec2(fbm(p*1.6+t*.030),fbm(p*1.6+vec2(5.2,1.3)+t*.024));" +
-      "vec2 s=vec2(fbm(p*1.9+q*1.7+vec2(1.7,9.2)+t*.020),fbm(p*1.9+q*1.7+vec2(8.3,2.8)-t*.017));" +
-      "float f=fbm(p*1.5+s*1.4);" +
-      "vec3 paper=vec3(.969,.945,.941),blush=vec3(.925,.847,.867),rose=vec3(.855,.694,.741);" +
-      "vec3 c=mix(paper,blush,smoothstep(.32,.78,f));" +
-      "c=mix(c,rose,smoothstep(.55,.95,f)*.55);" +
-      "float d=length((uv-m)*vec2(r.x/r.y,1.));" +
-      "c=mix(c,vec3(1.,.98,.975),smoothstep(.42,0.,d)*.16);" +
-      "c=mix(c,paper,smoothstep(.25,.95,length(uv-.5)*1.25)*.55);" +
-      "o=vec4(c,1.);}";
-
-    function sh (type, src) {
-      var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+  function dripPath (seed, W, H) {
+    var r = rng(seed), rest = H * 0.13, x = 0, pts = [];
+    while (x < W) {
+      /* slim segments, or the runs read as blobs rather than drips */
+      var seg = 13 + r() * 26;
+      var deep = r() < 0.30;
+      pts.push({ x: Math.min(x + seg / 2, W), w: seg,
+                 d: rest + (deep ? H * (0.30 + r() * 0.62) : H * (0.02 + r() * 0.13)) });
+      x += seg;
     }
-    var a = sh(gl.VERTEX_SHADER, vs), b = sh(gl.FRAGMENT_SHADER, fs);
-    if (!a || !b) return;
-    var pr = gl.createProgram();
-    gl.attachShader(pr, a); gl.attachShader(pr, b); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
-    gl.useProgram(pr);
+    var d = "M0," + rest.toFixed(1), prev = 0;
+    pts.forEach(function (p) {
+      var l = Math.max(0, p.x - p.w / 2), rr = Math.min(W, p.x + p.w / 2);
+      d += " C" + ((prev + l) / 2).toFixed(1) + "," + rest.toFixed(1) +
+           " " + l.toFixed(1) + "," + p.d.toFixed(1) +
+           " " + p.x.toFixed(1) + "," + p.d.toFixed(1);
+      d += " C" + rr.toFixed(1) + "," + p.d.toFixed(1) +
+           " " + rr.toFixed(1) + "," + rest.toFixed(1) +
+           " " + Math.min(W, rr + 2).toFixed(1) + "," + rest.toFixed(1);
+      prev = rr;
+    });
+    return d + " L" + W + ",0 L0,0 Z";
+  }
 
-    var buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    var loc = gl.getAttribLocation(pr, "p");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  function drips () {
+    var W = 1000, H = 100;
+    $$("[data-drip]").forEach(function (node, i) {
+      var cream = node.classList.contains("drip--cream");
+      var seed = (parseInt(node.getAttribute("data-drip"), 10) || (i + 7) * 131) | 0;
+      var id = "dg" + i;                       /* gradient ids must not collide */
+      var r = rng(seed + 99);
+      var stops = cream
+        ? '<stop offset="0" stop-color="#fbf3e6"/><stop offset=".6" stop-color="#f6e7cf"/>' +
+          '<stop offset="1" stop-color="#e8d3b4"/>'
+        : '<stop offset="0" stop-color="#3f2318"/><stop offset=".55" stop-color="#2e1a12"/>' +
+          '<stop offset="1" stop-color="#4a2a1c"/>';
+      var beads = "";
+      for (var b = 0; b < 3; b++) {
+        beads += '<circle class="bead" fill="url(#' + id + ')" cx="' +
+                 (90 + r() * 820).toFixed(0) + '" cy="' + (H * 0.4).toFixed(0) +
+                 '" r="' + (4 + r() * 3.4).toFixed(1) + '"/>';
+      }
+      node.innerHTML =
+        '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+          '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' + stops +
+          "</linearGradient></defs>" +
+          '<g class="runs">' +
+            '<path fill="url(#' + id + ')" d="' + dripPath(seed, W, H) + '"/>' +
+            '<path class="sheen" d="' + dripPath(seed + 13, W, H * 0.42) + '"/>' +
+          "</g>" + beads +
+        "</svg>";
+    });
+  }
 
-    var uR = gl.getUniformLocation(pr, "r"), uT = gl.getUniformLocation(pr, "t"),
-        uM = gl.getUniformLocation(pr, "m");
-    var mx = 0.62, my = 0.35, tx = mx, ty = my;
+  /* =========================================================================
+     5b. HERO FILM
+     Muted, looping, and only ever playing while it is on screen.
+     ====================================================================== */
+  function heroFilm () {
+    var wrap = $(".hero-video");
+    if (!wrap) return;
+    var v = $("video", wrap);
+    if (!v) return;
+    if (reduce) { v.remove(); return; }       /* the poster frame stands alone */
 
-    function size () {
-      var dpr = Math.min(devicePixelRatio || 1, touch ? 1 : 1.5);
-      var w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr);
-      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
-      gl.uniform2f(uR, cv.width, cv.height);
+    var sources = $$("source[data-src]", v);
+    var loaded = false;
+    function load () {
+      if (loaded) return;
+      loaded = true;
+      sources.forEach(function (s) { s.src = s.getAttribute("data-src"); });
+      v.load();
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+      v.addEventListener("playing", function () { v.classList.add("on"); }, { once: true });
     }
-    addEventListener("resize", size);
-    addEventListener("pointermove", function (e) {
-      tx = e.clientX / innerWidth; ty = 1 - e.clientY / innerHeight;
-    }, { passive: true });
-
-    var live = true;
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (r) { live = r[0].isIntersecting; })
-        .observe($(".hero"));
-    }
-    cv.style.transition = "opacity 1.4s cubic-bezier(.16,1,.3,1)";
-    var t0 = performance.now();
-    (function frame (now) {
-      requestAnimationFrame(frame);
-      if (!live) return;
-      size();
-      mx += (tx - mx) * 0.045; my += (ty - my) * 0.045;
-      gl.uniform2f(uM, mx, my);
-      gl.uniform1f(uT, (now - t0) / 1000);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    })(t0);
-    requestAnimationFrame(function () { cv.style.opacity = "1"; });
+      new IntersectionObserver(function (rows) {
+        rows.forEach(function (r) {
+          if (r.isIntersecting) { load(); if (v.paused) { var q = v.play(); if (q && q.catch) q.catch(function () {}); } }
+          else if (!v.paused) v.pause();
+        });
+      }, { threshold: 0.05 }).observe(wrap);
+    } else load();
   }
 
   /* =========================================================================
@@ -809,7 +848,13 @@
     reels();
     voices();
     ScrollTrigger.refresh();
-    addEventListener("load", function () { ScrollTrigger.refresh(); });
+    ScrollTrigger.addEventListener("refresh", function () {
+      if (window.__gl) window.__gl.refresh();
+    });
+    addEventListener("load", function () {
+      ScrollTrigger.refresh();
+      if (window.__gl) window.__gl.refresh();
+    });
   }
 
   /* =========================================================================
@@ -911,6 +956,7 @@
     renderCakes();
     renderFeature();
     renderCraft();
+    renderAtmosphere();
     renderReels();
     renderServices();
     renderBoxes();
@@ -925,10 +971,12 @@
     splitLines();
     splitWords();
 
+    drips();
     cursor();
     magnetic();
     chrome();
-    heroGL();
+    heroFilm();
+    if (window.AmabilisGL) window.__gl = window.AmabilisGL.start();
 
     if (animate) motion(); else staticMode();
   }

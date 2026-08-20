@@ -17,10 +17,10 @@
 <meta property="og:image" content="https://billydigitals.com/assets/amabilis/cakes/bloom.webp">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/amabilis/fonts/playfair-latin.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/amabilis/fonts/fraunces-latin.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../assets/amabilis/fonts/inter-latin.woff2">
 <link rel="stylesheet" href="amabilis.css">
-<link rel="preload" as="image" href="../../assets/amabilis/cakes/bloom.webp" fetchpriority="high">
+<link rel="preload" as="image" href="../../assets/amabilis/stock/hero-drip-poster.webp" fetchpriority="high">
 
 <script type="application/ld+json">
 {
@@ -128,8 +128,16 @@
 </section>
 
 <!-- ── hero ─────────────────────────────────────────────────────────────── -->
-<section class="hero" aria-labelledby="h-hero">
-  <canvas class="hero-gl" aria-hidden="true"></canvas>
+<section class="hero hero--film" data-gl="dark" aria-labelledby="h-hero">
+  <div class="hero-video">
+    <img class="poster" src="../../assets/amabilis/stock/hero-drip-poster.webp" alt="" aria-hidden="true" fetchpriority="high">
+    <video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"
+           poster="../../assets/amabilis/stock/hero-drip-poster.webp">
+      <source data-src="../../assets/amabilis/stock/hero-drip.mp4" type="video/mp4">
+      <source data-src="../../assets/amabilis/stock/hero-drip.webm" type="video/webm">
+    </video>
+    <span class="hero-scrim" aria-hidden="true"></span>
+  </div>
   <div class="hero-wash" aria-hidden="true"></div>
 
   <div class="hero-inner">
@@ -137,13 +145,13 @@
       <p class="eyebrow">Basingstoke · Collection only · @bakedwithamabilis</p>
       <h1 class="d1" id="h-hero">
         <span class="ln"><span>Made slowly,</span></span>
-        <span class="ln ind"><span class="it">finished</span></span>
-        <span class="ln"><span>with love.</span></span>
+        <span class="ln ind"><span>finished</span></span>
+        <span class="ln"><span>with <em class="hl-caramel">love</em>.</span></span>
       </h1>
       <p class="lede hero-sub">A one-woman cake studio. Celebration cakes, brownies and
         cookies — piped, sculpted and boxed by hand, for collection in Basingstoke.</p>
       <div class="hero-actions">
-        <a class="btn magnetic" href="#order"><span>Request a cake</span><span class="arw" aria-hidden="true">→</span></a>
+        <a class="btn btn--light magnetic" href="#order"><span>Request a cake</span><span class="arw" aria-hidden="true">→</span></a>
         <a class="btn btn--ghost magnetic" href="#cakes"><span>See the work</span></a>
       </div>
       <div class="hero-meta">
@@ -152,30 +160,16 @@
         <span>Boxes from <b>£15</b></span>
       </div>
     </div>
-
-    <figure class="hero-plate">
-      <div class="hero-frame">
-        <img src="../../assets/amabilis/cakes/bloom.webp" width="660" height="1240"
-             alt="Tall blush buttercream cake with combed ribbon ruffles and a crown of fresh pink roses, hydrangea and an orchid"
-             fetchpriority="high" decoding="async">
-      </div>
-  <div class="seal" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          <defs><path id="sealpath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
-          <g class="ring"><text><textPath href="#sealpath" startOffset="0" textLength="276" lengthAdjust="spacing">Bakedwith Amabilis · with love · </textPath></text></g>
-          <circle class="pip" cx="60" cy="60" r="2.6"/>
-        </svg>
-      </div>
-      <figcaption><span>Bloom</span><span>Birthday · Basingstoke</span></figcaption>
-    </figure>
   </div>
 
-
+  <p class="hero-badge">Sound off · film</p>
   <div class="cue"><span>Scroll</span><i></i></div>
 </section>
 
+<div class="drip" data-drip="17" aria-hidden="true"></div>
+
 <!-- ── intro ────────────────────────────────────────────────────────────── -->
-<section class="sec intro" id="story" aria-labelledby="h-story">
+<section class="sec intro" id="story" data-gl="paper" aria-labelledby="h-story">
   <div class="wrap intro-grid">
     <div class="intro-side">
       <p class="eyebrow eyebrow--rule" id="h-story">The studio</p>
@@ -203,12 +197,12 @@
 </div>
 
 <!-- ── signature ────────────────────────────────────────────────────────── -->
-<section class="sig" id="cakes" aria-labelledby="h-cakes">
+<section class="sig" id="cakes" data-gl="paper" aria-labelledby="h-cakes">
   <div class="sig-head">
     <div class="wrapx head">
       <div>
         <p class="eyebrow eyebrow--rule">Signature creations</p>
-        <h2 class="d2" id="h-cakes" data-split style="margin-top:.3em">Five cakes, and<br>who they were for.</h2>
+        <h2 class="d2" id="h-cakes" data-split style="margin-top:.3em">Five cakes, and<br><em class="hl-rose">who</em> they were for.</h2>
       </div>
       <div>
         <p class="body" data-fade>Each one started as a message — a date, a name, a colour,
@@ -226,13 +220,15 @@
   </div>
 </section>
 
+<div class="drip" data-drip="41" aria-hidden="true"></div>
+
 <!-- ── dark chapter: anatomy ────────────────────────────────────────────── -->
-<section class="sec dark feat" id="detail" aria-labelledby="h-detail">
+<section class="sec dark feat" id="detail" data-gl="dark" aria-labelledby="h-detail">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">Anatomy</p>
-        <h2 class="d2" id="h-detail" data-split style="margin-top:.3em">Close enough<br>to see the work.</h2>
+        <h2 class="d2" id="h-detail" data-split style="margin-top:.3em">Close enough<br>to <em class="hl-caramel">see the work</em>.</h2>
       </div>
       <p class="body" data-fade>Three of them, in detail — what the finish actually is,
         who it feeds, and where the price begins.</p>
@@ -249,7 +245,7 @@
 </section>
 
 <!-- ── craft ────────────────────────────────────────────────────────────── -->
-<section class="dark craft" id="craft" aria-labelledby="h-craft">
+<section class="dark craft" id="craft" data-gl="dark" aria-labelledby="h-craft">
   <div class="craft-pin">
     <div class="craft-sticky">
       <div class="craft-inner">
@@ -288,11 +284,11 @@
 </section>
 
 <!-- ── reels ────────────────────────────────────────────────────────────── -->
-<section class="sec reels" id="reels" aria-labelledby="h-reels">
+<section class="sec reels" id="reels" data-gl="dark" aria-labelledby="h-reels">
   <div class="wrap head">
     <div>
       <p class="eyebrow eyebrow--rule">From the feed</p>
-      <h2 class="d2" id="h-reels" data-split style="margin-top:.3em">Cakes, moving.</h2>
+      <h2 class="d2" id="h-reels" data-split style="margin-top:.3em">Cakes, <em class="hl-rose">moving</em>.</h2>
     </div>
     <p class="body" data-fade>Her own films, as posted. Silent by default — tap or hover to play.</p>
   </div>
@@ -302,8 +298,10 @@
   </div>
 </section>
 
+<div class="drip drip--cream" data-drip="73" aria-hidden="true"></div>
+
 <!-- ── about ────────────────────────────────────────────────────────────── -->
-<section class="sec about" id="about" aria-labelledby="h-about">
+<section class="sec about" id="about" data-gl="paper" aria-labelledby="h-about">
   <div class="wrap about-grid">
     <figure class="about-fig" data-fade-x>
       <div class="frame">
@@ -332,20 +330,39 @@
   </div>
 </section>
 
-<section class="pull" aria-label="In her words">
+<section class="pull" data-gl="paper" aria-label="In her words">
   <div class="wrap">
     <blockquote data-words>“If you need a flavour, quantity, or last-minute order that isn't
       listed, please contact me, and I will do my best to accommodate.”</blockquote>
   </div>
 </section>
 
+<!-- ── atmosphere (stock) ───────────────────────────────────────────────── -->
+<section class="sec atmos" id="ingredients" data-gl="paper" aria-labelledby="h-atmos">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow eyebrow--rule">The ingredients</p>
+        <h2 class="d2" id="h-atmos" data-split style="margin-top:.3em">Flour, butter,<br>sugar, <em class="hl-choc">time</em>.</h2>
+      </div>
+      <div style="display:grid;gap:16px;justify-items:start">
+        <p class="body" data-fade>Nothing here is bought in and dressed up. Sponges baked
+          close to the day, buttercream whipped and coloured by hand, chocolate tempered and
+          poured while it is still warm enough to run.</p>
+        <span class="demo-flag" data-demo-flag>Stock photography — swap for her own kitchen</span>
+      </div>
+    </div>
+    <div class="atmos-grid" data-atmos></div>
+  </div>
+</section>
+
 <!-- ── services ─────────────────────────────────────────────────────────── -->
-<section class="sec" id="services" aria-labelledby="h-services">
+<section class="sec" id="services" data-gl="paper" aria-labelledby="h-services">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">What she makes</p>
-        <h2 class="d2" id="h-services" data-split style="margin-top:.3em">Ask for the thing<br>you actually want.</h2>
+        <h2 class="d2" id="h-services" data-split style="margin-top:.3em">Ask for the thing<br>you <em class="hl-berry">actually</em> want.</h2>
       </div>
       <p class="body" data-fade>If it isn't on this list, ask anyway. Off-menu flavours,
         unusual quantities and short-notice orders are all worth a message.</p>
@@ -356,12 +373,12 @@
 <div class="svc-peek" aria-hidden="true"><img src="" alt=""></div>
 
 <!-- ── boxes ────────────────────────────────────────────────────────────── -->
-<section class="sec boxes" id="menu" aria-labelledby="h-menu">
+<section class="sec boxes" id="menu" data-gl="blush" aria-labelledby="h-menu">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">The price list</p>
-        <h2 class="d2" id="h-menu" data-split style="margin-top:.3em">Brownies and cookies,<br>by the box.</h2>
+        <h2 class="d2" id="h-menu" data-split style="margin-top:.3em"><em class="hl-choc">Brownies</em> and cookies,<br>by the box.</h2>
       </div>
       <p class="body" data-fade>Fixed prices, four sizes, eight flavours. Five days' notice.
         Mix flavours within a box — just say which when you order.</p>
@@ -371,12 +388,12 @@
 </section>
 
 <!-- ── pricing ──────────────────────────────────────────────────────────── -->
-<section class="sec" id="pricing" aria-labelledby="h-pricing">
+<section class="sec" id="pricing" data-gl="paper" aria-labelledby="h-pricing">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">Cakes</p>
-        <h2 class="d2" id="h-pricing" data-split style="margin-top:.3em">Where the work<br>starts.</h2>
+        <h2 class="d2" id="h-pricing" data-split style="margin-top:.3em">Where the <em class="hl-caramel">work</em><br>starts.</h2>
       </div>
       <div style="display:grid;gap:16px;justify-items:start">
         <p class="body" data-fade>Bespoke cakes are priced on the work involved — size, finish,
@@ -392,12 +409,12 @@
 </section>
 
 <!-- ── process ──────────────────────────────────────────────────────────── -->
-<section class="sec" id="process" aria-labelledby="h-process">
+<section class="sec" id="process" data-gl="paper" aria-labelledby="h-process">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">Ordering</p>
-        <h2 class="d2" id="h-process" data-split style="margin-top:.3em">Five steps, and<br>none of them hard.</h2>
+        <h2 class="d2" id="h-process" data-split style="margin-top:.3em">Five steps, and<br>none of them <em class="hl-pistachio">hard</em>.</h2>
       </div>
       <p class="body" data-fade>Orders are confirmed once payment is received in full, by bank
         transfer. Everything before that is just a conversation.</p>
@@ -406,12 +423,14 @@
   </div>
 </section>
 
+<div class="drip" data-drip="58" aria-hidden="true"></div>
+
 <!-- ── order ────────────────────────────────────────────────────────────── -->
-<section class="sec dark order" id="order" aria-labelledby="h-order">
+<section class="sec dark order" id="order" data-gl="dark" aria-labelledby="h-order">
   <div class="wrap order-grid">
     <div class="order-aside">
       <p class="eyebrow eyebrow--rule">Request a bespoke cake</p>
-      <h2 class="d3" id="h-order" data-split>Tell her what<br>you're dreaming of.</h2>
+      <h2 class="d3" id="h-order" data-split>Tell her what<br>you're <em class="hl-caramel">dreaming</em> of.</h2>
       <p class="body" data-fade>Fill this in and it writes your enquiry for you, in exactly the
         order she asks for it. Copy it across to Instagram and she'll come back with a quote.</p>
       <dl class="order-facts" data-fade>
@@ -471,7 +490,7 @@
 </section>
 
 <!-- ── voices ───────────────────────────────────────────────────────────── -->
-<section class="sec voices" aria-labelledby="h-voices">
+<section class="sec voices" data-gl="paper" aria-labelledby="h-voices">
   <div class="wrap">
     <div class="head">
       <div>
@@ -485,12 +504,12 @@
 </section>
 
 <!-- ── feed ─────────────────────────────────────────────────────────────── -->
-<section class="sec" id="feed" aria-labelledby="h-feed">
+<section class="sec" id="feed" data-gl="paper" aria-labelledby="h-feed">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">@bakedwithamabilis</p>
-        <h2 class="d2" id="h-feed" data-split style="margin-top:.3em">Follow<br>the journey.</h2>
+        <h2 class="d2" id="h-feed" data-split style="margin-top:.3em">Follow<br>the <em class="hl-rose">journey</em>.</h2>
       </div>
       <p class="body" data-fade>Every cake here has been posted, boxed and collected.
         New work goes up first on Instagram.</p>
@@ -503,7 +522,7 @@
 </section>
 
 <!-- ── fine print ───────────────────────────────────────────────────────── -->
-<section class="sec fine" id="terms" aria-labelledby="h-terms">
+<section class="sec fine" id="terms" data-gl="paper" aria-labelledby="h-terms">
   <div class="wrap fine-grid">
     <div>
       <p class="eyebrow eyebrow--rule" id="h-terms">The fine print</p>
@@ -516,11 +535,11 @@
 </section>
 
 <!-- ── cta ──────────────────────────────────────────────────────────────── -->
-<section class="sec cta" aria-labelledby="h-cta">
+<section class="sec cta" data-gl="blush" aria-labelledby="h-cta">
   <span class="cta-ring" aria-hidden="true"></span>
   <div class="wrap">
     <p class="eyebrow">Basingstoke · Collection only</p>
-    <h2 class="d2" id="h-cta" data-split>Let's make something<br>worth the wait.</h2>
+    <h2 class="d2" id="h-cta" data-split>Let's make something<br>worth the <em class="hl-merlot">wait</em>.</h2>
     <a class="btn magnetic" href="#order"><span>Request a cake</span><span class="arw" aria-hidden="true">→</span></a>
   </div>
 </section>
@@ -528,7 +547,7 @@
 </main>
 
 <!-- ── footer ───────────────────────────────────────────────────────────── -->
-<footer class="foot">
+<footer class="foot" data-gl="dark">
   <div class="wrap">
     <div class="foot-top">
       <div>
@@ -569,6 +588,7 @@
 <script src="../vendor/ScrollTrigger.min.js"></script>
 <script src="../vendor/lenis.min.js"></script>
 <script src="data.js"></script>
+<script src="amabilis-gl.js"></script>
 <script src="amabilis.js"></script>
 </body>
 </html>

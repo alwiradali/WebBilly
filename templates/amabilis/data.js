@@ -12,6 +12,7 @@ window.AMABILIS = (function () {
 
   var IMG = "../../assets/amabilis/cakes/";
   var VID = "../../assets/amabilis/video/";
+  var STK = "../../assets/amabilis/stock/";
 
   return {
 
@@ -162,6 +163,37 @@ window.AMABILIS = (function () {
         img: IMG + "peony.webp",
         note: "Marbled blush and cream buttercream under fresh peonies, with a " +
               "gold script topper." }
+    ],
+
+    /* -- stock imagery ----------------------------------------------------
+       NOT her work, and never presented as it. Free-licence photography from
+       Pexels (free for commercial use, no attribution required) used for
+       atmosphere and for the process steps she has no photographs of yet.
+       Swap any of these for her own and the page picks them up unchanged. */
+    stockIsPlaceholder: true,
+    hero: {
+      poster: STK + "hero-drip-poster.webp",
+      mp4:    STK + "hero-drip.mp4",
+      webm:   STK + "hero-drip.webm",
+      credit: "Stock film — Pexels"
+    },
+    atmosphere: [
+      { img: STK + "drip-pour.webp",   sm: STK + "drip-pour-sm.webp",
+        cap: "The drip",       alt: "Chocolate ganache being poured over the edge of a pink buttercream cake" },
+      { img: STK + "mix-cocoa.webp",   sm: STK + "mix-cocoa-sm.webp",
+        cap: "Cocoa & flour",  alt: "Cocoa powder and flour sifted together in a glass bowl beside cracked eggs" },
+      { img: STK + "pipe-kisses.webp", sm: STK + "pipe-kisses-sm.webp",
+        cap: "Piped by hand",  alt: "A piping bag setting rows of pink buttercream kisses onto a cake" },
+      { img: STK + "flatlay.webp",     sm: STK + "flatlay-sm.webp",
+        cap: "Everything out", alt: "Baking ingredients and utensils laid out on a table before a bake" },
+      { img: STK + "drip-white.webp",  sm: STK + "drip-white-sm.webp",
+        cap: "The pour",       alt: "Caramel sauce being poured over the top of a white iced cake" },
+      { img: STK + "pipe-hands.webp",  sm: STK + "pipe-hands-sm.webp",
+        cap: "Steady hands",   alt: "Hands holding a piping bag mid-pipe" },
+      { img: STK + "flour-dark.webp",  sm: STK + "flour-dark-sm.webp",
+        cap: "The mix",        alt: "Flour and cocoa being stirred in a dark bowl" },
+      { img: STK + "drip-dark.webp",   sm: STK + "drip-dark-sm.webp",
+        cap: "Couverture",     alt: "Dark chocolate running down the side of a naked layer cake" }
     ],
 
     /* -- boxes: the studio's own price list ------------------------------- */
