@@ -424,7 +424,16 @@
   onSpreadChange(Math.round(current));
 
   // scroll is sampled in the rAF loop above, so no scroll listener here
+  /* iOS collapses the URL bar as you scroll, which fires resize with a
+     slightly taller viewport; re-measuring then rewrites the scroller
+     height under the reader's thumb. Only a real change gets through. */
+  var lastW = window.innerWidth, lastH = window.innerHeight;
   window.addEventListener('resize', function () {
+    var vv = window.visualViewport;
+    var w = Math.round((vv && vv.width) || window.innerWidth);
+    var h = Math.round((vv && vv.height) || window.innerHeight);
+    if (w === lastW && Math.abs(h - lastH) < 150) return;
+    lastW = w; lastH = h;
     measure(); readScroll();
   }, { passive: true });
 
