@@ -44,10 +44,11 @@ Path is set in one place — `templates/amabilis/data.js` → `studio.logo`.
 
 ### What's here now
 
-`cakes/*.webp` are frames lifted from the studio's own five reels and cropped so
-the TikTok handle watermark falls outside the frame (see
-`scripts/amabilis-assets.sh` for how). They're 576px-wide source upscaled 2×, so
-they hold up at the sizes the site uses them and no larger.
+The page currently runs entirely on Pexels stock (see `stock/`) at the client's
+request — the reel frames in `cakes/` are no longer referenced but are kept so
+her real work can come back with a one-line change. Every cake slug in
+`templates/amabilis/data.js` maps to a stock file; replace the file (or repoint
+the path) with her photograph and that cake is hers again everywhere.
 
 ### Replacing them with the real photographs
 

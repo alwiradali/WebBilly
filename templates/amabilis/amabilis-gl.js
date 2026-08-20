@@ -25,9 +25,9 @@ window.AmabilisGL = (function () {
      base/accent drive the fold; pearl/alpha/size/fold drive the field. */
   var TONES = {
     paper: { base: [0.969, 0.945, 0.941], accent: [0.925, 0.847, 0.867],
-             pearl: [0.855, 0.706, 0.753], alpha: 0.085, size: 2.10, fold: 0.07 },
+             pearl: [0.816, 0.612, 0.522], alpha: 0.155, size: 2.30, fold: 0.10 },
     blush: { base: [0.925, 0.847, 0.867], accent: [0.980, 0.949, 0.953],
-             pearl: [1.000, 0.984, 0.976], alpha: 0.150, size: 1.80, fold: 0.09 },
+             pearl: [1.000, 0.976, 0.949], alpha: 0.230, size: 1.95, fold: 0.11 },
     dark:  { base: [0.071, 0.051, 0.051], accent: [0.180, 0.128, 0.235],
              pearl: [0.902, 0.875, 0.894], alpha: 0.280, size: 1.05, fold: 0.20 }
   };

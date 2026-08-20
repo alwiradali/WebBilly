@@ -101,16 +101,16 @@
      process shots — she has no photographs of her own kitchen mid-bake yet, and
      they are listed as replaceable in assets/amabilis/README.md. */
   var CRAFT_SHOTS = [
-    { src: "../../assets/amabilis/cakes/bloom-detail.webp",
-      alt: "A finished blush cake crowned with fresh roses and hydrangea" },
+    { src: "../../assets/amabilis/stock/craft-spatula.webp",
+      alt: "A hand smoothing pink buttercream onto a cake with a small spatula" },
     { src: "../../assets/amabilis/stock/mix-cocoa.webp",
       alt: "Cocoa powder and flour sifted together in a glass bowl beside cracked eggs" },
-    { src: "../../assets/amabilis/stock/pipe-kisses.webp",
-      alt: "A piping bag setting rows of buttercream kisses onto a cake" },
-    { src: "../../assets/amabilis/stock/drip-pour.webp",
-      alt: "Ganache being poured over the edge of a pink buttercream cake" },
-    { src: "../../assets/amabilis/cakes/heirloom.webp",
-      alt: "A finished blush cake boxed under clear organza and tied with ribbon" }
+    { src: "../../assets/amabilis/stock/craft-piping.webp",
+      alt: "Hands piping buttercream detail onto a tray of cakes" },
+    { src: "../../assets/amabilis/stock/craft-drip.webp",
+      alt: "Chocolate being piped in drips down the side of a pink cake" },
+    { src: "../../assets/amabilis/stock/cake-rose.webp",
+      alt: "A finished blush vintage-piped cake ready for collection" }
   ];
   function renderCraft () {
     var stage = $("[data-craft-stage]");
@@ -133,23 +133,6 @@
                     '" loading="lazy" decoding="async">' +
                     "<figcaption>" + esc(a.cap) + "</figcaption>";
       box.appendChild(f);
-    });
-  }
-
-  function renderReels () {
-    var row = $("[data-reels]");
-    if (!row) return;
-    D.cakes.filter(function (c) { return c.reel; }).forEach(function (c) {
-      var f = el("figure", "reel");
-      f.innerHTML =
-        '<img src="' + esc(c.poster) + '" alt="' + esc(c.alt) + '" loading="lazy" decoding="async">' +
-        '<video muted loop playsinline preload="none" poster="' + esc(c.poster) + '" aria-label="' + esc(c.name) + ' — film"></video>' +
-        '<span class="reel-sound" aria-hidden="true">MUTE</span>' +
-        '<figcaption><span class="reel-name">' + esc(c.name) + '</span><span>' + esc(c.occasion) + '</span></figcaption>';
-      var v = f.querySelector("video");
-      v.setAttribute("data-src", c.reel);
-      if (c.reelWebm) v.setAttribute("data-webm", c.reelWebm);
-      row.appendChild(f);
     });
   }
 
@@ -369,6 +352,266 @@
   }
 
   /* =========================================================================
+     3b. THE SHOP AND THE BASKET
+     Fixed-price boxes, sizes and flavours chosen per box. No card form: she
+     takes bank transfer, so checkout writes the order and hands it over. The
+     basket survives a reload.
+     ====================================================================== */
+  var Cart = (function () {
+    var KEY = "amabilis.cart.v1";
+    var items = [];
+    try { items = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) { items = []; }
+    if (!Array.isArray(items)) items = [];
+
+    function save () {
+      try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
+      paint();
+    }
+    function count () { return items.reduce(function (n, i) { return n + i.qty; }, 0); }
+    function total () { return items.reduce(function (n, i) { return n + i.price * i.qty; }, 0); }
+    function key (i) { return i.id + "|" + i.size + "|" + i.flavours.join(","); }
+
+    function add (item) {
+      var k = key(item);
+      var hit = items.filter(function (i) { return key(i) === k; })[0];
+      if (hit) hit.qty += item.qty; else items.push(item);
+      save();
+    }
+    function setQty (idx, q) {
+      if (!items[idx]) return;
+      items[idx].qty = Math.max(0, q);
+      if (!items[idx].qty) items.splice(idx, 1);
+      save();
+    }
+    function clear () { items = []; save(); }
+
+    function paint () {
+      var badge = $(".cart-btn .count");
+      if (badge) {
+        badge.textContent = count();
+        badge.classList.toggle("on", count() > 0);
+      }
+      var btn = $(".cart-btn");
+      if (btn) btn.setAttribute("aria-label", "Basket, " + count() + " item" + (count() === 1 ? "" : "s"));
+      var body = $(".cart-body"), foot = $(".cart-foot");
+      if (!body) return;
+      if (!items.length) {
+        body.innerHTML = '<div class="cart-empty"><p class="body">Your basket is empty.</p>' +
+          '<a class="link" href="#shop" data-cart-close>Back to the boxes <span aria-hidden="true">→</span></a></div>';
+        if (foot) foot.hidden = true;
+        return;
+      }
+      if (foot) foot.hidden = false;
+      body.innerHTML = items.map(function (i, n) {
+        return '<div class="line">' +
+          '<img src="' + esc(i.img) + '" alt="" loading="lazy">' +
+          '<div><h4>' + esc(i.name) + '</h4>' +
+            '<p class="meta">Box of ' + i.size + '<br>' + esc(i.flavours.join(" · ")) + '</p>' +
+            '<button class="rm" type="button" data-rm="' + n + '">Remove</button></div>' +
+          '<div class="line-right"><span class="line-price">' + money(i.price * i.qty) + '</span>' +
+            '<span class="qty"><button type="button" data-dec="' + n + '" aria-label="One fewer">–</button>' +
+            '<span>' + i.qty + '</span>' +
+            '<button type="button" data-inc="' + n + '" aria-label="One more">+</button></span></div>' +
+        "</div>";
+      }).join("");
+      var t = $(".cart-total b");
+      if (t) t.textContent = money(total());
+    }
+
+    return { add: add, setQty: setQty, clear: clear, paint: paint,
+             count: count, total: function () { return total(); },
+             items: function () { return items.slice(); } };
+  })();
+
+  function renderShop () {
+    var box = $("[data-shop]");
+    if (!box || !D.shop) return;
+    D.shop.forEach(function (p) {
+      var art = el("article", "prod");
+      art.setAttribute("data-fade", "");
+      art.setAttribute("data-prod", p.id);
+      art.innerHTML =
+        '<figure class="prod-fig"><img src="' + esc(p.img) + '" alt="' + esc(p.alt) +
+          '" loading="lazy" decoding="async">' +
+          '<figcaption class="prod-lead">' + p.lead + " days' notice</figcaption></figure>" +
+        '<div class="prod-body">' +
+          "<h3>" + esc(p.name) + "</h3>" +
+          '<p class="prod-blurb">' + esc(p.blurb) + "</p>" +
+          '<div class="opt"><span class="opt-label" id="sz-' + p.id + '">Box size</span>' +
+            '<div class="pills" role="group" aria-labelledby="sz-' + p.id + '">' +
+              p.sizes.map(function (sz, i) {
+                return '<button class="pill pill--size" type="button" data-size="' + sz.qty +
+                       '" data-price="' + sz.price + '" aria-pressed="' + (i === 0) + '">' +
+                       sz.qty + " <b>" + money(sz.price) + "</b></button>";
+              }).join("") +
+            "</div></div>" +
+          '<div class="opt"><span class="opt-label" id="fl-' + p.id + '">Flavours — pick as many as you like</span>' +
+            '<div class="pills" role="group" aria-labelledby="fl-' + p.id + '">' +
+              p.flavours.map(function (f, i) {
+                return '<button class="pill pill--flav" type="button" aria-pressed="' + (i === 0) + '">' +
+                       esc(f) + "</button>";
+              }).join("") +
+            "</div></div>" +
+          '<p class="prod-err" data-prod-err></p>' +
+          '<div class="prod-foot">' +
+            '<span class="prod-price"><b data-prod-price>' + money(p.sizes[0].price) + "</b><span>per box</span></span>" +
+            '<span class="qty"><button type="button" data-q="-1" aria-label="One fewer box">–</button>' +
+              '<span data-prod-qty>1</span>' +
+              '<button type="button" data-q="1" aria-label="One more box">+</button></span>' +
+          "</div>" +
+          '<button class="btn magnetic" type="button" data-add style="justify-content:center">' +
+            "<span>Add to basket</span><span class=\"arw\" aria-hidden=\"true\">→</span></button>" +
+        "</div>";
+      box.appendChild(art);
+    });
+
+    /* one delegated listener for every card */
+    box.addEventListener("click", function (e) {
+      var card = e.target.closest("[data-prod]");
+      if (!card) return;
+      var p = D.shop.filter(function (x) { return x.id === card.getAttribute("data-prod"); })[0];
+      var sizeBtn = e.target.closest(".pill--size");
+      var flavBtn = e.target.closest(".pill--flav");
+      var qBtn = e.target.closest("[data-q]");
+      var addBtn = e.target.closest("[data-add]");
+      var qtyEl = $("[data-prod-qty]", card), err = $("[data-prod-err]", card);
+
+      if (sizeBtn) {
+        $$(".pill--size", card).forEach(function (b) { b.setAttribute("aria-pressed", String(b === sizeBtn)); });
+        $("[data-prod-price]", card).textContent = money(+sizeBtn.getAttribute("data-price"));
+      }
+      if (flavBtn) {
+        var on = flavBtn.getAttribute("aria-pressed") === "true";
+        flavBtn.setAttribute("aria-pressed", String(!on));
+        err.textContent = "";
+      }
+      if (qBtn) {
+        qtyEl.textContent = Math.max(1, Math.min(20, +qtyEl.textContent + +qBtn.getAttribute("data-q")));
+      }
+      if (addBtn) {
+        var size = $(".pill--size[aria-pressed='true']", card);
+        var flavs = $$(".pill--flav[aria-pressed='true']", card).map(function (b) { return b.textContent.trim(); });
+        if (!flavs.length) { err.textContent = "Pick at least one flavour."; return; }
+        err.textContent = "";
+        Cart.add({ id: p.id, name: p.name, img: p.img,
+                   size: +size.getAttribute("data-size"),
+                   price: +size.getAttribute("data-price"),
+                   flavours: flavs, qty: +qtyEl.textContent, lead: p.lead });
+        openCart();
+      }
+    });
+  }
+
+  function openCart () {
+    var d = $(".cart"), sc = $(".cart-scrim");
+    if (!d) return;
+    d.classList.add("on"); sc.classList.add("on");
+    d.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    var c = $(".cart-close", d); if (c) c.focus();
+  }
+  function closeCart () {
+    var d = $(".cart"), sc = $(".cart-scrim");
+    if (!d) return;
+    d.classList.remove("on"); sc.classList.remove("on");
+    d.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function cartWiring () {
+    var d = $(".cart");
+    if (!d) return;
+    Cart.paint();
+    var btn = $(".cart-btn"); if (btn) btn.addEventListener("click", openCart);
+    var sc = $(".cart-scrim"); if (sc) sc.addEventListener("click", closeCart);
+    addEventListener("keydown", function (e) { if (e.key === "Escape") closeCart(); });
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("[data-cart-close]")) closeCart();
+      if (e.target.closest(".cart-close")) closeCart();
+    });
+    d.addEventListener("click", function (e) {
+      var inc = e.target.closest("[data-inc]"), dec = e.target.closest("[data-dec]"),
+          rm = e.target.closest("[data-rm]");
+      var list = Cart.items();
+      if (inc) Cart.setQty(+inc.getAttribute("data-inc"), list[+inc.getAttribute("data-inc")].qty + 1);
+      if (dec) Cart.setQty(+dec.getAttribute("data-dec"), list[+dec.getAttribute("data-dec")].qty - 1);
+      if (rm)  Cart.setQty(+rm.getAttribute("data-rm"), 0);
+      if (e.target.closest("[data-checkout]")) showCheckout();
+    });
+  }
+
+  function showCheckout () {
+    var foot = $(".cart-foot");
+    if (!foot || !Cart.items().length) return;
+    var lead = Cart.items().reduce(function (n, i) { return Math.max(n, i.lead || 5); }, 5);
+    var min = new Date(); min.setDate(min.getDate() + lead);
+    foot.innerHTML =
+      '<form class="checkout" data-checkout-form novalidate>' +
+        '<div class="field"><label for="c-name">Your name</label>' +
+          '<input id="c-name" name="name" autocomplete="name" required><span class="err" data-err="name"></span></div>' +
+        '<div class="field"><label for="c-contact">Instagram handle or email</label>' +
+          '<input id="c-contact" name="contact" required><span class="err" data-err="contact"></span></div>' +
+        '<div class="field"><label for="c-date">Collection date</label>' +
+          '<input id="c-date" name="date" type="date" required min="' + min.toISOString().slice(0, 10) +
+          '"><span class="err" data-err="date"></span></div>' +
+        '<p class="cart-note">' + esc(D.payment.note) + " Collection from " + esc(D.studio.town) + ".</p>" +
+        '<button class="btn magnetic" type="submit" style="justify-content:center">' +
+          "<span>Write my order</span><span class=\"arw\" aria-hidden=\"true\">→</span></button>" +
+      "</form>";
+    var f = $("[data-checkout-form]", foot);
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = {}; $$("input", f).forEach(function (i) { v[i.name] = (i.value || "").trim(); });
+      var ok = true;
+      [["name", "Please add your name"], ["contact", "How should she reach you?"],
+       ["date", "Pick a collection date"]].forEach(function (pair) {
+        var m = v[pair[0]] ? "" : pair[1];
+        $('[data-err="' + pair[0] + '"]', f).textContent = m;
+        if (m) ok = false;
+      });
+      if (!ok) return;
+      var d = new Date(v.date);
+      var pretty = isNaN(d) ? v.date : d.toLocaleDateString("en-GB",
+        { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      var lines = ["Hi! I'd like to order:", ""];
+      Cart.items().forEach(function (i) {
+        lines.push("• " + i.qty + " × " + i.name + ", box of " + i.size +
+                   " — " + i.flavours.join(", ") + " — " + money(i.price * i.qty));
+      });
+      lines.push("", "Total: " + money(Cart.total()),
+                 "Collection: " + pretty, "Name: " + v.name, "Contact: " + v.contact,
+                 "", "Happy to pay by bank transfer — please send details.");
+      foot.innerHTML =
+        '<div class="cart-out"><p class="eyebrow">Your order</p><pre>' + esc(lines.join("\n")) + "</pre>" +
+        '<button class="btn magnetic" type="button" data-cart-copy style="justify-content:center">' +
+          '<span data-cart-copy-label>Copy order</span></button>' +
+        '<a class="btn btn--ghost magnetic" href="' + esc(D.studio.instagram) + '" target="_blank" rel="noopener" style="justify-content:center">' +
+          '<span>Send on Instagram</span><span class="arw" aria-hidden="true">↗</span></a>' +
+        '<p class="cart-note">Paste it into a DM to <b>@' + esc(D.studio.handle) + "</b>.</p></div>";
+      var cp = $("[data-cart-copy]", foot);
+      cp.addEventListener("click", function () {
+        var lbl = $("[data-cart-copy-label]", foot), txt = $("pre", foot).textContent;
+        var done = function () { lbl.textContent = "Copied"; setTimeout(function () { lbl.textContent = "Copy order"; }, 2200); };
+        if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, done);
+        else done();
+      });
+    });
+  }
+
+  /* -- the counter: rows of everything she makes, always moving ----------- */
+  function renderCounter () {
+    var rows = $$("[data-counter]");
+    if (!rows.length || !D.counter) return;
+    rows.forEach(function (row, n) {
+      var src = n ? D.counter.slice().reverse() : D.counter;
+      var html = src.map(function (u) {
+        return '<figure class="counter-i"><img src="' + esc(u) + '" alt="" loading="lazy" decoding="async"></figure>';
+      }).join("");
+      row.innerHTML = html + html;          /* doubled, so the loop has no seam */
+    });
+  }
+
+  /* =========================================================================
      4. CHROME — cursor, nav, drawer, progress
      ====================================================================== */
   function cursor () {
@@ -496,56 +739,80 @@
     };
   }
 
-  function dripPath (seed, W, H) {
-    var r = rng(seed), rest = H * 0.13, x = 0, pts = [];
+  /* A run of chocolate leaves the edge wide, pulls in to a waist, then hangs
+     in a bead that is wider than the waist. Drawing it as a straight peg with a
+     rounded end is what made the first two attempts look like pegs. */
+  function dripRuns (seed, W, H) {
+    var r = rng(seed), x = -8, runs = [];
     while (x < W) {
-      /* slim segments, or the runs read as blobs rather than drips */
-      var seg = 13 + r() * 26;
-      var deep = r() < 0.30;
-      pts.push({ x: Math.min(x + seg / 2, W), w: seg,
-                 d: rest + (deep ? H * (0.30 + r() * 0.62) : H * (0.02 + r() * 0.13)) });
-      x += seg;
+      var neck = 15 + r() * 26;
+      var roll = r();
+      /* most are barely a bulge; a few really run */
+      var len = roll < 0.16 ? H * (0.55 + r() * 0.42)
+              : roll < 0.42 ? H * (0.24 + r() * 0.28)
+                            : H * (0.05 + r() * 0.13);
+      runs.push({ cx: x + neck / 2, neck: neck, len: len });
+      x += neck + 6 + r() * 30;
     }
-    var d = "M0," + rest.toFixed(1), prev = 0;
-    pts.forEach(function (p) {
-      var l = Math.max(0, p.x - p.w / 2), rr = Math.min(W, p.x + p.w / 2);
-      d += " C" + ((prev + l) / 2).toFixed(1) + "," + rest.toFixed(1) +
-           " " + l.toFixed(1) + "," + p.d.toFixed(1) +
-           " " + p.x.toFixed(1) + "," + p.d.toFixed(1);
-      d += " C" + rr.toFixed(1) + "," + p.d.toFixed(1) +
-           " " + rr.toFixed(1) + "," + rest.toFixed(1) +
-           " " + Math.min(W, rr + 2).toFixed(1) + "," + rest.toFixed(1);
-      prev = rr;
-    });
-    return d + " L" + W + ",0 L0,0 Z";
+    return runs;
+  }
+
+  function runPath (d, band) {
+    var cx = d.cx, w0 = d.neck / 2;
+    var w1 = Math.max(1.6, w0 * 0.36);              /* the waist */
+    var r  = Math.max(2.6, w1 * 1.8);               /* the bead, wider than the waist */
+    var L  = Math.max(d.len, r * 2.2);
+    var yb = band + L - r;                          /* bead centre */
+    var yk = band + L * 0.58;                       /* waist height */
+    var f = function (n) { return n.toFixed(1); };
+    return "M" + f(cx - w0) + "," + f(band) +
+      " C" + f(cx - w0) + "," + f(band + L * 0.20) + " " + f(cx - w1) + "," + f(yk - L * 0.20) + " " + f(cx - w1) + "," + f(yk) +
+      " C" + f(cx - w1) + "," + f(yb - r * 0.75) + " " + f(cx - r) + "," + f(yb - r * 0.85) + " " + f(cx - r) + "," + f(yb) +
+      " A" + f(r) + "," + f(r) + " 0 1 0 " + f(cx + r) + "," + f(yb) +
+      " C" + f(cx + r) + "," + f(yb - r * 0.85) + " " + f(cx + w1) + "," + f(yb - r * 0.75) + " " + f(cx + w1) + "," + f(yk) +
+      " C" + f(cx + w1) + "," + f(yk - L * 0.20) + " " + f(cx + w0) + "," + f(band + L * 0.20) + " " + f(cx + w0) + "," + f(band) +
+      " Z";
   }
 
   function drips () {
-    var W = 1000, H = 100;
+    var W = 1440, H = 130, BAND = 30;
     $$("[data-drip]").forEach(function (node, i) {
       var cream = node.classList.contains("drip--cream");
       var seed = (parseInt(node.getAttribute("data-drip"), 10) || (i + 7) * 131) | 0;
-      var id = "dg" + i;                       /* gradient ids must not collide */
-      var r = rng(seed + 99);
+      var id = "dg" + i, gl = "gl" + i;
+      var runs = dripRuns(seed, W, H - BAND);
+      var body = runs.map(function (d) { return '<path d="' + runPath(d, BAND) + '"/>'; }).join("");
+      /* the light sits along the top of the band and catches the fattest beads */
+      /* a catchlight on the shoulder of every bead that actually hangs */
+      var gloss = runs.filter(function (d) { return d.len > (H - BAND) * 0.22; })
+        .map(function (d) {
+          var w1 = Math.max(1.6, (d.neck / 2) * 0.36), r = Math.max(2.6, w1 * 1.8);
+          return '<ellipse cx="' + (d.cx - r * 0.36).toFixed(1) + '" cy="' +
+                 (BAND + Math.max(d.len, r * 2.2) - r * 1.28).toFixed(1) +
+                 '" rx="' + (r * 0.30).toFixed(1) + '" ry="' + (r * 0.46).toFixed(1) +
+                 '" transform="rotate(-18 ' + d.cx.toFixed(1) + " " +
+                 (BAND + d.len).toFixed(1) + ')"/>';
+        }).join("");
       var stops = cream
-        ? '<stop offset="0" stop-color="#fbf3e6"/><stop offset=".6" stop-color="#f6e7cf"/>' +
-          '<stop offset="1" stop-color="#e8d3b4"/>'
-        : '<stop offset="0" stop-color="#3f2318"/><stop offset=".55" stop-color="#2e1a12"/>' +
-          '<stop offset="1" stop-color="#4a2a1c"/>';
-      var beads = "";
-      for (var b = 0; b < 3; b++) {
-        beads += '<circle class="bead" fill="url(#' + id + ')" cx="' +
-                 (90 + r() * 820).toFixed(0) + '" cy="' + (H * 0.4).toFixed(0) +
-                 '" r="' + (4 + r() * 3.4).toFixed(1) + '"/>';
-      }
+        ? '<stop offset="0" stop-color="#fffaf1"/><stop offset=".42" stop-color="#f6e7cf"/>' +
+          '<stop offset="1" stop-color="#e3cba6"/>'
+        : '<stop offset="0" stop-color="#4a2b1c"/><stop offset=".38" stop-color="#331d14"/>' +
+          '<stop offset=".82" stop-color="#26150e"/><stop offset="1" stop-color="#3d2317"/>';
+
       node.innerHTML =
         '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" aria-hidden="true">' +
-          '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' + stops +
-          "</linearGradient></defs>" +
-          '<g class="runs">' +
-            '<path fill="url(#' + id + ')" d="' + dripPath(seed, W, H) + '"/>' +
-            '<path class="sheen" d="' + dripPath(seed + 13, W, H * 0.42) + '"/>' +
-          "</g>" + beads +
+          "<defs>" +
+            '<linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' + stops + "</linearGradient>" +
+            '<linearGradient id="' + gl + '" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0" stop-color="#fff" stop-opacity=".16"/>' +
+              '<stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+          "</defs>" +
+          '<g class="runs" fill="url(#' + id + ')">' +
+            '<rect x="0" y="0" width="' + W + '" height="' + (BAND + 2) + '"/>' + body +
+          "</g>" +
+          '<rect class="lip" x="0" y="0" width="' + W + '" height="' + (BAND * 0.55).toFixed(1) +
+            '" fill="url(#' + gl + ')"/>' +
+          '<g class="beads" fill="#fff" opacity="' + (cream ? ".55" : ".22") + '">' + gloss + "</g>" +
         "</svg>";
     });
   }
@@ -629,7 +896,6 @@
     $$(".manifesto .word,.pull .word").forEach(function (w) { w.classList.add("on"); });
     var cp = $(".craft-pin"); if (cp) cp.classList.add("flat");
     var stage = $("[data-craft-stage]"); if (stage) stage.parentNode.style.display = "none";
-    reels();
     voices();
   }
 
@@ -810,6 +1076,42 @@
       });
     }
 
+    /* -- the counter: rows drift, and lean with the scroll ---------------- */
+    (function counter () {
+      var rows = $$("[data-counter]");
+      if (!rows.length) return;
+      rows.forEach(function (row, n) {
+        gsap.set(row, { xPercent: n ? -50 : 0 });
+        var loop = gsap.to(row, {
+          xPercent: n ? 0 : -50, repeat: -1, ease: "none",
+          duration: 46 + n * 9
+        });
+        ScrollTrigger.create({
+          trigger: row, start: "top bottom", end: "bottom top",
+          onUpdate: function (self) {
+            var v = self.getVelocity();
+            /* scrolling down speeds the row up, scrolling up drags it back */
+            loop.timeScale(gsap.utils.clamp(-4, 5, 1 + v / 700));
+          }
+        });
+      });
+      /* the whole band leans a few degrees with the scroll, then settles */
+      var skew = $(".counter-skew");
+      if (skew) {
+        var s2 = { v: 0 };
+        ScrollTrigger.create({
+          trigger: skew, start: "top bottom", end: "bottom top",
+          onUpdate: function (self) {
+            var target = gsap.utils.clamp(-5, 5, self.getVelocity() / 340);
+            gsap.to(s2, { v: target, duration: .35, overwrite: true,
+              onUpdate: function () { gsap.set(skew, { skewY: s2.v * 0.5, rotate: s2.v * 0.16 }); } });
+            gsap.to(s2, { v: 0, duration: 1.1, delay: .12, overwrite: false,
+              onUpdate: function () { gsap.set(skew, { skewY: s2.v * 0.5, rotate: s2.v * 0.16 }); } });
+          }
+        });
+      }
+    })();
+
     /* -- marquee, velocity-aware ------------------------------------------ */
     $$(".marq-in").forEach(function (row) {
       var loop = gsap.to(row, { xPercent: -50, repeat: -1, duration: 26, ease: "none" });
@@ -845,7 +1147,6 @@
     gsap.to(".cta-ring", { rotate: 90, ease: "none",
       scrollTrigger: { trigger: ".cta", start: "top bottom", end: "bottom top", scrub: true } });
 
-    reels();
     voices();
     ScrollTrigger.refresh();
     ScrollTrigger.addEventListener("refresh", function () {
@@ -855,64 +1156,6 @@
       ScrollTrigger.refresh();
       if (window.__gl) window.__gl.refresh();
     });
-  }
-
-  /* =========================================================================
-     9. REELS — nothing downloads until a clip is actually wanted
-     ====================================================================== */
-  function reels () {
-    var list = $$(".reel");
-    if (!list.length) return;
-
-    function load (fig) {
-      var v = $("video", fig);
-      if (!v || v.dataset.loaded) return v;
-      var webm = v.getAttribute("data-webm"), mp4 = v.getAttribute("data-src");
-      /* VP9 first for the bandwidth, H.264 behind it for everything else */
-      if (webm) v.appendChild(Object.assign(document.createElement("source"),
-                                            { src: webm, type: "video/webm" }));
-      if (mp4)  v.appendChild(Object.assign(document.createElement("source"),
-                                            { src: mp4,  type: "video/mp4" }));
-      v.dataset.loaded = "1";
-      v.load();
-      return v;
-    }
-    function play (fig) {
-      var v = load(fig);
-      if (!v) return;
-      var p = v.play();
-      if (p && p.catch) p.catch(function () {});
-      v.classList.add("on");
-    }
-    function stop (fig) {
-      var v = $("video", fig);
-      if (!v) return;
-      v.pause();
-      v.classList.remove("on");
-    }
-
-    if (touch) {
-      /* on a phone, whichever reel is centred plays — one at a time */
-      if (!("IntersectionObserver" in window)) return;
-      var io = new IntersectionObserver(function (rows) {
-        rows.forEach(function (r) { r.isIntersecting && r.intersectionRatio > .7 ? play(r.target) : stop(r.target); });
-      }, { threshold: [0, .7, 1], rootMargin: "-15% 0px -15% 0px" });
-      list.forEach(function (f) { io.observe(f); });
-    } else {
-      list.forEach(function (f) {
-        f.addEventListener("pointerenter", function () { play(f); });
-        f.addEventListener("pointerleave", function () { stop(f); });
-        f.addEventListener("focusin", function () { play(f); });
-        f.addEventListener("focusout", function () { stop(f); });
-      });
-      /* warm the posters' clips once the row is close, so hover is instant */
-      if ("IntersectionObserver" in window) {
-        var pre = new IntersectionObserver(function (rows) {
-          rows.forEach(function (r) { if (r.isIntersecting) { load(r.target); pre.unobserve(r.target); } });
-        }, { rootMargin: "300px" });
-        list.forEach(function (f) { pre.observe(f); });
-      }
-    }
   }
 
   /* =========================================================================
@@ -957,7 +1200,8 @@
     renderFeature();
     renderCraft();
     renderAtmosphere();
-    renderReels();
+    renderShop();
+    renderCounter();
     renderServices();
     renderBoxes();
     renderPricing();
@@ -967,6 +1211,7 @@
     renderPolicy();
     renderForm();
     orderForm();
+    cartWiring();
 
     splitLines();
     splitWords();

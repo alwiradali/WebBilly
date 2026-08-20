@@ -908,9 +908,10 @@ p{margin:0}
 .no-js .craft-steps{gap:clamp(36px,6vh,70px);min-height:0}
 .no-js .craft-step{grid-area:auto;opacity:1;transform:none}
 .no-js .craft-stage,.no-js .craft-rail,.no-js .craft-index{display:none}
-.no-js #cakes,.no-js #detail,.no-js #reels,.no-js #services,.no-js #menu,
-.no-js #pricing,.no-js #process,.no-js .voices,.no-js #feed,.no-js #terms,
-.no-js .order form{display:none}
+.no-js #cakes,.no-js #detail,.no-js #counter,.no-js #services,.no-js #shop,
+.no-js #ingredients,.no-js #pricing,.no-js #process,.no-js .voices,.no-js #feed,
+.no-js #terms,.no-js .order form,.no-js .cart-btn,.no-js .cart,
+.no-js .cart-scrim{display:none}
 
 .nojs{display:none}
 .no-js .nojs{display:block;background:var(--blush-2)}
@@ -1026,23 +1027,21 @@ p{margin:0}
   position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;
   opacity:0;transition:opacity 1.4s var(--ease);
 }
-/* The dark chapters hand their ground to the canvas completely — that is where
-   the pearls read and where a degree of colour drift is invisible. The light
-   chapters keep a veil of their own colour instead: the field still moves
-   behind them, but paper stays paper and the text contrast is guaranteed
-   rather than depending on the canvas matching a hex value exactly. */
+/* The veils are keyed off `data-gl` — the same attribute the canvas reads — so
+   a section can never end up wearing one tone while the canvas paints another.
+   Keying them off class names let `.reels` (a dark chapter without the `.dark`
+   class) match the paper rule and sit light over a dark canvas.
+   Dark chapters hand their ground over completely: that is where the pearls
+   read and where colour drift is invisible. Light chapters keep a veil of their
+   own colour, so paper stays paper and contrast is guaranteed rather than
+   depending on the canvas matching a hex value. */
 .gl-on body{background:transparent}
-.gl-on .dark,
-.gl-on .reels,
-.gl-on .foot,
-.gl-on .order{background:transparent}
-.gl-on .sig{background:rgba(247,241,240,.88)}
-.gl-on .fine{background:rgba(252,248,247,.88)}
-.gl-on .boxes{background:rgba(245,231,234,.88)}
-.gl-on .cta{background:rgba(236,216,221,.86)}
-.gl-on main > .sec:not(.dark),
-.gl-on main > .pull,
-.gl-on main > .marq{background:rgba(247,241,240,.88)}
+.gl-on [data-gl="dark"]{background:transparent}
+.gl-on [data-gl="paper"]{background:rgba(247,241,240,.72)}
+.gl-on [data-gl="blush"]{background:rgba(245,231,234,.74)}
+.gl-on .fine[data-gl="paper"]{background:rgba(252,248,247,.72)}
+.gl-on .cta[data-gl="blush"]{background:rgba(236,216,221,.72)}
+
 /* the CSS hero wash is only a stand-in for the canvas */
 .gl-on .hero-wash{opacity:0}
 
@@ -1108,3 +1107,131 @@ p{margin:0}
   background:linear-gradient(to top,rgba(28,16,12,.72),transparent);
   font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);
 }
+
+/* =========================================================================
+   THE SHOP
+   Two products, four sizes each, flavours picked per box. Her real prices.
+   ========================================================================= */
+.shop-grid{display:grid;gap:clamp(24px,3.4vw,48px)}
+@media(min-width:900px){.shop-grid{grid-template-columns:1fr 1fr}}
+.prod{
+  background:var(--paper-2);border:1px solid var(--line-2);border-radius:4px;overflow:hidden;
+  display:grid;grid-template-rows:auto 1fr;box-shadow:0 34px 70px -60px rgba(60,25,35,.6);
+}
+.prod-fig{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--paper-3)}
+.prod-fig img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.prod:hover .prod-fig img{transform:scale(1.04)}
+.prod-lead{
+  position:absolute;top:12px;left:12px;padding:7px 13px;border-radius:999px;
+  background:rgba(28,16,12,.62);backdrop-filter:blur(6px);color:var(--cream);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+}
+.prod-body{padding:clamp(20px,2.6vw,34px);display:grid;gap:18px;align-content:start}
+.prod h3{font-size:clamp(1.5rem,2.4vw,2rem)}
+.prod-blurb{font-size:.9rem;color:var(--ink-3);line-height:1.65}
+.opt{display:grid;gap:9px}
+.opt-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{
+  padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:transparent;
+  font-size:12px;letter-spacing:.06em;color:var(--ink-2);cursor:pointer;
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.pill:hover{border-color:var(--rose)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pill--size b{font-family:var(--display);font-size:1rem;margin-left:7px}
+.prod-foot{
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--line);
+}
+.prod-price{display:flex;align-items:baseline;gap:8px}
+.prod-price b{font-family:var(--display);font-size:clamp(1.8rem,2.6vw,2.3rem);line-height:1}
+.prod-price span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.qty button{width:38px;height:38px;font-size:15px;color:var(--ink-2);transition:background .25s}
+.qty button:hover{background:var(--paper-3)}
+.qty span{min-width:26px;text-align:center;font-variant-numeric:tabular-nums;font-size:.95rem}
+.prod-err{font-size:11.5px;color:var(--rose-deep);min-height:1em}
+
+/* =========================================================================
+   CART
+   ========================================================================= */
+.cart-btn{
+  position:relative;display:inline-flex;align-items:center;gap:9px;padding:11px 17px;
+  border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);
+  font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;
+}
+.nav.dark .cart-btn{box-shadow:inset 0 0 0 1px var(--dark-line)}
+.cart-btn .count{
+  min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--rose-deep);color:#fff;
+  display:grid;place-items:center;font-size:10px;letter-spacing:0;font-variant-numeric:tabular-nums;
+  transform:scale(0);transition:transform .4s var(--ease);
+}
+.cart-btn .count.on{transform:scale(1)}
+@media(max-width:640px){.cart-btn .label{display:none}.cart-btn{padding:11px 13px}}
+
+.cart-scrim{
+  position:fixed;inset:0;z-index:80;background:rgba(20,12,10,.5);backdrop-filter:blur(3px);
+  opacity:0;visibility:hidden;transition:opacity .5s var(--ease),visibility .5s;
+}
+.cart-scrim.on{opacity:1;visibility:visible}
+.cart{
+  position:fixed;top:0;right:0;bottom:0;z-index:85;width:min(430px,100%);
+  background:var(--paper);display:grid;grid-template-rows:auto 1fr auto;
+  transform:translateX(101%);transition:transform .62s var(--ease-io);
+  box-shadow:-30px 0 80px -40px rgba(40,20,15,.55);
+}
+.cart.on{transform:none}
+.cart-head{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:clamp(20px,3vw,28px);border-bottom:1px solid var(--line);
+}
+.cart-head h2{font-size:1.35rem}
+.cart-close{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;font-size:17px}
+.cart-close:hover{background:var(--paper-3)}
+.cart-body{overflow-y:auto;padding:clamp(16px,2.4vw,24px);display:grid;gap:14px;align-content:start}
+.cart-empty{display:grid;gap:14px;justify-items:start;padding:clamp(16px,3vw,26px) 0;color:var(--ink-3)}
+.line{display:grid;grid-template-columns:74px 1fr auto;gap:14px;align-items:start;
+  padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.line img{width:74px;height:74px;object-fit:cover;border-radius:3px}
+.line h4{font-family:var(--display);font-weight:400;font-size:1.05rem;margin:0 0 3px}
+.line .meta{font-size:11.5px;color:var(--ink-3);line-height:1.5}
+.line .rm{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  margin-top:7px;text-decoration:underline;text-underline-offset:3px}
+.line .rm:hover{color:var(--rose-deep)}
+.line-right{display:grid;gap:8px;justify-items:end}
+.line-price{font-family:var(--display);font-size:1.05rem}
+.cart-foot{padding:clamp(18px,2.6vw,26px);border-top:1px solid var(--line);display:grid;gap:14px}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline}
+.cart-total span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.cart-total b{font-family:var(--display);font-size:1.7rem}
+.cart-note{font-size:11.5px;color:var(--ink-3);line-height:1.55}
+.cart-foot .btn{justify-content:center}
+
+/* checkout step lives inside the drawer */
+.checkout{display:grid;gap:14px}
+.checkout .field label{color:var(--ink-3)}
+.checkout .field input,.checkout .field textarea{
+  border-bottom-color:var(--line);color:var(--ink);
+}
+.checkout .field input:focus,.checkout .field textarea:focus{border-color:var(--rose-deep)}
+.checkout .err{color:var(--rose-deep)}
+.cart-out{display:grid;gap:12px}
+.cart-out pre{
+  margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--sans);
+  font-size:.84rem;line-height:1.65;color:var(--ink-2);background:var(--paper-2);
+  border:1px solid var(--line-2);border-radius:3px;padding:14px;max-height:210px;overflow:auto;
+}
+
+/* =========================================================================
+   THE COUNTER — rows that keep moving, and answer the scroll
+   ========================================================================= */
+.counter{overflow:hidden;padding-block:clamp(30px,4vw,54px)}
+.counter-row{display:flex;gap:clamp(10px,1.2vw,18px);width:max-content;will-change:transform}
+.counter-row + .counter-row{margin-top:clamp(10px,1.2vw,18px)}
+.counter-i{
+  flex:0 0 auto;width:clamp(150px,17vw,260px);aspect-ratio:4/5;overflow:hidden;border-radius:3px;
+  background:rgba(243,233,232,.07);   /* dark chapter — placeholder must not flash light */
+}
+.counter-i img{width:100%;height:100%;object-fit:cover}
+.counter-skew{will-change:transform}

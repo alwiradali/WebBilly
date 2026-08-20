@@ -71,7 +71,12 @@
     <a href="#services">Services</a>
     <a href="#pricing">Prices</a>
   </nav>
-  <a class="btn nav-cta magnetic" href="#order"><span>Request a cake</span><span class="arw" aria-hidden="true">→</span></a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="cart-btn magnetic" type="button" aria-label="Basket, 0 items">
+      <span aria-hidden="true">Basket</span><span class="count" aria-hidden="true">0</span>
+    </button>
+    <a class="btn nav-cta magnetic" href="#order"><span>Request a cake</span><span class="arw" aria-hidden="true">→</span></a>
+  </div>
   <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
 </header>
 
@@ -81,7 +86,7 @@
     <a href="#craft">Craft</a>
     <a href="#about">About</a>
     <a href="#services">Services</a>
-    <a href="#menu">Boxes</a>
+    <a href="#shop">Shop</a>
     <a href="#pricing">Prices</a>
     <a href="#order">Order</a>
   </nav>
@@ -187,7 +192,7 @@
   </div>
 </section>
 
-<div class="marq" aria-hidden="true">
+<div class="marq" data-gl="paper" aria-hidden="true">
   <div class="marq-in">
     <span>Celebration cakes<i></i></span><span>Wedding cakes</span><span>Cupcakes</span>
     <span>Brownies</span><span>Cookies</span><span>Mini loaves</span><span>Dessert tables</span>
@@ -202,7 +207,7 @@
     <div class="wrapx head">
       <div>
         <p class="eyebrow eyebrow--rule">Signature creations</p>
-        <h2 class="d2" id="h-cakes" data-split style="margin-top:.3em">Five cakes, and<br><em class="hl-rose">who</em> they were for.</h2>
+        <h2 class="d2" id="h-cakes" data-split style="margin-top:.3em">Eight cakes, and<br><em class="hl-rose">who</em> they were for.</h2>
       </div>
       <div>
         <p class="body" data-fade>Each one started as a message — a date, a name, a colour,
@@ -283,18 +288,22 @@
   </div>
 </section>
 
-<!-- ── reels ────────────────────────────────────────────────────────────── -->
-<section class="sec reels" id="reels" data-gl="dark" aria-labelledby="h-reels">
+<!-- ── the counter (swiping) ────────────────────────────────────────────── -->
+<section class="sec reels counter" id="counter" data-gl="dark" aria-labelledby="h-counter">
   <div class="wrap head">
     <div>
-      <p class="eyebrow eyebrow--rule">From the feed</p>
-      <h2 class="d2" id="h-reels" data-split style="margin-top:.3em">Cakes, <em class="hl-rose">moving</em>.</h2>
+      <p class="eyebrow eyebrow--rule">The counter</p>
+      <h2 class="d2" id="h-counter" data-split style="margin-top:.3em">Everything, <em class="hl-caramel">moving</em>.</h2>
     </div>
-    <p class="body" data-fade>Her own films, as posted. Silent by default — tap or hover to play.</p>
+    <p class="body" data-fade>Cakes, cookies, brownies. The rows keep going on their own,
+      and lean whichever way you are scrolling.</p>
   </div>
-  <div class="reel-row" data-reels></div>
+  <div class="counter-skew">
+    <div class="counter-row" data-counter aria-hidden="true"></div>
+    <div class="counter-row" data-counter aria-hidden="true"></div>
+  </div>
   <div class="wrap" style="margin-top:clamp(26px,3vw,44px)">
-    <a class="link" href="https://www.instagram.com/bakedwithamabilis/" target="_blank" rel="noopener">Follow the journey <span aria-hidden="true">↗</span></a>
+    <a class="link" href="#shop">Shop the boxes <span aria-hidden="true">→</span></a>
   </div>
 </section>
 
@@ -370,20 +379,24 @@
     <div class="svc-list" data-services></div>
   </div>
 </section>
-<div class="svc-peek" aria-hidden="true"><img src="" alt=""></div>
+<div class="svc-peek" aria-hidden="true"><img alt=""></div>
 
-<!-- ── boxes ────────────────────────────────────────────────────────────── -->
-<section class="sec boxes" id="menu" data-gl="blush" aria-labelledby="h-menu">
+<!-- ── shop ─────────────────────────────────────────────────────────────── -->
+<section class="sec boxes" id="shop" data-gl="blush" aria-labelledby="h-shop">
   <div class="wrap">
     <div class="head">
       <div>
         <p class="eyebrow eyebrow--rule">The price list</p>
-        <h2 class="d2" id="h-menu" data-split style="margin-top:.3em"><em class="hl-choc">Brownies</em> and cookies,<br>by the box.</h2>
+        <h2 class="d2" id="h-shop" data-split style="margin-top:.3em"><em class="hl-choc">Brownies</em> and cookies,<br>by the box.</h2>
       </div>
       <p class="body" data-fade>Fixed prices, four sizes, eight flavours. Five days' notice.
-        Mix flavours within a box — just say which when you order.</p>
+        Mix flavours across a box — pick as many as you like and she'll divide it up.</p>
     </div>
-    <div class="box-grid" data-boxes></div>
+    <div class="shop-grid" data-shop></div>
+    <p class="small" style="margin-top:clamp(22px,3vw,34px);max-width:56ch">
+      Cakes are priced on the work involved rather than sold by the box —
+      <a class="link" href="#order" style="font-size:11px">request one here</a>.
+    </p>
   </div>
 </section>
 
@@ -546,6 +559,21 @@
 
 </main>
 
+<!-- ── basket ───────────────────────────────────────────────────────────── -->
+<div class="cart-scrim" aria-hidden="true"></div>
+<aside class="cart" role="dialog" aria-modal="true" aria-label="Basket" aria-hidden="true">
+  <div class="cart-head">
+    <h2>Your basket</h2>
+    <button class="cart-close" type="button" aria-label="Close basket">✕</button>
+  </div>
+  <div class="cart-body"></div>
+  <div class="cart-foot" hidden>
+    <div class="cart-total"><span>Total</span><b>£0</b></div>
+    <p class="cart-note">Collection from Basingstoke. Payment by bank transfer once she confirms.</p>
+    <button class="btn magnetic" type="button" data-checkout><span>Checkout</span><span class="arw" aria-hidden="true">→</span></button>
+  </div>
+</aside>
+
 <!-- ── footer ───────────────────────────────────────────────────────────── -->
 <footer class="foot" data-gl="dark">
   <div class="wrap">
@@ -561,7 +589,7 @@
           <li><a href="#cakes">Cakes</a></li>
           <li><a href="#craft">Craft</a></li>
           <li><a href="#about">The baker</a></li>
-          <li><a href="#menu">Boxes</a></li>
+          <li><a href="#shop">Shop</a></li>
           <li><a href="#pricing">Prices</a></li>
           <li><a href="#terms">Fine print</a></li>
         </ul>

@@ -10,7 +10,6 @@
 window.AMABILIS = (function () {
   "use strict";
 
-  var IMG = "../../assets/amabilis/cakes/";
   var VID = "../../assets/amabilis/video/";
   var STK = "../../assets/amabilis/stock/";
 
@@ -37,133 +36,185 @@ window.AMABILIS = (function () {
       ]
     },
 
-    /* -- the cakes -------------------------------------------------------- */
-    /* Stills are frames from the studio's own reels. `reel` links the clip the
-       still was taken from; cards without one simply don't offer playback. */
+    /* -- the cakes ---------------------------------------------------------
+       Stock photography (Pexels — free for commercial use, no attribution).
+       Every one of these is a placeholder for one of her own cakes: keep the
+       slug, drop her photograph in at the same path, done. */
     cakes: [
+      { slug:"rose", name:"Rose", occasion:"Birthday", line:"Vintage piping, in blush",
+        note:"Heritage piping worked shell by shell — ribbon swags, a scalloped collar and a hand-lettered plaque, boxed and tied before it leaves the kitchen.",
+        finish:"Vintage piped buttercream", serves:"12–16", from:65,
+        img:STK+"cake-rose.webp", detail:STK+"cake-petal.webp", tone:"blush",
+        alt:"Blush pink vintage-piped celebration cake with a scalloped collar and a hand-lettered plaque" },
+      { slug:"bloom", name:"Bloom", occasion:"Celebration", line:"Covered in flowers",
+        note:"Sugar confetti through the buttercream, a crown of fresh blooms and a hand-lettered topper. The one people photograph before anyone is allowed to cut it.",
+        finish:"Speckled buttercream, fresh florals", serves:"16–20", from:85,
+        img:STK+"cake-bloom.webp", detail:STK+"cake-marble.webp", tone:"blush",
+        alt:"Pale pink celebration cake scattered with sugar confetti under a crown of fresh flowers" },
+      { slug:"ivory", name:"Ivory", occasion:"Milestone", line:"Piped, and gilded",
+        note:"A classic piped shell finish under gold numerals. Quiet from across the room, and worth walking over to.",
+        finish:"Piped buttercream, gold leaf", serves:"16–20", from:85,
+        img:STK+"cake-ivory.webp", detail:STK+"cake-linen.webp", tone:"cream",
+        alt:"Ivory piped buttercream cake finished with gold milestone numerals" },
+      { slug:"noir", name:"Noir", occasion:"Wedding",
+        line:"Black tie, three tiers",
+        note:"Tiered work in charcoal buttercream, dressed on the day with whatever is in season. Tasted before it is made.",
+        finish:"Charcoal buttercream, fresh flowers", serves:"60+", from:120,
+        img:STK+"cake-noir.webp", detail:STK+"cake-marble.webp", tone:"dark",
+        alt:"Tall black tiered wedding cake on a dressed table surrounded by white flowers" },
+      { slug:"marble", name:"Marble", occasion:"Engagement", line:"Stone, and marigold",
+        note:"A marbled two-tier with a single seam of colour and fresh flowers set at the join. Modern, and not fussy about it.",
+        finish:"Marbled buttercream", serves:"30–40", from:120,
+        img:STK+"cake-marble.webp", detail:STK+"cake-berry.webp", tone:"cream",
+        alt:"Marbled two-tier cake decorated with orange and blush flowers at the tier join" },
+      { slug:"berry", name:"Berry", occasion:"Summer", line:"Cream and fruit",
+        note:"Whipped vanilla, seasonal berries piled on top and nothing else. The one everyone finishes.",
+        finish:"Whipped cream, fresh fruit", serves:"12–16", from:65,
+        img:STK+"cake-berry.webp", detail:STK+"cake-linen.webp", tone:"cream",
+        alt:"White cream cake topped with fresh strawberries, blackberries and mint" },
+      { slug:"petal", name:"Petal", occasion:"Anniversary", line:"Pressed flowers, gold",
+        note:"Dried petals and edible gold pressed into a bare white finish. Almost nothing on it, and it takes the longest.",
+        finish:"Smooth buttercream, dried florals, gold", serves:"12–16", from:85,
+        img:STK+"cake-petal.webp", detail:STK+"cake-ivory.webp", tone:"cream",
+        alt:"Minimal white cake decorated with pressed dried flowers and flecks of edible gold" },
+      { slug:"linen", name:"Linen", occasion:"Christening", line:"As plain as it gets",
+        note:"A single tier, piped collar, nothing else. Proof that plain is a decision rather than a shortcut.",
+        finish:"Piped buttercream", serves:"10–14", from:45,
+        img:STK+"cake-linen.webp", detail:STK+"cake-rose.webp", tone:"cream",
+        alt:"Plain white piped cake on a stand beside brass candlesticks" }
+    ],
+
+    /* -- the shop ----------------------------------------------------------
+       Real products at her real prices. There is no payment gateway: she takes
+       bank transfer, so the basket ends in a written order plus her transfer
+       details rather than a card form. Wiring Stripe in later only changes the
+       checkout step. */
+    shop: [
       {
-        slug: "heirloom",
-        name: "Heirloom",
-        occasion: "Birthday",
-        line: "Twenty‑three, in blush",
-        note: "Heritage piping worked shell by shell — pearl beading, ribbon " +
-              "swags and a hand‑lettered plaque, boxed under organza and tied " +
-              "before it leaves the kitchen.",
-        finish: "Vintage piped buttercream",
-        serves: "12–16",
-        from: 65,
-        img: IMG + "heirloom.webp",
-        alt: "Blush pink vintage-piped celebration cake with pearl beading and a " +
-             "hand-lettered 'Twenty Three' plaque, ribbon-tied in a clear box",
-        detail: IMG + "heirloom-detail.webp",
-        reel: VID + "heirloom.mp4",
-        reelWebm: VID + "heirloom.webm",
-        poster: VID + "heirloom-poster.webp",
-        tone: "blush"
+        id: "cookie",
+        name: "Cookie box",
+        blurb: "Thick, soft-baked and boxed the morning they go out. Mix the flavours across a box — just say which.",
+        img: STK + "cookie-stack.webp",
+        alt: "A stack of thick chocolate chip cookies on a white plate",
+        lead: 5,
+        flavours: ["Triple chocolate", "White chocolate", "Plain chocolate chip", "Oreo"],
+        sizes: [ { qty: 6, price: 15 }, { qty: 9, price: 22 },
+                 { qty: 12, price: 28 }, { qty: 18, price: 40 } ]
       },
       {
-        slug: "merlot",
-        name: "Merlot",
-        occasion: "Milestone",
-        line: "Deep red, gold satin",
-        note: "A merlot buttercream shell finished with antique gold bows, " +
-              "gilded pearls and a single piped initial. Built for the birthday " +
-              "that wants the room to go quiet.",
-        finish: "Merlot buttercream, gold leaf pearls",
-        serves: "16–20",
-        from: 85,
-        img: IMG + "merlot.webp",
-        alt: "Deep merlot buttercream cake trimmed with antique gold satin bows " +
-             "and gold pearls, with a piped monogram on the crown",
-        detail: IMG + "merlot-detail.webp",
-        reel: VID + "merlot.mp4",
-        reelWebm: VID + "merlot.webm",
-        poster: VID + "merlot-poster.webp",
-        tone: "merlot"
-      },
-      {
-        slug: "bloom",
-        name: "Bloom",
-        occasion: "Birthday",
-        line: "Ruffled, and full of flowers",
-        note: "Ribbon ruffles combed into the buttercream by hand, then a whole " +
-              "crown of fresh blooms — roses, hydrangea, an orchid laid at the " +
-              "base like an afterthought that took an hour.",
-        finish: "Combed ruffles, fresh florals",
-        serves: "16–20",
-        from: 85,
-        img: IMG + "bloom.webp",
-        alt: "Tall blush buttercream cake with combed ribbon ruffles and a crown " +
-             "of fresh pink roses, hydrangea and an orchid",
-        detail: IMG + "bloom-detail.webp",
-        reel: VID + "bloom.mp4",
-        reelWebm: VID + "bloom.webm",
-        poster: VID + "bloom-poster.webp",
-        tone: "blush"
-      },
-      {
-        slug: "midnight",
-        name: "Midnight",
-        occasion: "Birthday",
-        line: "Portrait in aubergine",
-        note: "An edible print set into an aubergine shell, ringed with piped " +
-              "shells, silver pearls and mirrored spheres. Every detail cut to " +
-              "the same low, late‑night key.",
-        finish: "Aubergine buttercream, edible print",
-        serves: "16–20",
-        from: 85,
-        img: IMG + "midnight.webp",
-        alt: "Deep aubergine buttercream cake with an edible portrait print, " +
-             "piped shell borders, silver pearls and mirrored disco spheres",
-        detail: IMG + "midnight-detail.webp",
-        reel: VID + "midnight.mp4",
-        reelWebm: VID + "midnight.webm",
-        poster: VID + "midnight-poster.webp",
-        tone: "aubergine"
-      },
-      {
-        slug: "velocity",
-        name: "Velocity",
-        occasion: "Children's",
-        line: "Fifth birthday, top speed",
-        note: "Two greens torn back over one another, a hand‑cut crest, " +
-              "chequered flags and a name board at the base. Sculpted work, " +
-              "made for someone who is five.",
-        finish: "Two-tone buttercream, sculpted detail",
-        serves: "12–16",
-        from: 75,
-        img: IMG + "velocity.webp",
-        alt: "Two-tone green sculpted birthday cake with a Lamborghini crest, " +
-             "chequered flags, a number five topper and a name board",
-        detail: IMG + "velocity-detail.webp",
-        reel: VID + "velocity.mp4",
-        reelWebm: VID + "velocity.webm",
-        poster: VID + "velocity-poster.webp",
-        tone: "green"
+        id: "brownie",
+        name: "Brownie box",
+        blurb: "Fudgy in the middle, paper-thin crust on top. Cut generously and boxed with a knife's worth of care.",
+        img: STK + "brownie-dusted.webp",
+        alt: "Squares of brownie dusted with icing sugar on a wooden board",
+        lead: 5,
+        flavours: ["Triple chocolate", "White chocolate", "Lotus Biscoff", "Chocolate & strawberry"],
+        sizes: [ { qty: 6, price: 15 }, { qty: 9, price: 22 },
+                 { qty: 12, price: 28 }, { qty: 18, price: 40 } ]
       }
     ],
 
-    /* Photographs the studio has sent but that aren't in the repository yet.
-       Save each file at the path below, move the entry up into `cakes`, and it
-       appears everywhere the others do. Nothing else needs touching. */
-    awaitingPhotos: [
-      { slug: "noel",     name: "Noël",     occasion: "Christmas",
-        img: IMG + "noel.webp",
-        note: "Coconut snow, a fondant Santa face-down in a drift, piped sleigh " +
-              "and reindeer, tree and gifts at the base." },
-      { slug: "macaron",  name: "Macaron",  occasion: "Celebration",
-        img: IMG + "macaron.webp",
-        note: "Watercolour buttercream with gold leaf, a rose drip and a crown " +
-              "of macarons." },
-      { slug: "blessing", name: "Blessing", occasion: "Christening",
-        img: IMG + "blessing.webp",
-        note: "Ivory buttercream under a cascade of silver and pearl, blue and " +
-              "teal florals, glitter cross." },
-      { slug: "peony",    name: "Peony",    occasion: "Birthday",
-        img: IMG + "peony.webp",
-        note: "Marbled blush and cream buttercream under fresh peonies, with a " +
-              "gold script topper." }
+    /* Bank details are deliberately not in the source — she sends them once an
+       order is confirmed. Change this line if she wants them shown up front. */
+    payment: {
+      method: "Bank transfer",
+      note: "She'll send bank details to confirm. Orders are made once payment clears."
+    },
+
+    /* -- the boxes, in pictures -------------------------------------------- */
+    cookieShots: [
+      { img:STK+"cookie-stack.webp", alt:"A stack of thick chocolate chip cookies on a white plate" },
+      { img:STK+"cookie-tray.webp",  alt:"Chocolate chip cookies fresh from the oven on a baking tray" },
+      { img:STK+"cookie-dark.webp",  alt:"Chocolate chip cookies on a dark surface scattered with petals" },
+      { img:STK+"cookie-warm.webp",  alt:"Golden cookies surrounded by scattered chocolate chips" }
     ],
+    brownieShots: [
+      { img:STK+"brownie-drizzle.webp", alt:"Brownie slices under a ribbon of warm chocolate sauce" },
+      { img:STK+"brownie-dusted.webp",  alt:"Squares of brownie dusted with icing sugar on a wooden board" },
+      { img:STK+"brownie-rack.webp",    alt:"A stack of fudgy brownies cooling on a wire rack" },
+      { img:STK+"brownie-bowl.webp",    alt:"Rich chocolate brownies piled in a white dish" }
+    ],
+
+    /* -- the swiping counter ------------------------------------------------ */
+    counter: [
+      STK+"cake-rose.webp", STK+"cookie-stack.webp", STK+"brownie-drizzle.webp",
+      STK+"cake-bloom.webp", STK+"craft-drip.webp", STK+"cake-ivory.webp",
+      STK+"brownie-dusted.webp", STK+"cake-marble.webp", STK+"cookie-tray.webp",
+      STK+"cake-berry.webp", STK+"craft-spatula.webp", STK+"cake-petal.webp",
+      STK+"brownie-rack.webp", STK+"cookie-warm.webp", STK+"cake-noir.webp",
+      STK+"craft-turntable.webp", STK+"cake-linen.webp", STK+"brownie-bowl.webp"
+    ],
+
+    /* Her own photographs replace the stock set above one for one: same slug,
+       same path, no other change. The four she has already sent (Christmas,
+       macaron drip, God Bless christening, peony) are listed in
+       assets/amabilis/README.md with the filenames to save them as. */
+
+    /* -- the shop ----------------------------------------------------------
+       Real products at her real prices. There is no payment gateway: she takes
+       bank transfer, so the basket ends in a written order plus her transfer
+       details rather than a card form. Wiring Stripe in later only changes the
+       checkout step. */
+    shop: [
+      {
+        id: "cookie",
+        name: "Cookie box",
+        blurb: "Thick, soft-baked and boxed the morning they go out. Mix the flavours across a box — just say which.",
+        img: STK + "cookie-stack.webp",
+        alt: "A stack of thick chocolate chip cookies on a white plate",
+        lead: 5,
+        flavours: ["Triple chocolate", "White chocolate", "Plain chocolate chip", "Oreo"],
+        sizes: [ { qty: 6, price: 15 }, { qty: 9, price: 22 },
+                 { qty: 12, price: 28 }, { qty: 18, price: 40 } ]
+      },
+      {
+        id: "brownie",
+        name: "Brownie box",
+        blurb: "Fudgy in the middle, paper-thin crust on top. Cut generously and boxed with a knife's worth of care.",
+        img: STK + "brownie-dusted.webp",
+        alt: "Squares of brownie dusted with icing sugar on a wooden board",
+        lead: 5,
+        flavours: ["Triple chocolate", "White chocolate", "Lotus Biscoff", "Chocolate & strawberry"],
+        sizes: [ { qty: 6, price: 15 }, { qty: 9, price: 22 },
+                 { qty: 12, price: 28 }, { qty: 18, price: 40 } ]
+      }
+    ],
+
+    /* Bank details are deliberately not in the source — she sends them once an
+       order is confirmed. Change this line if she wants them shown up front. */
+    payment: {
+      method: "Bank transfer",
+      note: "She'll send bank details to confirm. Orders are made once payment clears."
+    },
+
+    /* -- the boxes, in pictures -------------------------------------------- */
+    cookieShots: [
+      { img:STK+"cookie-stack.webp", alt:"A stack of thick chocolate chip cookies on a white plate" },
+      { img:STK+"cookie-tray.webp",  alt:"Chocolate chip cookies fresh from the oven on a baking tray" },
+      { img:STK+"cookie-dark.webp",  alt:"Chocolate chip cookies on a dark surface scattered with petals" },
+      { img:STK+"cookie-warm.webp",  alt:"Golden cookies surrounded by scattered chocolate chips" }
+    ],
+    brownieShots: [
+      { img:STK+"brownie-drizzle.webp", alt:"Brownie slices under a ribbon of warm chocolate sauce" },
+      { img:STK+"brownie-dusted.webp",  alt:"Squares of brownie dusted with icing sugar on a wooden board" },
+      { img:STK+"brownie-rack.webp",    alt:"A stack of fudgy brownies cooling on a wire rack" },
+      { img:STK+"brownie-bowl.webp",    alt:"Rich chocolate brownies piled in a white dish" }
+    ],
+
+    /* -- the swiping counter ------------------------------------------------ */
+    counter: [
+      STK+"cake-rose.webp", STK+"cookie-stack.webp", STK+"brownie-drizzle.webp",
+      STK+"cake-bloom.webp", STK+"craft-drip.webp", STK+"cake-ivory.webp",
+      STK+"brownie-dusted.webp", STK+"cake-marble.webp", STK+"cookie-tray.webp",
+      STK+"cake-berry.webp", STK+"craft-spatula.webp", STK+"cake-petal.webp",
+      STK+"brownie-rack.webp", STK+"cookie-warm.webp", STK+"cake-noir.webp",
+      STK+"craft-turntable.webp", STK+"cake-linen.webp", STK+"brownie-bowl.webp"
+    ],
+
+    /* Her own photographs replace the stock set above one for one: same slug,
+       same path, no other change. The four she has already sent (Christmas,
+       macaron drip, God Bless christening, peony) are listed in
+       assets/amabilis/README.md with the filenames to save them as. */
 
     /* -- stock imagery ----------------------------------------------------
        NOT her work, and never presented as it. Free-licence photography from
@@ -214,14 +265,14 @@ window.AMABILIS = (function () {
 
     /* -- services --------------------------------------------------------- */
     services: [
-      { name: "Birthday cakes",   note: "Single tier, sculpted, or piped to a theme.", img: IMG + "heirloom-sm.webp" },
-      { name: "Celebration cakes",note: "Engagements, christenings, anniversaries, graduations.", img: IMG + "bloom-sm.webp" },
-      { name: "Wedding cakes",    note: "Tiered work, tasting first, styled to the day.", img: IMG + "merlot-sm.webp" },
-      { name: "Cupcakes",         note: "Piped and finished to match the cake.", img: IMG + "bloom-detail-sm.webp" },
-      { name: "Brownies & cookies", note: "Boxed by the six, nine, twelve or eighteen.", img: IMG + "heirloom-detail-sm.webp" },
-      { name: "Mini loaves & muffins", note: "Favours, hampers, morning tables.", img: IMG + "merlot-detail-sm.webp" },
-      { name: "Dessert tables",   note: "One order, styled as a whole.", img: IMG + "midnight-sm.webp" },
-      { name: "Corporate & events", note: "Branded, sculpted, or kept quiet and elegant.", img: IMG + "velocity-sm.webp" }
+      { name: "Birthday cakes",   note: "Single tier, sculpted, or piped to a theme.", img: STK + "cake-rose-sm.webp" },
+      { name: "Celebration cakes",note: "Engagements, christenings, anniversaries, graduations.", img: STK + "cake-bloom-sm.webp" },
+      { name: "Wedding cakes",    note: "Tiered work, tasting first, styled to the day.", img: STK + "cake-noir-sm.webp" },
+      { name: "Cupcakes",         note: "Piped and finished to match the cake.", img: STK + "craft-piping-sm.webp" },
+      { name: "Brownies & cookies", note: "Boxed by the six, nine, twelve or eighteen.", img: STK + "brownie-dusted-sm.webp" },
+      { name: "Mini loaves & muffins", note: "Favours, hampers, morning tables.", img: STK + "cookie-stack-sm.webp" },
+      { name: "Dessert tables",   note: "One order, styled as a whole.", img: STK + "cake-marble-sm.webp" },
+      { name: "Corporate & events", note: "Branded, sculpted, or kept quiet and elegant.", img: STK + "cake-linen-sm.webp" }
     ],
 
     /* -- pricing ---------------------------------------------------------- */
