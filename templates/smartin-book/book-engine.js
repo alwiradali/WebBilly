@@ -59,6 +59,10 @@
   /* ---- scroll → p ------------------------------------------------ */
 
   var VH_PER_LEAF = 1.0;          // how much scroll one turn costs
+  /* Below 900px the book shows one page at a time and the leaf already
+     fills it, so there is no second half to slide off-centre for —
+     applying the opening slide there pushes the cover off the screen. */
+  var single = window.matchMedia('(max-width: 900px)').matches;
   var target = 0, current = 0, velocity = 0;
   var maxScroll = 1;
 
@@ -68,6 +72,7 @@
     scroller.style.height = ((N + 1.15) * VH_PER_LEAF * 100) + 'vh';
     maxScroll = Math.max(1, scroller.offsetHeight - window.innerHeight);
     root.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+    single = window.matchMedia('(max-width: 900px)').matches;
     buildSnaps();
   }
 
@@ -156,7 +161,7 @@
     var eased = open * open * (3 - 2 * open);           // smoothstep
     // closed at the front, the visible half is the right one (-25%);
     // closed at the back it is the left one (+25%); open, neither (0).
-    var slide = shut > 0 ? 25 * (1 - eased) : -25 + 25 * eased;
+    var slide = single ? 0 : (shut > 0 ? 25 * (1 - eased) : -25 + 25 * eased);
     book.style.transform =
       'translateX(' + slide + '%) ' +
       'rotateX(' + (7 - 3.5 * eased) + 'deg) ' +

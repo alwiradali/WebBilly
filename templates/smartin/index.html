@@ -17,6 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Questrial&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="../../assets/fonts/fonts-reading.css">
+<link rel="stylesheet" href="book-hero.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"EducationalOrganization",
 "name":"SMARTin SCIENCE","slogan":"Science made simple. Results made real!",
@@ -66,34 +68,58 @@
 </nav>
 
 <!-- ============================ HERO ============================ -->
-<header class="hero">
-  <div class="orb a"></div><div class="orb b"></div>
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow" data-fx="reveal">GCSE Combined Science · Y10 &amp; Y11 · 4 Weeks</span>
-        <h1 data-fx="text" data-fx-step="55">Science made simple. Results made real.</h1>
-        <p class="lead" data-fx="reveal" data-fx-delay="260">Is science stressing out your child? In just four weeks, I'll give them the knowledge and the confidence to put them back on track for GCSE Combined Science.</p>
-        <div class="hero-cta" data-fx="reveal" data-fx-delay="380">
-          <a class="btn btn-p" href="#booking">Secure Your Place →</a>
-          <a class="btn btn-wa" data-c="wa" target="_blank" rel="noopener">Message Rod</a>
+<!-- ==================== HERO — THE BOOK ====================
+     The same hero content it has always been, set as an exercise book
+     that opens page by page as you scroll past it. Ships as a plain
+     stacked hero; book-hero.js upgrades it. Everything below this
+     section is unchanged. -->
+<header class="hero bookhero" id="bookhero">
+  <!-- The orbs used to be clipped by .hero's overflow:hidden. The sticky
+       stage needs overflow:visible on the section, so they get their own
+       clip here instead of pushing the layout 130px wider than the phone. -->
+  <div class="bh-orbs" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div></div>
+
+  <div class="bh-stage">
+    <div class="bh-shadow" aria-hidden="true"></div>
+
+    <div class="bh-book">
+
+      <!-- ---------- LEAF 0 : the cover, then the promise ---------- -->
+      <div class="bh-leaf">
+        <div class="bh-face bh-front bh-cover">
+          <span class="bh-eyebrow">GCSE Combined Science · Y10 &amp; Y11 · 4 Weeks</span>
+          <div>
+            <img class="bh-mark" src="../../assets/smartin/mark.svg" alt="">
+            <h1>Science made simple.<br><i>Results made real.</i></h1>
+            <p class="bh-tag">Is science stressing out your child?</p>
+          </div>
+          <div class="bh-foot">
+            <span class="bh-who">Rod Martin<span>Expert STEM tutor · Former Head of Science</span></span>
+            <span class="bh-ed">Scroll to open</span>
+          </div>
         </div>
-        <div class="trustrow" data-fx="stagger" data-fx-step="90" data-fx-delay="440">
-          <span><b>Former Head of Science</b> — and an expert STEM tutor</span>
-          <span><b>20+ years</b> teaching science in UK classrooms</span>
-          <span><b>Y10 &amp; Y11</b> GCSE Combined Science specialists</span>
-          <span><b>Empowerment, Engagement, Excellence</b> — every session</span>
+
+        <div class="bh-face bh-back">
+          <div class="bh-chap"><i>01</i><b>The promise</b></div>
+          <p class="bh-lede">In just four weeks, I'll give them the knowledge and the confidence to put them back on track for GCSE Combined Science.</p>
+          <ul class="bh-ticks">
+            <li><b>Former Head of Science</b> — and an expert STEM tutor</li>
+            <li><b>20+ years</b> teaching science in UK classrooms</li>
+            <li><b>Y10 &amp; Y11</b> GCSE Combined Science specialists</li>
+            <li><b>Empowerment, Engagement, Excellence</b> — every session</li>
+          </ul>
+          <p class="bh-note">Nearly always a confidence problem, not an ability one ✓</p>
+          <span class="bh-pageno">1</span>
         </div>
       </div>
 
-      <div style="position:relative" data-fx="reveal" data-fx-variant="scale" data-fx-delay="220">
-        <div class="tile t1"><u>6</u><b>C</b><s>CARBON</s></div>
-        <div class="tile t2"><u>26</u><b>Fe</b><s>IRON</s></div>
-        <div class="panel">
-          <div class="ptop"><span>The Course</span><span>Y10 &amp; Y11</span></div>
-          <div class="ring">
+      <!-- ---------- LEAF 1 : the course, then the four weeks ---------- -->
+      <div class="bh-leaf">
+        <div class="bh-face bh-front">
+          <div class="bh-ptop"><span>The Course</span><span>Y10 &amp; Y11</span></div>
+          <div class="bh-ring">
             <svg viewBox="0 0 186 186" aria-hidden="true">
-              <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+              <defs><linearGradient id="bhrg" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#0457ac"/><stop offset=".5" stop-color="#308fac"/>
                 <stop offset="1" stop-color="#37bd79"/></linearGradient></defs>
               <circle class="bg" cx="93" cy="93" r="80" fill="none" stroke-width="12"/>
@@ -101,14 +127,43 @@
             </svg>
             <div class="mid"><b>4</b><span>Weeks</span></div>
           </div>
-          <div class="wklist">
-            <div class="wkrow"><i>01</i>Biology that actually sticks<em>Week 1</em></div>
-            <div class="wkrow"><i>02</i>Chemistry without the fear<em>Week 2</em></div>
-            <div class="wkrow"><i>03</i>Physics, formulas &amp; maths skills<em>Week 3</em></div>
-            <div class="wkrow"><i>04</i>Exam technique &amp; past papers<em>Week 4</em></div>
+          <p>Four focused weeks, each with one job — built around what the exam actually asks for, not around finishing a textbook.</p>
+          <span class="bh-pageno">2</span>
+        </div>
+
+        <div class="bh-face bh-back">
+          <div class="bh-chap"><i>02</i><b>Four weeks, four jobs</b></div>
+          <div class="bh-weeks">
+            <div class="bh-wk"><i>01</i><span><b>Biology that actually sticks</b><em>Week 1</em></span></div>
+            <div class="bh-wk"><i>02</i><span><b>Chemistry without the fear</b><em>Week 2</em></span></div>
+            <div class="bh-wk"><i>03</i><span><b>Physics, formulas &amp; maths skills</b><em>Week 3</em></span></div>
+            <div class="bh-wk"><i>04</i><span><b>Exam technique &amp; past papers</b><em>Week 4</em></span></div>
           </div>
+          <span class="bh-pageno">3</span>
         </div>
       </div>
+
+      <!-- ---------- LEAF 2 : where the hero has always ended ---------- -->
+      <div class="bh-leaf">
+        <div class="bh-face bh-front">
+          <div class="bh-chap"><i>02</i><b>Start here</b></div>
+          <h2>Ready when <em>you are</em>.</h2>
+          <p>Tell me about your child and I'll come back within 24 hours with the next start date, times and rates.</p>
+          <div class="bh-cta">
+            <a class="btn btn-p" href="#booking">Secure Your Place →</a>
+            <a class="btn btn-wa" data-c="wa" target="_blank" rel="noopener">Message Rod</a>
+          </div>
+          <p class="bh-note">A free chat first — no obligation at all ✓</p>
+          <span class="bh-pageno">4</span>
+        </div>
+        <div class="bh-face bh-back" aria-hidden="true"></div>
+      </div>
+
+    </div>
+
+    <div class="bh-hint" aria-hidden="true">
+      <span class="k">Scroll to turn the page</span>
+      <div class="m"></div>
     </div>
   </div>
 </header>
@@ -602,6 +657,7 @@
   <span>Message Rod</span>
 </a>
 
+<script src="book-hero.js" defer></script>
 <script src="../../assets/js/scroll-fx.js" defer></script>
 <script src="letters.js" defer></script>
 <script src="site.js" defer></script>
