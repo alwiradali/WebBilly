@@ -89,8 +89,10 @@
   background:repeating-linear-gradient(90deg,#E7EEF5 0 1px,#FBFDFF 1px 3px);
   box-shadow:0 16px 44px -24px rgba(4,50,92,.55);
 }
-.bh-on .bh-book::after{right:-1px;width:calc(9px * (1 - var(--bh-p,0) / 2));transform:translateX(100%)}
-.bh-on .bh-book::before{left:-1px;width:calc(9px * (var(--bh-p,0) / 2));transform:translateX(-100%)}
+/* --bh-turns, not a literal: the number of leaves changes with the page
+   count and again between spread and single-page mode. */
+.bh-on .bh-book::after{right:-1px;width:calc(9px * (1 - var(--bh-p,0) / var(--bh-turns,2)));transform:translateX(100%)}
+.bh-on .bh-book::before{left:-1px;width:calc(9px * (var(--bh-p,0) / var(--bh-turns,2)));transform:translateX(-100%)}
 
 /* The weight under the book. It CANNOT be a filter on .bh-book — a
    filter forces preserve-3d to flatten, which collapses the page
@@ -281,6 +283,10 @@
 .bh-wk:nth-child(2) i{background:linear-gradient(112deg,#308fac,#37bd79)}
 .bh-wk:nth-child(3) i{background:linear-gradient(112deg,#37bd79,#a7e237)}
 .bh-wk:nth-child(4) i{background:linear-gradient(112deg,#ffba53,#37bd79)}
+/* the six-beat list runs two past the four weeks — keep the ramp going
+   rather than letting 05 and 06 drop back to flat blue */
+.bh-wk:nth-child(5) i{background:linear-gradient(112deg,#0457ac,#308fac)}
+.bh-wk:nth-child(6) i{background:linear-gradient(112deg,#308fac,#a7e237)}
 .bh-wk b{display:block;font-family:var(--dis);font-weight:600;color:var(--bink);
   font-size:clamp(13px,calc(var(--bh-u,3px)*3.24),25px)}
 .bh-wk em{display:block;font-style:normal;font-family:var(--read);color:var(--mut);
