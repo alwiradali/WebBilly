@@ -1,44 +1,95 @@
 # Billy Digitals — robots.txt
 # Search engines: full access to public pages.
+#
+# Private paths are repeated in every group below. robots.txt has no
+# inheritance: a crawler obeys ONLY the most specific group that matches its
+# name, so a named agent with just "Allow: /" ignores the "*" rules entirely.
+# Without the repeats, every client demo under /templates/ was crawlable by the
+# AI agents even though it was disallowed for everyone else.
+#
+# Disallow lines come before "Allow: /" in each group on purpose. Modern
+# crawlers resolve conflicts by longest match (RFC 9309) and would block either
+# way; older first-match parsers only block if the Disallow is listed first.
+
 User-agent: *
-Allow: /
 Disallow: /templates/
 Disallow: /send-review.html
 Disallow: /admin.html
+Allow: /
 
-# --- AI answer engines: explicitly welcomed so we can be read & cited ---
+# --- AI answer engines: explicitly welcomed on the public site so we can be
+#     read & cited — but kept out of the unlisted client demos. ---
+
 # (ChatGPT / OpenAI)
 User-agent: GPTBot
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
+
 User-agent: OAI-SearchBot
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
+
 User-agent: ChatGPT-User
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 # (Anthropic / Claude)
 User-agent: ClaudeBot
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
+
 User-agent: Claude-Web
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
+
 User-agent: anthropic-ai
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 # (Perplexity)
 User-agent: PerplexityBot
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
+
 User-agent: Perplexity-User
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 # (Google AI — Gemini / AI Overviews)
 User-agent: Google-Extended
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 # (Apple Intelligence)
 User-agent: Applebot-Extended
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 # (Microsoft Copilot / Bing)
 User-agent: Bingbot
+Disallow: /templates/
+Disallow: /send-review.html
+Disallow: /admin.html
 Allow: /
 
 Sitemap: https://www.billydigitals.com/sitemap.xml

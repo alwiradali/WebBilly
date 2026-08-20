@@ -1,5 +1,17 @@
 # Bakedwith Amabilis — assets
 
+**The page is unlisted.** It lives at `/templates/amabilis` and anyone with the
+link can open it — that is the point, it gets sent to the client. It is kept out
+of search by four separate things: nothing on the site links to it, it is absent
+from `sitemap.xml`, `robots.txt` disallows `/templates/` for every crawler
+including the AI agents, and `_headers` serves
+`X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex` for the
+page and `noindex, noimageindex` for the media. Link-preview scrapers ignore all
+of that, so sharing the URL still renders a proper card.
+
+Unlisted is not the same as private. If the URL needs a key before it opens,
+that is a small addition to `worker.js` — ask.
+
 Everything the site shows lives here. Nothing needs rebuilding, bundling or
 deploying: drop a file in at the right path, reload the page, done.
 

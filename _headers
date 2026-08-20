@@ -26,3 +26,18 @@
   Cache-Control: public, max-age=2592000
 /assets/amabilis/video/*
   Cache-Control: public, max-age=2592000
+
+# --- Unlisted client preview: Bakedwith Amabilis --------------------------
+# Reachable by anyone with the link (that is the point — it gets sent to the
+# client), but kept out of every index. robots.txt already tells compliant
+# crawlers not to fetch /templates/; these headers are the second layer, for
+# anything that fetches anyway or that arrives via a shared link. The media is
+# covered separately so the photographs can't be surfaced by image search on
+# their own. Link-preview scrapers (WhatsApp, iMessage, Slack) ignore these, so
+# sharing the URL still renders a proper card.
+/templates/amabilis
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/amabilis/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/amabilis/*
+  X-Robots-Tag: noindex, noimageindex
