@@ -43,6 +43,7 @@
   /* The markup ships as a flat list of pages in reading order — which is
      what the no-JS fallback wants anyway. The leaves are assembled here,
      because how many pages a leaf carries depends on the screen. */
+  var shadow = sec.querySelector('.bh-shadow');
   var faces = [].slice.call(book.querySelectorAll('.bh-face'));
   if (faces.length < 3) return;
 
@@ -74,6 +75,10 @@
       }
       book.appendChild(leaf);
     }
+
+    // the shadow lives inside the book so it rides the book's transform
+    // and never participates in the stage's layout — see book-hero.css
+    if (shadow) book.appendChild(shadow);
 
     leaves = [].slice.call(book.querySelectorAll('.bh-leaf'));
     N = leaves.length;
