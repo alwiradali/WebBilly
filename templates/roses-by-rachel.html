@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Roses by Rachel — Manchester Florist | Bouquets for Every Occasion</title>
+<meta name="description" content="Roses by Rachel — Manchester florist. Fresh bouquets made to order: birthdays, anniversaries, weddings and just-because. Order through Instagram.">
+<meta name="theme-color" content="#f8f3ea">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Roses by Rachel — flowers that say it beautifully.">
+<meta property="og:description" content="Manchester florist. Fresh bouquets made to order for every occasion — order through Instagram.">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="icon" href="../assets/rachel/icon-32.png" sizes="32x32">
+<link rel="preload" href="../assets/rachel/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/rachel/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* ============================================================
+   ROSES BY RACHEL — the gilded garden atelier.
+   Ivory linen, champagne gold from her monogram, rose-petal
+   pinks from her bouquets. Cormorant serif like her wordmark,
+   fine double rules and a diamond spark, petals falling through
+   three depths behind the page, and a rose that blooms open as
+   you scroll. Nothing shared with any other template here.
+   ============================================================ */
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:600 700;font-display:swap;
+  src:url(../assets/rachel/fonts/cormorant.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:500;font-display:swap;
+  src:url(../assets/rachel/fonts/cormorant-italic.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(../assets/rachel/fonts/inter-var.woff2) format('woff2')}
+:root{
+  --ivory:#f8f3ea; --ivory2:#fdfaf3; --linen:#f1e9db;
+  --gold:#a8834f; --gold2:#c4a165; --goldpale:#e5d5b8;
+  --ink:#2b2118; --soft:#75655230; --mut:#7c6d58;
+  --rose:#d77b93; --rose2:#e8a7b7; --rosedeep:#b95a76;
+  --leaf:#7a8c6d;
+  --ser:'Cormorant Garamond', Garamond, Georgia, serif;
+  --ui:'Inter', system-ui, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--ivory)}
+body{background:transparent;color:var(--ink);font-family:var(--ui);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--rose2);color:var(--ink)}
+.wrap{max-width:1150px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+
+/* petals fall behind everything */
+#petals{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.ivorybase{position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(1000px 640px at 88% -8%,#fdf8ee,transparent 60%),
+  radial-gradient(860px 700px at 2% 108%,#f2e7d3,transparent 62%),
+  var(--ivory)}
+
+h1,h2,h3{font-family:var(--ser);font-weight:600;line-height:1.02;letter-spacing:.005em}
+h2{font-size:clamp(2.4rem,5.8vw,4.1rem)}
+h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
+.lede{color:var(--mut);font-size:clamp(1rem,1.6vw,1.13rem);max-width:56ch}
+
+/* her logo's rule: line ✦ line */
+.spark-rule{display:flex;align-items:center;gap:18px;justify-content:center;color:var(--gold)}
+.spark-rule::before,.spark-rule::after{content:"";height:1px;background:linear-gradient(90deg,transparent,var(--gold));flex:1;max-width:170px}
+.spark-rule::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.spark-rule b{font-family:var(--ser);font-weight:600;font-size:1rem;letter-spacing:.5em;text-indent:.5em;text-transform:uppercase;color:var(--gold)}
+.spark-rule svg{width:13px;height:13px;flex:none;fill:var(--gold)}
+
+/* ---------- buttons ---------- */
+.rbtn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 34px;cursor:pointer;
+  font-family:var(--ser);font-weight:700;font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ivory2);background:linear-gradient(135deg,var(--gold),#95713e);border:1px solid #8a6a3c;
+  transition:box-shadow .25s,transform .25s;position:relative;
+}
+.rbtn::after{content:"";position:absolute;inset:3px;border:1px solid rgba(253,250,243,.5);pointer-events:none}
+.rbtn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -16px rgba(139,106,60,.7)}
+.rbtn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.rbtn.ghost::after{border-color:rgba(168,131,79,.3)}
+.rbtn.ghost:hover{background:rgba(168,131,79,.07)}
+.rbtn.rose{background:linear-gradient(135deg,var(--rose),var(--rosedeep));border-color:var(--rosedeep);color:#fff}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:90;transition:background .3s,box-shadow .3s}
+.nav.stuck{background:rgba(253,250,243,.93);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(168,131,79,.25)}
+.nav-in{max-width:1150px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:18px}
+.rrmark{display:flex;align-items:center;gap:13px;margin-right:auto}
+.rrmark svg{width:46px;height:46px;flex:none}
+.rrmark .t b{display:block;font-family:var(--ser);font-weight:600;font-size:1.02rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink)}
+.rrmark .t i{display:block;font-family:var(--ser);font-style:italic;font-size:.86rem;color:var(--gold);letter-spacing:.06em}
+.navlinks{display:none;gap:30px;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+.navlinks a{color:var(--mut);transition:color .2s;position:relative}
+.navlinks a::after{content:"";position:absolute;left:50%;right:50%;bottom:-6px;height:1px;background:var(--gold);transition:left .25s,right .25s}
+.navlinks a:hover{color:var(--ink)}
+.navlinks a:hover::after{left:0;right:0}
+@media(min-width:960px){.navlinks{display:flex}}
+.nav .rbtn{padding:10px 20px;font-size:.82rem}
+@media(max-width:430px){.rrmark .t b{font-size:.88rem;letter-spacing:.22em}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;align-items:center;overflow:hidden}
+.hero-in{display:grid;gap:clamp(38px,6vw,72px);grid-template-columns:minmax(0,1fr);align-items:center;padding-block:140px 80px}
+@media(min-width:940px){.hero-in{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);padding-block:150px 90px}}
+.cameo{
+  position:relative;width:min(440px,86vw);aspect-ratio:.82;margin:0 auto;border-radius:50%;
+  overflow:hidden;border:1px solid var(--gold);
+  box-shadow:0 0 0 10px var(--ivory2),0 0 0 11px var(--gold2),0 44px 90px -44px rgba(43,33,24,.5);
+}
+.cameo video,.cameo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cameo-leaf{position:absolute;z-index:2;width:110px;opacity:.9}
+.cameo-leaf.tl{top:6%;left:2%;transform:rotate(-16deg)}
+.cameo-leaf.br{bottom:4%;right:1%;transform:rotate(160deg)}
+@media(max-width:939px){.cameo-leaf{display:none}}
+.hero .kick{font-family:var(--ser);font-style:italic;font-size:clamp(1.4rem,3vw,1.9rem);color:var(--gold);display:block;margin-bottom:10px}
+.hero h1{font-size:clamp(3.4rem,8.4vw,6.6rem)}
+.hero .lede{margin:24px 0 34px;max-width:47ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px}
+.hero-pins{display:flex;flex-wrap:wrap;gap:9px 24px;margin-top:34px}
+.hero-pins span{display:flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.hero-pins svg{width:12px;height:12px;fill:var(--rose)}
+
+/* ---------- gold ticker ---------- */
+.tick{border-block:1px solid rgba(168,131,79,.4);padding:15px 0;overflow:hidden;background:var(--ivory2)}
+.tick-t{display:flex;width:max-content;animation:tk 32s linear infinite}
+.tick:hover .tick-t{animation-play-state:paused}
+.tick-t span{font-family:var(--ser);font-weight:600;font-size:1rem;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);padding:0 26px;white-space:nowrap}
+.tick-t span::after{content:"✦";margin-left:52px;letter-spacing:0;color:var(--rose)}
+@keyframes tk{to{transform:translateX(-50%)}}
+
+.sect{padding:clamp(76px,9vw,126px) 0;position:relative}
+
+/* ---------- the collection (shop) ---------- */
+.coll{display:grid;gap:26px;margin-top:56px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:700px){.coll{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.coll{grid-template-columns:repeat(3,1fr)}}
+.bq{
+  background:var(--ivory2);border:1px solid var(--goldpale);position:relative;
+  transition:transform .3s,box-shadow .3s;padding:10px;
+}
+.bq::before{content:"";position:absolute;inset:5px;border:1px solid var(--goldpale);pointer-events:none;z-index:2}
+.bq:hover{transform:translateY(-8px);box-shadow:0 36px 60px -36px rgba(43,33,24,.4)}
+.bq .ph{position:relative;overflow:hidden;aspect-ratio:.92}
+.bq .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.bq:hover .ph img{transform:scale(1.06)}
+.bq .bd{padding:20px 16px 18px;text-align:center}
+.bq h3{font-size:1.7rem}
+.bq .occ{font-family:var(--ser);font-style:italic;color:var(--gold);font-size:1.02rem}
+.bq p{color:var(--mut);font-size:.87rem;margin-top:8px;min-height:44px}
+.bq button{
+  margin-top:14px;width:100%;padding:12px;border:1px solid var(--gold);background:transparent;cursor:pointer;
+  font-family:var(--ser);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.86rem;color:var(--gold);
+  transition:background .2s,color .2s;
+}
+.bq button:hover{background:var(--gold);color:var(--ivory2)}
+.coll-note{margin-top:30px;text-align:center;font-family:var(--ser);font-style:italic;font-size:1.25rem;color:var(--mut)}
+
+/* ---------- the bloom (pinned) ---------- */
+.bloomwrap{background:var(--ivory2);border-block:1px solid rgba(168,131,79,.3)}
+.bloompin{position:relative;height:320vh}
+.bloompin .fx-pin-inner{display:flex;align-items:center}
+.bloomgrid{display:grid;gap:clamp(30px,6vw,80px);grid-template-columns:minmax(0,1fr);width:100%;align-items:center}
+@media(min-width:880px){.bloomgrid{grid-template-columns:.92fr 1.08fr}}
+.rosestage{position:relative;height:min(56vh,470px);display:grid;place-items:end center}
+.rosestage svg{width:min(330px,74%);height:auto;overflow:visible}
+.bl{opacity:calc(clamp(0,var(--p),1));transform-origin:165px 210px;
+  transform:scale(calc(.5 + clamp(0,var(--p),1) * .5)) rotate(calc((1 - clamp(0,var(--p),1)) * -8deg))}
+.bloompin .b1{--p:calc(var(--fx-progress,0) * 4.6 - 0.05)}
+.bloompin .b2{--p:calc(var(--fx-progress,0) * 4.6 - 0.9)}
+.bloompin .b3{--p:calc(var(--fx-progress,0) * 4.6 - 1.8)}
+.bloompin .b4{--p:calc(var(--fx-progress,0) * 4.6 - 2.7)}
+.bloompin .b5{--p:calc(var(--fx-progress,0) * 4.6 - 3.5)}
+.bsteps{display:grid;gap:16px}
+.bstep{
+  background:var(--ivory);border:1px solid var(--goldpale);padding:20px 24px;position:relative;
+  opacity:calc(.3 + clamp(0,var(--o),1) * .7);transform:translateX(calc((1 - clamp(0,var(--o),1)) * 22px));
+}
+.bstep::before{content:"";position:absolute;inset:4px;border:1px solid rgba(168,131,79,.18);pointer-events:none}
+.bloompin .bstep:nth-child(1){--o:calc(var(--fx-progress,0) * 4.6 - 0.05)}
+.bloompin .bstep:nth-child(2){--o:calc(var(--fx-progress,0) * 4.6 - 0.9)}
+.bloompin .bstep:nth-child(3){--o:calc(var(--fx-progress,0) * 4.6 - 1.8)}
+.bloompin .bstep:nth-child(4){--o:calc(var(--fx-progress,0) * 4.6 - 2.7)}
+.bstep small{font-family:var(--ser);font-style:italic;font-size:1.15rem;color:var(--gold)}
+.bstep h3{font-size:1.5rem;margin:3px 0 5px}
+.bstep p{color:var(--mut);font-size:.9rem}
+@media(max-width:879px){
+  .bloompin{height:auto}
+  .bloompin .fx-pin-inner{position:static;height:auto;display:block;padding:0}
+  .rosestage{height:300px;margin-bottom:26px}
+  .bl{opacity:1;transform:none}
+  .bstep{opacity:1;transform:none}
+}
+
+/* ---------- occasions ---------- */
+.occs{display:grid;gap:0;margin-top:50px;border-top:1px solid var(--goldpale)}
+.occ-row{
+  display:grid;gap:6px 26px;grid-template-columns:minmax(0,1fr);align-items:baseline;
+  padding:26px 6px;border-bottom:1px solid var(--goldpale);transition:background .25s,padding-left .25s;
+}
+@media(min-width:760px){.occ-row{grid-template-columns:270px minmax(0,1fr) auto}}
+.occ-row:hover{background:var(--ivory2);padding-left:18px}
+.occ-row h3{font-size:clamp(1.7rem,3.4vw,2.3rem)}
+.occ-row p{color:var(--mut);font-size:.92rem}
+.occ-row .go{font-family:var(--ser);font-style:italic;color:var(--gold);white-space:nowrap;font-size:1.1rem}
+.occ-row:hover .go{color:var(--rosedeep)}
+
+/* ---------- gallery ---------- */
+.gal{display:grid;gap:16px;margin-top:52px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:880px){.gal{grid-template-columns:repeat(4,1fr)}}
+.gp{position:relative;overflow:hidden;border:1px solid var(--goldpale);aspect-ratio:.82;background:var(--ivory2);padding:8px}
+.gp img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.gp:hover img{transform:scale(1.07)}
+.gp:nth-child(2),.gp:nth-child(4){translate:0 26px}
+@media(max-width:879px){.gp:nth-child(2),.gp:nth-child(4){translate:0 14px}}
+
+/* ---------- order atelier ---------- */
+.orderw{background:var(--ivory2);border-block:1px solid rgba(168,131,79,.3)}
+.ogrid{display:grid;gap:clamp(30px,5vw,60px);margin-top:50px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:960px){.ogrid{grid-template-columns:1.05fr .95fr;align-items:start}}
+.oform{background:var(--ivory);border:1px solid var(--goldpale);padding:clamp(24px,4vw,40px);position:relative}
+.oform::before{content:"";position:absolute;inset:8px;border:1px solid rgba(168,131,79,.2);pointer-events:none}
+.oform label{display:block;font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;font-weight:700;color:var(--gold);margin:18px 0 7px}
+.oform label:first-of-type{margin-top:0}
+.oform select,.oform input,.oform textarea{
+  width:100%;padding:13px 14px;background:var(--ivory2);border:1px solid var(--goldpale);
+  font-size:.95rem;color:var(--ink);position:relative;z-index:1;border-radius:0;-webkit-appearance:none;appearance:none;
+}
+.oform select:focus,.oform input:focus,.oform textarea:focus{outline:none;border-color:var(--gold)}
+.oform textarea{min-height:84px;resize:vertical}
+.orow{display:grid;gap:0 16px;grid-template-columns:1fr 1fr}
+.oform .rbtn{width:100%;margin-top:24px;z-index:1}
+.opreview{position:sticky;top:100px}
+.chatcard{background:var(--ivory);border:1px solid var(--goldpale);padding:clamp(22px,3.4vw,32px);position:relative}
+.chatcard::before{content:"";position:absolute;inset:8px;border:1px solid rgba(168,131,79,.2);pointer-events:none}
+.chatcard h3{font-size:1.5rem;margin-bottom:14px}
+.msg{
+  background:#fff;border:1px solid var(--goldpale);padding:18px 20px;font-size:.93rem;color:var(--ink);
+  line-height:1.75;white-space:pre-wrap;position:relative;z-index:1;
+}
+.chatcard .note{margin-top:16px;font-size:.85rem;color:var(--mut);position:relative;z-index:1}
+.copied{
+  position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);z-index:99;
+  background:var(--ink);color:var(--ivory2);padding:13px 26px;font-size:.9rem;letter-spacing:.06em;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);pointer-events:none;
+}
+.copied.on{transform:translateX(-50%) translateY(0)}
+
+/* ---------- footer ---------- */
+footer{padding:56px 0 66px;text-align:center;border-top:1px solid rgba(168,131,79,.3)}
+footer .rrmark{justify-content:center;margin:0 0 6px}
+footer p{color:var(--mut);font-size:.83rem;margin-top:12px}
+footer a{border-bottom:1px solid var(--gold2)}
+
+@media(prefers-reduced-motion:reduce){.tick-t{animation:none}}
+</style>
+</head>
+<body>
+<div class="ivorybase" aria-hidden="true"></div>
+<canvas id="petals" aria-hidden="true"></canvas>
+<div data-fx="progressbar" style="color:#a8834f"></div>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a class="rrmark" href="#top" aria-label="Roses by Rachel — home">
+      <svg viewBox="0 0 60 60" aria-hidden="true">
+        <circle cx="30" cy="30" r="28" fill="#fdfaf3" stroke="#a8834f" stroke-width="1.4"/>
+        <text x="24" y="38" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
+        <text x="37" y="41" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
+        <path d="M18 22 q4 -8 10 -7 q-2 6 -7 7 q4 1 5 5" fill="none" stroke="#a8834f" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+      <span class="t"><b>Roses by Rachel</b><i>Manchester florist</i></span>
+    </a>
+    <div class="navlinks">
+      <a href="#shop">The collection</a>
+      <a href="#bespoke">Bespoke</a>
+      <a href="#occasions">Occasions</a>
+      <a href="#gallery">Gallery</a>
+    </div>
+    <a class="rbtn" href="#order">Order</a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap hero-in">
+    <div>
+      <span class="kick" data-fx="reveal">fresh from the atelier, Manchester</span>
+      <h1 data-fx="text" data-fx-step="90">Flowers that<br>say it <i>beautifully.</i></h1>
+      <p class="lede" data-fx="reveal" data-fx-delay="300">
+        Roses by Rachel is a Manchester florist making bouquets to order —
+        wrapped by hand, finished with care, and built around your occasion,
+        your colours and your person.
+      </p>
+      <div class="hero-cta" data-fx="reveal" data-fx-delay="420">
+        <a class="rbtn" href="#shop">Shop bouquets</a>
+        <a class="rbtn ghost" href="#order">Request bespoke</a>
+      </div>
+      <div class="hero-pins" data-fx="stagger" data-fx-step="90" data-fx-delay="520">
+        <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Made fresh to order</span>
+        <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Manchester &amp; around</span>
+        <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Ordered in your DMs</span>
+      </div>
+    </div>
+    <div style="position:relative" data-fx="reveal" data-fx-variant="scale" data-fx-delay="200">
+      <svg class="cameo-leaf tl" viewBox="0 0 110 60" aria-hidden="true">
+        <path d="M4 52 Q30 8 104 12 Q66 18 48 34 Q34 46 4 52z" fill="#7a8c6d" opacity=".55"/>
+        <path d="M10 50 Q40 22 96 16" fill="none" stroke="#5f7052" stroke-width="1.4" opacity=".7"/>
+      </svg>
+      <div class="cameo">
+        <img src="../assets/rachel/poster.webp" alt="">
+        <video autoplay muted loop playsinline preload="metadata" poster="../assets/rachel/poster.webp" id="heroVid">
+          <source src="../assets/rachel/hero.mp4" type="video/mp4">
+        </video>
+      </div>
+      <svg class="cameo-leaf br" viewBox="0 0 110 60" aria-hidden="true">
+        <path d="M4 52 Q30 8 104 12 Q66 18 48 34 Q34 46 4 52z" fill="#7a8c6d" opacity=".55"/>
+        <path d="M10 50 Q40 22 96 16" fill="none" stroke="#5f7052" stroke-width="1.4" opacity=".7"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- ================= GOLD TICKER ================= -->
+<div class="tick" aria-hidden="true">
+  <div class="tick-t" id="tkt">
+    <span>Roses</span><span>Bouquets</span><span>Weddings</span><span>Anniversaries</span>
+    <span>Birthdays</span><span>New baby</span><span>Just because</span><span>Manchester</span>
+  </div>
+</div>
+
+<!-- ================= THE COLLECTION ================= -->
+<section class="sect" id="shop">
+  <div class="wrap">
+    <div class="spark-rule" data-fx="reveal"><b>The Collection</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Signature styles,<br><i>made yours.</i></h2>
+    <p class="lede" style="margin:20px auto 0;text-align:center" data-fx="reveal" data-fx-delay="140">
+      Pick a style and order it in a tap — every bouquet is arranged fresh,
+      sized to your budget, and finished with her signature wrap.
+    </p>
+    <div class="coll" data-fx="stagger" data-fx-step="100">
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/pinkroses-sm.webp" alt="Pale pink roses wrapped in lavender paper" loading="lazy"></div>
+        <div class="bd"><h3>The Blush</h3><span class="occ">pink roses, softly wrapped</span>
+          <p>Her signature — pastel roses in a cloud of elegant wrap, pretty in pink from every angle.</p>
+          <button data-order="The Blush (pink roses)">Order this style</button></div>
+      </article>
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/babysbreath-sm.webp" alt="White roses with baby's breath" loading="lazy"></div>
+        <div class="bd"><h3>The Classic</h3><span class="occ">roses &amp; baby's breath</span>
+          <p>Timeless white and cream with clouds of gypsophila — romance that never misses.</p>
+          <button data-order="The Classic (roses &amp; baby's breath)">Order this style</button></div>
+      </article>
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/yellow-sm.webp" alt="Sunflowers and yellow chrysanthemums" loading="lazy"></div>
+        <div class="bd"><h3>The Sunshine</h3><span class="occ">sunflowers &amp; golden blooms</span>
+          <p>Sunflowers, golden chrysanthemums and cream lilies — a bouquet that grins back.</p>
+          <button data-order="The Sunshine (sunflowers &amp; yellow)">Order this style</button></div>
+      </article>
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/redyellow-sm.webp" alt="Red and yellow roses in elegant wrap" loading="lazy"></div>
+        <div class="bd"><h3>The Romance</h3><span class="occ">reds, brights &amp; lilies</span>
+          <p>Rich red roses with lilies and colour — anniversaries, apologies and grand gestures.</p>
+          <button data-order="The Romance (red roses &amp; lilies)">Order this style</button></div>
+      </article>
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/peonies-sm.webp" alt="Pastel peony arrangement" loading="lazy"></div>
+        <div class="bd"><h3>The Pastel</h3><span class="occ">peony-soft &amp; dreamy</span>
+          <p>Powder pinks and creams for new babies, birthdays and the gentlest congratulations.</p>
+          <button data-order="The Pastel (soft pastel mix)">Order this style</button></div>
+      </article>
+      <article class="bq">
+        <div class="ph"><img src="../assets/rachel/giftbox-sm.webp" alt="Roses presented in a gift box" loading="lazy"></div>
+        <div class="bd"><h3>The Gift Box</h3><span class="occ">boxed, beribboned, done</span>
+          <p>An arrangement in its own keepsake box — arrives beautiful, no vase required.</p>
+          <button data-order="The Gift Box">Order this style</button></div>
+      </article>
+    </div>
+    <p class="coll-note" data-fx="reveal">every bouquet is sized to your budget — just say what you'd like to spend</p>
+  </div>
+</section>
+
+<!-- ================= BESPOKE — the rose blooms ================= -->
+<section class="bloomwrap" id="bespoke">
+  <div class="bloompin" data-fx="pin">
+    <div class="fx-pin-inner">
+      <div class="wrap bloomgrid">
+        <div class="rosestage" aria-hidden="true">
+          <svg viewBox="0 0 330 430">
+            <!-- stem & leaves -->
+            <g class="bl b1">
+              <path d="M165 210 C 158 290, 172 340, 165 424" fill="none" stroke="#5f7052" stroke-width="7" stroke-linecap="round"/>
+              <path d="M165 300 Q120 282 96 306 Q130 318 163 310z" fill="#7a8c6d"/>
+              <path d="M167 350 Q212 336 232 356 Q200 370 169 360z" fill="#7a8c6d"/>
+            </g>
+            <!-- outer petals -->
+            <g class="bl b2">
+              <path d="M165 212 Q92 196 84 130 Q120 118 152 150 Q166 172 165 212z" fill="#e8a7b7"/>
+              <path d="M165 212 Q238 196 246 130 Q210 118 178 150 Q164 172 165 212z" fill="#e29cae"/>
+              <path d="M165 214 Q102 246 118 158 Q150 158 165 214z" fill="#f0b9c7" opacity=".9"/>
+              <path d="M165 214 Q228 246 212 158 Q180 158 165 214z" fill="#eeb0c0" opacity=".9"/>
+            </g>
+            <!-- mid petals -->
+            <g class="bl b3">
+              <path d="M165 200 Q120 160 138 104 Q168 108 172 150z" fill="#d77b93"/>
+              <path d="M165 200 Q210 160 192 104 Q162 108 158 150z" fill="#d0718a"/>
+              <path d="M165 196 Q136 150 165 112 Q194 150 165 196z" fill="#dd8ba1"/>
+            </g>
+            <!-- inner bud -->
+            <g class="bl b4">
+              <path d="M165 178 Q146 146 165 122 Q184 146 165 178z" fill="#b95a76"/>
+              <path d="M165 172 Q155 150 165 134 Q175 150 165 172z" fill="#a94c68"/>
+            </g>
+            <!-- sparkles -->
+            <g class="bl b5">
+              <path d="M96 96 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4z" fill="#c4a165"/>
+              <path d="M240 84 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#a8834f"/>
+              <path d="M212 232 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z" fill="#e8a7b7"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <div class="spark-rule" style="justify-content:flex-start" data-fx="reveal"><b>Bespoke</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+          <h2 style="margin:20px 0 30px">Made for your<br><i>occasion.</i></h2>
+          <div class="bsteps">
+            <div class="bstep"><small>one</small><h3>Tell her the occasion</h3>
+              <p>Wedding, anniversary, birthday, sympathy, just-because — plus the date you need it and any colours you love.</p></div>
+            <div class="bstep"><small>two</small><h3>She designs it</h3>
+              <p>Blooms picked fresh around your brief and your budget — from a single wrapped rose to full wedding flowers.</p></div>
+            <div class="bstep"><small>three</small><h3>Wrapped &amp; finished</h3>
+              <p>Signature wrap, ribbon and card, photographed before it leaves so you see exactly what they're getting.</p></div>
+            <div class="bstep"><small>four</small><h3>In their hands</h3>
+              <p>Collection or drop-off arranged in your messages — timed for the doorstep moment, not before, not after.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OCCASIONS ================= -->
+<section class="sect" id="occasions">
+  <div class="wrap">
+    <div class="spark-rule" data-fx="reveal"><b>Occasions</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Whatever the moment,<br><i>there's a bouquet for it.</i></h2>
+    <div class="occs" data-fx="stagger" data-fx-step="80">
+      <a class="occ-row" href="#order" data-occ="Wedding">
+        <h3>Weddings</h3>
+        <p>Bridal bouquets, buttonholes and arrangements that match the dress, the theme and the day.</p>
+        <span class="go">enquire →</span>
+      </a>
+      <a class="occ-row" href="#order" data-occ="Anniversary">
+        <h3>Anniversaries</h3>
+        <p>The flowers from the day, recreated — or something new to mark another year of you two.</p>
+        <span class="go">order →</span>
+      </a>
+      <a class="occ-row" href="#order" data-occ="Birthday">
+        <h3>Birthdays</h3>
+        <p>Their favourite colours, their favourite flowers, arriving on the right morning.</p>
+        <span class="go">order →</span>
+      </a>
+      <a class="occ-row" href="#order" data-occ="New baby">
+        <h3>New baby</h3>
+        <p>Soft pastels for the newest arrival — gentle, photograph-ready and hospital-friendly.</p>
+        <span class="go">order →</span>
+      </a>
+      <a class="occ-row" href="#order" data-occ="Sympathy">
+        <h3>Sympathy</h3>
+        <p>Quiet, graceful arrangements that say what's hard to put into words.</p>
+        <span class="go">order →</span>
+      </a>
+      <a class="occ-row" href="#order" data-occ="Just because">
+        <h3>Just because</h3>
+        <p>The best reason of all. Tuesday flowers hit different.</p>
+        <span class="go">order →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section class="sect" id="gallery" style="padding-top:0">
+  <div class="wrap">
+    <div class="spark-rule" data-fx="reveal"><b>From the Atelier</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <div class="gal" data-fx="stagger" data-fx-step="90">
+      <figure class="gp"><img src="../assets/rachel/closeup-sm.webp" alt="Pink roses and anemones close up" loading="lazy"></figure>
+      <figure class="gp"><img src="../assets/rachel/pastelmix-sm.webp" alt="Pastel roses, dahlias and orchids wrapped" loading="lazy"></figure>
+      <figure class="gp"><img src="../assets/rachel/bridal-sm.webp" alt="Bride holding white rose bouquet in sunlight" loading="lazy"></figure>
+      <figure class="gp"><img src="../assets/rachel/studio-sm.webp" alt="Florist arranging a bouquet in the studio" loading="lazy"></figure>
+    </div>
+    <p class="coll-note" data-fx="reveal">see the real thing on <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" style="border-bottom:1px solid var(--gold2);color:var(--gold)">@rosesbyrachelx</a></p>
+  </div>
+</section>
+
+<!-- ================= ORDER ATELIER ================= -->
+<section class="orderw sect" id="order">
+  <div class="wrap">
+    <div class="spark-rule" data-fx="reveal"><b>Order Flowers</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Build your order,<br><i>send it in a tap.</i></h2>
+    <p class="lede" style="margin:20px auto 0;text-align:center" data-fx="reveal" data-fx-delay="140">
+      Rachel takes orders through Instagram — fill this in and we'll write the
+      message for you, ready to paste straight into her DMs.
+    </p>
+    <div class="ogrid">
+      <form class="oform" id="oform" data-fx="reveal" onsubmit="return false">
+        <label for="fStyle">Style</label>
+        <select id="fStyle">
+          <option>The Blush (pink roses)</option>
+          <option>The Classic (roses &amp; baby's breath)</option>
+          <option>The Sunshine (sunflowers &amp; yellow)</option>
+          <option>The Romance (red roses &amp; lilies)</option>
+          <option>The Pastel (soft pastel mix)</option>
+          <option>The Gift Box</option>
+          <option>Rachel's choice — surprise me</option>
+        </select>
+        <label for="fOcc">Occasion</label>
+        <select id="fOcc">
+          <option>Just because</option><option>Birthday</option><option>Anniversary</option>
+          <option>Wedding</option><option>New baby</option><option>Sympathy</option>
+          <option>Congratulations</option><option>Apology (good luck)</option>
+        </select>
+        <div class="orow">
+          <div>
+            <label for="fDate">Needed for</label>
+            <input id="fDate" type="date">
+          </div>
+          <div>
+            <label for="fBudget">Budget (optional)</label>
+            <input id="fBudget" type="text" inputmode="numeric" placeholder="e.g. £40">
+          </div>
+        </div>
+        <label for="fColours">Colours you love (optional)</label>
+        <input id="fColours" type="text" placeholder="e.g. pinks &amp; whites">
+        <label for="fNotes">Anything else</label>
+        <textarea id="fNotes" placeholder="Card message, who it's for, collection or drop-off…"></textarea>
+        <button class="rbtn rose" id="sendBtn" type="button">Copy message &amp; open Instagram</button>
+      </form>
+      <div class="opreview" data-fx="reveal" data-fx-delay="120">
+        <div class="chatcard">
+          <h3>Your message to Rachel</h3>
+          <div class="msg" id="msgOut">Hi Rachel! I'd love to order The Blush (pink roses) — just because. 💐</div>
+          <p class="note">Tapping the button copies this and opens
+            <b>@rosesbyrachelx</b> — just paste it into her DMs and she'll take
+            it from there. No account? Screenshot it instead.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <a class="rrmark" href="#top" aria-label="Roses by Rachel">
+      <svg viewBox="0 0 60 60" aria-hidden="true" style="width:54px;height:54px">
+        <circle cx="30" cy="30" r="28" fill="#fdfaf3" stroke="#a8834f" stroke-width="1.4"/>
+        <text x="24" y="38" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
+        <text x="37" y="41" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
+        <path d="M18 22 q4 -8 10 -7 q-2 6 -7 7 q4 1 5 5" fill="none" stroke="#a8834f" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+    </a>
+    <div class="spark-rule" style="margin-top:10px"><b>Roses by Rachel</b><svg viewBox="0 0 13 13" style="width:11px;height:11px"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <p>Manchester, United Kingdom · orders via <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">@rosesbyrachelx</a><br>
+    © <span id="yr">2026</span> · Photography &amp; film via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a></p>
+  </div>
+</footer>
+
+<div class="copied" id="copied">Message copied — paste it in her DMs ♥</div>
+
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function () { nav.classList.toggle('stuck', scrollY > 40); }, { passive: true });
+
+  var v = document.getElementById('heroVid');
+  if (v) { var pr = v.play && v.play(); if (pr && pr.catch) pr.catch(function () { v.remove(); }); }
+
+  /* ============ the order atelier — compose, copy, open her DMs ========== */
+  var IG = 'https://www.instagram.com/rosesbyrachelx';
+  var $ = function (id) { return document.getElementById(id); };
+  function nice(d) {
+    if (!d) return '';
+    try {
+      return new Date(d + 'T12:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    } catch (e) { return d; }
+  }
+  function compose() {
+    var style = $('fStyle').value, occ = $('fOcc').value.toLowerCase();
+    var date = nice($('fDate').value), budget = $('fBudget').value.trim();
+    var col = $('fColours').value.trim(), notes = $('fNotes').value.trim();
+    var m = "Hi Rachel! I'd love to order " + style +
+      (occ === 'just because' ? ' — just because.' :
+        " — it's for " + (/^[aeiou]/.test(occ) ? 'an ' : 'a ') + occ + '.');
+    if (date) m += '\nNeeded for: ' + date;
+    if (budget) m += '\nBudget: around ' + budget;
+    if (col) m += '\nColours: ' + col;
+    if (notes) m += '\n' + notes;
+    m += ' 💐';
+    $('msgOut').textContent = m;
+    return m;
+  }
+  ['fStyle', 'fOcc', 'fDate', 'fBudget', 'fColours', 'fNotes'].forEach(function (id) {
+    $(id).addEventListener('input', compose);
+  });
+  /* collection buttons & occasion rows pre-fill the form */
+  [].forEach.call(document.querySelectorAll('[data-order]'), function (b) {
+    b.addEventListener('click', function () {
+      var want = b.getAttribute('data-order').replace(/&amp;/g, '&');
+      var sel = $('fStyle');
+      [].forEach.call(sel.options, function (o) { if (o.text === want) sel.value = o.value; });
+      compose();
+      document.getElementById('order').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+    });
+  });
+  [].forEach.call(document.querySelectorAll('.occ-row'), function (r) {
+    r.addEventListener('click', function () {
+      $('fOcc').value = r.getAttribute('data-occ');
+      compose();
+    });
+  });
+  $('sendBtn').addEventListener('click', function () {
+    var m = compose(), toast = $('copied');
+    function done() {
+      toast.classList.add('on');
+      setTimeout(function () { toast.classList.remove('on'); }, 2600);
+      setTimeout(function () { window.open(IG, '_blank', 'noopener'); }, 650);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(m).then(done, done);
+    } else { done(); }
+  });
+  compose();
+
+  /* ============ falling petals — three depths, breeze on pointer ========= */
+  var cv = document.getElementById('petals'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, pets = [], raf = 0, last = 0, sy = 0, mx = 0;
+  var TINTS = ['#e8a7b7', '#f0b9c7', '#d77b93', '#e5d5b8'];
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function build() {
+    W = innerWidth; H = innerHeight;
+    var dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pets = [];
+    var n = W < 700 ? 14 : 26;
+    for (var i = 0; i < n; i++) {
+      var depth = [0.45, 0.7, 1][i % 3];
+      pets.push({
+        x: rnd(0, 1), y: rnd(0, 1), s: depth * rnd(7, 15), depth: depth,
+        vy: rnd(8, 18) * depth, sway: rnd(0.3, 1), ph: rnd(0, 6.28),
+        rot: rnd(0, 6.28), vr: rnd(-0.8, 0.8), tint: TINTS[i % TINTS.length]
+      });
+    }
+  }
+  function petal(x, y, s, rot, col, alpha) {
+    ctx.save();
+    ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s * 0.9, -s * 0.7, s * 0.7, s * 0.6, 0, s);
+    ctx.bezierCurveTo(-s * 0.7, s * 0.6, -s * 0.9, -s * 0.7, 0, -s);
+    ctx.fillStyle = col; ctx.fill();
+    ctx.globalAlpha = alpha * 0.5;
+    ctx.beginPath(); ctx.moveTo(0, -s * 0.8); ctx.quadraticCurveTo(s * 0.16, 0, 0, s * 0.8);
+    ctx.strokeStyle = '#b95a76'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  }
+  var FRAME = 1000 / 30;
+  function frame(ms) {
+    raf = 0;
+    if (ms - last < FRAME) { raf = requestAnimationFrame(frame); return; }
+    last = ms;
+    ctx.clearRect(0, 0, W, H);
+    var t = ms / 1000;
+    for (var i = 0; i < pets.length; i++) {
+      var p = pets[i];
+      var px = ((p.x * W + Math.sin(t * p.sway + p.ph) * 44 + mx * 30 * p.depth) % (W + 80) + (W + 80)) % (W + 80) - 40;
+      var py = ((p.y * H + t * p.vy - sy * 0.09 * p.depth) % (H + 80) + (H + 80)) % (H + 80) - 40;
+      petal(px, py, p.s, p.rot + t * p.vr, p.tint, 0.16 + p.depth * 0.24);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function still() {
+    ctx.clearRect(0, 0, W, H);
+    pets.forEach(function (p) { petal(p.x * W, p.y * H, p.s, p.rot, p.tint, 0.12 + p.depth * 0.18); });
+  }
+  build();
+  if (REDUCED) { still(); }
+  else {
+    raf = requestAnimationFrame(frame);
+    addEventListener('scroll', function () { sy = pageYOffset; }, { passive: true });
+    addEventListener('pointermove', function (e) { mx = (e.clientX / W - 0.5) * 2; }, { passive: true });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (raf) cancelAnimationFrame(raf), raf = 0; }
+      else if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
+    });
+  }
+  addEventListener('resize', function () { build(); if (REDUCED) still(); }, { passive: true });
+})();
+</script>
+</body>
+</html>
