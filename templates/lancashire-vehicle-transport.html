@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Lancashire Vehicle Transport — Car &amp; Vehicle Delivery Nationwide</title>
+<meta name="description" content="Lancashire Vehicle Transport — professional vehicle collection and delivery across the UK. Auction collections, dealership transfers, private sales. Call 07973 130072.">
+<meta name="theme-color" content="#0f1216">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lancashire Vehicle Transport — your keys, our miles.">
+<meta property="og:description" content="Professional vehicle collection and delivery across the UK. Auction collections, dealership transfers, private sales. Call 07973 130072.">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="icon" href="../assets/lvt/icon-32.png" sizes="32x32">
+<link rel="preload" href="../assets/lvt/fonts/saira-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/lvt/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* ============================================================
+   LANCASHIRE VEHICLE TRANSPORT — night-haul cinema.
+   Asphalt charcoal, LVT crimson, motorsport condensed caps,
+   hexagons from the badge, light streaks from the card's dawn
+   road. A completely separate world from every other template.
+   ============================================================ */
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:700;font-display:swap;
+  src:url(../assets/lvt/fonts/saira-700.woff2) format('woff2')}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:800;font-display:swap;
+  src:url(../assets/lvt/fonts/saira-800.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(../assets/lvt/fonts/inter-var.woff2) format('woff2')}
+:root{
+  --tar:#0f1216; --tar2:#141920; --panel:#1a202b;
+  --edge:#2a3342;
+  --red:#a32431; --red2:#c9303f; --redglow:rgba(201,48,63,.4);
+  --white:#f2f4f7; --steel:#97a1b2; --dim:#5c6675;
+  --amber:#f5b93f;
+  --dis:'Saira Condensed', 'Arial Narrow', sans-serif;
+  --ui:'Inter', system-ui, -apple-system, sans-serif;
+  --rl:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--tar)}
+body{background:transparent;color:var(--white);font-family:var(--ui);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--red2);color:#fff}
+.wrap{max-width:1220px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+
+/* hex field canvas sits behind the whole page */
+#hexfield{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.groundfog{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 600px at 85% -5%,rgba(163,36,49,.14),transparent 60%),
+  radial-gradient(900px 700px at 0% 105%,rgba(163,36,49,.08),transparent 55%)}
+
+h1,h2,h3{font-family:var(--dis);font-weight:800;text-transform:uppercase;line-height:.95;letter-spacing:.01em}
+h2{font-size:clamp(2.4rem,6vw,4.4rem)}
+h2 .red{color:var(--red2)}
+.eyeline{display:flex;align-items:center;gap:14px;margin-bottom:18px;
+  font-family:var(--dis);font-weight:700;font-size:1rem;letter-spacing:.34em;text-transform:uppercase;color:var(--red2)}
+.eyeline::before{content:"";width:44px;height:3px;background:var(--red2);transform:skewX(-30deg)}
+.lede{color:var(--steel);font-size:clamp(1rem,1.7vw,1.14rem);max-width:60ch}
+
+/* ---------- buttons: chevron-cut plates ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:11px;padding:16px 30px;cursor:pointer;border:0;
+  font-family:var(--dis);font-weight:800;font-size:1.1rem;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--red);color:#fff;position:relative;
+  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
+  transition:background .2s,transform .2s;
+}
+.btn:hover{background:var(--red2);transform:translateY(-2px)}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 2px var(--edge);color:var(--white)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 2px var(--red2);background:rgba(201,48,63,.08)}
+.btn svg{width:19px;height:19px;flex:none}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:90;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.nav.stuck{background:rgba(15,18,22,.92);backdrop-filter:blur(14px);border-color:var(--edge)}
+.nav-in{max-width:1220px;margin:0 auto;padding:16px 22px;display:flex;align-items:center;gap:18px}
+.lvt-mark{display:flex;align-items:center;gap:13px;margin-right:auto}
+.lvt-mark svg{width:52px;height:56px;flex:none}
+.lvt-mark .t{line-height:1.02;font-family:var(--dis);text-transform:uppercase}
+.lvt-mark .t b{display:block;font-weight:800;font-size:1.2rem;letter-spacing:.06em}
+.lvt-mark .t i{display:block;font-style:normal;font-weight:700;font-size:.86rem;letter-spacing:.22em;color:var(--red2)}
+.navlinks{display:none;gap:26px;font-family:var(--dis);font-weight:700;letter-spacing:.14em;font-size:.92rem;text-transform:uppercase}
+.navlinks a{color:var(--steel);transition:color .2s;position:relative}
+.navlinks a:hover{color:var(--white)}
+.navlinks a::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--red2);transition:right .25s}
+.navlinks a:hover::after{right:0}
+@media(min-width:960px){.navlinks{display:flex}}
+.nav .btn{padding:11px 22px;font-size:.95rem}
+@media(max-width:480px){.lvt-mark .t b{font-size:1rem}.lvt-mark .t i{font-size:.72rem}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;align-items:end;overflow:hidden;isolation:isolate}
+.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:
+  linear-gradient(180deg,rgba(15,18,22,.55) 0%,rgba(15,18,22,.25) 45%,rgba(15,18,22,.94) 86%,var(--tar) 100%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:
+  repeating-linear-gradient(115deg,transparent 0 260px,rgba(201,48,63,.05) 260px 262px)}
+.hero-in{width:100%;padding-block:150px 90px}
+.hero h1{font-size:clamp(3.4rem,10vw,7.6rem);letter-spacing:.005em}
+.hero h1 em{font-style:normal;color:var(--red2);
+  text-shadow:0 0 34px var(--redglow)}
+.hero .lede{margin:22px 0 34px;max-width:54ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.14)}
+.hero-tags span{font-family:var(--dis);font-weight:700;letter-spacing:.18em;font-size:.88rem;text-transform:uppercase;color:var(--steel);display:flex;align-items:center;gap:9px}
+.hero-tags b{color:var(--red2);font-size:1.1rem}
+.scrollcue{position:absolute;right:26px;bottom:26px;z-index:2;display:none;align-items:center;gap:10px;
+  font-family:var(--dis);font-weight:700;letter-spacing:.3em;font-size:.72rem;color:var(--steel);text-transform:uppercase;
+  writing-mode:vertical-rl}
+.scrollcue i{width:2px;height:54px;background:var(--edge);position:relative;overflow:hidden}
+.scrollcue i::after{content:"";position:absolute;left:0;right:0;top:-40%;height:40%;background:var(--red2);animation:cuedrop 1.8s ease-in-out infinite}
+@keyframes cuedrop{to{top:110%}}
+@media(min-width:900px){.scrollcue{display:flex}}
+@media(max-width:700px){
+  .hero::before{background:linear-gradient(180deg,rgba(15,18,22,.6) 0%,rgba(15,18,22,.5) 45%,rgba(15,18,22,.96) 82%,var(--tar) 100%)}
+}
+
+/* ---------- gantry coverage board ---------- */
+.gantry{background:#0a0d11;border-block:1px solid var(--edge);padding:0;overflow:hidden;position:relative}
+.gantry::before,.gantry::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
+.gantry::before{left:0;background:linear-gradient(90deg,#0a0d11,transparent)}
+.gantry::after{right:0;background:linear-gradient(-90deg,#0a0d11,transparent)}
+.gantry-t{display:flex;width:max-content;animation:gt 28s linear infinite;padding:15px 0}
+.gantry:hover .gantry-t{animation-play-state:paused}
+.gantry-t span{font-family:var(--dis);font-weight:700;font-size:1.05rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--amber);text-shadow:0 0 12px rgba(245,185,63,.45);padding:0 30px;white-space:nowrap}
+.gantry-t span::after{content:"//";color:var(--red2);margin-left:60px;letter-spacing:0}
+@keyframes gt{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+.sect{padding:clamp(72px,9vw,128px) 0;position:relative}
+
+/* ---------- services: tilt plates ---------- */
+.svc-grid{display:grid;gap:22px;margin-top:52px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:680px){.svc-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+.svc{
+  position:relative;border:1px solid var(--edge);border-radius:var(--rl);overflow:hidden;
+  background:linear-gradient(165deg,var(--panel),var(--tar2));
+  transform-style:preserve-3d;transition:border-color .25s;will-change:transform;
+}
+.svc:hover{border-color:var(--red)}
+.svc .ph{height:190px;overflow:hidden;position:relative}
+.svc .ph img{width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.05);transition:transform .5s ease}
+.svc:hover .ph img{transform:scale(1.06)}
+.svc .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,18,22,.9))}
+.svc .hexno{
+  position:absolute;top:14px;right:14px;width:46px;height:52px;display:grid;place-items:center;
+  font-family:var(--dis);font-weight:800;font-size:1.05rem;color:#fff;
+  background:var(--red);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+}
+.svc .bd{padding:22px 24px 26px;position:relative}
+.svc .bd::before{content:"";position:absolute;top:0;left:24px;width:52px;height:3px;background:var(--red2);transform:skewX(-30deg)}
+.svc h3{font-size:1.6rem;letter-spacing:.04em;margin:10px 0 8px}
+.svc p{color:var(--steel);font-size:.93rem}
+
+/* ---------- the M6 run: pinned motorway scene ---------- */
+.m6{background:linear-gradient(180deg,var(--tar) 0%,#12161c 100%)}
+.m6pin{position:relative;height:340vh}
+.m6pin .fx-pin-inner{display:flex;flex-direction:column;justify-content:center}
+.m6-head{text-align:left}
+.motorway{position:relative;margin-top:clamp(30px,5vh,60px);height:190px}
+.lane{position:absolute;left:-4vw;right:-4vw;top:78px;height:86px;background:#191f28;border-block:2px solid var(--edge)}
+.lane::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;
+  background:repeating-linear-gradient(90deg,var(--white) 0 42px,transparent 42px 90px);opacity:.6}
+.lane::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:3px;
+  background:repeating-linear-gradient(90deg,var(--amber) 0 16px,transparent 16px 30px);opacity:.28}
+/* the rig: cab + trailer + car, scrubbed by --fx-progress */
+.rig{
+  position:absolute;top:44px;left:0;width:min(340px,52vw);z-index:2;
+  transform:translateX(calc(var(--fx-progress,0) * (100vw - min(340px,52vw) - 8vw)));
+  will-change:transform;
+}
+.rig svg{width:100%;height:auto;filter:drop-shadow(0 18px 20px rgba(0,0,0,.5))}
+.rig .whl{transform-origin:center;transform-box:fill-box;animation:spin 1.1s linear infinite;animation-play-state:var(--wheels,running)}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* step chips light as the rig passes */
+.m6steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.m6s{
+  border:1px solid var(--edge);border-radius:14px;background:var(--panel);padding:18px 18px 20px;
+  opacity:calc(.25 + var(--on,0) * .75);transform:translateY(calc((1 - var(--on,0)) * 14px));
+  transition:opacity .3s,transform .3s;
+}
+.m6pin .m6s:nth-child(1){--on:clamp(0,calc(var(--fx-progress,0) * 5 - 0.1),1)}
+.m6pin .m6s:nth-child(2){--on:clamp(0,calc(var(--fx-progress,0) * 5 - 1.3),1)}
+.m6pin .m6s:nth-child(3){--on:clamp(0,calc(var(--fx-progress,0) * 5 - 2.5),1)}
+.m6pin .m6s:nth-child(4){--on:clamp(0,calc(var(--fx-progress,0) * 5 - 3.7),1)}
+.m6s b{font-family:var(--dis);font-weight:800;font-size:1.05rem;letter-spacing:.12em;text-transform:uppercase;color:var(--red2);display:block}
+.m6s h3{font-size:1.3rem;margin:6px 0 6px}
+.m6s p{color:var(--steel);font-size:.86rem;line-height:1.5}
+@media(max-width:860px){
+  .m6pin{height:auto}
+  .m6pin .fx-pin-inner{position:static;height:auto;display:block;padding:0}
+  .m6steps{grid-template-columns:1fr 1fr;margin-top:30px}
+  .m6s{opacity:1;transform:none}
+  .rig{transform:translateX(calc(var(--fx-progress,0) * (100vw - min(340px,52vw) - 8vw)))}
+}
+@media(max-width:520px){.m6steps{grid-template-columns:1fr}}
+
+/* ---------- gallery ---------- */
+.gal{display:grid;gap:18px;margin-top:50px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:900px){.gal{grid-template-columns:repeat(3,1fr)}}
+.g{
+  position:relative;border-radius:var(--rl);overflow:hidden;border:1px solid var(--edge);
+  aspect-ratio:4/3;transition:border-color .25s;
+}
+.g:nth-child(1),.g:nth-child(6){aspect-ratio:4/2.6}
+.g img{width:100%;height:100%;object-fit:cover;filter:saturate(.9);transition:transform .6s ease,filter .4s}
+.g:hover img{transform:scale(1.07);filter:saturate(1.05)}
+.g::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,13,17,.85))}
+.g b{
+  position:absolute;left:16px;bottom:13px;z-index:2;font-family:var(--dis);font-weight:700;
+  letter-spacing:.18em;font-size:.82rem;text-transform:uppercase;color:var(--white);
+}
+.g b::before{content:"— ";color:var(--red2)}
+.g:hover{border-color:var(--red)}
+
+/* ---------- assurance band ---------- */
+.assure{border-block:1px solid var(--edge);background:var(--tar2)}
+.assure .wrap{display:grid;gap:34px;padding-top:clamp(50px,6vw,80px);padding-bottom:clamp(50px,6vw,80px)}
+@media(min-width:900px){.assure .wrap{grid-template-columns:1.1fr .9fr;align-items:center}}
+.assure blockquote{font-family:var(--dis);font-weight:700;text-transform:uppercase;line-height:1.1;
+  font-size:clamp(1.6rem,3.6vw,2.6rem);letter-spacing:.02em}
+.assure blockquote em{font-style:normal;color:var(--red2)}
+.alist{display:grid;gap:14px}
+.alist div{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--edge);border-radius:14px;background:var(--panel)}
+.alist svg{width:22px;height:22px;flex:none;stroke:var(--red2);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+.alist b{font-family:var(--dis);font-weight:800;letter-spacing:.06em;text-transform:uppercase;display:block;font-size:1.05rem}
+.alist p{color:var(--steel);font-size:.88rem}
+
+/* ---------- contact ---------- */
+.quote{position:relative;overflow:hidden}
+.qpanel{
+  position:relative;border-radius:26px;overflow:hidden;border:1px solid var(--edge);
+  background:linear-gradient(140deg,var(--red) 0%,#7c1a26 60%,#5d131d 100%);
+  padding:clamp(40px,6vw,72px) clamp(26px,5vw,64px);
+}
+.qpanel::before{content:"";position:absolute;inset:0;opacity:.12;background-image:
+  radial-gradient(rgba(255,255,255,.8) 1px,transparent 1px);background-size:20px 20px}
+.qpanel::after{content:"";position:absolute;right:-70px;top:-70px;width:300px;height:330px;opacity:.14;
+  background:#fff;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.qpanel h2{color:#fff}
+.qpanel .lede{color:#ffd9dd}
+.qrow{display:flex;flex-wrap:wrap;gap:16px;margin-top:38px;position:relative;z-index:1}
+.qcard{background:#fff;color:var(--tar);border-radius:16px;padding:20px 26px;min-width:min(300px,100%);display:block;transition:transform .2s}
+.qcard:hover{transform:translateY(-4px)}
+.qcard small{font-family:var(--dis);font-weight:700;letter-spacing:.26em;text-transform:uppercase;font-size:.72rem;color:var(--red)}
+.qcard b{display:block;font-family:var(--dis);font-weight:800;font-size:clamp(1.5rem,3.4vw,2rem);letter-spacing:.04em;margin-top:4px}
+.qcard span{color:#5b6472;font-size:.86rem;font-weight:600}
+.qnote{margin-top:26px;color:#ffc9cf;font-size:.92rem;position:relative;z-index:1}
+
+/* ---------- footer ---------- */
+footer{padding:44px 0 60px;border-top:1px solid var(--edge);background:#0a0d11}
+.foot{display:flex;flex-wrap:wrap;gap:26px;align-items:center;justify-content:space-between}
+.foot p{color:var(--dim);font-size:.84rem}
+.foot a{color:var(--steel)}
+.foot a:hover{color:var(--white)}
+
+@media(prefers-reduced-motion:reduce){
+  .gantry-t{animation:none}
+  .rig .whl{animation:none}
+  .scrollcue i::after{animation:none}
+}
+</style>
+</head>
+<body>
+<canvas id="hexfield" aria-hidden="true"></canvas>
+<div class="groundfog" aria-hidden="true"></div>
+<div data-fx="progressbar" style="color:#c9303f"></div>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a class="lvt-mark" href="#top" aria-label="Lancashire Vehicle Transport — home">
+      <svg viewBox="0 0 100 112" aria-hidden="true">
+        <polygon points="50,4 95,30 95,82 50,108 5,82 5,30" fill="#0a0d11" stroke="#f2f4f7" stroke-width="5"/>
+        <polygon points="50,22 78,38 50,54 22,38" fill="#a32431" stroke="#0a0d11" stroke-width="3"/>
+        <polygon points="22,38 50,54 50,88 22,72" fill="#8e1e2a" stroke="#0a0d11" stroke-width="3"/>
+        <polygon points="78,38 50,54 50,88 78,72" fill="#c9303f" stroke="#0a0d11" stroke-width="3"/>
+        <text x="50" y="42" text-anchor="middle" font-family="Saira Condensed, Arial Narrow" font-weight="800" font-size="19" fill="#fff">L</text>
+        <text x="36" y="72" text-anchor="middle" font-family="Saira Condensed, Arial Narrow" font-weight="800" font-size="19" fill="#fff">V</text>
+        <text x="64" y="72" text-anchor="middle" font-family="Saira Condensed, Arial Narrow" font-weight="800" font-size="19" fill="#fff">T</text>
+      </svg>
+      <span class="t"><b>Lancashire</b><i>Vehicle Transport</i></span>
+    </a>
+    <div class="navlinks">
+      <a href="#services">Services</a>
+      <a href="#how">How it works</a>
+      <a href="#road">On the road</a>
+      <a href="#quote">Quote</a>
+    </div>
+    <a class="btn" href="tel:+447973130072">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>
+      Call
+    </a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <img class="poster" src="../assets/lvt/poster.webp" alt="" fetchpriority="high">
+  <video autoplay muted loop playsinline preload="metadata" poster="../assets/lvt/poster.webp" id="heroVid">
+    <source src="../assets/lvt/hero.mp4" type="video/mp4">
+  </video>
+  <div class="wrap hero-in">
+    <span class="eyeline" data-fx="reveal">Vehicle collection &amp; delivery</span>
+    <h1 data-fx="text" data-fx-step="80">Your keys.<br><em>Our miles.</em></h1>
+    <p class="lede" data-fx="reveal" data-fx-delay="300">
+      Lancashire Vehicle Transport moves cars and vans across the UK — auction
+      collections, dealership transfers, private sales. Collected where it sits,
+      delivered where it's needed, treated like it's ours in between.
+    </p>
+    <div class="hero-cta" data-fx="reveal" data-fx-delay="420">
+      <a class="btn" href="tel:+447973130072">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>
+        07973 130072
+      </a>
+      <a class="btn ghost" href="#quote">Get a quote</a>
+    </div>
+    <div class="hero-tags" data-fx="stagger" data-fx-step="90" data-fx-delay="520">
+      <span><b>UK</b> nationwide coverage</span>
+      <span><b>7</b> days a week</span>
+      <span><b>1</b> driver, door to door</span>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true">Roll on<i></i></div>
+</header>
+
+<!-- ================= GANTRY BOARD ================= -->
+<div class="gantry" aria-hidden="true">
+  <div class="gantry-t" id="gt">
+    <span>North West</span><span>Midlands</span><span>London &amp; South East</span>
+    <span>Yorkshire &amp; North East</span><span>Scotland</span><span>Wales</span>
+    <span>South West</span><span>Anywhere between</span>
+  </div>
+</div>
+
+<!-- ================= SERVICES ================= -->
+<section class="sect" id="services">
+  <div class="wrap">
+    <span class="eyeline" data-fx="reveal">What we move</span>
+    <h2 data-fx="reveal" data-fx-delay="80">Anything with<br>wheels, <span class="red">basically.</span></h2>
+    <div class="svc-grid">
+      <article class="svc" data-fx="reveal" data-tilt>
+        <div class="ph"><img src="../assets/lvt/loader-sm.webp" alt="Car transporter carrying vehicles on the road" loading="lazy"><span class="hexno">01</span></div>
+        <div class="bd"><h3>Car &amp; van delivery</h3><p>Single vehicle moves, door to door, anywhere in the UK. You hand over the keys — we handle every mile in between.</p></div>
+      </article>
+      <article class="svc" data-fx="reveal" data-fx-delay="80" data-tilt>
+        <div class="ph"><img src="../assets/lvt/loading-sm.webp" alt="Car being loaded onto a transporter" loading="lazy"><span class="hexno">02</span></div>
+        <div class="bd"><h3>Auction collections</h3><p>Won it online? We collect from auction sites nationwide and bring it to your door — paperwork checked, photos before it moves.</p></div>
+      </article>
+      <article class="svc" data-fx="reveal" data-fx-delay="160" data-tilt>
+        <div class="ph"><img src="../assets/lvt/depot-sm.webp" alt="Car beside a logistics truck at a depot" loading="lazy"><span class="hexno">03</span></div>
+        <div class="bd"><h3>Dealership transfers</h3><p>Trade moves between sites, buyers and body shops — handled quietly, on schedule, with the condition it left in.</p></div>
+      </article>
+      <article class="svc" data-fx="reveal" data-tilt>
+        <div class="ph"><img src="../assets/lvt/showroom-sm.webp" alt="Classic cars lined up in a showroom" loading="lazy"><span class="hexno">04</span></div>
+        <div class="bd"><h3>Private sales</h3><p>Bought or sold a car miles from home? We bridge the distance so neither side spends a Saturday on the motorway.</p></div>
+      </article>
+      <article class="svc" data-fx="reveal" data-fx-delay="80" data-tilt>
+        <div class="ph"><img src="../assets/lvt/flatbed-sm.webp" alt="Vintage car secured on a flatbed trailer" loading="lazy"><span class="hexno">05</span></div>
+        <div class="bd"><h3>Classics &amp; projects</h3><p>Barn finds, restorations and the pride-and-joy. Strapped properly, moved gently, photographed at both ends.</p></div>
+      </article>
+      <article class="svc" data-fx="reveal" data-fx-delay="160" data-tilt>
+        <div class="ph"><img src="../assets/lvt/m1-sm.webp" alt="Aerial view of a UK motorway" loading="lazy"><span class="hexno">06</span></div>
+        <div class="bd"><h3>Something unusual?</h3><p>Odd timings, multiple vehicles, a move that doesn't fit a tidy box — ask. If it rolls, we'll find a way to move it.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= THE RUN (pinned motorway) ================= -->
+<section class="m6" id="how">
+  <div class="m6pin" data-fx="pin">
+    <div class="fx-pin-inner">
+      <div class="wrap">
+        <div class="m6-head">
+          <span class="eyeline">How it works</span>
+          <h2>Four steps.<br><span class="red">One clean run.</span></h2>
+        </div>
+        <div class="motorway" aria-hidden="true">
+          <div class="lane"></div>
+          <div class="rig">
+            <svg viewBox="0 0 340 130">
+              <!-- trailer -->
+              <rect x="4" y="34" width="196" height="10" rx="4" fill="#2a3342" stroke="#0a0d11" stroke-width="3"/>
+              <path d="M8 44 L196 44 L196 84 L8 84 Z" fill="none"/>
+              <rect x="4" y="76" width="200" height="10" rx="4" fill="#39445a" stroke="#0a0d11" stroke-width="3"/>
+              <path d="M14 34 L14 78 M197 34 L197 78" stroke="#39445a" stroke-width="6"/>
+              <!-- car on trailer -->
+              <g>
+                <path d="M36 62 q10 -18 34 -18 h32 q22 0 34 14 l4 4 h-108z" fill="#c9303f" stroke="#0a0d11" stroke-width="3"/>
+                <rect x="30" y="60" width="118" height="14" rx="7" fill="#a32431" stroke="#0a0d11" stroke-width="3"/>
+                <path d="M62 47 h32 l10 12 h-48z" fill="#0f1216" opacity=".85"/>
+                <circle cx="58" cy="76" r="9" fill="#0a0d11"/><circle cx="58" cy="76" r="3.6" fill="#97a1b2"/>
+                <circle cx="122" cy="76" r="9" fill="#0a0d11"/><circle cx="122" cy="76" r="3.6" fill="#97a1b2"/>
+              </g>
+              <!-- cab -->
+              <path d="M212 30 h56 c6 0 10 3 13 8l12 22 c2 4 2 8 2 12 v14 h-83z" fill="#a32431" stroke="#0a0d11" stroke-width="3.4"/>
+              <path d="M262 38 h8 c4 0 7 2 9 6l8 16 h-25z" fill="#aeb9cb" stroke="#0a0d11" stroke-width="3"/>
+              <rect x="204" y="80" width="92" height="12" rx="5" fill="#0a0d11"/>
+              <polygon points="228,46 246,56 228,66 210,56" fill="#7c1a26" stroke="#0a0d11" stroke-width="2"/>
+              <text x="228" y="60" text-anchor="middle" font-family="Saira Condensed, Arial Narrow" font-weight="800" font-size="10" fill="#fff">LVT</text>
+              <!-- wheels -->
+              <g class="whl"><circle cx="38" cy="96" r="15" fill="#0a0d11"/><circle cx="38" cy="96" r="6" fill="#97a1b2"/><path d="M38 88v16M30 96h16" stroke="#0a0d11" stroke-width="2.6"/></g>
+              <g class="whl"><circle cx="168" cy="96" r="15" fill="#0a0d11"/><circle cx="168" cy="96" r="6" fill="#97a1b2"/><path d="M168 88v16M160 96h16" stroke="#0a0d11" stroke-width="2.6"/></g>
+              <g class="whl"><circle cx="232" cy="96" r="16" fill="#0a0d11"/><circle cx="232" cy="96" r="6.4" fill="#97a1b2"/><path d="M232 87v18M223 96h18" stroke="#0a0d11" stroke-width="2.6"/></g>
+              <g class="whl"><circle cx="276" cy="96" r="16" fill="#0a0d11"/><circle cx="276" cy="96" r="6.4" fill="#97a1b2"/><path d="M276 87v18M267 96h18" stroke="#0a0d11" stroke-width="2.6"/></g>
+            </svg>
+          </div>
+        </div>
+        <div class="m6steps">
+          <div class="m6s"><b>Step 01</b><h3>Tell us the run</h3><p>What it is, where it sits, where it's going and when. A reg and two postcodes is all it takes to get started.</p></div>
+          <div class="m6s"><b>Step 02</b><h3>Collection &amp; checks</h3><p>We arrive when we said we would, walk round the vehicle, photograph it and confirm everything before a wheel turns.</p></div>
+          <div class="m6s"><b>Step 03</b><h3>Loaded &amp; secured</h3><p>Strapped down properly and driven like our name's on it — because it is. Updates on the way if you want them.</p></div>
+          <div class="m6s"><b>Step 04</b><h3>Handover done</h3><p>Delivered to the door, checked over together, keys in the right hand. Paperwork sorted before we pull away.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ON THE ROAD ================= -->
+<section class="sect" id="road" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyeline" data-fx="reveal">On the road</span>
+    <h2 data-fx="reveal" data-fx-delay="80">Miles we're<br><span class="red">proud of.</span></h2>
+    <div class="gal" data-fx="stagger" data-fx-step="90">
+      <figure class="g"><img src="../assets/lvt/loader-sm.webp" alt="Loaded car transporter on the move" loading="lazy"><b>Full load, southbound</b></figure>
+      <figure class="g"><img src="../assets/lvt/flatbed-sm.webp" alt="Vintage car strapped to a flatbed" loading="lazy"><b>Project car, strapped</b></figure>
+      <figure class="g"><img src="../assets/lvt/lights-sm.webp" alt="Motorway light trails at night" loading="lazy"><b>Night run</b></figure>
+      <figure class="g"><img src="../assets/lvt/loading-sm.webp" alt="Car being loaded onto a transporter" loading="lazy"><b>Careful loading</b></figure>
+      <figure class="g"><img src="../assets/lvt/m1-sm.webp" alt="UK motorway from above" loading="lazy"><b>The long way north</b></figure>
+      <figure class="g"><img src="../assets/lvt/driver-sm.webp" alt="Driver waving from the cab" loading="lazy"><b>See you at the door</b></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ASSURANCE ================= -->
+<section class="assure">
+  <div class="wrap">
+    <blockquote data-fx="reveal">
+      "Treat every car like it's the <em>owner's pride and joy</em> — because to somebody, it is."
+    </blockquote>
+    <div class="alist" data-fx="stagger" data-fx-step="100">
+      <div><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg><span><b>Photographed both ends</b><p>Condition recorded at collection and delivery, so everyone's covered.</p></span></div>
+      <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span><b>Turn up when we say</b><p>Agreed windows, honest ETAs, a call if the motorway has other ideas.</p></span></div>
+      <div><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg><span><b>Strapped, not chanced</b><p>Proper tie-downs and soft straps every time — never "it'll be right".</p></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUOTE ================= -->
+<section class="sect quote" id="quote">
+  <div class="wrap">
+    <div class="qpanel" data-fx="reveal" data-fx-variant="scale">
+      <span class="eyeline" style="color:#ffd9dd">Free quotes, straight answers</span>
+      <h2>Get it moved.</h2>
+      <p class="lede" style="margin-top:14px">
+        Reg, pickup postcode, drop-off postcode — that's all we need to quote a run.
+        Ring, or fire it over by email, seven days a week.
+      </p>
+      <div class="qrow">
+        <a class="qcard" href="tel:+447973130072"><small>Call or text</small><b>07973 130072</b><span>Fastest way to book</span></a>
+        <a class="qcard" href="mailto:Lvtmoves@gmail.com?subject=Vehicle%20move%20quote"><small>Email</small><b style="text-transform:none">Lvtmoves@gmail.com</b><span>Send the details &amp; the listing</span></a>
+      </div>
+      <p class="qnote">Covering the whole of the UK from Lancashire — if it rolls, ring us.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot">
+    <a class="lvt-mark" href="#top">
+      <svg viewBox="0 0 100 112" aria-hidden="true" style="width:42px;height:46px">
+        <polygon points="50,4 95,30 95,82 50,108 5,82 5,30" fill="#0a0d11" stroke="#f2f4f7" stroke-width="5"/>
+        <polygon points="50,22 78,38 50,54 22,38" fill="#a32431" stroke="#0a0d11" stroke-width="3"/>
+        <polygon points="22,38 50,54 50,88 22,72" fill="#8e1e2a" stroke="#0a0d11" stroke-width="3"/>
+        <polygon points="78,38 50,54 50,88 78,72" fill="#c9303f" stroke="#0a0d11" stroke-width="3"/>
+      </svg>
+      <span class="t"><b style="font-size:1rem">Lancashire</b><i style="font-size:.72rem">Vehicle Transport</i></span>
+    </a>
+    <p>© <span id="yr">2026</span> Lancashire Vehicle Transport · <a href="tel:+447973130072">07973 130072</a> · <a href="mailto:Lvtmoves@gmail.com">Lvtmoves@gmail.com</a><br>
+    Photography &amp; film via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>.</p>
+  </div>
+</footer>
+
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* nav backdrop after the fold */
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function () {
+    nav.classList.toggle('stuck', scrollY > 40);
+  }, { passive: true });
+
+  /* hero video: some phones refuse autoplay — the poster stays underneath */
+  var v = document.getElementById('heroVid');
+  if (v) { var pr = v.play && v.play(); if (pr && pr.catch) pr.catch(function () { v.remove(); }); }
+
+  /* wheels only spin while the page is actually moving */
+  var rig = document.querySelector('.rig'), wTimer = 0;
+  if (rig && !REDUCED) {
+    rig.style.setProperty('--wheels', 'paused');
+    addEventListener('scroll', function () {
+      rig.style.setProperty('--wheels', 'running');
+      clearTimeout(wTimer);
+      wTimer = setTimeout(function () { rig.style.setProperty('--wheels', 'paused'); }, 180);
+    }, { passive: true });
+  }
+
+  /* ============ hex field — the badge, scattered into the night ========== */
+  var cv = document.getElementById('hexfield'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, hexes = [], raf = 0, last = 0, sy = 0, mx = 0, my = 0;
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function build() {
+    W = innerWidth; H = innerHeight;
+    var dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    hexes = [];
+    var n = W < 700 ? 12 : 22;
+    for (var i = 0; i < n; i++) {
+      var depth = [0.4, 0.65, 1][i % 3];
+      hexes.push({
+        x: rnd(0, 1), y: rnd(0, 1), r: depth * rnd(26, 64), depth: depth,
+        rot: rnd(0, 6.28), spin: rnd(-0.1, 0.1),
+        pulse: rnd(0, 6.28), ps: rnd(0.2, 0.7)
+      });
+    }
+  }
+  function hexPath(x, y, r, rot) {
+    ctx.beginPath();
+    for (var i = 0; i < 6; i++) {
+      var a = rot + i * Math.PI / 3;
+      var px = x + r * Math.cos(a), py = y + r * Math.sin(a);
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.closePath();
+  }
+  var FRAME = 1000 / 30;
+  function frame(ms) {
+    raf = 0;
+    if (ms - last < FRAME) { raf = requestAnimationFrame(frame); return; }
+    last = ms;
+    ctx.clearRect(0, 0, W, H);
+    var t = ms / 1000;
+    for (var i = 0; i < hexes.length; i++) {
+      var h = hexes[i];
+      var px = ((h.x * W + t * 4 * h.depth + mx * 26 * h.depth) % (W + 200) + (W + 200)) % (W + 200) - 100;
+      var py = ((h.y * H - sy * 0.1 * h.depth + my * 14 * h.depth) % (H + 200) + (H + 200)) % (H + 200) - 100;
+      var glow = 0.5 + 0.5 * Math.sin(h.pulse + t * h.ps);
+      ctx.lineWidth = 1 + h.depth;
+      ctx.strokeStyle = 'rgba(201,48,63,' + (0.05 + glow * 0.13 * h.depth).toFixed(3) + ')';
+      hexPath(px, py, h.r, h.rot + t * h.spin);
+      ctx.stroke();
+      if (glow > 0.86) {
+        ctx.strokeStyle = 'rgba(245,185,63,' + ((glow - 0.86) * 0.8).toFixed(3) + ')';
+        hexPath(px, py, h.r * 0.7, -(h.rot + t * h.spin));
+        ctx.stroke();
+      }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function still() {
+    ctx.clearRect(0, 0, W, H);
+    hexes.forEach(function (h) {
+      ctx.lineWidth = 1 + h.depth;
+      ctx.strokeStyle = 'rgba(201,48,63,' + (0.1 * h.depth).toFixed(3) + ')';
+      hexPath(h.x * W, h.y * H, h.r, h.rot);
+      ctx.stroke();
+    });
+  }
+  build();
+  if (REDUCED) { still(); }
+  else {
+    raf = requestAnimationFrame(frame);
+    addEventListener('scroll', function () { sy = pageYOffset; }, { passive: true });
+    addEventListener('pointermove', function (e) { mx = (e.clientX / W - 0.5) * 2; my = (e.clientY / H - 0.5) * 2; }, { passive: true });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (raf) cancelAnimationFrame(raf), raf = 0; }
+      else if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
+    });
+  }
+  addEventListener('resize', function () { build(); if (REDUCED) still(); }, { passive: true });
+
+  /* ============ 3D tilt on the service plates (desktop pointers) ========= */
+  if (matchMedia('(pointer: fine)').matches && !REDUCED) {
+    [].forEach.call(document.querySelectorAll('[data-tilt]'), function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        var rx = ((e.clientY - r.top) / r.height - 0.5) * -7;
+        var ry = ((e.clientX - r.left) / r.width - 0.5) * 9;
+        el.style.transform = 'perspective(800px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-4px)';
+      });
+      el.addEventListener('pointerleave', function () { el.style.transform = ''; });
+    });
+  }
+})();
+</script>
+</body>
+</html>
