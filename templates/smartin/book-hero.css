@@ -102,18 +102,20 @@
 /* The weight under the book. It CANNOT be a filter on .bh-book — a
    filter forces preserve-3d to flatten, which collapses the page
    rotation and lets the pages show through one another. */
-/* The shadow shares the book's grid cell instead of being pinned to a
-   percentage of the stage — positioned independently, any disagreement
-   between the stage's height and the measured box let it drift off the
-   book and float as a detached white sheet. In the same cell it centres
-   wherever the book centres, by construction. */
+/* The shadow lives INSIDE the book (the engine moves it there), a
+   plane just behind the pages. Anywhere else it either drifts when the
+   stage and the measured box disagree, or — as a grid sibling — its
+   open-state width inflates the shared track and shoves the book half
+   off a phone screen. As a child it rides the book's own transform and
+   can never disagree with it about anything. */
 .bh-on .bh-shadow{
-  display:block;grid-area:1/1;place-self:center;
-  margin:0 0 calc(var(--bh-vh, 100vh) * .15);   /* same lift as the book */
-  width:calc(var(--bh-pw) * (1 + var(--bh-open,0)));height:calc(var(--bh-ph) * .97);
-  border-radius:6px;pointer-events:none;z-index:-1;
+  display:block;position:absolute;top:1.5%;height:97%;
+  right:0;width:calc(50% * (1 + var(--bh-open,0)));
+  transform:translateZ(-6px);
+  border-radius:6px;pointer-events:none;
   box-shadow:0 42px 70px -30px rgba(4,50,92,.40), 0 10px 24px -12px rgba(4,50,92,.20);
 }
+.bh-on.bh-single .bh-shadow{width:100%}
 
 .bh-on .bh-leaf{
   position:absolute;top:0;right:0;width:50%;height:100%;
@@ -354,7 +356,6 @@
    ================================================================== */
 .bh-on.bh-single .bh-stage{perspective:1500px}
 .bh-on.bh-single .bh-book{width:var(--bh-pw);margin-bottom:calc(var(--bh-vh, 100vh) * .04)}
-.bh-on.bh-single .bh-shadow{margin-bottom:calc(var(--bh-vh, 100vh) * .04)}
 .bh-on.bh-single .bh-leaf{width:100%}
 .bh-on.bh-single .bh-book::before,
 .bh-on.bh-single .bh-book::after{display:none}
