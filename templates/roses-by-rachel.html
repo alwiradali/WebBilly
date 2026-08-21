@@ -111,9 +111,14 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .cameo-leaf.tl{top:6%;left:2%;transform:rotate(-16deg)}
 .cameo-leaf.br{bottom:4%;right:1%;transform:rotate(160deg)}
 @media(max-width:939px){.cameo-leaf{display:none}}
-/* her logo — interlocked RR monogram with the line-drawn rose */
-.rr-lockup{margin-bottom:26px;max-width:300px}
-.rr-lockup svg{width:100%;height:auto;display:block}
+/* her logo — the real monogram artwork + crisp wordmark */
+.rr-lockup{margin-bottom:28px;width:min(270px,64vw)}
+.rr-lockup .mono{width:76%;height:auto;display:block;margin:0 auto}
+.rr-lockup .rl{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--gold)}
+.rr-lockup .rl::before,.rr-lockup .rl::after{content:"";height:1px;background:var(--gold);flex:1;opacity:.85}
+.rr-lockup .rl svg{width:11px;height:11px;flex:none;fill:var(--gold)}
+.rr-lockup .wm{font-family:var(--ser);font-weight:600;font-size:1.02rem;letter-spacing:.42em;text-indent:.42em;
+  text-transform:uppercase;color:var(--gold);text-align:center;white-space:nowrap}
 .hero .kick{font-family:var(--ser);font-style:italic;font-size:clamp(1.4rem,3vw,1.9rem);color:var(--gold);display:block;margin-bottom:10px}
 .hero h1{font-size:clamp(3.4rem,8.4vw,6.6rem)}
 .hero .lede{margin:24px 0 34px;max-width:47ch}
@@ -267,12 +272,7 @@ footer a{border-bottom:1px solid var(--gold2)}
 <nav class="nav" id="nav">
   <div class="nav-in">
     <a class="rrmark" href="#top" aria-label="Roses by Rachel — home">
-      <svg viewBox="0 0 60 60" aria-hidden="true">
-        <circle cx="30" cy="30" r="28" fill="#fdfaf3" stroke="#a8834f" stroke-width="1.4"/>
-        <text x="24" y="38" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
-        <text x="37" y="41" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
-        <path d="M18 22 q4 -8 10 -7 q-2 6 -7 7 q4 1 5 5" fill="none" stroke="#a8834f" stroke-width="1.1" stroke-linecap="round"/>
-      </svg>
+      <span style="width:46px;height:46px;flex:none;border-radius:50%;overflow:hidden;border:1px solid var(--gold);display:block"><img src="../assets/rachel/avatar.webp" alt="" width="300" height="300" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></span>
       <span class="t"><b>Roses by Rachel</b><i>Manchester florist</i></span>
     </a>
     <div class="navlinks">
@@ -290,25 +290,9 @@ footer a{border-bottom:1px solid var(--gold2)}
   <div class="wrap hero-in">
     <div>
       <div class="rr-lockup" data-fx="reveal" aria-label="Roses by Rachel">
-        <svg viewBox="0 0 300 150">
-          <g font-family="Cormorant Garamond, Garamond, Georgia, serif" font-weight="600" fill="#a8834f">
-            <text x="118" y="86" font-size="92">R</text>
-            <text x="152" y="98" font-size="92" opacity=".92">R</text>
-          </g>
-          <!-- the line rose across the first stem -->
-          <g fill="none" stroke="#a8834f" stroke-width="1.5" stroke-linecap="round">
-            <path d="M96 34 q10 -12 22 -8 q-4 10 -14 11 q9 2 10 10 q-10 2 -15 -6"/>
-            <path d="M104 47 C 110 62, 118 78, 130 96"/>
-            <path d="M114 66 q-12 -2 -16 8 q10 5 18 -3"/>
-            <path d="M122 80 q12 -1 15 9 q-11 4 -17 -4"/>
-          </g>
-          <g stroke="#a8834f" stroke-width="1">
-            <line x1="18" y1="118" x2="118" y2="118"/>
-            <line x1="182" y1="118" x2="282" y2="118"/>
-          </g>
-          <path d="M150 111 l2.4 4.8 4.8 2.2 -4.8 2.2 -2.4 4.8 -2.4 -4.8 -4.8 -2.2 4.8 -2.2z" fill="#a8834f"/>
-          <text x="150" y="142" text-anchor="middle" font-family="Cormorant Garamond, Garamond, Georgia, serif" font-weight="600" font-size="15" letter-spacing="7" fill="#8a6a3c">ROSES BY RACHEL</text>
-        </svg>
+        <img class="mono" src="../assets/rachel/monogram.webp" alt="Roses by Rachel monogram" width="738" height="675">
+        <div class="rl" aria-hidden="true"><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+        <div class="wm">Roses by Rachel</div>
       </div>
       <span class="kick" data-fx="reveal">fresh from the atelier, Manchester</span>
       <h1 data-fx="text" data-fx-step="90">Flowers that<br>say it <i>beautifully.</i></h1>
@@ -576,12 +560,7 @@ footer a{border-bottom:1px solid var(--gold2)}
 <footer>
   <div class="wrap">
     <a class="rrmark" href="#top" aria-label="Roses by Rachel">
-      <svg viewBox="0 0 60 60" aria-hidden="true" style="width:54px;height:54px">
-        <circle cx="30" cy="30" r="28" fill="#fdfaf3" stroke="#a8834f" stroke-width="1.4"/>
-        <text x="24" y="38" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
-        <text x="37" y="41" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="27" fill="#a8834f">R</text>
-        <path d="M18 22 q4 -8 10 -7 q-2 6 -7 7 q4 1 5 5" fill="none" stroke="#a8834f" stroke-width="1.1" stroke-linecap="round"/>
-      </svg>
+      <span style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:1px solid var(--gold);display:block"><img src="../assets/rachel/avatar.webp" alt="" width="300" height="300" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></span>
     </a>
     <div class="spark-rule" style="margin-top:10px"><b>Roses by Rachel</b><svg viewBox="0 0 13 13" style="width:11px;height:11px"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
     <p>Manchester, United Kingdom · orders via <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">@rosesbyrachelx</a><br>
