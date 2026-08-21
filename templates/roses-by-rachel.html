@@ -106,7 +106,10 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
   overflow:hidden;border:1px solid var(--gold);
   box-shadow:0 0 0 10px var(--ivory2),0 0 0 11px var(--gold2),0 44px 90px -44px rgba(43,33,24,.5);
 }
-.cameo video,.cameo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cameo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cameo .kenburns{animation:kenb 26s ease-in-out infinite alternate;transform-origin:52% 38%}
+@keyframes kenb{from{transform:scale(1)}to{transform:scale(1.14) translateY(-2.5%)}}
+@media(prefers-reduced-motion:reduce){.cameo .kenburns{animation:none}}
 .cameo-leaf{position:absolute;z-index:2;width:110px;opacity:.9}
 .cameo-leaf.tl{top:6%;left:2%;transform:rotate(-16deg)}
 .cameo-leaf.br{bottom:4%;right:1%;transform:rotate(160deg)}
@@ -317,10 +320,7 @@ footer a{border-bottom:1px solid var(--gold2)}
         <path d="M10 50 Q40 22 96 16" fill="none" stroke="#5f7052" stroke-width="1.4" opacity=".7"/>
       </svg>
       <div class="cameo">
-        <img src="../assets/rachel/poster.webp" alt="">
-        <video autoplay muted loop playsinline preload="metadata" poster="../assets/rachel/poster.webp" id="heroVid">
-          <source src="../assets/rachel/hero.mp4" type="video/mp4">
-        </video>
+        <img class="kenburns" src="../assets/rachel/own-blush.webp" alt="Rachel's signature pink bouquet">
       </div>
       <svg class="cameo-leaf br" viewBox="0 0 110 60" aria-hidden="true">
         <path d="M4 52 Q30 8 104 12 Q66 18 48 34 Q34 46 4 52z" fill="#7a8c6d" opacity=".55"/>
@@ -564,7 +564,7 @@ footer a{border-bottom:1px solid var(--gold2)}
     </a>
     <div class="spark-rule" style="margin-top:10px"><b>Roses by Rachel</b><svg viewBox="0 0 13 13" style="width:11px;height:11px"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
     <p>Manchester, United Kingdom · orders via <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">@rosesbyrachelx</a><br>
-    © <span id="yr">2026</span> · Photography &amp; film via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a></p>
+    © <span id="yr">2026</span> Roses by Rachel · every photograph is her own work</p>
   </div>
 </footer>
 
@@ -579,9 +579,6 @@ footer a{border-bottom:1px solid var(--gold2)}
 
   var nav = document.getElementById('nav');
   addEventListener('scroll', function () { nav.classList.toggle('stuck', scrollY > 40); }, { passive: true });
-
-  var v = document.getElementById('heroVid');
-  if (v) { var pr = v.play && v.play(); if (pr && pr.catch) pr.catch(function () { v.remove(); }); }
 
   /* ============ the order atelier — compose, copy, open Rachel's DMs ========== */
   var IG = 'https://www.instagram.com/rosesbyrachelx';
