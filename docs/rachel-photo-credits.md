@@ -1,6 +1,8 @@
 # Roses by Rachel — media credits
 
-All photography and film via Pexels (free licence).
+The six Collection photographs (`own-*.webp`) are the client's own work,
+taken from her public Instagram (@rosesbyrachelx) at Billy's request.
+The hero film remains Pexels stock:
 
 | file | photographer | source |
 |---|---|---|

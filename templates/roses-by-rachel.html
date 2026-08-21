@@ -111,6 +111,9 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .cameo-leaf.tl{top:6%;left:2%;transform:rotate(-16deg)}
 .cameo-leaf.br{bottom:4%;right:1%;transform:rotate(160deg)}
 @media(max-width:939px){.cameo-leaf{display:none}}
+/* her logo — interlocked RR monogram with the line-drawn rose */
+.rr-lockup{margin-bottom:26px;max-width:300px}
+.rr-lockup svg{width:100%;height:auto;display:block}
 .hero .kick{font-family:var(--ser);font-style:italic;font-size:clamp(1.4rem,3vw,1.9rem);color:var(--gold);display:block;margin-bottom:10px}
 .hero h1{font-size:clamp(3.4rem,8.4vw,6.6rem)}
 .hero .lede{margin:24px 0 34px;max-width:47ch}
@@ -140,7 +143,7 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .bq::before{content:"";position:absolute;inset:5px;border:1px solid var(--goldpale);pointer-events:none;z-index:2}
 .bq:hover{transform:translateY(-8px);box-shadow:0 36px 60px -36px rgba(43,33,24,.4)}
 .bq .ph{position:relative;overflow:hidden;aspect-ratio:.92}
-.bq .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.bq .ph img{width:100%;height:100%;object-fit:cover;object-position:center 24%;transition:transform .6s ease}
 .bq:hover .ph img{transform:scale(1.06)}
 .bq .bd{padding:20px 16px 18px;text-align:center}
 .bq h3{font-size:1.7rem}
@@ -286,6 +289,27 @@ footer a{border-bottom:1px solid var(--gold2)}
 <header class="hero" id="top">
   <div class="wrap hero-in">
     <div>
+      <div class="rr-lockup" data-fx="reveal" aria-label="Roses by Rachel">
+        <svg viewBox="0 0 300 150">
+          <g font-family="Cormorant Garamond, Garamond, Georgia, serif" font-weight="600" fill="#a8834f">
+            <text x="118" y="86" font-size="92">R</text>
+            <text x="152" y="98" font-size="92" opacity=".92">R</text>
+          </g>
+          <!-- the line rose across the first stem -->
+          <g fill="none" stroke="#a8834f" stroke-width="1.5" stroke-linecap="round">
+            <path d="M96 34 q10 -12 22 -8 q-4 10 -14 11 q9 2 10 10 q-10 2 -15 -6"/>
+            <path d="M104 47 C 110 62, 118 78, 130 96"/>
+            <path d="M114 66 q-12 -2 -16 8 q10 5 18 -3"/>
+            <path d="M122 80 q12 -1 15 9 q-11 4 -17 -4"/>
+          </g>
+          <g stroke="#a8834f" stroke-width="1">
+            <line x1="18" y1="118" x2="118" y2="118"/>
+            <line x1="182" y1="118" x2="282" y2="118"/>
+          </g>
+          <path d="M150 111 l2.4 4.8 4.8 2.2 -4.8 2.2 -2.4 4.8 -2.4 -4.8 -4.8 -2.2 4.8 -2.2z" fill="#a8834f"/>
+          <text x="150" y="142" text-anchor="middle" font-family="Cormorant Garamond, Garamond, Georgia, serif" font-weight="600" font-size="15" letter-spacing="7" fill="#8a6a3c">ROSES BY RACHEL</text>
+        </svg>
+      </div>
       <span class="kick" data-fx="reveal">fresh from the atelier, Manchester</span>
       <h1 data-fx="text" data-fx-step="90">Flowers that<br>say it <i>beautifully.</i></h1>
       <p class="lede" data-fx="reveal" data-fx-delay="300">
@@ -341,40 +365,40 @@ footer a{border-bottom:1px solid var(--gold2)}
     </p>
     <div class="coll" data-fx="stagger" data-fx-step="100">
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/pinkroses-sm.webp" alt="Pale pink roses wrapped in lavender paper" loading="lazy"></div>
-        <div class="bd"><h3>The Blush</h3><span class="occ">pink roses, softly wrapped</span>
-          <p>My signature — pastel roses in a cloud of elegant wrap, pretty in pink from every angle.</p>
-          <button data-order="The Blush (pink roses)">Order this style</button></div>
+        <div class="ph"><img src="../assets/rachel/own-blush-sm.webp" alt="Rachel's pink roses, dahlias and chamomile in rose-gold wrap" loading="lazy"></div>
+        <div class="bd"><h3>The Blush</h3><span class="occ">pretty in pink</span>
+          <p>My signature — pink roses, dahlias and chamomile daisies in a rose-gold-edged wrap.</p>
+          <button data-order="The Blush (pretty in pink)">Order this style</button></div>
       </article>
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/babysbreath-sm.webp" alt="White roses with baby's breath" loading="lazy"></div>
+        <div class="ph"><img src="../assets/rachel/own-classic-sm.webp" alt="Rachel's pink and cream roses with baby's breath in a lace-tied box" loading="lazy"></div>
         <div class="bd"><h3>The Classic</h3><span class="occ">roses &amp; baby's breath</span>
-          <p>Timeless white and cream with clouds of gypsophila — romance that never misses.</p>
+          <p>Pink and cream roses in a cloud of gypsophila, boxed and tied with lace — romance that never misses.</p>
           <button data-order="The Classic (roses &amp; baby's breath)">Order this style</button></div>
       </article>
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/yellow-sm.webp" alt="Sunflowers and yellow chrysanthemums" loading="lazy"></div>
+        <div class="ph"><img src="../assets/rachel/own-sunshine-sm.webp" alt="Rachel's sunflower, yellow chrysanthemums and white alstroemeria" loading="lazy"></div>
         <div class="bd"><h3>The Sunshine</h3><span class="occ">sunflowers &amp; golden blooms</span>
-          <p>Sunflowers, golden chrysanthemums and cream lilies — a bouquet that grins back.</p>
+          <p>A sunflower heart with golden chrysanthemums and white alstroemeria — a bouquet that grins back.</p>
           <button data-order="The Sunshine (sunflowers &amp; yellow)">Order this style</button></div>
       </article>
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/redyellow-sm.webp" alt="Red and yellow roses in elegant wrap" loading="lazy"></div>
-        <div class="bd"><h3>The Romance</h3><span class="occ">reds, brights &amp; lilies</span>
-          <p>Rich red roses with lilies and colour — anniversaries, apologies and grand gestures.</p>
-          <button data-order="The Romance (red roses &amp; lilies)">Order this style</button></div>
+        <div class="ph"><img src="../assets/rachel/own-sorbet-sm.webp" alt="Rachel's peach and apricot roses with baby's breath in a box" loading="lazy"></div>
+        <div class="bd"><h3>The Sorbet</h3><span class="occ">peach &amp; apricot roses</span>
+          <p>Warm sorbet tones wrapped around baby's breath — summery, soft and a little bit different.</p>
+          <button data-order="The Sorbet (peach &amp; apricot roses)">Order this style</button></div>
       </article>
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/peonies-sm.webp" alt="Pastel peony arrangement" loading="lazy"></div>
-        <div class="bd"><h3>The Pastel</h3><span class="occ">peony-soft &amp; dreamy</span>
-          <p>Powder pinks and creams for new babies, birthdays and the gentlest congratulations.</p>
-          <button data-order="The Pastel (soft pastel mix)">Order this style</button></div>
+        <div class="ph"><img src="../assets/rachel/own-statement-sm.webp" alt="Rachel's hot pink hydrangeas with baby's breath" loading="lazy"></div>
+        <div class="bd"><h3>The Statement</h3><span class="occ">big &amp; cute hydrangeas</span>
+          <p>Full-bloom hydrangeas that fill the doorway — for the moments that deserve a gasp.</p>
+          <button data-order="The Statement (hydrangeas)">Order this style</button></div>
       </article>
       <article class="bq">
-        <div class="ph"><img src="../assets/rachel/giftbox-sm.webp" alt="Roses presented in a gift box" loading="lazy"></div>
-        <div class="bd"><h3>The Gift Box</h3><span class="occ">boxed, beribboned, done</span>
-          <p>An arrangement in its own keepsake box — arrives beautiful, no vase required.</p>
-          <button data-order="The Gift Box">Order this style</button></div>
+        <div class="ph"><img src="../assets/rachel/own-ivory-sm.webp" alt="Rachel's cream roses laid out with greenery" loading="lazy"></div>
+        <div class="bd"><h3>The Ivory</h3><span class="occ">cream on cream</span>
+          <p>Quiet, elegant cream roses — weddings, sympathy, or anyone whose taste runs timeless.</p>
+          <button data-order="The Ivory (cream roses)">Order this style</button></div>
       </article>
     </div>
     <p class="coll-note" data-fx="reveal">every bouquet is sized to your budget — just say what you'd like to spend</p>
@@ -479,17 +503,16 @@ footer a{border-bottom:1px solid var(--gold2)}
   </div>
 </section>
 
-<!-- ================= GALLERY ================= -->
+<!-- ================= INSTAGRAM ================= -->
 <section class="sect" id="gallery" style="padding-top:0">
-  <div class="wrap">
+  <div class="wrap" style="text-align:center">
     <div class="spark-rule" data-fx="reveal"><b>From the Atelier</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
-    <div class="gal" data-fx="stagger" data-fx-step="90">
-      <figure class="gp"><img src="../assets/rachel/closeup-sm.webp" alt="Pink roses and anemones close up" loading="lazy"></figure>
-      <figure class="gp"><img src="../assets/rachel/pastelmix-sm.webp" alt="Pastel roses, dahlias and orchids wrapped" loading="lazy"></figure>
-      <figure class="gp"><img src="../assets/rachel/bridal-sm.webp" alt="Bride holding white rose bouquet in sunlight" loading="lazy"></figure>
-      <figure class="gp"><img src="../assets/rachel/studio-sm.webp" alt="Florist arranging a bouquet in the studio" loading="lazy"></figure>
-    </div>
-    <p class="coll-note" data-fx="reveal">see the real thing on <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" style="border-bottom:1px solid var(--gold2);color:var(--gold)">@rosesbyrachelx</a></p>
+    <h2 style="margin-top:24px" data-fx="reveal" data-fx-delay="80">Every bouquet above<br><i>is my own work.</i></h2>
+    <p class="lede" style="margin:20px auto 30px" data-fx="reveal" data-fx-delay="140">
+      No stock photos in my collection — those are real orders, photographed in
+      real Manchester daylight. The rest live on my Instagram.
+    </p>
+    <a class="rbtn" href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" data-fx="reveal" data-fx-delay="200">Follow @rosesbyrachelx</a>
   </div>
 </section>
 
@@ -506,12 +529,12 @@ footer a{border-bottom:1px solid var(--gold2)}
       <form class="oform" id="oform" data-fx="reveal" onsubmit="return false">
         <label for="fStyle">Style</label>
         <select id="fStyle">
-          <option>The Blush (pink roses)</option>
+          <option>The Blush (pretty in pink)</option>
           <option>The Classic (roses &amp; baby's breath)</option>
           <option>The Sunshine (sunflowers &amp; yellow)</option>
-          <option>The Romance (red roses &amp; lilies)</option>
-          <option>The Pastel (soft pastel mix)</option>
-          <option>The Gift Box</option>
+          <option>The Sorbet (peach &amp; apricot roses)</option>
+          <option>The Statement (hydrangeas)</option>
+          <option>The Ivory (cream roses)</option>
           <option>Rachel's choice — surprise me</option>
         </select>
         <label for="fOcc">Occasion</label>
@@ -539,7 +562,7 @@ footer a{border-bottom:1px solid var(--gold2)}
       <div class="opreview" data-fx="reveal" data-fx-delay="120">
         <div class="chatcard">
           <h3>Your message to me</h3>
-          <div class="msg" id="msgOut">Hi Rachel! I'd love to order The Blush (pink roses) — just because. 💐</div>
+          <div class="msg" id="msgOut">Hi Rachel! I'd love to order The Blush (pretty in pink) — just because. 💐</div>
           <p class="note">Tapping the button copies this and opens my
             Instagram, <b>@rosesbyrachelx</b> — paste it into my DMs and I'll
             take it from there. No account? Screenshot it instead.</p>
