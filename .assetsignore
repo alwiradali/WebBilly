@@ -22,3 +22,14 @@ templates/m2l-admin.html
 templates/m2l-invoice-admin.html
 templates/m2l-invoice.html
 assets/mumbai2london
+
+# Divine Rising — hidden from the web, kept in git.
+templates/divine-rising.html
+templates/divine-rising.css
+templates/divine-rising.js
+templates/divine-gl.js
+
+# Diamond — hidden from the web, kept in git.
+templates/diamond.html
+templates/diamond-book.html
+assets/diamond
