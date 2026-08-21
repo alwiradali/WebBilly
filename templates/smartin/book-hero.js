@@ -103,11 +103,17 @@
      and posts the bottom third of it off the display.
      ------------------------------------------------------------------ */
 
+  /* The LAYOUT viewport, never visualViewport. visualViewport shrinks
+     under pinch-zoom and reports transient nonsense while iOS is still
+     settling its bars — geometry measured from it built a 170px book
+     shoved to the foot of the screen. documentElement.clientHeight is
+     stable across zoom AND across the URL bar collapsing, which is the
+     one number a fixed stage wants. */
   function viewport() {
-    var vv = window.visualViewport;
+    var d = document.documentElement;
     return {
-      w: Math.round((vv && vv.width) || window.innerWidth || document.documentElement.clientWidth),
-      h: Math.round((vv && vv.height) || window.innerHeight || document.documentElement.clientHeight)
+      w: d.clientWidth || window.innerWidth,
+      h: d.clientHeight || window.innerHeight
     };
   }
 
@@ -118,16 +124,25 @@
     var nav = document.querySelector('.nav');
     var navH = nav ? Math.round(nav.getBoundingClientRect().height) : 92;
     var boxW = v.w;
-    var boxH = Math.max(320, v.h - navH);
+    /* the stylesheet lifts the book with a bottom margin (the closed
+       pose projects low); that margin is part of the box the book must
+       fit, or short screens end up over-constrained and the cap in CSS
+       silently stops centring */
+    var lift = v.h * 0.15;
+    var boxH = Math.max(320, v.h - navH - lift);
 
     /* A spread only earns its place when each page is still wide enough
        to hold a line of type. Below that it is one page at a time —
        decided from the space actually available, not from a breakpoint. */
     single = boxW < 900 || boxW / 2 < 330;
+    if (single) { lift = v.h * 0.04; boxH = Math.max(320, v.h - navH - lift); }
 
     var ratio = single ? 1.52 : 1.17;
     var pw = single ? boxW * 0.9 : boxW * 0.44;
-    if (pw > boxH / ratio) pw = boxH / ratio;          // must fit vertically
+    /* 0.92: the closed book leans back 7° in perspective, which projects
+       taller than its layout box — without the allowance the cover's foot
+       runs just off the bottom of a height-limited screen. */
+    if (pw > (boxH * 0.92) / ratio) pw = (boxH * 0.92) / ratio;
     if (!single && pw * 2 > boxW - 40) pw = (boxW - 40) / 2;
     if (single && pw > 470) pw = 470;
     pw = Math.max(200, Math.floor(pw));

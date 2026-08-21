@@ -61,10 +61,10 @@
 
 /* The section is tall; the stage inside it sticks for the whole of
    that height, which is what buys the scroll range for the turns. */
-/* Height comes from --bh-vh, which JS measures off visualViewport.
-   `100vh` on iOS counts the area behind the address bar, so the book
-   ends up centred in a box taller than the screen and its bottom third
-   is posted off the display. */
+/* Height comes from --bh-vh, which JS measures off the layout viewport
+   (documentElement.clientHeight): stable under pinch-zoom and while iOS
+   settles its bars, unlike visualViewport, and free of the address-bar
+   strip that `100vh` counts. */
 .bh-on .bh-stage{
   position:sticky;top:0;height:var(--bh-vh,100vh);
   /* the site's nav is sticky and opaque, so the book has to be centred
@@ -76,7 +76,12 @@
 }
 
 .bh-on .bh-book{
-  position:relative;margin:0;padding:0;max-width:none;pointer-events:auto;
+  grid-area:1/1;place-self:center;
+  position:relative;padding:0;max-width:none;pointer-events:auto;
+  /* the closed book leans back 7° and the perspective origin sits above
+     its centre, so the projection lands lower than the layout box — the
+     margin biases the box up so the rendered book is the centred one */
+  margin:0 0 calc(var(--bh-vh, 100vh) * .15);
   width:calc(var(--bh-pw) * 2);height:var(--bh-ph);
   -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
   will-change:transform;
@@ -97,8 +102,14 @@
 /* The weight under the book. It CANNOT be a filter on .bh-book — a
    filter forces preserve-3d to flatten, which collapses the page
    rotation and lets the pages show through one another. */
+/* The shadow shares the book's grid cell instead of being pinned to a
+   percentage of the stage — positioned independently, any disagreement
+   between the stage's height and the measured box let it drift off the
+   book and float as a detached white sheet. In the same cell it centres
+   wherever the book centres, by construction. */
 .bh-on .bh-shadow{
-  display:block;position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+  display:block;grid-area:1/1;place-self:center;
+  margin:0 0 calc(var(--bh-vh, 100vh) * .15);   /* same lift as the book */
   width:calc(var(--bh-pw) * (1 + var(--bh-open,0)));height:calc(var(--bh-ph) * .97);
   border-radius:6px;pointer-events:none;z-index:-1;
   box-shadow:0 42px 70px -30px rgba(4,50,92,.40), 0 10px 24px -12px rgba(4,50,92,.20);
@@ -342,7 +353,8 @@
    JS on the other, and the result was half a page of blank paper.
    ================================================================== */
 .bh-on.bh-single .bh-stage{perspective:1500px}
-.bh-on.bh-single .bh-book{width:var(--bh-pw)}
+.bh-on.bh-single .bh-book{width:var(--bh-pw);margin-bottom:calc(var(--bh-vh, 100vh) * .04)}
+.bh-on.bh-single .bh-shadow{margin-bottom:calc(var(--bh-vh, 100vh) * .04)}
 .bh-on.bh-single .bh-leaf{width:100%}
 .bh-on.bh-single .bh-book::before,
 .bh-on.bh-single .bh-book::after{display:none}

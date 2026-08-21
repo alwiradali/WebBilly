@@ -111,12 +111,11 @@
     var step = single ? VH_PER_LEAF * 62 : VH_PER_LEAF * 100;
     scroller.style.height = ((N + 1.15) * step) + 'vh';
     maxScroll = Math.max(1, scroller.offsetHeight - window.innerHeight);
-    /* visualViewport, not innerHeight: iOS counts the strip behind the
-       address bar in innerHeight and in `100vh`, so sizing the stage
-       that way centres the book in a box taller than the screen and
-       posts its bottom third off the display. */
-    var vv = window.visualViewport;
-    var vh = Math.round((vv && vv.height) || window.innerHeight);
+    /* The LAYOUT viewport. clientHeight excludes the strip behind the
+       iOS address bar (unlike innerHeight and 100vh) and — unlike
+       visualViewport — is stable under pinch-zoom and while the
+       browser is still settling its bars during load. */
+    var vh = document.documentElement.clientHeight || window.innerHeight;
     root.style.setProperty('--vh', vh * 0.01 + 'px');
     buildSnaps();
   }
@@ -429,9 +428,9 @@
      height under the reader's thumb. Only a real change gets through. */
   var lastW = window.innerWidth, lastH = window.innerHeight;
   window.addEventListener('resize', function () {
-    var vv = window.visualViewport;
-    var w = Math.round((vv && vv.width) || window.innerWidth);
-    var h = Math.round((vv && vv.height) || window.innerHeight);
+    var d = document.documentElement;
+    var w = d.clientWidth || window.innerWidth;
+    var h = d.clientHeight || window.innerHeight;
     if (w === lastW && Math.abs(h - lastH) < 150) return;
     lastW = w; lastH = h;
     measure(); readScroll();
