@@ -238,11 +238,13 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 }
 .chatcard .note{margin-top:16px;font-size:.85rem;color:var(--mut);position:relative;z-index:1}
 .copied{
-  position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);z-index:99;
+  position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));z-index:99;
+  transform:translateX(-50%) translateY(16px);opacity:0;visibility:hidden;
   background:var(--ink);color:var(--ivory2);padding:13px 26px;font-size:.9rem;letter-spacing:.06em;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1);pointer-events:none;
+  transition:opacity .3s,transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s .35s;pointer-events:none;
 }
-.copied.on{transform:translateX(-50%) translateY(0)}
+.copied.on{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);
+  transition:opacity .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
 
 /* ---------- footer ---------- */
 footer{padding:56px 0 66px;text-align:center;border-top:1px solid rgba(168,131,79,.3)}
@@ -287,8 +289,8 @@ footer a{border-bottom:1px solid var(--gold2)}
       <span class="kick" data-fx="reveal">fresh from the atelier, Manchester</span>
       <h1 data-fx="text" data-fx-step="90">Flowers that<br>say it <i>beautifully.</i></h1>
       <p class="lede" data-fx="reveal" data-fx-delay="300">
-        Roses by Rachel is a Manchester florist making bouquets to order —
-        wrapped by hand, finished with care, and built around your occasion,
+        I'm Rachel — a Manchester florist making every bouquet to order.
+        Wrapped by hand, finished with care, and built around your occasion,
         your colours and your person.
       </p>
       <div class="hero-cta" data-fx="reveal" data-fx-delay="420">
@@ -298,7 +300,7 @@ footer a{border-bottom:1px solid var(--gold2)}
       <div class="hero-pins" data-fx="stagger" data-fx-step="90" data-fx-delay="520">
         <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Made fresh to order</span>
         <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Manchester &amp; around</span>
-        <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Ordered in your DMs</span>
+        <span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"/></svg>Ordered in my DMs</span>
       </div>
     </div>
     <div style="position:relative" data-fx="reveal" data-fx-variant="scale" data-fx-delay="200">
@@ -334,8 +336,8 @@ footer a{border-bottom:1px solid var(--gold2)}
     <div class="spark-rule" data-fx="reveal"><b>The Collection</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
     <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Signature styles,<br><i>made yours.</i></h2>
     <p class="lede" style="margin:20px auto 0;text-align:center" data-fx="reveal" data-fx-delay="140">
-      Pick a style and order it in a tap — every bouquet is arranged fresh,
-      sized to your budget, and finished with her signature wrap.
+      Pick a style and order it in a tap — I arrange every bouquet fresh,
+      size it to your budget, and finish it with my signature wrap.
     </p>
     <div class="coll" data-fx="stagger" data-fx-step="100">
       <article class="bq">
@@ -422,14 +424,14 @@ footer a{border-bottom:1px solid var(--gold2)}
           <div class="spark-rule" style="justify-content:flex-start" data-fx="reveal"><b>Bespoke</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
           <h2 style="margin:20px 0 30px">Made for your<br><i>occasion.</i></h2>
           <div class="bsteps">
-            <div class="bstep"><small>one</small><h3>Tell her the occasion</h3>
+            <div class="bstep"><small>one</small><h3>Tell me the occasion</h3>
               <p>Wedding, anniversary, birthday, sympathy, just-because — plus the date you need it and any colours you love.</p></div>
-            <div class="bstep"><small>two</small><h3>She designs it</h3>
-              <p>Blooms picked fresh around your brief and your budget — from a single wrapped rose to full wedding flowers.</p></div>
+            <div class="bstep"><small>two</small><h3>I design it</h3>
+              <p>I pick the blooms fresh around your brief and your budget — from a single wrapped rose to full wedding flowers.</p></div>
             <div class="bstep"><small>three</small><h3>Wrapped &amp; finished</h3>
-              <p>Signature wrap, ribbon and card, photographed before it leaves so you see exactly what they're getting.</p></div>
+              <p>My signature wrap, ribbon and card — photographed before it leaves, so you see exactly what they're getting.</p></div>
             <div class="bstep"><small>four</small><h3>In their hands</h3>
-              <p>Collection or drop-off arranged in your messages — timed for the doorstep moment, not before, not after.</p></div>
+              <p>Collection or drop-off arranged in our messages — timed for the doorstep moment, not before, not after.</p></div>
           </div>
         </div>
       </div>
@@ -497,8 +499,8 @@ footer a{border-bottom:1px solid var(--gold2)}
     <div class="spark-rule" data-fx="reveal"><b>Order Flowers</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
     <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Build your order,<br><i>send it in a tap.</i></h2>
     <p class="lede" style="margin:20px auto 0;text-align:center" data-fx="reveal" data-fx-delay="140">
-      Rachel takes orders through Instagram — fill this in and we'll write the
-      message for you, ready to paste straight into her DMs.
+      I take my orders through Instagram — fill this in and your message
+      writes itself, ready to paste straight into my DMs.
     </p>
     <div class="ogrid">
       <form class="oform" id="oform" data-fx="reveal" onsubmit="return false">
@@ -536,11 +538,11 @@ footer a{border-bottom:1px solid var(--gold2)}
       </form>
       <div class="opreview" data-fx="reveal" data-fx-delay="120">
         <div class="chatcard">
-          <h3>Your message to Rachel</h3>
+          <h3>Your message to me</h3>
           <div class="msg" id="msgOut">Hi Rachel! I'd love to order The Blush (pink roses) — just because. 💐</div>
-          <p class="note">Tapping the button copies this and opens
-            <b>@rosesbyrachelx</b> — just paste it into her DMs and she'll take
-            it from there. No account? Screenshot it instead.</p>
+          <p class="note">Tapping the button copies this and opens my
+            Instagram, <b>@rosesbyrachelx</b> — paste it into my DMs and I'll
+            take it from there. No account? Screenshot it instead.</p>
         </div>
       </div>
     </div>
@@ -564,7 +566,7 @@ footer a{border-bottom:1px solid var(--gold2)}
   </div>
 </footer>
 
-<div class="copied" id="copied">Message copied — paste it in her DMs ♥</div>
+<div class="copied" id="copied">Message copied — paste it in my DMs ♥</div>
 
 <script src="../assets/js/scroll-fx.js" defer></script>
 <script>
