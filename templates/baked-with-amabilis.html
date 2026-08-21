@@ -90,8 +90,8 @@ h2{font-size:clamp(2.2rem,5.4vw,3.8rem)}
 
 /* ---------- hero: copy beside a patisserie-window arch ---------- */
 .hero{position:relative;min-height:100svh;display:grid;align-items:center;overflow:hidden}
-.hero-in{display:grid;gap:clamp(36px,6vw,70px);grid-template-columns:minmax(0,1fr);align-items:center;padding:130px 0 70px}
-@media(min-width:920px){.hero-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding:150px 0 90px}}
+.hero-in{display:grid;gap:clamp(36px,6vw,70px);grid-template-columns:minmax(0,1fr);align-items:center;padding-block:130px 70px}
+@media(min-width:920px){.hero-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);padding-block:150px 90px}}
 .hero-arch{
   position:relative;width:min(470px,88vw);aspect-ratio:.78;margin:0 auto;
   border-radius:999px 999px 26px 26px;overflow:hidden;
@@ -106,6 +106,55 @@ h2{font-size:clamp(2.2rem,5.4vw,3.8rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:14px}
 .hero-notice{margin-top:32px;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--soft)}
 .hero-notice b{color:var(--rose2)}
+/* her logo — pink BA monogram behind the signature */
+.lockup{position:relative;display:inline-block;line-height:1;padding:.35em .2em}
+.lockup .ba{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:0;
+  font-family:var(--ser);font-weight:700;color:#f0c6d4;letter-spacing:-.02em;font-size:2.5em;opacity:.9;
+}
+.lockup .sig{position:relative;z-index:1;font-family:var(--script);font-size:1.6em;color:var(--cocoa);white-space:nowrap}
+.lockup .wl{display:block;text-align:center;position:relative;z-index:1;margin-top:.55em;
+  font-family:var(--ui);font-weight:600;font-size:.34em;letter-spacing:.62em;text-indent:.62em;color:var(--cocoa2)}
+.hero-lockup{font-size:clamp(1.5rem,3.4vw,2.1rem);margin-bottom:14px}
+.foot-lockup{font-size:1.5rem}
+
+/* the fly-past — a swallow towing a silk ribbon across the hero */
+.flyer{
+  position:absolute;top:16%;left:0;z-index:4;pointer-events:none;
+  display:flex;align-items:center;perspective:600px;
+  transform:translateX(-60vw);animation:flyby 17s linear infinite 1.2s;
+}
+@keyframes flyby{
+  0%{transform:translateX(-60vw) translateY(0)}
+  25%{transform:translateX(-10vw) translateY(-12px)}
+  50%{transform:translateX(40vw) translateY(8px)}
+  75%{transform:translateX(85vw) translateY(-10px)}
+  100%{transform:translateX(130vw) translateY(0)}
+}
+.flyer .bird{width:58px;height:44px;flex:none;transform:translateY(-8px);filter:drop-shadow(0 6px 8px rgba(34,20,24,.18))}
+.flyer .bird svg{width:100%;height:100%}
+.flyer .wingT{transform-origin:32px 22px;animation:flap .5s ease-in-out infinite alternate}
+@keyframes flap{from{transform:rotate(-16deg)}to{transform:rotate(26deg)}}
+.ribbon{display:flex;transform-style:preserve-3d;margin-left:-6px}
+.ribbon i{
+  font-style:normal;display:grid;place-items:center;height:44px;padding:0 4px;
+  background:linear-gradient(180deg,#fbe9f0,#f3cfdc);border-block:1px solid rgba(34,20,24,.35);
+  font-family:var(--ser);font-weight:600;font-size:1.02rem;letter-spacing:.16em;color:var(--cocoa);
+  animation:wavez 1.5s ease-in-out infinite;transform:rotateY(0deg);
+  animation-delay:calc(var(--i) * -.11s);backface-visibility:visible;
+}
+.ribbon i:last-child{clip-path:polygon(0 0,100% 0,calc(100% - 14px) 50%,100% 100%,0 100%);padding-right:20px}
+@keyframes wavez{
+  0%,100%{transform:rotateY(14deg) translateY(0)}
+  50%{transform:rotateY(-14deg) translateY(3px)}
+}
+@media(max-width:700px){
+  .flyer{top:78px}
+  .flyer .bird{width:44px;height:34px}
+  .ribbon i{height:34px;font-size:.8rem;letter-spacing:.12em}
+}
+@media(prefers-reduced-motion:reduce){.flyer{display:none}}
+
 /* rotating "with love" seal */
 .seal{position:absolute;right:6%;bottom:9%;width:130px;height:130px;z-index:3;display:none}
 @media(min-width:900px){.seal{display:block}}
@@ -258,9 +307,28 @@ footer a{border-bottom:1px solid var(--rose)}
 
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
+  <div class="flyer" aria-hidden="true">
+    <span class="bird">
+      <svg viewBox="0 0 58 44">
+        <path d="M6 26 Q20 18 34 22 L52 26 Q38 34 24 32 Q12 31 6 26z" fill="#3a2228"/>
+        <path class="wingT" d="M30 22 Q36 6 52 4 Q42 16 36 23z" fill="#5a3a42"/>
+        <circle cx="48" cy="25" r="1.6" fill="#f9eef2"/>
+        <path d="M6 26 L-2 22 L2 28 L-2 33z" fill="#3a2228"/>
+      </svg>
+    </span>
+    <span class="ribbon">
+      <i style="--i:0">N</i><i style="--i:1">O</i><i style="--i:2">W</i><i style="--i:3">&nbsp;</i>
+      <i style="--i:4">T</i><i style="--i:5">A</i><i style="--i:6">K</i><i style="--i:7">I</i><i style="--i:8">N</i><i style="--i:9">G</i><i style="--i:10">&nbsp;</i>
+      <i style="--i:11">O</i><i style="--i:12">R</i><i style="--i:13">D</i><i style="--i:14">E</i><i style="--i:15">R</i><i style="--i:16">S</i><i style="--i:17">&nbsp;♥&nbsp;</i>
+    </span>
+  </div>
   <div class="wrap hero-in">
    <div>
-    <span class="script script-top" data-fx="reveal">from my oven, to your occasion</span>
+    <div class="lockup hero-lockup" data-fx="reveal">
+      <span class="ba" aria-hidden="true">BA</span>
+      <span class="sig">Baked with Amabilis</span>
+      <small class="wl">WITH LOVE</small>
+    </div>
     <h1 data-fx="text" data-fx-step="90">Baked<br>with love.</h1>
     <p class="lede" data-fx="reveal" data-fx-delay="300">
       Cookie boxes, brownie boxes, cakes and cupcakes — home-baked to order,
@@ -285,7 +353,7 @@ footer a{border-bottom:1px solid var(--rose)}
     <svg viewBox="0 0 130 130">
       <defs><path id="circ" d="M65,65 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/></defs>
       <text font-family="Inter, sans-serif" font-size="10" letter-spacing="3" fill="#7d5f66">
-        <textPath href="#circ">BAKED WITH AMABILIS · WITH LOVE · MADE TO ORDER · </textPath>
+        <textPath href="#circ">BAKED WITH AMABILIS · WITH LOVE · </textPath>
       </text>
     </svg>
     <span class="heart">♥</span>
@@ -488,7 +556,11 @@ footer a{border-bottom:1px solid var(--rose)}
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="wrap">
-    <span class="script">Baked with Amabilis</span>
+    <div class="lockup foot-lockup">
+      <span class="ba" aria-hidden="true">BA</span>
+      <span class="sig">Baked with Amabilis</span>
+      <small class="wl">WITH LOVE</small>
+    </div>
     <p>with love, always · © <span id="yr">2026</span><br>
     Photography &amp; film via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>.</p>
   </div>
