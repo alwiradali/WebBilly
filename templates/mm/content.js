@@ -28,7 +28,7 @@
 
   /* editable elements, and the zones that must never be editable */
   var SELECT = 'h1,h2,h3,p,ul,img';
-  var EXCLUDE = 'nav,footer,form,#timetable,#reviews,#mm-notice,.ti-wrap,.crumb,.rev-google,.rev-nav,.wa-float';
+  var EXCLUDE = 'nav,footer,form,#timetable,#reviews,#mm-notice,#mm-shop-live,.ti-wrap,.crumb,.rev-google,.rev-nav,.wa-float';
 
   function collect() {
     return [].filter.call(document.querySelectorAll(SELECT), function (el) {

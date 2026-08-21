@@ -52,6 +52,9 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
     }
+    if (url.pathname === "/api/mm-shop") {
+      return handleMMShop(request);
+    }
     // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
     // at clean root URLs, and is indexable.
     if (isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
@@ -137,6 +140,105 @@ function originOk(request, env) {
     return isM2LHost(new URL(origin).hostname, env);
   } catch (_) {
     return false;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Lynsey's Payhip shop, as JSON.
+   The Resources page on molecularmiracles (and its demo copy here)
+   shows what is in her shop RIGHT NOW without anyone touching the
+   site: she adds a product on Payhip and it appears. Browsers cannot
+   read payhip.com directly, so this proxies her public storefront and
+   parses the product cards out of it. Cached for five minutes; if
+   Payhip is down or redesigns their markup, the page's built-in
+   content simply stays — an empty list is a valid answer, never an
+   error the visitor sees.
+   ------------------------------------------------------------------ */
+const MM_SHOP_URL = "https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu";
+
+async function handleMMShop(request) {
+  const cache = caches.default;
+  const cacheKey = new Request("https://mm-shop-cache/api/mm-shop");
+  const hit = await cache.match(cacheKey);
+  if (hit) return hit;
+
+  let products = [];
+  try {
+    const r = await fetch(MM_SHOP_URL, {
+      headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
+    });
+    if (r.ok) products = parsePayhipStore(await r.text());
+  } catch (e) { /* empty list below */ }
+
+  const res = json({ store: MM_SHOP_URL, products });
+  res.headers.set("Cache-Control", "public, max-age=300");
+  await cache.put(cacheKey, res.clone());
+  return res;
+}
+
+/* Payhip storefront markup (verified against live stores): each product
+   renders its name as <h3 class="card__heading …productName"><a href=
+   "https://payhip.com/b/KEY">Name</a></h3>, with the cover image's
+   cdn-cgi <img> just before it and <span class="price-item--regular">
+   just after. Everything is matched defensively — a product missing a
+   piece is skipped or shipped without it, never thrown. */
+function parsePayhipStore(html) {
+  /* Payhip currently ships two storefront themes. Newer stores render each
+     product as a "card" with the name inside a linked heading; older ones
+     render "grid-item" blocks where the link is a separate anchor after the
+     name and price. Lynsey's store is empty until she adds her first
+     product, so which theme she has is unknowable today — both are parsed,
+     and a store that matches neither yields an empty list, never an error. */
+  var out = cardTheme(html);
+  if (!out.length) out = gridTheme(html);
+  return out.slice(0, 40);
+
+  function cardTheme(html) {
+    var out = [], seen = {};
+    var re = /card__heading[^"]*productName[^>]*>\s*<a\s+href="(https:\/\/payhip\.com\/b\/[A-Za-z0-9]+)"[^>]*>\s*([\s\S]*?)\s*<\/a>/g;
+    var m;
+    while ((m = re.exec(html)) !== null) {
+      if (seen[m[1]]) continue;
+      seen[m[1]] = 1;
+      var name = clean(m[2]);
+      if (!name) continue;
+      var before = html.slice(Math.max(0, m.index - 4000), m.index);
+      var img = lastMatch(before, /src="(https:\/\/payhip\.com\/cdn-cgi\/image\/[^"]+)"/g);
+      var after = html.slice(m.index, m.index + 4000);
+      var price = (after.match(/price-item--regular">\s*([^<]+?)\s*</) || [, ''])[1].trim();
+      out.push({ name: name, link: m[1], price: price, img: img });
+    }
+    return out;
+  }
+
+  function gridTheme(html) {
+    var out = [], seen = {};
+    var starts = [];
+    var re = /class="grid-item js-grid-item"/g, m;
+    while ((m = re.exec(html)) !== null) starts.push(m.index);
+    for (var i = 0; i < starts.length; i++) {
+      var block = html.slice(starts[i], starts[i + 1] || starts[i] + 6000);
+      var link = (block.match(/grid-item-link[^>]*href="((?:https:\/\/payhip\.com)?\/b\/[A-Za-z0-9]+)"/) || [])[1];
+      if (!link) continue;
+      if (link.charAt(0) === '/') link = 'https://payhip.com' + link;
+      if (seen[link]) continue;
+      seen[link] = 1;
+      var name = clean((block.match(/productName[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>/) || [, ''])[1]);
+      if (!name) continue;
+      var price = clean((block.match(/class="price[\s"][^>]*>\s*([^<]+?)\s*</) || [, ''])[1]);
+      var img = (block.match(/(?:data-src|src)="(https:\/\/payhip\.com\/cdn-cgi\/image\/[^"]+)"/) || [, ''])[1];
+      out.push({ name: name, link: link, price: price, img: img });
+    }
+    return out;
+  }
+
+  function clean(s) {
+    return (s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  }
+  function lastMatch(s, re) {
+    var v = '', m;
+    while ((m = re.exec(s)) !== null) v = m[1];
+    return v;
   }
 }
 
