@@ -168,7 +168,19 @@
     d.products.slice(0, 9).forEach(function (p, i) {
       var a = document.createElement('a');
       a.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
-      a.href = p.link; a.target = '_blank'; a.rel = 'noopener';
+      a.href = p.link; a.rel = 'noopener';
+      /* Payhip's embed turns this into an overlay checkout that opens ON
+         this page — the customer buys without ever leaving the site. The
+         href stays as the real product page, so if their script is blocked
+         or slow the card still works as an ordinary link. */
+      var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
+      if (key) {
+        a.classList.add('payhip-buy-button');
+        a.setAttribute('data-product', key);
+        a.setAttribute('data-theme', 'none');
+      } else {
+        a.target = '_blank';
+      }
       if (p.img) {
         var im = document.createElement('img');
         im.src = p.img; im.alt = ''; im.loading = 'lazy';
@@ -183,6 +195,11 @@
       grid.appendChild(a);
     });
     document.getElementById('mm-shop-live').hidden = false;
+    /* loaded AFTER the cards exist, because payhip.js binds the overlay to
+       .payhip-buy-button elements it finds when it initialises */
+    var ps = document.createElement('script');
+    ps.src = 'https://payhip.com/payhip.js';
+    document.body.appendChild(ps);
   }).catch(function (e) {
     console.info('[shop] live products unavailable —', e && e.message ? e.message : e);
   });
