@@ -260,7 +260,9 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 
 /* florist's choice card + order atelier extras */
 .fc-ph{background:linear-gradient(160deg,#fdfaf3,#f1e6d2);position:relative}
-.fc-q{position:absolute;right:12%;bottom:10%;font-family:var(--ser);font-weight:600;font-size:4rem;color:var(--rose);opacity:.85}
+.fc-opts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.fc-opts span{padding:5px 13px;border:1px solid var(--goldpale);border-radius:100px;font-size:.72rem;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
 .seg{display:flex;gap:0;border:1px solid var(--goldpale);width:max-content;max-width:100%}
 .seg{align-items:stretch}.seg label{position:relative;cursor:pointer;display:flex}
 .seg input{position:absolute;opacity:0;pointer-events:none}
@@ -433,7 +435,12 @@ footer a{border-bottom:1px solid var(--gold2)}
           <img src="../assets/rachel/logo.webp" alt="" style="width:62%;height:auto;object-fit:contain;position:absolute;left:19%;top:14%">
                   </div>
         <div class="bd"><h3>Florist's Choice</h3><span class="occ">let me surprise you</span>
-          <p>Tell me the occasion and your budget — I'll design something just for you with the best blooms of the week.</p>
+          <p>Tell me the occasion and your budget — I'll design you a surprise with the
+             best blooms of the week. Have it hand-tied, in a gift box, in a vase, or
+             without — completely your choice.</p>
+          <div class="fc-opts" aria-hidden="true">
+            <span>Hand-tied</span><span>Gift box</span><span>Vase</span><span>Or without</span>
+          </div>
           <button data-order="Florist's Choice — surprise me">Surprise me</button></div>
       </article>
     </div>
