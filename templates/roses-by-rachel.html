@@ -115,7 +115,7 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .cameo-leaf.br{bottom:4%;right:1%;transform:rotate(160deg)}
 @media(max-width:939px){.cameo-leaf{display:none}}
 /* her logo — the real monogram artwork + crisp wordmark */
-.rr-lockup{margin-bottom:28px;width:min(270px,64vw)}
+.rr-lockup{margin-bottom:26px;width:min(280px,66vw)}
 .rr-lockup .mono{width:76%;height:auto;display:block;margin:0 auto}
 .rr-lockup .rl{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--gold)}
 .rr-lockup .rl::before,.rr-lockup .rl::after{content:"";height:1px;background:var(--gold);flex:1;opacity:.85}
@@ -257,6 +257,50 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .copied.on{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);
   transition:opacity .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
 
+/* florist's choice card + order atelier extras */
+.fc-ph{background:linear-gradient(160deg,#fdfaf3,#f1e6d2);position:relative}
+.fc-q{position:absolute;right:12%;bottom:10%;font-family:var(--ser);font-weight:600;font-size:4rem;color:var(--rose);opacity:.85}
+.seg{display:flex;gap:0;border:1px solid var(--goldpale);width:max-content;max-width:100%}
+.seg{align-items:stretch}.seg label{position:relative;cursor:pointer;display:flex}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:flex;align-items:center;padding:11px 22px;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--mut);transition:background .2s,color .2s}
+.seg input:checked + span{background:var(--gold);color:var(--ivory2)}
+.seg label + label{border-left:1px solid var(--goldpale)}
+#deliveryRow{display:none}
+#deliveryRow.on{display:block}
+.paysteps{display:grid;gap:16px;margin-top:40px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.paysteps{grid-template-columns:repeat(3,1fr)}}
+.pstep{background:var(--ivory);border:1px solid var(--goldpale);padding:22px 24px;position:relative}
+.pstep::before{content:"";position:absolute;inset:5px;border:1px solid rgba(168,131,79,.16);pointer-events:none}
+.pstep small{font-family:var(--ser);font-style:italic;font-size:1.1rem;color:var(--gold)}
+.pstep h3{font-size:1.32rem;margin:4px 0 6px}
+.pstep p{color:var(--mut);font-size:.88rem}
+/* demo payment sheet */
+.paymodal{position:fixed;inset:0;z-index:120;display:none;place-items:center;padding:20px;background:rgba(43,33,24,.5);backdrop-filter:blur(6px)}
+.paymodal.on{display:grid}
+.paysheet{width:min(420px,100%);background:#fff;border-radius:20px;padding:28px;position:relative;box-shadow:0 40px 80px -30px rgba(0,0,0,.5)}
+.paysheet .close{position:absolute;top:14px;right:16px;border:0;background:none;font-size:1.4rem;cursor:pointer;color:#999}
+.paysheet h3{font-family:var(--ser);font-size:1.4rem;margin-bottom:4px}
+.paysheet .amt{font-family:var(--ser);font-weight:700;font-size:2rem;margin:6px 0 16px}
+.paysheet .amt i{font-style:normal;font-size:.85rem;color:#9a8b76;font-family:var(--ui);font-weight:500}
+.walletrow{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-bottom:14px}
+.walletrow span{display:grid;place-items:center;height:44px;border-radius:10px;background:#111;color:#fff;font-weight:700;font-size:.92rem;letter-spacing:.02em}
+.walletrow span:last-child{background:#fff;border:1px solid #ddd;color:#111}
+.orpay{display:flex;align-items:center;gap:12px;color:#b3a48e;font-size:.74rem;letter-spacing:.2em;margin:10px 0 14px}
+.orpay::before,.orpay::after{content:"";height:1px;background:#e8e0d2;flex:1}
+.payfield{border:1px solid #e2d9c9;border-radius:10px;padding:12px 14px;color:#b9ab94;font-size:.92rem;margin-bottom:10px;background:#fbf9f5}
+.payrow2{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.paybtn{width:100%;margin-top:8px;padding:14px;border:0;border-radius:12px;cursor:pointer;
+  background:linear-gradient(135deg,var(--rose),var(--rosedeep));color:#fff;font-weight:700;letter-spacing:.06em}
+.demo-tag{margin-top:14px;text-align:center;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#b3a48e}
+/* enquiry success */
+#sentPanel{display:none;text-align:center;padding:34px 20px}
+#sentPanel.on{display:block}
+#sentPanel .tick{width:64px;height:64px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#8fbc8f,#5f9b62);color:#fff;font-size:1.8rem}
+#sentPanel h3{font-size:1.7rem}
+#sentPanel p{color:var(--mut);font-size:.92rem;margin-top:8px}
+
 /* ---------- footer ---------- */
 footer{padding:56px 0 66px;text-align:center;border-top:1px solid rgba(168,131,79,.3)}
 footer .rrmark{justify-content:center;margin:0 0 6px}
@@ -292,10 +336,9 @@ footer a{border-bottom:1px solid var(--gold2)}
 <header class="hero" id="top">
   <div class="wrap hero-in">
     <div>
-      <div class="rr-lockup" data-fx="reveal" aria-label="Roses by Rachel">
-        <img class="mono" src="../assets/rachel/monogram.svg" alt="Roses by Rachel monogram" width="630" height="545">
-        <div class="rl" aria-hidden="true"><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
-        <div class="wm">Roses by Rachel</div>
+      <div class="rr-lockup" data-fx="reveal">
+        <img src="../assets/rachel/logo.webp" alt="Roses by Rachel" width="557" height="464" style="width:100%;height:auto;display:block">
+      </div>
       </div>
       <span class="kick" data-fx="reveal">fresh from the atelier, Manchester</span>
       <h1 data-fx="text" data-fx-step="90">Flowers that<br>say it <i>beautifully.</i></h1>
@@ -383,6 +426,15 @@ footer a{border-bottom:1px solid var(--gold2)}
         <div class="bd"><h3>The Ivory</h3><span class="occ">cream on cream</span>
           <p>Quiet, elegant cream roses — weddings, sympathy, or anyone whose taste runs timeless.</p>
           <button data-order="The Ivory (cream roses)">Order this style</button></div>
+      </article>
+      <article class="bq fc-card">
+        <div class="ph fc-ph" aria-hidden="true">
+          <img src="../assets/rachel/logo.webp" alt="" style="width:62%;height:auto;object-fit:contain;position:absolute;left:19%;top:14%">
+          <span class="fc-q">?</span>
+        </div>
+        <div class="bd"><h3>Florist's Choice</h3><span class="occ">let me surprise you</span>
+          <p>Tell me the occasion and your budget — I'll design something just for them with the best blooms in that week.</p>
+          <button data-order="Florist's Choice — surprise me">Surprise them</button></div>
       </article>
     </div>
     <p class="coll-note" data-fx="reveal">every bouquet is sized to your budget — just say what you'd like to spend</p>
@@ -504,13 +556,17 @@ footer a{border-bottom:1px solid var(--gold2)}
 <section class="orderw sect" id="order">
   <div class="wrap">
     <div class="spark-rule" data-fx="reveal"><b>Order Flowers</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
-    <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Build your order,<br><i>send it in a tap.</i></h2>
+    <h2 style="text-align:center;margin-top:24px" data-fx="reveal" data-fx-delay="80">Build your order,<br><i>send it your way.</i></h2>
     <p class="lede" style="margin:20px auto 0;text-align:center" data-fx="reveal" data-fx-delay="140">
-      I take my orders through Instagram — fill this in and your message
-      writes itself, ready to paste straight into my DMs.
+      Send it as an enquiry straight to my inbox, or pop it in my Instagram DMs —
+      whichever you prefer. I confirm every order personally before anything is paid.
     </p>
     <div class="ogrid">
       <form class="oform" id="oform" data-fx="reveal" onsubmit="return false">
+        <label for="fName">Your name</label>
+        <input id="fName" type="text" placeholder="So I know who I'm making for" autocomplete="name">
+        <label for="fEmail">Your email</label>
+        <input id="fEmail" type="email" placeholder="For your confirmation" autocomplete="email">
         <label for="fStyle">Style</label>
         <select id="fStyle">
           <option>The Blush (pretty in pink)</option>
@@ -519,7 +575,7 @@ footer a{border-bottom:1px solid var(--gold2)}
           <option>The Sorbet (peach &amp; apricot roses)</option>
           <option>The Statement (hydrangeas)</option>
           <option>The Ivory (cream roses)</option>
-          <option>Rachel's choice — surprise me</option>
+          <option>Florist's Choice — surprise me</option>
         </select>
         <label for="fOcc">Occasion</label>
         <select id="fOcc">
@@ -527,6 +583,22 @@ footer a{border-bottom:1px solid var(--gold2)}
           <option>Wedding</option><option>New baby</option><option>Sympathy</option>
           <option>Congratulations</option><option>Apology (good luck)</option>
         </select>
+        <label>Presentation</label>
+        <select id="fPres">
+          <option>Hand-tied wrap — no box</option>
+          <option>In a gift box</option>
+          <option>In a vase</option>
+          <option>Florist's choice presentation</option>
+        </select>
+        <label>Delivery or collection</label>
+        <div class="seg" id="fulfilSeg">
+          <label><input type="radio" name="fulfil" value="Delivery" checked><span>Delivery</span></label>
+          <label><input type="radio" name="fulfil" value="Collection"><span>Collection</span></label>
+        </div>
+        <div id="deliveryRow" class="on">
+          <label for="fPostcode">Delivery postcode</label>
+          <input id="fPostcode" type="text" placeholder="e.g. M20 …" autocomplete="postal-code">
+        </div>
         <div class="orow">
           <div>
             <label for="fDate">Needed for</label>
@@ -540,21 +612,57 @@ footer a{border-bottom:1px solid var(--gold2)}
         <label for="fColours">Colours you love (optional)</label>
         <input id="fColours" type="text" placeholder="e.g. pinks &amp; whites">
         <label for="fNotes">Anything else</label>
-        <textarea id="fNotes" placeholder="Card message, who it's for, collection or drop-off…"></textarea>
-        <button class="rbtn rose" id="sendBtn" type="button">Copy message &amp; open Instagram</button>
+        <textarea id="fNotes" placeholder="Card message, who it's for, anything I should know…"></textarea>
+        <button class="rbtn rose" id="sendBtn" type="button" style="width:100%;margin-top:24px">Send my enquiry ✦</button>
+        <button class="rbtn ghost" id="dmBtn" type="button" style="width:100%;margin-top:12px">Copy &amp; DM on Instagram instead</button>
       </form>
       <div class="opreview" data-fx="reveal" data-fx-delay="120">
-        <div class="chatcard">
-          <h3>Your message to me</h3>
-          <div class="msg" id="msgOut">Hi Rachel! I'd love to order The Blush (pretty in pink) — just because. 💐</div>
-          <p class="note">Tapping the button copies this and opens my
-            Instagram, <b>@rosesbyrachelx</b> — paste it into my DMs and I'll
-            take it from there. No account? Screenshot it instead.</p>
+        <div class="chatcard" id="prevCard">
+          <h3>Your order, as I'll receive it</h3>
+          <div class="msg" id="msgOut"></div>
+          <p class="note">"Send my enquiry" delivers this straight to my inbox and I
+            reply by email. Prefer chatting? The Instagram button copies it into
+            your clipboard and opens <b>@rosesbyrachelx</b>.</p>
+        </div>
+        <div class="chatcard" id="sentPanel">
+          <div class="tick">✓</div>
+          <h3>Enquiry on its way ♥</h3>
+          <p>Thank you — I'll come back to you at <b id="sentEmail"></b> within the day
+            to confirm the details and the price, with a secure payment link to lock
+            your date in.</p>
+          <p style="margin-top:14px"><a href="#" id="againLink" style="border-bottom:1px solid var(--gold2);color:var(--gold)">send another enquiry</a></p>
         </div>
       </div>
     </div>
+
+    <!-- paying, made simple -->
+    <div class="spark-rule" style="margin-top:clamp(60px,8vw,90px)" data-fx="reveal"><b>Paying is Simple</b><svg viewBox="0 0 13 13"><path d="M6.5 0l1.6 4.9L13 6.5 8.1 8.1 6.5 13 4.9 8.1 0 6.5l4.9-1.6z"/></svg></div>
+    <div class="paysteps" data-fx="stagger" data-fx-step="100">
+      <div class="pstep"><small>one</small><h3>I confirm your order</h3>
+        <p>Every order is confirmed personally first — flowers, date, delivery and the exact price. No surprises.</p></div>
+      <div class="pstep"><small>two</small><h3>Pay securely online</h3>
+        <p>You'll get a secure card payment link — pay on your phone in seconds, Apple&nbsp;Pay and Google&nbsp;Pay included.</p>
+        <button class="rbtn" id="payDemoBtn" type="button" style="margin-top:14px;padding:11px 22px;font-size:.85rem">Preview the payment page</button></div>
+      <div class="pstep"><small>three</small><h3>Your date is locked in</h3>
+        <p>Once paid, your flowers are in the book. Delivered to the door or ready for collection — whichever you chose.</p></div>
+    </div>
   </div>
 </section>
+
+<!-- demo payment sheet -->
+<div class="paymodal" id="payModal" role="dialog" aria-modal="true" aria-label="Payment preview">
+  <div class="paysheet">
+    <button class="close" id="payClose" aria-label="Close">×</button>
+    <h3>Roses by Rachel</h3>
+    <div class="amt">£42.00 <i>· The Blush · delivery M20</i></div>
+    <div class="walletrow"><span> Pay</span><span>G Pay</span></div>
+    <div class="orpay">or pay by card</div>
+    <div class="payfield">Card number&nbsp;&nbsp;•••• •••• •••• ••••</div>
+    <div class="payrow2"><div class="payfield">MM / YY</div><div class="payfield">CVC</div></div>
+    <button class="paybtn" type="button">Pay £42.00</button>
+    <p class="demo-tag">Preview — goes live with Rachel's payment account</p>
+  </div>
+</div>
 
 <!-- ================= FOOTER ================= -->
 <footer>
@@ -580,22 +688,38 @@ footer a{border-bottom:1px solid var(--gold2)}
   var nav = document.getElementById('nav');
   addEventListener('scroll', function () { nav.classList.toggle('stuck', scrollY > 40); }, { passive: true });
 
-  /* ============ the order atelier — compose, copy, open Rachel's DMs ========== */
+  /* ============ the order atelier — enquiry, DM, and payment preview ==== */
+  /* Wire-up for launch:
+     RR_EMAIL    — Rachel's real inbox (shown in the confirmation panel)
+     RR_W3F_KEY  — a free Web3Forms access key created for that inbox makes
+                   "Send my enquiry" deliver real email with no server
+     RR_PAYLINK  — her Stripe Payment Link / PayPal.Me once she has one;
+                   the preview sheet then becomes a real checkout link      */
+  var RR_EMAIL = 'hello@rosesbyrachel.co.uk';           /* example for now */
+  var RR_W3F_KEY = '';
+  var RR_PAYLINK = '';
   var IG = 'https://www.instagram.com/rosesbyrachelx';
   var $ = function (id) { return document.getElementById(id); };
   function nice(d) {
     if (!d) return '';
-    try {
-      return new Date(d + 'T12:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-    } catch (e) { return d; }
+    try { return new Date(d + 'T12:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }); }
+    catch (e) { return d; }
+  }
+  function fulfil() {
+    var r = document.querySelector('input[name="fulfil"]:checked');
+    return r ? r.value : 'Delivery';
   }
   function compose() {
     var style = $('fStyle').value, occ = $('fOcc').value.toLowerCase();
+    var name = $('fName').value.trim();
+    var pres = $('fPres').value, ff = fulfil(), pc = $('fPostcode').value.trim();
     var date = nice($('fDate').value), budget = $('fBudget').value.trim();
     var col = $('fColours').value.trim(), notes = $('fNotes').value.trim();
-    var m = "Hi Rachel! I'd love to order " + style +
+    var m = 'Hi Rachel! ' + (name ? "It's " + name + ' — ' : '') + "I'd love to order " + style +
       (occ === 'just because' ? ' — just because.' :
         " — it's for " + (/^[aeiou]/.test(occ) ? 'an ' : 'a ') + occ + '.');
+    m += '\nPresentation: ' + pres;
+    m += '\n' + (ff === 'Delivery' ? 'Delivery' + (pc ? ' to ' + pc : '') : 'Collection');
     if (date) m += '\nNeeded for: ' + date;
     if (budget) m += '\nBudget: around ' + budget;
     if (col) m += '\nColours: ' + col;
@@ -604,10 +728,15 @@ footer a{border-bottom:1px solid var(--gold2)}
     $('msgOut').textContent = m;
     return m;
   }
-  ['fStyle', 'fOcc', 'fDate', 'fBudget', 'fColours', 'fNotes'].forEach(function (id) {
+  ['fName', 'fEmail', 'fStyle', 'fOcc', 'fPres', 'fPostcode', 'fDate', 'fBudget', 'fColours', 'fNotes'].forEach(function (id) {
     $(id).addEventListener('input', compose);
   });
-  /* collection buttons & occasion rows pre-fill the form */
+  [].forEach.call(document.querySelectorAll('input[name="fulfil"]'), function (r) {
+    r.addEventListener('change', function () {
+      $('deliveryRow').classList.toggle('on', fulfil() === 'Delivery');
+      compose();
+    });
+  });
   [].forEach.call(document.querySelectorAll('[data-order]'), function (b) {
     b.addEventListener('click', function () {
       var want = b.getAttribute('data-order').replace(/&amp;/g, '&');
@@ -618,22 +747,55 @@ footer a{border-bottom:1px solid var(--gold2)}
     });
   });
   [].forEach.call(document.querySelectorAll('.occ-row'), function (r) {
-    r.addEventListener('click', function () {
-      $('fOcc').value = r.getAttribute('data-occ');
-      compose();
-    });
+    r.addEventListener('click', function () { $('fOcc').value = r.getAttribute('data-occ'); compose(); });
   });
+
+  /* send as email enquiry (Web3Forms when the key is set; demo flow until then) */
   $('sendBtn').addEventListener('click', function () {
+    var m = compose();
+    var email = $('fEmail').value.trim();
+    $('sentEmail').textContent = email || 'your email';
+    function showSent() {
+      $('prevCard').style.display = 'none';
+      $('sentPanel').classList.add('on');
+      $('sentPanel').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+    }
+    if (RR_W3F_KEY) {
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          access_key: RR_W3F_KEY, subject: 'Bouquet enquiry — Roses by Rachel',
+          from_name: $('fName').value.trim() || 'Website enquiry',
+          email: email, message: m
+        })
+      }).then(showSent, showSent);
+    } else { showSent(); }
+  });
+  $('againLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    $('sentPanel').classList.remove('on');
+    $('prevCard').style.display = '';
+  });
+
+  /* copy & DM path */
+  $('dmBtn').addEventListener('click', function () {
     var m = compose(), toast = $('copied');
     function done() {
       toast.classList.add('on');
       setTimeout(function () { toast.classList.remove('on'); }, 2600);
       setTimeout(function () { window.open(IG, '_blank', 'noopener'); }, 650);
     }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(m).then(done, done);
-    } else { done(); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(m).then(done, done);
+    else done();
   });
+
+  /* payment preview sheet */
+  $('payDemoBtn').addEventListener('click', function () {
+    if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
+    $('payModal').classList.add('on');
+  });
+  $('payClose').addEventListener('click', function () { $('payModal').classList.remove('on'); });
+  $('payModal').addEventListener('click', function (e) { if (e.target === $('payModal')) $('payModal').classList.remove('on'); });
   compose();
 
   /* ============ falling petals — three depths, breeze on pointer ========= */
