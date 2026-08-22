@@ -33,3 +33,7 @@ templates/divine-gl.js
 templates/diamond.html
 templates/diamond-book.html
 assets/diamond
+
+# Roses by Rachel — hidden while the shop features are finished.
+templates/roses-by-rachel.html
+assets/rachel
