@@ -34,3 +34,7 @@ templates/diamond.html
 templates/diamond-book.html
 assets/diamond
 
+
+# Lancashire Vehicle Transport — hidden from the web, kept in git.
+templates/lancashire-vehicle-transport.html
+assets/lvt
