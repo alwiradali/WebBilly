@@ -142,6 +142,31 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .hero-pins span{display:flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:600}
 .hero-pins svg{width:12px;height:12px;fill:var(--rose)}
 
+/* ---- stacked layouts (phone + tablet): centre the composition ----
+   The hero is a two-column editorial spread on desktop; once it stacks
+   it has to become a centred lockup or everything hugs the left edge. */
+@media(max-width:939px){
+  .hero-in{text-align:center;gap:clamp(30px,6vw,50px)}
+  .rr-lockup{margin-left:auto;margin-right:auto;width:min(300px,72vw)}
+  .hero .lede{margin-left:auto;margin-right:auto}
+  .hero-cta{justify-content:center}
+  .hero-pins{justify-content:center;gap:10px 22px}
+  /* section heads that sit left beside artwork on desktop */
+  .bloompin .spark-rule{justify-content:center !important}
+  .bloompin h2{text-align:center}
+  .occ-row{text-align:center;justify-items:center}
+  .occ-row:hover{padding-left:6px}
+}
+@media(max-width:560px){
+  .hero h1{font-size:clamp(2.8rem,11.4vw,3.5rem);line-height:1.06}
+  .hero .kick{font-size:1.24rem}
+  .hero .lede{font-size:1.02rem;margin-block:20px 30px}
+  .hero-cta{flex-direction:column;align-items:stretch;gap:12px}
+  .hero-cta .rbtn{width:100%}
+  .hero-pins{flex-direction:column;align-items:center;gap:9px;margin-top:28px}
+  .hero-pins span{font-size:.74rem}
+}
+
 /* ---------- gold ticker ---------- */
 .tick{border-block:1px solid rgba(168,131,79,.4);padding:15px 0;overflow:hidden;background:var(--ivory2)}
 .tick-t{display:flex;width:max-content;animation:tk 32s linear infinite}
