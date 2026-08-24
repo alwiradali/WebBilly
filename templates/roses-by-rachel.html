@@ -285,15 +285,17 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .oform{background:var(--ivory);border:1px solid var(--goldpale);padding:clamp(24px,4vw,40px);position:relative}
 .oform::before{content:"";position:absolute;inset:8px;border:1px solid rgba(168,131,79,.2);pointer-events:none}
 .oform label{display:block;font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;font-weight:700;color:var(--gold);margin:18px 0 7px}
-.oform label:first-of-type{margin-top:0}
+.oform > label:first-of-type{margin-top:0}
 .oform select,.oform input,.oform textarea{
   width:100%;padding:13px 14px;background:var(--ivory2);border:1px solid var(--goldpale);
   font-size:.95rem;color:var(--ink);position:relative;z-index:1;border-radius:0;-webkit-appearance:none;appearance:none;
 }
 .oform select:focus,.oform input:focus,.oform textarea:focus{outline:none;border-color:var(--gold)}
 .oform textarea{min-height:84px;resize:vertical}
-.orow{display:grid;gap:0 16px;grid-template-columns:1fr 1fr}
-.oform .rbtn{width:100%;margin-top:24px;z-index:1}
+.orow{display:grid;gap:0 16px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media(max-width:560px){.orow{grid-template-columns:minmax(0,1fr)}}
+.oform .rbtn{width:100%;margin-top:24px;z-index:1;min-height:58px}
+@media(max-width:560px){.oform .rbtn{padding-inline:14px;font-size:.95rem;letter-spacing:.1em}}
 .opreview{position:sticky;top:100px}
 .chatcard{background:var(--ivory);border:1px solid var(--goldpale);padding:clamp(22px,3.4vw,32px);position:relative}
 .chatcard::before{content:"";position:absolute;inset:8px;border:1px solid rgba(168,131,79,.2);pointer-events:none}
@@ -317,10 +319,10 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 .fc-opts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
 .fc-opts span{padding:5px 13px;border:1px solid var(--goldpale);border-radius:100px;font-size:.72rem;
   letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
-.seg{display:flex;gap:0;border:1px solid var(--goldpale);width:max-content;max-width:100%}
-.seg{align-items:stretch}.seg label{position:relative;cursor:pointer;display:flex}
+.seg{display:flex;gap:0;border:1px solid var(--goldpale);width:100%}
+.seg{align-items:stretch}.seg label{position:relative;cursor:pointer;display:flex;flex:1 1 0;min-width:0;margin:0}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg span{display:flex;align-items:center;padding:11px 22px;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--mut);transition:background .2s,color .2s}
+.seg span{display:flex;align-items:center;flex:1;justify-content:center;padding:11px 10px;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--mut);transition:background .2s,color .2s}
 .seg input:checked + span{background:var(--gold);color:var(--ivory2)}
 .seg label + label{border-left:1px solid var(--goldpale)}
 #deliveryRow{display:none}
@@ -447,44 +449,44 @@ footer a{border-bottom:1px solid var(--gold2)}
       Pick a style and order it in a tap — I arrange every bouquet fresh,
       size it to your budget, and finish it with my signature wrap.
     </p>
-    <div class="coll" data-fx="stagger" data-fx-step="100">
-      <article class="bq">
+    <div class="coll">
+      <article class="bq" data-fx="reveal">
         <div class="ph"><img src="../assets/rachel/own-blush-sm.webp" alt="Rachel's pink roses, dahlias and chamomile in rose-gold wrap" loading="lazy"></div>
         <div class="bd"><h3>The Blush</h3><span class="occ">pretty in pink</span>
           <p>My signature — pink roses, dahlias and chamomile daisies in a rose-gold-edged wrap.</p>
           <button data-order="The Blush (pretty in pink)">Order this style</button></div>
       </article>
-      <article class="bq">
+      <article class="bq" data-fx="reveal" data-fx-delay="90">
         <div class="ph"><img src="../assets/rachel/own-classic-sm.webp" alt="Rachel's pink and cream roses with baby's breath in a lace-tied box" loading="lazy"></div>
         <div class="bd"><h3>The Classic</h3><span class="occ">roses &amp; baby's breath</span>
           <p>Pink and cream roses in a cloud of gypsophila, boxed and tied with lace — romance that never misses.</p>
           <button data-order="The Classic (roses &amp; baby's breath)">Order this style</button></div>
       </article>
-      <article class="bq">
+      <article class="bq" data-fx="reveal" data-fx-delay="180">
         <div class="ph"><img src="../assets/rachel/own-sunshine-sm.webp" alt="Rachel's sunflower, yellow chrysanthemums and white alstroemeria" loading="lazy"></div>
         <div class="bd"><h3>The Sunshine</h3><span class="occ">sunflowers &amp; golden blooms</span>
           <p>A sunflower heart with golden chrysanthemums and white alstroemeria — a bouquet that grins back.</p>
           <button data-order="The Sunshine (sunflowers &amp; yellow)">Order this style</button></div>
       </article>
-      <article class="bq">
+      <article class="bq" data-fx="reveal">
         <div class="ph"><img src="../assets/rachel/own-sorbet-sm.webp" alt="Rachel's peach and apricot roses with baby's breath in a box" loading="lazy"></div>
         <div class="bd"><h3>The Sorbet</h3><span class="occ">peach &amp; apricot roses</span>
           <p>Warm sorbet tones wrapped around baby's breath — summery, soft and a little bit different.</p>
           <button data-order="The Sorbet (peach &amp; apricot roses)">Order this style</button></div>
       </article>
-      <article class="bq">
+      <article class="bq" data-fx="reveal" data-fx-delay="90">
         <div class="ph"><img src="../assets/rachel/own-statement-sm.webp" alt="Rachel's hot pink hydrangeas with baby's breath" loading="lazy"></div>
         <div class="bd"><h3>The Statement</h3><span class="occ">big &amp; cute hydrangeas</span>
           <p>Full-bloom hydrangeas that fill the doorway — for the moments that deserve a gasp.</p>
           <button data-order="The Statement (hydrangeas)">Order this style</button></div>
       </article>
-      <article class="bq">
+      <article class="bq" data-fx="reveal" data-fx-delay="180">
         <div class="ph"><img src="../assets/rachel/own-ivory-sm.webp" alt="Rachel's cream roses laid out with greenery" loading="lazy"></div>
         <div class="bd"><h3>The Ivory</h3><span class="occ">cream on cream</span>
           <p>Quiet, elegant cream roses — weddings, sympathy, or anyone whose taste runs timeless.</p>
           <button data-order="The Ivory (cream roses)">Order this style</button></div>
       </article>
-      <article class="bq fc-card">
+      <article class="bq fc-card" data-fx="reveal">
         <div class="ph fc-ph" aria-hidden="true">
           <img src="../assets/rachel/logo.webp" alt="" style="width:62%;height:auto;object-fit:contain;position:absolute;left:19%;top:14%">
                   </div>
@@ -675,7 +677,7 @@ footer a{border-bottom:1px solid var(--gold2)}
         <label for="fNotes">Anything else</label>
         <textarea id="fNotes" placeholder="Card message, who it's for, anything I should know…"></textarea>
         <button class="rbtn rose" id="sendBtn" type="button" style="width:100%;margin-top:24px">Send my enquiry ✦</button>
-        <button class="rbtn ghost" id="dmBtn" type="button" style="width:100%;margin-top:12px">Copy &amp; DM on Instagram instead</button>
+        <button class="rbtn ghost" id="dmBtn" type="button" style="width:100%;margin-top:12px">Or DM me on Instagram</button>
       </form>
       <div class="opreview" data-fx="reveal" data-fx-delay="120">
         <div class="chatcard" id="prevCard">
