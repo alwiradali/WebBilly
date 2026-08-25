@@ -38,7 +38,3 @@ assets/diamond
 # Lancashire Vehicle Transport — hidden from the web, kept in git.
 templates/lancashire-vehicle-transport.html
 assets/lvt
-
-# Roses by Rachel — hidden from the web, kept in git.
-templates/roses-by-rachel.html
-assets/rachel
