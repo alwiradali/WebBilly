@@ -2076,6 +2076,112 @@
     AS.draft = {};
     asSay("Let's build it. What's the property called? (e.g. 12 Willow Lane)");
   }
+
+  /* infer the lettings facts from the rooms the photos created */
+  function asInferFacts() {
+    var p = TOUR.project = TOUR.project || {};
+    var beds = 0, baths = 0, garden = false, drive = false;
+    TOUR.rooms.forEach(function (r) {
+      if (r.kind === "Bedroom") beds++;
+      else if (r.kind === "Bathroom") baths++;
+      else if (/garden|terrace|balcony|patio|yard/i.test(r.name)) garden = true;
+      else if (/drive|parking|garage/i.test(r.name)) drive = true;
+    });
+    if (beds) p.beds = beds;
+    if (baths) p.baths = baths;
+    if (!p.propertyType) p.propertyType = garden || beds >= 3 ? "House" : "Apartment";
+    AS._garden = garden; AS._drive = drive;
+    return { beds: beds, baths: baths, garden: garden, drive: drive };
+  }
+
+  /* honest listing copy composed from the record — facts only, editable after */
+  function asWriteCopy() {
+    var p = TOUR.project = TOUR.project || {};
+    var f = asInferFacts();
+    var area = (p.location || "").trim();
+    var type = (p.propertyType || "home").toLowerCase();
+    var roomNames = TOUR.rooms.map(function (r) { return r.name.toLowerCase(); });
+    var summary = (f.beds ? f.beds + "-bedroom " : "") + type + (area ? " in " + area : "") +
+      " — walk every room in 360° online before you book a viewing.";
+    var paras = [];
+    var inside = roomNames.length ? "Inside: " + roomNames.join(", ") + "." : "";
+    paras.push((p.name || "This property") + " is a " + (f.beds ? f.beds + "-bedroom " : "") + type +
+      (area ? " in " + area : "") + (f.baths ? " with " + f.baths + " bathroom" + (f.baths === 1 ? "" : "s") : "") +
+      ". " + inside);
+    if (f.garden || f.drive) paras.push("Outside" +
+      (f.garden && f.drive ? " there's a garden and a driveway." : f.garden ? " there's a garden." : " there's a driveway."));
+    paras.push("Every room has been captured in 360° — take the full walk-through online, then book a viewing with Megacity Properties on 0161 220 1763.");
+    var feats = [];
+    if (f.beds) feats.push(f.beds + " bedroom" + (f.beds === 1 ? "" : "s"));
+    if (f.baths) feats.push(f.baths + " bathroom" + (f.baths === 1 ? "" : "s"));
+    if (f.garden) feats.push("Garden");
+    if (f.drive) feats.push("Driveway");
+    feats.push("Walk-through 360° tour");
+    if (area) feats.push(area);
+    return { summary: summary, paras: paras, feats: feats };
+  }
+
+  /* one click: live + website listing + the 10ninety-ready pack */
+  function asPublishEverywhere() {
+    var p = TOUR.project = TOUR.project || {};
+    var copy = asWriteCopy();
+    if (!(p.summary || "").trim()) p.summary = copy.summary;
+    p.hidden = false;
+    afterSiteEdit();
+    var okLive = saveNow();
+
+    /* the website listing — same origin, same browser, same demo model */
+    var photos = [];
+    TOUR.rooms.forEach(function (r) { (r.photos || []).forEach(function (ph) { photos.push({ room: r.name, src: ph.src }); }); });
+    var cover = photos.length ? photos[0].src : (TOUR.rooms[0] && TOUR.rooms[0].pano) || "";
+    var priceNum = parseInt(String(p.price || "").replace(/[^0-9]/g, ""), 10) || 0;
+    var entry = {
+      id: PROJECT,
+      name: p.name || PROJECT,
+      area: p.location || "Manchester", postcode: "",
+      price: priceNum, priceLabel: p.price || "Rent on application",
+      status: "available", statusLabel: "Available",
+      beds: p.beds || 0, baths: p.baths || 0,
+      type: p.propertyType || "Home",
+      furnishing: p.furnished || "", availableFrom: p.availableFrom || "",
+      deposit: p.deposit || "", epc: p.epc || "", councilTaxBand: p.councilTax || "",
+      tour: PROJECT, tourRoom: TOUR.rooms[0] ? TOUR.rooms[0].id : "",
+      cover: cover,
+      summary: copy.summary,
+      description: copy.paras,
+      features: copy.feats,
+      story: photos.slice(0, 6).map(function (ph) { return { room: ph.room, caption: "", src: ph.src }; })
+    };
+    var okSite = true;
+    try {
+      var saved = JSON.parse(localStorage.getItem("megacity:data") || "null") || {};
+      var ap = saved.addProperties || [];
+      for (var i = ap.length - 1; i >= 0; i--) if (ap[i] && ap[i].id === entry.id) ap.splice(i, 1);
+      ap.unshift(entry);
+      saved.addProperties = ap;
+      localStorage.setItem("megacity:data", JSON.stringify(saved));
+    } catch (e) { okSite = false; }
+
+    /* the 10ninety pack — everything staff paste, in one clipboard */
+    var pack = (p.name || PROJECT) + (p.location ? " — " + p.location : "") + "\n" +
+      "360° tour (paste into 10ninety's virtual-tour field): " + tourUrl() + "\n\n" +
+      copy.summary + "\n\n" + copy.paras.join("\n\n") + "\n\nKey points: " + copy.feats.join(" · ");
+    copyText(pack, "10ninety pack copied.");
+
+    var autos = 0;
+    TOUR.rooms.forEach(function (r) { (r.hotspots || []).forEach(function (h) { if (h.auto) autos++; }); });
+    asSay("Published.\n" +
+      (okLive ? "✓ Live on the tour platform" : "⚠ Couldn't save — this browser's storage is full") + "\n" +
+      (okSite ? "✓ Listed on the Megacity website (this browser — on the live domain this step publishes for everyone)"
+        : "⚠ The website listing couldn't be saved — storage is full. Free some space and say “publish everywhere” again.") + "\n" +
+      "✓ 10ninety pack copied — paste it into the 10ninety listing, and the tour link into its virtual-tour field. Rightmove, Zoopla and OnTheMarket pick everything up from 10ninety's own feed — the feed is the upload; the portals have no separate door.\n\n" +
+      "Link: " + tourUrl().replace(/^https?:\/\//, "") +
+      (autos ? "\n\nWorth doing when you have a minute: " + autos + " auto-placed door" + (autos === 1 ? "" : "s") + " to aim — say “doors”." : ""),
+      [
+        { label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } },
+        { label: "See it on the website", run: function () { window.open("/templates/megacity-property?id=" + PROJECT, "_blank"); } }
+      ]);
+  }
   function asQuality() {
     var h = tourHealth();
     var warns = h.checks.filter(function (c) { return !c.ok; });
@@ -2101,8 +2207,15 @@
   function asCapturePrompt() {
     var next = asNextTarget();
     if (!next) {
-      asSay("Every room has its 360°. Next: aim each door at the real doorway — say “doors” and I'll open that screen. Then “make it live” when you're happy.",
-        [{ label: "Open the doors screen", cmd: "doors" }]);
+      var f = asInferFacts();
+      markDirty(); saveNow();
+      asSay("Every room has its 360°" +
+        (f.beds || f.baths ? " — I make that " + f.beds + " bedroom" + (f.beds === 1 ? "" : "s") +
+          (f.baths ? " and " + f.baths + " bathroom" + (f.baths === 1 ? "" : "s") : "") +
+          (f.garden ? ", with a garden" : "") + "." : ".") +
+        "\n\nThe description is written from what you dropped. One click does the rest — live tour, the website listing, and the 10ninety pack on your clipboard.",
+        [{ label: "Publish everywhere", cmd: "publish everywhere" },
+         { label: "Open the doors screen", cmd: "doors" }]);
       AS.state = "idle";
       return;
     }
@@ -2131,18 +2244,35 @@
           next(); return;
         }
         /* a file named after a room goes to THAT room — replacing its 360°
-           if it already has one (a re-shoot must never be misfiled).
-           Un-named files go to the room the assistant asked for, then the
-           next one waiting. */
-        var room = null, replacing = false;
-        var guess = slug(prettyName(r.name));
+           if it already has one (a re-shoot must never be misfiled). A file
+           with a NEW room name creates that room on the spot; only files
+           with generic camera names (IMG_1234…) fall through to the room
+           the assistant asked for. */
+        var room = null, replacing = false, created = false;
+        var pretty = prettyName(r.name);
+        var guess = slug(pretty);
+        var generic = !pretty || /^(img|image|photo|pano|dsc|pxl|untitled|room|capture)\b/i.test(pretty) || /^\d+$/.test(guess.replace(/-/g, ""));
         for (var k = 0; k < TOUR.rooms.length; k++) {
           if (slug(TOUR.rooms[k].name) === guess) { room = TOUR.rooms[k]; replacing = !!room.pano; break; }
         }
+        if (!room && !generic) {
+          room = newRoom(pretty, TOUR.floors[0].id, 10);
+          room.kind = roomKind(pretty);
+          room.plan = [18 + (TOUR.rooms.length % 4) * 28, 18 + Math.floor(TOUR.rooms.length / 4) * 22];
+          TOUR.rooms.push(room);
+          (TOUR.guided = TOUR.guided || {}).order = (TOUR.guided.order || []).concat([room.id]);
+          created = true;
+        }
         if (!room && AS.capHint && roomsById[AS.capHint] && !roomsById[AS.capHint].pano) room = roomsById[AS.capHint];
         if (!room) room = asNextTarget();
-        if (!room) { asSay("Every room is photographed — “" + (r.name || "the extra image") + "” wasn't filed. Name it after a room (kitchen.jpg) to replace that room's 360°."); next(); return; }
+        if (!room) { asSay("Every room is photographed — “" + (r.name || "the extra image") + "” wasn't filed. Name it after a room (kitchen.jpg) to replace that room's 360°, or a new name to create that room."); next(); return; }
         AS.capHint = null;
+        if (created) {
+          autoLinkRooms();
+          indexRooms();
+          engine.load(TOUR);
+          TOUR.rooms.forEach(function (rr) { if (rr.pano) engine.setPano(rr.id, rr.pano); });
+        }
         room.pano = r.src;
         rememberPanoStats(room, r);
         engine.setPano(room.id, r.src);
@@ -2171,12 +2301,32 @@
       return;
     }
 
-    /* the property-creation conversation */
+    /* the property-creation conversation — two questions, then photos */
     if (AS.state === "np_name") {
       AS.draft.name = t;
-      AS.state = "np_rent";
+      AS.state = "np_area";
       asSay("Its link will be " + (location.origin + location.pathname.replace(/index\.html$/, "")).replace(/^https?:\/\//, "") +
-        "?site=" + uniqueSiteId(t) + " — made from the name, automatically.\n\nWhat's the rent or price? (or say “skip”)");
+        "?site=" + uniqueSiteId(t) + " — made from the name, automatically.\n\nWhich area is it in? (e.g. Salford, Cheetham Hill)");
+      return;
+    }
+    if (AS.state === "np_area") {
+      var dr = AS.draft;
+      dr.area = t;
+      var tour2 = blankTour(dr.name, { beds: 0, baths: 0, living: false, kitchen: false, garden: false, driveway: false, stairs: false });
+      tour2.project.hidden = true;
+      tour2.project.location = dr.area;
+      if (!storeSite(tour2)) { AS.state = "idle"; asSay("This browser's storage is full — export a property in Publish first, then try again."); return; }
+      AS.state = "capture";
+      AS.draft = null;
+      AS._keep = true;
+      switchProject(tour2.id, { force: true, silent: true });
+      studioTab = "assistant";
+      renderStudio();
+      asSay("Done — " + TOUR.project.name + " in " + TOUR.project.location + " exists, with its permanent link:\n" +
+        tourUrl().replace(/^https?:\/\//, "") +
+        "\n\nNow drop ALL the photos into this chat — name the files after the rooms (hallway.jpg, kitchen.jpg, bedroom-1.jpg, garden.jpg…) and each 360° becomes its own room, door-linked automatically. I'll work out the bedrooms, bathrooms and the description from what you drop. Say the rent whenever you like (“rent is £995”).",
+        [{ label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } }]);
+      AS.state = "capture";
       return;
     }
     if (AS.state === "np_rent") {
@@ -2249,6 +2399,20 @@
     /* commands, any time */
     if (/new prop|create|another prop|add a prop|start a prop|build a prop/.test(lc)) { asStartNew(); return; }
     if (/missing|what's left|whats left|ready|score|quality|check/.test(lc)) { asQuality(); return; }
+    /* the rent can be said at any point */
+    var rentM = lc.match(/(?:rent|price)[^0-9£]{0,12}£?\s?(\d[\d,]{1,7})/);
+    if (rentM) {
+      var rentTxt = "£" + rentM[1].replace(/^0+/, "");
+      if (!/pw|week/.test(lc)) rentTxt += " pcm";
+      (TOUR.project = TOUR.project || {}).price = rentTxt;
+      afterSiteEdit(); saveTour(true);
+      asSay("Rent set: " + rentTxt + " — saved.");
+      return;
+    }
+
+    /* one click: live + website + 10ninety pack (before the plain publish matcher) */
+    if (/publish everywhere|everywhere|website and 10ninety|list it|one click/.test(lc)) { asPublishEverywhere(); return; }
+
     /* hide before publish — "unpublish" contains "publish" and must win */
     if (/hide|unpublish|take.*down|let agreed/.test(lc)) {
       (TOUR.project = TOUR.project || {}).hidden = true;

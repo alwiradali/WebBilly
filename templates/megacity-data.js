@@ -263,6 +263,18 @@
       PROPERTIES.length = 0;
       Array.prototype.push.apply(PROPERTIES, saved.properties);
     }
+    /* additive entries — written by the 360° Studio's assistant when a
+       property is "published everywhere". They sit alongside the shipped
+       (or Studio-replaced) list; a matching id replaces its entry. */
+    if (saved && saved.addProperties && saved.addProperties.length) {
+      saved.addProperties.forEach(function (p) {
+        if (!p || !p.id) return;
+        for (var i = 0; i < PROPERTIES.length; i++) {
+          if (PROPERTIES[i].id === p.id) { PROPERTIES.splice(i, 1); break; }
+        }
+        PROPERTIES.unshift(p);
+      });
+    }
     if (saved && saved.biz) {
       for (var k in saved.biz) if (Object.prototype.hasOwnProperty.call(saved.biz, k)) BIZ[k] = saved.biz[k];
     }
