@@ -716,6 +716,39 @@
 
   /* ── forms: honest submission — opens a pre-filled email ──────── */
   function forms() {
+    /* forms with data-api post JSON to the site worker (real send) */
+    document.querySelectorAll("form[data-api]").forEach(function (f) {
+      f.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var data = {};
+        f.querySelectorAll("input,select,textarea").forEach(function (c) {
+          if (!c.name || c.type === "submit") return;
+          data[c.name] = c.type === "checkbox" ? (c.checked ? "yes" : "") : c.value;
+        });
+        var btn = f.querySelector('button[type="submit"]');
+        var note = f.querySelector(".form-note");
+        if (btn) { btn.disabled = true; btn.style.opacity = ".6"; }
+        fetch(f.getAttribute("data-api"), {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data)
+        }).then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (jr) { return { ok: r.ok, body: jr }; });
+        }).then(function (res) {
+          if (btn) { btn.disabled = false; btn.style.opacity = ""; }
+          if (!res.ok) throw new Error((res.body && res.body.error) || "something went wrong");
+          var done = f.querySelector(".form-done");
+          if (done) {
+            done.hidden = false;
+            if (motion) gsap.from(done, { y: 16, opacity: 0, duration: 0.6, ease: "power3.out" });
+          }
+          f.querySelectorAll("input:not([type=hidden]),textarea").forEach(function (c) { c.value = ""; });
+        }).catch(function (err) {
+          if (btn) { btn.disabled = false; btn.style.opacity = ""; }
+          if (note) note.textContent = "Could not send — " + err.message + ". Please call the office on " + (D ? D.biz.phone : "") + " instead.";
+        });
+      });
+    });
     document.querySelectorAll("form[data-mailto]").forEach(function (f) {
       f.addEventListener("submit", function (e) {
         e.preventDefault();

@@ -31,6 +31,10 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
+    if (url.pathname === "/api/megacity-maintenance") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityMaintenance(request, env);
+    }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
     if (!M2L_PARKED) {
@@ -513,6 +517,88 @@ billydigitals.com`;
   </td></tr></table>
 </body></html>`;
 
+  return { html, text };
+}
+
+
+/* ── Megacity Properties — tenant maintenance reports ────────────────────
+   The office manages every job in 10ninety and updates the landlord from
+   there; this endpoint just gets the report to them instantly, structured.
+   DEMO: reports go to our own inbox. At go-live, point MEGACITY_MAINT_TO
+   at the office inbox (info@megacityproperties.co.uk) or the 10ninety
+   intake address once their support confirms one, and add the client's
+   domain to originOk. */
+const MEGACITY_MAINT_TO = "hello@billydigitals.com";
+const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
+
+async function handleMegacityMaintenance(request, env) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim().slice(0, 120);
+  const contact = String(body.contact || "").trim().slice(0, 160);
+  const address = String(body.address || "").trim().slice(0, 240);
+  const urgency = String(body.urgency || "Routine").trim().slice(0, 80);
+  const issue = String(body.issue || "").trim().slice(0, 4000);
+  const access = String(body.access || "").trim().slice(0, 500);
+
+  if (!name || !contact || !address || !issue) {
+    return json({ error: "Please fill in your name, contact, the property address and the problem." }, 400);
+  }
+
+  const isEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact);
+  const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
+  const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
+
+  const payload = { from: MEGACITY_FROM, to: [MEGACITY_MAINT_TO], subject, html, text };
+  if (isEmail) payload.reply_to = contact;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  return json({ ok: true });
+}
+
+function megacityMaintEmail(d) {
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rows = [
+    ["Tenant", d.name],
+    ["Contact", d.contact],
+    ["Property", d.address],
+    ["Urgency", d.urgency],
+    ["Problem", d.issue],
+    ["Access", d.access || "—"],
+  ]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:110px;">${k}</td>` +
+        `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`
+    )
+    .join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Maintenance report <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Log this job in 10ninety, then reply to the tenant directly — reply-to is set when they left an email address.</div></div>`;
+  const text = rows
+    ? ["Maintenance report", "Tenant: " + d.name, "Contact: " + d.contact, "Property: " + d.address, "Urgency: " + d.urgency, "Problem: " + d.issue, "Access: " + (d.access || "—")].join("\n")
+    : "";
   return { html, text };
 }
 

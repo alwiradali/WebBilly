@@ -69,7 +69,7 @@
             <li><a href="megacity-tours"><i>Walk</i><b>Tour homes in 360° first</b><span>→</span></a></li>
             <li><a href="#register"><i>Register</i><b>Hear about homes before the portals</b><span>→</span></a></li>
             <li><a href="megacity-contact"><i>Book</i><b>Arrange a viewing with the team</b><span>→</span></a></li>
-            <li><a href="mailto:info@megacityproperties.co.uk?subject=Maintenance%20issue%20at%20my%20Megacity%20home"><i>Report</i><b>Report a maintenance issue</b><span>→</span></a></li>
+            <li><a href="#maintenance"><i>Report</i><b>Report a maintenance issue</b><span>→</span></a></li>
           </ul>
           <div>
             <p class="lead" data-fx="fade">Renting with Megacity means an ARLA-regulated agency, a protected deposit, and maintenance you can report online and track to resolution — not a landlord's voicemail.</p>
@@ -80,6 +80,38 @@
             </ul>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <section class="section section--tight" id="maintenance" aria-label="Report a maintenance issue">
+      <div class="wrap split" style="align-items:start">
+        <div>
+          <p class="eyebrow" data-fx="fade">Tenants &middot; repairs</p>
+          <h2 class="t-2" data-fx="fade" style="margin-top:18px">Something needs<br><em>fixing</em>?</h2>
+          <p class="lead" data-fx="fade" style="margin-top:22px">Report it here and it goes straight to the Megacity office. The team logs every job, arranges the fix and keeps your landlord informed &mdash; you&rsquo;ll hear back the same working day.</p>
+          <p class="lead" data-fx="fade" style="margin-top:12px;font-size:15px">Smell gas? Call the National Gas Emergency line on <b>0800 111 999</b> first, then let us know.</p>
+        </div>
+        <form class="form" style="margin-top:0" data-api="/api/megacity-maintenance">
+          <input type="text" name="botcheck" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+          <div class="field"><label for="m-name">Your name</label><input id="m-name" name="name" required autocomplete="name"></div>
+          <div class="field"><label for="m-contact">Phone or email</label><input id="m-contact" name="contact" required></div>
+          <div class="field field--full"><label for="m-address">Property address</label><input id="m-address" name="address" required placeholder="Flat / house number, street, postcode"></div>
+          <div class="field field--full"><label for="m-urgency">How urgent is it?</label>
+            <select id="m-urgency" name="urgency">
+              <option>Routine &mdash; within a few days</option>
+              <option>Urgent &mdash; today or tomorrow</option>
+              <option>Emergency &mdash; no heat, water or power</option>
+            </select></div>
+          <div class="field field--full"><label for="m-issue">What&rsquo;s the problem?</label><textarea id="m-issue" name="issue" rows="4" required placeholder="What&rsquo;s wrong, and where in the property?"></textarea></div>
+          <div class="field field--full"><label for="m-access">Access notes (optional)</label><input id="m-access" name="access" placeholder="e.g. home after 5pm, dog in the house"></div>
+          <div class="form-actions">
+            <button class="btn btn--solid btn--lg magnetic" type="submit">Send the report
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <p class="form-note">Goes straight to the office &mdash; the team manages every job in their system and updates your landlord.</p>
+          </div>
+          <div class="form-done" hidden><b>Report sent.</b>The office has it &mdash; they&rsquo;ll be in touch to arrange the fix.</div>
+        </form>
       </div>
     </section>
 
