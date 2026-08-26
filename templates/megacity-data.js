@@ -19,6 +19,7 @@
     brandName: "Megacity",
     brandSub: "Properties",
     strap: "Lettings & property management, Manchester & Salford",
+    tagline: "Doing rental right",
     phone: "0161 220 1763",
     phoneHref: "tel:+441612201763",
     email: "info@megacityproperties.co.uk",
@@ -31,7 +32,7 @@
     memberships: [
       { name: "ARLA Propertymark", note: "Regulated letting agent" },
       { name: "The Property Ombudsman", note: "Membership T06217" },
-      { name: "Tenancy Deposit Scheme", note: "Deposits protected" },
+      { name: "DPS", note: "Deposit Protection Service" },
       { name: "NRLA", note: "National Residential Landlords Association" }
     ]
   };

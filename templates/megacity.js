@@ -135,7 +135,7 @@
         '<a class="btn btn--ghost btn--lg" href="' + D.biz.phoneHref + '">Call ' + D.biz.phone + "</a></div></div>" +
         '<div class="wrap footer-grid">' +
         '<div class="footer-brand"><a class="nav-brand" href="megacity">' + esc(D.biz.brandName) + "<small>" + esc(D.biz.brandSub) + "</small></a>" +
-        "<p>" + D.biz.strap + ". Every managed home presented properly — photography, floor plans and a 360° tour you can walk before you visit.</p></div>" +
+        "<p>" + esc(D.biz.tagline ? D.biz.tagline + " — " : "") + (D.biz.tagline ? D.biz.strap.charAt(0).toLowerCase() + D.biz.strap.slice(1) : D.biz.strap) + ". Every managed home presented properly — photography, floor plans and a 360° tour you can walk before you visit.</p></div>" +
         '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="megacity-tools">Tools &amp; calculators</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
         '<div><h4>With us</h4><ul><li><a href="megacity-landlords">Landlords</a></li><li><a href="megacity-tenants">Tenants</a></li><li><a href="megacity-valuation">Valuation</a></li></ul></div>' +
         '<div><h4>Office</h4><ul>' +
@@ -145,7 +145,7 @@
         '<li><a href="' + D.biz.facebook + '" target="_blank" rel="noopener">Facebook</a></li>' +
         '<li><a href="' + D.biz.linkedin + '" target="_blank" rel="noopener">LinkedIn</a></li></ul></div></div>' +
         '<div class="wrap footer-legal"><span>© <span id="mcYear"></span> ' + esc(D.biz.brandName + " " + D.biz.brandSub) + " · Company no. " + D.biz.companyNo + "</span>" +
-        "<span>ARLA Propertymark · The Property Ombudsman T06217 · TDS · NRLA</span>" +
+        "<span>ARLA Propertymark · The Property Ombudsman T06217 · DPS · NRLA</span>" +
         '<span style="margin-left:auto">Redesign concept by <a href="/" target="_blank" rel="noopener">Billy Digitals</a></span></div>' +
         '<div class="wrap"><div class="footer-word" aria-hidden="true" data-fx="footer-word">' + esc((D.biz.brandName || "MEGACITY").toUpperCase()) + "</div></div></footer>";
       var y = document.getElementById("mcYear");
