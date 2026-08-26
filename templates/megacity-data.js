@@ -30,7 +30,7 @@
     linkedin: "https://www.linkedin.com/company/megacity-properties",
     /* memberships listed on the current site — nothing invented */
     memberships: [
-      { name: "ARLA Propertymark", note: "Regulated letting agent" },
+      { name: "ARLA Propertymark", note: "Regulated agent · Client Money Protection" },
       { name: "The Property Ombudsman", note: "Membership T06217" },
       { name: "DPS", note: "Deposit Protection Service" },
       { name: "NRLA", note: "National Residential Landlords Association" }
