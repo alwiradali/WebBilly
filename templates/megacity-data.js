@@ -168,6 +168,29 @@
       ]
     },
     {
+      id: "waterloo-road-room",
+      name: "Room 3, Waterloo Road",
+      area: "Cheetham Hill", postcode: "M8",
+      price: 600, priceLabel: "£600 pcm · bills included",
+      status: "available", statusLabel: "Available",
+      beds: 1, baths: 1, type: "Double room",
+      furnishing: "Fully furnished", availableFrom: "Available now",
+      deposit: "5 weeks' rent", epc: "C", councilTaxBand: "A",
+      tour: null, tourRoom: null,
+      cover: img("1556020685-ae41abfc9365"),
+      summary: "A fully furnished double with every bill included, around the corner from our own office — renting at its simplest.",
+      description: [
+        "Room 3 is a proper double in a well-kept house share on Waterloo Road: bed, wardrobe and chest of drawers all in, with a lock on the door and a fitted kitchen shared with the house.",
+        "One payment covers everything — rent, gas, electric, water, Wi-Fi and council tax — so what you see is what you pay. Buses to the city run from the end of the road, and our office is two minutes away if you ever need us."
+      ],
+      features: ["All bills included — gas, electric, water, Wi-Fi & council tax", "Fully furnished double", "Lock on the bedroom door", "Shared fitted kitchen", "Two minutes from our office", "Buses to the city from the end of the road"],
+      story: [
+        { room: "Bedroom", caption: "A furnished double — bed, wardrobe and drawers included.", src: img("1556020685-ae41abfc9365") },
+        { room: "Bedroom", caption: "Light, simple and ready to move into.", src: img("1540518614846-7eded433c457") },
+        { room: "Kitchen", caption: "The shared kitchen, fitted and looked after.", src: img("1556909114-f6e7ad7d3136") }
+      ]
+    },
+    {
       id: "albany-terrace",
       name: "Albany Road Terrace",
       area: "Chorlton", postcode: "M21",
@@ -284,7 +307,7 @@
   window.MEGACITY = {
     biz: BIZ,
     properties: PROPERTIES,
-    areas: ["Ancoats", "Castlefield", "Northern Quarter", "Salford", "Salford Quays", "West Didsbury", "Chorlton", "Prestwich"],
+    areas: ["Ancoats", "Castlefield", "Northern Quarter", "Salford", "Salford Quays", "West Didsbury", "Chorlton", "Prestwich", "Cheetham Hill"],
     toursBase: TOURS_BASE,
     byId: byId,
     withTours: withTours,
