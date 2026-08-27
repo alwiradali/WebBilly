@@ -13,7 +13,7 @@
      ------------------------------------------------------------------ */
   var CONTACT = {
     whatsapp: '',                       // digits only, e.g. 447700900123
-    email: '',                          // e.g. rod@smartinscience.co.uk
+    email: 'roddymartin80@gmail.com',
     phone: ''                           // e.g. 07700 900123
   };
 
