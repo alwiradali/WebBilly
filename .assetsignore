@@ -38,3 +38,11 @@ assets/diamond
 # Lancashire Vehicle Transport — hidden from the web, kept in git.
 templates/lancashire-vehicle-transport.html
 assets/lvt
+
+# Hair by Elle — parked for now. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/hair-by-elle is unreachable on the web.
+# Delete these four lines to put it back live.
+templates/hair-by-elle.html
+templates/hair-by-elle.css
+templates/hair-by-elle.js
+templates/hair-by-elle-gl.js
