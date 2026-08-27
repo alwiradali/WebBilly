@@ -46,3 +46,7 @@ templates/hair-by-elle.html
 templates/hair-by-elle.css
 templates/hair-by-elle.js
 templates/hair-by-elle-gl.js
+
+# Roses by Rachel — hidden from the web, kept in git.
+templates/roses-by-rachel.html
+assets/rachel
