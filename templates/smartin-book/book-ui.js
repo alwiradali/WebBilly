@@ -16,7 +16,7 @@
      ------------------------------------------------------------------ */
   var CONTACT = {
     whatsapp: '',                 // digits only, e.g. 447700900123
-    email: ''                     // e.g. rod@smartinscience.co.uk
+    email: 'roddymartin80@gmail.com'
   };
 
   /* Web3Forms access key — paste Rod's key and enquiries land in his
