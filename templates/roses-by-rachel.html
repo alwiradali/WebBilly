@@ -316,9 +316,21 @@ h2 i,h1 i{font-style:italic;font-weight:500;color:var(--gold)}
 
 /* florist's choice card + order atelier extras */
 .fc-ph{background:linear-gradient(160deg,#fdfaf3,#f1e6d2);position:relative}
-.fc-opts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
-.fc-opts span{padding:5px 13px;border:1px solid var(--goldpale);border-radius:100px;font-size:.72rem;
-  letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+/* presentation choice — on every bouquet, exactly as Rachel asked:
+   boxed, in a vase, or hand-tied with neither. Each chip is a real
+   shortcut: it carries both the style and the presentation into the
+   order form. */
+.pres{margin-top:14px;padding-top:12px;border-top:1px solid var(--goldpale)}
+.pres small{display:block;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;
+  font-weight:700;color:var(--mut);margin-bottom:8px}
+.pres-opts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.pres-opts button{
+  width:auto;flex:0 0 auto;margin-top:0;
+  padding:6px 13px;border:1px solid var(--goldpale);border-radius:100px;background:transparent;
+  font-size:.71rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--gold);
+  cursor:pointer;transition:background .2s,color .2s,border-color .2s;font-family:var(--ui);
+}
+.pres-opts button:hover{background:var(--gold);border-color:var(--gold);color:var(--ivory2)}
 .seg{display:flex;gap:0;border:1px solid var(--goldpale);width:100%}
 .seg{align-items:stretch}.seg label{position:relative;cursor:pointer;display:flex;flex:1 1 0;min-width:0;margin:0}
 .seg input{position:absolute;opacity:0;pointer-events:none}
@@ -454,36 +466,72 @@ footer a{border-bottom:1px solid var(--gold2)}
         <div class="ph"><img src="../assets/rachel/own-blush-sm.webp" alt="Rachel's pink roses, dahlias and chamomile in rose-gold wrap" loading="lazy"></div>
         <div class="bd"><h3>The Blush</h3><span class="occ">pretty in pink</span>
           <p>My signature — pink roses, dahlias and chamomile daisies in a rose-gold-edged wrap.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Blush (pretty in pink)">Order this style</button></div>
       </article>
       <article class="bq" data-fx="reveal" data-fx-delay="90">
         <div class="ph"><img src="../assets/rachel/own-classic-sm.webp" alt="Rachel's pink and cream roses with baby's breath in a lace-tied box" loading="lazy"></div>
         <div class="bd"><h3>The Classic</h3><span class="occ">roses &amp; baby's breath</span>
           <p>Pink and cream roses in a cloud of gypsophila, boxed and tied with lace — romance that never misses.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Classic (roses &amp; baby's breath)">Order this style</button></div>
       </article>
       <article class="bq" data-fx="reveal" data-fx-delay="180">
         <div class="ph"><img src="../assets/rachel/own-sunshine-sm.webp" alt="Rachel's sunflower, yellow chrysanthemums and white alstroemeria" loading="lazy"></div>
         <div class="bd"><h3>The Sunshine</h3><span class="occ">sunflowers &amp; golden blooms</span>
           <p>A sunflower heart with golden chrysanthemums and white alstroemeria — a bouquet that grins back.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Sunshine (sunflowers &amp; yellow)">Order this style</button></div>
       </article>
       <article class="bq" data-fx="reveal">
         <div class="ph"><img src="../assets/rachel/own-sorbet-sm.webp" alt="Rachel's peach and apricot roses with baby's breath in a box" loading="lazy"></div>
         <div class="bd"><h3>The Sorbet</h3><span class="occ">peach &amp; apricot roses</span>
           <p>Warm sorbet tones wrapped around baby's breath — summery, soft and a little bit different.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Sorbet (peach &amp; apricot roses)">Order this style</button></div>
       </article>
       <article class="bq" data-fx="reveal" data-fx-delay="90">
         <div class="ph"><img src="../assets/rachel/own-statement-sm.webp" alt="Rachel's hot pink hydrangeas with baby's breath" loading="lazy"></div>
         <div class="bd"><h3>The Statement</h3><span class="occ">big &amp; cute hydrangeas</span>
           <p>Full-bloom hydrangeas that fill the doorway — for the moments that deserve a gasp.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Statement (hydrangeas)">Order this style</button></div>
       </article>
       <article class="bq" data-fx="reveal" data-fx-delay="180">
         <div class="ph"><img src="../assets/rachel/own-ivory-sm.webp" alt="Rachel's cream roses laid out with greenery" loading="lazy"></div>
         <div class="bd"><h3>The Ivory</h3><span class="occ">cream on cream</span>
           <p>Quiet, elegant cream roses — weddings, sympathy, or anyone whose taste runs timeless.</p>
+        <div class="pres"><small>Have it</small>
+          <div class="pres-opts">
+            <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+            <button data-pres="In a gift box">In a box</button>
+            <button data-pres="In a vase">In a vase</button>
+          </div></div>
           <button data-order="The Ivory (cream roses)">Order this style</button></div>
       </article>
       <article class="bq fc-card" data-fx="reveal">
@@ -494,9 +542,13 @@ footer a{border-bottom:1px solid var(--gold2)}
           <p>Tell me the occasion and your budget — I'll design you a surprise with the
              best blooms of the week. Have it hand-tied, in a gift box, in a vase, or
              without — completely your choice.</p>
-          <div class="fc-opts" aria-hidden="true">
-            <span>Hand-tied</span><span>Gift box</span><span>Vase</span><span>Or without</span>
-          </div>
+          <div class="pres"><small>Have it</small>
+            <div class="pres-opts">
+              <button data-pres="Hand-tied wrap — no box">Hand-tied</button>
+              <button data-pres="In a gift box">In a box</button>
+              <button data-pres="In a vase">In a vase</button>
+              <button data-pres="Florist's choice presentation">Rachel's pick</button>
+            </div></div>
           <button data-order="Florist's Choice — surprise me">Surprise me</button></div>
       </article>
     </div>
@@ -800,13 +852,30 @@ footer a{border-bottom:1px solid var(--gold2)}
       compose();
     });
   });
+  function pickStyle(want) {
+    var sel = $('fStyle');
+    [].forEach.call(sel.options, function (o) { if (o.text === want) sel.value = o.value; });
+  }
+  function goToOrder() {
+    compose();
+    document.getElementById('order').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+  }
   [].forEach.call(document.querySelectorAll('[data-order]'), function (b) {
     b.addEventListener('click', function () {
-      var want = b.getAttribute('data-order').replace(/&amp;/g, '&');
-      var sel = $('fStyle');
-      [].forEach.call(sel.options, function (o) { if (o.text === want) sel.value = o.value; });
-      compose();
-      document.getElementById('order').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+      pickStyle(b.getAttribute('data-order').replace(/&amp;/g, '&'));
+      goToOrder();
+    });
+  });
+  /* a presentation chip picks BOTH its bouquet and how it's presented */
+  [].forEach.call(document.querySelectorAll('[data-pres]'), function (b) {
+    b.addEventListener('click', function () {
+      var card = b.closest('.bq');
+      var orderBtn = card && card.querySelector('[data-order]');
+      if (orderBtn) pickStyle(orderBtn.getAttribute('data-order').replace(/&amp;/g, '&'));
+      var want = b.getAttribute('data-pres').replace(/&amp;/g, '&');
+      var pres = $('fPres');
+      [].forEach.call(pres.options, function (o) { if (o.text === want) pres.value = o.value; });
+      goToOrder();
     });
   });
   [].forEach.call(document.querySelectorAll('.occ-row'), function (r) {
