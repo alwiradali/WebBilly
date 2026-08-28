@@ -49,6 +49,54 @@
      status: available · new · let-agreed
      tour:   billy360 site id, or null when no capture exists yet  */
   var PROPERTIES = [
+    /* ── the agency's real current listings, photography straight from
+       their live 10ninety media — at go-live the feed keeps these fresh */
+    {
+      id: "room-7-salford",
+      name: "Room 7, Salford",
+      area: "Salford", postcode: "",
+      price: 600, priceLabel: "£600 pcm · all bills included",
+      status: "available", statusLabel: "Available now",
+      beds: 1, baths: 1, type: "Double room",
+      furnishing: "Furnished", availableFrom: "Available now",
+      deposit: "£500", epc: "See listing", councilTaxBand: "B",
+      tour: null, tourRoom: null,
+      cover: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/678?width=1000&height=756&cropToFill=true",
+      summary: "A large double on the second floor of a well-kept Salford house share — every bill included, close to the University, Salford Quays and MediaCityUK.",
+      description: [
+        "A large double room on the second floor of a well-run house share in Salford, close to the University, Salford Quays and MediaCityUK.",
+        "The house comprises an entrance hall, a large shared kitchen and dining area, a ground-floor bathroom and a further first-floor bathroom and toilet. All bills are included, with gas central heating and double glazing throughout. Reference RL0060-7."
+      ],
+      features: ["All bills included", "Gas central heating", "Double glazing", "Fitted kitchen", "Fitted bathroom", "Students welcome"],
+      story: [
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/678" },
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/1627" },
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/1629" }
+      ]
+    },
+    {
+      id: "ladywell-point",
+      name: "Ladywell Point, Pilgrims Way",
+      area: "Salford", postcode: "",
+      price: 1250, priceLabel: "£1,250 pcm",
+      status: "available", statusLabel: "Available now",
+      beds: 2, baths: 2, type: "Apartment",
+      furnishing: "Furnished", availableFrom: "Available now",
+      deposit: "£1,250", epc: "See listing", councilTaxBand: "B",
+      tour: null, tourRoom: null,
+      cover: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/3189?width=1000&height=756&cropToFill=true",
+      summary: "A well-presented two-bed in the popular Ladywell Point development — master with en-suite, open-plan living, a short walk from Ladywell Metrolink.",
+      description: [
+        "A well-presented two-bedroom apartment in the popular Ladywell Point development in Salford: a welcoming entrance hall, two generous doubles including a master with en-suite shower room, a modern family bathroom, and a spacious open-plan living, dining and kitchen area flooded with natural light.",
+        "Ladywell Metrolink is a short walk away for MediaCityUK, Salford Quays and the city centre, with shops, supermarkets and cafés all close by. Reference RL0140."
+      ],
+      features: ["Two double bedrooms", "Master with en-suite", "Open-plan living & kitchen", "Integrated appliances", "Large windows, lots of light", "Short walk to Ladywell Metrolink"],
+      story: [
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/3189" },
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/3190" },
+        { room: "Gallery", caption: "Photography from the live listing.", src: "https://megacityproperties.10ninety.co.uk/PublicPropertyMedia/DisplayImage/3191" }
+      ]
+    },
     {
       id: "foundry-loft",
       name: "The Foundry Loft",
@@ -165,29 +213,6 @@
         { room: "Living", caption: "One big brick-walled room, steel windows to the street.", src: img("1522156373667-4c7234bbd804") },
         { room: "Kitchen", caption: "A galley behind the steel screen.", src: img("1556909114-f6e7ad7d3136") },
         { room: "Bedroom", caption: "The mezzanine double.", src: img("1598928506311-c55ded91a20c") }
-      ]
-    },
-    {
-      id: "waterloo-road-room",
-      name: "Room 3, Waterloo Road",
-      area: "Cheetham Hill", postcode: "M8",
-      price: 600, priceLabel: "£600 pcm · bills included",
-      status: "available", statusLabel: "Available",
-      beds: 1, baths: 1, type: "Double room",
-      furnishing: "Fully furnished", availableFrom: "Available now",
-      deposit: "5 weeks' rent", epc: "C", councilTaxBand: "A",
-      tour: null, tourRoom: null,
-      cover: img("1556020685-ae41abfc9365"),
-      summary: "A fully furnished double with every bill included, around the corner from our own office — renting at its simplest.",
-      description: [
-        "Room 3 is a proper double in a well-kept house share on Waterloo Road: bed, wardrobe and chest of drawers all in, with a lock on the door and a fitted kitchen shared with the house.",
-        "One payment covers everything — rent, gas, electric, water, Wi-Fi and council tax — so what you see is what you pay. Buses to the city run from the end of the road, and our office is two minutes away if you ever need us."
-      ],
-      features: ["All bills included — gas, electric, water, Wi-Fi & council tax", "Fully furnished double", "Lock on the bedroom door", "Shared fitted kitchen", "Two minutes from our office", "Buses to the city from the end of the road"],
-      story: [
-        { room: "Bedroom", caption: "A furnished double — bed, wardrobe and drawers included.", src: img("1556020685-ae41abfc9365") },
-        { room: "Bedroom", caption: "Light, simple and ready to move into.", src: img("1540518614846-7eded433c457") },
-        { room: "Kitchen", caption: "The shared kitchen, fitted and looked after.", src: img("1556909114-f6e7ad7d3136") }
       ]
     },
     {

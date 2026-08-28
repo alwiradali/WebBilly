@@ -405,7 +405,7 @@
       '<span class="prop-flags"><span class="badge badge--' + p.status + '">' + p.statusLabel + "</span>" + badge360 + "</span>" +
       '<span class="prop-cta">View home ' + svgArrow + "</span></span>" +
       '<span class="prop-info"><span class="prop-price">£' + p.price.toLocaleString("en-GB") + "<small>" + (p.priceLabel && p.priceLabel.indexOf("bills") !== -1 ? "pcm · bills inc." : "pcm") + "</small></span>" +
-      '<span class="prop-where">' + p.area + " · " + p.postcode + "</span></span>" +
+      '<span class="prop-where">' + p.area + (p.postcode ? " · " + p.postcode : "") + "</span></span>" +
       '<span class="prop-meta"><i>' + p.beds + " bed</i><i>" + p.baths + " bath</i><i>" + p.type + "</i></span>" +
       '<span class="prop-name">' + p.name + "</span></a>" +
       '<button class="prop-save' + (saved.has(p.id) ? " is-on" : "") + '" data-save="' + p.id +

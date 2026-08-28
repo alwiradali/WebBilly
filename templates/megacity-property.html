@@ -65,7 +65,7 @@
       '<div class="hero-media" aria-hidden="true"><img src="' + p.cover.replace("w=1600", "w=2400") + '" alt="" fetchpriority="high"></div>' +
       '<div class="hero-inner wrap">' +
       '<div class="p-hero-title">' +
-      '<p class="hero-eyebrow eyebrow" data-hero-fade>' + p.type + " · " + p.area + " " + p.postcode + '</p>' +
+      '<p class="hero-eyebrow eyebrow" data-hero-fade>' + p.type + " · " + p.area + (p.postcode ? " " + p.postcode : "") + '</p>' +
       '<h1 class="t-1"><span class="ln"><span>' + p.name + "</span></span></h1>" +
       '<div style="display:flex;gap:10px;margin-top:20px" data-hero-fade>' +
       '<span class="badge badge--' + p.status + '">' + p.statusLabel + "</span>" +
@@ -157,7 +157,7 @@
       '<section class="section section--tight" style="border-top:1px solid var(--line)" id="enquire" aria-label="Location and viewings"><div class="wrap split">' +
       "<div>" +
       '<p class="eyebrow" data-fx="fade">Location</p>' +
-      '<h2 class="t-2" data-fx="fade" style="margin-top:18px">' + p.area + ", " + p.postcode + "</h2>" +
+      '<h2 class="t-2" data-fx="fade" style="margin-top:18px">' + p.area + (p.postcode ? ", " + p.postcode : "") + "</h2>" +
       '<p class="lead" data-fx="fade" style="margin-top:20px">Viewings are accompanied by the Megacity team and arranged around you — evenings and weekends included.</p>' +
       '<ul class="contact-rows" data-fx="stagger">' +
       '<li><a href="https://maps.google.com/?q=' + encodeURIComponent(p.area + " " + p.postcode + " Manchester") + '" target="_blank" rel="noopener"><i>Map</i><b>Open the area in Maps</b><span>→</span></a></li>' +
