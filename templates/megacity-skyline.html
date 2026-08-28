@@ -113,6 +113,27 @@ body.is-ready .veil{display:none}
   animation:cuefall 1.8s ease-in-out infinite}
 @keyframes cuefall{0%{top:-50%}70%,100%{top:110%}}
 
+/* cinematic video hero */
+.hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
+.hero-media video,.hero-media .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,46,.6),rgba(20,22,46,.26) 45%,rgba(20,22,46,.74) 100%)}
+.hero--cine h1{color:#fff}
+.hero--cine h1 em{color:var(--sky)}
+.hero--cine .hero-kicker{color:var(--sky)}
+.hero--cine .hero-sub{color:rgba(255,255,255,.8)}
+.hero--cine .btn--ghost{border-color:rgba(255,255,255,.85);color:#fff}
+.hero--cine .btn--ghost:hover{background:#fff;color:var(--navy-ink)}
+.hero--cine .scrollcue{color:rgba(255,255,255,.72)}
+.hero--cine .scrollcue i{background:rgba(255,255,255,.32)}
+.hero--cine .marq{border-top-color:rgba(255,255,255,.2)}
+.hero--cine .marq span{color:rgba(255,255,255,.68)}
+body.cine .nav:not(.is-solid) .brand b{color:#fff}
+body.cine .nav:not(.is-solid) .brand small{color:#fff!important}
+body.cine .nav:not(.is-solid) .brand small i{color:var(--sky)!important}
+body.cine .nav:not(.is-solid) .nav-links a{color:rgba(255,255,255,.78)}
+body.cine .nav:not(.is-solid) .nav-links a:hover{color:#fff}
+body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
+
 /* areas marquee */
 .marq{border-top:1px solid var(--line);padding:20px 0;overflow:clip;margin:0 calc(var(--gut) * -1)}
 .marq-track{display:flex;gap:0;width:max-content;animation:marq 34s linear infinite}
@@ -270,7 +291,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .footer-in a:hover{color:var(--sky-deep)}
 </style>
 </head>
-<body>
+<body class="cine">
 <a class="skip" href="#main">Skip to content</a>
 
 <div class="veil" aria-hidden="true"><i></i><i></i>
@@ -299,8 +320,13 @@ form.enq{display:grid;gap:18px;align-content:start}
 <main id="main">
 
 <!-- ══ HERO ══ -->
-<section class="hero" id="top" data-rail="Top">
-  <div id="bg3d" aria-hidden="true"></div>
+<section class="hero hero--cine" id="top" data-rail="Top">
+  <div class="hero-media" aria-hidden="true">
+    <div class="poster" style="background-image:url('https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop')"></div>
+    <video id="heroVideo" muted loop playsinline autoplay preload="auto"
+      poster="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop"
+      src="https://videos.pexels.com/video-files/1826904/1826904-hd_1920_1080_24fps.mp4"></video>
+  </div>
   <p class="hero-kicker">Professional letting · Manchester &amp; Salford</p>
   <h1>
     <span class="ln"><span>Trusted</span></span>
