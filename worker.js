@@ -39,6 +39,10 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleMegacityViewing(request, env);
     }
+    if (url.pathname === "/api/megacity-contact") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityContact(request, env);
+    }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
     if (!M2L_PARKED) {
@@ -628,6 +632,61 @@ async function handleMegacityViewing(request, env) {
     `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
     `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply to confirm the viewing — reply-to is set to the applicant.</div></div>`;
   const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: [MEGACITY_MAINT_TO], reply_to: email, subject, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  return json({ ok: true });
+}
+
+
+/* General enquiries from the contact page — same route as the rest. */
+async function handleMegacityContact(request, env) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim().slice(0, 120);
+  const phone = String(body.phone || "").trim().slice(0, 60);
+  const email = String(body.email || "").trim().slice(0, 160);
+  const topic = String(body.topic || "General").trim().slice(0, 80);
+  const message = String(body.message || "").trim().slice(0, 4000);
+
+  if (!name || !message) return json({ error: "Please include your name and a message." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+
+  const subject = "Website enquiry — " + topic + " · " + name;
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rows = [["Name", name], ["Phone", phone || "—"], ["Email", email], ["About", topic], ["Message", message]]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:110px;">${k}</td>` +
+        `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`
+    )
+    .join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Website enquiry <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the sender — replying answers them directly.</div></div>`;
+  const text = ["Website enquiry", "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "About: " + topic, "Message: " + message].join("\n");
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",

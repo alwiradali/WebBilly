@@ -57,22 +57,23 @@
         </div>
         <div>
           <p class="eyebrow" data-fx="fade">Send a message</p>
-          <form class="form" data-mailto data-subject="Website enquiry — megacityproperties.co.uk">
-            <div class="field"><label for="c-name">Your name</label><input id="c-name" name="Name" required autocomplete="name"></div>
-            <div class="field"><label for="c-phone">Phone</label><input id="c-phone" name="Phone" type="tel" autocomplete="tel"></div>
-            <div class="field field--full"><label for="c-email">Email</label><input id="c-email" name="Email" type="email" required autocomplete="email"></div>
+          <form class="form" data-api="/api/megacity-contact">
+            <input type="text" name="botcheck" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+            <div class="field"><label for="c-name">Your name</label><input id="c-name" name="name" required autocomplete="name"></div>
+            <div class="field"><label for="c-phone">Phone</label><input id="c-phone" name="phone" type="tel" autocomplete="tel"></div>
+            <div class="field field--full"><label for="c-email">Email</label><input id="c-email" name="email" type="email" required autocomplete="email"></div>
             <div class="field field--full"><label for="c-topic">I’m getting in touch about</label>
-              <select id="c-topic" name="Topic">
+              <select id="c-topic" name="topic">
                 <option>Renting a home</option><option>Letting my property</option>
                 <option>Property management</option><option>Maintenance</option><option>Something else</option>
               </select></div>
-            <div class="field field--full"><label for="c-msg">Message</label><textarea id="c-msg" name="Message" required></textarea></div>
+            <div class="field field--full"><label for="c-msg">Message</label><textarea id="c-msg" name="message" required></textarea></div>
             <div class="form-actions">
               <button class="btn btn--lg magnetic" type="submit">Send message
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
-              <p class="form-note">Submitting opens a pre-filled email — nothing is sent until you press send.</p>
+              <p class="form-note">Goes straight to the office — we reply the same working day.</p>
             </div>
-            <div class="form-done" hidden><b>Almost there.</b>Your email draft is open — press send and we’ll reply the same working day.</div>
+            <div class="form-done" hidden><b>Message sent.</b>The office has it — we’ll reply the same working day.</div>
           </form>
         </div>
       </div>
@@ -89,16 +90,18 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
           </div>
         </div>
-        <div class="split-media split-media--land" data-fx="mask">
-          <div class="mask" aria-hidden="true"></div>
-          <img src="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=1600&q=80" alt="Manchester city buildings" loading="lazy">
+        <div data-fx="fade" style="border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.16)">
+          <iframe src="https://www.google.com/maps?q=The+Tube+Business+Centre,+86+North+Street,+Manchester+M8+8RA&amp;output=embed"
+            title="Map — The Tube Business Centre, 86 North Street, Manchester M8 8RA"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            style="display:block;width:100%;height:min(56vh,440px);border:0;background:#e8ecf3"></iframe>
         </div>
       </div>
     </section>
 
   </main>
 
-  <div id="mcFooter"></div>
+    <div id="mcFooter"></div>
 
   <script src="vendor/gsap.min.js" defer></script>
   <script src="vendor/ScrollTrigger.min.js" defer></script>
