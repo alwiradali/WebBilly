@@ -55,7 +55,7 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
   const key = new THREE.DirectionalLight(0xffffff, 1.15);
   key.position.set(6, 10, 8);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x4fa3dc, .5);
+  const rim = new THREE.DirectionalLight(0x4da7d9, .5);
   rim.position.set(-8, -4, 6);
   scene.add(rim);
 
@@ -66,8 +66,8 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
   shape.closePath();
   const geo = new THREE.ExtrudeGeometry(shape, { depth: .55, bevelEnabled: false });
   geo.center();
-  const matNavy = new THREE.MeshLambertMaterial({ color: 0x2e3480 });
-  const matSky = new THREE.MeshLambertMaterial({ color: 0x4fa3dc });
+  const matNavy = new THREE.MeshLambertMaterial({ color: 0x3d416e });
+  const matSky = new THREE.MeshLambertMaterial({ color: 0x4da7d9 });
   const matPale = new THREE.MeshLambertMaterial({ color: 0xd9e6f6 });
 
   const N = coarse ? 26 : 44;

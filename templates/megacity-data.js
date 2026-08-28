@@ -18,8 +18,8 @@
        editable in the Studio, so the whole site can be re-branded */
     brandName: "Megacity",
     brandSub: "Properties",
-    strap: "Lettings & property management, Manchester & Salford",
-    tagline: "Doing rental right",
+    strap: "Across Manchester & Salford",
+    tagline: "Professional letting · Trusted management",
     phone: "0161 220 1763",
     phoneHref: "tel:+441612201763",
     email: "info@megacityproperties.co.uk",

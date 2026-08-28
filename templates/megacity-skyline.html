@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Megacity Properties — Doing rental right</title>
-<meta name="description" content="Megacity Properties Ltd — Manchester &amp; Salford lettings and property management. Doing rental right.">
-<meta name="theme-color" content="#1A1E52">
+<title>Megacity Properties — Professional letting · Trusted management</title>
+<meta name="description" content="Megacity Properties Ltd — Manchester &amp; Salford lettings and property management. Professional letting · Trusted management.">
+<meta name="theme-color" content="#23264A">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,8 +19,8 @@
    Fraunces display / Sora UI. Standalone template, no shared css.
    ════════════════════════════════════════════════════════════════════ */
 :root{
-  --navy:#2E3480; --navy-deep:#191D4E; --navy-ink:#12142B;
-  --sky:#4FA3DC; --sky-deep:#2E7FBF; --sky-soft:#EAF3FB;
+  --navy:#3D416E; --navy-deep:#23264A; --navy-ink:#14162E;
+  --sky:#4DA7D9; --sky-deep:#2E86BC; --sky-soft:#EAF3FB;
   --paper:#FAFBFF; --surface:#F1F5FC; --mut:#5A617D;
   --line:rgba(18,20,43,.12); --line-strong:rgba(18,20,43,.3);
   --ff-d:"Fraunces",Georgia,serif; --ff-u:"Sora",system-ui,sans-serif;
@@ -67,12 +67,13 @@ body.is-ready .veil{display:none}
   background:var(--sky);transform:scaleX(0) skewX(-24deg);transform-origin:left;transition:transform .3s ease}
 .nav-links a:hover{color:var(--navy-ink)}
 .nav-links a:hover::after{transform:scaleX(1) skewX(-24deg)}
-.nav-cta{margin-left:8px;background:var(--navy);color:#fff;border:0;border-radius:999px;
+.nav-cta{margin-left:8px;background:var(--navy);color:#fff;border:0;border-radius:999px;white-space:nowrap;
   padding:13px 24px;font:600 12.5px/1 var(--ff-u);letter-spacing:.06em;display:inline-flex;gap:9px;align-items:center;
   transition:background .25s ease,transform .25s ease}
 .nav-cta:hover{background:var(--sky-deep)}
 @media (max-width:980px){.nav-links{display:none}}
 @media (max-width:480px){.brand small{font-size:8px;letter-spacing:.18em}}
+@media (max-width:560px){.nav-cta .num{display:none}.nav-cta{padding:13px 15px}.nav-cta .chv,.nav-cta svg{margin:0}}
 
 /* ── section progress rail ─────────────────────────────────────────── */
 .rail{position:fixed;right:clamp(10px,2vw,26px);top:50%;transform:translateY(-50%);z-index:90;
@@ -273,13 +274,13 @@ form.enq{display:grid;gap:18px;align-content:start}
 <a class="skip" href="#main">Skip to content</a>
 
 <div class="veil" aria-hidden="true"><i></i><i></i>
-  <svg viewBox="0 0 96 74"><g fill="none"><polygon fill="#2E3480" points="10,50 42,18 54,30 22,62"/><polygon fill="#4FA3DC" points="86,50 54,18 42,30 74,62"/><rect fill="#2E3480" x="43" y="52" width="10" height="10"/></g></svg>
+  <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
 </div>
 
 <header class="nav" id="nav">
   <a class="brand" href="#top" aria-label="Megacity Properties — home">
-    <svg viewBox="0 0 96 74" aria-hidden="true"><polygon fill="#2E3480" points="10,50 42,18 54,30 22,62"/><polygon fill="#4FA3DC" points="86,50 54,18 42,30 74,62"/><rect fill="#2E3480" x="43" y="52" width="10" height="10"/></svg>
-    <span><b>Megacity Properties</b><small>doing rental right</small></span>
+    <svg viewBox="0 0 96 74" aria-hidden="true"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
+    <span><b>Megacity Properties</b><small style="color:var(--navy-ink)">Professional letting <i style="font-style:normal;color:var(--sky-deep);display:inline-block">· Trusted management</i></small></span>
   </a>
   <nav class="nav-links" aria-label="Sections">
     <a href="#services">Services</a>
@@ -288,9 +289,9 @@ form.enq{display:grid;gap:18px;align-content:start}
     <a href="#landlords">Landlords</a>
     <a href="#contact">Contact</a>
   </nav>
-  <a class="nav-cta magnet" href="tel:+441612201763">
+  <a class="nav-cta magnet" href="tel:+441612201763" aria-label="Call 0161 220 1763">
     <svg class="chv" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg>
-    0161 220 1763</a>
+    <span class="num">0161 220 1763</span></a>
 </header>
 
 <nav class="rail" id="rail" aria-label="Page progress"></nav>
@@ -300,10 +301,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 <!-- ══ HERO ══ -->
 <section class="hero" id="top" data-rail="Top">
   <div id="bg3d" aria-hidden="true"></div>
-  <p class="hero-kicker">Manchester &amp; Salford · Lettings &amp; Management</p>
+  <p class="hero-kicker">Professional letting · Manchester &amp; Salford</p>
   <h1>
-    <span class="ln"><span>Doing</span></span>
-    <span class="ln"><span>rental <em>right.</em></span></span>
+    <span class="ln"><span>Trusted</span></span>
+    <span class="ln"><span><em>management.</em></span></span>
   </h1>
   <p class="hero-sub">Megacity Properties is an ARLA Propertymark agency letting and managing homes
     across Manchester and Salford — with the presentation, the paperwork and the people done properly.</p>
@@ -341,19 +342,19 @@ form.enq{display:grid;gap:18px;align-content:start}
   </div>
   <div class="svc-grid">
     <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#2E3480" points="10,50 42,18 54,30 22,62"/><polygon fill="#4FA3DC" points="86,50 54,18 42,30 74,62"/><rect fill="#2E3480" x="43" y="52" width="10" height="10"/></svg>
+      <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
       <h3>Fully managed</h3>
       <p>The whole tenancy, handled — from first viewing to final inspection, with one point of contact throughout.</p>
       <ul><li>Marketing, viewings &amp; referencing</li><li>Rent collection &amp; statements</li><li>Maintenance co-ordinated</li><li>Deposit protection &amp; inspections</li></ul>
     </article>
     <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#4FA3DC" points="10,50 42,18 54,30 22,62"/><polygon fill="#2E3480" points="86,50 54,18 42,30 74,62"/><rect fill="#4FA3DC" x="43" y="52" width="10" height="10"/></svg>
+      <svg viewBox="0 0 96 74"><polygon fill="#4DA7D9" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#4DA7D9" x="16" y="46" width="8" height="14"/><rect fill="#4DA7D9" x="30" y="40" width="8" height="20"/><rect fill="#4DA7D9" x="44" y="34" width="8" height="26"/><path fill="#4DA7D9" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#3D416E" x="70" y="41" width="10" height="8"/><rect fill="#4DA7D9" x="6" y="64" width="84" height="6"/></svg>
       <h3>Let only</h3>
       <p>We find, vet and move in the right tenant — then hand the keys and the file back to you.</p>
       <ul><li>Full marketing &amp; accompanied viewings</li><li>Independent referencing</li><li>Tenancy agreement &amp; compliance</li><li>Move-in inventory</li></ul>
     </article>
     <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#2E3480" points="10,50 42,18 54,30 22,62"/><polygon fill="#2E3480" points="86,50 54,18 42,30 74,62"/><rect fill="#4FA3DC" x="43" y="52" width="10" height="10"/></svg>
+      <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#4DA7D9" x="6" y="64" width="84" height="6"/></svg>
       <h3>Rent collection</h3>
       <p>You keep the relationship with the property; we make sure the rent arrives and the records stay straight.</p>
       <ul><li>Collection &amp; arrears chasing</li><li>Monthly statements</li><li>Renewals &amp; rent reviews</li><li>Deposit administration</li></ul>
@@ -499,7 +500,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 </main>
 
 <footer class="footer">
-  <p class="footer-word" aria-hidden="true">doing rental <em>right</em></p>
+  <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
   <div class="footer-in">
     <span>© Megacity Properties Ltd</span>
     <a href="tel:+441612201763">0161 220 1763</a>
