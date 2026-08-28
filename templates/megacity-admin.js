@@ -40,7 +40,7 @@
     }
   };
   var selected = 0;
-  var STATUS_LABEL = { "available": "Available", "new": "New", "let-agreed": "Let agreed" };
+  var STATUS_LABEL = { "available": "Available", "new": "New", "let-agreed": "Let agreed", "hidden": "Hidden — draft" };
 
   /* ── autosave ─────────────────────────────────────────────────── */
   var saveTimer = null;
@@ -112,7 +112,7 @@
     $("#mcaPropForm").innerHTML =
       field("Name", inp(base + "name", p.name)) +
       field("Slug / link id", inp(base + "id", p.id)) +
-      field("Status", sel(base + "status", p.status, [["available", "Available"], ["new", "New"], ["let-agreed", "Let agreed"]])) +
+      field("Status", sel(base + "status", p.status, [["hidden", "Hidden (draft)"], ["available", "Available"], ["new", "New"], ["let-agreed", "Let agreed"]])) +
       field("Area", inp(base + "area", p.area)) +
       field("Postcode district", inp(base + "postcode", p.postcode)) +
       field("Rent £ pcm", inp(base + "price", p.price, "number")) +
@@ -271,9 +271,18 @@
       renderPropList(); renderPropForm();
     });
     $("#mcaPropNew").addEventListener("click", function () {
-      var n = clone(state.properties[0] || {});
-      n.id = "new-listing-" + (state.properties.length + 1);
-      n.name = "New listing"; n.status = "new"; n.tour = null;
+      /* a new listing starts completely blank, hidden from the site
+         until staff fill it in and switch the status themselves */
+      var n = {
+        id: "new-listing-" + (state.properties.length + 1),
+        name: "New listing", area: "", postcode: "",
+        price: 0, priceLabel: "",
+        status: "hidden", statusLabel: STATUS_LABEL.hidden,
+        beds: "", baths: "", type: "", furnishing: "", availableFrom: "",
+        deposit: "", epc: "", councilTaxBand: "",
+        tour: null, tourRoom: null,
+        cover: "", summary: "", description: [], features: [], story: []
+      };
       state.properties.push(n);
       selected = state.properties.length - 1;
       renderPropList(); renderPropForm(); queueSave();

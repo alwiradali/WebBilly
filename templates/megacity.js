@@ -444,21 +444,22 @@
   /* grids that render themselves from the shared data */
   function autoGrids() {
     if (!D) return;
+    function pub(list) { return list.filter(function (p) { return p.status !== "hidden"; }); }
     var feat = document.getElementById("mcFeatured");
     if (feat) {
       var ids = (feat.getAttribute("data-ids") || "").split(",").filter(Boolean);
-      var list = ids.length ? ids.map(D.byId).filter(Boolean) : D.properties.slice(0, 3);
+      var list = pub(ids.length ? ids.map(D.byId).filter(Boolean) : D.properties.slice(0, 3));
       feat.innerHTML = list.map(cardHTML).join("");
     }
     var tg = document.getElementById("mcToursGrid");
-    if (tg) tg.innerHTML = D.withTours().map(tourCardHTML).join("");
+    if (tg) tg.innerHTML = pub(D.withTours()).map(tourCardHTML).join("");
 
     /* "similar homes" — same area, or within 20% of the price */
     $$b("[data-similar]").forEach(function (grid) {
       var base = D.byId(grid.getAttribute("data-similar"));
       var section = grid.closest("[data-similar-section]");
       if (!base) { if (section) section.hidden = true; return; }
-      var list = D.properties.filter(function (p) {
+      var list = pub(D.properties).filter(function (p) {
         if (p.id === base.id) return false;
         return p.area === base.area || Math.abs(p.price - base.price) <= base.price * 0.2;
       }).slice(0, 3);
@@ -523,6 +524,7 @@
       var f = current();
       var shortlist = saved.all();
       var list = D.properties.filter(function (p) {
+        if (p.status === "hidden") return false;
         if (savedOnly && shortlist.indexOf(p.id) === -1) return false;
         if (f.area && p.area !== f.area) return false;
         if (f.type && p.type.indexOf(f.type) === -1) return false;
