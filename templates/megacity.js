@@ -142,8 +142,12 @@
         '<li><a href="' + D.biz.mapsHref + '" target="_blank" rel="noopener">' + D.biz.office + "</a></li>" +
         '<li><a href="' + D.biz.phoneHref + '">' + D.biz.phone + "</a></li>" +
         '<li><a href="mailto:' + D.biz.email + '">' + D.biz.email + "</a></li>" +
-        '<li><a href="' + D.biz.facebook + '" target="_blank" rel="noopener">Facebook</a></li>' +
-        '<li><a href="' + D.biz.linkedin + '" target="_blank" rel="noopener">LinkedIn</a></li></ul></div></div>' +
+        (D.biz.facebook ? '<li><a href="' + D.biz.facebook + '" target="_blank" rel="noopener">Facebook</a></li>' : "") +
+        (D.biz.linkedin ? '<li><a href="' + D.biz.linkedin + '" target="_blank" rel="noopener">LinkedIn</a></li>' : "") +
+        (D.biz.instagram ? '<li><a href="' + D.biz.instagram + '" target="_blank" rel="noopener">Instagram</a></li>' : "") +
+        (D.biz.tiktok ? '<li><a href="' + D.biz.tiktok + '" target="_blank" rel="noopener">TikTok</a></li>' : "") +
+        (D.biz.tours360 ? '<li><a href="' + D.biz.tours360 + '">360° Virtual Tours</a></li>' : "") +
+        "</ul></div></div>" +
         '<div class="wrap footer-legal"><span>© <span id="mcYear"></span> ' + esc(D.biz.brandName + " " + D.biz.brandSub) + " · Company no. " + D.biz.companyNo + "</span>" +
         "<span>ARLA Propertymark · Client Money Protection · The Property Ombudsman T06217 · DPS · NRLA</span>" +
         '<span style="margin-left:auto">Redesign concept by <a href="/" target="_blank" rel="noopener">Billy Digitals</a></span></div>' +

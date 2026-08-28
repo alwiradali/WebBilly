@@ -162,7 +162,10 @@
       field("Office address", inp("biz.office", b.office), "f-3") +
       field("Google Maps link", inp("biz.mapsHref", b.mapsHref), "f-3") +
       field("Facebook", inp("biz.facebook", b.facebook), "f-2") +
-      field("LinkedIn", inp("biz.linkedin", b.linkedin));
+      field("LinkedIn", inp("biz.linkedin", b.linkedin)) +
+      field("Instagram — blank to hide", inp("biz.instagram", b.instagram || ""), "f-2") +
+      field("TikTok — blank to hide", inp("biz.tiktok", b.tiktok || "")) +
+      field("360° virtual tours link", inp("biz.tours360", b.tours360 || "megacity-tours"), "f-2");
   }
 
   /* ── rates pane ───────────────────────────────────────────────── */

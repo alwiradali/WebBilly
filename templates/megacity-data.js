@@ -27,6 +27,9 @@
     mapsHref: "https://maps.google.com/?q=The+Tube+Business+Centre,+86+North+Street,+Manchester+M8+8RA",
     companyNo: "12321291",
     facebook: "https://www.facebook.com/megacityproperties",
+    instagram: "",
+    tiktok: "",
+    tours360: "megacity-tours",
     linkedin: "https://www.linkedin.com/company/megacity-properties",
     /* memberships listed on the current site — nothing invented */
     memberships: [
