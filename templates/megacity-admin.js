@@ -89,6 +89,20 @@
       return '<option value="' + o[0] + '"' + (o[0] === value ? " selected" : "") + ">" + o[1] + "</option>";
     }).join("") + "</select>";
   }
+  /* input with a tap-to-pick suggestion list — staff can still type anything new */
+  var DL_ID = 0;
+  function dlist(path, value, options) {
+    var id = "mcaDl" + (++DL_ID);
+    return '<input data-path="' + path + '" value="' + esc(value == null ? "" : value) + '" list="' + id + '">' +
+      '<datalist id="' + id + '">' + options.map(function (o) {
+        return '<option value="' + esc(o) + '">';
+      }).join("") + "</datalist>";
+  }
+  var AREA_OPTS = (D.areas && D.areas.length ? D.areas.slice() : ["Ancoats", "Castlefield", "Northern Quarter", "Salford", "Salford Quays", "West Didsbury", "Chorlton", "Prestwich", "Cheetham Hill"]);
+  var POSTCODE_OPTS = ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M11", "M12", "M13", "M14", "M15", "M16", "M19", "M20", "M21", "M25", "M27", "M28", "M30", "M40", "M45", "M50"];
+  var TYPE_OPTS = ["Apartment", "Studio", "Double room", "House", "Terraced house", "Semi-detached", "Detached house", "Maisonette", "Bungalow", "Penthouse", "Loft apartment", "Commercial unit"];
+  var AVAIL_OPTS = ["Available now", "Let agreed", "Coming soon", "From 1 September", "From 1 October", "From 1 November"];
+  function opts(list) { return [["", "—"]].concat(list.map(function (v) { return [String(v), String(v)]; })); }
 
   /* resolve "a.b.c" against an object */
   function setPath(root, path, value) {
@@ -113,17 +127,17 @@
       field("Name", inp(base + "name", p.name)) +
       field("Slug / link id", inp(base + "id", p.id)) +
       field("Status", sel(base + "status", p.status, [["hidden", "Hidden (draft)"], ["available", "Available"], ["new", "New"], ["let-agreed", "Let agreed"]])) +
-      field("Area", inp(base + "area", p.area)) +
-      field("Postcode district", inp(base + "postcode", p.postcode)) +
+      field("Area", dlist(base + "area", p.area, AREA_OPTS)) +
+      field("Postcode district", dlist(base + "postcode", p.postcode, POSTCODE_OPTS)) +
       field("Rent £ pcm", inp(base + "price", p.price, "number")) +
-      field("Bedrooms", inp(base + "beds", p.beds, "number")) +
-      field("Bathrooms", inp(base + "baths", p.baths, "number")) +
-      field("Property type", inp(base + "type", p.type)) +
-      field("Furnishing", inp(base + "furnishing", p.furnishing)) +
-      field("Availability", inp(base + "availableFrom", p.availableFrom)) +
+      field("Bedrooms", sel(base + "beds", String(p.beds == null ? "" : p.beds), opts([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))) +
+      field("Bathrooms", sel(base + "baths", String(p.baths == null ? "" : p.baths), opts([1, 2, 3, 4, 5]))) +
+      field("Property type", dlist(base + "type", p.type, TYPE_OPTS)) +
+      field("Furnishing", sel(base + "furnishing", p.furnishing || "", opts(["Furnished", "Fully furnished", "Part-furnished", "Unfurnished"]))) +
+      field("Availability", dlist(base + "availableFrom", p.availableFrom, AVAIL_OPTS)) +
       field("Deposit", inp(base + "deposit", p.deposit)) +
-      field("EPC", inp(base + "epc", p.epc)) +
-      field("Council tax band", inp(base + "councilTaxBand", p.councilTaxBand)) +
+      field("EPC", sel(base + "epc", p.epc || "", opts(["A", "B", "C", "D", "E", "F", "G", "See listing"]))) +
+      field("Council tax band", sel(base + "councilTaxBand", p.councilTaxBand || "", opts(["A", "B", "C", "D", "E", "F", "G", "H"]))) +
       field("360° tour id (blank = none)", inp(base + "tour", p.tour || "")) +
       '<div class="field f-3"><label>Cover photo — paste a URL or upload</label>' +
       '<div class="mca-uprow"><img class="mca-thumb" alt="" src="' + esc(p.cover) + '">' +
