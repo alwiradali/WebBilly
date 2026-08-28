@@ -166,17 +166,18 @@
       "<div>" +
       '<p class="eyebrow" data-fx="fade">Book a viewing</p>' +
       '<h2 class="t-3" data-fx="fade" style="margin-top:16px">Tell us when suits — we’ll confirm the rest.</h2>' +
-      '<form class="form" data-mailto data-subject="Viewing request — ' + p.name + ", " + p.area + '">' +
-      '<div class="field"><label for="v-name">Your name</label><input id="v-name" name="Name" required autocomplete="name"></div>' +
-      '<div class="field"><label for="v-phone">Phone</label><input id="v-phone" name="Phone" type="tel" autocomplete="tel"></div>' +
-      '<div class="field field--full"><label for="v-email">Email</label><input id="v-email" name="Email" type="email" required autocomplete="email"></div>' +
-      '<div class="field"><label for="v-date">Preferred day</label><input id="v-date" name="Preferred day" type="date"></div>' +
-      '<div class="field"><label for="v-time">Preferred time</label><select id="v-time" name="Preferred time"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Weekend</option></select></div>' +
-      '<div class="field field--full"><label for="v-msg">Anything we should know?</label><textarea id="v-msg" name="Message"></textarea></div>' +
-      '<input type="hidden" name="Property" value="' + p.name + " — " + p.area + " (" + p.id + ')">' +
+      '<form class="form" data-api="/api/megacity-viewing">' +
+      '<input type="text" name="botcheck" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">' +
+      '<div class="field"><label for="v-name">Your name</label><input id="v-name" name="name" required autocomplete="name"></div>' +
+      '<div class="field"><label for="v-phone">Phone</label><input id="v-phone" name="phone" type="tel" autocomplete="tel"></div>' +
+      '<div class="field field--full"><label for="v-email">Email</label><input id="v-email" name="email" type="email" required autocomplete="email"></div>' +
+      '<div class="field"><label for="v-date">Preferred day</label><input id="v-date" name="day" type="date"></div>' +
+      '<div class="field"><label for="v-time">Preferred time</label><select id="v-time" name="time"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Weekend</option></select></div>' +
+      '<div class="field field--full"><label for="v-msg">Anything we should know?</label><textarea id="v-msg" name="message"></textarea></div>' +
+      '<input type="hidden" name="property" value="' + p.name + " — " + p.area + " (" + p.id + ')">' +
       '<div class="form-actions"><button class="btn btn--lg magnetic" type="submit">Request this viewing ' + A + "</button>" +
-      '<p class="form-note">Submitting opens a pre-filled email to our lettings team — nothing is sent until you press send.</p></div>' +
-      '<div class="form-done" hidden><b>Almost there.</b>Your email draft is open — press send and we’ll come back to you the same working day.</div>' +
+      '<p class="form-note">Goes straight to the lettings team — we’ll come back to confirm the same working day.</p></div>' +
+      '<div class="form-done" hidden><b>Request sent.</b>The team has it — we’ll confirm your viewing the same working day.</div>' +
       "</form></div></div></section>" +
 
       /* keep looking */
