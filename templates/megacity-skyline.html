@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 <style>
 /* ════════════════════════════════════════════════════════════════════
    SKYLINE INDIGO — Megacity Properties Ltd
@@ -43,7 +42,7 @@ button{font:inherit;cursor:pointer}
 
 /* ── preloader curtain ─────────────────────────────────────────────── */
 .veil{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none}
-.veil svg{width:min(150px,30vw);opacity:0;animation:veilmark .7s .1s ease forwards}
+.veil svg,.veil img{width:min(240px,56vw);opacity:0;animation:veilmark .7s .1s ease forwards;position:relative}
 @keyframes veilmark{to{opacity:1}}
 .veil i{position:absolute;inset:0;transform:translateX(-101%)}
 .veil i:first-child{background:var(--navy)}
@@ -53,7 +52,8 @@ body.is-ready .veil{display:none}
 
 /* ── nav ───────────────────────────────────────────────────────────── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:26px;
-  padding:22px var(--gut);transition:padding .35s ease,background .35s ease,box-shadow .35s ease}
+  padding:14px var(--gut);background:rgba(250,251,255,.94);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);
+  transition:padding .35s ease}
 .nav.is-solid{padding:12px var(--gut);background:rgba(250,251,255,.88);backdrop-filter:blur(14px);
   box-shadow:0 1px 0 var(--line)}
 .brand{display:flex;align-items:center;gap:12px}
@@ -115,7 +115,9 @@ body.is-ready .veil{display:none}
 
 /* cinematic video hero */
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
-.hero-media video,.hero-media .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center}
+.hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:herodrift 26s ease-in-out infinite alternate}
+@keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,46,.6),rgba(20,22,46,.26) 45%,rgba(20,22,46,.74) 100%)}
 .hero--cine h1{color:#fff}
 .hero--cine h1 em{color:var(--sky)}
@@ -133,6 +135,70 @@ body.cine .nav:not(.is-solid) .brand small i{color:var(--sky)!important}
 body.cine .nav:not(.is-solid) .nav-links a{color:rgba(255,255,255,.78)}
 body.cine .nav:not(.is-solid) .nav-links a:hover{color:#fff}
 body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
+
+/* valuation CTA */
+.valcta{background:var(--navy-deep);padding:11vh var(--gut)}
+.valcta-in{max-width:var(--maxw);margin:0 auto;display:grid;gap:44px;grid-template-columns:1.1fr 1fr;align-items:center}
+@media (max-width:880px){.valcta-in{grid-template-columns:1fr}}
+.valcta h2{font:400 clamp(34px,4.6vw,60px)/1.06 var(--ff-d)}
+.valcta h2 em{font-style:italic;color:var(--sky)}
+.valform{display:grid;gap:12px;background:#fff;border-radius:var(--r);padding:26px}
+.valform input{border:1px solid var(--line-strong);border-radius:10px;padding:15px 16px;font:500 15px/1 var(--ff-u);width:100%}
+.valform input:focus{outline:2px solid var(--sky-deep)}
+.valform .btn{justify-content:center}
+.val-note{font-size:12px;color:var(--mut);text-align:center}
+.val-done{background:var(--sky-soft);border-radius:10px;padding:16px;color:var(--navy-ink);font-size:14.5px}
+
+/* FAQs */
+.faq{padding:11vh var(--gut);background:var(--surface)}
+.faq-in{max-width:860px;margin:0 auto}
+.faq h2{font:400 clamp(30px,4vw,52px)/1.1 var(--ff-d)}
+.faq h2 em{font-style:italic;color:var(--sky-deep)}
+.faq-list{margin-top:34px;display:grid;gap:12px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 22px}
+.faq summary{cursor:pointer;list-style:none;font:600 16px/1.4 var(--ff-u);padding:19px 30px 19px 0;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);
+  font:400 26px/1 var(--ff-d);color:var(--sky-deep);transition:transform .25s}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq details p{padding:0 0 20px;color:var(--mut);font-size:15px;max-width:64ch}
+
+/* floating contact cluster */
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:column;gap:10px}
+.fab-b{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;
+  box-shadow:0 8px 22px rgba(12,16,40,.35);transition:transform .2s}
+.fab-b:hover{transform:translateY(-3px)}
+.fab-b svg{width:24px;height:24px}
+.fab-wa{background:#25d366}
+.fab-call{background:var(--navy)}
+.fab-mail{background:var(--sky-deep)}
+
+/* footer grid + badges */
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:52px var(--gut) 34px;display:grid;gap:36px;
+  grid-template-columns:1.2fr .7fr 1fr 1.1fr}
+@media (max-width:960px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.foot-grid{grid-template-columns:1fr}}
+.foot-grid h4{font:700 10.5px/1 var(--ff-u);letter-spacing:.24em;text-transform:uppercase;color:var(--sky);margin-bottom:14px}
+.foot-grid a{display:block;color:rgba(255,255,255,.78);font-size:14px;padding:4px 0}
+.foot-grid a:hover{color:#fff}
+.foot-acc{display:flex;gap:10px;flex-wrap:wrap}
+.foot-acc img{height:34px;width:auto;background:#fff;border-radius:7px;padding:4px 8px}
+.foot-pay{display:flex;gap:8px;flex-wrap:wrap}
+.pay{display:inline-grid;place-items:center;background:#fff;border-radius:6px;padding:5px 7px}
+.pay svg{width:48px;height:16px;display:block}
+
+/* offer strip */
+.offer{background:var(--navy);color:#fff}
+.offer-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--gut);display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.offer p{font:500 14px/1.5 var(--ff-u)}
+.offer s{opacity:.55}
+.offer b{color:var(--sky)}
+.offer a{font:700 12px/1 var(--ff-u);letter-spacing:.12em;text-transform:uppercase;color:#fff;border-bottom:2px solid var(--sky);padding-bottom:4px}
+
+/* accreditation logo cards */
+.cred--logo{background:#fff;border-radius:14px;padding:22px}
+.cred--logo img{height:52px;width:auto;max-width:100%;object-fit:contain;display:block;margin:0 auto 12px}
+.cred--logo span{display:block;text-align:center}
 
 /* areas marquee */
 .marq{border-top:1px solid var(--line);padding:20px 0;overflow:clip;margin:0 calc(var(--gut) * -1)}
@@ -281,7 +347,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 .enq textarea{min-height:110px;resize:vertical}
 .enq input:focus,.enq textarea:focus{outline:none;border-bottom-color:var(--sky-deep)}
 .enq .btn{justify-self:start;margin-top:8px}
-.footer{border-top:1px solid var(--line);padding:40px var(--gut) 120px;position:relative;overflow:clip}
+.footer{background:var(--navy-ink);color:rgba(255,255,255,.85);padding:10px 0 120px;position:relative;overflow:clip}
+.footer .footer-in{padding:22px var(--gut) 0;border-top:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6)}
+.footer .footer-in a{color:rgba(255,255,255,.7)}
+.footer .footer-in a:hover{color:#fff}
 .footer-in{max-width:var(--maxw);margin:0 auto;display:flex;gap:24px;flex-wrap:wrap;align-items:center;
   font:600 11px/1.8 var(--ff-u);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
 .footer-in span{margin-right:auto}
@@ -295,13 +364,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 <a class="skip" href="#main">Skip to content</a>
 
 <div class="veil" aria-hidden="true"><i></i><i></i>
-  <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
+  <img src="assets/mcr/logo.png" alt="" style="width:min(240px,56vw);position:relative">
 </div>
 
-<header class="nav" id="nav">
+<header class="nav is-solid" id="nav">
   <a class="brand" href="#top" aria-label="Megacity Properties — home">
-    <svg viewBox="0 0 96 74" aria-hidden="true"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
-    <span><b>Megacity Properties</b><small style="color:var(--navy-ink)">Professional letting <i style="font-style:normal;color:var(--sky-deep);display:inline-block">· Trusted management</i></small></span>
+    <img src="assets/mcr/logo.png" alt="Megacity Properties — Professional letting · Trusted management" style="height:46px;width:auto;display:block">
   </a>
   <nav class="nav-links" aria-label="Sections">
     <a href="#services">Services</a>
@@ -322,10 +390,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 <!-- ══ HERO ══ -->
 <section class="hero hero--cine" id="top" data-rail="Top">
   <div class="hero-media" aria-hidden="true">
-    <div class="poster" style="background-image:url('https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop')"></div>
-    <video id="heroVideo" muted loop playsinline autoplay preload="auto"
-      poster="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop"
-      src="https://videos.pexels.com/video-files/1826904/1826904-hd_1920_1080_24fps.mp4"></video>
+    <img src="assets/mcr/mcr-night.jpg" alt="" class="hero-still" fetchpriority="high">
   </div>
   <p class="hero-kicker">Professional letting · Manchester &amp; Salford</p>
   <h1>
@@ -334,6 +399,7 @@ form.enq{display:grid;gap:18px;align-content:start}
   </h1>
   <p class="hero-sub">Megacity Properties is an ARLA Propertymark agency letting and managing homes
     across Manchester and Salford — with the presentation, the paperwork and the people done properly.</p>
+  <p style="margin-top:14px;font:600 12px/1.6 var(--ff-u);letter-spacing:.14em;text-transform:uppercase;color:var(--sky)">Letting Manchester homes since 2018 &middot; Trusted by families across the city</p>
   <div class="hero-ctas">
     <a class="btn btn--fill magnet" href="#landlords">I'm a landlord
       <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></a>
@@ -347,6 +413,13 @@ form.enq{display:grid;gap:18px;align-content:start}
       <span>Prestwich <b></b></span><span>Crumpsall <b></b></span><span>Strangeways <b></b></span>
       <span>Ancoats <b></b></span><span>City Centre <b></b></span>
     </div></div>
+  </div>
+</section>
+
+<section class="offer" aria-label="Current offers">
+  <div class="offer-in">
+    <p><b>New landlord offer</b> — Tenant Find <b>&pound;295</b> inc. VAT <s>&pound;495</s> &nbsp;&middot;&nbsp; Full management <b>8%</b> <s>10%</s></p>
+    <a href="#valuation-form">Claim your free valuation &rarr;</a>
   </div>
 </section>
 
@@ -390,10 +463,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 
 <!-- ══ CITY BAND ══ -->
 <section class="band" id="cityband" data-rail="Manchester">
-  <div class="poster" style="background-image:url('https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop')"></div>
-  <video id="cityVideo" muted loop playsinline preload="none"
-    poster="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=1800&auto=format&fit=crop"
-    src="https://videos.pexels.com/video-files/1826904/1826904-hd_1920_1080_24fps.mp4"></video>
+  <div class="poster" style="background-image:url('assets/mcr/lab-tower.jpg');background-position:center 30%"></div>
   <div class="band-copy">
     <p class="no">The patch we know</p>
     <h2>Manchester <em>is home.</em></h2>
@@ -455,10 +525,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 <!-- ══ INTERIOR SPLIT ══ -->
 <section class="split" id="present" data-rail="Presentation">
   <div class="split-media">
-    <div class="poster" style="background-image:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1400&auto=format&fit=crop')"></div>
-    <video id="homeVideo" muted loop playsinline preload="none"
-      poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1400&auto=format&fit=crop"
-      src="https://videos.pexels.com/video-files/3773486/3773486-hd_1920_1080_30fps.mp4"></video>
+    <div class="poster" style="background-image:url('assets/mcr/lab-lobby.jpg')"></div>
   </div>
   <div class="split-copy">
     <p class="no">The standard</p>
@@ -494,16 +561,52 @@ form.enq{display:grid;gap:18px;align-content:start}
 <!-- ══ CREDENTIALS ══ -->
 <section class="creds" data-rail="Credentials">
   <div class="creds-in">
-    <div class="cred"><b>ARLA Propertymark</b><span>Regulated agents — client money protected.</span></div>
-    <div class="cred"><b>The Property Ombudsman</b><span>Membership T06217 — independent redress on every tenancy.</span></div>
-    <div class="cred"><b>Deposit Protection Service</b><span>Every deposit protected, every time, in full.</span></div>
-    <div class="cred"><b>NRLA</b><span>National Residential Landlords Association member agency.</span></div>
+    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark Protected"><span>Regulated agents — client money protected.</span></div>
+    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman"><span>Membership T06217 — independent redress.</span></div>
+    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-dps.png" alt="Deposit Protection Service"><span>Every deposit protected, every time.</span></div>
+    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-nrla.png" alt="NRLA"><span>National Residential Landlords Association.</span></div>
   </div>
   <p class="note">Megacity Properties Ltd · Registered in England &amp; Wales, company no. 12321291 ·
     Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA</p>
 </section>
 
 <!-- ══ CONTACT ══ -->
+<section class="valcta" id="valuation-form" data-rail="Valuation">
+  <div class="valcta-in">
+    <div>
+      <p class="no" style="color:var(--sky)">Free landlord valuation</p>
+      <h2 style="color:#fff">What could your<br>property <em>earn</em>?</h2>
+      <p style="color:rgba(255,255,255,.75);margin-top:16px;max-width:42ch">An honest rental valuation from the team that lets homes on your street — free, no obligation, usually within one working day.</p>
+    </div>
+    <form class="valform" id="valForm">
+      <input id="vPost" placeholder="Property postcode  e.g. M8 8RA" required autocomplete="postal-code">
+      <input id="vName" placeholder="Your name" required autocomplete="name">
+      <input id="vEmail" type="email" placeholder="Email" required autocomplete="email">
+      <input id="vPhone" type="tel" placeholder="Phone" autocomplete="tel">
+      <button class="btn btn--fill" type="submit">Get my free valuation</button>
+      <p class="val-note">No spam, no obligation — just an honest number.</p>
+      <div class="val-done" hidden><b>Request received.</b> The team will call you within one working day with your valuation.</div>
+    </form>
+  </div>
+</section>
+
+<section class="faq" id="faq" data-rail="FAQs">
+  <div class="faq-in">
+    <img src="assets/mcr/logo.png" alt="" style="height:54px;width:auto;margin:0 auto 18px;display:block">
+    <h2 style="text-align:center">Questions, <em>answered.</em></h2>
+    <div class="faq-list">
+      <details><summary>What does full management cost?</summary><p>Currently <b>8% of the monthly rent</b> — usually 10%. That covers rent collection, tenant communication, maintenance co-ordination, inspections and day-to-day issues, with one dedicated point of contact.</p></details>
+      <details><summary>How much is Tenant Find?</summary><p>Our new landlord offer is <b>&pound;295 inc. VAT</b> (usually &pound;495): marketing, enquiries, viewings and securing a suitable tenant — you manage the tenancy yourself.</p></details>
+      <details><summary>Can you just collect the rent?</summary><p>Yes — Rent Collection is <b>5% of the monthly rent</b>: collection, arrears chasing, monthly statements, renewals and deposit administration.</p></details>
+      <details><summary>How do I switch from my current agent?</summary><p>We handle the whole handover: one authority letter from you, then we collect the keys, documents and deposit registrations, and your tenants get one friendly letter about where to pay rent. The tenancy itself is unaffected.</p></details>
+      <details><summary>Do you handle HMO licensing?</summary><p>Yes — our specialist HMO team helps with licence requirements, applications and renewals, selective licensing, property preparation and the works needed to reach the required standard.</p></details>
+      <details><summary>Who protects the deposit and my money?</summary><p>Deposits are protected with the <b>Deposit Protection Service</b>, and client money is protected through the <b>Propertymark Client Money Protection</b> scheme. We answer to The Property Ombudsman (T06217).</p></details>
+      <details><summary>What safety certificates does my property need?</summary><p>Typically a Gas Safety Certificate, an EICR, an EPC and compliant smoke and fire alarms. We co-ordinate the inspections, certificates and any remedial work.</p></details>
+      <details><summary>How long have you been letting?</summary><p>We&rsquo;ve been letting and managing Manchester homes <b>since 2018</b>, across Manchester and Salford — from Cheetham Hill to the Quays.</p></details>
+    </div>
+  </div>
+</section>
+
 <section class="contact" id="contact" data-rail="Contact">
   <div class="contact-grid">
     <div>
@@ -525,12 +628,52 @@ form.enq{display:grid;gap:18px;align-content:start}
 </section>
 </main>
 
+<div class="fab" aria-label="Contact options">
+  <a href="https://wa.me/447804900719" target="_blank" rel="noopener" class="fab-b fab-wa" aria-label="WhatsApp us">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1.1 2.2-.2 3.7a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0 0-.2-.1-.3-.1z"/></svg></a>
+  <a href="tel:+441612201763" class="fab-b fab-call" aria-label="Call 0161 220 1763">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg></a>
+  <a href="mailto:info@megacityproperties.co.uk" class="fab-b fab-mail" aria-label="Email us">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg></a>
+</div>
+
 <footer class="footer">
   <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
+  <div class="foot-grid">
+    <div>
+      <img src="assets/mcr/logo.png" alt="Megacity Properties" style="height:52px;width:auto;filter:brightness(0) invert(1);opacity:.94">
+      <p style="margin-top:14px;color:rgba(255,255,255,.65);font-size:13.5px;max-width:30ch">Letting Manchester homes since 2018 — trusted by families across the city.</p>
+    </div>
+    <div><h4>Explore</h4>
+      <a href="#services">Services</a><a href="#process">The process</a><a href="#homes">Homes</a><a href="#landlords">Landlords</a><a href="#faq">FAQs</a><a href="#valuation-form">Free valuation</a>
+    </div>
+    <div><h4>Talk to us</h4>
+      <a href="tel:+441612201763">0161 220 1763</a>
+      <a href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
+      <a href="mailto:info@megacityproperties.co.uk">info@megacityproperties.co.uk</a>
+      <a href="https://maps.google.com/?q=The+Tube+Business+Centre,+86+North+Street,+Manchester+M8+8RA" target="_blank" rel="noopener">Office 21, The Tube, 86 North Street, M8 8RA</a>
+    </div>
+    <div><h4>Accredited &amp; protected</h4>
+      <div class="foot-acc">
+        <img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark">
+        <img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman">
+        <img src="assets/mcr/acc-logo-dps.png" alt="Deposit Protection Service">
+        <img src="assets/mcr/acc-logo-nrla.png" alt="NRLA">
+      </div>
+      <h4 style="margin-top:18px">Secure payments</h4>
+      <div class="foot-pay" aria-label="Accepted payment methods">
+        <span class="pay"><svg viewBox="0 0 48 16"><text x="24" y="12.5" text-anchor="middle" font-family="Arial" font-size="12" font-weight="800" font-style="italic" fill="#1a1f71">VISA</text></svg></span>
+        <span class="pay"><svg viewBox="0 0 48 16"><circle cx="20" cy="8" r="6.5" fill="#eb001b"/><circle cx="28" cy="8" r="6.5" fill="#f79e1b" fill-opacity=".85"/></svg></span>
+        <span class="pay"><svg viewBox="0 0 48 16"><rect x="4" y="1" width="40" height="14" rx="2" fill="#2557d6"/><text x="24" y="11.5" text-anchor="middle" font-family="Arial" font-size="8" font-weight="800" fill="#fff">AMEX</text></svg></span>
+        <span class="pay"><svg viewBox="0 0 48 16"><text x="24" y="11.5" text-anchor="middle" font-family="Helvetica,Arial" font-size="7.5" font-weight="800" fill="#111">APPLE&#160;PAY</text></svg></span>
+        <span class="pay"><svg viewBox="0 0 48 16"><text x="24" y="12" text-anchor="middle" font-family="Arial" font-size="10" font-weight="700" fill="#3c4043"><tspan fill="#4285f4">G</tspan> Pay</text></svg></span>
+        <span class="pay"><svg viewBox="0 0 48 16"><text x="24" y="11.5" text-anchor="middle" font-family="Arial" font-size="7.5" font-weight="800" fill="#14162E">BANK&#160;TRANSFER</text></svg></span>
+      </div>
+    </div>
+  </div>
   <div class="footer-in">
-    <span>© Megacity Properties Ltd</span>
-    <a href="tel:+441612201763">0161 220 1763</a>
-    <a href="mailto:info@megacityproperties.co.uk">Email</a>
+    <span>&copy; Megacity Properties Ltd &middot; Company no. 12321291 &middot; Registered in England &amp; Wales</span>
+    <span>Skyline photo &copy; LimeSpiked (CC BY 2.0) &middot; Beetham photo &copy; JThomas (CC BY-SA 2.0)</span>
     <a href="https://www.billydigitals.com" target="_blank" rel="noopener">Site concept — Billy Digitals</a>
   </div>
 </footer>
@@ -538,6 +681,6 @@ form.enq{display:grid;gap:18px;align-content:start}
 <script src="vendor/lenis.min.js" defer></script>
 <script src="vendor/gsap.min.js" defer></script>
 <script src="vendor/ScrollTrigger.min.js" defer></script>
-<script type="module" src="megacity-skyline.js"></script>
+<script src="megacity-skyline.js" type="module"></script>
 </body>
 </html>

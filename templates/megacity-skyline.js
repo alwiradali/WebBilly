@@ -6,7 +6,7 @@
    when the hero is off screen or the tab is hidden, no shader work at
    all beyond two lights, videos only play in view.
    ════════════════════════════════════════════════════════════════════ */
-import * as THREE from "three";
+/* three.js removed with the 3D hero — saves a 670KB module download */
 
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = matchMedia("(pointer: fine)").matches;
@@ -34,108 +34,7 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
 }
 
 /* ── 3D ribbon field ───────────────────────────────────────────────── */
-(function bg3d() {
-  const host = $("#bg3d");
-  if (!host || reduce) return;
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-  } catch (e) { return; }
-  const coarse = matchMedia("(pointer: coarse)").matches;
-  const DPR = Math.min(devicePixelRatio || 1, coarse ? 1.25 : 1.6);
-  renderer.setPixelRatio(DPR);
-  host.appendChild(renderer.domElement);
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xfafbff, 26, 74);
-  const cam = new THREE.PerspectiveCamera(38, 1, .1, 120);
-  cam.position.set(0, 0, 34);
-
-  scene.add(new THREE.AmbientLight(0xffffff, .85));
-  const key = new THREE.DirectionalLight(0xffffff, 1.15);
-  key.position.set(6, 10, 8);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0x4da7d9, .5);
-  rim.position.set(-8, -4, 6);
-  scene.add(rim);
-
-  /* the logo's ribbon: a flat chevron, extruded */
-  const shape = new THREE.Shape();
-  shape.moveTo(-2.4, -0.9); shape.lineTo(0, 1.5); shape.lineTo(2.4, -0.9);
-  shape.lineTo(2.4, -2.1); shape.lineTo(0, .3); shape.lineTo(-2.4, -2.1);
-  shape.closePath();
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: .55, bevelEnabled: false });
-  geo.center();
-  const matNavy = new THREE.MeshLambertMaterial({ color: 0x3d416e });
-  const matSky = new THREE.MeshLambertMaterial({ color: 0x4da7d9 });
-  const matPale = new THREE.MeshLambertMaterial({ color: 0xd9e6f6 });
-
-  const N = coarse ? 26 : 44;
-  const ribbons = [];
-  for (let i = 0; i < N; i++) {
-    const m = new THREE.Mesh(geo, i % 5 === 0 ? matSky : i % 3 === 0 ? matNavy : matPale);
-    const s = .45 + Math.random() * 1.5;
-    m.scale.setScalar(s);
-    m.position.set((Math.random() - .5) * 56, (Math.random() - .5) * 34, -6 - Math.random() * 42);
-    m.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-    m.userData = {
-      rx: (Math.random() - .5) * .0038, ry: (Math.random() - .5) * .0044,
-      fy: .5 + Math.random(), ph: Math.random() * Math.PI * 2, y0: m.position.y,
-    };
-    scene.add(m);
-    ribbons.push(m);
-  }
-
-  let w = 0, h = 0;
-  function resize() {
-    const r = host.getBoundingClientRect();
-    if (r.width === w && r.height === h) return;
-    w = r.width; h = r.height;
-    renderer.setSize(w, h, false);
-    cam.aspect = w / Math.max(1, h);
-    cam.updateProjectionMatrix();
-  }
-  resize();
-  addEventListener("resize", resize);
-
-  /* pointer + scroll influence, both lerped */
-  let px = 0, py = 0, tx = 0, ty = 0, scrollN = 0;
-  if (finePointer) addEventListener("pointermove", e => {
-    tx = (e.clientX / innerWidth - .5);
-    ty = (e.clientY / innerHeight - .5);
-  }, { passive: true });
-  if (window.ScrollTrigger) {
-    ScrollTrigger.create({
-      trigger: "#top", start: "top top", end: "bottom top", scrub: true,
-      onUpdate: st => { scrollN = st.progress; },
-    });
-  }
-
-  /* render only while the hero is on screen and the tab is visible */
-  let onScreen = true, t0 = performance.now();
-  new IntersectionObserver(en => { onScreen = en[0].isIntersecting; }, { threshold: 0 }).observe(host);
-  renderer.domElement.addEventListener("webglcontextlost", e => { e.preventDefault(); host.style.display = "none"; });
-
-  function frame(t) {
-    requestAnimationFrame(frame);
-    if (!onScreen || document.hidden) return;
-    const dt = Math.min(50, t - t0); t0 = t;
-    px += (tx - px) * .045; py += (ty - py) * .045;
-    cam.position.x = px * 3.2;
-    cam.position.y = -py * 2.2 - scrollN * 5;
-    cam.position.z = 34 - scrollN * 6;
-    cam.lookAt(0, -scrollN * 4, 0);
-    const tm = t * .001;
-    for (let i = 0; i < ribbons.length; i++) {
-      const r = ribbons[i], u = r.userData;
-      r.rotation.x += u.rx * dt * .06;
-      r.rotation.y += u.ry * dt * .06;
-      r.position.y = u.y0 + Math.sin(tm * u.fy * .5 + u.ph) * 1.1;
-    }
-    renderer.render(scene, cam);
-  }
-  requestAnimationFrame(frame);
-})();
+/* (3D chevron field retired — hero is now the real Manchester skyline) */
 
 /* ── nav state ─────────────────────────────────────────────────────── */
 (function navState() {
@@ -250,8 +149,28 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     { autoAlpha: 1, y: 0, duration: 1, stagger: .12, ease: "power3.out",
       scrollTrigger: { trigger: "#cityband", start: "top 55%" } });
 
-  /* process rail: pinned horizontal on desktop */
+  /* process rail: pinned horizontal on desktop, scroll-driven on mobile */
   const track = $("#procTrack");
+  if (track && !matchMedia("(min-width: 901px)").matches) {
+    /* phones: vertical scroll slides the cards horizontally — a sticky
+       runway, no pinning, no jank on iOS */
+    const proc = $("#process"), view = $("#procView");
+    const dist = () => Math.max(0, track.scrollWidth - innerWidth + 40);
+    view.style.position = "sticky";
+    view.style.top = "17vh";
+    view.style.overflow = "clip";
+    const setup = () => { proc.style.height = (innerHeight * 0.9 + dist()) + "px"; };
+    setup();
+    addEventListener("resize", setup);
+    const drive = () => {
+      const r = proc.getBoundingClientRect();
+      const total = Math.max(1, r.height - innerHeight * 0.9);
+      const p = Math.max(0, Math.min(1, -r.top / total));
+      track.style.transform = "translateX(" + (-p * dist()) + "px)";
+    };
+    addEventListener("scroll", drive, { passive: true });
+    drive();
+  }
   if (track && matchMedia("(min-width: 901px)").matches) {
     const dist = () => Math.max(0, track.scrollWidth - innerWidth + 40);
     gsap.fromTo(track, { x: 0 }, {
@@ -291,3 +210,35 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true },
   });
 }
+
+
+/* ── free valuation form → the office inbox ─────────────────────────── */
+(() => {
+  const f = document.getElementById("valForm");
+  if (!f) return;
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const g = id => (f.querySelector("#" + id) || {}).value || "";
+    const btn = f.querySelector("button");
+    btn.disabled = true; btn.style.opacity = ".6";
+    try {
+      const r = await fetch("/api/megacity-contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: g("vName"), email: g("vEmail"), phone: g("vPhone"),
+          topic: "Free landlord valuation",
+          message: "Free valuation requested via the website.\nPostcode: " + g("vPost"),
+          botcheck: ""
+        })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "something went wrong");
+      f.querySelectorAll("input,button").forEach(el => el.style.display = "none");
+      f.querySelector(".val-done").hidden = false;
+    } catch (err) {
+      btn.disabled = false; btn.style.opacity = "";
+      const n = f.querySelector(".val-note");
+      if (n) n.textContent = "Could not send — " + err.message + ". Please call 0161 220 1763.";
+    }
+  });
+})();
