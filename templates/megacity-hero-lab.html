@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Megacity — Hero Lab · The Journey Home</title>
+  <meta name="description" content="Experimental scroll-driven hero concept for Megacity Properties. Not linked from the live site.">
+  <meta name="theme-color" content="#0b0d1f">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════════════════════
+       HERO LAB — "The Journey Home"
+       Experimental scroll-scrubbed hero: Manchester skyline → Beetham
+       Tower → through the door → a premium interior. GSAP ScrollTrigger
+       drives one canvas render; the stage is CSS-sticky inside a 420vh
+       runway, so there is no pin-jank and no layout shift.
+       Luxury-agency restraint: Fraunces serif, hairline rules, small
+       caps, deep navy. Reduced motion or any failure = calm static page.
+       ══════════════════════════════════════════════════════════════ */
+    :root{
+      --ink:#0b0d1f; --cream:#f5f1e9; --cream-2:rgba(245,241,233,.72);
+      --gold:#c9a35f; --line:rgba(245,241,233,.18);
+      --serif:'Fraunces',Georgia,serif; --sans:'Manrope',system-ui,sans-serif;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{background:var(--ink);color:var(--cream);font:400 16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+    a{color:inherit;text-decoration:none}
+
+    /* minimal lab chrome */
+    .labbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:14px;
+      padding:16px clamp(18px,4vw,44px);mix-blend-mode:difference}
+    .labbar b{font:600 17px/1 var(--serif);letter-spacing:.01em}
+    .labbar b small{display:block;font:700 8px/1.6 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+    .labbar .tag{margin-left:auto;font:700 9px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;
+      border:1px solid var(--line);border-radius:999px;padding:8px 14px;color:var(--cream-2)}
+
+    /* the runway: tall scroll region with a sticky stage inside */
+    .journey{position:relative;height:420vh}
+    .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+    .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .stage .fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(180deg,rgba(11,13,31,.5),transparent 30%,transparent 62%,rgba(11,13,31,.66))}
+
+    /* captions — one per chapter, crossfaded by scroll */
+    .cap{position:absolute;z-index:2;left:clamp(20px,6vw,90px);bottom:clamp(72px,13vh,130px);
+      max-width:34ch;opacity:0;transform:translateY(18px);pointer-events:none}
+    .cap .no{font:700 10px/1 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+    .cap h2{font:300 clamp(34px,5.6vw,64px)/1.04 var(--serif);letter-spacing:-.01em}
+    .cap h2 em{font-style:italic;color:var(--gold)}
+    .cap p{margin-top:14px;color:var(--cream-2);font-size:clamp(14px,1.2vw,16.5px);max-width:30ch}
+    .cap--final{pointer-events:none}
+    .cap--final .ctas{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border-radius:999px;
+      font:700 11.5px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;
+      border:1px solid var(--cream);transition:background .25s,color .25s}
+    .btn--solid{background:var(--cream);color:var(--ink)}
+    .btn--solid:hover{background:var(--gold);border-color:var(--gold)}
+    .btn--ghost:hover{background:var(--cream);color:var(--ink)}
+
+    .cue{position:absolute;z-index:2;right:clamp(20px,5vw,70px);bottom:34px;display:flex;align-items:center;gap:10px;
+      font:700 9.5px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--cream-2);
+      writing-mode:vertical-rl;pointer-events:none}
+    .cue i{width:1px;height:44px;background:var(--line);position:relative;overflow:hidden}
+    .cue i::after{content:"";position:absolute;left:0;top:-50%;width:100%;height:50%;background:var(--gold);animation:drop 1.8s ease-in-out infinite}
+    @keyframes drop{to{top:110%}}
+
+    /* after the journey */
+    .after{min-height:52vh;display:grid;place-content:center;text-align:center;padding:80px 20px;border-top:1px solid var(--line)}
+    .after .no{font:700 10px/1 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+    .after h3{font:300 clamp(26px,3.6vw,40px)/1.15 var(--serif);margin-top:18px}
+    .after p{color:var(--cream-2);margin:16px auto 0;max-width:52ch}
+    .after .ctas{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+    .credits{padding:26px 20px 34px;text-align:center;font:600 9px/1.8 var(--sans);letter-spacing:.18em;
+      text-transform:uppercase;color:rgba(245,241,233,.4)}
+
+    /* reduced motion / no JS: a calm single screen */
+    @media (prefers-reduced-motion: reduce){
+      .journey{height:100vh}
+      .cue{display:none}
+    }
+    .no-js .journey{height:100vh}
+    .no-js .cap--final{opacity:1;transform:none;pointer-events:auto}
+  </style>
+</head>
+<body class="no-js">
+  <header class="labbar">
+    <b>Megacity<small>Properties · Hero Lab</small></b>
+    <span class="tag">Experimental — not live</span>
+  </header>
+
+  <section class="journey" id="journey" aria-label="The journey home — scroll story">
+    <div class="stage">
+      <img class="fallback" src="assets/mcr/mcr-night.jpg" alt="Manchester skyline at night">
+      <canvas id="labCanvas" aria-hidden="true"></canvas>
+
+      <div class="cap" data-cap="0">
+        <p class="no">01 · Manchester</p>
+        <h2>Your city,<br>after <em>dark</em>.</h2>
+        <p>Every light is a household. Someone lets each one.</p>
+      </div>
+      <div class="cap" data-cap="1">
+        <p class="no">02 · The address</p>
+        <h2>The address<br><em>matters</em>.</h2>
+        <p>From Deansgate to Cheetham Hill — we know what every street is worth.</p>
+      </div>
+      <div class="cap" data-cap="2">
+        <p class="no">03 · Arrival</p>
+        <h2>Step<br><em>closer</em>.</h2>
+        <p>Presentation is the difference between a listing and a letting.</p>
+      </div>
+      <div class="cap cap--final" data-cap="3">
+        <p class="no">04 · Home</p>
+        <h2>Managed<br><em>properly</em>.</h2>
+        <p>Professional letting · trusted management, across Manchester &amp; Salford.</p>
+        <div class="ctas">
+          <a class="btn btn--solid" href="megacity-valuation">Request a valuation</a>
+          <a class="btn btn--ghost" href="megacity-landlords">Landlords &amp; investors</a>
+        </div>
+      </div>
+
+      <p class="cue">Scroll <i></i></p>
+    </div>
+  </section>
+
+  <section class="after">
+    <p class="no">Hero Lab</p>
+    <h3>That was the experiment.</h3>
+    <p>A scroll-driven journey — skyline, tower, threshold, home — built on the existing
+      GSAP + ScrollTrigger + canvas stack, with the same fallbacks as the live hero.
+      Nothing on the live site has been changed.</p>
+    <div class="ctas">
+      <a class="btn btn--ghost" href="megacity">View the current live homepage</a>
+    </div>
+  </section>
+  <p class="credits">Skyline © LimeSpiked · CC BY 2.0 &nbsp;·&nbsp; Beetham Tower © JThomas · CC BY-SA 2.0 &nbsp;·&nbsp; Interior via Unsplash</p>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script>
+  (function () {
+    document.body.classList.remove("no-js");
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var cv = document.getElementById("labCanvas");
+    var fallback = document.querySelector(".stage .fallback");
+    var caps = Array.prototype.slice.call(document.querySelectorAll(".cap"));
+    if (!cv || !cv.getContext || !window.gsap || !window.ScrollTrigger) { staticMode(); return; }
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ── the three chapters' imagery ── */
+    var SRC = {
+      city:     { src: "assets/mcr/mcr-night.jpg",     w: 1920, h: 645  },
+      tower:    { src: "assets/mcr/lab-tower.jpg",     w: 847,  h: 1600 },
+      interior: { src: "assets/mcr/lab-interior.jpg",  w: 1600, h: 1067 }
+    };
+    var imgs = {}, loaded = 0, total = 3, failed = false;
+    Object.keys(SRC).forEach(function (k) {
+      var im = new Image();
+      im.onload = function () { loaded++; if (loaded === total) start(); };
+      im.onerror = function () { failed = true; staticMode(); };
+      im.src = SRC[k].src;
+      imgs[k] = im;
+    });
+
+    var cx = cv.getContext("2d"), W = 0, H = 0, DPR = 1;
+    function size() {
+      DPR = Math.min(devicePixelRatio || 1, 2);
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = W * DPR; cv.height = H * DPR;
+      cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    /* cover-fit an image around a focal point (fx, fy in 0..1), scaled by z */
+    function drawCover(im, meta, z, fx, fy, alpha) {
+      var sc = Math.max(W / meta.w, H / meta.h) * z;
+      var dw = meta.w * sc, dh = meta.h * sc;
+      var x = W / 2 - fx * dw, y = H / 2 - fy * dh;
+      x = Math.min(0, Math.max(W - dw, x));
+      y = Math.min(0, Math.max(H - dh, y));
+      cx.globalAlpha = alpha;
+      cx.drawImage(im, x, y, dw, dh);
+      cx.globalAlpha = 1;
+    }
+    function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+    function seg(p, a, b) { return clamp01((p - a) / (b - a)); }
+    function easeIO(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+    var WINDOWS = [[0.00, 0.24], [0.26, 0.50], [0.52, 0.72], [0.80, 1.01]];
+    var last = -1;
+    function render(p) {
+      if (Math.abs(p - last) < 0.0022 && last >= 0) return;
+      last = p;
+      cx.fillStyle = "#0b0d1f";
+      cx.fillRect(0, 0, W, H);
+
+      /* Chapter 1+2 — the skyline, wide then travelling in toward the towers */
+      if (p < 0.52) {
+        var t = seg(p, 0, 0.5);
+        var z = 1 + easeIO(t) * 1.25;                    /* 1 → 2.25 */
+        var fx = 0.5 - easeIO(t) * 0.31;                 /* drift toward the Deansgate cluster */
+        var fy = 0.62 + easeIO(t) * 0.05;
+        drawCover(imgs.city, SRC.city, z, fx, fy, 1);
+      }
+      /* Chapter 2→3 — dissolve to Beetham Tower, then descend toward its base */
+      if (p >= 0.34 && p < 0.80) {
+        var a1 = seg(p, 0.34, 0.50);                     /* fade the tower in */
+        var t2 = seg(p, 0.44, 0.78);
+        var z2 = 1.06 + easeIO(t2) * 0.9;                /* arrive, then push in */
+        var fy2 = 0.30 + easeIO(t2) * 0.52;              /* crown → entrance level */
+        drawCover(imgs.tower, SRC.tower, z2, 0.5, fy2, easeIO(a1));
+        /* golden-hour warmth deepens as we close in */
+        cx.globalAlpha = 0.14 * easeIO(a1);
+        cx.fillStyle = "#c9a35f";
+        cx.fillRect(0, 0, W, H);
+        cx.globalAlpha = 1;
+      }
+      /* Chapter 4 — the threshold: an opening door of light reveals home */
+      if (p >= 0.66) {
+        var d = easeIO(seg(p, 0.66, 0.94));
+        var iz = 1.14 - d * 0.14;
+        cx.save();
+        var dw = (0.08 + d * 1.04) * W;                  /* door width grows past full */
+        var dh = (0.24 + d * 0.9) * H;
+        var rx = W / 2 - dw / 2, ry = H * 0.94 - dh;
+        var r = Math.min(28, dw * 0.08) * (1 - d * 0.9);
+        cx.beginPath();
+        if (cx.roundRect) cx.roundRect(rx, ry, dw, dh, [r, r, 0, 0]);
+        else cx.rect(rx, ry, dw, dh);
+        cx.clip();
+        drawCover(imgs.interior, SRC.interior, iz, 0.46, 0.55, 1);
+        cx.restore();
+        /* doorway glow while the threshold is still narrow */
+        if (d < 1) {
+          cx.globalAlpha = 0.18 * (1 - d);
+          cx.fillStyle = "#ffdf9e";
+          cx.fillRect(rx - 6, ry - 6, dw + 12, dh + 12);
+          cx.globalAlpha = 1;
+        }
+      }
+      /* a quiet reading scrim under the captions, only while one is visible */
+      var capVis = 0;
+      for (var ci = 1; ci < WINDOWS.length; ci++) {
+        var cw = WINDOWS[ci];
+        var v = seg(p, cw[0], cw[0] + 0.05) * (ci === WINDOWS.length - 1 ? 1 : (1 - seg(p, cw[1] - 0.05, cw[1])));
+        if (v > capVis) capVis = v;
+      }
+      if (capVis > 0.01) {
+        var lg = cx.createLinearGradient(0, H, W * 0.62, H * 0.35);
+        lg.addColorStop(0, "rgba(11,13,31," + (0.66 * capVis) + ")");
+        lg.addColorStop(1, "rgba(11,13,31,0)");
+        cx.fillStyle = lg;
+        cx.fillRect(0, 0, W, H);
+      }
+    }
+
+    /* caption choreography — window per chapter, driven by the same progress */
+    function captions(p) {
+      for (var i = 0; i < caps.length; i++) {
+        var w = WINDOWS[i];
+        var vis = seg(p, w[0], w[0] + 0.05) * (1 - seg(p, w[1] - 0.05, w[1]));
+        if (i === caps.length - 1) vis = seg(p, w[0], w[0] + 0.07);  /* the finale stays */
+        caps[i].style.opacity = vis;
+        caps[i].style.transform = "translateY(" + (18 * (1 - vis)) + "px)";
+        if (i === caps.length - 1) caps[i].style.pointerEvents = vis > 0.6 ? "auto" : "none";
+      }
+    }
+
+    function start() {
+      if (failed) return;
+      fallback.style.display = "none";
+      size();
+      if (reduce) { staticMode(true); return; }
+      render(0); captions(0);
+      ScrollTrigger.create({
+        trigger: "#journey",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.35,
+        onUpdate: function (self) { render(self.progress); captions(self.progress); }
+      });
+      addEventListener("resize", function () { size(); last = -1; render(ScrollTrigger.getAll()[0] ? ScrollTrigger.getAll()[0].progress : 0); });
+    }
+
+    /* calm single-screen mode: interior + final caption, no scrub */
+    function staticMode(canvasOk) {
+      document.querySelector(".journey").style.height = "100vh";
+      if (canvasOk) { size(); render(1); } else if (fallback) { fallback.style.display = ""; }
+      caps.forEach(function (c, i) {
+        var isFinal = i === caps.length - 1;
+        c.style.opacity = isFinal ? 1 : 0;
+        c.style.transform = "none";
+        if (isFinal) c.style.pointerEvents = "auto";
+      });
+      var cue = document.querySelector(".cue");
+      if (cue) cue.style.display = "none";
+    }
+  })();
+  </script>
+</body>
+</html>
