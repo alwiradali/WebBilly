@@ -49,7 +49,7 @@
     <section class="hero" aria-label="Welcome">
       <div class="hero-media" aria-hidden="true">
         <canvas id="mcDusk" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
-        <img src="assets/mcr/mcr-night.jpg" alt="" fetchpriority="high">
+        <img src="assets/mcr/house-lit.jpg" alt="" fetchpriority="high">
       </div>
       <div class="hero-inner wrap">
         <p class="hero-eyebrow eyebrow" data-hero-fade>Professional letting · Trusted management</p>
@@ -263,14 +263,14 @@
   <script src="megacity-data.js" defer></script>
   <script src="megacity.js" defer></script>
 
-  <script src="assets/mcr/mcr-lights.js" defer></script>
+  <script src="assets/mcr/house-lights.js" defer></script>
   <script>
-  /* ── real Manchester lights up as you scroll ───────────────────────
-     Two photographs of the actual 2025 skyline (one asleep, one lit)
-     plus 484 detected light positions. Scroll switches the real lights
-     on, patch by patch, over the sleeping city. Red aviation beacons
-     never sleep. Photograph © LimeSpiked, CC BY 2.0 (credited in the
-     footer). Reduced-motion visitors get the fully lit city, static. */
+  /* ── the house wakes up ────────────────────────────────────────────
+     A real photograph of a grand home at dusk, processed into two
+     frames: asleep and lit. On arrival the lights bloom on room by
+     room from the front door outwards, with a slow settling zoom —
+     no video, ~600KB, runs anywhere. Reduced motion gets the lit
+     house, still. Photograph via Unsplash. */
   (function () {
     var cv = document.getElementById("mcDusk");
     if (!cv || !cv.getContext) return;
@@ -278,70 +278,84 @@
     var fallbackImg = cv.parentElement.querySelector("img");
     var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    var dark = new Image(), lit = new Image(), ready = 0, failed = false;
+    var dark = new Image(), lit = new Image(), ready = 0;
     dark.onload = lit.onload = function () { ready++; if (ready === 2) start(); };
-    dark.onerror = lit.onerror = function () { failed = true; };
-    dark.src = "assets/mcr/mcr-dark.jpg";
-    lit.src = "assets/mcr/mcr-night.jpg";
+    dark.src = "assets/mcr/house-dark.jpg";
+    lit.src = "assets/mcr/house-lit.jpg";
 
-    var W = 0, H = 0, DPR = 1, IW = 1920, IH = 579, lights = [];
+    var W = 0, H = 0, DPR = 1, IW = 2000, IH = 1124, tiles = [];
+    var off = document.createElement("canvas"), ox = off.getContext("2d");
+    var mk = document.createElement("canvas"), mx = mk.getContext("2d");
 
     function size() {
       DPR = Math.min(devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight;
-      cv.width = W * DPR; cv.height = H * DPR;
+      cv.width = off.width = mk.width = W * DPR;
+      cv.height = off.height = mk.height = H * DPR;
       cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      ox.setTransform(DPR, 0, 0, DPR, 0, 0);
+      mx.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
+    /* cover-fit with a slight settling zoom */
+    function fit(z) {
+      var sc = Math.max(W / IW, H / IH) * z;
+      return { s: sc, x: (W - IW * sc) / 2, y: (H - IH * sc) * 0.35 };
+    }
+    function ease(x) { return 1 - Math.pow(1 - x, 3); }
 
-    var last = -1;
     function draw(p) {
-      if (Math.abs(p - last) < 0.003 && last >= 0) return;
-      last = p;
-      /* the strip covers the full width, anchored to the bottom */
-      var sc = W / IW, dh = IH * sc, top = H - dh;
-      /* sky above the photograph, blended to its top edge */
-      var sky = cx.createLinearGradient(0, 0, 0, Math.max(top, 1));
-      sky.addColorStop(0, "#0b0d1f");
-      sky.addColorStop(1, "rgb(40,45,58)");
-      cx.fillStyle = sky;
-      cx.fillRect(0, 0, W, Math.ceil(Math.max(top, 0)) + 1);
-      cx.drawImage(dark, 0, top, W, dh);
-      /* switch the real lights on */
-      var count = Math.min(lights.length, Math.floor(p * 1.1 * lights.length));
-      for (var i = 0; i < count; i++) {
-        var L = lights[i];
-        var a = Math.min(1, (count - i) / 14 + 0.3);
-        var dx = L[0] * sc, dy = top + L[1] * sc, dw = L[2] * sc, dhh = L[3] * sc;
-        cx.globalAlpha = 0.12 * a;
-        cx.fillStyle = "rgb(255,205,140)";
-        cx.fillRect(dx - 3, dy - 3, dw + 6, dhh + 6);
-        cx.globalAlpha = a;
-        cx.drawImage(lit, L[0], L[1], L[2], L[3], dx, dy, dw, dhh);
+      var z = 1.045 - 0.045 * ease(p);
+      var f = fit(z);
+      cx.clearRect(0, 0, W, H);
+      cx.drawImage(dark, f.x, f.y, IW * f.s, IH * f.s);
+      var count = Math.min(tiles.length, Math.floor(ease(p) * 1.06 * tiles.length));
+      if (count > 0) {
+        /* union mask of soft blobs, painted once, then applied once */
+        mx.clearRect(0, 0, W, H);
+        for (var i = 0; i < count; i++) {
+          var t = tiles[i];
+          var a = Math.min(1, (count - i) / 10 + 0.3);
+          var tx = f.x + (t[0] + t[2] / 2) * f.s, ty = f.y + (t[1] + t[3] / 2) * f.s;
+          var r = Math.max(t[2], t[3]) * f.s * 1.35;
+          var g = mx.createRadialGradient(tx, ty, r * 0.2, tx, ty, r);
+          g.addColorStop(0, "rgba(255,255,255," + a + ")");
+          g.addColorStop(1, "rgba(255,255,255,0)");
+          mx.fillStyle = g;
+          mx.fillRect(tx - r, ty - r, r * 2, r * 2);
+        }
+        ox.clearRect(0, 0, W, H);
+        ox.globalCompositeOperation = "source-over";
+        ox.drawImage(lit, f.x, f.y, IW * f.s, IH * f.s);
+        ox.globalCompositeOperation = "destination-in";
+        ox.drawImage(mk, 0, 0, W, H);
+        ox.globalCompositeOperation = "source-over";
+        cx.drawImage(off, 0, 0, W, H);
       }
-      cx.globalAlpha = 1;
     }
 
-    var hero = document.querySelector(".hero");
-    function progress() {
-      var range = Math.max(1, (hero ? hero.offsetHeight : innerHeight) * 1.05);
-      return Math.max(0, Math.min(1, (scrollY || pageYOffset) / range));
-    }
-    var queued = false;
-    function onScroll() {
-      if (queued) return; queued = true;
-      requestAnimationFrame(function () { queued = false; draw(progress()); });
+    var t0 = 0, DUR = 4500, rafOn = false;
+    function loop(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / DUR);
+      draw(p);
+      if (p < 1) requestAnimationFrame(loop);
+      else rafOn = false;
     }
     function start() {
-      if (failed) return;
       if (fallbackImg) fallbackImg.style.display = "none";
-      lights = (window.MCR_LIGHTS && MCR_LIGHTS.lights) || [];
-      IW = (window.MCR_LIGHTS && MCR_LIGHTS.w) || 1920;
-      IH = (window.MCR_LIGHTS && MCR_LIGHTS.h) || 579;
+      tiles = (window.HOUSE_LIGHTS && HOUSE_LIGHTS.lights) || [];
+      IW = (window.HOUSE_LIGHTS && HOUSE_LIGHTS.w) || 2000;
+      IH = (window.HOUSE_LIGHTS && HOUSE_LIGHTS.h) || 1124;
       size();
-      if (reduce) { draw(1); addEventListener("resize", function () { size(); last = -1; draw(1); }); return; }
-      draw(progress());
-      addEventListener("scroll", onScroll, { passive: true });
-      addEventListener("resize", function () { size(); last = -1; draw(progress()); });
+      if (reduce || !tiles.length) {
+        var f = fit(1);
+        cx.drawImage(lit, f.x, f.y, IW * f.s, IH * f.s);
+        addEventListener("resize", function () { size(); var f2 = fit(1); cx.drawImage(lit, f2.x, f2.y, IW * f2.s, IH * f2.s); });
+        return;
+      }
+      draw(0);
+      setTimeout(function () { rafOn = true; requestAnimationFrame(loop); }, 500);
+      addEventListener("resize", function () { size(); if (!rafOn) draw(1); });
     }
   })();
   </script>
