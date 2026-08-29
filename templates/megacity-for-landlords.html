@@ -28,6 +28,13 @@
   --gut:clamp(20px,4.5vw,72px); --maxw:1480px; --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+h1,h2,h3{overflow-wrap:break-word;hyphens:none}
+@media (max-width:820px){
+  .shead h2,.band-copy h2,.split-copy h2,.contact h2,.faq h2,.valcta h2,.lsec h2{font-size:clamp(27px,8.4vw,44px);line-height:1.08}
+  .hero h1{font-size:clamp(44px,13.5vw,72px)}
+  .step h3{font-size:clamp(20px,5.6vw,26px);line-height:1.16}
+  .svc h3{font-size:clamp(21px,5.8vw,27px);line-height:1.16}
+}
 h1,h2,h3,.ff-d,.hero h1,.brand b{font-family:var(--ff-d);
   font-variation-settings:"SOFT" 34,"WONK" 1,"opsz" 120;font-optical-sizing:auto}
 em{font-variation-settings:"SOFT" 44,"WONK" 1,"opsz" 90}
@@ -82,6 +89,8 @@ button{font:inherit;cursor:pointer}
 .lsec--dark .btn--fill{background:var(--sky-deep);border-color:var(--sky-deep)}
 .lsec--dark .btn:hover{background:#fff;color:var(--navy-ink)}
 
+
+.svc-mark{height:54px;width:auto;display:block;margin-bottom:22px}
 
 /* ── nav dropdowns ─────────────────────────────────────────────────── */
 .nd{position:relative}
@@ -244,13 +253,15 @@ body.is-ready .veil{display:none}
 
 /* cinematic video hero */
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
-.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,11,43,.55),rgba(14,11,43,.18) 45%,rgba(14,11,43,.78))}
-.hero-media picture,.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}
-.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}
-@media (max-width:760px){.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}}
-@keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.08)}}
-@media (prefers-reduced-motion:reduce){.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}}
-.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,46,.6),rgba(20,22,46,.26) 45%,rgba(20,22,46,.74) 100%)}
+.hero-media picture{position:absolute;inset:0;display:block;width:100%;height:100%}
+.hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;display:block;
+  object-fit:cover;object-position:center 52%;animation:herodrift 30s ease-in-out infinite alternate}
+@media (max-width:760px){.hero-media img.hero-still{object-position:center 46%}}
+@keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.07)}}
+@media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
+.hero-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(14,11,43,.50) 0%,rgba(14,11,43,.06) 40%,rgba(14,11,43,.22) 72%,rgba(14,11,43,.80) 100%),
+             linear-gradient(102deg,rgba(14,11,43,.74) 0%,rgba(14,11,43,.40) 46%,rgba(14,11,43,.04) 78%,transparent 100%)}
 .hero--cine h1{color:#fff}
 .hero--cine h1 em{color:var(--sky)}
 .hero--cine .hero-kicker{color:var(--sky)}
@@ -268,7 +279,7 @@ body.cine .nav:not(.is-solid) .nav-links a{color:rgba(255,255,255,.78)}
 body.cine .nav:not(.is-solid) .nav-links a:hover{color:#fff}
 body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 
-/* valuation CTA */
+/* professional valuation CTA */
 .valcta{background:var(--navy-deep);padding:11vh var(--gut)}
 .valcta-in{max-width:var(--maxw);margin:0 auto;display:grid;gap:44px;grid-template-columns:1.1fr 1fr;align-items:center}
 @media (max-width:880px){.valcta-in{grid-template-columns:1fr}}
@@ -296,15 +307,16 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 .faq details p{padding:0 0 20px;color:var(--mut);font-size:15px;max-width:64ch}
 
 /* floating contact cluster */
-.fab{transition:opacity .3s ease,transform .3s ease;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:column;gap:10px}
-.fab-b{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;
+.fab{transition:opacity .3s ease,transform .3s ease;position:fixed;right:16px;
+  bottom:calc(16px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:column;gap:10px}
+.fab-b{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;border:2px solid rgba(255,255,255,.9);
   box-shadow:0 8px 22px rgba(12,16,40,.35);transition:transform .2s}
 .fab-b:hover{transform:translateY(-3px)}
 .fab.is-hidden{opacity:0;transform:translateY(14px);pointer-events:none}
 .fab-b svg{width:24px;height:24px}
 .fab-wa{background:#25d366}
 .fab-call{background:var(--navy)}
-.fab-mail{background:var(--sky-deep)}
+.fab-mail{background:var(--blue)}
 
 /* footer grid + badges */
 .foot-grid{max-width:var(--maxw);margin:0 auto;padding:52px var(--gut) 34px;display:grid;gap:36px;
@@ -343,10 +355,10 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ── manifesto ─────────────────────────────────────────────────────── */
-.manif{padding:20vh var(--gut);max-width:var(--maxw);margin:0 auto}
-.manif p{font:400 clamp(30px,4.6vw,68px)/1.22 var(--ff-d);letter-spacing:-.01em;max-width:24ch}
-.manif .w{color:#C6D2E6}
-.manif .sig{margin-top:44px;display:flex;gap:16px;align-items:center;font:600 12px/1.5 var(--ff-u);
+.manif{padding:9vh var(--gut) 8vh;max-width:var(--maxw);margin:0 auto}
+.manif p{font:400 clamp(26px,4.2vw,60px)/1.20 var(--ff-d);letter-spacing:-.012em;max-width:26ch}
+.manif .w{color:#B9C4DC}
+.manif .sig{margin-top:28px;display:flex;gap:16px;align-items:center;font:600 12px/1.5 var(--ff-u);
   letter-spacing:.18em;text-transform:uppercase;color:var(--sky-deep)}
 .manif .sig i{width:56px;height:1.5px;background:var(--sky);font-style:normal}
 
@@ -376,8 +388,9 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 .svc li::before{content:"";width:7px;height:7px;background:var(--sky);transform:rotate(45deg);flex:none;position:relative;top:-1px}
 
 /* ── city video band ───────────────────────────────────────────────── */
-.band{position:relative;height:118svh;clip-path:polygon(0 4vw,100% 0,100% calc(100% - 4vw),0 100%);
+.band{position:relative;height:96svh;clip-path:polygon(0 4vw,100% 0,100% calc(100% - 4vw),0 100%);
   margin:6vh 0;overflow:clip;background:var(--navy-deep)}
+@media (max-width:900px){.band{height:min(58svh,580px)}}
 .band video,.band .poster{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;
   background-size:cover;background-position:center;opacity:.62}
 .band-copy{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:#fff;padding:0 var(--gut)}
@@ -387,7 +400,7 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 .band-copy p{margin:24px auto 0;max-width:46ch;color:rgba(255,255,255,.72)}
 
 /* ── process rail (pinned horizontal) ──────────────────────────────── */
-.proc{position:relative;padding:12vh 0}
+.proc{position:relative;padding:8vh 0}
 .proc .shead{padding:0 var(--gut);max-width:var(--maxw);margin:0 auto 30px}
 .proc-view{overflow:clip}
 .proc-track{display:flex;gap:26px;padding:10px var(--gut) 30px;width:max-content;align-items:stretch}
@@ -399,8 +412,15 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 .step .tag{font:600 10.5px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;color:var(--sky-deep)}
 .step h3{font:500 clamp(24px,2.3vw,34px)/1.12 var(--ff-d);margin:16px 0 14px}
 .step p{color:var(--mut);font-size:15px;max-width:36ch}
-@media (max-width:900px){.proc-view{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-  .proc-track{width:max-content}.step{scroll-snap-align:center}}
+@media (max-width:900px){
+  .proc{padding:9vh 0}
+  .proc .shead{padding:0 var(--gut)}
+  .proc-view{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none}
+  .proc-view::-webkit-scrollbar{display:none}
+  .proc-track{width:max-content;transform:none!important}
+  .step{scroll-snap-align:center;width:min(78vw,340px)}
+}
 
 /* ── homes grid ────────────────────────────────────────────────────── */
 .homes{padding:12vh var(--gut);max-width:var(--maxw);margin:0 auto}
@@ -492,6 +512,35 @@ form.enq{display:grid;gap:18px;align-content:start}
   font:400 15.5vw/0.9 var(--ff-d);color:var(--surface);white-space:nowrap;letter-spacing:-.02em}
 .footer-word em{font-style:italic}
 .footer-in a:hover{color:var(--sky-deep)}
+
+/* ── mobile contact bar (must win: declared last) ────────────────────── */
+@media (max-width:820px){
+  .fab{left:0;right:0;bottom:0;top:auto;flex-direction:row;gap:0;padding:0 0 env(safe-area-inset-bottom);
+    background:var(--navy-ink);box-shadow:0 -6px 24px rgba(14,11,43,.34)}
+  .fab .fab-b{flex:1;width:auto;height:62px;border-radius:0;border:0;box-shadow:none;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    font:700 12.5px/1 var(--ff-u);letter-spacing:.09em;text-transform:uppercase;color:#fff}
+  .fab .fab-b svg{width:20px;height:20px;flex:none}
+  .fab .fab-b::after{content:attr(data-label)}
+  .fab .fab-b:hover{transform:none}
+  .fab .fab-wa{background:#1FA855}
+  .fab .fab-call{background:var(--blue)}
+  .fab .fab-mail{background:var(--navy)}
+  body{padding-bottom:62px}
+  .footer{padding-bottom:24px}
+}
+
+/* ── phones: sections were built on desktop vh padding and read as empty ── */
+@media (max-width:820px){
+  .manif{padding:7vh var(--gut) 4vh}
+  .manif .sig{margin-top:22px}
+  .services{padding:5vh var(--gut) 7vh}
+  .services .shead{margin-bottom:30px}
+  .proc{padding:6vh 0}
+  .homes,.faq,.valcta,.lsec,.sec{padding-top:7vh;padding-bottom:7vh}
+  .contact{padding-top:7vh;padding-bottom:7vh}
+  .shead{margin-bottom:28px}
+}
 </style>
 <style>
 .lp-hero{position:relative;padding:150px var(--gut) 90px;background:var(--grad);color:#fff;overflow:clip}
@@ -629,7 +678,7 @@ form.enq{display:grid;gap:18px;align-content:start}
           <div class="nd-cta">
             <h5>Start here</h5>
             <p>An honest rental figure for your property, from the team that lets homes on your street.</p>
-            <a class="btn btn--fill" href="#valuation-form">Professional valuation</a>
+            <a class="btn btn--fill" href="#professional valuation-form">Professional valuation</a>
           </div>
         </div>
       </div>
@@ -664,7 +713,7 @@ form.enq{display:grid;gap:18px;align-content:start}
     <div class="mm-cols">
       <div class="mm-col">
         <h4>Landlords &amp; investors</h4>
-        <a href="#valuation-form"><b>Free rental valuation</b></a>
+        <a href="#professional valuation-form"><b>Free rental valuation</b></a>
         <a href="#services">Tenant Find — &pound;295 <s>&pound;495</s></a>
         <a href="#services">Rent Collection — 5%</a>
         <a href="#services">Full Management — 8% <s>10%</s></a>
@@ -696,7 +745,7 @@ form.enq{display:grid;gap:18px;align-content:start}
         <a href="mailto:info@megacityproperties.co.uk">info@megacityproperties.co.uk</a>
         <p>Office 21, The Tube Business Centre,<br>86 North Street, Manchester M8 8RA</p>
         <p class="mm-hours">Mon&ndash;Fri, 9am&ndash;5:30pm</p>
-        <a class="btn btn--fill" href="#valuation-form" style="margin-top:14px">Get a professional valuation</a>
+        <a class="btn btn--fill" href="#professional valuation-form" style="margin-top:14px">Get a professional valuation</a>
       </div>
     </div>
   </div>
@@ -712,7 +761,7 @@ form.enq{display:grid;gap:18px;align-content:start}
       and your money are each protected by a named scheme — not just a promise. Here is exactly how, and
       exactly what we check before anyone gets a key.</p>
     <div class="ctas">
-      <a class="btn btn--fill" href="megacity-skyline#valuation-form">Book a professional valuation</a>
+      <a class="btn btn--fill" href="megacity-skyline#professional valuation-form">Book a professional valuation</a>
       <a class="btn" href="tel:+441612201763">Call 0161 220 1763</a>
     </div>
     <div class="lp-badges">
@@ -1058,8 +1107,8 @@ form.enq{display:grid;gap:18px;align-content:start}
         <p>Yes — HMOs and single lets are our core business, for both professionals and students, across
           Salford and Greater Manchester. That includes licence applications and renewals, selective
           licensing, preparing a property to the required standard, and HMO conversion work.</p></details>
-      <details><summary>How quickly will I hear back about a valuation?</summary>
-        <p>Usually within one working day. The valuation is free, carries no obligation, and is based on
+      <details><summary>How quickly will I hear back about a professional valuation?</summary>
+        <p>Usually within one working day. The professional valuation is free, carries no obligation, and is based on
           comparable lettings we have actually agreed nearby — an achievable rent rather than a flattering
           one that leaves your property empty.</p></details>
     </div>
@@ -1071,12 +1120,36 @@ form.enq{display:grid;gap:18px;align-content:start}
   <p>A professional valuation costs nothing and commits you to nothing — just an honest number from the team
     that lets homes on your street.</p>
   <div class="ctas">
-    <a class="btn btn--fill" href="megacity-skyline#valuation-form">Book a professional valuation</a>
+    <a class="btn btn--fill" href="megacity-skyline#professional valuation-form">Book a professional valuation</a>
     <a class="btn" href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
   </div>
 </section>
 
 </main>
+
+<div class="fab" aria-label="Contact options">
+  <a href="https://wa.me/447804900719" target="_blank" rel="noopener" class="fab-b fab-wa" data-label="WhatsApp" aria-label="WhatsApp us">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1.1 2.2-.2 3.7a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0 0-.2-.1-.3-.1z"/></svg></a>
+  <a href="tel:+441612201763" class="fab-b fab-call" data-label="Call" aria-label="Call 0161 220 1763">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg></a>
+  <a href="mailto:info@megacityproperties.co.uk" class="fab-b fab-mail" data-label="Email" aria-label="Email us">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg></a>
+</div>
+
+<footer class="footer">
+  <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
+  <div class="foot-grid">
+    <div>
+      <img src="assets/mcr/logo-white.png" alt="Megacity Properties" style="height:54px;width:auto;opacity:.96">
+      <p style="margin-top:14px;color:rgba(255,255,255,.65);font-size:13.5px;max-width:30ch">Letting Manchester homes since 2018 — trusted by families across the city.</p>
+      <div class="foot-social">
+        <a href="https://www.facebook.com/megacityproperties" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1z"/></svg></a>
+        <a href="https://www.linkedin.com/company/megacity-properties" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6.9 8.2H3.6V21h3.3V8.2zM5.2 3a1.9 1.9 0 1 0 0 3.9 1.9 1.9 0 0 0 0-3.9zM21 13.9c0-3.4-1.8-5-4.2-5-1.9 0-2.8 1.1-3.3 1.8V8.2H10.2V21h3.3v-7c0-1.5.8-2.4 2-2.4s1.9.8 1.9 2.4v7H21v-7.1z"/></svg></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.9c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.2-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.9s0-3.6.1-4.9C2.3 4 3.8 2.4 7.1 2.3c1.3 0 1.7-.1 4.9-.1zm0 5.1a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.9-7.9a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2z"/></svg></a>
+        <a href="https://www.tiktok.com/" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3v13.2a2.7 2.7 0 1 1-2.3-2.7v-3a5.7 5.7 0 1 0 5.3 5.7V9.1a6.6 6.6 0 0 0 3.7 1.2v-3a3.7 3.7 0 0 1-3.7-3.7V2z"/></svg></a>
+      </div>
+    </div>
+
 <footer class="footer">
   <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
   <div class="foot-grid">
@@ -1091,7 +1164,7 @@ form.enq{display:grid;gap:18px;align-content:start}
       </div>
     </div>
     <div><h4>Explore</h4>
-      <a href="#services">Services</a><a href="#process">The process</a><a href="#homes">Homes</a><a href="#landlords">Landlords</a><a href="#faq">FAQs</a><a href="#valuation-form">Professional valuation</a>
+      <a href="#services">Services</a><a href="#process">The process</a><a href="#homes">Homes</a><a href="#landlords">Landlords</a><a href="#faq">FAQs</a><a href="#professional valuation-form">Professional valuation</a>
     </div>
     <div><h4>Talk to us</h4>
       <a href="tel:+441612201763">0161 220 1763</a>

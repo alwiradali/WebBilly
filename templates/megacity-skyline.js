@@ -151,26 +151,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 
   /* process rail: pinned horizontal on desktop, scroll-driven on mobile */
   const track = $("#procTrack");
-  if (track && !matchMedia("(min-width: 901px)").matches) {
-    /* phones: vertical scroll slides the cards horizontally — a sticky
-       runway, no pinning, no jank on iOS */
-    const proc = $("#process"), view = $("#procView");
-    const dist = () => Math.max(0, track.scrollWidth - innerWidth + 40);
-    view.style.position = "sticky";
-    view.style.top = "17vh";
-    view.style.overflow = "clip";
-    const setup = () => { proc.style.height = (innerHeight * 0.9 + dist()) + "px"; };
-    setup();
-    addEventListener("resize", setup);
-    const drive = () => {
-      const r = proc.getBoundingClientRect();
-      const total = Math.max(1, r.height - innerHeight * 0.9);
-      const p = Math.max(0, Math.min(1, -r.top / total));
-      track.style.transform = "translateX(" + (-p * dist()) + "px)";
-    };
-    addEventListener("scroll", drive, { passive: true });
-    drive();
-  }
+  /* phones use native horizontal scroll-snap — a real finger swipe */
   if (track && matchMedia("(min-width: 901px)").matches) {
     const dist = () => Math.max(0, track.scrollWidth - innerWidth + 40);
     gsap.fromTo(track, { x: 0 }, {
