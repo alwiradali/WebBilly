@@ -104,6 +104,51 @@
   var AVAIL_OPTS = ["Available now", "Let agreed", "Coming soon", "From 1 September", "From 1 October", "From 1 November"];
   function opts(list) { return [["", "—"]].concat(list.map(function (v) { return [String(v), String(v)]; })); }
 
+
+  /* ── the listing writer: honest copy built ONLY from entered facts ──
+     No invented views, no imaginary features — it reads the structured
+     fields staff filled in and writes clean paragraphs from them. */
+  function aiWriteListing(p) {
+    var t = (p.type || "property").toLowerCase();
+    var isRoom = t.indexOf("room") !== -1;
+    var beds = p.beds && !isRoom ? p.beds + "-bedroom " : "";
+    var where = p.area ? " in " + p.area : "";
+    var bills = (p.priceLabel || "").toLowerCase().indexOf("bill") !== -1;
+    var seed = 0; String(p.id || "x").split("").forEach(function (c) { seed = (seed * 31 + c.charCodeAt(0)) % 997; });
+    var openers = isRoom ? [
+      "A " + t + here_(p) + ", part of a well-kept house share" + where + ".",
+      "A well-presented " + t + where + ", in a managed house share."
+    ] : [
+      "A " + beds + t + where + trailFurnish(p) + ".",
+      "A well-presented " + beds + t + where + trailFurnish(p) + "."
+    ];
+    function here_(q) { return q.furnishing ? ", " + q.furnishing.toLowerCase() : ""; }
+    function trailFurnish(q) { return q.furnishing ? ", " + q.furnishing.toLowerCase() : ""; }
+    var s1 = openers[seed % openers.length];
+    var bits = [];
+    if (p.baths && !isRoom) bits.push(p.baths + (+p.baths === 1 ? " bathroom" : " bathrooms"));
+    if (bills) bits.push("all bills included in the rent");
+    if (p.councilTaxBand) bits.push("council tax band " + p.councilTaxBand);
+    if (p.deposit) bits.push("deposit " + p.deposit);
+    var s2 = bits.length ? "The tenancy comes with " + bits.join(", ") + "." : "";
+    var s3 = p.availableFrom ? (p.availableFrom.toLowerCase() === "available now" ? "Available now — " : p.availableFrom + " — ") +
+      "viewings are accompanied by the Megacity team and arranged around you." :
+      "Viewings are accompanied by the Megacity team and arranged around you.";
+    var feats = (p.features || []).slice();
+    if (!feats.length) {
+      if (bills) feats.push("All bills included");
+      if (p.furnishing) feats.push(p.furnishing);
+      if (p.councilTaxBand) feats.push("Council tax band " + p.councilTaxBand);
+      if (p.area) feats.push(p.area + " location");
+    }
+    var fsent = feats.length ? (function (s) { return " " + s.charAt(0).toUpperCase() + s.slice(1) + "."; })(feats.slice(0, 3).join(", ").replace(/,([^,]*)$/, " and$1").toLowerCase()) : "";
+    return {
+      summary: (s1 + fsent).slice(0, 200),
+      description: [s1 + (s2 ? " " + s2 : ""), s3],
+      features: feats
+    };
+  }
+
   /* resolve "a.b.c" against an object */
   function setPath(root, path, value) {
     var parts = path.split("."), o = root;
@@ -143,6 +188,7 @@
       '<div class="mca-uprow"><img class="mca-thumb" alt="" src="' + esc(p.cover) + '">' +
       inp(base + "cover", p.cover) +
       '<button type="button" class="btn btn--ghost mca-up" data-upload="' + base + 'cover">Upload</button></div></div>' +
+      '<div class="field f-3"><button type="button" class="btn btn--ghost" data-ai-write style="justify-self:start">&#10024; Write the listing for me — from the details above</button></div>' +
       field("Card summary", area(base + "summary", p.summary), "f-3") +
       field("Description — blank line between paragraphs", area(base + "descriptionText", (p.description || []).join("\n\n")), "f-3") +
       field("Key features — one per line", area(base + "featuresText", (p.features || []).join("\n")), "f-3") +
@@ -305,6 +351,15 @@
       renderPropList(); renderPropForm(); queueSave();
     });
     $("#mcaPropForm").addEventListener("click", function (e) {
+      if (e.target.closest("[data-ai-write]")) {
+        var pw = state.properties[selected];
+        var out = aiWriteListing(pw);
+        pw.summary = out.summary;
+        pw.description = out.description;
+        pw.features = out.features;
+        renderPropForm(); queueSave();
+        return;
+      }
       if (e.target.closest("[data-prop-dup]")) {
         var c = clone(state.properties[selected]);
         c.id += "-copy"; c.name += " (copy)";
