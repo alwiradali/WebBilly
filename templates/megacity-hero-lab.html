@@ -129,7 +129,7 @@
         </div>
       </div>
 
-      <p class="cue">      <p class="cue">Scroll <i></i></p>
+      <p class="cue">Scroll <i></i></p>
     </div>
   </section>
 
@@ -148,356 +148,108 @@
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
   <script>
-  /* ══ THE JOURNEY HOME v2 — a continuous camera, not a slideshow ══
-     One projected world. The camera travels along Z; every scene is
-     geometry at a fixed depth. Corridor walls are drawn from YOUR
-     viewport edges to the NEXT portal's rectangle, so each space
-     physically connects to the one ahead — you pass through doorways,
-     nothing ever cross-fades. Photographs only appear as planes seen
-     through real openings. */
+  /* ══ THE JOURNEY HOME v3 — true frame-by-frame sequence ══
+     Apple-style: 96 pre-rendered cinematic frames (motion-blurred,
+     generated from the projected-world engine), a pinned canvas, and
+     ScrollTrigger scrubbing the frame index. Playback is pure frame
+     blitting — runs on anything. Frames stream in progressively; the
+     player never blocks on the network: it shows the nearest frame
+     already loaded. */
   (function () {
     document.body.classList.remove("no-js");
     var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     var cv = document.getElementById("labCanvas");
     var fallback = document.querySelector(".stage .fallback");
     var caps = Array.prototype.slice.call(document.querySelectorAll(".cap"));
-    if (!cv || !cv.getContext || !window.gsap || !window.ScrollTrigger) { staticMode(false); return; }
+    if (!cv || !cv.getContext || !window.gsap || !window.ScrollTrigger) { staticMode(); return; }
     gsap.registerPlugin(ScrollTrigger);
 
-    var SRC = {
-      sky:      { src: "assets/mcr/mcr-night.jpg",    w: 1920, h: 645  },
-      tower:    { src: "assets/mcr/lab-tower.jpg",    w: 847,  h: 1600 },
-      lobby:    { src: "assets/mcr/lab-lobby.jpg",    w: 1400, h: 933  },
-      interior: { src: "assets/mcr/lab-interior.jpg", w: 1600, h: 1067 }
-    };
-    var imgs = {}, loaded = 0, want = 4, failed = false;
-    Object.keys(SRC).forEach(function (k) {
-      var im = new Image();
-      im.onload = function () { loaded++; if (loaded === want) start(); };
-      im.onerror = function () { failed = true; staticMode(false); };
-      im.src = SRC[k].src;
-      imgs[k] = im;
-    });
+    var N = 96, FW = 1536, FH = 864;
+    var frames = new Array(N), ready = new Array(N), highest = -1;
+    function src(i) { return "assets/mcr/seq/f" + String(i).padStart(3, "0") + ".jpg"; }
 
-    var cx = cv.getContext("2d"), W = 0, H = 0, DPR = 1, CX = 0, CY = 0;
+    var cx = cv.getContext("2d"), W = 0, H = 0, DPR = 1;
     function size() {
       DPR = Math.min(devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight;
-      CX = W / 2; CY = H / 2;
       cv.width = W * DPR; cv.height = H * DPR;
       cx.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
-    function clamp01(v) { return Math.max(0, Math.min(1, v)); }
-    function seg(p, a, b) { return clamp01((p - a) / (b - a)); }
-    function eio(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    /* ── the world ─────────────────────────────────────────────────
-       camera z: 0 → 88.  F = focal length. */
-    var F = 8, cam = 0, sway = 0;
-    var Z = { facade: 34, glass: 36, lobby: 48, aptdoor: 80, interior: 90 };
-
-    /* a plane at depth z with world-height wh (1 = viewport at d=F):
-       returns its projected screen rect, or null when behind camera */
-    function planeRect(z, wh, aspect, yBias) {
-      var d = z - cam;
-      if (d < 0.25) return null;
-      var s = F / d;
-      var h = H * wh * s;
-      var w = h * aspect;
-      var swx = sway * Math.min(2.2, s);
-      return { x: CX - w / 2 + swx, y: CY - h / 2 - h * (yBias || 0), w: w, h: h, s: s, d: d };
-    }
-    function sub(r, fx, fy, fw, fh) {           /* rect fraction of a rect */
-      return { x: r.x + r.w * fx, y: r.y + r.h * fy, w: r.w * fw, h: r.h * fh };
-    }
-    function drawPlaneImg(im, r, alpha) {
-      cx.globalAlpha = alpha == null ? 1 : alpha;
-      cx.drawImage(im, r.x, r.y, r.w, r.h);
-      cx.globalAlpha = 1;
-    }
-    function punch(im, r, hole, srcCrop) {      /* image plane with a doorway hole */
-      cx.save();
-      cx.beginPath();
-      cx.rect(r.x, r.y, r.w, r.h);
-      cx.rect(hole.x, hole.y, hole.w, hole.h);
-      cx.clip("evenodd");
-      if (srcCrop) cx.drawImage(im, srcCrop[0], srcCrop[1], srcCrop[2], srcCrop[3], r.x, r.y, r.w, r.h);
-      else cx.drawImage(im, r.x, r.y, r.w, r.h);
-      cx.restore();
+    var lastDrawn = -1;
+    function draw(i, force) {
+      /* nearest loaded frame at or below the target — never a stall */
+      var j = i;
+      while (j > 0 && !ready[j]) j--;
+      if (!ready[j]) return;
+      if (j === lastDrawn && !force) return;
+      lastDrawn = j;
+      var sc = Math.max(W / FW, H / FH);
+      var dw = FW * sc, dh = FH * sc;
+      cx.drawImage(frames[j], (W - dw) / 2, (H - dh) / 2, dw, dh);
     }
 
-    /* corridor: four gradient walls joining nearRect → farRect,
-       so the space between you and the next portal is real geometry */
-    function corridor(near, far, wallCol, floorCol, ceilCol) {
-      function quad(a, b, c, d2, fill) {
-        cx.beginPath(); cx.moveTo(a[0], a[1]); cx.lineTo(b[0], b[1]);
-        cx.lineTo(c[0], c[1]); cx.lineTo(d2[0], d2[1]); cx.closePath();
-        cx.fillStyle = fill; cx.fill();
-      }
-      var nx0 = near.x, nx1 = near.x + near.w, ny0 = near.y, ny1 = near.y + near.h;
-      var fx0 = far.x,  fx1 = far.x + far.w,  fy0 = far.y,  fy1 = far.y + far.h;
-      quad([nx0, ny0], [fx0, fy0], [fx0, fy1], [nx0, ny1], wallCol);   /* left  */
-      quad([nx1, ny0], [fx1, fy0], [fx1, fy1], [nx1, ny1], wallCol);   /* right */
-      quad([nx0, ny0], [nx1, ny0], [fx1, fy0], [fx0, fy0], ceilCol);   /* ceil  */
-      quad([nx0, ny1], [nx1, ny1], [fx1, fy1], [fx0, fy1], floorCol);  /* floor */
-    }
-    /* décor along the corridor at depth zi, offset t across the wall */
-    function wallSpot(zi, zFar, side, upFrac, near, far) {
-      var d = zi - cam;
-      if (d < 0.5) return null;
-      var u = clamp01(((1 / d) - (1 / (zFar - cam))) / ((1 / 0.9) - (1 / (zFar - cam))));
-      var fxE = side < 0 ? far.x : far.x + far.w;
-      var nxE = side < 0 ? near.x : near.x + near.w;
-      var x = lerp(fxE, nxE, u);
-      var yTop = lerp(far.y, near.y, u), yBot = lerp(far.y + far.h, near.y + near.h, u);
-      return { x: x, y: lerp(yTop, yBot, upFrac), k: lerp(0.12, 1.6, u), u: u };
-    }
-
-    var last = -1;
-    function render(p) {
-      if (Math.abs(p - last) < 0.0018 && last >= 0) return;
-      last = p;
-      cam = p * 88;
-      sway = Math.sin(p * Math.PI * 5.2) * W * 0.006 * (1 - p * 0.7);
-      cx.fillStyle = "#07060c";
-      cx.fillRect(0, 0, W, H);
-      var view = { x: -W * 0.06, y: -H * 0.06, w: W * 1.12, h: H * 1.12 };
-
-      /* ── deepest first: the apartment interior.
-             While distant it is a plane seen through the doorway; once it
-             reaches the viewport it becomes the room itself, with a gentle
-             capped settle so the arrival never over-zooms ── */
-      var ri = planeRect(Z.interior, 1.7, SRC.interior.w / SRC.interior.h, 0);
-      if (ri) {
-        if (ri.h < H * 1.02) {
-          drawPlaneImg(imgs.interior, ri);
-        } else {
-          var zsettle = Math.min(1.30, Math.max(1, ri.h / H * 0.42 + 0.58));
-          var sc2 = Math.max(W / SRC.interior.w, H / SRC.interior.h) * zsettle;
-          var dw2 = SRC.interior.w * sc2, dh2i = SRC.interior.h * sc2;
-          cx.drawImage(imgs.interior, CX - dw2 / 2 + sway, CY - dh2i / 2, dw2, dh2i);
-        }
-      }
-
-      /* ── apartment door plane (white panelled, leaf swings open) ── */
-      var rd = planeRect(Z.aptdoor, 1.25, 0.9, 0);
-      if (rd) {
-        var hole = sub(rd, 0.335, 0.14, 0.33, 0.80);
-        /* wall around the door */
-        cx.save();
-        cx.beginPath(); cx.rect(rd.x - W, rd.y - H, rd.w + 2 * W, rd.h + 2 * H);
-        cx.rect(hole.x, hole.y, hole.w, hole.h); cx.clip("evenodd");
-        var wg = cx.createLinearGradient(0, rd.y, 0, rd.y + rd.h);
-        wg.addColorStop(0, "#241f2e"); wg.addColorStop(1, "#161320");
-        cx.fillStyle = wg;
-        cx.fillRect(rd.x - W, rd.y - H, rd.w + 2 * W, rd.h + 2 * H);
-        cx.restore();
-        /* architrave */
-        cx.strokeStyle = "rgba(201,163,95,.55)"; cx.lineWidth = Math.max(1, hole.w * 0.02);
-        cx.strokeRect(hole.x - hole.w * 0.03, hole.y - hole.w * 0.03, hole.w * 1.06, hole.h + hole.w * 0.05);
-        /* warm spill from inside */
-        var doorOpen = eio(seg(cam, 70.5, 77.5));
-        var lg = cx.createRadialGradient(hole.x + hole.w / 2, hole.y + hole.h * 0.55, 1,
-                                         hole.x + hole.w / 2, hole.y + hole.h * 0.55, hole.w * (0.8 + doorOpen));
-        lg.addColorStop(0, "rgba(255,214,150," + (0.30 * (1 - doorOpen * 0.6)) + ")");
-        lg.addColorStop(1, "rgba(255,214,150,0)");
-        cx.fillStyle = lg;
-        cx.fillRect(hole.x - hole.w, hole.y - hole.w, hole.w * 3, hole.h + hole.w * 2);
-        /* the swinging leaf: narrows as it opens away from us */
-        var leafW = hole.w * (1 - doorOpen * 0.96);
-        if (leafW > 1) {
-          var dg = cx.createLinearGradient(hole.x, 0, hole.x + leafW, 0);
-          dg.addColorStop(0, "#efe9dc"); dg.addColorStop(1, "#c9c1ae");
-          cx.fillStyle = dg;
-          cx.fillRect(hole.x, hole.y, leafW, hole.h);
-          cx.fillStyle = "rgba(0,0,0,.14)";
-          for (var pnl = 0; pnl < 2; pnl++)
-            cx.fillRect(hole.x + leafW * 0.16, hole.y + hole.h * (0.1 + pnl * 0.42), leafW * 0.68, hole.h * 0.3);
-          cx.fillStyle = "#c9a35f";
-          cx.fillRect(hole.x + leafW * 0.86, hole.y + hole.h * 0.5, Math.max(2, leafW * 0.045), hole.h * 0.045);
-        }
-      }
-
-      /* ── the hallway: real geometry joining you (or the arch) to the door ── */
-      if (rd && cam > 40) {
-        var arch = planeRect(Z.lobby, 1.0, SRC.lobby.w / SRC.lobby.h, 0);
-        var nearRect = (arch && cam < Z.lobby - 0.4) ? sub(arch, 0.36, 0.30, 0.28, 0.68) : view;
-        corridor(nearRect, rd, "#1b1726", "#120f1a", "#0f0d17");
-        /* skirting + picture frames + sconces flowing past */
-        for (var zi = 46; zi < Z.aptdoor; zi += 4.25) {
-          if (zi <= cam + 0.6) continue;
-          for (var sdir = -1; sdir <= 1; sdir += 2) {
-            var sc = wallSpot(zi, Z.aptdoor, sdir, 0.42, nearRect, rd);
-            if (!sc) continue;
-            var fw = 26 * sc.k, fh = 34 * sc.k;
-            cx.fillStyle = "rgba(201,163,95," + (0.16 + 0.1 * sc.u) + ")";
-            cx.fillRect(sc.x - fw / 2, sc.y - fh / 2, fw, fh);
-            var gl = wallSpot(zi + 2, Z.aptdoor, sdir, 0.30, nearRect, rd);
-            if (gl) {
-              var g2 = cx.createRadialGradient(gl.x, gl.y, 0, gl.x, gl.y, 30 * gl.k);
-              g2.addColorStop(0, "rgba(255,208,140,.5)"); g2.addColorStop(1, "rgba(255,208,140,0)");
-              cx.fillStyle = g2;
-              cx.fillRect(gl.x - 30 * gl.k, gl.y - 30 * gl.k, 60 * gl.k, 60 * gl.k);
-            }
-          }
-        }
-        /* floor sheen */
-        var fs = cx.createLinearGradient(0, rd.y + rd.h, 0, view.y + view.h);
-        fs.addColorStop(0, "rgba(255,214,150,.10)"); fs.addColorStop(1, "rgba(255,214,150,0)");
-        cx.fillStyle = fs;
-        cx.beginPath();
-        cx.moveTo(nearRect.x, view.y + view.h); cx.lineTo(rd.x, rd.y + rd.h);
-        cx.lineTo(rd.x + rd.w, rd.y + rd.h); cx.lineTo(nearRect.x + nearRect.w, view.y + view.h);
-        cx.closePath(); cx.fill();
-      }
-
-      /* ── the lobby wall — a photograph with a doorway through to the corridor ── */
-      var rl = planeRect(Z.lobby, 1.0, SRC.lobby.w / SRC.lobby.h, 0);
-      if (rl && cam < Z.lobby - 0.4) {
-        var ah = sub(rl, 0.36, 0.30, 0.28, 0.68);
-        /* warm light just beyond the opening so it reads as a lit corridor */
-        var ag = cx.createLinearGradient(0, ah.y, 0, ah.y + ah.h);
-        ag.addColorStop(0, "rgba(64,52,72,.9)");
-        ag.addColorStop(0.75, "rgba(150,112,72,.55)");
-        ag.addColorStop(1, "rgba(255,206,140,.5)");
-        cx.fillStyle = ag;
-        cx.fillRect(ah.x, ah.y, ah.w, ah.h);
-        punch(imgs.lobby, rl, ah);
-        cx.strokeStyle = "rgba(201,163,95,.6)";
-        cx.lineWidth = Math.max(1.5, ah.w * 0.03);
-        cx.strokeRect(ah.x - ah.w * 0.015, ah.y - ah.w * 0.015, ah.w * 1.03, ah.h + ah.w * 0.03);
-      }
-
-      /* ── the glass doors — they part as you reach them ── */
-      if (cam < Z.glass - 0.3) {
-        var rg = planeRect(Z.glass, 0.86, 0.78, 0.02);
-        if (rg) {
-          var open = eio(seg(cam, 31.5, 35.2));
-          for (var pside = -1; pside <= 1; pside += 2) {
-            var pw2 = rg.w / 2, px = CX + sway - (pside < 0 ? pw2 : 0) + pside * open * pw2 * 1.12;
-            var pg = cx.createLinearGradient(px, rg.y, px + pw2, rg.y + rg.h);
-            pg.addColorStop(0, "rgba(190,215,235,.20)");
-            pg.addColorStop(0.5, "rgba(160,190,215,.10)");
-            pg.addColorStop(1, "rgba(190,215,235,.22)");
-            cx.fillStyle = pg;
-            cx.fillRect(px, rg.y, pw2, rg.h);
-            cx.strokeStyle = "rgba(230,240,250,.35)";
-            cx.lineWidth = Math.max(1, rg.w * 0.006);
-            cx.strokeRect(px, rg.y, pw2, rg.h);
-            cx.fillStyle = "rgba(201,163,95,.9)";
-            cx.fillRect(px + (pside < 0 ? pw2 * 0.88 : pw2 * 0.06), rg.y + rg.h * 0.38, Math.max(2, rg.w * 0.012), rg.h * 0.24);
-            cx.save();
-            cx.beginPath(); cx.rect(px, rg.y, pw2, rg.h); cx.clip();
-            cx.fillStyle = "rgba(255,255,255,.05)";
-            cx.beginPath();
-            cx.moveTo(px - rg.w * 0.2, rg.y + rg.h);
-            cx.lineTo(px + pw2 * 0.5, rg.y);
-            cx.lineTo(px + pw2 * 0.72, rg.y);
-            cx.lineTo(px + pw2 * 0.02, rg.y + rg.h);
-            cx.closePath(); cx.fill();
-            cx.restore();
-          }
-        }
-      }
-
-      /* ── the tower façade — the doorway is cut into the photograph.
-             While far away only the building's lower façade shows (no sky),
-             so it reads as the street's end wall, not a pasted photo ── */
-      var crop = eio(seg(cam, 20, 30));            /* 0 = façade-only, 1 = full tower */
-      var srcY = SRC.tower.h * 0.40 * (1 - crop);
-      var srcH = SRC.tower.h - srcY;
-      var fAspect = SRC.tower.w / srcH * SRC.tower.h / SRC.tower.h;
-      var rf = planeRect(Z.facade, 2.1 * (srcH / SRC.tower.h), SRC.tower.w / srcH, -0.32 * crop);
-      if (rf && cam < Z.facade - 0.35) {
-        punch(imgs.tower, rf, sub(rf, 0.34, 0.855, 0.32, 0.13), [0, srcY, SRC.tower.w, srcH]);
-        var dh2 = sub(rf, 0.34, 0.855, 0.32, 0.13);
-        var eg = cx.createLinearGradient(0, dh2.y - dh2.h, 0, dh2.y + dh2.h);
-        eg.addColorStop(0, "rgba(255,214,150,0)");
-        eg.addColorStop(1, "rgba(255,214,150,.18)");
-        cx.fillStyle = eg;
-        cx.fillRect(dh2.x - dh2.w * 0.2, dh2.y - dh2.h, dh2.w * 1.4, dh2.h * 2);
-      }
-
-      /* ── the street: skyline ahead, canyon walls joining you to the façade ── */
-      if (cam < Z.facade - 0.35 && rf) {
-        var doorRect = sub(rf, 0.02, 0.02, 0.96, 0.96);
-        /* city glow above the street's end — atmosphere, not a pasted stripe */
-        if (cam < 24) {
-          var hz = cx.createLinearGradient(0, doorRect.y - H * 0.2, 0, doorRect.y + doorRect.h * 0.3);
-          hz.addColorStop(0, "rgba(120,110,160," + 0.35 * (1 - seg(cam, 10, 22)) + ")");
-          hz.addColorStop(1, "rgba(120,110,160,0)");
-          cx.fillStyle = hz;
-          cx.fillRect(0, 0, W, H);
-        }
-        corridor(view, doorRect, "#100d18", "#0b0913", "#080711");
-        for (var zj = 3; zj < Z.facade - 1; zj += 4.5) {
-          if (zj <= cam + 0.7) continue;
-          for (var sd2 = -1; sd2 <= 1; sd2 += 2) {
-            var wpt = wallSpot(zj, Z.facade, sd2, 0.34, view, doorRect);
-            if (!wpt) continue;
-            var wwd = 30 * wpt.k, wht = 44 * wpt.k;
-            cx.fillStyle = "rgba(255,196,110," + (0.10 + 0.14 * wpt.u) + ")";
-            cx.fillRect(wpt.x - wwd / 2, wpt.y - wht / 2, wwd, wht);
-            var lp = wallSpot(zj + 2.2, Z.facade, sd2, 0.86, view, doorRect);
-            if (lp) {
-              var g3 = cx.createRadialGradient(lp.x, lp.y, 0, lp.x, lp.y, 26 * lp.k);
-              g3.addColorStop(0, "rgba(255,220,160,.42)"); g3.addColorStop(1, "rgba(255,220,160,0)");
-              cx.fillStyle = g3;
-              cx.fillRect(lp.x - 26 * lp.k, lp.y - 26 * lp.k, 52 * lp.k, 52 * lp.k);
-            }
-          }
-        }
-      }
-
-      /* ── reading scrim under the visible caption ── */
-      var capVis = 0;
-      for (var ci = 0; ci < WINDOWS.length; ci++) {
-        var cw = WINDOWS[ci];
-        var v = seg(p, cw[0], cw[0] + 0.05) * (ci === WINDOWS.length - 1 ? 1 : (1 - seg(p, cw[1] - 0.05, cw[1])));
-        if (v > capVis) capVis = v;
-      }
-      if (capVis > 0.01) {
-        var sg = cx.createLinearGradient(0, H, W * 0.62, H * 0.35);
-        sg.addColorStop(0, "rgba(7,6,12," + (0.62 * capVis) + ")");
-        sg.addColorStop(1, "rgba(7,6,12,0)");
-        cx.fillStyle = sg;
-        cx.fillRect(0, 0, W, H);
-      }
+    var progress = 0;
+    function onProgress(p) {
+      progress = p;
+      draw(Math.round(p * (N - 1)));
+      captions(p);
     }
 
     var WINDOWS = [[0.00, 0.20], [0.24, 0.36], [0.38, 0.50], [0.56, 0.78], [0.87, 1.01]];
     function captions(p) {
+      function segl(x, a, b) { return Math.max(0, Math.min(1, (x - a) / (b - a))); }
       for (var i = 0; i < caps.length; i++) {
         var w = WINDOWS[i];
-        var vis = seg(p, w[0], w[0] + 0.045) * (1 - seg(p, w[1] - 0.045, w[1]));
-        if (i === caps.length - 1) vis = seg(p, w[0], w[0] + 0.06);
+        var vis = segl(p, w[0], w[0] + 0.045) * (1 - segl(p, w[1] - 0.045, w[1]));
+        if (i === caps.length - 1) vis = segl(p, w[0], w[0] + 0.06);
         caps[i].style.opacity = vis;
         caps[i].style.transform = "translateY(" + (18 * (1 - vis)) + "px)";
         if (i === caps.length - 1) caps[i].style.pointerEvents = vis > 0.6 ? "auto" : "none";
       }
     }
 
-    function start() {
-      if (failed) return;
-      fallback.style.display = "none";
-      size();
-      if (reduce) { staticMode(true); return; }
-      render(0); captions(0);
-      ScrollTrigger.create({
-        trigger: "#journey", start: "top top", end: "bottom bottom", scrub: 0.3,
-        onUpdate: function (self) { render(self.progress); captions(self.progress); }
-      });
-      addEventListener("resize", function () {
-        size(); last = -1;
-        var st = ScrollTrigger.getAll()[0];
-        render(st ? st.progress : 0);
-      });
+    /* progressive loader: first frame instantly, then stream the rest */
+    function load(i, cb) {
+      if (frames[i]) return;
+      var im = new Image();
+      im.onload = function () {
+        ready[i] = true;
+        if (i > highest) highest = i;
+        if (cb) cb();
+        /* repaint if the visitor is waiting on this frame */
+        if (Math.round(progress * (N - 1)) >= i) draw(Math.round(progress * (N - 1)), true);
+      };
+      im.onerror = function () { if (i === 0) staticMode(); };
+      im.src = src(i);
+      frames[i] = im;
     }
-    function staticMode(canvasOk) {
+    function streamFrom(i) {
+      var batch = 0;
+      (function next() {
+        while (i < N && frames[i]) i++;
+        if (i >= N) return;
+        batch++;
+        load(i, batch % 6 === 0 ? function () { setTimeout(next, 0); } : null);
+        if (batch % 6 !== 0) { i++; next(); }
+        else i++;
+      })();
+    }
+
+    size();
+    load(0, function () {
+      fallback.style.display = "none";
+      if (reduce) { load(N - 1, function () { lastDrawn = -1; draw(N - 1, true); }); staticCaps(); return; }
+      draw(0, true); captions(0);
+      streamFrom(1);
+      ScrollTrigger.create({
+        trigger: "#journey", start: "top top", end: "bottom bottom", scrub: 0.4,
+        onUpdate: function (self) { onProgress(self.progress); }
+      });
+      addEventListener("resize", function () { size(); lastDrawn = -1; draw(Math.round(progress * (N - 1)), true); });
+    });
+
+    function staticCaps() {
       document.querySelector(".journey").style.height = "100vh";
-      if (canvasOk) { size(); last = -1; render(1); }
-      else if (fallback) { fallback.style.display = ""; }
       caps.forEach(function (c, i) {
         var isFinal = i === caps.length - 1;
         c.style.opacity = isFinal ? 1 : 0;
@@ -506,6 +258,10 @@
       });
       var cue = document.querySelector(".cue");
       if (cue) cue.style.display = "none";
+    }
+    function staticMode() {
+      if (fallback) fallback.style.display = "";
+      staticCaps();
     }
   })();
   </script>
