@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Megacity Properties — Professional letting · Trusted management</title>
-<meta name="description" content="Megacity Properties Ltd — Manchester &amp; Salford lettings and property management. Professional letting · Trusted management.">
-<meta name="theme-color" content="#23264A">
+<title>Landlords &amp; Investors — Megacity Properties Manchester &amp; Salford</title>
+<meta name="description" content="ARLA Propertymark protected letting and property management in Salford &amp; Greater Manchester. How your rent is protected, how your property is protected, how we find and vet good tenants, and what every accreditation actually means.">
+<meta name="theme-color" content="#211D50">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -244,15 +244,13 @@ body.is-ready .veil{display:none}
 
 /* cinematic video hero */
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
-.hero-media picture{position:absolute;inset:0;display:block;width:100%;height:100%}
-.hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;display:block;
-  object-fit:cover;object-position:center 52%;animation:herodrift 30s ease-in-out infinite alternate}
-@media (max-width:760px){.hero-media img.hero-still{object-position:center 46%}}
-@keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.07)}}
-@media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
-.hero-media::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(14,11,43,.50) 0%,rgba(14,11,43,.06) 40%,rgba(14,11,43,.22) 72%,rgba(14,11,43,.80) 100%),
-             linear-gradient(102deg,rgba(14,11,43,.74) 0%,rgba(14,11,43,.40) 46%,rgba(14,11,43,.04) 78%,transparent 100%)}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,11,43,.55),rgba(14,11,43,.18) 45%,rgba(14,11,43,.78))}
+.hero-media picture,.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}
+.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}
+@media (max-width:760px){.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}}
+@keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.hero-media img.hero-still{object-fit:cover;object-position:center 55%;animation:herodrift 30s ease-in-out infinite alternate}}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,46,.6),rgba(20,22,46,.26) 45%,rgba(20,22,46,.74) 100%)}
 .hero--cine h1{color:#fff}
 .hero--cine h1 em{color:var(--sky)}
 .hero--cine .hero-kicker{color:var(--sky)}
@@ -495,14 +493,107 @@ form.enq{display:grid;gap:18px;align-content:start}
 .footer-word em{font-style:italic}
 .footer-in a:hover{color:var(--sky-deep)}
 </style>
+<style>
+.lp-hero{position:relative;padding:150px var(--gut) 90px;background:var(--grad);color:#fff;overflow:clip}
+.lp-hero::after{content:"";position:absolute;inset:0;background:url('assets/mcr/hero-aerial-wide.jpg') center/cover;opacity:.17;mix-blend-mode:luminosity}
+.lp-hero-in{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto}
+.lp-hero .no{font:800 11px/1 var(--ff-u);letter-spacing:.28em;text-transform:uppercase;color:var(--blue-lift);margin-bottom:20px}
+.lp-hero h1{font:400 clamp(38px,6.4vw,84px)/1.02 var(--ff-d);letter-spacing:-.015em;max-width:16ch}
+.lp-hero h1 em{font-style:italic;color:var(--blue-lift)}
+.lp-hero p{margin-top:22px;max-width:56ch;font-size:clamp(15px,1.4vw,18.5px);color:rgba(255,255,255,.8)}
+.lp-hero .ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.lp-badges{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap;align-items:center}
+.lp-badges img{height:52px;width:auto;background:#fff;border-radius:9px;padding:8px 12px}
+
+.sec{padding:11vh var(--gut)}
+.sec--tint{background:var(--surface)}
+.sec--dark{background:var(--navy-ink);color:#fff}
+.sec-in{max-width:var(--maxw);margin:0 auto}
+.sec .no{font:800 10.5px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+.sec--dark .no{color:var(--blue-lift)}
+.sec h2{font:400 clamp(30px,4.4vw,58px)/1.06 var(--ff-d);letter-spacing:-.012em}
+.sec h2 em{font-style:italic;color:var(--blue)}
+.sec--dark h2 em{color:var(--blue-lift)}
+.sec .lede{margin-top:20px;max-width:62ch;color:var(--mut);font-size:16px}
+.sec--dark .lede{color:rgba(255,255,255,.76)}
+
+.cards{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 28px;
+  box-shadow:0 6px 26px rgba(14,11,43,.05)}
+.sec--dark .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.card .ic{width:48px;height:48px;border-radius:12px;background:var(--grad);display:grid;place-items:center;margin-bottom:20px}
+.card .ic svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.9}
+.card h3{font:500 clamp(20px,2.1vw,25px)/1.2 var(--ff-d);margin-bottom:12px}
+.card p{color:var(--mut);font-size:14.8px;line-height:1.68}
+.sec--dark .card p{color:rgba(255,255,255,.74)}
+.card ul{margin:14px 0 0;list-style:none}
+.card li{position:relative;padding-left:24px;margin-bottom:9px;font-size:14.5px;color:var(--mut);line-height:1.6}
+.sec--dark .card li{color:rgba(255,255,255,.74)}
+.card li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;background:var(--blue);transform:rotate(45deg)}
+
+/* accreditation explainers — big real logos on white */
+.acc{display:grid;gap:22px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.acc-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 14px 40px rgba(14,11,43,.10);
+  border:1px solid var(--line);display:flex;flex-direction:column}
+.acc-logo{background:#fff;padding:30px 26px 22px;display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.acc-logo img{height:88px;width:auto;max-width:100%;object-fit:contain}
+.acc-body{padding:26px 28px 30px}
+.acc-body h3{font:500 21px/1.25 var(--ff-d);color:var(--navy-ink);margin-bottom:6px}
+.acc-body .tag{font:700 10px/1 var(--ff-u);letter-spacing:.2em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:block}
+.acc-body p{color:var(--mut);font-size:14.6px;line-height:1.7}
+.acc-body p+p{margin-top:10px}
+
+.steps{counter-reset:s;display:grid;gap:18px;margin-top:44px}
+.stp{position:relative;padding:26px 28px 26px 84px;background:#fff;border:1px solid var(--line);border-radius:16px}
+.sec--dark .stp{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.stp::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:28px;top:26px;
+  font:700 13px/1 var(--ff-u);color:#fff;background:var(--grad);width:38px;height:38px;border-radius:10px;display:grid;place-items:center}
+.stp h4{font:600 16.5px/1.35 var(--ff-u);margin-bottom:7px}
+.stp p{color:var(--mut);font-size:14.6px;line-height:1.68}
+.sec--dark .stp p{color:rgba(255,255,255,.72)}
+
+.fees{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.fee{background:#fff;border:1px solid var(--line);border-radius:20px;padding:34px 30px;position:relative;overflow:hidden}
+.fee--hero{background:var(--grad);color:#fff;border-color:transparent}
+.fee .lbl{font:800 10.5px/1 var(--ff-u);letter-spacing:.24em;text-transform:uppercase;color:var(--blue)}
+.fee--hero .lbl{color:var(--blue-lift)}
+.fee .amt{font:400 clamp(38px,4.6vw,54px)/1 var(--ff-d);margin:16px 0 6px}
+.fee .sub{font-size:13.5px;color:var(--mut)}
+.fee--hero .sub{color:rgba(255,255,255,.72)}
+.fee ul{list-style:none;margin:22px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+.fee--hero ul{border-color:rgba(255,255,255,.2)}
+.fee li{position:relative;padding-left:24px;margin-bottom:9px;font-size:14.2px;color:var(--mut);line-height:1.55}
+.fee--hero li{color:rgba(255,255,255,.82)}
+.fee li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--blue);transform:rotate(45deg)}
+.fee--hero li::before{background:var(--blue-lift)}
+
+.blog{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.post{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.post .im{aspect-ratio:16/10;overflow:hidden}
+.post .im img{width:100%;height:100%;object-fit:cover}
+.post .bd{padding:24px 24px 28px}
+.post .k{font:700 10px/1 var(--ff-u);letter-spacing:.2em;text-transform:uppercase;color:var(--blue);margin-bottom:12px;display:block}
+.post h3{font:500 19px/1.3 var(--ff-d);margin-bottom:10px}
+.post p{color:var(--mut);font-size:14.2px;line-height:1.65}
+
+.lp-faq{margin-top:40px;display:grid;gap:12px;max-width:900px}
+.lp-faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 24px}
+.lp-faq summary{cursor:pointer;list-style:none;font:600 16px/1.45 var(--ff-u);padding:20px 34px 20px 0;position:relative}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);
+  font:400 26px/1 var(--ff-d);color:var(--blue);transition:transform .25s}
+.lp-faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.lp-faq p{padding:0 0 22px;color:var(--mut);font-size:15px;line-height:1.72}
+
+.endcta{background:var(--grad);color:#fff;padding:12vh var(--gut);text-align:center}
+.endcta h2{font:400 clamp(32px,4.8vw,60px)/1.06 var(--ff-d)}
+.endcta h2 em{font-style:italic;color:var(--blue-lift)}
+.endcta p{margin:20px auto 0;max-width:52ch;color:rgba(255,255,255,.8)}
+.endcta .ctas{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+</style>
 </head>
-<body class="cine">
+<body>
 <a class="skip" href="#main">Skip to content</a>
-
-<div class="veil" aria-hidden="true"><i></i><i></i>
-  <img src="assets/mcr/logo.png" alt="" style="width:min(240px,56vw);position:relative">
-</div>
-
 <header class="nav is-solid" id="nav">
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="megamenu">
     <span></span><span></span><span></span></button>
@@ -611,365 +702,381 @@ form.enq{display:grid;gap:18px;align-content:start}
   </div>
 </div>
 
-<nav class="rail" id="rail" aria-label="Page progress"></nav>
-
 <main id="main">
 
-<!-- ══ HERO ══ -->
-<section class="hero hero--cine" id="top" data-rail="Top">
-  <div class="hero-media" aria-hidden="true">
-    <picture>
-      <source media="(max-width:760px)" srcset="assets/mcr/hero-aerial.jpg">
-      <img src="assets/mcr/hero-aerial-wide.jpg" alt="" class="hero-still" fetchpriority="high">
-    </picture>
-  </div>
-  <p class="hero-kicker">Professional letting · Manchester &amp; Salford</p>
-  <h1>
-    <span class="ln"><span>Trusted</span></span>
-    <span class="ln"><span><em>management.</em></span></span>
-  </h1>
-  <p class="hero-sub">Megacity Properties is an ARLA Propertymark agency letting and managing homes
-    across Manchester and Salford — with the presentation, the paperwork and the people done properly.</p>
-  <p style="margin-top:14px;font:600 12px/1.6 var(--ff-u);letter-spacing:.14em;text-transform:uppercase;color:var(--sky)">Letting Manchester homes since 2018 &middot; Trusted by families across the city</p>
-  <div class="hero-ctas">
-    <a class="btn btn--fill magnet" href="#landlords">I'm a landlord
-      <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></a>
-    <a class="btn btn--ghost magnet" href="#homes">Find a home
-      <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></a>
-  </div>
-  <div class="hero-foot">
-    <p class="scrollcue"><i></i> Scroll</p>
-    <div class="marq" id="areas" aria-hidden="true"><div class="marq-track" id="marq">
-      <span>Cheetham Hill <b></b></span><span>Salford <b></b></span><span>Broughton <b></b></span>
-      <span>Prestwich <b></b></span><span>Crumpsall <b></b></span><span>Strangeways <b></b></span>
-      <span>Ancoats <b></b></span><span>City Centre <b></b></span>
-    </div></div>
-  </div>
-</section>
-
-<section class="offer" aria-label="Current offers">
-  <div class="offer-in">
-    <p><b>New landlord offer</b> — Tenant Find <b>&pound;295</b> inc. VAT <s>&pound;495</s> &nbsp;&middot;&nbsp; Full management <b>8%</b> <s>10%</s></p>
-    <a href="#valuation-form">Book your professional valuation &rarr;</a>
-  </div>
-</section>
-
-<section class="asearch" aria-label="Search homes by area">
-  <div class="asearch-in">
-    <h3>Find a home</h3>
-    <form id="areaSearch" role="search">
-      <select id="asArea" aria-label="Area">
-        <option value="">All areas</option>
-        <option>Salford</option><option>Cheetham Hill</option><option>Broughton</option>
-        <option>Prestwich</option><option>Crumpsall</option><option>City Centre</option>
-        <option>Old Trafford</option><option>Ancoats</option><option>Longsight</option>
-        <option>Fallowfield</option><option>Rusholme</option><option>Whalley Range</option>
-      </select>
-      <select id="asType" aria-label="Property type">
-        <option value="">Any type</option>
-        <option>HMO room</option><option>Studio</option><option>Apartment</option><option>House</option>
-      </select>
-      <select id="asBudget" aria-label="Budget">
-        <option value="">Any budget</option>
-        <option>Up to &pound;600 pcm</option><option>&pound;600&ndash;&pound;900 pcm</option>
-        <option>&pound;900&ndash;&pound;1,400 pcm</option><option>&pound;1,400+ pcm</option>
-      </select>
-      <button type="submit">Search</button>
-    </form>
-  </div>
-</section>
-
-<!-- ══ MANIFESTO ══ -->
-<section class="manif" id="manif" data-rail="Why">
-  <p id="manifText">Renting a home should feel as considered as buying one. We photograph properly,
-    reference properly, protect deposits properly and answer the phone properly — because a
-    tenancy done right is worth more to a landlord than a tenancy done fast.</p>
-  <p class="sig"><i></i> Megacity Properties Ltd · Manchester</p>
-</section>
-
-<!-- ══ SERVICES ══ -->
-<section class="services" id="services" data-rail="Services">
-  <div class="shead">
-    <span class="no">01</span>
-    <h2>Three ways <em>we help.</em></h2>
-    <p class="lead">Pick the level of involvement that suits the property and the landlord — every option
-      runs on the same standards.</p>
-  </div>
-  <div class="svc-grid">
-    <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#3D416E" x="6" y="64" width="84" height="6"/></svg>
-      <h3>Fully managed</h3>
-      <p>The whole tenancy, handled — from first viewing to final inspection, with one point of contact throughout. Currently <b>8%</b> of monthly rent — usually 10%.</p>
-      <ul><li>Marketing, viewings &amp; referencing</li><li>Rent collection &amp; statements</li><li>Maintenance co-ordinated</li><li>Deposit protection &amp; inspections</li></ul>
-    </article>
-    <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#4DA7D9" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#4DA7D9" x="16" y="46" width="8" height="14"/><rect fill="#4DA7D9" x="30" y="40" width="8" height="20"/><rect fill="#4DA7D9" x="44" y="34" width="8" height="26"/><path fill="#4DA7D9" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#3D416E" x="70" y="41" width="10" height="8"/><rect fill="#4DA7D9" x="6" y="64" width="84" height="6"/></svg>
-      <h3>Let only</h3>
-      <p>We find, vet and move in the right tenant — then hand the keys and the file back to you. New landlord offer: <b>£295</b> inc. VAT, usually £495.</p>
-      <ul><li>Full marketing &amp; accompanied viewings</li><li>Independent referencing</li><li>Tenancy agreement &amp; compliance</li><li>Move-in inventory</li></ul>
-    </article>
-    <article class="svc" data-tilt>
-      <svg viewBox="0 0 96 74"><polygon fill="#3D416E" points="4,38 58,8 90,22 90,30 58,16 10,42"/><rect fill="#3D416E" x="16" y="46" width="8" height="14"/><rect fill="#3D416E" x="30" y="40" width="8" height="20"/><rect fill="#3D416E" x="44" y="34" width="8" height="26"/><path fill="#3D416E" d="M58 30h28v8H66v14h20v8H58z"/><rect fill="#4DA7D9" x="70" y="41" width="10" height="8"/><rect fill="#4DA7D9" x="6" y="64" width="84" height="6"/></svg>
-      <h3>Rent collection</h3>
-      <p>You keep the relationship with the property; we make sure the rent arrives and the records stay straight. <b>5%</b> of monthly rent.</p>
-      <ul><li>Collection &amp; arrears chasing</li><li>Monthly statements</li><li>Renewals &amp; rent reviews</li><li>Deposit administration</li></ul>
-    </article>
-  </div>
-</section>
-
-<!-- ══ CITY BAND ══ -->
-<section class="band" id="cityband" data-rail="Manchester">
-  <div class="poster" style="background-image:url('assets/mcr/hero-aerial-wide.jpg');background-position:center 30%"></div>
-  <div class="band-copy">
-    <p class="no">The patch we know</p>
-    <h2>Manchester <em>is home.</em></h2>
-    <p>From Cheetham Hill to the Quays — we let homes in the streets we drive every day,
-      priced from the lettings we actually agree, not a national average.</p>
-  </div>
-</section>
-
-<!-- ══ PROCESS ══ -->
-<section class="proc" id="process" data-rail="Process">
-  <div class="shead">
-    <span class="no">02</span>
-    <h2>From valuation<br>to <em>move-in.</em></h2>
-  </div>
-  <div class="proc-view" id="procView">
-    <div class="proc-track" id="procTrack">
-      <article class="step"><span class="ghost">1</span><p class="tag">Step one</p>
-        <h3>An honest valuation</h3>
-        <p>We walk the property and price it from comparable local lettings — an achievable rent,
-          not a flattering one that costs you a void.</p></article>
-      <article class="step"><span class="ghost">2</span><p class="tag">Step two</p>
-        <h3>Presented properly</h3>
-        <p>Professional photography and considered listings. A home that looks cared for
-          attracts tenants who care for it.</p></article>
-      <article class="step"><span class="ghost">3</span><p class="tag">Step three</p>
-        <h3>Referenced, not rushed</h3>
-        <p>Independent credit, employment and landlord references on every applicant —
-          the week of diligence that saves a year of trouble.</p></article>
-      <article class="step"><span class="ghost">4</span><p class="tag">Step four</p>
-        <h3>A managed move-in</h3>
-        <p>Inventory, deposit protection, compliance certificates and a proper handover —
-          then one number to call for the whole tenancy.</p></article>
+<section class="lp-hero">
+  <div class="lp-hero-in">
+    <p class="no">For landlords &amp; investors · Salford &amp; Greater Manchester</p>
+    <h1>Your property,<br>protected <em>properly.</em></h1>
+    <p>Megacity Properties is an ARLA Propertymark protected agency. Your rent, your deposit, your property
+      and your money are each protected by a named scheme — not just a promise. Here is exactly how, and
+      exactly what we check before anyone gets a key.</p>
+    <div class="ctas">
+      <a class="btn btn--fill" href="megacity-skyline#valuation-form">Book a professional valuation</a>
+      <a class="btn" href="tel:+441612201763">Call 0161 220 1763</a>
+    </div>
+    <div class="lp-badges">
+      <img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark Protected">
+      <img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman">
+      <img src="assets/mcr/acc-logo-dps.png" alt="Deposit Protection Service">
+      <img src="assets/mcr/acc-logo-nrla.png" alt="NRLA">
     </div>
   </div>
 </section>
 
-<!-- ══ HOMES ══ -->
-<section class="homes" id="homes" data-rail="Homes">
-  <div class="shead">
-    <span class="no">03</span>
-    <h2>Homes, <em>not units.</em></h2>
-    <p class="lead">A flavour of the streets and spaces we let across the city — call the office for
-      what's available this week.</p>
-  </div>
-  <p id="asNote" hidden style="margin:0 0 22px;font:600 13px/1.5 var(--ff-u);letter-spacing:.06em;text-transform:uppercase;color:var(--blue)"></p>
-  <div class="homes-grid">
-    <figure class="home" data-par><span class="ph"><img loading="lazy" alt="Bright open-plan living space" src="assets/mcr/prop-room-1.jpg"></span>
-      <figcaption><span><small>Salford Quays</small><b>Waterside apartment</b></span><span class="beds">2 bed</span></figcaption></figure>
-    <figure class="home" data-par><span class="ph"><img loading="lazy" alt="Modern kitchen and dining area" src="assets/mcr/prop-kitchen-2.jpg"></span>
-      <figcaption><span><small>Prestwich</small><b>Family semi</b></span><span class="beds">3 bed</span></figcaption></figure>
-    <figure class="home" data-par><span class="ph"><img loading="lazy" alt="Compact stylish bedroom" src="assets/mcr/prop-room-2.jpg"></span>
-      <figcaption><span><small>City Centre</small><b>Studio</b></span><span class="beds">1 bed</span></figcaption></figure>
-    <figure class="home" data-par><span class="ph"><img loading="lazy" alt="Red-brick terraced street" src="assets/mcr/prop-kitchen-1.jpg"></span>
-      <figcaption><span><small>Cheetham Hill</small><b>Victorian terrace</b></span><span class="beds">2 bed</span></figcaption></figure>
-    <figure class="home" data-par><span class="ph"><img loading="lazy" alt="Apartment building exterior" src="assets/mcr/hero-aerial-wide.jpg"></span>
-      <figcaption><span><small>Broughton</small><b>New-build apartments</b></span><span class="beds">1–3 bed</span></figcaption></figure>
-  </div>
-</section>
-
-<!-- ══ INTERIOR SPLIT ══ -->
-<section class="split" id="present" data-rail="Presentation">
-  <div class="split-media">
-    <div class="poster" style="background-image:url('assets/mcr/prop-room-2.jpg')"></div>
-  </div>
-  <div class="split-copy">
-    <p class="no">The standard</p>
-    <h2>Presented <em>properly.</em></h2>
-    <p>Every instruction gets real photography, honest floor descriptions and a listing written by
-      someone who has stood in the room. Homes that are shown well let faster — and to better tenants.</p>
-    <ul>
-      <li>Professional photography on every home</li>
-      <li>Accurate, plain-English listings</li>
-      <li>Accompanied viewings, always</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ══ LANDLORDS / TENANTS ══ -->
-<section class="duo" id="landlords" data-rail="For you">
-  <div class="duo-half" style="--im:url('assets/mcr/prop-room-1.jpg')" tabindex="0">
-    <p class="no">For landlords</p>
-    <h3>Your property,<br>earning properly.</h3>
-    <p>Fair valuations, careful referencing, protected deposits and statements you can actually read.
-      One office, one number, no call centres. Commercial units handled too.</p>
-    <a class="btn" href="#contact">Talk to us about your property</a>
-  </div>
-  <div class="duo-half" style="--im:url('assets/mcr/prop-kitchen-2.jpg')" tabindex="0">
-    <p class="no">For tenants</p>
-    <h3>A home you're<br>treated well in.</h3>
-    <p>Honest listings, protected deposits, repairs that actually happen. Renting through Megacity
-      means someone answers when something goes wrong.</p>
-    <a class="btn" href="#contact">Register for homes</a>
-  </div>
-</section>
-
-<!-- ══ CREDENTIALS ══ -->
-<section class="lsec lsec--dark" id="switch" data-rail="Switch">
-  <div class="lsec-in">
-    <div class="lsec-copy">
-      <p class="no">Switch managing agent</p>
-      <h2>Unhappy with your<br>current <em>agent?</em></h2>
-      <p>Switching is easier than most landlords think — and we do all of it. Your tenants stay, your tenancy stays, the rent keeps coming. You sign one letter of authority and we handle the rest.</p>
-      <ol class="lsteps">
-        <li><b>You sign one authority letter.</b><span>That&rsquo;s the only paperwork you touch.</span></li>
-        <li><b>We contact your current agent.</b><span>Keys, tenancy agreements, deposit registrations, certificates and tenant details — collected for you.</span></li>
-        <li><b>Your tenants get one friendly letter.</b><span>Telling them where the rent goes now. Nothing else in their tenancy changes.</span></li>
-      </ol>
-      <p class="lnote">No switching fee. Full management from <b>8%</b> — usually 10%.</p>
-      <a class="btn btn--fill" href="#valuation-form">Start your switch — free review</a>
-    </div>
-    <div class="lsec-media"><img src="assets/mcr/s-sign.jpg" alt="Signing a management agreement" loading="lazy"></div>
-  </div>
-</section>
-
-<section class="lsec" id="hmo" data-rail="HMO">
-  <div class="lsec-in lsec-in--rev">
-    <div class="lsec-copy">
-      <p class="no">HMO &amp; property licensing</p>
-      <h2>HMOs, without<br>the <em>headache.</em></h2>
-      <p>Managing an HMO brings extra licensing, safety and property obligations. Our specialist team helps landlords understand and navigate every one of them — whether you own a portfolio, are buying your first investment, or are converting a property into an HMO.</p>
-      <ul class="lticks">
-        <li>HMO licence requirements, applications &amp; renewals</li>
-        <li>Selective licensing requirements</li>
-        <li>Property preparation for licensing</li>
-        <li>Safety &amp; compliance requirements</li>
-        <li>Works co-ordinated to bring a property up to standard</li>
-      </ul>
-      <a class="btn" href="#contact">Talk to the HMO team</a>
-    </div>
-    <div class="lsec-media"><img src="assets/mcr/s-handshake.jpg" alt="Meeting a landlord about HMO licensing" loading="lazy"></div>
-  </div>
-</section>
-
-<section class="lsec lsec--dark" id="maintenance" data-rail="Maintenance">
-  <div class="lsec-in">
-    <div class="lsec-copy">
-      <p class="no">Maintenance &amp; renovations</p>
-      <h2>Kept in good<br><em>condition.</em></h2>
-      <p>Protecting your investment and giving tenants a safe, comfortable home. From a dripping tap to a full refurbishment, we co-ordinate the work from start to finish with trusted contractors at sensible rates — ten years of hands-on maintenance experience behind every job.</p>
-      <ul class="lticks">
-        <li>Day-to-day maintenance and repairs</li>
-        <li>End-of-tenancy freshen-ups</li>
-        <li>Painting and decorating</li>
-        <li>Property improvements and renovations</li>
-        <li>Preparing properties for new tenants</li>
-        <li>Contractors and remedial works co-ordinated</li>
-      </ul>
-      <a class="btn btn--fill" href="#contact">Book a maintenance visit</a>
-    </div>
-    <div class="lsec-media"><img src="assets/mcr/s-tools.jpg" alt="Tradesman carrying out property maintenance" loading="lazy"></div>
-  </div>
-</section>
-
-<section class="lsec" id="compliance" data-rail="Compliance">
-  <div class="lsec-in lsec-in--rev">
-    <div class="lsec-copy">
-      <p class="no">Safety certificates &amp; compliance</p>
-      <h2>Certificates,<br><em>handled.</em></h2>
-      <p>Landlords carry a long list of safety and compliance responsibilities. We co-ordinate the inspections, certificates and any associated works your property needs — and keep track of when each one is due.</p>
-      <ul class="lticks">
-        <li>Gas Safety Certificates</li>
-        <li>Electrical Installation Condition Reports (EICR)</li>
-        <li>Energy Performance Certificates (EPC)</li>
-        <li>Smoke and fire alarm requirements</li>
-        <li>Associated remedial and compliance works</li>
-      </ul>
-      <a class="btn" href="#contact">Check my property&rsquo;s compliance</a>
-    </div>
-    <div class="lsec-media"><img src="assets/mcr/prop-kitchen-1.jpg" alt="Property inspection" loading="lazy"></div>
-  </div>
-</section>
-
-<section class="creds" id="creds" data-rail="Credentials">
-  <div class="creds-in">
-    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark Protected"><span>Regulated agents — client money protected.</span></div>
-    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman"><span>Membership T06217 — independent redress.</span></div>
-    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-dps.png" alt="Deposit Protection Service"><span>Every deposit protected, every time.</span></div>
-    <div class="cred cred--logo"><img src="assets/mcr/acc-logo-nrla.png" alt="NRLA"><span>National Residential Landlords Association.</span></div>
-  </div>
-  <p class="note">Megacity Properties Ltd · Registered in England &amp; Wales, company no. 12321291 ·
-    Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA</p>
-</section>
-
-<!-- ══ CONTACT ══ -->
-<section class="valcta" id="valuation-form" data-rail="Valuation">
-  <div class="valcta-in">
-    <div>
-      <p class="no" style="color:var(--sky)">Free professional valuation</p>
-      <h2 style="color:#fff">What could your<br>property <em>earn</em>?</h2>
-      <p style="color:rgba(255,255,255,.75);margin-top:16px;max-width:42ch">An honest rental valuation from the team that lets homes on your street — free, no obligation, usually within one working day.</p>
-    </div>
-    <form class="valform" id="valForm">
-      <input id="vPost" placeholder="Property postcode  e.g. M8 8RA" required autocomplete="postal-code">
-      <input id="vName" placeholder="Your name" required autocomplete="name">
-      <input id="vEmail" type="email" placeholder="Email" required autocomplete="email">
-      <input id="vPhone" type="tel" placeholder="Phone" autocomplete="tel">
-      <button class="btn btn--fill" type="submit">Get my professional valuation</button>
-      <p class="val-note">No spam, no obligation — just an honest number.</p>
-      <div class="val-done" hidden><b>Request received.</b> The team will call you within one working day with your valuation.</div>
-    </form>
-  </div>
-</section>
-
-<section class="faq" id="faq" data-rail="FAQs">
-  <div class="faq-in">
-    <img src="assets/mcr/logo.png" alt="" style="height:54px;width:auto;margin:0 auto 18px;display:block">
-    <h2 style="text-align:center">Questions, <em>answered.</em></h2>
-    <div class="faq-list">
-      <details><summary>What does full management cost?</summary><p>Currently <b>8% of the monthly rent</b> — usually 10%. That covers rent collection, tenant communication, maintenance co-ordination, inspections and day-to-day issues, with one dedicated point of contact.</p></details>
-      <details><summary>How much is Tenant Find?</summary><p>Our new landlord offer is <b>&pound;295 inc. VAT</b> (usually &pound;495): marketing, enquiries, viewings and securing a suitable tenant — you manage the tenancy yourself.</p></details>
-      <details><summary>Can you just collect the rent?</summary><p>Yes — Rent Collection is <b>5% of the monthly rent</b>: collection, arrears chasing, monthly statements, renewals and deposit administration.</p></details>
-      <details><summary>How do I switch from my current agent?</summary><p>We handle the whole handover: one authority letter from you, then we collect the keys, documents and deposit registrations, and your tenants get one friendly letter about where to pay rent. The tenancy itself is unaffected.</p></details>
-      <details><summary>Do you handle HMO licensing?</summary><p>Yes — our specialist HMO team helps with licence requirements, applications and renewals, selective licensing, property preparation and the works needed to reach the required standard.</p></details>
-      <details><summary>Who protects the deposit and my money?</summary><p>Deposits are protected with the <b>Deposit Protection Service</b>, and client money is protected through the <b>Propertymark Client Money Protection</b> scheme. We answer to The Property Ombudsman (T06217).</p></details>
-      <details><summary>What safety certificates does my property need?</summary><p>Typically a Gas Safety Certificate, an EICR, an EPC and compliant smoke and fire alarms. We co-ordinate the inspections, certificates and any remedial work.</p></details>
-      <details><summary>How long have you been letting?</summary><p>We&rsquo;ve been letting and managing Manchester homes <b>since 2018</b>, across Manchester and Salford — from Cheetham Hill to the Quays.</p></details>
-    </div>
-  </div>
-</section>
-
-<section class="contact" id="contact" data-rail="Contact">
-  <div class="contact-grid">
-    <div>
-      <h2>Let's do it <em>right.</em></h2>
-      <div class="ways">
-        <a href="tel:+441612201763"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg>0161 220 1763</a>
-        <a href="mailto:info@megacityproperties.co.uk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg>info@megacityproperties.co.uk</a>
-        <a href="https://maps.google.com/?q=The+Tube+Business+Centre+M8+8RA" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s6.5-6.1 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 14.9 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.4"/></svg>Office 21, The Tube, 86 North Street, M8 8RA</a>
+<section class="sec" id="protection">
+  <div class="sec-in">
+    <p class="no">Your money &amp; your rent</p>
+    <h2>How your rent is<br><em>protected.</em></h2>
+    <p class="lede">Rent passing through a letting agent is only as safe as the agent holding it. Ours is
+      protected by law, by scheme membership and by process — here is each layer.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.5 8 9 4.6-.5 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Client Money Protection</h3>
+        <p>Every penny of rent we hold on your behalf sits in a designated client account, separate from
+          company money, and is covered by the Propertymark Client Money Protection scheme. If money held on
+          your behalf were ever misappropriated, the scheme compensates you — this is a legal requirement for
+          letting agents in England, and we hold it.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3z"/><path d="M3 11h18"/><path d="M7 15h4"/></svg></div>
+        <h3>Rent collected &amp; paid on time</h3>
+        <p>Rent is collected on the due date, reconciled against your tenancy, and paid to you promptly with a
+          statement you can actually read. Arrears are chased the moment they appear — not weeks later — and
+          you are told immediately rather than discovering it on a statement.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.2 3.7 9.4 9 10 5.3-.6 9-4.8 9-10V6z"/></svg></div>
+        <h3>Deposits held in the DPS</h3>
+        <p>Tenant deposits are registered with the Deposit Protection Service within the statutory 30 days and
+          the prescribed information is served correctly. That protects your position at the end of the
+          tenancy: an unprotected deposit can cost a landlord up to three times the deposit in penalties and
+          block a Section 21 notice.</p>
       </div>
     </div>
-    <form class="enq" id="enq">
-      <div><label for="fName">Name</label><input id="fName" name="name" autocomplete="name" required></div>
-      <div><label for="fPhone">Phone or email</label><input id="fPhone" name="contact" autocomplete="email" required></div>
-      <div><label for="fMsg">What can we help with?</label><textarea id="fMsg" name="message"></textarea></div>
-      <button class="btn btn--fill magnet" type="submit">Send the enquiry
-        <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></button>
-    </form>
   </div>
 </section>
+
+<section class="sec sec--tint">
+  <div class="sec-in">
+    <p class="no">Your asset</p>
+    <h2>How your property<br>is <em>protected.</em></h2>
+    <p class="lede">A tenancy is four things: the right tenant, the right paperwork, the right condition and
+      the right eyes on it. We handle all four.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 10 12 4l8 6v9H4z"/><path d="M9 19v-6h6v6"/></svg></div>
+        <h3>Inventory &amp; condition</h3>
+        <p>A dated, photographic inventory and schedule of condition at move-in, and a check-out report at the
+          end. Without that evidence a deposit deduction is very hard to win at adjudication — with it, your
+          claim stands up.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Routine inspections</h3>
+        <p>Periodic inspections with written findings and photographs, so small problems — a slow leak, early
+          damp, an unreported repair — are caught while they are still cheap to fix.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M14 7a4 4 0 1 0-4 4"/><path d="m10 11 8 8 3-3-8-8"/></svg></div>
+        <h3>Compliance kept current</h3>
+        <p>Gas Safety, EICR, EPC, smoke and carbon monoxide alarms, and the Homes (Fitness for Human
+          Habitation) standard — tracked with renewal dates so nothing lapses. Under the Renters' Rights Act
+          and Awaab's Law the timescales for damp, mould and hazards are tightening; we work to them.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M6 21V9l6-5 6 5v12"/><path d="M10 21v-6h4v6"/></svg></div>
+        <h3>HMO &amp; selective licensing</h3>
+        <p>If your property is an HMO or sits in a selective licensing area, operating without the right
+          licence risks a rent repayment order and an unlimited fine. We identify what is needed, apply,
+          renew, and co-ordinate any works required to meet the standard.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M7 21h10"/></svg></div>
+        <h3>Maintenance by trusted trades</h3>
+        <p>Ten years of hands-on maintenance experience and a contractor list we actually use. Repairs are
+          co-ordinated, quoted where they matter, and recorded — protecting both the tenant and your asset.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg></div>
+        <h3>Correct paperwork</h3>
+        <p>Tenancy agreements drafted properly, How to Rent guide served, EPC and gas certificate issued,
+          deposit prescribed information served on time. Getting this wrong is what invalidates possession
+          notices — so we treat it as the foundation, not the afterthought.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--dark" id="tenants">
+  <div class="sec-in">
+    <p class="no">Tenant selection</p>
+    <h2>How we find — and check —<br><em>good tenants.</em></h2>
+    <p class="lede">The single biggest risk to a landlord's income is the wrong tenant. Referencing is not a
+      formality here; it is the week of diligence that saves a year of trouble.</p>
+    <div class="steps">
+      <div class="stp"><h4>Marketed properly, to the right audience</h4>
+        <p>Professional photography, honest listings and accompanied viewings — advertised to professionals
+          and students across Greater Manchester, and syndicated to the major portals.</p></div>
+      <div class="stp"><h4>Right to Rent — a legal requirement</h4>
+        <p>Every adult occupier's immigration status is checked and documented before a tenancy begins, as
+          required by the Immigration Act. Getting this wrong exposes the landlord to a civil penalty, so it
+          is never skipped or assumed.</p></div>
+      <div class="stp"><h4>Independent referencing</h4>
+        <p>Credit history, employment and income verification, affordability assessment against the rent, and
+          a previous landlord reference. We are looking for a tenant who can comfortably afford the property —
+          not one who can only just reach it.</p></div>
+      <div class="stp"><h4>Identity &amp; anti-money-laundering</h4>
+        <p>Identity verified against documents, with anti-money-laundering checks applied where they are
+          required of a regulated agent.</p></div>
+      <div class="stp"><h4>Guarantor where appropriate</h4>
+        <p>For students and applicants with thinner references, a UK-based guarantor is referenced and bound
+          by deed — so the rent is still covered if circumstances change.</p></div>
+      <div class="stp"><h4>Move-in done correctly</h4>
+        <p>Deposit registered with the DPS, prescribed information served, inventory signed, certificates
+          issued, standing order set. The tenancy starts on a clean, documented footing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="accreditations">
+  <div class="sec-in">
+    <p class="no">Accreditations explained</p>
+    <h2>What each badge<br>actually <em>means.</em></h2>
+    <p class="lede">Plenty of agents display logos. Fewer explain what they oblige the agent to do, or what
+      they entitle you to if something goes wrong. Here is the plain-English version.</p>
+    <div class="acc">
+      <div class="acc-card">
+        <div class="acc-logo"><img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark Protected"></div>
+        <div class="acc-body">
+          <span class="tag">Regulation &amp; client money</span>
+          <h3>ARLA Propertymark</h3>
+          <p>Propertymark is the professional body for the property sector; ARLA is its lettings arm. A
+            Propertymark Protected agent must meet entry requirements, hold Client Money Protection and
+            professional indemnity insurance, keep client money in a separate designated account, submit to
+            an annual accountant's report, and follow the Propertymark Conduct and Membership Rules.</p>
+          <p>For you as a landlord it means your money is ring-fenced and insured, the agent is accountable to
+            a professional body, and there is a route of complaint beyond the agent themselves.</p>
+        </div>
+      </div>
+      <div class="acc-card">
+        <div class="acc-logo"><img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman"></div>
+        <div class="acc-body">
+          <span class="tag">Independent redress · membership T06217</span>
+          <h3>The Property Ombudsman</h3>
+          <p>Every letting agent in England must belong to a government-approved redress scheme. The Property
+            Ombudsman provides free, independent adjudication for landlords and tenants when a complaint
+            cannot be resolved with the agent directly.</p>
+          <p>If you were ever unhappy with how we handled something, you would not be arguing with us alone:
+            you can escalate to an independent Ombudsman whose award is binding on us, up to the scheme's
+            compensation limits.</p>
+        </div>
+      </div>
+      <div class="acc-card">
+        <div class="acc-logo"><img src="assets/mcr/acc-logo-dps.png" alt="Deposit Protection Service"></div>
+        <div class="acc-body">
+          <span class="tag">Deposit protection</span>
+          <h3>Deposit Protection Service</h3>
+          <p>Deposits on assured shorthold tenancies must be protected in a government-approved scheme within
+            30 days, with prescribed information served on the tenant. We use the DPS.</p>
+          <p>That protects you as much as the tenant: an unprotected or late-protected deposit can lead to a
+            penalty of one to three times the deposit and prevents you from serving a valid Section 21 notice.
+            Disputes go to free adjudication, decided on the evidence — which is why our inventories matter.</p>
+        </div>
+      </div>
+      <div class="acc-card">
+        <div class="acc-logo"><img src="assets/mcr/acc-logo-nrla.png" alt="National Residential Landlords Association"></div>
+        <div class="acc-body">
+          <span class="tag">Legislation &amp; best practice</span>
+          <h3>NRLA</h3>
+          <p>The National Residential Landlords Association is the UK's largest membership organisation for
+            private landlords, providing training, legal guidance and up-to-date interpretation of housing
+            law.</p>
+          <p>Membership keeps us current on the things that change fastest — the Renters' Rights Act, Awaab's
+            Law on damp and mould, EPC requirements and licensing — so your property stays compliant as the
+            rules move.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--tint" id="fees">
+  <div class="sec-in">
+    <p class="no">Services &amp; pricing</p>
+    <h2>Clear services.<br>Clear <em>prices.</em></h2>
+    <p class="lede">Published fees, no surprises. Every level runs on the same standards and the same
+      protections — the only difference is how much of it you want us to carry.</p>
+    <div class="fees">
+      <div class="fee">
+        <span class="lbl">Let Only</span>
+        <p class="amt">from &pound;295</p>
+        <p class="sub">inc. VAT · ideal if you manage the property yourself</p>
+        <ul>
+          <li>Professional property marketing</li>
+          <li>Accompanied viewings</li>
+          <li>Tenant referencing &amp; affordability checks</li>
+          <li>Right to Rent checks</li>
+          <li>Tenancy agreement preparation</li>
+          <li>Deposit registration</li>
+          <li>Compliance documentation</li>
+          <li>Move-in arrangements</li>
+        </ul>
+      </div>
+      <div class="fee">
+        <span class="lbl">Rent Collection</span>
+        <p class="amt">from 5%</p>
+        <p class="sub">inc. VAT · you keep the relationship, we handle the money</p>
+        <ul>
+          <li>Everything included in Let Only</li>
+          <li>Monthly rent collection</li>
+          <li>Prompt landlord payments</li>
+          <li>Rent statements</li>
+          <li>Arrears monitoring &amp; tenant communication</li>
+        </ul>
+      </div>
+      <div class="fee fee--hero">
+        <span class="lbl">Fully Managed</span>
+        <p class="amt">from 10%</p>
+        <p class="sub">inc. VAT · our complete hassle-free service</p>
+        <ul>
+          <li>Everything included in Rent Collection</li>
+          <li>Dedicated property manager</li>
+          <li>Tenant communication</li>
+          <li>Repairs &amp; maintenance coordination</li>
+          <li>Routine property inspections</li>
+          <li>Contractor management</li>
+          <li>Compliance monitoring</li>
+          <li>Advice on changing legislation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="investors">
+  <div class="sec-in">
+    <p class="no">For investors</p>
+    <h2>From property deal<br>to <em>rental income.</em></h2>
+    <p class="lede">Thinking of starting or growing a rental portfolio in Greater Manchester but not sure
+      where to begin? We work with investors from purchase through to a tenanted, compliant, income-producing
+      asset.</p>
+    <div class="cards">
+      <div class="card"><h3>Where the demand actually is</h3>
+        <p>Honest guidance on achievable rents street by street across Salford and Greater Manchester —
+          priced from the lettings we agree, not a national average.</p></div>
+      <div class="card"><h3>HMO conversion &amp; licensing</h3>
+        <p>Single let to HMO is where much of the yield sits — and where most of the regulation sits too. We
+          advise on the licensing standard, room sizes, amenities and fire safety, then co-ordinate the works.</p></div>
+      <div class="card"><h3>Renovation &amp; readiness</h3>
+        <p>Refurbishment, decoration and preparing a property for its first tenancy — managed end to end so
+          your void period is as short as it can be.</p></div>
+      <div class="card"><h3>Then we run it</h3>
+        <p>Once tenanted, the property moves into full management: rent collected, compliance tracked,
+          maintenance handled, statements issued. One team from deal to income.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--tint">
+  <div class="sec-in">
+    <p class="no">Landlord advice</p>
+    <h2>Guides worth<br><em>reading.</em></h2>
+    <p class="lede">Straight guidance on the rules that affect your income — written for landlords in
+      Greater Manchester.</p>
+    <div class="blog">
+      <article class="post">
+        <div class="im"><img src="assets/mcr/prop-room-1.jpg" alt="A furnished HMO room" loading="lazy"></div>
+        <div class="bd"><span class="k">HMO · Licensing</span>
+          <h3>Does my property need an HMO licence?</h3>
+          <p>Three or more tenants forming more than one household usually means an HMO, and five or more
+            across two storeys means mandatory licensing — but selective licensing can catch far smaller
+            properties depending on the council ward. What to check before you let.</p></div>
+      </article>
+      <article class="post">
+        <div class="im"><img src="assets/mcr/prop-kitchen-1.jpg" alt="A shared HMO kitchen" loading="lazy"></div>
+        <div class="bd"><span class="k">Compliance</span>
+          <h3>Awaab's Law, damp and mould: what landlords must now do</h3>
+          <p>New statutory timescales for investigating and fixing damp, mould and other hazards are arriving
+            through the Renters' Rights Act. What the deadlines mean in practice, and how to evidence that you
+            acted.</p></div>
+      </article>
+      <article class="post">
+        <div class="im"><img src="assets/mcr/prop-room-2.jpg" alt="A tenanted room ready for move-in" loading="lazy"></div>
+        <div class="bd"><span class="k">Voids · Yield</span>
+          <h3>Void periods are quietly costing landlords more than ever</h3>
+          <p>An empty month is not one month's rent — it is that plus council tax, utilities and a re-let
+            cost. How presentation, pricing and renewal timing keep a property occupied.</p></div>
+      </article>
+      <article class="post">
+        <div class="im"><img src="assets/mcr/prop-kitchen-2.jpg" alt="Kitchen in a managed property" loading="lazy"></div>
+        <div class="bd"><span class="k">Deposits</span>
+          <h3>Winning a deposit dispute starts on move-in day</h3>
+          <p>Adjudicators decide on evidence, not opinion. What a defensible inventory looks like, what fair
+            wear and tear actually means, and the mistakes that lose landlords their claim.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-in">
+    <p class="no">Landlord questions</p>
+    <h2>Answers, <em>plainly.</em></h2>
+    <div class="lp-faq">
+      <details open><summary>How is my money protected if something happened to the agent?</summary>
+        <p>Rent and any funds we hold on your behalf are kept in a designated client account, separate from
+          our own money, and are covered by Propertymark Client Money Protection. That scheme exists to
+          compensate landlords and tenants where client money is misappropriated. We also hold professional
+          indemnity insurance, and we are members of The Property Ombudsman for independent redress.</p></details>
+      <details><summary>What checks do you run on a tenant before they move in?</summary>
+        <p>Right to Rent immigration checks on every adult occupier, credit history, employment and income
+          verification, an affordability assessment against the rent, a previous landlord reference, and
+          identity verification. Where references are thin — students, for example — we reference a UK-based
+          guarantor as well.</p></details>
+      <details><summary>Who holds the deposit?</summary>
+        <p>The deposit is registered with the Deposit Protection Service within 30 days of receipt and the
+          prescribed information is served on the tenant. If there is a dispute at the end of the tenancy it
+          goes to the scheme's free adjudication service, decided on the evidence from the inventory and
+          check-out report.</p></details>
+      <details><summary>What happens if the tenant stops paying?</summary>
+        <p>Arrears are identified the day the rent is missed, not at month end. We contact the tenant
+          immediately, keep you informed in writing, and follow a documented arrears process. If matters
+          escalate we advise on the correct notice and, where you want it, work with solicitors on possession
+          — with the paperwork in the state it needs to be in for a notice to be valid.</p></details>
+      <details><summary>Which safety certificates does my property need?</summary>
+        <p>Typically an annual Gas Safety Certificate, an Electrical Installation Condition Report at least
+          every five years, a valid EPC at the required minimum rating, and compliant smoke and carbon
+          monoxide alarms. HMOs carry additional fire safety and amenity requirements. We track renewal dates
+          and arrange the inspections.</p></details>
+      <details><summary>Can you take over a tenancy from my current agent?</summary>
+        <p>Yes, and we handle the whole handover. You sign one letter of authority; we collect the keys,
+          tenancy agreements, deposit registrations, certificates and tenant details from your existing agent,
+          and write to your tenants explaining where the rent goes now. The tenancy itself is unaffected.</p></details>
+      <details><summary>Do you manage HMOs and student properties?</summary>
+        <p>Yes — HMOs and single lets are our core business, for both professionals and students, across
+          Salford and Greater Manchester. That includes licence applications and renewals, selective
+          licensing, preparing a property to the required standard, and HMO conversion work.</p></details>
+      <details><summary>How quickly will I hear back about a valuation?</summary>
+        <p>Usually within one working day. The valuation is free, carries no obligation, and is based on
+          comparable lettings we have actually agreed nearby — an achievable rent rather than a flattering
+          one that leaves your property empty.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="endcta">
+  <h2>Let's talk about<br>your <em>property.</em></h2>
+  <p>A professional valuation costs nothing and commits you to nothing — just an honest number from the team
+    that lets homes on your street.</p>
+  <div class="ctas">
+    <a class="btn btn--fill" href="megacity-skyline#valuation-form">Book a professional valuation</a>
+    <a class="btn" href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
+  </div>
+</section>
+
 </main>
-
-<div class="fab" aria-label="Contact options">
-  <a href="https://wa.me/447804900719" target="_blank" rel="noopener" class="fab-b fab-wa" aria-label="WhatsApp us">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1.1 2.2-.2 3.7a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0 0-.2-.1-.3-.1z"/></svg></a>
-  <a href="tel:+441612201763" class="fab-b fab-call" aria-label="Call 0161 220 1763">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg></a>
-  <a href="mailto:info@megacityproperties.co.uk" class="fab-b fab-mail" aria-label="Email us">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg></a>
-</div>
-
 <footer class="footer">
   <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
   <div class="foot-grid">
@@ -1023,10 +1130,6 @@ form.enq{display:grid;gap:18px;align-content:start}
     <a href="https://www.billydigitals.com" target="_blank" rel="noopener">Site concept — Billy Digitals</a>
   </div>
 </footer>
-
-<script src="vendor/lenis.min.js" defer></script>
-<script src="vendor/gsap.min.js" defer></script>
-<script src="vendor/ScrollTrigger.min.js" defer></script>
 <script src="megacity-skyline.js" type="module"></script>
 </body>
 </html>

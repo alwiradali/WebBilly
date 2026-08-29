@@ -277,3 +277,46 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   menu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && open) setOpen(false); });
 })();
+
+
+/* ── floating buttons must never cover the footer ────────────────────── */
+(() => {
+  const fab = document.querySelector(".fab");
+  const foot = document.querySelector(".footer");
+  if (!fab || !foot || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(
+    ([e]) => fab.classList.toggle("is-hidden", e.isIntersecting),
+    { rootMargin: "0px 0px -25% 0px" }
+  ).observe(foot);
+})();
+
+/* ── area search → the homes section, filtered ───────────────────────── */
+(() => {
+  const f = document.getElementById("areaSearch");
+  if (!f) return;
+  f.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const area = (document.getElementById("asArea") || {}).value || "";
+    const type = (document.getElementById("asType") || {}).value || "";
+    const budget = (document.getElementById("asBudget") || {}).value || "";
+    const cards = Array.from(document.querySelectorAll(".home"));
+    let shown = 0;
+    cards.forEach((c) => {
+      const t = c.textContent.toLowerCase();
+      const ok = (!area || t.includes(area.toLowerCase())) &&
+                 (!type || t.includes(type.toLowerCase().split(" ")[0]));
+      c.style.display = ok ? "" : "none";
+      if (ok) shown++;
+    });
+    const note = document.getElementById("asNote");
+    if (note) {
+      note.textContent = shown
+        ? shown + (shown === 1 ? " home" : " homes") + " matching" + (area ? " in " + area : "") +
+          (budget ? " · " + budget.replace(/&pound;/g, "£") : "")
+        : "Nothing listed there right now — register and we'll call you first.";
+      note.hidden = false;
+    }
+    const homes = document.getElementById("homes");
+    if (homes) homes.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+})();
