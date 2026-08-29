@@ -150,6 +150,7 @@
         "</ul></div></div>" +
         '<div class="wrap footer-legal"><span>© <span id="mcYear"></span> ' + esc(D.biz.brandName + " " + D.biz.brandSub) + " · Company no. " + D.biz.companyNo + "</span>" +
         "<span>ARLA Propertymark · Client Money Protection · The Property Ombudsman T06217 · DPS · NRLA</span>" +
+        '<span>Skyline photograph © LimeSpiked · CC BY 2.0</span>' +
         '<span style="margin-left:auto">Redesign concept by <a href="/" target="_blank" rel="noopener">Billy Digitals</a></span></div>' +
         '<div class="wrap"><div class="footer-word" aria-hidden="true" data-fx="footer-word">' + esc((D.biz.brandName || "MEGACITY").toUpperCase()) + "</div></div></footer>";
       var y = document.getElementById("mcYear");

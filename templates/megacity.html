@@ -49,7 +49,7 @@
     <section class="hero" aria-label="Welcome">
       <div class="hero-media" aria-hidden="true">
         <canvas id="mcDusk" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
-        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=80" alt="" fetchpriority="high">
+        <img src="assets/mcr/mcr-night.jpg" alt="" fetchpriority="high">
       </div>
       <div class="hero-inner wrap">
         <p class="hero-eyebrow eyebrow" data-hero-fade>Professional letting · Trusted management</p>
@@ -263,106 +263,62 @@
   <script src="megacity-data.js" defer></script>
   <script src="megacity.js" defer></script>
 
+  <script src="assets/mcr/mcr-lights.js" defer></script>
   <script>
-  /* ── the dusk city: windows light up as you scroll ─────────────────
-     Drawn in code — no video, no big downloads. Scroll progress drives
-     the sky from dusk to night and switches the windows on one by one.
-     Reduced-motion visitors get the fully lit scene, static. */
+  /* ── real Manchester lights up as you scroll ───────────────────────
+     Two photographs of the actual 2025 skyline (one asleep, one lit)
+     plus 484 detected light positions. Scroll switches the real lights
+     on, patch by patch, over the sleeping city. Red aviation beacons
+     never sleep. Photograph © LimeSpiked, CC BY 2.0 (credited in the
+     footer). Reduced-motion visitors get the fully lit city, static. */
   (function () {
     var cv = document.getElementById("mcDusk");
     if (!cv || !cv.getContext) return;
     var cx = cv.getContext("2d");
-    var img = cv.parentElement.querySelector("img");
-    if (img) img.style.display = "none";
+    var fallbackImg = cv.parentElement.querySelector("img");
     var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    var dark = new Image(), lit = new Image(), ready = 0, failed = false;
+    dark.onload = lit.onload = function () { ready++; if (ready === 2) start(); };
+    dark.onerror = lit.onerror = function () { failed = true; };
+    dark.src = "assets/mcr/mcr-dark.jpg";
+    lit.src = "assets/mcr/mcr-night.jpg";
 
-    var W = 0, H = 0, DPR = 1, blds = [], wins = [];
-    function build() {
+    var W = 0, H = 0, DPR = 1, IW = 1920, IH = 579, lights = [];
+
+    function size() {
       DPR = Math.min(devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight;
       cv.width = W * DPR; cv.height = H * DPR;
       cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      blds = []; wins = [];
-      var r = rng(7), x = -30, base = H, k = 0;
-      while (x < W + 60) {
-        var bw = 70 + r() * 120;
-        var tall = r() > 0.62;
-        var bh = H * (tall ? 0.52 + r() * 0.3 : 0.26 + r() * 0.22);
-        var gable = r() > 0.6;
-        blds.push({ x: x, w: bw, h: bh, g: gable, shade: 0.72 + r() * 0.28 });
-        var cols = Math.max(2, Math.floor(bw / 26)), rows = Math.max(2, Math.floor(bh / 34));
-        for (var c = 0; c < cols; c++) for (var q = 0; q < rows; q++) {
-          if (r() < 0.24) continue;
-          wins.push({
-            x: x + 10 + c * ((bw - 20) / cols) + 2, y: base - bh + 16 + q * ((bh - 30) / rows),
-            w: Math.min(11, (bw - 20) / cols - 7), h: 13,
-            t: r(), warm: 0.85 + r() * 0.3
-          });
-          k++;
-        }
-        x += bw + (6 + r() * 26);
-      }
-      wins.sort(function (a, b) { return a.t - b.t; });
     }
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-    function mix(c1, c2, t) { return "rgb(" + Math.round(lerp(c1[0], c2[0], t)) + "," + Math.round(lerp(c1[1], c2[1], t)) + "," + Math.round(lerp(c1[2], c2[2], t)) + ")"; }
 
     var last = -1;
     function draw(p) {
       if (Math.abs(p - last) < 0.003 && last >= 0) return;
       last = p;
-      var duskTop = [38, 44, 84], nightTop = [10, 12, 30];
-      var duskHor = [201, 128, 62], nightHor = [26, 30, 58];
-      var sky = cx.createLinearGradient(0, 0, 0, H);
-      sky.addColorStop(0, mix(duskTop, nightTop, p));
-      sky.addColorStop(0.72, mix(duskHor, nightHor, p));
-      sky.addColorStop(1, mix([60, 46, 44], [12, 14, 32], p));
-      cx.fillStyle = sky; cx.fillRect(0, 0, W, H);
-
-      /* stars arrive with the night */
-      var sr = rng(21);
-      cx.fillStyle = "rgba(234,242,255," + (0.65 * p) + ")";
-      for (var i = 0; i < 70; i++) {
-        var sx = sr() * W, sy = sr() * H * 0.5, ss = sr() * 1.6 + 0.3;
-        cx.fillRect(sx, sy, ss, ss);
+      /* the strip covers the full width, anchored to the bottom */
+      var sc = W / IW, dh = IH * sc, top = H - dh;
+      /* sky above the photograph, blended to its top edge */
+      var sky = cx.createLinearGradient(0, 0, 0, Math.max(top, 1));
+      sky.addColorStop(0, "#0b0d1f");
+      sky.addColorStop(1, "rgb(40,45,58)");
+      cx.fillStyle = sky;
+      cx.fillRect(0, 0, W, Math.ceil(Math.max(top, 0)) + 1);
+      cx.drawImage(dark, 0, top, W, dh);
+      /* switch the real lights on */
+      var count = Math.min(lights.length, Math.floor(p * 1.1 * lights.length));
+      for (var i = 0; i < count; i++) {
+        var L = lights[i];
+        var a = Math.min(1, (count - i) / 14 + 0.3);
+        var dx = L[0] * sc, dy = top + L[1] * sc, dw = L[2] * sc, dhh = L[3] * sc;
+        cx.globalAlpha = 0.12 * a;
+        cx.fillStyle = "rgb(255,205,140)";
+        cx.fillRect(dx - 3, dy - 3, dw + 6, dhh + 6);
+        cx.globalAlpha = a;
+        cx.drawImage(lit, L[0], L[1], L[2], L[3], dx, dy, dw, dhh);
       }
-
-      /* buildings */
-      for (var b = 0; b < blds.length; b++) {
-        var d = blds[b];
-        var facade = mix([32, 36, 66], [16, 18, 40], p);
-        cx.fillStyle = facade;
-        cx.globalAlpha = d.shade;
-        if (d.g) {
-          cx.beginPath();
-          cx.moveTo(d.x, H - d.h + 26);
-          cx.lineTo(d.x + d.w * 0.5, H - d.h - 8);
-          cx.lineTo(d.x + d.w, H - d.h + 26);
-          cx.lineTo(d.x + d.w, H); cx.lineTo(d.x, H); cx.closePath(); cx.fill();
-        } else {
-          cx.fillRect(d.x, H - d.h, d.w, d.h);
-        }
-        cx.globalAlpha = 1;
-      }
-
-      /* windows switch on in a fixed, scattered order */
-      var lit = Math.floor(wins.length * Math.min(1, p * 1.08));
-      for (var w = 0; w < wins.length; w++) {
-        var win = wins[w];
-        if (w < lit) {
-          var a = Math.min(1, (lit - w) / 14 + 0.35);
-          cx.fillStyle = "rgba(255,190,110," + (0.16 * a) + ")";
-          cx.fillRect(win.x - 3, win.y - 3, win.w + 6, win.h + 6);
-          cx.fillStyle = "rgba(255," + Math.round(196 * win.warm) + ",120," + (0.92 * a) + ")";
-          cx.fillRect(win.x, win.y, win.w, win.h);
-        } else {
-          cx.fillStyle = "rgba(90,97,140," + (0.16 * (1 - p) + 0.05) + ")";
-          cx.fillRect(win.x, win.y, win.w, win.h);
-        }
-      }
+      cx.globalAlpha = 1;
     }
 
     var hero = document.querySelector(".hero");
@@ -375,11 +331,18 @@
       if (queued) return; queued = true;
       requestAnimationFrame(function () { queued = false; draw(progress()); });
     }
-    build();
-    if (reduce) { draw(1); addEventListener("resize", function () { build(); last = -1; draw(1); }); return; }
-    draw(progress());
-    addEventListener("scroll", onScroll, { passive: true });
-    addEventListener("resize", function () { build(); last = -1; draw(progress()); });
+    function start() {
+      if (failed) return;
+      if (fallbackImg) fallbackImg.style.display = "none";
+      lights = (window.MCR_LIGHTS && MCR_LIGHTS.lights) || [];
+      IW = (window.MCR_LIGHTS && MCR_LIGHTS.w) || 1920;
+      IH = (window.MCR_LIGHTS && MCR_LIGHTS.h) || 579;
+      size();
+      if (reduce) { draw(1); addEventListener("resize", function () { size(); last = -1; draw(1); }); return; }
+      draw(progress());
+      addEventListener("scroll", onScroll, { passive: true });
+      addEventListener("resize", function () { size(); last = -1; draw(progress()); });
+    }
   })();
   </script>
 </body>
