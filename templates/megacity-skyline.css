@@ -122,7 +122,7 @@ button{font:inherit;cursor:pointer}
 .asearch form{display:flex;gap:10px;flex:1;min-width:260px;flex-wrap:wrap}
 .asearch select,.asearch input{flex:1;min-width:130px;border:0;border-radius:10px;padding:15px 16px;
   font:500 14.5px/1 var(--ff-u);background:#fff;color:var(--navy-ink)}
-.asearch button{border:0;border-radius:10px;padding:15px 26px;background:var(--blue-lift);color:#fff;
+.asearch button{border:0;border-radius:10px;padding:15px 26px;background:#1B4E9B;color:#fff;
   font:700 12.5px/1 var(--ff-u);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
 .asearch button:hover{background:#fff;color:var(--navy)}
 
@@ -301,7 +301,7 @@ body.cine .nav:not(.is-solid) .brand svg [fill="#3D416E"]{fill:#fff}
 .faq h2 em{font-style:italic;color:var(--sky-deep)}
 .faq-list{margin-top:34px;display:grid;gap:12px}
 .faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 22px}
-.faq summary{cursor:pointer;list-style:none;font:600 16px/1.4 var(--ff-u);padding:19px 30px 19px 0;position:relative}
+.faq summary{cursor:pointer;display:block;list-style:none;font:600 16px/1.4 var(--ff-u);padding:19px 30px 19px 0;position:relative}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);
   font:400 26px/1 var(--ff-d);color:var(--sky-deep);transition:transform .25s}
@@ -572,3 +572,23 @@ form.enq{display:grid;gap:18px;align-content:start}
 .nav:not(.is-solid) .nav-find:hover{color:#fff}
 .nav:not(.is-solid) .nav-cta{background:#fff;color:var(--navy-ink);border-color:#fff}
 .nav:not(.is-solid) .nav-cta:hover{background:var(--sky);border-color:var(--sky);color:var(--navy-ink)}
+.split--rev .split-media{order:2}
+@media (max-width:900px){.split--rev .split-media{order:0}}
+
+/* .split sits on --navy-deep, so a navy .btn--fill disappears into it. */
+.split-copy .btn{border-color:#fff;color:#fff}
+.split-copy .btn--fill{background:var(--sky-deep);border-color:var(--sky-deep);color:#fff}
+.split-copy .btn:hover{background:#fff;color:var(--navy-ink);border-color:#fff}
+
+/* ── Touch targets ────────────────────────────────────────────────────────
+   Footer and legal links were 21–31px tall, and on mobile .nav-find shrank
+   to its 18px icon. Pad the hit area without changing the visual rhythm. */
+@media (pointer:coarse){
+  .footer .foot-grid a,.foot-legal a,.footer-in a{
+    min-height:44px;display:inline-flex;align-items:center}
+  .foot-legal{display:flex;flex-wrap:wrap;gap:0 18px}
+  .nav-find{min-width:44px;min-height:44px;justify-content:center}
+  .nd-panel a,.nd-grid a{min-height:44px;display:flex;align-items:center}
+}
+@media (pointer:coarse){ .offer a{min-height:44px;display:inline-flex;align-items:center} }
+.pay--wide svg{width:78px}

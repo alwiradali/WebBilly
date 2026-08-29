@@ -10,19 +10,19 @@
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════════════════════════════════
    SKYLINE INDIGO — Megacity Properties Ltd
    White ground · logo navy + sky · crossing-ribbon motif throughout.
-   Fraunces display / Sora UI. Standalone template, no shared css.
+   Playfair Display headings / Inter UI. Standalone template, no shared css.
    ════════════════════════════════════════════════════════════════════ */
 :root{
   --navy:#3D416E; --navy-deep:#23264A; --navy-ink:#14162E;
   --sky:#4DA7D9; --sky-deep:#2E86BC; --sky-soft:#EAF3FB;
   --paper:#FAFBFF; --surface:#F1F5FC; --mut:#5A617D;
   --line:rgba(18,20,43,.12); --line-strong:rgba(18,20,43,.3);
-  --ff-d:"Fraunces",Georgia,serif; --ff-u:"Sora",system-ui,sans-serif;
+  --ff-d:"Playfair Display",Georgia,serif; --ff-u:"Inter",system-ui,sans-serif;
   --gut:clamp(20px,4.5vw,72px); --maxw:1480px; --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -448,6 +448,11 @@ form.enq{display:grid;gap:18px;align-content:start}
   font:400 15.5vw/0.9 var(--ff-d);color:var(--surface);white-space:nowrap;letter-spacing:-.02em}
 .footer-word em{font-style:italic}
 .footer-in a:hover{color:var(--sky-deep)}
+
+@media (pointer:coarse){
+  .legal a,.foot-legal a,.footer-in a,.nav-find{min-height:44px;display:inline-flex;align-items:center}
+  .nav-find{min-width:44px;justify-content:center}
+}
 </style>
 <style>
 .legal{max-width:820px;margin:0 auto;padding:130px var(--gut) 90px}
@@ -461,7 +466,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .legal ul{margin:0 0 14px 20px}
 .legal li{margin-bottom:7px}
 .legal .upd{margin-top:38px;padding-top:20px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mut)}
-.legal a{color:var(--sky-deep);text-decoration:underline}
+.legal a{color:#2868C0;text-decoration:underline}
 </style>
 </head>
 <body>
