@@ -50,3 +50,15 @@ templates/hair-by-elle-gl.js
 # Roses by Rachel — hidden from the web, kept in git.
 templates/roses-by-rachel.html
 assets/rachel
+
+# Jet Wash Team — hidden from the web, kept in git.
+templates/jet-wash.html
+
+# Hobberry Deliveries — hidden from the web, kept in git.
+templates/hobberry.html
+assets/hobberry
+
+# Baked with Amabilis — both builds hidden, kept in git.
+templates/baked-with-amabilis.html
+assets/ama
+templates/amabilis
