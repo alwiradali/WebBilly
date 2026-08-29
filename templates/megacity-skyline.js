@@ -199,6 +199,16 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     yPercent: 0, ease: "none",
     scrollTrigger: { trigger: ".split", start: "top bottom", end: "bottom top", scrub: true },
   });
+  /* landlord service sections */
+  $$(".lsec").forEach(sec => {
+    gsap.fromTo(sec.querySelectorAll(".lsec-copy > *"), { autoAlpha: 0, y: 34 },
+      { autoAlpha: 1, y: 0, duration: .85, stagger: .08, ease: "power3.out",
+        scrollTrigger: { trigger: sec, start: "top 74%" } });
+    const m = sec.querySelector(".lsec-media img");
+    if (m) gsap.fromTo(m, { scale: 1.12 }, { scale: 1, ease: "none",
+      scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: .6 } });
+  });
+
   gsap.fromTo(".cred", { autoAlpha: 0, y: 34 },
     { autoAlpha: 1, y: 0, duration: .8, stagger: .09, ease: "power3.out",
       scrollTrigger: { trigger: ".creds", start: "top 80%" } });
@@ -241,4 +251,29 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       if (n) n.textContent = "Could not send — " + err.message + ". Please call 0161 220 1763.";
     }
   });
+})();
+
+
+/* ── mega menu ──────────────────────────────────────────────────────── */
+(() => {
+  const burger = document.getElementById("burger");
+  const menu = document.getElementById("megamenu");
+  if (!burger || !menu) return;
+  let open = false;
+  const setOpen = (v) => {
+    open = v;
+    burger.setAttribute("aria-expanded", v ? "true" : "false");
+    burger.setAttribute("aria-label", v ? "Close menu" : "Open menu");
+    document.body.classList.toggle("mm-open", v);
+    if (v) {
+      menu.hidden = false;
+      requestAnimationFrame(() => menu.classList.add("is-open"));
+    } else {
+      menu.classList.remove("is-open");
+      setTimeout(() => { if (!open) menu.hidden = true; }, 280);
+    }
+  };
+  burger.addEventListener("click", () => setOpen(!open));
+  menu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && open) setOpen(false); });
 })();

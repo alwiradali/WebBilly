@@ -40,6 +40,90 @@ button{font:inherit;cursor:pointer}
 .skip:focus{top:16px}
 :focus-visible{outline:2px solid var(--sky-deep);outline-offset:3px}
 
+
+
+/* ── landlord service sections ──────────────────────────────────────── */
+.lsec{padding:11vh var(--gut)}
+.lsec--dark{background:var(--navy-ink);color:#fff}
+.lsec-in{max-width:var(--maxw);margin:0 auto;display:grid;gap:clamp(30px,5vw,68px);
+  grid-template-columns:1.05fr .95fr;align-items:center}
+.lsec-in--rev .lsec-media{order:-1}
+@media (max-width:880px){.lsec-in{grid-template-columns:1fr}.lsec-in--rev .lsec-media{order:0}}
+.lsec .no{font:700 10.5px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;color:var(--sky-deep);margin-bottom:16px}
+.lsec--dark .no{color:var(--sky)}
+.lsec h2{font:400 clamp(30px,4.2vw,54px)/1.06 var(--ff-d);letter-spacing:-.01em}
+.lsec h2 em{font-style:italic;color:var(--sky-deep)}
+.lsec--dark h2 em{color:var(--sky)}
+.lsec-copy>p{margin-top:18px;color:var(--mut);max-width:52ch;font-size:15.5px}
+.lsec--dark .lsec-copy>p{color:rgba(255,255,255,.72)}
+.lsec-media{border-radius:var(--r);overflow:hidden;aspect-ratio:4/3}
+.lsec-media img{width:100%;height:100%;object-fit:cover}
+.lsteps{list-style:none;counter-reset:st;margin:26px 0 0;display:grid;gap:16px}
+.lsteps li{counter-increment:st;position:relative;padding-left:46px}
+.lsteps li::before{content:counter(st);position:absolute;left:0;top:-2px;width:30px;height:30px;
+  border-radius:50%;display:grid;place-items:center;background:var(--sky);color:#fff;
+  font:700 13px/1 var(--ff-u)}
+.lsteps b{display:block;font:600 15.5px/1.4 var(--ff-u)}
+.lsteps span{display:block;margin-top:4px;font-size:14px;color:rgba(255,255,255,.66)}
+.lsec:not(.lsec--dark) .lsteps span{color:var(--mut)}
+.lticks{list-style:none;margin:24px 0 26px;display:grid;gap:11px}
+.lticks li{position:relative;padding-left:28px;font-size:15px;color:var(--mut)}
+.lsec--dark .lticks li{color:rgba(255,255,255,.78)}
+.lticks li::before{content:"";position:absolute;left:0;top:7px;width:9px;height:9px;
+  background:var(--sky);transform:rotate(45deg)}
+.lnote{margin:22px 0 24px;font:500 15px/1.5 var(--ff-u)}
+.lnote b{color:var(--sky)}
+.lsec--dark .btn{border-color:#fff;color:#fff}
+.lsec--dark .btn--fill{background:var(--sky-deep);border-color:var(--sky-deep)}
+.lsec--dark .btn:hover{background:#fff;color:var(--navy-ink)}
+
+/* ── burger + mega menu ─────────────────────────────────────────────── */
+.burger{width:42px;height:42px;border:0;background:transparent;display:grid;place-content:center;gap:5px;padding:0;flex:none}
+.burger span{display:block;width:22px;height:2px;background:var(--navy-ink);border-radius:2px;transition:transform .3s,opacity .25s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.brand img{height:46px;width:auto;display:block}
+.nav-find{display:none;align-items:center;gap:8px;margin-left:auto;font:600 12.5px/1 var(--ff-u);
+  letter-spacing:.06em;color:var(--navy-ink)}
+.nav-find svg{width:18px;height:18px}
+.nav-find:hover{color:var(--sky-deep)}
+@media (min-width:981px){.nav-links{margin-left:26px}.nav-find{display:inline-flex}}
+@media (max-width:980px){.nav-find{display:inline-flex;margin-left:auto}.nav-find span{display:none}}
+@media (max-width:400px){.brand img{height:38px}}
+
+.megamenu{position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;
+  -webkit-overflow-scrolling:touch;padding:96px var(--gut) 60px;opacity:0;transform:translateY(-12px);
+  transition:opacity .28s ease,transform .28s ease}
+.megamenu[hidden]{display:none}
+.megamenu.is-open{opacity:1;transform:none}
+.mm-inner{max-width:var(--maxw);margin:0 auto}
+.mm-cols{display:grid;gap:34px;grid-template-columns:repeat(4,1fr)}
+@media (max-width:980px){.mm-cols{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.mm-cols{grid-template-columns:1fr}}
+.mm-col h4{font:700 10.5px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;
+  color:var(--sky-deep);padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.mm-col a{display:block;padding:11px 0;font:400 17px/1.3 var(--ff-d);color:var(--navy-ink);
+  border-bottom:1px solid rgba(18,20,43,.06)}
+.mm-col a:hover{color:var(--sky-deep)}
+.mm-col a b{font-weight:500}
+.mm-col a s{opacity:.45;font-size:14px}
+.mm-talk a.mm-big{font:500 22px/1.2 var(--ff-d);border-bottom:0;padding:6px 0}
+.mm-talk p{color:var(--mut);font-size:13.5px;margin-top:10px;line-height:1.6}
+.mm-hours{color:var(--sky-deep)!important;font-weight:600}
+.mm-talk .btn{width:100%;justify-content:center;padding:15px 22px}
+body.mm-open{overflow:hidden}
+
+/* ── footer social + legal ──────────────────────────────────────────── */
+.foot-social{display:flex;gap:10px;margin-top:16px}
+.foot-social a{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);
+  display:grid;place-items:center;padding:0}
+.foot-social a:hover{background:var(--sky)}
+.foot-social svg{width:17px;height:17px;fill:#fff}
+.foot-legal{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
+.foot-legal a{color:rgba(255,255,255,.7);font-size:13px}
+.foot-legal a:hover{color:#fff}
+
 /* ── preloader curtain ─────────────────────────────────────────────── */
 .veil{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--paper);pointer-events:none}
 .veil svg,.veil img{width:min(240px,56vw);opacity:0;animation:veilmark .7s .1s ease forwards;position:relative}
@@ -51,7 +135,7 @@ body.is-ready .veil{display:none}
 @media (prefers-reduced-motion:reduce){.veil{display:none}}
 
 /* ── nav ───────────────────────────────────────────────────────────── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:26px;
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;gap:26px;
   padding:14px var(--gut);background:rgba(250,251,255,.94);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);
   transition:padding .35s ease}
 .nav.is-solid{padding:12px var(--gut);background:rgba(250,251,255,.88);backdrop-filter:blur(14px);
@@ -88,6 +172,10 @@ body.is-ready .veil{display:none}
   padding:120px var(--gut) 0;overflow:clip}
 #bg3d{position:absolute;inset:0;z-index:-1}
 #bg3d canvas{width:100%;height:100%;display:block}
+@media (max-width:760px){
+  .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(12,14,32,.82) 0%,rgba(12,14,32,.58) 34%,rgba(12,14,32,.72) 72%,rgba(12,14,32,.92) 100%)}
+}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;
   background:radial-gradient(120% 90% at 78% 12%,rgba(79,163,220,.16),transparent 55%),
              radial-gradient(90% 70% at 8% 88%,rgba(46,52,128,.10),transparent 60%)}
@@ -115,7 +203,9 @@ body.is-ready .veil{display:none}
 
 /* cinematic video hero */
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
-.hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:herodrift 26s ease-in-out infinite alternate}
+.hero-media picture,.hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-media img.hero-still{object-fit:cover;object-position:center 62%;animation:herodrift 26s ease-in-out infinite alternate}
+@media (max-width:760px){.hero-media img.hero-still{object-position:center 40%}}
 @keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.08)}}
 @media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,46,.6),rgba(20,22,46,.26) 45%,rgba(20,22,46,.74) 100%)}
@@ -368,20 +458,66 @@ form.enq{display:grid;gap:18px;align-content:start}
 </div>
 
 <header class="nav is-solid" id="nav">
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="megamenu">
+    <span></span><span></span><span></span></button>
   <a class="brand" href="#top" aria-label="Megacity Properties — home">
-    <img src="assets/mcr/logo.png" alt="Megacity Properties — Professional letting · Trusted management" style="height:46px;width:auto;display:block">
+    <img src="assets/mcr/logo.png" alt="Megacity Properties — Professional letting · Trusted management">
   </a>
   <nav class="nav-links" aria-label="Sections">
     <a href="#services">Services</a>
     <a href="#process">The process</a>
     <a href="#homes">Homes</a>
     <a href="#landlords">Landlords</a>
-    <a href="#contact">Contact</a>
+    <a href="#faq">FAQs</a>
   </nav>
+  <a class="nav-find" href="#homes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Find a home</span></a>
   <a class="nav-cta magnet" href="tel:+441612201763" aria-label="Call 0161 220 1763">
     <svg class="chv" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a12.5 12.5 0 0 0 6 6L16 14l5 2v4a1.5 1.5 0 0 1-1.6 1.5A17.5 17.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></svg>
     <span class="num">0161 220 1763</span></a>
 </header>
+
+<div class="megamenu" id="megamenu" hidden>
+  <div class="mm-inner">
+    <div class="mm-cols">
+      <div class="mm-col">
+        <h4>Landlords &amp; investors</h4>
+        <a href="#valuation-form"><b>Free rental valuation</b></a>
+        <a href="#services">Tenant Find — &pound;295 <s>&pound;495</s></a>
+        <a href="#services">Rent Collection — 5%</a>
+        <a href="#services">Full Management — 8% <s>10%</s></a>
+        <a href="#switch">Switch managing agent</a>
+        <a href="#hmo">HMO &amp; property licensing</a>
+        <a href="#maintenance">Maintenance &amp; renovations</a>
+        <a href="#compliance">Safety certificates &amp; compliance</a>
+      </div>
+      <div class="mm-col">
+        <h4>Tenants</h4>
+        <a href="#homes">Search homes to rent</a>
+        <a href="megacity-tours">360&deg; virtual tours</a>
+        <a href="#contact">Register for new homes</a>
+        <a href="https://megacityproperties-maintenance.10ninety.co.uk" target="_blank" rel="noopener">Report a maintenance issue</a>
+        <a href="#faq">Renting FAQs</a>
+      </div>
+      <div class="mm-col">
+        <h4>About Megacity</h4>
+        <a href="#manif">Why Megacity</a>
+        <a href="#creds">Accreditations &amp; protection</a>
+        <a href="#areas">Areas we cover</a>
+        <a href="#faq">FAQs</a>
+        <a href="#contact">Contact us</a>
+      </div>
+      <div class="mm-col mm-talk">
+        <h4>Talk to us</h4>
+        <a class="mm-big" href="tel:+441612201763">0161 220 1763</a>
+        <a class="mm-big" href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
+        <a href="mailto:info@megacityproperties.co.uk">info@megacityproperties.co.uk</a>
+        <p>Office 21, The Tube Business Centre,<br>86 North Street, Manchester M8 8RA</p>
+        <p class="mm-hours">Mon&ndash;Fri, 9am&ndash;5:30pm</p>
+        <a class="btn btn--fill" href="#valuation-form" style="margin-top:14px">Get a free valuation</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <nav class="rail" id="rail" aria-label="Page progress"></nav>
 
@@ -390,7 +526,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 <!-- ══ HERO ══ -->
 <section class="hero hero--cine" id="top" data-rail="Top">
   <div class="hero-media" aria-hidden="true">
-    <img src="assets/mcr/mcr-night.jpg" alt="" class="hero-still" fetchpriority="high">
+    <picture>
+      <source media="(max-width:760px)" srcset="assets/mcr/hero-portrait.jpg">
+      <img src="assets/mcr/mcr-night.jpg" alt="" class="hero-still" fetchpriority="high">
+    </picture>
   </div>
   <p class="hero-kicker">Professional letting · Manchester &amp; Salford</p>
   <h1>
@@ -408,7 +547,7 @@ form.enq{display:grid;gap:18px;align-content:start}
   </div>
   <div class="hero-foot">
     <p class="scrollcue"><i></i> Scroll</p>
-    <div class="marq" aria-hidden="true"><div class="marq-track" id="marq">
+    <div class="marq" id="areas" aria-hidden="true"><div class="marq-track" id="marq">
       <span>Cheetham Hill <b></b></span><span>Salford <b></b></span><span>Broughton <b></b></span>
       <span>Prestwich <b></b></span><span>Crumpsall <b></b></span><span>Strangeways <b></b></span>
       <span>Ancoats <b></b></span><span>City Centre <b></b></span>
@@ -559,7 +698,83 @@ form.enq{display:grid;gap:18px;align-content:start}
 </section>
 
 <!-- ══ CREDENTIALS ══ -->
-<section class="creds" data-rail="Credentials">
+<section class="lsec lsec--dark" id="switch" data-rail="Switch">
+  <div class="lsec-in">
+    <div class="lsec-copy">
+      <p class="no">Switch managing agent</p>
+      <h2>Unhappy with your<br>current <em>agent?</em></h2>
+      <p>Switching is easier than most landlords think — and we do all of it. Your tenants stay, your tenancy stays, the rent keeps coming. You sign one letter of authority and we handle the rest.</p>
+      <ol class="lsteps">
+        <li><b>You sign one authority letter.</b><span>That&rsquo;s the only paperwork you touch.</span></li>
+        <li><b>We contact your current agent.</b><span>Keys, tenancy agreements, deposit registrations, certificates and tenant details — collected for you.</span></li>
+        <li><b>Your tenants get one friendly letter.</b><span>Telling them where the rent goes now. Nothing else in their tenancy changes.</span></li>
+      </ol>
+      <p class="lnote">No switching fee. Full management from <b>8%</b> — usually 10%.</p>
+      <a class="btn btn--fill" href="#valuation-form">Start your switch &mdash; free review</a>
+    </div>
+    <div class="lsec-media"><img src="assets/mcr/s-sign.jpg" alt="Signing a management agreement" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="lsec" id="hmo" data-rail="HMO">
+  <div class="lsec-in lsec-in--rev">
+    <div class="lsec-copy">
+      <p class="no">HMO &amp; property licensing</p>
+      <h2>HMOs, without<br>the <em>headache.</em></h2>
+      <p>Managing an HMO brings extra licensing, safety and property obligations. Our specialist team helps landlords understand and navigate every one of them — whether you own a portfolio, are buying your first investment, or are converting a property into an HMO.</p>
+      <ul class="lticks">
+        <li>HMO licence requirements, applications &amp; renewals</li>
+        <li>Selective licensing requirements</li>
+        <li>Property preparation for licensing</li>
+        <li>Safety &amp; compliance requirements</li>
+        <li>Works co-ordinated to bring a property up to standard</li>
+      </ul>
+      <a class="btn" href="#contact">Talk to the HMO team</a>
+    </div>
+    <div class="lsec-media"><img src="assets/mcr/s-handshake.jpg" alt="Meeting a landlord about HMO licensing" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="lsec lsec--dark" id="maintenance" data-rail="Maintenance">
+  <div class="lsec-in">
+    <div class="lsec-copy">
+      <p class="no">Maintenance &amp; renovations</p>
+      <h2>Kept in good<br><em>condition.</em></h2>
+      <p>Protecting your investment and giving tenants a safe, comfortable home. From a dripping tap to a full refurbishment, we co-ordinate the work from start to finish with trusted contractors at sensible rates — ten years of hands-on maintenance experience behind every job.</p>
+      <ul class="lticks">
+        <li>Day-to-day maintenance and repairs</li>
+        <li>End-of-tenancy freshen-ups</li>
+        <li>Painting and decorating</li>
+        <li>Property improvements and renovations</li>
+        <li>Preparing properties for new tenants</li>
+        <li>Contractors and remedial works co-ordinated</li>
+      </ul>
+      <a class="btn btn--fill" href="#contact">Book a maintenance visit</a>
+    </div>
+    <div class="lsec-media"><img src="assets/mcr/s-tools.jpg" alt="Tradesman carrying out property maintenance" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="lsec" id="compliance" data-rail="Compliance">
+  <div class="lsec-in lsec-in--rev">
+    <div class="lsec-copy">
+      <p class="no">Safety certificates &amp; compliance</p>
+      <h2>Certificates,<br><em>handled.</em></h2>
+      <p>Landlords carry a long list of safety and compliance responsibilities. We co-ordinate the inspections, certificates and any associated works your property needs — and keep track of when each one is due.</p>
+      <ul class="lticks">
+        <li>Gas Safety Certificates</li>
+        <li>Electrical Installation Condition Reports (EICR)</li>
+        <li>Energy Performance Certificates (EPC)</li>
+        <li>Smoke and fire alarm requirements</li>
+        <li>Associated remedial and compliance works</li>
+      </ul>
+      <a class="btn" href="#contact">Check my property&rsquo;s compliance</a>
+    </div>
+    <div class="lsec-media"><img src="assets/mcr/s-window.jpg" alt="Property inspection" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="creds" id="creds" data-rail="Credentials">
   <div class="creds-in">
     <div class="cred cred--logo"><img src="assets/mcr/acc-logo-arla.jpeg" alt="ARLA Propertymark Protected"><span>Regulated agents — client money protected.</span></div>
     <div class="cred cred--logo"><img src="assets/mcr/acc-logo-tpos.png" alt="The Property Ombudsman"><span>Membership T06217 — independent redress.</span></div>
@@ -641,8 +856,14 @@ form.enq{display:grid;gap:18px;align-content:start}
   <p class="footer-word" aria-hidden="true">professional <em>letting</em></p>
   <div class="foot-grid">
     <div>
-      <img src="assets/mcr/logo.png" alt="Megacity Properties" style="height:52px;width:auto;filter:brightness(0) invert(1);opacity:.94">
+      <img src="assets/mcr/logo-white.png" alt="Megacity Properties" style="height:54px;width:auto;opacity:.96">
       <p style="margin-top:14px;color:rgba(255,255,255,.65);font-size:13.5px;max-width:30ch">Letting Manchester homes since 2018 — trusted by families across the city.</p>
+      <div class="foot-social">
+        <a href="https://www.facebook.com/megacityproperties" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1z"/></svg></a>
+        <a href="https://www.linkedin.com/company/megacity-properties" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6.9 8.2H3.6V21h3.3V8.2zM5.2 3a1.9 1.9 0 1 0 0 3.9 1.9 1.9 0 0 0 0-3.9zM21 13.9c0-3.4-1.8-5-4.2-5-1.9 0-2.8 1.1-3.3 1.8V8.2H10.2V21h3.3v-7c0-1.5.8-2.4 2-2.4s1.9.8 1.9 2.4v7H21v-7.1z"/></svg></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.9c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.2-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.9s0-3.6.1-4.9C2.3 4 3.8 2.4 7.1 2.3c1.3 0 1.7-.1 4.9-.1zm0 5.1a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.9-7.9a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2z"/></svg></a>
+        <a href="https://www.tiktok.com/" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3v13.2a2.7 2.7 0 1 1-2.3-2.7v-3a5.7 5.7 0 1 0 5.3 5.7V9.1a6.6 6.6 0 0 0 3.7 1.2v-3a3.7 3.7 0 0 1-3.7-3.7V2z"/></svg></a>
+      </div>
     </div>
     <div><h4>Explore</h4>
       <a href="#services">Services</a><a href="#process">The process</a><a href="#homes">Homes</a><a href="#landlords">Landlords</a><a href="#faq">FAQs</a><a href="#valuation-form">Free valuation</a>
@@ -670,6 +891,13 @@ form.enq{display:grid;gap:18px;align-content:start}
         <span class="pay"><svg viewBox="0 0 48 16"><text x="24" y="11.5" text-anchor="middle" font-family="Arial" font-size="7.5" font-weight="800" fill="#14162E">BANK&#160;TRANSFER</text></svg></span>
       </div>
     </div>
+  </div>
+  <div class="foot-legal">
+    <a href="megacity-privacy">Privacy policy</a>
+    <a href="megacity-privacy#cookies">Cookies</a>
+    <a href="megacity-terms">Terms &amp; conditions</a>
+    <a href="#faq">FAQs</a>
+    <a href="#contact">Contact us</a>
   </div>
   <div class="footer-in">
     <span>&copy; Megacity Properties Ltd &middot; Company no. 12321291 &middot; Registered in England &amp; Wales</span>
