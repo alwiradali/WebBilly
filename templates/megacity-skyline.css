@@ -549,3 +549,26 @@ form.enq{display:grid;gap:18px;align-content:start}
   .contact{padding-top:7vh;padding-bottom:7vh}
   .shead{margin-bottom:28px}
 }
+
+/* ── Journal teaser links on the landlord hub ─────────────────────────── */
+.blog .bd h3 a{color:inherit;text-decoration:none;background-image:linear-gradient(var(--blue),var(--blue));
+  background-size:0 1.5px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s ease}
+.blog .bd h3 a:hover{background-size:100% 1.5px;color:var(--blue)}
+.jr-link{color:var(--blue);font-weight:600;white-space:nowrap}
+.jr-link:hover{text-decoration:underline}
+
+/* ── Brand mark: his own white variant while the nav is transparent ───────
+   The nav only gains .is-solid past 40px of scroll, so at the top of a
+   dark hero the navy wordmark was invisible. Both files are his artwork —
+   nothing is recoloured with a filter. */
+.brand-light{display:none}
+.nav:not(.is-solid) .brand-dark{display:none}
+.nav:not(.is-solid) .brand-light{display:block}
+.nav:not(.is-solid){background:linear-gradient(180deg,rgba(14,11,43,.52),rgba(14,11,43,0))}
+.nav:not(.is-solid) .nav-links a,.nav:not(.is-solid) .nd-top{color:rgba(255,255,255,.88)}
+.nav:not(.is-solid) .nav-links a:hover,.nav:not(.is-solid) .nd-top:hover{color:#fff}
+.nav:not(.is-solid) .burger span{background:#fff}
+.nav:not(.is-solid) .nav-find{color:rgba(255,255,255,.90)}
+.nav:not(.is-solid) .nav-find:hover{color:#fff}
+.nav:not(.is-solid) .nav-cta{background:#fff;color:var(--navy-ink);border-color:#fff}
+.nav:not(.is-solid) .nav-cta:hover{background:var(--sky);border-color:var(--sky);color:var(--navy-ink)}
