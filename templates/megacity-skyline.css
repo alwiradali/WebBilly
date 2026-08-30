@@ -590,6 +590,10 @@ form.enq{display:grid;gap:18px;align-content:start}
    to its 18px icon. Pad the hit area without changing the visual rhythm. */
 @media (pointer:coarse){
   .footer .foot-grid a{min-height:44px;display:flex;align-items:center}
+  /* the social chips sit inside .foot-grid too, but they are already 44px and
+     centred: without this they inherit the left-aligned flex above and the
+     brand marks slide off to one side of the circle */
+  .footer .foot-grid .foot-social a{display:grid;place-items:center;padding:0}
   .foot-legal a,.footer-in a{min-height:44px;display:inline-flex;align-items:center}
   .foot-legal{display:flex;flex-wrap:wrap;gap:0 18px}
   .nav-find{min-width:44px;min-height:44px;justify-content:center}
