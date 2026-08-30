@@ -33,11 +33,13 @@ def rewrite(html, domain, path):
         target = m.group(2)
         if target == 'index.html':
             return m.group(1) + '/'
-        if target.startswith('blog/'):
-            return m.group(1) + '/' + target[:-5].replace('/index', '/')
+        for section in ('blog/', 'areas/'):
+            if target.startswith(section):
+                return m.group(1) + '/' + target[:-5].replace('/index', '/')
         return m.group(1) + '/' + target[:-5]
-    html = re.sub(r'(href=")(?:\.\./)*((?:blog/)?[a-z0-9-]+\.html)', clean, html)
+    html = re.sub(r'(href=")(?:\.\./)*((?:blog/|areas/)?[a-z0-9-]+\.html)', clean, html)
     html = html.replace('href="/blog/index"', 'href="/blog/"')
+    html = html.replace('href="/areas/index"', 'href="/areas/"')
 
     # local css/js referenced relatively from blog pages
     html = html.replace('href="../shared.css"', 'href="/shared.css"')

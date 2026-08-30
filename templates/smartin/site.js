@@ -188,8 +188,50 @@
     });
   }
 
+
+  /* ---- hero tilt -------------------------------------------------
+     The hero panel and its floating element tiles sit in a real 3D
+     scene. The pointer rotates that scene a few degrees, and because
+     each child carries its own translateZ, the tiles part company
+     from the panel as it turns — parallax you get for free from the
+     geometry rather than faked with offsets.
+
+     Pointer only: no gyro (it makes phones feel broken while you read),
+     and nothing at all when the visitor prefers reduced motion.      */
+  function heroTilt() {
+    var el = document.getElementById('heroTilt');
+    if (!el) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    var stage = el.parentElement, MAX = 7, raf = 0, tx = 0, ty = 0;
+
+    [].forEach.call(el.children, function (c) {
+      var d = c.getAttribute('data-d');
+      if (d) c.style.setProperty('--d', d);
+    });
+
+    function apply() {
+      raf = 0;
+      el.style.setProperty('--ry', tx.toFixed(2) + 'deg');
+      el.style.setProperty('--rx', ty.toFixed(2) + 'deg');
+    }
+    stage.addEventListener('pointermove', function (e) {
+      var r = stage.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2 * MAX;
+      ty = -((e.clientY - r.top) / r.height - 0.5) * 2 * MAX;
+      el.classList.add('live');
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
+    stage.addEventListener('pointerleave', function () {
+      el.classList.remove('live');
+      tx = ty = 0;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
+  }
+
   function init() {
-    applyContact(); nav(); marquees(); reveals(); counters(); faq(); booking();
+    applyContact(); nav(); marquees(); reveals(); counters(); faq(); booking(); heroTilt();
   }
 
   document.readyState === 'loading'

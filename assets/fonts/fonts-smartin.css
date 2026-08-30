@@ -1,0 +1,24 @@
+/* SMARTin SCIENCE type — self-hosted, SIL Open Font License.
+   Rod's brand guide specifies Futura for the logo and headlines and
+   Century Gothic for body copy. Neither is a web font, so the stacks
+   below fall back to the closest free revivals: Jost for Futura,
+   Questrial for Century Gothic. Visitors who own the real faces get
+   them; everyone else gets a faithful stand-in.
+
+   Self-hosted rather than pulled from Google: one less third-party
+   request on a page aimed at parents, no dependency on Google being
+   reachable, and the text paints a round-trip sooner. */
+
+@font-face{font-family:'Jost';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(jost-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+@font-face{font-family:'Jost';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(jost-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+@font-face{font-family:'Questrial';font-style:normal;font-weight:400;font-display:swap;
+  src:url(questrial-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+@font-face{font-family:'Questrial';font-style:normal;font-weight:400;font-display:swap;
+  src:url(questrial-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
