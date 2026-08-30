@@ -137,8 +137,11 @@ button{font:inherit;cursor:pointer}
   letter-spacing:.06em;color:var(--navy-ink)}
 .nav-find svg{width:18px;height:18px}
 .nav-find:hover{color:var(--sky-deep)}
-@media (min-width:981px){.nav-links{margin-left:26px}.nav-find{display:inline-flex}}
-@media (max-width:980px){.nav-find{display:inline-flex;margin-left:auto}.nav-find span{display:none}}
+@media (min-width:981px){.nav-links{margin-left:26px}}
+/* the search link duplicated the Properties nav item and the menu's
+   "Properties to rent", and once the social marks joined the bar it collided
+   with FAQs between 1100 and 1500px. Dropped rather than squeezed. */
+.nav-find{display:none!important}
 @media (max-width:400px){.brand img{height:38px}}
 
 .megamenu{position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;
@@ -168,10 +171,13 @@ body.mm-open{overflow:hidden}
 /* .foot-grid a comes later in this file with equal specificity, so it was
    winning with display:block and padding:4px 0 and pushing the brand mark
    7.5px below centre. Qualify with .footer to outrank it everywhere. */
-.footer .foot-social a{width:44px;height:44px;border-radius:50%;background:#fff;
+/* no chip behind the marks: they sit straight on the footer. TikTok's glyph is
+   black in its primary form, which vanishes on navy, so that one uses the
+   reverse treatment its own brand guidance provides for dark grounds. */
+.footer .foot-social a{width:44px;height:44px;border-radius:50%;background:transparent;
   display:grid;place-items:center;padding:0;min-height:0}
-.footer .foot-social a:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
-.footer .foot-social svg{width:21px;height:21px;display:block}
+.footer .foot-social a:hover{transform:translateY(-2px)}
+.footer .foot-social svg{width:27px;height:27px;display:block}
 .foot-social{gap:12px}
 .foot-pay-note{color:rgba(255,255,255,.62);font-size:13px;line-height:1.6;max-width:34ch;margin-top:4px}
 .foot-legal{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
@@ -969,14 +975,17 @@ form.enq{display:grid;gap:18px;align-content:start}
 .sc-cap b{display:block;font:500 15.5px/1.25 var(--ff-d)}
 .sc-cap small{display:block;margin-top:3px;font:700 10px/1.4 var(--ff-u);
   letter-spacing:.16em;text-transform:uppercase;color:#B6E4F6}
-/* two tiles earn more room; dense flow packs the rest with no holes */
+/* five properties in four columns: a 2x2 lead, two stacked beside it, one
+   pair across, and the last as a full-width band. Fills with no holes. */
 .sc-item:nth-child(1){grid-column:span 2;grid-row:span 2}
-.sc-item:nth-child(9){grid-column:span 2}
+.sc-item:nth-child(4){grid-column:span 2}
+.sc-item:nth-child(5){grid-column:span 4}
 .sc-more{margin-top:34px}
 @media (max-width:900px){
   .sc-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:158px;gap:9px}
   .sc-item:nth-child(1){grid-column:span 2;grid-row:span 2}
-  .sc-item:nth-child(9){grid-column:span 2}
+  .sc-item:nth-child(4){grid-column:span 2}
+  .sc-item:nth-child(5){grid-column:span 2}
   .sc-cap{padding:12px}
   .sc-cap b{font-size:14px}
 }
@@ -1085,3 +1094,22 @@ form.enq{display:grid;gap:18px;align-content:start}
   .pd-epc,.pd-block,.faq details,.lp-faq details,.nd-cta,.valform,.val-done,
   .pg-thumb:hover{animation:none}
 }
+
+/* ── Social marks in the top bar ──────────────────────────────────────── */
+.nav-social{display:none;align-items:center;gap:10px}
+.nav-social a{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+  transition:transform .25s ease}
+.nav-social a:hover{transform:translateY(-2px)}
+.nav-social svg{width:20px;height:20px;display:block}
+/* below 1500px the link row and the phone pill need the width themselves;
+   the marks live in the menu panel at those sizes */
+@media (min-width:1500px){.nav-social{display:flex}}
+/* inside the menu panel, where phones can reach them */
+.mm-talk .foot-social,.mm-talk .nav-social{display:flex;gap:12px;margin-top:16px}
+.mm-talk .nav-social a{width:38px;height:38px}
+.mm-talk .nav-social svg{width:24px;height:24px}
+
+/* Portal credit is set as text. Drawing an imitation of Zoopla's mark would be
+   the same mistake as the hand-traced payment badges: it needs their official
+   asset, not a lookalike. */
+.foot-portals-note{color:rgba(255,255,255,.62);font-size:13px;line-height:1.6;max-width:32ch;margin-top:4px}
