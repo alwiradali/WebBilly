@@ -58,10 +58,24 @@
 .fx-stagger-item.fx-in { opacity: 1; transform: translateY(0); }
 
 /* ---- 3. TEXT REVEAL ---- */
-[data-fx="text"] .fx-word { display: inline-block; overflow: hidden; vertical-align: top; }
+/* The mask that hides each word before it rises also clips whatever falls
+   below the baseline, so descenders — the tails of g, y, p, q, j — were
+   being sliced off every animated heading. The padding gives the mask
+   room for them; the matching negative margin keeps the line box exactly
+   where it was, so no layout moves. */
+[data-fx="text"] .fx-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+}
 [data-fx="text"] .fx-word-inner {
   display: inline-block;
-  transform: translateY(110%);
+  /* 110% of its own height clears an unpadded mask exactly; the descender
+     padding above makes the mask taller, so add that back or the top of
+     each word peeks out before it rises. */
+  transform: translateY(calc(110% + 0.3em));
   transition: transform 0.7s var(--fx-ease);
   will-change: transform;
 }
