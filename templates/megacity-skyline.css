@@ -165,10 +165,13 @@ body.mm-open{overflow:hidden}
 
 /* ── footer social + legal ──────────────────────────────────────────── */
 .foot-social{display:flex;gap:10px;margin-top:16px}
-.foot-social a{width:44px;height:44px;border-radius:50%;background:#fff;
-  display:grid;place-items:center;padding:0}
-.foot-social a:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
-.foot-social svg{width:21px;height:21px;display:block}
+/* .foot-grid a comes later in this file with equal specificity, so it was
+   winning with display:block and padding:4px 0 and pushing the brand mark
+   7.5px below centre. Qualify with .footer to outrank it everywhere. */
+.footer .foot-social a{width:44px;height:44px;border-radius:50%;background:#fff;
+  display:grid;place-items:center;padding:0;min-height:0}
+.footer .foot-social a:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
+.footer .foot-social svg{width:21px;height:21px;display:block}
 .foot-social{gap:12px}
 .foot-pay-note{color:rgba(255,255,255,.62);font-size:13px;line-height:1.6;max-width:34ch;margin-top:4px}
 .foot-legal{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
