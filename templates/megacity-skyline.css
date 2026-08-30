@@ -1039,3 +1039,49 @@ form.enq{display:grid;gap:18px;align-content:start}
 @media (prefers-reduced-motion:reduce){
   .card,.svc,.step,.stp,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{animation:none}
 }
+
+
+/* ══ The charge on the remaining tiles ═════════════════════════════════════
+   Same technique, but these carry their own content rather than a watermark:
+   --tile-mark:none, and photo tiles take a transparent fill because the image
+   already covers the padding box. */
+.home,.sc-item,.pd-main,.pd-mapframe,.cred--logo,.accpanel,.accpanel-grid span,
+.pd-epc,.pd-block,.faq details,.lp-faq details,.nd-cta,.valform,.val-done{
+  --tile-ang:0deg;
+  --tile-mark:none;
+  border:2px solid transparent;
+  background-color:transparent;
+  background-image:var(--tile-mark),
+    linear-gradient(var(--tile-fill,#fff),var(--tile-fill,#fff)),
+    conic-gradient(from var(--tile-ang),transparent 0 244deg,
+      rgba(40,104,192,.55) 268deg,rgba(40,104,192,1) 296deg,rgba(82,159,189,1) 320deg,
+      rgba(34,211,238,1) 338deg,rgba(167,232,247,.85) 350deg,transparent 360deg);
+  background-origin:padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,border-box;
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  background-size:cover,auto,auto;
+  background-position:center,center,center;
+  animation:tilespark 6s linear infinite;
+}
+/* the photograph is the content, so nothing should sit behind it */
+.home,.sc-item,.pd-main,.pd-mapframe{--tile-fill:transparent}
+/* panels that sit on the tinted or dark grounds keep their own tone */
+.pd-block{--tile-fill:rgba(40,104,192,.06)}
+.accpanel-grid span,.cred--logo,.accpanel,.pd-epc{--tile-fill:#fff}
+.nd-cta{--tile-fill:var(--surface)}
+.valform,.val-done{--tile-fill:rgba(255,255,255,.06)}
+.faq details,.lp-faq details{--tile-fill:#fff}
+
+/* 51 gallery thumbnails animating at once is not worth the frames, so those
+   light up on hover instead */
+.pg-thumb{--tile-ang:0deg;border:2px solid transparent;background-color:transparent;
+  background-image:conic-gradient(from var(--tile-ang),transparent 0 300deg,
+    rgba(40,104,192,.9) 326deg,rgba(34,211,238,1) 344deg,transparent 360deg);
+  background-origin:border-box;background-clip:border-box}
+.pg-thumb:hover{animation:tilespark 2.6s linear infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .home,.sc-item,.pd-main,.pd-mapframe,.cred--logo,.accpanel,.accpanel-grid span,
+  .pd-epc,.pd-block,.faq details,.lp-faq details,.nd-cta,.valform,.val-done,
+  .pg-thumb:hover{animation:none}
+}
