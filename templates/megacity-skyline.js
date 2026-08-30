@@ -45,10 +45,19 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
      white artwork there. */
   const DARK = ".hero,.band,.duo,.split,.valcta,.creds,.footer,.sec--dark,.phead,.lp-hero,.jr-hero,.pull--alt,.save";
   const darkBlocks = [...document.querySelectorAll(DARK)];
+  const AWAY_AFTER = 260;   // clear of the hero before it starts hiding
+  const DEADZONE   = 6;     // ignore the jitter of a finger resting on glass
+  let last = scrollY;
+
   const onScroll = () => {
-    const scrolled = scrollY > 40;
+    const y = Math.max(0, scrollY);
+    const scrolled = y > 40;
     nav.classList.toggle("is-solid", scrolled);
-    const edge = nav.getBoundingClientRect().bottom;
+
+    /* Measure from the bar's own height, not its box. Once it slides away its
+       rect goes with it, and the colour would be decided against a strip of
+       page the bar is no longer over, so it would return in the wrong state. */
+    const edge = nav.offsetHeight;
     // the city band is clipped to a slant, so its box reaches the bar a little
     // before its dark pixels do; require real overlap rather than a sliver
     const overDark = scrolled && darkBlocks.some(el => {
@@ -56,7 +65,24 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
       return r.top < edge - 32 && r.bottom > 32;
     });
     nav.classList.toggle("nav--dark", overDark);
+
+    /* Out of the way while you are reading down the page, back the moment you
+       head up, because going up is what asking for the menu looks like. */
+    const delta = y - last;
+    if (Math.abs(delta) > DEADZONE) {
+      const menuOpen = !menu().hidden;
+      const inBar = nav.contains(document.activeElement);
+      if (delta > 0 && y > AWAY_AFTER && !menuOpen && !inBar) nav.classList.add("is-away");
+      else if (delta < 0) nav.classList.remove("is-away");
+      last = y;
+    }
+    if (y <= AWAY_AFTER) nav.classList.remove("is-away");
   };
+
+  const menu = () => document.getElementById("megamenu") || { hidden: true };
+  // the bar carries the close button, so it can never be away while the menu is up
+  nav.addEventListener("mc:show", () => nav.classList.remove("is-away"));
+
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 })();
@@ -274,6 +300,9 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     }
   };
   burger.addEventListener("click", () => setOpen(!open));
+  // the burger lives in the bar, so bring it back before the menu appears
+  const navEl = $("#nav");
+  if (navEl) burger.addEventListener("click", () => navEl.dispatchEvent(new Event("mc:show")));
   menu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && open) setOpen(false); });
 })();

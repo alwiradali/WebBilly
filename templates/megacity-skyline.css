@@ -213,7 +213,7 @@ body.is-ready .veil{display:none}
      the mixed blues this carried before */
   background:linear-gradient(100deg,rgba(29,32,73,.17) 0%,rgba(24,74,120,.19) 46%,rgba(23,107,153,.22) 100%),
              linear-gradient(#fff,#fff);
-  transition:padding .35s ease,background .45s ease,box-shadow .45s ease;
+  transition:padding .35s ease,background .45s ease,box-shadow .45s ease,transform .38s ease;
 }
 
 .brand{display:flex;align-items:center;gap:12px}
@@ -1140,6 +1140,10 @@ form.enq{display:grid;gap:18px;align-content:start}
    logo is never recoloured with a filter. */
 /* .nav.is-solid is (0,2,0) and would otherwise paint its light film straight
    over this one, so the dark state has to match it for weight. */
+/* slides up out of the way on the way down, back on the way up */
+.nav.is-away{transform:translateY(-100%)}
+@media (prefers-reduced-motion:reduce){.nav{transition:none}}
+
 .nav.is-solid.nav--dark{
   background:linear-gradient(100deg,rgba(29,32,73,.93) 0%,rgba(24,58,100,.91) 46%,rgba(23,107,153,.88) 100%);
   box-shadow:0 6px 26px rgba(12,14,34,.30)}
