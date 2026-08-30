@@ -1005,3 +1005,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* the property header sits on white, so it needs the dark button treatment
    rather than .phead-ctas, which is built for the gradient page headers */
 .pd-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+/* the breadcrumb link was a 15px-tall target, under the WCAG 2.5.8 minimum */
+@media (pointer:coarse){
+  .pd-crumb a{display:inline-block;padding:6px 0}
+  .pd-crumb{padding-top:calc(96px + 2vh)}
+}

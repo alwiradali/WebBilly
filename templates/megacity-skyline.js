@@ -318,8 +318,10 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   pv.setAttribute("role", "dialog");
   pv.setAttribute("aria-modal", "true");
   pv.setAttribute("aria-label", "Property photograph");
+  // no src until it is opened: an <img> sitting in the DOM with an empty src
+  // reads as a broken image to crawlers and to our own QA probe
   pv.innerHTML =
-    '<img alt="">' +
+    '<img alt="" hidden>' +
     '<button class="pv-x" aria-label="Close">×</button>' +
     '<button class="pv-nav pv-prev" aria-label="Previous photo">‹</button>' +
     '<button class="pv-nav pv-next" aria-label="Next photo">›</button>' +
@@ -332,6 +334,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 
   const show = i => {
     at = (i + shots.length) % shots.length;
+    img.hidden = false;
     img.src = shots[at];
     img.alt = "Property photograph " + (at + 1) + " of " + shots.length;
     count.textContent = (at + 1) + " / " + shots.length;
