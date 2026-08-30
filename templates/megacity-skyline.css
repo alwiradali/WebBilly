@@ -1177,6 +1177,18 @@ form.enq{display:grid;gap:18px;align-content:start}
   box-shadow:0 30px 70px rgba(6,4,26,.34)}
 .save-field{margin-bottom:26px}
 .save-field label{display:block;font:600 13px/1 var(--ff-u);color:var(--mut);margin-bottom:8px}
+.save-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.save-manual{border:0;background:none;padding:6px 2px;margin-bottom:8px;cursor:pointer;
+  font:600 13px/1 var(--ff-u);color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+.save-manual:hover{color:var(--navy)}
+.save-manual:focus-visible{outline:2px solid var(--sky-deep);outline-offset:3px;border-radius:5px}
+.save-entry{display:flex;align-items:baseline;gap:4px;margin-bottom:8px;
+  font:400 clamp(30px,3.4vw,40px)/1 var(--ff-d);color:var(--navy)}
+.save-entry input{width:100%;min-width:0;border:0;border-bottom:2px solid var(--blue);
+  background:none;padding:0 0 6px;font:inherit;color:inherit;-moz-appearance:textfield}
+.save-entry input::-webkit-outer-spin-button,
+.save-entry input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.save-entry input:focus{outline:0;border-bottom-color:var(--sky-deep)}
 .save-field output{display:block;font:400 clamp(30px,3.4vw,40px)/1 var(--ff-d);color:var(--navy);margin-bottom:14px}
 .save-field input[type=range]{width:100%;height:34px;-webkit-appearance:none;appearance:none;
   background:#DCE6F6;border-radius:99px;cursor:pointer}
@@ -1199,4 +1211,31 @@ form.enq{display:grid;gap:18px;align-content:start}
 @media (max-width:900px){
   .save-in{grid-template-columns:1fr;gap:32px}
   .incl-cols{gap:10px 24px}
+}
+
+/* ── mega menu: accordion ─────────────────────────────────────────────── */
+.mm-acc{display:block}
+.mm-g{border-bottom:1px solid var(--line)}
+.mm-g:first-of-type{border-top:1px solid var(--line)}
+.mm-g summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;
+  padding:19px 2px;font:400 clamp(20px,2.4vw,25px)/1.2 var(--ff-d);color:var(--navy-ink)}
+.mm-g summary::-webkit-details-marker{display:none}
+.mm-g summary::before{content:"";flex:none;width:13px;height:13px;margin-left:2px;
+  border:solid var(--blue);border-width:0 2.4px 2.4px 0;transform:translateY(-3px) rotate(45deg);
+  transition:transform .28s ease}
+.mm-g[open] summary::before{transform:translateY(2px) rotate(-135deg)}
+.mm-g summary:hover{color:var(--blue)}
+.mm-g summary:focus-visible{outline:2px solid var(--sky-deep);outline-offset:3px;border-radius:6px}
+.mm-g-in{display:grid;gap:2px;padding:0 0 18px 29px}
+.mm-g-in a{display:block;padding:11px 0;font:400 16px/1.35 var(--ff-u);color:var(--mut);
+  border-bottom:0;transition:color .2s,transform .2s}
+.mm-g-in a:hover{color:var(--blue);transform:translateX(3px)}
+.mm-go{display:flex;align-items:center;gap:14px;padding:19px 2px;
+  font:600 15px/1.2 var(--ff-u);color:var(--blue);border-bottom:1px solid var(--line)}
+.mm-go::before{content:"";flex:none;width:11px;height:11px;margin-left:3px;
+  border:solid currentColor;border-width:0 2.4px 2.4px 0;transform:rotate(-45deg);
+  transition:transform .2s}
+.mm-go:hover::before{transform:rotate(-45deg) translate(3px,3px)}
+@media (prefers-reduced-motion:reduce){
+  .mm-g summary::before,.mm-g-in a,.mm-go::before{transition:none}
 }

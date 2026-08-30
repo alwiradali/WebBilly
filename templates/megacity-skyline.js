@@ -441,5 +441,37 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 
   rent.addEventListener("input", draw);
   fee.addEventListener("input", draw);
+
+  /* A slider cannot land on £1,347, and a landlord knows their exact rent,
+     so let them type it. The slider keeps its own range for its track fill. */
+  const manual = document.getElementById("svManual");
+  const entry  = document.getElementById("svEntry");
+  const num    = document.getElementById("svRentNum");
+  if (manual && entry && num) {
+    manual.addEventListener("click", () => {
+      const typing = entry.hidden;
+      entry.hidden = !typing;
+      out("svRentOut").hidden = typing;
+      rent.hidden = typing;
+      manual.textContent = typing ? "Use the slider" : "Enter amount manually";
+      if (typing) { num.value = rent.value; num.focus(); num.select(); }
+      else draw();
+    });
+    num.addEventListener("input", () => {
+      const v = Math.max(0, Math.min(20000, +num.value || 0));
+      // clamp only what feeds the slider; the typed figure drives the sums
+      rent.value = Math.max(+rent.min, Math.min(+rent.max, v));
+      const f = +fee.value;
+      const them = v * (f / 100) * 12, us = v * (OURS / 100) * 12;
+      out("svThem").textContent = gbp(them) + " a year";
+      out("svUs").textContent   = gbp(us) + " a year";
+      const diff = them - us, row = out("svDiff"),
+            dt = row.closest(".save-total").querySelector("dt");
+      if (diff > 0)       { row.textContent = gbp(diff) + " a year";      dt.textContent = "You would keep"; }
+      else if (diff === 0){ row.textContent = "the same";                 dt.textContent = "You would pay"; }
+      else                { row.textContent = gbp(-diff) + " a year more"; dt.textContent = "With us you would pay"; }
+    });
+  }
+
   draw();
 })();
