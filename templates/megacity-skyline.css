@@ -296,6 +296,8 @@ body.is-ready .veil{display:none}
 .valform input:focus{outline:2px solid var(--sky-deep)}
 .valform .btn{justify-content:center}
 .val-note{font-size:12px;color:var(--mut);text-align:center}
+/* the form panel is dark, so the muted grey was near-invisible on it */
+.valform .val-note{color:rgba(255,255,255,.72)}
 .val-done{background:var(--sky-soft);border-radius:10px;padding:16px;color:var(--navy-ink);font-size:14.5px}
 
 /* FAQs */
@@ -740,7 +742,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 
 .steps{counter-reset:s;display:grid;gap:18px;margin-top:44px}
 .stp{position:relative;padding:26px 28px 26px 84px;border-radius:16px}
-.sec--dark .stp{--tile-fill:rgba(255,255,255,.05)}
+.sec--dark .stp{--tile-fill:#1B1840}
 .stp::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:28px;top:26px;
   font:700 13px/1 var(--ff-u);color:#fff;background:var(--grad);width:38px;height:38px;border-radius:10px;display:grid;place-items:center}
 .stp h4{font:600 16.5px/1.35 var(--ff-u);margin-bottom:7px}
@@ -1039,12 +1041,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* per-tile fills */
 .svc{--tile-fill:var(--surface)}
 .sec--dark .card,.sec--dark .stp,.sec--dark .step{--tile-fill:#1B1840;--tile-mark:url("assets/mcr/mark-ghost-light.png")}
-.mm-d--cta,.pd-card--cta{--tile-mark:url("assets/mcr/mark-ghost-light.png")}
-.mm-d--cta,.pd-card--cta{background-image:var(--tile-mark),var(--grad),
+.mm-d--cta,.pd-card--cta,.fee--hero{--tile-mark:url("assets/mcr/mark-ghost-light.png")}
+.mm-d--cta,.pd-card--cta,.fee--hero{background-image:var(--tile-mark),var(--grad),
   conic-gradient(from var(--tile-ang),transparent 0 244deg,
     rgba(255,255,255,.5) 268deg,rgba(143,211,238,1) 300deg,rgba(34,211,238,1) 330deg,
     rgba(255,255,255,.9) 348deg,transparent 360deg)}
-.jr-toc a{--tile-fill:rgba(255,255,255,.06);--tile-mark:url("assets/mcr/mark-ghost-light.png")}
+.jr-toc a{--tile-fill:#2A2668;--tile-mark:url("assets/mcr/mark-ghost-light.png")}
 @media (prefers-reduced-motion:reduce){
   .card,.svc,.step,.stp,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{animation:none}
 }
@@ -1075,10 +1077,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* the photograph is the content, so nothing should sit behind it */
 .home,.sc-item,.pd-main,.pd-mapframe{--tile-fill:transparent}
 /* panels that sit on the tinted or dark grounds keep their own tone */
-.pd-block{--tile-fill:rgba(40,104,192,.06)}
+.pd-block{--tile-fill:#F2F6FC}
 .accpanel-grid span,.cred--logo,.accpanel,.pd-epc{--tile-fill:#fff}
 .nd-cta{--tile-fill:var(--surface)}
-.valform,.val-done{--tile-fill:rgba(255,255,255,.06)}
+.valform,.val-done{--tile-fill:#241F5B}
 .faq details,.lp-faq details{--tile-fill:#fff}
 
 /* 51 gallery thumbnails animating at once is not worth the frames, so those
