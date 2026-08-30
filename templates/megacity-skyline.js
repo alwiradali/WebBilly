@@ -301,3 +301,78 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     if (homes) homes.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 })();
+
+/* ── Property photo viewer ──────────────────────────────────────────────
+   Thumbnails open full size, with arrow keys, swipe and a close button. */
+(function photoViewer() {
+  const thumbs = [...document.querySelectorAll(".pg-thumb")];
+  const heroImg = document.querySelector(".pd-main img");
+  if (!thumbs.length && !heroImg) return;
+
+  const shots = [];
+  if (heroImg) shots.push(heroImg.getAttribute("src"));
+  thumbs.forEach(t => shots.push(t.dataset.full));
+
+  const pv = document.createElement("div");
+  pv.className = "pv";
+  pv.setAttribute("role", "dialog");
+  pv.setAttribute("aria-modal", "true");
+  pv.setAttribute("aria-label", "Property photograph");
+  pv.innerHTML =
+    '<img alt="">' +
+    '<button class="pv-x" aria-label="Close">×</button>' +
+    '<button class="pv-nav pv-prev" aria-label="Previous photo">‹</button>' +
+    '<button class="pv-nav pv-next" aria-label="Next photo">›</button>' +
+    '<p class="pv-count"></p>';
+  document.body.appendChild(pv);
+
+  const img = pv.querySelector("img");
+  const count = pv.querySelector(".pv-count");
+  let at = 0, lastFocus = null;
+
+  const show = i => {
+    at = (i + shots.length) % shots.length;
+    img.src = shots[at];
+    img.alt = "Property photograph " + (at + 1) + " of " + shots.length;
+    count.textContent = (at + 1) + " / " + shots.length;
+  };
+  const open = i => {
+    lastFocus = document.activeElement;
+    show(i);
+    pv.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+    pv.querySelector(".pv-x").focus();
+  };
+  const close = () => {
+    pv.classList.remove("is-open");
+    document.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  };
+
+  if (heroImg) {
+    heroImg.style.cursor = "zoom-in";
+    heroImg.addEventListener("click", () => open(0));
+  }
+  thumbs.forEach((t, i) => t.addEventListener("click", () => open(i + (heroImg ? 1 : 0))));
+
+  pv.querySelector(".pv-x").addEventListener("click", close);
+  pv.querySelector(".pv-prev").addEventListener("click", e => { e.stopPropagation(); show(at - 1); });
+  pv.querySelector(".pv-next").addEventListener("click", e => { e.stopPropagation(); show(at + 1); });
+  pv.addEventListener("click", e => { if (e.target === pv || e.target === img) close(); });
+
+  document.addEventListener("keydown", e => {
+    if (!pv.classList.contains("is-open")) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") show(at - 1);
+    else if (e.key === "ArrowRight") show(at + 1);
+  });
+
+  let x0 = null;
+  pv.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  pv.addEventListener("touchend", e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 45) show(at + (dx < 0 ? 1 : -1));
+    x0 = null;
+  }, { passive: true });
+})();
