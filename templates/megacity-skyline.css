@@ -286,10 +286,10 @@ body.is-ready .veil{display:none}
 @keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
 .hero-media::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(14,11,43,.44) 0%,rgba(14,11,43,.16) 34%,rgba(14,11,43,.30) 68%,rgba(14,11,43,.82) 100%),
-             linear-gradient(102deg,rgba(14,11,43,.84) 0%,rgba(14,11,43,.54) 42%,rgba(14,11,43,.12) 72%,rgba(14,11,43,0) 100%)}
+  background:linear-gradient(180deg,rgba(12,14,34,.52) 0%,rgba(12,14,34,.30) 34%,rgba(12,14,34,.44) 68%,rgba(12,14,34,.88) 100%),
+             linear-gradient(102deg,rgba(12,14,34,.92) 0%,rgba(12,14,34,.74) 42%,rgba(12,14,34,.34) 72%,rgba(12,14,34,.12) 100%)}
 @media (max-width:760px){
-  .hero-media::after{background:linear-gradient(180deg,rgba(14,11,43,.54) 0%,rgba(14,11,43,.22) 24%,rgba(14,11,43,.36) 58%,rgba(14,11,43,.84) 100%)}
+  .hero-media::after{background:linear-gradient(180deg,rgba(12,14,34,.72) 0%,rgba(12,14,34,.48) 24%,rgba(12,14,34,.56) 58%,rgba(12,14,34,.90) 100%)}
 }
 .hero--cine h1{color:#fff}
 .hero--cine h1 em{color:var(--sky)}
@@ -560,6 +560,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 
 /* ── mobile contact bar (must win: declared last) ────────────────────── */
 @media (max-width:820px){
+  /* The bar is fixed across the bottom, so the last thing in the hero has to
+     clear it or it is simply covered. The area marquee was, once the larger
+     type made the hero copy taller. 62px of bar plus the safe area. */
+  .hero{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
   .fab{left:0;right:0;bottom:0;top:auto;flex-direction:row;gap:0;padding:0 0 env(safe-area-inset-bottom);
     background:var(--navy-ink);box-shadow:0 -6px 24px rgba(14,11,43,.34)}
   .fab .fab-b{flex:1;width:auto;height:62px;border-radius:0;border:0;box-shadow:none;
