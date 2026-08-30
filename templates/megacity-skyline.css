@@ -928,3 +928,14 @@ form.enq{display:grid;gap:18px;align-content:start}
 .home-link:focus-visible{outline:2px solid var(--sky-deep);outline-offset:3px;border-radius:var(--r)}
 .home:hover .ph img{transform:scale(1.03)}
 .home .ph img{transition:transform .5s ease,filter .4s ease}
+
+/* ── Page header with a photograph behind it ─────────────────────────── */
+.phead--photo{position:relative;overflow:clip;isolation:isolate}
+.phead--photo::before{content:"";position:absolute;inset:0;z-index:-2;
+  background-image:var(--ph-img);background-size:cover;background-position:center 62%}
+.phead--photo::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(105deg,rgba(20,17,58,.86) 0%,rgba(20,17,58,.72) 42%,rgba(24,33,86,.50) 72%,rgba(30,60,130,.38) 100%)}
+@media (max-width:760px){
+  .phead--photo::before{background-position:center 58%}
+  .phead--photo::after{background:linear-gradient(178deg,rgba(20,17,58,.78) 0%,rgba(20,17,58,.62) 46%,rgba(24,40,102,.54) 100%)}
+}
