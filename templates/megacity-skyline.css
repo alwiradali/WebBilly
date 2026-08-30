@@ -786,3 +786,47 @@ form.enq{display:grid;gap:18px;align-content:start}
   .mm-d b{font-size:17.5px}
   .mm-d span{font-size:12.8px;line-height:1.5}
 }
+
+/* ── Brand lockup ─────────────────────────────────────────────────────────
+   His strapline is 15px tall inside a 200px logo, so at nav size it rendered
+   at 3.5px and was unreadable. logo-nav.png is his artwork with that one line
+   masked out (monogram and wordmark untouched), and the words are set as live
+   type below it in his own ink colour so they can actually be read. */
+.brand{flex-direction:column;align-items:flex-start;gap:4px}
+.brand img{height:42px}
+.brand-strap{display:block;font:700 8.2px/1 var(--ff-u);letter-spacing:.085em;
+  text-transform:uppercase;color:#2D2A46;white-space:nowrap}
+.brand-strap i{font-style:normal;color:var(--blue);margin:0 .25em}
+@media (min-width:900px){
+  .brand img{height:50px}
+  .brand-strap{font-size:9.6px;letter-spacing:.1em}
+}
+@media (max-width:400px){
+  .brand img{height:37px}
+  .brand-strap{font-size:7.2px;letter-spacing:.045em}
+}
+/* The strapline widens the brand block, which pushed the call button off the
+   right edge at every phone size. Search lives in the menu as "Properties to
+   rent", so on phones the bar keeps the two actions that matter: menu and call. */
+@media (max-width:700px){ .nav-find{display:none} }
+
+/* The band photo is a 2.8:1 panorama: centring it on a phone crops out both
+   the town hall and the bridge, so shift toward the lit city on narrow screens. */
+@media (max-width:760px){ .band .poster{background-position:64% 58%} }
+@media (max-width:380px){
+  .nav{padding-left:14px;padding-right:14px;gap:12px}
+  .brand-strap{font-size:6.9px}
+}
+/* the taller brand block gave these room to wrap onto two lines */
+.nav-links a,.nd-top,.nav-find span,.nav-cta .num{white-space:nowrap}
+
+/* The brand block doubled in width once the strapline became live type, which
+   pushed the phone pill past the right edge between 1000 and 1500px. Tighten
+   the spacing in that range and let the link row shrink rather than shove. */
+@media (min-width:900px) and (max-width:1499px){
+  .nav{gap:16px;padding-left:clamp(20px,2.4vw,40px);padding-right:clamp(20px,2.4vw,40px)}
+  .nav-links{gap:clamp(14px,1.8vw,26px);min-width:0;flex-shrink:1}
+  .nav-links a,.nd-top{font-size:12.5px;letter-spacing:.04em}
+  .brand-strap{font-size:8.6px;letter-spacing:.07em}
+  .brand img{height:44px}
+}
