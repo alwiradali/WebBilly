@@ -708,7 +708,7 @@ form.enq{display:grid;gap:18px;align-content:start}
     rgba(34,211,238,1) 338deg,rgba(167,232,247,.85) 350deg,transparent 360deg);
   animation:cardspark 6s linear infinite}
 .card::after{content:"";position:absolute;z-index:-1;inset:2px;border-radius:16px;
-  background:#fff url("assets/mcr/mark-ghost.png") no-repeat right -26px bottom -30px/152px auto;
+  background:url("assets/mcr/mark-ghost.png") no-repeat center/cover,#fff;
   box-shadow:inset 0 0 0 1px var(--line)}
 .card>*{position:relative;z-index:1}
 .card:hover{transform:translateY(-10px) rotateX(2.2deg) rotateY(-1.6deg) scale(1.012);
@@ -722,15 +722,12 @@ form.enq{display:grid;gap:18px;align-content:start}
   50%{transform:translateY(-6px) rotateX(.7deg) rotateY(-.5deg)}}
 @keyframes cardspark{to{transform:rotate(1turn)}}
 /* the monogram is his navy artwork, so it needs to sit light on dark panels */
-.sec--dark .card::after{background:#1B1840 url("assets/mcr/mark-ghost-light.png") no-repeat
-  right -26px bottom -30px/152px auto;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.sec--dark .card::after{background:url("assets/mcr/mark-ghost-light.png") no-repeat center/cover,#1B1840;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
 @media (prefers-reduced-motion:reduce){
   .card,.card::before{animation:none}
   .card:hover{transform:none}
 }
-@media (max-width:620px){
-  .card::after{background-size:120px auto;background-position:right -20px bottom -24px}
-}
+
 .card .ic{width:48px;height:48px;border-radius:12px;background:var(--grad);display:grid;place-items:center;margin-bottom:20px}
 .card .ic svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.9}
 .card h3{font:500 clamp(20px,2.1vw,25px)/1.2 var(--ff-d);margin-bottom:12px}
@@ -1010,3 +1007,20 @@ form.enq{display:grid;gap:18px;align-content:start}
   .pd-crumb a{display:inline-block;padding:6px 0}
   .pd-crumb{padding-top:calc(96px + 2vh)}
 }
+
+
+/* ── His monogram behind every tile ───────────────────────────────────────
+   The mark fills the whole tile rather than sitting in a corner: his artwork
+   on a transparent ground, faded so body copy still reads over it. */
+.svc,.step,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{
+  background-image:url("assets/mcr/mark-ghost.png");
+  background-repeat:no-repeat;background-position:center;background-size:cover;
+}
+/* tiles already on the brand gradient take the light mark over it */
+.mm-d--cta,.pd-card--cta{
+  background-image:url("assets/mcr/mark-ghost-light.png"),var(--grad);
+  background-repeat:no-repeat,no-repeat;
+  background-position:center,center;
+  background-size:cover,cover;
+}
+.jr-toc a{background-image:url("assets/mcr/mark-ghost-light.png")}
