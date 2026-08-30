@@ -939,3 +939,34 @@ form.enq{display:grid;gap:18px;align-content:start}
   .phead--photo::before{background-position:center 58%}
   .phead--photo::after{background:linear-gradient(178deg,rgba(20,17,58,.78) 0%,rgba(20,17,58,.62) 46%,rgba(24,40,102,.54) 100%)}
 }
+.pd-epc{margin:16px 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:420px}
+.pd-epc img{width:100%;height:auto;display:block}
+
+/* ── Showcase ─────────────────────────────────────────────────────────── */
+.showcase{padding:11vh var(--gut);max-width:var(--maxw);margin:0 auto}
+.sc-grid{display:grid;gap:12px;margin-top:44px;grid-auto-flow:dense;
+  grid-template-columns:repeat(4,1fr);grid-auto-rows:210px}
+.sc-item{position:relative;display:block;border-radius:14px;overflow:clip;background:var(--surface)}
+.sc-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.sc-item:hover img{transform:scale(1.05)}
+.sc-item::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(transparent 45%,rgba(14,11,43,.86));opacity:.92;transition:opacity .3s}
+.sc-cap{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:16px 16px 14px;color:#fff}
+.sc-cap b{display:block;font:500 15.5px/1.25 var(--ff-d)}
+.sc-cap small{display:block;margin-top:3px;font:700 10px/1.4 var(--ff-u);
+  letter-spacing:.16em;text-transform:uppercase;color:#B6E4F6}
+/* two tiles earn more room; dense flow packs the rest with no holes */
+.sc-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+.sc-item:nth-child(9){grid-column:span 2}
+.sc-more{margin-top:34px}
+@media (max-width:900px){
+  .sc-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:158px;gap:9px}
+  .sc-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+  .sc-item:nth-child(9){grid-column:span 2}
+  .sc-cap{padding:12px}
+  .sc-cap b{font-size:14px}
+}
+
+/* the property header sits on white, so it needs the dark button treatment
+   rather than .phead-ctas, which is built for the gradient page headers */
+.pd-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
