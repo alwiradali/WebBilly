@@ -195,10 +195,11 @@ body.is-ready .veil{display:none}
 
 /* ── nav ───────────────────────────────────────────────────────────── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;gap:26px;
-  padding:14px var(--gut);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);
-  /* the same wash the tiles carry, kept translucent so the blur still reads */
-  background:linear-gradient(100deg,rgba(251,252,254,.96) 0%,rgba(238,243,252,.95) 48%,rgba(226,236,249,.94) 100%);
-  transition:padding .35s ease}
+  padding:14px var(--gut);backdrop-filter:blur(14px) saturate(1.15);box-shadow:0 1px 0 var(--line);
+  /* his blue, stronger than the tiles because the bar is a thin strip */
+  background:linear-gradient(100deg,rgba(226,236,250,.97) 0%,rgba(207,223,246,.96) 46%,rgba(190,212,242,.95) 100%);
+  transition:padding .35s ease,background .45s ease,box-shadow .45s ease;
+}
 
 .brand{display:flex;align-items:center;gap:12px}
 .brand svg{width:44px;height:auto;flex:none}
@@ -591,7 +592,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 
 /* The bar carries its own surface from the first paint, so the navy wordmark
    never sits on a dark photo and never changes colour on scroll. */
-.nav.is-solid{box-shadow:0 6px 26px rgba(14,11,43,.10)}
+/* scrolled: the bar turns to glass so the page reads through it. The blur and
+   a light film keep his navy wordmark legible over whatever passes beneath. */
+.nav.is-solid{
+  background:linear-gradient(100deg,rgba(230,239,252,.82) 0%,rgba(211,227,248,.80) 46%,rgba(193,215,244,.78) 100%);
+  backdrop-filter:blur(22px) saturate(1.35);
+  box-shadow:0 6px 26px rgba(14,11,43,.10)}
 .split--rev .split-media{order:2}
 @media (max-width:900px){.split--rev .split-media{order:0}}
 
@@ -1114,3 +1120,21 @@ form.enq{display:grid;gap:18px;align-content:start}
    the same mistake as the hand-traced payment badges: it needs their official
    asset, not a lookalike. */
 .foot-portals-note{color:rgba(255,255,255,.62);font-size:13px;line-height:1.6;max-width:32ch;margin-top:4px}
+
+/* ── Glass bar passing over a dark section ────────────────────────────────
+   His navy wordmark cannot read through glass over the dark bands, so the bar
+   darkens its film and swaps to his own white artwork. Both files are his; the
+   logo is never recoloured with a filter. */
+/* .nav.is-solid is (0,2,0) and would otherwise paint its light film straight
+   over this one, so the dark state has to match it for weight. */
+.nav.is-solid.nav--dark{
+  background:linear-gradient(100deg,rgba(14,11,38,.90) 0%,rgba(20,18,54,.88) 46%,rgba(26,30,78,.86) 100%);
+  box-shadow:0 6px 26px rgba(6,4,20,.28)}
+.nav--dark .brand img.brand-dark{display:none}
+.nav--dark .brand img.brand-light{display:block}
+.nav--dark .brand-strap{color:rgba(255,255,255,.92)}
+.nav--dark .brand-strap i{color:#8FD3EE}
+.nav--dark .nav-links a,.nav--dark .nd-top{color:rgba(255,255,255,.92)}
+.nav--dark .burger span{background:#fff}
+.nav--dark .nav-cta{background:#fff;border-color:#fff;color:var(--navy-ink)}
+.brand img.brand-light{display:none}

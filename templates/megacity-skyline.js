@@ -39,7 +39,24 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
 /* ── nav state ─────────────────────────────────────────────────────── */
 (function navState() {
   const nav = $("#nav");
-  const onScroll = () => nav.classList.toggle("is-solid", scrollY > 40);
+  /* The bar turns to glass once you scroll, so whatever is beneath shows
+     through. Over the dark sections that would leave his navy wordmark
+     unreadable, so watch what is actually under the bar and switch to his
+     white artwork there. */
+  const DARK = ".hero,.band,.duo,.split,.valcta,.creds,.footer,.sec--dark,.phead,.lp-hero,.jr-hero,.pull--alt";
+  const darkBlocks = [...document.querySelectorAll(DARK)];
+  const onScroll = () => {
+    const scrolled = scrollY > 40;
+    nav.classList.toggle("is-solid", scrolled);
+    const edge = nav.getBoundingClientRect().bottom;
+    // the city band is clipped to a slant, so its box reaches the bar a little
+    // before its dark pixels do; require real overlap rather than a sliver
+    const overDark = scrolled && darkBlocks.some(el => {
+      const r = el.getBoundingClientRect();
+      return r.top < edge - 32 && r.bottom > 32;
+    });
+    nav.classList.toggle("nav--dark", overDark);
+  };
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 })();
