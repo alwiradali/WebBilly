@@ -53,7 +53,7 @@ footer{background:rgba(231,241,249,.9);backdrop-filter:blur(3px)}
 .brand .mark{width:44px;height:44px;flex:0 0 auto}
 .wm{display:grid;line-height:1;font-family:var(--dis)}
 .wm b{font-weight:700;font-size:1.12rem;letter-spacing:.005em;color:var(--blue)}
-.wm b i{font-style:normal;color:var(--green)}
+.wm b i{font-style:normal;color:var(--amber)}   /* the deck sets the "in" in amber */
 .wm em{font-style:normal;font-weight:600;font-size:.83rem;letter-spacing:.30em;color:var(--teal);margin-top:3px}
 .brand:hover .mark{transform:rotate(-8deg) scale(1.04)}
 .brand .mark{transition:transform .5s cubic-bezier(.22,1,.36,1)}
@@ -146,13 +146,27 @@ section{padding:66px 0}
 .hero-cta{display:flex;gap:11px;flex-wrap:wrap;margin-top:28px}
 .hero-cta .btn{flex:1 1 auto;justify-content:center}
 @media(min-width:520px){.hero-cta .btn{flex:0 0 auto}}
-.trustrow{display:grid;gap:10px 24px;margin-top:30px}
+.trustrow{display:grid;gap:10px 24px;margin-top:30px;list-style:none;padding:0}
 @media(min-width:640px){.trustrow{grid-template-columns:1fr 1fr;max-width:560px}}
-.trustrow span{display:block;position:relative;padding-left:24px;color:var(--mut);font-size:13.4px;line-height:1.5}
-.trustrow span::before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:800}
+.trustrow li{display:block;position:relative;padding-left:24px;color:var(--mut);font-size:13.4px;line-height:1.5}
+.trustrow li::before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:800}
 .trustrow b{color:var(--ink);font-weight:600}
 
-/* hero panel: the 4-week ring */
+/* ---------- hero stage: a real 3D scene ----------
+   .hero-stage owns the perspective; .tilt is the single preserve-3d
+   layer that the pointer/gyro rotates. Every child sits at its own
+   depth via data-d → --d, so the tiles genuinely float in front of
+   the panel rather than faking it with a drop shadow.
+   NOTHING inside .tilt may use filter/opacity<1 — either would flatten
+   the 3D context and collapse the whole scene into one plane.        */
+.hero-stage{position:relative;perspective:1200px;perspective-origin:50% 45%}
+.tilt{position:relative;transform-style:preserve-3d;will-change:transform;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.tilt.live{transition:transform .12s linear}
+.tilt>*{transform:translateZ(calc(var(--d,0) * 1px))}
+
+/* hero panel: what we cover */
 .panel{position:relative;background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px 26px;
   box-shadow:var(--sh-lg);overflow:hidden}
 .panel::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--grad)}
@@ -168,28 +182,34 @@ section{padding:66px 0}
 .ring .mid b{font-family:var(--dis);font-size:2.9rem;font-weight:700;line-height:1;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ring .mid span{display:block;font-family:var(--dis);font-size:10.6px;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-top:5px}
-.wklist{display:grid;gap:9px}
+.wklist{display:grid;gap:9px;list-style:none;margin:0;padding:0}
 .wkrow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--tint);
   border:1px solid var(--line);font-size:.9rem;color:var(--ink)}
-.wkrow i{width:26px;height:26px;flex:0 0 auto;border-radius:9px;display:grid;place-items:center;
-  font-style:normal;font-family:var(--dis);font-weight:700;font-size:11.5px;color:#fff;background:var(--grad-c)}
-.wkrow:nth-child(2) i{background:linear-gradient(112deg,#308fac,#37bd79)}
-.wkrow:nth-child(3) i{background:linear-gradient(112deg,#37bd79,#a7e237)}
-.wkrow:nth-child(4) i{background:linear-gradient(112deg,#ffba53,#37bd79)}
-.wkrow em{margin-left:auto;font-style:normal;font-size:11.6px;color:var(--mut)}
+.wkrow img{width:24px;height:24px;flex:0 0 auto;padding:5px;box-sizing:content-box;
+  background:#fff;border:1px solid var(--line);border-radius:10px}
+.wkrow em{margin-left:auto;font-style:normal;font-size:11.6px;color:var(--mut);white-space:nowrap}
 
-/* floating periodic tiles around the panel */
-.tile{position:absolute;width:62px;height:70px;border-radius:14px;background:#fff;border:1.6px solid var(--line);
-  box-shadow:var(--sh);display:grid;place-content:center;text-align:center;font-family:var(--dis);z-index:3;
-  animation:bob 6s ease-in-out infinite alternate}
-.tile b{font-size:1.4rem;font-weight:700;color:var(--blue);line-height:1}
-.tile s{display:block;text-decoration:none;font-size:9.4px;letter-spacing:1.4px;color:var(--mut);margin-top:3px}
+/* floating periodic tiles — the signature element */
+.tile{position:absolute;width:64px;height:72px;border-radius:15px;background:#fff;border:1.6px solid var(--line);
+  box-shadow:var(--sh);display:grid;place-content:center;text-align:center;font-family:var(--dis);z-index:3}
+.tile::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(255,255,255,0) 46%);pointer-events:none}
+.tile b{font-size:1.45rem;font-weight:700;color:var(--blue);line-height:1}
+.tile s{display:block;text-decoration:none;font-size:9.2px;letter-spacing:1.3px;text-transform:uppercase;color:var(--mut);margin-top:3px}
 .tile u{position:absolute;top:6px;left:8px;text-decoration:none;font-size:9px;color:var(--mut)}
-.tile.t1{top:-22px;left:-18px;animation-delay:-1s}
-.tile.t2{bottom:-24px;right:-16px;animation-delay:-3s}
+.tile.t1{top:-26px;left:-20px}
+.tile.t2{bottom:-26px;right:-18px}
 .tile.t2 b{color:var(--green)}
-@keyframes bob{to{transform:translateY(-14px) rotate(3deg)}}
-@media(max-width:980px){.tile{display:none}}
+.tile.t3{top:38%;right:-34px}
+.tile.t3 b{color:var(--teal)}
+@media (prefers-reduced-motion:no-preference){
+  .tile{animation:bob 6s ease-in-out infinite alternate}
+  .tile.t1{animation-delay:-1s} .tile.t2{animation-delay:-3s} .tile.t3{animation-delay:-4.5s}
+}
+@keyframes bob{to{transform:translateZ(calc(var(--d,0) * 1px)) translateY(-13px) rotate(3deg)}}
+@media(max-width:980px){.tile.t3{display:none}}
+@media(max-width:640px){.tile{width:54px;height:62px}.tile b{font-size:1.15rem}
+  .tile.t1{left:-6px;top:-20px}.tile.t2{right:-6px}}
 
 /* ---------- strapline marquee ---------- */
 .mq{overflow:hidden;padding:16px 0;border-block:1px solid var(--line);background:rgba(255,255,255,.7)}
