@@ -398,3 +398,48 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     x0 = null;
   }, { passive: true });
 })();
+
+/* ── What you'd save ────────────────────────────────────────────────────
+   Compares Megacity's 8% against whatever the landlord's current agent
+   charges. We ask for their figure rather than asserting one for the rest of
+   the market, because management fees vary and we cannot evidence a average. */
+(function savings() {
+  const rent = document.getElementById("svRent");
+  const fee  = document.getElementById("svFee");
+  if (!rent || !fee) return;
+
+  const OURS = 8;
+  const gbp = n => "£" + Math.round(n).toLocaleString("en-GB");
+  const out = id => document.getElementById(id);
+
+  const draw = () => {
+    const r = +rent.value, f = +fee.value;
+    const them = r * (f / 100) * 12;
+    const us   = r * (OURS / 100) * 12;
+    out("svRentOut").textContent = gbp(r);
+    out("svFeeOut").textContent  = (Number.isInteger(f) ? f : f.toFixed(1)) + "%";
+    out("svThem").textContent = gbp(them) + " a year";
+    out("svUs").textContent   = gbp(us) + " a year";
+    const diff = them - us;
+    const row  = out("svDiff");
+    if (diff > 0) {
+      row.textContent = gbp(diff) + " a year";
+      row.closest(".save-total").querySelector("dt").textContent = "You would keep";
+    } else if (diff === 0) {
+      row.textContent = "the same";
+      row.closest(".save-total").querySelector("dt").textContent = "You would pay";
+    } else {
+      // be straight about it when their agent is already cheaper
+      row.textContent = gbp(-diff) + " a year more";
+      row.closest(".save-total").querySelector("dt").textContent = "With us you would pay";
+    }
+    [rent, fee].forEach(el => {
+      const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+      el.style.background = `linear-gradient(90deg,#2868C0 ${pct}%,#DCE6F6 ${pct}%)`;
+    });
+  };
+
+  rent.addEventListener("input", draw);
+  fee.addEventListener("input", draw);
+  draw();
+})();

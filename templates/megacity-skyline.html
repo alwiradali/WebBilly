@@ -100,6 +100,7 @@
 <div class="megamenu" id="megamenu" hidden>
   <div class="mm-inner">
     <div class="mm-cols">
+      <a class="mm-top-cta" href="megacity-skyline#valuation-form">Book a free professional valuation</a>
       <nav class="mm-dest" aria-label="Main sections">
         <a class="mm-d" href="megacity-for-landlords">
           <b>Landlords &amp; Investors</b>
@@ -221,6 +222,79 @@
       </select>
       <button type="submit">Search</button>
     </form>
+  </div>
+</section>
+
+<!-- ══ WHAT'S INCLUDED ══ -->
+<section class="incl" id="included" data-rail="What's included">
+  <div class="incl-in">
+    <p class="no">Fully managed &middot; 8% of the monthly rent</p>
+    <h2>What&rsquo;s <em>included.</em></h2>
+    <p class="lead">One fee, the whole tenancy. Not a starting price with the useful parts sold
+      back to you afterwards.</p>
+    <div class="incl-cols">
+      <ul class="incl-list">
+        <li>Professional photography on every home</li>
+        <li>Honest, plain-English listing written by someone who stood in the room</li>
+        <li>Advertised across Greater Manchester and listed on Zoopla</li>
+        <li>Accompanied viewings, always</li>
+        <li>Independent credit and affordability referencing</li>
+        <li>Employment and previous-landlord references</li>
+        <li>Right to Rent checks on every adult occupier</li>
+        <li>Tenancy agreement drafted and served correctly</li>
+      </ul>
+      <ul class="incl-list">
+        <li>Deposit protected with the DPS inside 30 days</li>
+        <li>Prescribed information served on time</li>
+        <li>Dated, photographic inventory and check-out report</li>
+        <li>Rent collected, reconciled and paid over with a readable statement</li>
+        <li>Arrears chased the moment they appear</li>
+        <li>Repairs co-ordinated with trades we actually use</li>
+        <li>Routine inspections with written findings</li>
+        <li>Gas Safety, EICR, EPC and alarms tracked so nothing lapses</li>
+      </ul>
+    </div>
+    <div class="incl-cta">
+      <a class="btn btn--fill" href="#valuation-form">Book a free professional valuation</a>
+      <a class="btn" href="megacity-for-landlords#fees">Compare all three services</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SAVINGS CALCULATOR ══ -->
+<section class="save" id="save" data-rail="What you'd save">
+  <div class="save-in">
+    <div class="save-copy">
+      <p class="no">Megacity against your current agent</p>
+      <h2>What would you<br><em>be saving?</em></h2>
+      <p class="lead">Management fees vary a lot between agents, so rather than guess at someone
+        else&rsquo;s, put your own numbers in. Ours is 8% of the monthly rent.</p>
+    </div>
+
+    <div class="save-card">
+      <div class="save-field">
+        <label for="svRent">Monthly rent</label>
+        <output id="svRentOut">&pound;950</output>
+        <input id="svRent" type="range" min="300" max="3000" step="25" value="950"
+               aria-label="Monthly rent in pounds">
+      </div>
+      <div class="save-field">
+        <label for="svFee">What your current agent charges</label>
+        <output id="svFeeOut">12%</output>
+        <input id="svFee" type="range" min="5" max="20" step="0.5" value="12"
+               aria-label="Your current agent's management fee, percent of rent">
+      </div>
+
+      <dl class="save-rows">
+        <div><dt>Your agent now</dt><dd id="svThem">&pound;1,368 a year</dd></div>
+        <div><dt>Megacity at 8%</dt><dd id="svUs">&pound;912 a year</dd></div>
+        <div class="save-total"><dt>You would keep</dt><dd id="svDiff">&pound;456 a year</dd></div>
+      </dl>
+      <p class="save-note">A guide only, worked on the rent and percentage you entered.
+        Fees are inclusive of VAT. Nothing here is a quote, and your own agreement may include
+        charges we cannot see.</p>
+      <a class="btn btn--fill" href="#valuation-form">Get an honest figure for your property</a>
+    </div>
   </div>
 </section>
 
