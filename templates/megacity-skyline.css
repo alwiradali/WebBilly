@@ -4,12 +4,20 @@
    Playfair Display headings / Inter UI. Standalone template, no shared css.
    ════════════════════════════════════════════════════════════════════ */
 :root{
-  --navy:#211D50; --navy-deep:#171340; --navy-ink:#0E0B2B;
-  --blue:#2868C0; --blue-deep:#1B4E9B; --blue-lift:#4E8FE0;
-  --sky:#529FBD; --sky-soft:#E8F1FA;
-  --paper:#FFFFFF; --surface:#F4F7FC; --mut:#4A5170;
-  --line:rgba(33,29,80,.14); --line-strong:rgba(33,29,80,.34);
-  --grad:linear-gradient(135deg,#211D50 0%,#2A2668 45%,#2868C0 100%);
+  /* Sampled straight out of the logo file: the wordmark and mark are
+     #1D2049, the stripe in the monogram is #1C72A4. The old navy was
+     #211D50, which reads violet because red sat above green; his is a true
+     blue. The accent is his #1C72A4 taken two steps darker so it still
+     clears 4.5:1 on the tinted panels. */
+  --navy:#1D2049; --navy-deep:#151735; --navy-ink:#0C0E22;
+  --blue:#176B99; --blue-deep:#11506F; --blue-lift:#57A6CE;
+  --sky:#2E90B8; --sky-soft:#E7F1F7;
+  /* used 28 times, including the focus outline, but never declared, so
+     every one of those rules was falling back to the inherited colour */
+  --sky-deep:#15607F;
+  --paper:#FFFFFF; --surface:#F3F7FA; --mut:#48506B;
+  --line:rgba(29,32,73,.14); --line-strong:rgba(29,32,73,.34);
+  --grad:linear-gradient(135deg,#1D2049 0%,#1B3560 45%,#176B99 100%);
   --ff-d:"Playfair Display",Georgia,"Times New Roman",serif;
   --ff-u:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
   --gut:clamp(20px,4.5vw,72px); --maxw:1480px; --r:18px;
@@ -132,15 +140,16 @@ button{font:inherit;cursor:pointer}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
 .burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .brand img{height:46px;width:auto;display:block}
-.nav-find{display:none;align-items:center;gap:8px;margin-left:auto;font:600 12.5px/1 var(--ff-u);
-  letter-spacing:.06em;color:var(--navy-ink)}
+.nav-find{display:flex;align-items:center;gap:9px;margin-left:auto;font:600 12.5px/1 var(--ff-u);
+  letter-spacing:.04em;color:var(--navy-ink);padding:11px 18px;border-radius:999px;
+  border:1.5px solid var(--line-strong);background:rgba(255,255,255,.72);
+  transition:border-color .2s,background .2s,color .2s}
+.nav-find:hover{border-color:var(--blue);background:#fff;color:var(--blue)}
 .nav-find svg{width:18px;height:18px}
-.nav-find:hover{color:var(--sky-deep)}
 @media (min-width:981px){.nav-links{margin-left:26px}}
-/* the search link duplicated the Properties nav item and the menu's
-   "Properties to rent", and once the social marks joined the bar it collided
-   with FAQs between 1100 and 1500px. Dropped rather than squeezed. */
-.nav-find{display:none!important}
+/* it collided with FAQs between 1100 and 1500px when the call button was
+   also in the bar. The call button has moved out (the number is in the menu,
+   the footer and the floating button), so the search fits again. */
 @media (max-width:400px){.brand img{height:38px}}
 
 .megamenu{position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;
@@ -196,8 +205,10 @@ body.is-ready .veil{display:none}
 /* ── nav ───────────────────────────────────────────────────────────── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;gap:26px;
   padding:14px var(--gut);backdrop-filter:blur(14px) saturate(1.15);box-shadow:0 1px 0 var(--line);
-  /* his blue, stronger than the tiles because the bar is a thin strip */
-  background:linear-gradient(100deg,rgba(226,236,250,.97) 0%,rgba(207,223,246,.96) 46%,rgba(190,212,242,.95) 100%);
+  /* washed from the two inks in his logo, #1D2049 and #176B99, rather than
+     the mixed blues this carried before */
+  background:linear-gradient(100deg,rgba(29,32,73,.17) 0%,rgba(24,74,120,.19) 46%,rgba(23,107,153,.22) 100%),
+             linear-gradient(#fff,#fff);
   transition:padding .35s ease,background .45s ease,box-shadow .45s ease;
 }
 
@@ -595,9 +606,10 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* scrolled: the bar turns to glass so the page reads through it. The blur and
    a light film keep his navy wordmark legible over whatever passes beneath. */
 .nav.is-solid{
-  background:linear-gradient(100deg,rgba(230,239,252,.82) 0%,rgba(211,227,248,.80) 46%,rgba(193,215,244,.78) 100%);
+  background:linear-gradient(100deg,rgba(29,32,73,.14) 0%,rgba(24,74,120,.16) 46%,rgba(23,107,153,.19) 100%),
+             linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.82));
   backdrop-filter:blur(22px) saturate(1.35);
-  box-shadow:0 6px 26px rgba(14,11,43,.10)}
+  box-shadow:0 6px 26px rgba(29,32,73,.10)}
 .split--rev .split-media{order:2}
 @media (max-width:900px){.split--rev .split-media{order:0}}
 
@@ -836,7 +848,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* The strapline widens the brand block, which pushed the call button off the
    right edge at every phone size. Search lives in the menu as "Properties to
    rent", so on phones the bar keeps the two actions that matter: menu and call. */
-@media (max-width:700px){ .nav-find{display:none} }
+
 
 /* The band photo is a 2.8:1 panorama: centring it on a phone crops out both
    the town hall and the bridge, so shift toward the lit city on narrow screens. */
@@ -869,8 +881,9 @@ form.enq{display:grid;gap:18px;align-content:start}
   .nav{display:grid;grid-template-columns:1fr auto 1fr;gap:10px}
   .burger{justify-self:start}
   .brand{justify-self:center;align-items:center;text-align:center}
-  .nav-cta{justify-self:end}
-  .nav-find{display:none}
+  .nav-find{justify-self:end;margin-left:0;padding:11px 14px;min-height:44px}
+  .nav-find span{display:none}
+  .nav-find svg{width:20px;height:20px}
 }
 
 /* ── Property detail ──────────────────────────────────────────────────── */
@@ -1130,8 +1143,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* .nav.is-solid is (0,2,0) and would otherwise paint its light film straight
    over this one, so the dark state has to match it for weight. */
 .nav.is-solid.nav--dark{
-  background:linear-gradient(100deg,rgba(14,11,38,.90) 0%,rgba(20,18,54,.88) 46%,rgba(26,30,78,.86) 100%);
-  box-shadow:0 6px 26px rgba(6,4,20,.28)}
+  background:linear-gradient(100deg,rgba(29,32,73,.93) 0%,rgba(24,58,100,.91) 46%,rgba(23,107,153,.88) 100%);
+  box-shadow:0 6px 26px rgba(12,14,34,.30)}
 .nav--dark .brand img.brand-dark{display:none}
 .nav--dark .brand img.brand-light{display:block}
 .nav--dark .brand-strap{color:rgba(255,255,255,.92)}
@@ -1264,3 +1277,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* the label sits on the navy end of the card's gradient, where --blue-lift
    measured 4.49:1, so it takes a lighter blue and clears with margin */
 .fee--hero .lbl{color:#8FC4F5}
+
+/* inline text link. Padded so the hit area clears 24px: at the bare line
+   height these measured 18px, under WCAG 2.5.8. inline-block keeps them in
+   the flow of the paragraph and honours the <br> separators. */
+.lnk{display:inline-block;padding:4px 0;color:var(--blue);font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.lnk:hover{color:var(--navy)}
+.sec--dark .lnk,.valcta .lnk{color:#8FC4F5}
+.sec--dark .lnk:hover,.valcta .lnk:hover{color:#fff}
