@@ -692,42 +692,24 @@ form.enq{display:grid;gap:18px;align-content:start}
 .sec .lede{margin-top:20px;max-width:62ch;color:var(--mut);font-size:16px}
 .sec--dark .lede{color:rgba(255,255,255,.76)}
 
-/* ── Cards: floating, with his monogram behind and a charge running the edge ──
-   ::before is a conic gradient rotating behind the card; ::after covers all but
-   a 1.5px rim, so what shows through reads as a current travelling the outline.
-   The monogram sits on that same layer at low opacity. */
+/* ── Cards ─────────────────────────────────────────────────────────────── */
 .cards{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
   perspective:1400px}
-.card{position:relative;isolation:isolate;border:0;border-radius:18px;padding:32px 28px;
-  background:transparent;overflow:hidden;box-shadow:0 10px 30px rgba(14,11,43,.07);
+.card{border-radius:18px;padding:32px 28px;box-shadow:0 10px 30px rgba(14,11,43,.07);
   transform-style:preserve-3d;animation:cardfloat 11s ease-in-out infinite;
   transition:transform .5s cubic-bezier(.2,.7,.3,1),box-shadow .5s ease}
-.card::before{content:"";position:absolute;z-index:-2;inset:-60%;border-radius:0;
-  background:conic-gradient(from 0deg,transparent 0 244deg,
-    rgba(40,104,192,.55) 268deg,rgba(40,104,192,1) 296deg,rgba(82,159,189,1) 320deg,
-    rgba(34,211,238,1) 338deg,rgba(167,232,247,.85) 350deg,transparent 360deg);
-  animation:cardspark 6s linear infinite}
-.card::after{content:"";position:absolute;z-index:-1;inset:2px;border-radius:16px;
-  background:url("assets/mcr/mark-ghost.png") no-repeat center/cover,#fff;
-  box-shadow:inset 0 0 0 1px var(--line)}
-.card>*{position:relative;z-index:1}
 .card:hover{transform:translateY(-10px) rotateX(2.2deg) rotateY(-1.6deg) scale(1.012);
   box-shadow:0 26px 60px rgba(14,11,43,.16);animation-play-state:paused}
-.card:hover::before{animation-duration:2.6s}
 .card:nth-child(2n){animation-delay:-2.4s}
 .card:nth-child(3n){animation-delay:-4.7s}
 .card:nth-child(5n){animation-delay:-6.1s}
 @keyframes cardfloat{
   0%,100%{transform:translateY(0) rotateX(0) rotateY(0)}
   50%{transform:translateY(-6px) rotateX(.7deg) rotateY(-.5deg)}}
-@keyframes cardspark{to{transform:rotate(1turn)}}
-/* the monogram is his navy artwork, so it needs to sit light on dark panels */
-.sec--dark .card::after{background:url("assets/mcr/mark-ghost-light.png") no-repeat center/cover,#1B1840;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
 @media (prefers-reduced-motion:reduce){
-  .card,.card::before{animation:none}
+  .card{animation:none}
   .card:hover{transform:none}
 }
-
 .card .ic{width:48px;height:48px;border-radius:12px;background:var(--grad);display:grid;place-items:center;margin-bottom:20px}
 .card .ic svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.9}
 .card h3{font:500 clamp(20px,2.1vw,25px)/1.2 var(--ff-d);margin-bottom:12px}
@@ -751,8 +733,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 .acc-body p+p{margin-top:10px}
 
 .steps{counter-reset:s;display:grid;gap:18px;margin-top:44px}
-.stp{position:relative;padding:26px 28px 26px 84px;background:#fff;border:1px solid var(--line);border-radius:16px}
-.sec--dark .stp{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.stp{position:relative;padding:26px 28px 26px 84px;border-radius:16px}
+.sec--dark .stp{--tile-fill:rgba(255,255,255,.05)}
 .stp::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:28px;top:26px;
   font:700 13px/1 var(--ff-u);color:#fff;background:var(--grad);width:38px;height:38px;border-radius:10px;display:grid;place-items:center}
 .stp h4{font:600 16.5px/1.35 var(--ff-u);margin-bottom:7px}
@@ -1009,18 +991,51 @@ form.enq{display:grid;gap:18px;align-content:start}
 }
 
 
-/* ── His monogram behind every tile ───────────────────────────────────────
-   The mark fills the whole tile rather than sitting in a corner: his artwork
-   on a transparent ground, faded so body copy still reads over it. */
-.svc,.step,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{
-  background-image:url("assets/mcr/mark-ghost.png");
-  background-repeat:no-repeat;background-position:center;background-size:cover;
+
+
+
+/* ══ Every tile: his monogram filling it, and a charge running the outline ══
+   The border is transparent and painted by a conic gradient clipped to the
+   border box, so the bright arc reads as a current travelling the edge. The
+   angle is a registered custom property so it can animate; it is also given a
+   plain 0deg value, so a browser without @property shows a static glow rather
+   than losing the background entirely. */
+@property --tile-ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+
+.card,.svc,.step,.stp,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{
+  --tile-ang:0deg;
+  --tile-fill:#fff;
+  --tile-mark:url("assets/mcr/mark-ghost.png");
+  border:2px solid transparent;
+  background-color:transparent;
+  background-image:var(--tile-mark),
+    linear-gradient(var(--tile-fill),var(--tile-fill)),
+    conic-gradient(from var(--tile-ang),transparent 0 244deg,
+      rgba(40,104,192,.55) 268deg,rgba(40,104,192,1) 296deg,rgba(82,159,189,1) 320deg,
+      rgba(34,211,238,1) 338deg,rgba(167,232,247,.85) 350deg,transparent 360deg);
+  background-origin:padding-box,padding-box,border-box;
+  background-clip:padding-box,padding-box,border-box;
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  background-size:cover,auto,auto;
+  background-position:center,center,center;
+  animation:tilespark 6s linear infinite;
 }
-/* tiles already on the brand gradient take the light mark over it */
-.mm-d--cta,.pd-card--cta{
-  background-image:url("assets/mcr/mark-ghost-light.png"),var(--grad);
-  background-repeat:no-repeat,no-repeat;
-  background-position:center,center;
-  background-size:cover,cover;
+@keyframes tilespark{to{--tile-ang:360deg}}
+.card:hover,.svc:hover,.svcnav-card:hover,.ct-card:hover,.mm-d:hover,.post:hover,.jr-toc a:hover{
+  animation-duration:2.6s}
+/* the float on .card runs on its own timeline, so give it both animations */
+.card{animation:cardfloat 11s ease-in-out infinite,tilespark 6s linear infinite}
+.card:hover{animation-play-state:paused,running;animation-duration:11s,2.6s}
+
+/* per-tile fills */
+.svc{--tile-fill:var(--surface)}
+.sec--dark .card,.sec--dark .stp,.sec--dark .step{--tile-fill:#1B1840;--tile-mark:url("assets/mcr/mark-ghost-light.png")}
+.mm-d--cta,.pd-card--cta{--tile-mark:url("assets/mcr/mark-ghost-light.png")}
+.mm-d--cta,.pd-card--cta{background-image:var(--tile-mark),var(--grad),
+  conic-gradient(from var(--tile-ang),transparent 0 244deg,
+    rgba(255,255,255,.5) 268deg,rgba(143,211,238,1) 300deg,rgba(34,211,238,1) 330deg,
+    rgba(255,255,255,.9) 348deg,transparent 360deg)}
+.jr-toc a{--tile-fill:rgba(255,255,255,.06);--tile-mark:url("assets/mcr/mark-ghost-light.png")}
+@media (prefers-reduced-motion:reduce){
+  .card,.svc,.step,.stp,.svcnav-card,.ct-card,.fee,.acc-card,.pd-card,.post,.mm-d,.jr-toc a{animation:none}
 }
-.jr-toc a{background-image:url("assets/mcr/mark-ghost-light.png")}
