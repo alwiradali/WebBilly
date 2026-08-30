@@ -1027,7 +1027,7 @@ form.enq{display:grid;gap:18px;align-content:start}
   background-origin:padding-box,padding-box,border-box;
   background-clip:padding-box,padding-box,border-box;
   background-repeat:no-repeat,no-repeat,no-repeat;
-  background-size:cover,auto,auto;
+  background-size:auto 76%,auto,auto;
   background-position:center,center,center;
   animation:tilespark 6s linear infinite;
 }
@@ -1042,7 +1042,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .svc{--tile-fill:var(--surface)}
 .sec--dark .card,.sec--dark .stp,.sec--dark .step{--tile-fill:#1B1840;--tile-mark:url("assets/mcr/mark-ghost-light.png")}
 .mm-d--cta,.pd-card--cta,.fee--hero{--tile-mark:url("assets/mcr/mark-ghost-light.png")}
-.mm-d--cta,.pd-card--cta,.fee--hero{background-image:var(--tile-mark),var(--grad),
+.mm-d--cta,.pd-card--cta,.fee--hero{background-size:auto 76%,cover,auto;background-image:var(--tile-mark),var(--grad),
   conic-gradient(from var(--tile-ang),transparent 0 244deg,
     rgba(255,255,255,.5) 268deg,rgba(143,211,238,1) 300deg,rgba(34,211,238,1) 330deg,
     rgba(255,255,255,.9) 348deg,transparent 360deg)}
@@ -1070,7 +1070,7 @@ form.enq{display:grid;gap:18px;align-content:start}
   background-origin:padding-box,padding-box,border-box;
   background-clip:padding-box,padding-box,border-box;
   background-repeat:no-repeat,no-repeat,no-repeat;
-  background-size:cover,auto,auto;
+  background-size:auto 76%,auto,auto;
   background-position:center,center,center;
   animation:tilespark 6s linear infinite;
 }
