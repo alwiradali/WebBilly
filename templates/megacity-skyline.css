@@ -395,9 +395,9 @@ body.is-ready .veil{display:none}
 .svc li::before{content:"";width:7px;height:7px;background:var(--sky);transform:rotate(45deg);flex:none;position:relative;top:-1px}
 
 /* ── city video band ───────────────────────────────────────────────── */
-.band{position:relative;height:96svh;clip-path:polygon(0 4vw,100% 0,100% calc(100% - 4vw),0 100%);
+.band{position:relative;height:min(72svh,620px);clip-path:polygon(0 4vw,100% 0,100% calc(100% - 4vw),0 100%);
   margin:6vh 0;overflow:clip;background:var(--navy-deep)}
-@media (max-width:900px){.band{height:min(58svh,580px)}}
+@media (max-width:900px){.band{height:min(54svh,460px)}}
 .band video,.band .poster{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;
   background-size:cover;background-position:center;opacity:.78}
 .band::after{content:"";position:absolute;inset:0;pointer-events:none;
@@ -765,3 +765,24 @@ form.enq{display:grid;gap:18px;align-content:start}
 .endcta h2 em{font-style:italic;color:var(--blue-lift)}
 .endcta p{margin:20px auto 0;max-width:52ch;color:rgba(255,255,255,.8)}
 .endcta .ctas{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+
+/* ── Menu as a list of destinations ───────────────────────────────────────
+   Every entry goes to a page. The old menu showed each section's contents
+   expanded inline, so tapping "Landlords & Investors" led nowhere. */
+.mm-dest{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-content:start}
+.mm-d{display:block;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  transition:border-color .25s ease,transform .25s ease,box-shadow .25s ease}
+.mm-d:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 14px 32px rgba(14,11,43,.10)}
+.mm-d b{display:block;font:500 19px/1.25 var(--ff-d);color:var(--navy-ink);margin-bottom:5px}
+.mm-d b::after{content:" →";color:var(--blue);font-family:var(--ff-u);font-size:14px}
+.mm-d span{display:block;font:400 13.5px/1.55 var(--ff-u);color:var(--mut)}
+.mm-d--cta{background:var(--grad);border-color:transparent}
+.mm-d--cta b{color:#fff}
+.mm-d--cta b::after{color:#A8DEF2}
+.mm-d--cta span{color:rgba(255,255,255,.85)}
+@media (max-width:900px){
+  .mm-dest{grid-template-columns:1fr;gap:8px}
+  .mm-d{padding:15px 17px}
+  .mm-d b{font-size:17.5px}
+  .mm-d span{font-size:12.8px;line-height:1.5}
+}

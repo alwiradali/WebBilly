@@ -1,0 +1,6 @@
+
+/* The band photo is a 2.8:1 panorama: centring it on a phone crops out both
+   the town hall and the bridge, so shift toward the lit city on narrow screens. */
+@media (max-width:760px){
+  .band .poster{background-position:64% 58% !important}
+}
