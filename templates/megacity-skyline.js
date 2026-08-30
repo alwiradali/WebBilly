@@ -127,8 +127,10 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     manif.innerHTML = manif.textContent.trim().split(/\s+/)
       .map(w => '<span class="w">' + w + "</span>").join(" ");
     gsap.fromTo("#manifText .w", { color: "#C6D2E6" }, {
-      color: "#12142B", stagger: .06, ease: "none",
-      scrollTrigger: { trigger: "#manif", start: "top 72%", end: "bottom 45%", scrub: .4 },
+      color: "#12142B", stagger: .045, ease: "none",
+      // finish the fill while the paragraph is still well in view: ending at
+      // "bottom 45%" left the last words pale for anyone reading on a phone
+      scrollTrigger: { trigger: "#manif", start: "top 85%", end: "bottom 78%", scrub: .4 },
     });
   }
 
