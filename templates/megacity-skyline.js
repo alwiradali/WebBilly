@@ -43,7 +43,7 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
      through. Over the dark sections that would leave his navy wordmark
      unreadable, so watch what is actually under the bar and switch to his
      white artwork there. */
-  const DARK = ".hero,.band,.duo,.split,.valcta,.creds,.footer,.sec--dark,.phead,.lp-hero,.jr-hero,.pull--alt";
+  const DARK = ".hero,.band,.duo,.split,.valcta,.creds,.footer,.sec--dark,.phead,.lp-hero,.jr-hero,.pull--alt,.save";
   const darkBlocks = [...document.querySelectorAll(DARK)];
   const onScroll = () => {
     const scrolled = scrollY > 40;
