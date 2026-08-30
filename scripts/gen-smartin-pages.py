@@ -54,7 +54,7 @@ AREAS = [
          local="Pudsey sits between Leeds and Bradford, which means students here go to schools on either side of that line and sit papers set by whichever board their school chose.",
          detail="That split matters more than it sounds. Two friends a street apart can be revising the same physics with different required practicals and different exam wording — worth checking before anyone buys a revision guide."),
     dict(slug='garforth', name='Garforth', region='Leeds', mode='both',
-         blurb='GCSE science tuition in Garforth — in person in east Leeds or online.',
+         blurb='GCSE science tuition in Garforth — in person across east Leeds, or online anywhere in the UK.',
          local="Garforth lies east of Leeds towards the A1, with its own station on the York line and a settled community feel.",
          detail="East Leeds families are often furthest from tutors clustered around the centre and the north. Online levels that out — the same teacher, no travel."),
     dict(slug='wetherby', name='Wetherby', region='West Yorkshire', mode='both',
@@ -62,7 +62,7 @@ AREAS = [
          local="Wetherby is a market town on the River Wharfe at the north-eastern edge of the Leeds district, roughly equidistant from Leeds, York and Harrogate.",
          detail="Being between three centres, Wetherby students end up at a wide spread of schools. Sessions are built around the specification the student is actually sitting, not a generic 'GCSE science' syllabus."),
     dict(slug='otley', name='Otley', region='West Yorkshire', mode='both',
-         blurb='GCSE science tuition in Otley — in person in Wharfedale or online.',
+         blurb='GCSE science tuition in Otley and Wharfedale — in person locally, or online anywhere in the UK.',
          local="Otley is a market town on the Wharfe below the Chevin, north-west of Leeds, with a long-standing Wednesday and Saturday market.",
          detail="Wharfedale is beautiful and not always quick to drive across, especially in winter. Online sessions run whatever the weather is doing on the Chevin."),
     dict(slug='guiseley', name='Guiseley', region='West Yorkshire', mode='both',
@@ -316,7 +316,7 @@ def areas_index():
         <p>{a['blurb']}</p>
         <span class="ln">See {a['name']} →</span>
       </a>''')
-    return (head(1, 'Areas We Cover | GCSE Science Tuition in Leeds &amp; Online | SMARTin SCIENCE',
+    return (head(1, 'Areas We Cover | GCSE Science Tuition | SMARTin SCIENCE',
                  'GCSE Combined Science tuition in Leeds and across West Yorkshire, plus online tuition anywhere in the UK, with former Head of Science Rod Martin.',
                  '/areas/') + nav(1) + '''
 <section class="areahero">
