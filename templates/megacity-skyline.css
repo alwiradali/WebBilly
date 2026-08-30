@@ -171,7 +171,7 @@ body.mm-open{overflow:hidden}
 .foot-social svg{width:21px;height:21px;display:block}
 .foot-social{gap:12px}
 .foot-pay-note{color:rgba(255,255,255,.62);font-size:13px;line-height:1.6;max-width:34ch;margin-top:4px}
-.foot-legal{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
+.foot-legal{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
 .foot-legal a{color:rgba(255,255,255,.7);font-size:13px}
 .foot-legal a:hover{color:#fff}
 
@@ -316,7 +316,8 @@ body.is-ready .veil{display:none}
 .fab-mail{background:var(--blue)}
 
 /* footer grid + badges */
-.foot-grid{max-width:var(--maxw);margin:0 auto;padding:52px var(--gut) 34px;display:grid;gap:36px;
+/* above the watermark */
+.foot-grid{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:52px var(--gut) 34px;display:grid;gap:36px;
   grid-template-columns:1.2fr .7fr 1fr 1.1fr}
 @media (max-width:960px){.foot-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.foot-grid{grid-template-columns:1fr}}
@@ -522,14 +523,18 @@ form.enq{display:grid;gap:18px;align-content:start}
 .enq input:focus,.enq textarea:focus{outline:none;border-bottom-color:var(--sky-deep)}
 .enq .btn{justify-self:start;margin-top:8px}
 .footer{background:var(--navy-ink);color:rgba(255,255,255,.85);padding:10px 0 120px;position:relative;overflow:clip}
-.footer .footer-in{padding:22px var(--gut) 0;border-top:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6)}
+.footer .footer-in{position:relative;z-index:1;padding:22px var(--gut) 0;border-top:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6)}
 .footer .footer-in a{color:rgba(255,255,255,.7)}
 .footer .footer-in a:hover{color:#fff}
 .footer-in{max-width:var(--maxw);margin:0 auto;display:flex;gap:24px;flex-wrap:wrap;align-items:center;
   font:600 11px/1.8 var(--ff-u);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
 .footer-in span{margin-right:auto}
-.footer-word{position:absolute;left:0;right:0;bottom:-2vw;text-align:center;pointer-events:none;
-  font:400 15.5vw/0.9 var(--ff-d);color:var(--surface);white-space:nowrap;letter-spacing:-.02em}
+/* Watermark, not a headline. At 15.5vw the phrase was 100px wider than the
+   viewport on a phone and 492px wider at 1920, so it was always cut off, and
+   bottom:-2vw hung it past the footer edge. 11.5vw fits at every width. */
+.footer-word{position:absolute;left:0;right:0;bottom:10px;z-index:0;text-align:center;
+  pointer-events:none;font:400 11.5vw/1.18 var(--ff-d);color:rgba(255,255,255,.07);
+  white-space:nowrap;letter-spacing:-.02em}
 .footer-word em{font-style:italic}
 .footer-in a:hover{color:var(--sky-deep)}
 
