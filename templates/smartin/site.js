@@ -230,8 +230,40 @@
     }, { passive: true });
   }
 
+  /* ---------- tile charge ----------
+     Every tile carries the conic-gradient outline animation, parked in the
+     paused state by the stylesheet. Animating that gradient repaints the
+     whole element every frame, so only the tiles actually on screen are set
+     running — a long page holds far more of them than a viewport shows. */
+  var TILES_SEL = '.card,.panel,.val,.wkcard,.step2,.cmp,.stat,.slist,.q,.form,.post,.fq,.tile';
+
+  function tileCharge() {
+    var tiles = document.querySelectorAll(TILES_SEL);
+    if (!tiles.length) return;
+
+    // Offset each tile's phase with a negative delay, stepped by the golden
+    // ratio so neighbours land far apart on the cycle. Without this every
+    // card on a grid sparks in lockstep, which reads as a blinking machine
+    // rather than a current moving through the page.
+    for (var i = 0; i < tiles.length; i++) {
+      tiles[i].style.animationDelay = (-((i * 0.618034) % 1) * 7).toFixed(2) + 's';
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      for (var k = 0; k < tiles.length; k++) tiles[k].classList.add('tile-live');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        e.target.classList.toggle('tile-live', e.isIntersecting);
+      });
+    }, { rootMargin: '120px 0px' });
+    for (var j = 0; j < tiles.length; j++) io.observe(tiles[j]);
+  }
+
   function init() {
     applyContact(); nav(); marquees(); reveals(); counters(); faq(); booking(); heroTilt();
+    tileCharge();
   }
 
   document.readyState === 'loading'
