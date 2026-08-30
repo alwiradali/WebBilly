@@ -69,11 +69,10 @@ button{font:inherit;cursor:pointer}
 .accpanel-grid img{max-width:100%;max-height:74px;width:auto;height:auto;display:block}
 .accpanel-n{font:500 12.5px/1.6 var(--ff-u);color:var(--mut);text-align:center;margin:0}
 @media (max-width:520px){.accpanel-grid span{min-height:86px}.accpanel-grid img{max-height:58px}}
-.lsteps{list-style:none;counter-reset:st;margin:26px 0 0;display:grid;gap:16px}
-.lsteps li{counter-increment:st;position:relative;padding-left:46px}
-.lsteps li::before{content:counter(st);position:absolute;left:0;top:-2px;width:30px;height:30px;
-  border-radius:50%;display:grid;place-items:center;background:var(--sky);color:#fff;
-  font:700 13px/1 var(--ff-u)}
+.lsteps{list-style:none;margin:26px 0 0;display:grid;gap:16px}
+.lsteps li{position:relative;padding-left:26px}
+.lsteps li::before{content:"";position:absolute;left:2px;top:.55em;width:9px;height:9px;
+  background:var(--blue);transform:rotate(45deg);border-radius:2px}
 .lsteps b{display:block;font:600 15.5px/1.4 var(--ff-u)}
 .lsteps span{display:block;margin-top:4px;font-size:14px;color:rgba(255,255,255,.66)}
 .lsec:not(.lsec--dark) .lsteps span{color:var(--mut)}
