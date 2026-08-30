@@ -757,7 +757,9 @@ form.enq{display:grid;gap:18px;align-content:start}
 .fee{background:#fff;border:1px solid var(--line);border-radius:20px;padding:34px 30px;position:relative;overflow:hidden}
 .fee--hero{background:var(--grad);color:#fff;border-color:transparent}
 .fee .lbl{font:800 10.5px/1 var(--ff-u);letter-spacing:.24em;text-transform:uppercase;color:var(--blue)}
-.fee--hero .lbl{color:var(--blue-lift)}
+/* the label sits on the navy end of the card's gradient, where --blue-lift
+   measured 4.49:1, so it takes a lighter blue and clears with margin */
+.fee--hero .lbl{color:#8FC4F5}
 .fee .amt{font:400 clamp(38px,4.6vw,54px)/1 var(--ff-d);margin:16px 0 6px}
 .fee .sub{font-size:13.5px;color:var(--mut)}
 .fee--hero .sub{color:rgba(255,255,255,.72)}
@@ -1239,3 +1241,26 @@ form.enq{display:grid;gap:18px;align-content:start}
 @media (prefers-reduced-motion:reduce){
   .mm-g summary::before,.mm-g-in a,.mm-go::before{transition:none}
 }
+
+/* ── brand colour through the scroll ──────────────────────────────────────
+   The big display headings stay ink so the page keeps a spine; the sub
+   headings inside cards and the money figures carry the blue, so the brand
+   reappears in every section rather than only in the kickers. Dark sections
+   are excluded: their headings are already white and must stay white. */
+.svc h3, .step h3, .card h3, .svcnav-card h3, .post h3,
+.pd-card h3, .pd-main-col h3, .fee .lbl, .incl-list li b{
+  color:var(--blue)}
+/* the accreditation panels sit on a tinted grey, where --blue lands at
+   4.47:1, so this one heading takes the deeper blue to clear 4.5 */
+.acc-body h3{color:var(--blue-deep)}
+.sec--dark .svc h3, .sec--dark .step h3, .sec--dark .card h3,
+.sec--dark .post h3, .pd-card--cta h3, .duo-half h3, .asearch h3{color:#fff}
+
+/* key figures: the number is the point, so it gets the colour. A direct
+   rule beats inherited white, so every card that sits on the dark gradient
+   has to be named back, or its figure turns blue on blue. */
+.fee .amt{color:var(--blue)}
+.fee--hero .amt{color:#fff}
+/* the label sits on the navy end of the card's gradient, where --blue-lift
+   measured 4.49:1, so it takes a lighter blue and clears with margin */
+.fee--hero .lbl{color:#8FC4F5}
