@@ -95,16 +95,18 @@
 <div class="megamenu" id="megamenu" hidden>
   <div class="mm-inner">
     <div class="mm-cols">
-      <a class="mm-top-cta" href="megacity-skyline#valuation-form">Book a free professional valuation</a>
+      <a class="mm-top-cta" href="megacity-valuation">Book a free professional valuation</a>
 
       <nav class="mm-acc" aria-label="Main sections">
         <details class="mm-g">
           <summary>Letting your property</summary>
           <div class="mm-g-in">
             <a href="megacity-for-landlords">Landlords &amp; investors</a>
-            <a href="megacity-for-landlords#fees">Fully managed, 8% of the rent</a>
-            <a href="megacity-for-landlords#fees">Rent collection, 5%</a>
-            <a href="megacity-for-landlords#fees">Let only, &pound;295 inc. VAT</a>
+            <a href="megacity-fully-managed">Fully Managed, 8% of the rent</a>
+            <a href="megacity-rent-collection">Rent Collection, 5%</a>
+            <a href="megacity-tenant-find">Tenant Find, &pound;295 inc. VAT</a>
+            <a href="megacity-skyline#packages">Compare all three</a>
+            <a href="megacity-valuation">Free professional valuation</a>
             <a href="megacity-for-landlords#protection">How your rent is protected</a>
             <a href="megacity-for-landlords#tenants">How we find good tenants</a>
             <a href="megacity-switch">Switch managing agent</a>
@@ -385,8 +387,8 @@
     <div class="save-copy">
       <p class="no">Megacity against your current agent</p>
       <h2>What would you<br><em>be saving?</em></h2>
-      <p class="lead">Management fees vary a lot between agents, so rather than guess at someone
-        else&rsquo;s, put your own numbers in. Ours is 8% of the monthly rent.</p>
+      <p class="lead">Move the rent to your figure. The high street number is 15% including VAT,
+        the middle of the published range once VAT is counted, so you are comparing like with like.</p>
     </div>
 
     <div class="save-card">
@@ -404,22 +406,221 @@
                  inputmode="numeric" aria-label="Monthly rent in pounds">
         </div>
       </div>
-      <div class="save-field">
-        <label for="svFee">What your current agent charges</label>
-        <output id="svFeeOut">12%</output>
-        <input id="svFee" type="range" min="5" max="20" step="0.5" value="12"
-               aria-label="Your current agent's management fee, percent of rent">
-      </div>
-
       <dl class="save-rows">
-        <div><dt>Your agent now</dt><dd id="svThem">&pound;1,368 a year</dd></div>
-        <div><dt>Megacity at 8%</dt><dd id="svUs">&pound;912 a year</dd></div>
-        <div class="save-total"><dt>You would keep</dt><dd id="svDiff">&pound;456 a year</dd></div>
+        <div><dt>High street agent at 15%</dt><dd id="svThem">&pound;1,710 a year</dd></div>
+        <div><dt>Megacity Rent Collection at 5%</dt><dd id="svRc">&pound;570 a year</dd></div>
+        <div><dt>Megacity Fully Managed at 8%</dt><dd id="svUs">&pound;912 a year</dd></div>
+        <div class="save-total"><dt>You would keep</dt><dd id="svDiff">&pound;798 a year</dd></div>
       </dl>
-      <p class="save-note">A guide only, worked on the rent and percentage you entered.
-        Fees are inclusive of VAT. Nothing here is a quote, and your own agreement may include
-        charges we cannot see.</p>
+      <p class="save-note">Our fees are inclusive of VAT. High street agents usually quote before
+        it: published guides put full management at 10% to 15% plus VAT, which is 12% to 18% once
+        VAT is added, so the 15% used here sits in the middle of that. A guide only, not a quote,
+        and your own agreement may carry charges we cannot see.</p>
       <a class="btn btn--fill" href="#valuation-form">Get an honest figure for your property</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ YOUR OPTIONS ══ -->
+<section class="opts" id="options" data-rail="Your options">
+  <div class="opts-in">
+    <p class="no">Landlord services</p>
+    <h2>Your options, <em>in plain words.</em></h2>
+    <p class="lead">Whether you will be up a ladder with a paintbrush yourself, or would rather throw
+      us the keys and hear from us twice a year, there is a level that fits. Nobody here is paid to
+      sell you the biggest one.</p>
+    <div class="opt-grid">
+      <a class="opt" href="megacity-tenant-find">
+        <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+        <h3>Tenant Find</h3>
+        <p class="opt-price">&pound;295 inc. VAT</p>
+        <p>For landlords who run their own property but would rather not run their own advert. We market it, reference properly, do the paperwork and hand you the keys and a complete file.</p>
+        <span class="opt-go">Read what it covers &rarr;</span>
+      </a>
+      <a class="opt" href="megacity-rent-collection">
+        <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10 12 4l8 6v9H4z"/><path d="M9 19v-6h6v6"/></svg></span>
+        <h3>Rent Collection</h3>
+        <p class="opt-price">5% inc. VAT</p>
+        <p>A step up. Everything above, plus the rent collected, reconciled and paid over with a statement, arrears chased the moment they appear, and renewals handled before the tenancy drifts.</p>
+        <span class="opt-go">Read what it covers &rarr;</span>
+      </a>
+      <a class="opt" href="megacity-fully-managed">
+        <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></span>
+        <h3>Fully Managed</h3>
+        <p class="opt-price">8% inc. VAT</p>
+        <p>The whole tenancy under one named person whose direct number you have. Repairs, inspections, certificates, renewals and the call at nine on a Sunday night.</p>
+        <span class="opt-go">Read what it covers &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARE THE PACKAGES ══ -->
+<section class="pkg" id="packages" data-rail="Compare">
+  <div class="pkg-in">
+    <p class="no">Three ways to work with us</p>
+    <h2>Compare our <em>landlord packages.</em></h2>
+    <p class="lead">The standard does not change between them. The referencing, the protected
+      deposit and the person answering the phone are the same whichever you pick. What changes is
+      how much of the tenancy you hand over.</p>
+
+    <div class="pkg-table" role="table" aria-label="What each Megacity service includes">
+      <div class="pkg-head" role="row">
+        <div class="pkg-f" role="columnheader"><span class="pkg-h-lbl">What you get</span></div>
+        <div class="pkg-c" role="columnheader"><b>Tenant Find</b><span>&pound;295 inc. VAT</span></div>
+        <div class="pkg-c" role="columnheader"><b>Rent Collection</b><span>5% inc. VAT</span></div>
+        <div class="pkg-c pkg-c--fm" role="columnheader"><b>Fully Managed</b><span>8% inc. VAT</span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">A free professional rental valuation</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Professional photography of every room</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Listed on Zoopla, OnTheMarket and megacityproperties.co.uk</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Accompanied viewings, always</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Independent credit and affordability referencing</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Employment and previous-landlord references</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Right to Rent checks on every adult occupier</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Tenancy agreement drafted and served correctly</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Deposit registered with the DPS inside 30 days</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Prescribed information served on time</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Compliance documents collected and filed</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Move-in arranged and keys handed over</div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Dated, photographic inventory and check-out report
+          <em class="pkg-note">Prepared by us on every service and charged separately. Ask the office what it comes to for your property.</em></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Monthly rent collected and reconciled</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Paid over promptly with a readable statement</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Arrears chased the moment they appear</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Tenancy renewals and rent reviews</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-y" role="img" aria-label="Included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">A named property manager with a direct number</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Repairs co-ordinated with trades we actually use</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Routine inspections with written findings</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Contractors instructed and managed for you</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Gas Safety, EICR, EPC and alarms tracked so nothing lapses</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">360&deg; virtual tour, walkable room by room</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+      <div class="pkg-row" role="row">
+        <div class="pkg-f" role="rowheader">Told what changes in the law before it bites</div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Tenant Find"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c" role="cell"><span class="pkg-n" role="img" aria-label="Not included with Rent Collection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></div>
+        <div class="pkg-c pkg-c--fm" role="cell"><span class="pkg-y" role="img" aria-label="Included with Fully Managed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5.5 5.5L20 7"/></svg></span></div>
+      </div>
+    </div>
+
+    <div class="pkg-cta">
+      <a class="btn btn--fill" href="megacity-valuation">Book your free professional valuation</a>
+      <a class="btn" href="megacity-for-landlords#fees">Read the fees in full</a>
     </div>
   </div>
 </section>
@@ -740,7 +941,7 @@
       </div>
     </div>
     <div><h4>Explore</h4>
-      <a href="megacity-skyline#services">Services</a><a href="megacity-about-us">About us</a><a href="megacity-skyline#process">The process</a><a href="megacity-renting#available">Homes</a><a href="megacity-skyline#landlords">Landlords</a><a href="megacity-renting#faq">FAQs</a><a href="megacity-skyline#valuation-form">Professional valuation</a>
+      <a href="megacity-skyline#packages">Services &amp; fees</a><a href="megacity-valuation">Free valuation</a><a href="megacity-about-us">About us</a><a href="megacity-skyline#process">The process</a><a href="megacity-renting#available">Homes</a><a href="megacity-skyline#landlords">Landlords</a><a href="megacity-renting#faq">FAQs</a><a href="megacity-skyline#valuation-form">Professional valuation</a>
     </div>
     <div><h4>Talk to us</h4>
       <a href="tel:+441612201763">0161 220 1763</a>

@@ -264,7 +264,9 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
         body: JSON.stringify({
           name: g("vName"), email: g("vEmail"), phone: g("vPhone"),
           topic: "Free landlord valuation",
-          message: "Free valuation requested via the website.\nPostcode: " + g("vPost"),
+          message: "Free valuation requested via the website."
+            + "\nWhat they need: " + ((f.querySelector('input[name=vtype]:checked') || {}).value || "not stated")
+            + "\nPostcode: " + g("vPost"),
           botcheck: ""
         })
       });
@@ -428,51 +430,38 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   }, { passive: true });
 })();
 
-/* ── What you'd save ────────────────────────────────────────────────────
-   Compares Megacity's 8% against whatever the landlord's current agent
-   charges. We ask for their figure rather than asserting one for the rest of
-   the market, because management fees vary and we cannot evidence a average. */
+/* ── What you'd save ─────────────────────────────────────────────────
+   One slider, the rent. The high street figure is fixed at 15% including VAT:
+   published guides put full management at 10% to 15% plus VAT, so 12% to 18%
+   inclusive, and 15% is the middle of that. Ours are inclusive already, so the
+   two sides are the same kind of number. */
 (function savings() {
   const rent = document.getElementById("svRent");
-  const fee  = document.getElementById("svFee");
-  if (!rent || !fee) return;
+  if (!rent) return;
 
-  const OURS = 8;
-  const gbp = n => "£" + Math.round(n).toLocaleString("en-GB");
+  const HIGH_ST = 15, RENT_COLL = 5, MANAGED = 8;
+  const gbp = n => "\u00a3" + Math.round(n).toLocaleString("en-GB");
   const out = id => document.getElementById(id);
+  const year = (r, pct) => r * (pct / 100) * 12;
 
-  const draw = () => {
-    const r = +rent.value, f = +fee.value;
-    const them = r * (f / 100) * 12;
-    const us   = r * (OURS / 100) * 12;
-    out("svRentOut").textContent = gbp(r);
-    out("svFeeOut").textContent  = (Number.isInteger(f) ? f : f.toFixed(1)) + "%";
-    out("svThem").textContent = gbp(them) + " a year";
-    out("svUs").textContent   = gbp(us) + " a year";
-    const diff = them - us;
-    const row  = out("svDiff");
-    if (diff > 0) {
-      row.textContent = gbp(diff) + " a year";
-      row.closest(".save-total").querySelector("dt").textContent = "You would keep";
-    } else if (diff === 0) {
-      row.textContent = "the same";
-      row.closest(".save-total").querySelector("dt").textContent = "You would pay";
-    } else {
-      // be straight about it when their agent is already cheaper
-      row.textContent = gbp(-diff) + " a year more";
-      row.closest(".save-total").querySelector("dt").textContent = "With us you would pay";
-    }
-    [rent, fee].forEach(el => {
-      const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
-      el.style.background = `linear-gradient(90deg,#2868C0 ${pct}%,#DCE6F6 ${pct}%)`;
-    });
+  const paint = (r) => {
+    out("svThem").textContent = gbp(year(r, HIGH_ST)) + " a year";
+    out("svRc").textContent   = gbp(year(r, RENT_COLL)) + " a year";
+    out("svUs").textContent   = gbp(year(r, MANAGED)) + " a year";
+    out("svDiff").textContent = gbp(year(r, HIGH_ST) - year(r, MANAGED)) + " a year";
   };
 
+  const draw = () => {
+    const r = +rent.value;
+    out("svRentOut").textContent = gbp(r);
+    paint(r);
+    const pct = ((r - rent.min) / (rent.max - rent.min)) * 100;
+    rent.style.background = `linear-gradient(90deg,#176B99 ${pct}%,#DCE6F6 ${pct}%)`;
+  };
   rent.addEventListener("input", draw);
-  fee.addEventListener("input", draw);
 
-  /* A slider cannot land on £1,347, and a landlord knows their exact rent,
-     so let them type it. The slider keeps its own range for its track fill. */
+  /* A slider cannot land on a real rent like 1,347, and a landlord knows their
+     own figure, so let them type it. The slider keeps its range for the fill. */
   const manual = document.getElementById("svManual");
   const entry  = document.getElementById("svEntry");
   const num    = document.getElementById("svRentNum");
@@ -490,15 +479,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       const v = Math.max(0, Math.min(20000, +num.value || 0));
       // clamp only what feeds the slider; the typed figure drives the sums
       rent.value = Math.max(+rent.min, Math.min(+rent.max, v));
-      const f = +fee.value;
-      const them = v * (f / 100) * 12, us = v * (OURS / 100) * 12;
-      out("svThem").textContent = gbp(them) + " a year";
-      out("svUs").textContent   = gbp(us) + " a year";
-      const diff = them - us, row = out("svDiff"),
-            dt = row.closest(".save-total").querySelector("dt");
-      if (diff > 0)       { row.textContent = gbp(diff) + " a year";      dt.textContent = "You would keep"; }
-      else if (diff === 0){ row.textContent = "the same";                 dt.textContent = "You would pay"; }
-      else                { row.textContent = gbp(-diff) + " a year more"; dt.textContent = "With us you would pay"; }
+      paint(v);
     });
   }
 
