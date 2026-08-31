@@ -68,9 +68,9 @@
   var WW = 0, WH = 0;
 
   var BLOOMS = [
-    { c: '4,87,172',   a: 0.11, r: 0.66, ph: 0.0, fq: 0.0016, ox: 0.20, oy: 0.20, sx: 0.15, sy: 0.12 },
-    { c: '55,189,121', a: 0.11, r: 0.60, ph: 2.1, fq: 0.0013, ox: 0.82, oy: 0.32, sx: 0.13, sy: 0.15 },
-    { c: '48,143,172', a: 0.09, r: 0.74, ph: 4.0, fq: 0.0011, ox: 0.48, oy: 0.86, sx: 0.17, sy: 0.10 }
+    { c: '4,87,172',   a: 0.15, r: 0.66, ph: 0.0, fq: 0.0016, ox: 0.20, oy: 0.20, sx: 0.15, sy: 0.12 },
+    { c: '55,189,121', a: 0.15, r: 0.60, ph: 2.1, fq: 0.0013, ox: 0.82, oy: 0.32, sx: 0.13, sy: 0.15 },
+    { c: '48,143,172', a: 0.13, r: 0.74, ph: 4.0, fq: 0.0011, ox: 0.48, oy: 0.86, sx: 0.17, sy: 0.10 }
   ];
 
   function drawWash() {
@@ -104,8 +104,8 @@
   }
 
   function build() {
-    var count = Math.round((W * H) / 26000);
-    count = Math.max(14, Math.min(count, 54));
+    var count = Math.round((W * H) / 20000);
+    count = Math.max(18, Math.min(count, 68));
 
     glyphs = [];
     for (var i = 0; i < count; i++) {
@@ -123,7 +123,7 @@
         y: Math.random() * H,
         vx: rand(-0.52, 0.52) * sp,
         vy: rand(-0.52, 0.52) * sp,
-        s: frag ? 10 + z * 9 : 12 + z * 22,
+        s: frag ? 11 + z * 10 : 13 + z * 25,
         a: rand(-0.24, 0.24),          // resting tilt
         va: rand(-0.0052, 0.0052) * sp,  // spin
         // a slow sway on top of the drift, so nothing travels in a dead
@@ -131,7 +131,7 @@
         ph: Math.random() * Math.PI * 2,
         fq: rand(0.006, 0.014),
         am: rand(3, 10) * sp,
-        o: frag ? 0.08 + z * 0.14 : 0.10 + z * 0.20,
+        o: frag ? 0.14 + z * 0.23 : 0.17 + z * 0.33,
         c: colour()
       });
     }
@@ -182,24 +182,24 @@
     ctx.translate(g.x + (g.dx || 0), g.y + (g.dy || 0));
     ctx.rotate(g.a);
 
-    ctx.globalAlpha = 0.13;
+    ctx.globalAlpha = 0.20;
     ctx.strokeStyle = g.c;
     ctx.lineWidth = 1.5;
     roundRect(-s / 2, -s * 0.56, s, s * 1.12, s * 0.17);
     ctx.stroke();
 
-    ctx.globalAlpha = 0.022;
+    ctx.globalAlpha = 0.032;
     ctx.fillStyle = g.c;
     ctx.fill();
 
-    ctx.globalAlpha = 0.17;
+    ctx.globalAlpha = 0.27;
     ctx.fillStyle = g.c;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '600 ' + (s * 0.46).toFixed(1) + 'px ' + DIS;
     ctx.fillText(g.t, 0, s * 0.02);
 
-    ctx.globalAlpha = 0.12;
+    ctx.globalAlpha = 0.18;
     ctx.font = '500 ' + (s * 0.16).toFixed(1) + 'px ' + DIS;
     ctx.textAlign = 'left';
     ctx.fillText(String(g.n), -s * 0.36, -s * 0.36);
@@ -264,7 +264,7 @@
         var d2 = dx * dx + dy * dy;
         if (d2 < maxD * maxD) {
           var d = Math.sqrt(d2);
-          ctx.globalAlpha = (1 - d / maxD) * 0.10 * (0.5 + a.z * 0.5);
+          ctx.globalAlpha = (1 - d / maxD) * 0.17 * (0.5 + a.z * 0.5);
           ctx.strokeStyle = a.c;
           ctx.lineWidth = 1;
           ctx.beginPath();
