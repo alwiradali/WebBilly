@@ -138,8 +138,8 @@
       var low = Math.round(mid * (1 - RATES.estimateSpread) / 25) * 25;
       var high = Math.round(mid * (1 + RATES.estimateSpread) / 25) * 25;
       setFigure(lo, low, 0, "");
-      setText(hi, "– " + fmt(high) + " pcm");
-      if (yr) setText(yr, "That's roughly " + fmt(low * 12) + " – " + fmt(high * 12) + " a year before costs.");
+      setText(hi, "to " + fmt(high) + " pcm");
+      if (yr) setText(yr, "That's roughly " + fmt(low * 12) + " to " + fmt(high * 12) + " a year before costs.");
     }
     [area, beds, type].forEach(function (c) { c && c.addEventListener("change", run); });
     run();
@@ -213,7 +213,7 @@
       var p = val(price);
       var tax = sdltFor(p, buyer());
       setFigure($("#sdTax"), tax, 0);
-      setText($("#sdRate"), p ? ((tax / p) * 100).toFixed(2) + "% effective rate" : "—");
+      setText($("#sdRate"), p ? ((tax / p) * 100).toFixed(2) + "% effective rate" : "");
       setText($("#sdTotal"), fmt(p + tax));
     }
     price.addEventListener("input", run);

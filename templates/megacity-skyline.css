@@ -436,7 +436,6 @@ body.is-ready .veil{display:none}
 .proc-track{display:flex;gap:26px;padding:10px var(--gut) 30px;width:max-content;align-items:stretch}
 .step{position:relative;width:clamp(300px,34vw,470px);background:#fff;border:1px solid var(--line);
   border-radius:var(--r);padding:40px 36px 44px;flex:none;overflow:clip}
-.step .ghost{display:none}
 .step>*{position:relative;z-index:1}
 .step .tag{font:600 12.6px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;color:var(--sky-deep)}
 .step h3{font:500 clamp(25.44px,2.44vw,35.02px)/1.12 var(--ff-d);margin:16px 0 14px}
@@ -669,7 +668,6 @@ form.enq{display:grid;gap:18px;align-content:start}
   border-radius:var(--r);background:#fff;overflow:hidden;
   transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
 .svcnav-card:hover{transform:translateY(-4px);box-shadow:0 22px 50px rgba(14,11,43,.11);border-color:var(--blue)}
-.svcnav-card .n{display:none}
 .svcnav-card h3{font:500 clamp(21.2px,2.12vw,27.56px)/1.18 var(--ff-d);color:var(--navy-ink);margin:14px 0 12px}
 .svcnav-card p{font:400 16.5px/1.68 var(--ff-u);color:var(--mut);margin-bottom:18px}
 .svcnav-card .go{display:inline-flex;align-items:center;gap:8px;font:600 14.25px/1 var(--ff-u);
@@ -763,7 +761,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 .stp{position:relative;padding:26px 28px;border-radius:16px}
 .sec--dark .stp{--tile-bg:linear-gradient(163deg,#221E52 0%,#1B1840 60%,#181534 100%)}
 
-.stp h4{font:600 18.15px/1.35 var(--ff-u);margin-bottom:7px}
+.stp h3{font:600 18.15px/1.35 var(--ff-u);color:var(--navy-ink);margin-bottom:7px}
+.sec--dark .stp h3{color:#fff}
 .stp p{color:var(--mut);font-size:16.06px;line-height:1.68}
 .sec--dark .stp p{color:rgba(255,255,255,.72)}
 
@@ -1370,6 +1369,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 .pkg-y svg,.pkg-n svg{width:23px;height:23px;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;display:block}
 .pkg-y svg{stroke:var(--blue-deep)}
 .pkg-n svg{stroke:#9AA3BC;stroke-width:2.2}
+.pkg-more{display:block;width:100%;margin-top:0;padding:19px 24px;cursor:pointer;
+  border:1px solid var(--line);border-top:0;border-radius:0 0 20px 20px;background:var(--surface);
+  font:600 15.4px/1.3 var(--ff-u);color:var(--blue-deep);transition:background .2s}
+.pkg-more:hover{background:var(--sky-soft)}
+.pkg-more:focus-visible{outline:2px solid var(--sky-deep);outline-offset:-3px}
+.pkg-table:has(+ .pkg-more:not([hidden])){border-bottom-left-radius:0;border-bottom-right-radius:0}
 .pkg-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
 
 /* Phones: the feature name gets its own line above the three marks, so the
@@ -1480,10 +1485,14 @@ form.enq{display:grid;gap:18px;align-content:start}
 .opts h2 em{font-style:italic;color:var(--blue-deep)}
 .opts .lead{margin-top:20px;max-width:62ch;font-size:clamp(16px,1.3vw,19px);line-height:1.7;color:var(--mut)}
 .opt-grid{margin-top:44px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.opt{display:block;padding:34px 32px 30px;border-radius:20px;background:#fff;
+.opt{display:block;padding:0 0 30px;overflow:hidden;border-radius:20px;background:#fff;
   border:1.5px solid var(--line);transition:border-color .25s,transform .25s,box-shadow .25s}
 .opt:hover{border-color:var(--blue-deep);transform:translateY(-4px);box-shadow:0 18px 44px rgba(29,32,73,.10)}
-.opt-ic{display:block;width:44px;height:44px;margin-bottom:18px}
+.opt-img{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--surface)}
+.opt-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.opt:hover .opt-img img{transform:scale(1.05)}
+.opt > :not(.opt-img){margin-left:32px;margin-right:32px}
+.opt-ic{display:block;width:44px;height:44px;margin:26px 0 16px}
 .opt-ic svg{width:44px;height:44px;fill:none;stroke:var(--blue-deep);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round}
 .opt h3{font:500 clamp(23px,2.3vw,29px)/1.18 var(--ff-d);color:var(--blue-deep);margin-bottom:6px}

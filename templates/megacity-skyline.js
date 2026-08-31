@@ -485,3 +485,37 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 
   draw();
 })();
+
+
+/* ── the comparison table ───────────────────────────────────────────────
+   Twenty four rows runs to about three screens on a phone, which is a lot to
+   scroll past before the rest of the page. Collapse the tail behind a control,
+   but only from script: with no JS the whole table is there, which is the way
+   round it has to be for something that states what a landlord is buying. */
+(function pkgTable() {
+  const table = document.querySelector(".pkg-table");
+  const btn = document.getElementById("pkgMore");
+  if (!table || !btn) return;
+  const rows = [...table.querySelectorAll(".pkg-row")];
+  const KEEP = 10;
+  if (rows.length <= KEEP + 3) return;
+
+  const hidden = rows.slice(KEEP);
+  const apply = (open) => {
+    hidden.forEach(r => r.hidden = !open);
+    btn.textContent = open
+      ? "Show less"
+      : `Show all ${rows.length}, and what each service covers`;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+  btn.hidden = false;
+  btn.setAttribute("aria-controls", "pkgTable");
+  table.id = table.id || "pkgTable";
+  apply(false);
+
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    apply(!open);
+    if (open) table.scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+})();
