@@ -1240,6 +1240,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 .mm-acc{display:block}
 .mm-g{border-bottom:1px solid var(--line)}
 .mm-g:first-of-type{border-top:1px solid var(--line)}
+.mm-go--first{border-top:1px solid var(--line)}
+.mm-go--first + .mm-g{border-top:0}
 .mm-g summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;
   padding:19px 2px;font:400 clamp(21.2px,2.54vw,26.5px)/1.2 var(--ff-d);color:var(--navy-ink)}
 .mm-g summary::-webkit-details-marker{display:none}
