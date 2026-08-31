@@ -30,7 +30,7 @@
     ["megacity-landlords", "Landlords"],
     ["megacity-tenants", "Tenants"],
     ["megacity-tours", "360° Tours"],
-    ["mcf805d9d6-tools", "Tools"],
+    ["megacity-tools", "Tools"],
     ["megacity-about", "About"],
     ["megacity-contact", "Contact"]
   ];
@@ -118,7 +118,7 @@
       '<div class="menu-top"><a class="nav-brand" href="megacity">' + esc(D ? D.biz.brandName : "Megacity") + "<small>" + esc(D ? D.biz.brandSub : "Properties") + "</small></a>" +
       '<button class="menu-close" aria-label="Close menu">&#10005;</button></div>' +
       '<ul class="menu-links">' + links + "</ul>" +
-      '<div class="menu-foot"><a class="btn btn--solid" href="mcf805d9d6-valuation">Request a valuation</a>' +
+      '<div class="menu-foot"><a class="btn btn--solid" href="megacity-valuation">Request a valuation</a>' +
       '<a href="' + (D ? D.biz.phoneHref : "#") + '">' + (D ? D.biz.phone : "") + "</a>" +
       '<a href="mailto:' + (D ? D.biz.email : "") + '">' + (D ? D.biz.email : "") + "</a></div></nav>"
     ));
@@ -131,13 +131,13 @@
         '<div class="wrap footer-cta"><p class="eyebrow" data-fx="fade">One conversation to start</p>' +
         '<h2 class="t-1" data-fx="fade" style="margin-top:20px">What’s your property <em>worth</em>?</h2>' +
         '<p class="lead" data-fx="fade" style="margin-top:22px">Get in touch with the Megacity team to discuss your property — a valuation costs nothing.</p>' +
-        '<div class="hero-actions" data-fx="fade"><a class="btn btn--solid btn--lg magnetic" href="mcf805d9d6-valuation">Request a valuation ' + svgArrow + "</a>" +
+        '<div class="hero-actions" data-fx="fade"><a class="btn btn--solid btn--lg magnetic" href="megacity-valuation">Request a valuation ' + svgArrow + "</a>" +
         '<a class="btn btn--ghost btn--lg" href="' + D.biz.phoneHref + '">Call ' + D.biz.phone + "</a></div></div>" +
         '<div class="wrap footer-grid">' +
         '<div class="footer-brand"><a class="nav-brand" href="megacity">' + esc(D.biz.brandName) + "<small>" + esc(D.biz.brandSub) + "</small></a>" +
         "<p>" + esc(D.biz.tagline ? D.biz.tagline + " — " : "") + (D.biz.tagline ? D.biz.strap.charAt(0).toLowerCase() + D.biz.strap.slice(1) : D.biz.strap) + ". Every managed home presented properly — photography, floor plans and a 360° tour you can walk before you visit.</p></div>" +
-        '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="mcf805d9d6-tools">Tools &amp; calculators</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
-        '<div><h4>With us</h4><ul><li><a href="megacity-landlords">Landlords</a></li><li><a href="megacity-tenants">Tenants</a></li><li><a href="mcf805d9d6-valuation">Valuation</a></li></ul></div>' +
+        '<div><h4>Explore</h4><ul><li><a href="megacity-properties">Properties</a></li><li><a href="megacity-tours">360° Tours</a></li><li><a href="megacity-tools">Tools &amp; calculators</a></li><li><a href="megacity-about">About</a></li><li><a href="megacity-contact">Contact</a></li></ul></div>' +
+        '<div><h4>With us</h4><ul><li><a href="megacity-landlords">Landlords</a></li><li><a href="megacity-tenants">Tenants</a></li><li><a href="megacity-valuation">Valuation</a></li></ul></div>' +
         '<div><h4>Office</h4><ul>' +
         '<li><a href="' + D.biz.mapsHref + '" target="_blank" rel="noopener">' + D.biz.office + "</a></li>" +
         '<li><a href="' + D.biz.phoneHref + '">' + D.biz.phone + "</a></li>" +
