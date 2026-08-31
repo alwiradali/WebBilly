@@ -9,7 +9,7 @@
   /* secondary — lime & yellow for playful brightness, grey to ground it */
   --lime:#a7e237; --amber:#ffba53; --grey:#636e72;
 
-  --ink:#062E56; --body:#46586B; --mut:#636e72;
+  --ink:#062E56; --body:#46586B; --mut:#56616A;
   --paper:#FFFFFF; --tint:#F2F8FC; --tint2:#E7F1F9; --line:#D8E7F2;
 
   --grad:linear-gradient(112deg,#0457ac 0%,#308fac 46%,#37bd79 100%);
@@ -49,9 +49,9 @@ body>nav,body>header,body>section,body>footer,body>.prog,body>main{position:rela
    over the whole section every time it does — which pinned the page at ~24fps
    from the first section down. The veils are 66–90% opaque over a background
    that is now very faint, so the blur was buying almost nothing to begin with. */
-section:not(.alt):not(.dark){background:rgba(255,255,255,.70)}
-.alt{background:rgba(242,248,252,.84)}
-footer{background:rgba(231,241,249,.94)}
+section:not(.alt):not(.dark){background:rgba(255,255,255,.66)}
+.alt{background:rgba(242,248,252,.80)}
+footer{background:rgba(231,241,249,.90)}
 
 /* ---------- brand lockup ---------- */
 .brand{display:flex;align-items:center;gap:11px}
@@ -136,9 +136,9 @@ section{padding:66px 0}
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;padding:46px 0 62px;background:transparent!important}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:radial-gradient(120% 92% at 84% 2%,rgba(227,243,248,.92) 0%,transparent 58%),
-             radial-gradient(100% 80% at 4% 98%,rgba(228,248,237,.92) 0%,transparent 60%),
-             linear-gradient(180deg,rgba(255,255,255,.66),rgba(242,248,252,.72))}
+  background:radial-gradient(120% 92% at 84% 2%,rgba(227,243,248,.70) 0%,transparent 58%),
+             radial-gradient(100% 80% at 4% 98%,rgba(228,248,237,.70) 0%,transparent 60%),
+             linear-gradient(180deg,rgba(255,255,255,.50),rgba(242,248,252,.58))}
 @media(min-width:900px){.hero{padding:74px 0 92px}}
 .orb{position:absolute;border-radius:50%;filter:blur(86px);pointer-events:none;animation:drift 24s ease-in-out infinite alternate}
 .orb.a{width:480px;height:480px;background:rgba(4,87,172,.13);top:-200px;right:-130px}
