@@ -301,7 +301,9 @@ body.is-ready .veil{display:none}
   .hero-media::after{background:linear-gradient(180deg,rgba(12,14,34,.72) 0%,rgba(12,14,34,.48) 24%,rgba(12,14,34,.56) 58%,rgba(12,14,34,.90) 100%)}
 }
 .hero--cine h1{color:#fff}
-.hero--cine h1 em{color:var(--sky)}
+/* --sky measured 4.42:1 over the hero photograph, so the italic takes
+   the lighter blue the rest of the dark sections use */
+.hero--cine h1 em{color:#8FC4F5}
 .hero--cine .hero-kicker{color:#CDEBF8;text-shadow:0 1px 16px rgba(14,11,43,.55)}
 .hero--cine .hero-sub{color:rgba(255,255,255,.92);text-shadow:0 1px 20px rgba(14,11,43,.5)}
 .hero--cine .btn--ghost{border-color:rgba(255,255,255,.85);color:#fff}
@@ -315,8 +317,17 @@ body.is-ready .veil{display:none}
 .valcta{background:var(--navy-deep);padding:11vh var(--gut)}
 .valcta-in{max-width:var(--maxw);margin:0 auto;display:grid;gap:44px;grid-template-columns:1.1fr 1fr;align-items:center}
 @media (max-width:880px){.valcta-in{grid-template-columns:1fr}}
-.valcta h2{font:400 clamp(35.02px,4.88vw,61.8px)/1.06 var(--ff-d)}
-.valcta h2 em{font-style:italic;color:var(--sky)}
+/* This band is dark, but nothing here coloured its own text. The home page
+   papered over that with inline style="color:#fff", so any other page using
+   .valcta rendered near-black on navy at 1.23:1, which is what happened on
+   About us. The section owns its colours now, and the kicker takes a lighter
+   blue because --sky measured 4.28:1 against this ground. */
+.valcta,.valcta p,.valcta li{color:rgba(255,255,255,.82)}
+.valcta h2{font:400 clamp(35.02px,4.88vw,61.8px)/1.06 var(--ff-d);color:#fff}
+.valcta h2 em{font-style:italic;color:#8FC4F5}
+.valcta .no{color:#8FC4F5}
+.valcta .lead,.valcta .lede{color:rgba(255,255,255,.82)}
+.valcta b,.valcta strong{color:#fff}
 .valform{display:grid;gap:12px;background:#fff;border-radius:var(--r);padding:26px}
 .valform input{border:1px solid var(--line-strong);border-radius:10px;padding:15px 16px;font:500 16.5px/1 var(--ff-u);width:100%}
 .valform input:focus{outline:2px solid var(--sky-deep)}
@@ -1001,7 +1012,9 @@ form.enq{display:grid;gap:18px;align-content:start}
 .sc-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .sc-item:hover img{transform:scale(1.05)}
 .sc-item::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(transparent 45%,rgba(14,11,43,.86));opacity:.92;transition:opacity .3s}
+  /* the caption measured 4.30:1 where a photograph is pale behind it, so the
+     scrim carries more weight at the bottom where the words actually sit */
+  background:linear-gradient(transparent 34%,rgba(12,14,34,.34) 58%,rgba(12,14,34,.86) 100%)}
 .sc-cap{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:16px 16px 14px;color:#fff}
 .sc-cap b{display:block;font:500 17.05px/1.25 var(--ff-d)}
 .sc-cap small{display:block;margin-top:3px;font:700 12px/1.4 var(--ff-u);
@@ -1303,8 +1316,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 .lnk{display:inline-block;padding:4px 0;color:var(--blue);font-weight:600;
   text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 .lnk:hover{color:var(--navy)}
-.sec--dark .lnk,.valcta .lnk{color:#8FC4F5}
-.sec--dark .lnk:hover,.valcta .lnk:hover{color:#fff}
+.sec--dark .lnk,.valcta .lnk,.phead .lnk,.hero .lnk{color:#8FC4F5}
+.sec--dark .lnk:hover,.valcta .lnk:hover,.phead .lnk:hover,.hero .lnk:hover{color:#fff}
 
 /* ── Fees against the market ──────────────────────────────────────────── */
 .vs{padding:11vh var(--gut);background:var(--surface)}
@@ -1525,9 +1538,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 .tsec--dark .t-h2{color:#fff}
 .tsec .lead{margin-top:16px;max-width:62ch;font:400 clamp(16px,1.25vw,18px)/1.7 var(--ff-u);color:var(--mut)}
 .tsec--dark .lead{color:rgba(255,255,255,.82)}
-.tsec .split{display:grid;gap:32px;grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);
+/* two columns inside a calculator. It was called .split, which in this sheet
+   is the home page's dark image band, so the panel painted itself navy and
+   left its own dark text on top of it. */
+.tool-split{display:grid;gap:38px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
   align-items:start;margin-top:34px}
-@media (max-width:860px){.tsec .split{grid-template-columns:1fr}}
+@media (max-width:860px){.tool-split{grid-template-columns:1fr}}
 
 .tool-form{display:grid;gap:18px}
 .field{display:grid;gap:8px}
@@ -1596,3 +1612,42 @@ form.enq{display:grid;gap:18px;align-content:start}
 .tsec--dark .tool-rows b{color:#fff}
 .tool-note,.tsec .small{margin-top:16px;font:400 13.68px/1.65 var(--ff-u);color:var(--mut)}
 .tsec--dark .tool-note,.tsec--dark .small{color:rgba(255,255,255,.7)}
+
+/* These sit low on a tile, where the logo watermark darkens the ground to
+   about rgb(204,208,224). --blue-deep measured 3.8:1 there, so they take the
+   navy, which is the same weight as the heading above them. */
+.svcnav-card .go,.card .go,.post .go,span.go{color:var(--navy)}
+.svcnav-card:hover .go,.card:hover .go,.post:hover .go{color:var(--blue-deep)}
+
+/* The outline button carries dark text for a light page. Several sections are
+   dark, and each one that noticed patched it separately, so the ones that did
+   not left "Call 0161 220 1763" at 1.44:1 on the landlord hero and "WhatsApp
+   us" at 2.00:1 in the closing band. One rule for all of them instead. */
+.hero .btn:not(.btn--fill),.phead .btn:not(.btn--fill),.lp-hero .btn:not(.btn--fill),
+.jr-hero .btn:not(.btn--fill),.endcta .btn:not(.btn--fill),.valcta .btn:not(.btn--fill),
+.sec--dark .btn:not(.btn--fill),.band .btn:not(.btn--fill),.duo .btn:not(.btn--fill),
+.save .btn:not(.btn--fill),.tsec--dark .btn:not(.btn--fill),.creds .btn:not(.btn--fill){
+  color:#fff;border-color:rgba(255,255,255,.55)}
+.hero .btn:not(.btn--fill):hover,.phead .btn:not(.btn--fill):hover,
+.lp-hero .btn:not(.btn--fill):hover,.jr-hero .btn:not(.btn--fill):hover,
+.endcta .btn:not(.btn--fill):hover,.valcta .btn:not(.btn--fill):hover,
+.sec--dark .btn:not(.btn--fill):hover,.band .btn:not(.btn--fill):hover,
+.duo .btn:not(.btn--fill):hover,.save .btn:not(.btn--fill):hover,
+.tsec--dark .btn:not(.btn--fill):hover,.creds .btn:not(.btn--fill):hover{
+  background:#fff;color:var(--navy);border-color:#fff}
+
+/* the dropdown trigger measured 4.36:1 against the bar */
+.nav-links .nd-top,.nav-links > a{color:var(--navy-ink)}
+
+/* The italic in a photographic hero crosses pale sky, where --blue-lift
+   measured 3.39:1. The lighter blue holds up over both ends of the picture. */
+.lp-hero h1 em,.jr-hero h1 em,.phead h1 em{color:#8FC4F5}
+/* journal tags sit on the tile watermark, which reads about rgb(208,216,224) */
+.post .k,.bd .k,.jr-card .k{color:var(--navy)}
+
+/* The label was shrinking inside the flex button and breaking onto three
+   lines, but only on desktop where there is room. Applying nowrap everywhere
+   stopped cards shrinking on a phone and pushed two pages 18 and 28px wide,
+   so it is scoped to the widths where the problem actually was. */
+@media (min-width:901px){.btn{white-space:nowrap}}
+.btn svg{flex:none}
