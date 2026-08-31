@@ -194,19 +194,14 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     { autoAlpha: 1, y: 0, duration: 1, stagger: .12, ease: "power3.out",
       scrollTrigger: { trigger: "#cityband", start: "top 55%" } });
 
-  /* process rail: pinned horizontal on desktop, scroll-driven on mobile */
-  const track = $("#procTrack");
-  /* phones use native horizontal scroll-snap — a real finger swipe */
-  if (track && matchMedia("(min-width: 901px)").matches) {
-    const dist = () => Math.max(0, track.scrollWidth - innerWidth + 40);
-    gsap.fromTo(track, { x: 0 }, {
-      x: () => -dist(), ease: "none",
-      scrollTrigger: {
-        trigger: "#process", start: "top 12%", end: () => "+=" + (dist() + innerHeight * .2),
-        pin: true, scrub: .5, invalidateOnRefresh: true,
-      },
-    });
-  }
+  /* The four steps used to sit on a pinned horizontal rail: the page stopped
+     moving down and the cards slid sideways instead. It was already off on
+     touch because the swipe was unreliable, and on desktop it took the scroll
+     away from the reader in the middle of the page, which is the thing that
+     makes people give up. They are a plain grid now and just reveal in place. */
+  gsap.fromTo(".step", { autoAlpha: 0, y: 40 },
+    { autoAlpha: 1, y: 0, duration: .85, stagger: .1, ease: "power3.out",
+      scrollTrigger: { trigger: ".proc-track", start: "top 82%" } });
 
   /* homes: inner-image parallax */
   $$("[data-par] img").forEach(img => gsap.fromTo(img, { yPercent: -9 }, {
