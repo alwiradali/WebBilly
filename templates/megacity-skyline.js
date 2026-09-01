@@ -265,13 +265,13 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
           botcheck: ""
         })
       });
-      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "something went wrong");
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the message did not go through");
       f.querySelectorAll("input,button").forEach(el => el.style.display = "none");
       f.querySelector(".val-done").hidden = false;
     } catch (err) {
       btn.disabled = false; btn.style.opacity = "";
       const n = f.querySelector(".val-note");
-      if (n) n.textContent = "Could not send — " + err.message + ". Please call 0161 220 1763.";
+      if (n) n.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will handle it directly.";
     }
   });
 })();
