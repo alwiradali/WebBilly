@@ -39,12 +39,6 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
 /* ── nav state ─────────────────────────────────────────────────────── */
 (function navState() {
   const nav = $("#nav");
-  /* The bar turns to glass once you scroll, so whatever is beneath shows
-     through. Over the dark sections that would leave his navy wordmark
-     unreadable, so watch what is actually under the bar and switch to his
-     white artwork there. */
-  const DARK = ".hero,.band,.duo,.split,.valcta,.creds,.footer,.sec--dark,.phead,.lp-hero,.jr-hero,.pull--alt,.save";
-  const darkBlocks = [...document.querySelectorAll(DARK)];
   const AWAY_AFTER = 260;   // clear of the hero before it starts hiding
   const DEADZONE   = 6;     // ignore the jitter of a finger resting on glass
   let last = scrollY;
@@ -54,17 +48,9 @@ if (!reduce && window.Lenis && window.gsap && window.ScrollTrigger) {
     const scrolled = y > 40;
     nav.classList.toggle("is-solid", scrolled);
 
-    /* Measure from the bar's own height, not its box. Once it slides away its
-       rect goes with it, and the colour would be decided against a strip of
-       page the bar is no longer over, so it would return in the wrong state. */
-    const edge = nav.offsetHeight;
-    // the city band is clipped to a slant, so its box reaches the bar a little
-    // before its dark pixels do; require real overlap rather than a sliver
-    const overDark = scrolled && darkBlocks.some(el => {
-      const r = el.getBoundingClientRect();
-      return r.top < edge - 32 && r.bottom > 32;
-    });
-    nav.classList.toggle("nav--dark", overDark);
+    /* White only at the very top of the page; the moment you scroll, the bar
+       holds the brand blue with his white artwork, whatever passes beneath. */
+    nav.classList.toggle("nav--dark", scrolled);
 
     /* Out of the way while you are reading down the page, back the moment you
        head up, because going up is what asking for the menu looks like. */

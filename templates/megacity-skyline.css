@@ -2049,3 +2049,12 @@ body.sl-open{overflow:hidden}
   .team-shots img{height:auto;aspect-ratio:16/10}
 }
 .band-copy h2 em{color:#A8DEF2}
+
+
+/* buttons end on the deep blue: the light tail of the surface gradient
+   reads as a pale tinge at pill size */
+:root{--gradbtn:linear-gradient(135deg,#1D2049 0%,#1B3560 55%,#11506F 100%)}
+.btn--fill{background:var(--gradbtn)}
+.mm-top-cta{background:var(--gradbtn)}
+.fab-val{background:var(--gradbtn)}
+.nav-book{background:var(--gradbtn)}
