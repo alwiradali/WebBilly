@@ -428,13 +428,56 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 })();
 
 
+/* ── property page: brochure print + viewing request ─────────────────── */
+(() => {
+  const pr = document.querySelector("[data-print]");
+  if (pr) pr.addEventListener("click", () => print());
+
+  const f = document.querySelector("[data-viewing]");
+  if (!f) return;
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const note = f.querySelector(".pd-vnote");
+    const btn = f.querySelector("button[type=submit]");
+    btn.disabled = true; btn.style.opacity = ".6"; note.textContent = "";
+    try {
+      const r = await fetch("/api/megacity-viewing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: f.name.value.trim(),
+          phone: f.phone.value.trim(),
+          email: f.email.value.trim(),
+          day: f.day.value.trim(),
+          property: f.dataset.property,
+          botcheck: f.botcheck.value
+        })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the request did not go through");
+      f.hidden = true;
+      const done = document.querySelector(".pd-vdone");
+      if (done) done.hidden = false;
+    } catch (err) {
+      btn.disabled = false; btn.style.opacity = "";
+      note.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will book it directly.";
+    }
+  });
+})();
+
+
 /* ── floating buttons must never cover the footer ────────────────────── */
 (() => {
   const fab = document.querySelector(".fab");
+  const pill = document.getElementById("fabVal");
+  // pointless on the page it links to
+  if (pill && /megacity-valuation/.test(location.pathname)) pill.hidden = true;
   const foot = document.querySelector(".footer");
   if (!fab || !foot || !("IntersectionObserver" in window)) return;
   new IntersectionObserver(
-    ([e]) => fab.classList.toggle("is-hidden", e.isIntersecting),
+    ([e]) => {
+      fab.classList.toggle("is-hidden", e.isIntersecting);
+      if (pill) pill.classList.toggle("is-hidden", e.isIntersecting);
+    },
     { rootMargin: "0px 0px -25% 0px" }
   ).observe(foot);
 })();

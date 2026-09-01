@@ -1969,3 +1969,59 @@ body.sl-open{overflow:hidden;touch-action:none}
 @media (prefers-reduced-motion:reduce){.searchlay{transition:none}.sl-a{transition:none}}
 @media (max-width:560px){.searchlay{padding-top:calc(18px + env(safe-area-inset-top,0px))}
   .sl-bar input{font-size:16px}}
+
+
+/* ── property action row ─────────────────────────────────────────────── */
+.pd-actions{max-width:var(--maxw);margin:18px auto 0;padding:0 var(--gut);
+  display:flex;flex-wrap:wrap;gap:10px}
+.pd-act{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--line-strong);
+  border-radius:999px;padding:13px 19px;background:#fff;color:var(--navy-ink);cursor:pointer;
+  font:600 13.6px/1 var(--ff-u);letter-spacing:.08em;text-transform:uppercase;
+  transition:background .22s ease,color .22s ease,border-color .22s ease}
+.pd-act svg{width:17px;height:17px;flex:none;color:var(--blue-deep)}
+.pd-act:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+.pd-act:hover svg{color:#8FC4F5}
+.pd-act:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* ── viewing request form, on the dark sidebar card ──────────────────── */
+.pd-vform{display:grid;gap:10px;margin-bottom:16px}
+.pd-vform input{width:100%;border:0;border-radius:10px;padding:14px 15px;
+  font:500 16px/1.3 var(--ff-u);color:var(--navy-ink);background:#fff}
+.pd-vform input::placeholder{color:#5A6280}
+.pd-vform .btn{margin-bottom:0}
+.pd-vnote{font:400 14.5px/1.5 var(--ff-u);color:#FFD9D9;margin:2px 0 0}
+.pd-vnote:empty{display:none}
+.pd-vdone{font:600 15.5px/1.5 var(--ff-u);color:#fff;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:13px 15px;margin-bottom:16px}
+
+/* ── floating valuation pill ─────────────────────────────────────────── */
+.fab-val{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:205;
+  display:inline-flex;align-items:center;gap:9px;background:var(--grad);color:#fff;
+  border-radius:999px;padding:15px 21px;font:700 13.4px/1 var(--ff-u);letter-spacing:.05em;
+  box-shadow:0 12px 30px rgba(12,14,34,.35);
+  transition:opacity .3s ease,transform .3s ease}
+.fab-val svg{width:15px;height:15px;flex:none}
+.fab-val:hover{transform:translateY(-2px)}
+.fab-val.is-hidden{opacity:0;transform:translateY(14px);pointer-events:none}
+@media (max-width:700px){
+  /* sit above the full-width contact bar */
+  .fab-val{left:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));padding:13px 17px;font-size:12.6px}
+}
+
+/* ── print: the page becomes its own brochure ────────────────────────── */
+@media print{
+  *{opacity:1!important;visibility:visible!important;transform:none!important;
+    transition:none!important;animation:none!important;box-shadow:none!important}
+  .nav,.megamenu,.searchlay,.fab,.fab-val,.footer,.endcta,.pd-actions,.skip,
+  .pd-card--cta,.pd-vform,.sl-res,video,.veil,.pv{display:none!important}
+  body{background:#fff;color:#111}
+  main{padding-top:0!important}
+  .pd-crumb{padding-top:16px}
+  .pd-crumb::after{content:"Megacity Properties \00b7 0161 220 1763 \00b7 info@megacityproperties.co.uk \00b7 Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA";
+    display:block;margin-top:6px;font:600 11.5px/1.5 var(--ff-u);color:#333}
+  .pd-hero,.pd-body{break-inside:avoid-page}
+  .pd-gallery img{max-height:220px}
+  a{color:#111;text-decoration:none}
+  .pd-map iframe{display:none}
+  .pd-map::after{content:"Map and street view: megacityproperties.co.uk";font:500 12px/1.4 var(--ff-u);color:#333}
+}
