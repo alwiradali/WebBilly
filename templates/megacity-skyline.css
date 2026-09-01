@@ -158,7 +158,7 @@ button{font:inherit;cursor:pointer}
    the footer and the floating button), so the search fits again. */
 @media (max-width:400px){.brand img{height:38px}}
 
-.megamenu{position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;
+.megamenu{position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;touch-action:pan-y;
   -webkit-overflow-scrolling:touch;padding:96px var(--gut) 60px;opacity:0;transform:translateY(-12px);
   transition:opacity .28s ease,transform .28s ease}
 .megamenu.is-open{opacity:1;transform:none}
@@ -275,7 +275,7 @@ body.is-ready .veil{display:none}
 .btn{display:inline-flex;align-items:center;gap:12px;border-radius:999px;padding:18px 32px;
   font:600 15.39px/1 var(--ff-u);letter-spacing:.05em;border:1.5px solid var(--navy-ink);
   background:transparent;color:var(--navy-ink);transition:background .3s,color .3s,border-color .3s;will-change:transform}
-.btn--fill{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn--fill{background:var(--grad);border-color:transparent;color:#fff}
 .btn--fill:hover{background:var(--sky-deep);border-color:var(--sky-deep)}
 .btn--ghost:hover{background:var(--navy-ink);color:#fff}
 .btn .chv{width:14px;height:14px;flex:none}
@@ -662,10 +662,12 @@ form.enq{display:grid;gap:18px;align-content:start}
 .phead .lede{margin-top:24px;max-width:60ch;color:rgba(255,255,255,.88);
   font-size:clamp(16.5px,1.38vw,19.61px);line-height:1.68}
 .phead-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
-.phead-ctas .btn{border-color:rgba(255,255,255,.8);color:#fff}
-.phead-ctas .btn--fill{background:#fff;border-color:#fff;color:var(--navy-ink)}
-.phead-ctas .btn--fill:hover{background:var(--sky);border-color:var(--sky)}
-.phead-ctas .btn:hover{background:#fff;color:var(--navy-ink)}
+/* white buttons belong to the dark page header only; two light sections
+   reuse .phead-ctas purely for its layout and must keep normal buttons */
+.phead .phead-ctas .btn{border-color:rgba(255,255,255,.8);color:#fff}
+.phead .phead-ctas .btn--fill{background:#fff;border-color:#fff;color:var(--navy-ink)}
+.phead .phead-ctas .btn--fill:hover{background:var(--sky);border-color:var(--sky)}
+.phead .phead-ctas .btn:hover{background:#fff;color:var(--navy-ink)}
 
 /* ── Contact tiles ────────────────────────────────────────────────────── */
 .ct-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
@@ -725,7 +727,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .lp-badges img{height:52px;width:auto;background:#fff;border-radius:9px;padding:8px 12px}
 
 .sec{padding:11vh var(--gut)}
-.sec--tint{background:var(--surface)}
+.sec--tint{background:linear-gradient(180deg,#EFF5FA 0%,var(--sky-soft) 100%)}
 .sec--dark{background:var(--navy-ink);color:#fff}
 .sec-in{max-width:var(--maxw);margin:0 auto}
 .sec .no{font:800 12.6px/1 var(--ff-u);letter-spacing:.26em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
@@ -1725,7 +1727,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .mm-acc .mm-go:hover{color:var(--blue-deep)}
 
 /* body must not scroll behind the open menu, and must not jump when it opens */
-body.mm-open{overflow:hidden;touch-action:none}
+body.mm-open{overflow:hidden}
 
 .svc-price{font:700 12.6px/1 var(--ff-u);letter-spacing:.16em;text-transform:uppercase;
   color:var(--mut);margin:-6px 0 14px}
@@ -1936,12 +1938,12 @@ h1 em, h2 em, h3 em{
 
 
 /* ── site search overlay ──────────────────────────────────────────────── */
-.searchlay{position:fixed;inset:0;z-index:320;overflow-y:auto;-webkit-overflow-scrolling:touch;
+.searchlay{position:fixed;inset:0;z-index:320;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
   background:linear-gradient(165deg,rgba(12,14,34,.97) 0%,rgba(27,53,96,.96) 55%,rgba(17,80,111,.95) 100%);
   backdrop-filter:blur(10px);padding:calc(30px + env(safe-area-inset-top,0px)) var(--gut) 60px;
   opacity:0;transition:opacity .26s ease}
 .searchlay.is-open{opacity:1}
-body.sl-open{overflow:hidden;touch-action:none}
+body.sl-open{overflow:hidden}
 .sl-in{max-width:760px;margin:0 auto}
 .sl-bar{display:flex;align-items:center;gap:13px;background:#fff;border-radius:16px;padding:7px 8px 7px 19px;
   box-shadow:0 24px 60px rgba(0,0,0,.35)}
@@ -2025,3 +2027,12 @@ body.sl-open{overflow:hidden;touch-action:none}
   .pd-map iframe{display:none}
   .pd-map::after{content:"Map and street view: megacityproperties.co.uk";font:500 12px/1.4 var(--ff-u);color:#333}
 }
+
+
+/* ── crisp brand accents ─────────────────────────────────────────────── */
+/* the two logo inks drawn as a fine line along the top of every page */
+.nav::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+.footer::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+::selection{background:var(--blue);color:#fff}
+.jr-note{border-left:4px solid var(--blue);padding-left:22px}
+@media print{.nav::before,.footer::before{display:none}}
