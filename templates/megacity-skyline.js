@@ -282,12 +282,25 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   const burger = document.getElementById("burger");
   const menu = document.getElementById("megamenu");
   if (!burger || !menu) return;
-  let open = false;
+  let open = false, lastFocus = null;
   const setOpen = (v) => {
     open = v;
     burger.setAttribute("aria-expanded", v ? "true" : "false");
     burger.setAttribute("aria-label", v ? "Close menu" : "Open menu");
     document.body.classList.toggle("mm-open", v);
+    /* Locking the body removes the scrollbar, which shifts the whole layout
+       sideways as the menu opens. Hold the gap open while it is locked. */
+    if (v) {
+      const gap = innerWidth - document.documentElement.clientWidth;
+      if (gap > 0) document.body.style.paddingRight = gap + "px";
+      lastFocus = document.activeElement;
+    } else {
+      document.body.style.paddingRight = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    // lenis is module scope, not on window: window.lenis is always undefined
+    // and the smooth scroller would have kept running behind the open menu
+    if (lenis) v ? lenis.stop() : lenis.start();
     if (v) {
       menu.hidden = false;
       requestAnimationFrame(() => menu.classList.add("is-open"));
@@ -512,5 +525,77 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     const open = btn.getAttribute("aria-expanded") === "true";
     apply(!open);
     if (open) table.scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+})();
+
+
+/* ── where am I ──────────────────────────────────────────────────────────
+   The bar shows seven destinations; mark the one being viewed so the answer
+   is visible rather than something the reader has to remember. */
+(function currentPage() {
+  const here = location.pathname.split("/").pop().replace(/\.html$/, "");
+  if (!here) return;
+  document.querySelectorAll(".nav-links a").forEach(a => {
+    const target = (a.getAttribute("href") || "").split("#")[0].replace(/\.html$/, "");
+    if (target && target === here) a.setAttribute("aria-current", "page");
+  });
+})();
+
+
+/* ── Properties: filtering ───────────────────────────────────────────────
+   Filters run against data attributes already on each card, so nothing is
+   fetched and nothing can half-load. With no matches the grid is replaced by
+   a real way forward rather than an empty box. */
+(function propertyList() {
+  const grid = document.getElementById("plGrid");
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll(".pl-card")];
+  const fArea = document.getElementById("fArea");
+  const fType = document.getElementById("fType");
+  const fBeds = document.getElementById("fBeds");
+  const count = document.getElementById("plCount");
+  const empty = document.getElementById("plEmpty");
+
+  const apply = () => {
+    const a = fArea.value, t = fType.value, b = fBeds.value;
+    let shown = 0;
+    cards.forEach(c => {
+      const ok = (!a || c.dataset.area === a)
+              && (!t || c.dataset.type === t)
+              && (!b || c.dataset.beds === b);
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    count.textContent = shown === cards.length
+      ? `Showing all ${cards.length} properties`
+      : `Showing ${shown} of ${cards.length} properties`;
+    empty.hidden = shown > 0;
+    grid.hidden = shown === 0;
+  };
+
+  const reset = () => { fArea.value = ""; fType.value = ""; fBeds.value = ""; apply(); };
+  [fArea, fType, fBeds].forEach(el => el.addEventListener("change", apply));
+  document.getElementById("plReset").addEventListener("click", reset);
+  document.getElementById("plClear2").addEventListener("click", reset);
+  apply();
+})();
+
+
+/* ── Calculators: one reset ──────────────────────────────────────────────
+   Every field carries its shipped value as a data attribute the first time
+   this runs, so reset restores the page as it loaded rather than emptying it. */
+(function toolsReset() {
+  const btn = document.getElementById("toolsReset");
+  if (!btn) return;
+  const fields = [...document.querySelectorAll(".tool-form input, .tool-form select")];
+  fields.forEach(f => { if (!f.dataset.initial) f.dataset.initial = f.value; });
+  btn.addEventListener("click", () => {
+    fields.forEach(f => {
+      f.value = f.dataset.initial;
+      f.dispatchEvent(new Event("input", { bubbles: true }));
+      f.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    const first = document.querySelector(".tsec");
+    if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 })();

@@ -158,8 +158,20 @@
       var r = val(rate) / 100 / 12;
       var n = val(term) * 12;
       var interestOnly = mode() === "io";
+      /* An empty or zero term is not a mortgage, and dividing by it produced
+         the whole loan as a single monthly payment. Say what is missing
+         rather than printing a number nobody could act on. */
+      if (n < 12 || P <= 0) {
+        setText($("#mgMonthly"), P <= 0 ? "\u2014" : "\u2014");
+        setText($("#mgLoan"), fmt(P));
+        setText($("#mgLtv"), (val(price) ? ((P / val(price)) * 100).toFixed(1) : "0.0") + "%");
+        setText($("#mgTotal"), P <= 0
+          ? "Enter a price above the deposit"
+          : "Enter a term of at least one year");
+        return;
+      }
       var monthly = interestOnly ? P * r
-        : (r === 0 ? P / Math.max(1, n) : P * r / (1 - Math.pow(1 + r, -n)));
+        : (r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n)));
       var ltv = val(price) ? (P / val(price)) * 100 : 0;
       setFigure($("#mgMonthly"), monthly, 0);
       setText($("#mgLoan"), fmt(P));
