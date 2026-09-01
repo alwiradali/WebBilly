@@ -64,14 +64,16 @@
       <a href="#top"><img class="logo" src="../../assets/mm/logo.png" alt="Molecular Miracles Chemistry Tuition"></a>
       <span class="sp"></span>
       <div class="nlinks">
-        <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="resources.html">Resources</a><a href="#timetable">Timetable</a>
+        <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+        <a href="resources.html">Resources</a><a href="#timetable">Timetable</a>
         <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#booking">Booking</a>
       </div>
       <a class="btn btn-p" href="#booking">Book a Place</a>
       <div class="burger" id="bg"><span></span><span></span><span></span></div>
     </div>
     <div class="mobmenu" id="mm">
-      <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="resources.html">Resources</a><a href="#timetable">Class Timetable</a>
+      <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+        <a href="resources.html">Resources</a><a href="#timetable">Class Timetable</a>
       <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#areas">Areas We Cover</a><a href="#booking">Booking &amp; Enquiries</a>
     </div>
   </div>
@@ -306,7 +308,7 @@
             <p>Your enquiry has been sent. I'll get back to you personally within 24 hours with availability and rates.</p>
           </div>
           <form id="bkForm" novalidate>
-            <div class="fld"><label for="pname">Parent / guardian name *</label><input type="text" id="pname" required></div>
+            <div class="fld"><label for="pname">Your name — parent, carer or pupil *</label><input type="text" id="pname" required></div>
             <div class="fld"><label for="email">Email address *</label><input type="email" id="email" required></div>
             <div class="fld"><label for="phone">Phone / WhatsApp</label><input type="tel" id="phone"></div>
             <div class="fld"><label for="sname">Pupil's first name</label><input type="text" id="sname"></div>
@@ -322,6 +324,7 @@
             <div class="fld"><label for="mode">Preferred days</label>
               <select id="mode">
                 <option>Weekday evenings</option>
+                <option>Weekday daytime (school hours)</option>
                 <option>Weekends</option>
                 <option>Either is fine</option>
               </select>
@@ -386,7 +389,8 @@
         <h4>Explore</h4>
         <ul>
           <li><a href="#about">About Lynsey</a></li>
-          <li><a href="courses/index.html">Courses</a><a href="resources.html">Resources</a></li>
+          <li><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+        <a href="resources.html">Resources</a></li>
           <li><a href="faq.html">Questions</a></li>
           <li><a href="#timetable">Class Timetable</a></li>
           <li><a href="#how">How It Works</a></li>
@@ -432,6 +436,14 @@ addEventListener('scroll',()=>{
    while the form still claimed the enquiry had been sent. */
 var W3F_KEY = 'a3984088-da60-451e-9ccf-0512998a15d4';
 
+// a link from the daytime page arrives as ?enq=daytime — preselect that
+// option so the enquiry is already labelled before anyone types a word
+if(/[?&]enq=daytime/.test(location.search)){
+  var md=document.getElementById('mode');
+  for(var mi=0;mi<md.options.length;mi++){
+    if(/daytime/i.test(md.options[mi].text)){md.selectedIndex=mi;break;}
+  }
+}
 document.getElementById('bkForm').addEventListener('submit',function(e){
   e.preventDefault();
   if(document.getElementById('botcheck').checked)return;
@@ -448,7 +460,9 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
     headers:{'Content-Type':'application/json',Accept:'application/json'},
     body:JSON.stringify({
       access_key:W3F_KEY,
-      subject:'Chemistry tuition enquiry — '+v('level'),
+      // she is gauging demand for daytime slots, so those need to be
+      // countable at a glance rather than buried in the body
+      subject:'Chemistry tuition enquiry — '+v('level')+(/daytime/i.test(v('mode'))?' (DAYTIME)':''),
       from_name:'Molecular Miracles website',
       // so hitting reply in Gmail answers the parent, not the form service
       replyto:v('email'),
