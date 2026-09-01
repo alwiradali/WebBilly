@@ -2058,3 +2058,12 @@ body.sl-open{overflow:hidden}
 .mm-top-cta{background:var(--gradbtn)}
 .fab-val{background:var(--gradbtn)}
 .nav-book{background:var(--gradbtn)}
+
+
+/* ── SpareRoom: a quiet second route for room hunters ─────────────────── */
+.sroom{padding:34px var(--gut);background:var(--sky-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sroom-in{max-width:var(--maxw);margin:0 auto;display:flex;gap:18px 28px;align-items:center;
+  justify-content:space-between;flex-wrap:wrap}
+.sroom .no{margin-bottom:5px}
+.sroom-t{font:400 16.5px/1.55 var(--ff-u);color:var(--navy-ink)}
+.sroom .btn{flex:none}
