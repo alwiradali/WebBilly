@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><defs>
+    <linearGradient id="bd" x1="18" y1="20" x2="176" y2="182" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2b7fff"/>
+      <stop offset=".55" stop-color="#22bff0"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  <radialGradient id="bdGlow" cx=".5" cy=".47" r=".5"><stop offset="0" stop-color="#2b7fff" stop-opacity=".30"/><stop offset=".55" stop-color="#22d3ee" stop-opacity=".10"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient></defs><rect width="1024" height="1024" fill="#060b1a"/><rect width="1024" height="1024" fill="url(#bdGlow)"/><g transform="translate(106.80,85.69) scale(4.2209)">
+  <g fill="none" stroke="url(#bd)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+    <!-- top bowl: a browser window -->
+    <rect x="30" y="24" width="122" height="74" rx="22"/>
+    <!-- bottom bowl: a device / app card, bulging a touch wider -->
+    <rect x="30" y="104" width="132" height="74" rx="26"/>
+    <!-- phone home indicator -->
+    <path d="M83 165 h26" stroke-width="7"/>
+  </g>
+  <!-- browser traffic-light dots -->
+  <g fill="url(#bd)">
+    <circle cx="47" cy="40" r="3.1"/><circle cx="58" cy="40" r="3.1"/><circle cx="69" cy="40" r="3.1"/>
+  </g>
+</g></svg>
