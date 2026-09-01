@@ -318,6 +318,116 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 })();
 
 
+/* ── site search ─────────────────────────────────────────────────────── */
+(() => {
+  const btn = document.getElementById("navSearch");
+  const lay = document.getElementById("searchlay");
+  if (!btn || !lay) return;
+  const input = document.getElementById("slInput");
+  const res = document.getElementById("slRes");
+
+  const PAGES = [
+    { t: "Homes to rent", d: "Every property currently available, with filters", u: "megacity-properties", k: "properties homes rent listings available flat house search" },
+    { t: "Book a free rental valuation", d: "What your property should let for, from the team", u: "megacity-valuation", k: "valuation appraisal free book rent worth price" },
+    { t: "Landlords", d: "Services, fees and how your property is managed properly", u: "megacity-for-landlords", k: "landlord investor manage protect own" },
+    { t: "Fees & pricing", d: "5% rent collection, 8% fully managed, and what high street agents charge", u: "megacity-for-landlords#fees", k: "fees pricing cost charges percent compare cheap high street" },
+    { t: "Tenant Find", d: "\u00a3295 for landlords new to Megacity: marketing, vetting, paperwork", u: "megacity-tenant-find", k: "tenant find 295 let only advertise vetting referencing" },
+    { t: "Rent Collection", d: "Tenant Find plus the rent chased and paid over, at 5%", u: "megacity-rent-collection", k: "rent collection 5 arrears chase statements" },
+    { t: "Fully Managed", d: "The whole tenancy handled end to end, at 8%", u: "megacity-fully-managed", k: "fully managed 8 management complete repairs inspections" },
+    { t: "Switch to Megacity", d: "Moving from your current agent, handled for you", u: "megacity-switch", k: "switch change agent transfer move leave" },
+    { t: "HMO management", d: "Licensing, room lets and shared houses", u: "megacity-hmo", k: "hmo house share licence rooms multiple occupation" },
+    { t: "Maintenance & repairs", d: "How repairs are reported, approved and done", u: "megacity-maintenance", k: "maintenance repair broken boiler leak contractor report" },
+    { t: "Compliance & certificates", d: "Gas, electrical, EPC, deposits and licensing kept current", u: "megacity-compliance", k: "compliance certificate gas eicr epc legal safety deposit" },
+    { t: "Tenants", d: "Renting with Megacity: homes, rights and the portal", u: "megacity-renting", k: "tenant renting rent room apartment rights register" },
+    { t: "Rent & yield calculators", d: "Work the numbers on a property", u: "megacity-tools", k: "calculator tools yield mortgage stamp duty numbers" },
+    { t: "About us", d: "Where landlords and tenants have peace of mind", u: "megacity-about-us", k: "about team who trust accreditations" },
+    { t: "Contact us", d: "0161 220 1763 \u00b7 info@megacityproperties.co.uk", u: "megacity-contact-us", k: "contact phone email office address whatsapp call talk" },
+  ];
+  const GUIDES = [
+    { t: "The Renters\u2019 Rights Act, in plain English", d: "What actually changed for landlords", u: "megacity-journal#renters-rights", k: "renters rights act law section 21 periodic tenancy" },
+    { t: "Does my property need an HMO licence?", d: "Mandatory, additional and selective licensing", u: "megacity-journal#hmo-licence", k: "hmo licence licensing selective mandatory council" },
+    { t: "Awaab\u2019s Law, damp and mould", d: "The new deadlines and how to meet them", u: "megacity-journal#awaabs-law", k: "awaab damp mould hazard deadline repair" },
+    { t: "What a void month really costs", d: "And how to keep a property occupied", u: "megacity-journal#voids", k: "void empty vacancy cost pricing" },
+    { t: "Winning a deposit dispute", d: "Starts on move-in day, with the inventory", u: "megacity-journal#deposits", k: "deposit dispute inventory adjudication dps" },
+    { t: "Landlord journal", d: "All guides in one place", u: "megacity-journal", k: "journal blog guides articles advice news" },
+  ];
+  const HOMES = [
+    { t: "2 bed apartment, Denmark Road, Manchester", d: "2 bed \u00b7 2 bath \u00b7 bills included", u: "megacity-let-denmark-road", k: "apartment flat manchester denmark two bed bills" },
+    { t: "2 bed apartment, Ladywell Point, Salford", d: "2 bed \u00b7 2 bath \u00b7 balcony", u: "megacity-let-ladywell-point", k: "apartment flat salford ladywell balcony two bed" },
+    { t: "Furnished double room, licensed HMO, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-3", k: "room double share hmo salford bills furnished" },
+    { t: "Double room, high spec house share, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-5", k: "room double share house salford bills spec" },
+    { t: "Large double room, licensed HMO, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-7", k: "room double large share hmo salford bills" },
+  ];
+
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const item = (r) => `<a class="sl-a" href="${r.u}"><b>${esc(r.t)}</b><span>${esc(r.d)}</span></a>`;
+  const group = (h, rows) => rows.length ? `<p class="sl-h">${h}</p>` + rows.map(item).join("") : "";
+  const hay = (r) => (r.t + " " + r.d + " " + r.k + " " + r.u).toLowerCase();
+  const match = (list, words) => list.filter((r) => { const h = hay(r); return words.every((w) => h.includes(w)); });
+
+  const render = () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) {
+      res.innerHTML = group("Popular", [PAGES[0], PAGES[1], PAGES[3], PAGES[14]]);
+      return;
+    }
+    const words = q.split(/\s+/);
+    const pages = match(PAGES, words), guides = match(GUIDES, words), homes = match(HOMES, words);
+    if (!pages.length && !guides.length && !homes.length) {
+      res.innerHTML = `<p class="sl-none">Nothing found for \u201c${esc(input.value.trim())}\u201d. Try
+        \u201crooms\u201d, \u201cfees\u201d or \u201cvaluation\u201d, or ring
+        <a href="tel:+441612201763">0161 220 1763</a>.</p>`;
+      return;
+    }
+    res.innerHTML = group("Homes to rent", homes) + group("Pages", pages) + group("Landlord guides", guides);
+  };
+
+  let open = false, lastFocus = null;
+  const setOpen = (v) => {
+    open = v;
+    btn.setAttribute("aria-expanded", v ? "true" : "false");
+    document.body.classList.toggle("sl-open", v);
+    // same scrollbar-gap hold as the mega menu, so the page never shifts
+    if (v) {
+      const gap = innerWidth - document.documentElement.clientWidth;
+      if (gap > 0) document.body.style.paddingRight = gap + "px";
+      lastFocus = document.activeElement;
+    } else {
+      document.body.style.paddingRight = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    if (lenis) v ? lenis.stop() : lenis.start();
+    if (v) {
+      lay.hidden = false;
+      render();
+      requestAnimationFrame(() => {
+        lay.classList.add("is-open");
+        input.focus();
+      });
+    } else {
+      lay.classList.remove("is-open");
+      setTimeout(() => { if (!open) lay.hidden = true; }, 260);
+    }
+  };
+
+  btn.addEventListener("click", () => setOpen(!open));
+  const navEl = $("#nav");
+  if (navEl) btn.addEventListener("click", () => navEl.dispatchEvent(new Event("mc:show")));
+  document.getElementById("slClose").addEventListener("click", () => setOpen(false));
+  lay.addEventListener("click", (e) => {
+    if (e.target.closest("a")) { setOpen(false); return; }
+    if (!e.target.closest(".sl-bar") && !e.target.closest(".sl-res")) setOpen(false);
+  });
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && open) setOpen(false); });
+  input.addEventListener("input", render);
+  lay.querySelector(".sl-bar").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const first = res.querySelector("a");
+    if (first) location.href = first.getAttribute("href");
+  });
+})();
+
+
 /* ── floating buttons must never cover the footer ────────────────────── */
 (() => {
   const fab = document.querySelector(".fab");

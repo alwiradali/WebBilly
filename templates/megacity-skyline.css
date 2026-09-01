@@ -898,7 +898,9 @@ form.enq{display:grid;gap:18px;align-content:start}
    the true centre line, and the block centres its own two lines so the
    wordmark sits over the middle of the strapline. */
 @media (max-width:980px){
-  .nav{display:grid;grid-template-columns:1fr auto 1fr;gap:10px}
+  /* auto side tracks: the fixed 1fr pair could run narrower than the 46px
+     search button at ~390px and clip it against the edge padding */
+  .nav{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px}
   .burger{justify-self:start}
   .brand{justify-self:center;align-items:center;text-align:center}
   .nav-find{justify-self:end;margin-left:0;padding:11px 14px;min-height:44px}
@@ -1147,7 +1149,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .nav-social svg{width:20px;height:20px;display:block}
 /* below 1500px the link row and the phone pill need the width themselves;
    the marks live in the menu panel at those sizes */
-@media (min-width:1500px){.nav-social{display:flex}}
+@media (min-width:1980px){.nav-social{display:flex}}
 /* inside the menu panel, where phones can reach them */
 .mm-talk .foot-social,.mm-talk .nav-social{display:flex;gap:12px;margin-top:16px}
 .mm-talk .nav-social a{width:38px;height:38px}
@@ -1655,7 +1657,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .btn svg.chv{width:15px;height:15px}
 
 /* ══ Navigation, rebuilt around seven destinations ═══════════════════════ */
-.nav-links{display:flex;gap:30px;margin-left:auto;align-items:center}
+.nav-links{display:flex;gap:30px;margin-left:auto;align-items:center;flex:none}
 .nav-links a{position:relative;font:600 13.2px/1 var(--ff-u);letter-spacing:.1em;
   text-transform:uppercase;color:var(--navy-ink);padding:8px 0;white-space:nowrap}
 .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
@@ -1676,12 +1678,43 @@ form.enq{display:grid;gap:18px;align-content:start}
 .nav-book:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .nav--dark .nav-book{background:#fff;color:var(--navy)}
 
-@media (max-width:1180px){.nav-links{gap:20px}.nav-links a{font-size:12.4px}.nav-book{margin-left:16px;padding:13px 17px}}
+/* a real search control beside it, outlined so the filled CTA stays the star */
+.nav-search{display:inline-flex;align-items:center;gap:8px;margin-left:26px;flex:none;cursor:pointer;
+  padding:13px 20px;border-radius:999px;background:transparent;border:1.5px solid rgba(29,32,73,.32);
+  color:var(--navy-ink);font:600 13.2px/1 var(--ff-u);letter-spacing:.14em;text-transform:uppercase;
+  transition:background .25s ease,color .25s ease,border-color .25s ease}
+.nav-search svg{width:16px;height:16px;flex:none}
+.nav-search:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+.nav-search:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.nav--dark .nav-search{border-color:rgba(255,255,255,.6);color:#fff}
+.nav--dark .nav-search:hover{background:#fff;border-color:#fff;color:var(--navy)}
+.nav-search + .nav-book{margin-left:12px}
+
+/* The bar holds seven links, search and the booking CTA only where all of
+   them honestly fit side by side. Measured, not hoped: below each threshold
+   the next thing folds away instead of sliding underneath its neighbour,
+   which is what the old shrink rule quietly did. */
+@media (max-width:1779px){
+  .nav-search span{display:none}
+  .nav-search{padding:0;width:46px;height:46px;justify-content:center}
+  .nav-search svg{width:19px;height:19px}
+}
+@media (min-width:1360px) and (max-width:1779px){
+  .nav-links{gap:11px}
+  .nav-links a{font-size:12.6px;letter-spacing:.06em}
+  .nav-search{margin-left:14px}
+}
+@media (max-width:1359px){.nav-links{display:none}}
+@media (min-width:981px) and (max-width:1359px){
+  .nav-search{margin-left:auto}
+  .nav-book{margin-left:12px}
+}
 @media (max-width:980px){
-  .nav-links{display:none}
-  .nav-book span{display:none}
-  .nav-book{margin-left:0;padding:0;width:46px;height:46px;justify-self:end;justify-content:center}
-  .nav-book svg{width:19px;height:19px}
+  /* one action per side: burger left, search right. Booking lives in the
+     menu CTA and on every hero, so the cryptic arrow circle goes. */
+  .nav-book{display:none}
+  .nav-search{margin-left:0;justify-self:end}
+  .nav-search svg{width:20px;height:20px}
 }
 
 /* the menu is one flat list of destinations now, not five accordions */
@@ -1877,7 +1910,7 @@ body.mm-open{overflow:hidden;touch-action:none}
 @media (max-width:380px){
   .brand-strap{display:none}
   .nav{gap:8px;padding-left:11px;padding-right:11px}
-  .nav-book{width:42px;height:42px}
+  .nav-search{width:42px;height:42px}
   .burger{width:38px}
 }
 
@@ -1900,3 +1933,39 @@ h1 em, h2 em, h3 em{
    "Landlord services" was rendering as stray serif */
 .no{font:800 15.4px/1.2 var(--ff-u);letter-spacing:.22em;text-transform:uppercase;color:var(--blue-deep)}
 .shead .no{margin-bottom:16px}
+
+
+/* ── site search overlay ──────────────────────────────────────────────── */
+.searchlay{position:fixed;inset:0;z-index:320;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:linear-gradient(165deg,rgba(12,14,34,.97) 0%,rgba(27,53,96,.96) 55%,rgba(17,80,111,.95) 100%);
+  backdrop-filter:blur(10px);padding:calc(30px + env(safe-area-inset-top,0px)) var(--gut) 60px;
+  opacity:0;transition:opacity .26s ease}
+.searchlay.is-open{opacity:1}
+body.sl-open{overflow:hidden;touch-action:none}
+.sl-in{max-width:760px;margin:0 auto}
+.sl-bar{display:flex;align-items:center;gap:13px;background:#fff;border-radius:16px;padding:7px 8px 7px 19px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.sl-bar>svg{width:20px;height:20px;flex:none;color:var(--blue-deep)}
+.sl-bar input{flex:1;min-width:0;border:0;outline:0;background:none;padding:15px 0;
+  font:500 16.5px/1.4 var(--ff-u);color:var(--navy-ink)}
+.sl-bar input::placeholder{color:#5A6280}
+.sl-bar input::-webkit-search-cancel-button{display:none}
+.sl-close{width:46px;height:46px;flex:none;border:0;border-radius:12px;background:var(--navy);color:#fff;
+  display:grid;place-items:center;cursor:pointer;transition:background .25s ease}
+.sl-close:hover{background:var(--blue-deep)}
+.sl-close svg{width:17px;height:17px}
+.sl-res{margin-top:10px;padding-bottom:20px}
+.sl-h{font:800 13px/1.2 var(--ff-u);letter-spacing:.22em;text-transform:uppercase;color:#8FC4F5;
+  margin:26px 0 10px}
+.sl-a{display:block;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:14px;padding:15px 18px;color:#fff;margin-top:8px;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.sl-a b{display:block;font:600 15.8px/1.35 var(--ff-u)}
+.sl-a span{display:block;margin-top:3px;font:400 13.8px/1.5 var(--ff-u);color:#C4D6E6}
+.sl-a:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateX(3px)}
+.sl-a:focus-visible{outline:2px solid #8FC4F5;outline-offset:2px}
+.sl-none{margin-top:26px;color:#C4D6E6;font:400 15.8px/1.6 var(--ff-u)}
+.sl-none a{color:#8FC4F5;text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.searchlay{transition:none}.sl-a{transition:none}}
+@media (max-width:560px){.searchlay{padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .sl-bar input{font-size:16px}}
