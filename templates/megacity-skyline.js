@@ -536,16 +536,21 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     img.alt = "Property photograph " + (at + 1) + " of " + shots.length;
     count.textContent = (at + 1) + " / " + shots.length;
   };
+  pv.setAttribute("data-lenis-prevent", "");
   const open = i => {
     lastFocus = document.activeElement;
     show(i);
     pv.classList.add("is-open");
     document.body.style.overflow = "hidden";
+    // the smooth scroller keeps eating gestures while the viewer is up,
+    // which panned the page behind each swipe
+    if (lenis) lenis.stop();
     pv.querySelector(".pv-x").focus();
   };
   const close = () => {
     pv.classList.remove("is-open");
     document.body.style.overflow = "";
+    if (lenis) lenis.start();
     if (lastFocus) lastFocus.focus();
   };
 

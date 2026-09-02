@@ -611,7 +611,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .blog .bd h3 a{color:inherit;text-decoration:none;background-image:linear-gradient(var(--blue),var(--blue));
   background-size:0 1.5px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s ease}
 .blog .bd h3 a:hover{background-size:100% 1.5px;color:var(--blue)}
-.jr-link{color:var(--blue);font-weight:600;white-space:nowrap}
+.jr-link{color:var(--blue);font-weight:600}
 .jr-link:hover{text-decoration:underline}
 
 /* ── Brand mark: his own white variant while the nav is transparent ───────
@@ -935,7 +935,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .pg-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
 .pg-thumb:hover img{transform:scale(1.06)}
 .pd-body{max-width:var(--maxw);margin:0 auto;padding:8vh var(--gut);
-  display:grid;grid-template-columns:1.6fr 1fr;gap:44px;align-items:start}
+  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:44px;align-items:start}
 .pd-main-col h2{font:700 clamp(27.56px,3.18vw,39.14px)/1.1 var(--ff-d);color:var(--navy-ink);margin-bottom:18px}
 .pd-main-col h3{font:700 clamp(20.14px,2.12vw,25.44px)/1.2 var(--ff-d);color:var(--navy);margin:34px 0 14px}
 .pd-main-col p{font-size:clamp(16.5px,1.17vw,18.15px);line-height:1.75;color:var(--mut);margin-bottom:14px}
@@ -969,13 +969,13 @@ form.enq{display:grid;gap:18px;align-content:start}
 .pd-mapframe iframe{display:block;width:100%;height:min(52vh,420px);border:0;background:#e8ecf3}
 @media (max-width:900px){
   .pd-hero{grid-template-columns:1fr;gap:22px;padding-top:16px}
-  .pd-body{grid-template-columns:1fr;gap:32px;padding-top:6vh}
+  .pd-body{grid-template-columns:minmax(0,1fr);gap:32px;padding-top:6vh}
   .pd-side{position:static}
   .pg-grid{grid-template-columns:repeat(auto-fill,minmax(min(112px,100%),1fr));gap:8px}
 }
 
 /* photo lightbox */
-.pv{position:fixed;inset:0;z-index:400;background:rgba(9,7,26,.94);display:grid;place-items:center;
+.pv{position:fixed;inset:0;z-index:400;background:rgba(9,7,26,.94);display:grid;place-items:center;touch-action:none;
   padding:20px;opacity:0;pointer-events:none;transition:opacity .28s ease}
 .pv.is-open{opacity:1;pointer-events:auto}
 .pv img{max-width:min(96vw,1400px);max-height:88vh;border-radius:10px;display:block}
@@ -1129,18 +1129,14 @@ form.enq{display:grid;gap:18px;align-content:start}
 .valform,.val-done{--tile-bg:linear-gradient(163deg,#2C2668 0%,#241F5B 100%)}
 .faq details,.lp-faq details{--tile-bg:linear-gradient(163deg,#FBFCFE 0%,#EFF4FC 100%)}
 
-/* 51 gallery thumbnails animating at once is not worth the frames, so those
-   light up on hover instead */
-.pg-thumb{--tile-ang:0deg;border:2px solid transparent;background-color:transparent;
-  background-image:conic-gradient(from var(--tile-ang),transparent 0 300deg,
-    rgba(40,104,192,.9) 326deg,rgba(34,211,238,1) 344deg,transparent 360deg);
-  background-origin:border-box;background-clip:border-box}
-.pg-thumb:hover{animation:tilespark 2.6s linear infinite}
+/* the conic spark ring painted a static blue arc across the top of every
+   thumbnail on touch screens, where hover never comes; thumbs keep their
+   plain border and the zoom-on-hover instead */
+.pg-thumb:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 @media (prefers-reduced-motion:reduce){
   .home,.sc-item,.pd-main,.pd-mapframe,.cred--logo,.accpanel,.accpanel-grid span,
-  .pd-epc,.pd-block,.faq details,.lp-faq details,.nd-cta,.valform,.val-done,
-  .pg-thumb:hover{animation:none}
+  .pd-epc,.pd-block,.faq details,.lp-faq details,.nd-cta,.valform,.val-done{animation:none}
 }
 
 /* ── Social marks in the top bar ──────────────────────────────────────── */
@@ -1316,7 +1312,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* inline text link. Padded so the hit area clears 24px: at the bare line
    height these measured 18px, under WCAG 2.5.8. inline-block keeps them in
    the flow of the paragraph and honours the <br> separators. */
-.lnk{display:inline-block;padding:4px 0;color:var(--blue);font-weight:600;
+.lnk{display:inline-block;padding:4px 0;color:var(--blue);font-weight:600;overflow-wrap:anywhere;
   text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 .lnk:hover{color:var(--navy)}
 .sec--dark .lnk,.valcta .lnk,.phead .lnk,.hero .lnk{color:#8FC4F5}
@@ -1987,7 +1983,7 @@ body.sl-open{overflow:hidden}
 
 /* ── viewing request form, on the dark sidebar card ──────────────────── */
 .pd-vform{display:grid;gap:10px;margin-bottom:16px}
-.pd-vform input{width:100%;border:0;border-radius:10px;padding:14px 15px;
+.pd-vform input:not(.vis-hidden){width:100%;border:0;border-radius:10px;padding:14px 15px;
   font:500 16px/1.3 var(--ff-u);color:var(--navy-ink);background:#fff}
 .pd-vform input::placeholder{color:#5A6280}
 .pd-vform .btn{margin-bottom:0}
@@ -2067,3 +2063,10 @@ body.sl-open{overflow:hidden}
 .sroom .no{margin-bottom:5px}
 .sroom-t{font:400 16.5px/1.55 var(--ff-u);color:var(--navy-ink)}
 .sroom .btn{flex:none}
+
+
+/* segmented controls squeeze rather than push the page sideways at 320 */
+@media (max-width:374px){
+  .seg{flex-wrap:wrap;border-radius:16px}
+  .seg button{padding:11px 13px;font-size:13.3px;flex:1 1 auto}
+}
