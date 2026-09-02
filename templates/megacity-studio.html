@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Megacity Studio</title>
+<meta name="description" content="The back office for Megacity Properties.">
+<meta name="theme-color" content="#1D2049">
+<link rel="icon" href="/favicon.ico?v=4" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="megacity-studio.css">
+</head>
+<body>
+<a class="st-skip" href="#view">Skip to content</a>
+
+<div id="boot" class="st-boot" role="status" aria-live="polite">
+  <div class="st-boot-brand"><span class="st-wm">Megacity</span><span class="st-wm-sub">Studio</span></div>
+  <p>Opening the Studio…</p>
+</div>
+
+<div id="auth" class="st-auth" hidden></div>
+
+<div id="app" class="st-shell" hidden>
+  <aside class="st-side" aria-label="Studio navigation">
+    <a class="st-brand" href="#/" aria-label="Megacity Studio, home">
+      <span class="st-wm">Megacity</span><span class="st-wm-sub">Studio</span>
+    </a>
+    <nav class="st-nav" id="nav" aria-label="Sections"></nav>
+    <div class="st-side-foot" id="sideUser"></div>
+  </aside>
+
+  <div class="st-mainwrap">
+    <header class="st-top" id="top">
+      <a class="st-top-back" id="topBack" href="#/listings" hidden aria-label="Back to listings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div class="st-top-title">
+        <h1 id="topTitle">Home</h1>
+        <p id="topSub" class="st-top-sub" hidden></p>
+      </div>
+      <div id="topChip" class="st-top-chip"></div>
+      <div class="st-top-actions">
+        <button type="button" class="st-search" id="btnSearch" aria-label="Search listings or jump to a screen" aria-keyshortcuts="Meta+K Control+K">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg>
+          <span class="st-search-txt">Search…</span><kbd>⌘K</kbd>
+        </button>
+        <div class="st-bell-wrap" id="bellWrap">
+          <button type="button" class="st-bell" id="btnBell" aria-label="Notifications" aria-haspopup="menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="st-bell-badge" data-unread hidden>0</span>
+          </button>
+        </div>
+        <div class="st-usermenu" id="userMenu"></div>
+      </div>
+    </header>
+    <main class="st-main" id="view" tabindex="-1"></main>
+  </div>
+
+  <nav class="st-bar" id="bar" aria-label="Quick navigation"></nav>
+</div>
+
+<div class="st-drawer-wrap" id="drawerWrap" hidden>
+  <div class="st-scrim" data-close></div>
+  <aside class="st-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" tabindex="-1">
+    <header class="st-drawer-head">
+      <h2 id="drawerTitle">Drawer</h2>
+      <button type="button" class="st-x" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <div class="st-drawer-body" id="drawerBody"></div>
+  </aside>
+</div>
+
+<div class="st-modal-wrap" id="modalWrap" hidden>
+  <div class="st-scrim" data-close></div>
+  <div class="st-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1"></div>
+</div>
+
+<div class="st-cmdk-wrap" id="cmdkWrap" hidden>
+  <div class="st-scrim" data-close></div>
+  <div class="st-cmdk" role="dialog" aria-modal="true" aria-label="Jump to">
+    <div class="st-cmdk-in">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg>
+      <input id="cmdkInput" type="text" autocomplete="off" spellcheck="false" placeholder="Search listings or jump to a screen…" aria-label="Search listings or jump to a screen" aria-controls="cmdkList" aria-expanded="true" role="combobox" aria-autocomplete="list">
+      <kbd>Esc</kbd>
+    </div>
+    <ul id="cmdkList" class="st-cmdk-list" role="listbox" aria-label="Results"></ul>
+  </div>
+</div>
+
+<div class="st-toasts" id="toasts" aria-live="polite" aria-relevant="additions"></div>
+
+<script src="megacity-intake.js" defer></script>
+<script src="megacity-studio-api.js" defer></script>
+<script src="megacity-studio.js" defer></script>
+</body>
+</html>
