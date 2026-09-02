@@ -51,9 +51,11 @@ templates/hair-by-elle.css
 templates/hair-by-elle.js
 templates/hair-by-elle-gl.js
 
-# Roses by Rachel — hidden from the web, kept in git.
-templates/roses-by-rachel.html
-assets/rachel
+# Roses by Rachel — live, but noindex so it stays out of Google.
+# The un-watermarked masters must never be uploaded: only the watermarked
+# copies in assets/rachel/ itself are served.
+assets/rachel/src
+assets/rachel/gen
 
 # Jet Wash Team — hidden from the web, kept in git.
 templates/jet-wash.html
