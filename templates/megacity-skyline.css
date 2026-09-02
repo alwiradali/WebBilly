@@ -2125,3 +2125,45 @@ body.sl-open{overflow:hidden}
   transform:rotate(45deg) translateY(-1px)}
 .hero-kicker::before{content:"";display:inline-block;width:9px;height:9px;margin-right:14px;
   background:linear-gradient(135deg,#176B99 0%,#8FC4F5 100%);transform:rotate(45deg) translateY(-1px)}
+
+
+/* ── valuation stage: the approved mockup, live. Skyline behind, everything centred,
+   the form kept intact as a framed glass panel. ── */
+.valcta--stage{position:relative;overflow:hidden;background:var(--ink);padding:13vh var(--gut) 12vh}
+.valcta--stage .valcta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:.55}
+.valcta--stage::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(12,14,34,.55) 0%,rgba(12,14,34,.28) 45%,rgba(12,14,34,.82) 100%)}
+.valcta--stage .valcta-in{position:relative;z-index:1;display:block;max-width:760px;text-align:center}
+.valcta--stage .valcta-head .no{color:#A8DEF2}
+.valcta--stage .valcta-head .no::before{margin-right:11px}
+.valcta--stage h2{font:700 clamp(38px,6.2vw,76px)/1.02 var(--ff-d);color:#F5F2EA;text-shadow:0 2px 28px rgba(12,14,34,.5)}
+.valcta--stage h2 em{color:#8FC4F5}
+.valcta--stage .lead{margin:20px auto 0;max-width:46ch;color:rgba(245,242,234,.86)}
+.valcta--stage .valform{margin:38px auto 0;max-width:560px;background:rgba(12,14,34,.42);
+  border:1px solid rgba(245,242,234,.35);border-radius:6px;padding:26px;backdrop-filter:blur(10px);
+  grid-template-columns:1fr 1fr}
+.valcta--stage .valform input{background:rgba(245,242,234,.94);border-color:transparent}
+.valcta--stage .valform input:first-child,.valcta--stage .valform button,.valcta--stage .val-note,.valcta--stage .val-done{grid-column:1/-1}
+.valcta--stage .valform .btn--fill{background:transparent;border:1px solid rgba(245,242,234,.85);color:#F5F2EA;
+  font:600 13.4px/1 var(--ff-u);letter-spacing:.2em;text-transform:uppercase;padding:18px 24px;border-radius:0;
+  position:relative;overflow:hidden;isolation:isolate}
+.valcta--stage .valform .btn--fill::before{content:"";position:absolute;inset:0;z-index:-1;background:#F5F2EA;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+.valcta--stage .valform .btn--fill:hover{color:var(--navy-ink)}
+.valcta--stage .valform .btn--fill:hover::before{transform:scaleX(1)}
+.valcta--stage .valform .val-note{color:rgba(245,242,234,.7)}
+.valcta-foot{margin:30px auto 0;font:400 15px/1.7 var(--ff-u);color:rgba(245,242,234,.72)}
+.valcta-foot a{display:block;font:500 19px/1.4 var(--ff-u);letter-spacing:.06em;color:#F5F2EA;text-decoration:none}
+.valcta-foot span{display:block;margin-top:4px}
+@media (max-width:560px){.valcta--stage .valform{grid-template-columns:1fr;padding:20px}
+  .valcta--stage .valform input{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.valcta--stage .valform .btn--fill::before{transition:none}}
+
+/* ── why: the concept's protection quartet treatment, six items, same copy ── */
+.why-grid{gap:44px 40px;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.why-item{display:block}
+.why-ic{width:54px;height:54px;margin-bottom:16px}
+.why-ic svg{width:46px;height:46px;stroke-width:1.4}
+.why-item h3{font:800 13.4px/1.35 var(--ff-u);letter-spacing:.18em;text-transform:uppercase;color:var(--navy-ink);margin-bottom:10px}
+.why-item p{font-size:15.2px}
+@media (min-width:900px){.why-grid{grid-template-columns:repeat(3,1fr)}.why-item:nth-child(3n+2){transform:translateY(26px)}}
