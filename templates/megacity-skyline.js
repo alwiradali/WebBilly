@@ -316,10 +316,10 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     { t: "Homes to rent", d: "Every property currently available, with filters", u: "megacity-properties", k: "properties homes rent listings available flat house search" },
     { t: "Book a free rental valuation", d: "What your property should let for, from the team", u: "megacity-valuation", k: "valuation appraisal free book rent worth price" },
     { t: "Landlords", d: "Services, fees and how your property is managed properly", u: "megacity-for-landlords", k: "landlord investor manage protect own" },
-    { t: "Fees & pricing", d: "5% rent collection, 8% fully managed, and what high street agents charge", u: "megacity-for-landlords#fees", k: "fees pricing cost charges percent compare cheap high street" },
+    { t: "Fees & pricing", d: "5% rent collection, 10% fully managed, and what high street agents charge", u: "megacity-for-landlords#fees", k: "fees pricing cost charges percent compare cheap high street" },
     { t: "Tenant Find", d: "\u00a3295 for landlords new to Megacity: marketing, vetting, paperwork", u: "megacity-tenant-find", k: "tenant find 295 let only advertise vetting referencing" },
     { t: "Rent Collection", d: "Tenant Find plus the rent chased and paid over, at 5%", u: "megacity-rent-collection", k: "rent collection 5 arrears chase statements" },
-    { t: "Fully Managed", d: "The whole tenancy handled end to end, at 8%", u: "megacity-fully-managed", k: "fully managed 8 management complete repairs inspections" },
+    { t: "Fully Managed", d: "The whole tenancy handled end to end, at 10%", u: "megacity-fully-managed", k: "fully managed 10 management complete repairs inspections" },
     { t: "Switch to Megacity", d: "Moving from your current agent, handled for you", u: "megacity-switch", k: "switch change agent transfer move leave" },
     { t: "HMO management", d: "Licensing, room lets and shared houses", u: "megacity-hmo", k: "hmo house share licence rooms multiple occupation" },
     { t: "Maintenance & repairs", d: "How repairs are reported, approved and done", u: "megacity-maintenance", k: "maintenance repair broken boiler leak contractor report" },
@@ -591,7 +591,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   const rent = document.getElementById("svRent");
   if (!rent) return;
 
-  const HIGH_ST = 15, RENT_COLL = 5, MANAGED = 8;
+  const HIGH_ST = 15, RENT_COLL = 5, MANAGED = 10;
   const gbp = n => "\u00a3" + Math.round(n).toLocaleString("en-GB");
   const out = id => document.getElementById(id);
   const year = (r, pct) => r * (pct / 100) * 12;
