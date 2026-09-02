@@ -10,6 +10,9 @@ import * as listings from "./listings.js";
 import * as media from "./media.js";
 import * as settings from "./settings.js";
 import * as tours from "./tours.js";
+import * as pub from "./public.js";
+import * as render from "./render.js";
+import { readAll as readSettings } from "./settings.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
 const ROUTES = [
@@ -83,7 +86,8 @@ function match(method, path) {
    stays a one-liner. */
 export function isMegacityPath(url) {
   const p = url.pathname;
-  return p.startsWith("/api/studio/") || p.startsWith("/api/public/") || p.startsWith("/media/") || p === "/api/billy360-verify";
+  return p.startsWith("/api/studio/") || p.startsWith("/api/public/") || p.startsWith("/media/") || p === "/api/billy360-verify" ||
+    /^\/templates\/megacity-let-[a-z0-9-]+$/.test(p) || p === "/templates/megacity-properties" || p === "/templates/megacity-sitemap.xml" || p === "/templates/megacity-let-template";
 }
 
 /* Strict same-origin for anything that changes state. Browsers send Origin
@@ -99,6 +103,34 @@ function sameOrigin(request, url) {
 export async function handleMegacity(request, env, ctx, url) {
   const p = url.pathname;
   if (p.startsWith("/media/")) return media.serve(request, env, url);
+
+  /* ── Worker-rendered public pages (fall back to the static files) ──── */
+  if (p === "/templates/megacity-let-template") return new Response("Not found", { status: 404 });
+  if (p.startsWith("/templates/megacity-")) {
+    const db = officeDb(env);
+    const passThrough = () => env.ASSETS.fetch(request).then((r) => { const h = new Headers(r.headers); h.set("x-mc-render", "static"); return new Response(r.body, { status: r.status, headers: h }); });
+    if (!db || (request.method !== "GET" && request.method !== "HEAD")) return passThrough();
+    try {
+      if (p === "/templates/megacity-sitemap.xml") return await render.sitemap(env, url, db);
+      const m = /^\/templates\/megacity-let-([a-z0-9-]+)$/.exec(p);
+      if (m) {
+        const live = await render.loadLive(db, m[1]);
+        if (!live) return passThrough();
+        const settings = await readSettings(db);
+        const page = await render.renderListingPage(request, env, url, live, settings);
+        return page || passThrough();
+      }
+      if (p === "/templates/megacity-properties") {
+        const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"));
+        const cards = await feed.json();
+        const page = cards.items && cards.items.length ? await render.renderPropertiesPage(request, env, url, cards) : null;
+        return page || passThrough();
+      }
+    } catch (e) {
+      console.error("render", e && e.stack ? e.stack : e);
+    }
+    return passThrough();
+  }
 
   if (p.startsWith("/api/studio/")) return studioApi(request, env, ctx, url, p.slice("/api/studio".length));
 
@@ -118,6 +150,8 @@ export async function handleMegacity(request, env, ctx, url) {
     try {
       const m = /^\/api\/public\/tours(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
       if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1]) : tours.publicManifest(db);
+      const l = /^\/api\/public\/listings(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
+      if (l && request.method === "GET") return l[1] ? pub.one(db, l[1]) : pub.list(db, url);
       return json({ error: "Not found" }, 404);
     } catch (e) { return errorResponse(e); }
   }

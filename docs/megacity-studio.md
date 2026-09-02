@@ -149,6 +149,29 @@ Media: `{id, kind:"photo|pano|video|pdf", role, roomLabel, url, thumb, orig, pan
 
 R2 keys: `l/<listingId>/<mediaId>/orig.<ext>`, `w1600.jpg`, `w480.jpg`, `pano4096.jpg`. Allowed types: `image/jpeg|png|webp|gif|avif`, `video/mp4|webm`, `application/pdf`. HEIC cannot be decoded by Chrome/Firefox; the Studio shows the iPhone "Most Compatible" instruction instead of failing silently.
 
+### 360° tours
+The tour JSON is billy360's own format (see `docs/billy360.md`). One draft and one live copy per listing.
+
+| Route | Body | Response |
+|---|---|---|
+| `GET /api/studio/tours/:listingId` | – | `{tour, status, version, health, roomCount, liveAt, updatedAt}`; 404 `{canCreate:true}` when none exists |
+| `POST /api/studio/tours/:listingId` | `{brand?, agent?}` or `{tour}` | creates the tour — with no `tour` a skeleton is built from the listing (hallway, receptions, kitchen, bedrooms, bathrooms, garden, driveway, doors already linked) |
+| `PUT /api/studio/tours/:listingId` | `{tour, version, health}` | `{ok, version}`; 409 if `version` is stale; 413 if the tour still embeds a `data:` image (upload it first) |
+| `POST …/publish` | `{health}` | `{ok:true, url}` or `{ok:false, problems}` — needs at least one 360° and `health ≥ settings.tourGateScore` (default 70) |
+| `POST …/unpublish` | – | `{ok}` |
+| `DELETE /api/studio/tours/:listingId` | – | `{ok}` |
+| `POST /api/studio/tours/import` | `{tours:[…], overwrite?}` | `{imported:[ids], skipped:[{id, reason}]}` — for tours saved in a browser before the Studio existed |
+| `POST /api/billy360-verify` | `{code}` (ignored) | `{ok:true}` when the Studio cookie is valid — billy360's `admin.verifyUrl` |
+| `GET /api/public/tours/:listingId` | – | the live tour JSON (cached 120 s); 404 while draft |
+| `GET /api/public/tours` | – | `{items:[{id, title, rentPcm, bedrooms, area, liveAt, roomCount}]}` |
+
+How billy360 uses it (`billy360/store.js`, loaded before `app.js`):
+- `/billy360/?site=<id>&office=1` — the Studio: draft from the API, no passcode (the office cookie is the login), saves go through `PUT`, every embedded image is uploaded to R2 first.
+- `/billy360/?site=<id>` or `…&embed=1` — visitors: the live tour from the public feed, else the shipped file.
+- `/billy360/` — unchanged: browser storage and the demo tours.
+
+The tour link for 10ninety's virtual-tour box is `https://<host>/billy360/?site=<listingId>`; the embed is `<div data-billy360="<listingId>" data-height="16:9"></div><script src="/billy360/embed.js" defer></script>`.
+
 ### Dashboard and audit (Phase 1 minimum)
 `GET /api/studio/dashboard` → `{counts:{listings:{live,draft,total}, media, tours:{live}}, recent:[{at,action,entity,entityId,user}]}`
 `GET /api/studio/audit?limit=50` → `{items:[…]}`

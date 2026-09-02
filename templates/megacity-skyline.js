@@ -270,6 +270,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   if (!burger || !menu) return;
   let open = false, lastFocus = null;
   const setOpen = (v) => {
+    if (v) refreshHomes();
     open = v;
     burger.setAttribute("aria-expanded", v ? "true" : "false");
     burger.setAttribute("aria-label", v ? "Close menu" : "Open menu");
@@ -345,6 +346,17 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     { t: "Large double room, licensed HMO, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-7", k: "room double large share hmo salford bills" },
   ];
 
+  /* Homes come from the Studio's live feed when it exists; the list above is
+     the fallback for the demo host. Fetched once, the first time search opens. */
+  let homesFetched = false;
+  const refreshHomes = () => {
+    if (homesFetched) return;
+    homesFetched = true;
+    fetch("/api/public/listings?view=search", { credentials: "omit" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j && Array.isArray(j.items) && j.items.length) { HOMES.length = 0; j.items.forEach((h) => HOMES.push(h)); render(); } })
+      .catch(() => {});
+  };
   const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const item = (r) => `<a class="sl-a" href="${r.u}"><b>${esc(r.t)}</b><span>${esc(r.d)}</span></a>`;
   const group = (h, rows) => rows.length ? `<p class="sl-h">${h}</p>` + rows.map(item).join("") : "";
