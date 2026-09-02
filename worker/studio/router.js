@@ -12,6 +12,7 @@ import * as settings from "./settings.js";
 import * as tours from "./tours.js";
 import * as pub from "./public.js";
 import * as render from "./render.js";
+import * as enq from "./enquiries.js";
 import { readAll as readSettings } from "./settings.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
@@ -48,6 +49,12 @@ const ROUTES = [
   ["POST", "/listings/:id/unpublish", listings.unpublish],
   ["POST", "/listings/:id/status", listings.setStatus],
   ["PUT", "/listings/:id/media/order", listings.orderMedia],
+
+  ["GET", "/enquiries", enq.list],
+  ["GET", "/enquiries/:id", enq.get],
+  ["PATCH", "/enquiries/:id", enq.patch],
+  ["GET", "/notifications", enq.notifications],
+  ["POST", "/notifications/read", enq.markRead],
 
   ["POST", "/tours/import", tours.importTours],
   ["GET", "/tours/:id", tours.get],
@@ -152,6 +159,11 @@ export async function handleMegacity(request, env, ctx, url) {
       if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1]) : tours.publicManifest(db);
       const l = /^\/api\/public\/listings(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
       if (l && request.method === "GET") return l[1] ? pub.one(db, l[1]) : pub.list(db, url);
+      if (p === "/api/public/event" && request.method === "POST") return enq.publicEvent(request, env);
+      if (p === "/api/public/lead" && request.method === "POST") {
+        if (!sameOrigin(request, url)) return json({ error: "Forbidden" }, 403);
+        return enq.publicLead(request, env, ctx);
+      }
       return json({ error: "Not found" }, 404);
     } catch (e) { return errorResponse(e); }
   }

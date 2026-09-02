@@ -248,6 +248,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
           message: "Free valuation requested via the website."
             + "\nWhat they need: " + ((f.querySelector('input[name=vtype]:checked') || {}).value || "not stated")
             + "\nPostcode: " + g("vPost"),
+          attr: window.mcAttr || {},
           botcheck: ""
         })
       });
@@ -448,6 +449,8 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
           email: f.email.value.trim(),
           day: f.day.value.trim(),
           property: f.dataset.property,
+          listingId: f.dataset.listing || "",
+          attr: window.mcAttr || {},
           botcheck: f.botcheck.value
         })
       });
@@ -702,6 +705,35 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
    Filters run against data attributes already on each card, so nothing is
    fetched and nothing can half-load. With no matches the grid is replaced by
    a real way forward rather than an empty box. */
+/* ── Attribution + first-party events ──────────────────────────────────
+   Where a visitor came from is remembered for the session and sent with any
+   enquiry, so the Studio can show which channel produced it. A listing view
+   is counted first-party (no cookies, no third parties) when the Studio
+   database exists; otherwise the beacon is simply ignored. */
+window.mcAttr = (() => {
+  try {
+    const key = "mc_attr";
+    let a = JSON.parse(sessionStorage.getItem(key) || "null");
+    if (!a) {
+      const q = new URLSearchParams(location.search);
+      a = { utm_source: q.get("utm_source"), utm_medium: q.get("utm_medium"), utm_campaign: q.get("utm_campaign"),
+            referrer: document.referrer || null, landing: location.pathname + location.search };
+      sessionStorage.setItem(key, JSON.stringify(a));
+    }
+    return a;
+  } catch { return {}; }
+})();
+window.mcBeacon = (name, extra) => {
+  try {
+    const body = JSON.stringify({ name, ...(extra || {}) });
+    if (navigator.sendBeacon) navigator.sendBeacon("/api/public/event", new Blob([body], { type: "application/json" }));
+  } catch {}
+};
+(() => {
+  const f = document.querySelector(".pd-vform[data-listing]");
+  if (f) window.mcBeacon("listing_view", { listingId: f.dataset.listing });
+})();
+
 (function propertyList() {
   const grid = document.getElementById("plGrid");
   if (!grid) return;

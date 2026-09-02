@@ -360,8 +360,12 @@ export async function dashboard(c) {
     `SELECT a.at, a.action, a.entity, a.entity_id, a.detail_json, u.name AS user_name FROM audit a LEFT JOIN users u ON u.id=a.user_id
       WHERE a.action NOT IN ('login','login.failed') ORDER BY a.at DESC LIMIT 20`
   ).all()).results || [];
+  let activity = null;
+  try { activity = await (await import("./enquiries.js")).stats(c.db); } catch (e) { console.error("dashboard stats", e); }
   return json({
     counts,
+    enquiries: activity ? activity.enquiries : null,
+    events7: activity ? activity.events7 : null,
     recent: recent.map((r) => ({ at: r.at, action: r.action, entity: r.entity, entityId: r.entity_id, user: r.user_name || "System", detail: parseJson(r.detail_json, null) })),
   });
 }

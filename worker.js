@@ -23,6 +23,7 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 /* Megacity Studio — the client's back office (docs/megacity-studio.md).
    Lives in worker/studio/*; bundled into this Worker at deploy time. */
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
+import { recordEnquiry, notifyTo } from "./worker/studio/enquiries.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -38,15 +39,15 @@ export default {
     }
     if (url.pathname === "/api/megacity-maintenance") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleMegacityMaintenance(request, env);
+      return handleMegacityMaintenance(request, env, ctx);
     }
     if (url.pathname === "/api/megacity-viewing") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleMegacityViewing(request, env);
+      return handleMegacityViewing(request, env, ctx);
     }
     if (url.pathname === "/api/megacity-contact") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleMegacityContact(request, env);
+      return handleMegacityContact(request, env, ctx);
     }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
@@ -544,7 +545,7 @@ billydigitals.com`;
 const MEGACITY_MAINT_TO = "hello@billydigitals.com";
 const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
 
-async function handleMegacityMaintenance(request, env) {
+async function handleMegacityMaintenance(request, env, ctx) {
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
@@ -573,8 +574,9 @@ async function handleMegacityMaintenance(request, env) {
   const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
   const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
 
-  const payload = { from: MEGACITY_FROM, to: [MEGACITY_MAINT_TO], subject, html, text };
+  const payload = { from: MEGACITY_FROM, to: await notifyTo(env), subject, html, text };
   if (isEmail) payload.reply_to = contact;
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "maintenance", name, email: isEmail ? contact : null, phone: isEmail ? null : contact, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr }));
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -592,7 +594,7 @@ async function handleMegacityMaintenance(request, env) {
 /* Viewing requests from property pages — same delivery route as
    maintenance: instant structured email to the office (demo: our inbox),
    with the tenant as reply-to so one tap answers them. */
-async function handleMegacityViewing(request, env) {
+async function handleMegacityViewing(request, env, ctx) {
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
@@ -638,10 +640,11 @@ async function handleMegacityViewing(request, env) {
     `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply to confirm the viewing — reply-to is set to the applicant.</div></div>`;
   const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
 
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: [MEGACITY_MAINT_TO], reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
@@ -652,7 +655,7 @@ async function handleMegacityViewing(request, env) {
 
 
 /* General enquiries from the contact page — same route as the rest. */
-async function handleMegacityContact(request, env) {
+async function handleMegacityContact(request, env, ctx) {
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   }
@@ -693,10 +696,11 @@ async function handleMegacityContact(request, env) {
     `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the sender — replying answers them directly.</div></div>`;
   const text = ["Website enquiry", "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "About: " + topic, "Message: " + message].join("\n");
 
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: [MEGACITY_MAINT_TO], reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();

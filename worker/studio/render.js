@@ -236,7 +236,8 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="apply"]', { element: (e) => { if (v.links.apply) e.setAttribute("href", v.links.apply); } })
     .on('[data-slot="map"]', { element: (e) => { e.setAttribute("src", "https://www.google.com/maps?q=" + mapQ + "&output=embed"); e.setAttribute("title", "Map showing " + v.addr); } })
     .on('[data-slot="mapsec"]', { element: (e) => { if (!v.addr) e.remove(); } })
-    .on("[data-slot]", { element: (e) => e.removeAttribute("data-slot") });
+    .on("[data-slot]", { element: (e) => e.removeAttribute("data-slot") })
+    .onDocument({ comments: (c) => { if (/TEMPLATE:/.test(c.text)) c.remove(); } });
   const res = rewriter.transform(tpl);
   const headers = new Headers(res.headers);
   headers.set("content-type", "text/html; charset=utf-8");
