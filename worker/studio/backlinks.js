@@ -3,9 +3,23 @@
    list of links asked for and won, and the Worker checks whether each source
    page still links to the site. */
 
-import { uid, nowIso, HttpError, json, readJsonBody, clampStr, audit } from "./db.js";
+import { uid, nowIso, HttpError, json, readJsonBody, clampStr, audit, bump } from "./db.js";
 
 const STATUSES = ["planned", "requested", "live", "lost"];
+
+/* the checker fetches staff-supplied addresses: never our own hosts, never
+   bare addresses or local names, and only a handful of checks per person */
+function checkable(env, url, source) {
+  let h;
+  try { h = new URL(source).hostname.toLowerCase(); } catch { return false; }
+  if (!/\./.test(h) || /^\d+\.\d+\.\d+\.\d+$/.test(h) || /^\[/.test(h) || /(^|\.)(localhost|local|internal|lan)$/.test(h)) return false;
+  const own = [url.hostname, "billydigitals.com", "www.billydigitals.com"].concat(String(env.MEGACITY_HOST || "").split(",")).map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return !own.includes(h);
+}
+async function allow(c) {
+  const rl = await bump(c.db, "backlink:user:" + c.user.id, 3600e3, 40);
+  if (!rl.ok) throw new HttpError(429, "That is enough link checks for now; try again later.", { retryAfter: rl.retryAfter });
+}
 
 function toJson(r) {
   return { id: r.id, sourceUrl: r.source_url, targetPath: r.target_path, anchor: r.anchor, contact: r.contact, notes: r.notes, status: r.status, lastCheckedAt: r.last_checked_at, lastResult: r.last_result, createdAt: r.created_at };
@@ -60,10 +74,12 @@ export async function remove(c) {
 async function probe(env, url, r) {
   const base = (env.MEGACITY_PUBLIC_BASE || (url.origin + "/templates/")).replace(/\/?$/, "/");
   const host = new URL(base).host.replace(/^www\./, "");
+  if (!checkable(env, url, r.source_url)) return { status: r.status === "planned" ? "planned" : "lost", result: "That address cannot be checked from here." };
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 10000);
   try {
-    const res = await fetch(r.source_url, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (compatible; MegacityLinkCheck/1.0; +https://megacityproperties.co.uk)", accept: "text/html" } });
+    const res = await fetch(r.source_url, { signal: ctl.signal, redirect: "manual", headers: { "user-agent": "Mozilla/5.0 (compatible; MegacityLinkCheck/1.0; +https://megacityproperties.co.uk)", accept: "text/html" } });
+    if (res.status >= 300 && res.status < 400) return { status: "lost", result: `The page redirects (${res.status}) — check the address and try again.` };
     if (!res.ok) return { status: "lost", result: `The page answered ${res.status}.` };
     const html = (await res.text()).slice(0, 2_000_000);
     const hrefs = [...html.matchAll(/href\s*=\s*["']([^"']+)["']/gi)].map((m) => m[1]);
@@ -81,13 +97,15 @@ async function probe(env, url, r) {
 export async function check(c) {
   const r = await c.db.prepare(`SELECT * FROM backlinks WHERE id=?1`).bind(c.params.id).first();
   if (!r) throw new HttpError(404, "No such link.");
+  await allow(c);
   const p = await probe(c.env, c.url, r);
   await c.db.prepare(`UPDATE backlinks SET status=?1, last_checked_at=?2, last_result=?3 WHERE id=?4`).bind(p.status, nowIso(), p.result, r.id).run();
   return json(toJson(await c.db.prepare(`SELECT * FROM backlinks WHERE id=?1`).bind(r.id).first()));
 }
 
 export async function checkAll(c) {
-  const rows = (await c.db.prepare(`SELECT * FROM backlinks WHERE status IN ('requested','live','lost') ORDER BY last_checked_at ASC LIMIT 30`).all()).results || [];
+  await allow(c);
+  const rows = (await c.db.prepare(`SELECT * FROM backlinks WHERE status IN ('requested','live','lost') ORDER BY last_checked_at ASC LIMIT 12`).all()).results || [];
   c.ctx.waitUntil((async () => {
     for (const r of rows) {
       const p = await probe(c.env, c.url, r);

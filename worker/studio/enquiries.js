@@ -21,6 +21,15 @@ export async function notifyTo(env) {
   } catch { return [FALLBACK_TO]; }
 }
 
+/* The legacy website forms: a handful of messages per connection per hour is
+   plenty for real people; anything more is a script. Without a database the
+   forms behave exactly as they always have. */
+export async function formAllowed(env, request) {
+  const db = officeDb(env);
+  if (!db) return { ok: true };
+  return bump(db, "form:ip:" + clientIp(request), 3600e3, 10);
+}
+
 function sourceFrom(topic, fallback) {
   const t = String(topic || "").toLowerCase();
   if (/valuation/.test(t)) return "valuation";
@@ -135,21 +144,37 @@ const BILLY_MAP = { open: "tour_open", room: "tour_room", hotspot: "tour_hotspot
 export async function publicEvent(request, env) {
   const db = officeDb(env);
   if (!db) return json({ ok: false, connected: false }, 503);
-  const rl = await bump(db, "event:ip:" + clientIp(request), 60e3, 120);
+  const rl = await bump(db, "event:ip:" + clientIp(request), 60e3, 30);
   if (!rl.ok) return json({ ok: false }, 429);
   let body;
   try { body = await request.json(); } catch { return json({ ok: false }, 400); }
+  if (!body || typeof body !== "object") return json({ ok: false }, 400);
   const name = BILLY_MAP[body.ev] || body.name;
   if (!EVENT_NAMES.has(name)) return json({ ok: false }, 400);
-  const listingId = clampStr(body.listingId || body.site, 80);
+  let listingId = clampStr(body.listingId || body.site, 80);
+  if (listingId) {
+    if (!/^[a-z0-9-]{1,80}$/.test(listingId)) return json({ ok: false }, 400);
+    const l = await db.prepare(`SELECT id FROM listings WHERE id=?1 AND deleted_at IS NULL`).bind(listingId).first();
+    if (!l) listingId = null;                       // unknown ids are not worth a row
+  }
   const day = new Date().toISOString().slice(0, 10);
   const session = (await sha256Hex(clientIp(request) + "|" + (request.headers.get("user-agent") || "") + "|" + day)).slice(0, 24);
   const meta = {};
   for (const k of ["room", "kind", "view", "embed"]) if (body[k] != null) meta[k] = String(body[k]).slice(0, 80);
   try {
+    if (name === "listing_view" || name === "tour_open") {
+      /* one view per visitor per listing per day — refreshes are not audiences */
+      const dup = await db.prepare(`SELECT 1 FROM events WHERE name=?1 AND listing_id IS ?2 AND session_hash=?3 AND at >= ?4 LIMIT 1`)
+        .bind(name, listingId, session, day + "T00:00:00.000Z").first();
+      if (dup) return json({ ok: true, dup: true });
+    }
     await db.prepare(`INSERT INTO events (id, at, name, listing_id, session_hash, meta_json) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`)
       .bind(uid("e"), nowIso(), name, listingId, session, JSON.stringify(meta)).run();
-    if (Math.random() < 0.01) await db.prepare(`DELETE FROM events WHERE at < ?1`).bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
+    if (Math.random() < 0.05) {
+      await db.prepare(`DELETE FROM events WHERE at < ?1`).bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
+      const n = await db.prepare(`SELECT COUNT(*) n FROM events`).first();
+      if (Number(n.n) > 300000) await db.prepare(`DELETE FROM events WHERE id IN (SELECT id FROM events ORDER BY at ASC LIMIT 50000)`).run();
+    }
   } catch (e) { console.error("event", e); }
   return json({ ok: true });
 }
@@ -161,6 +186,7 @@ export async function publicLead(request, env, ctx) {
   if (!rl.ok) return json({ error: "Too many requests. Please ring the office." }, 429);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
   const name = clampStr(body.name, 120), email = clampStr(body.email, 160), phone = clampStr(body.phone, 60);
   if (!name || !isEmail(email)) return json({ error: "A name and a valid email are needed so the agent can reply." }, 400);
   const property = clampStr(body.property, 160) || clampStr(body.site, 80) || "a property";

@@ -120,8 +120,9 @@ function mainHtml(v) {
   if (v.features.length) h += `\n<h3>Key features</h3>\n<ul class="pd-ticks">${v.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>`;
   const items = homeItems(v);
   if (items.length) h += `\n<h3>The home</h3>\n<ul class="pd-ticks">${items.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>`;
-  if (Array.isArray(v.extras.services) && v.extras.services.length) {
-    h += `\n<h3>Services</h3>\n<dl class="pd-mini">${v.extras.services.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${esc(val)}</dd></div>`).join("")}</dl>`;
+  const services = Array.isArray(v.extras.services) ? v.extras.services.filter((p) => Array.isArray(p) && p.length === 2) : [];
+  if (services.length) {
+    h += `\n<h3>Services</h3>\n<dl class="pd-mini">${services.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${esc(val)}</dd></div>`).join("")}</dl>`;
   }
   return h;
 }
@@ -134,7 +135,8 @@ function epcHtml(v) {
   else if (r.epc_rating) h += `<p>Energy rating <b>${esc(r.epc_rating)}</b>.</p>`;
   if (v.epcImg) h += `<figure class="pd-epc"><img loading="lazy" src="${esc(v.epcImg.url)}" alt="${esc(v.epcImg.alt || "Energy efficiency rating certificate for " + v.addr)}"></figure>`;
   if (v.floorplan) h += `<p><a class="jr-link" href="${esc(v.floorplan.url)}" target="_blank" rel="noopener">${v.floorplan.kind === "pdf" ? "Open the floor plan (PDF)" : "View the floor plan"} &rarr;</a></p>`;
-  if (v.extras.links && v.extras.links.tenninety) h += `<p>The floor plan and full brochure are held on our lettings portal. <a class="jr-link" href="${esc(v.extras.links.tenninety)}" target="_blank" rel="noopener">View floor plan and brochure &rarr;</a></p>`;
+  const t = v.extras.links && typeof v.extras.links.tenninety === "string" && /^https:\/\//.test(v.extras.links.tenninety) ? v.extras.links.tenninety : null;
+  if (t) h += `<p>The floor plan and full brochure are held on our lettings portal. <a class="jr-link" href="${esc(t)}" target="_blank" rel="noopener">View floor plan and brochure &rarr;</a></p>`;
   return h;
 }
 
@@ -158,7 +160,7 @@ function factsHtml(v) {
   const r = v.r, rows = [];
   const row = (k, val) => { if (val != null && val !== "") rows.push(`<div><dt>${esc(k)}</dt><dd>${esc(val)}</dd></div>`); };
   if (r.rent_pcm) row("Rent", money(r.rent_pcm) + " pcm");
-  if (r.deposit) row("Deposit", money(r.deposit) + (v.extras.depositNote ? " " + v.extras.depositNote.toLowerCase() : ""));
+  if (r.deposit) row("Deposit", money(r.deposit) + (typeof v.extras.depositNote === "string" && v.extras.depositNote ? " " + v.extras.depositNote.toLowerCase() : ""));
   if (v.isRoom) row("Let type", "Room in a shared home");
   else if (r.bedrooms != null) row("Bedrooms", String(r.bedrooms));
   if (v.bathsShared) row("Bathrooms", "Shared");
@@ -210,7 +212,10 @@ export async function renderListingPage(request, env, url, live, settings) {
   const tpl = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-let-template.html", url).toString()));
   if (!tpl.ok) return null;
   const mapQ = encodeURIComponent([v.addr, v.r.postcode].filter(Boolean).join(", "));
+  /* every fragment is built before the rewriter streams: a bad record throws
+     into the router's fallback instead of truncating a half-sent page */
   const epc = epcHtml(v);
+  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v), facts: factsHtml(v) };
   const rewriter = new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(v.pageTitle) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", v.metaDesc) })
@@ -219,19 +224,19 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('meta[property="og:title"], meta[name="twitter:title"]', { element: (e) => e.setAttribute("content", v.pageTitle) })
     .on('meta[property="og:description"], meta[name="twitter:description"]', { element: (e) => e.setAttribute("content", v.metaDesc) })
     .on('meta[property="og:image"], meta[name="twitter:image"]', { element: (e) => e.setAttribute("content", v.ogImage) })
-    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(jsonLd(env, url, v), { html: true }); } })
+    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(frag.ld, { html: true }); } })
     .on('[data-slot="crumb"]', { element: (e) => e.setInnerContent(v.addr || v.title) })
     .on('[data-slot="cover"]', { element: (e) => { if (v.cover) { e.setAttribute("src", v.cover.url); e.setAttribute("alt", v.cover.alt || v.title); } else e.remove(); } })
     .on('[data-slot="kicker"]', { element: (e) => e.setInnerContent((v.isRoom ? "Room" : v.typeLabel) + " to rent") })
     .on('[data-slot="title"]', { element: (e) => e.setInnerContent(v.title) })
     .on('[data-slot="price"]', { element: (e) => { if (v.r.rent_pcm) e.setInnerContent(`${esc(money(v.r.rent_pcm))} <span>pcm</span>`, { html: true }); else e.remove(); } })
-    .on('[data-slot="quick"]', { element: (e) => e.setInnerContent(quickHtml(v), { html: true }) })
+    .on('[data-slot="quick"]', { element: (e) => e.setInnerContent(frag.quick, { html: true }) })
     .on('[data-slot="actions"] a[href="#epc"]', { element: (e) => { if (!epc) e.remove(); } })
-    .on('[data-slot="gallery"]', { element: (e) => { if (v.gallery.length) e.setInnerContent(galleryHtml(v), { html: true }); else e.remove(); } })
-    .on('[data-slot="main"]', { element: (e) => { e.removeAndKeepContent(); e.replace(mainHtml(v), { html: true }); } })
+    .on('[data-slot="gallery"]', { element: (e) => { if (frag.gallery) e.setInnerContent(frag.gallery, { html: true }); else e.remove(); } })
+    .on('[data-slot="main"]', { element: (e) => { e.replace(frag.main, { html: true }); } })
     .on('[data-slot="epc"]', { element: (e) => { if (epc) e.setInnerContent(epc, { html: true }); else e.remove(); } })
-    .on('[data-slot="tour"]', { element: (e) => e.setInnerContent(tourHtml(v), { html: true }) })
-    .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(factsHtml(v), { html: true }) })
+    .on('[data-slot="tour"]', { element: (e) => e.setInnerContent(frag.tour, { html: true }) })
+    .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
     .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
     .on('[data-slot="apply"]', { element: (e) => { if (v.links.apply) e.setAttribute("href", v.links.apply); } })
@@ -244,7 +249,7 @@ export async function renderListingPage(request, env, url, live, settings) {
   headers.set("content-type", "text/html; charset=utf-8");
   headers.set("cache-control", "public, max-age=60, s-maxage=120");
   headers.set("x-mc-render", "d1");
-  headers.delete("content-length");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
   return new Response(res.body, { status: 200, headers });
 }
 
@@ -280,7 +285,7 @@ export async function renderPropertiesPage(request, env, url, cards) {
   headers.set("content-type", "text/html; charset=utf-8");
   headers.set("cache-control", "public, max-age=60, s-maxage=120");
   headers.set("x-mc-render", "d1");
-  headers.delete("content-length");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
   return new Response(res.body, { status: 200, headers });
 }
 

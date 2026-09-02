@@ -23,7 +23,7 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 /* Megacity Studio — the client's back office (docs/megacity-studio.md).
    Lives in worker/studio/*; bundled into this Worker at deploy time. */
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
-import { recordEnquiry, notifyTo } from "./worker/studio/enquiries.js";
+import { recordEnquiry, notifyTo, formAllowed } from "./worker/studio/enquiries.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -246,7 +246,7 @@ function originOk(request, env) {
   if (/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) return true;
   try {
     const h = new URL(origin).hostname;
-    return isM2LHost(h, env) || isClientHost(h, env, "HEATFIX_HOST");
+    return isM2LHost(h, env) || isClientHost(h, env, "HEATFIX_HOST") || isClientHost(h, env, "MEGACITY_HOST");
   } catch (_) {
     return false;
   }
@@ -574,9 +574,10 @@ async function handleMegacityMaintenance(request, env, ctx) {
   const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
   const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
 
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
   const payload = { from: MEGACITY_FROM, to: await notifyTo(env), subject, html, text };
   if (isEmail) payload.reply_to = contact;
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "maintenance", name, email: isEmail ? contact : null, phone: isEmail ? null : contact, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr }));
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -587,6 +588,7 @@ async function handleMegacityMaintenance(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "maintenance", name, email: isEmail ? contact : null, phone: isEmail ? null : contact, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr }));
   return json({ ok: true });
 }
 
@@ -640,7 +642,8 @@ async function handleMegacityViewing(request, env, ctx) {
     `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply to confirm the viewing — reply-to is set to the applicant.</div></div>`;
   const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
 
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many requests from this connection. Please ring the office instead." }, 429);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -650,6 +653,7 @@ async function handleMegacityViewing(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
   return json({ ok: true });
 }
 
@@ -696,7 +700,8 @@ async function handleMegacityContact(request, env, ctx) {
     `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the sender — replying answers them directly.</div></div>`;
   const text = ["Website enquiry", "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "About: " + topic, "Message: " + message].join("\n");
 
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -706,6 +711,7 @@ async function handleMegacityContact(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
   return json({ ok: true });
 }
 

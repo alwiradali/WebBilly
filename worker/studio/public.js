@@ -90,7 +90,8 @@ export async function list(db, url) {
 export async function one(db, id) {
   const r = await db.prepare(`${BASE} AND l.id=?1`).bind(id).first();
   if (!r) return json({ error: "Not found" }, 404, { "cache-control": "public, max-age=60" });
-  const media = (await listForListing(db, id)).filter((m) => m.role !== "og");
+  /* originals (EXIF and all) stay private; the web sizes are what the public gets */
+  const media = (await listForListing(db, id)).filter((m) => m.role !== "og").map((m) => ({ ...m, orig: undefined }));
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
   const extras = parseJson(r.external_json, {}) || {};
   const out = {

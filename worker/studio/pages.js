@@ -2,7 +2,7 @@
    Stored as blocks, rendered by the Worker at /templates/megacity-<slug>
    through templates/megacity-page-template.html (slots marked data-slot). */
 
-import { uid, nowIso, HttpError, json, readJsonBody, clampStr, slugify, parseJson, audit } from "./db.js";
+import { uid, nowIso, HttpError, json, readJsonBody, clampStr, slugify, parseJson, audit, safeHref } from "./db.js";
 import { esc } from "./email.js";
 import { mediaUrl } from "./media.js";
 
@@ -21,7 +21,7 @@ function normaliseBlocks(v) {
     const out = { type };
     if (type === "list") out.items = (Array.isArray(b.items) ? b.items : []).map((i) => clampStr(i, 300)).filter(Boolean).slice(0, 12);
     else if (type === "image") { out.mediaId = clampStr(b.mediaId, 40); out.caption = clampStr(b.caption, 200); }
-    else if (type === "cta") { out.text = clampStr(b.text, 120) || "Talk to the office"; out.href = clampStr(b.href, 300) || "megacity-contact-us"; }
+    else if (type === "cta") { out.text = clampStr(b.text, 120) || "Talk to the office"; out.href = safeHref(b.href) || "megacity-contact-us"; }
     else out.text = clampStr(b.text, type === "h2" ? 160 : 4000);
     return out;
   }).filter((b) => b.type === "list" ? b.items.length : b.type === "image" ? b.mediaId : b.text);
@@ -164,6 +164,10 @@ export async function renderPage(request, env, url, db, row) {
   ];
   if (faq.length) graph.push({ "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) });
   const faqHtml = faq.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n");
+  /* every fragment is built here, before the rewriter streams, so a bad
+     record throws into the router's fallback instead of truncating a page */
+  const bodyHtml = bodyBlocks.map((b) => blockHtml(b, mediaById)).join("\n");
+  const ldJson = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
   const res = new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(pageTitle) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", lede.slice(0, 300)) })
@@ -172,12 +176,12 @@ export async function renderPage(request, env, url, db, row) {
     .on('meta[property="og:title"], meta[name="twitter:title"]', { element: (e) => e.setAttribute("content", pageTitle) })
     .on('meta[property="og:description"], meta[name="twitter:description"]', { element: (e) => e.setAttribute("content", lede.slice(0, 300)) })
     .on('meta[property="og:image"], meta[name="twitter:image"]', { element: (e) => e.setAttribute("content", ogImage) })
-    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c"), { html: true }); } })
+    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(ldJson, { html: true }); } })
     .on('[data-slot="hero"]', { element: (e) => { if (hero) e.setAttribute("style", `--ph-img:url('${hero.replace(/'/g, "%27")}')`); else { e.removeAttribute("style"); e.setAttribute("class", "phead"); } } })
     .on('[data-slot="kicker"]', { element: (e) => e.setInnerContent(KIND_LABEL[row.kind] || "Megacity Properties") })
     .on('[data-slot="title"]', { element: (e) => e.setInnerContent(row.title) })
     .on('[data-slot="lede"]', { element: (e) => { if (lede) e.setInnerContent(lede); else e.remove(); } })
-    .on('[data-slot="body"]', { element: (e) => e.setInnerContent(bodyBlocks.map((b) => blockHtml(b, mediaById)).join("\n"), { html: true }) })
+    .on('[data-slot="body"]', { element: (e) => e.setInnerContent(bodyHtml, { html: true }) })
     .on('[data-slot="faqsec"]', { element: (e) => { if (!faq.length) e.remove(); } })
     .on('[data-slot="faq"]', { element: (e) => e.setInnerContent(faqHtml, { html: true }) })
     .on("[data-slot]", { element: (e) => e.removeAttribute("data-slot") })
@@ -186,6 +190,6 @@ export async function renderPage(request, env, url, db, row) {
   const headers = new Headers(res.headers);
   headers.set("content-type", "text/html; charset=utf-8");
   headers.set("cache-control", "public, max-age=60, s-maxage=120");
-  headers.delete("content-length");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
   return new Response(res.body, { status: 200, headers });
 }

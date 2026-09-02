@@ -23,6 +23,7 @@ function findDataUri(v, path = "$") {
 function checkTour(tour, listingId) {
   if (!tour || typeof tour !== "object") throw new HttpError(400, "Expected a tour object.");
   if (!Array.isArray(tour.rooms) || !tour.rooms.length) throw new HttpError(400, "A tour needs at least one room.");
+  tour.id = listingId;
   const text = JSON.stringify(tour);
   if (text.length > MAX_TOUR_BYTES) throw new HttpError(413, "The tour is too large to store. Panoramas must be uploaded, not embedded.");
   const bad = findDataUri(tour);
@@ -33,8 +34,16 @@ function checkTour(tour, listingId) {
     if (ids.has(r.id)) throw new HttpError(400, `Room id "${r.id}" appears twice.`);
     ids.add(r.id);
   }
-  tour.id = listingId;
   return text;
+}
+
+/* brand and agent blocks come from the browser; only known string fields survive */
+const BRAND_KEYS = ["name", "mark", "markAccent", "sub", "tagline", "logo", "accent", "accent2", "bg", "ink", "fontDisplay", "fontBody", "credit", "creditHref"];
+const AGENT_KEYS = ["name", "phone", "email", "url"];
+function pick(obj, keys) {
+  const out = {};
+  if (obj && typeof obj === "object") for (const k of keys) if (typeof obj[k] === "string" && obj[k].length <= 300) out[k] = obj[k];
+  return out;
 }
 
 function summary(t) {
@@ -57,7 +66,7 @@ const LAYOUT_KIND = { 2: "Café", 6: "Meeting room", 8: "Terrace (open roof)", 9
 const PALETTE = { wall: "#e2e6ec", floor: "#87837c", accent: "#176B99", light: "#ffe8c8", wood: "#b78448", fabric: "#42536b" };
 
 function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "room"; }
-function rid() { return Math.random().toString(36).slice(2, 5); }
+function rid() { return uid("").slice(0, 6); }
 
 function newRoom(name, floorId, layout, kind) {
   const base = LAYOUT_SPACE[layout] || LAYOUT_SPACE[10];
@@ -156,7 +165,7 @@ export async function create(c) {
   const body = await readJsonBody(c.request, 2_000_000);
   let tour;
   if (body.tour) { checkTour(body.tour, listing.id); tour = body.tour; }
-  else tour = buildSkeleton(listing, body.brand, body.agent);
+  else { tour = buildSkeleton(listing, pick(body.brand, BRAND_KEYS), pick(body.agent, AGENT_KEYS)); checkTour(tour, listing.id); }
   const now = nowIso();
   await c.db.prepare(
     `INSERT INTO tours (listing_id, draft_json, live_json, version, status, health_score, room_count, updated_at, updated_by, live_at)
@@ -253,7 +262,10 @@ export async function importTours(c) {
 
 /* ── public ────────────────────────────────────────────────────────────── */
 export async function publicTour(db, id) {
-  const t = await db.prepare(`SELECT live_json FROM tours WHERE listing_id=?1 AND status='live'`).bind(id).first();
+  const t = await db.prepare(
+    `SELECT t.live_json FROM tours t JOIN listings l ON l.id=t.listing_id
+      WHERE t.listing_id=?1 AND t.status='live' AND l.status='live' AND l.hidden=0 AND l.deleted_at IS NULL`
+  ).bind(id).first();
   if (!t || !t.live_json) return json({ error: "No live tour for this listing." }, 404, { "cache-control": "public, max-age=60" });
   return new Response(t.live_json, { status: 200, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=60, s-maxage=120" } });
 }
@@ -261,7 +273,7 @@ export async function publicTour(db, id) {
 export async function publicManifest(db) {
   const rows = (await db.prepare(
     `SELECT t.listing_id, l.title, l.rent_pcm, l.bedrooms, l.area, t.live_at, t.room_count FROM tours t JOIN listings l ON l.id=t.listing_id
-      WHERE t.status='live' AND l.deleted_at IS NULL AND l.hidden=0 ORDER BY t.live_at DESC`
+      WHERE t.status='live' AND l.status='live' AND l.deleted_at IS NULL AND l.hidden=0 ORDER BY t.live_at DESC`
   ).all()).results || [];
   return jsonCached({ items: rows.map((r) => ({ id: r.listing_id, title: r.title, rentPcm: r.rent_pcm, bedrooms: r.bedrooms, area: r.area, liveAt: r.live_at, roomCount: r.room_count })) }, 120);
 }

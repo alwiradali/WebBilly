@@ -1,6 +1,6 @@
 /* Megacity Studio — settings (JSON blobs in the settings table). */
 
-import { json, readJsonBody, HttpError, getSetting, setSetting, clampStr, toInt, isEmail, audit } from "./db.js";
+import { json, readJsonBody, HttpError, setSetting, clampStr, toInt, isEmail, audit } from "./db.js";
 
 export const DEFAULTS = {
   brand: {
@@ -29,9 +29,12 @@ const KEYS = Object.keys(DEFAULTS);
 
 export async function readAll(db) {
   const out = {};
+  const rows = (await db.prepare(`SELECT key, value FROM settings`).all()).results || [];
+  const have = {};
+  for (const r of rows) { try { have[r.key] = JSON.parse(r.value); } catch {} }
   for (const k of KEYS) {
-    const v = await getSetting(db, k, undefined);
-    out[k] = v === undefined ? DEFAULTS[k] : (typeof DEFAULTS[k] === "object" && !Array.isArray(DEFAULTS[k]) ? { ...DEFAULTS[k], ...v } : v);
+    const v = have[k];
+    out[k] = v === undefined ? DEFAULTS[k] : (typeof DEFAULTS[k] === "object" && !Array.isArray(DEFAULTS[k]) ? { ...DEFAULTS[k], ...(v && typeof v === "object" ? v : {}) } : v);
   }
   return out;
 }

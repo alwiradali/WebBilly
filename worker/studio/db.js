@@ -103,7 +103,20 @@ export async function readJsonBody(request, maxBytes = 1_000_000) {
   try { text = await request.text(); } catch { throw new HttpError(400, "Could not read the request body."); }
   if (text.length > maxBytes) throw new HttpError(413, "Request body too large.");
   if (!text.trim()) return {};
-  try { return JSON.parse(text); } catch { throw new HttpError(400, "Invalid JSON body."); }
+  let v;
+  try { v = JSON.parse(text); } catch { throw new HttpError(400, "Invalid JSON body."); }
+  return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+}
+
+/* Only these link shapes may ever be rendered as an href. */
+export function safeHref(v) {
+  const s = clampStr(v, 500);
+  if (!s) return null;
+  if (/^https?:\/\/[^\s"'<>]+$/i.test(s)) return s;
+  if (/^\/[a-z0-9\/#._?=&%-]*$/i.test(s)) return s;
+  if (/^(mailto:[^\s"'<>]+|tel:\+?[0-9 ()-]+)$/i.test(s)) return s;
+  if (/^[a-z0-9-]+(#[a-z0-9-]*)?$/i.test(s)) return s;          // a sibling Megacity page
+  return null;
 }
 
 export function parseJson(text, fallback) {
@@ -156,6 +169,7 @@ export async function bump(db, key, windowMs, max) {
     const row = await db.prepare(`SELECT window_start, count FROM rate_limits WHERE key=?1`).bind(key).first();
     if (!row || now - Number(row.window_start) > windowMs) {
       await db.prepare(`INSERT OR REPLACE INTO rate_limits (key, window_start, count) VALUES (?1, ?2, 1)`).bind(key, now).run();
+      if (Math.random() < 0.01) await db.prepare(`DELETE FROM rate_limits WHERE window_start < ?1`).bind(now - 864e5).run().catch(() => {});
       return { ok: true };
     }
     if (Number(row.count) >= max) {

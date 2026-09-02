@@ -11,6 +11,7 @@ export const IMAGE_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/web
 export const STREAM_TYPES = { "video/mp4": "mp4", "video/webm": "webm", "application/pdf": "pdf" };
 const MAX_IMAGE = 40 * 1024 * 1024;
 const MAX_STREAM = 60 * 1024 * 1024;
+const MAX_DERIVED = { large: 6 * 1024 * 1024, thumb: 1024 * 1024, pano: 20 * 1024 * 1024 };
 const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg)$/;
 
 export function mediaUrl(key) {
@@ -86,8 +87,21 @@ function normaliseRole(role) {
   return valid("mediaRole", role) && role ? role : "gallery";
 }
 
+function needStore(env) {
+  if (!env.MEDIA) throw new HttpError(503, "The photo store (R2) is not connected. Add the MEDIA binding and redeploy.");
+}
+
+/* a derived size must really be a JPEG of sane size, or it is dropped */
+async function derived(file, kind) {
+  if (!(file instanceof File) || !file.size) return null;
+  if (file.size > MAX_DERIVED[kind]) throw new HttpError(413, `The ${kind} version is too large.`);
+  if ((await sniff(await head(file))) !== "image/jpeg") throw new HttpError(415, `The ${kind} version is not a JPEG.`);
+  return file;
+}
+
 /* POST /api/studio/media — multipart: meta + orig + large + thumb (+ pano) */
 export async function upload(c) {
+  needStore(c.env);
   const len = Number(c.request.headers.get("content-length") || 0);
   if (len > MAX_IMAGE * 2) throw new HttpError(413, "That upload is too large.");
   let form;
@@ -97,19 +111,20 @@ export async function upload(c) {
   const listingId = String(meta.listingId);
   if (!/^[a-z0-9-]{1,80}$/.test(listingId) || !(await listingExists(c.db, listingId))) throw new HttpError(404, "No such listing.");
 
-  const orig = form.get("orig"), large = form.get("large"), thumb = form.get("thumb"), pano = form.get("pano");
+  const orig = form.get("orig");
   if (!(orig instanceof File) || !orig.size) throw new HttpError(400, "No file received.");
   if (orig.size > MAX_IMAGE) throw new HttpError(413, "Images must be under 40 MB.");
   const mime = sniff(await head(orig));
   if (!mime || !IMAGE_TYPES[mime]) throw new HttpError(415, "That file is not a supported image (JPEG, PNG, WebP, GIF or AVIF).");
+  const large = await derived(form.get("large"), "large"), thumb = await derived(form.get("thumb"), "thumb"), pano = await derived(form.get("pano"), "pano");
 
   const id = uid("m");
   const base = `l/${listingId}/${id}/`;
   const keys = { key_orig: base + "orig." + IMAGE_TYPES[mime], key_large: null, key_thumb: null, key_pano: null };
   const puts = [c.env.MEDIA.put(keys.key_orig, await orig.arrayBuffer(), { httpMetadata: { contentType: mime } })];
-  if (large instanceof File && large.size) { keys.key_large = base + "w1600.jpg"; puts.push(c.env.MEDIA.put(keys.key_large, await large.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
-  if (thumb instanceof File && thumb.size) { keys.key_thumb = base + "w480.jpg"; puts.push(c.env.MEDIA.put(keys.key_thumb, await thumb.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
-  if (pano instanceof File && pano.size) { keys.key_pano = base + "pano4096.jpg"; puts.push(c.env.MEDIA.put(keys.key_pano, await pano.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
+  if (large) { keys.key_large = base + "w1600.jpg"; puts.push(c.env.MEDIA.put(keys.key_large, await large.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
+  if (thumb) { keys.key_thumb = base + "w480.jpg"; puts.push(c.env.MEDIA.put(keys.key_thumb, await thumb.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
+  if (pano) { keys.key_pano = base + "pano4096.jpg"; puts.push(c.env.MEDIA.put(keys.key_pano, await pano.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
   await Promise.all(puts);
 
   const isPano = !!keys.key_pano || meta.isPano === true;
@@ -127,11 +142,14 @@ export async function upload(c) {
   await maybeSetCover(c.db, listingId, id, role, row.kind);
   await touch(c.db, listingId, c.user.id);
   await audit(c.db, { userId: c.user.id, action: "media.uploaded", entity: "listing", entityId: listingId, detail: { mediaId: id, kind: row.kind, role, bytes: orig.size } });
-  return json(mediaToJson(row), 201);
+  let wentLive = false;
+  try { wentLive = await (await import("./listings.js")).autoPublishIfReady(c.env, c.db, listingId); } catch (e) { console.error("autoPublish", e); }
+  return json({ ...mediaToJson(row), listingWentLive: wentLive }, 201);
 }
 
 /* PUT /api/studio/media/stream?listingId=&kind=video|pdf&role=&filename= — raw body */
 export async function stream(c) {
+  needStore(c.env);
   const listingId = String(c.url.searchParams.get("listingId") || "");
   if (!/^[a-z0-9-]{1,80}$/.test(listingId) || !(await listingExists(c.db, listingId))) throw new HttpError(404, "No such listing.");
   const len = Number(c.request.headers.get("content-length") || 0);
@@ -217,7 +235,7 @@ export async function patch(c) {
 export async function remove(c) {
   const m = await c.db.prepare(`SELECT * FROM media WHERE id=?1`).bind(c.params.id).first();
   if (!m) throw new HttpError(404, "No such media.");
-  await deleteObjects(c.env, m);
+  await deleteObjects(c.env, m, c.url.origin);
   await c.db.prepare(`DELETE FROM media WHERE id=?1`).bind(m.id).run();
   const l = await c.db.prepare(`SELECT cover_media_id FROM listings WHERE id=?1`).bind(m.listing_id).first();
   if (l && l.cover_media_id === m.id) {
@@ -229,14 +247,19 @@ export async function remove(c) {
   return json({ ok: true });
 }
 
-export async function deleteObjects(env, m) {
+export async function deleteObjects(env, m, origin) {
   const keys = [m.key_orig, m.key_large, m.key_thumb, m.key_pano].filter(Boolean);
-  if (keys.length) await env.MEDIA.delete(keys);
+  if (!keys.length) return;
+  if (env.MEDIA) await env.MEDIA.delete(keys);
+  /* the edge copy is immutable for a year unless we drop it here */
+  if (origin) {
+    for (const k of keys) { try { await caches.default.delete(new Request(origin + "/media/" + k)); } catch {} }
+  }
 }
 
-export async function deleteAllForListing(env, db, listingId) {
+export async function deleteAllForListing(env, db, listingId, origin) {
   const rows = (await db.prepare(`SELECT * FROM media WHERE listing_id=?1`).bind(listingId).all()).results || [];
-  for (const m of rows) await deleteObjects(env, m);
+  for (const m of rows) await deleteObjects(env, m, origin);
   await db.prepare(`DELETE FROM media WHERE listing_id=?1`).bind(listingId).run();
 }
 
@@ -247,13 +270,24 @@ export async function listForListing(db, listingId) {
 
 /* GET /media/<key> — public, immutable, range-aware (video seeking). */
 export async function serve(request, env, url) {
+  try {
+    return await serveInner(request, env, url);
+  } catch (e) {
+    if (e instanceof URIError) return new Response("Not found", { status: 404 });
+    console.error("media serve", e && e.message);
+    return new Response("Bad request", { status: 400 });
+  }
+}
+
+async function serveInner(request, env, url) {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
   const key = decodeURIComponent(url.pathname.slice("/media/".length));
   if (!KEY_RE.test(key)) return new Response("Not found", { status: 404 });
   if (!env.MEDIA) return new Response("Media store not connected", { status: 503 });
 
   const cache = caches.default;
-  const cacheKey = new Request(url.toString(), { method: "GET" });
+  /* the key is the path alone, so ?anything cannot bypass the edge copy */
+  const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
   if (!request.headers.has("range")) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;

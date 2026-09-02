@@ -39,7 +39,7 @@ const ROUTES = [
   ["GET", "/settings", settings.get],
   ["PUT", "/settings", settings.put],
   ["GET", "/dashboard", listings.dashboard],
-  ["GET", "/audit", listings.auditList],
+  ["GET", "/audit", listings.auditList, { owner: true }],
 
   ["GET", "/listings", listings.list],
   ["POST", "/listings", listings.create],

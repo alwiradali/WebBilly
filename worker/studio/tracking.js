@@ -20,6 +20,6 @@ export function inject(response, settings) {
   }
   const res = new HTMLRewriter().on("head", { element: (e) => e.append(parts.join("\n"), { html: true }) }).transform(response);
   const headers = new Headers(res.headers);
-  headers.delete("content-length");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
   return new Response(res.body, { status: res.status, headers });
 }

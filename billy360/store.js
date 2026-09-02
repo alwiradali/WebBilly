@@ -15,7 +15,9 @@
 (function () {
   "use strict";
   var QS = new URLSearchParams(location.search);
-  var SITE = QS.get("site") || QS.get("property");
+  /* a listing id is a slug and nothing else — anything odd is treated as absent */
+  var RAW_SITE = QS.get("site") || QS.get("property") || "";
+  var SITE = /^[a-z0-9-]{1,80}$/i.test(RAW_SITE) ? RAW_SITE.toLowerCase() : null;
   var OFFICE = QS.get("office") === "1";
   var APP = "app.js?v=20260902s";
   var CFG = window.BILLY360_CONFIG || (window.BILLY360_CONFIG = {});
@@ -179,10 +181,26 @@
 
   function showBlocked(title, body, href, label) {
     var paint = function () {
+      /* built with textContent — nothing from the URL is ever parsed as HTML */
       var box = document.createElement("div");
       box.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#0C0E22;color:#F5F2EA;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px";
-      box.innerHTML = '<div style="max-width:440px;text-align:center"><h1 style="font:600 24px/1.2 Georgia,serif;margin:0 0 10px">' + title + '</h1><p style="opacity:.8;margin:0 0 18px">' + body + '</p>' +
-        (href ? '<a href="' + href + '" style="display:inline-block;background:#176B99;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:600">' + label + '</a>' : "") + "</div>";
+      var card = document.createElement("div");
+      card.style.cssText = "max-width:440px;text-align:center";
+      var h = document.createElement("h1");
+      h.style.cssText = "font:600 24px/1.2 Georgia,serif;margin:0 0 10px";
+      h.textContent = title;
+      var p = document.createElement("p");
+      p.style.cssText = "opacity:.8;margin:0 0 18px";
+      p.textContent = body;
+      card.appendChild(h); card.appendChild(p);
+      if (href && /^\/[a-z0-9\/#._?=-]*$/i.test(href)) {
+        var a = document.createElement("a");
+        a.href = href;
+        a.style.cssText = "display:inline-block;background:#176B99;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:600";
+        a.textContent = label;
+        card.appendChild(a);
+      }
+      box.appendChild(card);
       document.body.appendChild(box);
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", paint);
@@ -190,7 +208,11 @@
   }
 
   /* ── mode selection ───────────────────────────────────────────────────── */
-  if (!SITE) { inject(); return; }
+  if (!SITE) {
+    if (OFFICE) { showBlocked("No such listing", "The Studio link is missing a valid listing id.", "/templates/megacity-studio#/listings", "Back to listings"); return; }
+    inject();
+    return;
+  }
 
   if (!OFFICE) {
     STORE.mode = "public";
@@ -239,7 +261,7 @@
   }).catch(function (e) {
     if (e.status === 401) showBlocked("Sign in to the Studio first", "This tour editor uses your Megacity Studio login.", "/templates/megacity-studio#/login", "Open the Studio");
     else if (e.status === 503) showBlocked("Not connected yet", "The Studio database is not set up on this deployment.", "/templates/megacity-studio", "Open the Studio");
-    else if (e.status === 404) showBlocked("No such listing", "There is no listing with the id “" + SITE + "”.", "/templates/megacity-studio#/listings", "Back to listings");
+    else if (e.status === 404) showBlocked("No such listing", "There is no listing with that id.", "/templates/megacity-studio#/listings", "Back to listings");
     else showBlocked("Could not load the tour", e.message || "Please try again.", "/templates/megacity-studio#/listings", "Back to listings");
   });
 })();

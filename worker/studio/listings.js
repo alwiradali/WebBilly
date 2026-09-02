@@ -3,7 +3,7 @@
    camelCase; the table is snake_case. Blank means "not stated" and is never
    rendered. */
 
-import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, toBool, parseJson, slugify, audit } from "./db.js";
+import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, toBool, parseJson, slugify, audit, safeHref } from "./db.js";
 import { valid } from "./options.js";
 import { listForListing, deleteAllForListing, mediaUrl } from "./media.js";
 
@@ -186,6 +186,7 @@ export async function create(c) {
   const cols = toColumns(body);
   if (!cols.title) throw new HttpError(400, "Give the listing a title.");
   const id = body.id && /^[a-z0-9-]{2,80}$/.test(body.id) ? await uniqueId(c.db, body.id) : await uniqueId(c.db, cols.title);
+  if (body.status === "live") throw new HttpError(400, "A listing goes live from its Publish tab, once it passes the checks.");
   const now = nowIso();
   const base = { id, source: "manual", status: valid("status", body.status) && body.status ? body.status : "draft", created_at: now, updated_at: now, created_by: c.user.id, updated_by: c.user.id, ...cols };
   const keys = Object.keys(base);
@@ -214,6 +215,7 @@ export async function patch(c) {
   const cols = toColumns(body);
   if ("status" in body) {
     if (!valid("status", body.status) || !body.status) throw new HttpError(400, "Unknown status.");
+    if (body.status === "live" && row.status !== "live") throw new HttpError(400, "A listing goes live from its Publish tab, once it passes the checks.");
     cols.status = body.status;
   }
   if (cols.cover_media_id) {
@@ -232,7 +234,7 @@ export async function remove(c) {
   const row = await mustGet(c.db, c.params.id, { allowDeleted: true });
   if (c.url.searchParams.get("hard") === "1") {
     if (c.user.role !== "owner") throw new HttpError(403, "Only an owner can delete a listing for good.");
-    await deleteAllForListing(c.env, c.db, row.id);
+    await deleteAllForListing(c.env, c.db, row.id, c.url.origin);
     await c.db.prepare(`DELETE FROM listings WHERE id=?1`).bind(row.id).run();
     await audit(c.db, { userId: c.user.id, action: "listing.deleted", entity: "listing", entityId: row.id, detail: { title: row.title } });
     return json({ ok: true, deleted: true });
@@ -322,31 +324,70 @@ export async function orderMedia(c) {
 
 /* One-off import of the hand-built listings (seed JSON). Upsert by id;
    photos are uploaded separately by the browser through the normal route. */
+/* The seed's extra bits, checked before they are stored: only strings,
+   pairs of strings, and links that are safe to render. */
+function cleanExtras(item) {
+  const extras = {};
+  const dn = clampStr(item.depositNote, 80);
+  if (dn) extras.depositNote = dn;
+  if (Array.isArray(item.services)) {
+    const s = item.services.filter((p) => Array.isArray(p) && p.length === 2).map(([k, v]) => [clampStr(k, 60), clampStr(v, 160)]).filter(([k, v]) => k && v).slice(0, 12);
+    if (s.length) extras.services = s;
+  }
+  if (item.links && typeof item.links === "object") {
+    const links = {};
+    for (const k of ["apply", "tenninety"]) { const h = safeHref(item.links[k]); if (h && /^https?:\/\//.test(h)) links[k] = h; }
+    if (Object.keys(links).length) extras.links = links;
+  }
+  return extras;
+}
+
 export async function importLegacy(c) {
   const body = await readJsonBody(c.request, 4_000_000);
   const items = Array.isArray(body.listings) ? body.listings.slice(0, 50) : [];
-  let imported = 0;
+  const stmts = [];
+  const ids = [];
+  const now = nowIso();
   for (const item of items) {
     if (!item || !/^[a-z0-9-]{2,80}$/.test(String(item.id || ""))) continue;
     const cols = toColumns(item);
     if (!cols.title) continue;
-    const extras = {};
-    for (const k of ["depositNote", "services", "links"]) if (item[k] != null) extras[k] = item[k];
-    const now = nowIso();
+    const extras = cleanExtras(item);
+    /* a seed marked live is imported as a draft and goes live by itself the
+       moment its photos are in and it passes the same checks as everyone else */
+    if (item.status === "live") extras.importStatus = "live";
     const exists = await c.db.prepare(`SELECT id FROM listings WHERE id=?1`).bind(item.id).first();
-    const base = { ...cols, status: valid("status", item.status) && item.status ? item.status : "draft", external_json: Object.keys(extras).length ? JSON.stringify({ extras }) : null, updated_at: now, updated_by: c.user.id };
+    const base = { ...cols, status: "draft", external_json: Object.keys(extras).length ? JSON.stringify({ extras }) : null, updated_at: now, updated_by: c.user.id };
     if (exists) {
       const keys = Object.keys(base);
-      await c.db.prepare(`UPDATE listings SET ${keys.map((k, i) => `${k}=?${i + 1}`).join(", ")}, deleted_at=NULL WHERE id=?${keys.length + 1}`).bind(...keys.map((k) => base[k]), item.id).run();
+      stmts.push(c.db.prepare(`UPDATE listings SET ${keys.map((k, i) => `${k}=?${i + 1}`).join(", ")}, deleted_at=NULL WHERE id=?${keys.length + 1}`).bind(...keys.map((k) => base[k]), item.id));
     } else {
       const full = { id: item.id, source: "manual", created_at: now, created_by: c.user.id, ...base };
       const keys = Object.keys(full);
-      await c.db.prepare(`INSERT INTO listings (${keys.join(", ")}) VALUES (${keys.map((_, i) => "?" + (i + 1)).join(", ")})`).bind(...keys.map((k) => full[k])).run();
+      stmts.push(c.db.prepare(`INSERT INTO listings (${keys.join(", ")}) VALUES (${keys.map((_, i) => "?" + (i + 1)).join(", ")})`).bind(...keys.map((k) => full[k])));
     }
-    imported++;
+    ids.push(item.id);
   }
-  await audit(c.db, { userId: c.user.id, action: "listing.imported", entity: "listing", entityId: null, detail: { count: imported } });
-  return json({ ok: true, imported });
+  if (stmts.length) await c.db.batch(stmts);       // all or nothing
+  await audit(c.db, { userId: c.user.id, action: "listing.imported", entity: "listing", entityId: null, detail: { count: ids.length, ids } });
+  return json({ ok: true, imported: ids.length });
+}
+
+/* Called after a photo lands: an imported listing that asked to be live goes
+   live once it passes the publish checks. */
+export async function autoPublishIfReady(env, db, listingId) {
+  const l = await getFull(db, listingId);
+  if (!l || !l.extras || !l.extras.extras || l.extras.extras.importStatus !== "live" || l.status === "live") return false;
+  const problems = await problemsFor(db, l);
+  if (problems.length) return false;
+  const extras = { ...l.extras };
+  extras.extras = { ...extras.extras };
+  delete extras.extras.importStatus;
+  const now = nowIso();
+  await db.prepare(`UPDATE listings SET status='live', hidden=0, published_at=COALESCE(published_at, ?1), external_json=?2, updated_at=?1 WHERE id=?3`)
+    .bind(now, Object.keys(extras.extras).length ? JSON.stringify(extras) : null, listingId).run();
+  await audit(db, { userId: null, action: "listing.published", entity: "listing", entityId: listingId, detail: { auto: true } });
+  return true;
 }
 
 export async function dashboard(c) {

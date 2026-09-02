@@ -132,6 +132,7 @@ export async function listingCopy(c) {
 }
 
 async function imageBlock(c, mediaId) {
+  if (!c.env.MEDIA) throw new HttpError(503, "The photo store (R2) is not connected.");
   const m = await c.db.prepare(`SELECT * FROM media WHERE id=?1`).bind(String(mediaId || "")).first();
   if (!m) throw new HttpError(404, "No such photo.");
   if (m.kind !== "photo" && m.kind !== "pano") throw new HttpError(400, "Only photos can be looked at.");

@@ -12,7 +12,12 @@ import {
 } from "./db.js";
 import { sendEmail, inviteEmail, resetEmail } from "./email.js";
 
-const COOKIE = "mc_studio";
+/* __Host- : the browser refuses the cookie unless it is Secure, Path=/ and has
+   no Domain — so nothing on a sibling host can ever set or shadow it */
+const COOKIE = "__Host-mc_studio";
+/* a real hash to verify against when the email is unknown, so a wrong email
+   costs the same time as a wrong password */
+const DUMMY_HASH = "pbkdf2$100000$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 const SESSION_DAYS = 14;
 const TOKEN_HOURS = 48;
 const DENY = new Set(["password12", "1234567890", "qwertyuiop", "megacity2026", "megacityproperties", "manchester1", "walid12345"]);
@@ -178,12 +183,14 @@ export async function login(c) {
   const email = String(body.email || "").trim().toLowerCase().slice(0, 160);
   const password = String(body.password || "");
   const ip = clientIp(c.request);
-  // An office shares one IP, so the per-address limit is loose; the per-email limit is the real brake.
+  // An office shares one IP, so the per-address limit is loose; the per-email
+  // limit is keyed on email+address so one stranger cannot lock the owner out.
   const a = await bump(c.db, "login:ip:" + ip, 900e3, 40);
-  const b = await bump(c.db, "login:email:" + email, 900e3, 10);
+  const b = await bump(c.db, "login:email:" + email + ":" + ip, 900e3, 10);
   if (!a.ok || !b.ok) throw new HttpError(429, "Too many sign-in attempts. Wait a few minutes and try again.", { retryAfter: (a.retryAfter || b.retryAfter) });
   const row = email ? await c.db.prepare(`SELECT * FROM users WHERE email=?1`).bind(email).first() : null;
-  const ok = row && !row.disabled && (await verifyPassword(password, row.pass_hash));
+  const verified = await verifyPassword(password, row ? row.pass_hash : DUMMY_HASH);
+  const ok = row && !row.disabled && verified;
   if (!ok) {
     await audit(c.db, { userId: null, action: "login.failed", entity: "user", entityId: row ? row.id : null, detail: { email, ip } });
     throw new HttpError(401, "That email and password do not match.");

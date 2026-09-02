@@ -50,7 +50,7 @@ Then `http://localhost:8787/templates/megacity-studio`.
 
 ## Conventions
 
-- Cookie `mc_studio` — `HttpOnly; Secure; SameSite=Lax; Path=/`, 14-day sliding session; the cookie carries a random secret whose SHA-256 is stored in the `sessions` table (no signing key to manage).
+- Cookie `__Host-mc_studio` — `HttpOnly; Secure; SameSite=Lax; Path=/`, 14-day sliding session; the cookie carries a random secret whose SHA-256 is stored in the `sessions` table (no signing key to manage).
 - Every non-GET call to `/api/studio/*` must send the header `X-Studio: 1` and pass a strict same-origin check (`Origin` or `Sec-Fetch-Site: same-origin`).
 - Responses are JSON. Errors: `{error:"message"}` with 400/401/403/404/409/413/429/503.
 - Field names are camelCase over the wire, snake_case in the database.
