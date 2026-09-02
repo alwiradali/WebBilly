@@ -5,6 +5,10 @@ wrangler.toml
 README.md
 billy-digitals-logo.zip
 worker.js
+worker
+migrations
+wrangler.dev.toml
+.dev.vars
 whatsapp-catalogue.md
 whatsapp-setup.md
 marketing-playbook.md

@@ -27,6 +27,12 @@
 /assets/amabilis/video/*
   Cache-Control: public, max-age=2592000
 
+# Megacity Studio — the client's back office. Never indexed.
+/templates/megacity-studio
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+/templates/megacity-studio.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+
 # --- Unlisted client preview: Bakedwith Amabilis --------------------------
 # Reachable by anyone with the link (that is the point — it gets sent to the
 # client), but kept out of every index. robots.txt already tells compliant

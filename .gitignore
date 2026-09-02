@@ -9,3 +9,7 @@ skills-lock.json
 
 # Generated deployable client builds (see scripts/build-mm.py)
 dist/
+
+# Local Worker development (Megacity Studio)
+.dev.vars
+.wrangler/

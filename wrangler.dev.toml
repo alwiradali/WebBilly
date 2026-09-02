@@ -1,0 +1,43 @@
+# LOCAL DEVELOPMENT ONLY — never deployed.
+# Mirrors wrangler.toml but with the Megacity bindings switched on against
+# Miniflare's local D1 and R2, so the Studio can be exercised end to end
+# without touching the Cloudflare account. The real ids live in wrangler.toml
+# once Billy has created the database and bucket.
+#
+#   npx wrangler@4 d1 migrations apply megacity --local --config wrangler.dev.toml
+#   npx wrangler@4 dev --local --config wrangler.dev.toml --port 8787
+#
+# Secrets for local runs go in .dev.vars (git-ignored):
+#   SESSION_SECRET=...   OFFICE_SETUP_TOKEN=...   RESEND_API_KEY=...   ANTHROPIC_API_KEY=...
+
+name = "billydigitals"
+compatibility_date = "2025-07-03"
+main = "worker.js"
+
+[vars]
+M2L_HOST = ""
+HEATFIX_HOST = ""
+MEGACITY_HOST = ""
+MEGACITY_PUBLIC_BASE = "http://localhost:8787/templates/"
+PBKDF2_ITERS = "20000"
+
+[[d1_databases]]
+binding = "MEGACITY_DB"
+database_name = "megacity"
+database_id = "local-dev"
+migrations_dir = "migrations/megacity"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "megacity-media"
+
+[assets]
+directory = "."
+not_found_handling = "404-page"
+binding = "ASSETS"
+run_worker_first = [
+  "/api/*", "/media/*", "/templates/megacity-*",
+  "/", "/admin", "/invoice", "/sign", "/book", "/i",
+  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
+  "/manufacturers-warranty", "/privacy", "/terms",
+]

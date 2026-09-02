@@ -34,6 +34,32 @@ M2L_HOST = ""
 # domain routes above.
 HEATFIX_HOST = ""
 
+# Megacity Properties. Leave MEGACITY_HOST empty until their nameservers are
+# on Cloudflare; MEGACITY_PUBLIC_BASE is where canonical/OG/sitemap links
+# point while the site lives on the demo host.
+MEGACITY_HOST = ""
+MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
+
+# ── Megacity Studio (docs/megacity-studio.md) ───────────────────────────────
+# The back office needs a D1 database and an R2 bucket. Create them first:
+#   npx wrangler r2 bucket create megacity-media     (R2 must be enabled in the dashboard)
+#   npx wrangler d1 create megacity                  (prints the database_id)
+# then paste the REAL database_id below, uncomment BOTH blocks, commit, and run:
+#   npx wrangler d1 migrations apply megacity --remote
+# Never commit a placeholder id — Cloudflare rejects the whole deploy (see the
+# M2L note below). `node scripts/check-wrangler.mjs` refuses to deploy one.
+# Until the blocks are live, worker/studio answers 503 {connected:false} and
+# nothing else on the site changes.
+# [[d1_databases]]
+# binding = "MEGACITY_DB"
+# database_name = "megacity"
+# database_id = "PASTE_REAL_ID_HERE"
+# migrations_dir = "migrations/megacity"
+#
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "megacity-media"
+
 # D1 database for Mumbai2London enquiries + booking diary.
 # Create it once with:  npx wrangler d1 create m2l
 # then paste the database_id it prints below, and run:
@@ -68,7 +94,7 @@ binding = "ASSETS"
 # The rest let a client domain serve its site at "/" instead of the Billy
 # Digitals homepage. If wrangler is too old for the array form, use `true`.
 run_worker_first = [
-  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i",
+  "/api/*", "/media/*", "/", "/admin", "/invoice", "/sign", "/book", "/i",
   "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
   "/manufacturers-warranty", "/privacy", "/terms",
 ]

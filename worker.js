@@ -20,9 +20,14 @@ const FROM = "Billy Digitals <hello@billydigitals.com>";
 const REPLY_TO = "hello@billydigitals.com";
 const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 
+/* Megacity Studio — the client's back office (docs/megacity-studio.md).
+   Lives in worker/studio/*; bundled into this Worker at deploy time. */
+import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (isMegacityPath(url)) return handleMegacity(request, env, ctx, url);
     if (url.pathname === "/api/send-review") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleSendReview(request, env);

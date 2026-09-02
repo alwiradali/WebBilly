@@ -1,0 +1,747 @@
+{
+  "generatedAt": "2026-09-02T11:59:08.729Z",
+  "listings": [
+    {
+      "id": "ladywell-point",
+      "source": "manual",
+      "ref": "RL0140",
+      "status": "live",
+      "hidden": false,
+      "title": "2 bed apartment, Ladywell Point, Salford",
+      "headline": null,
+      "type": "apartment",
+      "letType": "whole",
+      "furnishing": "furnished",
+      "rentPcm": 1250,
+      "deposit": 1250,
+      "depositNote": null,
+      "bills": null,
+      "billsNote": null,
+      "availability": "available_now",
+      "availableFrom": null,
+      "minTerm": null,
+      "councilTaxBand": "B",
+      "epcRating": null,
+      "bedrooms": 2,
+      "home": {
+        "bathrooms": [
+          {
+            "subtype": "bath_shower_over"
+          },
+          {
+            "subtype": "en_suite"
+          }
+        ],
+        "receptions": [
+          {
+            "subtype": "open_plan"
+          }
+        ],
+        "kitchen": {
+          "subtype": "fitted_integrated"
+        },
+        "garden": null,
+        "driveway": null
+      },
+      "parkingSpaces": null,
+      "parkingNote": null,
+      "pets": null,
+      "hmoLicensed": null,
+      "floorAreaSqft": null,
+      "address": {
+        "line1": "Ladywell Point",
+        "line2": "Pilgrims Way",
+        "town": "Salford",
+        "postcode": "",
+        "area": "salford",
+        "lat": null,
+        "lng": null
+      },
+      "summary": "Megacity Properties are delighted to present this well-presented two-bedroom apartment, ideally situated within easy reach of Salford Quays, MediaCityUK and Manchester city centre.",
+      "description": "Megacity Properties are delighted to present this well-presented two-bedroom apartment, ideally situated within easy reach of Salford Quays, MediaCityUK and Manchester city centre.\n\nOffering bright and spacious accommodation throughout, the property comprises a welcoming entrance hall, two good-sized double bedrooms, a modern family bathroom and a contemporary open-plan living and kitchen area.\n\nConveniently located just a short walk from Ladywell Metrolink stop, the apartment offers excellent transport links across Greater Manchester.",
+      "features": [
+        "Two spacious double bedrooms",
+        "Master bedroom with en-suite shower room",
+        "Modern family bathroom",
+        "Bright open-plan living and kitchen area",
+        "Furnished",
+        "Contemporary fitted kitchen with integrated appliances",
+        "Excellent transport links",
+        "Walking distance to Ladywell Metrolink",
+        "Close to MediaCityUK, Salford Quays and Manchester city centre"
+      ],
+      "services": null,
+      "media": [
+        {
+          "src": "assets/mcr/props/ladywell-00.jpg",
+          "role": "cover",
+          "roomLabel": "Living room",
+          "alt": "Living room with corner sofa at Ladywell Point, Pilgrims Way, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-01.jpg",
+          "role": "gallery",
+          "roomLabel": "Kitchen",
+          "alt": "Fitted kitchen with oven, hob and fridge freezer, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-02.jpg",
+          "role": "gallery",
+          "roomLabel": "Bedroom",
+          "alt": "Double bedroom with floor-to-ceiling window, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-03.jpg",
+          "role": "gallery",
+          "roomLabel": "Bedroom",
+          "alt": "Second double bedroom, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-04.jpg",
+          "role": "gallery",
+          "roomLabel": "Bathroom",
+          "alt": "Bathroom with bath and shower over, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-05.jpg",
+          "role": "gallery",
+          "roomLabel": "Shower room",
+          "alt": "Shower room, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-06.jpg",
+          "role": "gallery",
+          "roomLabel": "Hallway",
+          "alt": "Hallway leading to both bedrooms, Ladywell Point, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/ladywell-10.jpg",
+          "role": "epc",
+          "roomLabel": null,
+          "alt": "Energy efficiency rating certificate for Ladywell Point, Pilgrims Way, Salford",
+          "kind": "photo"
+        }
+      ],
+      "links": {
+        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "tenninety": "https://www.megacityproperties.co.uk/property/225/2-bed-apartment-to-let-apartment-ladywell-point-pilgrims-way-salford/"
+      }
+    },
+    {
+      "id": "denmark-road",
+      "source": "manual",
+      "ref": null,
+      "status": "live",
+      "hidden": false,
+      "title": "2 bed apartment, Denmark Road, Manchester",
+      "headline": null,
+      "type": "apartment",
+      "letType": "whole",
+      "furnishing": null,
+      "rentPcm": 1300,
+      "deposit": 1300,
+      "depositNote": null,
+      "bills": null,
+      "billsNote": null,
+      "availability": "available_now",
+      "availableFrom": null,
+      "minTerm": null,
+      "councilTaxBand": "B",
+      "epcRating": "C",
+      "bedrooms": 2,
+      "home": {
+        "bathrooms": [
+          {
+            "subtype": "bathroom"
+          },
+          {
+            "subtype": "en_suite"
+          }
+        ],
+        "receptions": [
+          {
+            "subtype": "open_plan"
+          }
+        ],
+        "kitchen": {
+          "subtype": "open_plan"
+        },
+        "garden": {
+          "subtype": "balcony"
+        },
+        "driveway": null
+      },
+      "parkingSpaces": 2,
+      "parkingNote": "Two parking spaces",
+      "pets": null,
+      "hmoLicensed": null,
+      "floorAreaSqft": null,
+      "address": {
+        "line1": "Denmark Road",
+        "line2": null,
+        "town": "Manchester",
+        "postcode": "",
+        "area": "manchester",
+        "lat": null,
+        "lng": null
+      },
+      "summary": "Megacity Properties is pleased to offer this spacious two-bedroom apartment, ideally located for University of Manchester and Manchester Metropolitan University students.",
+      "description": "Megacity Properties is pleased to offer this spacious two-bedroom apartment, ideally located for University of Manchester and Manchester Metropolitan University students.\n\nSituated on the second floor at 99 Denmark Road, the apartment is an excellent choice for two students looking to share, offering two double bedrooms, two bathrooms, an open-plan living space, private balcony and two parking spaces.",
+      "features": [
+        "Ideal for two students sharing",
+        "Two double bedrooms",
+        "Master bedroom with private en-suite",
+        "Separate main bathroom",
+        "Spacious open-plan kitchen and lounge",
+        "Private balcony",
+        "Two parking spaces",
+        "Second-floor apartment",
+        "Excellent location for Manchester universities"
+      ],
+      "services": [
+        [
+          "Electricity supply",
+          "Mains"
+        ],
+        [
+          "Heating",
+          "Electric"
+        ],
+        [
+          "Water supply",
+          "Mains"
+        ]
+      ],
+      "media": [
+        {
+          "src": "assets/mcr/props/denmark-00.jpg",
+          "role": "cover",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-01.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 2",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-02.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 3",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-03.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 4",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-04.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 5",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-05.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 6",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-06.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 7",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-07.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 8",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-08.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 9",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-09.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 10",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-10.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Denmark Road, Manchester, photo 11",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/denmark-11.jpg",
+          "role": "epc",
+          "roomLabel": null,
+          "alt": "Energy efficiency rating certificate for Denmark Road, Manchester",
+          "kind": "photo"
+        }
+      ],
+      "links": {
+        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "tenninety": "https://www.megacityproperties.co.uk/property/226/2-bed-apartment-to-let-apartment--denmark-road-manchester/"
+      }
+    },
+    {
+      "id": "room-3",
+      "source": "manual",
+      "ref": "RL0063-3",
+      "status": "live",
+      "hidden": false,
+      "title": "Furnished double room, licensed HMO, Salford",
+      "headline": null,
+      "type": "room_in_share",
+      "letType": "room",
+      "furnishing": "furnished",
+      "rentPcm": 600,
+      "deposit": 500,
+      "depositNote": null,
+      "bills": "included",
+      "billsNote": "Gas, Electricity, Water, Council tax, Fast internet",
+      "availability": "available_now",
+      "availableFrom": null,
+      "minTerm": null,
+      "councilTaxBand": "B",
+      "epcRating": "D",
+      "bedrooms": 1,
+      "home": {
+        "bathrooms": [
+          {
+            "subtype": "shared"
+          }
+        ],
+        "receptions": [],
+        "kitchen": {
+          "subtype": "shared"
+        },
+        "garden": null,
+        "driveway": null
+      },
+      "parkingSpaces": null,
+      "parkingNote": "Parking",
+      "pets": null,
+      "hmoLicensed": true,
+      "floorAreaSqft": null,
+      "address": {
+        "line1": "Room 3",
+        "line2": null,
+        "town": "Salford",
+        "postcode": "",
+        "area": "salford",
+        "lat": null,
+        "lng": null
+      },
+      "summary": "A furnished double room is available in this spacious licensed HMO in Salford, ideally located for both students and working professionals.",
+      "description": "A furnished double room is available in this spacious licensed HMO in Salford, ideally located for both students and working professionals.\n\nThe property is approximately a 15-minute walk from the University of Salford and is conveniently located near local shops and transport links.\n\nSet over four floors, the property comprises eight bedrooms, three bathrooms and a large shared kitchen.",
+      "features": [
+        "Furnished double room",
+        "Licensed HMO",
+        "Approximately 15 minutes' walk to the University of Salford",
+        "Eight bedrooms over four floors",
+        "Three bathrooms",
+        "Large shared kitchen",
+        "Double glazing",
+        "Gas central heating",
+        "Parking",
+        "Students welcome",
+        "No smoking"
+      ],
+      "services": [
+        [
+          "Heating",
+          "Gas central heating"
+        ]
+      ],
+      "media": [
+        {
+          "src": "assets/mcr/props/room3-00.jpg",
+          "role": "cover",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-01.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford, photo 2",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-02.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford, photo 3",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-03.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford, photo 4",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-04.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford, photo 5",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-05.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 3, licensed HMO, Salford, photo 6",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room3-06.jpg",
+          "role": "epc",
+          "roomLabel": null,
+          "alt": "Energy efficiency rating certificate for Room 3, licensed HMO, Salford",
+          "kind": "photo"
+        }
+      ],
+      "links": {
+        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "tenninety": "https://www.megacityproperties.co.uk/property/108/1-bed-double-room-to-let-room-3/"
+      }
+    },
+    {
+      "id": "room-5",
+      "source": "manual",
+      "ref": null,
+      "status": "live",
+      "hidden": false,
+      "title": "Double room, high-spec house share, Salford",
+      "headline": null,
+      "type": "room_in_share",
+      "letType": "room",
+      "furnishing": "furnished",
+      "rentPcm": 600,
+      "deposit": 500,
+      "depositNote": "Holding deposit",
+      "bills": "included",
+      "billsNote": "Superfast broadband, Gas and electricity, Water, Council tax, Regular cleaning of communal areas",
+      "availability": "available_now",
+      "availableFrom": null,
+      "minTerm": null,
+      "councilTaxBand": "B",
+      "epcRating": "D",
+      "bedrooms": 1,
+      "home": {
+        "bathrooms": [
+          {
+            "subtype": "shared"
+          }
+        ],
+        "receptions": [],
+        "kitchen": {
+          "subtype": "shared"
+        },
+        "garden": {
+          "subtype": "private_rear"
+        },
+        "driveway": null
+      },
+      "parkingSpaces": null,
+      "parkingNote": "On-street parking available",
+      "pets": null,
+      "hmoLicensed": null,
+      "floorAreaSqft": null,
+      "address": {
+        "line1": "Room 5",
+        "line2": null,
+        "town": "Salford",
+        "postcode": "",
+        "area": "salford",
+        "lat": null,
+        "lng": null
+      },
+      "summary": "A beautifully presented double room in a high-spec house share, fully furnished and equipped throughout.",
+      "description": "A beautifully presented double room in a high-spec house share, fully furnished and equipped throughout.\n\nThe room comes with a comfortable double bed and quality mattress, a double wardrobe, chest of drawers and bedside tables, and a desk and chair for studying or working from home.",
+      "features": [
+        "Comfortable double bed with quality mattress",
+        "Double wardrobe, chest of drawers and bedside tables",
+        "Desk and chair",
+        "Fully furnished and equipped throughout",
+        "Large kitchen-diner with two American fridge freezers and an extra freezer",
+        "Eight-hob stove and four-door oven",
+        "Two washer-dryers",
+        "Two modern bathrooms and a separate WC",
+        "Private rear garden",
+        "On-street parking available"
+      ],
+      "services": [
+        [
+          "Electricity supply",
+          "Mains"
+        ],
+        [
+          "Heating",
+          "Gas mains"
+        ],
+        [
+          "Water supply",
+          "Mains"
+        ]
+      ],
+      "media": [
+        {
+          "src": "assets/mcr/props/room5-00.jpg",
+          "role": "cover",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-01.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 2",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-02.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 3",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-03.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 4",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-04.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 5",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-05.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 6",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-06.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 5, house share, Salford, photo 7",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room5-07.jpg",
+          "role": "epc",
+          "roomLabel": null,
+          "alt": "Energy efficiency rating certificate for Room 5, house share, Salford",
+          "kind": "photo"
+        }
+      ],
+      "links": {
+        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "tenninety": "https://www.megacityproperties.co.uk/property/110/8-bed-double-room-to-let-room-5/"
+      }
+    },
+    {
+      "id": "room-7",
+      "source": "manual",
+      "ref": "RL0060-7",
+      "status": "live",
+      "hidden": false,
+      "title": "Large double room, HMO, Salford",
+      "headline": null,
+      "type": "room_in_share",
+      "letType": "room",
+      "furnishing": null,
+      "rentPcm": 600,
+      "deposit": 500,
+      "depositNote": null,
+      "bills": "included",
+      "billsNote": "All bills included",
+      "availability": "available_now",
+      "availableFrom": null,
+      "minTerm": null,
+      "councilTaxBand": "B",
+      "epcRating": "D",
+      "bedrooms": 1,
+      "home": {
+        "bathrooms": [
+          {
+            "subtype": "shared"
+          }
+        ],
+        "receptions": [],
+        "kitchen": {
+          "subtype": "shared"
+        },
+        "garden": null,
+        "driveway": null
+      },
+      "parkingSpaces": null,
+      "parkingNote": null,
+      "pets": null,
+      "hmoLicensed": null,
+      "floorAreaSqft": null,
+      "address": {
+        "line1": "Room 7",
+        "line2": null,
+        "town": "Salford",
+        "postcode": "",
+        "area": "salford",
+        "lat": null,
+        "lng": null
+      },
+      "summary": "A large double room on the second floor of an HMO in Salford, close to the University, Salford Quays and Manchester city centre.",
+      "description": "A large double room on the second floor of an HMO in Salford, close to the University, Salford Quays and Manchester city centre.\n\nThe property comprises an entrance hall, ground-floor bathroom, large kitchen and dining area, and a first-floor bathroom.",
+      "features": [
+        "Large double room on the second floor",
+        "Close to the University of Salford",
+        "Near Salford Quays and Manchester city centre",
+        "Large kitchen and dining area",
+        "Two bathrooms",
+        "Double glazing",
+        "Gas central heating",
+        "Students welcome"
+      ],
+      "services": [
+        [
+          "Heating",
+          "Gas central heating"
+        ]
+      ],
+      "media": [
+        {
+          "src": "assets/mcr/props/room7-00.jpg",
+          "role": "cover",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-01.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 2",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-02.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 3",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-03.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 4",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-04.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 5",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-05.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 6",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-06.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 7",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-07.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 8",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-08.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 9",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-09.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 10",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-10.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 11",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-11.jpg",
+          "role": "gallery",
+          "roomLabel": null,
+          "alt": "Room 7, HMO, Salford, photo 12",
+          "kind": "photo"
+        },
+        {
+          "src": "assets/mcr/props/room7-12.jpg",
+          "role": "epc",
+          "roomLabel": null,
+          "alt": "Energy efficiency rating certificate for Room 7, HMO, Salford",
+          "kind": "photo"
+        }
+      ],
+      "links": {
+        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "tenninety": "https://www.megacityproperties.co.uk/property/102/1-bed-double-room-to-let-room-7/"
+      }
+    }
+  ]
+}
