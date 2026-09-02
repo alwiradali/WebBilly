@@ -2070,3 +2070,58 @@ body.sl-open{overflow:hidden}
   .seg{flex-wrap:wrap;border-radius:16px}
   .seg button{padding:11px 13px;font-size:13.3px;flex:1 1 auto}
 }
+
+
+/* ── landing restyle to the approved concept: dusk hero, diptych, fee rows ── */
+.hero--cine{justify-content:flex-end}
+.hero--cine h1{font-size:clamp(40px,8.6vw,122px);max-width:none;letter-spacing:-.01em}
+@media (max-width:760px){.hero--cine h1{font-size:clamp(38px,12.4vw,68px)}}
+.hero--cine .hero-kicker{color:#A8DEF2}
+.hero--cine .hero-sub{color:rgba(245,242,234,.90)}
+.hero--cine .hero-ctas{border-top:1px solid rgba(245,242,234,.26);padding-top:28px;margin-top:36px;max-width:860px}
+
+/* gateway reads as a navy and ivory diptych, journeys unchanged */
+.gate-panel--ll::after{background:linear-gradient(168deg,rgba(29,32,73,.86) 0%,rgba(12,14,34,.94) 100%)}
+.gate-panel--ll .gate-img img{opacity:.34;mix-blend-mode:luminosity}
+.gate-panel--tt{background:var(--sky-soft)}
+.gate-panel--tt::after{background:linear-gradient(180deg,rgba(231,241,247,.88) 0%,rgba(231,241,247,.97) 100%)}
+.gate-panel--tt .gate-img img{opacity:.6;mix-blend-mode:luminosity}
+.gate-panel--tt .gate-kick{color:var(--blue-deep)}
+.gate-panel--tt h2{color:var(--navy-ink)}
+.gate-panel--tt h2 em{color:var(--blue-deep)}
+.gate-panel--tt li{color:var(--mut)}
+.gate-panel--tt li::before{border-color:var(--blue-deep)}
+.gate-panel--tt .gate-go{border:1.5px solid var(--navy);color:var(--navy);background:transparent}
+.gate-panel--tt:hover .gate-go{background:var(--navy);color:#fff}
+
+/* services as an editorial fee schedule */
+.feerows{max-width:var(--maxw);margin:44px auto 0;border-top:1px solid var(--line-strong)}
+.feerow{display:grid;gap:10px 34px;grid-template-columns:minmax(0,1fr);padding:34px 6px;
+  border-bottom:1px solid var(--line-strong);color:inherit;
+  transition:background .25s ease,padding-left .25s ease}
+@media (min-width:900px){.feerow{grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) auto;align-items:center}}
+.feerow:hover{background:rgba(29,32,73,.03);padding-left:14px}
+.fr-name{display:block;font:700 clamp(24px,2.6vw,33px)/1.15 var(--ff-d);color:var(--navy-ink)}
+.fr-note{display:block;margin-top:7px;font:600 12.2px/1.4 var(--ff-u);letter-spacing:.15em;text-transform:uppercase;color:var(--mut)}
+.fr-copy{font:400 15.5px/1.65 var(--ff-u);color:var(--mut);max-width:52ch}
+.fr-price{font:700 clamp(38px,4.4vw,58px)/1 var(--ff-d);color:var(--blue-deep);justify-self:end}
+.fr-go{grid-column:1/-1;display:inline-flex;align-items:center;gap:9px;justify-self:start;
+  font:600 14.6px/1 var(--ff-u);color:var(--navy)}
+.fr-go svg{width:16px;height:16px;transition:transform .3s ease}
+.feerow:hover .fr-go{color:var(--blue-deep)}
+.feerow:hover .fr-go svg{transform:translateX(4px)}
+@media (prefers-reduced-motion:reduce){.feerow,.fr-go svg{transition:none}}
+
+/* the valuation band closes like the concept: gradient depth, hairline edge */
+.valcta{position:relative;background:linear-gradient(175deg,var(--navy) 0%,#16305B 55%,var(--blue-deep) 100%)}
+.valcta::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--blue) 55%,#8FC4F5 100%)}
+
+
+/* ── the brand petal: one small diamond in his blues before every section
+   kicker, site-wide. One motif, used consistently, never louder than this. ── */
+.no::before,.jr-k::before,.gate-kick::before{content:"";display:inline-block;width:9px;height:9px;
+  margin-right:13px;background:linear-gradient(135deg,var(--blue) 0%,#8FC4F5 100%);
+  transform:rotate(45deg) translateY(-1px)}
+.hero-kicker::before{content:"";display:inline-block;width:9px;height:9px;margin-right:14px;
+  background:linear-gradient(135deg,#176B99 0%,#8FC4F5 100%);transform:rotate(45deg) translateY(-1px)}
