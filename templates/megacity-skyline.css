@@ -2083,7 +2083,7 @@ body.sl-open{overflow:hidden}
 /* gateway reads as a navy and ivory diptych, journeys unchanged */
 .gate-panel--ll::after{background:linear-gradient(168deg,rgba(29,32,73,.86) 0%,rgba(12,14,34,.94) 100%)}
 .gate-panel--ll .gate-img img{opacity:.34;mix-blend-mode:luminosity}
-.gate-panel--tt{background:var(--sky-soft)}
+.gate-panel--tt{background:var(--sky-soft);color:var(--navy-ink)}
 .gate-panel--tt::after{background:linear-gradient(180deg,rgba(231,241,247,.88) 0%,rgba(231,241,247,.97) 100%)}
 .gate-panel--tt .gate-img img{opacity:.6;mix-blend-mode:luminosity}
 .gate-panel--tt .gate-kick{color:var(--blue-deep)}
