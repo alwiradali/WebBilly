@@ -450,13 +450,12 @@
   /* ── not connected yet: the setup checklist ──────────────────────── */
   function showNotConnected() {
     var steps = [
-      ["Enable R2 and create the media bucket", "Cloudflare dashboard → R2 → enable it (a payment card is required even for the free 10 GB tier), then:", ["npx wrangler r2 bucket create megacity-media"]],
-      ["Create the D1 database", "Paste the database_id it prints into the [[d1_databases]] block in wrangler.toml, uncomment the D1 and R2 blocks and commit them with the code. A placeholder id rejects the whole deploy.", ["npx wrangler d1 create megacity", "node scripts/check-wrangler.mjs"]],
-      ["Apply the migrations", "", ["npx wrangler d1 migrations apply megacity --remote"]],
-      ["Set the secrets", "SESSION_SECRET is any long random string. OFFICE_SETUP_TOKEN is used once to create the owner account, then deleted.", ["npx wrangler secret put SESSION_SECRET", "npx wrangler secret put OFFICE_SETUP_TOKEN"]],
-      ["Deploy", "Push to main, reopen this page and choose “Create the owner account”.", ["git push origin main"]]
+      ["Enable R2 in the Cloudflare dashboard", "One click, once: Cloudflare dashboard → R2 → Enable. A payment card must be on the account even for the free 10 GB tier. Nothing else in the dashboard is needed.", []],
+      ["Run the setup script", "From the repository on the main branch, on a machine where “npx wrangler whoami” shows the Billy Digitals account. It creates the bucket and the database, writes the real database id into wrangler.toml, applies the migration and sets the one-off setup token — and prints that token at the end. Keep it.", ["bash scripts/megacity-setup.sh"]],
+      ["Commit and push what it changed", "The script edits wrangler.toml. Push it to main and the deploy connects the Studio.", ["git add wrangler.toml && git commit -m \"Wire Megacity Studio bindings\" && git push origin main"]],
+      ["Come back here", "Reopen this page, choose “Create the owner account” and paste the setup token. Afterwards: npx wrangler secret delete OFFICE_SETUP_TOKEN.", []]
     ];
-    authShell('<h1>Not connected yet</h1><p class="st-lead">The Studio needs its database and storage before anyone can sign in. Work through these once, in order. The full runbook is in <code>docs/megacity-studio.md</code>.</p>' +
+    authShell('<h1>Not connected yet</h1><p class="st-lead">The Studio needs its database and storage before anyone can sign in. Four steps, once. Doing it by hand instead (or on the Free plan) is described in <code>docs/megacity-studio.md</code>.</p>' +
       '<ol class="st-steps">' + steps.map(function (s) {
         return '<li class="st-step"><div><h3>' + esc(s[0]) + "</h3>" + (s[1] ? "<p>" + esc(s[1]) + "</p>" : "") +
           s[2].map(function (c) { return '<div class="st-cmd"><code>' + esc(c) + '</code><button type="button" class="st-btn st-btn--sm" data-copy="' + esc(c) + '" aria-label="Copy command">' + I.copy + "Copy</button></div>"; }).join("") + "</div></li>";
