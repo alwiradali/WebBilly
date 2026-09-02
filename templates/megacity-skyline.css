@@ -2201,3 +2201,15 @@ body.sl-open{overflow:hidden}
 .hero-cta-line:hover{border-color:#8FC4F5}
 .hero-cta-line:hover svg{transform:translateX(4px)}
 @media (prefers-reduced-motion:reduce){.hero-cta::before,.hero-cta-line svg{transition:none}}
+
+
+/* ── Studio pages (area guides, landing pages, guides rendered by the Worker) ── */
+.pg-body{max-width:860px}
+.pg-body h2{font:700 clamp(26px,3.4vw,38px)/1.15 var(--ff-d);margin:34px 0 12px}
+.pg-body h2:first-child{margin-top:0}
+.pg-body p{margin:0 0 16px;font-size:17px;line-height:1.7;color:var(--mut)}
+.pg-body .pd-ticks{margin:6px 0 22px}
+.pg-body .btn{margin:6px 0 18px}
+.pg-fig{margin:22px 0}
+.pg-fig img{width:100%;height:auto;border-radius:var(--r);display:block}
+.pg-fig figcaption{margin-top:8px;font-size:13.5px;color:var(--mut)}

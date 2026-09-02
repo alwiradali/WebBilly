@@ -15,6 +15,8 @@ import * as render from "./render.js";
 import * as enq from "./enquiries.js";
 import * as tracking from "./tracking.js";
 import * as ai from "./ai.js";
+import * as pages from "./pages.js";
+import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
@@ -51,6 +53,21 @@ const ROUTES = [
   ["POST", "/listings/:id/unpublish", listings.unpublish],
   ["POST", "/listings/:id/status", listings.setStatus],
   ["PUT", "/listings/:id/media/order", listings.orderMedia],
+
+  ["GET", "/pages", pages.list],
+  ["POST", "/pages", pages.create],
+  ["GET", "/pages/:id", pages.get],
+  ["PATCH", "/pages/:id", pages.patch],
+  ["DELETE", "/pages/:id", pages.remove],
+  ["POST", "/pages/:id/publish", pages.publish],
+  ["POST", "/pages/:id/unpublish", pages.unpublish],
+
+  ["GET", "/backlinks", backlinks.list],
+  ["POST", "/backlinks", backlinks.create],
+  ["POST", "/backlinks/check-all", backlinks.checkAll],
+  ["PATCH", "/backlinks/:id", backlinks.patch],
+  ["DELETE", "/backlinks/:id", backlinks.remove],
+  ["POST", "/backlinks/:id/check", backlinks.check],
 
   ["POST", "/ai/listing-copy", ai.listingCopy],
   ["POST", "/ai/classify-room", ai.classifyRoom],
@@ -152,6 +169,12 @@ export async function handleMegacity(request, env, ctx, url) {
         const cards = await feed.json();
         const page = cards.items && cards.items.length ? await render.renderPropertiesPage(request, env, url, cards) : null;
         return page ? finish(page, "d1") : passThrough();
+      }
+      const slug = p.slice("/templates/megacity-".length);
+      const live = await pages.loadLive(db, slug);
+      if (live) {
+        const page = await pages.renderPage(request, env, url, db, live);
+        if (page) return finish(page, "d1");
       }
     } catch (e) {
       console.error("render", e && e.stack ? e.stack : e);
