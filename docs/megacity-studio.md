@@ -191,6 +191,18 @@ The tour link for 10ninety's virtual-tour box is `https://<host>/billy360/?site=
 
 When a GA4 id, Meta Pixel id or Search Console token is set in Settings → Integrations, the Worker injects `megacity-consent.js` (UK consent banner, Consent Mode v2, nothing loads before "Accept all") and/or the verification meta into every public Megacity page it serves.
 
+### Pages and backlinks
+| Route | Body | Response |
+|---|---|---|
+| `GET /api/studio/pages` | – | `{items:[{id, slug, kind, title, status, publishedAt, updatedAt, url}]}` |
+| `POST /api/studio/pages` | `{title, slug?, kind:"area"\|"landing"\|"guide", seoTitle?, seoDescription?, heroMediaId?, blocks?, faq?}` | `Page` (201); reserved addresses (the static page names, `let-…`, `studio…`) are refused |
+| `GET/PATCH/DELETE /api/studio/pages/:id` | partial `Page` | `Page` |
+| `POST /api/studio/pages/:id/publish`, `/unpublish` | – | `{ok, page}` or `{ok:false, problems}` |
+| `GET /templates/megacity-<slug>` | – | the live page, rendered through `templates/megacity-page-template.html` with `WebPage`, `BreadcrumbList` and `FAQPage` JSON-LD |
+| `GET/POST /api/studio/backlinks`; `PATCH/DELETE …/:id`; `POST …/:id/check`; `POST /api/studio/backlinks/check-all` | `{sourceUrl, targetPath, anchor, contact, notes, status:"planned"\|"requested"\|"live"\|"lost"}` | the tracker; `check` fetches the source page and looks for a link to the site |
+
+Blocks: `{type:"h2"|"p"|"list"|"cta"|"image", text?, items?, href?, mediaId?, caption?}`. FAQ: `[{q, a}]`.
+
 ### AI (Claude, key only in the `ANTHROPIC_API_KEY` secret)
 All answer `503 {configured:false}` until the secret exists; the Studio hides the buttons. 60 calls per person per hour; every call is logged in `ai_usage` (`GET /api/studio/ai/usage`). The model writes only from the facts in the record and never writes to the database itself: staff review, then save.
 

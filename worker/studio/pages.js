@@ -172,7 +172,7 @@ export async function renderPage(request, env, url, db, row) {
     .on('meta[property="og:title"], meta[name="twitter:title"]', { element: (e) => e.setAttribute("content", pageTitle) })
     .on('meta[property="og:description"], meta[name="twitter:description"]', { element: (e) => e.setAttribute("content", lede.slice(0, 300)) })
     .on('meta[property="og:image"], meta[name="twitter:image"]', { element: (e) => e.setAttribute("content", ogImage) })
-    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(JSON.stringify({ "@context": "https://schema.org", "@graph": graph }), { html: true }); } })
+    .on('script[data-slot="ld"]', { element: (e) => { e.removeAttribute("data-slot"); e.setInnerContent(JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c"), { html: true }); } })
     .on('[data-slot="hero"]', { element: (e) => { if (hero) e.setAttribute("style", `--ph-img:url('${hero.replace(/'/g, "%27")}')`); else { e.removeAttribute("style"); e.setAttribute("class", "phead"); } } })
     .on('[data-slot="kicker"]', { element: (e) => e.setInnerContent(KIND_LABEL[row.kind] || "Megacity Properties") })
     .on('[data-slot="title"]', { element: (e) => e.setInnerContent(row.title) })

@@ -200,7 +200,8 @@ function jsonLd(env, url, v) {
       { "@type": "ListItem", position: 3, name: v.title, item: v.canonical },
     ],
   };
-  return JSON.stringify({ "@context": "https://schema.org", "@graph": [listing, crumbs] });
+  /* "<" is escaped so no value can ever close the script element */
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": [listing, crumbs] }).replace(/</g, "\\u003c");
 }
 
 /* ── the page ──────────────────────────────────────────────────────────── */
