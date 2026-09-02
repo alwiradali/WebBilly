@@ -83,11 +83,14 @@
     mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>',
     chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-4.5 3.5z"/><path d="M8 9.5h8M8 12.5h5"/></svg>',
     expand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>',
-    tour: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>'
+    tour: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',
+    pages: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M4 7v14h11"/></svg>',
+    plug: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg>'
   };
 
   /* ── state & shell nodes ─────────────────────────────────────────── */
-  var state = { user: null, features: {}, options: null, route: null, listIndex: null, listIndexAt: 0, intended: null, liveCount: null, notConnected: false, setup: {}, unread: 0, notifs: [] };
+  var state = { user: null, features: {}, options: null, route: null, listIndex: null, listIndexAt: 0, intended: null, liveCount: null, notConnected: false, setup: {}, unread: 0, notifs: [], mediaIndex: null, mediaLists: null, mediaIndexAt: 0 };
   var view = $("#view"), app = $("#app"), authEl = $("#auth"), bootEl = $("#boot"), toasts = $("#toasts");
   var topTitle = $("#topTitle"), topSub = $("#topSub"), topChip = $("#topChip"), topBack = $("#topBack");
 
@@ -154,6 +157,8 @@
   }
   modalWrap.addEventListener("click", function (e) {
     if (e.target.closest("[data-close]")) { if (!modalNoEsc) closeModal(false); return; }
+    if (e.target.closest("[data-usedraft]")) { applyDraft(); return; }
+    var pk = e.target.closest("[data-pick]"); if (pk) { var cbp = pickCb; pickCb = null; closeModal(false); if (cbp) cbp(pk.getAttribute("data-pick")); return; }
     var b = e.target.closest("[data-modal]"); if (!b) return;
     closeModal(b.getAttribute("data-modal") === "ok");
   });
@@ -190,13 +195,16 @@
     topBack.hidden = !o.back; if (o.back) topBack.setAttribute("href", o.back);
     topChip.innerHTML = o.chip || "";
   }
-  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
+  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["Website"], ["#/pages", "Pages", "pages"], ["#/backlinks", "Backlinks", "link"], ["#/integrations", "Integrations", "plug"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
   function navKey() {
     var h = location.hash.replace(/^#/, "").split("?")[0] || "/";
     if (h === "/") return "#/";
     if (h.indexOf("/listings/new") === 0) return "#/listings/new";
     if (h.indexOf("/listings") === 0) return "#/listings";
     if (h.indexOf("/enquiries") === 0) return "#/enquiries";
+    if (h.indexOf("/pages") === 0) return "#/pages";
+    if (h.indexOf("/backlinks") === 0) return "#/backlinks";
+    if (h.indexOf("/integrations") === 0) return "#/integrations";
     if (h.indexOf("/settings") === 0 || h.indexOf("/account") === 0) return "#/settings";
     if (h.indexOf("/team") === 0) return "#/team";
     return "";
@@ -232,6 +240,9 @@
   function openMore() {
     var u = state.user || {};
     openDrawer("More", '<div class="st-menu-list">' +
+      '<a href="#/pages" data-close>' + I.pages + "Pages</a>" +
+      '<a href="#/backlinks" data-close>' + I.link + "Backlinks</a>" +
+      '<a href="#/integrations" data-close>' + I.plug + "Integrations</a>" +
       '<a href="#/settings" data-close>' + I.cog + "Settings</a>" +
       '<a href="#/team" data-close>' + I.users + "Team</a>" +
       '<a href="#/settings/account" data-close>' + I.key + "Change password</a>" +
@@ -242,7 +253,7 @@
   function signOut() {
     closeDrawer(); closeUserMenu();
     API.auth.logout().catch(function () { /* the cookie may already be gone */ }).then(function () {
-      state.user = null; state.listIndex = null; state.intended = null; ed = null; stopNotifPoll(); stopTourPoll();
+      state.user = null; state.listIndex = null; state.intended = null; ed = null; pg = null; state.mediaIndexAt = 0; stopNotifPoll(); stopTourPoll();
       go("#/login");
     });
   }
@@ -253,6 +264,7 @@
     [/^\/?$/, "dashboard"], [/^\/listings$/, "listings"], [/^\/listings\/new$/, "newListing"],
     [/^\/listings\/([^/]+)$/, "editor"], [/^\/listings\/([^/]+)\/(details|home|media|tour|publish)$/, "editor"],
     [/^\/enquiries$/, "enquiries"], [/^\/enquiries\/([^/]+)$/, "enquiries"],
+    [/^\/pages$/, "pages"], [/^\/pages\/([^/]+)$/, "pageEditor"], [/^\/backlinks$/, "backlinks"], [/^\/integrations$/, "integrations"],
     [/^\/settings$/, "settings"], [/^\/settings\/([^/]+)$/, "settings"], [/^\/team$/, "team"], [/^\/account$/, "account"]
   ];
   function parseRoute() {
@@ -268,6 +280,7 @@
     var r = parseRoute();
     closeDrawer(); closeModal(false); closeUserMenu(); closeCmdk(); closeRowMenus(); closeBell();
     if (state.route && state.route.name === "editor" && !(r.name === "editor" && r.params[0] === state.route.params[0])) editorLeave();
+    if (state.route && state.route.name === "pageEditor" && !(r.name === "pageEditor" && r.params[0] === state.route.params[0])) pageLeave();
     state.route = r;
     if (state.notConnected) { showNotConnected(); return; }
     if (r.pub) {
@@ -353,7 +366,7 @@
   function bindForm(form, handler) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var err = $(".st-err", form); if (err) err.hidden = true;
+      var err = $("[data-form-err]", form) || $(".st-err", form); if (err) err.hidden = true;
       var btn = $('button[type="submit"]', form), label = btn.innerHTML;
       var data = {};
       $$("input,select,textarea", form).forEach(function (i) { if (i.name) data[i.name] = i.type === "checkbox" ? i.checked : i.value; });
@@ -365,7 +378,7 @@
     });
   }
   function showFormError(form, msg) {
-    var err = $(".st-err", form);
+    var err = $("[data-form-err]", form) || $(".st-err", form);
     if (!err) { err = document.createElement("p"); err.className = "st-err"; err.setAttribute("role", "alert"); var btn = $('button[type="submit"]', form); form.insertBefore(err, btn ? btn.parentNode === form ? btn : form.lastChild : null); }
     err.textContent = msg; err.hidden = false;
   }
@@ -635,7 +648,7 @@
     tab = tab || "details";
     if (ed && ed.id === id && ed.doc) { ed.tab = tab; renderEditor(); return; }
     editorLeave();
-    var E = ed = { id: id, base: null, doc: null, dirty: {}, timer: null, saving: false, again: false, tab: tab, notes: {}, savedAt: null, chipState: "saved" };
+    var E = ed = { id: id, base: null, doc: null, dirty: {}, timer: null, saving: false, again: false, tab: tab, notes: {}, savedAt: null, chipState: "saved", suggested: {}, aiCopy: null };
     setTop({ title: "Listing", back: "#/listings" });
     view.innerHTML = loading();
     API.listings.get(id).then(function (l) {
@@ -654,19 +667,19 @@
     if (Object.keys(E.dirty).length && !E.saving) edSave(E);
     ed = null; topChip.innerHTML = "";
   }
-  window.addEventListener("beforeunload", function (e) { if (ed && (Object.keys(ed.dirty).length || ed.saving)) { e.preventDefault(); e.returnValue = ""; } });
+  window.addEventListener("beforeunload", function (e) { if ((ed && (Object.keys(ed.dirty).length || ed.saving)) || (pg && (Object.keys(pg.dirty).length || pg.saving))) { e.preventDefault(); e.returnValue = ""; } });
 
-  function chipHtml() {
-    if (!ed) return "";
-    var s = ed.chipState, txt, cls;
+  function chipMarkup(s, savedAt) {
+    var txt, cls;
     if (s === "saving") { txt = "Saving…"; cls = "is-saving"; }
     else if (s === "dirty") { txt = "Not saved"; cls = "is-dirty"; }
     else if (s === "error") { txt = "Not saved"; cls = "is-error"; }
-    else { txt = ed.savedAt ? "Saved · " + rel(new Date(ed.savedAt).toISOString()) : "Saved"; cls = "is-saved"; }
+    else { txt = savedAt ? "Saved · " + rel(new Date(savedAt).toISOString()) : "Saved"; cls = "is-saved"; }
     return '<span class="st-chip ' + cls + '" role="status"><i aria-hidden="true"></i>' + esc(txt) + "</span>";
   }
+  function chipHtml() { return ed ? chipMarkup(ed.chipState, ed.savedAt) : ""; }
   function setChip(s) { if (!ed) return; ed.chipState = s; topChip.innerHTML = chipHtml(); }
-  setInterval(function () { if (ed && ed.chipState === "saved" && ed.savedAt) topChip.innerHTML = chipHtml(); }, 30000);
+  setInterval(function () { if (ed && ed.chipState === "saved" && ed.savedAt) topChip.innerHTML = chipHtml(); else if (pg && pg.chipState === "saved" && pg.savedAt) topChip.innerHTML = pgChipHtml(); }, 30000);
 
   function edSet(path, v) { setPath(ed.doc, path, v); edMark(path.split(".")[0]); }
   function edMark(topKey) { ed.dirty[topKey] = true; setChip("dirty"); clearTimeout(ed.timer); var E = ed; ed.timer = setTimeout(function () { edSave(E); }, 900); }
@@ -779,6 +792,7 @@
       fld({ k: "summary", label: "Summary", type: "textarea", rows: 3, ph: "One or two sentences for the listing card and search results.", after: '<span class="st-count' + ((d.summary || "").length > 200 ? " is-over" : "") + '" id="edSumCount">' + (d.summary || "").length + " / 200</span>" }) +
       fld({ k: "description", label: "Description", type: "textarea", tall: true, ph: "Paragraph one.\n\nParagraph two.", hint: "Leave a blank line between paragraphs — each one becomes a paragraph on the page." }) +
       fld({ k: "features", label: "Features", type: "textarea", lines: true, rows: 6, ph: "One per line", after: '<div class="st-fchips" id="edFeatChips">' + featChips(d.features) + "</div>" }) + "</div></section>" +
+      aiCopyCardHtml() +
       '<details class="st-details" id="edSeo" style="margin-top:14px"><summary>Search preview</summary><div><div class="st-form">' +
       fld({ k: "seoTitle", label: "Search title", ph: d.title || "", max: 70, hint: "Leave blank to use the title." }) + fld({ k: "seoDescription", label: "Search description", type: "textarea", rows: 2, max: 160, ph: "Leave blank to use the summary." }) +
       "</div>" + serpHtml() + "</div></details>" +
@@ -851,6 +865,10 @@
       }
       return;
     }
+    if (t.hasAttribute("data-mfield") || t.hasAttribute("data-mother")) {
+      var smid = t.getAttribute("data-mid") || t.getAttribute("data-mother");
+      if (ed.suggested && ed.suggested[smid] && e.isTrusted) { delete ed.suggested[smid]; var sc = t.closest(".st-mcard"), sb = sc && $(".st-mbadge--ai", sc); if (sb) sb.parentNode.removeChild(sb); }
+    }
     if (t.hasAttribute("data-mfield")) {
       var mid = t.getAttribute("data-mid"), f = t.getAttribute("data-mfield");
       if (f === "roomLabel") {
@@ -900,7 +918,7 @@
   function mediaCard(m, i) {
     var d = ed.doc, isCover = d.coverMediaId === m.id, count = (d.media || []).length, id = esc(m.id);
     var visual = isPhoto(m) ? '<img src="' + esc(m.thumb || m.url) + '" alt="' + esc(m.alt || "") + '" loading="lazy" draggable="false">' : '<div class="st-file">' + (m.kind === "video" ? I.film : I.doc) + "<span>" + esc(m.kind === "video" ? "Video" : "PDF") + "</span></div>";
-    var badges = (isCover ? '<span class="st-mbadge st-mbadge--cover">Cover</span>' : (m.role && m.role !== "gallery" && m.role !== "cover" ? '<span class="st-mbadge">' + esc(optLabel("mediaRole", m.role)) + "</span>" : "")) + (m.isPano || m.kind === "pano" ? '<span class="st-mbadge st-mbadge--pano">360°</span>' : "");
+    var badges = (isCover ? '<span class="st-mbadge st-mbadge--cover">Cover</span>' : (m.role && m.role !== "gallery" && m.role !== "cover" ? '<span class="st-mbadge">' + esc(optLabel("mediaRole", m.role)) + "</span>" : "")) + (m.isPano || m.kind === "pano" ? '<span class="st-mbadge st-mbadge--pano">360°</span>' : "") + (ed.suggested && ed.suggested[m.id] ? '<span class="st-mbadge st-mbadge--ai">AI suggested</span>' : "");
     var notes = (ed.notes[m.id] || []).map(function (n) { return '<span class="st-mnote" title="' + esc(n) + '">' + esc(noteLabel(n)) + "</span>"; }).join("");
     return '<article class="st-mcard' + (isCover ? " is-cover" : "") + '" draggable="true" data-mid="' + id + '" aria-label="' + esc(m.roomLabel || m.alt || "Item " + (i + 1)) + '">' +
       '<div class="st-mthumb">' + visual + '<div class="st-mbadges">' + badges + "</div>" + (notes ? '<div class="st-mnotes">' + notes + "</div>" : "") + "</div>" +
@@ -909,6 +927,7 @@
       '<input class="st-in" type="text" data-mother="' + id + '" placeholder="Which room?" value="' + esc(m.roomLabel || "") + '" aria-label="Room name"' + (isOtherRoom(m.roomLabel) ? "" : " hidden") + "></div>" +
       '<div class="st-field"><label class="st-label" for="ma_' + id + '">Alt text</label><input class="st-in" id="ma_' + id + '" type="text" data-mfield="alt" data-mid="' + id + '" value="' + esc(m.alt || "") + '" placeholder="Living room with corner sofa"></div>' +
       '<div class="st-field"><label class="st-label" for="mro_' + id + '">Use as</label><div class="st-select"><select id="mro_' + id + '" data-mfield="role" data-mid="' + id + '">' + optList("mediaRole").filter(function (o) { return o.value !== "cover"; }).map(function (o) { return '<option value="' + esc(o.value) + '"' + ((m.role === "cover" ? "gallery" : m.role) === o.value ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div></div>" +
+      (aiOn() && isPhoto(m) ? '<div class="st-mai"><button type="button" class="st-btn st-btn--sm" data-mai="classify" data-mid="' + id + '">' + I.spark + 'What room is this?</button><button type="button" class="st-btn st-btn--sm" data-mai="alt" data-mid="' + id + '">Suggest alt text</button></div>' : "") +
       (m.isPano || m.kind === "pano" ? '<p class="st-mtour">360° panorama · <a href="#/listings/' + esc(encodeURIComponent(ed.id)) + '/tour">Add it to the tour</a></p>' : "") +
       '<div class="st-mactions">' +
       '<button type="button" class="st-btn st-btn--icon st-star' + (isCover ? " is-on" : "") + '" data-mact="cover" data-mid="' + id + '" aria-pressed="' + (isCover ? "true" : "false") + '" aria-label="' + (isCover ? "This is the cover photo" : "Use as the cover photo") + '"' + (isPhoto(m) ? "" : " disabled") + ">" + I.star + "</button>" +
@@ -1100,7 +1119,7 @@
         '<a class="st-btn" href="/templates/megacity-let-' + esc(encodeURIComponent(d.id)) + '" target="_blank" rel="noopener">' + I.eye + 'View on the website</a><span class="st-tag">Link goes live in the next release</span></div>' +
         '<div class="st-form" style="margin-top:16px"><div class="st-field c6"><label class="st-label" for="edStatus">Status</label><div class="st-select"><select id="edStatus" data-status>' + optList("status").filter(function (o) { return o.value !== "draft"; }).map(function (o) { return '<option value="' + esc(o.value) + '"' + (o.value === d.status ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div></div>" +
         '<div class="st-field c6" style="justify-content:flex-end"><button type="button" class="st-btn" data-eact="unpublish">Take off the website</button></div></div></section>' : "") +
-      '<section class="st-card"><div class="st-card-head"><div><h2>Visibility</h2><p>Hide the listing without taking it off — handy while the photos are being redone.</p></div></div>' + fld({ k: "hidden", label: "Hidden from the website", type: "toggle" }) + "</section>";
+      '<section class="st-card"><div class="st-card-head"><div><h2>Visibility</h2><p>Hide the listing without taking it off — handy while the photos are being redone.</p></div></div>' + fld({ k: "hidden", label: "Hidden from the website", type: "toggle" }) + "</section>" + shareKitCardHtml();
   }
   function editorAction(act, btn) {
     var E = ed; if (!E) return;
@@ -1130,11 +1149,12 @@
   }
 
   /* ── settings ────────────────────────────────────────────────────── */
-  var SECTIONS = [["branding", "Branding", "cog"], ["notifications", "Notifications", "bell"], ["links", "10ninety links", "link"], ["data", "Data", "db"], ["account", "Account", "person"]];
+  var SECTIONS = [["branding", "Branding", "cog"], ["notifications", "Notifications", "bell"], ["links", "10ninety links", "link"], ["integrations", "Integrations", "plug"], ["data", "Data", "db"], ["account", "Account", "person"]];
   SCREENS.settings = function (section) {
+    if (section === "integrations") { go("#/integrations"); return; }
     section = SECTIONS.some(function (s) { return s[0] === section; }) ? section : "branding";
     setTop({ title: "Settings" });
-    view.innerHTML = '<div class="st-settings"><nav class="st-subnav" aria-label="Settings sections">' + SECTIONS.map(function (s) { return '<a href="#/settings/' + s[0] + '"' + (s[0] === section ? ' aria-current="page"' : "") + ">" + I[s[2]] + esc(s[1]) + "</a>"; }).join("") + '</nav><div id="setBody">' + loading() + "</div></div>";
+    view.innerHTML = '<div class="st-settings"><nav class="st-subnav" aria-label="Settings sections">' + SECTIONS.map(function (s) { return '<a href="' + (s[0] === "integrations" ? "#/integrations" : "#/settings/" + s[0]) + '"' + (s[0] === section ? ' aria-current="page"' : "") + ">" + I[s[2]] + esc(s[1]) + "</a>"; }).join("") + '</nav><div id="setBody">' + loading() + "</div></div>";
     var body = $("#setBody");
     if (section === "account") { body.innerHTML = accountHtml(); bindAccount(body); return; }
     if (section === "data") { body.innerHTML = dataHtml(); return; }
@@ -1343,7 +1363,7 @@
   }
   function cmdkRender(q) {
     var ql = q.trim().toLowerCase(), items = [];
-    [["Home", "#/", "home"], ["Listings", "#/listings", "list"], ["New listing", "#/listings/new", "plus"], ["Enquiries", "#/enquiries", "inbox"], ["Settings", "#/settings", "cog"], ["Team", "#/team", "users"], ["Change password", "#/settings/account", "key"], ["Import the current listings", "import", "upload"]].forEach(function (s) {
+    [["Home", "#/", "home"], ["Listings", "#/listings", "list"], ["New listing", "#/listings/new", "plus"], ["Enquiries", "#/enquiries", "inbox"], ["Pages", "#/pages", "pages"], ["Backlinks", "#/backlinks", "link"], ["Integrations", "#/integrations", "plug"], ["Settings", "#/settings", "cog"], ["Team", "#/team", "users"], ["Change password", "#/settings/account", "key"], ["Import the current listings", "import", "upload"]].forEach(function (s) {
       if (!ql || s[0].toLowerCase().indexOf(ql) >= 0) items.push({ label: s[0], k: "Screen", go: s[1], icon: s[2] });
     });
     (state.listIndex || []).forEach(function (l) {
@@ -1630,15 +1650,463 @@
     return '<ul class="st-bars" aria-label="Enquiries this week by source">' + keys.map(function (k) { return "<li><span>" + esc(optLabel("enquirySource", k) || k) + '</span><i style="--w:' + Math.round(100 * by[k] / max) + '%" aria-hidden="true"></i><b>' + by[k] + "</b></li>"; }).join("") + "</ul>";
   }
 
+  /* ── AI helpers ─────────────────────────────────────────────────── */
+  function aiOn() { return !!(state.features && state.features.ai); }
+  function aiRun(btn, promise) {
+    var label = btn ? btn.innerHTML : "";
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="st-spin" aria-hidden="true"></span> ' + label; }
+    return promise.then(function (r) { if (btn && document.contains(btn)) { btn.disabled = false; btn.innerHTML = label; } return r; }, function (err) {
+      if (btn && document.contains(btn)) { btn.disabled = false; btn.innerHTML = label; }
+      if (err && err.status === 503) { state.features.ai = false; toast("AI is off until the ANTHROPIC_API_KEY secret is added", { kind: "warn", ttl: 8000 }); route(); }
+      else toast((err && err.message) || "The AI service did not answer", { kind: "bad", ttl: 7000 });
+      throw err;
+    });
+  }
+  var AI_FIELDS = [["summary", "Summary"], ["description", "Description"], ["features", "Features"], ["seoTitle", "Search title"], ["seoDescription", "Search description"]];
+  function aiCopyCardHtml() {
+    if (!aiOn()) return "";
+    if (ed.doc.source === "tenninety") return '<section class="st-card st-ai"><div class="st-card-head"><div><h2>Write the listing for me</h2><p>Copy is managed in 10ninety for this listing.</p></div></div></section>';
+    return '<section class="st-card st-ai" id="aiCopy"><div class="st-card-head"><div><h2>Write the listing for me</h2><p>Claude writes a summary, description, features and search text from the facts on this page and The home tab. Nothing is saved until you choose what to use.</p></div></div>' +
+      '<div class="st-ai-row"><div class="st-select"><label class="st-vh" for="aiTone">Tone</label><select id="aiTone"><option value="standard">Standard</option><option value="warm">Warm</option><option value="concise">Concise</option></select></div>' +
+      '<button type="button" class="st-btn st-btn--blue" data-ai="listing-copy">' + I.spark + 'Write the listing for me</button></div><div id="aiReview"></div></section>';
+  }
+  function aiFmt(v) { return v == null || v === "" || (Array.isArray(v) && !v.length) ? "" : Array.isArray(v) ? v.join("\n") : String(v); }
+  function aiReviewHtml(res) {
+    return '<div class="st-review" id="aiReviewPanel" role="region" aria-label="Suggested copy">' + AI_FIELDS.map(function (f) {
+      var cur = aiFmt(ed.doc[f[0]]), sug = aiFmt(res[f[0]]);
+      return '<div class="st-review-item" data-aif="' + f[0] + '"><h3>' + esc(f[1]) + '</h3><div><span class="lbl">Now</span><div class="cur">' + (cur ? esc(cur) : "<i>blank</i>") + '</div></div><div><span class="lbl">Suggested</span><div class="sug">' + esc(sug) + '</div></div><button type="button" class="st-btn st-btn--sm" data-ai-use="' + f[0] + '"' + (sug ? "" : " disabled") + ">Use this</button></div>";
+    }).join("") + '<div class="st-actions"><button type="button" class="st-btn st-btn--fill" data-ai-use="*">Use all</button><button type="button" class="st-btn st-btn--ghost" data-ai-dismiss>Dismiss</button></div></div>';
+  }
+  function aiApplyField(k) {
+    var v = ed && ed.aiCopy ? ed.aiCopy[k] : null;
+    if (v == null || v === "" || (Array.isArray(v) && !v.length)) return;
+    var val = k === "features" ? (Array.isArray(v) ? v : String(v).split("\n").map(function (s) { return s.trim(); }).filter(Boolean)) : String(v);
+    edSet(k, val);
+    var el = $('[data-k="' + k + '"]', view); if (el) el.value = k === "features" ? val.join("\n") : val;
+    if (k === "features") { var chips = $("#edFeatChips"); if (chips) chips.innerHTML = featChips(val); }
+    if (k === "summary") { var c = $("#edSumCount"); if (c) { c.textContent = val.length + " / 200"; c.classList.toggle("is-over", val.length > 200); } }
+    updateSerp();
+    var item = $('[data-aif="' + k + '"]', view); if (item) { item.classList.add("is-used"); var b = $("[data-ai-use]", item); if (b) { b.disabled = true; b.textContent = "Used"; } }
+  }
+  function shareKitCardHtml() {
+    if (!aiOn()) return "";
+    return '<section class="st-card st-ai" id="aiKit"><div class="st-card-head"><div><h2>Share kit</h2><p>Posts for Facebook, Instagram and WhatsApp' + (ed.doc.letType === "room" ? ", plus a SpareRoom advert" : "") + ', written from the listing facts. Copy what you need.</p></div></div><div class="st-actions"><button type="button" class="st-btn st-btn--blue" data-ai="share-kit">' + I.spark + 'Write the share kit</button></div><div id="aiKitOut"></div></section>';
+  }
+  function shareKitHtml(k) {
+    var url = location.origin + (k.url || "/templates/megacity-let-" + ed.id);
+    var items = [["Headline", k.headline], ["Facebook", k.facebook], ["Instagram", k.instagram], ["WhatsApp", k.whatsapp], ["SpareRoom", k.spareroom], ["Hashtags", (k.hashtags || []).map(function (h) { return "#" + h; }).join(" ")], ["Meta description", k.metaDescription]].filter(function (x) { return x[1]; });
+    return '<div class="st-kit">' + items.map(function (x) {
+      var extra = x[0] === "WhatsApp" ? '<a class="st-btn st-btn--sm" href="https://wa.me/?text=' + encodeURIComponent(x[1]) + '" target="_blank" rel="noopener">' + I.chat + "Share on WhatsApp</a>" : x[0] === "Facebook" ? '<a class="st-btn st-btn--sm" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">Share on Facebook</a>' : "";
+      return '<div class="st-kit-item"><span class="st-label">' + esc(x[0]) + "</span><p>" + esc(x[1]) + '</p><div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-copy="' + esc(x[1]) + '">' + I.copy + "Copy</button>" + extra + "</div></div>";
+    }).join("") + "</div>";
+  }
+  function aiAction(act, btn) {
+    if (act === "listing-copy") {
+      var E = ed, tone = ($("#aiTone") || {}).value || "standard";
+      aiRun(btn, API.ai.listingCopy(E.id, tone)).then(function (r) { if (ed !== E) return; E.aiCopy = r; var out = $("#aiReview"); if (out) { out.innerHTML = aiReviewHtml(r); var f = $("[data-ai-use]", out); if (f) f.focus(); } }).catch(function () { /* toasted */ });
+    } else if (act === "share-kit") {
+      var E2 = ed;
+      aiRun(btn, API.ai.shareKit(E2.id)).then(function (k) { if (ed !== E2) return; var out = $("#aiKitOut"); if (out) out.innerHTML = shareKitHtml(k); }).catch(function () { /* toasted */ });
+    } else if (act === "page-draft") pageDraftDialog();
+  }
+  function mediaAi(act, mid, btn) {
+    var E = ed;
+    aiRun(btn, act === "classify" ? API.ai.classifyRoom(mid) : API.ai.altText(mid)).then(function (r) {
+      if (ed !== E) return;
+      var card = $('.st-mcard[data-mid="' + mid + '"]', view), m = findMedia(E, mid); if (!card || !m) return;
+      if (act === "classify") {
+        var name = r.name || optLabel("tourRoom", r.kind) || "";
+        if (name) {
+          var sel = $('[data-mfield="roomLabel"]', card), other = $("[data-mother]", card);
+          if (roomChoices().indexOf(name) >= 0) { sel.value = name; if (other) other.hidden = true; } else { sel.value = "__other"; if (other) { other.hidden = false; other.value = name; } }
+          mediaPatch(mid, "roomLabel", name);
+        }
+        if (r.alt && !m.alt) { var alt = $('[data-mfield="alt"]', card); if (alt) alt.value = r.alt; mediaPatch(mid, "alt", r.alt); }
+        toast("Looks like " + (name || "something else") + (r.confidence != null ? " · " + Math.round(r.confidence * 100) + "% sure" : ""));
+      } else if (r.alt) { var a2 = $('[data-mfield="alt"]', card); if (a2) a2.value = r.alt; mediaPatch(mid, "alt", r.alt); }
+      E.suggested[mid] = true;
+      var badges = $(".st-mbadges", card); if (badges && !$(".st-mbadge--ai", badges)) badges.insertAdjacentHTML("beforeend", '<span class="st-mbadge st-mbadge--ai">AI suggested</span>');
+    }).catch(function () { /* toasted */ });
+  }
+
+  /* ── pages: list ────────────────────────────────────────────────── */
+  var KIND_LABEL = { area: "Area guide", landing: "Landing page", guide: "Guide" }, KIND_OPTS = [{ value: "area", label: "Area guide" }, { value: "landing", label: "Landing page" }, { value: "guide", label: "Guide" }];
+  var BLOCK_LABEL = { h2: "Heading", p: "Paragraph", list: "List", cta: "Call to action", image: "Photo" };
+  function kindBadge(k) { return '<span class="st-kind st-kind--' + esc(k) + '">' + esc(KIND_LABEL[k] || k) + "</span>"; }
+  function pagePill(s) { return '<span class="st-pill st-pill--' + (s === "live" ? "live" : "draft") + '">' + (s === "live" ? "Live" : "Draft") + "</span>"; }
+  function slugify(v) { return String(v || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80); }
+  SCREENS.pages = function () {
+    setTop({ title: "Pages" });
+    view.innerHTML = '<div class="st-toolbar"><p class="st-hint" style="flex:1 1 300px;margin:0">Area guides, landing pages and guides, published at /templates/megacity-&lt;address&gt; with the search markup done for you.</p><button type="button" class="st-btn st-btn--fill" data-newpage>' + I.plus + 'New page</button></div><div id="pgBody">' + loading() + "</div>";
+    API.pages.list().then(function (res) {
+      var items = res.items || [], body = $("#pgBody"); if (!body) return;
+      body.innerHTML = items.length ? pagesTable(items) + pagesCards(items) : '<div class="st-empty">' + I.doc + '<h3>No pages yet</h3><p>Start with an area guide for somewhere you let a lot.</p><button type="button" class="st-btn st-btn--fill" data-newpage>' + I.plus + "New page</button></div>";
+    }).catch(function (err) { var b = $("#pgBody"); if (b) b.innerHTML = errorHtml(err); });
+    $("#pgBody").addEventListener("click", function (e) { if (e.target.closest("a,button")) return; var row = e.target.closest("[data-pid]"); if (row) go("#/pages/" + encodeURIComponent(row.getAttribute("data-pid"))); });
+    $("#pgBody").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-pid][tabindex]")) { e.preventDefault(); go("#/pages/" + encodeURIComponent(e.target.getAttribute("data-pid"))); } });
+  };
+  function pagesTable(items) {
+    return '<div class="st-tablewrap"><table class="st-table"><thead><tr><th scope="col">Page</th><th scope="col">Kind</th><th scope="col">Status</th><th scope="col">Published</th><th scope="col">Updated</th></tr></thead><tbody>' + items.map(function (p) {
+      return '<tr data-pid="' + esc(p.id) + '" tabindex="0"><td><div class="st-title">' + esc(p.title) + '</div><div class="st-sub">' + esc(p.url) + "</div></td><td>" + kindBadge(p.kind) + "</td><td>" + pagePill(p.status) + '</td><td class="num">' + (p.publishedAt ? esc(fmtDate(p.publishedAt)) : "—") + '</td><td class="num">' + esc(rel(p.updatedAt)) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+  }
+  function pagesCards(items) {
+    return '<div class="st-cards">' + items.map(function (p) { return '<article class="st-rcard" data-pid="' + esc(p.id) + '" tabindex="0" style="grid-template-columns:1fr auto"><div style="min-width:0"><div class="st-title">' + esc(p.title) + '</div><div class="st-sub">' + esc(p.url) + '</div><div class="st-rmeta">' + kindBadge(p.kind) + "<span>" + esc(rel(p.updatedAt)) + "</span></div></div>" + pagePill(p.status) + "</article>"; }).join("") + "</div>";
+  }
+  function newPageDrawer() {
+    openDrawer("New page", '<form novalidate class="st-stack" id="newPageForm">' + fieldHtml({ label: "Title", name: "title", required: true, ph: "Renting in Salford" }) +
+      selectHtml({ label: "Kind", name: "kind", noEmpty: true, value: "area", options: KIND_OPTS }) +
+      '<div class="st-field"><label class="st-label" for="f_slug">Address <span class="st-opt">made from the title if left blank</span></label><div class="st-slug"><span>/templates/megacity-</span><input id="f_slug" name="slug" autocomplete="off" spellcheck="false" placeholder="renting-in-salford"></div><p class="st-err" id="slugErr" role="alert" hidden></p><span class="st-hint" id="slugPrev"></span></div>' +
+      '<p class="st-err" data-form-err role="alert" hidden></p><button type="submit" class="st-btn st-btn--fill">Create page</button></form>', function (body) {
+        var f = $("#newPageForm", body), t = $("#f_title", f), sl = $("#f_slug", f), prev = $("#slugPrev", f);
+        var upd = function () { var s = slugify(sl.value || t.value); prev.textContent = s ? "Will be published at /templates/megacity-" + s : ""; };
+        t.addEventListener("input", upd); sl.addEventListener("input", upd);
+        bindForm(f, function (d) {
+          if (!d.title.trim()) throw new Error("Give the page a title");
+          var payload = { title: d.title.trim(), kind: d.kind }; if (d.slug.trim()) payload.slug = d.slug.trim();
+          $("#slugErr", f).hidden = true;
+          return API.pages.create(payload).then(function (p) { closeDrawer(); state.mediaIndexAt = 0; toast("Page created — it saves as you go", { kind: "good" }); go("#/pages/" + encodeURIComponent(p.id)); }, function (err) {
+            if (err.status === 400 || err.status === 409) { var se = $("#slugErr", f); se.textContent = err.message; se.hidden = false; sl.focus(); return; }
+            throw err;
+          });
+        });
+      });
+  }
+
+  /* ── pages: editor with autosave ────────────────────────────────── */
+  var pg = null;
+  SCREENS.pageEditor = function (id) {
+    if (pg && pg.id === id && pg.doc) { renderPage(); return; }
+    pageLeave();
+    var P = pg = { id: id, base: null, doc: null, dirty: {}, timer: null, saving: false, again: false, chipState: "saved", savedAt: null, aiDraft: null };
+    setTop({ title: "Page", back: "#/pages" });
+    view.innerHTML = loading();
+    API.pages.get(id).then(function (p) {
+      if (pg !== P) return;
+      P.base = p; P.doc = clone(p); P.doc.blocks = P.doc.blocks || []; P.doc.faq = P.doc.faq || [];
+      renderPage();
+      if (neededMedia(P.doc).length) ensureMediaIndex().then(function () { if (pg === P) { var h = $("#pgHero"); if (h) h.innerHTML = heroThumbHtml(); $$("#pgBlocks .st-block--image").forEach(function (el) { var i = +el.getAttribute("data-bi"); el.outerHTML = blockHtml(P.doc.blocks[i], i, P.doc.blocks.length); }); } }).catch(function () { /* thumbs stay as placeholders */ });
+    }).catch(function (err) { if (pg !== P) return; if (err.status === 404) view.innerHTML = '<div class="st-empty"><h3>That page does not exist</h3><a class="st-btn" href="#/pages">Back to pages</a></div>'; else showError(err); });
+  };
+  function pageLeave() { if (!pg) return; var P = pg; clearTimeout(P.timer); if (Object.keys(P.dirty).length && !P.saving) pgSave(P); pg = null; topChip.innerHTML = ""; }
+  function pgChipHtml() { return chipMarkup(pg.chipState, pg.savedAt); }
+  function pgSetChip(s) { if (!pg) return; pg.chipState = s; topChip.innerHTML = pgChipHtml(); }
+  function pgSet(k, v) { pg.doc[k] = v; pgMark(k); }
+  function pgMark(k) { pg.dirty[k] = true; pgSetChip("dirty"); clearTimeout(pg.timer); var P = pg; pg.timer = setTimeout(function () { pgSave(P); }, 900); }
+  function pgSave(P) {
+    P = P || pg; if (!P || !P.base) return;
+    clearTimeout(P.timer);
+    if (P.saving) { P.again = true; return; }
+    var patch = {};
+    Object.keys(P.dirty).forEach(function (k) { if (!same(P.base[k], P.doc[k])) patch[k] = clone(P.doc[k]); else delete P.dirty[k]; });
+    if (!Object.keys(patch).length) { if (pg === P) pgSetChip("saved"); return; }
+    P.saving = true; if (pg === P) pgSetChip("saving");
+    var sent = clone(patch);
+    API.pages.patch(P.id, patch).then(function (res) {
+      P.saving = false;
+      Object.keys(sent).forEach(function (k) { if (same(P.doc[k], sent[k])) { delete P.dirty[k]; if (k !== "blocks" && k !== "faq") P.doc[k] = clone(res[k]); } });
+      Object.keys(res).forEach(function (k) { if (!P.dirty[k] && k !== "blocks" && k !== "faq") P.doc[k] = clone(res[k]); });
+      P.base = res; P.savedAt = Date.now();
+      if (pg === P) { pgSetChip(Object.keys(P.dirty).length ? "dirty" : "saved"); refreshPageHead(); }
+      if (P.again || Object.keys(P.dirty).length) { P.again = false; P.timer = setTimeout(function () { pgSave(P); }, 500); }
+    }).catch(function (err) {
+      P.saving = false; P.again = false;
+      if (pg === P) pgSetChip("error");
+      toast(err.message || "Could not save the page", { kind: "bad", action: { label: "Retry", run: function () { pgSave(P); } } });
+    });
+  }
+  function pgAdopt(p) { var P = pg; P.base = p; var nd = clone(p); Object.keys(P.dirty).forEach(function (k) { nd[k] = P.doc[k]; }); nd.blocks = nd.blocks || []; nd.faq = nd.faq || []; P.doc = nd; }
+  function flushPage(P) {
+    clearTimeout(P.timer);
+    if (!Object.keys(P.dirty).length && !P.saving) return Promise.resolve();
+    return new Promise(function (res) { pgSave(P); var t = setInterval(function () { if (!P.saving) { clearInterval(t); res(); } }, 100); });
+  }
+  function neededMedia(d) { var ids = []; if (d.heroMediaId) ids.push(d.heroMediaId); (d.blocks || []).forEach(function (b) { if (b.type === "image" && b.mediaId) ids.push(b.mediaId); }); return ids.filter(function (id) { return !(state.mediaIndex && state.mediaIndex[id]); }); }
+  function ensureMediaIndex() {
+    if (state.mediaIndexAt && Date.now() - state.mediaIndexAt < 120000) return Promise.resolve(state.mediaIndex);
+    return API.listings.list({}).then(function (r) { return Promise.all((r.items || []).slice(0, 25).map(function (s) { return API.listings.get(s.id).catch(function () { return null; }); })); }).then(function (ls) {
+      var idx = state.mediaIndex || {}, lists = [];
+      ls.forEach(function (l) { if (!l) return; lists.push({ id: l.id, title: l.title, media: (l.media || []).filter(isPhoto) }); (l.media || []).forEach(function (m) { idx[m.id] = { id: m.id, thumb: m.thumb || m.url, alt: m.alt || "", listing: l.title }; }); });
+      state.mediaIndex = idx; state.mediaLists = lists; state.mediaIndexAt = Date.now();
+      return idx;
+    });
+  }
+  function thumbFor(id, size) { var m = id && state.mediaIndex && state.mediaIndex[id]; return m ? '<img src="' + esc(m.thumb) + '" alt="' + esc(m.alt) + '">' : '<span class="st-thumb st-thumb--ph" aria-hidden="true">' + I.image + "</span>"; }
+  function heroThumbHtml() {
+    var id = pg.doc.heroMediaId;
+    return thumbFor(id) + '<div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-hero="pick">' + (id ? "Change photo" : "Choose a photo") + "</button>" + (id ? '<button type="button" class="st-btn st-btn--sm st-btn--ghost" data-hero="remove">Remove</button>' : '<span class="st-hint">Optional — the page uses the site’s Manchester photo without one.</span>') + "</div>";
+  }
+  function pf(o) {
+    var id = "pg_" + o.k, v = pg.doc[o.k], input;
+    if (o.type === "textarea") input = '<textarea class="st-ta" id="' + id + '" data-pk="' + o.k + '" rows="' + (o.rows || 3) + '"' + (o.max ? ' maxlength="' + o.max + '"' : "") + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : "") + ">" + esc(v == null ? "" : v) + "</textarea>";
+    else input = '<input class="st-in" id="' + id + '" data-pk="' + o.k + '" type="text" value="' + esc(v == null ? "" : v) + '"' + (o.max ? ' maxlength="' + o.max + '"' : "") + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : "") + ">";
+    return '<div class="st-field ' + (o.cls || "") + '"><label class="st-label" for="' + id + '">' + esc(o.label) + (o.req ? ' <span class="st-req">required</span>' : "") + "</label>" + input + (o.counter ? '<span class="st-count' + ((v || "").length > o.counter ? " is-over" : "") + '" data-count-for="' + id + '" data-max="' + o.counter + '">' + (v || "").length + " / " + o.counter + "</span>" : "") + (o.hint ? '<span class="st-hint">' + o.hint + "</span>" : "") + "</div>";
+  }
+  function blockHtml(b, i, n) {
+    var bi = ' data-bi="' + i + '"', body;
+    if (b.type === "h2") body = '<input class="st-in" data-bk="text"' + bi + ' value="' + esc(b.text || "") + '" placeholder="Heading" aria-label="Heading text">';
+    else if (b.type === "p") body = '<textarea class="st-ta" data-bk="text"' + bi + ' placeholder="Paragraph" aria-label="Paragraph">' + esc(b.text || "") + "</textarea>";
+    else if (b.type === "list") body = '<textarea class="st-ta" data-bk="items"' + bi + ' placeholder="One item per line" aria-label="List items, one per line">' + esc((b.items || []).join("\n")) + "</textarea>";
+    else if (b.type === "cta") body = '<div class="st-form"><div class="st-field c6"><label class="st-label" for="cta_t' + i + '">Button text</label><input class="st-in" id="cta_t' + i + '" data-bk="text"' + bi + ' value="' + esc(b.text || "") + '" placeholder="Talk to the office"></div><div class="st-field c6"><label class="st-label" for="cta_h' + i + '">Goes to</label><input class="st-in" id="cta_h' + i + '" data-bk="href"' + bi + ' value="' + esc(b.href || "") + '" placeholder="megacity-contact-us or https://…"></div></div>';
+    else body = '<div class="st-block-img">' + thumbFor(b.mediaId) + '<div class="st-stack" style="flex:1;min-width:200px"><div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-bact="pick"' + bi + ">" + (b.mediaId ? "Change photo" : "Choose a photo") + '</button></div><div class="st-field"><label class="st-label" for="img_c' + i + '">Caption</label><input class="st-in" id="img_c' + i + '" data-bk="caption"' + bi + ' value="' + esc(b.caption || "") + '"></div></div></div>';
+    return '<div class="st-block st-block--' + b.type + '"' + bi + '><div class="st-block-head"><span class="st-tag">' + esc(BLOCK_LABEL[b.type] || b.type) + '</span><div class="st-actions">' +
+      '<button type="button" class="st-btn st-btn--sm st-btn--icon" data-bact="up"' + bi + ' aria-label="Move up"' + (i === 0 ? " disabled" : "") + ">" + I.up + "</button>" +
+      '<button type="button" class="st-btn st-btn--sm st-btn--icon" data-bact="down"' + bi + ' aria-label="Move down"' + (i === n - 1 ? " disabled" : "") + ">" + I.down + "</button>" +
+      '<button type="button" class="st-btn st-btn--sm st-btn--icon st-del" data-bact="delete"' + bi + ' aria-label="Delete block">' + I.trash + "</button></div></div>" + body + "</div>";
+  }
+  function blocksHtml() { var b = pg.doc.blocks; return b.length ? b.map(function (x, i) { return blockHtml(x, i, b.length); }).join("") : '<p class="st-hint">No content yet — add a heading and a paragraph below.</p>'; }
+  function faqHtml() {
+    var f = pg.doc.faq;
+    return f.length ? f.map(function (x, i) { return '<div class="st-faq-row"><div class="st-stack"><input class="st-in" data-fk="q" data-fi="' + i + '" value="' + esc(x.q || "") + '" placeholder="Question" aria-label="Question ' + (i + 1) + '"><textarea class="st-ta" data-fk="a" data-fi="' + i + '" rows="2" placeholder="Answer" aria-label="Answer ' + (i + 1) + '">' + esc(x.a || "") + '</textarea></div><button type="button" class="st-btn st-btn--sm st-btn--icon st-del" data-faq-rm="' + i + '" aria-label="Remove question">' + I.trash + "</button></div>"; }).join("") : '<p class="st-hint">None yet.</p>';
+  }
+  function pageHeadHtml() {
+    var d = pg.doc, live = d.status === "live";
+    return '<div class="st-pagehead" id="pgHead">' + pagePill(d.status) + kindBadge(d.kind) + (live && d.publishedAt ? '<span class="st-hint">published ' + esc(rel(d.publishedAt)) + "</span>" : "") +
+      '<div class="st-actions">' + (aiOn() ? '<button type="button" class="st-btn" data-ai="page-draft">' + I.spark + "Draft with AI</button>" : "") +
+      (live ? '<a class="st-btn" href="' + esc(d.url) + '" target="_blank" rel="noopener">' + I.eye + "View live page</a>" : '<span class="st-status-note">Publish to see it on the website</span>') +
+      (live ? '<button type="button" class="st-btn" data-pact="unpublish">Unpublish</button>' : '<button type="button" class="st-btn st-btn--fill" data-pact="publish">' + I.eye + "Publish</button>") +
+      '<button type="button" class="st-btn st-btn--danger" data-pact="delete">Delete</button></div></div>';
+  }
+  function refreshPageHead() { var h = $("#pgHead"); if (h) h.outerHTML = pageHeadHtml(); topSub.textContent = "/templates/megacity-" + pg.doc.slug; topSub.hidden = false; }
+  function renderPage() {
+    var d = pg.doc;
+    setTop({ title: d.title || "Untitled page", sub: "/templates/megacity-" + d.slug, back: "#/pages", chip: pgChipHtml() });
+    view.innerHTML = pageHeadHtml() + '<ul class="st-problems" id="pgProblems" hidden style="margin:12px 0"></ul>' +
+      '<section class="st-card" style="margin-top:14px"><div class="st-card-head"><h2>Page</h2></div><div class="st-form">' +
+      pf({ k: "title", label: "Title", req: true, cls: "c8" }) +
+      '<div class="st-field c4"><label class="st-label" for="pg_kind">Kind</label><div class="st-select"><select id="pg_kind" data-pk="kind">' + KIND_OPTS.map(function (o) { return '<option value="' + o.value + '"' + (d.kind === o.value ? " selected" : "") + ">" + o.label + "</option>"; }).join("") + "</select></div></div>" +
+      '<div class="st-field"><label class="st-label" for="pg_slug">Address</label><div class="st-slug"><span>/templates/megacity-</span><input id="pg_slug" data-pk="slug" value="' + esc(d.slug) + '" autocomplete="off" spellcheck="false"></div><span class="st-hint">Changing the address changes the link; search engines take a while to catch up.</span></div>' +
+      pf({ k: "seoTitle", label: "Search title", max: 70, counter: 60, cls: "c6", ph: d.title, hint: "Blank uses the title." }) + pf({ k: "seoDescription", label: "Search description", type: "textarea", rows: 2, max: 170, counter: 155, cls: "c6", hint: "What Google shows under the title. Needed before publishing." }) +
+      '<div class="st-field"><span class="st-label">Hero photo</span><div class="st-hero-thumb" id="pgHero">' + heroThumbHtml() + "</div></div></div></section>" +
+      '<section class="st-card"><div class="st-card-head"><div><h2>Content</h2><p>Blocks in the order they appear. Headings break the page up; a call to action sends people to the office.</p></div></div><div class="st-blocks" id="pgBlocks">' + blocksHtml() + '</div><div class="st-addrow">' +
+      ["h2", "p", "list", "cta", "image"].map(function (t) { return '<button type="button" class="st-btn st-btn--sm" data-addblock="' + t + '">' + I.plus + esc(BLOCK_LABEL[t]) + "</button>"; }).join("") + "</div></section>" +
+      '<section class="st-card"><div class="st-card-head"><div><h2>Questions and answers</h2><p>Shown at the end of the page and marked up for search engines.</p></div></div><div class="st-faq" id="pgFaq">' + faqHtml() + '</div><div class="st-addrow"><button type="button" class="st-btn st-btn--sm" data-addfaq>' + I.plus + "Add a question</button></div></section>";
+  }
+  function rerenderBlocks() { var b = $("#pgBlocks"); if (b) b.innerHTML = blocksHtml(); }
+  function rerenderFaq() { var f = $("#pgFaq"); if (f) f.innerHTML = faqHtml(); }
+  function onPgInput(e) {
+    var t = e.target; if (!pg || !pg.doc || !t.getAttribute) return false;
+    if (t.hasAttribute("data-pk")) {
+      var k = t.getAttribute("data-pk"), v = t.value;
+      if (k === "slug") v = v.trim();
+      if (same(pg.doc[k], v === "" && k !== "slug" ? null : v)) return true;
+      pgSet(k, v === "" && k !== "slug" ? null : v);
+      if (k === "title") topTitle.textContent = v || "Untitled page";
+      if (k === "slug") topSub.textContent = "/templates/megacity-" + slugify(v);
+      if (k === "kind") refreshPageHead();
+      var cnt = $('[data-count-for="' + t.id + '"]', view); if (cnt) { var max = +cnt.getAttribute("data-max"); cnt.textContent = v.length + " / " + max; cnt.classList.toggle("is-over", v.length > max); }
+      return true;
+    }
+    if (t.hasAttribute("data-bk")) { var i = +t.getAttribute("data-bi"), bk = t.getAttribute("data-bk"), b = pg.doc.blocks[i]; if (!b) return true; b[bk] = bk === "items" ? t.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean) : t.value; pgMark("blocks"); return true; }
+    if (t.hasAttribute("data-fk")) { var fi = +t.getAttribute("data-fi"), fk = t.getAttribute("data-fk"), f = pg.doc.faq[fi]; if (!f) return true; f[fk] = t.value; pgMark("faq"); return true; }
+    return false;
+  }
+  function pageClick(el) {
+    var P = pg, d = P.doc;
+    if (el.hasAttribute("data-addblock")) {
+      var t = el.getAttribute("data-addblock");
+      d.blocks.push(t === "list" ? { type: "list", items: [] } : t === "cta" ? { type: "cta", text: "Talk to the office", href: "megacity-contact-us" } : t === "image" ? { type: "image", mediaId: "", caption: "" } : { type: t, text: "" });
+      pgMark("blocks"); rerenderBlocks();
+      var last = $$("#pgBlocks .st-block").pop(), f = last && $("input,textarea", last); if (f) f.focus();
+      if (t === "image") { var idx = d.blocks.length - 1; pickMedia(function (id) { if (pg !== P) return; d.blocks[idx].mediaId = id; pgMark("blocks"); rerenderBlocks(); }); }
+      return true;
+    }
+    if (el.hasAttribute("data-bact")) {
+      var act = el.getAttribute("data-bact"), i = +el.getAttribute("data-bi");
+      if (act === "pick") { pickMedia(function (id) { if (pg !== P || !d.blocks[i]) return; d.blocks[i].mediaId = id; pgMark("blocks"); rerenderBlocks(); }); return true; }
+      if (act === "up" && i > 0) { d.blocks.splice(i - 1, 0, d.blocks.splice(i, 1)[0]); }
+      else if (act === "down" && i < d.blocks.length - 1) { d.blocks.splice(i + 1, 0, d.blocks.splice(i, 1)[0]); }
+      else if (act === "delete") d.blocks.splice(i, 1);
+      pgMark("blocks"); rerenderBlocks();
+      var ni = act === "up" ? i - 1 : act === "down" ? i + 1 : Math.min(i, d.blocks.length - 1);
+      var nb = $('#pgBlocks [data-bact="' + act + '"][data-bi="' + ni + '"]'); if (nb && !nb.disabled) nb.focus(); else { var any = $('#pgBlocks [data-bi="' + ni + '"] button'); if (any) any.focus(); }
+      return true;
+    }
+    if (el.hasAttribute("data-addfaq")) { d.faq.push({ q: "", a: "" }); pgMark("faq"); rerenderFaq(); var lf = $$("#pgFaq input").pop(); if (lf) lf.focus(); return true; }
+    if (el.hasAttribute("data-faq-rm")) { d.faq.splice(+el.getAttribute("data-faq-rm"), 1); pgMark("faq"); rerenderFaq(); return true; }
+    if (el.hasAttribute("data-hero")) {
+      if (el.getAttribute("data-hero") === "remove") { pgSet("heroMediaId", null); $("#pgHero").innerHTML = heroThumbHtml(); }
+      else pickMedia(function (id) { if (pg !== P) return; pgSet("heroMediaId", id); var h = $("#pgHero"); if (h) h.innerHTML = heroThumbHtml(); });
+      return true;
+    }
+    if (el.hasAttribute("data-pact")) { pageAction(el.getAttribute("data-pact"), el); return true; }
+    return false;
+  }
+  function pageAction(act, btn) {
+    var P = pg;
+    if (act === "publish") {
+      btn.disabled = true;
+      flushPage(P).then(function () { return API.pages.publish(P.id); }).then(function (res) {
+        if (pg !== P) return;
+        var pl = $("#pgProblems");
+        if (res.ok) { pgAdopt(res.page); toast("The page is live", { kind: "good" }); renderPage(); }
+        else { if (pl) { pl.hidden = false; pl.innerHTML = (res.problems || []).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join(""); } btn.disabled = false; }
+      }).catch(function (err) { errToast(err); btn.disabled = false; });
+    } else if (act === "unpublish") {
+      confirmModal({ title: "Take the page off the website?", body: "Visitors get a not-found page until you publish it again. Nothing is deleted.", confirm: "Unpublish" }).then(function (ok) {
+        if (!ok || pg !== P) return;
+        return API.pages.unpublish(P.id).then(function (res) { if (pg !== P) return; pgAdopt(res.page); toast("Page taken off the website"); renderPage(); });
+      }).catch(errToast);
+    } else if (act === "delete") {
+      confirmModal({ title: "Delete this page?", body: "“" + (P.doc.title || "Untitled page") + "” is deleted for good, with its questions and answers. Photos stay with their listings.", confirm: "Delete page", danger: true }).then(function (ok) {
+        if (!ok) return;
+        return API.pages.remove(P.id).then(function () { pg = null; toast("Page deleted"); go("#/pages"); });
+      }).catch(errToast);
+    }
+  }
+  var pickCb = null;
+  function pickMedia(cb) {
+    pickCb = cb;
+    openModal('<h2 id="modalTitle">Choose a photo</h2><div class="st-modal-body" id="pickBody">' + loading() + '</div><div class="st-modal-foot"><button type="button" class="st-btn" data-modal="cancel">Cancel</button></div>', { wide: true });
+    ensureMediaIndex().then(function () {
+      var body = $("#pickBody"); if (!body) return;
+      var lists = state.mediaLists || [];
+      body.innerHTML = '<p class="st-hint">Photos already on a listing — nothing is uploaded twice.</p><div class="st-select"><label class="st-vh" for="pickListing">Listing</label><select id="pickListing" data-pick-listing>' + lists.map(function (l, i) { return '<option value="' + i + '">' + esc(l.title) + " (" + l.media.length + ")</option>"; }).join("") + '</select></div><div class="st-picker" id="pickGrid" role="listbox" aria-label="Photos"></div>';
+      renderPickGrid(0);
+      var first = $("#pickGrid button"); if (first) first.focus();
+    }).catch(function (err) { var body = $("#pickBody"); if (body) body.innerHTML = '<p class="st-err">' + esc(err.message || "Could not load the photos") + "</p>"; });
+  }
+  function renderPickGrid(i) {
+    var l = (state.mediaLists || [])[i], g = $("#pickGrid"); if (!g) return;
+    g.innerHTML = l && l.media.length ? l.media.map(function (m) { return '<button type="button" role="option" data-pick="' + esc(m.id) + '" aria-label="' + esc(m.roomLabel || m.alt || "Photo") + '"><img src="' + esc(m.thumb || m.url) + '" alt="" loading="lazy"></button>'; }).join("") : '<p class="st-hint">No photos on this listing yet.</p>';
+  }
+  modalWrap.addEventListener("change", function (e) { if (e.target.hasAttribute && e.target.hasAttribute("data-pick-listing")) renderPickGrid(+e.target.value); });
+  function pageDraftDialog() {
+    var P = pg; if (!P) return;
+    openModal('<h2 id="modalTitle">Draft with AI</h2><div class="st-modal-body"><p>Claude drafts the page from a short brief and the homes we let there — no statistics, prices or claims that are not in the brief. You review it before anything changes.</p><form novalidate class="st-stack" id="draftForm">' +
+      '<dl class="st-kv"><dt>Kind</dt><dd>' + esc(KIND_LABEL[P.doc.kind] || P.doc.kind) + "</dd></dl>" +
+      fieldHtml({ label: "Area", name: "area", ph: "Salford", value: P.doc.kind === "area" ? (P.doc.title || "").replace(/^(renting|living) in /i, "") : "" }) +
+      '<div class="st-field"><label class="st-label" for="f_brief">Brief <span class="st-opt">what the page should cover</span></label><textarea class="st-ta" id="f_brief" name="brief" rows="4" placeholder="Who it is for, what to mention, what to leave out"></textarea></div>' +
+      '<p class="st-err" data-form-err role="alert" hidden></p><div class="st-modal-foot"><button type="button" class="st-btn" data-modal="cancel">Cancel</button><button type="submit" class="st-btn st-btn--fill">' + I.spark + "Draft it</button></div></form></div>", { wide: true });
+    bindForm($("#draftForm"), function (d, form) {
+      if (!d.area.trim() && !d.brief.trim()) throw new Error("Give the page a subject: an area, or a brief");
+      var btn = $('button[type="submit"]', form);
+      return aiRun(btn, API.ai.pageDraft({ kind: P.doc.kind, area: d.area.trim(), brief: d.brief.trim() })).then(function (r) {
+        if (pg !== P) return;
+        P.aiDraft = r;
+        openModal('<h2 id="modalTitle">Review the draft</h2><div class="st-modal-body"><p><b>' + esc(r.title) + '</b></p><p class="st-hint">' + esc(r.seoDescription || "") + "</p><p>" + plural((r.blocks || []).length, "block") + " · " + plural((r.faq || []).length, "question") + '</p><ul class="st-log" style="max-height:240px">' +
+          (r.blocks || []).map(function (b) { return "<li><b>" + esc(BLOCK_LABEL[b.type] || b.type) + "</b>&nbsp;" + esc(b.type === "list" ? (b.items || []).join(" · ") : b.text || "") + "</li>"; }).join("") +
+          '</ul><p class="st-hint">Using it replaces the title, search text, content and questions on this page. Photos are not touched, and it saves as a draft.</p></div><div class="st-modal-foot"><button type="button" class="st-btn" data-modal="cancel">Keep mine</button><button type="button" class="st-btn st-btn--fill" data-usedraft data-focus>Use this draft</button></div>', { wide: true });
+      }, function () { /* toasted by aiRun */ });
+    });
+  }
+  function applyDraft() {
+    var P = pg, r = P && P.aiDraft; closeModal(false); if (!r) return;
+    P.doc.title = r.title || P.doc.title; P.doc.seoTitle = r.seoTitle || null; P.doc.seoDescription = r.seoDescription || null;
+    P.doc.blocks = (r.blocks || []).map(function (b) { return b.type === "list" ? { type: "list", items: b.items || [] } : b.type === "cta" ? { type: "cta", text: b.text || "Talk to the office", href: "megacity-contact-us" } : { type: b.type === "h2" ? "h2" : "p", text: b.text || "" }; }).filter(function (b) { return b.type === "list" ? b.items.length : b.text; });
+    P.doc.faq = (r.faq || []).filter(function (f) { return f.q && f.a; });
+    ["title", "seoTitle", "seoDescription", "blocks", "faq"].forEach(function (k) { P.dirty[k] = true; });
+    P.aiDraft = null; renderPage(); pgMark("blocks");
+    toast("Draft applied — read it through before publishing", { kind: "good" });
+  }
+
+  /* ── backlinks ──────────────────────────────────────────────────── */
+  var blRows = [], BL_STATUS = [["planned", "Planned"], ["requested", "Requested"], ["live", "Live"], ["lost", "Lost"]];
+  var OUTREACH = [
+    ["Local directory", "Subject: Listing Megacity Properties in your directory\n\nHello,\n\nWe are Megacity Properties, a lettings and property management agency in Manchester, based at The Tube Business Centre on North Street. Could we be listed in your directory?\n\nMegacity Properties\n<website address>\n0161 220 1763\ninfo@megacityproperties.co.uk\n\nHappy to send a logo or a short description in whatever format suits you.\n\nThank you,\n<your name>\nMegacity Properties"],
+    ["Business association", "Subject: Our entry on your members page\n\nHello,\n\nMegacity Properties is a member of <association>. Could you check that our entry on the members page links to our website, <website address>? If there is a form or a preferred wording, tell me and I will send it straight back.\n\nThank you,\n<your name>\nMegacity Properties"],
+    ["Partner mention", "Subject: A link between our websites\n\nHello <name>,\n\nWe work with you on <what you do together> and mention you on our website. Would you be open to a short mention of Megacity Properties on yours, linking to <website address>? One sentence is plenty, and I can suggest wording if that helps.\n\nThank you,\n<your name>\nMegacity Properties"]
+  ];
+  function blPill(s) { var l = BL_STATUS.filter(function (x) { return x[0] === s; })[0]; return '<span class="st-pill st-pill--' + esc(s) + '">' + esc(l ? l[1] : s) + "</span>"; }
+  SCREENS.backlinks = function () {
+    setTop({ title: "Backlinks" });
+    view.innerHTML = '<p class="st-hint" style="margin-bottom:12px">Links are earned by asking. This list tracks the ones you have asked for and checks they are still there.</p>' +
+      '<div class="st-toolbar"><div class="st-counts" id="blCounts" style="margin:0;flex:1 1 200px"></div><button type="button" class="st-btn" data-blact="check-all">Check all</button><button type="button" class="st-btn st-btn--fill" data-blact="add">' + I.plus + 'Add a link</button></div>' +
+      '<div id="blBody">' + loading() + "</div>" +
+      '<section class="st-card" style="margin-top:16px"><div class="st-card-head"><div><h2>Outreach templates</h2><p>Short and plain. Fill in the angle brackets before sending.</p></div></div><div class="st-tpl">' +
+      OUTREACH.map(function (t) { return '<details class="st-details"><summary>' + esc(t[0]) + "</summary><div><pre>" + esc(t[1]) + '</pre><div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-copy="' + esc(t[1]) + '">' + I.copy + "Copy email</button></div></div></details>"; }).join("") + "</div></section>";
+    loadBacklinks();
+  };
+  function loadBacklinks() {
+    return API.backlinks.list().then(function (res) {
+      var body = $("#blBody"); if (!body) return;
+      blRows = res.items || [];
+      var c = res.counts || {}; var cnt = $("#blCounts"); if (cnt) cnt.innerHTML = BL_STATUS.map(function (s) { return '<span class="st-fchip">' + s[1] + " <b>" + (c[s[0]] || 0) + "</b></span>"; }).join("");
+      body.innerHTML = blRows.length ? blTable(blRows) + blCards(blRows) : '<div class="st-empty">' + I.link + '<h3>No links tracked yet</h3><p>Add the first one you ask for — a local directory is a good start.</p><button type="button" class="st-btn st-btn--fill" data-blact="add">' + I.plus + "Add a link</button></div>";
+    }).catch(function (err) { var b = $("#blBody"); if (b) b.innerHTML = errorHtml(err); });
+  }
+  function blActions(b) { return '<div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-blact="check" data-bid="' + esc(b.id) + '">Check now</button><button type="button" class="st-btn st-btn--sm" data-blact="edit" data-bid="' + esc(b.id) + '">Edit</button><button type="button" class="st-btn st-btn--sm st-btn--danger" data-blact="delete" data-bid="' + esc(b.id) + '" aria-label="Delete link">' + I.trash + "</button></div>"; }
+  function blHost(u) { try { return new URL(u).host + new URL(u).pathname.replace(/\/$/, ""); } catch (e) { return u; } }
+  function blTable(rows) {
+    return '<div class="st-tablewrap"><table class="st-table"><thead><tr><th scope="col">Source page</th><th scope="col">Points to</th><th scope="col">Anchor</th><th scope="col">Status</th><th scope="col">Last checked</th><th scope="col"><span class="st-vh">Actions</span></th></tr></thead><tbody>' + rows.map(function (b) {
+      return '<tr data-bid="' + esc(b.id) + '" style="cursor:default"><td><a class="st-url" href="' + esc(b.sourceUrl) + '" target="_blank" rel="noopener" title="' + esc(b.sourceUrl) + '">' + esc(blHost(b.sourceUrl)) + "</a>" + (b.contact ? '<div class="st-sub">' + esc(b.contact) + "</div>" : "") + "</td><td><code>" + esc(b.targetPath) + "</code></td><td>" + esc(b.anchor || "—") + "</td><td>" + blPill(b.status) + "</td><td>" + (b.lastCheckedAt ? '<time datetime="' + esc(b.lastCheckedAt) + '">' + esc(rel(b.lastCheckedAt)) + "</time>" : '<span class="st-hint">never</span>') + (b.lastResult ? '<span class="st-result">' + esc(b.lastResult) + "</span>" : "") + "</td><td>" + blActions(b) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+  }
+  function blCards(rows) {
+    return '<div class="st-cards">' + rows.map(function (b) { return '<article class="st-rcard" data-bid="' + esc(b.id) + '" style="grid-template-columns:1fr;cursor:default"><div style="min-width:0"><div class="st-title"><a href="' + esc(b.sourceUrl) + '" target="_blank" rel="noopener">' + esc(blHost(b.sourceUrl)) + '</a></div><div class="st-sub">→ ' + esc(b.targetPath) + (b.anchor ? " · “" + esc(b.anchor) + "”" : "") + '</div><div class="st-rmeta">' + blPill(b.status) + "<span>" + (b.lastCheckedAt ? "checked " + esc(rel(b.lastCheckedAt)) : "never checked") + "</span></div>" + (b.lastResult ? '<p class="st-msg">' + esc(b.lastResult) + "</p>" : "") + '<div style="margin-top:10px">' + blActions(b) + "</div></div></article>"; }).join("") + "</div>";
+  }
+  function backlinkDrawer(b) {
+    var isNew = !b; b = b || { sourceUrl: "", targetPath: "/templates/megacity-skyline", anchor: "Megacity Properties", contact: "", notes: "", status: "planned" };
+    openDrawer(isNew ? "Add a link" : "Edit link", '<form novalidate class="st-stack" id="blForm">' +
+      fieldHtml({ label: "Source page", name: "sourceUrl", type: "url", required: true, value: b.sourceUrl, ph: "https://…", inputmode: "url", hint: "The page on their site that links, or will link, to ours." }) +
+      fieldHtml({ label: "Points to", name: "targetPath", value: b.targetPath, ph: "/templates/megacity-skyline", hint: "The path on our site they should link to." }) +
+      fieldHtml({ label: "Anchor text", name: "anchor", value: b.anchor, ph: "Megacity Properties" }) +
+      fieldHtml({ label: "Contact", name: "contact", value: b.contact, ph: "Name or email at the other end", auto: "off" }) +
+      '<div class="st-field"><label class="st-label" for="f_notes">Notes</label><textarea class="st-ta" id="f_notes" name="notes" rows="3">' + esc(b.notes || "") + "</textarea></div>" +
+      selectHtml({ label: "Status", name: "status", noEmpty: true, value: b.status, options: BL_STATUS.map(function (s) { return { value: s[0], label: s[1] }; }) }) +
+      '<p class="st-err" data-form-err role="alert" hidden></p><button type="submit" class="st-btn st-btn--fill">' + (isNew ? "Add the link" : "Save changes") + "</button></form>", function (body) {
+        bindForm($("#blForm", body), function (d) {
+          if (!/^https?:\/\/\S+$/i.test(d.sourceUrl.trim())) throw new Error("The source page must be a full address starting with https://");
+          var payload = { sourceUrl: d.sourceUrl.trim(), targetPath: d.targetPath.trim() || "/", anchor: d.anchor.trim(), contact: d.contact.trim(), notes: d.notes.trim(), status: d.status };
+          return (isNew ? API.backlinks.create(payload) : API.backlinks.patch(b.id, payload)).then(function () { closeDrawer(); toast(isNew ? "Link added" : "Saved", { kind: "good" }); loadBacklinks(); });
+        });
+      });
+  }
+  function backlinkAction(act, id, btn) {
+    var row = blRows.filter(function (x) { return x.id === id; })[0];
+    if (act === "add") return backlinkDrawer(null);
+    if (act === "edit") return backlinkDrawer(row);
+    if (act === "check") { btn.disabled = true; return API.backlinks.check(id).then(function (b) { var i = blRows.findIndex(function (x) { return x.id === id; }); if (i >= 0) blRows[i] = b; var body = $("#blBody"); if (body) body.innerHTML = blTable(blRows) + blCards(blRows); toast(b.lastResult || "Checked"); }).catch(function (err) { errToast(err); btn.disabled = false; }); }
+    if (act === "check-all") { btn.disabled = true; return API.backlinks.checkAll().then(function (r) { toast("Checking " + plural(r.checking || 0, "link") + " — the list refreshes in a few seconds"); setTimeout(function () { if ($("#blBody")) loadBacklinks(); if (document.contains(btn)) btn.disabled = false; }, 8000); }).catch(function (err) { errToast(err); btn.disabled = false; }); }
+    if (act === "delete") return confirmModal({ title: "Delete this link?", body: "Only the record here is removed — nothing changes on their site.", confirm: "Delete", danger: true }).then(function (ok) { if (!ok) return; return API.backlinks.remove(id).then(function () { toast("Deleted"); loadBacklinks(); }); }).catch(errToast);
+  }
+
+  /* ── integrations ───────────────────────────────────────────────── */
+  SCREENS.integrations = function () {
+    setTop({ title: "Integrations" });
+    view.innerHTML = loading();
+    var owner = state.user && state.user.role === "owner";
+    Promise.all([API.settings.get(), aiOn() ? API.ai.usage().catch(function () { return null; }) : Promise.resolve(null)]).then(function (r) {
+      var s = r[0].settings || {}, usage = r[1], ro = owner ? "" : " readonly";
+      var lockNote = owner ? "" : '<p class="st-lock">' + I.key + "Only the owner can change the three IDs above. The banner wording is yours to edit.</p>";
+      view.innerHTML = '<div class="st-stack" style="max-width:860px">' +
+        '<section class="st-card"><div class="st-card-head"><div><h2>Analytics and pixels</h2><p>Nothing here loads for visitors until they accept the cookie banner.</p></div></div><form novalidate class="st-form" id="intForm">' +
+        '<div class="st-field c6"><label class="st-label" for="f_ga4Id">Google Analytics 4</label><input class="st-in" id="f_ga4Id" name="ga4Id" value="' + esc(s.ga4Id || "") + '" placeholder="G-XXXXXXXXXX" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Measures visits, listing views and enquiries. The measurement ID looks like G-XXXXXXXXXX.</span></div>' +
+        '<div class="st-field c6"><label class="st-label" for="f_metaPixelId">Meta Pixel</label><input class="st-in" id="f_metaPixelId" name="metaPixelId" value="' + esc(s.metaPixelId || "") + '" placeholder="Digits only" inputmode="numeric" autocomplete="off"' + ro + '><span class="st-hint">Lets Facebook and Instagram ads count enquiries. The pixel ID is a long number.</span></div>' +
+        '<div class="st-field"><label class="st-label" for="f_gscVerification">Google Search Console verification</label><input class="st-in" id="f_gscVerification" name="gscVerification" value="' + esc(s.gscVerification || "") + '" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Proves to Google that this is our site so it reports search clicks and indexing. In Search Console choose the HTML tag method and paste only the <code>content</code> value of the meta tag it gives you; the site puts the tag on every page.</span></div>' +
+        '<div class="st-field"><label class="st-label" for="f_consentText">Cookie banner wording</label><textarea class="st-ta" id="f_consentText" name="consentText" rows="3">' + esc(s.consentText || "") + '</textarea><span class="st-hint">Shown on the banner every visitor sees first. Analytics and the pixel only load once they accept.</span></div>' +
+        lockNote + '<p class="st-err" data-form-err role="alert" hidden></p><div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Save changes</button></div></form></section>' +
+        '<section class="st-card"><div class="st-card-head"><div><h2>AI</h2><p>' + (aiOn() ? "Claude writes listing copy, share kits and page drafts from the facts in the Studio; staff review before anything is saved." : "") + "</p></div></div>" +
+        (aiOn() ? usageHtml(usage) : '<p class="st-hint">AI is off until the ANTHROPIC_API_KEY secret is added.</p>') + "</section></div>";
+      bindForm($("#intForm"), function (d) {
+        var partial = { consentText: d.consentText.trim() };
+        if (owner) { partial.ga4Id = d.ga4Id.trim(); partial.metaPixelId = d.metaPixelId.trim(); partial.gscVerification = d.gscVerification.trim(); }
+        return API.settings.put(partial).then(function () { toast("Saved", { kind: "good" }); });
+      });
+    }).catch(showError);
+  };
+  function usageHtml(u) {
+    var rows = (u && u.last30) || [];
+    if (!rows.length) return '<p class="st-hint">No AI calls in the last 30 days.</p>';
+    return '<table class="st-usage"><caption class="st-vh">AI calls in the last 30 days</caption><thead><tr><th scope="col">What</th><th scope="col" style="text-align:right">Calls</th><th scope="col" style="text-align:right">Worked</th><th scope="col" style="text-align:right">Tokens in / out</th></tr></thead><tbody>' + rows.map(function (r) { return "<tr><td>" + esc(r.route) + '</td><td class="num">' + esc(r.calls) + '</td><td class="num">' + esc(r.ok) + '</td><td class="num">' + esc((r.inputTokens || 0).toLocaleString("en-GB")) + " / " + esc((r.outputTokens || 0).toLocaleString("en-GB")) + "</td></tr>"; }).join("") + "</tbody></table>";
+  }
+
   /* ── global delegation, shortcuts, init ──────────────────────────── */
-  view.addEventListener("input", onEdInput);
-  view.addEventListener("change", function (e) { if (teamAction(e)) return; onEdInput(e); });
+  view.addEventListener("input", function (e) { if (pg && onPgInput(e)) return; onEdInput(e); });
+  view.addEventListener("change", function (e) { if (teamAction(e)) return; if (pg && onPgInput(e)) return; onEdInput(e); });
   view.addEventListener("click", function (e) {
     if (e.target.closest("[data-import]")) { runImport(); return; }
     if (e.target.closest("[data-retry-route]")) { route(); return; }
     var c = e.target.closest("[data-copy]");
     if (c) { copyText(c.getAttribute("data-copy")).then(function () { toast("Copied"); }, function () { toast("Copy failed", { kind: "warn" }); }); return; }
     if (teamAction(e)) return;
+    var aiBtn = e.target.closest("[data-ai]"); if (aiBtn) { aiAction(aiBtn.getAttribute("data-ai"), aiBtn); return; }
+    var aiUse = e.target.closest("[data-ai-use]"); if (aiUse) { var uk = aiUse.getAttribute("data-ai-use"); if (uk === "*") AI_FIELDS.forEach(function (f) { aiApplyField(f[0]); }); else aiApplyField(uk); return; }
+    if (e.target.closest("[data-ai-dismiss]")) { var rp = $("#aiReviewPanel"); if (rp) rp.parentNode.removeChild(rp); return; }
+    var mai = e.target.closest("[data-mai]"); if (mai) { mediaAi(mai.getAttribute("data-mai"), mai.getAttribute("data-mid"), mai); return; }
+    if (e.target.closest("[data-newpage]")) { newPageDrawer(); return; }
+    if (pg) { var pa = e.target.closest("[data-pact],[data-bact],[data-addblock],[data-addfaq],[data-faq-rm],[data-hero]"); if (pa && pageClick(pa)) return; }
+    var blb = e.target.closest("[data-blact]"); if (blb) { backlinkAction(blb.getAttribute("data-blact"), blb.getAttribute("data-bid"), blb); return; }
     if (!ed) return;
     var ea = e.target.closest("[data-eact]"); if (ea) { editorAction(ea.getAttribute("data-eact"), ea); return; }
     var ma = e.target.closest("[data-mact]"); if (ma) { mediaAction(ma.getAttribute("data-mact"), ma.getAttribute("data-mid")); return; }
