@@ -176,5 +176,33 @@ The tour link for 10ninety's virtual-tour box is `https://<host>/billy360/?site=
 `GET /api/studio/dashboard` → `{counts:{listings:{live,draft,total}, media, tours:{live}}, recent:[{at,action,entity,entityId,user}]}`
 `GET /api/studio/audit?limit=50` → `{items:[…]}`
 
+### Enquiries, notifications, events
+| Route | Purpose |
+|---|---|
+| `POST /api/megacity-viewing`, `-contact`, `-maintenance` (existing) | still email the office (Settings → Notifications addresses, else the demo inbox) **and** insert an `enquiries` row + a notification. Bodies may carry `listingId` and `attr` (`{utm_source, utm_medium, utm_campaign, referrer, landing}`, captured by the site script) |
+| `POST /api/public/lead` | billy360's "Book a viewing" (`{property, site, name, email, phone, date, message, room, url}`) → enquiry `source:"tour"` + email |
+| `POST /api/public/event` | `sendBeacon` body `{name, listingId}` (`listing_view`, `tour_open`, …) or billy360's `{ev, site}`; stored 90 days with a daily-rotating session hash, no cookies |
+| `GET /api/studio/enquiries?status=&source=&listingId=` → `{items, counts}`; `GET/PATCH /api/studio/enquiries/:id` (`{status:new|handled|spam, note}`) | the inbox |
+| `GET /api/studio/notifications` → `{items, unread}`; `POST /api/studio/notifications/read {ids?}` | the bell |
+| `GET /api/studio/dashboard` | also returns `enquiries:{new,last7,bySource,daily}` and `events7` |
+
+### Public pages rendered by the Worker
+`/templates/megacity-let-<id>` is rendered from the database for a live listing (header `X-MC-Render: d1`), otherwise the static file is served (`static`). `/templates/megacity-properties` gets its grid and filters from the feed when there is at least one live listing. `/templates/megacity-sitemap.xml` lists the static pages and every live listing. `GET /api/public/listings?area&type&beds&minRent&maxRent&furnishing&pets&sort&view=cards|search` and `GET /api/public/listings/:id` are the read-only feed (cached 120 s).
+
+When a GA4 id, Meta Pixel id or Search Console token is set in Settings → Integrations, the Worker injects `megacity-consent.js` (UK consent banner, Consent Mode v2, nothing loads before "Accept all") and/or the verification meta into every public Megacity page it serves.
+
+### AI (Claude, key only in the `ANTHROPIC_API_KEY` secret)
+All answer `503 {configured:false}` until the secret exists; the Studio hides the buttons. 60 calls per person per hour; every call is logged in `ai_usage` (`GET /api/studio/ai/usage`). The model writes only from the facts in the record and never writes to the database itself: staff review, then save.
+
+| Route | Body | Response |
+|---|---|---|
+| `POST /api/studio/ai/listing-copy` | `{listingId, tone:"standard"\|"warm"\|"concise"}` | `{summary, description, features[], seoTitle, seoDescription}` (manual listings only; synced copy lives in 10ninety) |
+| `POST /api/studio/ai/classify-room` | `{mediaId}` | `{kind, name, confidence, alt}` — which room a photo shows; also stored as `aiLabel` on the media |
+| `POST /api/studio/ai/alt-text` | `{mediaId}` | `{alt}` |
+| `POST /api/studio/ai/share-kit` | `{listingId}` | `{headline, facebook, instagram, whatsapp, spareroom, hashtags[], metaDescription, url}` |
+| `POST /api/studio/ai/page-draft` | `{kind:"area"\|"landing"\|"guide", area?, brief?}` | `{title, seoTitle, seoDescription, blocks[{type:h2\|p\|list\|cta, text, items}], faq[{q,a}]}` |
+
+Models: `claude-sonnet-5` for writing, `claude-haiku-4-5-20251001` for looking at photos.
+
 ## Unbound behaviour
 `officeDb(env)` returns `env.MEGACITY_DB || null`. Without it every studio/public route answers `503 {connected:false, error:"…"}` and the Studio shows the setup checklist. Rendered public pages (Phase 3) fall back to the static files with `X-MC-Render: static`.

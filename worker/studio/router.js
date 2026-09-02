@@ -13,6 +13,8 @@ import * as tours from "./tours.js";
 import * as pub from "./public.js";
 import * as render from "./render.js";
 import * as enq from "./enquiries.js";
+import * as tracking from "./tracking.js";
+import * as ai from "./ai.js";
 import { readAll as readSettings } from "./settings.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
@@ -49,6 +51,13 @@ const ROUTES = [
   ["POST", "/listings/:id/unpublish", listings.unpublish],
   ["POST", "/listings/:id/status", listings.setStatus],
   ["PUT", "/listings/:id/media/order", listings.orderMedia],
+
+  ["POST", "/ai/listing-copy", ai.listingCopy],
+  ["POST", "/ai/classify-room", ai.classifyRoom],
+  ["POST", "/ai/alt-text", ai.altText],
+  ["POST", "/ai/share-kit", ai.shareKit],
+  ["POST", "/ai/page-draft", ai.pageDraft],
+  ["GET", "/ai/usage", ai.usage],
 
   ["GET", "/enquiries", enq.list],
   ["GET", "/enquiries/:id", enq.get],
@@ -94,7 +103,12 @@ function match(method, path) {
 export function isMegacityPath(url) {
   const p = url.pathname;
   return p.startsWith("/api/studio/") || p.startsWith("/api/public/") || p.startsWith("/media/") || p === "/api/billy360-verify" ||
-    /^\/templates\/megacity-let-[a-z0-9-]+$/.test(p) || p === "/templates/megacity-properties" || p === "/templates/megacity-sitemap.xml" || p === "/templates/megacity-let-template";
+    p.startsWith("/templates/megacity-");
+}
+
+/* the Studio itself and any script/style/asset request: never touched */
+function isPublicHtmlPath(p) {
+  return /^\/templates\/megacity-[a-z0-9-]+$/.test(p) && !/^\/templates\/megacity-studio/.test(p);
 }
 
 /* Strict same-origin for anything that changes state. Browsers send Origin
@@ -115,23 +129,29 @@ export async function handleMegacity(request, env, ctx, url) {
   if (p === "/templates/megacity-let-template") return new Response("Not found", { status: 404 });
   if (p.startsWith("/templates/megacity-")) {
     const db = officeDb(env);
-    const passThrough = () => env.ASSETS.fetch(request).then((r) => { const h = new Headers(r.headers); h.set("x-mc-render", "static"); return new Response(r.body, { status: r.status, headers: h }); });
-    if (!db || (request.method !== "GET" && request.method !== "HEAD")) return passThrough();
+    const isHtml = isPublicHtmlPath(p);
+    if (!db || !isHtml || (request.method !== "GET" && request.method !== "HEAD")) return env.ASSETS.fetch(request);
+    let settings = null;
+    try { settings = await readSettings(db); } catch (e) { console.error("settings", e); }
+    const finish = (res, how) => {
+      const h = new Headers(res.headers); h.set("x-mc-render", how);
+      return tracking.inject(new Response(res.body, { status: res.status, headers: h }), settings);
+    };
+    const passThrough = () => env.ASSETS.fetch(request).then((r) => finish(r, "static"));
     try {
       if (p === "/templates/megacity-sitemap.xml") return await render.sitemap(env, url, db);
       const m = /^\/templates\/megacity-let-([a-z0-9-]+)$/.exec(p);
       if (m) {
         const live = await render.loadLive(db, m[1]);
         if (!live) return passThrough();
-        const settings = await readSettings(db);
-        const page = await render.renderListingPage(request, env, url, live, settings);
-        return page || passThrough();
+        const page = await render.renderListingPage(request, env, url, live, settings || {});
+        return page ? finish(page, "d1") : passThrough();
       }
       if (p === "/templates/megacity-properties") {
         const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"));
         const cards = await feed.json();
         const page = cards.items && cards.items.length ? await render.renderPropertiesPage(request, env, url, cards) : null;
-        return page || passThrough();
+        return page ? finish(page, "d1") : passThrough();
       }
     } catch (e) {
       console.error("render", e && e.stack ? e.stack : e);
