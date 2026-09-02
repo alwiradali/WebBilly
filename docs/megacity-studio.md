@@ -22,6 +22,8 @@ scripts/megacity-seed.mjs           builds templates/megacity-seed.json from the
 
 ## One-time setup (Billy, in this order)
 
+The short way: enable R2 in the dashboard, then run `bash scripts/megacity-setup.sh` from the repo root. It creates the bucket and database, writes the real id into `wrangler.toml`, applies the migration and sets the secrets, then tells you what to commit. `bash scripts/megacity-setup.sh verify` checks the live site after the deploy. The long way is below.
+
 1. Cloudflare dashboard → R2 → enable R2 (a payment card is required even for the free 10 GB tier). Then:
    `npx wrangler r2 bucket create megacity-media`
 2. `npx wrangler d1 create megacity` → copy the `database_id` it prints.
