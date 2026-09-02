@@ -1214,3 +1214,25 @@ body.is-embed .dash-inner { padding-top: 20px; }
 .as-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
 .as-row { display: flex; gap: 8px; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); }
 .as-row .input { flex: 1; }
+
+/* ── Studio · doors you can drag, hotspots you can move, "which room is this?" ── */
+.door-palette { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 4px; }
+.door-palette-l { font-size: 12px; color: var(--ink-2, #9aa3b5); margin-right: 2px; }
+.door-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line-2, rgba(255,255,255,.18));
+  background: var(--bg-2, rgba(255,255,255,.06)); color: inherit; font: inherit; font-size: 13px; cursor: grab; touch-action: manipulation; }
+.door-chip svg { width: 13px; height: 13px; }
+.door-chip:hover { border-color: var(--accent); }
+.door-chip.is-linked { border-style: dashed; opacity: .8; }
+.door-chip.is-drag { opacity: .5; cursor: grabbing; }
+.door-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#studioStage.is-drop { outline: 3px dashed var(--accent); outline-offset: -3px; }
+#studioStage .hs { touch-action: none; cursor: grab; }
+#studioStage .hs.is-moving { cursor: grabbing; }
+#studioStage .hs.is-moving .hs-mark { transform: scale(1.18); box-shadow: 0 0 0 4px rgba(255,255,255,.25); }
+.ask-room { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center; padding: 18px; background: rgba(6,8,16,.72); backdrop-filter: blur(6px); }
+.ask-room-card { width: min(560px, 100%); max-height: 92vh; overflow: auto; border-radius: 18px; background: var(--bg-1, #14161c); border: 1px solid var(--line-2, rgba(255,255,255,.14)); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.ask-room-card img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; background: #000; }
+.ask-room-body { padding: 18px 20px 20px; }
+.ask-room-body h4 { margin: 10px 0 4px; font-size: 20px; }
+.ask-room-body .field { margin-top: 12px; }
+@media (max-width: 600px) { .ask-room { padding: 0; align-items: flex-end; } .ask-room-card { border-radius: 18px 18px 0 0; } }

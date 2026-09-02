@@ -44,6 +44,10 @@
   /* ── state ────────────────────────────────────────────────────────────── */
 
   var CFG = window.BILLY360_CONFIG || {};
+  /* store.js decides where the tour lives (this browser, or the Megacity Studio
+     server); it always runs first, so this is set before anything below */
+  var STORE = window.BILLY360_STORE || { mode: "local" };
+  function remoteMode() { return STORE.mode === "remote"; }
   var PORTFOLIO = CFG.portfolio || {};
   var ADMIN_CFG = CFG.admin || {};
   var EMBED_CFG = CFG.embed || {};
@@ -194,6 +198,8 @@
      browser that once pressed Publish would never see a content update. */
   function loadTour(id) {
     var ship = shippedTour(id);
+    /* Studio-on-the-server: the tour came from the API, never from this browser */
+    if (remoteMode()) return ship ? JSON.parse(JSON.stringify(ship)) : null;
     try {
       var raw = localStorage.getItem(storeKey(id));
       if (raw) {
@@ -207,7 +213,33 @@
     } catch (e) { }
     return ship ? JSON.parse(JSON.stringify(ship)) : null;
   }
+  var remoteSaving = false, remoteQueued = false;
   function saveTour(silent) {
+    if (remoteMode()) {
+      /* uploads any embedded images to R2 first, then PUTs the tour; a save
+         that lands while one is in flight runs again afterwards */
+      if (remoteSaving) { remoteQueued = true; return true; }
+      remoteSaving = true;
+      dirty = false;
+      markSaved("Saving…");
+      var health = null;
+      try { health = tourHealth().score; } catch (e) { }
+      STORE.save(TOUR, { health: health, onStatus: function (s) { markSaved(s); } }).then(function () {
+        remoteSaving = false;
+        if (remoteQueued) { remoteQueued = false; saveTour(true); return; }
+        markSaved("Saved");
+        if (!silent) toast("Saved to the Studio.");
+        if (view === "studio" && studioTab === "publish") renderStudio();
+      })["catch"](function (e) {
+        remoteSaving = false; remoteQueued = false;
+        dirty = true;
+        markSaved("Not saved", true);
+        if (e && e.status === 409) toast("Someone else saved this tour since you opened it. Reload to see their changes.");
+        else if (e && e.status === 401) toast("Your Studio login has expired. Sign in again, then save.");
+        else toast("Couldn't save: " + ((e && e.message) || "no connection") + ". Your changes are still on screen.");
+      });
+      return true;
+    }
     try {
       localStorage.setItem(storeKey(PROJECT), JSON.stringify(TOUR));
       localStorage.setItem("billy360:project", PROJECT);
@@ -1195,10 +1227,40 @@
       else mark.appendChild(icon(HS_ICON[h.icon] || HS_ICON[h.type] || "info"));
       b.appendChild(mark);
       b.appendChild(el("span", "hs-tag", label));
+      var justMoved = false;
       b.onclick = function (ev) {
         ev.stopPropagation();
+        if (justMoved) { justMoved = false; return; }
         if (placing) { selectHotspot(h); return; }
         activateHotspot(h);
+      };
+      /* in the Studio a hotspot can simply be dragged to where it belongs */
+      b.onpointerdown = function (ev) {
+        if (view !== "studio" || !engine) return;
+        ev.stopPropagation();
+        var sx = ev.clientX, sy = ev.clientY, moved = false;
+        try { b.setPointerCapture(ev.pointerId); } catch (e) { }
+        b.onpointermove = function (e2) {
+          if (!moved && Math.abs(e2.clientX - sx) + Math.abs(e2.clientY - sy) < 5) return;
+          moved = true;
+          b.classList.add("is-moving");
+          var a = engine.angleAt(e2.clientX, e2.clientY);
+          if (!a) return;
+          h.yaw = +a.yaw.toFixed(2); h.pitch = +a.pitch.toFixed(2);
+          layoutHotspots(true);
+        };
+        b.onpointerup = b.onpointercancel = function (e2) {
+          try { b.releasePointerCapture(e2.pointerId); } catch (e) { }
+          b.onpointermove = null; b.onpointerup = null; b.onpointercancel = null;
+          b.classList.remove("is-moving");
+          if (!moved) return;
+          justMoved = true;
+          var wasAuto = h.auto;
+          delete h.auto;
+          markDirty();
+          if (view === "studio") renderStudio();
+          toast(wasAuto ? "Door moved onto the doorway." : "Hotspot moved.");
+        };
       };
       layer.appendChild(b);
       hotEls.push({ el: b, h: h });
@@ -3168,13 +3230,18 @@
     function done() {
       if (!made.length) { toast(skipped[0] || "No 360° images in that drop."); return; }
       made.sort(function (a, b) { return a.order - b.order; });
+      /* phones name files IMG_1234 — in the Studio we simply ask, one by one */
+      if (remoteMode() && !made.picked) { askRooms(made, function (choices) { made.picked = choices; done(); }); return; }
       var starter = TOUR.rooms.length === 1 && !TOUR.rooms[0].pano && !photosOf(TOUR.rooms[0]).length;
       var touched = [], filled = 0, added = 0;
       made.forEach(function (m, i) {
+        var pick = made.picked ? made.picked[i] : null;
+        if (pick && pick.skip) return;
+        if (pick && pick.name) m.name = pick.name;
         /* a file named after an existing empty room fills that room — so a
            drop lands straight into the skeleton the property was born with */
-        var room = null;
-        for (var k = 0; k < TOUR.rooms.length; k++) {
+        var room = pick && pick.room ? pick.room : null;
+        for (var k = 0; !room && k < TOUR.rooms.length; k++) {
           var r = TOUR.rooms[k];
           if (!r.pano && slug(r.name) === slug(m.name)) { room = r; break; }
         }
@@ -3197,6 +3264,7 @@
         room.panoDark = !!(m.luma && m.luma < 58);
         touched.push(room);
       });
+      if (!touched.length) { toast("Nothing was added."); return; }
       autoLinkRooms();
       indexRooms();
       engine.load(TOUR);
@@ -3221,6 +3289,63 @@
       if (skipped.length) setTimeout(function () { toast(skipped[0]); }, 3000);
     }
   }
+  /* "Which room is this?" — one card per dropped 360°, answered from a dropdown
+     of the property's rooms (empty ones first), or a new room by name */
+  function askRooms(made, cb) {
+    var out = [], i = 0;
+    (function next() {
+      if (i >= made.length) { cb(out); return; }
+      askRoom(made[i], i + 1, made.length, function (choice) { out.push(choice); i++; next(); });
+    })();
+  }
+  function askRoom(m, n, total, cb) {
+    var wrap = el("div", "ask-room");
+    var card = el("div", "ask-room-card");
+    var img = el("img"); img.src = m.src; img.alt = ""; card.appendChild(img);
+    var body = el("div", "ask-room-body");
+    body.appendChild(el("span", "chip", "Photo " + n + " of " + total));
+    body.appendChild(el("h4", null, "Which room is this?"));
+    body.appendChild(el("p", "t-body", m.name && !/^room \d+$/i.test(m.name) ? "The file is called “" + m.name + "”." : "Pick the room this 360° shows."));
+    var empty = TOUR.rooms.filter(function (r) { return !r.pano; });
+    var full = TOUR.rooms.filter(function (r) { return r.pano; });
+    var opts = [];
+    empty.forEach(function (r) { opts.push([r.id, r.name + " — needs its 360°"]); });
+    full.forEach(function (r) { opts.push([r.id, r.name + " — replace its 360°"]); });
+    opts.push(["__new", "A new room…"]);
+    var guess = null;
+    if (m.name) for (var k = 0; k < empty.length; k++) if (slug(empty[k].name) === slug(m.name)) { guess = empty[k].id; break; }
+    var sel = select(opts, guess || (empty[0] ? empty[0].id : "__new"), function () { nameRow.hidden = sel.value !== "__new"; });
+    body.appendChild(field("Room", sel));
+    var nameRow = el("div");
+    var nameI = el("input", "input"); nameI.placeholder = "e.g. Study, Utility, Second bathroom";
+    nameI.value = m.name && !/^room \d+$/i.test(m.name) ? m.name : "";
+    nameRow.appendChild(field("Name the new room", nameI));
+    nameRow.hidden = sel.value !== "__new";
+    body.appendChild(nameRow);
+    var acts = el("div");
+    acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:12px";
+    var ok = el("button", "btn btn--primary", "Use this photo");
+    ok.onclick = function () {
+      var v = sel.value;
+      if (v === "__new") {
+        var nm = nameI.value.trim();
+        if (!nm) { nameI.focus(); return; }
+        close(); cb({ room: null, name: nm });
+        return;
+      }
+      close(); cb({ room: roomsById[v] || null, name: (roomsById[v] || {}).name || m.name });
+    };
+    var skip = el("button", "btn", "Skip this one");
+    skip.onclick = function () { close(); cb({ skip: true }); };
+    acts.appendChild(ok); acts.appendChild(skip);
+    body.appendChild(acts);
+    card.appendChild(body);
+    wrap.appendChild(card);
+    document.body.appendChild(wrap);
+    function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }
+    setTimeout(function () { sel.focus(); }, 30);
+  }
+
   /* the Studio asks for the pictures — one room at a time, advancing itself */
   function nextMissingAfter(target) {
     var order = TOUR.rooms;
@@ -3401,11 +3526,57 @@
     pv.id = "studioStage";
     main.appendChild(pv);
 
+    var others = TOUR.rooms.filter(function (r) { return r.id !== room.id; });
+
+    /* drag a door chip onto the doorway in the panorama — or tap a chip, then
+       tap the doorway, on a phone */
+    if (others.length) {
+      var pal = el("div", "door-palette");
+      pal.appendChild(el("span", "door-palette-l", "Doors — drag one onto the doorway:"));
+      others.forEach(function (r) {
+        var chip = el("button", "door-chip" + (hasNav(room, r) ? " is-linked" : ""));
+        chip.type = "button";
+        chip.draggable = true;
+        chip.appendChild(icon("pin"));
+        chip.appendChild(document.createTextNode(r.name));
+        chip.title = hasNav(room, r) ? "A door to " + r.name + " exists — drag to move it" : "Drag onto the doorway that leads to " + r.name;
+        chip.ondragstart = function (e) {
+          e.dataTransfer.setData("text/plain", "billy360-door:" + r.id);
+          e.dataTransfer.effectAllowed = "copy";
+          chip.classList.add("is-drag");
+        };
+        chip.ondragend = function () { chip.classList.remove("is-drag"); };
+        chip.onclick = function () {
+          placing = true;
+          placingSpec = { type: "nav", to: r.id, label: "To " + r.name };
+          $("#studioStage").classList.add("is-placing");
+          renderStudio();
+          toast("Now tap the doorway that leads to " + r.name + ".");
+        };
+        pal.appendChild(chip);
+      });
+      main.appendChild(pal);
+      pv.ondragover = function (e) {
+        if (e.dataTransfer.types.indexOf("text/plain") < 0) return;
+        e.preventDefault(); e.dataTransfer.dropEffect = "copy"; pv.classList.add("is-drop");
+      };
+      pv.ondragleave = function () { pv.classList.remove("is-drop"); };
+      pv.ondrop = function (e) {
+        var d = e.dataTransfer.getData("text/plain") || "";
+        if (d.indexOf("billy360-door:") !== 0) return;
+        e.preventDefault(); pv.classList.remove("is-drop");
+        var target = roomsById[d.slice(14)];
+        if (!target || !currentRoom) return;
+        var a = engine.angleAt(e.clientX, e.clientY);
+        if (!a) return;
+        linkRoomsAt(currentRoom, target, +a.yaw.toFixed(2), +a.pitch.toFixed(2));
+      };
+    }
+
     var bar = el("div");
     bar.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0";
 
     /* doors first — the tool people actually need, in their words */
-    var others = TOUR.rooms.filter(function (r) { return r.id !== room.id; });
     if (others.length) {
       var doorSel = select(others.map(function (r) { return [r.id, r.name]; }), others[0].id, function () { });
       doorSel.style.maxWidth = "180px";
@@ -3573,6 +3744,23 @@
   function refreshHotspotsOnly(room) {
     if (currentRoom && currentRoom.id === room.id) renderHotspots(room);
     markDirty();
+  }
+  /* a door from a to b at an exact spot, plus the way back (auto, until aimed) */
+  function linkRoomsAt(a, b, yaw, pitch) {
+    a.hotspots = a.hotspots || []; b.hotspots = b.hotspots || [];
+    var door = null;
+    for (var i = 0; i < a.hotspots.length; i++) if (a.hotspots[i].type === "nav" && a.hotspots[i].to === b.id) { door = a.hotspots[i]; break; }
+    if (door) { door.yaw = yaw; door.pitch = pitch; delete door.auto; }
+    else { door = { id: "h" + Date.now().toString(36), type: "nav", to: b.id, yaw: yaw, pitch: pitch, label: "To " + b.name }; a.hotspots.push(door); }
+    if (!hasNav(b, a)) b.hotspots.push({
+      id: "h" + Math.random().toString(36).slice(2, 8), type: "nav", to: a.id,
+      yaw: +((((yaw + 180) % 360) + 360) % 360 - 180).toFixed(2), pitch: -4, label: "To " + a.name, auto: true
+    });
+    selectedHotspot = door;
+    renderHotspots(a);
+    markDirty();
+    renderStudio();
+    toast("Door placed — it walks to " + b.name + ". The way back is marked auto until you aim it from " + b.name + ".");
   }
   function selectHotspot(h) {
     selectedHotspot = h;
@@ -4382,6 +4570,61 @@
 
     var save = el("div", "studio-panel card");
     save.style.marginTop = "16px";
+    if (remoteMode()) {
+      var live = STORE.status === "live";
+      save.appendChild(el("h4", null, live ? "Live on the listing" : "Publish to the listing"));
+      save.appendChild(el("p", "t-body", live
+        ? "Visitors see this tour on the property page. Publishing again sends your latest changes; the link below is the one for 10ninety's virtual-tour box."
+        : "The tour is a draft only the Studio can see. Publish to put it on the property page and to get the link for 10ninety's virtual-tour box."));
+      var racts = el("div");
+      racts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:14px";
+      var rpub = el("button", "btn btn--primary");
+      rpub.appendChild(icon("check"));
+      rpub.appendChild(document.createTextNode(live ? "Publish latest changes" : "Publish to the listing"));
+      rpub.onclick = function () {
+        rpub.disabled = true; rpub.textContent = "Publishing…";
+        var h = tourHealth().score;
+        STORE.save(TOUR, { health: h, onStatus: function (s) { markSaved(s); } }).then(function () {
+          dirty = false; markSaved("Saved");
+          return STORE.publish(h);
+        }).then(function (j) {
+          if (j.ok) { toast("Published — the tour is live on the listing."); TOUR.project.hidden = false; }
+          else toast((j.problems && j.problems[0]) || "Not published yet.");
+          renderStudio();
+        })["catch"](function (e) { toast("Couldn't publish: " + (e.message || "no connection")); renderStudio(); });
+      };
+      racts.appendChild(rpub);
+      if (live) {
+        var unpub = el("button", "btn", "Take it off the listing");
+        unpub.onclick = function () {
+          STORE.unpublish().then(function () { toast("The tour is a draft again."); renderStudio(); })["catch"](function (e) { toast(e.message || "Couldn't do that."); });
+        };
+        racts.appendChild(unpub);
+      }
+      var copyLink = el("button", "btn", "Copy tour link for 10ninety");
+      copyLink.onclick = function () { copyText(STORE.tourUrl(), "Tour link copied — paste it into 10ninety's virtual-tour field."); };
+      racts.appendChild(copyLink);
+      var copyEmbed = el("button", "btn", "Copy embed code");
+      copyEmbed.onclick = function () { copyText(STORE.embedCode(), "Embed code copied."); };
+      racts.appendChild(copyEmbed);
+      var expR = el("button", "btn", "Export tour.json");
+      expR.onclick = exportTour;
+      racts.appendChild(expR);
+      var impLocal = el("button", "btn", "Upload this browser's saved tours");
+      impLocal.title = "Tours edited before the Studio existed live only in this browser — this sends them to the server.";
+      impLocal.onclick = function () {
+        impLocal.disabled = true; impLocal.textContent = "Uploading…";
+        STORE.importLocal().then(function (j) {
+          impLocal.disabled = false; impLocal.textContent = "Upload this browser's saved tours";
+          if (j.none) { toast("No saved tours in this browser."); return; }
+          toast((j.imported.length ? j.imported.length + " uploaded. " : "") + (j.skipped.length ? j.skipped.length + " skipped — " + j.skipped[0].reason : ""));
+        })["catch"](function (e) { impLocal.disabled = false; impLocal.textContent = "Upload this browser's saved tours"; toast(e.message || "Upload failed."); });
+      };
+      racts.appendChild(impLocal);
+      save.appendChild(racts);
+      main.appendChild(save);
+    }
+    if (!remoteMode()) {
     save.appendChild(el("h4", null, "Publish"));
     save.appendChild(el("p", "t-body", "Publishing writes the tour to this browser so the change is live for you immediately. " +
       "Export the file to move it onto the server, into a repository, or across to another machine."));
@@ -4441,6 +4684,7 @@
     acts.appendChild(pub); acts.appendChild(exp); acts.appendChild(imp); acts.appendChild(impF); acts.appendChild(reset);
     save.appendChild(acts);
     main.appendChild(save);
+    }
 
     /* ── send it everywhere — one link, every channel ────────────────────── */
     var shareCard = el("div", "studio-panel card");
@@ -5108,6 +5352,8 @@
     sites: function () { return visibleSites().map(function (m) { return { id: m.id, name: m.name, project: m.project }; }); },
     isAdmin: isAdmin,
     signOut: adminSignOut,
+    health: function () { return tourHealth(); },
+    save: function () { return saveTour(); },
     engine: function () { return engine; }
   };
 })();

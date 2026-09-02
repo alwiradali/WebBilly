@@ -9,6 +9,7 @@ import * as auth from "./auth.js";
 import * as listings from "./listings.js";
 import * as media from "./media.js";
 import * as settings from "./settings.js";
+import * as tours from "./tours.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
 const ROUTES = [
@@ -44,6 +45,14 @@ const ROUTES = [
   ["POST", "/listings/:id/unpublish", listings.unpublish],
   ["POST", "/listings/:id/status", listings.setStatus],
   ["PUT", "/listings/:id/media/order", listings.orderMedia],
+
+  ["POST", "/tours/import", tours.importTours],
+  ["GET", "/tours/:id", tours.get],
+  ["POST", "/tours/:id", tours.create],
+  ["PUT", "/tours/:id", tours.put],
+  ["DELETE", "/tours/:id", tours.remove],
+  ["POST", "/tours/:id/publish", tours.publish],
+  ["POST", "/tours/:id/unpublish", tours.unpublish],
 
   ["POST", "/media", media.upload],
   ["PUT", "/media/stream", media.stream],
@@ -94,7 +103,7 @@ export async function handleMegacity(request, env, ctx, url) {
   if (p.startsWith("/api/studio/")) return studioApi(request, env, ctx, url, p.slice("/api/studio".length));
 
   if (p === "/api/billy360-verify") {
-    // Phase 2 wires this to the tour studio; until then it simply reports the session state.
+    // billy360's Studio asks "is this person allowed in?" — the office cookie answers.
     const db = officeDb(env);
     if (!db) return json({ ok: false, connected: false }, 503);
     try {
@@ -106,7 +115,11 @@ export async function handleMegacity(request, env, ctx, url) {
   if (p.startsWith("/api/public/")) {
     const db = officeDb(env);
     if (!db) return json({ connected: false, items: [] }, 503);
-    return json({ error: "Not found" }, 404);
+    try {
+      const m = /^\/api\/public\/tours(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
+      if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1]) : tours.publicManifest(db);
+      return json({ error: "Not found" }, 404);
+    } catch (e) { return errorResponse(e); }
   }
   return env.ASSETS.fetch(request);
 }
