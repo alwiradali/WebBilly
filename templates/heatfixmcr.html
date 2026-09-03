@@ -368,164 +368,118 @@ h1.hh em{font-style:normal;color:#7cc6f2}
 <div data-fx="progressbar" style="color:#c9a24a"></div>
 
 <!-- ================= NAV ================= -->
-<nav class="nav" id="nav">
-  <div class="nav-in">
-    <a class="brandlink lockup" href="#top" aria-label="HeatFix Mcr Limited — home">
-      <span class="logo-plate"><img src="../assets/heatfix/logo-mark-400.webp" alt="Heat Fix Mcr Limited" width="400" height="377"></span>
-      <span class="brandtxt"><b>HEAT FIX MCR LIMITED</b><span class="svcs full">Installation &middot; Servicing &middot; Repairs &middot; Heating &middot; Plumbing &middot; Gas Safety</span><span class="svcs short">Installation &middot; Servicing &middot; Repairs &middot; Gas Safety</span></span>
+<nav class="hfnav" id="nav">
+  <div class="hfnav-in">
+    <a class="hfbrand" href="#top" aria-label="Heat Fix Mcr Limited — home">
+      <img src="../assets/heatfix/logo-lockup-rev-600.webp" alt="Heat Fix Mcr Limited" width="600" height="551">
     </a>
-    <div class="navlinks">
+    <div class="hfnav-links">
+      <a href="#top">Home</a>
       <a href="#services">Services</a>
-      <a href="#work">Our work</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#faqs">FAQs</a>
       <a href="#about">About</a>
-      <a href="#areas">Areas</a>
-      <a href="/book">Book</a>
+      <a href="#quote">Contact</a>
     </div>
-    <a class="navtel" href="tel:+447890452629">07890 452629</a>
-    <a class="btn sm gold" href="#quote" style="display:none" id="navcta">Free quote</a>
-    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    <a class="hfnav-tel" href="tel:+447890452629">07890 452629</a>
+    <a class="hfbtn" href="#quote">Get a free quote</a>
+    <button class="hfburger" id="burger" type="button" aria-label="Open menu">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
   </div>
 </nav>
-<div class="drawer" id="drawer">
-  <a href="#services">Services</a>
-  <a href="#work">Our work</a>
-  <a href="#reviews">Reviews</a>
-  <a href="#faqs">FAQs</a>
-  <a href="#about">About us</a>
-  <a href="#blog">Blog</a>
-  <a href="#areas">Areas covered</a>
-  <a href="/book">Book a visit</a>
-  <a href="#quote">Free quote</a>
+
+<div class="hfdrawer" id="drawer">
+  <div class="hfdrawer-in">
+    <a href="#top">Home</a>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#quote">Contact</a>
+    <a href="tel:+447890452629">07890 452629</a>
+    <a class="hfbtn" href="#quote">Get a free quote</a>
+  </div>
 </div>
 
 <!-- ================= HERO ================= -->
-<header class="hero" id="top">
-  <div class="hero-photo">
-    <picture>
-      <source media="(max-width:760px)" srcset="../assets/heatfix/hero-main-sm.webp">
-      <img src="../assets/heatfix/hero-main.webp" alt="Gas Safe registered engineer checking the gas pressure on a wall-mounted combi boiler" width="2000" height="875" fetchpriority="high" decoding="async">
-    </picture>
-  </div>
-  <div class="hero-scrim" aria-hidden="true"></div>
-  <div class="hero-ember" aria-hidden="true"></div>
-
-  <div class="wrap hero-in">
-    <div>
-      <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span class="h-badge-t">Gas Safe registered<span class="gsno" data-gsno="no"></span><span class="h-badge-x"> · Manchester's own gas engineer</span></span></span>
-      <h1 class="hh" data-fx="text" data-fx-step="60">
-        Cold house today. <em>Warm house tonight.</em>
-      </h1>
-      <p class="lede" data-fx="reveal" data-fx-delay="260">
-        HeatFix Mcr Limited is Mohammad Ejaz — Gas Safe registered, Manchester
-        based, and the only person who'll touch your boiler. One engineer start
-        to finish, with everything agreed in writing before a tool comes out.
+<header class="hfhero" id="top">
+  <div class="hfembers" aria-hidden="true"></div>
+  <div class="hfhero-in">
+    <div class="hfhero-txt">
+      <img class="hfhero-logo" src="../assets/heatfix/logo-lockup-rev.webp" alt="Heat Fix Mcr Limited" width="1200" height="1102">
+      <h1 data-fx="reveal">Warm homes.<em>Fixed fast.</em></h1>
+      <p class="sub" data-fx="reveal" data-fx-delay="120">
+        Gas Safe registered heating, boiler and plumbing engineers serving all Manchester.
       </p>
-      <div class="hero-cta" data-fx="reveal" data-fx-delay="380">
-        <a class="btn fire" href="#quote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-          Get a free quote
-        </a>
-        <a class="btn ghost" href="tel:+447890452629">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>
-          07890 452629
-        </a>
-      </div>
-      <div class="hero-mini" data-fx="stagger" data-fx-step="90" data-fx-delay="450">
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Free</b> quotes, no obligation</div>
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Same-day</b> call-outs where we can</div>
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Insured</b> <span id="insHero">public liability cover</span></div>
+      <div class="hfhero-cta" data-fx="reveal" data-fx-delay="220">
+        <a class="hfbtn" href="#quote">Get a free quote</a>
+        <a class="hfbtn line" href="#services">See our services</a>
       </div>
     </div>
-
-    <aside class="hero-card" data-fx="reveal" data-fx-delay="200">
-      <div class="cap" aria-hidden="true"></div>
-      <div class="in">
-        <h2>Book a visit</h2>
-        <p class="sub">Straight to Ejaz's phone.<br><b>Most enquiries answered the same day.</b></p>
-        <form class="hcf" id="heroBook" novalidate>
-          <input type="text" id="hbName" placeholder="Your name" autocomplete="name" required>
-          <div class="two">
-            <input type="tel" id="hbPhone" placeholder="Phone" autocomplete="tel" inputmode="tel" required>
-            <input type="text" id="hbPost" placeholder="Postcode" autocomplete="postal-code" style="text-transform:uppercase" required>
-          </div>
-          <select id="hbJob" required>
-            <option value="">What do you need?</option>
-            <option>Boiler not working / breakdown</option>
-            <option>New boiler quote</option>
-            <option>Boiler service or landlord certificate</option>
-            <option>Hot water cylinder</option>
-            <option>Gas cooker, hob or fire</option>
-            <option>Plumbing or bathroom</option>
-            <option>Something else</option>
-          </select>
-          <button class="btn fire" type="submit">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            Request a call back
-          </button>
-        </form>
-        <p class="small">Water still running? <a href="tel:+447890452629">Ring 07890 452629</a> — don't type.</p>
-      </div>
-    </aside>
-  </div>
-
-  <div class="hero-trust">
-    <div class="wrap htr">
-      <div><span class="gsmini" aria-hidden="true"></span><span><b>Gas Safe</b> registered<span class="gsno" data-gsno="no"></span></span></div>
-      <span class="sep" aria-hidden="true"></span>
-      <div><span class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg></span><span><b>Reviewed</b> on Google</span></div>
-      <span class="sep" aria-hidden="true"></span>
-      <div><span><b>Benchmark</b> commissioned installs</span></div>
-      <span class="sep" aria-hidden="true"></span>
-      <div><span><b>Manchester</b> &amp; Stockport</span></div>
+    <div class="hfhero-shot">
+      <img src="../assets/heatfix/hero-main.webp" alt="Gas Safe registered engineer working on a wall-mounted combi boiler" width="2000" height="875" fetchpriority="high">
     </div>
   </div>
 </header>
 
-<!-- ================= MARQUEE ================= -->
-<div class="mq" aria-hidden="true">
-  <div class="mq-t" id="mqt">
-    <span>Boiler installation</span><span>Boiler repair</span><span>Annual servicing</span>
-    <span>Unvented cylinders</span><span>Gas cookers &amp; hobs</span><span>Landlord gas safety</span>
-    <span>Power flushing</span><span>Bathrooms &amp; showers</span><span>Leaks &amp; emergencies</span>
-    <span>Radiators &amp; valves</span><span>Taps &amp; toilets</span><span>Gas Safe registered</span><span>Public liability insured</span>
+<!-- ================= TRUST BAND ================= -->
+<div class="hftrust">
+  <div class="hftrust-in">
+    <div><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8.6-8 9.6C7.4 20.6 4 17 4 12V6z"/><path d="m9 12 2 2 4-4"/></svg>Gas Safe registered</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>Same-day call-outs</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 7h16v11H4z"/><path d="M4 11h16M8 15h4"/></svg>Fixed-price quotes</div>
+    <div><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Local Manchester engineers</div>
   </div>
 </div>
 
-<!-- ================= BRANDS ================= -->
-<section class="sect" id="brands" style="padding-bottom:0">
-  <div class="wrap">
-    <span class="eyebrow" data-fx="reveal">Boilers and parts we work on</span>
-    <h2 data-fx="reveal" data-fx-delay="80" style="margin-top:16px;font-size:clamp(1.8rem,4.4vw,2.7rem)">
-      We install, service and repair<br>the makes you'll actually have.
-    </h2>
-    <p class="lede" data-fx="reveal" data-fx-delay="140" style="margin-top:18px">
-      Parts sourced from the merchants on the day where we can, so a breakdown doesn't
-      turn into a week without hot water.
-    </p>
-    <div class="brands" data-fx="stagger" data-fx-step="60">
-        <div class="brand">Worcester Bosch<small>Combi & system</small></div>
-        <div class="brand">Vaillant<small>Combi & system</small></div>
-        <div class="brand">Ideal<small>Logic & Vogue</small></div>
-        <div class="brand">Baxi<small>Combi & heat-only</small></div>
-        <div class="brand">Glow-worm<small>Energy & Betacom</small></div>
-        <div class="brand">Viessmann<small>Vitodens</small></div>
-        <div class="brand">Main<small>Eco Compact</small></div>
-        <div class="brand">Potterton<small>Promax</small></div>
-        <div class="brand">Alpha<small>E-Tec</small></div>
-        <div class="brand">Ariston<small>Clas & E-Combi</small></div>
-        <div class="brand">Megaflo<small>Unvented cylinders</small></div>
-        <div class="brand">Stelrad<small>Radiators</small></div>
-    </div>
-    <p style="margin-top:20px;font-size:.82rem;color:var(--dim)">
-      Brand names are listed to show what we work on. HeatFix Mcr Limited is an
-      independent Gas Safe registered business and is not an agent of any manufacturer.
-    </p>
+<!-- ================= WHAT WE DO ================= -->
+<section class="hfwhat" id="services">
+  <h2 data-fx="reveal">What we do</h2>
+  <div class="hfcards" data-fx="stagger" data-fx-step="70">
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="5" y="3" width="14" height="15" rx="2"/><path d="M12 7c-1.4 2-2.2 3-2.2 4.2a2.2 2.2 0 0 0 4.4 0C14.2 10 13.4 9 12 7z" fill="#fff" stroke="none"/><path d="M9 21v-3M15 21v-3"/></svg></span>
+      <h3>Boiler installation</h3>
+      <p>Combi, system or heat-only. Fixed price agreed in writing, old one out, new one in, commissioned on the Benchmark checklist.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M15 5a4 4 0 0 0-5.2 5.2L4 16v4h4l5.8-5.8A4 4 0 0 0 19 9l-2.6 2.6-2-2L17 7z" stroke-linejoin="round"/></svg></span>
+      <h3>Repairs &amp; servicing</h3>
+      <p>Annual services, landlord certificates and same-day breakdown repairs. Diagnosed properly, not guessed at.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="7" y="3" width="10" height="18" rx="4"/><path d="M10 8h4M10 12h4"/><circle cx="12" cy="17" r="1.4" fill="#fff" stroke="none"/></svg></span>
+      <h3>Unvented cylinders</h3>
+      <p>Megaflo and Tempest systems installed, serviced and repaired, with the pressure and safety controls set correctly.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="3" y="7" width="18" height="12" rx="2"/><circle cx="8" cy="13" r="2.2"/><circle cx="16" cy="13" r="2.2"/><path d="M6 7V5h12v2"/></svg></span>
+      <h3>Cookers, hobs &amp; fires</h3>
+      <p>Gas cookers, hobs and fires connected, tested and signed off. Disconnections and caps off done safely too.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M6 20V9a3 3 0 0 1 3-3h4V4h4v8h-4v-2H9v10z"/><path d="M4 20h6"/></svg></span>
+      <h3>Bathrooms &amp; showers</h3>
+      <p>Full bathroom installs, shower swaps, taps and toilets. Tiled, sealed and left clean.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3c1.6 3.4 4.6 4.6 4.6 8a4.6 4.6 0 0 1-9.2 0c0-2.1 1.6-3.4 2.6-5.4.6 1.7 1.4 2.2 1.8 1.2.7-1.4.4-2.6.2-3.8z" fill="#fff" stroke="none"/><path d="M6 20h12"/></svg></span>
+      <h3>Plumbing &amp; leaks</h3>
+      <p>Burst pipes, dripping taps, radiators and stopcocks. Emergency leaks answered the same day where we can.</p>
+      <a class="more" href="#quote">Learn more</a>
+    </article>
   </div>
 </section>
 
-<!-- ================= SERVICES ================= -->
+<!-- ================= ORANGE CALL BAND ================= -->
+<div class="hfband">
+  <div class="hfband-in">
+    <p>No heating or a burst pipe? Get us out today.</p>
+    <a class="hfbtn navyfill" href="tel:+447890452629">Call 07890 452629</a>
+  </div>
+</div>
+
 <!-- ================= QUICK SERVICE STRIP ================= -->
 <section class="sect" style="padding-block:clamp(46px,6vw,70px)">
   <div class="wrap">
@@ -1361,8 +1315,9 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     if(s!==t){t=s;nav.classList.toggle('stuck',s);}
     if(cta) cta.style.display = (window.innerWidth>=980 && window.scrollY>500) ? '' : 'none';
     var dock=document.getElementById('dock');
-    dock.classList.toggle('on', window.scrollY>560);
+    if(dock) dock.classList.toggle('on', window.scrollY>560);
   }
+  if(!nav||!b||!d) return;
   addEventListener('scroll',onScroll,{passive:true}); onScroll();
   b.addEventListener('click',function(){
     var on=d.classList.toggle('on'); b.classList.toggle('on',on);
