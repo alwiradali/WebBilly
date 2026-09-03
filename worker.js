@@ -183,6 +183,7 @@ const HEATFIX_PAGES = {
   "/faqs": "/templates/heatfix-faqs.html",
   "/blog": "/templates/heatfix-blog.html",
   "/safety-tips": "/templates/heatfix-safety-tips.html",
+  "/plumbing-gas-safety": "/templates/heatfix-plumbing-gas-safety.html",
   "/manufacturers-warranty": "/templates/heatfix-manufacturers-warranty.html",
   "/privacy": "/templates/heatfix-privacy.html",
   "/terms": "/templates/heatfix-terms.html",
@@ -190,7 +191,7 @@ const HEATFIX_PAGES = {
   "/i": "/templates/heatfix-invoice-view.html",
 };
 /* Everything except the two back-office tools should be indexable. */
-const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips",
+const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips", "/plumbing-gas-safety",
                         "/manufacturers-warranty", "/privacy", "/terms"];
 /* Blog articles live at /blog/<slug>. */
 const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
