@@ -68,3 +68,6 @@ assets/hobberry
 templates/baked-with-amabilis.html
 assets/ama
 templates/amabilis
+
+# HeatFix — the untouched camera originals stay in git, not on the web.
+assets/heatfix/src
