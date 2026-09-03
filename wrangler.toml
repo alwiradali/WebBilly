@@ -29,7 +29,7 @@ routes = [
 # Has no effect while M2L_PARKED is true in worker.js.
 M2L_HOST = ""
 
-# Comma-separated hostnames for Heat Fix Mcr Limited. Set these once the
+# Comma-separated hostnames for HeatFix Mcr Limited. Set these once the
 # domain's nameservers point at Cloudflare, and add the matching custom
 # domain routes above.
 HEATFIX_HOST = ""

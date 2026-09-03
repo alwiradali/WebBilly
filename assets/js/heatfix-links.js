@@ -1,4 +1,4 @@
-/* Heat Fix — preview link bridge.
+/* HeatFix — preview link bridge.
  *
  * The site's own links are written root-absolute (/about, /blog, /#quote)
  * because that is what they must be on heatfixmcrlimited.co.uk, where the

@@ -151,7 +151,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
    shrinks to an unreadable 23px wide at this height. */
 .nav .logo-plate{padding:6px 10px;border-radius:15px}
 .nav .logo-plate img{height:38px}
-/* Brand slot sized for the stacked HEAT FIX lockup. When the mark is the
+/* Brand slot sized for the stacked HEATFIX lockup. When the mark is the
    whole lockup (logo carries the name), .brandlink gets .lockup and the
    type beside it is dropped so the logo can be set large. */
 /* Brand block: the HF mark on the left, the company name set big and bold
@@ -606,7 +606,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .clean + .clean{border-top:1px solid var(--line)}
 
 /* ============================================================
-   HEAT FIX — navy and orange. The approved direction.
+   HEATFIX — navy and orange. The approved direction.
    ============================================================ */
 :root{
   --hf-navy:#0B2E63; --hf-navy-d:#021B3F; --hf-navy-nav:#0E3167;
