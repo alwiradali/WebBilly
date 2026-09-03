@@ -145,7 +145,8 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
    whole lockup (logo carries the name), .brandlink gets .lockup and the
    type beside it is dropped so the logo can be set large. */
 .brandlink.lockup .brandtxt{display:none}
-.brandlink.lockup .logo-plate{padding:6px 12px;border-radius:16px}
+/* the bar is already white, so the lockup needs no plate behind it */
+.brandlink.lockup .logo-plate{padding:0;border-radius:0;background:none;box-shadow:none}
 .brandlink.lockup .logo-plate img{height:54px}
 @media(min-width:760px){.brandlink.lockup .logo-plate img{height:64px}}
 @media(min-width:1100px){.brandlink.lockup .logo-plate img{height:72px}}
