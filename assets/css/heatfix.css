@@ -141,6 +141,15 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
    shrinks to an unreadable 23px wide at this height. */
 .nav .logo-plate{padding:6px 10px;border-radius:15px}
 .nav .logo-plate img{height:38px}
+/* Brand slot sized for the stacked HEAT FIX lockup. When the mark is the
+   whole lockup (logo carries the name), .brandlink gets .lockup and the
+   type beside it is dropped so the logo can be set large. */
+.brandlink.lockup .brandtxt{display:none}
+.brandlink.lockup .logo-plate{padding:6px 12px;border-radius:16px}
+.brandlink.lockup .logo-plate img{height:54px}
+@media(min-width:760px){.brandlink.lockup .logo-plate img{height:64px}}
+@media(min-width:1100px){.brandlink.lockup .logo-plate img{height:72px}}
+@media(max-width:420px){.brandlink.lockup .logo-plate img{height:46px}}
 .brandtxt{display:block;line-height:1.08;min-width:0}
 .brandtxt b{font-family:var(--dis);font-weight:800;font-size:1.06rem;letter-spacing:-.015em;display:block;
   white-space:nowrap;color:var(--navy)}
