@@ -119,7 +119,7 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 /* ---------- nav ---------- */
 .nav{position:fixed;inset:12px 0 auto;z-index:80;transition:top .3s}
 .nav-in{
-  max-width:1220px;margin:0 auto;padding:10px 12px;
+  max-width:1220px;margin:0 auto;padding:10px 14px;flex-wrap:nowrap;
   display:flex;align-items:center;gap:14px;border-radius:100px;
   border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.97);
   backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
@@ -130,6 +130,12 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
   box-shadow:0 14px 34px -20px rgba(13,42,99,.4);
 }
+
+/* the bar is a pill, so the last item needs to clear the curve */
+@media(min-width:1040px){.nav-in{padding-right:46px;padding-left:22px}}
+@media(min-width:1340px){.nav-in{padding-right:52px}}
+@media(min-width:1420px){.nav-in{max-width:1340px}}
+@media(min-width:1560px){.nav-in{max-width:1420px}}
 .brandlink{display:flex;align-items:center;gap:11px;flex:none;margin-right:auto}
 .logo-plate{
   background:#fff;border-radius:13px;padding:5px 8px;display:grid;place-items:center;flex:none;
@@ -144,13 +150,31 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 /* Brand slot sized for the stacked HEAT FIX lockup. When the mark is the
    whole lockup (logo carries the name), .brandlink gets .lockup and the
    type beside it is dropped so the logo can be set large. */
-.brandlink.lockup .brandtxt{display:none}
-/* the bar is already white, so the lockup needs no plate behind it */
+/* Brand block: the HF mark on the left, the company name set big and bold
+   beside it, and the list of services under the name. */
+.brandlink.lockup{gap:14px}
 .brandlink.lockup .logo-plate{padding:0;border-radius:0;background:none;box-shadow:none}
-.brandlink.lockup .logo-plate img{height:54px}
-@media(min-width:760px){.brandlink.lockup .logo-plate img{height:64px}}
-@media(min-width:1100px){.brandlink.lockup .logo-plate img{height:72px}}
-@media(max-width:420px){.brandlink.lockup .logo-plate img{height:46px}}
+.brandlink.lockup .logo-plate img{height:46px;width:auto}
+@media(min-width:760px){.brandlink.lockup .logo-plate img{height:56px}}
+@media(min-width:1100px){.brandlink.lockup .logo-plate img{height:64px}}
+.brandlink.lockup .brandtxt{display:block}
+.brandlink.lockup .brandtxt b{
+  font-family:var(--dis);font-weight:900;color:var(--navy);display:block;white-space:nowrap;
+  font-size:1.18rem;letter-spacing:-.012em;line-height:1;
+}
+@media(min-width:760px){.brandlink.lockup .brandtxt b{font-size:1.4rem}}
+@media(min-width:1240px){.brandlink.lockup .brandtxt b{font-size:1.62rem}}
+.brandlink.lockup .brandtxt .svcs{
+  display:none;margin-top:6px;white-space:nowrap;color:var(--blue);
+  font-family:var(--dis);font-weight:700;font-size:.5rem;letter-spacing:.11em;text-transform:uppercase;
+}
+@media(min-width:1180px){.brandlink.lockup .brandtxt .svcs.short{display:block}}
+@media(min-width:1420px){
+  .brandlink.lockup .brandtxt .svcs.full{display:block}
+  .brandlink.lockup .brandtxt .svcs.short{display:none}
+  .brandlink.lockup .brandtxt .svcs{font-size:.54rem;letter-spacing:.13em}
+}
+@media(max-width:479px){.brandlink.lockup .brandtxt .svcs{display:none !important}}
 .brandtxt{display:block;line-height:1.08;min-width:0}
 .brandtxt b{font-family:var(--dis);font-weight:800;font-size:1.06rem;letter-spacing:-.015em;display:block;
   white-space:nowrap;color:var(--navy)}
@@ -165,12 +189,13 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 }
 .navlinks{display:none;gap:2px;align-items:center}
 .navlinks a{
-  padding:9px 13px;border-radius:100px;font-size:.88rem;font-weight:600;color:var(--muted);
-  transition:color .2s,background .2s;
+  padding:9px 12px;border-radius:100px;font-size:.86rem;font-weight:600;color:var(--muted);
+  white-space:nowrap;transition:color .2s,background .2s;
 }
+@media(min-width:1340px){.navlinks a{padding:9px 13px;font-size:.88rem}}
 .navlinks a:hover{color:var(--navy);background:rgba(13,42,99,.07)}
 .navtel{display:none;align-items:center;gap:9px;font-family:var(--dis);font-weight:800;font-size:.95rem;
-  padding-right:6px;color:var(--navy)}
+  padding-right:6px;color:var(--navy);white-space:nowrap;flex:none}
 .burger{
   width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;gap:5px;
   background:#fff;border:1px solid var(--line2);cursor:pointer;
@@ -197,9 +222,9 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .drawer.on a:nth-child(5){transition-delay:.25s}.drawer.on a:nth-child(6){transition-delay:.3s}
 .drawer.on a:nth-child(7){transition-delay:.35s}.drawer.on a:nth-child(8){transition-delay:.4s}
 .drawer a:hover{color:var(--blue)}
-@media(min-width:980px){
+@media(min-width:1180px){
   .navlinks{display:flex}.navtel{display:flex}.burger{display:none}
-  .nav-in{padding:10px 14px 10px 12px}
+  .nav-in{padding:10px 46px 10px 22px}
 }
 
 /* ---------- card primitive (was the 3D tile — no rotation now) ---------- */
