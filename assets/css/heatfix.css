@@ -642,6 +642,8 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   border:1px solid rgba(255,255,255,.35);background:transparent;cursor:pointer}
 .hfburger svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none}
 @media(min-width:1080px){.hfburger{display:none}}
+/* on a phone the quote button crowded the burger off the edge — it lives in the drawer */
+@media(max-width:600px){.hfnav-in > .hfbtn{display:none}}
 
 /* ---------- hero: logo, words, photograph ---------- */
 .hfhero{position:relative;background:var(--hf-navy-d);overflow:hidden;isolation:isolate;
@@ -712,6 +714,16 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   align-items:center;justify-content:center;gap:18px 30px}
 .hfband p{font-family:var(--dis);font-weight:900;color:#fff;font-size:clamp(1.1rem,2.4vw,1.6rem);
   text-align:center}
+/* full-width variant drawn on the service-page artwork: copy left, button hard right */
+.hfband.wide{padding:clamp(14px,1.6vw,15px) 0}
+.hfband.wide .hfband-in{max-width:1500px;padding:0 clamp(20px,2.6vw,38px);
+  justify-content:space-between;gap:16px 30px;flex-wrap:nowrap}
+.hfband.wide p{text-align:left;font-size:clamp(1.02rem,1.95vw,1.72rem);line-height:1.2}
+@media(max-width:760px){.hfband.wide .hfband-in{flex-wrap:wrap}}
+.hfband.wide .hfbtn{font-size:clamp(.92rem,1.9vw,1.7rem);padding:clamp(12px,1.15vw,16px) clamp(20px,2.4vw,34px);
+  letter-spacing:.045em;line-height:1.2}
+@media(max-width:760px){.hfband.wide .hfband-in{justify-content:center}
+  .hfband.wide p{text-align:center}}
 
 /* ---------- navy drawer ---------- */
 .hfdrawer{position:fixed;inset:0;z-index:95;background:rgba(4,14,36,.6);display:none}
@@ -734,6 +746,17 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   letter-spacing:-.022em;line-height:1.02;font-size:clamp(2rem,5.2vw,3.7rem);margin-top:8px}
 .hfhead .kick{font-family:var(--dis);font-weight:800;color:var(--hf-orange);
   font-size:clamp(1.02rem,2.2vw,1.5rem);margin-top:12px}
+
+/* wide service page — margins, type and photo ratio taken off the artwork */
+.wrap.hfwide{max-width:1500px;padding:0 clamp(18px,2.1vw,30px)}
+/* sized so the headline holds one line from 900px up, as it is drawn */
+.hfhead.hfwide-h{padding-bottom:clamp(12px,1.4vw,20px)}
+.hfhead.hfwide-h h1{font-size:clamp(1.72rem,3.95vw,3.7rem);letter-spacing:-.035em;margin-top:4px}
+.hfhead.hfwide-h .kick{font-size:clamp(1.02rem,2.16vw,1.94rem);margin-top:10px}
+.hfduo.hfwide-duo{gap:clamp(24px,3.5vw,50px)}
+.hfduo.hfwide-duo figure{aspect-ratio:1.854}
+.hfduo.hfwide-duo h2{font-size:clamp(1.6rem,3.08vw,2.75rem);margin:20px 0 10px}
+.hfduo.hfwide-duo li{font-size:clamp(1rem,1.4vw,1.25rem);line-height:1.32;padding:6px 0;font-weight:500}
 
 /* two services side by side, photo over a titled list */
 .hfduo{display:grid;gap:clamp(26px,4vw,46px);grid-template-columns:minmax(0,1fr);
