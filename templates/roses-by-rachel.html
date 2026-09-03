@@ -632,6 +632,57 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   color:var(--burg);cursor:pointer;line-height:1;z-index:2}
 @media(max-width:520px){.popcard{aspect-ratio:.92}.popin{width:78%}}
 
+/* ---------- checkout ---------- */
+.co-bar{position:relative;background:var(--cream);border-bottom:1px solid var(--gold);overflow:hidden}
+.co-bar .nav-in{padding-block:24px}
+.co-rose{position:absolute;top:-14px;right:24px;height:112px;width:auto;
+  pointer-events:none;opacity:.5;transform:rotate(8deg)}
+@media(max-width:700px){.co-rose{height:76px;right:12px;opacity:.34}}
+.cogrid{display:grid;gap:clamp(30px,4vw,64px);grid-template-columns:minmax(0,1fr);align-items:start;
+  padding-block:clamp(30px,4vw,54px)}
+@media(min-width:960px){.cogrid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}}
+.cogrid h2{font-size:clamp(2.6rem,5vw,4.2rem);font-weight:500;margin-bottom:22px}
+.cofield{margin-bottom:18px}
+.cofield label{display:block;font-family:var(--ser);font-size:1.06rem;color:var(--burg);margin-bottom:7px}
+.coinput{display:flex;align-items:center;gap:12px;border:1px solid var(--gold-pale);border-radius:12px;
+  background:var(--cream);padding:0 16px;height:56px;transition:border-color .2s,box-shadow .2s}
+.coinput:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(192,152,42,.13)}
+.coinput svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.4;flex:none}
+.coinput input{flex:1;min-width:0;border:0;background:transparent;height:100%;font-size:1.02rem;
+  font-family:var(--ser);color:var(--burg)}
+.coinput input:focus{outline:none}
+.coinput input::placeholder{color:#B7A08F}
+.coinput .stripe-el{flex:1;min-width:0}
+.corow{display:grid;gap:0 22px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media(max-width:560px){.corow{grid-template-columns:minmax(0,1fr)}}
+.cobtn{width:100%;margin-top:12px;border-radius:12px;padding:20px;font-size:1.5rem;font-weight:500;
+  font-family:var(--disp);letter-spacing:0;gap:14px}
+.cobtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5}
+.conote{margin-top:16px;font-size:.94rem;color:var(--burg-soft);text-align:center}
+.cosummary{background:var(--cream);border:1px solid var(--gold-pale);border-radius:22px;
+  padding:clamp(26px,3vw,40px);position:sticky;top:26px}
+.cosummary h3{font-size:clamp(1.9rem,3vw,2.5rem);font-weight:500;text-align:center;margin-bottom:22px}
+.coline{display:grid;grid-template-columns:74px minmax(0,1fr) auto;gap:18px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--gold-fade)}
+.coline img{width:74px;height:74px;object-fit:cover;border-radius:8px;border:1px solid var(--gold-fade)}
+.coline b{font-family:var(--disp);font-weight:500;font-size:1.2rem}
+.coline small{display:block;font-family:var(--ui);font-size:.74rem;color:var(--burg-soft);margin-top:2px}
+.coline .p{font-family:var(--disp);font-weight:500;font-size:1.3rem;white-space:nowrap}
+.cotot{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;font-size:1.1rem;
+  color:var(--burg-soft)}
+.cotot b{color:var(--burg);font-weight:500;font-family:var(--disp);font-size:1.2rem}
+.cotot.grand{margin-top:6px;padding-top:12px}
+.cotot.grand span{font-family:var(--disp);font-size:clamp(1.7rem,2.6vw,2.3rem);color:var(--burg)}
+.cotot.grand b{font-family:var(--disp);font-size:clamp(1.9rem,3vw,2.6rem)}
+.cosecure{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:22px;
+  padding-top:20px;border-top:1px solid var(--gold-fade);font-size:.98rem;color:var(--burg-soft)}
+.cosecure svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.4;flex:none}
+.copay{border:1px dashed var(--gold-pale);border-radius:12px;background:rgba(192,152,42,.05);
+  padding:16px 18px;margin-bottom:18px}
+.copay b{display:block;font-family:var(--disp);font-size:1.08rem;margin-bottom:4px}
+.copay p{font-size:.94rem;color:var(--burg-soft);line-height:1.55}
+
+
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
 </style>
 </head>
@@ -1088,6 +1139,85 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   </div>
 </footer>
 
+
+<!-- checkout -->
+<div class="screen" id="checkoutScreen" role="dialog" aria-modal="true" aria-label="Checkout">
+  <div class="co-bar">
+    <img class="co-rose" src="../assets/rachel/rose-ornament.webp" alt="" width="315" height="361" aria-hidden="true">
+    <div class="nav-in">
+      <a class="brand" href="#top" id="coHome">
+        <img class="mk" src="../assets/rachel/logo-mark.webp" alt="" width="796" height="603">
+        <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+      </a>
+      <button class="closebtn" id="cox" type="button" aria-label="Back to your cart">&times;</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="cogrid">
+      <form id="coform" onsubmit="return false">
+        <h2>Checkout</h2>
+
+        <div class="cofield"><label for="coEmail">Email Address</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
+            <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required></div></div>
+
+        <div class="cofield"><label for="coAddr">Delivery Address</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required></div></div>
+
+        <div class="corow">
+          <div class="cofield"><label for="coCity">City</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 21V8l6-4v17M10 21V9l8 3v9M3 21h18"/><path d="M13 14h2M13 17h2"/></svg>
+              <input id="coCity" type="text" autocomplete="address-level2" placeholder="Manchester" required></div></div>
+          <div class="cofield"><label for="coPost">Postcode</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
+              <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required></div></div>
+        </div>
+
+        <div id="coCardLive" hidden>
+          <div class="cofield"><label for="co-card">Card Number</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M2 6h20v12H2z"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+              <div class="stripe-el" id="co-card"></div></div></div>
+          <div class="corow">
+            <div class="cofield"><label for="co-exp">Expiry Date</label>
+              <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+                <div class="stripe-el" id="co-exp"></div></div></div>
+            <div class="cofield"><label for="co-cvc">CVC</label>
+              <div class="coinput"><svg viewBox="0 0 24 24"><path d="M6 11h12v9H6z"/><path d="M9 11V7.5a3 3 0 0 1 6 0V11"/></svg>
+                <div class="stripe-el" id="co-cvc"></div></div></div>
+          </div>
+        </div>
+
+        <div class="copay" id="coCardOff">
+          <b>Card payment is not switched on yet</b>
+          <p>Rachel's Stripe account has not been connected, so the card boxes are not live.
+             Press Pay Securely and your order goes straight to her instead — she will confirm the
+             price and send you a payment link the same day.</p>
+        </div>
+
+        <button class="btn burg cobtn" id="coPay" type="submit">
+          <svg viewBox="0 0 24 24"><path d="M6 11h12v9H6z"/><path d="M9 11V7.5a3 3 0 0 1 6 0V11"/></svg>
+          Pay Securely
+        </button>
+        <p class="conote" id="coNote">Card details are entered on Stripe's own secure fields — they never touch this website.</p>
+      </form>
+
+      <aside class="cosummary">
+        <h3>Order Summary</h3>
+        <div id="coLines"></div>
+        <div style="margin-top:16px">
+          <div class="cotot"><span>Subtotal</span><b id="coSub">£0</b></div>
+          <div class="cotot"><span>Delivery</span><b>Free</b></div>
+          <div class="cotot grand"><span>Total</span><b id="coTot">£0</b></div>
+        </div>
+        <div class="cosecure">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+          Secured by Stripe · PCI compliant
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
 
 <!-- product page -->
 <div class="screen" id="pdp" role="dialog" aria-modal="true" aria-label="Product">
@@ -1731,21 +1861,92 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   $('keepShopping').addEventListener('click', function () { closeCart(); $('shop').scrollIntoView(); });
   $('pdpHome').addEventListener('click', function (e) { e.preventDefault(); closePDP(); });
   $('cartHome').addEventListener('click', function (e) { e.preventDefault(); closeCart(); });
-  addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePDP(); closeCart(); $('pop').classList.remove('on'); } });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePDP(); closeCart(); closeCheckout(); $('pop').classList.remove('on'); } });
 
-  $('checkout').addEventListener('click', function () {
-    if (!cart.length) return;
-    track('begin_checkout', { value: cartTotal(), items: cartCount() });
-    if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
-    /* until Rachel's Stripe link is in, the basket becomes an order she can read */
-    var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
-    $('fStyle').value = 'Something bespoke — help me choose';
-    $('fNotes').value = 'Cart: ' + lines + ' — total ' + money(cartTotal());
-    compose(); closeCart();
-    $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    toast('Checkout opens once Rachel’s Stripe is connected — order sent through instead ♥');
-  });
+  $('checkout').addEventListener('click', openCheckout);
   paintCount(); paintCart();
+
+  /* ---------------- checkout ----------------
+     The card boxes are Stripe Elements: Stripe drops its own iframed inputs
+     into them, so a card number never touches this page or Rachel's server.
+     Put her publishable key in RR_STRIPE_PK and it goes live. Building the
+     card fields as ordinary inputs would put her in full PCI scope and mean
+     card numbers arriving by email — so this is the only way it is done. */
+  var RR_STRIPE_PK = '';
+  var stripe = null, coCard = null;
+
+  function openCheckout() {
+    if (!cart.length) return;
+    paintCheckout();
+    closeCart();
+    $('checkoutScreen').classList.add('on');
+    document.body.style.overflow = 'hidden';
+    $('checkoutScreen').scrollTop = 0;
+    track('begin_checkout', { value: cartTotal(), items: cartCount() });
+    mountStripe();
+  }
+  function closeCheckout() {
+    $('checkoutScreen').classList.remove('on');
+    document.body.style.overflow = '';
+  }
+  function paintCheckout() {
+    $('coLines').innerHTML = cart.map(function (l) {
+      var p = findProduct(l.n); if (!p) return '';
+      return '<div class="coline">' +
+        '<img src="../assets/rachel/' + p.img + '-sm.webp" alt="' + p.alt + '" loading="lazy">' +
+        '<span><b>' + p.n + '</b>' + (l.q > 1 ? '<small>Quantity ' + l.q + '</small>' : '') + '</span>' +
+        '<span class="p">' + money(p.p * l.q) + '</span></div>';
+    }).join('');
+    var t = cartTotal();
+    $('coSub').textContent = money(t);
+    $('coTot').textContent = money(t);
+  }
+  function mountStripe() {
+    if (!RR_STRIPE_PK || coCard) return;
+    var go = function () {
+      if (!window.Stripe) return;
+      stripe = Stripe(RR_STRIPE_PK);
+      var el = stripe.elements();
+      var style = { base: { color: '#6A2E3A', fontFamily: 'Cormorant Garamond, Georgia, serif',
+        fontSize: '17px', '::placeholder': { color: '#B7A08F' } } };
+      coCard = el.create('cardNumber', { style: style, placeholder: '1234 5678 9012 3456' });
+      coCard.mount('#co-card');
+      el.create('cardExpiry', { style: style }).mount('#co-exp');
+      el.create('cardCvc', { style: style }).mount('#co-cvc');
+      $('coCardLive').hidden = false;
+      $('coCardOff').style.display = 'none';
+    };
+    if (window.Stripe) { go(); return; }
+    var sc = document.createElement('script');
+    sc.src = 'https://js.stripe.com/v3/'; sc.onload = go;
+    document.head.appendChild(sc);
+  }
+  $('cox').addEventListener('click', function () { closeCheckout(); openCart(); });
+  $('coHome').addEventListener('click', function (e) { e.preventDefault(); closeCheckout(); });
+  $('coform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = ($('coEmail').value || '').trim();
+    var addr  = ($('coAddr').value || '').trim();
+    var city  = ($('coCity').value || '').trim();
+    var post  = ($('coPost').value || '').trim();
+    if (!email || !addr || !city || !post) { toast('Fill in your email and delivery address ♥'); return; }
+
+    if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
+
+    /* no Stripe yet: send it to Rachel as a written order so nothing is lost */
+    var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
+    $('fName').value  = $('fName').value || email.split('@')[0];
+    $('fEmail').value = email;
+    $('fStyle').value = 'Something bespoke — help me choose';
+    $('fPostcode').value = post;
+    $('fNotes').value = 'Checkout order: ' + lines + ' — total ' + money(cartTotal()) +
+      '\nDeliver to: ' + addr + ', ' + city + ' ' + post;
+    compose();
+    track('order_submit', { source: 'checkout', value: cartTotal() });
+    closeCheckout();
+    $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Order sent to Rachel — she’ll confirm and send a payment link ♥');
+  });
 
   /* ---------------- rose-list popup ---------------- */
   (function popup() {
