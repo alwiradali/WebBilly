@@ -21,40 +21,53 @@
 <link rel="stylesheet" href="../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="../assets/css/heatfix.css">
 <style>
-/* ===================== HERO ===================== */
-.hero{position:relative;padding:130px 0 70px;overflow:hidden;isolation:isolate}
-/* live flame plate, deepest layer — a lit atmosphere, never a distraction */
-/* Animated hero background — a live heating circuit drawn on canvas by
-   assets/js/heatfix-bg.js. Pipe runs in pale navy with pulses of flow moving
-   through them: cool blue going out, warm amber coming back. */
-/* translucent so the page-wide circuit shows through the hero as well */
-.hero-bg{position:absolute;inset:0;z-index:-4;overflow:hidden;
-  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(238,243,250,.3) 58%,rgba(246,248,252,.5))}
-/* ambient blooms drift in CSS so the canvas never has to fill the whole
-   surface — two compositor-only transforms instead of gradients per frame */
-.hero-bg::before,.hero-bg::after{content:"";position:absolute;inset:-10%;
-  will-change:transform;animation:bloomdrift 30s ease-in-out infinite alternate}
-.hero-bg::before{background:radial-gradient(980px 640px at 78% 20%,rgba(47,159,214,.24),transparent 62%)}
-.hero-bg::after{background:radial-gradient(760px 520px at 20% 78%,rgba(234,124,18,.13),transparent 66%);
-  animation-duration:34s;animation-direction:alternate-reverse}
-@keyframes bloomdrift{from{transform:translate3d(-1.4%,-1.2%,0)}to{transform:translate3d(1.4%,1.4%,0)}}
-@media(prefers-reduced-motion:reduce){.hero-bg::before,.hero-bg::after{animation:none}}
-/* keeps the circuit off the words without washing it out on the tile side */
-.hero-wash{position:absolute;inset:0;z-index:-2;pointer-events:none;background:
-  linear-gradient(180deg,rgba(248,251,255,.76) 0%,rgba(248,251,255,.78) 44%,
-                  rgba(248,251,255,.36) 68%,rgba(248,251,255,0) 90%)}
-@media(min-width:1000px){
-  .hero-wash{background:
-    radial-gradient(76% 90% at 0% 46%,rgba(249,252,255,.9),rgba(249,252,255,.4) 54%,transparent 84%)}
+/* ===================== HERO =====================
+   One photograph, full bleed, with the copy sitting on a navy scrim over
+   the left of the frame and the booking card on the right. */
+.hero{position:relative;isolation:isolate;overflow:hidden;
+  min-height:clamp(560px,82svh,760px);display:grid;align-items:center;
+  padding:118px 0 clamp(118px,13vw,158px)}
+@media(min-width:1000px){.hero{padding:158px 0 140px}}
+.hero-photo{position:absolute;inset:0;z-index:-3}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:44% 52%}
+@media(max-width:999px){.hero-photo img{object-position:56% 50%}}
+.hero-scrim{position:absolute;inset:0;z-index:-2;pointer-events:none;background:
+  linear-gradient(96deg,rgba(6,17,36,.94) 0%,rgba(6,17,36,.88) 30%,
+                  rgba(6,17,36,.62) 52%,rgba(6,17,36,.24) 72%,rgba(6,17,36,.34) 100%),
+  linear-gradient(180deg,rgba(6,17,36,.5),transparent 34%,rgba(6,17,36,.55))}
+@media(max-width:999px){
+  .hero-scrim{background:linear-gradient(180deg,rgba(6,17,36,.86),rgba(6,17,36,.7) 46%,rgba(6,17,36,.92))}
 }
-.hero-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.6;
-  background:conic-gradient(from 200deg at 74% 20%,transparent,rgba(19,100,168,.10),transparent 44%)}
-.hero-in{display:grid;gap:clamp(38px,6vw,62px);grid-template-columns:minmax(0,1fr);align-items:center}
-@media(min-width:1000px){.hero-in{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr)}.hero{padding:154px 0 96px}}
+/* a single warm ember, the only movement left in the hero */
+.hero-ember{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.55;
+  background:radial-gradient(680px 420px at 68% 34%,rgba(234,124,18,.28),transparent 66%);
+  will-change:transform;animation:emberdrift 26s ease-in-out infinite alternate}
+@keyframes emberdrift{from{transform:translate3d(-2%,-1.5%,0)}to{transform:translate3d(2%,1.5%,0)}}
+@media(prefers-reduced-motion:reduce){.hero-ember{animation:none}}
 
+.hero-in{display:grid;gap:clamp(30px,4vw,58px);grid-template-columns:minmax(0,1fr);align-items:center}
+@media(min-width:1040px){.hero-in{grid-template-columns:minmax(0,1.32fr) minmax(0,.68fr)}}
+
+.hero .h-badge{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#fff;
+  backdrop-filter:blur(10px);box-shadow:none}
+h1.hh{font-size:clamp(2.6rem,6.6vw,4.5rem);letter-spacing:-.038em;line-height:1.02;color:#fff;
+  text-wrap:balance;text-shadow:0 2px 30px rgba(0,0,0,.45)}
+h1.hh .fx-line{display:block}
+h1.hh em{font-style:normal;color:#7cc6f2}
+.hero p.lede{margin:22px 0 30px;font-size:clamp(1.02rem,1.7vw,1.16rem);color:#d6e2f2;max-width:46ch;
+  text-shadow:0 1px 18px rgba(0,0,0,.4)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px}
+.hero .btn.ghost{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.34);color:#fff;
+  backdrop-filter:blur(10px)}
+.hero .btn.ghost:hover{background:rgba(255,255,255,.2)}
+.hero-mini{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:30px;padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.2)}
+.hero-mini div{display:flex;align-items:center;gap:9px;font-size:.86rem;color:#c3d3e6}
+.hero-mini b{font-family:var(--dis);font-weight:800;color:#fff;font-size:1rem}
+.tick{width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center}
+.tick svg{width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none}
 .gsno{white-space:nowrap;opacity:.85;font-variant-numeric:tabular-nums}
 .h-badge-t{display:block}
-/* on a phone the credential matters more than the strapline */
 @media(max-width:620px){.h-badge-x{display:none}}
 .h-badge{
   display:inline-flex;align-items:center;gap:11px;padding:6px 16px 6px 8px;border-radius:100px;
@@ -62,59 +75,47 @@
   font-size:.79rem;font-weight:600;color:var(--navy);margin-bottom:22px;
   box-shadow:0 8px 22px -14px rgba(13,42,99,.4);
 }
-.gs-tri{
-  width:30px;height:26px;flex:none;display:grid;place-items:center;position:relative;
-}
+.gs-tri{width:30px;height:26px;flex:none;display:grid;place-items:center;position:relative}
 .gs-tri::before{content:"";position:absolute;inset:0;background:var(--safe);
   clip-path:polygon(50% 4%,97% 94%,3% 94%);border-radius:3px}
 .gs-tri b{position:relative;font-family:var(--dis);font-weight:900;font-size:.5rem;color:#101010;margin-top:6px;letter-spacing:-.02em}
 
-h1.hh{font-size:clamp(2.5rem,7.4vw,4.65rem);letter-spacing:-.035em}
-h1.hh .fx-line{display:block}
-h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--sky) 55%,#1e88c4);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p.lede{margin:22px 0 30px;font-size:clamp(1.02rem,1.9vw,1.16rem)}
-.hero-cta{display:flex;flex-wrap:wrap;gap:12px}
-.hero-mini{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:32px;padding-top:26px;border-top:1px solid var(--line)}
-.hero-mini div{display:flex;align-items:center;gap:9px;font-size:.86rem;color:var(--muted)}
-.hero-mini b{font-family:var(--dis);font-weight:800;color:var(--navy);font-size:1.02rem}
-.tick{width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center}
-.tick svg{width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none}
+/* ---- booking card ---- */
+.hero-card{background:#fff;border-radius:20px;overflow:hidden;
+  box-shadow:0 40px 80px -34px rgba(4,12,28,.7),0 2px 8px -2px rgba(4,12,28,.3)}
+.hero-card .cap{background:linear-gradient(100deg,var(--fire,#ea7c12),#f0993c);height:6px}
+.hero-card .in{padding:clamp(22px,2.6vw,30px)}
+.hero-card h2{font-family:var(--dis);font-weight:800;font-size:1.42rem;letter-spacing:-.02em;
+  color:var(--navy);text-align:center}
+.hero-card .sub{text-align:center;font-size:.9rem;color:var(--muted);margin:7px 0 18px;line-height:1.55}
+.hero-card .sub b{color:var(--navy)}
+.hcf{display:grid;gap:11px}
+.hcf input,.hcf select{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:11px;
+  font-size:.96rem;background:#fbfcfe;-webkit-appearance:none;appearance:none}
+.hcf input:focus,.hcf select:focus{outline:none;border-color:var(--water);box-shadow:0 0 0 3px rgba(47,159,214,.16)}
+.hcf .two{display:grid;gap:11px;grid-template-columns:1fr 1fr}
+.hero-card .btn{width:100%;justify-content:center;margin-top:4px}
+.hero-card .small{margin-top:12px;text-align:center;font-size:.76rem;color:var(--muted)}
+.hero-card .small a{color:var(--navy);font-weight:600}
 
-/* ---- tile wall — straight, floating. Nothing rotates. ---- */
-.stage{position:relative;min-height:430px}
-@media(min-width:1000px){.stage{min-height:600px}}
-.wall{position:relative;height:430px}
-@media(min-width:1000px){.wall{height:600px}}
-.wt{
-  position:absolute;border-radius:20px;overflow:hidden;background:#fff;
-  border:1px solid var(--line);
-  box-shadow:0 26px 54px -26px rgba(13,42,99,.4),0 2px 6px -2px rgba(13,42,99,.12);
-  animation:wfloat var(--dur,9s) ease-in-out var(--del,0s) infinite;
-  transition:box-shadow .45s;
-}
-.wt:hover{box-shadow:0 40px 74px -28px rgba(13,42,99,.5)}
-.wt img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.06) contrast(1.03)}
-.wt::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 46%,rgba(9,20,38,.62))}
-.wt i{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--goldline);z-index:3}
-/* float + scroll depth compose in one transform: --sy is written by JS per tile,
-   so tiles at different depths drift apart as the page moves. Still no rotation. */
-@keyframes wfloat{
-  0%,100%{transform:translate3d(0,var(--sy,0px),0) scale(var(--sc,1))}
-  50%    {transform:translate3d(0,calc(var(--sy,0px) - 14px),0) scale(var(--sc,1))}
-}
-/* six tiles, hand-placed — offsets only, no perspective */
-.wt1{--dur:9s;   left:0%; top:3%;  width:43%;height:31%;z-index:4}
-.wt2{--dur:11s;--del:-2s;left:50%;top:0%;  width:45%;height:29%;z-index:2}
-.wt3{--dur:8s; --del:-4s;left:5%; top:37%; width:44%;height:30%;z-index:6}
-.wt4{--dur:12s;--del:-1s;left:55%;top:33%; width:41%;height:30%;z-index:3}
-.wt5{--dur:10s;--del:-5s;left:0%; top:70%; width:41%;height:28%;z-index:5}
-.wt6{--dur:9.5s;--del:-3s;left:47%;top:67%;width:46%;height:30%;z-index:1}
-/* The Gas Safe credential lives in the badge at the top of the copy —
-   once was enough, so the duplicate plate over the tiles is gone. */
-@media(max-width:979px){body{padding-bottom:84px}.stage{min-height:390px}.wall{height:390px}}
-
+/* ---- trust strip along the bottom of the photo ---- */
+.hero-trust{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  background:linear-gradient(180deg,transparent,rgba(4,12,28,.7) 46%);
+  padding:30px 0 18px}
+.htr{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 28px;
+  font-size:.84rem}
+@media(max-width:1039px){.htr{gap:8px 20px}.htr div{font-size:.78rem}}
+@media(min-width:1040px){.htr{justify-content:flex-start}}
+.htr div{display:flex;align-items:center;gap:11px;color:#e2ecf8;font-size:.86rem}
+.htr b{font-family:var(--dis);font-weight:800;color:#fff;font-size:.98rem}
+.htr .stars{display:flex;gap:2px}
+.htr .stars svg{width:15px;height:15px;fill:#f5b301}
+.htr .gsmini{width:26px;height:23px;flex:none;position:relative}
+.htr .gsmini::before{content:"";position:absolute;inset:0;background:var(--safe);
+  clip-path:polygon(50% 4%,97% 94%,3% 94%);border-radius:2px}
+.htr .sep{width:1px;height:26px;background:rgba(255,255,255,.25);display:none}
+@media(min-width:1040px){.htr .sep{display:block}}
+@media(max-width:979px){body{padding-bottom:84px}}
 /* ===================== MARQUEE ===================== */
 .mq{background:var(--gunmetal);border-block:1px solid rgba(255,255,255,.08);padding:16px 0;overflow:hidden;position:relative}
 .mq::before,.mq::after{content:"";position:absolute;left:0;right:0;height:1px;background:var(--goldline)}
@@ -401,7 +402,15 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
 
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
-  <div class="hero-bg"></div><div class="hero-wash"></div><div class="hero-glow"></div>
+  <div class="hero-photo">
+    <picture>
+      <source media="(max-width:760px)" srcset="../assets/heatfix/hero-main-sm.webp">
+      <img src="../assets/heatfix/hero-main.webp" alt="Gas Safe registered engineer checking the gas pressure on a wall-mounted combi boiler" width="2000" height="875" fetchpriority="high" decoding="async">
+    </picture>
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-ember" aria-hidden="true"></div>
+
   <div class="wrap hero-in">
     <div>
       <span class="h-badge"><svg class="gs-mark gs-sm" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg><span class="h-badge-t">Gas Safe registered<span class="gsno" data-gsno="no"></span><span class="h-badge-x"> · Manchester's own gas engineer</span></span></span>
@@ -418,10 +427,6 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
           Get a free quote
         </a>
-        <a class="btn ghost" href="/book">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-          Book a visit
-        </a>
         <a class="btn ghost" href="tel:+447890452629">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>
           07890 452629
@@ -430,21 +435,50 @@ h1.hh em{font-style:normal;background:linear-gradient(115deg,var(--blue),var(--s
       <div class="hero-mini" data-fx="stagger" data-fx-step="90" data-fx-delay="450">
         <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Free</b> quotes, no obligation</div>
         <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Same-day</b> call-outs where we can</div>
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Benchmark</b> commissioned installs</div>
         <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Insured</b> <span id="insHero">public liability cover</span></div>
       </div>
     </div>
 
-    <!-- 3D tile wall — every frame is one of Ejaz's own jobs, labelled as shot -->
-    <div class="stage" aria-hidden="true">
-      <div class="wall" id="wall">
-        <figure class="wt wt1"><img src="../assets/heatfix/tile-install.webp" alt="New Main Eco Compact combi on the wall, commissioning checklist still on the case" loading="eager" fetchpriority="high"><i></i></figure>
-        <figure class="wt wt2"><img src="../assets/heatfix/tile-cylinder.webp" alt="Megaflo unvented hot water cylinder installed" loading="lazy"><i></i></figure>
-        <figure class="wt wt3"><img src="../assets/heatfix/tile-gasvalve.webp" alt="New gas valve held up beside the old one during a swap" loading="eager"><i></i></figure>
-        <figure class="wt wt4"><img src="../assets/heatfix/tile-plumbing.webp" alt="Toilet cistern opened up, new fill and flush valves going in" loading="lazy"><i></i></figure>
-        <figure class="wt wt5"><img src="../assets/heatfix/tile-pipework.webp" alt="Copper pipework, valve group and expansion vessel at a Tempest cylinder" loading="lazy"><i></i></figure>
-        <figure class="wt wt6"><img src="../assets/heatfix/tile-cupboard.webp" alt="Boiler in a kitchen wall cupboard with the case off for work" loading="lazy"><i></i></figure>
-        </div>
+    <aside class="hero-card" data-fx="reveal" data-fx-delay="200">
+      <div class="cap" aria-hidden="true"></div>
+      <div class="in">
+        <h2>Book a visit</h2>
+        <p class="sub">Straight to Ejaz's phone.<br><b>Most enquiries answered the same day.</b></p>
+        <form class="hcf" id="heroBook" novalidate>
+          <input type="text" id="hbName" placeholder="Your name" autocomplete="name" required>
+          <div class="two">
+            <input type="tel" id="hbPhone" placeholder="Phone" autocomplete="tel" inputmode="tel" required>
+            <input type="text" id="hbPost" placeholder="Postcode" autocomplete="postal-code" style="text-transform:uppercase" required>
+          </div>
+          <select id="hbJob" required>
+            <option value="">What do you need?</option>
+            <option>Boiler not working / breakdown</option>
+            <option>New boiler quote</option>
+            <option>Boiler service or landlord certificate</option>
+            <option>Hot water cylinder</option>
+            <option>Gas cooker, hob or fire</option>
+            <option>Plumbing or bathroom</option>
+            <option>Something else</option>
+          </select>
+          <button class="btn fire" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Request a call back
+          </button>
+        </form>
+        <p class="small">Water still running? <a href="tel:+447890452629">Ring 07890 452629</a> — don't type.</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="hero-trust">
+    <div class="wrap htr">
+      <div><span class="gsmini" aria-hidden="true"></span><span><b>Gas Safe</b> registered<span class="gsno" data-gsno="no"></span></span></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div><span class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.7z"/></svg></span><span><b>Reviewed</b> on Google</span></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div><span><b>Benchmark</b> commissioned installs</span></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div><span><b>Manchester</b> &amp; Stockport</span></div>
     </div>
   </div>
 </header>
@@ -1274,6 +1308,34 @@ document.getElementById('yr').textContent = new Date().getFullYear();
    Each tile gets its own drift rate, written into --sy, which the wfloat
    keyframes fold into the same transform. Near tiles move more than far ones,
    so the wall gains depth as you scroll. Nothing tilts.                        */
+/* Hero booking card — hands the three answers to the full quote form below
+   and takes the visitor straight there, so nothing is typed twice. */
+(function(){
+  var f = document.getElementById('heroBook');
+  if (!f) return;
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = (document.getElementById('hbName').value || '').trim();
+    var phone = (document.getElementById('hbPhone').value || '').trim();
+    var post = (document.getElementById('hbPost').value || '').trim();
+    var job = document.getElementById('hbJob').value;
+    var q = document.getElementById('quoteForm');
+    if (q) {
+      if (name)  { var n = q.querySelector('[name="name"]');     if (n) n.value = name; }
+      if (phone) { var p = q.querySelector('[name="phone"]');    if (p) p.value = phone; }
+      if (post)  { var c = q.querySelector('[name="postcode"]'); if (c) c.value = post; }
+      if (job)   {
+        var j = q.querySelector('[name="job"]');
+        if (j) [].forEach.call(j.options, function(o){ if (o.text === job) j.value = o.value; });
+      }
+    }
+    var target = document.getElementById('quote');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var first = q && q.querySelector('[name="email"]');
+    if (first) setTimeout(function(){ first.focus({ preventScroll: true }); }, 700);
+  });
+})();
+
 (function(){
   var wall = document.getElementById('wall');
   if (!wall || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
