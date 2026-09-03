@@ -823,3 +823,43 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .hffoot a{color:#bcd0e6}
 .hffoot a:hover{color:#fff}
 .hffoot img{width:78px;height:auto;margin:16px auto 0}
+
+/* ============================================================================
+   ABOUT — every dimension below is measured off the approved artwork at the
+   viewport it was drawn for (2336px wide artwork ≈ a 1440px screen).
+   Scoped to .abx so no other page moves.
+   ========================================================================== */
+.abx .hfember-band{padding-top:clamp(76px,7.1vw,102px)}
+.abx .hfember-txt{padding:clamp(4px,.42vw,6px) 26px clamp(7px,.56vw,8px)}
+.abx .hfember-txt h1{font-size:clamp(1.28rem,2.43vw,2.2rem);line-height:1;letter-spacing:-.01em}
+.abx .hfember-txt .kick{font-size:clamp(.86rem,1.11vw,1rem);margin-top:clamp(7px,.7vw,10px)}
+
+.abx .hfwho{padding:clamp(12px,1.05vw,15px) 0 clamp(8px,.7vw,10px)}
+.abx .hfwho-in{max-width:1440px;padding:0 clamp(20px,3.5vw,50px);gap:clamp(24px,2.8vw,40px);
+  align-items:start}
+@media(min-width:900px){.abx .hfwho-in{grid-template-columns:minmax(0,.707fr) minmax(0,1fr)}}
+.abx .hfwho > .hfwho-in > div:first-child{padding-top:clamp(18px,2.4vw,34px)}
+.abx .hfwho h2{font-size:clamp(1.6rem,3.12vw,2.8rem);margin:0}
+.abx .hfwho p{font-size:clamp(.95rem,1.18vw,1.06rem);line-height:1.6;margin-top:clamp(10px,1vw,14px);
+  max-width:46ch}
+.abx .hfwho figure img{aspect-ratio:2.883;object-fit:cover}
+
+.abx .hfblue{padding:clamp(10px,.85vw,12px) 0}
+.abx .hfblue-in{max-width:1440px;padding:0 clamp(20px,4.3vw,62px);gap:clamp(14px,4.3vw,62px)}
+.abx .hfpill{padding:clamp(10px,1.05vw,15px) clamp(14px,1.7vw,24px);gap:clamp(12px,1.5vw,21px);
+  min-height:clamp(64px,6.75vw,97px)}
+.abx .hfpill img{height:clamp(40px,4.6vw,66px);width:auto;flex:none;display:block}
+.abx .hfpill b{font-size:clamp(1.05rem,1.8vw,1.62rem);letter-spacing:-.005em}
+.abx .hfpill small{font-size:clamp(.8rem,.97vw,.875rem);margin-top:2px}
+
+.abx .hfstats{padding:clamp(10px,.9vw,13px) 0 0}
+.abx .hfstats b{font-size:clamp(1.5rem,3.47vw,3.12rem);line-height:1}
+.abx .hfstats small{font-size:clamp(.68rem,.97vw,.875rem);margin-top:clamp(3px,.28vw,4px)}
+.abx .hffoot{padding:clamp(12px,1.25vw,18px) 0 clamp(7px,.63vw,9px)}
+.abx .hffoot b{font-size:clamp(1.1rem,1.87vw,1.69rem);line-height:1.15}
+.abx .hffoot p{font-size:clamp(.9rem,1.18vw,1.06rem);margin-top:clamp(3px,.28vw,4px)}
+/* on a phone the artwork scales down to a 100px logo — crop instead of shrink */
+@media(max-width:760px){
+  .abx .hfember-top{height:clamp(150px,44vw,190px);object-fit:cover;object-position:center}
+  .abx .hfember-txt{padding-top:10px}
+}
