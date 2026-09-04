@@ -86,6 +86,18 @@ MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
 # database_name = "m2l"
 # database_id = "PASTE_REAL_ID_HERE"
 
+# ---------------------------------------------------------------------------
+# HeatFix back office. Invoices, customers and his own details live here, so
+# they survive a lost phone and follow him between the van and the laptop.
+#
+# Create it once, on the account the Worker deploys to, then paste the id:
+#     npx wrangler d1 create hfcrm
+#     npx wrangler d1 execute hfcrm --remote --file=migrations/0002_heatfix_crm.sql
+[[d1_databases]]
+binding = "HF_DB"
+database_name = "hfcrm"
+database_id = "PASTE_REAL_ID_HERE"
+
 [assets]
 directory = "."
 not_found_handling = "404-page"
@@ -128,6 +140,13 @@ routes = [
   { pattern = "heatfixmcrlimited.co.uk", custom_domain = true },
   { pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
 ]
+
+# The same database on the client's own account. Create it there too and
+# paste that id; the two accounts cannot share one database.
+[[env.heatfix.d1_databases]]
+binding = "HF_DB"
+database_name = "hfcrm"
+database_id = "PASTE_REAL_ID_HERE"
 
 [env.heatfix.vars]
 M2L_HOST = ""

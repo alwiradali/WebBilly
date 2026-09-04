@@ -26,6 +26,7 @@ import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
 import { recordEnquiry, notifyTo, formAllowed } from "./worker/studio/enquiries.js";
 import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
+import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -82,6 +83,11 @@ export default {
         return handleInvoiceSign(request, env);
       }
     }
+    // HeatFix back office: his invoices, customers and settings.
+    if (isHfCrmPath(url.pathname)) {
+      return handleHfCrm(request, env, url);
+    }
+
     if (url.pathname === "/api/book") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
