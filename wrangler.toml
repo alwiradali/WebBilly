@@ -93,10 +93,12 @@ MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
 # Create it once, on the account the Worker deploys to, then paste the id:
 #     npx wrangler d1 create hfcrm
 #     npx wrangler d1 execute hfcrm --remote --file=migrations/0002_heatfix_crm.sql
-[[d1_databases]]
-binding = "HF_DB"
-database_name = "hfcrm"
-database_id = "PASTE_REAL_ID_HERE"
+# Uncomment these four lines once the database exists and the real id is in.
+# Until then the back office answers 503 and nothing else on the site changes.
+# [[d1_databases]]
+# binding = "HF_DB"
+# database_name = "hfcrm"
+# database_id = "PASTE_REAL_ID_HERE"
 
 [assets]
 directory = "."
@@ -143,10 +145,10 @@ routes = [
 
 # The same database on the client's own account. Create it there too and
 # paste that id; the two accounts cannot share one database.
-[[env.heatfix.d1_databases]]
-binding = "HF_DB"
-database_name = "hfcrm"
-database_id = "PASTE_REAL_ID_HERE"
+# [[env.heatfix.d1_databases]]
+# binding = "HF_DB"
+# database_name = "hfcrm"
+# database_id = "PASTE_REAL_ID_HERE"
 
 [env.heatfix.vars]
 M2L_HOST = ""
