@@ -90,15 +90,12 @@ MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
 # HeatFix back office. Invoices, customers and his own details live here, so
 # they survive a lost phone and follow him between the van and the laptop.
 #
-# Create it once, on the account the Worker deploys to, then paste the id:
-#     npx wrangler d1 create hfcrm
-#     npx wrangler d1 execute hfcrm --remote --file=migrations/0002_heatfix_crm.sql
-# Uncomment these four lines once the database exists and the real id is in.
-# Until then the back office answers 503 and nothing else on the site changes.
-# [[d1_databases]]
-# binding = "HF_DB"
-# database_name = "hfcrm"
-# database_id = "PASTE_REAL_ID_HERE"
+# There is deliberately NO HF_DB binding on this (Billy Digitals) worker. His
+# customers' names, addresses and phone numbers make HeatFix the data
+# controller, so the database lives on the HeatFix Cloudflare account and is
+# bound under [env.heatfix] at the bottom of this file. On billydigitals.com
+# the back office answers 503 "database not connected", which is correct: the
+# preview copy of the site should not be able to read his customer book.
 
 [assets]
 directory = "."
@@ -143,12 +140,14 @@ routes = [
   { pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
 ]
 
-# The same database on the client's own account. Create it there too and
-# paste that id; the two accounts cannot share one database.
-# [[env.heatfix.d1_databases]]
-# binding = "HF_DB"
-# database_name = "hfcrm"
-# database_id = "PASTE_REAL_ID_HERE"
+# The back office database, on HeatFix's own Cloudflare account. Apply the
+# schema once with:
+#   CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
+#   npx wrangler d1 execute hfcrm --remote --file=migrations/0002_heatfix_crm.sql
+[[env.heatfix.d1_databases]]
+binding = "HF_DB"
+database_name = "hfcrm"
+database_id = "497bcc16-15d2-4d61-b98c-9d7c09e6c9a5"
 
 [env.heatfix.vars]
 M2L_HOST = ""
