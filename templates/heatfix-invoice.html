@@ -103,6 +103,8 @@ body::before{opacity:.35}
 .p-co b{display:block;font-family:var(--dis);font-weight:800;font-size:15px;color:#0d2a63;line-height:1.2}
 .p-gsrow{display:flex;align-items:center;gap:8px;margin-top:5px}
 .p-gs{width:30px;height:auto;flex:none}
+/* the mark is Gas Safe yellow; without this the triangle inherits black */
+.p-gs polygon{fill:#FFD200;stroke:#FFD200}
 .p-gsrow b{font-family:var(--dis);font-weight:800;font-size:9px;letter-spacing:.09em;
   text-transform:uppercase;color:#0d2a63;display:block;line-height:1.25}
 .p-gsrow span{display:block;color:#5b6675;font-size:9.5px}
