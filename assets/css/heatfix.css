@@ -882,3 +882,37 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   font-size:clamp(1.28rem,2.43vw,2.2rem);line-height:1}
 @media(max-width:760px){.hfember-band.inpage .hfember-top{height:clamp(150px,44vw,190px);
   object-fit:cover;object-position:center}}
+
+/* ---- side card -----------------------------------------------------------
+   These lived only in the home page's own <style>, so the booking page used
+   the class and got nothing: a transparent card with light text on a
+   near-white background. Shared now so every page styles it the same. -- */
+.side-card{
+  padding:26px;border-radius:var(--rl);background:var(--card);border:1px solid var(--line);
+  position:relative;overflow:hidden;box-shadow:var(--shadow);
+}
+.side-card::before{content:"";position:absolute;inset:0;opacity:.6;pointer-events:none;
+  background-image:radial-gradient(rgba(13,42,99,.05) 1px,transparent 1px);background-size:6px 6px}
+.side-card + .side-card{margin-top:16px}
+.side-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.side-row:last-child{border:0;padding-bottom:0}
+.side-row .ic{width:42px;height:42px;border-radius:13px;flex:none;display:grid;place-items:center;
+  background:var(--paper2);border:1px solid var(--line)}
+.side-row .ic svg{width:19px;height:19px;stroke:var(--blue);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.side-row small{display:block;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.side-row b{font-family:var(--dis);font-weight:800;font-size:1.02rem;word-break:break-word;color:var(--navy)}
+
+/* ---- CTA band and tick ----------------------------------------------------
+   Same trap as the side card: these lived only in the home page's own
+   <style>, so on the ten secondary pages the band had no background while
+   .band still set near-white text tokens. White heading on a white page.
+   Shared now. ------------------------------------------------------------ */
+.band{position:relative;overflow:hidden;background:var(--gunmetal)}
+.band-fire{position:absolute;inset:0;z-index:0;opacity:.38;
+  background:radial-gradient(640px 340px at 50% 122%,var(--flame),transparent 68%)}
+.band-in{padding:clamp(56px,8vw,96px) 0;text-align:center;position:relative;z-index:2}
+.band h2{margin-bottom:14px}
+.band .lede{margin:0 auto 28px}
+.band-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tick{width:19px;height:19px;flex:none;border-radius:50%;background:var(--water);display:grid;place-items:center}
+.tick svg{width:11px;height:11px;stroke:#fff;stroke-width:3.4;fill:none}
