@@ -9,7 +9,7 @@
 var HF = {
   company: {
     name:   'HeatFix Mcr Limited',
-    person: 'Mohammad Ejaz',
+    person: '',            /* a named person no longer appears on invoices */
     role:   'Domestic Gas Engineer',
     phone:  '07890 452629',
     intl:   '447890452629',
@@ -338,7 +338,7 @@ HF.buildPdf = function (inv, logoBuf) {
 
   /* --- footer --- */
   rect(0, 0, A4.w, 44, '0.051 0.165 0.388');
-  txt(c.name + '  ·  ' + c.person + '  ·  ' + c.phone, M, 24, 8.5, true, '1 1 1');
+  txt([c.name, c.person, c.phone].filter(Boolean).join('  \u00b7  '), M, 24, 8.5, true, '1 1 1');
   right(c.web, xr, 24, 8.5, false, '0.78 0.84 0.92');
   txt('Thank you for your custom.', M, 12, 7.5, false, '0.62 0.70 0.82');
 
@@ -733,7 +733,7 @@ HF.message = function(inv, link){
   if (link) { L.push(''); L.push('View or download the PDF: ' + link); }
   L.push('');
   L.push('Any questions just give me a ring.');
-  L.push(HF.company.person + ' — ' + HF.company.name);
+  L.push([HF.company.person, HF.company.name].filter(Boolean).join(', '));
   L.push(HF.company.phone);
   return L.join('\n');
 };

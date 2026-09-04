@@ -168,7 +168,7 @@ table.p-t td:last-child{padding-right:8px;font-weight:700}
 </style>
 </head>
 <body>
-<!-- no animated background here: this is the tool Ejaz fills in on a job,
+<!-- no animated background here: this is the tool filled in on a job,
      and motion behind form fields is noise. The customer-facing /i view has it. -->
 
 <div class="top">
@@ -380,7 +380,7 @@ function render(){
       (inv.gassafe ? '<div class="p-sm" style="margin-top:7px">Gas Safe reg. ' + esc(inv.gassafe) + '</div>' : '') +
     '</div>' +
   '</div>' +
-  '<div class="p-foot"><span>' + c.name + ' · ' + c.person + ' · ' + c.phone + '</span><span>' + c.web + '</span></div>';
+  '<div class="p-foot"><span>' + [c.name, c.person, c.phone].filter(Boolean).join('  \u00b7  ') + '</span><span>' + c.web + '</span></div>';
 }
 
 /* ---------------- persistence ---------------- */
