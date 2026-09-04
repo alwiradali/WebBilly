@@ -17,7 +17,8 @@ main = "worker.js"
 [vars]
 M2L_HOST = ""
 HEATFIX_HOST = ""
-MEGACITY_HOST = ""
+# local root-mode testing: curl -H "Host: www.megacityproperties.co.uk" http://localhost:8787/
+MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
 MEGACITY_PUBLIC_BASE = "http://localhost:8787/templates/"
 PBKDF2_ITERS = "20000"
 
@@ -35,9 +36,4 @@ bucket_name = "megacity-media"
 directory = "."
 not_found_handling = "404-page"
 binding = "ASSETS"
-run_worker_first = [
-  "/api/*", "/media/*", "/templates/megacity-*",
-  "/", "/admin", "/invoice", "/sign", "/book", "/i",
-  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
-  "/manufacturers-warranty", "/privacy", "/terms",
-]
+run_worker_first = true

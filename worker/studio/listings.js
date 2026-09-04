@@ -10,6 +10,7 @@ import { listForListing, deleteAllForListing, mediaUrl } from "./media.js";
 /* camelCase → column, with the coercion to apply. */
 const FIELDS = {
   ref: ["ref", (v) => clampStr(v, 40)],
+  legacyId: ["legacy_id", (v) => clampStr(v, 40)],
   hidden: ["hidden", (v) => toBool(v) ?? 0],
   title: ["title", (v) => clampStr(v, 160)],
   headline: ["headline", (v) => clampStr(v, 160)],
@@ -97,7 +98,7 @@ function toColumns(body) {
 export function rowToListing(r, media, tour) {
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
   return {
-    id: r.id, source: r.source, externalId: r.external_id, ref: r.ref, status: r.status, hidden: !!r.hidden,
+    id: r.id, source: r.source, externalId: r.external_id, legacyId: r.legacy_id || null, ref: r.ref, status: r.status, hidden: !!r.hidden,
     title: r.title, headline: r.headline, type: r.type, letType: r.let_type, furnishing: r.furnishing,
     rentPcm: r.rent_pcm, deposit: r.deposit, bills: r.bills, billsNote: r.bills_note,
     availability: r.availability, availableFrom: r.available_from, minTerm: r.min_term,
@@ -254,7 +255,7 @@ export async function restore(c) {
 export async function duplicate(c) {
   const row = await mustGet(c.db, c.params.id);
   const id = await uniqueId(c.db, row.id + "-copy");
-  const skip = new Set(["id", "status", "hidden", "deleted_at", "cover_media_id", "external_id", "source", "synced_at", "published_at", "created_at", "updated_at", "created_by", "updated_by", "ref", "external_json"]);
+  const skip = new Set(["id", "status", "hidden", "deleted_at", "cover_media_id", "external_id", "legacy_id", "source", "synced_at", "published_at", "created_at", "updated_at", "created_by", "updated_by", "ref", "external_json"]);
   const cols = {};
   for (const k of Object.keys(row)) if (!skip.has(k)) cols[k] = row[k];
   const now = nowIso();
@@ -352,6 +353,11 @@ export async function importLegacy(c) {
     if (!item || !/^[a-z0-9-]{2,80}$/.test(String(item.id || ""))) continue;
     const cols = toColumns(item);
     if (!cols.title) continue;
+    /* the old website's /property/<id>/ number, so that address redirects here */
+    if (!cols.legacy_id && item.links && typeof item.links.tenninety === "string") {
+      const lm = /\/property\/(\d+)(?:\/|$)/.exec(item.links.tenninety);
+      if (lm) cols.legacy_id = lm[1];
+    }
     const extras = cleanExtras(item);
     /* a seed marked live is imported as a draft and goes live by itself the
        moment its photos are in and it passes the same checks as everyone else */

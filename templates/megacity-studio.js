@@ -8,6 +8,16 @@
   "use strict";
   var API = window.MCStudioAPI;
   if (!API) return;
+  /* links to the public site, right for whichever host the Studio is on
+     (megacity-urls.js): /templates/megacity-… on the demo host, root paths on
+     megacityproperties.co.uk */
+  var PUB = window.MCUrls || {
+    mode: function () { return "demo"; },
+    listing: function (id) { return "/templates/megacity-let-" + id; },
+    page: function (slug, frag) { return "/templates/megacity-" + (slug || "skyline") + (frag ? "#" + frag : ""); },
+    pagePrefix: function () { return "/templates/megacity-"; },
+    studio: function (h) { return "/templates/megacity-studio" + (h || ""); }
+  };
 
   /* ── helpers ─────────────────────────────────────────────────────── */
   function $(s, r) { return (r || document).querySelector(s); }
@@ -495,7 +505,7 @@
         '<div class="st-actions"><a class="st-btn st-btn--fill" href="#/listings/new">' + I.plus + 'New listing</a><a class="st-btn" href="#/settings">' + I.cog + "Open settings</a></div></div>" +
         (showImport ? '<section class="st-card st-import" style="margin-bottom:14px"><h2>Import the 5 current listings</h2><p>Bring in the five listings and their photos from the hand-built pages, so the website runs from the Studio. It takes a minute or two and can be re-run safely — anything already imported is skipped.</p><button type="button" class="st-btn" data-import>' + I.upload + "Import the current listings</button></section>" : "") +
         '<div class="st-tiles">' + tile("Live listings", L.live, "#/listings?status=live", "live") + tile("Drafts", L.draft, "#/listings?status=draft") + tile("All listings", L.total, "#/listings") + tile("Photos & files", c.media) + tile("Live tours", c.tours && c.tours.live) + "</div>" +
-        '<div class="st-tiles">' + tile("New enquiries", E ? E.new : null, "#/enquiries?status=new", E && E.new ? "hot" : null) + tile("Enquiries this week", E ? E.last7 : null, "#/enquiries?status=") + tile("Listing views this week", ev ? ev.listing_view : null) + tile("Tour opens this week", ev ? ev.tour_open : null) + "</div>" +
+        '<div class="st-tiles">' + tile("New enquiries", E ? E.new : null, "#/enquiries?status=new", E && E.new ? "hot" : null) + tile("Enquiries this week", E ? E.last7 : null, "#/enquiries?status=") + tile("Listing views this week", ev ? ev.listing_view : null) + tile("Tour opens this week", ev ? ev.tour_open : null) + tile("404s this week", ev ? ev.not_found : null, "#/settings/redirects", ev && ev.not_found > 20 ? "hot" : null) + "</div>" +
         '<div class="st-grid2" style="margin-top:14px">' +
         '<section class="st-card"><div class="st-card-head"><div><h2>Enquiries, last 30 days</h2><p>' + (E ? "By day, and this week by source." : "Numbers appear once the activity store is connected.") + "</p></div></div>" + sparkHtml(E ? E.daily : null) + bySourceHtml(E ? E.bySource : null) + "</section>" +
         '<section class="st-card"><div class="st-card-head"><h2>Recent activity</h2></div>' + feedHtml(d.recent || []) + "</section>" +
@@ -770,7 +780,7 @@
   function detailsHtml() {
     var d = ed.doc, nums = function (a, b) { var o = []; for (var i = a; i <= b; i++) o.push({ value: String(i), label: String(i) }); return o; };
     return '<section class="st-card"><div class="st-card-head"><h2>Basics</h2></div><div class="st-form">' +
-      fld({ k: "title", label: "Title", req: true, ph: "2 bed apartment, Ladywell Point, Salford", cls: "c8" }) + fld({ k: "ref", label: "Reference", ph: "RL0140", cls: "c4", optn: "as in 10ninety" }) +
+      fld({ k: "title", label: "Title", req: true, ph: "2 bed apartment, Ladywell Point, Salford", cls: "c8" }) + fld({ k: "ref", label: "Reference", ph: "RL0140", cls: "c4", optn: "as in 10ninety" }) + fld({ k: "legacyId", label: "Old website id", ph: "225", cls: "c4", optn: "the number in the old /property/…/ address, so it redirects here" }) +
       fld({ k: "headline", label: "Headline", ph: "Two doubles a short walk from Ladywell Metrolink", hint: "One line under the title on the property page." }) +
       sel({ k: "type", label: "Property type", list: "type", req: true, cls: "c4" }) + sel({ k: "letType", label: "Let type", list: "letType", cls: "c4" }) + sel({ k: "furnishing", label: "Furnishing", list: "furnishing", cls: "c4" }) + "</div></section>" +
       '<section class="st-card"><div class="st-card-head"><h2>Rent and terms</h2></div><div class="st-form">' +
@@ -1115,7 +1125,7 @@
       checks.map(function (c) { return '<li class="' + (c[1] ? "is-ok" : "is-todo") + '"><i aria-hidden="true">' + (c[1] ? I.check : "") + "</i>" + esc(c[0]) + "</li>"; }).join("") + '</ul><ul class="st-problems" id="edProblems" hidden></ul>' +
       (live ? "" : '<div class="st-actions" style="margin-top:18px"><button type="button" class="st-btn st-btn--fill st-btn--lg" data-eact="publish">' + I.eye + "Advertise on the website</button></div>") + "</section>" +
       (live ? '<section class="st-card"><div class="st-card-head"><div><h2>On the website</h2><p>Advertised ' + esc(d.publishedAt ? rel(d.publishedAt) : "") + ".</p></div>" + statusPill(d.status) + '</div><div class="st-live">' +
-        '<a class="st-btn" href="/templates/megacity-let-' + esc(encodeURIComponent(d.id)) + '" target="_blank" rel="noopener">' + I.eye + 'View on the website</a><span class="st-tag">Link goes live in the next release</span></div>' +
+        '<a class="st-btn" href="' + esc(PUB.listing(encodeURIComponent(d.id))) + '" target="_blank" rel="noopener">' + I.eye + 'View on the website</a></div>' +
         '<div class="st-form" style="margin-top:16px"><div class="st-field c6"><label class="st-label" for="edStatus">Status</label><div class="st-select"><select id="edStatus" data-status>' + optList("status").filter(function (o) { return o.value !== "draft"; }).map(function (o) { return '<option value="' + esc(o.value) + '"' + (o.value === d.status ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div></div>" +
         '<div class="st-field c6" style="justify-content:flex-end"><button type="button" class="st-btn" data-eact="unpublish">Take off the website</button></div></div></section>' : "") +
       '<section class="st-card"><div class="st-card-head"><div><h2>Visibility</h2><p>Hide the listing without taking it off — handy while the photos are being redone.</p></div></div>' + fld({ k: "hidden", label: "Hidden from the website", type: "toggle" }) + "</section>" + shareKitCardHtml();
@@ -1148,7 +1158,7 @@
   }
 
   /* ── settings ────────────────────────────────────────────────────── */
-  var SECTIONS = [["branding", "Branding", "cog"], ["notifications", "Notifications", "bell"], ["links", "10ninety links", "link"], ["integrations", "Integrations", "plug"], ["data", "Data", "db"], ["account", "Account", "person"]];
+  var SECTIONS = [["branding", "Branding", "cog"], ["notifications", "Notifications", "bell"], ["links", "10ninety links", "link"], ["redirects", "Redirects & 404s", "link"], ["integrations", "Integrations", "plug"], ["data", "Data", "db"], ["account", "Account", "person"]];
   SCREENS.settings = function (section) {
     if (section === "integrations") { go("#/integrations"); return; }
     section = SECTIONS.some(function (s) { return s[0] === section; }) ? section : "branding";
@@ -1157,6 +1167,7 @@
     var body = $("#setBody");
     if (section === "account") { body.innerHTML = accountHtml(); bindAccount(body); return; }
     if (section === "data") { body.innerHTML = dataHtml(); return; }
+    if (section === "redirects") { redirectsScreen(body); return; }
     API.settings.get().then(function (res) {
       var s = res.settings || {};
       body.innerHTML = section === "branding" ? brandingHtml(s) : section === "notifications" ? notifyHtml(s) : linksHtml(s);
@@ -1189,6 +1200,67 @@
   function dataHtml() {
     return '<section class="st-card"><div class="st-card-head"><div><h2>Import the current listings</h2><p>Brings in the five listings and their photos from the hand-built pages. Listings that already have photos are skipped unless you say otherwise, so it is safe to run again.</p></div></div><button type="button" class="st-btn st-btn--fill" data-import>' + I.upload + "Import the current listings</button></section>" +
       '<section class="st-card"><div class="st-card-head"><div><h2>Bin</h2><p>Listings you have moved to the Bin. Restore them, or the owner can delete them for good.</p></div></div><a class="st-btn" href="#/listings?status=bin">' + I.trash + "Open the Bin</a></section>";
+  }
+  /* Missing addresses the live site answered with a 404, and the redirects
+     that fix them. The Worker applies the list on megacityproperties.co.uk
+     before anything else (worker/studio/host.js). */
+  function redirectsScreen(body) {
+    var days = 7, showLegacy = false, data = { items: [] }, list = [];
+    function load() {
+      body.innerHTML = loading();
+      API.notfound.list({ days: days }).then(function (res) { data = res || { items: [] }; list = clone(res.redirects || []); paint(); }).catch(function (err) { body.innerHTML = errorHtml(err); });
+    }
+    function rowsHtml() {
+      var items = (data.items || []).filter(function (r) { return showLegacy || r.kind !== "legacy"; });
+      if (!items.length) return '<p class="st-hint">No missing addresses ' + (days === 7 ? "this week" : "in the last 30 days") + ". That is what you want to see.</p>";
+      return '<table class="st-usage"><caption class="st-vh">Missing addresses</caption><thead><tr><th scope="col">Address</th><th scope="col" style="text-align:right">Hits</th><th scope="col">Last seen</th><th scope="col">Came from</th><th scope="col"></th></tr></thead><tbody>' +
+        items.map(function (r) {
+          var done = list.some(function (x) { return x.from === r.path; });
+          return "<tr><td><code>" + esc(r.path) + "</code>" + (r.bots ? ' <span class="st-tag">' + esc(r.bots) + " bot" + (r.bots === 1 ? "" : "s") + "</span>" : "") + '</td><td class="num">' + esc(r.count) + "</td><td>" + esc(rel(r.lastSeen)) + "</td><td>" +
+            (r.referrer ? '<a href="' + esc(r.referrer) + '" target="_blank" rel="noopener">' + esc(String(r.referrer).replace(/^https?:\/\//, "").slice(0, 40)) + "</a>" : "—") + "</td><td>" +
+            (done ? '<span class="st-pill st-pill--live">redirected</span>' : '<button type="button" class="st-btn" data-add-redirect="' + esc(r.path) + '">Add redirect</button>') + "</td></tr>";
+        }).join("") + "</tbody></table>";
+    }
+    function listHtml() {
+      if (!list.length) return '<p class="st-hint">No redirects yet. Add one below, or from a missing address above.</p>';
+      return '<ul class="st-check">' + list.map(function (r, i) {
+        return '<li class="is-ok"><i aria-hidden="true">' + I.check + "</i><code>" + esc(r.from) + "</code> &rarr; <code>" + esc(r.to) + '</code> <span class="st-tag">' + (r.status === 302 ? "temporary" : "permanent") + '</span> <button type="button" class="st-btn" data-del-redirect="' + i + '">Remove</button></li>';
+      }).join("") + "</ul>";
+    }
+    function paint() {
+      body.innerHTML =
+        '<section class="st-card"><div class="st-card-head"><div><h2>Missing addresses (404s)</h2><p>Addresses people and search engines asked for that do not exist. Old links from the previous website show up here after the move; add a redirect and they land somewhere useful.</p></div></div>' +
+        '<div class="st-actions" style="margin-bottom:12px"><button type="button" class="st-btn' + (days === 7 ? " st-btn--fill" : "") + '" data-days="7">7 days</button><button type="button" class="st-btn' + (days === 30 ? " st-btn--fill" : "") + '" data-days="30">30 days</button><label class="st-hint" style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" data-legacy' + (showLegacy ? " checked" : "") + "> show old-site files (images, scripts)</label></div>" +
+        '<div id="nfRows">' + rowsHtml() + "</div></section>" +
+        '<section class="st-card"><div class="st-card-head"><div><h2>Redirects</h2><p>Applied on megacityproperties.co.uk before anything else. Permanent (301) tells search engines the page has moved for good; temporary (302) keeps the old address in their index.</p></div></div>' +
+        '<div id="rdList">' + listHtml() + "</div>" +
+        '<form novalidate class="st-form" id="rdForm" style="margin-top:14px">' +
+        wrap(fieldHtml({ label: "From", name: "from", ph: "/old-page", hint: "An address on this site that should send people elsewhere." }), "c5") +
+        wrap(fieldHtml({ label: "To", name: "to", ph: "/landlords or https://…", hint: "Where it should go: a page here, or a full web address." }), "c5") +
+        '<div class="st-field c2"><label class="st-label" for="rd_status">Kind</label><select class="st-in" id="rd_status" name="status"><option value="301">Permanent</option><option value="302">Temporary</option></select></div>' +
+        '<p class="st-err" data-form-err role="alert" hidden></p><div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Add and save</button></div></form>' +
+        '<p class="st-note">Changes reach every visitor within a minute.</p></section>';
+      bindForm($("#rdForm", body), function (d) {
+        var from = String(d.from || "").trim().toLowerCase(), to = String(d.to || "").trim();
+        if (from.length > 1) from = from.replace(/\/+$/, "");
+        if (!/^\/[a-z0-9\/._~-]*$/.test(from) || from === "/") throw new Error("From must be an address on this site, such as /old-page (not the home page).");
+        if (!/^(https?:\/\/\S+|\/[a-z0-9\/._~-]*(#[a-z0-9_-]+)?)$/i.test(to)) throw new Error("To must be a page here, such as /landlords, or a full https:// address.");
+        return save(list.filter(function (r) { return r.from !== from; }).concat([{ from: from, to: to, status: Number(d.status) === 302 ? 302 : 301 }]));
+      });
+    }
+    function save(next) {
+      return API.settings.put({ redirects: next }).then(function (res) { list = clone((res && res.settings && res.settings.redirects) || next); toast("Saved", { kind: "good" }); paint(); });
+    }
+    body.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-days],[data-add-redirect],[data-del-redirect]");
+      if (!b) return;
+      if (b.hasAttribute("data-days")) { days = Number(b.getAttribute("data-days")); load(); return; }
+      if (b.hasAttribute("data-add-redirect")) { var f = $("#rdForm", body); f.elements.from.value = b.getAttribute("data-add-redirect"); f.elements.to.focus(); f.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      var i = Number(b.getAttribute("data-del-redirect"));
+      save(list.filter(function (_, k) { return k !== i; })).catch(errToast);
+    });
+    body.addEventListener("change", function (e) { if (e.target.matches("[data-legacy]")) { showLegacy = e.target.checked; $("#nfRows", body).innerHTML = rowsHtml(); } });
+    load();
   }
   function bindSettingsForm(form, section) {
     bindForm(form, function (d) {
@@ -1692,7 +1764,7 @@
     return '<section class="st-card st-ai" id="aiKit"><div class="st-card-head"><div><h2>Share kit</h2><p>Posts for Facebook, Instagram and WhatsApp' + (ed.doc.letType === "room" ? ", plus a SpareRoom advert" : "") + ', written from the listing facts. Copy what you need.</p></div></div><div class="st-actions"><button type="button" class="st-btn st-btn--blue" data-ai="share-kit">' + I.spark + 'Write the share kit</button></div><div id="aiKitOut"></div></section>';
   }
   function shareKitHtml(k) {
-    var url = location.origin + (k.url || "/templates/megacity-let-" + ed.id);
+    var url = location.origin + (k.url || PUB.listing(ed.id));
     var items = [["Headline", k.headline], ["Facebook", k.facebook], ["Instagram", k.instagram], ["WhatsApp", k.whatsapp], ["SpareRoom", k.spareroom], ["Hashtags", (k.hashtags || []).map(function (h) { return "#" + h; }).join(" ")], ["Meta description", k.metaDescription]].filter(function (x) { return x[1]; });
     return '<div class="st-kit">' + items.map(function (x) {
       var extra = x[0] === "WhatsApp" ? '<a class="st-btn st-btn--sm" href="https://wa.me/?text=' + encodeURIComponent(x[1]) + '" target="_blank" rel="noopener">' + I.chat + "Share on WhatsApp</a>" : x[0] === "Facebook" ? '<a class="st-btn st-btn--sm" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '" target="_blank" rel="noopener">Share on Facebook</a>' : "";
@@ -1736,7 +1808,7 @@
   function slugify(v) { return String(v || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80); }
   SCREENS.pages = function () {
     setTop({ title: "Pages" });
-    view.innerHTML = '<div class="st-toolbar"><p class="st-hint" style="flex:1 1 300px;margin:0">Area guides, landing pages and guides, published at /templates/megacity-&lt;address&gt; with the search markup done for you.</p><button type="button" class="st-btn st-btn--fill" data-newpage>' + I.plus + 'New page</button></div><div id="pgBody">' + loading() + "</div>";
+    view.innerHTML = '<div class="st-toolbar"><p class="st-hint" style="flex:1 1 300px;margin:0">Area guides, landing pages and guides, published at ' + esc(PUB.pagePrefix()) + '&lt;address&gt; with the search markup done for you.</p><button type="button" class="st-btn st-btn--fill" data-newpage>' + I.plus + 'New page</button></div><div id="pgBody">' + loading() + "</div>";
     API.pages.list().then(function (res) {
       var items = res.items || [], body = $("#pgBody"); if (!body) return;
       body.innerHTML = items.length ? pagesTable(items) + pagesCards(items) : '<div class="st-empty">' + I.doc + '<h3>No pages yet</h3><p>Start with an area guide for somewhere you let a lot.</p><button type="button" class="st-btn st-btn--fill" data-newpage>' + I.plus + "New page</button></div>";
@@ -1755,10 +1827,10 @@
   function newPageDrawer() {
     openDrawer("New page", '<form novalidate class="st-stack" id="newPageForm">' + fieldHtml({ label: "Title", name: "title", required: true, ph: "Renting in Salford" }) +
       selectHtml({ label: "Kind", name: "kind", noEmpty: true, value: "area", options: KIND_OPTS }) +
-      '<div class="st-field"><label class="st-label" for="f_slug">Address <span class="st-opt">made from the title if left blank</span></label><div class="st-slug"><span>/templates/megacity-</span><input id="f_slug" name="slug" autocomplete="off" spellcheck="false" placeholder="renting-in-salford"></div><p class="st-err" id="slugErr" role="alert" hidden></p><span class="st-hint" id="slugPrev"></span></div>' +
+      '<div class="st-field"><label class="st-label" for="f_slug">Address <span class="st-opt">made from the title if left blank</span></label><div class="st-slug"><span>' + esc(PUB.pagePrefix()) + '</span><input id="f_slug" name="slug" autocomplete="off" spellcheck="false" placeholder="renting-in-salford"></div><p class="st-err" id="slugErr" role="alert" hidden></p><span class="st-hint" id="slugPrev"></span></div>' +
       '<p class="st-err" data-form-err role="alert" hidden></p><button type="submit" class="st-btn st-btn--fill">Create page</button></form>', function (body) {
         var f = $("#newPageForm", body), t = $("#f_title", f), sl = $("#f_slug", f), prev = $("#slugPrev", f);
-        var upd = function () { var s = slugify(sl.value || t.value); prev.textContent = s ? "Will be published at /templates/megacity-" + s : ""; };
+        var upd = function () { var s = slugify(sl.value || t.value); prev.textContent = s ? "Will be published at " + PUB.pagePrefix() + s : ""; };
         t.addEventListener("input", upd); sl.addEventListener("input", upd);
         bindForm(f, function (d) {
           if (!d.title.trim()) throw new Error("Give the page a title");
@@ -1866,15 +1938,15 @@
       (live ? '<button type="button" class="st-btn" data-pact="unpublish">Unpublish</button>' : '<button type="button" class="st-btn st-btn--fill" data-pact="publish">' + I.eye + "Publish</button>") +
       '<button type="button" class="st-btn st-btn--danger" data-pact="delete">Delete</button></div></div>';
   }
-  function refreshPageHead() { var h = $("#pgHead"); if (h) h.outerHTML = pageHeadHtml(); topSub.textContent = "/templates/megacity-" + pg.doc.slug; topSub.hidden = false; }
+  function refreshPageHead() { var h = $("#pgHead"); if (h) h.outerHTML = pageHeadHtml(); topSub.textContent = PUB.pagePrefix() + pg.doc.slug; topSub.hidden = false; }
   function renderPage() {
     var d = pg.doc;
-    setTop({ title: d.title || "Untitled page", sub: "/templates/megacity-" + d.slug, back: "#/pages", chip: pgChipHtml() });
+    setTop({ title: d.title || "Untitled page", sub: PUB.pagePrefix() + d.slug, back: "#/pages", chip: pgChipHtml() });
     view.innerHTML = pageHeadHtml() + '<ul class="st-problems" id="pgProblems" hidden style="margin:12px 0"></ul>' +
       '<section class="st-card" style="margin-top:14px"><div class="st-card-head"><h2>Page</h2></div><div class="st-form">' +
       pf({ k: "title", label: "Title", req: true, cls: "c8" }) +
       '<div class="st-field c4"><label class="st-label" for="pg_kind">Kind</label><div class="st-select"><select id="pg_kind" data-pk="kind">' + KIND_OPTS.map(function (o) { return '<option value="' + o.value + '"' + (d.kind === o.value ? " selected" : "") + ">" + o.label + "</option>"; }).join("") + "</select></div></div>" +
-      '<div class="st-field"><label class="st-label" for="pg_slug">Address</label><div class="st-slug"><span>/templates/megacity-</span><input id="pg_slug" data-pk="slug" value="' + esc(d.slug) + '" autocomplete="off" spellcheck="false"></div><span class="st-hint">Changing the address changes the link; search engines take a while to catch up.</span></div>' +
+      '<div class="st-field"><label class="st-label" for="pg_slug">Address</label><div class="st-slug"><span>' + esc(PUB.pagePrefix()) + '</span><input id="pg_slug" data-pk="slug" value="' + esc(d.slug) + '" autocomplete="off" spellcheck="false"></div><span class="st-hint">Changing the address changes the link; search engines take a while to catch up.</span></div>' +
       pf({ k: "seoTitle", label: "Search title", max: 70, counter: 60, cls: "c6", ph: d.title, hint: "Blank uses the title." }) + pf({ k: "seoDescription", label: "Search description", type: "textarea", rows: 2, max: 170, counter: 155, cls: "c6", hint: "What Google shows under the title. Needed before publishing." }) +
       '<div class="st-field"><span class="st-label">Hero photo</span><div class="st-hero-thumb" id="pgHero">' + heroThumbHtml() + "</div></div></div></section>" +
       '<section class="st-card"><div class="st-card-head"><div><h2>Content</h2><p>Blocks in the order they appear. Headings break the page up; a call to action sends people to the office.</p></div></div><div class="st-blocks" id="pgBlocks">' + blocksHtml() + '</div><div class="st-addrow">' +
@@ -1891,7 +1963,7 @@
       if (same(pg.doc[k], v === "" && k !== "slug" ? null : v)) return true;
       pgSet(k, v === "" && k !== "slug" ? null : v);
       if (k === "title") topTitle.textContent = v || "Untitled page";
-      if (k === "slug") topSub.textContent = "/templates/megacity-" + slugify(v);
+      if (k === "slug") topSub.textContent = PUB.pagePrefix() + slugify(v);
       if (k === "kind") refreshPageHead();
       var cnt = $('[data-count-for="' + t.id + '"]', view); if (cnt) { var max = +cnt.getAttribute("data-max"); cnt.textContent = v.length + " / " + max; cnt.classList.toggle("is-over", v.length > max); }
       return true;
@@ -2035,10 +2107,10 @@
     return '<div class="st-cards">' + rows.map(function (b) { return '<article class="st-rcard" data-bid="' + esc(b.id) + '" style="grid-template-columns:1fr;cursor:default"><div style="min-width:0"><div class="st-title"><a href="' + esc(b.sourceUrl) + '" target="_blank" rel="noopener">' + esc(blHost(b.sourceUrl)) + '</a></div><div class="st-sub">→ ' + esc(b.targetPath) + (b.anchor ? " · “" + esc(b.anchor) + "”" : "") + '</div><div class="st-rmeta">' + blPill(b.status) + "<span>" + (b.lastCheckedAt ? "checked " + esc(rel(b.lastCheckedAt)) : "never checked") + "</span></div>" + (b.lastResult ? '<p class="st-msg">' + esc(b.lastResult) + "</p>" : "") + '<div style="margin-top:10px">' + blActions(b) + "</div></div></article>"; }).join("") + "</div>";
   }
   function backlinkDrawer(b) {
-    var isNew = !b; b = b || { sourceUrl: "", targetPath: "/templates/megacity-skyline", anchor: "Megacity Properties", contact: "", notes: "", status: "planned" };
+    var isNew = !b; b = b || { sourceUrl: "", targetPath: PUB.page("skyline"), anchor: "Megacity Properties", contact: "", notes: "", status: "planned" };
     openDrawer(isNew ? "Add a link" : "Edit link", '<form novalidate class="st-stack" id="blForm">' +
       fieldHtml({ label: "Source page", name: "sourceUrl", type: "url", required: true, value: b.sourceUrl, ph: "https://…", inputmode: "url", hint: "The page on their site that links, or will link, to ours." }) +
-      fieldHtml({ label: "Points to", name: "targetPath", value: b.targetPath, ph: "/templates/megacity-skyline", hint: "The path on our site they should link to." }) +
+      fieldHtml({ label: "Points to", name: "targetPath", value: b.targetPath, ph: PUB.page("skyline"), hint: "The path on our site they should link to." }) +
       fieldHtml({ label: "Anchor text", name: "anchor", value: b.anchor, ph: "Megacity Properties" }) +
       fieldHtml({ label: "Contact", name: "contact", value: b.contact, ph: "Name or email at the other end", auto: "off" }) +
       '<div class="st-field"><label class="st-label" for="f_notes">Notes</label><textarea class="st-ta" id="f_notes" name="notes" rows="3">' + esc(b.notes || "") + "</textarea></div>" +
@@ -2067,10 +2139,11 @@
     var owner = state.user && state.user.role === "owner";
     Promise.all([API.settings.get(), aiOn() ? API.ai.usage().catch(function () { return null; }) : Promise.resolve(null)]).then(function (r) {
       var s = r[0].settings || {}, usage = r[1], ro = owner ? "" : " readonly";
-      var lockNote = owner ? "" : '<p class="st-lock">' + I.key + "Only the owner can change the three IDs above. The banner wording is yours to edit.</p>";
+      var lockNote = owner ? "" : '<p class="st-lock">' + I.key + "Only the owner can change the IDs above. The banner wording is yours to edit.</p>";
       view.innerHTML = '<div class="st-stack" style="max-width:860px">' +
         '<section class="st-card"><div class="st-card-head"><div><h2>Analytics and pixels</h2><p>Nothing here loads for visitors until they accept the cookie banner.</p></div></div><form novalidate class="st-form" id="intForm">' +
         '<div class="st-field c6"><label class="st-label" for="f_ga4Id">Google Analytics 4</label><input class="st-in" id="f_ga4Id" name="ga4Id" value="' + esc(s.ga4Id || "") + '" placeholder="G-XXXXXXXXXX" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Measures visits, listing views and enquiries. The measurement ID looks like G-XXXXXXXXXX.</span></div>' +
+        '<div class="st-field c6"><label class="st-label" for="f_gtmId">Google Tag Manager</label><input class="st-in" id="f_gtmId" name="gtmId" value="' + esc(s.gtmId || "") + '" placeholder="GTM-XXXXXXX" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Loads your existing Tag Manager container after the visitor accepts cookies. If that container already fires GA4, leave the GA4 box empty so nothing is counted twice.</span></div>' +
         '<div class="st-field c6"><label class="st-label" for="f_metaPixelId">Meta Pixel</label><input class="st-in" id="f_metaPixelId" name="metaPixelId" value="' + esc(s.metaPixelId || "") + '" placeholder="Digits only" inputmode="numeric" autocomplete="off"' + ro + '><span class="st-hint">Lets Facebook and Instagram ads count enquiries. The pixel ID is a long number.</span></div>' +
         '<div class="st-field"><label class="st-label" for="f_gscVerification">Google Search Console verification</label><input class="st-in" id="f_gscVerification" name="gscVerification" value="' + esc(s.gscVerification || "") + '" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Proves to Google that this is our site so it reports search clicks and indexing. In Search Console choose the HTML tag method and paste only the <code>content</code> value of the meta tag it gives you; the site puts the tag on every page.</span></div>' +
         '<div class="st-field"><label class="st-label" for="f_consentText">Cookie banner wording</label><textarea class="st-ta" id="f_consentText" name="consentText" rows="3">' + esc(s.consentText || "") + '</textarea><span class="st-hint">Shown on the banner every visitor sees first. Analytics and the pixel only load once they accept.</span></div>' +
@@ -2079,7 +2152,7 @@
         (aiOn() ? usageHtml(usage) : '<p class="st-hint">AI is off until the ANTHROPIC_API_KEY secret is added.</p>') + "</section></div>";
       bindForm($("#intForm"), function (d) {
         var partial = { consentText: d.consentText.trim() };
-        if (owner) { partial.ga4Id = d.ga4Id.trim(); partial.metaPixelId = d.metaPixelId.trim(); partial.gscVerification = d.gscVerification.trim(); }
+        if (owner) { partial.ga4Id = d.ga4Id.trim(); partial.gtmId = d.gtmId.trim(); partial.metaPixelId = d.metaPixelId.trim(); partial.gscVerification = d.gscVerification.trim(); }
         return API.settings.put(partial).then(function () { toast("Saved", { kind: "good" }); });
       });
     }).catch(showError);

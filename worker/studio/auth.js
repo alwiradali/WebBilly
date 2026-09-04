@@ -11,6 +11,7 @@ import {
   readJsonBody, clampStr, clientIp, isEmail, bump, audit,
 } from "./db.js";
 import { sendEmail, inviteEmail, resetEmail } from "./email.js";
+import * as urls from "./urls.js";
 
 /* __Host- : the browser refuses the cookie unless it is Secure, Path=/ and has
    no Domain — so nothing on a sibling host can ever set or shadow it */
@@ -125,8 +126,7 @@ function publicUser(u) {
 }
 
 function studioBase(c) {
-  const base = c.env.MEGACITY_PUBLIC_BASE || (c.url.origin + "/templates/");
-  return base.replace(/\/?$/, "/") + "megacity-studio";
+  return urls.absUrl(c.env, c.url, "studio");
 }
 
 async function issueToken(db, { kind, email, role, createdBy }) {

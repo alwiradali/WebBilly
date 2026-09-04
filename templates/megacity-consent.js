@@ -1,17 +1,20 @@
 /* Megacity Properties — cookie consent + analytics loader.
-   Injected by the Worker only when a GA4 measurement ID or a Meta Pixel ID is
-   set in the Studio (Settings → Integrations). Nothing loads until the visitor
-   accepts: Google Consent Mode v2 starts denied, and gtag.js / fbevents.js are
-   fetched only after "Accept all". Essential-only leaves the page as it is.
-   The choice is kept in localStorage (mc_consent) for six months. */
+   Injected by the Worker only when a GA4 measurement ID, a Google Tag Manager
+   container ID or a Meta Pixel ID is set in the Studio (Settings →
+   Integrations). Nothing loads until the visitor accepts: Google Consent
+   Mode v2 starts denied, and gtag.js / gtm.js / fbevents.js are fetched only
+   after "Accept all". Essential-only leaves the page as it is. The choice is
+   kept in localStorage (mc_consent) for six months. */
 (function () {
   "use strict";
   var s = document.currentScript;
   if (!s) return;
   var GA = s.getAttribute("data-ga") || "";
   var PIXEL = s.getAttribute("data-pixel") || "";
+  var GTM = s.getAttribute("data-gtm") || "";
+  var PRIVACY = s.getAttribute("data-privacy") || "megacity-privacy";
   var TEXT = s.getAttribute("data-text") || "We use cookies to understand how the site is used and to measure our advertising. Essential cookies keep the site working.";
-  if (!GA && !PIXEL) return;
+  if (!GA && !PIXEL && !GTM) return;
   var KEY = "mc_consent";
   var queue = [];
 
@@ -41,6 +44,15 @@
     gtag("js", new Date());
     gtag("config", GA, { anonymize_ip: true });
   }
+  function loadGTM() {
+    if (!GTM || document.getElementById("mc-gtm")) return;
+    /* the standard Tag Manager snippet, unchanged */
+    window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var el = document.createElement("script");
+    el.id = "mc-gtm"; el.async = true;
+    el.src = "https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(GTM);
+    document.head.appendChild(el);
+  }
   function loadPixel() {
     if (!PIXEL || window.fbq) return;
     /* the standard Meta base snippet, unchanged */
@@ -54,7 +66,7 @@
   }
   function grant() {
     gtag("consent", "update", { ad_storage: "granted", ad_user_data: "granted", ad_personalization: "granted", analytics_storage: "granted" });
-    loadGA(); loadPixel();
+    loadGA(); loadGTM(); loadPixel();
     queue.splice(0).forEach(function (q) { window.mcTrack(q[0], q[1]); });
   }
 
@@ -63,6 +75,7 @@
   window.mcTrack = function (name, params) {
     if (!granted) { queue.push([name, params]); return; }
     try { if (GA && window.gtag) window.gtag("event", name, params || {}); } catch (e) { }
+    try { if (GTM && !GA) window.dataLayer.push(Object.assign({ event: name }, params || {})); } catch (e) { }
     try {
       if (PIXEL && window.fbq) {
         var std = { generate_lead: "Lead", viewing_request: "Schedule", listing_view: "ViewContent", tour_open: "ViewContent" }[name];
@@ -81,7 +94,7 @@
     var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
     var box = document.createElement("div");
     box.id = "mcConsent"; box.setAttribute("role", "dialog"); box.setAttribute("aria-labelledby", "mccTitle"); box.setAttribute("data-lenis-prevent", "");
-    box.innerHTML = '<h2 id="mccTitle">Cookies</h2><p>' + TEXT.replace(/&/g, "&amp;").replace(/</g, "&lt;") + ' <a href="megacity-privacy">Privacy &amp; cookies</a></p>' +
+    box.innerHTML = '<h2 id="mccTitle">Cookies</h2><p>' + TEXT.replace(/&/g, "&amp;").replace(/</g, "&lt;") + ' <a href="' + PRIVACY.replace(/"/g, "") + '">Privacy &amp; cookies</a></p>' +
       '<div class="mcc-row"><button type="button" class="mcc-yes" data-c="all">Accept all</button><button type="button" data-c="essential">Essential only</button></div>';
     document.body.appendChild(box);
     box.addEventListener("click", function (e) {

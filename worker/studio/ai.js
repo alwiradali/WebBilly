@@ -9,6 +9,7 @@
    - every call is logged to ai_usage and rate limited per person. */
 
 import { uid, nowIso, HttpError, json, readJsonBody, clampStr, bump, audit, parseJson } from "./db.js";
+import * as urls from "./urls.js";
 import { label } from "./options.js";
 import { getFull } from "./listings.js";
 
@@ -188,8 +189,7 @@ export async function shareKit(c) {
   const body = await readJsonBody(c.request);
   const l = await listingFor(c, body.listingId);
   await limit(c, "share-kit");
-  const base = (c.env.MEGACITY_PUBLIC_BASE || (c.url.origin + "/templates/")).replace(/\/?$/, "/");
-  const urlOf = base + "megacity-let-" + l.id;
+  const urlOf = urls.absUrl(c.env, c.url, "listing", l.id);
   const out = await claude(c, {
     route: "share-kit", model: MODELS.write, maxTokens: 1200,
     system: `Write a small social kit for one rental listing, from the facts only. facebook: 2–4 sentences, ends with the link. instagram: short lines, emoji allowed but sparing, the link is not clickable there so say "link in bio" and include no URL. whatsapp: one friendly message a landlord's agent would forward, with the link. spareroom: only if it is a room in a shared house — a factual advert of 3–5 sentences; otherwise an empty string. hashtags: 5–8, lowercase, no spaces, Manchester-relevant. headline: at most 70 characters. metaDescription: at most 155 characters. The listing URL is ${urlOf}.`,

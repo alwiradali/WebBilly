@@ -301,7 +301,11 @@ function parsePage(slug) {
     features,
     services: services && services.length ? services : null,
     media,
-    links: { apply: apply || null, tenninety: tenninety || null },
+    /* only a hosted (https) application link is worth keeping; the site's own
+       form is the default and needs no link */
+    links: { apply: apply && /^https?:\/\//.test(apply) ? apply : null, tenninety: tenninety || null },
+    /* the old website's /property/<id>/ number: that address redirects to this listing */
+    legacyId: (tenninety && /\/property\/(\d+)(?:\/|$)/.exec(tenninety) || [])[1] || null,
   };
 }
 

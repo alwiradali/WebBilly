@@ -218,5 +218,40 @@ All answer `503 {configured:false}` until the secret exists; the Studio hides th
 
 Models: `claude-sonnet-5` for writing, `claude-haiku-4-5-20251001` for looking at photos.
 
+## Two hosts, one site (worker/studio/urls.js)
+
+The site has two addresses shapes. On the demo host (billydigitals.com,
+localhost) pages live at `/templates/megacity-<slug>`; on the client domain
+(any host in `MEGACITY_HOST`) the same files are served at root addresses
+(`/`, `/lettings`, `/landlords`, `/let/<id>`, `/studio`) by
+`worker/studio/host.js`, which rewrites every relative link on the way out.
+`worker/studio/urls.js` is the only place that knows the slug ↔ path table;
+`templates/megacity-urls.js` is its generated browser copy (`window.MCUrls`)
+used by the site script and the Studio. Regenerate it with
+`node scripts/megacity-urls-sync.mjs`; `--check` fails when it is stale.
+Absolute links (canonical, sitemap, JSON-LD, invite emails, share kits) come
+from `urls.absUrl(env, url, kind, id)` and follow the host automatically.
+
+## Redirects & 404s
+
+Every address the client domain answers with a 404 is logged (one row per
+visitor per address per day, bots marked) as an `events` row named
+`not_found`. `GET /api/studio/notfound?days=7|30` groups them; the Studio
+screen (Settings → Redirects & 404s) lists them with an *Add redirect*
+button. Redirects are the `redirects` setting: `[{from, to, status}]`,
+validated in settings.js (paths only for `from`; a root path with optional
+`#section`, or a full https:// address, for `to`; 301 or 302). host.js applies
+them on the live host before its own tables, with a one-minute cache.
+
+## Google Tag Manager
+
+`gtmId` (owner-only, `GTM-XXXXXXX`) loads the container after "Accept all",
+the same gate as GA4 and the Meta Pixel. If the container already fires GA4,
+leave `ga4Id` empty to avoid double counting.
+
+## Going live on the client domain
+
+See `docs/megacity-golive.md`.
+
 ## Unbound behaviour
 `officeDb(env)` returns `env.MEGACITY_DB || null`. Without it every studio/public route answers `503 {connected:false, error:"…"}` and the Studio shows the setup checklist. Rendered public pages (Phase 3) fall back to the static files with `X-MC-Render: static`.

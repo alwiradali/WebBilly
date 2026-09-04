@@ -207,9 +207,12 @@
     else paint();
   }
 
+  /* the Studio lives at /studio on the client domain, /templates/megacity-studio on the demo host (worker/studio/urls.js) */
+  var STUDIO = /^(www\.)?billydigitals\.com$|^localhost$|^127\.0\.0\.1$/i.test(location.hostname) ? "/templates/megacity-studio" : "/studio";
+
   /* ── mode selection ───────────────────────────────────────────────────── */
   if (!SITE) {
-    if (OFFICE) { showBlocked("No such listing", "The Studio link is missing a valid listing id.", "/templates/megacity-studio#/listings", "Back to listings"); return; }
+    if (OFFICE) { showBlocked("No such listing", "The Studio link is missing a valid listing id.", STUDIO + "#/listings", "Back to listings"); return; }
     inject();
     return;
   }
@@ -259,9 +262,9 @@
     if (!location.hash || location.hash === "#/") location.hash = "#/studio/rooms";
     inject();
   }).catch(function (e) {
-    if (e.status === 401) showBlocked("Sign in to the Studio first", "This tour editor uses your Megacity Studio login.", "/templates/megacity-studio#/login", "Open the Studio");
-    else if (e.status === 503) showBlocked("Not connected yet", "The Studio database is not set up on this deployment.", "/templates/megacity-studio", "Open the Studio");
-    else if (e.status === 404) showBlocked("No such listing", "There is no listing with that id.", "/templates/megacity-studio#/listings", "Back to listings");
-    else showBlocked("Could not load the tour", e.message || "Please try again.", "/templates/megacity-studio#/listings", "Back to listings");
+    if (e.status === 401) showBlocked("Sign in to the Studio first", "This tour editor uses your Megacity Studio login.", STUDIO + "#/login", "Open the Studio");
+    else if (e.status === 503) showBlocked("Not connected yet", "The Studio database is not set up on this deployment.", STUDIO, "Open the Studio");
+    else if (e.status === 404) showBlocked("No such listing", "There is no listing with that id.", STUDIO + "#/listings", "Back to listings");
+    else showBlocked("Could not load the tour", e.message || "Please try again.", STUDIO + "#/listings", "Back to listings");
   });
 })();

@@ -193,6 +193,7 @@
       remove: function (id) { return call("DELETE", "/media/" + encodeURIComponent(id)); }
     },
     dashboard: { get: function () { return call("GET", "/dashboard"); } },
+    notfound: { list: function (q) { return call("GET", "/notfound" + (q && q.days ? "?days=" + encodeURIComponent(q.days) : "")); } },
     tours: {
       get: function (id) { return call("GET", "/tours/" + encodeURIComponent(id)); },
       create: function (id, body) { return call("POST", "/tours/" + encodeURIComponent(id), body || {}); },
@@ -281,7 +282,7 @@
         brand: { name: "Megacity Properties", phone: "0161 220 1763", whatsapp: "", email: "info@megacityproperties.co.uk", address: "Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA" },
         notifyEmails: ["info@megacityproperties.co.uk"],
         links10ninety: { maintenance: "", apply: "", registerTenant: "", registerLandlord: "" },
-        tourGateScore: null, ga4Id: "", metaPixelId: "", gscVerification: "", consentText: ""
+        tourGateScore: null, ga4Id: "", gtmId: "", metaPixelId: "", gscVerification: "", consentText: "", redirects: []
       },
       listings: [],
       audit: [],
@@ -573,6 +574,11 @@
 
       /* settings */
       if (p === "/settings" && method === "GET") return { settings: clone(DB.settings) };
+      if (p.indexOf("/notfound") === 0 && method === "GET") return { days: 7, items: [
+        { path: "/tenants/register/", kind: "page", count: 14, lastSeen: ago(2), referrer: "https://www.google.com/", bots: 1 },
+        { path: "/property/225/", kind: "page", count: 6, lastSeen: ago(10), referrer: null, bots: 0 },
+        { path: "/images/logo.png", kind: "legacy", count: 40, lastSeen: ago(1), referrer: null, bots: 38 },
+      ], redirects: clone(DB.settings.redirects || []) };
       if (p === "/settings" && method === "PUT") {
         Object.keys(body).forEach(function (k) {
           if (["ga4Id", "metaPixelId", "gscVerification", "notifyEmails"].indexOf(k) >= 0) needOwner();

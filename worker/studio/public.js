@@ -5,9 +5,12 @@
 import { json, jsonCached, parseJson } from "./db.js";
 import { label, valid } from "./options.js";
 import { mediaUrl, listForListing } from "./media.js";
+import * as urls from "./urls.js";
 
-export function pageUrl(env, id) {
-  return "/templates/megacity-let-" + id;
+/* the listing page address for this host: /let/<id> on the client domain,
+   /templates/megacity-let-<id> on the demo host */
+export function pageUrl(env, url, id) {
+  return urls.listingPath(urls.mode(env, url && url.hostname), id);
 }
 
 function rentLabel(n) {
@@ -21,13 +24,13 @@ function typeShort(r) {
 }
 
 /* the card shape megacity-properties.html renders */
-function card(r) {
+function card(r, env, url) {
   const home = parseJson(r.home_json, {});
   const features = parseJson(r.features_json, []);
   const isRoom = r.let_type === "room" || r.type === "room_in_share";
   return {
     id: r.id,
-    url: pageUrl(null, r.id),
+    url: pageUrl(env, url, r.id),
     title: r.title,
     headline: r.headline || null,
     area: r.area, areaLabel: label("area", r.area), town: r.town, line1: r.address_1,
@@ -48,7 +51,7 @@ const BASE = `SELECT l.*, m.key_orig AS cover_key, m.key_large AS cover_large, m
                 FROM listings l LEFT JOIN media m ON m.id=l.cover_media_id
                WHERE l.status='live' AND l.hidden=0 AND l.deleted_at IS NULL`;
 
-export async function list(db, url) {
+export async function list(db, url, env) {
   const p = url.searchParams;
   const where = [], binds = [];
   const add = (sql, v) => { binds.push(v); where.push(sql.replace("?", "?" + binds.length)); };
@@ -74,7 +77,7 @@ export async function list(db, url) {
       items: rows.map((r) => ({
         t: r.title,
         d: [r.bedrooms ? r.bedrooms + " bed" : null, r.bathrooms ? r.bathrooms + " bath" : null, rentLabel(r.rent_pcm)].filter(Boolean).join(" · "),
-        u: pageUrl(null, r.id),
+        u: pageUrl(env, url, r.id),
         k: [r.area, r.town, r.postcode, r.type, r.let_type, r.address_1, label("type", r.type)].filter(Boolean).join(" ").toLowerCase(),
       })),
     }, 120);
@@ -84,10 +87,10 @@ export async function list(db, url) {
   const areas = [...new Set(all.map((r) => r.area).filter(Boolean))].map((v) => ({ value: v, label: label("area", v) }));
   const types = [...new Set(all.map((r) => typeShort(r)))].map((v) => ({ value: v, label: v === "room" ? "Room in a share" : v === "house" ? "House" : "Apartment" }));
   const bedsOpts = [...new Set(all.map((r) => (r.let_type === "room" ? 1 : r.bedrooms)).filter((n) => n != null))].sort((a, b) => a - b).map((n) => ({ value: String(Math.min(n, 4)), label: n >= 4 ? "4+" : String(n) }));
-  return jsonCached({ items: rows.map(card), count: rows.length, filters: { areas, types, beds: bedsOpts } }, 120);
+  return jsonCached({ items: rows.map((r) => card(r, env, url)), count: rows.length, filters: { areas, types, beds: bedsOpts } }, 120);
 }
 
-export async function one(db, id) {
+export async function one(db, url, env, id) {
   const r = await db.prepare(`${BASE} AND l.id=?1`).bind(id).first();
   if (!r) return json({ error: "Not found" }, 404, { "cache-control": "public, max-age=60" });
   /* originals (EXIF and all) stay private; the web sizes are what the public gets */
@@ -95,7 +98,7 @@ export async function one(db, id) {
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
   const extras = parseJson(r.external_json, {}) || {};
   const out = {
-    ...card(r),
+    ...card(r, env, url),
     ref: r.ref, deposit: r.deposit, bills: r.bills, billsNote: r.bills_note, availableFrom: r.available_from, minTerm: r.min_term,
     councilTaxBand: r.council_tax_band, epcRating: r.epc_rating, parkingSpaces: r.parking_spaces, parkingNote: r.parking_note,
     hmoLicensed: r.hmo_licensed == null ? null : !!r.hmo_licensed, floorAreaSqft: r.floor_area_sqft,

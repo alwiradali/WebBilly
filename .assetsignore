@@ -71,3 +71,19 @@ templates/amabilis
 
 # HeatFix — the untouched camera originals stay in git, not on the web.
 assets/heatfix/src
+
+# Megacity Properties — earlier builds and lab pages, kept in git, never
+# served: on the client's own domain they would only be duplicate content.
+templates/megacity.html
+templates/megacity-about.html
+templates/megacity-contact.html
+templates/megacity-landlords.html
+templates/megacity-tenants.html
+templates/megacity-property.html
+templates/megacity-tours.html
+templates/megacity.css
+templates/megacity.js
+templates/megacity-data.js
+templates/megacity-admin.html
+templates/megacity-admin.js
+templates/megacity-hero-lab.html

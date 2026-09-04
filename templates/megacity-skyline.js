@@ -359,7 +359,8 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       .catch(() => {});
   };
   const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  const item = (r) => `<a class="sl-a" href="${r.u}"><b>${esc(r.t)}</b><span>${esc(r.d)}</span></a>`;
+  const link = (u) => (window.MCUrls ? MCUrls.href(u) : u);   // same page, either host (megacity-urls.js)
+  const item = (r) => `<a class="sl-a" href="${link(r.u)}"><b>${esc(r.t)}</b><span>${esc(r.d)}</span></a>`;
   const group = (h, rows) => rows.length ? `<p class="sl-h">${h}</p>` + rows.map(item).join("") : "";
   const hay = (r) => (r.t + " " + r.d + " " + r.k + " " + r.u).toLowerCase();
   const match = (list, words) => list.filter((r) => { const h = hay(r); return words.every((w) => h.includes(w)); });
@@ -471,7 +472,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   const fab = document.querySelector(".fab");
   const pill = document.getElementById("fabVal");
   // pointless on the page it links to
-  if (pill && /megacity-valuation/.test(location.pathname)) pill.hidden = true;
+  if (pill && (window.MCUrls ? MCUrls.slugOf(location.pathname) === "valuation" : /megacity-valuation/.test(location.pathname))) pill.hidden = true;
   const foot = document.querySelector(".footer");
   if (!fab || !foot || !("IntersectionObserver" in window)) return;
   new IntersectionObserver(
@@ -692,11 +693,14 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
    The bar shows seven destinations; mark the one being viewed so the answer
    is visible rather than something the reader has to remember. */
 (function currentPage() {
-  const here = location.pathname.split("/").pop().replace(/\.html$/, "");
-  if (!here) return;
+  /* compare resolved paths, so it works at /templates/megacity-<slug> on the
+     demo host and at /<slug> on megacityproperties.co.uk alike */
+  const norm = (p) => p.replace(/\/+$/, "").replace(/\.html$/, "") || "/";
+  const here = norm(location.pathname);
   document.querySelectorAll(".nav-links a").forEach(a => {
-    const target = (a.getAttribute("href") || "").split("#")[0].replace(/\.html$/, "");
-    if (target && target === here) a.setAttribute("aria-current", "page");
+    let target;
+    try { target = norm(new URL(a.getAttribute("href") || "", location.href).pathname); } catch { return; }
+    if (target === here) a.setAttribute("aria-current", "page");
   });
 })();
 
@@ -785,5 +789,78 @@ window.mcBeacon = (name, extra) => {
     });
     const first = document.querySelector(".tsec");
     if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+})();
+
+
+/* ── tenant registration → the office inbox ─────────────────────────────
+   Replaces the old site's 10ninety-hosted form, which went with the old
+   site. Same route as the contact form; the Studio files it as a
+   registration. */
+(() => {
+  const f = document.querySelector("[data-register]");
+  if (!f) return;
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const note = f.querySelector(".pd-vnote");
+    const btn = f.querySelector("button[type=submit]");
+    btn.disabled = true; btn.style.opacity = ".6"; note.textContent = "";
+    try {
+      const r = await fetch("/api/megacity-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(),
+          topic: "Tenant registration",
+          message: "Registered on the website.\nLooking for: " + (f.wants.value.trim() || "not stated"),
+          attr: window.mcAttr || {}, botcheck: f.botcheck.value
+        })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the request did not go through");
+      f.hidden = true;
+      const done = f.parentElement.querySelector(".pd-vdone");
+      if (done) done.hidden = false;
+      if (window.mcTrack) window.mcTrack("generate_lead", { form: "register" });
+    } catch (err) {
+      btn.disabled = false; btn.style.opacity = "";
+      note.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will take your details.";
+    }
+  });
+})();
+
+/* ── tenancy application → the office inbox ─────────────────────────────
+   /tenant-application-form. The property and listing come in on the query
+   string from the "Apply for this property" button. */
+(() => {
+  const f = document.querySelector("[data-apply]");
+  if (!f) return;
+  const q = new URLSearchParams(location.search);
+  if (q.get("property") && !f.property.value) f.property.value = q.get("property").slice(0, 160);
+  if (q.get("listing")) f.listingId.value = q.get("listing").slice(0, 80);
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const note = f.querySelector(".pd-vnote");
+    const btn = f.querySelector("button[type=submit]");
+    btn.disabled = true; btn.style.opacity = ".6"; note.textContent = "";
+    const v = (n) => (f.elements[n] ? f.elements[n].value.trim() : "");
+    try {
+      const r = await fetch("/api/megacity-apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          property: v("property"), name: v("name"), phone: v("phone"), email: v("email"),
+          moveIn: v("moveIn"), occupants: v("occupants"), employment: v("employment"), message: v("message"),
+          listingId: v("listingId"), attr: window.mcAttr || {}, botcheck: v("botcheck")
+        })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the application did not go through");
+      f.hidden = true;
+      const done = f.parentElement.querySelector(".pd-vdone");
+      if (done) done.hidden = false;
+      if (window.mcTrack) window.mcTrack("generate_lead", { form: "application" });
+    } catch (err) {
+      btn.disabled = false; btn.style.opacity = "";
+      note.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will take your application over the phone.";
+    }
   });
 })();

@@ -21,6 +21,11 @@ routes = [
   # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "heatfixmcrlimited.co.uk", custom_domain = true }
   # ,{ pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
+  # Megacity Properties — go-live day (docs/megacity-golive.md): uncomment both
+  # once the zone is on Cloudflare and the imported A/www records are deleted,
+  # and set MEGACITY_HOST below in the same commit.
+  # ,{ pattern = "www.megacityproperties.co.uk", custom_domain = true }
+  # ,{ pattern = "megacityproperties.co.uk", custom_domain = true }
 ]
 
 [vars]
@@ -35,8 +40,11 @@ M2L_HOST = ""
 HEATFIX_HOST = ""
 
 # Megacity Properties. Leave MEGACITY_HOST empty until their nameservers are
-# on Cloudflare; MEGACITY_PUBLIC_BASE is where canonical/OG/sitemap links
-# point while the site lives on the demo host.
+# on Cloudflare and the two routes above are in (docs/megacity-golive.md).
+# The FIRST hostname is the canonical one every other listed host 301s to:
+#   MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
+# MEGACITY_PUBLIC_BASE is where canonical/OG/sitemap links point while the
+# site lives on the demo host only.
 MEGACITY_HOST = ""
 MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
 
@@ -91,14 +99,22 @@ binding = "ASSETS"
 # the quote form, the review emails and the whole Mumbai2London booking,
 # chat, admin and invoice layer were dead in production because of it.
 #
-# The rest let a client domain serve its site at "/" instead of the Billy
-# Digitals homepage. If wrangler is too old for the array form, use `true`.
-run_worker_first = [
-  "/api/*", "/media/*", "/templates/megacity-*",
-  "/", "/admin", "/invoice", "/sign", "/book", "/i",
-  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
-  "/manufacturers-warranty", "/privacy", "/terms",
-]
+# Every request now goes through the Worker. A client domain
+# (megacityproperties.co.uk) needs the Worker on EVERY path — its old
+# addresses (/property/…, /landlords/register/…), its root pages, its own
+# robots.txt and a branded, logged 404 — and this list is matched by path,
+# not by host, so no list can say "everything, but only on that host". The
+# Worker still hands every plain asset to env.ASSETS, so billydigitals.com is
+# unchanged; the cost is one Worker invocation per asset request (fine on
+# Workers Paid, which the Studio's password hashing already wants).
+# The old path list is kept below in case it ever has to come back.
+run_worker_first = true
+# run_worker_first = [
+#   "/api/*", "/media/*", "/templates/megacity-*",
+#   "/", "/admin", "/invoice", "/sign", "/book", "/i",
+#   "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
+#   "/manufacturers-warranty", "/privacy", "/terms",
+# ]
 
 # ---------------------------------------------------------------------------
 # HeatFix Mcr Limited on the client's own Cloudflare account.

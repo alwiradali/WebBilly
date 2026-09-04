@@ -33,7 +33,7 @@ export async function formAllowed(env, request) {
 function sourceFrom(topic, fallback) {
   const t = String(topic || "").toLowerCase();
   if (/valuation/.test(t)) return "valuation";
-  if (/register/.test(t)) return "register";
+  if (/regist/.test(t)) return "register";
   return fallback;
 }
 
@@ -141,6 +141,13 @@ export async function markRead(c) {
 const EVENT_NAMES = new Set(["listing_view", "tour_open", "tour_room", "tour_hotspot", "tour_cta", "gallery", "share", "apply_click", "call_click", "whatsapp_click"]);
 const BILLY_MAP = { open: "tour_open", room: "tour_room", hotspot: "tour_hotspot", cta: "tour_cta", gallery: "gallery" };
 
+/* ninety days of events, never more than 300k rows */
+export async function pruneEvents(db) {
+  await db.prepare(`DELETE FROM events WHERE at < ?1`).bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
+  const n = await db.prepare(`SELECT COUNT(*) n FROM events`).first();
+  if (Number(n && n.n) > 300000) await db.prepare(`DELETE FROM events WHERE id IN (SELECT id FROM events ORDER BY at ASC LIMIT 50000)`).run();
+}
+
 export async function publicEvent(request, env) {
   const db = officeDb(env);
   if (!db) return json({ ok: false, connected: false }, 503);
@@ -170,11 +177,7 @@ export async function publicEvent(request, env) {
     }
     await db.prepare(`INSERT INTO events (id, at, name, listing_id, session_hash, meta_json) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`)
       .bind(uid("e"), nowIso(), name, listingId, session, JSON.stringify(meta)).run();
-    if (Math.random() < 0.05) {
-      await db.prepare(`DELETE FROM events WHERE at < ?1`).bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
-      const n = await db.prepare(`SELECT COUNT(*) n FROM events`).first();
-      if (Number(n.n) > 300000) await db.prepare(`DELETE FROM events WHERE id IN (SELECT id FROM events ORDER BY at ASC LIMIT 50000)`).run();
-    }
+    if (Math.random() < 0.05) await pruneEvents(db);
   } catch (e) { console.error("event", e); }
   return json({ ok: true });
 }
@@ -212,6 +215,6 @@ export async function stats(db) {
   const newCount = Number((await db.prepare(`SELECT COUNT(*) n FROM enquiries WHERE status='new'`).first()).n) || 0;
   const daily = (await db.prepare(`SELECT substr(created_at,1,10) d, COUNT(*) n FROM enquiries WHERE created_at >= ?1 GROUP BY d ORDER BY d`).bind(since30).all()).results || [];
   const ev = {};
-  for (const r of (await db.prepare(`SELECT name, COUNT(*) n FROM events WHERE at >= ?1 AND name IN ('listing_view','tour_open','enquiry') GROUP BY name`).bind(since7).all()).results || []) ev[r.name] = Number(r.n);
+  for (const r of (await db.prepare(`SELECT name, COUNT(*) n FROM events WHERE at >= ?1 AND name IN ('listing_view','tour_open','enquiry','not_found') GROUP BY name`).bind(since7).all()).results || []) ev[r.name] = Number(r.n);
   return { enquiries: { new: newCount, last7: Object.values(bySource).reduce((a, b) => a + b, 0), bySource, daily: daily.map((d) => [d.d, Number(d.n)]) }, events7: ev };
 }

@@ -5,10 +5,11 @@
 import { uid, nowIso, HttpError, json, readJsonBody, clampStr, slugify, parseJson, audit, safeHref } from "./db.js";
 import { esc } from "./email.js";
 import { mediaUrl } from "./media.js";
+import * as urls from "./urls.js";
 
 const KINDS = ["area", "landing", "guide"];
 const KIND_LABEL = { area: "Area guide", landing: "Megacity Properties", guide: "Guide" };
-const RESERVED = new Set(["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "studio", "sitemap", "consent", "intake", "seed", "let-template", "page-template", "data", "admin", "portal", "tours", "property", "hero-lab", "about", "contact", "landlords", "tenants"]);
+const RESERVED = new Set(["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "studio", "sitemap", "consent", "intake", "seed", "let-template", "page-template", "data", "admin", "portal", "tours", "property", "hero-lab", "about", "contact", "landlords", "tenants"].concat(urls.RESERVED_ROOT_SLUGS));
 
 function badSlug(s) {
   return !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s) || s.length < 3 || s.length > 80 || RESERVED.has(s) || /^(let|studio)(-|$)/.test(s);
@@ -30,11 +31,11 @@ function normaliseFaq(v) {
   return (Array.isArray(v) ? v : []).slice(0, 12).map((f) => ({ q: clampStr(f && f.q, 200), a: clampStr(f && f.a, 2000) })).filter((f) => f.q && f.a);
 }
 
-function toJson(r) {
+function toJson(r, c) {
   return {
     id: r.id, slug: r.slug, kind: r.kind, title: r.title, seoTitle: r.seo_title, seoDescription: r.seo_description, heroMediaId: r.hero_media_id,
     blocks: parseJson(r.body_json, []), faq: parseJson(r.faq_json, []), status: r.status, publishedAt: r.published_at, updatedAt: r.updated_at, updatedBy: r.updated_by,
-    url: "/templates/megacity-" + r.slug,
+    url: urls.pagePath(urls.mode(c.env, c.url.hostname), r.slug),
   };
 }
 
@@ -45,8 +46,9 @@ async function mustGet(db, id) {
 }
 
 export async function list(c) {
+  const m = urls.mode(c.env, c.url.hostname);
   const rows = (await c.db.prepare(`SELECT id, slug, kind, title, status, published_at, updated_at FROM pages ORDER BY updated_at DESC`).all()).results || [];
-  return json({ items: rows.map((r) => ({ id: r.id, slug: r.slug, kind: r.kind, title: r.title, status: r.status, publishedAt: r.published_at, updatedAt: r.updated_at, url: "/templates/megacity-" + r.slug })) });
+  return json({ items: rows.map((r) => ({ id: r.id, slug: r.slug, kind: r.kind, title: r.title, status: r.status, publishedAt: r.published_at, updatedAt: r.updated_at, url: urls.pagePath(m, r.slug) })) });
 }
 
 export async function create(c) {
@@ -64,11 +66,11 @@ export async function create(c) {
   ).bind(id, slug, kind, title, clampStr(body.seoTitle, 120), clampStr(body.seoDescription, 320), clampStr(body.heroMediaId, 40),
     JSON.stringify(normaliseBlocks(body.blocks)), JSON.stringify(normaliseFaq(body.faq)), now, c.user.id).run();
   await audit(c.db, { userId: c.user.id, action: "page.created", entity: "page", entityId: id, detail: { slug } });
-  return json(toJson(await mustGet(c.db, id)), 201);
+  return json(toJson(await mustGet(c.db, id), c), 201);
 }
 
 export async function get(c) {
-  return json(toJson(await mustGet(c.db, c.params.id)));
+  return json(toJson(await mustGet(c.db, c.params.id), c));
 }
 
 export async function patch(c) {
@@ -93,7 +95,7 @@ export async function patch(c) {
   const keys = Object.keys(sets);
   await c.db.prepare(`UPDATE pages SET ${keys.map((k, i) => `${k}=?${i + 1}`).join(", ")} WHERE id=?${keys.length + 1}`).bind(...keys.map((k) => sets[k]), r.id).run();
   await audit(c.db, { userId: c.user.id, action: "page.updated", entity: "page", entityId: r.id, detail: { fields: keys } });
-  return json(toJson(await mustGet(c.db, r.id)));
+  return json(toJson(await mustGet(c.db, r.id), c));
 }
 
 export async function remove(c) {
@@ -114,13 +116,13 @@ export async function publish(c) {
   const now = nowIso();
   await c.db.prepare(`UPDATE pages SET status='live', published_at=COALESCE(published_at, ?1), updated_at=?1, updated_by=?2 WHERE id=?3`).bind(now, c.user.id, r.id).run();
   await audit(c.db, { userId: c.user.id, action: "page.published", entity: "page", entityId: r.id, detail: { slug: r.slug } });
-  return json({ ok: true, page: toJson(await mustGet(c.db, r.id)) });
+  return json({ ok: true, page: toJson(await mustGet(c.db, r.id), c) });
 }
 
 export async function unpublish(c) {
   const r = await mustGet(c.db, c.params.id);
   await c.db.prepare(`UPDATE pages SET status='draft', updated_at=?1, updated_by=?2 WHERE id=?3`).bind(nowIso(), c.user.id, r.id).run();
-  return json({ ok: true, page: toJson(await mustGet(c.db, r.id)) });
+  return json({ ok: true, page: toJson(await mustGet(c.db, r.id), c) });
 }
 
 /* ── public render ─────────────────────────────────────────────────────── */
@@ -142,7 +144,6 @@ function blockHtml(b, mediaById) {
 export async function renderPage(request, env, url, db, row) {
   const tpl = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-page-template.html", url).toString()));
   if (!tpl.ok) return null;
-  const base = (env.MEGACITY_PUBLIC_BASE || (url.origin + "/templates/")).replace(/\/?$/, "/");
   const blocks = parseJson(row.body_json, []);
   const faq = parseJson(row.faq_json, []);
   const ids = blocks.filter((b) => b.type === "image" && b.mediaId).map((b) => b.mediaId).concat(row.hero_media_id ? [row.hero_media_id] : []);
@@ -155,12 +156,12 @@ export async function renderPage(request, env, url, db, row) {
   const lede = row.seo_description || (firstP ? firstP.text : "");
   const bodyBlocks = firstP && !row.seo_description ? blocks.filter((b) => b !== firstP) : blocks;
   const pageTitle = (row.seo_title || row.title) + " | Megacity Properties";
-  const canonical = base + "megacity-" + row.slug;
+  const canonical = urls.absUrl(env, url, "cms", row.slug);
   const hero = row.hero_media_id && mediaById[row.hero_media_id] ? mediaById[row.hero_media_id].url : null;
-  const ogImage = hero ? (hero.startsWith("http") ? hero : new URL(base).origin + hero) : base + "assets/mcr/ph-manchester.jpg";
+  const ogImage = urls.absUrl(env, url, "asset", hero || "assets/mcr/ph-manchester.jpg");
   const graph = [
-    { "@type": "WebPage", "@id": canonical, url: canonical, name: row.seo_title || row.title, description: lede, ...(row.published_at ? { datePublished: row.published_at } : {}), dateModified: row.updated_at, isPartOf: { "@type": "WebSite", name: "Megacity Properties", url: base + "megacity-skyline" } },
-    { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: base + "megacity-skyline" }, { "@type": "ListItem", position: 2, name: row.title, item: canonical }] },
+    { "@type": "WebPage", "@id": canonical, url: canonical, name: row.seo_title || row.title, description: lede, ...(row.published_at ? { datePublished: row.published_at } : {}), dateModified: row.updated_at, isPartOf: { "@type": "WebSite", name: "Megacity Properties", url: urls.absUrl(env, url, "page", "skyline") } },
+    { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: urls.absUrl(env, url, "page", "skyline") }, { "@type": "ListItem", position: 2, name: row.title, item: canonical }] },
   ];
   if (faq.length) graph.push({ "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) });
   const faqHtml = faq.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n");

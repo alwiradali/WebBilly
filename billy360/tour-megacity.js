@@ -27,7 +27,7 @@
     name: "Megacity Properties",
     phone: "0161 220 1763",
     email: "info@megacityproperties.co.uk",
-    url: "/templates/megacity"
+    url: "/templates/megacity-skyline"
   };
 
   /* ── room recipes ── [layout, w, h, d, glazed face, warmth] ──── */

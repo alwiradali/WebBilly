@@ -13,18 +13,23 @@ export const DEFAULTS = {
   notifyEmails: [],
   links10ninety: {
     maintenance: "https://megacityproperties-maintenance.10ninety.co.uk",
-    apply: "https://www.megacityproperties.co.uk/tenant-application-form/",
-    registerTenant: "https://www.megacityproperties.co.uk/tenants/register/",
-    registerLandlord: "https://www.megacityproperties.co.uk/landlords/register/",
+    /* the old site's forms died with it; the website has its own now. Set
+       these only if 10ninety supplies hosted forms to link to. */
+    apply: "",
+    registerTenant: "",
+    registerLandlord: "",
   },
   tourGateScore: 70,
   ga4Id: "",
   metaPixelId: "",
   gscVerification: "",
+  gtmId: "",
+  /* [{from, to, status}] applied on the client domain before anything else (host.js) */
+  redirects: [],
   consentText: "We use cookies to understand how the site is used and to measure our advertising. Essential cookies keep the site working.",
 };
 
-const OWNER_ONLY = new Set(["notifyEmails", "ga4Id", "metaPixelId", "gscVerification"]);
+const OWNER_ONLY = new Set(["notifyEmails", "ga4Id", "metaPixelId", "gscVerification", "gtmId"]);
 const KEYS = Object.keys(DEFAULTS);
 
 export async function readAll(db) {
@@ -41,6 +46,48 @@ export async function readAll(db) {
 
 export async function get(c) {
   return json({ settings: await readAll(c.db) });
+}
+
+/* Redirects: a lowercase root path -> a root path (optionally #section) or a
+   full https:// address. Paths the site itself owns cannot be redirected. */
+const PROTECTED = /^\/(api|media|billy360|templates)(\/|$)|^\/studio(\/|$)|^\/$/;
+function redirectsList(v) {
+  const list = Array.isArray(v) ? v.slice(0, 200) : [];
+  const out = [], seen = new Set();
+  for (const it of list) {
+    if (!it || typeof it !== "object") continue;
+    let from = String(it.from || "").trim().toLowerCase();
+    if (from.length > 1) from = from.replace(/\/+$/, "");
+    if (!/^\/[a-z0-9\/._~-]*$/.test(from) || from.length > 300 || PROTECTED.test(from)) {
+      throw new HttpError(400, `"${String(it.from || "").slice(0, 80)}" cannot be redirected. Use a path such as /old-page (not the home page, /studio, /api or /media).`);
+    }
+    const to = String(it.to || "").trim();
+    const okTo = /^https?:\/\/[^\s"'<>]+$/i.test(to) ? to : (/^\/[a-z0-9\/._~-]*(#[a-z0-9_-]+)?$/i.test(to) && to.length <= 500 ? to : null);
+    if (!okTo) throw new HttpError(400, `"${to.slice(0, 80)}" is not a valid destination. Use a path such as /landlords, /tenants#register, or a full https:// address.`);
+    if (okTo.split("#")[0].replace(/\/+$/, "") === from) throw new HttpError(400, `${from} cannot redirect to itself.`);
+    if (seen.has(from)) throw new HttpError(400, `${from} is listed twice.`);
+    seen.add(from);
+    out.push({ from, to: okTo, status: toInt(it.status) === 302 ? 302 : 301 });
+  }
+  return out;
+}
+
+/* The live redirect list, cached per isolate for a minute (host.js asks on
+   every request). A save from the Studio clears it straight away. */
+let redirectCache = { at: 0, list: [] };
+export function invalidateRedirects() { redirectCache = { at: 0, list: [] }; }
+export async function liveRedirects(db) {
+  if (!db) return [];
+  if (Date.now() - redirectCache.at < 60e3) return redirectCache.list;
+  try {
+    const row = await db.prepare(`SELECT value FROM settings WHERE key='redirects'`).bind().first();
+    const list = row ? JSON.parse(row.value) : [];
+    redirectCache = { at: Date.now(), list: Array.isArray(list) ? list : [] };
+  } catch (e) {
+    console.error("redirects", e);
+    redirectCache = { at: Date.now(), list: redirectCache.list };
+  }
+  return redirectCache.list;
 }
 
 function url(v) {
@@ -101,12 +148,22 @@ export async function put(c) {
       case "gscVerification":
         changed.gscVerification = clampStr(v, 120) || "";
         break;
+      case "gtmId": {
+        const s = (clampStr(v, 30) || "").toUpperCase();
+        if (s && !/^GTM-[A-Z0-9]{4,10}$/.test(s)) throw new HttpError(400, "A Google Tag Manager container ID looks like GTM-XXXXXXX.");
+        changed.gtmId = s;
+        break;
+      }
+      case "redirects":
+        changed.redirects = redirectsList(v);
+        break;
       case "consentText":
         changed.consentText = clampStr(v, 600) || DEFAULTS.consentText;
         break;
     }
   }
   for (const k of Object.keys(changed)) await setSetting(c.db, k, changed[k], c.user.id);
+  if (changed.redirects) invalidateRedirects();
   if (Object.keys(changed).length) await audit(c.db, { userId: c.user.id, action: "settings.updated", entity: "settings", entityId: Object.keys(changed).join(","), detail: null });
   return json({ ok: true, settings: await readAll(c.db) });
 }

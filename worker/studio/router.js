@@ -18,6 +18,8 @@ import * as ai from "./ai.js";
 import * as pages from "./pages.js";
 import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
+import * as urls from "./urls.js";
+import * as redirects from "./redirects.js";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
 const ROUTES = [
@@ -81,6 +83,7 @@ const ROUTES = [
   ["PATCH", "/enquiries/:id", enq.patch],
   ["GET", "/notifications", enq.notifications],
   ["POST", "/notifications/read", enq.markRead],
+  ["GET", "/notfound", redirects.list404s],
 
   ["POST", "/tours/import", tours.importTours],
   ["GET", "/tours/:id", tours.get],
@@ -143,20 +146,33 @@ export async function handleMegacity(request, env, ctx, url) {
   if (p.startsWith("/media/")) return media.serve(request, env, url);
 
   /* ── Worker-rendered public pages (fall back to the static files) ──── */
-  if (p === "/templates/megacity-let-template") return new Response("Not found", { status: 404 });
+  if (p === "/templates/megacity-let-template" || p === "/templates/megacity-page-template") return new Response("Not found", { status: 404 });
+  /* once the client domain is live, the demo addresses on billydigitals.com
+     send people (and search engines) to the real site; scripts, styles and
+     pictures keep serving so nothing already on a page breaks */
+  if (urls.megacityHosts(env).length && /^(www\.)?billydigitals\.com$/i.test(url.hostname) &&
+      (isPublicHtmlPath(p) || p === "/templates/megacity-studio" || p === "/templates/megacity-sitemap.xml") &&
+      (request.method === "GET" || request.method === "HEAD")) {
+    const to = "https://" + urls.canonicalHost(env) + urls.rewriteHref(p.slice("/templates/".length), "root") + url.search;
+    return new Response(null, { status: 301, headers: { location: to, "cache-control": "public, max-age=3600" } });
+  }
   if (p.startsWith("/templates/megacity-")) {
     const db = officeDb(env);
+    /* the sitemap is not an HTML page: answer it before the page gate (it
+       works without the database too — the hand-built pages stand in) */
+    if (p === "/templates/megacity-sitemap.xml") {
+      try { return await render.sitemap(env, url, db); } catch (e) { console.error("sitemap", e); return env.ASSETS.fetch(request); }
+    }
     const isHtml = isPublicHtmlPath(p);
     if (!db || !isHtml || (request.method !== "GET" && request.method !== "HEAD")) return env.ASSETS.fetch(request);
     let settings = null;
     try { settings = await readSettings(db); } catch (e) { console.error("settings", e); }
     const finish = (res, how) => {
       const h = new Headers(res.headers); h.set("x-mc-render", how);
-      return tracking.inject(new Response(res.body, { status: res.status, headers: h }), settings);
+      return tracking.inject(new Response(res.body, { status: res.status, headers: h }), settings, { mode: "demo" });
     };
     const passThrough = () => env.ASSETS.fetch(request).then((r) => finish(r, "static"));
     try {
-      if (p === "/templates/megacity-sitemap.xml") return await render.sitemap(env, url, db);
       const m = /^\/templates\/megacity-let-([a-z0-9-]+)$/.exec(p);
       if (m) {
         const live = await render.loadLive(db, m[1]);
@@ -165,7 +181,7 @@ export async function handleMegacity(request, env, ctx, url) {
         return page ? finish(page, "d1") : passThrough();
       }
       if (p === "/templates/megacity-properties") {
-        const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"));
+        const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"), env);
         const cards = await feed.json();
         const page = cards.items && cards.items.length ? await render.renderPropertiesPage(request, env, url, cards) : null;
         return page ? finish(page, "d1") : passThrough();
@@ -201,7 +217,7 @@ export async function handleMegacity(request, env, ctx, url) {
       const m = /^\/api\/public\/tours(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
       if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1]) : tours.publicManifest(db);
       const l = /^\/api\/public\/listings(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
-      if (l && request.method === "GET") return l[1] ? pub.one(db, l[1]) : pub.list(db, url);
+      if (l && request.method === "GET") return l[1] ? pub.one(db, url, env, l[1]) : pub.list(db, url, env);
       if (p === "/api/public/event" && request.method === "POST") return enq.publicEvent(request, env);
       if (p === "/api/public/lead" && request.method === "POST") {
         if (!sameOrigin(request, url)) return json({ error: "Forbidden" }, 403);

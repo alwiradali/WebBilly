@@ -2241,7 +2241,7 @@
       (autos ? "\n\nWorth doing when you have a minute: " + autos + " auto-placed door" + (autos === 1 ? "" : "s") + " to aim — say “doors”." : ""),
       [
         { label: "Copy the link", run: function () { copyText(tourUrl(), "Link copied."); } },
-        { label: "See it on the website", run: function () { window.open("/templates/megacity-property?id=" + PROJECT, "_blank"); } }
+        { label: "See it on the website", run: function () { window.open((/^(www\.)?billydigitals\.com$|^localhost$|^127\.0\.0\.1$/i.test(location.hostname) ? "/templates/megacity-let-" : "/let/") + PROJECT, "_blank"); } }
       ]);
   }
   function asQuality() {

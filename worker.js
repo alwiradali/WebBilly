@@ -24,10 +24,18 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
    Lives in worker/studio/*; bundled into this Worker at deploy time. */
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
 import { recordEnquiry, notifyTo, formAllowed } from "./worker/studio/enquiries.js";
+import { serveMegacityHost } from "./worker/studio/host.js";
+import { isMegacityHost } from "./worker/studio/urls.js";
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // Megacity Properties on its own domain (MEGACITY_HOST): the Worker owns
+    // every path there — pages at root, old addresses redirected, branded 404.
+    if (isMegacityHost(env, url.hostname)) {
+      const served = await serveMegacityHost(request, env, ctx, url);
+      if (served) return served;
+    }
     if (isMegacityPath(url)) return handleMegacity(request, env, ctx, url);
     if (url.pathname === "/api/send-review") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -48,6 +56,10 @@ export default {
     if (url.pathname === "/api/megacity-contact") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleMegacityContact(request, env, ctx);
+    }
+    if (url.pathname === "/api/megacity-apply") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityApply(request, env, ctx);
     }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
@@ -713,6 +725,55 @@ async function handleMegacityContact(request, env, ctx) {
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
   if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
+  return json({ ok: true });
+}
+
+/* Tenancy application from /tenant-application-form (the old site's
+   10ninety form went with the old site). Emailed to the office and kept in
+   the Studio inbox as a "Tenancy application". */
+async function handleMegacityApply(request, env, ctx) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
+  if (body.botcheck) return json({ ok: true });
+  const s = (k, n) => String(body[k] || "").trim().slice(0, n);
+  const name = s("name", 120), email = s("email", 160), phone = s("phone", 60);
+  const property = s("property", 160) || "a Megacity property";
+  const listingId = s("listingId", 80).toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const moveIn = s("moveIn", 60), occupants = s("occupants", 160), employment = s("employment", 240), message = s("message", 3000);
+  if (!name || !phone) return json({ error: "Please include your name and a phone number." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "A valid email address is required." }, 400);
+
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const pairs = [["Name", name], ["Phone", phone], ["Email", email], ["Property", property], ["Move-in date", moveIn || "—"], ["Who will live there", occupants || "—"], ["Employment / income", employment || "—"], ["Anything else", message || "—"]];
+  const rows = pairs.map(([k, v]) =>
+    `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:130px;">${k}</td>` +
+    `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`).join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Tenancy application <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the applicant. Reference and right-to-rent checks still happen in 10ninety as usual.</div></div>`;
+  const text = ["Tenancy application"].concat(pairs.map(([k, v]) => k + ": " + v)).join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, {
+    source: "application", name, email, phone, listingId: listingId || null, property,
+    message: ["Move-in: " + (moveIn || "—"), "Who will live there: " + (occupants || "—"), "Employment / income: " + (employment || "—"), message].filter(Boolean).join("\n"),
+    attr: body.attr,
+  }));
   return json({ ok: true });
 }
 

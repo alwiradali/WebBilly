@@ -11,21 +11,15 @@ import { parseJson } from "./db.js";
 import { label } from "./options.js";
 import { listForListing, mediaUrl } from "./media.js";
 import { pageUrl } from "./public.js";
+import * as urls from "./urls.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = (n) => "£" + Number(n).toLocaleString("en-GB");
 const plural = (n, one, many) => n + " " + (n === 1 ? one : many || one + "s");
 
-function publicBase(env, url) {
-  const b = env.MEGACITY_PUBLIC_BASE || (url.origin + "/templates/");
-  return b.replace(/\/?$/, "/");
-}
-function absolute(env, url, path) {
-  if (!path) return null;
-  if (/^https?:\/\//.test(path)) return path;
-  const origin = new URL(publicBase(env, url)).origin;
-  return origin + (path.startsWith("/") ? path : "/templates/" + path);
-}
+/* absolute links follow the host: the client domain in root mode, the demo
+   folder on billydigitals.com (urls.js) */
+const absolute = (env, url, path) => (path ? urls.absUrl(env, url, "asset", path) : null);
 
 /* the live listing row plus everything the page needs; null when not live */
 export async function loadLive(db, id) {
@@ -68,9 +62,10 @@ function view(env, url, { r, media }, settings) {
   const title = r.title;
   const pageTitle = title + " | Megacity Properties";
   const metaDesc = r.seo_description || summary.slice(0, 155);
-  const canonical = publicBase(env, url) + "megacity-let-" + r.id;
+  const canonical = urls.absUrl(env, url, "listing", r.id);
+  const applyHref = urls.pagePath(urls.mode(env, url.hostname), "tenant-application-form") + "?property=" + encodeURIComponent(title) + "&listing=" + encodeURIComponent(r.id);
   const ogImage = cover ? absolute(env, url, cover.url) : absolute(env, url, "assets/mcr/ph-manchester.jpg");
-  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, floorplan, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage };
+  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, floorplan, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage, applyHref };
 }
 
 /* ── fragments ─────────────────────────────────────────────────────────── */
@@ -193,12 +188,12 @@ function jsonLd(env, url, v) {
     image: v.photos.slice(0, 8).map((m) => absolute(env, url, m.url)),
     about,
     ...(r.rent_pcm ? { offers: { "@type": "Offer", price: r.rent_pcm, priceCurrency: "GBP", priceSpecification: { "@type": "UnitPriceSpecification", price: r.rent_pcm, priceCurrency: "GBP", unitText: "MONTH" }, businessFunction: "http://purl.org/goodrelations/v1#LeaseOut", availability: r.availability === "let_agreed" ? "https://schema.org/SoldOut" : "https://schema.org/InStock", url: v.canonical } } : {}),
-    provider: { "@type": "RealEstateAgent", name: "Megacity Properties", telephone: v.phone, url: publicBase(env, url) + "megacity-skyline" },
+    provider: { "@type": "RealEstateAgent", name: "Megacity Properties", telephone: v.phone, url: urls.absUrl(env, url, "page", "skyline") },
   };
   const crumbs = {
     "@type": "BreadcrumbList", itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: publicBase(env, url) + "megacity-skyline" },
-      { "@type": "ListItem", position: 2, name: "Properties to rent", item: publicBase(env, url) + "megacity-properties" },
+      { "@type": "ListItem", position: 1, name: "Home", item: urls.absUrl(env, url, "page", "skyline") },
+      { "@type": "ListItem", position: 2, name: "Properties to rent", item: urls.absUrl(env, url, "page", "properties") },
       { "@type": "ListItem", position: 3, name: v.title, item: v.canonical },
     ],
   };
@@ -239,7 +234,7 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
     .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
-    .on('[data-slot="apply"]', { element: (e) => { if (v.links.apply) e.setAttribute("href", v.links.apply); } })
+    .on('[data-slot="apply"]', { element: (e) => { if (v.links.apply) e.setAttribute("href", v.links.apply); else { e.setAttribute("href", v.applyHref); e.removeAttribute("target"); e.removeAttribute("rel"); } } })
     .on('[data-slot="map"]', { element: (e) => { e.setAttribute("src", "https://www.google.com/maps?q=" + mapQ + "&output=embed"); e.setAttribute("title", "Map showing " + v.addr); } })
     .on('[data-slot="mapsec"]', { element: (e) => { if (!v.addr) e.remove(); } })
     .on("[data-slot]", { element: (e) => e.removeAttribute("data-slot") })
@@ -263,7 +258,7 @@ export async function renderPropertiesPage(request, env, url, cards) {
       c.typeShort === "room" ? "Shared bath" : (c.bathrooms ? c.bathrooms + " bath" : null),
       c.typeShort === "room" ? "Room" : c.typeLabel].filter(Boolean);
     const img = c.cover ? `<img src="${esc(c.cover.thumb || c.cover.url)}" alt="${esc(c.cover.alt || c.title)}" loading="lazy" decoding="async" width="1400" height="1050">` : "";
-    return `<a class="pl-card" href="megacity-let-${esc(c.id)}" data-area="${esc(c.area || "")}" data-type="${esc(c.typeShort)}" data-beds="${esc(String(c.bedrooms ?? ""))}">
+    return `<a class="pl-card" href="${esc(c.url)}" data-area="${esc(c.area || "")}" data-type="${esc(c.typeShort)}" data-beds="${esc(String(c.bedrooms ?? ""))}">
         <span class="pl-img">${img}</span>
         ${c.tag || c.headline ? `<span class="pl-tag">${esc(c.headline || c.tag)}</span>` : ""}
         <span class="pl-body">
@@ -289,15 +284,22 @@ export async function renderPropertiesPage(request, env, url, cards) {
   return new Response(res.body, { status: 200, headers });
 }
 
-/* sitemap: the static Megacity pages plus every live listing */
-const STATIC_PAGES = ["megacity-skyline", "megacity-properties", "megacity-for-landlords", "megacity-tenant-find", "megacity-rent-collection", "megacity-fully-managed", "megacity-switch", "megacity-hmo", "megacity-maintenance", "megacity-compliance", "megacity-renting", "megacity-valuation", "megacity-tools", "megacity-journal", "megacity-about-us", "megacity-contact-us", "megacity-privacy", "megacity-terms"];
+/* sitemap: the hand-built pages plus every live listing and Studio page,
+   at whichever addresses this host uses (root or demo). Works without the
+   database too: then the five hand-built listings stand in. */
+const SITEMAP_SKIP = new Set(["tenant-application-form"]);
 export async function sitemap(env, url, db) {
-  const base = publicBase(env, url);
-  const rows = (await db.prepare(`SELECT id, updated_at FROM listings WHERE status='live' AND hidden=0 AND deleted_at IS NULL`).all()).results || [];
-  const pages = (await db.prepare(`SELECT slug, updated_at FROM pages WHERE status='live'`).all().catch(() => ({ results: [] }))).results || [];
-  const items = STATIC_PAGES.map((p) => `<url><loc>${esc(base + p)}</loc></url>`)
-    .concat(rows.map((r) => `<url><loc>${esc(base + "megacity-let-" + r.id)}</loc><lastmod>${esc(String(r.updated_at).slice(0, 10))}</lastmod></url>`))
-    .concat(pages.map((p) => `<url><loc>${esc(base + "megacity-" + p.slug)}</loc><lastmod>${esc(String(p.updated_at).slice(0, 10))}</lastmod></url>`));
+  const one = (loc, mod) => `<url><loc>${esc(loc)}</loc>${mod ? `<lastmod>${esc(String(mod).slice(0, 10))}</lastmod>` : ""}</url>`;
+  let rows = [], cms = [];
+  if (db) {
+    rows = (await db.prepare(`SELECT id, updated_at FROM listings WHERE status='live' AND hidden=0 AND deleted_at IS NULL`).all()).results || [];
+    cms = (await db.prepare(`SELECT slug, updated_at FROM pages WHERE status='live'`).all().catch(() => ({ results: [] }))).results || [];
+  } else {
+    rows = urls.STATIC_LET_SLUGS.map((id) => ({ id, updated_at: null }));
+  }
+  const items = urls.PUBLIC_STATIC_SLUGS.filter((s) => !SITEMAP_SKIP.has(s)).map((s) => one(urls.absUrl(env, url, "page", s)))
+    .concat(rows.map((r) => one(urls.absUrl(env, url, "listing", r.id), r.updated_at)))
+    .concat(cms.map((p) => one(urls.absUrl(env, url, "cms", p.slug), p.updated_at)));
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items.join("\n")}\n</urlset>\n`;
   return new Response(xml, { status: 200, headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=300, s-maxage=600" } });
 }

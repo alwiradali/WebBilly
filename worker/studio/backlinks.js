@@ -4,6 +4,7 @@
    page still links to the site. */
 
 import { uid, nowIso, HttpError, json, readJsonBody, clampStr, audit, bump } from "./db.js";
+import * as urls from "./urls.js";
 
 const STATUSES = ["planned", "requested", "live", "lost"];
 
@@ -72,8 +73,7 @@ export async function remove(c) {
 /* Does the source page link to us? Looks for the site's host and, when a
    target path is set, that path. */
 async function probe(env, url, r) {
-  const base = (env.MEGACITY_PUBLIC_BASE || (url.origin + "/templates/")).replace(/\/?$/, "/");
-  const host = new URL(base).host.replace(/^www\./, "");
+  const host = new URL(urls.publicBase(env, url)).host.replace(/^www\./, "");
   if (!checkable(env, url, r.source_url)) return { status: r.status === "planned" ? "planned" : "lost", result: "That address cannot be checked from here." };
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 10000);

@@ -27,7 +27,8 @@
 /assets/amabilis/video/*
   Cache-Control: public, max-age=2592000
 
-# Megacity Studio — the client's back office. Never indexed.
+# Megacity Studio — the client's back office. Never indexed. (On the client's
+# own domain the Worker serves /studio itself and sets this header there.)
 /templates/megacity-studio
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
 /templates/megacity-studio.html

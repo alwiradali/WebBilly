@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T11:59:08.729Z",
+  "generatedAt": "2026-09-04T16:27:32.201Z",
   "listings": [
     {
       "id": "ladywell-point",
@@ -130,9 +130,10 @@
         }
       ],
       "links": {
-        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "apply": null,
         "tenninety": "https://www.megacityproperties.co.uk/property/225/2-bed-apartment-to-let-apartment-ladywell-point-pilgrims-way-salford/"
-      }
+      },
+      "legacyId": "225"
     },
     {
       "id": "denmark-road",
@@ -306,9 +307,10 @@
         }
       ],
       "links": {
-        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "apply": null,
         "tenninety": "https://www.megacityproperties.co.uk/property/226/2-bed-apartment-to-let-apartment--denmark-road-manchester/"
-      }
+      },
+      "legacyId": "226"
     },
     {
       "id": "room-3",
@@ -432,9 +434,10 @@
         }
       ],
       "links": {
-        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "apply": null,
         "tenninety": "https://www.megacityproperties.co.uk/property/108/1-bed-double-room-to-let-room-3/"
-      }
+      },
+      "legacyId": "108"
     },
     {
       "id": "room-5",
@@ -574,9 +577,10 @@
         }
       ],
       "links": {
-        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "apply": null,
         "tenninety": "https://www.megacityproperties.co.uk/property/110/8-bed-double-room-to-let-room-5/"
-      }
+      },
+      "legacyId": "110"
     },
     {
       "id": "room-7",
@@ -739,9 +743,10 @@
         }
       ],
       "links": {
-        "apply": "https://www.megacityproperties.co.uk/tenant-application-form/",
+        "apply": null,
         "tenninety": "https://www.megacityproperties.co.uk/property/102/1-bed-double-room-to-let-room-7/"
-      }
+      },
+      "legacyId": "102"
     }
   ]
 }

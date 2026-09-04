@@ -135,6 +135,7 @@ export const OPTIONS = {
     ["register", "Registration"],
     ["tour", "360° tour"],
     ["maintenance", "Maintenance"],
+    ["application", "Tenancy application"],
   ],
 };
 
