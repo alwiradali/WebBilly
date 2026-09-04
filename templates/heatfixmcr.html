@@ -195,7 +195,11 @@ h1.hh em{font-style:normal;color:var(--ice)}
 .kv div::before{content:"";position:absolute;top:0;left:14px;right:14px;height:2px;background:var(--goldline)}
 .kv b{display:block;font-family:var(--dis);font-weight:900;font-size:clamp(1.6rem,4vw,2.2rem);
   background:linear-gradient(120deg,var(--navy),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-.kv span{font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.kv span{font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  overflow-wrap:anywhere}
+/* the registration number never breaks, so it gets a line of its own rather
+   than being clipped off the edge of a narrow card */
+.kv .gsno{display:block;margin-top:2px;letter-spacing:.07em}
 
 /* ===================== WORK GALLERY ===================== */
 .gal{
@@ -1290,7 +1294,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   var b = document.getElementById('gsNoFoot'); if (b) b.textContent = 'Reg. no. ' + n;
   /* Gas Safe want the number shown wherever the mark is. Every badge carries a
      .gsno slot so a new one can never quietly ship without it. */
-  var FMT = { no: ' No. ' + n, reg: ' · Reg. ' + n, plain: n };
+  var FMT = { no: ' No. ' + n, reg: 'Reg. ' + n, plain: n };
   [].forEach.call(document.querySelectorAll('.gsno'), function (el) {
     el.textContent = FMT[el.getAttribute('data-gsno')] || FMT.plain;
   });
