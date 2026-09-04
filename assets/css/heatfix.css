@@ -619,10 +619,33 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .hfnav{position:fixed;inset:0 0 auto;z-index:90;background:var(--hf-navy);
   box-shadow:0 2px 18px -6px rgba(4,14,36,.55)}
 .hfnav-in{max-width:1400px;margin:0 auto;padding:10px 26px;display:flex;align-items:center;gap:22px}
-.hfnav .hfbrand{flex:none;margin-right:auto;display:block;background:none;padding:0}
+.hfnav .hfbrand{flex:none;display:block;background:none;padding:0}
 .hfnav .hfbrand img{height:62px;width:auto;display:block}
 @media(min-width:900px){.hfnav .hfbrand img{height:74px}}
 @media(min-width:1280px){.hfnav .hfbrand img{height:82px}}
+/* Below the desktop nav the middle of the bar is empty, so the mark goes on
+   the left on its own and the name and services sit in that space. Above it
+   the links own the middle, so the full lockup comes back and the text goes. */
+.hfnav .hfbrand img.hfbrand-mark{display:none}
+.hfnav-name{display:none;margin:0 auto;text-align:center;text-decoration:none;
+  min-width:0;padding:0 8px}
+.hfnav-name b{display:block;font-family:var(--dis);font-weight:900;color:#fff;
+  font-size:clamp(.92rem,3.4vw,1.22rem);letter-spacing:.01em;line-height:1.1;
+  text-transform:uppercase;white-space:nowrap}
+.hfnav-name span{display:block;margin-top:3px;font-family:var(--dis);font-weight:700;
+  color:var(--hf-blue-l);font-size:clamp(.38rem,1.42vw,.5rem);letter-spacing:.11em;
+  text-transform:uppercase;line-height:1.2}
+@media(max-width:1079px){
+  .hfnav .hfbrand img.hfbrand-lockup{display:none}
+  .hfnav .hfbrand img.hfbrand-mark{display:block;height:52px}
+  .hfnav-name{display:block}
+  .hfnav-in{gap:10px}
+}
+@media(min-width:1080px){.hfnav .hfbrand{margin-right:auto}}
+@media(max-width:359px){
+  .hfnav .hfbrand img.hfbrand-mark{height:44px}
+  .hfnav-name span{display:none}
+}
 .hfnav-links{display:none;gap:34px;margin:0 auto}
 .hfnav-links a{font-family:var(--dis);font-weight:700;font-size:.92rem;letter-spacing:.09em;
   text-transform:uppercase;color:#fff;white-space:nowrap;position:relative;padding:6px 0;opacity:.93}
