@@ -153,7 +153,12 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .hero{position:relative;overflow:hidden;background:var(--blush)}
 @media(min-width:940px){.hero{background:linear-gradient(90deg,var(--blush) 0%,var(--blush) 51%,var(--cream) 51%)}}
 .hero-in{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:0}
-@media(min-width:940px){.hero-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(min-width:940px){/* The photograph used to sit centred in its half, leaving cream above and
+   below it against a panel that ran the full height. It fills the column
+   now, so the two halves meet cleanly. */
+  .hero-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  .hero-txt{align-self:center}
+  .hero-shot{min-height:0}}
 .hero-txt{padding:clamp(56px,7vw,96px) 26px clamp(56px,7vw,92px)}
 @media(min-width:940px){
   /* text keeps to the 1240 grid; the photograph bleeds off the right edge */
@@ -628,8 +633,13 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   border-radius:8px;background:#fff;font-size:1rem}
 .popcard input:focus{outline:none;border-color:var(--gold)}
 .popcard .btn{width:100%;margin-top:11px;border-radius:8px;padding:13px}
-.popcard .x{position:absolute;top:9%;right:11%;border:0;background:none;font-size:1.5rem;
-  color:var(--burg);cursor:pointer;line-height:1;z-index:2}
+/* It was a 9px glyph sitting on the rose border, which read as broken. Now a
+   proper 44px target on its own plate, clear of the artwork. */
+.popcard .x{position:absolute;top:5.5%;right:6.5%;width:44px;height:44px;border:0;
+  border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 2px 10px -3px rgba(78,32,41,.45);
+  font-size:1.5rem;color:var(--burg);cursor:pointer;line-height:1;z-index:3;
+  display:grid;place-items:center;padding:0;transition:background .2s,transform .2s}
+.popcard .x:hover{background:#fff;transform:scale(1.06)}
 @media(max-width:520px){.popcard{aspect-ratio:.92}.popin{width:78%}}
 
 /* ---------- checkout ---------- */
@@ -684,6 +694,26 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 
 
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+/* ---- rotating name badge ------------------------------------------------
+   Her name circling the mark, sitting on the seam where the blush panel meets
+   the photograph so the two halves are tied together. ------------------- */
+.rrbadge{position:absolute;left:50%;bottom:clamp(16px,3vw,34px);transform:translateX(-50%);
+  width:clamp(104px,13vw,168px);aspect-ratio:1;border-radius:50%;z-index:4;
+  display:grid;place-items:center;background:var(--cream,#fdf8f3);
+  box-shadow:0 14px 34px -14px rgba(78,32,41,.5);text-decoration:none}
+.rrbadge-ring{position:absolute;inset:0;width:100%;height:100%;
+  animation:rrspin 22s linear infinite;fill:var(--burg,#5d2130)}
+.rrbadge-ring text{font-family:var(--ui,Inter),system-ui,sans-serif;font-size:15px;
+  font-weight:600;letter-spacing:.24em;text-transform:uppercase}
+.rrbadge-mk{width:46%;height:auto;position:relative;z-index:1}
+@keyframes rrspin{to{transform:rotate(360deg)}}
+.rrbadge:hover .rrbadge-ring{animation-duration:9s}
+@media(prefers-reduced-motion:reduce){.rrbadge-ring{animation:none}}
+@media(max-width:860px){
+  /* stacked hero: the badge sits on the join between copy and photograph */
+  .rrbadge{width:clamp(92px,26vw,124px)}
+}
 </style>
 </head>
 <body>
@@ -740,6 +770,15 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       <img src="../assets/rachel/hero-vase.webp" alt="Pink and cream roses with gypsophila in a fluted gold vase" width="1500" height="646" fetchpriority="high">
     </div>
   </div>
+      <a class="rrbadge" href="#shop" aria-label="Order a bouquet">
+        <svg class="rrbadge-ring" viewBox="0 0 220 220" aria-hidden="true" focusable="false">
+          <defs>
+            <path id="rrRing" d="M110,110 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"></path>
+          </defs>
+          <text><textPath href="#rrRing" startOffset="0">ROSES BY RACHEL &#183; ROSES BY RACHEL &#183; </textPath></text>
+        </svg>
+        <img class="rrbadge-mk" src="../assets/rachel/logo-mark-gold.webp" alt="" width="796" height="603" loading="lazy">
+      </a>
 </header>
 
 <!-- ===================== SHOP ===================== -->

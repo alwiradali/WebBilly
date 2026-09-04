@@ -47,6 +47,17 @@
   transform: translate(0, 0) scale(1);
 }
 
+/* ---- release the compositor layer once an element has arrived ----
+   will-change promotes every tagged element to its own GPU layer and holds
+   it there. On a long page that meant dozens of layers alive at once — one
+   site was carrying 69 — and scrolling stuttered on a phone. A reveal only
+   needs the layer while it is moving, so it is handed back on arrival.
+   Parallax, pin and horizontal keep theirs: they transform on every frame. */
+[data-fx="reveal"].fx-in,
+.fx-stagger-item.fx-in,
+[data-fx="text"] .fx-word-inner.fx-in,
+[data-fx="text"].fx-in .fx-word-inner { will-change: auto; }
+
 /* ---- 2. STAGGER ---- */
 .fx-stagger-item {
   opacity: 0;
