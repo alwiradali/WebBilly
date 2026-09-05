@@ -722,6 +722,9 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   max-width:1400px;margin-inline:auto;padding:0 26px}
 @media(min-width:640px){.hfcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1000px){.hfcards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Four services: two-up from 640, four across once there is room for them.
+   Left on the three-column rule a fourth card sits alone on its own row. */
+@media(min-width:1080px){.hfcards.four{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .hfcard{background:#fff;border:1.5px solid var(--hf-navy);border-radius:4px;
   padding:34px 26px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;
   transition:transform .25s,box-shadow .25s}

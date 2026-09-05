@@ -376,18 +376,28 @@ h1.hh em{font-style:normal;color:var(--ice)}
 .side-row b{font-family:var(--dis);font-weight:800;font-size:1.02rem;word-break:break-word;color:var(--navy)}
 
 /* ===================== AREAS ===================== */
-.areapic{position:relative;margin-top:30px;border-radius:var(--r);overflow:hidden;
-  border:1px solid var(--line);box-shadow:var(--shadow-lg);aspect-ratio:16/7;background:var(--card2)}
-/* extra height gives the parallax drift somewhere to go without showing an edge */
-.areapic img{position:absolute;left:0;top:-11%;width:100%;height:122%;object-fit:cover;display:block;
-  will-change:transform}
-.areapic::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top right,rgba(11,46,99,.42),rgba(11,46,99,.1) 32%,transparent 55%)}
-.areapic-tag{position:absolute;left:20px;bottom:18px;z-index:2;
-  font-family:var(--dis);font-weight:800;font-size:.82rem;letter-spacing:.04em;color:#fff;
-  background:rgba(30,37,48,.55);border:1px solid rgba(255,255,255,.22);
-  padding:9px 15px;border-radius:999px;backdrop-filter:blur(6px)}
-@media(max-width:620px){.areapic{aspect-ratio:16/10}.areapic-tag{left:14px;bottom:14px;font-size:.74rem}}
+/* The coverage map. This held a cropped photo before, so it carried
+   object-fit:cover, an oversized image for parallax drift and a dark navy
+   scrim for the caption chip. All three fight a map: cover crops the towns
+   off the edges and the scrim greys out the half of it under the gradient.
+   The map is drawn to fit its own box, so it just sits in it. */
+.areapic{margin-top:30px;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--line);box-shadow:var(--shadow-lg);background:var(--card2)}
+.areapic img{width:100%;height:auto;display:block}
+/* This was .88rem in --dim (#8493a6, under 3:1 on the page) and all but
+   invisible — on the one line that tells someone just outside the patch to
+   ring anyway. It is a call to action, so it is set like one. */
+.areanote{margin-top:22px;display:flex;gap:12px;align-items:center;
+  padding:16px 20px;border-radius:var(--r);
+  background:linear-gradient(180deg,#fff7f2,#fdefe6);
+  border:1px solid #f6cdb4;border-left:5px solid var(--flame);
+  font-family:var(--dis);font-weight:700;font-size:1.06rem;line-height:1.45;
+  color:#7a2c07}
+.areanote::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;
+  background:var(--flame);
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>') center/100% no-repeat;
+          mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a1 1 0 0 1-1 1A17 17 0 0 1 3 5a1 1 0 0 1 1-1z"/></svg>') center/100% no-repeat}
+@media(max-width:620px){.areanote{font-size:1rem;padding:14px 16px}}
 .areas{margin-top:34px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);
   overflow:hidden;box-shadow:var(--shadow)}
 .areas summary{
@@ -577,7 +587,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
 <!-- ================= WHAT WE DO ================= -->
 <section class="hfwhat" id="services">
   <h2 data-fx="reveal">What we do</h2>
-  <div class="hfcards three" data-fx="stagger" data-fx-step="80">
+  <div class="hfcards four" data-fx="stagger" data-fx-step="80">
     <article class="hfcard">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="6" y="3" width="12" height="16" rx="2"/><path d="M12 8c-1.2 1.7-1.9 2.6-1.9 3.7a1.9 1.9 0 0 0 3.8 0c0-1.1-.7-2-1.9-3.7z" fill="#fff" stroke="none"/><path d="M9 22v-3M15 22v-3"/></svg></span>
       <h3>Boilers</h3>
@@ -592,8 +602,17 @@ h1.hh em{font-style:normal;color:var(--ice)}
     </article>
     <article class="hfcard">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3c1.7 3.6 4.8 4.9 4.8 8.4a4.8 4.8 0 0 1-9.6 0c0-2.2 1.7-3.6 2.8-5.7.6 1.8 1.5 2.3 1.9 1.3.7-1.5.4-2.7.1-4z" fill="#fff"/></svg></span>
+      <!-- Subtitle was "Landlord certificates & checks", which made this card
+           and the CP12 one beside it read as the same service twice. This one
+           is the safety work; the next one is the certificate. -->
       <h3>Gas safety</h3>
-      <p>Landlord certificates &amp; checks</p>
+      <p>Leak checks, CO alarms &amp; tightness tests</p>
+      <a class="more" href="/plumbing-gas-safety">Learn more</a>
+    </article>
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h9L19 6.5v15H6z"/><path d="M14.6 2.6V7h4.3"/><path d="M9 12.5h6M9 16h4"/><path d="m9.2 9.1 1 1 1.9-2" stroke-width="1.8"/></svg></span>
+      <h3>Gas Safety Certificate</h3>
+      <p>CP12 for landlords, same visit</p>
       <a class="more" href="/plumbing-gas-safety">Learn more</a>
     </article>
   </div>
@@ -606,11 +625,20 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <svg class="mqb-gs" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" fill="#FFD200" stroke="#FFD200" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">&#174;</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="#fff">REGISTER</text></svg><span class="mqb-t"><b>Gas Safe Register</b><small>Reg. 627019</small></span></a>
       <a class="mqb" href="https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/" target="_blank" rel="noopener">
         <span class="mqb-w yell">Yell</span><span class="mqb-t"><b>Reviewed on Yell</b><small>4.9 from 13 reviews</small></span></a>
-      <span class="mqb plain"><span class="mqb-t"><b>Worcester Bosch</b><small>Installed &amp; serviced</small></span></span>
-      <span class="mqb plain"><span class="mqb-t"><b>Vaillant</b><small>Installed &amp; serviced</small></span></span>
-      <span class="mqb plain"><span class="mqb-t"><b>Ideal</b><small>Installed &amp; serviced</small></span></span>
-      <span class="mqb plain"><span class="mqb-t"><b>Baxi</b><small>Installed &amp; serviced</small></span></span>
-      <span class="mqb plain"><span class="mqb-t"><b>Glow-worm</b><small>Installed &amp; serviced</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Worcester Bosch</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Vaillant</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Ideal</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Baxi</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Glow-worm</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Viessmann</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Potterton</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Alpha</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Main</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Vokera</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Ariston</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Intergas</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Ferroli</b><small>Serviced, installed &amp; repaired</small></span></span>
+      <span class="mqb plain"><span class="mqb-t"><b>Any other make</b><small>Serviced, installed &amp; repaired</small></span></span>
       <span class="mqb plain"><span class="mqb-t"><b>Public liability</b><small>Insured</small></span></span>
   </div>
 </div>
@@ -951,7 +979,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <details class="faq"><summary>How long does a new boiler take to fit?</summary><div class="a"><p>A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through.</p></div></details>
       <details class="faq"><summary>Why does my boiler keep losing pressure?</summary><div class="a"><p>Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at.</p></div></details>
       <details class="faq"><summary>Does my boiler really need servicing every year?</summary><div class="a"><p>Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room.</p></div></details>
-      <details class="faq"><summary>What areas do you cover?</summary><div class="a"><p>Manchester and Stockport, and the whole belt between them: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest. Sixty-one areas in all. If you're a bit outside that, ring and ask; the answer is usually yes.</p></div></details>
+      <details class="faq"><summary>What areas do you cover?</summary><div class="a"><p>Manchester, Stockport and the areas we cover in between: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest, plus Sale, Timperley, Altrincham and Handforth. If you're a bit outside that, ring and ask; the answer is usually yes.</p></div></details>
       <details class="faq"><summary>Are you insured?</summary><div class="a"><p>Yes, HeatFix Mcr Limited carries public liability insurance<span id="insFaq"></span>, on top of being Gas Safe registered. If a landlord, letting agent or managing agent needs to see the certificate before work starts, ask and it gets sent over.</p></div></details>
     </div>
   </div>
@@ -1083,30 +1111,34 @@ h1.hh em{font-style:normal;color:var(--ice)}
 <section class="sect" id="areas" style="padding-top:0">
   <div class="wrap">
     <span class="eyebrow" data-fx="reveal">Where we work</span>
-    <h2 data-fx="reveal" data-fx-delay="80" style="margin-top:16px">Manchester and Stockport.</h2>
+    <h2 data-fx="reveal" data-fx-delay="80" style="margin-top:16px">Manchester, Stockport and the areas we cover.</h2>
     <p class="lede" data-fx="reveal" data-fx-delay="140" style="margin-top:18px">
-      Manchester city centre out through the south of the city and across Stockport: Burnage, Withington, the Heatons, Cheadle, Cheadle Hulme, Gatley and Bramhall included.
-      Sixty-one areas, all of them a short drive, which is what makes same-day
+      Manchester city centre out through the south of the city and across Stockport: Burnage, Withington, the Heatons, Cheadle, Cheadle Hulme, Gatley and Bramhall included, plus Sale, Timperley, Altrincham and Handforth.
+      Every one a short drive, which is what makes same-day
       call-outs possible.
     </p>
     <div class="areapic" data-fx="reveal" data-fx-delay="170">
-      <img data-fx="parallax" data-fx-speed="0.09" src="/assets/heatfix/pg-gassafety.webp"
-           srcset="/assets/heatfix/pg-gassafety-sm.webp 660w, /assets/heatfix/pg-gassafety.webp 1097w"
-           sizes="(max-width:900px) 92vw, 1100px"
-           alt="A wall-mounted combi boiler reading 1.2 bar beside a carbon monoxide alarm"
-           loading="lazy" decoding="async" width="1097" height="558">
-      <span class="areapic-tag">Manchester &amp; Stockport</span>
+      <!-- Two maps, not one scaled down. The wide banner's town labels are
+           15px against 1100, which is about 5px once the banner is 344px on a
+           phone. The narrow build drops the caption panel and the smaller
+           towns and sets the rest far larger. -->
+      <picture>
+        <source media="(max-width:719px)" srcset="/assets/heatfix/areas-map-sm.svg" width="700" height="780">
+        <img src="/assets/heatfix/areas-map.svg"
+             alt="Map of the area covered: Manchester and Salford at the top, down through Chorlton, Didsbury and the Heatons to Handforth and Bramhall, and from Altrincham and Timperley in the west across to Romiley and Hazel Grove in the east."
+             loading="lazy" decoding="async" width="1100" height="560">
+      </picture>
     </div>
     <details class="areas" data-fx="reveal" data-fx-delay="200" open>
-      <summary>The 61 areas we cover</summary>
+      <summary>The areas we cover</summary>
       <div class="arealist">
         <a href="#quote">Adswood</a>
+        <a href="#quote">Altrincham</a>
         <a href="#quote">Ancoats</a>
         <a href="#quote">Ardwick</a>
         <a href="#quote">Audenshaw</a>
         <a href="#quote">Beswick</a>
         <a href="#quote">Blackley</a>
-        <a href="#quote">Bradford</a>
         <a href="#quote">Bramhall</a>
         <a href="#quote">Bredbury</a>
         <a href="#quote">Brooklands</a>
@@ -1129,6 +1161,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <a href="#quote">Fallowfield</a>
         <a href="#quote">Gatley</a>
         <a href="#quote">Gorton</a>
+        <a href="#quote">Handforth</a>
         <a href="#quote">Harpurhey</a>
         <a href="#quote">Hazel Grove</a>
         <a href="#quote">Heald Green</a>
@@ -1156,6 +1189,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <a href="#quote">Salford</a>
         <a href="#quote">Stockport</a>
         <a href="#quote">Stretford</a>
+        <a href="#quote">Timperley</a>
         <a href="#quote">Urmston</a>
         <a href="#quote">Whalley Range</a>
         <a href="#quote">Withington</a>
@@ -1163,8 +1197,8 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <a href="#quote">Wythenshawe</a>
       </div>
     </details>
-    <p style="margin-top:18px;font-size:.88rem;color:var(--dim)">
-      Not on the list? Ring and ask, if the day works, we'll come.
+    <p class="areanote" data-fx="reveal" data-fx-delay="220">
+      Not on the list? Ring and ask &mdash; if the day works, we'll come.
     </p>
   </div>
 </section>
@@ -1251,7 +1285,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <li>Cheadle &amp; Cheadle Hulme</li>
         <li>Chorlton, Didsbury &amp; Burnage</li>
         <li>Salford &amp; Eccles</li>
-        <li><a href="/#areas">All 61 areas</a></li>
+        <li><a href="/#areas">Areas we cover</a></li>
       </ul>
     </div>
   </div>
@@ -1288,7 +1322,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
 </script>
 
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at."}}, {"@type": "Question", "name": "Does my boiler really need servicing every year?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester and Stockport, and the whole belt between them: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest. Sixty-one areas in all. If you're a bit outside that, ring and ask; the answer is usually yes."}}, {"@type": "Question", "name": "Are you insured?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, HeatFix Mcr Limited carries public liability insurance, on top of being Gas Safe registered. If a landlord, letting agent or managing agent needs to see the certificate before work starts, ask and it gets sent over."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at."}}, {"@type": "Question", "name": "Does my boiler really need servicing every year?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester, Stockport and the areas we cover in between: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest, plus Sale, Timperley, Altrincham and Handforth. If you're a bit outside that, ring and ask; the answer is usually yes."}}, {"@type": "Question", "name": "Are you insured?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, HeatFix Mcr Limited carries public liability insurance, on top of being Gas Safe registered. If a landlord, letting agent or managing agent needs to see the certificate before work starts, ask and it gets sent over."}}]}
 </script>
 
 <script src="../assets/js/scroll-fx.js" defer></script>
@@ -1458,7 +1492,22 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
 
 /* ---------- marquee: duplicate for a seamless loop ---------- */
-(function(){var t=document.getElementById('mqt'); if(t) t.innerHTML+=t.innerHTML;})();
+(function(){
+  var t=document.getElementById('mqt'); if(!t) return;
+  t.innerHTML+=t.innerHTML;                 /* two copies: translateX(-50%) loops seamlessly */
+  /* Hold the SPEED, not the duration. The band was 52s for six badges; adding
+     brands to it made the same 52s carry a track two and a half times longer,
+     which is the same marquee going two and a half times faster. Duration is
+     now derived from the width so the run reads at one pace whatever is in it. */
+  var PX_PER_SEC = 46;
+  function pace(){
+    var w = t.scrollWidth / 2;              /* one copy */
+    if (w > 0) t.style.animationDuration = Math.max(20, w / PX_PER_SEC) + 's';
+  }
+  pace();
+  addEventListener('resize', pace, {passive:true});
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(pace);
+})();
 
 /* ---------- hero wall: scroll depth ----------
    Each tile gets its own drift rate, written into --sy, which the wfloat
