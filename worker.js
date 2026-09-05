@@ -31,6 +31,17 @@ import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/cr
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    /* HeatFix's domain runs HeatFix's API and nothing else. /api/book,
+       /api/quote, /api/send-review and the Megacity form endpoints all send
+       mail without a session, so answering them here would put an open mailer
+       on his domain — spam sent from his address, billed to his Resend key,
+       burning his sending reputation. This runs before the API routes below
+       because they are matched by path and would otherwise claim the request
+       whatever host it arrived on. */
+    if (isClientHost(url.hostname, env, "HEATFIX_HOST") &&
+        url.pathname.startsWith("/api/") && !isHfCrmPath(url.pathname)) {
+      return json({ error: "Not found" }, 404);
+    }
     // Megacity Properties on its own domain (MEGACITY_HOST): the Worker owns
     // every path there — pages at root, old addresses redirected, branded 404.
     if (isMegacityHost(env, url.hostname)) {
@@ -101,6 +112,23 @@ export default {
 
     // HeatFix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
     if (isClientHost(url.hostname, env, "HEATFIX_HOST")) {
+      /* One canonical host. Both names resolve, and serveClient writes the
+         canonical tag from whichever one was asked for, so without this
+         Google finds two complete self-canonicalising copies of the site and
+         splits the ranking signals — on a business whose whole acquisition
+         channel is Manchester local search. It also splits his session
+         cookie, which is set without a Domain: signing in on one name leaves
+         him signed out on the other. The FIRST host in HEATFIX_HOST wins. */
+      const canonical = clientHosts(env, "HEATFIX_HOST")[0];
+      if (canonical && url.hostname.toLowerCase() !== canonical) {
+        return new Response(null, {
+          status: 301,
+          headers: {
+            location: "https://" + canonical + url.pathname + url.search,
+            "cache-control": "public, max-age=3600",
+          },
+        });
+      }
       return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
     }
 
@@ -286,6 +314,22 @@ function clientSitemap(url, PAGES, PUBLIC) {
   );
 }
 
+/* Fetch one of our own templates out of the asset store.
+   The asset router can answer a .html path with a redirect to its
+   extensionless form — the clean-URL behaviour billydigitals.com is built on,
+   and the wrong thing to hand a visitor on a client domain, where it would
+   bounce them from their clean URL to our internal /templates/… path.
+   html_handling = "none" on the client env stops it arising; following it
+   here stops it mattering if that setting is ever lost. */
+async function fetchAsset(env, url, request, path) {
+  const res = await env.ASSETS.fetch(new Request(new URL(path, url.origin), request));
+  if (res.status >= 300 && res.status < 400) {
+    const to = res.headers.get("location");
+    if (to) return env.ASSETS.fetch(new Request(new URL(to, url.origin), request));
+  }
+  return res;
+}
+
 async function serveClient(request, url, env, PAGES, PUBLIC) {
   let p = url.pathname.replace(/\/+$/, "") || "/";
 
@@ -306,20 +350,22 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
     else if (HEATFIX_INVOICE.test(p)) { target = "/templates/heatfix-invoice-view.html"; }
   }
   if (!target) {
+    /* The most-visited non-page on any new site. It used to be answered by
+       the asset router with Billy Digitals' 404 — a full-page advert for a
+       web design agency, on the client's own domain. */
+    if (PAGES === HEATFIX_PAGES) {
+      const miss = await fetchAsset(env, url, request, "/templates/heatfix-404.html");
+      if (miss.ok) {
+        return new Response(miss.body, {
+          status: 404,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+    }
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
   }
 
-  let res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
-  /* The asset router can answer a .html path with a redirect to its
-     extensionless form. That is the right behaviour for billydigitals.com and
-     the wrong thing to hand a visitor here: it would bounce them from the
-     client's clean URL to our internal /templates/… path. Follow it inside the
-     Worker instead. html_handling = "none" on this env stops it arising, and
-     this stops it mattering if that setting is ever lost. */
-  if (res.status >= 300 && res.status < 400) {
-    const to = res.headers.get("location");
-    if (to) res = await env.ASSETS.fetch(new Request(new URL(to, url.origin), request));
-  }
+  const res = await fetchAsset(env, url, request, target);
   if (!res.ok) return res;
 
   const canonical = "https://" + url.hostname + (p === "/" ? "/" : p);

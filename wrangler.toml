@@ -143,11 +143,14 @@ routes = [
 # The back office database, on HeatFix's own Cloudflare account. Apply the
 # schema once with:
 #   CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
-#   npx wrangler d1 execute hfcrm --remote --file=migrations/0002_heatfix_crm.sql
+#   npx wrangler d1 migrations apply hfcrm --env heatfix --remote
 [[env.heatfix.d1_databases]]
 binding = "HF_DB"
 database_name = "hfcrm"
 database_id = "497bcc16-15d2-4d61-b98c-9d7c09e6c9a5"
+# Without this, `wrangler d1 migrations apply hfcrm` defaults to ./migrations
+# and would run Mumbai2London's schema into his customer database.
+migrations_dir = "migrations/heatfix"
 
 [env.heatfix.vars]
 M2L_HOST = ""
@@ -165,19 +168,18 @@ not_found_handling = "404-page"
 # Worker, so the router should serve files here and nothing else.
 html_handling = "none"
 binding = "ASSETS"
-# Every path here must reach the Worker before the static-asset router. The
-# router has not_found_handling = "404-page", so it answers anything it does
-# not recognise itself and never falls through — a clean URL missing from this
-# list is a dead page on his live domain, not a fallback to the Worker.
-# Keep it in step with HEATFIX_PAGES in worker.js.
-run_worker_first = [
-  "/api/*",
-  # robots.txt and sitemap.xml are generated per host by the Worker; served as
-  # static assets they would be Billy Digitals' own files on his domain.
-  "/robots.txt", "/sitemap.xml",
-  "/", "/book", "/about", "/faqs", "/blog", "/blog/*",
-  "/safety-tips", "/plumbing-gas-safety", "/manufacturers-warranty",
-  "/privacy", "/terms",
-  # His tools: the invoice builder, the back office, and customers' invoices.
-  "/invoice", "/office", "/i", "/i/*",
-]
+# The Worker owns every path on his domain, exactly as it does on
+# billydigitals.com and for the same reason.
+#
+# A path LIST cannot work here. The asset directory is the whole repository,
+# so anything not named in the list is answered by the asset router from
+# Billy Digitals' files: /admin served the agency's Admin Console, some fifty
+# root pages served the agency's marketing site, and every mistyped URL
+# served the agency's 404 advert — all on the gas engineer's domain. No list
+# can fix that, because the list would have to name every path that must NOT
+# be served, and that set is the entire repository.
+#
+# With the Worker first, serveClient answers the paths in HEATFIX_PAGES,
+# passes /assets/* and the favicon through, and refuses everything else with
+# his own 404 page.
+run_worker_first = true

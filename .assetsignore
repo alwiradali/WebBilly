@@ -1,4 +1,17 @@
 .git
+# Wrangler's local state. `wrangler dev` puts a real SQLite file of the D1
+# database in here, and asset upload does NOT skip it: the HeatFix CRM
+# database was downloadable from heatfixmcrlimited.co.uk until this line.
+# It only ever held the seeded settings row, but the next person to run
+# `wrangler dev` against live data would have shipped their customers.
+.wrangler
+.github
+.gitignore
+# Build and check scripts are not site content.
+scripts
+node_modules
+package.json
+package-lock.json
 wrangler.toml
 .assetsignore
 .nojekyll
