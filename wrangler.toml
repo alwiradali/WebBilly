@@ -158,7 +158,7 @@ directory = "."
 not_found_handling = "404-page"
 binding = "ASSETS"
 run_worker_first = [
-  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i",
+  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i", "/i/*", "/office",
   "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
   "/manufacturers-warranty", "/privacy", "/terms",
 ]

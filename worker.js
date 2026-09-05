@@ -207,12 +207,15 @@ const HEATFIX_PAGES = {
   "/terms": "/templates/heatfix-terms.html",
   "/invoice": "/templates/heatfix-invoice.html",
   "/i": "/templates/heatfix-invoice-view.html",
+  "/office": "/templates/heatfix-office.html",
 };
 /* Everything except the two back-office tools should be indexable. */
 const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips", "/plumbing-gas-safety",
                         "/manufacturers-warranty", "/privacy", "/terms"];
 /* Blog articles live at /blog/<slug>. */
 const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
+/* A customer's invoice lives at /i/<uuid> — unguessable, and noindex. */
+const HEATFIX_INVOICE = /^\/i\/[0-9a-f-]{16,64}$/i;
 
 function clientHosts(env, key) {
   return String((env && env[key]) || "")
@@ -236,6 +239,9 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
   if (!target && PAGES === HEATFIX_PAGES) {
     const m = HEATFIX_BLOG.exec(p);
     if (m) { target = "/templates/heatfix-blog-" + m[1] + ".html"; publicPage = true; }
+    // A customer's own copy of an invoice: /i/<uuid>. The page reads the id
+    // out of the path itself and asks the API for it.
+    else if (HEATFIX_INVOICE.test(p)) { target = "/templates/heatfix-invoice-view.html"; }
   }
   if (!target) {
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });

@@ -88,7 +88,7 @@ async function getSettings(env) {
 
 const SETTING_FIELDS = [
   "business_name", "trading_name", "address", "postcode", "phone", "email",
-  "website", "company_no", "vat_number", "gas_safe_no", "logo_data",
+  "website", "company_no", "vat_number", "gas_safe_no", "logo_data", "review_url",
   "bank_name", "bank_account", "bank_sort", "payment_terms", "invoice_prefix",
   "template", "accent",
 ];
@@ -286,6 +286,10 @@ async function emailInvoice(env, id, origin, message) {
     <p style="margin:0 0 18px">Total ${money(inv.gross_pence)}${inv.paid_pence ? ` &middot; already paid ${money(inv.paid_pence)}` : ""}
       &middot; <b>due ${money(inv.gross_pence - inv.paid_pence)}</b></p>
     <p><a href="${link}" style="display:inline-block;background:#0B2E63;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none">View your invoice</a></p>
+    ${s.review_url ? `<p style="margin:26px 0 0;padding-top:20px;border-top:1px solid #e2e8f0">
+      If you were happy with the work, a quick Google review really helps a small
+      business like ours.<br>
+      <a href="${escape_(s.review_url)}" style="color:#0B2E63;font-weight:600">Leave a review</a></p>` : ""}
     <p style="margin-top:24px;font-size:13px;color:#55657a">
       ${escape_(s.business_name || "HeatFix Mcr Limited")}${s.vat_number ? ` &middot; VAT ${escape_(s.vat_number)}` : ""}
       ${s.gas_safe_no ? ` &middot; Gas Safe ${escape_(s.gas_safe_no)}` : ""}<br>
@@ -342,6 +346,13 @@ export async function handleHfCrm(request, env, url) {
   }
   if (path === "session") {
     return json({ signedIn: await validSession(request, env) });
+  }
+  /* The customer's own copy. No password: they were sent the link, and the
+     id is a UUID so it cannot be guessed or counted through. A draft is not
+     readable here, so nothing half-finished can leak. */
+  if (path.startsWith("public/") && method === "GET") {
+    const data = await readPublicInvoice(env, path.slice(7));
+    return data ? json(data) : json({ error: "That invoice is not available." }, 404);
   }
 
   if (!(await validSession(request, env))) return json({ error: "Please sign in." }, 401);
@@ -419,7 +430,8 @@ export async function readPublicInvoice(env, id) {
   return { invoice: inv, business: {
     name: s.business_name, address: s.address, postcode: s.postcode, phone: s.phone,
     email: s.email, website: s.website, vat_number: s.vat_number, company_no: s.company_no,
-    gas_safe_no: s.gas_safe_no, logo_data: s.logo_data, bank_name: s.bank_name,
+    gas_safe_no: s.gas_safe_no, logo_data: s.logo_data, review_url: s.review_url,
+    bank_name: s.bank_name,
     bank_account: s.bank_account, bank_sort: s.bank_sort, payment_terms: s.payment_terms,
     template: s.template, accent: s.accent,
   } };

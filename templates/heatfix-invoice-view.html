@@ -1,178 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-GB">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Your invoice | HeatFix Mcr Limited</title>
-<meta name="theme-color" content="#151b24">
-<link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="../assets/heatfix/icon-180.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Your invoice · HeatFix Mcr Limited</title>
+<link rel="icon" href="/assets/heatfix/icon-32.png" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/heatfix.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Playfair+Display:wght@500;600&display=swap">
 <style>
-body::before{opacity:.35}
-.vwrap{max-width:840px;margin:0 auto;padding:26px 16px 120px}
-.vtop{display:flex;align-items:center;gap:13px;margin-bottom:22px}
-.vtop .logo-plate{padding:6px 9px}.vtop .logo-plate img{height:38px}
-.vtop b{font-family:var(--dis);font-weight:800;font-size:1.05rem;display:block;line-height:1.15;color:var(--navy)}
-.vtop small{font-size:.64rem;letter-spacing:.17em;text-transform:uppercase;color:var(--gold);font-weight:800}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:#e9edf3;color:#101c30;
+       font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
 
-.paper{
-  background:#fff;color:#111820;border-radius:14px;overflow:hidden;line-height:1.5;
-  box-shadow:0 40px 90px -34px rgba(0,0,0,1);font-size:14px;
-}
-.paper *{box-sizing:border-box}
-.p-head{background:#fbfcfd;padding:26px 26px 20px;border-bottom:4px solid #0d2a63;position:relative}
-.p-head::after{content:"";position:absolute;bottom:-6px;left:0;right:0;height:2px;background:#c9a24a}
-.p-head-in{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
-.p-head img{height:64px;width:auto}
-.p-co b{display:block;font-family:var(--dis);font-weight:800;font-size:18px;color:#0d2a63;line-height:1.2}
-.p-gsrow{display:flex;align-items:center;gap:8px;margin-top:5px}
-.p-gs{width:36px;height:auto;flex:none}
-/* the mark is Gas Safe yellow; without this the triangle inherits black */
-.p-gs polygon{fill:#FFD200;stroke:#FFD200}
-.p-gsrow b{font-family:var(--dis);font-weight:800;font-size:9px;letter-spacing:.09em;
-  text-transform:uppercase;color:#0d2a63;display:block;line-height:1.25}
-.p-gsrow span{display:block;color:#5b6675;font-size:9.5px}
-.p-co span{display:block;color:#5b6675;font-size:12px}
-.p-right{margin-left:auto;text-align:right}
-.p-right b{font-family:var(--dis);font-weight:900;font-size:32px;color:#0d2a63;letter-spacing:-.02em;display:block;line-height:1}
-.p-right span{display:block;color:#5b6675;font-size:12px;margin-top:3px}
-.p-body{padding:26px}
-.p-meta{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:24px}
-.p-meta .bill{margin-left:auto;text-align:right}
-.p-lab{font-family:var(--dis);font-weight:700;font-size:9px;letter-spacing:.14em;color:#7a8593;text-transform:uppercase}
-.p-val{font-family:var(--dis);font-weight:700;font-size:15px;margin-top:3px}
-.p-sm{color:#5b6675;font-size:12.5px}
-.p-rule{height:1px;background:#c9a24a;margin:8px 0 18px}
-table.p-t{width:100%;border-collapse:collapse}
-table.p-t th{font-family:var(--dis);font-weight:700;font-size:9.5px;letter-spacing:.12em;color:#7a8593;
-  text-transform:uppercase;text-align:right;padding:9px 0;background:#f5f7f9}
-table.p-t th:first-child{text-align:left;padding-left:10px}
-table.p-t th:last-child{padding-right:10px}
-table.p-t td{padding:12px 0;border-bottom:1px solid #e6e9ed;text-align:right;font-size:14px;vertical-align:top}
-table.p-t td:first-child{text-align:left;padding-left:10px}
-table.p-t td:last-child{padding-right:10px;font-weight:700}
-.p-tot{margin-left:auto;max-width:340px;margin-top:16px}
-.p-tot div{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;color:#5b6675}
-.p-tot div.big{background:#f5f7f9;margin-top:9px;padding:14px 12px;border-top:2px solid #c9a24a;
-  color:#0d2a63;font-family:var(--dis);font-weight:800;font-size:19px}
-.p-pay{background:#f5f7f9;border-top:2px solid #c9a24a;padding:16px;margin-top:26px;white-space:pre-line;font-size:13px}
-.p-foot{background:#0d2a63;color:#fff;padding:14px 26px;font-size:11.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.vacts{display:grid;gap:10px;grid-template-columns:1fr;margin-top:22px}
-@media(min-width:560px){.vacts{grid-template-columns:1fr 1fr 1fr}}
-.vacts .btn{width:100%}
-.empty{text-align:center;padding:70px 20px}
-.empty h1{font-size:1.6rem;margin-bottom:12px}
-@media print{
-  body{background:#fff}
-  body::before,.vtop,.vacts,.vnote{display:none!important}
-  .vwrap{padding:0;max-width:none}
-  .paper{box-shadow:none;border-radius:0}
-}
+  .bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;
+       padding:10px 16px;background:#0b2e63;color:#eaf2ff}
+  .bar img{height:32px;width:auto;display:block}
+  .bar .sp{flex:1}
+  .bar button{min-height:40px;padding:0 15px;border:1px solid rgba(255,255,255,.26);
+              border-radius:8px;background:rgba(255,255,255,.1);color:#eaf2ff;
+              font:600 14px Inter,sans-serif;cursor:pointer}
+  .bar button:hover{background:rgba(255,255,255,.2)}
+
+  .wrap{max-width:834px;margin:0 auto;padding:20px 20px 60px}
+
+  /* The sheet is A4 and stays A4; on a phone it is scaled down whole so
+     nothing reflows and the customer sees the same document he signed off. */
+  .sheetbox{overflow:hidden;border-radius:8px;box-shadow:0 18px 46px -20px rgba(15,28,48,.5)}
+  .sheet{transform-origin:top left;width:794px}
+
+  /* On screen the sheet stops where the invoice stops. The full A4 height
+     is what a printer needs, not what a customer wants to scroll past. */
+  @media screen{ .sheet .hfdoc{min-height:0} }
+
+  .msg{padding:60px 24px;text-align:center;color:#5c6d85}
+  .msg h1{font:600 21px/1.3 "Space Grotesk",Inter,sans-serif;color:#101c30;margin:0 0 8px}
+  .msg a{color:#123f85}
+
+  .after{margin:20px 0 0;padding:18px 20px;background:#fff;border:1px solid #dde4ee;
+         border-radius:10px}
+  .after h2{margin:0 0 4px;font:600 16px/1.3 "Space Grotesk",Inter,sans-serif}
+  .after p{margin:0 0 14px;font-size:14px;color:#5c6d85}
+  .after .row{display:flex;flex-wrap:wrap;gap:10px}
+  .after a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;
+           border-radius:8px;font-weight:600;font-size:14.5px;text-decoration:none;
+           background:#eef2f8;color:#101c30;border:1px solid #dde4ee}
+  .after a.call{background:#ef5b18;color:#fff;border-color:#ef5b18}
+
+  @media print{
+    body{background:#fff}
+    .bar,.after{display:none}
+    .wrap{padding:0;max-width:none}
+    .sheetbox{box-shadow:none;border-radius:0}
+    .sheet{transform:none!important;width:794px}
+    @page{size:A4;margin:0}
+  }
 </style>
 </head>
 <body>
-<div class="site-fx" data-heatfx="circuit" aria-hidden="true"></div>
-<div class="vwrap">
-  <div class="vtop">
-    <span class="logo-plate"><img src="../assets/heatfix/logo-lockup.webp" alt="HeatFix Mcr Limited"></span>
-    <span><b>HeatFix Mcr Limited</b><small>Heating &amp; Plumbing · Manchester</small></span>
-  </div>
 
-  <div id="out"></div>
-
-  <div class="vacts" id="acts" style="display:none">
-    <button class="btn gold" id="dl">Download PDF</button>
-    <a class="btn ghost" id="callBtn" href="tel:+447890452629">Call about this invoice</a>
-    <a class="btn ghost" id="waBtn" href="https://wa.me/447890452629" target="_blank" rel="noopener">WhatsApp us</a>
-  </div>
-  <p class="vnote" style="text-align:center;color:var(--dim);font-size:.8rem;margin-top:16px">
-    HeatFix Mcr Limited · 07890 452629 · heatfixmcr@hotmail.com · heatfixmcrlimited.co.uk
-  </p>
+<div class="bar">
+  <img src="/assets/heatfix/logo-lockup-rev-600.webp" alt="HeatFix Mcr Limited">
+  <span class="sp"></span>
+  <button id="print" hidden>Save as PDF</button>
 </div>
 
-<script src="../assets/js/heatfix-bg.js" defer></script>
-<script src="../assets/js/heatfix-invoice.js"></script>
+<div class="wrap">
+  <div id="host"><div class="msg"><h1>Loading your invoice…</h1></div></div>
+  <div class="after" id="after" hidden>
+    <h2>Any questions?</h2>
+    <p>Give us a ring or send a message and we will sort it.</p>
+    <div class="row" id="afterRow"></div>
+  </div>
+</div>
+
+<script src="/assets/js/heatfix-qr.js"></script>
+<script src="/assets/js/heatfix-invoice-templates.js"></script>
 <script>
-var LOGO_PATH = '../assets/heatfix/logo-invoice.jpg';
-function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
-  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+(function () {
+  "use strict";
+  var host = document.getElementById("host");
+  var esc = window.HFInvoice.esc;
 
-var inv = HF.decode(location.hash);
-var out = document.getElementById('out');
+  /* /i/<uuid>, or ?id=<uuid> when opened from the preview host. */
+  function invoiceId() {
+    var m = /^\/i\/([0-9a-f-]{16,})$/i.exec(location.pathname);
+    if (m) return m[1];
+    return new URLSearchParams(location.search).get("id") || "";
+  }
 
-if (!inv || !inv.items){
-  out.innerHTML =
-    '<div class="empty"><h1>No invoice on this link</h1>' +
-    '<p class="lede" style="margin:0 auto">The link may have been cut short when it was copied. ' +
-    'Ask us to send it again, or ring 07890 452629 and we will read it out.</p>' +
-    '<p style="margin-top:24px"><a class="btn gold" href="tel:+447890452629">Call 07890 452629</a></p></div>';
-} else {
-  document.title = 'Invoice ' + (inv.number || '') + ' — HeatFix Mcr Limited';
-  var t = HF.totals(inv), c = HF.company;
-  var rows = inv.items.map(function(it){
-    return '<tr><td>' + esc(it.desc) + '</td><td>' + it.qty + '</td><td>£' + HF.money(it.price) +
-           '</td><td>£' + HF.money(it.qty * it.price) + '</td></tr>';
-  }).join('');
-  out.innerHTML =
-  '<div class="paper">' +
-  '<div class="p-head"><div class="p-head-in">' +
-    '<img src="' + LOGO_PATH + '" alt="HeatFix Mcr Limited">' +
-    '<div class="p-co"><b>' + c.name + '</b><span>' + c.role + '</span>' +
-      '<div class="p-gsrow"><svg class="p-gs" viewBox="0 0 100 118" aria-label="Gas Safe Register"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,\'Arial Black\',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="#0d2a63">REGISTER</text></svg><span><b>Gas Safe registered</b>' +
-        (inv.gassafe ? ('Reg. no. ' + esc(inv.gassafe)) : 'Registered business') + '</span></div></div>' +
-    '<div class="p-right"><b>INVOICE</b><span>' + c.phone + '</span><span>' + c.email + '</span><span>' + c.web + '</span></div>' +
-  '</div></div>' +
-  '<div class="p-body">' +
-    '<div class="p-meta">' +
-      '<div><div class="p-lab">Invoice no.</div><div class="p-val">' + esc(inv.number || '—') + '</div></div>' +
-      '<div><div class="p-lab">Date</div><div class="p-val">' + HF.fmtDate(inv.date || HF.isoDate(new Date())) + '</div></div>' +
-      '<div><div class="p-lab">Due</div><div class="p-val">' + (inv.due ? HF.fmtDate(inv.due) : 'On receipt') + '</div></div>' +
-      '<div class="bill"><div class="p-lab">Bill to</div><div class="p-val">' + (esc(inv.client) || '—') + '</div>' +
-        (inv.caddress ? '<div class="p-sm">' + esc(inv.caddress) + '</div>' : '') +
-        (inv.cpostcode ? '<div class="p-sm">' + esc(inv.cpostcode) + '</div>' : '') +
-        (inv.cphone ? '<div class="p-sm">' + esc(inv.cphone) + '</div>' : '') +
-      '</div>' +
-    '</div><div class="p-rule"></div>' +
-    '<table class="p-t"><thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr></thead><tbody>' +
-      rows + '</tbody></table>' +
-    '<div class="p-tot">' +
-      '<div><span>Subtotal</span><span>£' + HF.money(t.sub) + '</span></div>' +
-      (t.disc ? '<div><span>Discount</span><span>-£' + HF.money(t.disc) + '</span></div>' : '') +
-      (inv.vat ? '<div><span>VAT ' + (inv.vatRate || 20) + '%</span><span>£' + HF.money(t.vat) + '</span></div>' : '') +
-      '<div class="big"><span>TOTAL</span><span>£' + HF.money(t.total) + '</span></div>' +
-      (t.paid ? '<div style="margin-top:6px"><span>Paid</span><span>-£' + HF.money(t.paid) + '</span></div>' +
-                '<div style="font-weight:700;color:#0d2a63"><span>Balance due</span><span>£' + HF.money(t.due) + '</span></div>' : '') +
-    '</div>' +
-    (inv.work ? '<div style="margin-top:22px"><div class="p-lab">Work carried out</div><div style="margin-top:5px">' + esc(inv.work) + '</div></div>' : '') +
-    (inv.notes ? '<div style="margin-top:16px"><div class="p-lab">Notes</div><div class="p-sm" style="margin-top:5px">' + esc(inv.notes) + '</div></div>' : '') +
-    '<div class="p-pay"><div class="p-lab" style="margin-bottom:6px">How to pay</div>' +
-      (esc(inv.payto) || 'Bank details on request, call ' + c.phone + '.') +
-      (inv.gassafe ? '<div class="p-sm" style="margin-top:8px">Gas Safe reg. ' + esc(inv.gassafe) + '</div>' : '') +
-    '</div>' +
-  '</div>' +
-  '<div class="p-foot"><span>' + [c.name, c.person, c.phone].filter(Boolean).join('  \u00b7  ') + '</span><span>' + c.web + '</span></div>' +
-  '</div>';
+  function fail(title, detail) {
+    host.innerHTML = '<div class="msg"><h1>' + esc(title) + "</h1><p>" + esc(detail) + "</p>" +
+      '<p><a href="/">Go to the HeatFix website</a></p></div>';
+  }
 
-  document.getElementById('acts').style.display = '';
-  document.getElementById('waBtn').href =
-    'https://wa.me/' + c.intl + '?text=' + encodeURIComponent('Hi, about invoice ' + (inv.number || '') + ' — ');
-  document.getElementById('dl').onclick = function(){
-    var b = this; b.disabled = true; b.textContent = 'Building…';
-    var blob = HF.buildPdf(inv, HF.logoBuf());
-    var u = URL.createObjectURL(blob), a = document.createElement('a');
-    a.href = u; a.download = 'Invoice-' + (inv.number || 'HF') + '.pdf';
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(u); a.remove(); }, 1500);
-    b.disabled = false; b.textContent = 'Download PDF';
-  };
-}
+  function fit() {
+    var box = document.querySelector(".sheetbox"), sheet = document.querySelector(".sheet");
+    if (!box || !sheet) return;
+    var scale = Math.min(1, box.clientWidth / 794);
+    sheet.style.transform = "scale(" + scale + ")";
+    box.style.height = (sheet.scrollHeight * scale) + "px";
+  }
+  window.addEventListener("resize", fit);
+
+  (async function () {
+    var id = invoiceId();
+    if (!id) { fail("No invoice here", "The link you followed is missing its invoice number."); return; }
+
+    var data;
+    try {
+      var res = await fetch("/api/hf/public/" + encodeURIComponent(id));
+      data = await res.json();
+      if (!res.ok) throw new Error(data.error || "That invoice is not available.");
+    } catch (e) {
+      fail("We could not find that invoice", e.message + " If you were sent this link, give us a ring and we will resend it.");
+      return;
+    }
+
+    var f = window.HFInvoice.fragment(data);
+    var style = document.createElement("style");
+    style.textContent = f.css;
+    document.head.appendChild(style);
+    host.innerHTML = '<div class="sheetbox"><div class="sheet">' + f.html + "</div></div>";
+
+    document.title = "Invoice " + (data.invoice.number || "") + " · " +
+      (data.business.name || "HeatFix Mcr Limited");
+    document.getElementById("print").hidden = false;
+
+    var b = data.business, row = document.getElementById("afterRow"), bits = [];
+    if (b.phone) bits.push('<a class="call" href="tel:' + esc(String(b.phone).replace(/\s+/g, "")) + '">Ring ' + esc(b.phone) + "</a>");
+    if (b.phone) bits.push('<a href="https://wa.me/' +
+      esc(String(b.phone).replace(/[^0-9]/g, "").replace(/^0/, "44")) + '">WhatsApp</a>');
+    if (b.email) bits.push('<a href="mailto:' + esc(b.email) + '">Email</a>');
+    if (bits.length) { row.innerHTML = bits.join(""); document.getElementById("after").hidden = false; }
+
+    /* Wait for the logo before measuring, or the sheet is sized short. */
+    var imgs = Array.prototype.slice.call(host.querySelectorAll("img"));
+    await Promise.all(imgs.map(function (im) {
+      return im.complete ? null : new Promise(function (r) { im.onload = im.onerror = r; });
+    }));
+    fit();
+    setTimeout(fit, 400);
+  })();
+
+  document.getElementById("print").addEventListener("click", function () { window.print(); });
+})();
 </script>
-<script src="../assets/js/heatfix-links.js" defer></script>
-<script src="../assets/js/heatfix-scroll.js" defer></script>
 </body>
 </html>

@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS hf_settings (
   vat_rate        INTEGER NOT NULL DEFAULT 2000,  -- basis points: 2000 = 20.00%
   gas_safe_no     TEXT,
   logo_data       TEXT,                       -- data: URI, shown on every invoice
+  review_url      TEXT,                       -- Google review link, drawn as a QR
   bank_name       TEXT,
   bank_account    TEXT,
   bank_sort       TEXT,
@@ -95,5 +96,6 @@ CREATE TABLE IF NOT EXISTS hf_invoice_items (
 CREATE INDEX IF NOT EXISTS idx_hf_item_inv ON hf_invoice_items(invoice_id, position);
 
 -- ------------------------------------------------------------------ seed
-INSERT OR IGNORE INTO hf_settings (id, phone, email, website, gas_safe_no)
-VALUES (1, '07890 452629', 'heatfixmcr@hotmail.com', 'heatfixmcrlimited.co.uk', '627019');
+INSERT OR IGNORE INTO hf_settings (id, phone, email, website, gas_safe_no, review_url)
+VALUES (1, '07890 452629', 'heatfixmcr@hotmail.com', 'heatfixmcrlimited.co.uk', '627019',
+        'https://g.page/r/CUWoaXZnQhlqEAE/review');

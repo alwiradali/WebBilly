@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Back office · HeatFix Mcr Limited</title>
+<link rel="icon" href="/assets/heatfix/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/heatfix/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/assets/css/heatfix-office.css">
+</head>
+<body class="hfo">
+
+<!-- ─────────────────────────────────────────────── sign in ── -->
+<div class="hfo-gate" id="gate">
+  <form class="hfo-gate-card" id="gateForm">
+    <img src="/assets/heatfix/logo-lockup-600.webp" alt="HeatFix Mcr Limited">
+    <h1>Back office</h1>
+    <p>Invoices, customers and your own details.</p>
+    <div class="hfo-field">
+      <input type="password" id="pw" placeholder="Password" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-primary" style="width:100%" id="gateBtn">Sign in</button>
+    <p style="margin:16px 0 0;font-size:12.5px" id="gateMsg"></p>
+  </form>
+</div>
+
+<!-- ───────────────────────────────────────────────── shell ── -->
+<div class="hfo-shell" id="shell">
+
+  <div class="hfo-top">
+    <img src="/assets/heatfix/logo-lockup-rev-600.webp" alt="HeatFix Mcr Limited">
+    <span class="hfo-spacer"></span>
+    <span class="hfo-who" id="who"></span>
+    <button class="btn btn-sm btn-ghost" id="signOut" style="background:rgba(255,255,255,.1);color:#eaf2ff;border-color:rgba(255,255,255,.24)">Sign out</button>
+  </div>
+
+  <nav class="hfo-nav" id="nav">
+    <button data-view="home" class="on">Dashboard</button>
+    <button data-view="invoices">Invoices</button>
+    <button data-view="editor">New invoice</button>
+    <button data-view="customers">Customers</button>
+    <button data-view="settings">My details</button>
+  </nav>
+
+  <main class="hfo-main">
+
+    <!-- ───────────────────────────────────────── dashboard ── -->
+    <section class="hfo-view on" id="view-home">
+      <div class="hfo-h"><h2>Dashboard</h2><span class="hfo-spacer"></span>
+        <button class="btn btn-fire" data-new>New invoice</button></div>
+
+      <div class="hfo-stats">
+        <div class="hfo-stat owed"><span>Owed to you</span><b id="s-owed">£0.00</b></div>
+        <div class="hfo-stat"><span>Sent, unpaid</span><b id="s-sent">0</b></div>
+        <div class="hfo-stat"><span>Drafts</span><b id="s-draft">0</b></div>
+        <div class="hfo-stat"><span>Paid this month</span><b id="s-month">£0.00</b></div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>Recent invoices</h3>
+        <p class="hfo-sub">Tap any row to open it.</p>
+        <div class="hfo-tablewrap"><div id="recent"></div></div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────── invoices ── -->
+    <section class="hfo-view" id="view-invoices">
+      <div class="hfo-h"><h2>Invoices</h2><span class="hfo-spacer"></span>
+        <button class="btn btn-fire" data-new>New invoice</button></div>
+
+      <div class="hfo-card">
+        <div class="hfo-btnrow" style="margin-bottom:16px" id="filters">
+          <button class="btn btn-sm btn-primary" data-status="">All</button>
+          <button class="btn btn-sm" data-status="draft">Drafts</button>
+          <button class="btn btn-sm" data-status="sent">Sent</button>
+          <button class="btn btn-sm" data-status="paid">Paid</button>
+          <button class="btn btn-sm" data-status="void">Void</button>
+        </div>
+        <div class="hfo-tablewrap"><div id="invList"></div></div>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────── editor ── -->
+    <section class="hfo-view" id="view-editor">
+      <div class="hfo-h">
+        <h2 id="edTitle">New invoice</h2>
+        <span class="pill pill-draft" id="edStatus">Draft</span>
+        <span class="hfo-spacer"></span>
+        <button class="btn btn-sm btn-ghost" id="edPrint">Print / PDF</button>
+      </div>
+
+      <div class="hfo-split">
+        <div>
+          <div class="hfo-card">
+            <h3>Who is it for</h3>
+            <p class="hfo-sub">Start typing a name you have invoiced before and the rest fills itself in.</p>
+
+            <div class="hfo-field hfo-suggest">
+              <label for="cName">Customer name</label>
+              <input id="cName" autocomplete="off" placeholder="Mrs J Ahmed">
+              <div class="hfo-suggest-list" id="cSuggest" hidden></div>
+            </div>
+
+            <div class="hfo-grid">
+              <div class="hfo-field"><label for="cPhone">Phone</label><input id="cPhone" inputmode="tel" placeholder="07…"></div>
+              <div class="hfo-field"><label for="cEmail">Email <span class="hint">(needed to send by email)</span></label><input id="cEmail" type="email" inputmode="email"></div>
+            </div>
+            <div class="hfo-field"><label for="cAddr">Address</label><textarea id="cAddr" rows="3" placeholder="12 Example Road&#10;Manchester"></textarea></div>
+            <div class="hfo-grid">
+              <div class="hfo-field"><label for="cPost">Postcode</label><input id="cPost" autocapitalize="characters" placeholder="M14 5AB"></div>
+              <div class="hfo-field"><label for="iDue">Payment due by <span class="hint">(optional)</span></label><input id="iDue" type="date"></div>
+            </div>
+          </div>
+
+          <div class="hfo-card">
+            <h3>The work</h3>
+            <p class="hfo-sub">One line per thing you did or fitted. Prices are what you charge before VAT.</p>
+
+            <div class="hfo-field"><label for="iSummary">Short summary <span class="hint">(optional, sits above the lines)</span></label>
+              <input id="iSummary" placeholder="Boiler service and new thermostat"></div>
+
+            <div class="hfo-linehead">
+              <span>Description</span><span>Qty</span><span>Unit price</span><span>Amount</span><span></span>
+            </div>
+            <div class="hfo-lines" id="lines"></div>
+            <div class="hfo-btnrow" style="margin-top:12px">
+              <button class="btn btn-sm" id="addLine">+ Add a line</button>
+            </div>
+
+            <div class="hfo-sums">
+              <div class="hfo-sumrow"><span>Subtotal</span><b id="sumNet">£0.00</b></div>
+              <div class="hfo-sumrow" id="vatRow"><span id="vatLabel">VAT at 20%</span><b id="sumVat">£0.00</b></div>
+              <div class="hfo-sumrow big"><span>Total</span><b id="sumGross">£0.00</b></div>
+            </div>
+
+            <div class="hfo-grid" style="margin-top:16px">
+              <div class="hfo-field"><label for="iPaid">Already paid <span class="hint">(deposit, cash on the day)</span></label><input id="iPaid" inputmode="decimal" placeholder="0.00"></div>
+              <div class="hfo-field"><label for="iTpl">Design</label><select id="iTpl"></select></div>
+            </div>
+            <div class="hfo-field"><label for="iNotes">Notes for the customer <span class="hint">(optional)</span></label>
+              <textarea id="iNotes" rows="3" placeholder="Parts guaranteed 12 months. Next service due September 2027."></textarea></div>
+          </div>
+
+          <div class="hfo-card">
+            <h3>Save and send</h3>
+            <p class="hfo-sub" id="sendHelp">Save it first. Once it is sent the figures are locked, because the customer is holding that document.</p>
+            <div class="hfo-btnrow">
+              <button class="btn btn-primary" id="edSave">Save draft</button>
+              <button class="btn btn-fire" id="edEmail">Send by email</button>
+              <button class="btn" id="edWhats">Send on WhatsApp</button>
+            </div>
+            <div class="hfo-btnrow" style="margin-top:12px">
+              <button class="btn btn-sm" id="edPaid">Mark as paid</button>
+              <button class="btn btn-sm" id="edSent">Mark as sent by hand</button>
+              <button class="btn btn-sm btn-danger" id="edVoid">Void</button>
+              <button class="btn btn-sm btn-danger" id="edDelete">Delete draft</button>
+            </div>
+            <p class="hfo-sub" style="margin:14px 0 0" id="edLink"></p>
+          </div>
+        </div>
+
+        <div class="hfo-previewcol">
+          <div class="hfo-card" style="padding:14px">
+            <h3 style="padding:0 6px 8px">Preview</h3>
+            <div class="hfo-paper"><div class="hfo-paperbox" id="paperBox">
+              <iframe id="paper" title="Invoice preview"></iframe>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────── customers ── -->
+    <section class="hfo-view" id="view-customers">
+      <div class="hfo-h"><h2>Customers</h2><span class="hfo-spacer"></span></div>
+      <div class="hfo-card">
+        <div class="hfo-field"><input id="custSearch" placeholder="Search by name, postcode or phone"></div>
+        <div class="hfo-tablewrap"><div id="custList"></div></div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────── settings ── -->
+    <section class="hfo-view" id="view-settings">
+      <div class="hfo-h"><h2>My details</h2><span class="hfo-spacer"></span>
+        <button class="btn btn-primary" id="setSave">Save details</button></div>
+
+      <div class="hfo-card">
+        <h3>Logo</h3>
+        <p class="hfo-sub">This goes on the top of every invoice. A PNG with a see-through background looks best.</p>
+        <div class="hfo-logobox">
+          <img id="logoPrev" src="/assets/heatfix/logo-lockup-600.webp" alt="Current logo">
+          <div class="hfo-btnrow">
+            <label class="btn btn-sm">Choose a file<input type="file" id="logoFile" accept="image/*" hidden></label>
+            <button class="btn btn-sm btn-ghost" id="logoReset">Back to the standard one</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>Business</h3>
+        <div class="hfo-grid">
+          <div class="hfo-field"><label for="bName">Business name</label><input id="bName"></div>
+          <div class="hfo-field"><label for="bTrade">Trading as <span class="hint">(optional)</span></label><input id="bTrade"></div>
+        </div>
+        <div class="hfo-field"><label for="bAddr">Address</label><textarea id="bAddr" rows="3"></textarea></div>
+        <div class="hfo-grid-3">
+          <div class="hfo-field"><label for="bPost">Postcode</label><input id="bPost"></div>
+          <div class="hfo-field"><label for="bPhone">Phone</label><input id="bPhone"></div>
+          <div class="hfo-field"><label for="bEmail">Email</label><input id="bEmail"></div>
+        </div>
+        <div class="hfo-grid-3">
+          <div class="hfo-field"><label for="bWeb">Website</label><input id="bWeb"></div>
+          <div class="hfo-field"><label for="bCo">Company number</label><input id="bCo" placeholder="12345678"></div>
+          <div class="hfo-field"><label for="bGas">Gas Safe number</label><input id="bGas"></div>
+        </div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>VAT</h3>
+        <p class="hfo-sub">A VAT invoice has to show your VAT number, the rate and the VAT as its own line. Leave this on and every invoice does it for you.</p>
+        <div class="hfo-check">
+          <input type="checkbox" id="bVatReg">
+          <label for="bVatReg">I am VAT registered</label>
+        </div>
+        <div class="hfo-grid">
+          <div class="hfo-field"><label for="bVatNo">VAT number</label><input id="bVatNo" placeholder="GB123456789"></div>
+          <div class="hfo-field"><label for="bVatRate">Rate</label>
+            <select id="bVatRate">
+              <option value="2000">20% — standard</option>
+              <option value="500">5% — reduced (energy saving materials)</option>
+              <option value="0">0% — zero rated</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>Getting paid</h3>
+        <div class="hfo-grid-3">
+          <div class="hfo-field"><label for="bBank">Bank</label><input id="bBank"></div>
+          <div class="hfo-field"><label for="bSort">Sort code</label><input id="bSort" placeholder="00-00-00"></div>
+          <div class="hfo-field"><label for="bAcct">Account number</label><input id="bAcct" placeholder="12345678"></div>
+        </div>
+        <div class="hfo-field"><label for="bTerms">Payment terms</label><textarea id="bTerms" rows="2"></textarea></div>
+        <div class="hfo-grid">
+          <div class="hfo-field"><label for="bPrefix">Invoice number starts with</label><input id="bPrefix" placeholder="HF-"></div>
+          <div class="hfo-field"><label for="bNext">Next invoice number</label><input id="bNext" inputmode="numeric"></div>
+        </div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>Asking for reviews</h3>
+        <p class="hfo-sub">This link is printed on every invoice as a QR code the customer can
+          scan, and it goes out in the email and the WhatsApp message too. Leave it empty to
+          turn the review ask off.</p>
+        <div class="hfo-field"><label for="bReview">Google review link</label>
+          <input id="bReview" placeholder="https://g.page/r/…/review"></div>
+        <div class="hfo-logobox" style="border-style:solid">
+          <div id="qrPrev" style="width:104px"></div>
+          <p class="hfo-sub" style="margin:0;max-width:340px">Point a phone camera at this to check
+            it opens your Google reviews page.</p>
+        </div>
+      </div>
+
+      <div class="hfo-card">
+        <h3>Invoice design</h3>
+        <p class="hfo-sub">Pick the one you like. It is used on every new invoice, and you can still change it on any single invoice.</p>
+        <div class="hfo-field" style="max-width:220px">
+          <label for="bAccent">Accent colour</label>
+          <input type="color" id="bAccent" style="height:46px;padding:4px">
+        </div>
+        <div class="hfo-tpls" id="tplPick"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="hfo-toast" id="toast"></div>
+
+<div class="hfo-modal" id="modal">
+  <div class="hfo-modal-card">
+    <h3 id="mTitle">Send by email</h3>
+    <p class="hfo-sub" id="mSub"></p>
+    <div class="hfo-field"><label for="mMsg">Message</label><textarea id="mMsg" rows="4"></textarea></div>
+    <div class="hfo-btnrow" style="justify-content:flex-end">
+      <button class="btn" id="mCancel">Cancel</button>
+      <button class="btn btn-fire" id="mGo">Send it</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/heatfix-qr.js"></script>
+<script src="/assets/js/heatfix-invoice-templates.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------------------------------------------------------- api */
+  async function api(path, opts) {
+    const res = await fetch("/api/hf/" + path, Object.assign({
+      headers: { "content-type": "application/json" },
+      credentials: "same-origin"
+    }, opts || {}));
+    let data = {};
+    try { data = await res.json(); } catch (e) { /* empty body is fine */ }
+    if (!res.ok) throw new Error(data.error || ("Something went wrong (" + res.status + ")"));
+    return data;
+  }
+  const get  = (p) => api(p);
+  const post = (p, b) => api(p, { method: "POST", body: JSON.stringify(b || {}) });
+  const put  = (p, b) => api(p, { method: "PUT",  body: JSON.stringify(b || {}) });
+  const del  = (p) => api(p, { method: "DELETE" });
+
+  const $ = (id) => document.getElementById(id);
+  const money = (p) => window.HFInvoice.money(p);
+  const esc = (s) => window.HFInvoice.esc(s);
+
+  let toastTimer;
+  function toast(msg, kind) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.className = "hfo-toast on " + (kind || "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.className = "hfo-toast " + (kind || ""); }, 4200);
+  }
+
+  /* -------------------------------------------------------------- state */
+  const S = {
+    settings: {},
+    invoices: [],
+    customers: [],
+    filter: "",
+    inv: null,          /* the invoice being edited, null until saved */
+    lines: [],
+    tplPreview: null    /* template chosen on this invoice only */
+  };
+
+  const blankLine = () => ({ description: "", qty: 1, unit: "" });
+
+  /* --------------------------------------------------------------- gate */
+  $("gateForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("gateBtn").disabled = true;
+    $("gateMsg").textContent = "";
+    try {
+      await post("login", { password: $("pw").value });
+      $("pw").value = "";
+      await start();
+    } catch (err) {
+      $("gateMsg").textContent = err.message;
+      $("gateMsg").style.color = "#c0392b";
+    } finally {
+      $("gateBtn").disabled = false;
+    }
+  });
+
+  $("signOut").addEventListener("click", async () => {
+    await post("logout").catch(() => {});
+    location.reload();
+  });
+
+  /* --------------------------------------------------------------- nav */
+  function show(view) {
+    document.querySelectorAll(".hfo-view").forEach((v) => v.classList.toggle("on", v.id === "view-" + view));
+    document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
+    window.scrollTo(0, 0);
+    if (view === "customers") loadCustomers();
+    if (view === "editor") sizePaper();
+  }
+  document.querySelectorAll("#nav button").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (b.dataset.view === "editor" && S.inv) newInvoice();
+      show(b.dataset.view);
+    });
+  });
+  document.querySelectorAll("[data-new]").forEach((b) => {
+    b.addEventListener("click", () => { newInvoice(); show("editor"); });
+  });
+
+  /* ------------------------------------------------------------- lists */
+  function pill(status) {
+    const label = { draft: "Draft", sent: "Sent", paid: "Paid", void: "Void" }[status] || status;
+    return '<span class="pill pill-' + esc(status) + '">' + label + "</span>";
+  }
+
+  function invTable(rows, emptyMsg) {
+    if (!rows.length) return '<div class="hfo-empty">' + emptyMsg + "</div>";
+    return '<table class="hfo-t"><thead><tr>' +
+      "<th>Invoice</th><th>Customer</th><th>Date</th><th>Status</th><th>Total</th>" +
+      "</tr></thead><tbody>" +
+      rows.map((r) =>
+        '<tr class="tap" data-id="' + esc(r.id) + '">' +
+        "<td><b>" + esc(r.number) + "</b></td>" +
+        "<td>" + esc(r.cust_name || "—") + "</td>" +
+        "<td>" + window.HFInvoice.date(r.issued_at || r.created_at) + "</td>" +
+        "<td>" + pill(r.status) + "</td>" +
+        '<td class="hfo-money">' + money(r.gross_pence) + "</td>" +
+        "</tr>"
+      ).join("") + "</tbody></table>";
+  }
+
+  function wireRows(host) {
+    host.querySelectorAll("tr[data-id]").forEach((tr) => {
+      tr.addEventListener("click", () => openInvoice(tr.dataset.id));
+    });
+  }
+
+  async function loadInvoices() {
+    const d = await get("invoices" + (S.filter ? "?status=" + S.filter : ""));
+    S.invoices = d.invoices || [];
+
+    /* The dashboard always reflects everything, not the current filter. */
+    const all = S.filter ? (await get("invoices")).invoices || [] : S.invoices;
+    const owed = all.filter((r) => r.status === "sent").reduce((a, r) => a + (r.gross_pence - r.paid_pence), 0);
+    const month = new Date().toISOString().slice(0, 7);
+    const paidMonth = all.filter((r) => r.status === "paid" && String(r.paid_at || "").startsWith(month))
+      .reduce((a, r) => a + r.gross_pence, 0);
+
+    $("s-owed").textContent = money(owed);
+    $("s-sent").textContent = all.filter((r) => r.status === "sent").length;
+    $("s-draft").textContent = all.filter((r) => r.status === "draft").length;
+    $("s-month").textContent = money(paidMonth);
+
+    $("recent").innerHTML = invTable(all.slice(0, 8), "No invoices yet. Tap New invoice to raise the first one.");
+    wireRows($("recent"));
+    $("invList").innerHTML = invTable(S.invoices, "Nothing here.");
+    wireRows($("invList"));
+  }
+
+  document.querySelectorAll("#filters button").forEach((b) => {
+    b.addEventListener("click", async () => {
+      S.filter = b.dataset.status;
+      document.querySelectorAll("#filters button").forEach((x) => x.classList.toggle("btn-primary", x === b));
+      await loadInvoices();
+    });
+  });
+
+  async function loadCustomers(q) {
+    const d = await get("customers" + (q ? "?q=" + encodeURIComponent(q) : ""));
+    S.customers = d.customers || [];
+    const host = $("custList");
+    if (!S.customers.length) {
+      host.innerHTML = '<div class="hfo-empty">' +
+        (q ? "Nobody matches that." : "Your customer book fills itself in as you invoice people.") + "</div>";
+      return;
+    }
+    host.innerHTML = '<table class="hfo-t"><thead><tr>' +
+      "<th>Name</th><th>Phone</th><th>Postcode</th><th>Email</th><th></th>" +
+      "</tr></thead><tbody>" +
+      S.customers.map((c) =>
+        "<tr>" +
+        "<td><b>" + esc(c.name) + "</b></td>" +
+        "<td>" + (c.phone ? '<a href="tel:' + esc(c.phone) + '">' + esc(c.phone) + "</a>" : "—") + "</td>" +
+        "<td>" + esc(c.postcode || "—") + "</td>" +
+        "<td>" + esc(c.email || "—") + "</td>" +
+        '<td><button class="btn btn-sm" data-cust="' + esc(c.id) + '">Invoice them</button></td>' +
+        "</tr>"
+      ).join("") + "</tbody></table>";
+    host.querySelectorAll("[data-cust]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const c = S.customers.find((x) => x.id === b.dataset.cust);
+        newInvoice();
+        $("cName").value = c.name || "";
+        $("cPhone").value = c.phone || "";
+        $("cEmail").value = c.email || "";
+        $("cAddr").value = c.address || "";
+        $("cPost").value = c.postcode || "";
+        show("editor");
+        refresh();
+      });
+    });
+  }
+
+  let custTimer;
+  $("custSearch").addEventListener("input", (e) => {
+    clearTimeout(custTimer);
+    custTimer = setTimeout(() => loadCustomers(e.target.value), 220);
+  });
+
+  /* ------------------------------------------------- customer autofill */
+  const nameBox = $("cName"), suggest = $("cSuggest");
+  let nameTimer;
+  nameBox.addEventListener("input", () => {
+    clearTimeout(nameTimer);
+    refresh();
+    const q = nameBox.value.trim();
+    if (q.length < 2) { suggest.hidden = true; return; }
+    nameTimer = setTimeout(async () => {
+      let list = [];
+      try { list = (await get("customers?q=" + encodeURIComponent(q))).customers || []; } catch (e) { return; }
+      if (!list.length) { suggest.hidden = true; return; }
+      suggest.innerHTML = list.slice(0, 8).map((c) =>
+        '<button type="button" data-id="' + esc(c.id) + '"><b>' + esc(c.name) + "</b>" +
+        "<small>" + esc([c.postcode, c.phone].filter(Boolean).join(" · ") || "no other details") + "</small></button>"
+      ).join("");
+      suggest.hidden = false;
+      suggest.querySelectorAll("button").forEach((b) => {
+        b.addEventListener("click", () => {
+          const c = list.find((x) => x.id === b.dataset.id);
+          $("cName").value = c.name || "";
+          $("cPhone").value = c.phone || "";
+          $("cEmail").value = c.email || "";
+          $("cAddr").value = c.address || "";
+          $("cPost").value = c.postcode || "";
+          suggest.hidden = true;
+          refresh();
+        });
+      });
+    }, 220);
+  });
+  document.addEventListener("click", (e) => {
+    if (!suggest.contains(e.target) && e.target !== nameBox) suggest.hidden = true;
+  });
+
+  /* --------------------------------------------------------- the lines */
+  function drawLines() {
+    const host = $("lines");
+    host.innerHTML = S.lines.map((l, i) =>
+      '<div class="hfo-line" data-i="' + i + '">' +
+      '<input class="d" placeholder="What you did or fitted" value="' + esc(l.description) + '">' +
+      '<input class="q" inputmode="decimal" value="' + esc(l.qty) + '" aria-label="Quantity">' +
+      '<input class="u" inputmode="decimal" placeholder="0.00" value="' + esc(l.unit) + '" aria-label="Unit price">' +
+      '<div class="amt">' + money(lineTotal(l)) + "</div>" +
+      '<button class="kill" type="button" aria-label="Remove this line">&times;</button>' +
+      "</div>"
+    ).join("");
+    host.querySelectorAll(".hfo-line").forEach((row) => {
+      const i = Number(row.dataset.i);
+      row.querySelector(".d").addEventListener("input", (e) => { S.lines[i].description = e.target.value; refresh(false); });
+      row.querySelector(".q").addEventListener("input", (e) => { S.lines[i].qty = e.target.value; amounts(); refresh(false); });
+      row.querySelector(".u").addEventListener("input", (e) => { S.lines[i].unit = e.target.value; amounts(); refresh(false); });
+      row.querySelector(".kill").addEventListener("click", () => {
+        S.lines.splice(i, 1);
+        if (!S.lines.length) S.lines.push(blankLine());
+        drawLines(); refresh();
+      });
+    });
+  }
+
+  /* Redraw only the money, so typing never moves the caret. */
+  function amounts() {
+    document.querySelectorAll("#lines .hfo-line").forEach((row) => {
+      row.querySelector(".amt").textContent = money(lineTotal(S.lines[Number(row.dataset.i)]));
+    });
+  }
+
+  function pence(v) {
+    const n = Math.round(Number(String(v ?? "").replace(/[^0-9.-]/g, "")) * 100);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function lineTotal(l) {
+    const q = Number(l.qty);
+    return Math.round((Number.isFinite(q) ? q : 0) * pence(l.unit));
+  }
+
+  $("addLine").addEventListener("click", () => { S.lines.push(blankLine()); drawLines(); });
+
+  /* ------------------------------------------------------- the numbers */
+  function computed() {
+    const net = S.lines.reduce((a, l) => a + lineTotal(l), 0);
+    const reg = !!Number(S.settings.vat_registered);
+    const rateBp = Number(S.settings.vat_rate ?? 2000);
+    const vat = reg ? Math.round(net * rateBp / 10000) : 0;
+    return { net, vat, gross: net + vat, rateBp, reg };
+  }
+
+  function refresh(withPreview) {
+    const c = computed();
+    $("sumNet").textContent = money(c.net);
+    $("sumVat").textContent = money(c.vat);
+    $("sumGross").textContent = money(c.gross);
+    $("vatRow").style.display = c.reg ? "" : "none";
+    $("vatLabel").textContent = "VAT at " + (c.rateBp / 100) + "%";
+    if (withPreview !== false) drawPreview(); else queuePreview();
+  }
+
+  /* --------------------------------------------------------- preview */
+  let previewTimer;
+  function queuePreview() {
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(drawPreview, 260);
+  }
+
+  function currentData() {
+    const c = computed();
+    return {
+      invoice: {
+        number: S.inv ? S.inv.number : (S.settings.invoice_prefix || "HF-") + (S.settings.next_number || 1001),
+        status: S.inv ? S.inv.status : "draft",
+        created_at: S.inv ? S.inv.created_at : new Date().toISOString(),
+        issued_at: S.inv ? S.inv.issued_at : null,
+        due_at: $("iDue").value,
+        cust_name: $("cName").value,
+        cust_email: $("cEmail").value,
+        cust_phone: $("cPhone").value,
+        cust_address: $("cAddr").value,
+        cust_postcode: $("cPost").value.toUpperCase(),
+        work_summary: $("iSummary").value,
+        notes: $("iNotes").value,
+        net_pence: c.net, vat_pence: c.vat, gross_pence: c.gross,
+        paid_pence: pence($("iPaid").value),
+        vat_rate: c.rateBp,
+        items: S.lines.map((l) => ({
+          description: l.description, qty: Number(l.qty) || 0,
+          unit_pence: pence(l.unit), line_pence: lineTotal(l)
+        })).filter((r) => r.description || r.line_pence)
+      },
+      business: businessFromSettings(),
+      template: $("iTpl").value
+    };
+  }
+
+  function businessFromSettings() {
+    const s = S.settings;
+    return {
+      name: s.business_name || "HeatFix Mcr Limited",
+      address: s.address, postcode: s.postcode, phone: s.phone, email: s.email,
+      website: s.website, vat_number: Number(s.vat_registered) ? s.vat_number : "",
+      company_no: s.company_no, gas_safe_no: s.gas_safe_no, logo_data: s.logo_data,
+      bank_name: s.bank_name, bank_account: s.bank_account, bank_sort: s.bank_sort,
+      payment_terms: s.payment_terms, accent: s.accent, template: s.template,
+      review_url: s.review_url
+    };
+  }
+
+  function drawPreview() {
+    $("paper").srcdoc = window.HFInvoice.doc(currentData());
+    sizePaper();
+  }
+
+  /* The sheet is drawn at true A4 width and scaled down to whatever room
+     the column has, so the preview is the document, not an impression. */
+  function sizePaper() {
+    const box = $("paperBox"), frame = $("paper");
+    if (!box || !box.offsetWidth) return;
+    const scale = box.offsetWidth / 794;
+    frame.style.transform = "scale(" + scale + ")";
+    box.style.height = (1123 * scale) + "px";
+  }
+  window.addEventListener("resize", sizePaper);
+
+  /* ---------------------------------------------------------- editing */
+  function newInvoice() {
+    S.inv = null;
+    S.lines = [blankLine()];
+    ["cName", "cPhone", "cEmail", "cAddr", "cPost", "iDue", "iSummary", "iNotes", "iPaid"]
+      .forEach((id) => { $(id).value = ""; });
+    $("iTpl").value = S.settings.template || "classic";
+    $("edTitle").textContent = "New invoice";
+    $("edStatus").className = "pill pill-draft";
+    $("edStatus").textContent = "Draft";
+    $("edLink").textContent = "";
+    drawLines();
+    lockForStatus();
+    refresh();
+  }
+
+  async function openInvoice(id) {
+    const d = await get("invoices/" + id);
+    const inv = d.invoice;
+    S.inv = inv;
+    S.lines = (inv.items || []).map((it) => ({
+      description: it.description,
+      qty: it.qty,
+      unit: (it.unit_pence / 100).toFixed(2)
+    }));
+    if (!S.lines.length) S.lines = [blankLine()];
+    $("cName").value = inv.cust_name || "";
+    $("cPhone").value = inv.cust_phone || "";
+    $("cEmail").value = inv.cust_email || "";
+    $("cAddr").value = inv.cust_address || "";
+    $("cPost").value = inv.cust_postcode || "";
+    $("iDue").value = (inv.due_at || "").slice(0, 10);
+    $("iSummary").value = inv.work_summary || "";
+    $("iNotes").value = inv.notes || "";
+    $("iPaid").value = inv.paid_pence ? (inv.paid_pence / 100).toFixed(2) : "";
+    $("iTpl").value = inv.template || S.settings.template || "classic";
+    $("edTitle").textContent = "Invoice " + inv.number;
+    $("edStatus").className = "pill pill-" + inv.status;
+    $("edStatus").textContent = { draft: "Draft", sent: "Sent", paid: "Paid", void: "Void" }[inv.status] || inv.status;
+    showLink();
+    drawLines();
+    lockForStatus();
+    show("editor");
+    refresh();
+  }
+
+  function showLink() {
+    if (S.inv && S.inv.status !== "draft") {
+      const url = location.origin + "/i/" + S.inv.id;
+      $("edLink").innerHTML = 'The customer&rsquo;s copy: <a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url) + "</a>";
+    } else {
+      $("edLink").textContent = "";
+    }
+  }
+
+  /* A sent invoice is a document the customer holds. Its figures stop
+     being editable, but it can still be marked paid or voided. */
+  function lockForStatus() {
+    const locked = !!(S.inv && S.inv.status !== "draft");
+    const fields = ["cName", "cPhone", "cEmail", "cAddr", "cPost", "iDue", "iSummary", "iNotes", "iPaid"];
+    fields.forEach((id) => { $(id).disabled = locked; });
+    $("addLine").disabled = locked;
+    document.querySelectorAll("#lines input, #lines .kill").forEach((el) => { el.disabled = locked; });
+    $("edSave").disabled = locked;
+    $("edDelete").disabled = locked;
+    $("edSave").textContent = S.inv ? "Save changes" : "Save draft";
+    $("sendHelp").textContent = locked
+      ? "This invoice has been sent, so the figures are locked. Void it and raise a new one if something is wrong."
+      : "Save it first. Once it is sent the figures are locked, because the customer is holding that document.";
+  }
+
+  function payload() {
+    return {
+      cust_name: $("cName").value,
+      cust_email: $("cEmail").value,
+      cust_phone: $("cPhone").value,
+      cust_address: $("cAddr").value,
+      cust_postcode: $("cPost").value,
+      due_at: $("iDue").value,
+      work_summary: $("iSummary").value,
+      notes: $("iNotes").value,
+      paid: $("iPaid").value,
+      template: $("iTpl").value,
+      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit }))
+    };
+  }
+
+  async function save(quiet) {
+    if (!$("cName").value.trim()) { toast("Put the customer's name in first.", "bad"); return null; }
+    const body = payload();
+    const d = S.inv ? await put("invoices/" + S.inv.id, body) : await post("invoices", body);
+    S.inv = d.invoice;
+    $("edTitle").textContent = "Invoice " + S.inv.number;
+    lockForStatus();
+    showLink();
+    await Promise.all([loadInvoices(), reloadSettings()]);
+    if (!quiet) toast("Saved.", "good");
+    return S.inv;
+  }
+
+  $("edSave").addEventListener("click", async () => {
+    try { await save(); } catch (e) { toast(e.message, "bad"); }
+  });
+
+  $("edPrint").addEventListener("click", () => {
+    const w = window.open("", "_blank");
+    if (!w) { toast("Your browser blocked the print window.", "bad"); return; }
+    w.document.write(window.HFInvoice.doc(currentData()));
+    w.document.close();
+    /* Let the fonts and the logo land before the print dialog opens. */
+    w.addEventListener("load", () => setTimeout(() => w.print(), 350));
+  });
+
+  async function setStatus(status, via) {
+    if (!S.inv) { toast("Save it first.", "bad"); return; }
+    const d = await post("invoices/" + S.inv.id + "/status", { status, via });
+    S.inv = d.invoice;
+    $("edStatus").className = "pill pill-" + S.inv.status;
+    $("edStatus").textContent = { draft: "Draft", sent: "Sent", paid: "Paid", void: "Void" }[S.inv.status];
+    lockForStatus();
+    showLink();
+    await loadInvoices();
+  }
+
+  $("edPaid").addEventListener("click", async () => {
+    try { await setStatus("paid"); toast("Marked as paid.", "good"); } catch (e) { toast(e.message, "bad"); }
+  });
+  $("edSent").addEventListener("click", async () => {
+    try {
+      if (!S.inv) await save(true);
+      await setStatus("sent", "manual");
+      toast("Marked as sent.", "good");
+    } catch (e) { toast(e.message, "bad"); }
+  });
+  $("edVoid").addEventListener("click", async () => {
+    if (!confirm("Void this invoice? It stays in your records but stops counting as owed.")) return;
+    try { await setStatus("void"); toast("Voided."); } catch (e) { toast(e.message, "bad"); }
+  });
+  $("edDelete").addEventListener("click", async () => {
+    if (!S.inv) { newInvoice(); return; }
+    if (!confirm("Delete this draft for good?")) return;
+    try {
+      await del("invoices/" + S.inv.id);
+      toast("Draft deleted.");
+      newInvoice();
+      await loadInvoices();
+      show("invoices");
+    } catch (e) { toast(e.message, "bad"); }
+  });
+
+  /* ----------------------------------------------------------- sending */
+  $("edEmail").addEventListener("click", async () => {
+    try {
+      if (!S.inv) await save(true);
+      if (!S.inv) return;
+      if (!$("cEmail").value.trim() && !S.inv.cust_email) {
+        toast("That customer has no email address. Use WhatsApp instead.", "bad");
+        return;
+      }
+      $("mTitle").textContent = "Send invoice " + S.inv.number;
+      $("mSub").textContent = "It goes to " + (S.inv.cust_email || $("cEmail").value) + " with a link to the invoice.";
+      $("mMsg").value = "Thanks very much for the work. Your invoice is below — any questions just give me a ring.";
+      $("modal").classList.add("on");
+      $("mGo").onclick = async () => {
+        $("mGo").disabled = true;
+        try {
+          const d = await post("invoices/" + S.inv.id + "/email", { message: $("mMsg").value });
+          S.inv = d.invoice;
+          $("modal").classList.remove("on");
+          $("edStatus").className = "pill pill-sent";
+          $("edStatus").textContent = "Sent";
+          lockForStatus();
+          showLink();
+          await loadInvoices();
+          toast("Emailed.", "good");
+        } catch (e) { toast(e.message, "bad"); }
+        finally { $("mGo").disabled = false; }
+      };
+    } catch (e) { toast(e.message, "bad"); }
+  });
+  $("mCancel").addEventListener("click", () => $("modal").classList.remove("on"));
+  $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
+
+  $("edWhats").addEventListener("click", async () => {
+    /* The tab has to be opened on the click itself or the browser blocks
+       it, so it is opened empty and pointed at WhatsApp once saved. */
+    const tab = window.open("", "_blank");
+    try {
+      if (!S.inv) await save(true);
+      if (!S.inv) { if (tab) tab.close(); return; }
+      if (S.inv.status === "draft") await setStatus("sent", "whatsapp");
+      const url = location.origin + "/i/" + S.inv.id;
+      const due = S.inv.gross_pence - S.inv.paid_pence;
+      const review = S.settings.review_url
+        ? "\n\nIf you were happy with the work, a quick Google review really helps:\n" +
+          S.settings.review_url
+        : "";
+      const text =
+        "Hiya " + (S.inv.cust_name || "") + ", thanks very much for the work. " +
+        "Here is your invoice " + S.inv.number + " for " + money(due) + ":\n" + url + review;
+      const phone = String(S.inv.cust_phone || "").replace(/[^0-9]/g, "").replace(/^0/, "44");
+      const wa = "https://wa.me/" + (phone || "") + "?text=" + encodeURIComponent(text);
+      if (tab) tab.location = wa; else location.href = wa;
+      await loadInvoices();
+    } catch (e) {
+      if (tab) tab.close();
+      toast(e.message, "bad");
+    }
+  });
+
+  /* ---------------------------------------------------------- settings */
+  const SET_MAP = {
+    bName: "business_name", bTrade: "trading_name", bAddr: "address", bPost: "postcode",
+    bPhone: "phone", bEmail: "email", bWeb: "website", bCo: "company_no",
+    bGas: "gas_safe_no", bVatNo: "vat_number", bBank: "bank_name", bSort: "bank_sort",
+    bAcct: "bank_account", bTerms: "payment_terms", bPrefix: "invoice_prefix",
+    bAccent: "accent", bReview: "review_url"
+  };
+
+  function fillSettings() {
+    const s = S.settings;
+    Object.keys(SET_MAP).forEach((id) => { $(id).value = s[SET_MAP[id]] || ""; });
+    if (!$("bAccent").value) $("bAccent").value = "#0b2e63";
+    $("bVatReg").checked = !!Number(s.vat_registered);
+    $("bVatRate").value = String(s.vat_rate ?? 2000);
+    $("bNext").value = s.next_number ?? 1001;
+    $("logoPrev").src = s.logo_data || "/assets/heatfix/logo-lockup-600.webp";
+    drawReviewQr();
+    drawTemplatePicker();
+  }
+
+  $("setSave").addEventListener("click", async () => {
+    const body = {};
+    Object.keys(SET_MAP).forEach((id) => { body[SET_MAP[id]] = $(id).value; });
+    body.vat_registered = $("bVatReg").checked ? 1 : 0;
+    body.vat_rate = Number($("bVatRate").value);
+    body.next_number = Number($("bNext").value) || 1001;
+    body.template = S.settings.template || "classic";
+    if (S.settings.logo_data !== undefined) body.logo_data = S.settings.logo_data || "";
+    try {
+      const d = await put("settings", body);
+      S.settings = d.settings;
+      fillSettings();
+      refresh();
+      toast("Your details are saved.", "good");
+    } catch (e) { toast(e.message, "bad"); }
+  });
+
+  async function reloadSettings() {
+    S.settings = (await get("settings")).settings || {};
+  }
+
+  /* The logo is stored with the data, not as a file, so it travels with
+     the invoice and cannot go missing later. Big photos are shrunk first. */
+  $("logoFile").addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) { toast("That is not an image.", "bad"); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 900;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const cv = document.createElement("canvas");
+        cv.width = Math.round(img.width * scale);
+        cv.height = Math.round(img.height * scale);
+        cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+        /* PNG keeps a see-through background; JPEG would fill it white. */
+        const out = cv.toDataURL(file.type === "image/jpeg" ? "image/jpeg" : "image/png", 0.92);
+        if (out.length > 380000) { toast("That image is too big. Try a smaller one.", "bad"); return; }
+        S.settings.logo_data = out;
+        $("logoPrev").src = out;
+        refresh();
+        toast("Logo ready. Tap Save details to keep it.");
+      };
+      img.onerror = () => toast("That image would not open.", "bad");
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  });
+
+  $("logoReset").addEventListener("click", () => {
+    S.settings.logo_data = "";
+    $("logoPrev").src = "/assets/heatfix/logo-lockup-600.webp";
+    refresh();
+    toast("Back to the standard logo. Tap Save details to keep it.");
+  });
+
+  /* Show him the actual code, so a mistyped link is obvious before it is
+     printed on a hundred invoices. */
+  function drawReviewQr() {
+    const url = $("bReview").value.trim();
+    const host = $("qrPrev");
+    if (!url) { host.innerHTML = '<span class="hfo-sub">No link set.</span>'; return; }
+    try {
+      host.innerHTML = window.HFQR.svg(url, { size: 104, label: "Google review QR code" });
+    } catch (e) {
+      host.innerHTML = '<span class="hfo-sub">That link is too long for a QR code.</span>';
+    }
+  }
+  $("bReview").addEventListener("input", () => {
+    S.settings.review_url = $("bReview").value.trim();
+    drawReviewQr();
+    refresh();
+  });
+
+  $("bAccent").addEventListener("input", () => {
+    S.settings.accent = $("bAccent").value;
+    drawTemplatePicker();
+    refresh();
+  });
+
+  /* --------------------------------------------------- template picker */
+  /* Each thumbnail is the real template drawing the same sample job, so
+     what he picks is what the customer gets. */
+  const SAMPLE = {
+    invoice: {
+      number: "HF-1042", status: "sent", created_at: new Date().toISOString(),
+      issued_at: new Date().toISOString(), cust_name: "Mrs J Ahmed",
+      cust_address: "12 Example Road\nManchester", cust_postcode: "M14 5AB",
+      work_summary: "Annual boiler service and new room thermostat.",
+      items: [
+        { description: "Annual boiler service", qty: 1, unit_pence: 9000, line_pence: 9000 },
+        { description: "Room thermostat, supplied and fitted", qty: 1, unit_pence: 14500, line_pence: 14500 },
+        { description: "Labour", qty: 2, unit_pence: 4500, line_pence: 9000 }
+      ],
+      net_pence: 32500, vat_pence: 6500, gross_pence: 39000, paid_pence: 0, vat_rate: 2000
+    }
+  };
+
+  function drawTemplatePicker() {
+    const host = $("tplPick");
+    const b = businessFromSettings();
+    host.innerHTML = window.HFInvoice.templates.map((t) =>
+      '<button type="button" class="hfo-tpl' + (t.id === (S.settings.template || "classic") ? " on" : "") + '" data-tpl="' + t.id + '">' +
+      '<div class="thumb"><iframe title="' + esc(t.name) + ' preview" data-doc="' + t.id + '"></iframe></div>' +
+      "<b>" + esc(t.name) + "</b><small>" + esc(t.note) + "</small></button>"
+    ).join("");
+    host.querySelectorAll("iframe[data-doc]").forEach((f) => {
+      f.srcdoc = window.HFInvoice.doc({ invoice: SAMPLE.invoice, business: b, template: f.dataset.doc });
+      const w = f.parentElement.clientWidth || 148;
+      f.style.transform = "scale(" + (w / 794) + ")";
+    });
+    host.querySelectorAll("[data-tpl]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        S.settings.template = btn.dataset.tpl;
+        host.querySelectorAll(".hfo-tpl").forEach((x) => x.classList.toggle("on", x === btn));
+        if (!S.inv) $("iTpl").value = btn.dataset.tpl;
+        refresh();
+        toast("Design chosen. Tap Save details to keep it.");
+      });
+    });
+  }
+
+  $("iTpl").addEventListener("change", refresh);
+
+  /* -------------------------------------------------------- start up */
+  function fillTemplateSelect() {
+    $("iTpl").innerHTML = window.HFInvoice.templates
+      .map((t) => '<option value="' + t.id + '">' + esc(t.name) + "</option>").join("");
+  }
+
+  ["cPhone", "cEmail", "cAddr", "cPost", "iDue", "iSummary", "iNotes", "iPaid"].forEach((id) => {
+    $(id).addEventListener("input", () => refresh(false));
+  });
+
+  /* Postcodes are written in capitals on a bill, so make the box do it
+     rather than leaving him to hold shift. */
+  $("cPost").addEventListener("blur", () => {
+    const up = $("cPost").value.toUpperCase();
+    if (up !== $("cPost").value) { $("cPost").value = up; refresh(false); }
+  });
+
+  async function start() {
+    await reloadSettings();
+    $("gate").style.display = "none";
+    $("shell").classList.add("on");
+    $("who").textContent = S.settings.business_name || "HeatFix Mcr Limited";
+    fillTemplateSelect();
+    fillSettings();
+    newInvoice();
+    await loadInvoices();
+    show("home");
+  }
+
+  (async function boot() {
+    try {
+      const d = await get("session");
+      if (d.signedIn) { await start(); return; }
+    } catch (e) {
+      $("gateMsg").textContent = e.message;
+      $("gateMsg").style.color = "#c0392b";
+    }
+    $("pw").focus();
+  })();
+})();
+</script>
+</body>
+</html>
