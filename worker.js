@@ -309,7 +309,17 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
   }
 
-  const res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
+  let res = await env.ASSETS.fetch(new Request(new URL(target, url.origin), request));
+  /* The asset router can answer a .html path with a redirect to its
+     extensionless form. That is the right behaviour for billydigitals.com and
+     the wrong thing to hand a visitor here: it would bounce them from the
+     client's clean URL to our internal /templates/… path. Follow it inside the
+     Worker instead. html_handling = "none" on this env stops it arising, and
+     this stops it mattering if that setting is ever lost. */
+  if (res.status >= 300 && res.status < 400) {
+    const to = res.headers.get("location");
+    if (to) res = await env.ASSETS.fetch(new Request(new URL(to, url.origin), request));
+  }
   if (!res.ok) return res;
 
   const canonical = "https://" + url.hostname + (p === "/" ? "/" : p);

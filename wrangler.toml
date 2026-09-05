@@ -156,6 +156,14 @@ HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"
 [env.heatfix.assets]
 directory = "."
 not_found_handling = "404-page"
+# Without this the asset router answers /templates/heatfix-about.html with a
+# 307 to /templates/heatfix-about — its clean-URL behaviour, which is what
+# billydigitals.com wants and his domain must not have. serveClient fetches
+# the .html path internally to build every page, so that redirect was being
+# handed to the visitor: every clean URL on his site bounced them to the
+# internal /templates/… path. His clean URLs come from HEATFIX_PAGES in the
+# Worker, so the router should serve files here and nothing else.
+html_handling = "none"
 binding = "ASSETS"
 # Every path here must reach the Worker before the static-asset router. The
 # router has not_found_handling = "404-page", so it answers anything it does
