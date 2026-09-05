@@ -157,8 +157,19 @@ HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"
 directory = "."
 not_found_handling = "404-page"
 binding = "ASSETS"
+# Every path here must reach the Worker before the static-asset router. The
+# router has not_found_handling = "404-page", so it answers anything it does
+# not recognise itself and never falls through — a clean URL missing from this
+# list is a dead page on his live domain, not a fallback to the Worker.
+# Keep it in step with HEATFIX_PAGES in worker.js.
 run_worker_first = [
-  "/api/*", "/", "/admin", "/invoice", "/sign", "/book", "/i", "/i/*", "/office",
-  "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
-  "/manufacturers-warranty", "/privacy", "/terms",
+  "/api/*",
+  # robots.txt and sitemap.xml are generated per host by the Worker; served as
+  # static assets they would be Billy Digitals' own files on his domain.
+  "/robots.txt", "/sitemap.xml",
+  "/", "/book", "/about", "/faqs", "/blog", "/blog/*",
+  "/safety-tips", "/plumbing-gas-safety", "/manufacturers-warranty",
+  "/privacy", "/terms",
+  # His tools: the invoice builder, the back office, and customers' invoices.
+  "/invoice", "/office", "/i", "/i/*",
 ]

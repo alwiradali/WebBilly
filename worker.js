@@ -214,6 +214,16 @@ const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips"
                         "/manufacturers-warranty", "/privacy", "/terms"];
 /* Blog articles live at /blog/<slug>. */
 const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
+/* The same slugs again, written out, for the sitemap on his own domain. A
+   Worker cannot list the asset directory, so the articles have to be named
+   somewhere; serving them does not need this list, only advertising them does.
+   Add a slug here when you add templates/heatfix-blog-<slug>.html. */
+const HEATFIX_ARTICLES = [
+  "boiler-losing-pressure",
+  "cold-radiators",
+  "gas-cooker-rules",
+  "limescale-hot-water",
+];
 /* A customer's invoice lives at /i/<uuid> — unguessable, and noindex. */
 const HEATFIX_INVOICE = /^\/i\/[0-9a-f-]{16,64}$/i;
 
@@ -226,10 +236,62 @@ function isClientHost(hostname, env, key) {
 }
 
 /* Generic version of serveM2L for any client domain. */
+/* robots.txt and sitemap.xml for a client's own domain.
+   These used to fall through to the repository's own files, which is wrong on
+   anyone else's hostname: the sitemap lists only billydigitals.com URLs — a
+   cross-domain sitemap, which Search Console rejects, so none of the client's
+   pages would ever be submitted — and robots.txt ends with a Sitemap: line
+   pointing at the agency. Both are generated per host instead. */
+function clientRobots(url, PAGES, PUBLIC) {
+  const priv = Object.keys(PAGES).filter((p) => PUBLIC.indexOf(p) === -1);
+  return new Response([
+    "User-agent: *",
+    /* The whole repository is uploaded as assets, so every other client's
+       build is fetchable on this domain too. Keep it out of the index. */
+    "Disallow: /templates/",
+    /* His own tools: the back office and the customers' invoice links. */
+    ...priv.map((p) => "Disallow: " + p),
+    "Allow: /",
+    "",
+    "Sitemap: https://" + url.hostname + "/sitemap.xml",
+    "",
+  ].join("\n"), {
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "public, max-age=3600",
+    },
+  });
+}
+
+function clientSitemap(url, PAGES, PUBLIC) {
+  const base = "https://" + url.hostname;
+  const paths = PUBLIC.slice();
+  if (PAGES === HEATFIX_PAGES) {
+    for (const slug of HEATFIX_ARTICLES) paths.push("/blog/" + slug);
+  }
+  /* No lastmod/changefreq/priority: there is no build step to source a real
+     modification date from, Google ignores the other two, and a made-up date
+     is worse than none. */
+  return new Response(
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    paths.map((p) => "  <url><loc>" + base + p + "</loc></url>\n").join("") +
+    "</urlset>\n",
+    {
+      headers: {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "public, max-age=3600",
+      },
+    }
+  );
+}
+
 async function serveClient(request, url, env, PAGES, PUBLIC) {
   let p = url.pathname.replace(/\/+$/, "") || "/";
 
-  if (p.startsWith("/assets/") || p === "/favicon.ico" || p === "/robots.txt" || p === "/sitemap.xml") {
+  if (p === "/robots.txt") return clientRobots(url, PAGES, PUBLIC);
+  if (p === "/sitemap.xml") return clientSitemap(url, PAGES, PUBLIC);
+  if (p.startsWith("/assets/") || p === "/favicon.ico") {
     return env.ASSETS.fetch(request);
   }
 
