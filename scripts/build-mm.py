@@ -321,6 +321,13 @@ def main():
     with open(os.path.join(OUT, '_worker.js'), 'w') as fh:
         fh.write(PAGES_WORKER)
 
+    # Deployed as a Worker, the entry script is uploaded as code — but it also
+    # sits in the asset directory, where the asset router would happily serve
+    # it to anyone asking for /_worker.js. It was doing exactly that on the
+    # live site. This keeps it out of the served files.
+    with open(os.path.join(OUT, '.assetsignore'), 'w') as fh:
+        fh.write('_worker.js\n')
+
     # copy every stylesheet and script, rather than naming them: a hardcoded
     # list silently dropped reviews.js when it was added, and the page failed
     # with a 404 that only showed up in the console.
