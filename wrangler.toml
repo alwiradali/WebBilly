@@ -183,3 +183,35 @@ binding = "ASSETS"
 # passes /assets/* and the favicon through, and refuses everything else with
 # his own 404 page.
 run_worker_first = true
+
+# ---------------------------------------------------------------------------
+# Molecular Miracles on Lynsey's own Cloudflare account.
+# Deploy with:  CLOUDFLARE_API_TOKEN=<token from HER account> \
+#               npx wrangler deploy --env mm
+#
+# Unlike heatfix, this one does not serve the repository. scripts/build-mm.py
+# produces a self-contained site in dist/molecular-miracles — rewritten paths,
+# clean URLs, canonicals, a sitemap and its own _worker.js — so the Worker and
+# the assets both come from there and nothing of any other client is reachable
+# on her domain. Build before deploying, or you ship whatever was last built.
+#
+# The name MUST match the Worker already serving her domain. Deploying under a
+# different name creates a second Worker and quietly leaves her site on the old
+# one, which looks like a deploy that did nothing.
+[env.mm]
+name = "muddy-pine-f5bb"
+account_id = "d8e0c6635e2961e3c35061d28271846f"
+main = "dist/molecular-miracles/_worker.js"
+routes = [
+  { pattern = "molecularmiracleschemistrytuition.co.uk", custom_domain = true },
+  { pattern = "www.molecularmiracleschemistrytuition.co.uk", custom_domain = true }
+]
+
+[env.mm.assets]
+directory = "dist/molecular-miracles"
+# Her _worker.js calls env.ASSETS.fetch, so the binding has to carry that name.
+binding = "ASSETS"
+not_found_handling = "404-page"
+# The Worker owns /api/mm-shop and hands everything else to the asset router,
+# which is what resolves /daytime to daytime.html.
+run_worker_first = false
