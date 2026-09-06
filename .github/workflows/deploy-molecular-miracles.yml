@@ -62,7 +62,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Wrangler requires Node >= 22 and refuses to start below it, and
+          # GitHub is deprecating Node 20 on the runners anyway.
+          node-version: '22'
 
       - name: Build the site
         run: python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk
