@@ -62,7 +62,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Wrangler requires Node >= 22 and refuses to start below it, and
+          # GitHub is deprecating Node 20 on the runners anyway.
+          node-version: '22'
 
       - name: Build the site
         run: python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk
@@ -79,10 +81,23 @@ jobs:
           pages=$(find dist/molecular-miracles -name '*.html' | wc -l)
           echo "built $pages pages"
           test "$pages" -ge 20
-          # No page may ship pointing customers away to the Payhip storefront.
-          if grep -rq 'payhip.com/molecularmiracles' dist/molecular-miracles/*.html; then
-            echo "a page still links out to the Payhip storefront"; exit 1
+          # No page may ship markup that routes customers to the Payhip
+          # storefront — that was the whole complaint. The ONE permitted
+          # mention is the escape hatch inside showFallback(), which renders
+          # only if the product feed itself fails: a working shop link beats a
+          # dead page. So this checks for real anchor hrefs, and separately
+          # holds the fallback to a single occurrence so a buy button cannot
+          # quietly reappear as a JS-assigned href.
+          if grep -rq 'href="https://payhip.com/molecularmiracles' dist/molecular-miracles/*.html; then
+            echo "a page links out to the Payhip storefront in its markup"; exit 1
           fi
+          for f in masterclasses resources; do
+            n=$(grep -c 'payhip.com/molecularmiracles' "dist/molecular-miracles/$f.html" || true)
+            echo "  $f.html: $n storefront reference(s)"
+            if [ "$n" -gt 1 ]; then
+              echo "$f.html has more than the one permitted fallback link"; exit 1
+            fi
+          done
 
       - name: Check wrangler will deploy to HER worker
         # Guard rail, learned the hard way. If [env.mm] is missing from
