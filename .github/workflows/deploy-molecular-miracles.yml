@@ -1,0 +1,136 @@
+# Molecular Miracles → Lynsey's Cloudflare Worker
+#
+# Two jobs in one file:
+#   * a push to main that touches her site rebuilds and redeploys it
+#   * an hourly schedule rebuilds and redeploys it anyway
+#
+# The schedule is the point. Her products are read from the Payhip storefront
+# at BUILD time and committed as a snapshot, because the Worker cannot read
+# them at request time: Payhip sits behind Cloudflare and answers a Cloudflare
+# Worker with 403 "Just a moment...", every auth shape, every time. So the only
+# way a new product reaches her website is a rebuild. Hourly means she adds a
+# product in Payhip and it appears on her site within the hour, without anyone
+# being told and without anyone remembering.
+#
+# Deploys through the Cloudflare API with a token in GitHub Secrets. Her
+# Cloudflare account is NOT connected to this repository and does not need to
+# be — the token travels one way, from her account into a secret here.
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#
+#   CLOUDFLARE_API_TOKEN_MM  — from LYNSEY's Cloudflare account, with
+#                              Account → Workers Scripts → Edit
+#   CLOUDFLARE_ACCOUNT_ID_MM — d8e0c6635e2961e3c35061d28271846f
+#
+# Without them the job builds and checks but does not deploy, so a fork or a
+# credential-less checkout does not show a red tick for something it was never
+# meant to do.
+
+name: Deploy Molecular Miracles
+
+on:
+  push:
+    branches: [main]
+    # Only what actually changes her site. Rebuilding hers because Rod's page
+    # changed is noise that trains people to ignore the deploy history.
+    paths:
+      - 'templates/mm/**'
+      - 'assets/mm/**'
+      - 'assets/mm-brand/**'
+      - 'scripts/build-mm.py'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-molecular-miracles.yml'
+  schedule:
+    # Hourly, at :20 — off the top of the hour, where every other cron on
+    # GitHub's shared runners queues up.
+    - cron: '20 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-molecular-miracles
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build the site
+        run: python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk
+
+      - name: Check the build looks right
+        # A deploy that succeeds having published an empty or half-built
+        # directory is worse than one that fails, because nobody looks.
+        run: |
+          set -e
+          test -f dist/molecular-miracles/index.html
+          test -f dist/molecular-miracles/_worker.js
+          test -f dist/molecular-miracles/sitemap.xml
+          test -f dist/molecular-miracles/.assetsignore
+          pages=$(find dist/molecular-miracles -name '*.html' | wc -l)
+          echo "built $pages pages"
+          test "$pages" -ge 20
+          # No page may ship pointing customers away to the Payhip storefront.
+          if grep -rq 'payhip.com/molecularmiracles' dist/molecular-miracles/*.html; then
+            echo "a page still links out to the Payhip storefront"; exit 1
+          fi
+
+      - name: Check wrangler will deploy to HER worker
+        # Guard rail, learned the hard way. If [env.mm] is missing from
+        # wrangler.toml, `wrangler deploy --env mm` does not fail — it falls
+        # back to the top-level config, deploys a worker named
+        # billydigitals-mm, uploads the ENTIRE repository (every other
+        # client's files) to her Cloudflare account as static assets, and
+        # leaves her real site untouched. It looks like a successful deploy.
+        run: |
+          set -e
+          grep -q '^\[env\.mm\]' wrangler.toml
+          grep -q '^name = "muddy-pine-f5bb"' wrangler.toml
+          grep -q '^directory = "dist/molecular-miracles"' wrangler.toml
+          echo "wrangler.toml targets muddy-pine-f5bb from dist/molecular-miracles"
+
+      - name: Are the credentials present?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN_MM }}" ] \
+          && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID_MM }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials not set — built and checked, but not deployed."
+          fi
+
+      - name: Deploy to her Cloudflare Worker
+        if: steps.creds.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_MM }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_MM }}
+        run: npx --yes wrangler@latest deploy --env mm
+
+      - name: Confirm the live site answers
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://molecularmiracleschemistrytuition.co.uk/ || true)
+            echo "attempt $i: homepage $code"
+            if [ "$code" = "200" ]; then
+              n=$(curl -s https://molecularmiracleschemistrytuition.co.uk/api/mm-shop \
+                  | python3 -c 'import sys,json; print(len(json.load(sys.stdin).get("products",[])))' || echo 0)
+              echo "shop feed is carrying $n products"
+              # An empty shop is a broken shop — she always has products live.
+              test "$n" -ge 1
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Homepage did not return 200 after the deploy."
+          exit 1
