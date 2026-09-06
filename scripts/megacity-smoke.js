@@ -83,7 +83,7 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
   ok(!errors.length, "Studio has no console errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
   if (DEMO) {
     await page.goto(BASE + STUDIO + "?mock=1#/settings/redirects", { waitUntil: "networkidle" });
-    await page.waitForTimeout(600);
+    await page.waitForFunction(() => /Missing addresses/.test(document.body.textContent), null, { timeout: 8000 }).catch(() => {});
     const t = await page.textContent("body");
     ok(/Missing addresses/.test(t) && /tenants\/register/.test(t), "Redirects & 404s screen renders with sample rows (mock)" + (/Missing addresses/.test(t) ? "" : " — body starts: " + t.replace(/\s+/g, " ").trim().slice(0, 160)));
     await page.goto(BASE + STUDIO + "?mock=1#/integrations", { waitUntil: "networkidle" });

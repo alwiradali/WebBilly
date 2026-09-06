@@ -2213,3 +2213,6 @@ body.sl-open{overflow:hidden}
 .pg-fig{margin:22px 0}
 .pg-fig img{width:100%;height:auto;border-radius:var(--r);display:block}
 .pg-fig figcaption{margin-top:8px;font-size:13.5px;color:var(--mut)}
+
+/* the "Why choose Megacity?" kicker sits a touch larger than the other section labels */
+.no.no--lg{font-size:14.4px;letter-spacing:.28em}
