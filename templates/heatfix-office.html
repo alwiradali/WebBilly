@@ -46,6 +46,7 @@
 
   <nav class="hfo-nav" id="nav">
     <button data-view="home" class="on">Dashboard</button>
+    <button data-view="enquiries">Enquiries <span class="hfo-badge" id="enqBadge" hidden>0</span></button>
     <button data-view="invoices">Invoices</button>
     <button data-view="editor">New invoice</button>
     <button data-view="customers">Customers</button>
@@ -62,6 +63,7 @@
       <div class="hfo-stats">
         <div class="hfo-stat owed"><span>Owed to you</span><b id="s-owed">£0.00</b></div>
         <div class="hfo-stat"><span>Sent, unpaid</span><b id="s-sent">0</b></div>
+        <div class="hfo-stat"><span>New enquiries</span><b id="s-enq">0</b></div>
         <div class="hfo-stat"><span>Drafts</span><b id="s-draft">0</b></div>
         <div class="hfo-stat"><span>Paid this month</span><b id="s-month">£0.00</b></div>
       </div>
@@ -70,6 +72,17 @@
         <h3>Recent invoices</h3>
         <p class="hfo-sub">Tap any row to open it.</p>
         <div class="hfo-tablewrap"><div id="recent"></div></div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────── enquiries ── -->
+    <section class="hfo-view" id="view-enquiries">
+      <div class="hfo-h"><h2>Enquiries</h2><span class="hfo-spacer"></span></div>
+      <div class="hfo-card">
+        <p class="hfo-sub">Everyone who filled in the form on the website. They land
+          here the moment they press send, whether or not the WhatsApp message
+          ever went.</p>
+        <div class="hfo-tablewrap"><div id="enqList"></div></div>
       </div>
     </section>
 
@@ -376,6 +389,7 @@
     document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
     window.scrollTo(0, 0);
     if (view === "customers") loadCustomers();
+    if (view === "enquiries") loadEnquiries();
     if (view === "editor") sizePaper();
   }
   document.querySelectorAll("#nav button").forEach((b) => {
@@ -445,6 +459,66 @@
       await loadInvoices();
     });
   });
+
+  /* ------------------------------------------------------- enquiries */
+  async function loadEnquiries() {
+    const d = await get("enquiries");
+    S.enquiries = d.enquiries || [];
+    badgeEnquiries(d.new_count || 0);
+    const host = $("enqList");
+    if (!S.enquiries.length) {
+      host.innerHTML = '<div class="hfo-empty">Nothing yet. Anyone who fills in the ' +
+        'form on the website turns up here.</div>';
+      return;
+    }
+    host.innerHTML = S.enquiries.map((e) => {
+      const wa = String(e.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "44");
+      const where = [e.address, e.town, e.postcode].filter(Boolean).join(", ");
+      return '<div class="hfo-enq' + (e.status === "new" ? " is-new" : "") + '" data-id="' + esc(e.id) + '">' +
+        '<div class="hfo-enq-top">' +
+          '<b>' + esc(e.name) + '</b>' +
+          '<span class="hfo-pill s-' + esc(e.status) + '">' + esc(e.status) + '</span>' +
+          '<span class="hfo-enq-when">' + esc(fmtWhen(e.created_at)) + '</span>' +
+        '</div>' +
+        (e.job ? '<p class="hfo-enq-job">' + esc(e.job) + (e.slot ? ' &middot; ' + esc(e.slot) : "") + '</p>' : "") +
+        (where ? '<p class="hfo-enq-addr">' + esc(where) + '</p>' : "") +
+        (e.details ? '<p class="hfo-enq-note">' + esc(e.details) + '</p>' : "") +
+        '<div class="hfo-enq-acts">' +
+          '<a class="btn btn-sm" href="tel:' + esc(String(e.phone).replace(/\s+/g, "")) + '">Ring ' + esc(e.phone) + '</a>' +
+          (wa ? '<a class="btn btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc(wa) + '">WhatsApp</a>' : "") +
+          (e.email ? '<a class="btn btn-sm" href="mailto:' + esc(e.email) + '">Email</a>' : "") +
+          '<span class="hfo-spacer"></span>' +
+          '<button class="btn btn-sm" data-enq-status="contacted">Contacted</button>' +
+          '<button class="btn btn-sm" data-enq-status="booked">Booked</button>' +
+          '<button class="btn btn-sm" data-enq-status="closed">Close</button>' +
+        '</div></div>';
+    }).join("");
+    host.querySelectorAll("[data-enq-status]").forEach((b) => {
+      b.addEventListener("click", async () => {
+        const id = b.closest("[data-id]").dataset.id;
+        try { await put("enquiries/" + id, { status: b.dataset.enqStatus }); await loadEnquiries(); }
+        catch (err) { flash(err.message, true); }
+      });
+    });
+  }
+
+  /* A lead going unseen is the whole point of storing it, so the count is on
+     the nav as well as the dashboard. */
+  function badgeEnquiries(n) {
+    const b = $("enqBadge"), t = $("s-enq");
+    if (t) t.textContent = String(n);
+    if (!b) return;
+    b.textContent = String(n);
+    b.hidden = !n;
+  }
+
+  function fmtWhen(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) +
+           ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  }
 
   async function loadCustomers(q) {
     const d = await get("customers" + (q ? "?q=" + encodeURIComponent(q) : ""));
@@ -1034,6 +1108,9 @@
     fillSettings();
     newInvoice();
     await loadInvoices();
+    /* The dashboard tile and the nav badge have to be right before he has
+       opened the Enquiries tab, or a new lead sits there unseen. */
+    try { await loadEnquiries(); } catch (e) { /* an older database has no table yet */ }
     show("home");
   }
 

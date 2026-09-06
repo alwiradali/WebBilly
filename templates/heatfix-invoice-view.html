@@ -60,8 +60,17 @@
     body{background:#fff}
     .bar,.after{display:none}
     .wrap{padding:0;max-width:none}
-    .sheetbox{box-shadow:none;border-radius:0}
+    /* fit() writes a measured pixel height onto .sheetbox so the scaled-down
+       sheet does not leave a gap under it on screen. That measurement is taken
+       against the COLLAPSED sheet (the screen rule below sets min-height:0),
+       and print resets the scale back to 1:1 — so the box stayed at the screen
+       height with overflow:hidden and guillotined the invoice. On a phone that
+       left the customer with the top third of the page and no totals, no bank
+       details and no Gas Safe number. Height and clipping both have to go. */
+    .sheetbox{box-shadow:none;border-radius:0;
+              height:auto!important;overflow:visible!important}
     .sheet{transform:none!important;width:794px}
+    .sheet .hfdoc{min-height:1123px}
     @page{size:A4;margin:0}
   }
 </style>

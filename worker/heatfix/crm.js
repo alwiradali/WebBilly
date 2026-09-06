@@ -165,7 +165,26 @@ function totals(items, vatRateBp, vatRegistered) {
   return { rows, net, vat, gross: net + vat };
 }
 
+/* Claim the next invoice number in ONE statement.
+   This read the counter and wrote it back separately, with an await in the
+   middle. Double-tapping "Send by email" on a phone fires two saves before
+   either finishes: both read 1001, both try to insert HF-1001, one wins and
+   the other comes back "UNIQUE constraint failed" — so he is told an invoice
+   failed that in fact exists, taps again, and raises a duplicate for the same
+   job. RETURNING makes the increment and the read the same operation, so two
+   callers cannot be handed the same number. */
 async function nextNumber(env) {
+  const row = await env.HF_DB.prepare(
+    `UPDATE hf_settings
+        SET next_number = MAX(1, CAST(COALESCE(next_number, 1001) AS INTEGER)) + 1
+      WHERE id = 1
+      RETURNING next_number - 1 AS claimed, invoice_prefix`
+  ).first();
+  if (row && row.claimed != null) {
+    return `${row.invoice_prefix || "HF-"}${row.claimed}`;
+  }
+  /* No settings row yet (a database that has not been seeded). Fall back
+     rather than handing back "undefined" as an invoice number. */
   const s = await getSettings(env);
   const n = Math.max(1, Math.round(num(s.next_number, 1001)));
   await env.HF_DB.prepare("UPDATE hf_settings SET next_number = ? WHERE id = 1").bind(n + 1).run();
@@ -355,6 +374,37 @@ export async function handleHfCrm(request, env, url) {
     return data ? json(data) : json({ error: "That invoice is not available." }, 404);
   }
 
+  /* The booking form posts here before it opens WhatsApp, so a lead exists on
+     his account whether or not the visitor ever presses send. Unauthenticated
+     by necessity — the customer has no login — so everything is length-capped
+     and the honeypot is honoured. It only ever inserts; nothing here can read
+     the customer book back out. */
+  if (path === "enquiry" && method === "POST") {
+    const b = await request.json().catch(() => ({}));
+    if (clean(b.botcheck, 40)) return json({ ok: true });   /* a bot: look successful, store nothing */
+
+    const name = clean(b.name, 120);
+    const phone = clean(b.phone, 40);
+    if (!name || !phone) {
+      return json({ error: "A name and a phone number are needed." }, 400);
+    }
+    const id = newId();
+    await env.HF_DB.prepare(
+      `INSERT INTO hf_enquiries
+         (id, created_at, status, name, phone, email, address, town, postcode,
+          job, slot, details, source, ua)
+       VALUES (?,?,'new',?,?,?,?,?,?,?,?,?,?,?)`
+    ).bind(
+      id, nowIso(), name, phone,
+      clean(b.email, 160), clean(b.address, 200), clean(b.town, 80),
+      clean(b.postcode, 16).toUpperCase(), clean(b.job, 120), clean(b.slot, 120),
+      clean(b.details, 2000), clean(b.source, 80),
+      clean(request.headers.get("user-agent"), 200)
+    ).run();
+
+    return json({ ok: true, id });
+  }
+
   if (!(await validSession(request, env))) return json({ error: "Please sign in." }, 401);
 
   const body = ["POST", "PUT", "PATCH"].includes(method)
@@ -365,6 +415,26 @@ export async function handleHfCrm(request, env, url) {
     if (seg[0] === "settings") {
       if (method === "GET") return json({ settings: await getSettings(env) });
       if (method === "PUT")  return json({ settings: await saveSettings(env, body) });
+    }
+
+    if (seg[0] === "enquiries") {
+      if (method === "GET") {
+        const rows = (await env.HF_DB.prepare(
+          `SELECT * FROM hf_enquiries ORDER BY created_at DESC LIMIT 300`
+        ).all()).results || [];
+        return json({ enquiries: rows, new_count: rows.filter((r) => r.status === "new").length });
+      }
+      if (method === "PUT" && seg[1]) {
+        const allowed = ["new", "contacted", "booked", "closed"];
+        const status = allowed.includes(body.status) ? body.status : "new";
+        await env.HF_DB.prepare("UPDATE hf_enquiries SET status = ? WHERE id = ?")
+          .bind(status, seg[1]).run();
+        return json({ ok: true });
+      }
+      if (method === "DELETE" && seg[1]) {
+        await env.HF_DB.prepare("DELETE FROM hf_enquiries WHERE id = ?").bind(seg[1]).run();
+        return json({ ok: true });
+      }
     }
 
     if (seg[0] === "customers") {

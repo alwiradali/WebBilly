@@ -369,20 +369,46 @@ f.addEventListener('input',sync); f.addEventListener('change',sync); sync();
       dn.scrollIntoView({behavior:'smooth',block:'center'});
     }
     btn.disabled=true; btn.textContent='Sending…';
-    if(!W3F_KEY){
+
+    /* "Request sent" is only ever shown once the enquiry is actually stored.
+       This used to open a wa.me draft and call finish() straight after, but
+       wa.me only PRE-FILLS a message -- the visitor still has to press send
+       inside WhatsApp, and on a desktop, where WhatsApp Web wants a QR login,
+       most never do. So the page said the request had been sent when nothing
+       had, and the lead existed nowhere. */
+    function handover(){
+      /* Stored, but still worth putting it in front of him now. */
       window.open('https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines),'_blank');
-      finish(); return;
+      finish();
     }
-    fetch('https://api.web3forms.com/submit',{
-      method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({access_key:W3F_KEY,subject:'VISIT REQUEST — '+when+' — '+d.name+' ('+d.postcode+')',
-        from_name:'HeatFix Mcr website',replyto:d.email,when:when,...d,message:lines})
-    }).then(function(r){return r.json()}).then(function(j){
-      if(j.success){ finish(); }
-      else { window.open('https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines),'_blank'); finish(); }
-    }).catch(function(){
-      window.open('https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines),'_blank'); finish();
-    });
+    function couldNotSend(){
+      /* Never claim it went. Give them the two things that always work. */
+      btn.disabled=false; btn.textContent='Send my request';
+      say('We could not send that automatically. Ring 07890 452629, or tap '+
+          'WhatsApp below and press send — your details are already filled in.','err');
+      var wa=document.getElementById('waBtn');
+      if(wa){ wa.href='https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines);
+              wa.scrollIntoView({behavior:'smooth',block:'center'}); }
+    }
+
+    fetch('/api/hf/enquiry',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:d.name,phone:d.phone,email:d.email,address:d.address,
+        town:d.town,postcode:d.postcode,job:d.job,slot:when,details:d.details,
+        source:'/book',botcheck:f.botcheck.value})
+    }).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function(j){
+        if(!j.ok) return Promise.reject('no ok');
+        if(!W3F_KEY) return handover();
+        /* Stored already; the email is a courtesy, so its failure is not the
+           visitor's problem and must not turn a real booking into an error. */
+        return fetch('https://api.web3forms.com/submit',{
+          method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+          body:JSON.stringify({access_key:W3F_KEY,subject:'VISIT REQUEST — '+when+' — '+d.name+' ('+d.postcode+')',
+            from_name:'HeatFix Mcr website',replyto:d.email,when:when,...d,message:lines})
+        }).then(function(){ finish(); }).catch(function(){ finish(); });
+      })
+      .catch(couldNotSend);
   });
 })();
 </script>

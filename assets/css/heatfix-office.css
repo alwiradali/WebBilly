@@ -491,3 +491,37 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
 }
 
 @media print { body.hfo { background: #fff; } .hfo-top, .hfo-nav { display: none; } }
+
+/* ─────────────────────────────────────────────────── enquiries ──
+   Leads from the website form. Each one is a card rather than a table row:
+   he reads these on a phone, in a van, and needs the name, the job and a way
+   to ring them without pinching to zoom. */
+.hfo-badge{display:inline-flex;align-items:center;justify-content:center;
+  min-width:20px;height:20px;padding:0 6px;margin-left:7px;border-radius:999px;
+  background:var(--fire,#ef5b18);color:#fff;font-size:12px;font-weight:700;
+  line-height:1;vertical-align:middle}
+
+.hfo-enq{border:1px solid var(--line,#e2e8f2);border-radius:10px;
+  padding:15px 16px;margin-bottom:12px;background:#fff}
+/* An unactioned lead should be obvious at a glance. */
+.hfo-enq.is-new{border-left:4px solid var(--fire,#ef5b18);background:#fffaf7}
+.hfo-enq-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hfo-enq-top b{font-size:16px}
+.hfo-enq-when{margin-left:auto;color:#7a8796;font-size:13px;white-space:nowrap}
+.hfo-enq-job{margin:8px 0 0;font-weight:600;color:#123f73}
+.hfo-enq-addr{margin:4px 0 0;color:#55657a;font-size:14px}
+.hfo-enq-note{margin:8px 0 0;color:#55657a;font-size:14px;
+  padding:9px 11px;background:#f6f8fc;border-radius:7px;white-space:pre-wrap}
+.hfo-enq-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:13px}
+
+.hfo-pill{display:inline-block;padding:3px 9px;border-radius:999px;
+  font-size:12px;font-weight:700;text-transform:capitalize}
+.hfo-pill.s-new{background:#ffe8dc;color:#a3400f}
+.hfo-pill.s-contacted{background:#e2ecf8;color:#123f73}
+.hfo-pill.s-booked{background:#dcf3e2;color:#1d6b32}
+.hfo-pill.s-closed{background:#eceff4;color:#5b6b7f}
+
+@media(max-width:560px){
+  .hfo-enq-when{margin-left:0;width:100%}
+  .hfo-enq-acts .btn{flex:1 1 auto}
+}

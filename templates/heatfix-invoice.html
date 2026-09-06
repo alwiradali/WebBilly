@@ -276,10 +276,13 @@ table.p-t td:last-child{padding-right:8px;font-weight:700}
 <script>
 var $ = function(id){ return document.getElementById(id); };
 var LOGO_PATH = '../assets/heatfix/logo-invoice.jpg';
-var VIEW_BASE = (location.pathname.indexOf('/templates/') === 0)
-  ? location.origin + '/templates/heatfix-invoice-view.html'
-  : location.origin + '/i';
-
+/* This tool used to send the customer a link with the whole invoice packed
+   into the URL as base64. The viewer stopped reading that format when it moved
+   to the back office, so every link went out dead -- and it should not come
+   back: it put the customer's name, address and the amount into a URL that
+   gets logged and forwarded, and anyone could edit the base64 to change the
+   total. A real, unguessable /i/<id> link comes from the back office at
+   /office, which stores the invoice first. Here we send the PDF itself. */
 function toast(t){
   var el = $('toast'); el.textContent = t; el.classList.add('on');
   clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 2600);
@@ -480,9 +483,8 @@ $('bShare').onclick = function(){
   /* everything below is synchronous — iOS only permits share() inside the tap */
   var blob = makePdf(inv);
   var f = new File([blob], fileName(inv), { type:'application/pdf' });
-  var link = VIEW_BASE + '#' + HF.encode(inv);
   if (navigator.canShare && navigator.canShare({ files:[f] })){
-    navigator.share({ files:[f], title:'Invoice ' + inv.number, text:HF.message(inv, link) })
+    navigator.share({ files:[f], title:'Invoice ' + inv.number, text:HF.message(inv) })
       .then(function(){ saveHistory(inv); })
       .catch(function(){});
   } else {
@@ -494,21 +496,26 @@ $('bShare').onclick = function(){
 
 $('bWa').onclick = function(){
   var inv = gather(); if (!needClient(inv)) return;
-  var link = VIEW_BASE + '#' + HF.encode(inv);
   var num = HF.waNumber(inv.cphone);
-  var url = 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(HF.message(inv, link));
+  var url = 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(HF.message(inv));
+  /* wa.me can carry text but never a file, so the PDF is saved for him to
+     attach. Without this the customer gets a message about an invoice with no
+     invoice on it. */
+  download(makePdf(inv), fileName(inv));
   saveHistory(inv);
   window.open(url, '_blank');
-  toast(num ? 'Opening WhatsApp' : 'No number, pick the contact in WhatsApp');
+  toast('PDF saved — attach it in WhatsApp');
 };
 
 $('bMail').onclick = function(){
   var inv = gather(); if (!needClient(inv)) return;
-  var link = VIEW_BASE + '#' + HF.encode(inv);
+  /* mailto cannot attach a file, same as wa.me. */
+  download(makePdf(inv), fileName(inv));
   saveHistory(inv);
+  toast('PDF saved — attach it to the email');
   location.href = 'mailto:' + encodeURIComponent(inv.cemail || '') +
     '?subject=' + encodeURIComponent('Invoice ' + inv.number + ' — HeatFix Mcr Limited') +
-    '&body=' + encodeURIComponent(HF.message(inv, link));
+    '&body=' + encodeURIComponent(HF.message(inv));
 };
 
 $('bNew').onclick = function(){
