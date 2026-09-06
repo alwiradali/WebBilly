@@ -122,26 +122,113 @@ const MM_SHOP_URL = "https://payhip.com/molecularmiraclesChemistryResourcesScott
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/mm-shop") return handleMMShop(request);
+    if (url.pathname === "/api/mm-shop") return handleMMShop(request, env);
     return env.ASSETS.fetch(request);
   },
 };
 
-async function handleMMShop(request) {
+/* Payhip's official product API. Preferred over reading the storefront HTML,
+   which depends on their markup staying put. Only used when a key is present
+   as a Cloudflare secret; the scrape below stays as the fallback, so a missing
+   key, a wrong key or an unfamiliar response can only ever cost us the upgrade,
+   never the shop. The key is read from env and never reaches the browser. */
+const MM_API_URL = "https://payhip.com/api/v1/product";
+
+async function fetchViaApi(env) {
+  const key = env && env.PAYHIP_API_KEY;
+  if (!key) return null;
+
+  /* Payhip answers every unauthenticated request with the same generic error,
+     so which header it wants cannot be established from the outside. Rather
+     than guess once and be silently wrong, try each shape and keep the one
+     that answers. This runs at most once every five minutes, on a cache miss. */
+  const shapes = [
+    { headers: { "payhip-api-key": key } },
+    { headers: { "Authorization": "Bearer " + key } },
+    { headers: { "X-Api-Key": key } },
+    { url: MM_API_URL + "?api_key=" + encodeURIComponent(key) },
+  ];
+
+  for (const shape of shapes) {
+    try {
+      const r = await fetch(shape.url || MM_API_URL, {
+        headers: Object.assign({ "Accept": "application/json" }, shape.headers || {}),
+      });
+      if (!r.ok) continue;
+      const body = await r.json();
+      if (!body || body.success === false) continue;
+      const list = normaliseApi(body);
+      if (list.length) return list;
+    } catch (e) { /* next shape */ }
+  }
+  return null;
+}
+
+/* The response shape is not documented anywhere we can reach, so accept the
+   field names it might plausibly use rather than insisting on one. Anything
+   that does not yield a usable product key is dropped, because without the key
+   the buy and basket buttons have nothing to bind to. */
+function normaliseApi(body) {
+  let raw = [];
+  if (Array.isArray(body)) raw = body;
+  else if (body && Array.isArray(body.data)) raw = body.data;
+  else if (body && Array.isArray(body.products)) raw = body.products;
+  else if (body && body.data && Array.isArray(body.data.products)) raw = body.data.products;
+
+  const pick = (o, names) => {
+    for (const n of names) if (o && o[n] !== undefined && o[n] !== null && o[n] !== "") return o[n];
+    return "";
+  };
+
+  const out = [];
+  for (const p of raw) {
+    const link = String(pick(p, ["link", "url", "permalink", "product_url"]));
+    let keyPart = (link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
+    if (!keyPart) keyPart = String(pick(p, ["key", "product_key", "permalink_key", "slug"]));
+    if (!keyPart) continue;
+
+    let price = pick(p, ["price_formatted", "formatted_price", "display_price", "price"]);
+    if (typeof price === "number") {
+      /* minor units when it is a whole number too large to be pounds */
+      const pounds = price > 1000 ? price / 100 : price;
+      price = "£" + pounds.toFixed(2);
+    }
+
+    out.push({
+      name: String(pick(p, ["name", "title", "product_name"])).trim(),
+      link: link || ("https://payhip.com/b/" + keyPart),
+      price: String(price || "").trim(),
+      img: String(pick(p, ["image", "image_url", "thumbnail", "cover", "cover_image"])),
+    });
+  }
+  return out.filter((p) => p.name).slice(0, 40);
+}
+
+async function handleMMShop(request, env) {
   const cache = caches.default;
   const cacheKey = new Request("https://mm-shop-cache/api/mm-shop");
   const hit = await cache.match(cacheKey);
   if (hit) return hit;
 
   let products = [];
-  try {
-    const r = await fetch(MM_SHOP_URL, {
-      headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
-    });
-    if (r.ok) products = parsePayhipStore(await r.text());
-  } catch (e) { /* empty list below */ }
+  let source = "storefront";
 
-  const res = new Response(JSON.stringify({ store: MM_SHOP_URL, products }), {
+  const viaApi = await fetchViaApi(env);
+  if (viaApi && viaApi.length) {
+    products = viaApi;
+    source = "api";
+  } else {
+    try {
+      const r = await fetch(MM_SHOP_URL, {
+        headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
+      });
+      if (r.ok) products = parsePayhipStore(await r.text());
+    } catch (e) { /* empty list below */ }
+  }
+
+  /* "source" says which path answered — useful for checking the key landed,
+     and it reveals nothing secret. */
+  const res = new Response(JSON.stringify({ store: MM_SHOP_URL, source, products }), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=300",
