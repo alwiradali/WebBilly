@@ -229,7 +229,9 @@ const HEATFIX_PAGES = {
   "/faqs": "/templates/heatfix-faqs.html",
   "/blog": "/templates/heatfix-blog.html",
   "/safety-tips": "/templates/heatfix-safety-tips.html",
-  "/plumbing-gas-safety": "/templates/heatfix-plumbing-gas-safety.html",
+  "/boilers-and-radiators": "/templates/heatfix-boilers-radiators.html",
+  "/plumbing": "/templates/heatfix-plumbing.html",
+  "/gas-safety-certificate": "/templates/heatfix-gas-safety-certificate.html",
   "/manufacturers-warranty": "/templates/heatfix-manufacturers-warranty.html",
   "/privacy": "/templates/heatfix-privacy.html",
   "/terms": "/templates/heatfix-terms.html",
@@ -238,8 +240,15 @@ const HEATFIX_PAGES = {
   "/office": "/templates/heatfix-office.html",
 };
 /* Everything except the two back-office tools should be indexable. */
-const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips", "/plumbing-gas-safety",
+const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips",
+                        "/boilers-and-radiators", "/plumbing", "/gas-safety-certificate",
                         "/manufacturers-warranty", "/privacy", "/terms"];
+/* Old URLs that must not simply 404. /plumbing-gas-safety was one page doing
+   two jobs, and every service card on the home page pointed at it — three
+   different services, one destination. It is split into /plumbing and
+   /gas-safety-certificate; anything already linking to the old address lands
+   on the plumbing half. */
+const HEATFIX_GONE = { "/plumbing-gas-safety": "/plumbing" };
 /* Blog articles live at /blog/<slug>. */
 const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
 /* The same slugs again, written out, for the sitemap on his own domain. A
@@ -337,6 +346,13 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
   if (p === "/sitemap.xml") return clientSitemap(url, PAGES, PUBLIC);
   if (p.startsWith("/assets/") || p === "/favicon.ico") {
     return env.ASSETS.fetch(request);
+  }
+
+  if (PAGES === HEATFIX_PAGES && HEATFIX_GONE[p]) {
+    return new Response(null, {
+      status: 301,
+      headers: { location: HEATFIX_GONE[p], "cache-control": "public, max-age=3600" },
+    });
   }
 
   let target = PAGES[p], publicPage = PUBLIC.indexOf(p) !== -1;

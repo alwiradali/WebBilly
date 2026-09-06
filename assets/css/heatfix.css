@@ -801,6 +801,10 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .hfduo img.keep-right{object-position:88% center}
 .hfduo h2{font-family:var(--dis);font-weight:900;color:var(--hf-navy);text-transform:uppercase;
   font-size:clamp(1.6rem,3.4vw,2.4rem);letter-spacing:-.015em;margin:22px 0 14px}
+/* A paragraph before the list, so a service page explains the job rather than
+   only bullet-pointing it. */
+.hfduo p{color:#4a5a70;font-size:clamp(1rem,1.25vw,1.08rem);line-height:1.62;
+  margin:0 0 20px;max-width:56ch}
 .hfduo ul{list-style:none;margin:0;padding:0}
 .hfduo li{font-family:var(--dis);font-weight:600;color:#5b6b7f;font-size:clamp(1rem,1.5vw,1.14rem);
   padding:13px 0;border-bottom:1px solid #e6ebf3}
