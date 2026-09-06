@@ -89,6 +89,9 @@
       <h2>Ready to <span class="g">buy today</span></h2>
       <p>Straight from the shop — whatever Lynsey has live right now, exactly as she named it.</p>
     </div>
+    <div class="rv in" style="text-align:center;margin:-6px 0 26px">
+      <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
+    </div>
     <div class="grid g3" id="mm-shop-grid"></div>
   </div>
 </section>
@@ -169,33 +172,49 @@
     if (!d.products || !d.products.length) return;
     var grid = document.getElementById('mm-shop-grid');
     d.products.slice(0, 9).forEach(function (p, i) {
-      var a = document.createElement('a');
-      a.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
-      a.href = p.link; a.rel = 'noopener';
-      /* Payhip's embed turns this into an overlay checkout that opens ON
-         this page — the customer buys without ever leaving the site. The
-         href stays as the real product page, so if their script is blocked
-         or slow the card still works as an ordinary link. */
+      var wrap = document.createElement('div');
+      wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
-      if (key) {
-        a.classList.add('payhip-buy-button');
-        a.setAttribute('data-product', key);
-        a.setAttribute('data-theme', 'none');
-      } else {
-        a.target = '_blank';
-      }
+
       if (p.img) {
         var im = document.createElement('img');
         im.src = p.img; im.alt = ''; im.loading = 'lazy';
         im.style.cssText = 'border-radius:12px;margin-bottom:14px;width:100%;aspect-ratio:16/10;object-fit:cover';
-        a.appendChild(im);
+        wrap.appendChild(im);
       }
-      var h = document.createElement('h3'); h.textContent = p.name; a.appendChild(h);
+      var h = document.createElement('h3'); h.textContent = p.name; wrap.appendChild(h);
       var pr = document.createElement('p');
-      pr.textContent = p.price ? p.price + ' · Buy on the shop →' : 'See it on the shop →';
-      pr.style.fontWeight = '600'; pr.style.color = 'var(--teal)';
-      a.appendChild(pr);
-      grid.appendChild(a);
+      pr.textContent = p.price || '';
+      pr.style.cssText = 'font-weight:600;color:var(--teal);margin-bottom:12px';
+      wrap.appendChild(pr);
+
+      var row = document.createElement('div'); row.className = 'buyrow';
+      if (key) {
+        /* Payhip's own embed components, so the basket and the checkout are
+           theirs — we are not reimplementing either. Both open over this page. */
+        var buy = document.createElement('a');
+        buy.className = 'btn btn-p payhip-buy-button';
+        buy.href = p.link; buy.rel = 'noopener';
+        buy.setAttribute('data-product', key);
+        buy.setAttribute('data-theme', 'none');
+        buy.textContent = 'Buy now';
+        var add = document.createElement('a');
+        add.className = 'btn btn-g payhip-add-to-cart-button';
+        add.href = p.link; add.rel = 'noopener';
+        add.setAttribute('data-product', key);
+        add.setAttribute('data-theme', 'none');
+        add.textContent = 'Add to basket';
+        row.appendChild(buy); row.appendChild(add);
+      } else {
+        /* no readable key — fall back to the product's own page */
+        var only = document.createElement('a');
+        only.className = 'btn btn-p'; only.href = p.link;
+        only.target = '_blank'; only.rel = 'noopener';
+        only.textContent = 'View';
+        row.appendChild(only);
+      }
+      wrap.appendChild(row);
+      grid.appendChild(wrap);
     });
     document.getElementById('mm-shop-live').hidden = false;
     /* loaded AFTER the cards exist, because payhip.js binds the overlay to

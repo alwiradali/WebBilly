@@ -23,6 +23,8 @@
   color:#0B7F72;background:var(--tint2);border-radius:999px;padding:5px 12px;margin:10px 0 2px}
 .lvl .btn{width:100%;justify-content:center;margin-top:8px}
 .lvl .btn + .btn{margin-top:9px}
+.buyrow{display:grid;gap:8px}
+.buyrow .btn{width:100%;justify-content:center}
 </style>
 </head>
 <body>
@@ -124,6 +126,9 @@
       <h2>Reserve your <span class="g">masterclass</span></h2>
       <p>Every masterclass Lynsey currently has open, straight from the shop. Checkout opens right here — you never leave the site.</p>
     </div>
+    <div class="rv in" style="text-align:center;margin:-6px 0 26px">
+      <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
+    </div>
     <div class="grid g3" id="mc-grid"></div>
     <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Card or PayPal, handled securely. Your place and any materials are sent to you automatically.</p>
   </div>
@@ -198,29 +203,49 @@
     if (!items.length) return;
     var grid = document.getElementById('mc-grid');
     items.slice(0, 9).forEach(function (p, i) {
-      var a = document.createElement('a');
-      a.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
-      a.href = p.link; a.rel = 'noopener';
+      var wrap = document.createElement('div');
+      wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
-      if (key) {
-        a.classList.add('payhip-buy-button');
-        a.setAttribute('data-product', key);
-        a.setAttribute('data-theme', 'none');
-      } else {
-        a.target = '_blank';   /* no key to bind: fall back to a plain link */
-      }
+
       if (p.img) {
         var im = document.createElement('img');
         im.src = p.img; im.alt = ''; im.loading = 'lazy';
         im.style.cssText = 'border-radius:12px;margin-bottom:14px;width:100%;aspect-ratio:16/10;object-fit:cover';
-        a.appendChild(im);
+        wrap.appendChild(im);
       }
-      var h = document.createElement('h3'); h.textContent = p.name; a.appendChild(h);
+      var h = document.createElement('h3'); h.textContent = p.name; wrap.appendChild(h);
       var pr = document.createElement('p');
-      pr.textContent = p.price ? p.price + ' · Book now →' : 'Book now →';
-      pr.style.fontWeight = '600'; pr.style.color = 'var(--teal)';
-      a.appendChild(pr);
-      grid.appendChild(a);
+      pr.textContent = p.price || '';
+      pr.style.cssText = 'font-weight:600;color:var(--teal);margin-bottom:12px';
+      wrap.appendChild(pr);
+
+      var row = document.createElement('div'); row.className = 'buyrow';
+      if (key) {
+        /* Payhip's own embed components, so the basket and the checkout are
+           theirs — we are not reimplementing either. Both open over this page. */
+        var buy = document.createElement('a');
+        buy.className = 'btn btn-p payhip-buy-button';
+        buy.href = p.link; buy.rel = 'noopener';
+        buy.setAttribute('data-product', key);
+        buy.setAttribute('data-theme', 'none');
+        buy.textContent = 'Buy now';
+        var add = document.createElement('a');
+        add.className = 'btn btn-g payhip-add-to-cart-button';
+        add.href = p.link; add.rel = 'noopener';
+        add.setAttribute('data-product', key);
+        add.setAttribute('data-theme', 'none');
+        add.textContent = 'Add to basket';
+        row.appendChild(buy); row.appendChild(add);
+      } else {
+        /* no readable key — fall back to the product's own page */
+        var only = document.createElement('a');
+        only.className = 'btn btn-p'; only.href = p.link;
+        only.target = '_blank'; only.rel = 'noopener';
+        only.textContent = 'View';
+        row.appendChild(only);
+      }
+      wrap.appendChild(row);
+      grid.appendChild(wrap);
     });
     document.getElementById('book').hidden = false;
     /* after the cards exist — payhip.js binds to what it finds on init */
