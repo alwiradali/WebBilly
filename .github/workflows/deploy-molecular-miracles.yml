@@ -1,0 +1,110 @@
+# # Molecular Miracles → Cloudflare Pages
+#
+# Builds Lynsey's site from templates/mm and deploys it, so a push is the only
+# step. Before this, every change waited on someone remembering to build a zip
+# and upload it by hand — which is exactly how the daytime page sat finished
+# but unpublished.
+#
+# Deploys through the Cloudflare API rather than connecting the Pages project
+# to this repository. A Direct Upload project (which hers is) cannot be
+# converted to a Git-connected one; Cloudflare makes you create a new project
+# and move the custom domain across. This keeps the existing project, its
+# history and its domain exactly where they are.
+#
+# Needs two repository secrets, added under
+# Settings → Secrets and variables → Actions:
+#
+#   CLOUDFLARE_API_TOKEN   — from the Cloudflare account that owns the Pages
+#                            project, scoped to Account → Cloudflare Pages → Edit
+#   CLOUDFLARE_ACCOUNT_ID  — the account ID shown on that account's dashboard
+#
+# and one repository variable, MM_PAGES_PROJECT, holding the Pages project
+# name. Without them the job skips rather than fails, so a fork or a
+# credential-less checkout does not show a red tick for something it was never
+# meant to do.
+
+name: Deploy Molecular Miracles
+
+on:
+  push:
+    branches: [main]
+    # Only what actually changes her site. Everything else in this repository
+    # is other clients, and rebuilding hers because Rod's page changed is
+    # noise that trains people to ignore the deploy history.
+    paths:
+      - 'templates/mm/**'
+      - 'assets/mm/**'
+      - 'assets/mm-brand/**'
+      - 'scripts/build-mm.py'
+      - '.github/workflows/deploy-molecular-miracles.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-molecular-miracles
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build the site
+        run: python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk
+
+      - name: Check the build looks right
+        # A deploy that succeeds having published an empty or half-built
+        # directory is worse than one that fails, because nobody looks.
+        run: |
+          set -e
+          test -f dist/molecular-miracles/index.html
+          test -f dist/molecular-miracles/_worker.js
+          test -f dist/molecular-miracles/sitemap.xml
+          pages=$(find dist/molecular-miracles -name '*.html' | wc -l)
+          echo "built $pages pages"
+          test "$pages" -ge 20
+          # the shop must never ship pointing customers away from the site
+          if grep -rq 'payhip.com/molecularmiracles' dist/molecular-miracles/*.html; then
+            echo "a page still links out to the Payhip storefront"; exit 1
+          fi
+
+      - name: Are the credentials present?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] \
+          && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ] \
+          && [ -n "${{ vars.MM_PAGES_PROJECT }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials not set — built and checked, but not deployed."
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        if: steps.creds.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist/molecular-miracles --project-name=${{ vars.MM_PAGES_PROJECT }} --branch=main
+
+      - name: Confirm the live site answers
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          # Pages needs a moment to promote the deployment before the custom
+          # domain serves it, so give it a few tries rather than one.
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://molecularmiracleschemistrytuition.co.uk/ || true)
+            src=$(curl -s https://molecularmiracleschemistrytuition.co.uk/api/mm-shop | head -c 200 || true)
+            echo "attempt $i: homepage $code"
+            if [ "$code" = "200" ]; then
+              echo "shop feed says: $src"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::warning::Homepage did not return 200 after the deploy — worth a look."
