@@ -60,7 +60,7 @@
       <h1 style="font-size:clamp(2rem,4.6vw,3.2rem);margin:18px 0 16px">Chemistry <span class="g">Exam Edge</span></h1>
       <p style="color:var(--mut);font-size:1.06rem">Eight Sunday masterclasses to build confidence, skills and exam marks — one for National 5, Higher and Advanced Higher on the last Sunday of every month. Book a single masterclass when you need it, or secure all eight with the Masterclass Pass.</p>
       <div class="hero-cta">
-        <a class="btn btn-p" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Book on the Shop →</a>
+        <a class="btn btn-p" href="#book">See What's Bookable →</a>
       </div>
     </div>
   </div>
@@ -80,7 +80,7 @@
         <span class="mc-time">Sundays · 10:00–11:00</span>
         <div class="mc-price"><b>£18</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £119</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Book National 5 →</a>
+        <a class="btn btn-p" href="#book">Book National 5 →</a>
       </div>
       <div class="lvl rv d1">
         <div class="sqa">SQA Higher</div>
@@ -88,7 +88,7 @@
         <span class="mc-time">Sundays · 12:00–1:00</span>
         <div class="mc-price"><b>£22</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £145</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Book Higher →</a>
+        <a class="btn btn-p" href="#book">Book Higher →</a>
       </div>
       <div class="lvl rv d2">
         <div class="sqa">SQA Advanced Higher</div>
@@ -96,7 +96,7 @@
         <span class="mc-time">Sundays · 2:00–3:00</span>
         <div class="mc-price"><b>£26</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £169</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Book Advanced Higher →</a>
+        <a class="btn btn-p" href="#book">Book Advanced Higher →</a>
       </div>
     </div>
   </div>
@@ -117,11 +117,23 @@
   </div>
 </section>
 
+<section class="alt" id="book" hidden>
+  <div class="wrap">
+    <div class="sec-head rv in">
+      <span class="pill">Bookable now</span>
+      <h2>Reserve your <span class="g">masterclass</span></h2>
+      <p>Every masterclass Lynsey currently has open, straight from the shop. Checkout opens right here — you never leave the site.</p>
+    </div>
+    <div class="grid g3" id="mc-grid"></div>
+    <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Card or PayPal, handled securely. Your place and any materials are sent to you automatically.</p>
+  </div>
+</section>
+
 <section>
   <div class="wrap">
     <p class="rv" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Booking and payment are handled securely through the Molecular Miracles shop — card or PayPal, with everything delivered automatically.</p>
     <div class="rv" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:14px">
-      <a class="btn btn-p" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Open the Shop →</a>
+      <a class="btn btn-p" href="#book">Book a Masterclass →</a>
       <a class="btn btn-wa" href="https://wa.me/447708907247?text=Hi%20Lynsey%2C%20I'd%20like%20to%20ask%20about%20the%20Chemistry%20Exam%20Edge%20masterclasses." target="_blank" rel="noopener">Ask Lynsey First</a>
     </div>
   </div>
@@ -161,6 +173,65 @@
 </footer>
 <script src="molecules.js" defer></script>
 <script src="content.js" defer></script>
+<script>
+/* The masterclasses Lynsey has open right now, read from her shop through this
+   site's own /api/mm-shop. Payhip's embed then turns each card into an overlay
+   checkout that opens ON this page — the customer browses and buys without
+   ever being sent to payhip.com. Payhip stays in the background doing what it
+   is good at: taking the payment and delivering the materials.
+
+   If the feed is empty or unreachable the section stays hidden and the page
+   reads exactly as it shipped. */
+(function () {
+  /* Her shop holds masterclasses and resources together, and only some names
+     carry the word "masterclass" — but every masterclass is named with the
+     date it runs. So a date in the name is what marks one, with the explicit
+     word accepted too. */
+  var DATED = /\b\d{1,2}\s*(st|nd|rd|th)?\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+  var isMasterclass = function (n) { return DATED.test(n) || /masterclass/i.test(n); };
+
+  fetch('/api/mm-shop').then(function (r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function (d) {
+    var items = (d.products || []).filter(function (p) { return isMasterclass(p.name || ''); });
+    if (!items.length) return;
+    var grid = document.getElementById('mc-grid');
+    items.slice(0, 9).forEach(function (p, i) {
+      var a = document.createElement('a');
+      a.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
+      a.href = p.link; a.rel = 'noopener';
+      var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
+      if (key) {
+        a.classList.add('payhip-buy-button');
+        a.setAttribute('data-product', key);
+        a.setAttribute('data-theme', 'none');
+      } else {
+        a.target = '_blank';   /* no key to bind: fall back to a plain link */
+      }
+      if (p.img) {
+        var im = document.createElement('img');
+        im.src = p.img; im.alt = ''; im.loading = 'lazy';
+        im.style.cssText = 'border-radius:12px;margin-bottom:14px;width:100%;aspect-ratio:16/10;object-fit:cover';
+        a.appendChild(im);
+      }
+      var h = document.createElement('h3'); h.textContent = p.name; a.appendChild(h);
+      var pr = document.createElement('p');
+      pr.textContent = p.price ? p.price + ' · Book now →' : 'Book now →';
+      pr.style.fontWeight = '600'; pr.style.color = 'var(--teal)';
+      a.appendChild(pr);
+      grid.appendChild(a);
+    });
+    document.getElementById('book').hidden = false;
+    /* after the cards exist — payhip.js binds to what it finds on init */
+    var ps = document.createElement('script');
+    ps.src = 'https://payhip.com/payhip.js';
+    document.body.appendChild(ps);
+  }).catch(function (e) {
+    console.info('[masterclasses] live list unavailable —', e && e.message ? e.message : e);
+  });
+})();
+</script>
 <script>
   document.getElementById('bg').onclick=function(){this.classList.toggle('on');document.getElementById('mm').classList.toggle('on')};
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
