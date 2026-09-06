@@ -87,12 +87,13 @@
     <div class="sec-head rv in">
       <span class="pill">In the shop right now</span>
       <h2>Ready to <span class="g">buy today</span></h2>
-      <p>Straight from the shop — whatever Lynsey has live right now, exactly as she named it.</p>
+      <p>Straight from the shop &mdash; whatever Lynsey has live right now, exactly as she named it. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
     </div>
     <div class="rv in" style="text-align:center;margin:-6px 0 26px">
       <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
     </div>
     <div class="grid g3" id="mm-shop-grid"></div>
+    <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your resources and all the relevant information are then sent to you by email.</p>
   </div>
 </section>
 
@@ -165,6 +166,21 @@
    change at all. If the shop is empty or unreachable the section simply
    stays hidden and the page reads exactly as shipped. */
 (function () {
+
+  /* Payhip calls this by name when a purchase completes, so the customer is
+     thanked on Lynsey's site rather than being left looking at a closed
+     overlay wondering whether it worked. */
+  window.mmPurchaseDone = function () {
+    var n = document.createElement('div');
+    n.setAttribute('role', 'status');
+    n.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9999;' +
+      'background:#0B7F72;color:#fff;padding:16px 24px;border-radius:18px;font-weight:500;line-height:1.45;' +
+      'box-shadow:0 18px 44px -18px rgba(0,0,0,.4);max-width:92vw;text-align:center';
+    n.innerHTML = '<b>Thank you for your purchase!</b><br>Everything you need is on its way to your email.';
+    document.body.appendChild(n);
+    setTimeout(function () { n.style.transition = 'opacity .6s'; n.style.opacity = '0'; }, 9000);
+    setTimeout(function () { n.remove(); }, 9800);
+  };
   /* If the feed cannot answer, the section must still appear. It is the target
      of every buy button on the page, and a button pointing at a hidden element
      silently does nothing — which is worse than sending someone to the shop. */
@@ -213,21 +229,41 @@
 
       var row = document.createElement('div'); row.className = 'buyrow';
       if (key) {
-        /* Payhip's own embed components, so the basket and the checkout are
-           theirs — we are not reimplementing either. Both open over this page. */
-        var buy = document.createElement('a');
-        buy.className = 'btn btn-p payhip-buy-button';
-        buy.href = p.link; buy.rel = 'noopener';
-        buy.setAttribute('data-product', key);
-        buy.setAttribute('data-theme', 'none');
-        buy.textContent = 'Buy now';
+        /* One action, and it is the one that keeps them here: add to basket.
+           Payhip's basket is an iframe drawer over this page, so browsing,
+           adding, changing quantities and reviewing the order all happen on
+           molecularmiracleschemistrytuition.co.uk.
+
+           There is deliberately no "Buy now" button. Payhip's own embed script
+           (payhip.js?v=24u69015) ends Checkout.open() with an unconditional
+           redirectPage(buildCheckoutUrl(..., "fallback_direct")) — it builds an
+           overlay URL and then navigates anyway. createCheckoutIframe() is
+           still in their file but nothing calls it. So a Buy-now button cannot
+           be made to stay on this site by any means available to us; it only
+           ever threw the customer out to payhip.com mid-journey. Sending them
+           there once, at the card-details step, from a basket they have already
+           reviewed here, is the closest thing to the intended experience. */
         var add = document.createElement('a');
-        add.className = 'btn btn-g payhip-add-to-cart-button';
+        add.className = 'btn btn-p payhip-add-to-cart-button';
         add.href = p.link; add.rel = 'noopener';
         add.setAttribute('data-product', key);
         add.setAttribute('data-theme', 'none');
         add.textContent = 'Add to basket';
-        row.appendChild(buy); row.appendChild(add);
+        /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
+           walks the page once; these cards arrive later from a fetch, so that
+           scan is a race, and when it loses the anchor keeps its href and the
+           click just navigates. Cart.addItem is public, so calling it directly
+           is deterministic. The href stays as the fallback for anyone whose
+           browser never loads their script — a working link beats a dead one. */
+        add.addEventListener('click', function (ev) {
+          if (!window.Payhip || !window.Payhip.Cart) return;  /* let the link work */
+          ev.preventDefault();
+          window.Payhip.Cart.addItem({ product: key });
+          if (window.Payhip.Cart.displayCartAndLauncher) {
+            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
+          }
+        });
+        row.appendChild(add);
       } else {
         /* no readable key — fall back to the product's own page */
         var only = document.createElement('a');
@@ -240,11 +276,46 @@
       grid.appendChild(wrap);
     });
     document.getElementById('mm-shop-live').hidden = false;
-    /* loaded AFTER the cards exist, because payhip.js binds the overlay to
-       .payhip-buy-button elements it finds when it initialises */
-    var ps = document.createElement('script');
-    ps.src = 'https://payhip.com/payhip.js';
-    document.body.appendChild(ps);
+    /* Payhip's embed does not bind anything by itself here. Reading their
+       script: Payhip.Setup() is what calls Button.initiate(), it refuses to
+       run twice (window.PayhipSetupFinished), and the basket only exists if
+       enableCart was set BEFORE Setup ran — `enableCart === true && Cart.initiate()`.
+       Their loader also appends the real script asynchronously, so its own
+       onload fires before Payhip exists. Hence: set the config, load it, poll
+       for the object, then Setup once. Without this the buttons keep their
+       href and the click just navigates to Payhip, which is what was
+       happening. */
+    window.PayhipConfig = window.PayhipConfig || { enableCart: true };
+    if (!window.__payhipLoading) {
+      window.__payhipLoading = true;
+      var ps = document.createElement('script');
+      ps.src = 'https://payhip.com/payhip.js';
+      document.body.appendChild(ps);
+    }
+    (function waitForPayhip(tries) {
+      tries = tries || 0;
+      if (window.Payhip && typeof window.Payhip.Setup === 'function') {
+        if (!window.PayhipSetupFinished) window.Payhip.Setup();
+        bindBasketButtons();
+        return;
+      }
+      if (tries < 120) setTimeout(function () { waitForPayhip(tries + 1); }, 100);
+    })();
+
+    /* Setup() binds .payhip-open-cart-button on its single DOM pass, but only
+       reveals the drawer if the cart iframe has already reported in. Bind it
+       ourselves too so the button works the moment someone presses it. */
+    function bindBasketButtons() {
+      var list = document.getElementsByClassName('payhip-open-cart-button');
+      for (var i = 0; i < list.length; i++) {
+        list[i].addEventListener('click', function (ev) {
+          ev.preventDefault();
+          if (window.Payhip && window.Payhip.Cart && window.Payhip.Cart.displayCartAndLauncher) {
+            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
+          }
+        });
+      }
+    }
   }).catch(function (e) {
     console.info('[shop] live products unavailable —', e && e.message ? e.message : e);
     showFallback(document.getElementById('mm-shop-grid'), 'mm-shop-live');

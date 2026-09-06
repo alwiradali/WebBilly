@@ -399,6 +399,51 @@ def fetch_shop_products():
     return out[:40]
 
 
+def localise_shop_images(products, out_dir):
+    """Pull each cover image down and serve it from her own domain.
+
+    The images come back from payhip.com/cdn-cgi/image/... which fetches fine
+    from a server but does not reliably render in a browser on her site — the
+    cards were showing broken-image icons. Rather than keep guessing at another
+    party's CDN, the pictures are downloaded at build time and shipped with the
+    site: no third-party request on page load, nothing to block, faster, and
+    one less thing that can quietly stop working.
+
+    An image that cannot be fetched keeps its original URL, so a download
+    failure costs the local copy and not the picture.
+    """
+    import urllib.request, hashlib, os as _os
+    img_dir = _os.path.join(out_dir, 'assets', 'shop')
+    _os.makedirs(img_dir, exist_ok=True)
+    got = 0
+    for prod in products:
+        url = prod.get('img') or ''
+        if not url.startswith('http'):
+            continue
+        ext = '.jpg'
+        for cand in ('.jpeg', '.jpg', '.png', '.webp'):
+            if cand in url.lower():
+                ext = '.jpg' if cand == '.jpeg' else cand
+                break
+        name = hashlib.sha1(url.encode()).hexdigest()[:16] + ext
+        dest = _os.path.join(img_dir, name)
+        if not _os.path.exists(dest):
+            try:
+                req = urllib.request.Request(url, headers={
+                    'User-Agent': 'Mozilla/5.0 (site build for the store owner)'})
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    data = r.read()
+                if len(data) < 500:
+                    continue
+                with open(dest, 'wb') as fh:
+                    fh.write(data)
+            except Exception:
+                continue
+        prod['img'] = '/assets/shop/' + name
+        got += 1
+    return got
+
+
 def main():
     if len(sys.argv) != 2:
         sys.exit('usage: build-mm.py <domain>   e.g. build-mm.py molecularmiracles.co.uk')
@@ -436,9 +481,10 @@ def main():
     else:
         with open(os.path.join(os.path.dirname(__file__), 'mm-shop-snapshot.json'), 'w') as fh:
             _json.dump(snapshot, fh, indent=1)
+    local = localise_shop_images(snapshot, OUT)
     with open(os.path.join(OUT, 'shop.json'), 'w') as fh:
         _json.dump({'products': snapshot}, fh)
-    print(f'  shop snapshot: {len(snapshot)} products')
+    print(f'  shop snapshot: {len(snapshot)} products, {local} covers hosted locally')
 
     # copy every stylesheet and script, rather than naming them: a hardcoded
     # list silently dropped reviews.js when it was added, and the page failed
