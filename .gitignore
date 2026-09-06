@@ -9,3 +9,7 @@ skills-lock.json
 
 # Generated deployable client builds (see scripts/build-mm.py)
 dist/
+
+# wrangler's local scratch cache. Rewritten on every deploy, and it
+# stores the Cloudflare account name — a client's personal email address.
+.wrangler/
