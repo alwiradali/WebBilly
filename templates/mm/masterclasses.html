@@ -195,13 +195,37 @@
   var DATED = /\b\d{1,2}\s*(st|nd|rd|th)?\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
   var isMasterclass = function (n) { return DATED.test(n) || /masterclass/i.test(n); };
 
+  /* If the feed cannot answer, the section must still appear. It is the target
+     of every buy button on the page, and a button pointing at a hidden element
+     silently does nothing — which is worse than sending someone to the shop. */
+  function showFallback(grid, sectionId) {
+    var sec = document.getElementById(sectionId);
+    if (!sec) return;
+    grid.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'card rv in';
+    box.style.cssText = 'grid-column:1/-1;text-align:center';
+    var p = document.createElement('p');
+    p.textContent = 'The live list is not loading at the moment. Everything is still available in the shop.';
+    p.style.marginBottom = '14px';
+    var a = document.createElement('a');
+    a.className = 'btn btn-p';
+    a.href = 'https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu';
+    a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = 'Open the shop →';
+    box.appendChild(p); box.appendChild(a);
+    grid.appendChild(box);
+    sec.hidden = false;
+  }
+
+
   fetch('/api/mm-shop').then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }).then(function (d) {
-    var items = (d.products || []).filter(function (p) { return isMasterclass(p.name || ''); });
-    if (!items.length) return;
     var grid = document.getElementById('mc-grid');
+    var items = (d.products || []).filter(function (p) { return isMasterclass(p.name || ''); });
+    if (!items.length) { showFallback(grid, 'book'); return; }
     items.slice(0, 9).forEach(function (p, i) {
       var wrap = document.createElement('div');
       wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
@@ -254,6 +278,7 @@
     document.body.appendChild(ps);
   }).catch(function (e) {
     console.info('[masterclasses] live list unavailable —', e && e.message ? e.message : e);
+    showFallback(document.getElementById('mc-grid'), 'book');
   });
 })();
 </script>
