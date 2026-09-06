@@ -21,9 +21,10 @@ h1,h2,h3{font-family:var(--ser);font-weight:600;line-height:1.14;letter-spacing:
 ::selection{background:#BDF0E8;color:#06343B}
 
 /* nav */
+.nav .wrap{max-width:1460px}
 .nav{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .nav-in{display:flex;align-items:center;gap:14px;padding:10px 0}
-.nav-in .logo{height:46px;width:auto}
+.nav-in .logo{height:62px;width:auto}
 .nav .sp{flex:1}
 .nlinks{display:none;gap:24px;font-size:14.6px;font-weight:500;color:var(--body)}
 .nlinks a{position:relative;padding:4px 0}
@@ -187,7 +188,7 @@ footer a:hover{color:var(--teal)}
 /* ---------- mobile refinements ---------- */
 @media(max-width:999px){
   .nav-in{padding:8px 0;gap:10px}
-  .nav-in .logo{height:38px}
+  .nav-in .logo{height:48px}
   .nav-in .btn-p{padding:10px 15px;font-size:13.4px}
   .hero{padding:34px 0 46px}
   .hero h1{font-size:clamp(2.05rem,8.6vw,2.9rem);margin:13px 0 12px;letter-spacing:-.025em}
