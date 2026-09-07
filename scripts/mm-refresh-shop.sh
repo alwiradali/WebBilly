@@ -57,7 +57,10 @@ PY
 )
 echo; echo "$added"
 
-git add scripts/mm-shop-snapshot.json
+# The covers come down with the products, and both have to be committed or CI
+# ships product cards pointing at payhip.com images that do not load. Adding
+# only the snapshot left eleven covers untracked once already.
+git add scripts/mm-shop-snapshot.json assets/mm/shop
 git commit -q -m "Molecular Miracles: refresh the shop snapshot
 
 Run from scripts/mm-refresh-shop.sh. Payhip refuses datacentre networks, so

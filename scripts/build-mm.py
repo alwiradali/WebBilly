@@ -364,14 +364,40 @@ def fetch_shop_products():
     publishing an empty shop.
     """
     import urllib.request, re as _re, html as _html
-    req = urllib.request.Request(SHOP_URL, headers={
-        "User-Agent": "Mozilla/5.0 (site build for the store owner)"})
-    try:
+
+    def _get(url):
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (site build for the store owner)"})
         with urllib.request.urlopen(req, timeout=45) as r:
-            page = r.read().decode("utf-8", "replace")
+            return r.read().decode("utf-8", "replace")
+
+    # Her storefront paginates at 16 products a page, and for a long time this
+    # read only the first one. That silently published two thirds of her shop:
+    # every Advanced Higher masterclass and both series passes sit on page two,
+    # so the site advertised them at prices nobody could pay because the
+    # products "did not exist" as far as the build was concerned.
+    #
+    # Page one is the storefront root; the rest come from the collection view,
+    # whose ?page= parameter is an offset rather than a page number.
+    PER_PAGE = 16
+    pages = []
+    try:
+        pages.append(_get(SHOP_URL))
     except Exception as e:
         print(f"  ! could not reach the shop ({e}) — keeping the previous snapshot")
         return None
+    for offset in range(PER_PAGE, PER_PAGE * 12, PER_PAGE):
+        try:
+            nxt = _get(f"{SHOP_URL}/collection/all?&page={offset}")
+        except Exception:
+            break                      # a failed later page costs that page, not the build
+        if "card__heading" not in nxt:
+            break
+        pages.append(nxt)
+        # stop as soon as a page introduces no product links we have not seen
+        if not _re.search(r'href="https://payhip\.com/b/[A-Za-z0-9]+"', nxt):
+            break
+    page = "\n".join(pages)
 
     out, seen = [], set()
     pattern = _re.compile(
@@ -396,7 +422,7 @@ def fetch_shop_products():
             "price": pm.group(1).strip() if pm else "",
             "img": imgs[-1] if imgs else "",
         })
-    return out[:40]
+    return out[:120]
 
 
 def localise_shop_images(products, out_dir):
