@@ -154,6 +154,25 @@ has "embed.js" 'data-room' "$BASE/billy360/embed.js"
 has "robots" 'Disallow: /studio' "$BASE/robots.txt"
 lacks "robots" 'Disallow: /tour/' "$BASE/robots.txt"
 lacks "robots" 'Disallow: /billy360' "$BASE/robots.txt"
+echo "== deployment"
+# Is this host running the tree we are checking, or an older build? Twice on
+# 7 September billydigitals.com served an August deployment — whole directories
+# 404ing — while Workers Builds reported success, and nothing above would have
+# noticed. deploy-verify.mjs compares the live bytes against the working copy.
+if [[ ${#EXTRA[@]} -eq 0 ]]; then
+  # --files=off: the byte canaries are billydigitals.com's own directories, and
+  # this host serves only Megacity. The stamp is the check that applies here;
+  # every Megacity asset is already checked above.
+  if node "$(dirname "$0")/deploy-verify.mjs" --base="$BASE" --files=off > /tmp/mc_dv.$$ 2>&1; then
+    echo "ok   $(tail -1 /tmp/mc_dv.$$)"
+  else
+    echo "FAIL deploy-verify found an older build:"; sed 's/^/     /' /tmp/mc_dv.$$; fail=1
+  fi
+  rm -f /tmp/mc_dv.$$
+else
+  # --resolve/--host point curl somewhere deploy-verify cannot follow.
+  echo "skip deploy-verify (run it without --resolve/--host once DNS is live)"
+fi
 rm -f /tmp/mc_body.$$
 echo; if [[ $fail == 0 ]]; then echo "GO-LIVE CHECK: ALL PASS"; else echo "GO-LIVE CHECK: FAILURES"; fi
 exit $fail

@@ -23,11 +23,19 @@ static server and, for the office and API sections, `wrangler dev`; the scripts
 print the command to start whichever is missing. Reference: `docs/billy360.md`.
 
 ## Deploy workflow (branch → main, static site goes live on push)
-Work on branch `claude/3d-animation-billy-templates-g3ked5`, then:
+Stamp the build before committing, so the deployed site can say which tree it
+is running, then push and check that it actually went live:
 ```
+git add -A && node scripts/stamp.mjs && git add version.json
+git commit ...
 git push -u origin claude/3d-animation-billy-templates-g3ked5
 git checkout main -q && git merge --ff-only <branch> -q && git push origin main
 git checkout <branch> -q
+node scripts/deploy-verify.mjs          # after Cloudflare finishes the build
 ```
+`node scripts/stamp.mjs --check` fails if `version.json` is stale.
+`deploy-verify.mjs` compares the live bytes with this working copy and exits
+non-zero on an older build — billydigitals.com has twice served a month-old
+deployment while Workers Builds reported success, and nothing else catches it.
 Commit messages end with the required `Co-Authored-By:` and `Claude-Session:`
 trailers.

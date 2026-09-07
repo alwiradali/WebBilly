@@ -31,6 +31,24 @@ import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/cr
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    /* Which build is actually live. Twice on 7 September this host served an
+       August deployment — whole directories 404ing while the build reported
+       success — and nothing on the site could say so. version.json is written
+       by scripts/stamp.mjs and deployed with everything else, so it goes stale
+       exactly when the rest of the deployment does.
+       no-store matters: those stale 404s came back cf-cache-status: HIT, and a
+       cached stamp would name a build that is no longer being served.
+       Answered before any host branch, on every hostname: the client domains
+       deploy from this repository too and need the same check, and a build
+       hash tells a visitor nothing. */
+    if (url.pathname === "/version.json") {
+      const stamped = await env.ASSETS.fetch(new Request(new URL("/version.json", url.origin), request));
+      const headers = new Headers(stamped.headers);   // keep whatever _headers applied
+      headers.set("content-type", "application/json; charset=utf-8");
+      headers.set("cache-control", "no-store");
+      headers.delete("etag");                          // no-store and an etag disagree
+      return new Response(stamped.body, { status: stamped.status, headers });
+    }
     /* HeatFix's domain runs HeatFix's API and nothing else. /api/book,
        /api/quote, /api/send-review and the Megacity form endpoints all send
        mail without a session, so answering them here would put an open mailer
