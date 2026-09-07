@@ -405,16 +405,30 @@ def localise_shop_images(products, out_dir):
     The images come back from payhip.com/cdn-cgi/image/... which fetches fine
     from a server but does not reliably render in a browser on her site — the
     cards were showing broken-image icons. Rather than keep guessing at another
-    party's CDN, the pictures are downloaded at build time and shipped with the
-    site: no third-party request on page load, nothing to block, faster, and
-    one less thing that can quietly stop working.
+    party's CDN, the pictures are downloaded and shipped with the site: no
+    third-party request on page load, nothing to block, faster, and one less
+    thing that can quietly stop working.
 
-    An image that cannot be fetched keeps its original URL, so a download
-    failure costs the local copy and not the picture.
+    They are downloaded into the REPOSITORY (assets/mm/shop) and committed,
+    not into the build directory. The build directory is deleted and rebuilt
+    every run, so covers written there existed only on the machine that built
+    them — which meant every CI build found the folder empty, tried to
+    download them, was refused by Cloudflare like everything else from a
+    datacentre, and shipped the payhip.com URLs after all. The pictures on the
+    live site were broken for exactly that reason.
+
+    Committed covers are reused as-is, so a build that cannot reach Payhip
+    still ships her real images. An image that is neither committed nor
+    downloadable keeps its original URL, so a failure costs the local copy and
+    not the picture.
     """
-    import urllib.request, hashlib, os as _os
-    img_dir = _os.path.join(out_dir, 'assets', 'shop')
+    import urllib.request, hashlib, os as _os, shutil as _sh
+    # the tracked copy, which is what CI actually has
+    img_dir = _os.path.join(_os.path.dirname(__file__), '..', 'assets', 'mm', 'shop')
     _os.makedirs(img_dir, exist_ok=True)
+    # ...and the build output, already copied by the time this runs
+    out_img = _os.path.join(out_dir, 'assets', 'shop')
+    _os.makedirs(out_img, exist_ok=True)
     got = 0
     for prod in products:
         url = prod.get('img') or ''
@@ -439,6 +453,10 @@ def localise_shop_images(products, out_dir):
                     fh.write(data)
             except Exception:
                 continue
+        if not _os.path.exists(dest):
+            continue                      # neither committed nor fetchable
+        # copytree ran before this, so place it in the build output too
+        _sh.copy(dest, _os.path.join(out_img, name))
         prod['img'] = '/assets/shop/' + name
         got += 1
     return got
