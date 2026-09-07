@@ -1,0 +1,31 @@
+# TEMPORARY diagnostic — delete once it has answered its question.
+#
+# Payhip refuses her storefront from GitHub's runners (403), which is what
+# stops new products publishing themselves. Before asking her for an API key,
+# find out whether ANY approach gets through from a datacentre IP: different
+# headers, the sitemap, an embed endpoint. Run it, read it, delete it.
+name: TEMP payhip reachability
+on:
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe Payhip from a GitHub runner
+        run: |
+          S="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu"
+          probe () {
+            code=$(curl -s -o /tmp/b -w '%{http_code}' -m 25 "$@" || echo 000)
+            size=$(wc -c < /tmp/b)
+            hit=$(grep -c 'productName' /tmp/b || true)
+            chal=$(grep -c 'Just a moment' /tmp/b || true)
+            printf '  %-34s http=%s bytes=%s products=%s challenge=%s\n' "$LABEL" "$code" "$size" "$hit" "$chal"
+          }
+          LABEL="plain";            probe "$S"
+          LABEL="browser UA";       probe -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' "$S"
+          LABEL="browser UA+accept"; probe -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-GB,en;q=0.9' "$S"
+          LABEL="http2 + compressed"; probe --http2 --compressed -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' "$S"
+          LABEL="sitemap";          probe "https://payhip.com/sitemap.xml"
+          echo "--- API shape (no key) ---"
+          curl -s -m 20 -o /tmp/a -w '  api/v1/product no-key: http=%{http_code}\n' "https://payhip.com/api/v1/product"
+          head -c 200 /tmp/a; echo
