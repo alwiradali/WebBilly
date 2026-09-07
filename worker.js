@@ -42,6 +42,19 @@ export default {
         url.pathname.startsWith("/api/") && !isHfCrmPath(url.pathname)) {
       return json({ error: "Not found" }, 404);
     }
+    /* HeatFix has its own domain now, so nothing of it is served from
+       billydigitals.com any more — not the pages, not the back office, not the
+       artwork, not the API.
+       The FILES cannot simply be deleted: heatfixmcrlimited.co.uk is deployed
+       from this same repository and serves these exact templates and assets,
+       so removing them would take his live site down with them. They stay in
+       the repository and stop existing on this host instead. */
+    if (!isClientHost(url.hostname, env, "HEATFIX_HOST") && isHeatfixPath(url.pathname)) {
+      return env.ASSETS.fetch(new Request(new URL("/404.html", url.origin), request))
+        .then((r) => new Response(r.body, { status: 404, headers: r.headers }))
+        .catch(() => new Response("Not found", { status: 404 }));
+    }
+
     // Megacity Properties on its own domain (MEGACITY_HOST): the Worker owns
     // every path there — pages at root, old addresses redirected, branded 404.
     if (isMegacityHost(env, url.hostname)) {
@@ -263,6 +276,16 @@ const HEATFIX_ARTICLES = [
 ];
 /* A customer's invoice lives at /i/<uuid> — unguessable, and noindex. */
 const HEATFIX_INVOICE = /^\/i\/[0-9a-f-]{16,64}$/i;
+
+/* Everything of HeatFix's, wherever it lives in the repository: his pages,
+   his back office, his invoice tools, his photographs and logos, his
+   stylesheets and scripts, and his API. Matched by path so a file added to
+   any of these folders later is covered without anyone remembering to come
+   back here. */
+const HEATFIX_ASSET = /^\/(templates\/heatfix|assets\/heatfix\/|assets\/js\/heatfix-|assets\/css\/heatfix)/i;
+function isHeatfixPath(p) {
+  return HEATFIX_ASSET.test(p) || isHfCrmPath(p) || HEATFIX_INVOICE.test(p);
+}
 
 function clientHosts(env, key) {
   return String((env && env[key]) || "")
