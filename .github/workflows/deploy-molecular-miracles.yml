@@ -67,7 +67,21 @@ jobs:
           node-version: '22'
 
       - name: Build the site
-        run: python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk
+        # Surface a failed product fetch on the run summary. Payhip refuses
+        # requests from datacentre IPs — GitHub's runners included — so this
+        # build can silently fall back to the committed snapshot and publish a
+        # site that is missing whatever Lynsey added since. That is the exact
+        # thing the hourly schedule exists to prevent, so it must not be
+        # buried in a log nobody opens. The build still succeeds: a slightly
+        # stale shop beats no shop.
+        run: |
+          set -o pipefail
+          python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk 2>&1 | tee build.log
+          if grep -q 'could not reach the shop' build.log; then
+            echo "::warning::Could not read Payhip — the site was published from the committed snapshot, so any product Lynsey added since will NOT appear. Auto-update is not working."
+          else
+            echo "::notice::Product list read live from Payhip."
+          fi
 
       - name: Check the build looks right
         # A deploy that succeeds having published an empty or half-built
@@ -129,7 +143,32 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_MM }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_MM }}
-        run: npx --yes wrangler@latest deploy --env mm
+        # Judge the deploy on whether the Worker was actually uploaded, not on
+        # wrangler's exit code.
+        #
+        # After a successful upload wrangler re-asserts the custom-domain
+        # routes, which needs Zone -> Workers Routes on the token; this one has
+        # Account -> Workers Scripts. Her domain is already bound to this
+        # Worker and nothing needs changing, but wrangler still exits 1, which
+        # painted a fully successful deploy red — and a red tick that means
+        # "fine, actually" teaches you to ignore the real ones.
+        #
+        # So this greps for the upload line and fails if it is absent. That is
+        # narrower than ignoring the exit code: a genuine failure never prints
+        # it. Give the token that permission and this step goes back to being
+        # an ordinary pass.
+        run: |
+          set -o pipefail
+          npx --yes wrangler@latest deploy --env mm 2>&1 | tee deploy.log || true
+          if grep -q 'Uploaded muddy-pine-f5bb' deploy.log; then
+            echo "::notice::Worker uploaded to muddy-pine-f5bb."
+            if grep -q 'workers/routes' deploy.log; then
+              echo "::warning::Deploy succeeded. Wrangler could not re-assert the custom-domain routes (token lacks Zone -> Workers Routes); her domain is already bound, so nothing changed."
+            fi
+          else
+            echo "::error::Wrangler did not upload the Worker."
+            exit 1
+          fi
 
       - name: Confirm the live site answers
         if: steps.creds.outputs.ready == 'true'
