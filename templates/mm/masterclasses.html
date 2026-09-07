@@ -234,7 +234,14 @@
   }
 
 
-  fetch('/api/mm-shop').then(function (r) {
+  /* Cache-bust deliberately. Her zone applies a four-hour browser cache to
+     this response, which overrides the Worker's own no-store on an empty
+     result — so a visitor who once got a failed or empty feed kept being
+     shown the "not loading" fallback for hours after the site was fixed,
+     with a button that sent them to Payhip. The feed is under 2KB and the
+     Worker answers it from a committed snapshot, so a fresh fetch each
+     visit costs nothing worth having. */
+  fetch('/api/mm-shop?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }).then(function (d) {
