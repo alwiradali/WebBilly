@@ -32,6 +32,11 @@ public page carries the agency's structured data.
   registration goes to the valuation page.
 - Settings → Integrations gained **Google Tag Manager**; Settings gained
   **Redirects & 404s**; the listing editor gained **Old website id**.
+- **Two database migrations must be applied before the new Worker goes out**:
+  `migrations/megacity/0003_tours_live.sql` (`tours.live_version`) and
+  `0004_media_pano2048.sql` (`media.key_pano2048`). `npx wrangler d1 migrations
+  apply megacity --remote` applies both. Without them every 360 tour read and
+  every media upload fails.
 
 Local check (both hosts):
 
@@ -67,6 +72,17 @@ node scripts/megacity-smoke.js http://localhost:8787 --demo
 5. `scripts/megacity-golive-check.sh` against the live domain. Everything
    must print `ok`. (Before the nameservers change it can be run against the
    Cloudflare edge with `--resolve www.megacityproperties.co.uk:443:<ip>`.)
+   Its **360 tours** section checks that `/billy360/` and `/billy360/embed.js`
+   answer, that the viewer sends no `X-Frame-Options` and does send
+   `Content-Security-Policy: frame-ancestors` (so the listing pages can frame
+   it) and is `noindex`, that `/api/public/tours` answers, and then follows one
+   live tour end to end: its JSON, its first panorama out of R2 (a `/media/`
+   URL that returns an image), the pretty `/tour/<id>` link with the
+   "360° tour · Megacity Properties" title, the canonical back to the listing,
+   and the `data-billy360` frame on `/let/<id>`. It picks the first live tour
+   from the manifest, or the one named in `MEGACITY_TOUR_CANARY`; with no live
+   tour it prints a warning instead. `scripts/megacity-setup.sh verify` runs the
+   same probes.
 6. Sign in at `https://www.megacityproperties.co.uk/studio` (the login cookie
    is per host, so everyone signs in again). Settings → Integrations: enter
    the existing Google Analytics id **G-HP7S96BP9Y** and Tag Manager id
@@ -76,6 +92,14 @@ node scripts/megacity-smoke.js http://localhost:8787 --demo
 
 From this point the demo addresses on billydigitals.com redirect to the live
 site.
+
+**360 tour links copied before this day point at billydigitals.com.** They keep
+working, but the canonical link is `https://www.megacityproperties.co.uk/tour/<id>`
+once the domain is live. The Studio's 360 tab says so while the link is still on
+the demo host; after go-live, copy each live tour's link again (360 tab → *Copy
+tour link for 10ninety*) and re-paste it into the property's virtual-tour box in
+10ninety. The embed on the agency's own listing pages needs nothing — it is built
+from the host it is served on.
 
 ## Stage C — after launch
 

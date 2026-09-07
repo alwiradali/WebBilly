@@ -28,7 +28,12 @@ The short way: enable R2 in the dashboard, then run `bash scripts/megacity-setup
    `npx wrangler r2 bucket create megacity-media`
 2. `npx wrangler d1 create megacity` → copy the `database_id` it prints.
 3. In `wrangler.toml`, paste the id into the `[[d1_databases]]` block and uncomment the D1 and R2 blocks. **Commit that together with the code.** A placeholder id rejects the whole deploy (it happened before with M2L). `node scripts/check-wrangler.mjs` refuses a placeholder; set it as the Workers Builds build command if you want the safety net.
-4. `npx wrangler d1 migrations apply megacity --remote`
+4. `npx wrangler d1 migrations apply megacity --remote` — this applies every file in
+   `migrations/megacity/`, including `0003_tours_live.sql` (`tours.live_version`, which
+   tells the Studio when a live tour has unpublished changes) and
+   `0004_media_pano2048.sql` (`media.key_pano2048`, the phone-sized panorama).
+   **Apply the migrations before the new Worker goes out**: without those two columns
+   every tour read and every media upload fails.
 5. Secrets (`npx wrangler secret put NAME`):
    - `OFFICE_SETUP_TOKEN` — a one-off random string; used once to create the owner account, then `npx wrangler secret delete OFFICE_SETUP_TOKEN`
    - `ANTHROPIC_API_KEY` — for the AI features (Phase 4); optional until then
@@ -149,30 +154,155 @@ Media: `{id, kind:"photo|pano|video|pdf", role, roomLabel, url, thumb, orig, pan
 | `DELETE /api/studio/media/:id` | – | `{ok}` (removes the R2 objects) |
 | `GET /media/<key>` | – | the object, `Cache-Control: public, max-age=31536000, immutable` |
 
-R2 keys: `l/<listingId>/<mediaId>/orig.<ext>`, `w1600.jpg`, `w480.jpg`, `pano4096.jpg`. Allowed types: `image/jpeg|png|webp|gif|avif`, `video/mp4|webm`, `application/pdf`. HEIC cannot be decoded by Chrome/Firefox; the Studio shows the iPhone "Most Compatible" instruction instead of failing silently.
+R2 keys: `l/<listingId>/<mediaId>/orig.<ext>`, `w1600.jpg`, `w480.jpg`, `pano4096.jpg`, `pano2048.jpg`. Allowed types: `image/jpeg|png|webp|gif|avif`, `video/mp4|webm`, `application/pdf`. HEIC cannot be decoded by Chrome/Firefox; the Studio shows the iPhone "Most Compatible" instruction instead of failing silently.
 
 ### 360° tours
-The tour JSON is billy360's own format (see `docs/billy360.md`). One draft and one live copy per listing.
+The tour JSON is billy360's own format (see `docs/billy360.md`). One draft and
+one live copy per listing. The listing is the source of the facts: title, rent,
+bedrooms, EPC and reference are overlaid onto the tour on every read and every
+publish, so editing those fields in the tour editor has no effect (they are
+read-only there).
 
 | Route | Body | Response |
 |---|---|---|
-| `GET /api/studio/tours/:listingId` | – | `{tour, status, version, health, roomCount, liveAt, updatedAt}`; 404 `{canCreate:true}` when none exists |
-| `POST /api/studio/tours/:listingId` | `{brand?, agent?}` or `{tour}` | creates the tour — with no `tour` a skeleton is built from the listing (hallway, receptions, kitchen, bedrooms, bathrooms, garden, driveway, doors already linked) |
-| `PUT /api/studio/tours/:listingId` | `{tour, version, health}` | `{ok, version}`; 409 if `version` is stale; 413 if the tour still embeds a `data:` image (upload it first) |
-| `POST …/publish` | `{health}` | `{ok:true, url}` or `{ok:false, problems}` — needs at least one 360° and `health ≥ settings.tourGateScore` (default 70) |
-| `POST …/unpublish` | – | `{ok}` |
+| `GET /api/studio/tours/:listingId` | – | `{tour, status, version, health, roomCount, liveAt, updatedAt, updatedBy, liveVersion, listingLive, gate, publicUrl, embedOrigin}`; 404 `{canCreate:true}` when none exists; 410 `{binned:true}` when the listing is in the Bin |
+| `POST /api/studio/tours/:listingId` | `{brand?, agent?}` or `{tour}` | creates the tour — with no `tour` a skeleton is built from the listing (see below) |
+| `PUT /api/studio/tours/:listingId` | `{tour, version, health}` | `{ok, version, updatedAt, health, status, liveVersion, listingLive, gate, publicUrl, embedOrigin}`; 409 if `version` is stale; 413 if the tour still embeds a `data:` image or a `data:` URI inside a floor plan (upload it first) |
+| `POST …/publish` | `{}` | `{ok, status, health, gate, problems, listingLive, version, liveVersion, liveAt, note, url, publicUrl, embedOrigin}` |
+| `POST …/unpublish` | – | `{ok, status:'draft', liveAt:null, …}` |
 | `DELETE /api/studio/tours/:listingId` | – | `{ok}` |
 | `POST /api/studio/tours/import` | `{tours:[…], overwrite?}` | `{imported:[ids], skipped:[{id, reason}]}` — for tours saved in a browser before the Studio existed |
 | `POST /api/billy360-verify` | `{code}` (ignored) | `{ok:true}` when the Studio cookie is valid — billy360's `admin.verifyUrl` |
-| `GET /api/public/tours/:listingId` | – | the live tour JSON (cached 120 s); 404 while draft |
+| `GET /api/public/tours/:listingId` | – | the live tour JSON, `cache-control: public, max-age=0, stale-while-revalidate=60`; 404 `{error, listingUrl}` with `cache-control: no-store` while the tour is draft, the listing is hidden or not live, or the id is unknown |
 | `GET /api/public/tours` | – | `{items:[{id, title, rentPcm, bedrooms, area, liveAt, roomCount}]}` |
 
-How billy360 uses it (`billy360/store.js`, loaded before `app.js`):
-- `/billy360/?site=<id>&office=1` — the Studio: draft from the API, no passcode (the office cookie is the login), saves go through `PUT`, every embedded image is uploaded to R2 first.
-- `/billy360/?site=<id>` or `…&embed=1` — visitors: the live tour from the public feed, else the shipped file.
-- `/billy360/` — unchanged: browser storage and the demo tours.
+The publish gate uses the **stored** health score, not the one in the request
+body, so the editor's score has to reach the server through a `PUT` before
+`/publish` runs (the Studio's Publish button drains the editor's save queue
+first). `problems` is empty on success and otherwise names what is missing:
+"The tour has no rooms.", "No room has a 360° capture yet.", "The tour has not
+been scored yet — open it in the Studio once so it can be checked.", or "The
+quality score is N; it needs at least G to go live." `G` is
+`settings.tourGateScore` (default 70) and is returned as `gate` on every tour
+response, so the Studio never hard-codes it. Publishing writes the refreshed
+draft back as well (`project.hidden=false`, agency brand, office contacts,
+current listing facts) without bumping `version`, records `live_version`, keeps
+the original `live_at` on a re-publish, and purges the cached public JSON for
+both the request origin and the canonical host.
 
-The tour link for 10ninety's virtual-tour box is `https://<host>/billy360/?site=<listingId>`; the embed is `<div data-billy360="<listingId>" data-height="16:9"></div><script src="/billy360/embed.js" defer></script>`.
+How billy360 uses it (`billy360/store.js`, loaded before `app.js`):
+- `/billy360/?site=<id>&office=1` — the office editor: the draft from the API, no
+  passcode (the Studio cookie is the login), saves go through `PUT`, every
+  embedded image is uploaded to R2 first.
+- `/billy360/?site=<id>` or `…&embed=1` — visitors: the live tour, or nothing.
+- `/tour/<id>` on the client domain — the same viewer served in place; the
+  address bar keeps `/tour/<id>`.
+- `/billy360/` with no `?site=` — unchanged: browser storage and the demo tours.
+
+**The viewer is fail-closed.** A visitor link for a listing whose tour is still
+a draft, whose listing is hidden, not live or unknown gets a card — "This tour
+isn't published yet · Ask the office and we will send it over as soon as it is
+live." — with a *Back to the listing* button built from the 404's `listingUrl`.
+A network failure or a timeout gets "Couldn't load the tour"; an office link for
+a binned listing gets "This listing is in the Bin". It never falls back to a
+demo property: there is no Charnwood House stand-in and no portfolio grid on a
+`?site=` link, and the browser Studio cannot be opened from one.
+
+#### The 360 tab in the Studio (a listing → **360**)
+
+The strip along the top is the whole status of the tour:
+
+| What it shows | When |
+|---|---|
+| Quality ring with the score, "Quality score · it needs N to go live." | always; "The quality score appears after the first save in the studio." until the tour has been scored once |
+| **Draft** pill | the tour has never been published, or it was taken off |
+| **Live** pill + "live since <date>" | published |
+| "Changes not live — Publish latest changes" | live, and the draft has been saved since (`version > liveVersion`) |
+| "Published, but the listing is not live yet, so nobody can see it until the listing goes live." | published while the listing itself is still a draft |
+| "Publish first — the link, embed code and QR code show nothing until the tour is live." | draft |
+| "Links point at billydigitals.com until the domain moves — re-paste into 10ninety after go-live." | live, while the server's link is still on the demo host |
+
+*Copy tour link for 10ninety*, *Copy embed code* and *Download QR (PNG)* are
+disabled while the tour is a draft (and again after *Take it off the listing*) —
+the link would show the "not published yet" card. Both copies come from the
+server, not from the browser's address bar: `publicUrl` is
+`https://www.megacityproperties.co.uk/tour/<id>` on the client domain and
+`https://billydigitals.com/billy360/?site=<id>` on the demo host, and the embed
+snippet uses the matching `embedOrigin`. That is why the domain note above
+matters: a link copied before DNS day points at billydigitals.com, works, but
+should be re-pasted into 10ninety after go-live.
+
+On a phone the tab shows the strip plus **Open the tour Studio** — a same-tab
+link to `/billy360/?site=<id>&office=1#/studio/rooms`, with Back to return. On a
+desktop the editor is framed in the page and **Open full screen** opens the same
+address in a new tab.
+
+**Phone preview and print** is the QR card: the QR code of the tour link, the
+link in full, and *Download QR (PNG)*. The PNG is built for print — the code
+itself is at least 1000 px across, with the listing title above it and the
+MEGACITY PROPERTIES wordmark and the link below, roughly 1200 × 1500 px in all
+(the toast reports the exact size). It is the same link, so it needs the tour
+published first.
+
+**Start again** deletes the tour and builds a fresh skeleton from the listing
+after a confirm. Rooms, doors and captures in the tour are lost; 360s uploaded
+in the **Media** tab are kept and offered again.
+
+360s uploaded on the Media tab (kind `pano`) are offered to the tour: the Studio
+posts them to the editor on load and after every change on that tab, and the
+editor lists them under "Or use a 360° already uploaded to this listing".
+Picking one points the room at the file that is already in R2 — no second
+upload, no waiting — and the tile whose room label matches the room is
+highlighted. Deleting a 360 that a tour uses answers 409 and the Media tab shows
+the server's reason ("This 360 is used by the tour (room X) — replace it there
+first.").
+
+When the database is not bound the tab shows one line — "Tours need the
+database" — instead of the strip; the rest of the Studio is unaffected. A
+listing in the Bin shows "This listing is in the Bin · Restore it to keep
+editing the tour."
+
+#### How long a publish takes to show
+
+Publishing purges the cached tour JSON, and the browser revalidates it on every
+load, so the tour link and the QR code show the new version straight away. The
+**listing page** that frames the tour is HTML cached for a minute
+(`max-age=60, s-maxage=120`) and nothing purges it, so the frame on
+`/let/<id>` picks up the change within a minute or so — which is what the
+Studio's toast says ("Tour published — the listing page picks it up within a
+minute").
+
+#### The skeleton built from a listing
+
+Creating a tour with no JSON builds the rooms the listing says exist, with the
+doors already linked:
+
+- Houses, maisonettes and whole-house HMOs get a **Ground Floor** and a **First
+  Floor**; anything else gets a single, unnamed floor (a fourth-floor flat is not
+  a "ground floor").
+- A studio flat — or a listing with no bedrooms — gets one room called
+  **Studio**; a room let gets **The room**.
+- Bathrooms are named from the listing's own subtypes: Bathroom, Shower room,
+  En-suite, WC, Wet room, Shared bathroom, numbered when there is more than one
+  of the same name. En-suites open off Bedroom 1, 2, … in order; the other
+  bathrooms open off the landing (or the hallway when there is no upstairs).
+- Gardens follow the same rule: Garden, Front garden, Shared garden, Communal
+  garden, Yard, Balcony, Terrace. A driveway or garage becomes an outside room in
+  front of the hallway; a kitchen with a garden gets the door to it.
+- A hallway or landing with more than six doors spreads them evenly around the
+  room instead of fanning them from one side.
+- Every room opens facing its first door, so the way on is never behind the
+  visitor.
+
+The panorama for each room is uploaded as `pano4096.jpg` with a `pano2048.jpg`
+beside it and a `w480.jpg` thumbnail; phones fetch the 2048 file, tablets and
+desktops the 4096 one, and the thumbnail is what appears first. Image originals
+(`orig.*`) need the Studio session — they still carry the camera's EXIF.
+
+The tour link for 10ninety's virtual-tour box is `publicUrl` from the 360 tab
+(*Copy tour link for 10ninety*); the embed is
+`<div data-billy360="<listingId>" data-height="16:9"></div><script src="/billy360/embed.js" defer></script>`,
+which the listing pages already carry.
 
 ### Dashboard and audit (Phase 1 minimum)
 `GET /api/studio/dashboard` → `{counts:{listings:{live,draft,total}, media, tours:{live}}, recent:[{at,action,entity,entityId,user}]}`
