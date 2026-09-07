@@ -69,11 +69,18 @@
      ask for. A preload link is the one form the engine's own <img> request
      is guaranteed to reuse (a detached Image or a fetch downloads twice). */
   function panoCap() {
+    /* the engine's rule (engine.js panoCap): four texels per DPR-capped device
+       pixel, the 2048 ceiling only on phone-sized canvases, 1024 in low quality */
     var coarse = false;
     try { coarse = window.matchMedia("(pointer:coarse)").matches; } catch (e) { }
-    var px = Math.max(1, (window.innerWidth || 1024) * (window.devicePixelRatio || 1)) * 4;
+    var q = QS.get("q");
+    if (q === "lo" || q === "md") return 1024;
+    var dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2);
+    var w = (window.innerWidth || 1024) * dpr, h = (window.innerHeight || 768) * dpr;
+    var big = Math.max(w, h) >= 1500;
+    var px = Math.max(1, w) * 4;
     var pot = 1024; while (pot * 2 <= px && pot < 4096) pot *= 2;
-    return Math.min(pot, coarse ? 2048 : 4096);
+    return Math.min(pot, coarse && !big ? 2048 : 4096);
   }
   function warmFirstPano(tour) {
     try {
@@ -81,8 +88,9 @@
       for (var i = 0; i < rooms.length; i++) if (rooms[i] && rooms[i].id === (tour.project && tour.project.cover)) r = rooms[i];
       r = r || rooms[0];
       if (!r || typeof r.pano !== "string" || !r.pano) return;
-      var src = r.pano;
-      if (panoCap() <= 2048) src = src.replace(/\/pano4096\.jpg$/, "/pano2048.jpg");
+      var src = r.pano, cap = panoCap();
+      if (cap <= 1024) src = src.replace(/\/pano4096\.jpg$/, "/w1600.jpg");
+      else if (cap <= 2048) src = src.replace(/\/pano4096\.jpg$/, "/pano2048.jpg");
       [r.thumb, src].forEach(function (u) {
         if (typeof u !== "string" || !u) return;
         var l = document.createElement("link");
@@ -148,11 +156,13 @@
   /* upload one image (data URL or Blob) for a listing; resolves to
      {url, thumb, pano, pano2048, orig, id} — url is the 1600 photo, pano the
      4096 panorama, orig the untouched file (the logo keeps its PNG/SVG).
-     meta: {isPano, role: tour|logo|floorplan|gallery|cover, roomLabel, alt, listingId} */
+     meta: {isPano, role: tour|logo|floorplan|gallery|cover, roomLabel, alt, listingId,
+     derivedThumb: a data: URL JPEG ≤ 480 wide the caller already made (skips one decode)} */
   STORE.upload = function (src, meta) {
     meta = meta || {};
     var blob = typeof src === "string" ? dataUrlToBlob(src) : src;
     if (!blob) return Promise.reject(new Error("Not an image."));
+    var thumbBlob = typeof meta.derivedThumb === "string" && meta.derivedThumb.indexOf("data:image/jpeg") === 0 ? dataUrlToBlob(meta.derivedThumb) : null;
     var listingId = meta.listingId || STORE.listingId;
     var isPano = !!meta.isPano;
     var role = isPano ? "tour" : (meta.role || "gallery");
@@ -160,7 +170,7 @@
     var origP = ORIG_TYPES[blob.type] ? Promise.resolve({ blob: blob }) : resized(blob, 2048, 1, "image/png");
     return Promise.all([
       resized(blob, 1600, 0.82),
-      resized(blob, 480, 0.75),
+      thumbBlob ? Promise.resolve({ blob: thumbBlob }) : resized(blob, 480, 0.75),
       isPano ? resized(blob, 4096, 0.86) : null,
       isPano ? resized(blob, 2048, 0.86) : null,
       origP
@@ -183,7 +193,8 @@
       return api("POST", "/api/studio/media", fd, true);
     }).then(function (m) {
       m = m || {};
-      return { url: m.url || null, thumb: m.thumb || m.url || null, pano: m.pano || m.url || null, pano2048: m.pano2048 || null, orig: m.orig || m.url || null, id: m.id || null };
+      return { url: m.url || null, thumb: m.thumb || m.url || null, pano: m.pano || m.url || null, pano2048: m.pano2048 || null, orig: m.orig || m.url || null, id: m.id || null,
+        listingWentLive: m.listingWentLive === true };
     });
   };
   /* video / PDF hotspot attachments go up as a raw body (no derivatives) */
@@ -198,6 +209,12 @@
   };
 
   function isDataUrl(v) { return typeof v === "string" && v.indexOf("data:") === 0 && v.length > 4096; }
+  /* a photo uploaded from the tour completed an imported listing's set and the
+     listing went live by itself (F171) — the app shows a toast for it */
+  function listingWentLive() {
+    STORE.listingLive = true;
+    try { window.dispatchEvent(new CustomEvent("billy360:listing-live", { detail: { listingId: STORE.listingId } })); } catch (e) { }
+  }
 
   /* swap every embedded image in the tour for an uploaded URL; resolves to
      the number of uploads it made. Each write-back only lands when the field
@@ -218,6 +235,7 @@
         status(meta.roomLabel);
         var up = meta.stream ? STORE.uploadStream(v, meta) : STORE.upload(v, meta);
         return up.then(function (m) {
+          if (m && m.listingWentLive) listingWentLive();
           if (obj[key] !== v) return;   // superseded while uploading — keep the newer value
           obj[key] = pick ? pick(m) : m.url;
           if (extra) extra(m);
@@ -239,7 +257,8 @@
       });
     }
     (tour.rooms || []).forEach(function (r) {
-      want(r, "pano", { isPano: true, roomLabel: r.name }, function (m) { return m.pano; }, function (m) { if (m.thumb) r.thumb = m.thumb; });
+      want(r, "pano", { isPano: true, roomLabel: r.name, derivedThumb: typeof r.thumb === "string" && r.thumb.indexOf("data:") === 0 ? r.thumb : null },
+        function (m) { return m.pano; }, function (m) { if (m.thumb) r.thumb = m.thumb; });
       (r.photos || []).forEach(function (p) { want(p, "src", { roomLabel: r.name, alt: p.caption }, null, function (m) { if (m.thumb) p.thumb = m.thumb; }); });
       (r.hotspots || []).forEach(function (h) {
         if (h.type === "image") want(h, "src", { roomLabel: r.name, alt: h.label });
@@ -338,6 +357,7 @@
 
   /* the Studio lives at /studio on the client domain, /templates/megacity-studio on the demo host (worker/studio/urls.js) */
   var STUDIO = /^(www\.)?billydigitals\.com$|^localhost$|^127\.0\.0\.1$/i.test(location.hostname) ? "/templates/megacity-studio" : "/studio";
+  STORE.studioUrl = STUDIO;   // app.js builds "Back to the listing" and the sign-in link from it
 
   /* ── mode selection ───────────────────────────────────────────────────── */
   if (!SITE) {
@@ -403,6 +423,9 @@
     STORE.version = j.version;
     STORE.status = j.status;
     STORE.health = j.health;
+    STORE.liveVersion = j.liveVersion === undefined ? null : j.liveVersion;
+    STORE.listingLive = !!j.listingLive;
+    STORE.gate = j.gate == null ? null : j.gate;
     noteLinks(j);
     useOnly(tour);
     CFG.admin = CFG.admin || {};
@@ -425,6 +448,7 @@
     if (e.status === 401) showBlocked("Sign in to the Studio first", "This tour editor uses your Megacity Studio login.", STUDIO + "#/login", "Open the Studio");
     else if (e.status === 503) showBlocked("Not connected yet", "The Studio database is not set up on this deployment.", STUDIO, "Open the Studio");
     else if (e.status === 404) showBlocked("No such listing", "There is no listing with that id.", STUDIO + "#/listings", "Back to listings");
+    else if (e.status === 410) showBlocked("This listing is in the Bin", "Restore the listing in the Studio to keep editing its tour.", STUDIO + "#/listings/" + encodeURIComponent(SITE), "Open the listing");
     else showBlocked("Could not load the tour", e.message || "Please try again.", STUDIO + "#/listings", "Back to listings");
   });
 })();

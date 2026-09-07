@@ -951,7 +951,6 @@ form.enq{display:grid;gap:18px;align-content:start}
    embed.js drops its own ratio box + iframe inside; both are pinned to this
    box so its height, not the iframe's padding trick, decides the size. */
 .pd-tour{position:relative;width:100%;aspect-ratio:16/9;min-height:280px;margin:0 0 14px;border-radius:16px;overflow:hidden;background:#060b1a}
-.pd-tour>div{position:absolute!important;inset:0;padding:0!important}
 .pd-tour iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
 @media (max-width:700px){.pd-tour{min-height:60vh}}
 .pd-mini{display:grid;gap:10px;margin:0}

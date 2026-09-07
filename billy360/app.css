@@ -1340,6 +1340,28 @@ body.is-embed .dash-inner { padding-top: 20px; }
 }
 .failure--tap { cursor: pointer; }
 
+/* office-mode save queue surfaces (A3): the 409 sheet, the 401 bar, the
+   publish problems list, the tappable save pill and a bad URL field */
+.sync-sheet {
+  position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: rgba(6,11,26,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.sync-sheet > .card { max-width: 460px; width: 100%; padding: 22px; }
+.sync-sheet-act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.signin-bar {
+  position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 55;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 14px; border-radius: 12px;
+  background: #1a1f33; border: 1px solid rgba(251,191,36,.5); color: var(--text, #eaf2ff); font-size: .85rem; line-height: 1.45;
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+}
+.signin-bar > span { flex: 1 1 240px; }
+.pub-problems { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(251,191,36,.4); border-radius: 10px; background: rgba(251,191,36,.06); }
+.pub-problems ul { margin: 6px 0 0 18px; padding: 0; font-size: .82rem; line-height: 1.5; }
+.savestate[role=button] { cursor: pointer; }
+.savestate[role=button]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.input[aria-invalid="true"], .field input[aria-invalid="true"] { border-color: var(--warn); }
+.field-warn { display: block; color: var(--warn); font-size: .74rem; margin-top: 4px; }
+
 /* a room still downloading: a ring on its door and its filmstrip tile */
 @keyframes spin { to { transform: rotate(360deg); } }
 .strip-item.is-loading .strip-thumb::after, .hs.is-loading .hs-mark::after {

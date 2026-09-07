@@ -397,11 +397,9 @@
     if (!publishProblems.length && !publishNote) return null;
     var box = el("div", "pub-problems");
     box.setAttribute("role", "status");
-    box.style.cssText = "margin-top:12px;padding:10px 12px;border:1px solid rgba(251,191,36,.4);border-radius:10px;background:rgba(251,191,36,.06)";
     if (publishProblems.length) {
       box.appendChild(el("p", "t-body", publishProblems.length === 1 ? "Not published yet:" : "Not published yet — " + publishProblems.length + " things to fix:"));
       var ul = el("ul");
-      ul.style.cssText = "margin:6px 0 0 18px;padding:0;font-size:.82rem;line-height:1.5";
       publishProblems.forEach(function (pr) { ul.appendChild(el("li", null, pr)); });
       box.appendChild(ul);
     } else box.appendChild(el("p", "t-body", publishNote));
@@ -442,6 +440,13 @@
         });
         if (view === "studio" && studioTab === "rooms") renderStudio();
       }
+    });
+    /* a photo uploaded from this editor completed an imported listing and it
+       went live by itself (F171) — say so, the Publish tab's copy depends on it */
+    window.addEventListener("billy360:listing-live", function () {
+      STORE.listingLive = true;
+      toast("The listing is now live on the website — that photo completed its set.");
+      if (view === "studio" && studioTab === "publish") renderStudio();
     });
   }
   /* the parent's poll / publish / unpublish keep the iframe honest (F173);
@@ -492,13 +497,11 @@
     conflictLastFocus = document.activeElement;
     var wrap = el("div", "sync-sheet"); wrap.id = "syncConflict";
     wrap.setAttribute("role", "dialog"); wrap.setAttribute("aria-modal", "true"); wrap.setAttribute("aria-labelledby", "syncConflictTitle");
-    wrap.style.cssText = "position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(6,11,26,.72);padding:20px";
     var card = el("div", "card studio-panel");
-    card.style.cssText = "max-width:460px;width:100%;padding:22px";
     var h = el("h4", null, "Someone else saved this tour"); h.id = "syncConflictTitle";
     card.appendChild(h);
     card.appendChild(el("p", "t-body", "The tour on the server changed since you opened it — another tab or a colleague saved it. Which copy should win?"));
-    var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:14px";
+    var acts = el("div", "sync-sheet-act");
     var theirs = el("button", "btn", "Load their version"); theirs.id = "syncTheirs";
     var mine = el("button", "btn btn--primary", "Keep mine"); mine.id = "syncMine";
     var busy = function (on) { theirs.disabled = mine.disabled = on; };
@@ -534,7 +537,6 @@
     if (!on) { if (bar) bar.hidden = true; return; }
     if (!bar) {
       bar = el("div", "signin-bar"); bar.id = "signinBar"; bar.setAttribute("role", "alert");
-      bar.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:55;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:#1a1f33;border:1px solid rgba(251,191,36,.5);color:var(--text,#eaf2ff);font-size:.85rem";
       var p = el("span", null, "Your Studio sign-in has ended. Your changes are kept here" + (sync && sync.info.stashed ? " and in this browser" : "") + " — sign in again to save them.");
       var a = el("button", "btn btn--sm btn--primary", "Sign in"); a.id = "signinBarGo";
       a.onclick = signInAgain;
@@ -576,8 +578,7 @@
   function urlField(label, value, set, placeholder) {
     var i = input(value, function (v) { set(v); check(v); }, placeholder);
     var f = field(label, i);
-    var warn = el("small", "t-body");
-    warn.style.cssText = "display:block;color:var(--warn);font-size:.74rem;margin-top:4px";
+    var warn = el("small", "t-body field-warn");
     warn.hidden = true;
     warn.textContent = "Use a full https:// address — anything else is dropped when the tour is saved.";
     f.appendChild(warn);
@@ -585,7 +586,6 @@
       var bad = !!(v && v.trim()) && !safeHref(v);
       warn.hidden = !bad;
       i.setAttribute("aria-invalid", bad ? "true" : "false");
-      i.style.borderColor = bad ? "var(--warn)" : "";
     }
     check(value);
     return f;
@@ -692,7 +692,6 @@
     n.classList.toggle("is-busy", tone === "busy");
     n.classList.toggle("is-ok", tone === "ok");
     n.onclick = onTap || null;
-    n.style.cursor = onTap ? "pointer" : "";
     if (onTap) { n.setAttribute("role", "button"); n.tabIndex = 0; n.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); } }; }
     else { n.setAttribute("role", "status"); n.removeAttribute("tabindex"); n.onkeydown = null; }
   }
@@ -5928,7 +5927,7 @@
       ["This property", function () {
         note.textContent = "Goes on the page for " + (TOUR.project.name || "this property") + ".";
         return '<iframe\n  src="' + origin + '?site=' + PROJECT + '&embed=1#/tour/' +
-          (currentRoom ? currentRoom.id : TOUR.rooms[0].id) + '"\n' +
+          (currentRoom ? currentRoom.id : startRoomId()) + '"\n' +
           '  width="100%" height="640" loading="lazy"\n  style="border:0;border-radius:16px"\n' +
           '  allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"\n' +
           '  title="' + esc(TOUR.project.name) + ' — virtual tour"></iframe>';
@@ -5950,7 +5949,7 @@
         note.textContent = "Opens the walkthrough full-screen in a new tab — the lightest option, and the " +
           "one to use on a slow listing page.";
         return '<a href="' + origin + '?site=' + PROJECT + '&embed=1#/tour/' +
-          (currentRoom ? currentRoom.id : TOUR.rooms[0].id) + '"\n' +
+          (currentRoom ? currentRoom.id : startRoomId()) + '"\n' +
           '   target="_blank" rel="noopener">View the 360° tour</a>';
       }]
     ];
@@ -6335,6 +6334,13 @@
     if (remoteMode()) {
       $("#btnStudioPublish").setAttribute("data-golive", "1");
       $$('#studioNav button[data-tab="access"]').forEach(function (b) { b.hidden = true; });   // the office cookie is the login (F43)
+      /* the phone Studio opens this editor in the same tab (T1 §4) — the way
+         back is the listing's 360 tab; inside the Studio's frame the parent has it */
+      var backToListing = $("#btnStudioListing");
+      if (backToListing && !FRAMED && STORE.listingId) {
+        backToListing.href = STUDIO_URL + "#/listings/" + encodeURIComponent(STORE.listingId) + "/tour";
+        backToListing.hidden = false;
+      }
     }
     var bu = $("#btnUndo"), br = $("#btnRedo");
     if (bu) bu.onclick = undo;

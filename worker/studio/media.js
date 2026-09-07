@@ -165,11 +165,12 @@ export async function upload(c) {
     phash: clampStr(meta.phash, 80), luma: toInt(meta.luma), sharp: toInt(meta.sharp),
     created_at: nowIso(), created_by: c.user.id,
   };
+  let listingUpdatedAt = null;
   try {
     row.sort = await nextSort(c.db, listingId);
     await insertMedia(c.db, row);
     await maybeSetCover(c.db, listingId, id, role, row.kind);
-    await touch(c.db, listingId, c.user.id);
+    listingUpdatedAt = await touch(c.db, listingId, c.user.id);
     await audit(c.db, { userId: c.user.id, action: "media.uploaded", entity: "listing", entityId: listingId, detail: { mediaId: id, kind: row.kind, role, bytes: orig.size } });
   } catch (e) {
     /* the objects went up before the row: without this they would be orphans nothing can list or delete (G7) */
@@ -181,7 +182,11 @@ export async function upload(c) {
   if (isPhoto(row)) {
     try { wentLive = await (await import("./listings.js")).autoPublishIfReady(c.env, c.db, listingId); } catch (e) { console.error("autoPublish", e); }
   }
-  return json({ ...mediaToJson(row), listingWentLive: wentLive }, 201);
+  /* going live stamps the listing again — hand the Media tab the stamp it will be checked against (G1) */
+  if (wentLive) {
+    try { const l = await c.db.prepare(`SELECT updated_at FROM listings WHERE id=?1`).bind(listingId).first(); if (l && l.updated_at) listingUpdatedAt = l.updated_at; } catch (e) { }
+  }
+  return json({ ...mediaToJson(row), listingWentLive: wentLive, listingUpdatedAt }, 201);
 }
 
 /* PUT /api/studio/media/stream?listingId=&kind=video|pdf&role=&filename= — raw body */
@@ -229,9 +234,9 @@ export async function stream(c) {
     created_at: nowIso(), created_by: c.user.id,
   };
   await insertMedia(c.db, row);
-  await touch(c.db, listingId, c.user.id);
+  const listingUpdatedAt = await touch(c.db, listingId, c.user.id);
   await audit(c.db, { userId: c.user.id, action: "media.uploaded", entity: "listing", entityId: listingId, detail: { mediaId: id, kind, bytes: len } });
-  return json(mediaToJson(row), 201);
+  return json({ ...mediaToJson(row), listingUpdatedAt }, 201);
 }
 
 async function insertMedia(db, r) {
@@ -242,7 +247,9 @@ async function insertMedia(db, r) {
 }
 
 async function touch(db, listingId, userId) {
-  await db.prepare(`UPDATE listings SET updated_at=?1, updated_by=?2 WHERE id=?3`).bind(nowIso(), userId, listingId).run();
+  const at = nowIso();
+  await db.prepare(`UPDATE listings SET updated_at=?1, updated_by=?2 WHERE id=?3`).bind(at, userId, listingId).run();
+  return at;
 }
 
 /* PATCH /api/studio/media/:id */

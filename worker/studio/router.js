@@ -321,8 +321,9 @@ export async function tourPage(request, env, url, db, opts = {}) {
     .on("link[href]", attr("href"))
     .on("head", {
       element: (e) => {
-        /* store.js reads location.search first; at /tour/<id> the id arrives here instead */
-        if (base && site) e.prepend(`<script>window.BILLY360_SITE=${JSON.stringify(site)};if(!/[?&]site=/.test(location.search))try{history.replaceState(history.state,"",location.pathname+(location.search?location.search+"&":"?")+"site="+encodeURIComponent(window.BILLY360_SITE)+location.hash)}catch(e){}</script>`, { html: true });
+        /* at /tour/<id> the id arrives here instead of ?site= — store.js reads it
+           and injects app.js relative to its own <script>, so the address stays clean */
+        if (base && site) e.prepend(`<script>window.BILLY360_SITE=${JSON.stringify(site)}</script>`, { html: true });
         e.onEndTag((end) => {
           if (!sawRobots) extra.unshift('<meta name="robots" content="noindex,nofollow">');
           if (extra.length) end.before(extra.join("\n"), { html: true });
