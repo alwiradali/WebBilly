@@ -1,9 +1,10 @@
 # TEMPORARY diagnostic — delete once it has answered its question.
 #
-# Payhip refuses her storefront from GitHub's runners (403), which is what
-# stops new products publishing themselves. Before asking her for an API key,
-# find out whether ANY approach gets through from a datacentre IP: different
-# headers, the sitemap, an embed endpoint. Run it, read it, delete it.
+# Plain HTTP from a GitHub runner gets Cloudflare's "Just a moment..." JS
+# challenge on every Payhip URL, the API included. That challenge is solvable
+# by a real browser, so the question is whether headless Chrome gets through
+# where curl cannot. If it does, the hourly build can fetch her products with
+# a browser and auto-publishing works with nothing asked of anyone.
 name: TEMP payhip reachability
 on:
   workflow_dispatch:
@@ -11,21 +12,28 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe Payhip from a GitHub runner
+      - name: Try a real browser
         run: |
-          S="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu"
-          probe () {
-            code=$(curl -s -o /tmp/b -w '%{http_code}' -m 25 "$@" || echo 000)
-            size=$(wc -c < /tmp/b)
-            hit=$(grep -c 'productName' /tmp/b || true)
-            chal=$(grep -c 'Just a moment' /tmp/b || true)
-            printf '  %-34s http=%s bytes=%s products=%s challenge=%s\n' "$LABEL" "$code" "$size" "$hit" "$chal"
-          }
-          LABEL="plain";            probe "$S"
-          LABEL="browser UA";       probe -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' "$S"
-          LABEL="browser UA+accept"; probe -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-GB,en;q=0.9' "$S"
-          LABEL="http2 + compressed"; probe --http2 --compressed -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36' "$S"
-          LABEL="sitemap";          probe "https://payhip.com/sitemap.xml"
-          echo "--- API shape (no key) ---"
-          curl -s -m 20 -o /tmp/a -w '  api/v1/product no-key: http=%{http_code}\n' "https://payhip.com/api/v1/product"
-          head -c 200 /tmp/a; echo
+          npm init -y >/dev/null 2>&1
+          npm i playwright@latest >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > p.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const S = 'https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu';
+          const b = await chromium.launch();
+          const pg = await b.newPage({ userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36' });
+          const r = await pg.goto(S, { waitUntil: 'domcontentloaded', timeout: 60000 });
+          console.log('  first response :', r && r.status());
+          await pg.waitForTimeout(9000);           // let any challenge run
+          const html = await pg.content();
+          const challenged = /Just a moment/.test(html);
+          const names = await pg.$$eval('[class*=productName], [class*=card__heading]',
+            n => n.map(e => e.textContent.trim()).filter(Boolean)).catch(() => []);
+          console.log('  bytes          :', html.length);
+          console.log('  still challenged:', challenged);
+          console.log('  products found :', names.length);
+          names.slice(0, 5).forEach(n => console.log('     -', n.slice(0, 70)));
+          await b.close();
+          JS
+          node p.mjs
