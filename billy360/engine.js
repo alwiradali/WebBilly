@@ -27,7 +27,19 @@
      capture()             → PNG data URL of the current view
      quality(q)            'auto' | 'lo' | 'md' | 'hi'
      inputs(bool)          suspend look controls (modal open)
+     passiveWheel(bool)    leave the wheel to the page (embed before its first tap)
+     gyro(bool)            → Promise<boolean>, resolved with the real outcome
+     sleep(bool)           park the loop: no draw, no camera math (baking continues)
+     idleDrift(bool)       the slow idle drift (off in the Studio, embeds, behind sheets)
+     preload()             release the background preload (dashboard/embed hold it
+                           until the first interaction otherwise)
+     stats()               { textures, queued, inflight, bakes, pending } — a test hook
+     pending()             room id walked into whose picture has not landed yet, or null
      resize() current() ready() destroy()
+   Callbacks: onProgress(p,label) onReady() onRoom(room,from) onFrame(cam,room,t)
+     onError(e) onSharpen(bool) onThumb(id) onTap(e) onInteract()
+     onLoading(roomId, bool[, "failed"])  a walked-into room is still downloading /
+                                          gave up after the retries
    ═══════════════════════════════════════════════════════════════════════════ */
 
 (function (global) {
@@ -57,7 +69,8 @@
       room: opts.onRoom || noop,           // (room, previousRoom)
       frame: opts.onFrame || noop,         // (camera, room)
       error: opts.onError || noop,         // ({ title, message, detail, diag })
-      sharpen: opts.onSharpen || noop      // (bool) full-resolution pass running
+      sharpen: opts.onSharpen || noop,     // (bool) full-resolution pass running
+      loading: opts.onLoading || noop      // (roomId, bool[, "failed"]) a walked-into room is still downloading
     };
     if (!canvas) return null;
 
@@ -68,9 +81,12 @@
        GL CONTEXT — three attempts, then a real error rather than a hang
        ───────────────────────────────────────────────────────────────────── */
     var diag = [], gl = null;
+    /* no preserveDrawingBuffer: capture() renders synchronously before it
+       reads the canvas, and keeping the back buffer costs tile GPUs a
+       full-canvas copy every frame */
     var tries = [
-      { antialias: false, alpha: false, preserveDrawingBuffer: true, powerPreference: "high-performance" },
-      { antialias: false, alpha: false, preserveDrawingBuffer: true },
+      { antialias: false, alpha: false, powerPreference: "high-performance" },
+      { antialias: false, alpha: false },
       {}
     ];
     for (var ti = 0; ti < tries.length && !gl; ti++) {
@@ -798,13 +814,23 @@
   ].join("\n");
 
   /* ── 1b · the viewer: equirect → perspective, with cross-dissolve ─────── */
+  /* Mipmapped panoramas need an explicit level of detail: the automatic
+     one reads the uv derivative, which jumps by a whole texture at the
+     0°/360° seam and paints a blurred column there. With the LOD extension
+     the level is computed analytically per fragment (uLodA/uLodB carry the
+     per-texture base); without it the textures stay unmipmapped and the
+     macro falls back to a plain fetch, exactly the old behaviour. */
+  var lodExt = null;
+  try { lodExt = gl.getExtension("EXT_shader_texture_lod"); } catch (e) { }
   var VIEW_FS = [
+    lodExt ? "#extension GL_EXT_shader_texture_lod : enable" : "",
     "precision highp float;",
     "uniform sampler2D uA, uB;",
     "uniform vec2  uRes;",
-    "uniform float uYaw, uPitch, uFov, uMix, uFovA, uFovB;",
+    "uniform float uYaw, uPitch, uFov, uMix, uFovA, uFovB, uLodA, uLodB, uMipA, uMipB;",
     "uniform float uGrain, uVig, uFlash, uAvail;",
     "const float PI=3.14159265;",
+    lodExt ? "#define TEX(s,uv,l) texture2DLodEXT(s,uv,l)" : "#define TEX(s,uv,l) texture2D(s,uv)",
     "vec3 dirFor(vec2 p, float fov){",
     "  float f = 1.0/tan(fov*0.5);",
     "  vec3 d = normalize(vec3(p.x, p.y, -f));",
@@ -818,16 +844,28 @@
     "  float lon=atan(d.x,-d.z), lat=asin(clamp(d.y,-1.0,1.0));",
     "  return vec2(lon/(2.0*PI)+0.5, lat/PI+0.5);",
     "}",
+    /* one direction per texture; the chromatic-aberration taps are the same
+       uv nudged along its offset from the view centre (shortest way round
+       the seam), so a fragment costs three fetches and one set of rotations
+       instead of nine fetches and six (F206) */
+    "vec3 tap(sampler2D s, vec2 p, float fov, float lodBase, float mip, vec2 uvc, float ca, float r){",
+    "  vec2 uv = uvFor(dirFor(p, fov));",
+    "  vec2 d = uv - uvc; d.x -= floor(d.x + 0.5);",
+    "  if (mip > 0.5) {",   // minifying: explicit level through the mip chain (seam-safe)
+    "    float f = 1.0/tan(fov*0.5);",
+    "    float lod = lodBase + log2(f*f/(f*f + r*r)) - log2(max(cos((uv.y-0.5)*PI), 0.05));",
+    "    return vec3(TEX(s, uv + d*ca, lod).r, TEX(s, uv, lod).g, TEX(s, uv - d*ca, lod).b);",
+    "  }",
+    "  return vec3(texture2D(s, uv + d*ca).r, texture2D(s, uv).g, texture2D(s, uv - d*ca).b);",   // magnifying: level 0, the cheap path
+    "}",
     "void main(){",
     "  vec2 p = (gl_FragCoord.xy - 0.5*uRes)/(0.5*uRes.y);",
     "  float r = length(p);",
-    "  float ca = 1.0 + r*r*0.00055;",   // whisper of chromatic aberration at the edges
-    "  vec2 uva = uvFor(dirFor(p, uFovA));",
-    "  vec2 uvb = uvFor(dirFor(p, uFovB));",
-    "  vec3 A, B;",
-    "  A.r=texture2D(uA, uvFor(dirFor(p*ca, uFovA))).r; A.g=texture2D(uA,uva).g; A.b=texture2D(uA, uvFor(dirFor(p/ca, uFovA))).b;",
-    "  B.r=texture2D(uB, uvFor(dirFor(p*ca, uFovB))).r; B.g=texture2D(uB,uvb).g; B.b=texture2D(uB, uvFor(dirFor(p/ca, uFovB))).b;",
-    "  vec3 col = mix(A, B, uMix*uAvail);",
+    "  float ca = r*r*0.0003;",   // whisper of chromatic aberration at the edges
+    "  vec2 uvc = vec2(0.5 - uYaw/(2.0*PI), uPitch/PI + 0.5);",   // where the view centre lands in the panorama
+    "  vec3 col = tap(uA, p, uFovA, uLodA, uMipA, uvc, ca, r);",
+    "  float m = uMix*uAvail;",
+    "  if (m > 0.0) col = mix(col, tap(uB, p, uFovB, uLodB, uMipB, uvc, ca, r), m);",   // uniform branch: B is skipped for a settled room
     "  col *= 1.0 - uVig*smoothstep(0.85,2.25,r);",
     "  col += uFlash;",
     "  float g = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898,78.233)))*43758.5453);",
@@ -868,13 +906,21 @@
       return { p: p, u: u };
     }
 
-    var quad = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-    var progView = program(VIEW_FS);
+    var quad, progView;
+    /* the fixed GL objects — built once, and again after a context restore */
+    function buildStatics() {
+      /* a restored context forgets its extensions — ask again before the
+         shader that names the LOD extension is compiled */
+      if (lodExt) { try { lodExt = gl.getExtension("EXT_shader_texture_lod") || lodExt; } catch (e) { } }
+      quad = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      progView = program(VIEW_FS);
+      return !!progView;
+    }
+    buildStatics();
     if (!progView) {
       on.error({
         title: "This GPU couldn't compile the renderer",
@@ -979,8 +1025,17 @@
       diag.push("quality downshift → " + HI_W + "×" + HI_H);
     }
 
+    /* every room texture goes through these two so stats() can answer
+       "how much VRAM is this tour holding" and a leak shows up as a number */
+    var texCount = 0;
+    function newTex() { texCount++; return gl.createTexture(); }
+    function freeTex(t) {
+      if (!t || !t.tex) return;
+      try { gl.deleteTexture(t.tex); } catch (e) { }
+      t.tex = null; texCount--;
+    }
     function makeTex(w, h) {
-      var t = gl.createTexture();
+      var t = newTex();
       gl.bindTexture(gl.TEXTURE_2D, t);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, w, h, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -989,12 +1044,16 @@
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       return { tex: t, w: w, h: h };
     }
-    var fbo = gl.createFramebuffer();
-    var blank = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, blank);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array([8, 8, 10]));
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    var fbo, blank;
+    function buildTargets() {
+      fbo = gl.createFramebuffer();
+      blank = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, blank);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array([8, 8, 10]));
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    }
+    buildTargets();
 
     function srgb(h, mul) {
       h = String(h || "#888").replace("#", "");
@@ -1071,7 +1130,7 @@
           while (hiPool.length >= HI_KEEP) {
             var victim = hiPool.shift();
             if (victim.id === (current && current.id) || (incoming && victim.id === incoming.id)) { hiPool.push(victim); break; }
-            gl.deleteTexture(victim.t.tex);
+            freeTex(victim.t);
             if (store[victim.id]) store[victim.id].hi = null;
           }
           job.target = makeTex(job.w, job.h);
@@ -1147,15 +1206,84 @@
        thread where the browser can, resampled down to what the tier can
        afford, with a breather between each so input and rendering stay
        alive. The room being walked into jumps the queue. */
-    var panoQ = [], panoBusy = false, panoLoading = {};
+    var panoQ = [], panoBusy = false, panoLoading = {}, panoGen = 0;
+    /* per-room generation: setPano()/load() bump it, and a decode that lands
+       for an older generation (or an older src) is thrown away instead of
+       overwriting the newer picture (F8) */
+    var roomGen = {}, panoRetry = {}, panoFailed = {};
+    var RETRY_MS = [2000, 8000];   // transient failures: two automatic retries, then one more per go()
+    var PANO_WATCHDOG = 60000;     // a stalled request must not pin the serial pump
+
+    /* the canvas the tour is drawn on at full device resolution — the
+       adaptive DPR below may draw smaller, but the texture budget must not
+       follow it round in a circle (fewer pixels → smaller cap → fewer pixels) */
+    function nominalDpr() { return Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2); }
+    function nominalW() { return Math.round((host.clientWidth || window.innerWidth || 1024) * nominalDpr()); }
+    function nominalH() { return Math.round((host.clientHeight || window.innerHeight || 768) * nominalDpr()); }
 
     function panoCap() {
-      /* full desktop tier takes the capture as shipped; touch devices,
-         downshifted tiers and explicit low-quality modes take a quarter of
-         the pixels (half the edge) — indistinguishable at phone FOVs,
-         and a quarter of the decode, upload and VRAM */
-      var cap = (TIER > 0 || coarse || qualityMode === "lo" || qualityMode === "md") ? 1024 : 2048;
-      return Math.max(512, Math.min(cap, HI_W, MAXTEX));
+      /* sized to the display, not the pointer: four texels per device pixel
+         across the full circle (≈2048 on a DPR-capped phone, 4096 on a
+         desktop and on tablets, whose canvases are 1500+ px), never below
+         1024 for a real capture even in low quality, and the phone ceiling
+         only applies to phone-sized canvases (F204 F99 F2 G23 G19). The
+         bake tier is about the space shader, which a photographed room
+         never runs, so it has no say here. */
+      var w = nominalW(), big = Math.max(w, nominalH()) >= 1500;
+      var cap = clamp(pot(w * 4), 1024, (coarse && !big) ? 2048 : 4096);
+      if (qualityMode === "lo" || qualityMode === "md") cap = 1024;
+      return Math.min(cap, MAXTEX);
+    }
+
+    /* the file the engine asks for. Studio uploads live under /media/ with
+       a fixed ladder beside the 4096 original (w480, w1600, pano2048): a
+       phone fetches the 2048 file it can actually show and low quality the
+       1600 photo (G20). Shipped panos/, data: and blob: sources are
+       untouched, so the demo tours never change. */
+    var MEDIA_4096 = /^(?:https?:\/\/[^/]+)?\/media\/.+\/pano4096\.jpg$/;
+    function panoUrl(src) {
+      if (typeof src !== "string" || !MEDIA_4096.test(src)) return src;
+      var cap = panoCap();
+      if (cap <= 1024) return src.replace(/pano4096\.jpg$/, "w1600.jpg");
+      if (cap <= 2048) return src.replace(/pano4096\.jpg$/, "pano2048.jpg");
+      return src;
+    }
+
+    /* one texture from a decoded picture or canvas; POT sizes get a mipmap
+       chain so a wide view of a 4096 panorama stops shimmering (the viewer
+       picks the level itself — see VIEW_FS) */
+    function uploadPano(src, tw, th) {
+      var mip = !!lodExt && pot(tw) === tw && pot(th) === th;
+      var t = newTex();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      if (mip) gl.generateMipmap(gl.TEXTURE_2D);
+      /* mip: the chain exists; filt: the min filter currently walks it —
+         switched per frame by the viewer, only while the view minifies */
+      return { tex: t, w: tw, h: th, mip: mip, filt: false };
+    }
+    /* Does this texture need its mip chain for the view being drawn? The
+       centre density plus the latitude term at the visible extremes says
+       whether anything on screen is minified by more than a quarter level;
+       below that the plain level-0 fetch is both correct and the cheap path
+       (a software rasteriser pays 2× for trilinear; phones at rest never
+       need it). The filter follows the answer so the seam-safe LOD path is
+       only ever used with the chain and vice versa. */
+    function mipFor(t, lodBase, fovDeg) {
+      if (!t || !t.mip) return 0;
+      var latMax = Math.min(89, Math.abs(cam.pitch) + fovDeg * 0.5) * D2R;
+      var want = lodBase - Math.log(Math.cos(latMax)) / Math.LN2 > 0.25;
+      if (want !== t.filt) {   // the texture is bound on the active unit
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, want ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+        t.filt = want;
+      }
+      return want ? 1 : 0;
     }
 
     function panoStep(job) {
@@ -1168,21 +1296,22 @@
           c.getContext("2d").drawImage(im, 0, 0, tw, th);
           src = c;
         }
-        var t = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        store[room.id].lo = store[room.id].hi = { tex: t, w: tw, h: th };
+        var full = uploadPano(src, tw, th);
+        /* whatever sat in the slot (a bake preview, an older capture) goes
+           now — except the thumb of the room on screen, which stays as the
+           lo slot so the frame loop dissolves from it into the full picture
+           (and frees it after); a room nobody is looking at drops its thumb
+           at once, so a settled tour holds one texture per room */
+        var prev = store[room.id], onScreen = current && current.id === room.id;
+        var keepLo = (onScreen && prev && prev.lo && prev.lo.thumb) ? prev.lo : null;
+        if (prev) { if (prev.lo && prev.lo !== prev.hi && prev.lo !== keepLo) freeTex(prev.lo); freeTex(prev.hi); }
+        store[room.id] = { lo: keepLo || full, hi: full };
         /* thumbnail straight off the capture */
         var tc = document.createElement("canvas");
         tc.width = 640; tc.height = 320;
         tc.getContext("2d").drawImage(im, 0, 0, 640, 320);
         thumbSrc[room.id] = tc;
+        delete panoRetry[room.id]; delete panoFailed[room.id];
         if (opts.onThumb) opts.onThumb(room.id);
         if (job.cb) job.cb();
       } catch (e) {
@@ -1191,18 +1320,157 @@
       }
     }
 
+    /* Thumb first: a room that carries its w480 thumb (Studio uploads do)
+       gets it on the GPU straight away as a 512×256 texture — outside the
+       serial pump, it is a few kilobytes — so the first frame and every
+       door tap show the room in about a second; the full file replaces it
+       when it lands. Shipped demo rooms have no thumb and are unaffected. */
+    var thumbLoading = {};
+    function thumbFirst(room) {
+      var id = room.id, src = room.thumb;
+      if (typeof src !== "string" || !src || thumbLoading[id] || !store[id] || store[id].lo) return;
+      var im = new Image(), gen = panoGen, rgen = roomGen[id] || 0;
+      im.crossOrigin = "anonymous";
+      thumbLoading[id] = im;
+      var finish = function (ok) {
+        if (thumbLoading[id] !== im) return;
+        delete thumbLoading[id];
+        var r = byId[id];
+        if (!ok || destroyed || lost || !r || r.thumb !== src || gen !== panoGen || rgen !== (roomGen[id] || 0) || !store[id] || store[id].lo) return;
+        try {
+          var c = document.createElement("canvas");
+          c.width = 512; c.height = 256;
+          c.getContext("2d").drawImage(im, 0, 0, 512, 256);
+          var t = uploadPano(c, 512, 256);
+          t.thumb = true;
+          store[id].lo = t;
+          if (!thumbSrc[id]) { thumbSrc[id] = c; if (opts.onThumb) opts.onThumb(id); }
+        } catch (e) { diag.push("thumb upload failed: " + src); }
+      };
+      im.onload = function () { finish(true); };
+      im.onerror = function () { finish(false); };
+      im.src = src;
+    }
+    /* the full picture of a captured room is here (the lo slot may only be the thumb) */
+    function full(id) { return store[id] ? store[id].hi : null; }
+
+    /* the job that was fetched is still the one the room wants: same room
+       object family (by id), same src, same generation, same GL context */
+    function jobLive(job) {
+      var room = byId[job.room.id];
+      return !!room && room.pano === job.src && job.gen === panoGen && job.rgen === (roomGen[room.id] || 0);
+    }
+
+    function panoFail(job) {
+      var id = job.room.id, room = byId[id];
+      if (!room || !jobLive(job)) return;              // superseded — nothing to retry
+      var n = panoRetry[id] || 0;
+      if (n < RETRY_MS.length) {
+        /* flaky 3G / a 5xx / an aborted response: try again after a pause —
+           never swap a photographed room for a synthetic render (G21) */
+        panoRetry[id] = n + 1;
+        diag.push("panorama retry " + (n + 1) + " in " + RETRY_MS[n] + " ms: " + job.src);
+        var src = job.src, priority = job.priority, cb = job.cb;
+        setTimeout(function () {
+          var r = byId[id];
+          if (destroyed || !r || r.pano !== src || full(id) || panoLoading[id]) return;
+          loadPano(r, "lo", cb, priority);
+        }, RETRY_MS[n]);
+        return;
+      }
+      panoFailed[id] = true;
+      if (pending && pending.room.id === id) pending = null;   // stay in the room we were in
+      on.loading(id, false, "failed");
+    }
+
+    /* Studio uploads are fetched as a byte stream into a blob so the loader
+       can show real progress (F186 F5); shipped panos keep the plain <img>
+       path. A file the page has already asked for with <link rel=preload
+       as=image> is left to <img> too — a fetch would not reuse that
+       preload and the biggest file of the tour would download twice. */
+    function streamable(url) {
+      if (typeof url !== "string" || !/^(?:https?:\/\/[^/]+)?\/media\//.test(url)) return false;
+      if (!window.fetch || !window.ReadableStream || !window.Blob || !window.URL || !URL.createObjectURL) return false;
+      try {
+        var abs = new URL(url, location.href).href, links = document.querySelectorAll('link[rel="preload"][as="image"]');
+        for (var i = 0; i < links.length; i++) if (links[i].href === abs) return false;
+      } catch (e) { }
+      return true;
+    }
+    function streamFetch(job, ok, fail) {
+      var ctl = window.AbortController ? new AbortController() : null;
+      job.abort = ctl ? function () { try { ctl.abort(); } catch (e) { } } : null;
+      fetch(job.url, { mode: "cors", credentials: "same-origin", signal: ctl ? ctl.signal : undefined }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        job.total = +res.headers.get("content-length") || 0;
+        var type = res.headers.get("content-type") || "image/jpeg";
+        if (!res.body || !res.body.getReader) return res.blob();
+        var reader = res.body.getReader(), chunks = [];
+        return (function pump() {
+          return reader.read().then(function (r) {
+            if (r.done) return new Blob(chunks, { type: type });
+            chunks.push(r.value); job.loaded += r.value.byteLength;
+            return pump();
+          });
+        })();
+      }).then(function (blob) { ok(URL.createObjectURL(blob)); }, fail);
+    }
+
     function panoPump() {
       if (panoBusy || !panoQ.length || destroyed) return;
       panoBusy = true;
       var job = panoQ.shift();
-      var im = new Image();
+      var im = new Image(), settled = false, wd = 0, blobUrl = null;
       im.crossOrigin = "anonymous";
+      job.url = panoUrl(job.src); job.loaded = 0; job.total = 0; job.abort = null;
       var done = function (ok) {
-        if (ok) { job.im = im; panoStep(job); }
-        delete panoLoading[job.room.id];
+        if (settled) return;
+        settled = true; clearTimeout(wd);
+        var id = job.room.id;
+        if (panoLoading[id] === job) delete panoLoading[id];
+        if (jobLive(job)) {
+          job.room = byId[id];                       // the tour may have been reloaded meanwhile
+          if (ok) { job.im = im; panoStep(job); } else if (!job.silent) panoFail(job);
+        } else {
+          /* stale: the room changed its picture (or the context) while this
+             one was in flight — drop it and fetch what the room wants now */
+          var r = byId[id];
+          if (job.gen === panoGen && r && r.pano && !full(id) && !panoLoading[id]) loadPano(r, "lo", job.cb, job.priority);
+        }
+        if (blobUrl) { try { URL.revokeObjectURL(blobUrl); } catch (e) { } blobUrl = null; }
         /* a breather between captures — frames, scroll and clicks get
-           serviced before the next decode+upload lands */
-        setTimeout(function () { panoBusy = false; panoPump(); }, job.priority ? 30 : 150);
+           serviced before the next decode+upload lands; shorter when the
+           next one is the room being walked into */
+        var next = panoQ[0];
+        setTimeout(function () { panoBusy = false; panoPump(); }, (next && next.priority === true) ? 30 : 150);
+      };
+      var begin = function () {
+        if (streamable(job.url)) streamFetch(job, function (u) { if (settled) { try { URL.revokeObjectURL(u); } catch (e) { } return; } blobUrl = u; im.src = u; }, fail);
+        else im.src = job.url;
+      };
+      var fail = function () {
+        if (settled) return;
+        if (job.url !== job.src && !job.fellBack) {
+          /* the smaller derivative is missing (an upload from before the
+             ladder existed) — the 4096 original always exists: once */
+          job.fellBack = true; job.loaded = job.total = 0; job.abort = null;
+          diag.push("panorama derivative missing, taking the original: " + job.url);
+          job.url = job.src;
+          begin();
+          return;
+        }
+        diag.push("panorama failed to load: " + job.url);
+        done(false);
+      };
+      /* a stalled request is cut off (the watchdog) or dropped on purpose
+         (the loader's Retry) and the pump moves on */
+      job.cancel = function (why, silent) {
+        if (settled) return;
+        job.silent = !!silent;                      // the caller re-queues it itself, no backoff
+        diag.push("panorama " + (why || "cancelled") + ": " + job.url);
+        im.onload = im.onerror = null; im.src = "";
+        if (job.abort) job.abort();
+        done(false);
       };
       im.onload = function () {
         /* decode() moves the JPEG decode off the main thread; drawing an
@@ -1210,31 +1478,86 @@
         if (im.decode) im.decode().then(function () { done(true); }, function () { done(true); });
         else done(true);
       };
-      im.onerror = function () {
-        diag.push("panorama failed to load: " + job.room.pano);
-        if (job.room.space) enqueue(job.room.id, "lo", true);
-        done(false);
-      };
-      im.src = job.room.pano;
+      im.onerror = fail;
+      wd = setTimeout(function () { job.cancel("stalled"); }, PANO_WATCHDOG);
+      begin();
     }
 
+    /* priority: true = the room being walked into (front of the queue);
+       "soon" = a neighbour (behind the walked-into rooms, ahead of the
+       rest); anything else = background, in order. A room already queued
+       is moved rather than duplicated (F208). */
+    function placeJob(job) {
+      var i = panoQ.indexOf(job);
+      if (i >= 0) panoQ.splice(i, 1);
+      if (job.priority === true) { panoQ.unshift(job); return; }
+      if (job.priority === "soon") {
+        var pos = 0;
+        while (pos < panoQ.length && panoQ[pos].priority === true) pos++;
+        panoQ.splice(pos, 0, job);
+        return;
+      }
+      panoQ.push(job);
+    }
+    function rank(p) { return p === true ? 2 : p === "soon" ? 1 : 0; }
+
     function loadPano(room, kind, cb, priority) {
-      if (panoLoading[room.id]) return;
-      panoLoading[room.id] = true;
-      var job = { room: room, cb: cb, priority: !!priority };
-      if (priority) panoQ.unshift(job); else panoQ.push(job);
+      thumbFirst(room);
+      var live = panoLoading[room.id];
+      if (live) {
+        if (live.src === room.pano && rank(priority) > rank(live.priority) && panoQ.indexOf(live) >= 0) {
+          live.priority = priority;
+          placeJob(live);
+        }
+        if (cb && !live.cb) live.cb = cb;
+        return;
+      }
+      var job = { room: room, src: room.pano, cb: cb, priority: priority || false, gen: panoGen, rgen: roomGen[room.id] || 0 };
+      panoLoading[room.id] = job;
+      placeJob(job);
       panoPump();
     }
 
     function needLo(room, priority) {
-      if (!room || store[room.id].lo) return;
-      if (room.pano) loadPano(room, "lo", null, priority);
-      else enqueue(room.id, "lo", priority);
+      if (!room || !store[room.id]) return;
+      /* a captured room wants its full picture even when the thumb is up */
+      if (room.pano) { if (!full(room.id) && !panoFailed[room.id]) loadPano(room, "lo", null, priority); }
+      else if (!store[room.id].lo) enqueue(room.id, "lo", priority);
     }
     function needHi(room, priority) {
-      if (!room || store[room.id].hi) return;
+      if (!room || !store[room.id] || store[room.id].hi) return;
       if (room.pano) return;                       // a capture is already full resolution
       enqueue(room.id, "hi", priority);
+    }
+    /* rooms the visitor can walk into from here: the nav hotspots (the
+       legacy `links` list is honoured if a tour ever carries one) */
+    function neighbours(room) {
+      var out = [], seen = {};
+      if (!room) return out;
+      (room.hotspots || []).forEach(function (h) { if (h && h.type === "nav" && h.to) seen[h.to] = 1; });
+      (room.links || []).forEach(function (l) { var to = l && (l.to || l); if (to) seen[to] = 1; });
+      for (var id in seen) if (byId[id] && id !== room.id) out.push(byId[id]);
+      return out;
+    }
+    function prefetchAround(room) { neighbours(room).forEach(function (r) { needLo(r, "soon"); }); }
+    /* the ready-time preload: the room on screen, then its neighbours, then
+       the rest — but not on the dashboard (the auto-rotating view) nor in an
+       embed until the visitor has actually touched the tour (F100), and on a
+       Save-Data connection the rest stays lazy */
+    var preloaded = false, interacted = false;
+    function preloadAll() {
+      if (preloaded || !booted) return;
+      preloaded = true;
+      var room = incoming || current;
+      if (room) { needLo(room, true); prefetchAround(room); }
+      var conn = navigator.connection;
+      if (conn && conn.saveData) return;
+      rooms.forEach(function (r) { needLo(r); });
+    }
+    function interact() {
+      if (interacted) return;
+      interacted = true;
+      preloadAll();
     }
     function best(id) { return store[id] ? (store[id].hi || store[id].lo) : null; }
 
@@ -1243,8 +1566,10 @@
        ───────────────────────────────────────────────────────────────────── */
     var cam = { yaw: 0, pitch: 0, fov: 75, tYaw: 0, tPitch: 0, tFov: 75 };
     var current = null, incoming = null;
+    var pending = null;   // { room, o, from } — walked into, picture not here yet; keep drawing current
     var trans = { t: 1, dur: 1100 };
     var drift = 0, driftSpeed = 0.0022, idleSince = now(), inputsOn = true;
+    var idleOn = !opts.embed;   // the slow idle drift; the app switches it off in the Studio and behind sheets
     var asleep = false;   // canvas parked in a hidden view — skip the draw, keep baking
     var flash = 0, booted = false, bootStart = now(), destroyed = false;
 
@@ -1255,6 +1580,20 @@
       return [dz * sy, dy, dz * cy];
     }
 
+    /* The stored fov is the vertical field of view — right for a landscape
+       screen. Held upright, a phone would show a 40° slit of the room, so on
+       a portrait canvas the same number is taken as the horizontal field and
+       the vertical one follows from the aspect, capped at 100° so the corners
+       do not stretch. One helper, used by the shader, project() and
+       angleAt(), so hotspots and taps always agree with the picture (F13
+       F143). Room data and desktop are untouched. */
+    function effFov(fov) {
+      fov = fov == null ? cam.fov : fov;
+      var W = host.clientWidth, H = host.clientHeight;
+      if (!(H > W) || W < 2) return fov;
+      return Math.min(100, 2 * Math.atan(Math.tan(fov * D2R * 0.5) * H / W) * R2D);
+    }
+
     function project(yawDeg, pitchDeg) {
       var w = camDir(yawDeg, pitchDeg);
       var y = -cam.yaw * D2R, p = -cam.pitch * D2R;
@@ -1263,7 +1602,7 @@
       var cp = Math.cos(p), sp = Math.sin(p);
       var y2 = y1 * cp - z1 * sp, z2 = y1 * sp + z1 * cp;
       if (z2 > -0.02) return null;
-      var f = 1 / Math.tan(cam.fov * D2R * 0.5);
+      var f = 1 / Math.tan(effFov() * D2R * 0.5);
       var sx = f * x1 / -z2, sy2 = f * y2 / -z2;
       var W = host.clientWidth, H = host.clientHeight;
       return [W * 0.5 + sx * H * 0.5, H * 0.5 - sy2 * H * 0.5, Math.hypot(sx, sy2)];
@@ -1273,7 +1612,7 @@
       var r = host.getBoundingClientRect();
       var x = (clientX - r.left - r.width * 0.5) / (r.height * 0.5);
       var y = -(clientY - r.top - r.height * 0.5) / (r.height * 0.5);
-      var f = 1 / Math.tan(cam.fov * D2R * 0.5);
+      var f = 1 / Math.tan(effFov() * D2R * 0.5);
       var d = [x, y, -f], L = Math.hypot(d[0], d[1], d[2]);
       d = [d[0] / L, d[1] / L, d[2] / L];
       var p = cam.pitch * D2R, cp = Math.cos(p), sp = Math.sin(p);
@@ -1293,29 +1632,78 @@
       var room = byId[id];
       o = o || {};
       if (!room) return false;
-      if ((incoming && incoming.id === id) || (!incoming && current && current.id === id && !o.force)) {
+      if (pending && pending.room.id === id) {
+        /* still waiting for this room — a force re-points at the new object
+           (an undo rebuilt the tour) and the app learns about it (F115) */
+        if (o.force) { pending.room = room; on.room(room, pending.from); }
+        if (o.yaw != null) pending.o = o;
+        return false;
+      }
+      if (incoming && incoming.id === id) {
+        if (o.force) { incoming = room; on.room(room, current); }
+        if (o.yaw != null) look(o.yaw, o.pitch, o.fov);
+        return false;
+      }
+      if (!incoming && current && current.id === id && !o.force) {
         if (o.yaw != null) look(o.yaw, o.pitch, o.fov);
         return false;
       }
       var from = incoming || current;
-      incoming = room;
+      if (pending) { var pid = pending.room.id; pending = null; on.loading(pid, false); }   // the newer tap wins
+      /* a second tap mid-dissolve: the room we were dissolving into is done,
+         so the next dissolve starts from it — not from the room already
+         left (F128) */
+      if (incoming && trans.t < 1) { current = incoming; incoming = null; current._sharp = 0; }
+      if (panoFailed[id]) {
+        /* one more attempt when the visitor walks in again, no backoff */
+        delete panoFailed[id]; panoRetry[id] = RETRY_MS.length;
+      }
       needLo(room, true); needHi(room, true);
+      interact();
+      idleSince = now();
+      if (!best(id)) {
+        /* never dissolve into nothing: keep drawing where we are, show the
+           ring on the door, and start the dissolve when the picture lands */
+        pending = { room: room, o: o, from: from };
+        on.loading(id, true);
+        prefetchAround(room);
+        return true;
+      }
+      begin(room, o, from);
+      return true;
+    }
+
+    /* the dissolve proper — camera targets, neighbour prefetch, on.room */
+    function begin(room, o, from) {
+      incoming = room;
       trans.t = 0;
       trans.dur = reduce ? 220 : (o.dur || 1100);
       var s = room.view || {};
       cam.tYaw = o.yaw != null ? o.yaw : (s.yaw || 0);
       cam.tPitch = o.pitch != null ? o.pitch : (s.pitch || 0);
-      cam.tFov = o.fov != null ? o.fov : (s.fov || 75);
+      cam.tFov = clamp(o.fov != null ? o.fov : (s.fov || 75), 30, 100);   // a deep link's ?f= is data, not a guarantee
       while (cam.tYaw - cam.yaw > 180) cam.tYaw -= 360;
       while (cam.tYaw - cam.yaw < -180) cam.tYaw += 360;
-      (room.links || []).forEach(function (l) { needLo(byId[l.to || l]); });
+      prefetchAround(room);
       on.room(room, from);
       idleSince = now();
-      return true;
+    }
+
+    /* polled from the frame loop: the pending room's picture has arrived
+       (a capture decoded, or a preview baked) */
+    function settlePending() {
+      if (!pending || !best(pending.room.id)) return;
+      var p = pending; pending = null;
+      on.loading(p.room.id, false);
+      begin(p.room, p.o, p.from);
     }
 
     function look(y, p, f) {
-      if (y != null) cam.tYaw = y;
+      if (y != null) {
+        cam.tYaw = y;
+        while (cam.tYaw - cam.yaw > 180) cam.tYaw -= 360;   // shortest way round, like go()
+        while (cam.tYaw - cam.yaw < -180) cam.tYaw += 360;
+      }
       if (p != null) cam.tPitch = clamp(p, -88, 88);
       if (f != null) cam.tFov = clamp(f, 30, 100);
       idleSince = now();
@@ -1325,58 +1713,84 @@
        INPUT
        ───────────────────────────────────────────────────────────────────── */
     var drag = null, pinch = null, gyro = null;
+    var gyroOff = null;    // yaw/pitch the visitor has dragged on top of the device pose
 
+    /* Every listener lives on the canvas, which travels with mount(); the
+       host only lends its class list for the grab cursor. */
     function down(e) {
       if (!inputsOn) return;
-      if (e.target.closest && e.target.closest("[data-no-drag]")) return;
-      drag = { x: e.clientX, y: e.clientY, yaw: cam.tYaw, pitch: cam.tPitch, moved: 0 };
+      if (drag && drag.pid !== e.pointerId) return;      // a second finger is a pinch, never a new drag
+      drag = { pid: e.pointerId, mouse: e.pointerType === "mouse", x: e.clientX, y: e.clientY, dx: 0, dy: 0,
+               yaw: cam.tYaw, pitch: cam.tPitch, maxD: 0, t0: now() };
       host.classList.add("is-grabbing");
       idleSince = now();
+      interact();
       if (opts.onInteract) opts.onInteract();
     }
     function move(e) {
-      if (!drag) return;
-      var k = cam.fov / 75 * 0.13;
+      if (!drag || e.pointerId !== drag.pid) return;
+      var k = effFov() / 75 * 0.13;   // the view that is actually on screen sets the gain
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-      drag.moved += Math.abs(dx) + Math.abs(dy);
-      cam.tYaw = drag.yaw + dx * k;                       // grab-and-pull, like every photosphere
-      cam.tPitch = clamp(drag.pitch + dy * k, -88, 88);
+      drag.maxD = Math.max(drag.maxD, Math.hypot(dx, dy));
+      if (gyro && gyroOff) {
+        /* the device pose owns the camera — the drag moves the offset it sits on */
+        gyroOff.yaw += (dx - drag.dx) * k;
+        gyroOff.pitch = clamp(gyroOff.pitch + (dy - drag.dy) * k, -88, 88);
+      } else {
+        cam.tYaw = drag.yaw + dx * k;                       // grab-and-pull, like every photosphere
+        cam.tPitch = clamp(drag.pitch + dy * k, -88, 88);
+      }
+      drag.dx = dx; drag.dy = dy;
       idleSince = now();
     }
     function up(e) {
-      if (!drag) return;
+      if (!drag || e.pointerId !== drag.pid) return;
       host.classList.remove("is-grabbing");
-      var moved = drag.moved;
+      /* a tap is a short press that never strayed far from where it landed —
+         a finger rolls a few pixels on its own, so touch gets more room */
+      var tap = drag.maxD < (drag.mouse ? 5 : 12) && now() - drag.t0 < 600;
       drag = null;
       idleSince = now();
-      if (moved < 6 && opts.onTap) opts.onTap(e);
+      if (tap && opts.onTap) opts.onTap(e);
     }
-    host.addEventListener("pointerdown", down);
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerup", up);
-    window.addEventListener("pointercancel", function () { drag = null; host.classList.remove("is-grabbing"); });
-    host.addEventListener("wheel", function (e) {
-      if (!inputsOn) return;
+    function cancel(e) {
+      if (drag && e.pointerId !== drag.pid) return;
+      drag = null; host.classList.remove("is-grabbing");
+    }
+    function wheel(e) {
+      /* passiveWheel: the page owns the wheel (an embed before its first tap) */
+      if (!inputsOn || opts.passiveWheel) return;
       e.preventDefault();
       var step = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
       cam.tFov = clamp(cam.tFov + clamp(step, -90, 90) * 0.045, 30, 100);
       idleSince = now();
+      interact();
       if (opts.onInteract) opts.onInteract();
-    }, { passive: false });
-    host.addEventListener("touchstart", function (e) {
+    }
+    function touchStart(e) {
+      if (!inputsOn) return;
       if (e.touches.length === 2) {
         pinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), fov: cam.tFov };
-        drag = null;
+        drag = null; host.classList.remove("is-grabbing");
+        interact();
       }
-    }, { passive: true });
-    host.addEventListener("touchmove", function (e) {
+    }
+    function touchMove(e) {
       if (pinch && e.touches.length === 2) {
         var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
         cam.tFov = clamp(pinch.fov * pinch.d / d, 30, 100);
         idleSince = now();
       }
-    }, { passive: true });
-    host.addEventListener("touchend", function (e) { if (e.touches.length < 2) pinch = null; }, { passive: true });
+    }
+    function touchEnd(e) { if (e.touches.length < 2) pinch = null; }
+    canvas.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", cancel);
+    canvas.addEventListener("wheel", wheel, { passive: false });
+    canvas.addEventListener("touchstart", touchStart, { passive: true });
+    canvas.addEventListener("touchmove", touchMove, { passive: true });
+    canvas.addEventListener("touchend", touchEnd, { passive: true });
 
     /* Device-orientation look-around. The naive alpha/beta mapping falls apart
        the moment the phone is turned to landscape — which is exactly how people
@@ -1392,10 +1806,13 @@
       return (a || 0) * D2R;
     }
     function gyroToggle(want) {
-      if (gyro && !want) { window.removeEventListener("deviceorientation", gyro); gyro = null; return false; }
-      if (gyro || !want) return !!gyro;
+      if (gyro && !want) {
+        window.removeEventListener("deviceorientation", gyro);
+        gyro = null; gyroOff = null;
+        return Promise.resolve(false);
+      }
+      if (gyro || !want) return Promise.resolve(!!gyro);
 
-      var yawOffset = null;                       // captured on the first sample
       // q1 = −90° about X: the camera looks out through the back of the device.
       var Q1X = -Math.SQRT1_2, Q1W = Math.SQRT1_2;
 
@@ -1432,26 +1849,86 @@
         var fz = -1 + (qx * ty - qy * tx);
         var yaw = -Math.atan2(fx, -fz) * R2D;
         var pitch = Math.asin(clamp(fy, -1, 1)) * R2D;
-        if (yawOffset == null) yawOffset = cam.tYaw - yaw;         // engage without a jump
-        cam.tYaw = yaw + yawOffset;
-        cam.tPitch = clamp(pitch, -88, 88);
+        if (!gyroOff) gyroOff = { yaw: cam.tYaw - yaw, pitch: 0 };   // engage without a jump
+        cam.tYaw = yaw + gyroOff.yaw;
+        cam.tPitch = clamp(pitch + gyroOff.pitch, -88, 88);
         idleSince = now();
       };
-      var start = function () { gyro = handler; window.addEventListener("deviceorientation", handler); };
-      if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
-        DeviceOrientationEvent.requestPermission().then(function (r) { if (r === "granted") start(); }).catch(function () { });
-      } else if (window.DeviceOrientationEvent) start();
-      return true;
+      var start = function () { gyroOff = null; gyro = handler; window.addEventListener("deviceorientation", handler); interact(); return true; };
+      if (!window.DeviceOrientationEvent) return Promise.resolve(false);
+      if (DeviceOrientationEvent.requestPermission) {
+        /* iOS asks once per page and only from a user gesture — the caller
+           runs this from its click handler; the answer decides the outcome */
+        var ask;
+        try { ask = DeviceOrientationEvent.requestPermission(); } catch (e) { return Promise.resolve(false); }
+        return Promise.resolve(ask).then(function (r) { return r === "granted" ? start() : false; }, function () { return false; });
+      }
+      return Promise.resolve(start());
     }
+
+    /* ─────────────────────────────────────────────────────────────────────
+       CONTEXT LOSS — a driver reset, GPU pressure or a long spell in the
+       background can take the WebGL context away. preventDefault on the
+       loss asks the browser to hand it back; until then the loop stops
+       (every GL call would silently fail) and the app is told. On restore
+       every GL object is gone: rebuild the statics, forget every texture
+       and bake, and fetch the room the visitor is in again.
+       ───────────────────────────────────────────────────────────────────── */
+    var lost = false, started = false, rafId = 0;
+    function onLost(e) {
+      e.preventDefault();
+      lost = true;
+      diag.push("WebGL context lost");
+      on.error({ title: "The tour paused", message: "Tap to restart", detail: "webglcontextlost",
+        diag: diag.join("\n"), recoverable: true });
+    }
+    function onRestored() {
+      diag.push("WebGL context restored");
+      bakeProgs = {}; shaderFailed = false; shaderLog = "";
+      if (!buildStatics()) {
+        on.error({ title: "The tour could not restart", message: "Reload the page to try again.",
+          detail: shaderLog, diag: diag.join("\n") });
+        return;
+      }
+      buildTargets();
+      queue.length = 0; hiPool.length = 0;
+      panoQ.length = 0; panoLoading = {}; panoBusy = false; panoGen++;
+      panoRetry = {}; panoFailed = {}; thumbLoading = {}; texCount = 0;
+      rooms.forEach(function (r) { store[r.id] = { lo: null, hi: null }; });
+      lost = false; lastT = now(); slowStrikes = 0;
+      var room = incoming || current;
+      if (room) { needLo(room, true); needHi(room, true); }
+      if (pending) needLo(pending.room, true);
+      if (started) { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); }
+      if (booted) on.ready();
+    }
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
 
     /* ─────────────────────────────────────────────────────────────────────
        FRAME
        ───────────────────────────────────────────────────────────────────── */
-    var lastT = now(), lastW = 0, lastH = 0, dpr = 1;
+    var lastT = now(), lastW = 0, lastH = 0, dpr = 1, lastMip = 0;
     var slowStrikes = 0;   // consecutive multi-second frames while bakes were pending
 
+    /* Adaptive DPR (F210), phones with a captured room only: the panorama
+       supplies a few hundred texels across the view, so drawing 1.75× the
+       CSS pixels is bandwidth spent on bilinear blur. The canvas follows the
+       texel density (1.25 device px per texel, quarter steps, never below
+       1) and re-fits only once the zoom has settled. Baked demo rooms and
+       desktops keep the full device ratio, so the demo look is unchanged. */
+    function wantDpr() {
+      var fullDpr = nominalDpr();
+      if (!coarse) return fullDpr;
+      var room = incoming || current, t = room && room.pano ? best(room.id) : null;
+      if (!t || !t.w) return fullDpr;
+      var W = Math.max(2, host.clientWidth), H = Math.max(2, host.clientHeight);
+      var hfov = 2 * Math.atan(Math.tan(effFov() * D2R * 0.5) * W / H) * R2D;
+      var need = t.w * hfov / 360 / W * 1.25;
+      return clamp(Math.ceil(need * 4) / 4, 1, fullDpr);
+    }
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2);
+      dpr = wantDpr();
       var w = Math.max(2, host.clientWidth), h = Math.max(2, host.clientHeight);
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       canvas.style.width = w + "px"; canvas.style.height = h + "px";
@@ -1487,6 +1964,13 @@
       var s = store[room.id];
       if (!s) return 0;
       if (s.hi) return 1;
+      if (room.pano) {
+        /* a download: real bytes when the stream reports them, otherwise a
+           thumb on screen counts for most of the way */
+        var live = panoLoading[room.id];
+        if (live && live.total > 0) return 0.05 + 0.85 * clamp(live.loaded / live.total, 0, 1);
+        return s.lo ? 0.62 : 0.06;
+      }
       var job = null;
       for (var i = 0; i < queue.length; i++) if (queue[i].id === room.id) { job = queue[i]; break; }
       if (!job) return s.lo ? 0.62 : 0.06;
@@ -1494,23 +1978,43 @@
       return base + (job.kind === "lo" ? 0.5 : 0.5) * (job.row / job.rows);
     }
 
+    /* the boot guard counts only time the visitor could see — a tour opened
+       in a background tab, or left while a message is answered, is not a
+       slow tour. Visible time is a running total the visibility events keep;
+       the frame loop reads it, and no frames run while hidden anyway. */
+    var bootWarned = false, bootBase = 0, visibleAcc = 0, visibleSince = document.hidden ? -1 : now();
+    function onVisibility() {
+      if (document.hidden) { if (visibleSince >= 0) { visibleAcc += now() - visibleSince; visibleSince = -1; } }
+      else if (visibleSince < 0) visibleSince = now();
+    }
+    function visibleTime() { return visibleAcc + (visibleSince >= 0 ? now() - visibleSince : 0); }
+    document.addEventListener("visibilitychange", onVisibility);
+
     function frame(t, once) {
-      if (destroyed) return;
-      var rawGap = t - lastT;
-      var dt = Math.min(64, rawGap); lastT = t;
+      if (destroyed || lost) return;
+      /* a one-off frame (capture) draws the current state and leaves the
+         clock alone; a rAF timestamp can trail a now() taken during a busy
+         task by hundreds of ms, and a negative dt would turn the damping
+         into a runaway (the fov shot past 100 000° under a software GPU) */
+      var rawGap = once ? 0 : t - lastT;
+      var dt = clamp(rawGap, 0, 64);
+      if (!once) lastT = t;
+      if (!booted && !once && !bootWarned && visibleTime() - bootBase > 25000) { bootWarned = true; bootTimeout(); }
 
       /* Watchdog for GPUs where the shader compiles but crawls — the
          link-failure fallback never catches those, and each bake band can
          take seconds, which reads as a hung tab. Three consecutive
          multi-second frames with bakes pending = this tier is beyond the
          machine: remember the next tier down and reload once (the same
-         path a failed link takes). At the bottom tier, abandon the
-         background previews instead — the current room is all that bakes. */
+         path a failed link takes). At the bottom tier — or when the app
+         asked for noReload because unsaved edits outrank the renderer —
+         abandon the background previews instead; the current room is all
+         that bakes. */
       if (rawGap > 900 && queue.length && booted) {
         slowStrikes++;
         if (slowStrikes >= 3) {
           slowStrikes = 0;
-          if (TIER < 2) {
+          if (TIER < 2 && !opts.noReload) {
             diag.push("GPU too slow for the " + TIERS[TIER] + " renderer — dropping a tier");
             rememberTier(TIER + 1);
             if (reloadOnce()) return;
@@ -1526,10 +2030,14 @@
          math, no callbacks. Baking continues so previews finish while the
          viewer browses, and the loop stays armed so waking is one frame. */
       if (asleep && booted && !once && !incoming && trans.t >= 1) {
-        bakeBudget(true);
-        requestAnimationFrame(frame);
-        return;
+        settlePending();   // a room walked into while parked still arrives
+        if (!incoming) {
+          bakeBudget(true);
+          rafId = requestAnimationFrame(frame);
+          return;
+        }
       }
+      settlePending();
 
       /* frame-rate independent damping: the same feel at 30 fps and 120 */
       var k = drag ? 1 - Math.pow(0.00002, dt / 1000) : 1 - Math.pow(0.0016, dt / 1000);
@@ -1538,7 +2046,7 @@
       cam.fov = lerp(cam.fov, cam.tFov, 1 - Math.pow(0.002, dt / 1000));
 
       if (drift && !drag && !gyro && !reduce) cam.tYaw += driftSpeed * drift * dt;
-      else if (!drag && !gyro && !reduce && now() - idleSince > 5200) cam.tYaw += 0.0016 * dt;
+      else if (idleOn && !drag && !gyro && !reduce && now() - idleSince > 5200) cam.tYaw += 0.0016 * dt;
 
       if (trans.t < 1) {
         trans.t = clamp(trans.t + dt / trans.dur, 0, 1);
@@ -1556,35 +2064,50 @@
         if (s.hi && s.lo && s.hi !== s.lo) {
           current._sharp = Math.min(1, (current._sharp || 0) + dt / 420);
           mix = current._sharp;
+          /* the thumb has done its job once the full picture is fully in:
+             free it, so a settled room is back to one texture fetch */
+          if (mix >= 1 && s.lo.thumb) { freeTex(s.lo); s.lo = s.hi; mix = 0; A = B; current._sharp = 0; }
         } else current._sharp = 0;
         on.sharpen(!!s.lo && !s.hi);
       }
       avail = (A && B) ? 1 : 0;
       if (!A) A = B; if (!B) B = A;
 
-      var fovA = cam.fov, fovB = cam.fov;
+      var vfov = effFov(), fovA = vfov, fovB = vfov;
       if (incoming && !reduce) {
         var e = easeInOut(trans.t);
-        fovA = cam.fov * (1 - 0.30 * e);      // the room you are leaving pushes past you
-        fovB = cam.fov * (1 + 0.26 * (1 - e)); // the room you are entering opens up
+        fovA = vfov * (1 - 0.30 * e);      // the room you are leaving pushes past you
+        fovB = vfov * (1 + 0.26 * (1 - e)); // the room you are entering opens up
       }
 
       if (host.clientWidth !== lastW || host.clientHeight !== lastH) resize();
+      else if (!drag && !pinch && trans.t >= 1 && Math.abs(cam.fov - cam.tFov) < 0.3 && Math.abs(wantDpr() - dpr) >= 0.24) resize();
+      /* mip level base per texture: log2 of texels per device pixel at the
+         view centre; the shader adds the off-axis and latitude terms */
+      var lodA = A ? Math.log(A.w * Math.tan(fovA * D2R * 0.5) / (Math.PI * canvas.height)) / Math.LN2 : 0;
+      var lodB = B ? Math.log(B.w * Math.tan(fovB * D2R * 0.5) / (Math.PI * canvas.height)) / Math.LN2 : 0;
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.useProgram(progView.p);
       gl.bindBuffer(gl.ARRAY_BUFFER, quad);
       gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, (A && A.tex) || blank);
+      var mipA = mipFor(A, lodA, fovA);
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, (B && B.tex) || blank);
+      var mipB = (B === A) ? mipA : mipFor(B, lodB, fovB);
+      lastMip = mipA;
       var u = progView.u;
       gl.uniform1i(u.uA, 0); gl.uniform1i(u.uB, 1);
       gl.uniform2f(u.uRes, canvas.width, canvas.height);
       gl.uniform1f(u.uYaw, cam.yaw * D2R);
       gl.uniform1f(u.uPitch, cam.pitch * D2R);
-      gl.uniform1f(u.uFov, cam.fov * D2R);
+      gl.uniform1f(u.uFov, vfov * D2R);
       gl.uniform1f(u.uFovA, fovA * D2R);
       gl.uniform1f(u.uFovB, fovB * D2R);
+      gl.uniform1f(u.uLodA, lodA);
+      gl.uniform1f(u.uLodB, lodB);
+      gl.uniform1f(u.uMipA, mipA);
+      gl.uniform1f(u.uMipB, mipB);
       gl.uniform1f(u.uMix, mix);
       gl.uniform1f(u.uAvail, avail);
       gl.uniform1f(u.uGrain, 0.020);
@@ -1598,26 +2121,43 @@
       if (once) return;
       bakeBudget();
       if (!booted) {
-        var pr = loadProgress();
-        var label = pr < 0.14 ? "Calibrating optics"
+        var pr = loadProgress(), label;
+        if (current && current.pano) label = "Loading " + (current.name || current.short || "panorama") + "…";   // a photo, not a render (F110)
+        else label = pr < 0.14 ? "Calibrating optics"
           : pr < 0.5 ? "Ray-marching geometry"
             : pr < 0.94 ? "Stitching panorama" : "Sharpening";
         on.progress(pr, label);
         var st = current && store[current.id];
-        if (st && (st.hi || (st.lo && now() - bootStart > 1600))) {
+        /* a captured room's thumb is a true picture of the room — show it
+           at once and sharpen; a banded bake preview waits a moment */
+        if (st && (st.hi || (st.lo && (st.lo.thumb || now() - bootStart > 1600)))) {
           booted = true;
           on.progress(1, "Ready");
           on.ready();
-          rooms.forEach(function (r) { if (!current || r.id !== current.id) needLo(r); });
+          /* the dashboard is the one view that auto-rotates; there and in an
+             embed the rest of the tour waits for the first interaction */
+          if (interacted || (!opts.embed && !drift)) preloadAll();
         }
       }
-      requestAnimationFrame(frame);
+      rafId = requestAnimationFrame(frame);
     }
 
-    /* if nothing has rendered in 25 s, say so — a bar at 0% is not an error
-       message */
-    setTimeout(function () {
-      if (booted || destroyed) return;
+    /* if nothing has rendered in 25 s of visible time, say so — a bar at 0%
+       is not an error message */
+    function bootTimeout() {
+      var room = current, live = room && panoLoading[room.id];
+      if (room && room.pano) {
+        /* a photo tour that is still downloading is a slow network, not a
+           GPU problem — say so and offer to try again (F186 F5) */
+        on.error({
+          title: "This is taking longer than it should",
+          message: "The first panorama is still downloading — the network looks slow. Check the connection, then try again.",
+          detail: "network: " + (live ? (live.url + " " + live.loaded + "/" + (live.total || "?") + " bytes") : (panoFailed[room.id] ? "failed" : "queued")),
+          diag: diag.join("\n"), recoverable: true, network: true,
+          retry: function () { api.retry(room.id); }
+        });
+        return;
+      }
       on.error({
         title: "This is taking longer than it should",
         message: "The first panorama has not finished rendering. On older graphics hardware the full-resolution " +
@@ -1626,17 +2166,56 @@
           " band " + queue[0].row + "/" + queue[0].rows : ""),
         diag: diag.join("\n"), recoverable: true
       });
-    }, 25000);
+    }
 
     /* ─────────────────────────────────────────────────────────────────────
        API
        ───────────────────────────────────────────────────────────────────── */
     var api = {
+      /* diff by room id + picture: textures whose pano (or, for a baked
+         room, space) is unchanged are kept, everything else is freed and
+         purged from the queues; a room mid-download is left to finish and
+         is checked against its new src when it lands (F124 F9 F213) */
       load: function (t) {
+        var oldStore = store, oldById = byId, oldThumb = thumbSrc;
         tour = t;
         rooms = t.rooms || [];
-        byId = {}; store = {};
-        rooms.forEach(function (r, i) { r._i = i; byId[r.id] = r; store[r.id] = { lo: null, hi: null }; });
+        byId = {}; store = {}; thumbSrc = {};
+        var sig = function (r) { return r.pano ? "p:" + r.pano : "s:" + JSON.stringify(r.space || null); };
+        rooms.forEach(function (r, i) {
+          r._i = i; byId[r.id] = r;
+          var prev = oldById[r.id], keep = prev && oldStore[r.id] && sig(prev) === sig(r);
+          if (keep) {
+            store[r.id] = oldStore[r.id]; delete oldStore[r.id];
+            if (oldThumb[r.id]) thumbSrc[r.id] = oldThumb[r.id];
+          } else {
+            store[r.id] = { lo: null, hi: null };
+            if (prev) roomGen[r.id] = (roomGen[r.id] || 0) + 1;
+          }
+        });
+        for (var id in oldStore) {
+          var e = oldStore[id];
+          if (e.lo && e.lo !== e.hi) freeTex(e.lo);
+          freeTex(e.hi);
+          for (var j = hiPool.length - 1; j >= 0; j--) if (hiPool[j].id === id) hiPool.splice(j, 1);
+          for (var q = queue.length - 1; q >= 0; q--) if (queue[q].id === id) queue.splice(q, 1);
+          var live = panoLoading[id];
+          if (live && panoQ.indexOf(live) >= 0) {
+            /* queued, not in flight: drop it, and re-queue the room's new
+               picture at the same rank if the room is still here */
+            panoQ.splice(panoQ.indexOf(live), 1); delete panoLoading[id];
+            if (byId[id] && byId[id].pano) loadPano(byId[id], "lo", live.cb, live.priority);
+          }
+          delete panoRetry[id]; delete panoFailed[id];
+        }
+        /* the camera's rooms follow the new objects; a room that vanished
+           leaves the camera where the app's next go() puts it */
+        if (current) current = byId[current.id] || null;
+        if (incoming) { incoming = byId[incoming.id] || null; if (!incoming) trans.t = 1; }
+        if (pending) {
+          if (byId[pending.room.id]) pending.room = byId[pending.room.id];
+          else { var pid = pending.room.id; pending = null; on.loading(pid, false); }
+        }
         return api;
       },
       start: function (id, view) {
@@ -1645,25 +2224,28 @@
         var s = (view || room.view || {});
         cam.yaw = cam.tYaw = s.yaw || 0;
         cam.pitch = cam.tPitch = s.pitch || 0;
-        cam.fov = cam.tFov = s.fov || 75;
-        cam.yaw -= 22; cam.fov = Math.min(100, cam.fov + 8);   // settle into the opening view
+        cam.fov = cam.tFov = clamp(s.fov || 75, 30, 100);
+        if (!reduce) { cam.yaw -= 22; cam.fov = Math.min(100, cam.fov + 8); }   // settle into the opening view
         /* only compile the space shader when the starting room will actually
            draw it — a real captured panorama never touches it, and on some
            laptop drivers this compile alone stalls the tab for seconds */
         if (room.space && !room.pano && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
-        needLo(room, true); needHi(room, true);
-        (room.links || []).forEach(function (l) { needLo(byId[l.to || l]); });
-        on.room(room, null);
         resize();
-        requestAnimationFrame(frame);
+        needLo(room, true); needHi(room, true);
+        prefetchAround(room);
+        on.room(room, null);
+        started = true;
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(frame);
         return api;
       },
+      /* the listeners ride on the canvas, so moving house is a re-parent
+         and a re-fit — nothing to unbind */
       mount: function (el) {
         if (!el || el === host) return api;
-        host.removeEventListener("pointerdown", down);
+        host.classList.remove("is-grabbing");
         el.appendChild(canvas);
         host = el;
-        host.addEventListener("pointerdown", down);
         resize();
         return api;
       },
@@ -1678,26 +2260,45 @@
       gyro: gyroToggle,
       gyroOn: function () { return !!gyro; },
       inputs: function (v) { inputsOn = !!v; },
+      passiveWheel: function (v) { opts.passiveWheel = !!v; return api; },
       sleep: function (v) { asleep = !!v; },
+      idleDrift: function (v) { idleOn = !!v; return api; },
+      preload: function () { interact(); return api; },
+      stats: function () {
+        return { textures: texCount, queued: panoQ.length, inflight: panoBusy ? 1 : 0, bakes: queue.length,
+                 pending: pending ? pending.room.id : null, cap: panoCap(), dpr: dpr, vfov: effFov(), mip: !!lodExt, mipOn: !!lastMip };
+      },
+      pending: function () { return pending ? pending.room.id : null; },
       setPano: function (id, src) {
         var room = byId[id];
         if (!room) return;
+        var live = panoLoading[id];
+        if (room.pano === src && (full(id) || (live && live.src === src))) {
+          /* same picture, already here or on its way — nothing to redo */
+          if (full(id) && opts.onThumb) opts.onThumb(id);
+          return;
+        }
         room.pano = src;
+        roomGen[id] = (roomGen[id] || 0) + 1;      // an older decode in flight is now stale (F8)
+        delete panoRetry[id]; delete panoFailed[id];
         /* a preview bake already queued for this room would land after the
            capture and overwrite it — purge it, exactly as rebake does */
         for (var i = queue.length - 1; i >= 0; i--) if (queue[i].id === id) queue.splice(i, 1);
-        if (store[id].lo && store[id].lo.tex) { try { gl.deleteTexture(store[id].lo.tex); } catch (e) { } }
+        var e = store[id] || {};
+        if (e.lo && e.lo !== e.hi) freeTex(e.lo);
+        freeTex(e.hi);
+        for (var j = hiPool.length - 1; j >= 0; j--) if (hiPool[j].id === id) hiPool.splice(j, 1);
         store[id] = { lo: null, hi: null };
+        if (live && panoQ.indexOf(live) >= 0) { panoQ.splice(panoQ.indexOf(live), 1); delete panoLoading[id]; }
         loadPano(room, "lo", function () { if (opts.onThumb) opts.onThumb(id); }, true);
       },
       rebake: function (id) {
         var room = byId[id];
         if (!room) return;
         for (var i = queue.length - 1; i >= 0; i--) if (queue[i].id === id) queue.splice(i, 1);
-        ["lo", "hi"].forEach(function (k) {
-          var s = store[id] && store[id][k];
-          if (s && s.tex) { try { gl.deleteTexture(s.tex); } catch (e) { } }
-        });
+        var e = store[id] || {};
+        if (e.lo && e.lo !== e.hi) freeTex(e.lo);
+        freeTex(e.hi);
         for (var j = hiPool.length - 1; j >= 0; j--) if (hiPool[j].id === id) hiPool.splice(j, 1);
         store[id] = { lo: null, hi: null };
         needLo(room, true);
@@ -1727,18 +2328,46 @@
       },
       equirect: function (id) { return thumbSrc[id] || null; },
       capture: function () {
-        flash = 0.9;
+        /* the still is rendered clean; the flash plays on screen from the next frame */
+        flash = 0;
         frame(now(), true);
-        try { return canvas.toDataURL("image/png"); } catch (e) { return null; }
+        var data = null;
+        try { data = canvas.toDataURL("image/png"); } catch (e) { }
+        flash = 0.9;
+        return data;
       },
       quality: function (q) {
         if (!q) return qualityMode;
+        /* captures follow panoCap(), which the quality mode only moves at
+           the low end — a phone choosing "High" keeps the textures it has
+           rather than downloading every room again for the same picture
+           (F138); baked rooms always re-bake at the new size */
+        var before = panoCap();
         applyQuality(q);
-        var keep = (incoming || current);
-        rooms.forEach(function (r) { api.rebake(r.id); });
+        var same = panoCap() === before, keep = (incoming || current);
+        rooms.forEach(function (r) { if (!(same && r.pano)) api.rebake(r.id); });
         if (keep) { needLo(keep, true); needHi(keep, true); }
         return qualityMode;
       },
+      /* the loader's Retry: drop whatever the room's download is doing and
+         fetch it again now, front of the queue, and give the slow-network
+         guard a fresh 25 s */
+      retry: function (id) {
+        var room = byId[id] || current;
+        if (!room || !room.pano || full(room.id)) return false;
+        var live = panoLoading[room.id];
+        if (live) {
+          if (panoQ.indexOf(live) >= 0) { panoQ.splice(panoQ.indexOf(live), 1); delete panoLoading[room.id]; }
+          else if (live.cancel) live.cancel("retried", true);
+        }
+        delete panoRetry[room.id]; delete panoFailed[room.id];
+        bootWarned = false; bootBase = visibleTime();
+        loadPano(room, "lo", null, true);
+        return true;
+      },
+      /* the effective (on-screen) vertical field of view — portrait phones
+         widen the stored one; the app's telemetry keeps reading camera() */
+      viewFov: function () { return effFov(); },
       progress: loadProgress,
       current: function () { return incoming || current; },
       isReady: function () { return booted; },
@@ -1748,9 +2377,18 @@
       renderer: function () { return TIERS[TIER]; },
       destroy: function () {
         destroyed = true;
-        host.removeEventListener("pointerdown", down);
+        cancelAnimationFrame(rafId);
+        canvas.removeEventListener("pointerdown", down);
+        canvas.removeEventListener("wheel", wheel);
+        canvas.removeEventListener("touchstart", touchStart);
+        canvas.removeEventListener("touchmove", touchMove);
+        canvas.removeEventListener("touchend", touchEnd);
+        canvas.removeEventListener("webglcontextlost", onLost);
+        canvas.removeEventListener("webglcontextrestored", onRestored);
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
+        window.removeEventListener("pointercancel", cancel);
+        document.removeEventListener("visibilitychange", onVisibility);
         if (gyro) window.removeEventListener("deviceorientation", gyro);
       }
     };

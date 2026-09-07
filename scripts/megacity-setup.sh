@@ -26,6 +26,23 @@ if [[ "${1:-}" == "verify" ]]; then
   curl -s -o /dev/null -w ' /media/does-not-exist → %{http_code} (404 from the Worker is right)\n' "$BASE/media/l/x/m_aaaaaaaaaa/w480.jpg"
   curl -s -o /dev/null -w ' /templates/megacity-let-ladywell-point → %{http_code}\n' "$BASE/templates/megacity-let-ladywell-point"
   curl -s -I "$BASE/templates/megacity-let-ladywell-point" | grep -i "x-mc-render" || true
+  echo "360° tours:"
+  curl -s -o /dev/null -w ' /billy360/ → %{http_code}\n' "$BASE/billy360/"
+  curl -s -o /dev/null -w ' /billy360/embed.js → %{http_code}\n' "$BASE/billy360/embed.js"
+  curl -s -I "$BASE/billy360/" | tr -d '\r' | grep -qi "^x-frame-options" && echo " ✗ /billy360/ still sends X-Frame-Options — the listing pages cannot frame the tour" || echo " ✓ /billy360/ has no X-Frame-Options"
+  curl -s -I "$BASE/billy360/" | tr -d '\r' | grep -qi "frame-ancestors" && echo " ✓ /billy360/ sends frame-ancestors" || echo " ✗ /billy360/ lacks Content-Security-Policy: frame-ancestors"
+  tcode=$(curl -s -o /dev/null -w '%{http_code}' "$BASE/api/public/tours")
+  echo " /api/public/tours → $tcode $( [[ "$tcode" == 503 ]] && echo '(database not connected yet)' )"
+  canary="${MEGACITY_TOUR_CANARY:-$(curl -s "$BASE/api/public/tours" | grep -o '"id":"[a-z0-9-]*"' | head -1 | cut -d'"' -f4)}"
+  if [[ -n "$canary" ]]; then
+    curl -s -o /dev/null -w " /api/public/tours/$canary → %{http_code}\n" "$BASE/api/public/tours/$canary"
+    pano=$(curl -s "$BASE/api/public/tours/$canary" | grep -o '"pano":"/media/[^"]*"' | head -1 | cut -d'"' -f4)
+    [[ -n "$pano" ]] && curl -s -o /dev/null -w " $pano → %{http_code} %{content_type}\n" "$BASE$pano" || echo " ✗ the canary's rooms have no /media/ panorama"
+    curl -s -o /dev/null -w " /billy360/?site=$canary → %{http_code}\n" "$BASE/billy360/?site=$canary"
+    curl -s -o /dev/null -w " /tour/$canary → %{http_code} (200 on the client domain; 404 on the demo host is expected)\n" "$BASE/tour/$canary"
+  else
+    echo " no live tour to probe yet — publish one in the Studio, or set MEGACITY_TOUR_CANARY=<listing id>"
+  fi
   exit 0
 fi
 

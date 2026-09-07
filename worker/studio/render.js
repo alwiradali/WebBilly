@@ -9,7 +9,7 @@
 
 import { parseJson } from "./db.js";
 import { label } from "./options.js";
-import { listForListing, mediaUrl } from "./media.js";
+import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
 
@@ -24,7 +24,8 @@ const absolute = (env, url, path) => (path ? urls.absUrl(env, url, "asset", path
 /* the live listing row plus everything the page needs; null when not live */
 export async function loadLive(db, id) {
   const r = await db.prepare(
-    `SELECT l.*, (SELECT 1 FROM tours t WHERE t.listing_id=l.id AND t.status='live') AS tour_live
+    `SELECT l.*, (SELECT 1 FROM tours t WHERE t.listing_id=l.id AND t.status='live') AS tour_live,
+            (SELECT json_extract(t.live_json, '$.project.cover') FROM tours t WHERE t.listing_id=l.id AND t.status='live') AS tour_cover
        FROM listings l WHERE l.id=?1 AND l.status='live' AND l.hidden=0 AND l.deleted_at IS NULL`
   ).bind(id).first();
   if (!r) return null;
@@ -36,9 +37,10 @@ function view(env, url, { r, media }, settings) {
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
   const extras = (parseJson(r.external_json, {}) || {}).extras || {};
   const isRoom = r.let_type === "room" || r.type === "room_in_share";
-  const photos = media.filter((m) => m.kind === "photo" || m.kind === "pano");
+  /* 360° captures, the tour's logo and floor plans are not listing photos (F50) */
+  const photos = media.filter(isPhoto);
   const cover = photos.find((m) => m.id === r.cover_media_id) || photos.find((m) => m.role === "cover") || photos[0] || null;
-  const gallery = photos.filter((m) => m !== cover && m.role !== "epc" && m.role !== "floorplan" && m.role !== "og");
+  const gallery = photos.filter((m) => m !== cover && m.role !== "epc" && m.role !== "og");
   const epcImg = media.find((m) => m.role === "epc");
   const floorplan = media.find((m) => m.role === "floorplan");
   const addr = [r.address_1, r.address_2, r.town].filter(Boolean).join(", ");
@@ -135,12 +137,19 @@ function epcHtml(v) {
   return h;
 }
 
-function tourHtml(v) {
+function tourHtml(v, env, url) {
   if (v.r.tour_live) {
+    /* the frame opens on the tour's cover room (data-room → #/tour/<room>),
+       the full-screen page knows its way back (?from= → "← Back to property")
+       and the box is sized by .pd-tour in the CSS before embed.js runs, so the
+       page never shifts (F80 F182 F93 F225) */
+    const id = v.r.id, room = typeof v.r.tour_cover === "string" && /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(v.r.tour_cover) ? v.r.tour_cover : "";
+    const from = urls.listingPath(urls.mode(env, url.hostname), id);
+    const full = "/billy360/?site=" + encodeURIComponent(id) + "&from=" + encodeURIComponent(from) + "#/tour/" + encodeURIComponent(room);
     return `<h3>360&deg; virtual tour</h3>
       <p>Walk through ${esc(v.addrShort || "the property")} from wherever you are. Drag to look around; tap a door to move between rooms.</p>
-      <div class="pd-tour" data-billy360="${esc(v.r.id)}" data-height="16:9" data-title="${esc(v.title)} — 360° virtual tour"></div>
-      <p><a class="jr-link" href="/billy360/?site=${encodeURIComponent(v.r.id)}" target="_blank" rel="noopener">Open the tour full screen &rarr;</a></p>
+      <div class="pd-tour" data-billy360="${esc(id)}" data-height="16:9"${room ? ` data-room="${esc(room)}"` : ""} data-title="${esc(v.title)} — 360° virtual tour"></div>
+      <p><a class="jr-link" href="${esc(full)}" target="_blank" rel="noopener">Open the tour full screen &rarr;</a></p>
       <script src="/billy360/embed.js" defer></script>`;
   }
   const ask = v.waDigits
@@ -210,7 +219,7 @@ export async function renderListingPage(request, env, url, live, settings) {
   /* every fragment is built before the rewriter streams: a bad record throws
      into the router's fallback instead of truncating a half-sent page */
   const epc = epcHtml(v);
-  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v), facts: factsHtml(v) };
+  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v, env, url), facts: factsHtml(v) };
   const rewriter = new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(v.pageTitle) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", v.metaDesc) })

@@ -192,9 +192,15 @@ export async function publicLead(request, env, ctx) {
   if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
   const name = clampStr(body.name, 120), email = clampStr(body.email, 160), phone = clampStr(body.phone, 60);
   if (!name || !isEmail(email)) return json({ error: "A name and a valid email are needed so the agent can reply." }, 400);
-  const property = clampStr(body.property, 160) || clampStr(body.site, 80) || "a property";
-  const message = [body.date ? "Preferred date: " + clampStr(body.date, 40) : null, clampStr(body.message, 2000)].filter(Boolean).join("\n");
-  const id = await recordEnquiry(env, { source: "tour", name, email, phone, listingId: body.site, property, message, preferredDay: body.date, attr: { landing: body.url } });
+  /* the tour's listing id is what puts the lead under the right property in
+     the inbox; an id that is not a listing is kept in the message only */
+  let listingId = clampStr(body.site || body.listingId, 80);
+  let listing = null;
+  if (listingId && /^[a-z0-9-]{1,80}$/.test(listingId)) listing = await db.prepare(`SELECT id, title FROM listings WHERE id=?1 AND deleted_at IS NULL`).bind(listingId).first().catch(() => null);
+  if (!listing) listingId = null;
+  const property = clampStr(body.property, 160) || (listing && listing.title) || clampStr(body.site, 80) || "a property";
+  const message = [body.date ? "Preferred date: " + clampStr(body.date, 40) : null, body.room ? "Room: " + clampStr(body.room, 80) : null, clampStr(body.message, 2000)].filter(Boolean).join("\n");
+  const id = await recordEnquiry(env, { source: "tour", name, email, phone, listingId, property, message, preferredDay: body.date, attr: { landing: body.url, referrer: request.headers.get("referer") } });
   const to = await notifyTo(env);
   const html = layout("Viewing request from the 360° tour",
     `<p><b>${esc(name)}</b> asked to view <b>${esc(property)}</b> while walking the virtual tour${body.room ? " (they were in " + esc(body.room) + ")" : ""}.</p>` +

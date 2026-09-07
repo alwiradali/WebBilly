@@ -3,7 +3,7 @@
    Worker-rendered pages (Phase 3). Everything is same-origin: the Studio page,
    the API and the media live on one host, so there is no CORS. */
 
-import { officeDb, json, errorResponse, HttpError } from "./db.js";
+import { officeDb, json, errorResponse, HttpError, parseJson } from "./db.js";
 import { asJson as optionsJson } from "./options.js";
 import * as auth from "./auth.js";
 import * as listings from "./listings.js";
@@ -20,6 +20,12 @@ import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
 import * as urls from "./urls.js";
 import * as redirects from "./redirects.js";
+
+/* The viewer is framed by the listing pages on both hosts, so /billy360/*
+   drops the site-wide SAMEORIGIN for this allow-list (_headers has the same
+   block; setting it here too means the viewer never depends on the '!'
+   detach being honoured — F81 F70 F198). */
+export const FRAME_ANCESTORS = "frame-ancestors 'self' https://megacityproperties.co.uk https://*.megacityproperties.co.uk https://billydigitals.com https://*.billydigitals.com";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
 const ROUTES = [
@@ -123,7 +129,11 @@ function match(method, path) {
 export function isMegacityPath(url) {
   const p = url.pathname;
   return p.startsWith("/api/studio/") || p.startsWith("/api/public/") || p.startsWith("/media/") || p === "/api/billy360-verify" ||
-    p.startsWith("/templates/megacity-");
+    p.startsWith("/templates/megacity-") || isTourIndex(p);
+}
+/* the viewer's index only — app.js, css and the rest are plain assets */
+export function isTourIndex(p) {
+  return p === "/billy360/" || p === "/billy360/index.html";
 }
 
 /* the Studio itself and any script/style/asset request: never touched */
@@ -144,6 +154,7 @@ function sameOrigin(request, url) {
 export async function handleMegacity(request, env, ctx, url) {
   const p = url.pathname;
   if (p.startsWith("/media/")) return media.serve(request, env, url);
+  if (isTourIndex(p)) return tourPage(request, env, url, officeDb(env));
 
   /* ── Worker-rendered public pages (fall back to the static files) ──── */
   if (p === "/templates/megacity-let-template" || p === "/templates/megacity-page-template") return new Response("Not found", { status: 404 });
@@ -215,7 +226,7 @@ export async function handleMegacity(request, env, ctx, url) {
     if (!db) return json({ connected: false, items: [] }, 503);
     try {
       const m = /^\/api\/public\/tours(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
-      if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1]) : tours.publicManifest(db);
+      if (m && request.method === "GET") return m[1] ? tours.publicTour(db, m[1], env, url) : tours.publicManifest(db);
       const l = /^\/api\/public\/listings(?:\/([A-Za-z0-9_.-]{1,80}))?$/.exec(p);
       if (l && request.method === "GET") return l[1] ? pub.one(db, url, env, l[1]) : pub.list(db, url, env);
       if (p === "/api/public/event" && request.method === "POST") return enq.publicEvent(request, env);
@@ -227,6 +238,103 @@ export async function handleMegacity(request, env, ctx, url) {
     } catch (e) { return errorResponse(e); }
   }
   return env.ASSETS.fetch(request);
+}
+
+/* ── the tour page's identity (F220, decision 8) ─────────────────────────
+   GET /billy360/?site=<id> is what WhatsApp, iMessage and the portals scrape.
+   For a live listing the viewer's neutral head becomes the listing's: title,
+   description, og:* card (cover photo or the opening room), canonical to the
+   listing page (the indexable one — the viewer stays noindex). Anything else
+   is served untouched. `base` is set by host.js for the pretty /tour/<id>
+   address: the document then lives outside /billy360/, so relative script and
+   style URLs are made absolute and the site id is handed to store.js. */
+const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const SITE_RE = /^[a-z0-9-]{1,80}$/;
+
+async function liveTourHead(db, env, url, id) {
+  const r = await db.prepare(
+    `SELECT l.id, l.title, l.summary, l.seo_description, l.address_1, l.town, t.live_json,
+            (SELECT m.key_large FROM media m WHERE m.id=l.cover_media_id AND ${media.PHOTO_SQL}) AS cover_large,
+            (SELECT m.key_thumb FROM media m WHERE m.id=l.cover_media_id AND ${media.PHOTO_SQL}) AS cover_thumb
+       FROM tours t JOIN listings l ON l.id=t.listing_id
+      WHERE t.listing_id=?1 AND t.status='live' AND l.status='live' AND l.hidden=0 AND l.deleted_at IS NULL`
+  ).bind(id).first();
+  if (!r || !r.live_json) return null;
+  const tour = parseJson(r.live_json, null) || {};
+  const rooms = Array.isArray(tour.rooms) ? tour.rooms : [];
+  const cover = rooms.find((x) => x && x.id === (tour.project && tour.project.cover)) || rooms[0] || null;
+  /* the card picture: the listing's cover photo, else the opening room's
+     web size (its w480 thumb has a w1600 sibling from the same upload) */
+  let image = r.cover_large || r.cover_thumb ? media.mediaUrl(r.cover_large || r.cover_thumb) : null;
+  if (!image && cover) {
+    const t = typeof cover.thumb === "string" && cover.thumb.startsWith("/media/") ? cover.thumb : typeof cover.pano === "string" && cover.pano.startsWith("/media/") ? cover.pano : null;
+    if (t) image = t.replace(/\/(w480|pano4096|pano2048)\.jpg$/, "/w1600.jpg");
+  }
+  const title = r.title || id;
+  const where = [r.address_1, r.town].filter(Boolean).join(", ");
+  const summary = String(r.seo_description || r.summary || "").trim();
+  return {
+    id, title,
+    pageTitle: title + " · 360° tour · Megacity Properties",
+    description: (summary ? summary.slice(0, 155) : "Walk through " + (where || title) + " room by room in a 360° virtual tour from Megacity Properties."),
+    canonical: urls.absUrl(env, url, "listing", id),
+    image: urls.absUrl(env, url, "asset", image || "assets/mcr/ph-manchester.jpg"),
+    room: cover && typeof cover.id === "string" ? cover.id : null,
+  };
+}
+
+export async function tourPage(request, env, url, db, opts = {}) {
+  const raw = opts.site || url.searchParams.get("site") || "";
+  const site = SITE_RE.test(raw) ? raw : null;
+  const asset = await env.ASSETS.fetch(new Request(new URL("/billy360/", url.origin).toString(), request));
+  const headers = new Headers(asset.headers);
+  headers.delete("x-frame-options");
+  headers.set("content-security-policy", FRAME_ANCESTORS);
+  let head = null;
+  if (asset.ok && site && db) {
+    try { head = await liveTourHead(db, env, url, site); } catch (e) { console.error("tour head", e && e.message); }
+  }
+  if (!asset.ok || (!head && !opts.base)) return new Response(asset.body, { status: asset.status, headers });
+
+  const base = opts.base || null;
+  const rel = (v) => (base && v && !/^(\/|#|data:|[a-z][a-z0-9+.-]*:)/i.test(v) ? base + v.replace(/^(\.\/)+/, "") : v);
+  const attr = (name) => ({ element: (e) => { const v = e.getAttribute(name); if (v != null) { const n = rel(v); if (n !== v) e.setAttribute(name, n); } } });
+  let sawRobots = false;
+  const extra = [];
+  if (head) {
+    extra.push(
+      `<link rel="canonical" href="${esc(head.canonical)}">`,
+      `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="Megacity Properties">`,
+      `<meta property="og:title" content="${esc(head.pageTitle)}">`, `<meta property="og:description" content="${esc(head.description)}">`,
+      `<meta property="og:image" content="${esc(head.image)}">`, `<meta property="og:url" content="${esc(head.canonical)}">`,
+      `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:title" content="${esc(head.pageTitle)}">`,
+      `<meta name="twitter:description" content="${esc(head.description)}">`, `<meta name="twitter:image" content="${esc(head.image)}">`,
+    );
+  }
+  const rewriter = new HTMLRewriter()
+    .on("title", { element: (e) => { if (head) e.setInnerContent(head.pageTitle); } })
+    .on('meta[name="description"]', { element: (e) => { if (head) e.setAttribute("content", head.description); } })
+    .on('meta[name="theme-color"]', { element: (e) => { if (head) e.setAttribute("content", "#060b1a"); } })
+    .on('meta[name="robots"]', { element: (e) => { sawRobots = true; e.setAttribute("content", "noindex,nofollow"); } })
+    .on('link[rel="canonical"], meta[property^="og:"], meta[name^="twitter:"]', { element: (e) => e.remove() })
+    .on("script[src]", attr("src"))
+    .on("link[href]", attr("href"))
+    .on("head", {
+      element: (e) => {
+        /* store.js reads location.search first; at /tour/<id> the id arrives here instead */
+        if (base && site) e.prepend(`<script>window.BILLY360_SITE=${JSON.stringify(site)};if(!/[?&]site=/.test(location.search))try{history.replaceState(history.state,"",location.pathname+(location.search?location.search+"&":"?")+"site="+encodeURIComponent(window.BILLY360_SITE)+location.hash)}catch(e){}</script>`, { html: true });
+        e.onEndTag((end) => {
+          if (!sawRobots) extra.unshift('<meta name="robots" content="noindex,nofollow">');
+          if (extra.length) end.before(extra.join("\n"), { html: true });
+        });
+      },
+    });
+  const out = rewriter.transform(new Response(asset.body, { status: asset.status, headers: asset.headers }));
+  headers.set("content-type", "text/html; charset=utf-8");
+  headers.set("cache-control", "public, max-age=60");
+  headers.set("x-mc-render", head ? "tour" : "tour-static");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
+  return new Response(out.body, { status: 200, headers });
 }
 
 async function studioApi(request, env, ctx, url, path) {

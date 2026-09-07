@@ -1,18 +1,33 @@
 /* Megacity Studio — media: uploads to R2, the /media/* reader, patch/delete.
 
-   Keys:  l/<listingId>/<mediaId>/orig.<ext> | w1600.jpg | w480.jpg | pano4096.jpg
-   The browser derives the sizes (templates/megacity-intake.js) so the Worker
-   never decodes an image; it only checks types by magic bytes and stores. */
+   Keys:  l/<listingId>/<mediaId>/orig.<ext> | w1600.jpg | w480.jpg | pano4096.jpg | pano2048.jpg
+   The browser derives the sizes (templates/megacity-intake.js, billy360/store.js)
+   so the Worker never decodes an image; it only checks types by magic bytes
+   and stores. Image originals are private (EXIF, GPS): only a Studio session
+   can open orig.jpg/png/…; video and PDF originals stay public. */
 
-import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, parseJson, audit } from "./db.js";
+import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, parseJson, audit, officeDb } from "./db.js";
 import { valid } from "./options.js";
+import { getSession } from "./auth.js";
 
 export const IMAGE_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "image/avif": "avif" };
 export const STREAM_TYPES = { "video/mp4": "mp4", "video/webm": "webm", "application/pdf": "pdf" };
 const MAX_IMAGE = 40 * 1024 * 1024;
 const MAX_STREAM = 60 * 1024 * 1024;
-const MAX_DERIVED = { large: 6 * 1024 * 1024, thumb: 1024 * 1024, pano: 20 * 1024 * 1024 };
-const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg)$/;
+const MAX_DERIVED = { large: 6 * 1024 * 1024, thumb: 1024 * 1024, pano: 20 * 1024 * 1024, pano2048: 8 * 1024 * 1024 };
+const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg|pano2048\.jpg)$/;
+const ORIG_IMAGE_RE = /\/orig\.(jpe?g|png|webp|gif|avif)$/i;
+const NO_STORE = { "cache-control": "no-store" };
+
+/* A listing photo is a photo: 360° captures (kind pano / role tour), the
+   brand logo and floor plans never become the cover, never count towards
+   "Add at least one photo" and never send an imported listing live (F50 F63
+   F171). PHOTO_SQL is the same rule for SQL (listings.js first_thumb). */
+const NOT_PHOTO_ROLES = new Set(["tour", "logo", "floorplan"]);
+export function isPhoto(m) {
+  return !!m && m.kind === "photo" && !NOT_PHOTO_ROLES.has(m.role);
+}
+export const PHOTO_SQL = "m.kind='photo' AND m.role NOT IN ('tour','logo','floorplan')";
 
 export function mediaUrl(key) {
   return key ? "/media/" + key : null;
@@ -29,6 +44,7 @@ export function mediaToJson(m) {
     thumb: mediaUrl(m.key_thumb || m.key_large || m.key_orig),
     orig: mediaUrl(m.key_orig),
     pano: mediaUrl(m.key_pano),
+    pano2048: mediaUrl(m.key_pano2048),
     mime: m.mime,
     width: m.width,
     height: m.height,
@@ -75,7 +91,7 @@ async function nextSort(db, listingId) {
 }
 
 async function maybeSetCover(db, listingId, mediaId, role, kind) {
-  if (kind !== "photo" && kind !== "pano") return;
+  if (!isPhoto({ kind, role })) return;
   const l = await db.prepare(`SELECT cover_media_id FROM listings WHERE id=?1`).bind(listingId).first();
   if (!l) return;
   if (role === "cover" || !l.cover_media_id) {
@@ -84,6 +100,7 @@ async function maybeSetCover(db, listingId, mediaId, role, kind) {
 }
 
 function normaliseRole(role) {
+  if (role === "logo") return "logo";   // the tour's brand mark — never a cover, not a Studio dropdown choice (options.js)
   return valid("mediaRole", role) && role ? role : "gallery";
 }
 
@@ -99,7 +116,9 @@ async function derived(file, kind) {
   return file;
 }
 
-/* POST /api/studio/media — multipart: meta + orig + large + thumb (+ pano) */
+/* POST /api/studio/media — multipart: meta + orig + large + thumb (+ pano + pano2048).
+   meta.panoIsOrig: the orig bytes are already a JPEG panorama ≤ 4096 wide, so
+   the browser sent them once and they are filed as pano4096.jpg too (F160). */
 export async function upload(c) {
   needStore(c.env);
   const len = Number(c.request.headers.get("content-length") || 0);
@@ -116,15 +135,23 @@ export async function upload(c) {
   if (orig.size > MAX_IMAGE) throw new HttpError(413, "Images must be under 40 MB.");
   const mime = sniff(await head(orig));
   if (!mime || !IMAGE_TYPES[mime]) throw new HttpError(415, "That file is not a supported image (JPEG, PNG, WebP, GIF or AVIF).");
-  const large = await derived(form.get("large"), "large"), thumb = await derived(form.get("thumb"), "thumb"), pano = await derived(form.get("pano"), "pano");
+  const large = await derived(form.get("large"), "large"), thumb = await derived(form.get("thumb"), "thumb");
+  const pano = await derived(form.get("pano"), "pano"), pano2048 = await derived(form.get("pano2048"), "pano2048");
 
   const id = uid("m");
   const base = `l/${listingId}/${id}/`;
-  const keys = { key_orig: base + "orig." + IMAGE_TYPES[mime], key_large: null, key_thumb: null, key_pano: null };
-  const puts = [c.env.MEDIA.put(keys.key_orig, await orig.arrayBuffer(), { httpMetadata: { contentType: mime } })];
+  const keys = { key_orig: base + "orig." + IMAGE_TYPES[mime], key_large: null, key_thumb: null, key_pano: null, key_pano2048: null };
+  const origBuf = await orig.arrayBuffer();
+  const puts = [c.env.MEDIA.put(keys.key_orig, origBuf, { httpMetadata: { contentType: mime } })];
   if (large) { keys.key_large = base + "w1600.jpg"; puts.push(c.env.MEDIA.put(keys.key_large, await large.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
   if (thumb) { keys.key_thumb = base + "w480.jpg"; puts.push(c.env.MEDIA.put(keys.key_thumb, await thumb.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
   if (pano) { keys.key_pano = base + "pano4096.jpg"; puts.push(c.env.MEDIA.put(keys.key_pano, await pano.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
+  else if (meta.isPano === true && meta.panoIsOrig === true && mime === "image/jpeg") {
+    keys.key_pano = base + "pano4096.jpg";
+    puts.push(c.env.MEDIA.put(keys.key_pano, origBuf, { httpMetadata: { contentType: "image/jpeg" } }));
+  }
+  /* only what the browser sent: nothing is derived here (the Worker never decodes) */
+  if (pano2048) { keys.key_pano2048 = base + "pano2048.jpg"; puts.push(c.env.MEDIA.put(keys.key_pano2048, await pano2048.arrayBuffer(), { httpMetadata: { contentType: "image/jpeg" } })); }
   await Promise.all(puts);
 
   const isPano = !!keys.key_pano || meta.isPano === true;
@@ -134,16 +161,26 @@ export async function upload(c) {
     room_label: clampStr(meta.roomLabel, 60), ...keys, mime,
     width: toInt(meta.width), height: toInt(meta.height), bytes: orig.size,
     alt: clampStr(meta.alt, 200), caption: clampStr(meta.caption, 300),
-    sort: await nextSort(c.db, listingId),
+    sort: 0,
     phash: clampStr(meta.phash, 80), luma: toInt(meta.luma), sharp: toInt(meta.sharp),
     created_at: nowIso(), created_by: c.user.id,
   };
-  await insertMedia(c.db, row);
-  await maybeSetCover(c.db, listingId, id, role, row.kind);
-  await touch(c.db, listingId, c.user.id);
-  await audit(c.db, { userId: c.user.id, action: "media.uploaded", entity: "listing", entityId: listingId, detail: { mediaId: id, kind: row.kind, role, bytes: orig.size } });
+  try {
+    row.sort = await nextSort(c.db, listingId);
+    await insertMedia(c.db, row);
+    await maybeSetCover(c.db, listingId, id, role, row.kind);
+    await touch(c.db, listingId, c.user.id);
+    await audit(c.db, { userId: c.user.id, action: "media.uploaded", entity: "listing", entityId: listingId, detail: { mediaId: id, kind: row.kind, role, bytes: orig.size } });
+  } catch (e) {
+    /* the objects went up before the row: without this they would be orphans nothing can list or delete (G7) */
+    try { await c.env.MEDIA.delete(Object.values(keys).filter(Boolean)); } catch (e2) { console.error("media cleanup", e2 && e2.message); }
+    throw e;
+  }
   let wentLive = false;
-  try { wentLive = await (await import("./listings.js")).autoPublishIfReady(c.env, c.db, listingId); } catch (e) { console.error("autoPublish", e); }
+  /* a 360° capture, a logo or a plan is not the photo an imported listing was waiting for (F63 F171) */
+  if (isPhoto(row)) {
+    try { wentLive = await (await import("./listings.js")).autoPublishIfReady(c.env, c.db, listingId); } catch (e) { console.error("autoPublish", e); }
+  }
   return json({ ...mediaToJson(row), listingWentLive: wentLive }, 201);
 }
 
@@ -186,7 +223,7 @@ export async function stream(c) {
   const row = {
     id, listing_id: listingId, kind, role: kind === "pdf" && role === "gallery" ? "floorplan" : role,
     room_label: clampStr(c.url.searchParams.get("roomLabel"), 60),
-    key_orig: key, key_large: null, key_thumb: null, key_pano: null, mime,
+    key_orig: key, key_large: null, key_thumb: null, key_pano: null, key_pano2048: null, mime,
     width: null, height: null, bytes: len, alt: clampStr(c.url.searchParams.get("alt") || c.url.searchParams.get("filename"), 200), caption: null,
     sort: await nextSort(c.db, listingId), phash: null, luma: null, sharp: null,
     created_at: nowIso(), created_by: c.user.id,
@@ -199,9 +236,9 @@ export async function stream(c) {
 
 async function insertMedia(db, r) {
   await db.prepare(
-    `INSERT INTO media (id, listing_id, kind, role, room_label, key_orig, key_large, key_thumb, key_pano, mime, width, height, bytes, alt, caption, sort, phash, luma, sharp, created_at, created_by)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21)`
-  ).bind(r.id, r.listing_id, r.kind, r.role, r.room_label, r.key_orig, r.key_large, r.key_thumb, r.key_pano, r.mime, r.width, r.height, r.bytes, r.alt, r.caption, r.sort, r.phash, r.luma, r.sharp, r.created_at, r.created_by).run();
+    `INSERT INTO media (id, listing_id, kind, role, room_label, key_orig, key_large, key_thumb, key_pano, key_pano2048, mime, width, height, bytes, alt, caption, sort, phash, luma, sharp, created_at, created_by)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22)`
+  ).bind(r.id, r.listing_id, r.kind, r.role, r.room_label, r.key_orig, r.key_large, r.key_thumb, r.key_pano, r.key_pano2048 || null, r.mime, r.width, r.height, r.bytes, r.alt, r.caption, r.sort, r.phash, r.luma, r.sharp, r.created_at, r.created_by).run();
 }
 
 async function touch(db, listingId, userId) {
@@ -231,15 +268,45 @@ export async function patch(c) {
   return json(mediaToJson(fresh));
 }
 
+/* Where a media row is used inside the listing's tour (draft or live): the
+   room's name, "the logo", "the floor plan", or null when it is not. Every
+   /media URL of a row shares the folder l/<listing>/<id>/, so the folder is
+   the needle. */
+function tourUse(t, mediaId) {
+  if (!t) return null;
+  const needle = "/" + mediaId + "/";
+  const has = (v) => typeof v === "string" && v.includes(needle);
+  for (const text of [t.draft_json, t.live_json]) {
+    if (!text || !text.includes(needle)) continue;
+    const tour = parseJson(text, null);
+    if (!tour) return "the tour";
+    for (const r of tour.rooms || []) {
+      if (has(r.pano) || has(r.thumb)) return "room " + (r.name || r.id);
+      if ((r.photos || []).some((p) => has(p && p.src) || has(p && p.thumb))) return "the photos of " + (r.name || r.id);
+      if ((r.hotspots || []).some((h) => has(h && h.src) || has(h && h.href))) return "a hotspot in " + (r.name || r.id);
+    }
+    if (tour.brand && has(tour.brand.logo)) return "the logo";
+    const floor = (tour.floors || []).find((f) => has(f && f.plan));
+    if (floor) return "the floor plan" + (floor.name ? " of " + floor.name : "");
+    if (tour.project && has(tour.project.coverImage)) return "the cover";
+    return "the tour";
+  }
+  return null;
+}
+
 /* DELETE /api/studio/media/:id */
 export async function remove(c) {
   const m = await c.db.prepare(`SELECT * FROM media WHERE id=?1`).bind(c.params.id).first();
   if (!m) throw new HttpError(404, "No such media.");
+  /* a picture the tour still points at would leave visitors a 404 room (F169) */
+  const t = await c.db.prepare(`SELECT draft_json, live_json FROM tours WHERE listing_id=?1`).bind(m.listing_id).first().catch(() => null);
+  const used = tourUse(t, m.id);
+  if (used) throw new HttpError(409, `This ${m.kind === "pano" ? "360" : "image"} is used by the tour (${used}) — replace it there first.`, { usedBy: used });
   await deleteObjects(c.env, m, c.url.origin);
   await c.db.prepare(`DELETE FROM media WHERE id=?1`).bind(m.id).run();
   const l = await c.db.prepare(`SELECT cover_media_id FROM listings WHERE id=?1`).bind(m.listing_id).first();
   if (l && l.cover_media_id === m.id) {
-    const next = await c.db.prepare(`SELECT id FROM media WHERE listing_id=?1 AND kind IN ('photo','pano') ORDER BY sort LIMIT 1`).bind(m.listing_id).first();
+    const next = await c.db.prepare(`SELECT m.id FROM media m WHERE m.listing_id=?1 AND ${PHOTO_SQL} ORDER BY m.sort LIMIT 1`).bind(m.listing_id).first();
     await c.db.prepare(`UPDATE listings SET cover_media_id=?1 WHERE id=?2`).bind(next ? next.id : null, m.listing_id).run();
   }
   await touch(c.db, m.listing_id, c.user.id);
@@ -248,7 +315,7 @@ export async function remove(c) {
 }
 
 export async function deleteObjects(env, m, origin) {
-  const keys = [m.key_orig, m.key_large, m.key_thumb, m.key_pano].filter(Boolean);
+  const keys = [m.key_orig, m.key_large, m.key_thumb, m.key_pano, m.key_pano2048].filter(Boolean);
   if (!keys.length) return;
   if (env.MEDIA) await env.MEDIA.delete(keys);
   /* the edge copy is immutable for a year unless we drop it here */
@@ -268,7 +335,11 @@ export async function listForListing(db, listingId) {
   return rows.map(mediaToJson);
 }
 
-/* GET /media/<key> — public, immutable, range-aware (video seeking). */
+/* GET /media/<key> — public, immutable, range-aware (video seeking). Image
+   originals are the exception: they carry EXIF (camera, time, GPS) and are
+   path-derivable from any web-size URL, so they need the Studio session
+   (F234). The brand logo's original is what the public viewer draws, so it
+   stays public; video and PDF originals are the only copy and stay public. */
 export async function serve(request, env, url) {
   try {
     return await serveInner(request, env, url);
@@ -284,11 +355,21 @@ async function serveInner(request, env, url) {
   const key = decodeURIComponent(url.pathname.slice("/media/".length));
   if (!KEY_RE.test(key)) return new Response("Not found", { status: 404 });
   if (!env.MEDIA) return new Response("Media store not connected", { status: 503 });
+  let isPrivate = false;
+  if (ORIG_IMAGE_RE.test(key)) {
+    const db = officeDb(env);
+    const m = db ? await db.prepare(`SELECT role FROM media WHERE key_orig=?1`).bind(key).first().catch(() => null) : null;
+    if (!m || m.role !== "logo") {
+      const session = db ? await getSession(request, db).catch(() => null) : null;
+      if (!session) return new Response("Originals need a Studio sign-in", { status: 403, headers: NO_STORE });
+      isPrivate = true;
+    }
+  }
 
   const cache = caches.default;
   /* the key is the path alone, so ?anything cannot bypass the edge copy */
   const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
-  if (!request.headers.has("range")) {
+  if (!request.headers.has("range") && !isPrivate) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;
   }
@@ -298,7 +379,7 @@ async function serveInner(request, env, url) {
   const headers = new Headers();
   obj.writeHttpMetadata(headers);
   headers.set("etag", obj.httpEtag);
-  headers.set("cache-control", "public, max-age=31536000, immutable");
+  headers.set("cache-control", isPrivate ? "private, max-age=3600" : "public, max-age=31536000, immutable");
   headers.set("accept-ranges", "bytes");
   headers.set("x-content-type-options", "nosniff");
   if (hasRange && obj.range) {
@@ -311,7 +392,7 @@ async function serveInner(request, env, url) {
   if (!("body" in obj)) return new Response(null, { status: 304, headers });
   headers.set("content-length", String(obj.size));
   const res = new Response(request.method === "HEAD" ? null : obj.body, { status: 200, headers });
-  if (request.method === "GET") {
+  if (request.method === "GET" && !isPrivate) {
     try { await cache.put(cacheKey, res.clone()); } catch {}
   }
   return res;

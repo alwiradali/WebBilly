@@ -53,7 +53,7 @@ const STATIC_LET_SLUGS = ["denmark-road", "ladywell-point", "room-3", "room-5", 
 /* old-site /property/<id>/ numbers -> our slugs, for the listings we know */
 const LEGACY_LISTINGS = { "226": "denmark-road", "225": "ladywell-point", "102": "room-7", "108": "room-3", "110": "room-5" };
 /* root paths a Studio page may never take */
-const RESERVED_ROOT_SLUGS = ["lettings", "landlords", "tenants", "privacy-policy", "tenant-application-form", "let", "property", "api", "media", "billy360", "templates", "sitemap", "sitemap.xml", "robots", "robots.txt", "images", "css", "js", "free-valuation", "testimonials", "register", "blog", "sales", "buyers", "vendors", "commercial", "index", "home", "404", "favicon.ico", "apple-touch-icon.png"];
+const RESERVED_ROOT_SLUGS = ["lettings", "landlords", "tenants", "privacy-policy", "tenant-application-form", "let", "property", "tour", "api", "media", "billy360", "templates", "sitemap", "sitemap.xml", "robots", "robots.txt", "images", "css", "js", "free-valuation", "testimonials", "register", "blog", "sales", "buyers", "vendors", "commercial", "index", "home", "404", "favicon.ico", "apple-touch-icon.png"];
 
 function withFrag(p, frag) { return frag ? p + (frag.charAt(0) === "#" ? frag : "#" + frag) : p; }
 function pagePath(mode, slug, frag) {

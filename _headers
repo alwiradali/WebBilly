@@ -8,6 +8,17 @@
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
   Strict-Transport-Security: max-age=15552000; includeSubDomains
 
+# billy360 — the 360° tour viewer. It is framed by the Megacity listing pages
+# (and by the client's own domain once it moves), so the site-wide SAMEORIGIN
+# is detached here and an allow-list of framing origins takes its place. The
+# office editor is not exposed by this: the Studio cookie is SameSite=Lax, so a
+# cross-site frame is never signed in. To let another site embed a tour, add
+# its origin to the one line below (the Worker sends the same list for the
+# index — worker/studio/router.js FRAME_ANCESTORS — keep the two in step).
+/billy360/*
+  ! X-Frame-Options
+  Content-Security-Policy: frame-ancestors 'self' https://megacityproperties.co.uk https://*.megacityproperties.co.uk https://billydigitals.com https://*.billydigitals.com
+
 # Vendored libraries never change — cache them hard.
 /templates/vendor/*
   Cache-Control: public, max-age=31536000, immutable

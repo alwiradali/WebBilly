@@ -25,6 +25,7 @@ want(){ local got="$1" exp="$2" what="$3"; got="${got/http:\/\//https://}"; if [
 has() { local what="$1" pat="$2" url="$3"; c "$url" > /tmp/mc_body.$$; if grep -q -- "$pat" /tmp/mc_body.$$; then echo "ok   $what has $pat"; else echo "FAIL $what lacks $pat"; fail=1; fi; }
 lacks(){ local what="$1" pat="$2" url="$3"; c "$url" > /tmp/mc_body.$$; if grep -q -- "$pat" /tmp/mc_body.$$; then echo "FAIL $what has $pat"; fail=1; else echo "ok   $what lacks $pat"; fi; }
 hdr() { local what="$1" pat="$2" url="$3"; if c -D - -o /dev/null "$url" | tr -d '\r' | grep -qi -- "$pat"; then echo "ok   $what header $pat"; else echo "FAIL $what header $pat"; fail=1; fi; }
+nohdr(){ local what="$1" pat="$2" url="$3"; if c -D - -o /dev/null "$url" | tr -d '\r' | grep -qi -- "$pat"; then echo "FAIL $what still sends header $pat"; fail=1; else echo "ok   $what has no $pat header"; fi; }
 
 echo "== host"
 want "$(st "$BASE/landlords/")" "301 $CANON/landlords" "trailing slash"
@@ -95,6 +96,38 @@ has "sitemap" "<loc>$CANON/lettings</loc>" "$BASE/sitemap.xml"
 has "sitemap" "<loc>$CANON/let/" "$BASE/sitemap.xml"
 lacks "sitemap" '/templates/' "$BASE/sitemap.xml"
 for a in /templates/megacity-skyline.css /templates/megacity-skyline.js /templates/megacity-urls.js /templates/megacity-consent.js /templates/assets/mcr/logo-nav.png /templates/assets/mcr/hero-wide.jpg /templates/vendor/gsap.min.js /billy360/embed.js /favicon.ico /apple-touch-icon.png; do want "$(st "$BASE$a")" "200 " "asset $a"; done
+echo "== 360 tours (G27)"
+# The viewer and its embed must be framable by the listing pages, the public
+# tour API must answer, and one live tour (the canary — the first in the
+# manifest, or MEGACITY_TOUR_CANARY) must open end to end: its JSON, its first
+# panorama out of R2, the pretty /tour/<id> link and the head of the viewer.
+want "$(st "$BASE/billy360/")" "200 " "GET /billy360/"
+want "$(st "$BASE/billy360/embed.js")" "200 " "GET /billy360/embed.js"
+nohdr "/billy360/" 'x-frame-options' "$BASE/billy360/"
+hdr "/billy360/" 'content-security-policy: frame-ancestors' "$BASE/billy360/"
+has "/billy360/" 'name="robots" content="noindex' "$BASE/billy360/"
+want "$(st "$BASE/api/public/tours")" "200 " "/api/public/tours"
+CANARY="${MEGACITY_TOUR_CANARY:-$(c "$BASE/api/public/tours" 2>/dev/null | grep -o '"id":"[a-z0-9-]*"' | head -1 | cut -d'"' -f4)}"
+if [[ -z "$CANARY" ]]; then
+  echo "WARN no live tour to probe yet (publish one in the Studio, or set MEGACITY_TOUR_CANARY=<listing id>)"
+else
+  echo "     canary: $CANARY"
+  want "$(st "$BASE/api/public/tours/$CANARY")" "200 " "/api/public/tours/$CANARY"
+  PANO=$(c "$BASE/api/public/tours/$CANARY" | python3 -c 'import json,sys
+try:
+  t=json.load(sys.stdin); r=[x for x in t.get("rooms",[]) if isinstance(x.get("pano"),str)]
+  print(r[0]["pano"] if r else "")
+except Exception: print("")' 2>/dev/null)
+  if [[ "$PANO" == /media/* ]]; then echo "ok   rooms[0].pano is under /media/ ($PANO)"; else echo "FAIL rooms[0].pano is not a /media/ URL: '$PANO'"; fail=1; fi
+  if [[ -n "$PANO" ]]; then
+    hdr "first panorama" 'content-type: image/' "$BASE$PANO"
+    want "$(st "$BASE$PANO")" "200 " "GET $PANO"
+  fi
+  want "$(st "$BASE/tour/$CANARY")" "200 " "/tour/$CANARY"
+  has "/tour/$CANARY" '360° tour · Megacity Properties' "$BASE/tour/$CANARY"
+  has "/billy360/?site=$CANARY" "rel=\"canonical\" href=\"$CANON/let/$CANARY\"" "$BASE/billy360/?site=$CANARY"
+  has "/let/$CANARY" "data-billy360=\"$CANARY\"" "$BASE/let/$CANARY"
+fi
 rm -f /tmp/mc_body.$$
 echo; if [[ $fail == 0 ]]; then echo "GO-LIVE CHECK: ALL PASS"; else echo "GO-LIVE CHECK: FAILURES"; fi
 exit $fail

@@ -22,6 +22,7 @@ import * as pub from "./public.js";
 import * as tracking from "./tracking.js";
 import { readAll as readSettings, liveRedirects } from "./settings.js";
 import { pruneEvents } from "./enquiries.js";
+import { tourPage, isTourIndex } from "./router.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
 const PASS_ASSET = /^\/(billy360\/|templates\/assets\/mcr\/|templates\/vendor\/|templates\/megacity-[a-z0-9-]+\.(css|js|json|map)$)/;
@@ -49,6 +50,8 @@ export async function serveMegacityHost(request, env, ctx, url) {
   /* the API and the media are the same on both hosts */
   if (p.startsWith("/api/")) return ALLOW_API.test(p) ? null : json({ error: "Not found" }, 404);
   if (p.startsWith("/media/")) return media.serve(request, env, url);
+  /* the viewer's index gets the listing's title and card when ?site= names a live tour (F220) */
+  if (isTourIndex(p)) return tourPage(request, env, url, officeDb(env));
   if (PASS_ASSET.test(p)) {
     const res = await env.ASSETS.fetch(request);
     return res.status === 404 ? notFoundResponse(request, env, ctx, url, p, "asset") : res;
@@ -68,6 +71,22 @@ export async function serveMegacityHost(request, env, ctx, url) {
   if (p === "/sitemap.xml") return render.sitemap(env, url, db);
   if (request.method !== "GET" && request.method !== "HEAD") {
     return new Response("Method not allowed", { status: 405, headers: { allow: "GET, HEAD", "content-type": "text/plain; charset=utf-8" } });
+  }
+
+  /* the permanent tour link: /tour/<id> is the viewer at /billy360/?site=<id>,
+     served in place so the address in the portal's box never changes (dec. 8).
+     store.js loads app.js relative to the document, so /tour/<file> answers
+     with the viewer's own files. */
+  const tour = /^\/tour\/([a-z0-9-]{1,80})$/.exec(p);
+  if (tour) {
+    const untidy = tidy();
+    if (untidy) return untidy;
+    return tourPage(request, env, url, db, { site: tour[1], base: "/billy360/" });
+  }
+  const tourFile = /^\/tour\/([a-z0-9._-]+\.(?:js|css|json|map|jpg|jpeg|png|webp|svg|ico|woff2?))$/i.exec(raw);
+  if (tourFile) {
+    const res = await env.ASSETS.fetch(new Request(url.origin + "/billy360/" + tourFile[1] + url.search, request));
+    return res.status === 404 ? notFoundResponse(request, env, ctx, url, raw, "asset") : res;
   }
 
   /* demo-shaped addresses on the live host */
@@ -188,7 +207,7 @@ async function icon(env, url, p) {
 
 export function robotsTxt(env) {
   const origin = "https://" + urls.canonicalHost(env);
-  const body = ["User-agent: *", "Disallow: /studio", "Disallow: /api/", "Disallow: /templates/megacity-studio", "Allow: /", "", "Sitemap: " + origin + "/sitemap.xml", ""].join("\n");
+  const body = ["User-agent: *", "Disallow: /studio", "Disallow: /api/", "Disallow: /templates/megacity-studio", "Disallow: /tour/", "Disallow: /billy360/", "Allow: /", "", "Sitemap: " + origin + "/sitemap.xml", ""].join("\n");
   return new Response(body, { status: 200, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" } });
 }
 
