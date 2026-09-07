@@ -205,9 +205,13 @@ async function icon(env, url, p) {
   return new Response(res.body, { status: 200, headers: h });
 }
 
+/* /tour/<id> and /billy360/ are deliberately crawlable: they send
+   noindex,nofollow themselves, which a crawler can only obey if it is allowed
+   to fetch them, and Googlebot needs /billy360/embed.js to render the tour
+   frame on every listing page (render.js). */
 export function robotsTxt(env) {
   const origin = "https://" + urls.canonicalHost(env);
-  const body = ["User-agent: *", "Disallow: /studio", "Disallow: /api/", "Disallow: /templates/megacity-studio", "Disallow: /tour/", "Disallow: /billy360/", "Allow: /", "", "Sitemap: " + origin + "/sitemap.xml", ""].join("\n");
+  const body = ["User-agent: *", "Disallow: /studio", "Disallow: /api/", "Disallow: /templates/megacity-studio", "Allow: /", "", "Sitemap: " + origin + "/sitemap.xml", ""].join("\n");
   return new Response(body, { status: 200, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" } });
 }
 

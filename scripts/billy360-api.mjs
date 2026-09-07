@@ -236,6 +236,20 @@ const PLAN_IN =
     const l2 = await api("GET", "/api/studio/listings/" + lid);
     t("the photograph, not the panorama, becomes the cover", (l2.json.coverMediaId || l2.json.cover_media_id) === phm.id, { cover: l2.json.coverMediaId || l2.json.cover_media_id, photo: phm.id });
 
+    /* the brand mark belongs to the tour and is created by its own upload: the
+       Studio's per-photo "Use as" list must not offer it, and the patch path
+       must refuse it — a photo turned into a logo drops off the listing, blocks
+       publishing and makes its untouched original public (REG1) */
+    const opts = await api("GET", "/api/studio/options");
+    const roles = (((opts.json || {}).mediaRole) || []).map((o) => (o && o.value) || o[0]);
+    t("the Use-as list does not offer the brand logo", roles.indexOf("gallery") !== -1 && roles.indexOf("logo") === -1, roles.join(","));
+    const toLogo = await api("PATCH", "/api/studio/media/" + phm.id, { role: "logo" });
+    const l3 = await api("GET", "/api/studio/listings/" + lid);
+    t("a photo cannot be turned into the brand logo, and stays the cover",
+      toLogo.status === 400 && (l3.json.coverMediaId || l3.json.cover_media_id) === phm.id,
+      { status: toLogo.status, cover: l3.json.coverMediaId || l3.json.cover_media_id });
+    t("the refused change left the photograph's original private", (await raw("GET", phm.orig, { cookie: false })).status === 403, phm.orig);
+
     /* image originals are behind the Studio session; the logo and the web sizes are not */
     t("an image original is refused without the Studio cookie", (await raw("GET", pm.orig || (pm.url || "").replace(/w1600\.jpg$/, "orig.jpg"), { cookie: false })).status === 403, pm.orig);
     const withCookie = await raw("GET", pm.orig);
@@ -274,6 +288,9 @@ const PLAN_IN =
     const items = (rows.json && (rows.json.items || rows.json)) || [];
     const mine = items.filter && items.filter((e) => e.email === "d1@example.com")[0];
     t("it lands in the Studio's enquiries with source 'tour'", !!mine && mine.source === "tour", mine && { source: mine.source, listing: mine.listing_id || mine.listingId });
+    t("the enquiry names the room the visitor was in, not its id",
+      !!mine && /Room: Hallway/.test(mine.message || ""),
+      mine && ((mine.message || "").split("\n").filter((l) => /^Room:/.test(l))[0] || mine.message));
   }
 
   /* ── 6 · the pages a visitor can open ────────────────────────────────── */
@@ -284,6 +301,8 @@ const PLAN_IN =
     t("its head is the listing's: title, description, og and canonical", /360° tour · Megacity Properties<\/title>/.test(viewer.text) && /og:image/.test(viewer.text) && /rel="canonical"/.test(viewer.text), (viewer.text.match(/<title>[^<]*<\/title>/) || [])[0]);
     t("it stays out of the index", /name="robots"[^>]*noindex/.test(viewer.text));
     t("it can be framed by the listing pages", !viewer.headers.get("x-frame-options") && /frame-ancestors/.test(viewer.headers.get("content-security-policy") || ""), { xfo: viewer.headers.get("x-frame-options"), csp: (viewer.headers.get("content-security-policy") || "").slice(0, 80) });
+    const office = await raw("GET", "/billy360/?site=" + ID + "&office=1", { cookie: false });
+    t("the signed-in editor is framable only by the Studio itself", (office.headers.get("content-security-policy") || "").trim() === "frame-ancestors 'self'", office.headers.get("content-security-policy"));
     const asset = await raw("GET", "/billy360/app.js", { cookie: false });
     t("the viewer's own assets are framable too", asset.status === 200 && !asset.headers.get("x-frame-options") && /frame-ancestors/.test(asset.headers.get("content-security-policy") || ""), { xfo: asset.headers.get("x-frame-options") });
     const embed = await raw("GET", "/billy360/embed.js", { cookie: false });
@@ -304,7 +323,12 @@ const PLAN_IN =
     const tidy = curl("GET", "/Tour/" + ID.toUpperCase() + "/", HOST);
     t("a sloppy /Tour/<ID>/ redirects to the tidy address", tidy.status === 301 && /\/tour\//.test(tidy.location || ""), { status: tidy.status, to: tidy.location });
     const robots = curl("GET", "/robots.txt", HOST);
-    t("robots.txt keeps crawlers out of /tour/ and /billy360/", /Disallow: \/tour\//.test(robots.text) && /Disallow: \/billy360\//.test(robots.text), robots.text.split("\n").filter((l) => /Disallow/.test(l)).join(" | "));
+    /* the tour pages send noindex themselves, which a crawler can only obey if it
+       may fetch them, and Googlebot needs /billy360/embed.js to render the tour
+       frame on every listing page (REG2) */
+    t("robots.txt keeps the Studio out but lets crawlers reach the tour and embed.js",
+      /Disallow: \/studio/.test(robots.text) && !/Disallow: \/tour\//.test(robots.text) && !/Disallow: \/billy360/.test(robots.text),
+      robots.text.split("\n").filter((l) => /Disallow/.test(l)).join(" | "));
     const listing = curl("GET", "/let/" + ID, HOST);
     t("the listing page carries the tour frame with its cover room", new RegExp('data-billy360="' + ID + '"').test(listing.text) && /data-room="[^"]+"/.test(listing.text), (listing.text.match(/data-billy360="[^"]*"[^>]*/) || [])[0]);
   }

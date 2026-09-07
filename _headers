@@ -11,10 +11,13 @@
 # billy360 — the 360° tour viewer. It is framed by the Megacity listing pages
 # (and by the client's own domain once it moves), so the site-wide SAMEORIGIN
 # is detached here and an allow-list of framing origins takes its place. The
-# office editor is not exposed by this: the Studio cookie is SameSite=Lax, so a
-# cross-site frame is never signed in. To let another site embed a tour, add
-# its origin to the one line below (the Worker sends the same list for the
-# index — worker/studio/router.js FRAME_ANCESTORS — keep the two in step).
+# signed-in office editor is NOT covered by SameSite=Lax — that is judged on
+# the registrable domain, so any sibling subdomain on this list is same-site
+# and its frame would carry the Studio cookie — so the Worker narrows the
+# index to frame-ancestors 'self' whenever office=1 (router.js tourPage). To
+# let another site embed a tour, add its origin to the one line below (the
+# Worker sends the same list for the index — worker/studio/router.js
+# FRAME_ANCESTORS — keep the two in step).
 /billy360/*
   ! X-Frame-Options
   Content-Security-Policy: frame-ancestors 'self' https://megacityproperties.co.uk https://*.megacityproperties.co.uk https://billydigitals.com https://*.billydigitals.com

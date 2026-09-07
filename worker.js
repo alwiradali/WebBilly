@@ -61,7 +61,12 @@ export default {
       const served = await serveMegacityHost(request, env, ctx, url);
       if (served) return served;
     }
-    if (isMegacityPath(url)) return handleMegacity(request, env, ctx, url);
+    /* A client's own domain owns every path on it. isMegacityPath claims a few
+       paths on every hostname — /billy360/ among them — and without this guard
+       they slip past serveClient and answer with Billy Digitals' 404 advert on
+       the client's domain, which is the failure mode serveClient exists to
+       stop. The Megacity host itself is already handled above. */
+    if (isMegacityPath(url) && !isOwnClientHost(url.hostname, env)) return handleMegacity(request, env, ctx, url);
     if (url.pathname === "/api/send-review") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleSendReview(request, env);
@@ -293,6 +298,10 @@ function clientHosts(env, key) {
 }
 function isClientHost(hostname, env, key) {
   return clientHosts(env, key).includes(String(hostname || "").toLowerCase());
+}
+/* The hosts whose own site answers every path on them (serveM2L, serveClient). */
+function isOwnClientHost(hostname, env) {
+  return (!M2L_PARKED && isM2LHost(hostname, env)) || isClientHost(hostname, env, "HEATFIX_HOST");
 }
 
 /* Generic version of serveM2L for any client domain. */

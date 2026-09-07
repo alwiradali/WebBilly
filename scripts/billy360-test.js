@@ -20,7 +20,7 @@
  * exits non-zero if anything failed, and prints a per-section table either way.
  *
  * Knobs: CHROME (browser binary), MEGACITY_LISTING / MEGACITY_HOST (section 6),
- * STUDIO_EMAIL / STUDIO_PASSWORD, BILLY360_OFFICE_ONLY=<letters a-g> to run part
+ * STUDIO_EMAIL / STUDIO_PASSWORD, BILLY360_OFFICE_ONLY=<letters a-h> to run part
  * of section 6, BILLY360_OUT (screenshots and fixtures, default a temp folder).
  */
 "use strict";
@@ -424,6 +424,79 @@ async function sectionPublic(br) {
     ok("no page errors in the a11y pass", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
     await ctx.close();
   }
+
+  /* (e) the guided walkthrough, the documented deep link, the panel copy */
+  {
+    const ctx = await br.newContext(DESKTOP);
+    await offline(ctx); await stubApi(ctx, stubTour());
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/billy360/?site=x", { waitUntil: "load" });
+    await ready(page); await sleep(400);
+    /* the visitor opens in the cover room, which sits in the middle of the
+       order — a lap has to come back round to the rooms before it */
+    const seen = [await page.evaluate(() => document.querySelector("#roomName").textContent)];
+    await page.click("#btnPlay"); await sleep(400);
+    for (let i = 0; i < 2; i++) {
+      const was = seen[seen.length - 1];
+      await page.evaluate(() => document.querySelector("#btnNext").click());
+      await page.waitForFunction((w) => document.querySelector("#roomName").textContent !== w, was, { timeout: 40000 }).catch(() => {});
+      await sleep(300);
+      seen.push(await page.evaluate(() => document.querySelector("#roomName").textContent));
+    }
+    const mid = await page.evaluate(() => ({ pos: document.querySelector("#transportPos").textContent,
+      end: !!(document.querySelector("#guidedEnd") && !document.querySelector("#guidedEnd").hidden) }));
+    await page.evaluate(() => document.querySelector("#btnNext").click());
+    await sleep(800);
+    const end = await page.evaluate(() => { const n = document.querySelector("#guidedEnd");
+      return { card: n && !n.hidden ? n.textContent : "", on: document.querySelector("#transport").classList.contains("is-on") }; });
+    ok("the guided walkthrough is a full lap from wherever the visitor is standing",
+       seen.join(" → ") === "Kitchen → Bedroom → Hallway" && !mid.end && /Room 3 of 3/.test(mid.pos), { seen, mid });
+    ok("\"That's the whole tour\" waits until every room has been shown", /whole tour/.test(end.card) && !end.on, end);
+    ok("the empty state under \"In this space\" describes that list, not the photographs above it",
+       await page.evaluate(() => { const t = document.querySelector("#sideHotspots").textContent;
+         return /Nothing extra marked in this room yet\./.test(t) && !/photos/i.test(t); }),
+       await page.evaluate(() => document.querySelector("#sideHotspots").textContent.trim()));
+
+    const deep = await ctx.newPage();
+    await deep.goto(S + "/billy360/?site=x#/tour/a?y=45&p=3&f=50", { waitUntil: "load" });
+    await ready(deep); await settle(deep);
+    const at = await deep.evaluate(() => ({ room: document.querySelector("#roomName").textContent, cam: window.BILLY360App.engine().camera() }));
+    ok("the documented deep link #/tour/<room>?y=&p=&f= opens that room at that view",
+       at.room === "Hallway" && Math.abs(at.cam.yaw - 45) < 1 && Math.abs(at.cam.fov - 50) < 1, at);
+    ok("no page errors around the walkthrough and the deep link", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
+
+  /* (f) a property card's floor plan is a plan sink like any other: the
+     portfolio only exists in local mode, so this one boots the demos */
+  {
+    const ctx = await br.newContext(DESKTOP);
+    await offline(ctx);
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/billy360/", { waitUntil: "load" });
+    await ready(page);
+    const id = await page.evaluate(() => {
+      const src = (window.BILLY360_TOURS || []).filter((t) => t.floors && t.floors[0] && !(t.project || {}).coverImage)[0];
+      if (!src) return null;
+      const t = JSON.parse(JSON.stringify(src));
+      t.version = (t.version || 0) + 10;            // a browser copy only wins when it is newer
+      t.floors[0].plan = '<rect width="9" height="9"/><img src=x onerror="window.__pwned=1;document.title=\'PWNED\'">';
+      localStorage.setItem("billy360:tour:" + t.id, JSON.stringify(t));
+      return t.id;
+    });
+    await page.goto(S + "/billy360/#/sites", { waitUntil: "load" });
+    await page.reload({ waitUntil: "load" });        // same-document hash moves do not re-read storage
+    await ready(page); await sleep(800);
+    const card = await page.evaluate((sid) => {
+      const c = document.querySelector('[data-site="' + sid + '"]');
+      const plan = c && c.querySelector(".sitecard-plan");
+      return { pwned: !!window.__pwned, title: document.title, html: plan ? plan.innerHTML : "(no card)" };
+    }, id);
+    ok("a hostile floor plan on a property card is rebuilt from the allow-list",
+       !!id && !card.pwned && !/PWNED/.test(card.title) && /<rect width="9" height="9">/.test(card.html) && !/img|onerror/i.test(card.html), card);
+    ok("no page errors on the portfolio", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
 }
 
 /* ══ 3 · the listing-page embed ════════════════════════════════════════ */
@@ -632,6 +705,49 @@ async function sectionEmbed(br) {
     ok("no page errors on the listing page", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
     await ctx.close();
   }
+
+  /* (e) the frame a phone gets on a listing page: 4:5 of a narrow column is
+     short as well as narrow, and the landscape chrome must not claim it */
+  {
+    const ctx = await br.newContext(PHONE);
+    await offline(ctx); await stubApi(ctx, stubTour());
+    await ctx.route(S + "/listing-phone", (r) => r.fulfill({ status: 200, contentType: "text/html", body:
+      '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Listing</title>' +
+      '<body style="margin:0"><div style="height:200px;background:#eee">above</div>' +
+      '<div style="padding:0 20px"><div class="pd-tour" data-billy360="x" data-title="360° tour"></div></div>' +
+      '<p id="after">after</p><div style="height:1200px"></div>' +
+      '<script src="/billy360/embed.js" defer></script>' }));
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/listing-phone", { waitUntil: "load" });
+    await page.evaluate(() => document.querySelector(".pd-tour").scrollIntoView({ block: "center" }));
+    await page.waitForFunction(() => !!document.querySelector(".pd-tour iframe"), null, { timeout: 20000 });
+    let frame = null;   // loading="lazy": the frame appears in the list a moment after the element
+    for (let i = 0; i < 40 && !frame; i++) { frame = page.frames().find((f) => (f.url() || "").indexOf("embed=1") >= 0); if (!frame) await sleep(250); }
+    await ready(frame); await sleep(600);
+    const P = await frame.evaluate(() => {
+      const box = (s) => { const n = document.querySelector(s); if (!n) return null; const r = n.getBoundingClientRect(); return { x: r.left, y: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height }; };
+      const area = (a, b) => (!a || !b) ? 0 : Math.max(0, Math.min(a.r, b.r) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.y, b.y));
+      const w = document.querySelector("#stripWrap");
+      return { vw: innerWidth, vh: innerHeight, portrait: innerHeight > innerWidth,
+               strip: Math.round(w.clientWidth), tiles: Math.round(w.scrollWidth),
+               names: getComputedStyle(document.querySelector(".strip-name")).display,
+               onDock: Math.round(area(box("#stripWrap"), box(".mobile-dock"))) };
+    });
+    ok("a portrait phone frame keeps a usable room strip", P.portrait && P.strip >= P.vw * 0.7 && P.names !== "none" && P.onDock === 0, P);
+    ok("no page errors in the phone listing frame", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
+
+  /* (f) the head the viewer ships is the one a link that is not live lands on
+     (the Worker rewrites it only for a live tour), so it must stay neutral */
+  {
+    const r = await fetch(S + "/billy360/");
+    const html = (await r.text()).slice(0, 4000);
+    const title = (/<title>([^<]*)<\/title>/i.exec(html) || [])[1] || "";
+    const desc = (/<meta name="description" content="([^"]*)"/i.exec(html) || [])[1] || "";
+    ok("the shipped head names no product and sells no other property", !!title && !!desc && !/billy360/i.test(title + desc) && !/sq ft|office|studio/i.test(desc),
+       JSON.stringify({ title, desc }));
+  }
 }
 
 /* ══ 4 · devices ═══════════════════════════════════════════════════════ */
@@ -787,6 +903,104 @@ async function sectionDevices(br) {
     await page.waitForFunction(() => document.querySelector("#roomName").textContent === "Hallway", null, { timeout: 40000 });
     ok("reduced motion: walking still works", true);
     ok("no page errors under reduced motion", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
+
+  /* (f) landscape with the "Back to property" bar: the bar shortens the view,
+     so a raised dock measured against the viewport lands on the toolbar */
+  {
+    const ctx = await br.newContext(Object.assign({}, PHONE, { viewport: { width: 844, height: 390 } }));
+    await offline(ctx); await stubApi(ctx, stubTour());
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/billy360/?site=x&from=/let/ladywell-point", { waitUntil: "load" });
+    await ready(page); await sleep(800);
+    await page.tap("#dockInfo").catch(() => page.tap("#dockDetails"));
+    await sleep(800);
+    const B = await page.evaluate(() => {
+      const box = (s) => { const n = document.querySelector(s); if (!n) return null; const r = n.getBoundingClientRect(); return { x: r.left, y: r.top, r: r.right, b: r.bottom }; };
+      const area = (a, b) => (!a || !b) ? 0 : Math.max(0, Math.min(a.r, b.r) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.y, b.y));
+      const d = box(".mobile-dock");
+      return { backbar: document.querySelector("#app").classList.contains("has-backbar"),
+               raised: document.querySelector(".mobile-dock").classList.contains("is-raised"),
+               onToolbar: Math.round(area(d, box("#tourTop"))), onEnquire: Math.round(area(d, box("#btnEnquire"))) };
+    });
+    ok("landscape from a listing: the raised dock stays clear of the toolbar and Enquire", B.backbar && B.raised && B.onToolbar === 0 && B.onEnquire === 0, B);
+    ok("no page errors in landscape with the back bar", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
+
+  /* (g) the Studio header on a 390 px phone: with the save pill up, the row
+     still has to fit — Publish on screen and the rail toggle a real target */
+  {
+    const ctx = await br.newContext(PHONE);
+    await offline(ctx); await pinTier(ctx);
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/billy360/", { waitUntil: "load" });
+    await ready(page);
+    await page.evaluate(() => { location.hash = "#/studio/rooms"; });
+    await sleep(500);
+    await page.fill("#lockCode", "redadmin"); await page.click("#lockGo");
+    await page.waitForFunction(() => window.BILLY360App.isAdmin(), null, { timeout: 20000 }).catch(() => {});
+    await sleep(600);
+    /* the longest label the save pill ever carries (app.js markSaved) */
+    const H = await page.evaluate(() => {
+      const n = document.querySelector("#saveState");
+      n.innerHTML = ""; n.appendChild(document.createElement("i")); n.appendChild(document.createTextNode(" Not saved — retrying"));
+      const top = document.querySelector(".studio-top");
+      const box = (s) => { const e = document.querySelector(s); const r = e.getBoundingClientRect(); return { x: Math.round(r.left), r: Math.round(r.right), w: Math.round(r.width) }; };
+      return { view: (document.querySelector(".view.is-active") || {}).id, vw: innerWidth,
+               scrollWidth: top.scrollWidth, clientWidth: top.clientWidth,
+               publish: box("#btnStudioPublish"), toggle: box("#btnRailToggle"), pill: box("#saveState"),
+               name: document.querySelector("#btnStudioPublish").textContent.trim() };
+    });
+    ok("the Studio header fits a 390 px phone with the save pill up", H.view === "viewStudio" && H.scrollWidth <= H.clientWidth && H.publish.r <= H.vw && H.toggle.w >= 36 && /Publish/.test(H.name), H);
+    ok("no page errors in the Studio on a phone", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await ctx.close();
+  }
+
+  /* (h) the upload path: every web size is re-encoded, so none of the files
+     served publicly carries the camera's EXIF (only the gated orig does) */
+  {
+    const ctx = await br.newContext(DESKTOP);
+    await offline(ctx); await stubApi(ctx, stubTour());
+    const page = await ctx.newPage(); const errs = watch(page);
+    await page.goto(S + "/billy360/?site=x", { waitUntil: "load" });
+    await page.waitForFunction(() => window.BILLY360_STORE, null, { timeout: 60000 });
+    const U = await page.evaluate(async () => {
+      /* a 2048×1024 JPEG (inside every derivative's edge) with a marker in an
+         APP1 segment where a camera writes EXIF */
+      const c = document.createElement("canvas"); c.width = 2048; c.height = 1024;
+      const x = c.getContext("2d");
+      for (let i = 0; i < 64; i++) { x.fillStyle = "hsl(" + i * 5 + ",60%,50%)"; x.fillRect(i * 32, 0, 32, 1024); }
+      const plain = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.9));
+      const head = new Uint8Array(await plain.slice(0, 2).arrayBuffer());
+      const marker = "Exif\u0000\u0000SECRET-GPS-53.4808N-2.2426W";
+      const app1 = new Uint8Array(4 + marker.length);
+      app1[0] = 0xff; app1[1] = 0xe1; app1[2] = ((marker.length + 2) >> 8) & 255; app1[3] = (marker.length + 2) & 255;
+      for (let i = 0; i < marker.length; i++) app1[4 + i] = marker.charCodeAt(i);
+      const src = new Blob([head, app1, await plain.slice(2)], { type: "image/jpeg" });
+
+      let sent = null;
+      const real = window.fetch;
+      window.fetch = function (u, o) {
+        if (String(u).indexOf("/api/studio/media") >= 0) { sent = o.body; return Promise.resolve(new Response("{}", { status: 200, headers: { "content-type": "application/json" } })); }
+        return real.apply(window, arguments);
+      };
+      try { await window.BILLY360_STORE.upload(src, { isPano: true, role: "tour", listingId: "x", roomLabel: "EXIF probe" }); }
+      finally { window.fetch = real; }
+      const txt = async (b) => new TextDecoder("latin1").decode(new Uint8Array(await b.arrayBuffer()));
+      const meta = JSON.parse(sent.get("meta"));
+      const parts = {};
+      for (const k of ["orig", "large", "thumb", "pano", "pano2048"]) {
+        const f = sent.get(k);
+        parts[k] = f ? { size: f.size, exif: (await txt(f)).indexOf("SECRET-GPS") >= 0 } : null;
+      }
+      return { srcSize: src.size, panoIsOrig: meta.panoIsOrig, parts };
+    });
+    const web = ["large", "thumb", "pano", "pano2048"];
+    ok("the upload sends a re-encoded file for every web size, EXIF only on the orig",
+       U.panoIsOrig === undefined && web.every((k) => U.parts[k] && U.parts[k].size > 0 && !U.parts[k].exif && U.parts[k].size !== U.srcSize) && U.parts.orig.exif, U);
+    ok("no page errors during the upload", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
     await ctx.close();
   }
 }
@@ -1242,7 +1456,7 @@ async function sectionData(br) {
 }
 
 /* ══ 6 · office mode against wrangler dev ══════════════════════════════ */
-const OFFICE_ONLY = process.env.BILLY360_OFFICE_ONLY || "abcdefg";
+const OFFICE_ONLY = process.env.BILLY360_OFFICE_ONLY || "abcdefgh";
 const STUDIO = () => W + "/templates/megacity-studio";
 let COOKIE = "";
 
@@ -1495,6 +1709,75 @@ async function sectionOffice(br) {
     await page.click("#syncMine");
     const keptMine = await waitPill(page, /^Saved$/, 40000);
     ok('"Keep mine" wins with the fresh version', keptMine && (await serverTour()).tour.rooms[0].name === "Mine", (await serverTour()).tour.rooms[0].name);
+
+    /* a second clash while the first is being resolved: "Keep mine" must not
+       report a save that never left the browser, and the pill has to lead
+       back to the sheet if it ever goes */
+    const s2 = await serverTour();
+    const other2 = JSON.parse(JSON.stringify(s2.tour));
+    other2.rooms[0].name = "Saved by someone else again";
+    await wapi("PUT", "/api/studio/tours/" + ID, { tour: other2, version: s2.version, health: 90 });
+    await renameRoom(page, "Mine again");
+    await page.waitForSelector("#syncConflict", { timeout: 40000 }).catch(() => {});
+    let clash = true;
+    await page.route("**/api/studio/tours/" + ID, (r) => (clash && r.request().method() === "PUT")
+      ? r.fulfill({ status: 409, contentType: "application/json", body: '{"error":"Someone else saved this tour since you opened it.","version":9999}' })
+      : r.continue());
+    await page.evaluate(() => { window.__toasts = []; });
+    await page.click("#syncMine");
+    await sleep(3000);
+    const failed = await page.evaluate(() => ({
+      sheet: !!document.querySelector("#syncConflict"), toasts: window.__toasts.slice(-2),
+      pill: document.querySelector("#saveState").textContent.trim(), dirty: window.BILLY360App.sync().dirty
+    }));
+    ok('a "Keep mine" that the server refused says so and keeps the sheet open',
+       failed.sheet && failed.dirty && !failed.toasts.some((t) => /Saved your version/.test(t)) && failed.toasts.some((t) => /Couldn't save your version/.test(t)),
+       failed);
+    ok("the server does not have the version that was reported as saved", (await serverTour()).tour.rooms[0].name === "Saved by someone else again", (await serverTour()).tour.rooms[0].name);
+    /* the sheet gone, the pill is the only way back to it */
+    await page.evaluate(() => {
+      const n = document.querySelector("#syncConflict"); if (n) n.remove();
+      ["viewSites", "viewDash", "viewTour", "viewStudio"].forEach((id) => { const e = document.querySelector("#" + id); if (e) e.inert = false; });
+    });
+    await page.click("#saveState");
+    await sleep(600);
+    const reopened = await page.evaluate(() => ({ sheet: !!document.querySelector("#syncConflict"),
+      role: document.querySelector("#saveState").getAttribute("role"), pill: document.querySelector("#saveState").textContent.trim() }));
+    ok("the conflict pill is a button that reopens the sheet", reopened.sheet && reopened.role === "button" && /Conflict/.test(reopened.pill), reopened);
+    clash = false;
+    await page.click("#syncMine");
+    const won = await waitPill(page, /^(Saved|Changes not live)$/, 40000);
+    ok('"Keep mine" saves once the server lets it', won && (await serverTour()).tour.rooms[0].name === "Mine again", await pillNow(page));
+    await page.unroute("**/api/studio/tours/" + ID);
+
+    /* the tab going away with an edit still in hand: a phone that reclaims a
+       backgrounded tab never fires beforeunload, so the draft is stashed */
+    const stashKey = "billy360:pending:" + ID;
+    let hold = true;
+    await page.route("**/api/studio/tours/" + ID, (r) => (hold && r.request().method() === "PUT") ? r.abort("failed") : r.continue());
+    await renameRoom(page, "Typed just before the tab went");
+    await waitPill(page, /Unsaved|Saving|retrying|Not saved/, 30000);
+    const onHide = await page.evaluate((k) => {
+      localStorage.removeItem(k);
+      Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "hidden" });
+      document.dispatchEvent(new Event("visibilitychange"));
+      const kept = localStorage.getItem(k);
+      Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "visible" });
+      return kept ? (JSON.parse(kept).tour.rooms[0].name || "") : null;
+    }, stashKey);
+    ok("the tab being hidden with an unsaved edit stashes the draft", onHide === "Typed just before the tab went", onHide);
+    const onPagehide = await page.evaluate((k) => {
+      localStorage.removeItem(k);
+      window.dispatchEvent(new Event("pagehide"));
+      const kept = localStorage.getItem(k);
+      return kept ? (JSON.parse(kept).tour.rooms[0].name || "") : null;
+    }, stashKey);
+    ok("pagehide stashes it too", onPagehide === "Typed just before the tab went", onPagehide);
+    hold = false;
+    await page.evaluate(() => window.BILLY360App.sync().retry());
+    const stashed = await waitPill(page, /^(Saved|Changes not live)$/, 40000);
+    ok("the stash is cleared again once the edit reaches the server", stashed && (await page.evaluate((k) => !localStorage.getItem(k), stashKey)), await pillNow(page));
+    await page.unroute("**/api/studio/tours/" + ID);
 
     /* the session expires: the draft is kept and a way back offered */
     await page.route("**/api/studio/tours/" + ID, (r) => r.request().method() === "PUT"
@@ -1772,6 +2055,59 @@ async function sectionOffice(br) {
       await page.screenshot({ path: path.join(OUT, "tour-pretty-link.png") });
       await ctx.close();
     }
+  }
+
+  /* ── (h) two degraded cases: a poll landing mid-keystroke, a shell with no sync.js ── */
+  if (OFFICE_ONLY.indexOf("h") >= 0) {
+    await resetTour(true);
+    const ctx = await br.newContext(DESKTOP);
+    await offline(ctx); await withCookie(ctx);
+    const page = await ctx.newPage(); const errs = watch(page);
+    await bootOffice(page, "#/studio/rooms");
+    /* a colleague saves, the parent's poll says a newer version exists, and
+       Walid types while the GET that fetches it is still out */
+    const s0 = await serverTour();
+    const theirs = JSON.parse(JSON.stringify(s0.tour));
+    theirs.rooms[0].name = "Their copy";
+    await wapi("PUT", "/api/studio/tours/" + ID, { tour: theirs, version: s0.version, health: 90 });
+    const newVersion = (await serverTour()).version;
+    await page.route("**/api/studio/tours/" + ID, async (r) => { if (r.request().method() === "GET") await sleep(1000); return r.continue(); });
+    await page.evaluate((v) => {
+      window.postMessage({ source: "billy360", type: "billy360:status", version: v, status: "draft" }, location.origin);
+      setTimeout(() => {
+        const f = [...document.querySelectorAll("#studioBody .field")].find((x) => x.firstChild && x.firstChild.textContent.trim() === "Name");
+        const inp = f && f.querySelector("input");
+        if (!inp) return;
+        inp.value = "Typed during the poll";
+        inp.dispatchEvent(new Event("input", { bubbles: true }));
+      }, 150);
+    }, newVersion);
+    await sleep(2500);
+    const kept = await page.evaluate(() => window.BILLY360App.tour().rooms[0].name);
+    ok("a poll landing mid-keystroke does not overwrite what is being typed", kept === "Typed during the poll", kept);
+    const landed = await waitPill(page, /^(Saved|Changes not live)$/, 40000);
+    ok("and the typing goes up on top of their version", landed && (await serverTour()).tour.rooms[0].name === "Typed during the poll", (await serverTour()).tour.rooms[0].name);
+    await page.unroute("**/api/studio/tours/" + ID);
+    ok("no page errors around the poll", errs.length === 0, errs.slice(0, 3).join(" | ") || "none");
+    await page.close(); await ctx.close();
+
+    /* a part-deployed shell: sync.js 404s. Saving already falls back to one
+       plain PUT — Publish has to say why rather than throw past every catch */
+    const ctx2 = await br.newContext(DESKTOP);
+    await offline(ctx2); await withCookie(ctx2);
+    await ctx2.route("**/billy360/sync.js*", (r) => r.fulfill({ status: 404, contentType: "application/javascript", body: "" }));
+    const p2 = await ctx2.newPage(); const errs2 = watch(p2);
+    await p2.goto(W + "/billy360/?site=" + ID + "&office=1#/studio/rooms", { waitUntil: "domcontentloaded" });
+    await p2.waitForFunction(() => window.BILLY360App && window.BILLY360App.tour(), null, { timeout: 60000 });
+    await sleep(600);
+    const shell = await p2.evaluate(() => ({ lib: !!window.BILLY360Sync, queue: !!window.BILLY360App.sync() }));
+    const pub = await p2.evaluate(() => window.BILLY360App.publish().then((j) => ({ ok: j.ok, problems: j.problems }), (e) => ({ threw: String((e && e.message) || e) })));
+    const btns = await p2.evaluate(() => ({ disabled: [...document.querySelectorAll("[data-golive]")].map((b) => b.disabled), toast: (document.querySelector("#toast") || {}).textContent || "" }));
+    ok("Publish on a shell without sync.js reports a problem instead of throwing",
+       !shell.lib && !shell.queue && pub.ok === false && !pub.threw && /reload the page/i.test((pub.problems || []).join(" ")), { shell, pub });
+    ok("and it leaves the Publish buttons usable", btns.disabled.every((d) => d === false) && /reload the page/i.test(btns.toast), btns);
+    ok("no page errors on a shell without sync.js", errs2.length === 0, errs2.slice(0, 3).join(" | ") || "none");
+    await p2.close(); await ctx2.close();
   }
 }
 

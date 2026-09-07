@@ -4,9 +4,10 @@
    answered AND the tour on screen still equals what was sent. An edit that
    lands mid-save runs another pass afterwards; a failed save retries by
    itself (2 s, 5 s, 15 s) and then waits for a tap on the pill; a lost login
-   keeps the draft in memory and stashes it in this browser; a version clash
-   stops autosaving and asks which copy should win. Nothing here touches the
-   DOM — app.js paints the states this reports through onState.
+   — or the tab going away with an edit in hand — keeps the draft in memory
+   and stashes it in this browser; a version clash stops autosaving and asks
+   which copy should win. Nothing here touches the DOM — app.js paints the
+   states this reports through onState.
 
    BILLY360Sync.create({ store, getTour, getHealth, onState, onConflict, onSaved })
      → { schedule(delay), flush(opts) → Promise, retry(), keepMine(), useTheirs(),
@@ -197,14 +198,19 @@
         });
       });
     };
-    /* "Keep mine": take the server's version number, PUT once */
+    /* "Keep mine": take the server's version number, PUT once. It resolves
+       only once that PUT has landed: run()'s own promise fulfils whether the
+       save worked or not, so going through the queue's waiters is what makes
+       a second clash or a dropped connection reject instead of reporting a
+       save that never happened. */
     sync.keepMine = function () {
       return sync.fetchServer().then(function (j) {
         store.version = j.version;
         adopt(j);
         sync.dirty = true;
         sync.attempt = 0;
-        return run();
+        set("queued", {});                 // out of "conflict", or flush refuses at once
+        return sync.flush({ force: true });
       });
     };
     /* "Load their version": hand the server copy back for app.js to apply;
@@ -221,12 +227,19 @@
     };
 
     /* the network coming back, or the tab being looked at again, is a
-       reason to try once more (F168) */
+       reason to try once more (F168); the tab going away is the last chance
+       to keep the draft — a phone that reclaims a backgrounded tab discards
+       it without ever firing beforeunload, and offerPendingDraft hands a
+       stash back on the next boot */
     function nudge() {
       if (sync.state === "error" && !sync.info.signin && !sync.info.final && !running) sync.retry();
     }
+    function keepSafe() { if (sync.dirty || running) sync.stash(); }
     window.addEventListener("online", nudge);
-    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") nudge(); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") keepSafe(); else nudge();
+    });
+    window.addEventListener("pagehide", keepSafe);
 
     return sync;
   }

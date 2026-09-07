@@ -229,7 +229,8 @@
      In office mode every edit goes through one queue: uploads, then the
      PUT, and "Saved" only once the server has answered and the tour on
      screen still equals what was sent (F153 F168 F51). It retries by
-     itself, stashes the draft on a lost login and stops for a 409. */
+     itself, stashes the draft on a lost login (or on the way out of the tab)
+     and stops for a 409. */
   var sync = null;
   function syncBusy() { return !!(sync && sync.busy()); }
   function initSync() {
@@ -251,7 +252,7 @@
     if (state === "saving") markSaved(info.label || "Saving…", false, "busy");
     else if (state === "queued") markSaved("Unsaved changes", true);
     else if (state === "saved") markSaved(notLive ? "Changes not live" : "Saved", notLive, notLive ? "warn" : "ok");
-    else if (state === "conflict") markSaved("Conflict", true);
+    else if (state === "conflict") markSaved("Conflict · Fix", true, "warn", function () { openConflictSheet(); });
     else if (state === "error") {
       if (info.signin) markSaved("Sign in", true, "warn", function () { signInAgain(); });
       else if (info.retrying) markSaved("Not saved — retrying", true, "busy");
@@ -333,6 +334,15 @@
     }
     if (publishing) return publishing;
     initSync();
+    if (!sync) {
+      /* sync.js never loaded (a part-deployed shell): there is no queue to
+         drain, and the throw would be synchronous — past every catch */
+      var noQueue = "The tour editor couldn't start its save queue — reload the page and try again.";
+      publishProblems = [noQueue];
+      if (!opts.quiet) toast(noQueue);
+      busSend({ type: "billy360:published", ok: false, problems: [noQueue] });
+      return Promise.resolve({ ok: false, problems: publishProblems.slice() });
+    }
     var btns = $$("[data-golive]");
     btns.forEach(function (b) { b.disabled = true; });
     publishing = sync.flush({ force: true }).then(function () {
@@ -423,6 +433,7 @@
       if (d.type === "billy360:flush") {
         if (!remoteMode()) { busSend({ type: "billy360:flushed", version: STORE.version || 0 }); return; }
         initSync();
+        if (!sync) { busSend({ type: "billy360:flush-failed", reason: "The tour editor couldn't start its save queue — reload the page." }); return; }
         sync.flush().then(function () { busSend({ type: "billy360:flushed", version: STORE.version }); },
           function (err) { busSend({ type: "billy360:flush-failed", reason: (err && err.message) || "The tour could not be saved." }); });
       } else if (d.type === "billy360:publish") {
@@ -459,7 +470,14 @@
     if (d.gate != null) STORE.gate = d.gate;
     if (d.listingLive !== undefined) STORE.listingLive = !!d.listingLive;
     if (remoteMode() && sync && typeof d.version === "number" && d.version > (STORE.version || 0) && !dirty && !syncBusy() && sync.state !== "conflict") {
-      sync.useTheirs().then(function (j) { if (j && j.tour) { applyServerTour(j); toast("Updated with changes saved elsewhere."); } })["catch"](function () { });
+      /* "nothing unsaved here" was true before the fetch — check it again on
+         the way back, or a keystroke typed during it is overwritten and the
+         undo stack that could recover it is emptied */
+      var snap = JSON.stringify(TOUR);
+      sync.useTheirs().then(function (j) {
+        if (JSON.stringify(TOUR) !== snap) { sync.schedule(0); return; }
+        if (j && j.tour) { applyServerTour(j); toast("Updated with changes saved elsewhere."); }
+      })["catch"](function () { });
       return;
     }
     if (view === "studio" && (studioTab === "publish" || studioTab === "sites")) renderStudio();
@@ -513,7 +531,7 @@
     mine.onclick = function () {
       busy(true);
       sync.keepMine().then(function () { closeConflictSheet(); toast("Saved your version over theirs."); })
-      ["catch"](function (e) { closeConflictSheet(); if (e && e.status === 409) openConflictSheet(); });
+      ["catch"](function (e) { busy(false); toast("Couldn't save your version: " + String((e && e.message) || "no connection").replace(/\.$/, "") + "."); });
     };
     acts.appendChild(mine); acts.appendChild(theirs);
     card.appendChild(acts);
@@ -1235,7 +1253,12 @@
   function readHash() {
     var h = (location.hash || "").replace(/^#\/?/, "");
     var parts = h.split("/");
-    if (parts[0] === "tour") return { view: "tour", room: parts[1] || null };
+    /* the documented deep link carries the view in the hash —
+       #/tour/<room>?y=&p=&f= — so the query is not part of the room id */
+    if (parts[0] === "tour") {
+      var seg = (parts[1] || "").split("?");
+      return { view: "tour", room: seg[0] || null, q: seg[1] ? new URLSearchParams(seg[1]) : null };
+    }
     if (parts[0] === "studio") return PUBLIC ? { view: "tour", room: null } : { view: "studio", tab: parts[1] || "rooms" };
     if (parts[0] === "sites") return { view: "sites" };
     if (parts[0] === "site" && parts[1]) return { view: "dash", site: parts[1] };
@@ -1352,7 +1375,8 @@
       /* otherwise the floor plan itself is the card art — real data, and it
          costs nothing to draw */
       var plan = el("span", "sitecard-plan");
-      plan.innerHTML = '<svg viewBox="0 0 120 80" aria-hidden="true">' + (m.plan || "") + "</svg>";
+      plan.innerHTML = '<svg viewBox="0 0 120 80" aria-hidden="true"></svg>';
+      if (m.plan && window.BILLY360Plan) plan.firstChild.appendChild(window.BILLY360Plan.sanitize(m.plan));
       art.appendChild(plan);
     }
     /* the card carries its own client's accent, so a mixed portfolio does not
@@ -1779,7 +1803,7 @@
       row.onclick = function () { activateHotspot(h, true); };
       (h.type === "nav" ? lk : hs).appendChild(row);
     });
-    if (!hs.children.length) hs.appendChild(el("p", "t-body", "No extra photos here."));
+    if (!hs.children.length) hs.appendChild(el("p", "t-body", "Nothing extra marked in this room yet."));
     if (!lk.children.length) lk.appendChild(el("p", "t-body", "No doors from this room yet."));
 
     $$(".strip-item").forEach(function (n) {
@@ -2539,7 +2563,7 @@
   /* ═══════════════════════════════════════════════════════════════════════
      GUIDED TOUR
      ═══════════════════════════════════════════════════════════════════════ */
-  var guided = { on: false, timer: 0, at: 0, speed: 1, dwell: 9000, t0: 0, raf: 0, paused: false, auto: false, resume: 0, elapsed: 0, endT: 0 };
+  var guided = { on: false, timer: 0, at: 0, from: 0, seen: 0, speed: 1, dwell: 9000, t0: 0, raf: 0, paused: false, auto: false, resume: 0, elapsed: 0, endT: 0 };
   var SPEEDS = [0.5, 0.75, 1, 1.5, 2];
 
   function guidedOrder() {
@@ -2560,7 +2584,11 @@
   }
   function guidedPos() {
     var n = $("#transportPos");
-    if (n) n.textContent = "Room " + (guided.at + 1) + " of " + guidedOrder().length;
+    if (!n) return;
+    /* the walkthrough starts wherever the visitor is, so the count is how far
+       into this lap they are — not the room's place in the order */
+    var len = guidedOrder().length;
+    n.textContent = "Room " + (len ? ((guided.at - guided.from + len * 2) % len) + 1 : 1) + " of " + len;
   }
   function guidedStart() {
     var order = guidedOrder();
@@ -2570,6 +2598,7 @@
     guided.on = true; guided.paused = false; guided.auto = false; clearTimeout(guided.resume);
     guided.dwell = (TOUR.guided && TOUR.guided.dwell) || 9000;
     guided.at = Math.max(0, order.indexOf(currentRoom ? currentRoom.id : order[0]));
+    guided.from = guided.at; guided.seen = 0;
     guided.t0 = performance.now(); guided.elapsed = 0;
     guidedUI(true);
     guidedPos();
@@ -2625,7 +2654,7 @@
       hideGuidedEnd();
       if (mode === "lead") openLeadForm("tour");
       else if (mode === "details") openDetails();
-      else { guided.at = 0; engine.go(guidedOrder()[0]); setTimeout(guidedStart, 400); }
+      else { guided.at = 0; guided.from = 0; guided.seen = 0; engine.go(guidedOrder()[0]); setTimeout(guidedStart, 400); }
     };
     n.hidden = false;
     clearTimeout(guided.endT);
@@ -2646,9 +2675,12 @@
   }
   function guidedGo(delta) {
     var order = guidedOrder();
-    var next = guided.at + delta;
-    if (delta > 0 && next >= order.length) { guidedFinish(); return; }
-    guided.at = (next + order.length) % order.length;
+    /* a lap is every room once from where it started, so it ends on a count of
+       steps — running off the end of the order just wraps round to the ones
+       before it (G10 puts the cover room anywhere in the order) */
+    if (delta > 0 && ++guided.seen >= order.length) { guidedFinish(); return; }
+    if (delta < 0) { if (guided.seen > 0) guided.seen--; else guided.from = (guided.from - 1 + order.length) % order.length; }   // stepping back past the start moves the start
+    guided.at = (guided.at + delta + order.length) % order.length;
     guided.t0 = performance.now();
     guided.elapsed = 0;
     guidedPos();
@@ -6565,11 +6597,12 @@
 
     var startRoom = (route.room && roomsById[route.room]) ? route.room : startRoomId();
     var startView = null;
-    if (params.has("y")) {
+    var vq = route.q && route.q.has("y") ? route.q : params.has("y") ? params : null;
+    if (vq) {
       startView = {
-        yaw: parseFloat(params.get("y")),
-        pitch: parseFloat(params.get("p") || "0"),
-        fov: parseFloat(params.get("f") || "75")
+        yaw: parseFloat(vq.get("y")),
+        pitch: parseFloat(vq.get("p") || "0"),
+        fov: parseFloat(vq.get("f") || "75")
       };
     }
     /* Mount the stage the tour will actually run on BEFORE start(). The engine

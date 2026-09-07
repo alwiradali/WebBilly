@@ -129,21 +129,22 @@
     for (var i = 0; i < data.length; i++) arr[i] = data.charCodeAt(i);
     return new Blob([arr], { type: mime });
   }
-  /* a JPEG that already fits is passed through untouched (no second lossy
-     pass, and the caller can tell because `same` is set) */
+  /* Every web size is drawn through a canvas, even one that already fits: a
+     pass-through would ship the camera file itself — EXIF, capture time and
+     GPS included — under a public, immutable URL, and only the original is
+     gated behind a Studio sign-in (worker/studio/media.js). toBlob drops it. */
   function resized(blob, maxEdge, quality, type) {
     return new Promise(function (res) {
       var url = URL.createObjectURL(blob), im = new Image();
       im.onload = function () {
         var w = im.naturalWidth, h = im.naturalHeight, s = Math.min(1, maxEdge / Math.max(w, h));
-        if (s === 1 && !type && blob.type === "image/jpeg") { URL.revokeObjectURL(url); res({ blob: blob, w: w, h: h, same: true }); return; }
         var c = document.createElement("canvas");
         c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
         c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
         URL.revokeObjectURL(url);
         c.toBlob(function (b) { res({ blob: b || blob, w: w, h: h }); }, type || "image/jpeg", quality);
       };
-      im.onerror = function () { URL.revokeObjectURL(url); res({ blob: blob, w: 0, h: 0, same: true }); };
+      im.onerror = function () { URL.revokeObjectURL(url); res({ blob: blob, w: 0, h: 0 }); };
       im.src = url;
     });
   }
@@ -177,18 +178,14 @@
     ]).then(function (parts) {
       var orig = parts[4].blob;
       var fd = new FormData();
-      /* a JPEG panorama that is already ≤ 4096 wide is sent once: the server
-         files the orig bytes as pano4096.jpg as well (panoIsOrig) */
-      var panoIsOrig = !!(parts[2] && parts[2].same && parts[2].blob === orig);
       fd.append("meta", JSON.stringify({
         listingId: listingId, kind: isPano ? "pano" : "photo", role: role,
-        roomLabel: meta.roomLabel || "", alt: meta.alt || meta.roomLabel || "", width: parts[0].w, height: parts[0].h, isPano: isPano,
-        panoIsOrig: panoIsOrig
+        roomLabel: meta.roomLabel || "", alt: meta.alt || meta.roomLabel || "", width: parts[0].w, height: parts[0].h, isPano: isPano
       }));
       fd.append("orig", orig, "upload." + (ORIG_TYPES[orig.type] || "jpg"));
       fd.append("large", parts[0].blob, "w1600.jpg");
       fd.append("thumb", parts[1].blob, "w480.jpg");
-      if (parts[2] && !panoIsOrig) fd.append("pano", parts[2].blob, "pano4096.jpg");
+      if (parts[2]) fd.append("pano", parts[2].blob, "pano4096.jpg");
       if (parts[3]) fd.append("pano2048", parts[3].blob, "pano2048.jpg");
       return api("POST", "/api/studio/media", fd, true);
     }).then(function (m) {
@@ -336,11 +333,11 @@
       /* built with textContent — nothing from the URL is ever parsed as HTML */
       var box = document.createElement("div");
       box.id = "storeBlocked";
-      box.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#0C0E22;color:#F5F2EA;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px";
+      box.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#060b1a;color:#eaf2ff;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px";
       var card = document.createElement("div");
       card.style.cssText = "max-width:440px;text-align:center";
       var h = document.createElement("h1");
-      h.style.cssText = "font:600 24px/1.2 Georgia,serif;margin:0 0 10px";
+      h.style.cssText = "font:600 24px/1.2 Inter,system-ui,sans-serif;margin:0 0 10px";
       h.textContent = title;
       var p = document.createElement("p");
       p.style.cssText = "opacity:.8;margin:0 0 18px";
@@ -350,7 +347,7 @@
         var a = document.createElement("a");
         a.href = href;
         a.target = "_top";   // inside the Studio iframe the whole page moves, not the frame
-        a.style.cssText = "display:inline-block;background:#176B99;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:600";
+        a.style.cssText = "display:inline-block;background:#2b7fff;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:600";
         a.textContent = label;
         card.appendChild(a);
       }

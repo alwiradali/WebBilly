@@ -913,6 +913,13 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: none; b
   .studio-top p { display: none; }
   .studio-top-act #saveState { display: inline-block; max-width: 112px; height: 26px; line-height: 24px; padding: 0 8px; font-size: .64rem;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* the row has to fit a 390 px screen with the pill in it: only the title
+     gives ground, the controls keep their tap targets and Publish is its tick */
+  #btnRailToggle, .studio-top-act { flex: 0 0 auto; }
+  .studio-top > div:not(.studio-top-act) { flex: 1 1 auto; min-width: 0; }
+  .studio-top h2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #btnStudioPublish { gap: 0; padding: 0 11px; font-size: 0; }   /* "Publish" stays the accessible name */
+  #btnStudioPublish svg { width: 20px; height: 20px; }
   .studio-preview { aspect-ratio: 4/3; }
   .dl { grid-template-columns: 1fr auto; }
   .sheet-head { padding: 18px 16px 12px; }
@@ -1417,8 +1424,10 @@ body.is-embed #btnHome { display: none !important; }
 }
 
 /* landscape phone: one row of chrome at the bottom, the panorama gets the
-   rest (F134 F135) */
-@media (max-height: 520px) and (pointer: coarse) {
+   rest (F134 F135). The orientation guard matters: a portrait phone embed is
+   short too (4:5 of a 390 px column is ~506 px tall), and the landscape rules
+   would hand its filmstrip to a dock that is not beside it. */
+@media (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
   #tourTop { padding: 4px max(8px, env(safe-area-inset-right)) 10px max(8px, env(safe-area-inset-left)); gap: 8px; }
   #tourTop .brand, .tour-title p { display: none; }
   #filmstrip { right: calc(250px + env(safe-area-inset-right)); padding: 10px 6px 6px max(8px, env(safe-area-inset-left)); }
@@ -1429,8 +1438,11 @@ body.is-embed #btnHome { display: none !important; }
   .mobile-dock { left: auto; right: max(8px, env(safe-area-inset-right)); bottom: 9px; gap: 5px; flex-wrap: nowrap; }
   .mobile-dock .btn { padding: 0 9px; }
   .mobile-dock .btn span { display: none; }
-  .mobile-dock.is-raised { bottom: calc(70vh + 10px); }
-  .side, .side--right { max-height: 70vh; }
+  /* per cent of the view, not of the viewport: the "Back to property" bar
+     shortens the view by 40 px and a vh offset would drop the dock on the
+     toolbar, over Enquire */
+  .mobile-dock.is-raised { bottom: calc(70% + 10px); }
+  .side, .side--right { max-height: 70%; }
   .transport, .guided-end { bottom: 58px; }
   .transport { padding: 4px; }
   .transport .icon-btn--sm { width: 28px; height: 28px; }

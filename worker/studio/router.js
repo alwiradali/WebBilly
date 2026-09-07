@@ -289,7 +289,10 @@ export async function tourPage(request, env, url, db, opts = {}) {
   const asset = await env.ASSETS.fetch(new Request(new URL("/billy360/", url.origin).toString(), request));
   const headers = new Headers(asset.headers);
   headers.delete("x-frame-options");
-  headers.set("content-security-policy", FRAME_ANCESTORS);
+  /* the allow-list exists so listing pages can embed the public viewer; the
+     signed-in editor is framed only by the Studio itself, and a sibling
+     subdomain is same-site, so its Lax cookie would ride along (SEC3) */
+  headers.set("content-security-policy", url.searchParams.get("office") === "1" ? "frame-ancestors 'self'" : FRAME_ANCESTORS);
   let head = null;
   if (asset.ok && site && db) {
     try { head = await liveTourHead(db, env, url, site); } catch (e) { console.error("tour head", e && e.message); }

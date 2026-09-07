@@ -238,8 +238,10 @@ of live tours) exists if a portfolio of Megacity tours is ever wanted.
 `Content-Security-Policy: frame-ancestors 'self' https://megacityproperties.co.uk
 https://*.megacityproperties.co.uk https://billydigitals.com
 https://*.billydigitals.com`; the Worker sends the same pair on the viewer index
-(`worker/studio/router.js FRAME_ANCESTORS`). To let another site frame a tour,
-add its origin to both lists. Portals open the 10ninety link in a new window,
+(`worker/studio/router.js FRAME_ANCESTORS`) — except on `?office=1`, where the
+editor is signed in and only `frame-ancestors 'self'` is sent, so the Studio is
+the one page that can frame it. To let another site frame a tour, add its origin
+to both lists. Portals open the 10ninety link in a new window,
 so the allow-list does not affect them.
 
 **What an embed does differently** (`?embed=1`, and a few things whenever
@@ -843,10 +845,11 @@ full" banner stays up until a save succeeds. The admin session is
   listingWentLive}`. `src` is a data URL or Blob; `meta` is `{isPano, role,
   roomLabel, alt, listingId, derivedThumb}`. Roles: `tour` (implicit for a
   panorama), `logo`, `floorplan`, `gallery`, `cover`. The browser makes the
-  ladder itself (`w1600`, `w480`, `pano2048`, and `pano4096` only when the
-  source is not already a JPEG ≤ 4096 wide — `meta.panoIsOrig` tells the
-  server to file the original as the 4096 panorama, so nothing is sent
-  twice). `derivedThumb` passes an intake-made `w480` through so a panorama is
+  ladder itself (`w1600`, `w480`, `pano2048`, `pano4096`). Every web size is
+  drawn through a canvas even when the file would already fit: a pass-through
+  would publish the camera's own bytes — EXIF, capture time and GPS included —
+  under a public, immutable URL, while only `orig.*` is gated behind a Studio
+  sign-in. `derivedThumb` passes an intake-made `w480` through so a panorama is
   decoded once. A panorama, logo or floor plan never becomes the listing's
   cover photo and never counts as a listing photo; a gallery/cover photo that
   completes an imported listing can make it go live (`listingWentLive`, the

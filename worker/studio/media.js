@@ -262,6 +262,10 @@ export async function patch(c) {
   if ("caption" in body) sets.caption = clampStr(body.caption, 300);
   if ("roomLabel" in body) sets.room_label = clampStr(body.roomLabel, 60);
   if ("role" in body) {
+    /* the brand mark belongs to the tour, and a photo turned into one drops off
+       the listing and publishes its untouched original — only the tour's own
+       upload may create a logo row (normaliseRole) */
+    if (body.role === "logo") throw new HttpError(400, "The brand logo is set in the 360° Studio, not here.");
     const role = normaliseRole(body.role);
     sets.role = role;
     if (role === "cover") await c.db.prepare(`UPDATE listings SET cover_media_id=?1 WHERE id=?2`).bind(m.id, m.listing_id).run();

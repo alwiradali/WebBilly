@@ -148,9 +148,12 @@ has "skyline.css" '@media (max-width:700px){.pd-tour{min-height:60vh}}' "$BASE/t
 lacks "skyline.css" '.pd-tour>div' "$BASE/templates/megacity-skyline.css"
 has "embed.js" 'host.style.aspectRatio' "$BASE/billy360/embed.js"
 has "embed.js" 'data-room' "$BASE/billy360/embed.js"
-lacks "robots" 'Allow: /tour/' "$BASE/robots.txt"
-has "robots" 'Disallow: /tour/' "$BASE/robots.txt"
-has "robots" 'Disallow: /billy360/' "$BASE/robots.txt"
+# /tour/<id> and /billy360/ stay crawlable: both send noindex,nofollow
+# themselves, which only a crawler allowed to fetch them can obey, and Googlebot
+# needs /billy360/embed.js to render the tour frame on every listing page.
+has "robots" 'Disallow: /studio' "$BASE/robots.txt"
+lacks "robots" 'Disallow: /tour/' "$BASE/robots.txt"
+lacks "robots" 'Disallow: /billy360' "$BASE/robots.txt"
 rm -f /tmp/mc_body.$$
 echo; if [[ $fail == 0 ]]; then echo "GO-LIVE CHECK: ALL PASS"; else echo "GO-LIVE CHECK: FAILURES"; fi
 exit $fail

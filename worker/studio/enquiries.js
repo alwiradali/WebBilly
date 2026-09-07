@@ -199,11 +199,13 @@ export async function publicLead(request, env, ctx) {
   if (listingId && /^[a-z0-9-]{1,80}$/.test(listingId)) listing = await db.prepare(`SELECT id, title FROM listings WHERE id=?1 AND deleted_at IS NULL`).bind(listingId).first().catch(() => null);
   if (!listing) listingId = null;
   const property = clampStr(body.property, 160) || (listing && listing.title) || clampStr(body.site, 80) || "a property";
-  const message = [body.date ? "Preferred date: " + clampStr(body.date, 40) : null, body.room ? "Room: " + clampStr(body.room, 80) : null, clampStr(body.message, 2000)].filter(Boolean).join("\n");
+  /* the tour sends both the room's id and its name — the agent reads the name */
+  const roomLabel = clampStr(body.roomName, 80) || clampStr(body.room, 80);
+  const message = [body.date ? "Preferred date: " + clampStr(body.date, 40) : null, body.room ? "Room: " + roomLabel : null, clampStr(body.message, 2000)].filter(Boolean).join("\n");
   const id = await recordEnquiry(env, { source: "tour", name, email, phone, listingId, property, message, preferredDay: body.date, attr: { landing: body.url, referrer: request.headers.get("referer") } });
   const to = await notifyTo(env);
   const html = layout("Viewing request from the 360° tour",
-    `<p><b>${esc(name)}</b> asked to view <b>${esc(property)}</b> while walking the virtual tour${body.room ? " (they were in " + esc(body.room) + ")" : ""}.</p>` +
+    `<p><b>${esc(name)}</b> asked to view <b>${esc(property)}</b> while walking the virtual tour${body.room ? " (they were in " + esc(roomLabel) + ")" : ""}.</p>` +
     `<p>Email: ${esc(email)}<br>Phone: ${esc(phone || "—")}<br>Preferred date: ${esc(body.date || "any")}</p>` +
     (body.message ? `<p>${esc(body.message)}</p>` : "") +
     `<p style="margin-top:14px;font-size:13px;color:#5A617D;">Reply to this email to answer them directly. It is also in the Studio inbox.</p>`);
