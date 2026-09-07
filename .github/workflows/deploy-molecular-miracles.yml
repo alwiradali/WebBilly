@@ -1,16 +1,20 @@
 # Molecular Miracles → Lynsey's Cloudflare Worker
 #
-# Two jobs in one file:
-#   * a push to main that touches her site rebuilds and redeploys it
-#   * an hourly schedule rebuilds and redeploys it anyway
+# A push to main that touches her site rebuilds and redeploys it.
 #
-# The schedule is the point. Her products are read from the Payhip storefront
-# at BUILD time and committed as a snapshot, because the Worker cannot read
-# them at request time: Payhip sits behind Cloudflare and answers a Cloudflare
-# Worker with 403 "Just a moment...", every auth shape, every time. So the only
-# way a new product reaches her website is a rebuild. Hourly means she adds a
-# product in Payhip and it appears on her site within the hour, without anyone
-# being told and without anyone remembering.
+# There is deliberately NO schedule. It had one, on the theory that an hourly
+# rebuild would pick up new products by itself. It cannot. Payhip sits behind
+# Cloudflare and Cloudflare refuses datacentre networks — every one we tried,
+# every way we tried it:
+#
+#   her own Cloudflare Worker   403 "Just a moment..."
+#   GitHub runner, curl         403 on every header combination, API included
+#   GitHub runner, real Chrome  403, still challenged after nine seconds
+#
+# So no server can read her shop, and an hourly job could only redeploy the
+# same products indefinitely while reporting success — the worst kind of
+# broken. The product list is fetched from an ordinary connection by
+# scripts/mm-refresh-shop.sh and committed; that push is what publishes it.
 #
 # Deploys through the Cloudflare API with a token in GitHub Secrets. Her
 # Cloudflare account is NOT connected to this repository and does not need to
@@ -40,10 +44,6 @@ on:
       - 'scripts/build-mm.py'
       - 'wrangler.toml'
       - '.github/workflows/deploy-molecular-miracles.yml'
-  schedule:
-    # Hourly, at :20 — off the top of the hour, where every other cron on
-    # GitHub's shared runners queues up.
-    - cron: '20 * * * *'
   workflow_dispatch:
 
 concurrency:
@@ -67,18 +67,15 @@ jobs:
           node-version: '22'
 
       - name: Build the site
-        # Surface a failed product fetch on the run summary. Payhip refuses
-        # requests from datacentre IPs — GitHub's runners included — so this
-        # build can silently fall back to the committed snapshot and publish a
-        # site that is missing whatever Lynsey added since. That is the exact
-        # thing the hourly schedule exists to prevent, so it must not be
-        # buried in a log nobody opens. The build still succeeds: a slightly
-        # stale shop beats no shop.
+        # Payhip refuses GitHub's runners, so this build always falls back to
+        # the committed snapshot — that is expected here, not a fault. Say so
+        # on the run summary either way, so nobody has to remember which it
+        # was, and so the day Payhip does answer we find out.
         run: |
           set -o pipefail
           python3 scripts/build-mm.py molecularmiracleschemistrytuition.co.uk 2>&1 | tee build.log
           if grep -q 'could not reach the shop' build.log; then
-            echo "::warning::Could not read Payhip — the site was published from the committed snapshot, so any product Lynsey added since will NOT appear. Auto-update is not working."
+            echo "::notice::Payhip refused this runner, as it always does — the shop was published from the committed snapshot. That is the normal path here; refresh it with scripts/mm-refresh-shop.sh."
           else
             echo "::notice::Product list read live from Payhip."
           fi
