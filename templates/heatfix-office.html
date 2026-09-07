@@ -31,6 +31,24 @@
     </div>
     <button class="btn btn-primary" style="width:100%" id="gateBtn">Sign in</button>
     <p style="margin:16px 0 0;font-size:12.5px" id="gateMsg"></p>
+    <p style="margin:14px 0 0;font-size:13px">
+      <a href="#" id="forgotLink" style="color:#1f5fb4">Forgotten your password?</a>
+    </p>
+  </form>
+
+  <!-- Shown when the link in the reset email is followed. -->
+  <form class="hfo-gate-card" id="resetForm" hidden>
+    <img src="/assets/heatfix/logo-lockup-600.webp" alt="HeatFix Mcr Limited">
+    <h1>New password</h1>
+    <p>Pick something you will remember. At least 8 characters.</p>
+    <div class="hfo-field">
+      <input type="password" id="rpw1" placeholder="New password" autocomplete="new-password" required>
+    </div>
+    <div class="hfo-field">
+      <input type="password" id="rpw2" placeholder="Type it again" autocomplete="new-password" required>
+    </div>
+    <button class="btn btn-primary" style="width:100%" id="resetBtn">Save and sign in</button>
+    <p style="margin:16px 0 0;font-size:12.5px" id="resetMsg"></p>
   </form>
 </div>
 
@@ -296,6 +314,22 @@
           set up below.</p>
 
         <!-- He invoices from more than one account and picks per invoice. -->
+        <h3 style="margin-top:26px">Your password</h3>
+        <p class="hfo-sub">This is the password for this back office. Changing it
+          here takes effect straight away.</p>
+        <div class="hfo-grid-3">
+          <div class="hfo-field"><label for="pwCur">Current password</label>
+            <input type="password" id="pwCur" autocomplete="current-password"></div>
+          <div class="hfo-field"><label for="pwNew">New password</label>
+            <input type="password" id="pwNew" autocomplete="new-password"></div>
+          <div class="hfo-field"><label for="pwNew2">Type it again</label>
+            <input type="password" id="pwNew2" autocomplete="new-password"></div>
+        </div>
+        <div class="hfo-btnrow" style="margin-top:10px">
+          <button class="btn btn-sm btn-primary" id="pwSave">Change my password</button>
+        </div>
+        <p class="hfo-sub" id="pwNote" style="margin-top:10px"></p>
+
         <h3 style="margin-top:26px">Bank accounts</h3>
         <p class="hfo-sub">Whichever one you pick on an invoice is copied onto it,
           so changing an account here never rewrites an invoice you have already sent.</p>
@@ -401,6 +435,73 @@
   const blankLine = () => ({ description: "", qty: 1, unit: "", kind: "labour" });
 
   /* --------------------------------------------------------------- gate */
+  /* ---------------------------------------------------------- password */
+  /* Following the link in the reset email lands here with ?reset=<token>. */
+  const RESET_TOKEN = new URLSearchParams(location.search).get("reset") || "";
+  if (RESET_TOKEN) {
+    $("gateForm").hidden = true;
+    $("resetForm").hidden = false;
+  }
+
+  $("forgotLink").addEventListener("click", async (e) => {
+    e.preventDefault();
+    $("gateMsg").style.color = "";
+    $("gateMsg").textContent = "Sending…";
+    try {
+      await post("password/forgot", {});
+      $("gateMsg").style.color = "#1d6b32";
+      $("gateMsg").textContent = "Check your email — the link works once and lasts 45 minutes.";
+    } catch (err) {
+      /* Never pretend an email went when it did not. */
+      $("gateMsg").style.color = "#c0392b";
+      $("gateMsg").textContent = err.message + " Ring Billy Digitals and you will be let straight back in.";
+    }
+  });
+
+  $("resetForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const a = $("rpw1").value, b = $("rpw2").value;
+    $("resetMsg").style.color = "#c0392b";
+    if (a.length < 8) { $("resetMsg").textContent = "At least 8 characters."; return; }
+    if (a !== b) { $("resetMsg").textContent = "Those two do not match."; return; }
+    $("resetBtn").disabled = true;
+    try {
+      await post("password/reset", { token: RESET_TOKEN, password: a });
+      /* Drop the token out of the address bar before anything else happens. */
+      history.replaceState(null, "", location.pathname);
+      $("resetForm").hidden = true;
+      await start();
+    } catch (err) {
+      $("resetMsg").textContent = err.message;
+      $("resetBtn").disabled = false;
+    }
+  });
+
+  if ($("pwSave")) {
+    $("pwSave").addEventListener("click", async () => {
+      const cur = $("pwCur").value, a = $("pwNew").value, b = $("pwNew2").value;
+      if (a.length < 8) { flash("Pick a new password of at least 8 characters.", true); return; }
+      if (a !== b) { flash("The two new passwords do not match.", true); return; }
+      try {
+        await post("password", { current: cur, password: a });
+        ["pwCur", "pwNew", "pwNew2"].forEach((id) => { $(id).value = ""; });
+        flash("Password changed. It works from now on.");
+        passwordNote(true);
+      } catch (e) { flash(e.message, true); }
+    });
+  }
+
+  /* Say out loud who else can get in, rather than leaving him to assume. */
+  function passwordNote(own) {
+    const el = $("pwNote");
+    if (!el) return;
+    el.textContent = own
+      ? "You are signed in with your own password. Billy Digitals also holds a " +
+        "recovery password, so you can always be let back in if you forget yours."
+      : "You are still on the password Billy Digitals set up. Change it here to " +
+        "one only you know.";
+  }
+
   $("gateForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     $("gateBtn").disabled = true;
@@ -1314,6 +1415,7 @@
     $("gate").style.display = "none";
     $("shell").classList.add("on");
     $("who").textContent = S.settings.business_name || "HeatFix Mcr Limited";
+    passwordNote(!!S.settings.has_own_password);
     fillTemplateSelect();
     fillSettings();
     newInvoice();

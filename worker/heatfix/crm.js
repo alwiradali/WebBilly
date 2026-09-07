@@ -76,6 +76,56 @@ async function validSession(request, env) {
   return Number(parts[1]) > Date.now();
 }
 
+/* ------------------------------------------------------------- passwords
+   PBKDF2-SHA256, 150k iterations, a fresh 16-byte salt per password. Slow on
+   purpose: the whole point is that guessing costs the attacker real time.
+   Never store the password, only this. */
+const PBKDF2_ROUNDS = 150000;
+
+function toHex(buf) {
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function randomHex(bytes) {
+  return toHex(crypto.getRandomValues(new Uint8Array(bytes)));
+}
+
+async function hashPassword(password, saltHex) {
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(String(password)), "PBKDF2", false, ["deriveBits"]
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", salt: enc.encode(saltHex), iterations: PBKDF2_ROUNDS, hash: "SHA-256" },
+    key, 256
+  );
+  return toHex(bits);
+}
+
+/* SHA-256 is right for the reset token and wrong for the password: the token
+   is 32 random bytes, so there is nothing to guess and nothing to slow down. */
+async function sha256Hex(s) {
+  return toHex(await crypto.subtle.digest("SHA-256", enc.encode(String(s))));
+}
+
+/* His own password if he has set one. HF_ADMIN_PASSWORD keeps working as a
+   recovery password so a forgotten password with no email configured is not a
+   locked door -- the back office says as much, rather than leaving him to
+   find out. */
+async function passwordOk(env, s, attempt) {
+  if (s && s.password_hash && s.password_salt) {
+    if (safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash)) return true;
+  }
+  if (env.HF_ADMIN_PASSWORD && safeEqual(attempt, env.HF_ADMIN_PASSWORD)) return true;
+  return false;
+}
+
+async function setPassword(env, next) {
+  const salt = randomHex(16);
+  await env.HF_DB.prepare(
+    `UPDATE hf_settings SET password_hash=?, password_salt=?, password_set_at=?,
+      reset_hash=NULL, reset_expires=NULL WHERE id=1`
+  ).bind(await hashPassword(next, salt), salt, nowIso()).run();
+}
+
 function cookieHeader(value, maxAge) {
   return `${COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
@@ -84,6 +134,18 @@ function cookieHeader(value, maxAge) {
 async function getSettings(env) {
   const row = await env.HF_DB.prepare("SELECT * FROM hf_settings WHERE id = 1").first();
   return row || {};
+}
+
+/* Settings go to the browser and, for the business block, to anyone holding an
+   invoice link. The password hash, its salt and a live reset token must not
+   travel with them -- SELECT * would carry all three the moment they existed. */
+const SECRET_SETTINGS = ["password_hash", "password_salt", "reset_hash", "reset_expires"];
+function publicSettings(s) {
+  const out = { ...s };
+  for (const k of SECRET_SETTINGS) delete out[k];
+  /* Useful to the office, harmless to leak: whether he has set one at all. */
+  out.has_own_password = !!(s.password_hash && s.password_salt);
+  return out;
 }
 
 const SETTING_FIELDS = [
@@ -412,14 +474,75 @@ export async function handleHfCrm(request, env, url) {
   /* login and logout are the only doors that open without a session */
   if (path === "login" && method === "POST") {
     const body = await request.json().catch(() => ({}));
-    if (!env.HF_ADMIN_PASSWORD || !env.HF_SESSION_SECRET) {
+    const s = await getSettings(env);
+    const hasPassword = (s.password_hash && s.password_salt) || env.HF_ADMIN_PASSWORD;
+    if (!hasPassword || !env.HF_SESSION_SECRET) {
       return json({ error: "No password is set for the back office yet." }, 503);
     }
-    if (!safeEqual(body.password || "", env.HF_ADMIN_PASSWORD)) {
+    if (!(await passwordOk(env, s, body.password || ""))) {
       /* a beat, so the endpoint cannot be hammered quickly */
       await new Promise((r) => setTimeout(r, 600));
       return json({ error: "That password is not right." }, 401);
     }
+    return json({ ok: true }, 200, { "set-cookie": cookieHeader(await issueSession(env), SESSION_HOURS * 3600) });
+  }
+
+  /* ---- forgotten password: ask for a link, then use it ----
+     Both of these are unauthenticated by necessity. Neither reveals anything:
+     the request always answers the same way whether or not an email address is
+     configured, so it cannot be used to find out. */
+  if (path === "password/forgot" && method === "POST") {
+    const s = await getSettings(env);
+    const to = clean(s.email, 160);
+    const same = json({ ok: true, sent: true });
+    if (!to || !env.RESEND_API_KEY) {
+      /* Say plainly that it cannot send, rather than pretending it did and
+         leaving him waiting for an email that is never coming. */
+      return json({ ok: false, cannot: true,
+        error: !to
+          ? "There is no email address saved in My details, so a reset link cannot be sent."
+          : "Reset emails are not switched on yet." }, 503);
+    }
+    const token = randomHex(32);
+    const expires = new Date(Date.now() + 45 * 60 * 1000).toISOString();
+    await env.HF_DB.prepare("UPDATE hf_settings SET reset_hash=?, reset_expires=? WHERE id=1")
+      .bind(await sha256Hex(token), expires).run();
+
+    const link = `https://${url.hostname}/office?reset=${token}`;
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: `${s.business_name || "HeatFix Mcr Limited"} <${env.HF_MAIL_FROM || "invoices@heatfixmcrlimited.co.uk"}>`,
+        to: [to],
+        subject: "Reset your back office password",
+        html: `<p>Someone asked to reset the password for your back office.</p>
+<p><a href="${link}">Set a new password</a></p>
+<p>The link works once and stops working in 45 minutes. If this was not you,
+ignore it &mdash; nothing has changed.</p>`,
+      }),
+    }).catch(() => null);
+    if (!r || !r.ok) return json({ error: "The reset email could not be sent." }, 502);
+    return same;
+  }
+
+  if (path === "password/reset" && method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    const next = String(body.password || "");
+    if (next.length < 8) return json({ error: "Pick a password of at least 8 characters." }, 400);
+    const s = await getSettings(env);
+    if (!s.reset_hash || !s.reset_expires) {
+      return json({ error: "That reset link is not valid any more." }, 400);
+    }
+    if (new Date(s.reset_expires).getTime() < Date.now()) {
+      await env.HF_DB.prepare("UPDATE hf_settings SET reset_hash=NULL, reset_expires=NULL WHERE id=1").run();
+      return json({ error: "That reset link has expired. Ask for a new one." }, 400);
+    }
+    if (!safeEqual(await sha256Hex(clean(body.token, 200)), s.reset_hash)) {
+      await new Promise((r) => setTimeout(r, 600));
+      return json({ error: "That reset link is not valid any more." }, 400);
+    }
+    await setPassword(env, next);      /* clears the token as it goes */
     return json({ ok: true }, 200, { "set-cookie": cookieHeader(await issueSession(env), SESSION_HOURS * 3600) });
   }
   if (path === "logout") {
@@ -475,8 +598,22 @@ export async function handleHfCrm(request, env, url) {
 
   try {
     if (seg[0] === "settings") {
-      if (method === "GET") return json({ settings: await getSettings(env) });
-      if (method === "PUT")  return json({ settings: await saveSettings(env, body) });
+      if (method === "GET") return json({ settings: publicSettings(await getSettings(env)) });
+      if (method === "PUT")  return json({ settings: publicSettings(await saveSettings(env, body)) });
+    }
+
+    if (seg[0] === "password" && method === "POST") {
+      const s2 = await getSettings(env);
+      const next = String(body.password || "");
+      if (next.length < 8) return json({ error: "Pick a password of at least 8 characters." }, 400);
+      /* Signed in is not enough: an unattended laptop should not be able to
+         lock him out of his own back office. */
+      if (!(await passwordOk(env, s2, String(body.current || "")))) {
+        await new Promise((r) => setTimeout(r, 600));
+        return json({ error: "That current password is not right." }, 401);
+      }
+      await setPassword(env, next);
+      return json({ ok: true });
     }
 
     if (seg[0] === "banks") {
