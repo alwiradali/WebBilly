@@ -417,3 +417,10 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
   background:#fff;color:var(--ink);font-weight:600;font-size:.95rem;
   transition:border-color .25s,color .25s,transform .25s,box-shadow .25s}
 .rev-glink a:hover{border-color:var(--gold);color:#8a6100;transform:translateY(-2px);box-shadow:var(--sh)}
+
+/* The what's-on grid holds one card per level she currently sells, so it is
+   two today and three the day she adds Advanced Higher. A fixed three-column
+   grid leaves a hole on the right when there are two; auto-fit lets the cards
+   share the row whatever the count. */
+#whatson-grid{display:grid;gap:20px;max-width:900px;margin:0 auto;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}

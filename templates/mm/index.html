@@ -64,7 +64,8 @@
       <a href="#top"><img class="logo" src="../../assets/mm/logo.png" alt="Molecular Miracles Chemistry Tuition"></a>
       <span class="sp"></span>
       <div class="nlinks">
-        <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+        <a href="#about">About</a><a href="courses/index.html">Courses</a>
+        <a href="masterclasses.html">Masterclasses</a><a href="daytime.html">Daytime</a>
         <a href="resources.html">Resources</a><a href="#timetable">Timetable</a>
         <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#booking">Booking</a>
       </div>
@@ -72,7 +73,8 @@
       <div class="burger" id="bg"><span></span><span></span><span></span></div>
     </div>
     <div class="mobmenu" id="mm">
-      <a href="#about">About</a><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+      <a href="#about">About</a><a href="courses/index.html">Courses</a>
+        <a href="masterclasses.html">Masterclasses</a><a href="daytime.html">Daytime</a>
         <a href="resources.html">Resources</a><a href="#timetable">Class Timetable</a>
       <a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#areas">Areas We Cover</a><a href="#booking">Booking &amp; Enquiries</a>
     </div>
@@ -202,6 +204,27 @@
     </div>
 
     <p style="text-align:center;margin-top:32px;color:var(--mut)">Prices vary by course and group — <a href="#booking" style="color:var(--teal);font-weight:600">enquire for current rates</a>.</p>
+  </div>
+</section>
+
+<!-- ============ WHAT'S ON / MASTERCLASSES ============ -->
+<!-- The homepage never mentioned the shop. The masterclasses and the pass are
+     the only things on this site anyone can buy outright, and a visitor landing
+     on the home page had no route to them at all. This reads the same live
+     feed as the masterclasses page, so it follows whatever Lynsey has on sale
+     without anyone editing the homepage again. -->
+<section id="whatson">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill">Book right now</span>
+      <h2>Sunday <span class="g">masterclasses</span></h2>
+      <p>One Sunday a month, one topic done properly &mdash; the ones that decide grades. Book a single class, or take the whole series.</p>
+    </div>
+    <div class="grid g3 rv d1" id="whatson-grid"></div>
+    <div class="rv d2" style="text-align:center;margin-top:30px">
+      <a class="btn btn-p" href="/masterclasses">See all masterclasses &rarr;</a>
+      <a class="btn btn-g" href="/resources" style="margin-left:8px">Revision resources</a>
+    </div>
   </div>
 </section>
 
@@ -389,7 +412,8 @@
         <h4>Explore</h4>
         <ul>
           <li><a href="#about">About Lynsey</a></li>
-          <li><a href="courses/index.html">Courses</a><a href="daytime.html">Daytime</a>
+          <li><a href="courses/index.html">Courses</a>
+        <a href="masterclasses.html">Masterclasses</a><a href="daytime.html">Daytime</a>
         <a href="resources.html">Resources</a></li>
           <li><a href="faq.html">Questions</a></li>
           <li><a href="#timetable">Class Timetable</a></li>
@@ -486,6 +510,69 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
     err.classList.add('on');
   });
 });
+</script>
+<script>
+/* Homepage "what's on" — reads the same feed as the masterclasses page and
+   groups whatever she has on sale by level. Deliberately a summary, not a
+   second shop: the buying happens on /masterclasses, which already has the
+   basket wired up. Cache-busted for the same reason as the other pages — her
+   zone puts a four-hour browser cache on this response, so a visitor who once
+   got a failed feed would otherwise be stuck with it. */
+(function () {
+  var grid = document.getElementById('whatson-grid');
+  if (!grid) return;
+
+  function card(level, items, blurb) {
+    if (!items.length) return null;
+    var prices = items.map(function (p) {
+      return parseFloat(String(p.price || '').replace(/[^0-9.]/g, '')) || 0;
+    }).filter(Boolean);
+    var single = Math.min.apply(null, prices);
+    var pass = items.filter(function (p) { return /pass/i.test(p.name); })[0];
+    var classes = items.filter(function (p) { return !/pass/i.test(p.name); });
+
+    var d = document.createElement('div');
+    d.className = 'card';
+    var h = document.createElement('h3'); h.textContent = level; d.appendChild(h);
+    var n = document.createElement('p');
+    n.style.cssText = 'font-weight:600;color:var(--teal);margin:2px 0 10px';
+    n.textContent = classes.length + ' masterclass' + (classes.length === 1 ? '' : 'es')
+      + (single ? ' · from £' + single.toFixed(0) : '');
+    d.appendChild(n);
+    var b = document.createElement('p'); b.textContent = blurb; d.appendChild(b);
+    if (pass) {
+      var pp = document.createElement('p');
+      pp.style.cssText = 'margin-top:10px;font-weight:600';
+      pp.textContent = pass.name.replace(/^.*?(Pass.*)$/i, '$1') + ' — ' + (pass.price || '');
+      d.appendChild(pp);
+    }
+    return d;
+  }
+
+  fetch('/api/mm-shop?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (data) {
+      var all = (data && data.products) || [];
+      if (!all.length) throw new Error('empty');
+      var n5 = all.filter(function (p) { return /^n5|national 5/i.test(p.name); });
+      var hi = all.filter(function (p) { return /higher/i.test(p.name) && !/^n5/i.test(p.name) && !/advanced/i.test(p.name); });
+      var ah = all.filter(function (p) { return /advanced higher/i.test(p.name); });
+      [ card('National 5', n5, 'The topics N5 students lose most marks on, taken one at a time.'),
+        card('Higher', hi, 'Bonding, calculations, open-ended questions — the ones that separate an A from a B.'),
+        card('Advanced Higher', ah, 'Advanced Higher masterclasses.')
+      ].forEach(function (c) { if (c) grid.appendChild(c); });
+    })
+    .catch(function () {
+      /* Never leave a dead panel. The section still makes its point and the
+         buttons underneath still work. */
+      var d = document.createElement('div');
+      d.className = 'card';
+      d.style.cssText = 'grid-column:1/-1;text-align:center';
+      d.innerHTML = '<p>Masterclasses run one Sunday a month for National 5 and Higher. '
+                  + 'Tap through to see the dates and book.</p>';
+      grid.appendChild(d);
+    });
+})();
 </script>
 <script src="schedule.js" defer></script>
 <script src="reviews.js" defer></script>
