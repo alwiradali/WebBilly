@@ -381,8 +381,16 @@
               '<th>Date of supply</th><td>' + date(inv.issued_at || inv.created_at) + '</td></tr>' +
           '<tr><th>From</th><td>' + esc(b.name) + '</td>' +
               '<th>Payment due</th><td>' + (inv.due_at ? date(inv.due_at) : "On receipt") + '</td></tr>' +
+          /* A "VAT number —" row on the invoice of a business that is not VAT
+             registered advertises a gap that is not a gap. When there is no
+             number, the cell carries the Gas Safe registration instead, which
+             is the number a customer actually wants to see. */
           '<tr><th>Invoice to</th><td>' + esc(inv.cust_name) + '</td>' +
-              '<th>VAT number</th><td>' + (b.vat_number ? esc(b.vat_number) : "&mdash;") + '</td></tr>' +
+              (b.vat_number
+                ? '<th>VAT number</th><td>' + esc(b.vat_number) + '</td>'
+                : (b.gas_safe_no
+                    ? '<th>Gas Safe no.</th><td>' + esc(b.gas_safe_no) + '</td>'
+                    : '<th></th><td></td>')) + '</tr>' +
         '</tbody></table>' +
         '<div class="hf-body">' +
           '<div class="hf-cols hf-cols2">' +

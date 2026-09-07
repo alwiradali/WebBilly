@@ -200,9 +200,20 @@ async function readInvoice(env, id) {
   return { ...inv, items };
 }
 
+/* Charging VAT takes BOTH the switch and a registration number.
+   The switch alone used to decide it, and the schema defaulted it on, so a
+   brand-new database charged 20% on invoices carrying no VAT number anywhere.
+   HMRC requires the supplier's number on a VAT invoice, so that document is
+   not a valid one: the customer cannot reclaim against it, and a business that
+   is not registered is collecting money it has no right to. The number is what
+   makes the charge legitimate, so it is what gates it. */
+function vatIsChargeable(s) {
+  return (s.vat_registered ? 1 : 0) && clean(s.vat_number, 40) ? 1 : 0;
+}
+
 async function saveInvoice(env, id, body) {
   const s = await getSettings(env);
-  const vatRegistered = s.vat_registered ? 1 : 0;
+  const vatRegistered = vatIsChargeable(s);
   const vatRate = Math.round(num(body.vat_rate, s.vat_rate ?? 2000));
   const t = totals(Array.isArray(body.items) ? body.items : [], vatRate, vatRegistered);
 

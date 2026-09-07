@@ -243,8 +243,11 @@
         <p class="hfo-sub">A VAT invoice has to show your VAT number, the rate and the VAT as its own line. Leave this on and every invoice does it for you.</p>
         <div class="hfo-check">
           <input type="checkbox" id="bVatReg">
-          <label for="bVatReg">I am VAT registered</label>
+          <label for="bVatReg">I am VAT registered &mdash; add VAT to my invoices</label>
         </div>
+        <p class="hfo-sub" id="vatHint">Leave this off until you are VAT
+          registered. Turn it on and fill in your VAT number and invoices will
+          start showing VAT.</p>
         <div class="hfo-grid">
           <div class="hfo-field"><label for="bVatNo">VAT number</label><input id="bVatNo" placeholder="GB123456789"></div>
           <div class="hfo-field"><label for="bVatRate">Rate</label>
@@ -643,7 +646,10 @@
   /* ------------------------------------------------------- the numbers */
   function computed() {
     const net = S.lines.reduce((a, l) => a + lineTotal(l), 0);
-    const reg = !!Number(S.settings.vat_registered);
+    /* Same rule as the server: the switch AND a VAT number. Without this the
+       preview showed VAT that the saved invoice would not carry. */
+    const reg = !!Number(S.settings.vat_registered) &&
+                !!String(S.settings.vat_number || "").trim();
     const rateBp = Number(S.settings.vat_rate ?? 2000);
     const vat = reg ? Math.round(net * rateBp / 10000) : 0;
     return { net, vat, gross: net + vat, rateBp, reg };
@@ -959,6 +965,11 @@
     const body = {};
     Object.keys(SET_MAP).forEach((id) => { body[SET_MAP[id]] = $(id).value; });
     body.vat_registered = $("bVatReg").checked ? 1 : 0;
+    /* Ticked with no number means no VAT is charged, by design. Say so, or he
+       thinks it is on and finds out from his accountant. */
+    if (body.vat_registered && !String($("bVatNo").value || "").trim()) {
+      flash("Saved, but VAT will not be added until you fill in your VAT number.", true);
+    }
     body.vat_rate = Number($("bVatRate").value);
     body.next_number = Number($("bNext").value) || 1001;
     body.template = S.settings.template || "classic";

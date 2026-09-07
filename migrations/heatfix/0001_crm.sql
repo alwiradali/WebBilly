@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS hf_settings (
   website         TEXT,
   company_no      TEXT,                       -- Companies House number
   vat_number      TEXT,                       -- required on a VAT invoice
-  vat_registered  INTEGER NOT NULL DEFAULT 1, -- 0/1
+  vat_registered  INTEGER NOT NULL DEFAULT 0,  -- off until he is registered
   vat_rate        INTEGER NOT NULL DEFAULT 2000,  -- basis points: 2000 = 20.00%
   gas_safe_no     TEXT,
   logo_data       TEXT,                       -- data: URI, shown on every invoice
