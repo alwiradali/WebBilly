@@ -20,7 +20,8 @@ let fails = 0;
 const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) fails++; };
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: process.env.CHROME || undefined, args: ["--no-sandbox"] });
+  /* software WebGL so the 360 frame really renders on a machine with no GPU */
+  const browser = await chromium.launch({ executablePath: process.env.CHROME || undefined, args: ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, ignoreHTTPSErrors: true });
   /* third parties answer with empty bodies so an offline run stays quiet */
   await ctx.route(/fonts\.googleapis\.com/, (r) => r.fulfill({ contentType: "text/css", body: fontCss || "" }));
@@ -71,6 +72,60 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       ok(!styles.length, path + " has no relative url() left in inline styles");
     }
   }
+  /* the 360 tour: the listing page reserves the frame's box before embed.js
+     runs, and the frame opens on the panorama of the listing's cover room. */
+  {
+    let canary = process.env.MEGACITY_TOUR_CANARY || "";
+    if (!canary) {
+      const r = await page.goto(BASE + "/api/public/tours", { waitUntil: "domcontentloaded" }).catch(() => null);
+      if (r && r.status() === 200) {
+        const body = await page.evaluate(() => { try { return JSON.parse(document.body.innerText); } catch (e) { return null; } });
+        canary = (body && body.items && body.items[0] && body.items[0].id) || "";
+      }
+    }
+    if (!canary) console.log("skip 360 tour checks — no live tour yet (publish one, or set MEGACITY_TOUR_CANARY)");
+    else {
+      bad.length = 0; errors.length = 0;
+      let hold = true;
+      await page.route(/\/billy360\/embed\.js/, async (r) => { while (hold) await new Promise((res) => setTimeout(res, 50)); return r.continue(); });
+      await page.goto(BASE + LET(canary), { waitUntil: "commit" });
+      const host = await page.waitForSelector(".pd-tour", { timeout: 20000 }).catch(() => null);
+      if (!host) ok(false, "listing page has a tour box for " + canary);
+      else {
+        const before = await page.evaluate(() => { const n = document.querySelector(".pd-tour"); const r = n.getBoundingClientRect();
+          return { h: r.height, y: r.top + scrollY, id: n.getAttribute("data-billy360"), room: n.getAttribute("data-room") }; });
+        ok(before.h > 200 && before.id === canary, "tour box is reserved before embed.js runs (" + Math.round(before.h) + " px, id " + before.id + ")");
+        ok(!!before.room, "the listing tells the frame which room to open (" + before.room + ")");
+        hold = false;
+        /* embed.js only builds the frames near the viewport, so bring it into view */
+        await page.evaluate(() => document.querySelector(".pd-tour").scrollIntoView({ block: "center" }));
+        await page.waitForFunction(() => !!document.querySelector(".pd-tour iframe"), null, { timeout: 20000 }).catch(() => {});
+        const after = await page.evaluate(() => { const n = document.querySelector(".pd-tour"); const f = n.querySelector("iframe"); const r = n.getBoundingClientRect();
+          return { h: r.height, y: r.top + scrollY, src: f && f.getAttribute("src"), fits: f ? Math.abs(f.getBoundingClientRect().height - r.height) < 2 : false, kids: n.children.length }; });
+        ok(Math.abs(after.h - before.h) < 2 && Math.abs(after.y - before.y) < 2, "the box does not move when the frame lands (" + Math.round(before.h) + " → " + Math.round(after.h) + " px)");
+        ok(after.fits && after.kids === 1 && /embed=1/.test(after.src || ""), "the iframe fills the box with no wrapper (" + after.src + ")");
+        ok(!!after.src && after.src.indexOf("#/tour/" + before.room) > 0, "the frame opens on the cover room");
+        let frame = null;
+        for (let i = 0; i < 40 && !frame; i++) { frame = page.frames().find((f) => /billy360\/\?site=/.test(f.url())); if (!frame) await page.waitForTimeout(250); }
+        if (!frame) ok(false, "the tour frame is on the page");
+        else {
+          const booted = await frame.waitForFunction(() => window.BILLY360App && window.BILLY360App.engine() && document.querySelector("#loader.is-done"), null, { timeout: 90000 }).then(() => true, () => false);
+          const view = booted ? await frame.evaluate(() => ({ view: (document.querySelector(".view.is-active") || {}).id, room: (document.querySelector("#roomName") || {}).textContent, poster: !!document.querySelector("#poster") })) : {};
+          ok(booted && view.view === "viewTour" && !!view.room, "the framed viewer opens on the panorama (" + (view.room || "-") + ")");
+          ok(!booted || view.poster, "a poster holds the first tap so the listing keeps scrolling");
+        }
+        ok(!errors.length, "the tour frame has no console errors" + (errors.length ? ": " + errors.slice(0, 2).join(" | ") : ""));
+      }
+      await page.unroute(/\/billy360\/embed\.js/);
+      if (!DEMO) {
+        const pretty = await page.goto(BASE + "/tour/" + canary, { waitUntil: "domcontentloaded" });
+        ok(pretty && pretty.status() === 200, "GET /tour/" + canary + " -> " + (pretty && pretty.status()));
+        const booted = await page.waitForFunction(() => window.BILLY360_STORE && window.BILLY360_STORE.mode === "public", null, { timeout: 30000 }).then(() => true, () => false);
+        ok(booted, "the pretty tour link boots the viewer in public mode");
+      }
+    }
+  }
+
   /* the 404 page */
   const nf = await page.goto(BASE + "/this-does-not-exist", { waitUntil: "domcontentloaded" });
   ok(nf.status() === 404, "unknown path answers 404");

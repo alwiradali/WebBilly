@@ -6572,6 +6572,14 @@
         fov: parseFloat(params.get("f") || "75")
       };
     }
+    /* Mount the stage the tour will actually run on BEFORE start(). The engine
+       sizes its panorama request from the canvas it is mounted on, and the
+       dashboard stage is a third of the width — so booting straight into the
+       tour used to ask for the 2048 file for the opening room (and throw away
+       the 4096 one store.js had already preloaded) while every later room got
+       the full size. Views are visibility-hidden, not display-none, so the
+       tour stage measures correctly even before setView makes it active. */
+    if (route.view === "tour") mountStage($("#stageTour"));
     engine.start(startRoom, startView);
     engine.autoRotate(route.view === "dash", 0.0016);
     track("open", { view: route.view || "dash", embed: EMBED ? 1 : 0 });

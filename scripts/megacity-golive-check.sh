@@ -100,7 +100,9 @@ echo "== 360 tours (G27)"
 # The viewer and its embed must be framable by the listing pages, the public
 # tour API must answer, and one live tour (the canary — the first in the
 # manifest, or MEGACITY_TOUR_CANARY) must open end to end: its JSON, its first
-# panorama out of R2, the pretty /tour/<id> link and the head of the viewer.
+# panorama and thumbnail out of R2, the pretty /tour/<id> link, the head of the
+# viewer, and a listing page whose tour box is reserved before embed.js runs
+# and whose frame opens on the panorama of the cover room.
 want "$(st "$BASE/billy360/")" "200 " "GET /billy360/"
 want "$(st "$BASE/billy360/embed.js")" "200 " "GET /billy360/embed.js"
 nohdr "/billy360/" 'x-frame-options' "$BASE/billy360/"
@@ -123,11 +125,32 @@ except Exception: print("")' 2>/dev/null)
     hdr "first panorama" 'content-type: image/' "$BASE$PANO"
     want "$(st "$BASE$PANO")" "200 " "GET $PANO"
   fi
+  # thumb-first: the opening room needs its w480 beside the panorama
+  THUMB=$(c "$BASE/api/public/tours/$CANARY" | python3 -c 'import json,sys
+try:
+  t=json.load(sys.stdin); r=[x for x in t.get("rooms",[]) if isinstance(x.get("thumb"),str)]
+  print(r[0]["thumb"] if r else "")
+except Exception: print("")' 2>/dev/null)
+  if [[ "$THUMB" == /media/* ]]; then echo "ok   rooms[0].thumb is under /media/ ($THUMB)"; else echo "FAIL rooms[0].thumb is not a /media/ URL: '$THUMB'"; fail=1; fi
   want "$(st "$BASE/tour/$CANARY")" "200 " "/tour/$CANARY"
   has "/tour/$CANARY" '360° tour · Megacity Properties' "$BASE/tour/$CANARY"
+  has "/tour/$CANARY" 'window.BILLY360_SITE' "$BASE/tour/$CANARY"
   has "/billy360/?site=$CANARY" "rel=\"canonical\" href=\"$CANON/let/$CANARY\"" "$BASE/billy360/?site=$CANARY"
+  # the listing page: the frame is asked for by id and opens on the cover room
   has "/let/$CANARY" "data-billy360=\"$CANARY\"" "$BASE/let/$CANARY"
+  has "/let/$CANARY" 'data-room="' "$BASE/let/$CANARY"
 fi
+# the box the frame drops into is reserved by the stylesheet, before embed.js
+# runs, so the page never jumps (F80 F225); embed.js pins the iframe into it
+# and needs no wrapper of its own.
+has "skyline.css" '.pd-tour{position:relative;width:100%;aspect-ratio:16/9;min-height:280px' "$BASE/templates/megacity-skyline.css"
+has "skyline.css" '@media (max-width:700px){.pd-tour{min-height:60vh}}' "$BASE/templates/megacity-skyline.css"
+lacks "skyline.css" '.pd-tour>div' "$BASE/templates/megacity-skyline.css"
+has "embed.js" 'host.style.aspectRatio' "$BASE/billy360/embed.js"
+has "embed.js" 'data-room' "$BASE/billy360/embed.js"
+lacks "robots" 'Allow: /tour/' "$BASE/robots.txt"
+has "robots" 'Disallow: /tour/' "$BASE/robots.txt"
+has "robots" 'Disallow: /billy360/' "$BASE/robots.txt"
 rm -f /tmp/mc_body.$$
 echo; if [[ $fail == 0 ]]; then echo "GO-LIVE CHECK: ALL PASS"; else echo "GO-LIVE CHECK: FAILURES"; fi
 exit $fail

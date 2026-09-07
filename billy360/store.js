@@ -325,6 +325,12 @@
     return '<div data-billy360="' + STORE.listingId + '" data-height="16:9"></div>\n<script src="' + origin + '/billy360/embed.js" defer></script>';
   };
 
+  /* The only links a blocked card will draw: a path on this site, or an https
+     address. Anything else (javascript:, data:, junk) is refused. */
+  function safeBack(href) {
+    return !!href && (/^\/[a-z0-9\/#._?=-]*$/i.test(href) || /^https:\/\/[a-z0-9.-]+(\/[a-z0-9\/#._?=&%-]*)?$/i.test(href));
+  }
+
   function showBlocked(title, body, href, label) {
     var paint = function () {
       /* built with textContent — nothing from the URL is ever parsed as HTML */
@@ -340,7 +346,7 @@
       p.style.cssText = "opacity:.8;margin:0 0 18px";
       p.textContent = body;
       card.appendChild(h); card.appendChild(p);
-      if (href && (/^\/[a-z0-9\/#._?=-]*$/i.test(href) || /^https:\/\/[a-z0-9.-]+(\/[a-z0-9\/#._?=&%-]*)?$/i.test(href))) {
+      if (safeBack(href)) {
         var a = document.createElement("a");
         a.href = href;
         a.target = "_top";   // inside the Studio iframe the whole page moves, not the frame
@@ -381,7 +387,11 @@
       closeAdmin();
       forgetLocalCopy(SITE);
       if (ship) { useOnly(ship); inject(); return; }
-      var back = (body && typeof body.listingUrl === "string" && body.listingUrl) || "/";
+      /* showBlocked only draws a link it considers safe, so an unusable
+         listingUrl would leave the card with no way out at all. Test it here
+         and fall back to the home page instead. */
+      var offered = body && typeof body.listingUrl === "string" ? body.listingUrl : "";
+      var back = safeBack(offered) ? offered : "/";
       if (why === "network") showBlocked("Couldn't load the tour", "We couldn't reach the tour just now. Check your connection and try again.", back, "Back to the listing");
       else showBlocked("This tour isn't published yet", "Ask the office and we will send it over as soon as it is live.", back, "Back to the listing");
     };

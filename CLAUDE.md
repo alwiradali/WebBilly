@@ -16,6 +16,12 @@ elements with `data-fx="reveal|stagger|text|parallax|pin|horizontal|progressbar"
 Full reference: `docs/scroll-fx.md`. Do not hand-roll per-page one-offs unless
 the toolkit genuinely can't express the effect.
 
+## billy360 (the 360° tours) — run the tests before you push
+`node scripts/billy360-test.js` (add `--only=<demo|public|embed|devices|engine|office|data>`)
+and `node scripts/billy360-api.mjs --base=http://localhost:<port>`. Both need a
+static server and, for the office and API sections, `wrangler dev`; the scripts
+print the command to start whichever is missing. Reference: `docs/billy360.md`.
+
 ## Deploy workflow (branch → main, static site goes live on push)
 Work on branch `claude/3d-animation-billy-templates-g3ked5`, then:
 ```
