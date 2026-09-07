@@ -554,12 +554,15 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
     .then(function (data) {
       var all = (data && data.products) || [];
       if (!all.length) throw new Error('empty');
-      var n5 = all.filter(function (p) { return /^n5|national 5/i.test(p.name); });
-      var hi = all.filter(function (p) { return /higher/i.test(p.name) && !/^n5/i.test(p.name) && !/advanced/i.test(p.name); });
-      var ah = all.filter(function (p) { return /advanced higher/i.test(p.name); });
+      /* Match on how Lynsey actually names them in Payhip: "N5 Chemistry...",
+         "Higher Chemistry...", "AH Chemistry...". She uses AH, not the words
+         Advanced Higher, so matching on those words alone finds nothing. */
+      var n5 = all.filter(function (p) { return /^n5\b|national 5/i.test(p.name); });
+      var hi = all.filter(function (p) { return /^higher\b/i.test(p.name); });
+      var ah = all.filter(function (p) { return /^ah\b|advanced higher/i.test(p.name); });
       [ card('National 5', n5, 'The topics N5 students lose most marks on, taken one at a time.'),
         card('Higher', hi, 'Bonding, calculations, open-ended questions — the ones that separate an A from a B.'),
-        card('Advanced Higher', ah, 'Advanced Higher masterclasses.')
+        card('Advanced Higher', ah, 'The trickiest content on the course, taken slowly enough to actually land.')
       ].forEach(function (c) { if (c) grid.appendChild(c); });
     })
     .catch(function () {
