@@ -17,17 +17,21 @@
   "use strict";
   var QS = new URLSearchParams(location.search);
   /* a listing id is a slug and nothing else — anything odd is treated as absent */
-  var RAW_SITE = QS.get("site") || QS.get("property") || "";
+  /* /tour/<id> on the Megacity host hands the id over as window.BILLY360_SITE instead of ?site= */
+  var RAW_SITE = QS.get("site") || QS.get("property") || (typeof window.BILLY360_SITE === "string" ? window.BILLY360_SITE : "");
   var SITE = /^[a-z0-9-]{1,80}$/i.test(RAW_SITE) ? RAW_SITE.toLowerCase() : null;
   var OFFICE = QS.get("office") === "1";
   /* must match the <link rel="preload"> and the store.js tag stamp in index.html */
   var APP = "app.js?v=20260907a";
+  /* app.js lives beside this script, not beside the document (/tour/<id> is served from /billy360/);
+     document.currentScript is only set while this script runs, so capture it now, not in inject() */
+  var BASE = ((document.currentScript && document.currentScript.src) || "").replace(/[^\/]*$/, "");
   var CFG = window.BILLY360_CONFIG || (window.BILLY360_CONFIG = {});
   var PUBLIC_TIMEOUT = 8000;
 
   function inject() {
     var s = document.createElement("script");
-    s.src = APP;
+    s.src = BASE + APP;
     document.head.appendChild(s);
   }
   function fnv(str) {

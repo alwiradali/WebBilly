@@ -11,10 +11,13 @@
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <!-- ?v= is the build stamp — bump it on every deploy so a browser
      holding last week's files never mixes them with this week's -->
-<link rel="stylesheet" href="app.css?v=20260816m">
+<link rel="stylesheet" href="app.css?v=20260907a">
+<!-- store.js injects app.js with this exact query string — the two must match or app.js downloads twice -->
+<link rel="preload" href="app.js?v=20260907a" as="script">
 </head>
 <body>
 
@@ -70,6 +73,7 @@
 </svg>
 
 <div id="app">
+  <div id="backBar" class="backbar" hidden></div>
 
   <!-- ══════════════════ PORTFOLIO ══════════════════ -->
   <section class="view view--sites" id="viewSites" aria-label="Property portfolio">
@@ -194,7 +198,7 @@
             <div class="preview-loading" id="previewLoading">
               <div class="loader-in" style="width:min(280px,70%)">
                 <div class="loader-bar"><span class="loader-fill" id="previewFill"></span></div>
-                <div class="loader-row"><span id="previewStage">Calibrating optics</span><span id="previewPct">0%</span></div>
+                <div class="loader-row"><span id="previewStage">Loading…</span><span id="previewPct">0%</span></div>
               </div>
             </div>
           </div>
@@ -214,7 +218,7 @@
         <section class="section">
           <div class="section-head">
             <div>
-              <p class="t-eyebrow">Positions</p>
+              <p class="t-eyebrow">Rooms</p>
               <h2 class="t-h2" style="margin-top:8px">Every space we captured</h2>
             </div>
             <div class="segmented" id="dashFloors"></div>
@@ -232,8 +236,9 @@
 
   <!-- ══════════════════ TOUR ══════════════════ -->
   <section class="view view--tour" id="viewTour" aria-label="Virtual tour">
-    <div id="stageTour"></div>
+    <div id="stageTour" role="img" aria-label="360° view"></div>
     <div id="hotspots"></div>
+    <p class="sr" id="roomLive" aria-live="polite" aria-atomic="true"></p>
 
     <header class="tour-ui" id="tourTop">
       <button class="icon-btn" id="btnHome" title="Overview" aria-label="Back to overview">
@@ -244,7 +249,7 @@
         <span><span class="brand-word" id="brandWordTour"></span></span>
       </div>
       <div class="tour-title">
-        <h2 id="roomName">—</h2>
+        <h2 id="roomName" tabindex="-1">—</h2>
         <p id="roomMeta"></p>
       </div>
       <div class="tour-tools">
@@ -253,13 +258,16 @@
           <span>Search rooms…</span>
           <span class="kbd">⌘K</span>
         </button>
-        <button class="icon-btn" id="btnPlay" title="Guided tour  ·  Space" aria-label="Guided tour" aria-pressed="false">
+        <button class="btn btn--sm rooms-btn" id="btnRooms" aria-label="Choose a room" aria-haspopup="dialog" aria-controls="palette">
+          <svg viewBox="0 0 24 24"><use href="#i-rooms"/></svg> Rooms
+        </button>
+        <button class="icon-btn hide-sm" id="btnPlay" title="Guided tour  ·  Space" aria-label="Guided tour" aria-pressed="false">
           <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
         </button>
         <button class="icon-btn hide-xs" id="btnGallery" title="Photographs  ·  G" aria-label="Photographs" hidden>
           <svg viewBox="0 0 24 24"><use href="#i-gallery"/></svg>
         </button>
-        <button class="icon-btn hide-xs" id="btnGyro" title="Motion control" aria-label="Motion control" aria-pressed="false">
+        <button class="icon-btn" id="btnGyro" title="Look around by moving your phone" aria-label="Look around by moving your phone" aria-pressed="false">
           <svg viewBox="0 0 24 24"><use href="#i-gyro"/></svg>
         </button>
         <button class="icon-btn hide-sm" id="btnShot" title="Export a still" aria-label="Export still">
@@ -268,19 +276,22 @@
         <button class="icon-btn hide-sm" id="btnShare" title="Copy a link to this view" aria-label="Share this view">
           <svg viewBox="0 0 24 24"><use href="#i-share"/></svg>
         </button>
-        <button class="icon-btn hide-sm" id="btnPanels" title="Hide panels  ·  Tab" aria-label="Toggle panels">
+        <button class="icon-btn hide-sm" id="btnPanels" title="Hide panels  ·  P" aria-label="Toggle panels" aria-pressed="true" aria-controls="panelLeft panelRight">
           <svg viewBox="0 0 24 24"><use href="#i-panel"/></svg>
         </button>
         <button class="icon-btn hide-sm admin-only" id="btnStudio" title="Content studio" aria-label="Content studio">
           <svg viewBox="0 0 24 24"><use href="#i-edit"/></svg>
         </button>
-        <button class="icon-btn" id="btnFull" title="Fullscreen  ·  F" aria-label="Fullscreen">
+        <button class="icon-btn" id="btnFull" title="Fullscreen  ·  F" aria-label="Fullscreen" aria-pressed="false">
           <svg viewBox="0 0 24 24"><use href="#i-expand"/></svg>
+        </button>
+        <button class="btn btn--sm btn--primary hide-sm enquire-btn" id="btnEnquire" aria-haspopup="dialog" aria-controls="sheet" hidden>
+          <svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Enquire
         </button>
       </div>
     </header>
 
-    <aside class="panel side side--left" id="panelLeft" aria-label="Room information">
+    <aside class="panel side side--left" id="panelLeft" aria-label="Room information" tabindex="-1">
       <div class="side-head">
         <h3 id="sideTitle">—</h3>
         <button class="icon-btn icon-btn--sm" id="btnCloseLeft" aria-label="Close panel">
@@ -299,7 +310,7 @@
       </div>
     </aside>
 
-    <aside class="panel side side--right" id="panelRight" aria-label="Floor plan">
+    <aside class="panel side side--right" id="panelRight" aria-label="Floor plan" tabindex="-1">
       <div class="side-head">
         <h3>Floor plan</h3>
         <button class="icon-btn icon-btn--sm" id="btnCloseRight" aria-label="Close panel">
@@ -323,27 +334,30 @@
       <button class="icon-btn icon-btn--sm" id="btnNext" title="Next  ·  →" aria-label="Next space">
         <svg viewBox="0 0 24 24"><use href="#i-next"/></svg>
       </button>
+      <span class="transport-pos" id="transportPos" aria-live="polite"></span>
       <div class="transport-track"><span class="transport-fill" id="transportFill"></span></div>
-      <button class="transport-speed" id="btnSpeed" title="Playback speed">1.0×</button>
+      <button class="transport-speed" id="btnSpeed" title="Playback speed" aria-label="Playback speed">1.0×</button>
     </div>
 
-    <p class="telemetry" id="telemetry">AZ 000°  EL +0°  FOV 75°</p>
-    <p class="sharpen" id="sharpen">SHARPENING · FULL RESOLUTION</p>
+    <p class="telemetry admin-only" id="telemetry" aria-hidden="true">AZ 000°  EL +0°  FOV 75°</p>
+    <p class="sharpen admin-only" id="sharpen" aria-hidden="true">SHARPENING · FULL RESOLUTION</p>
 
-    <div class="hint panel" id="hint">
+    <div class="hint panel" id="hint" aria-hidden="true">
       <svg viewBox="0 0 24 24"><use href="#i-drag"/></svg>
       <span class="hint-full">Drag to look around · scroll to zoom · click a ring to walk through</span>
       <span class="hint-short">Drag to look · tap a ring to walk through</span>
     </div>
 
     <div class="mobile-dock" id="mobileDock">
-      <button class="btn btn--sm" id="dockInfo"><svg viewBox="0 0 24 24"><use href="#i-info"/></svg> Details</button>
-      <button class="btn btn--sm" id="dockPhotos" hidden><svg viewBox="0 0 24 24"><use href="#i-gallery"/></svg> Photos</button>
-      <button class="btn btn--sm" id="dockMap"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg> Plan</button>
-      <button class="btn btn--sm" id="dockMore"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg> More</button>
+      <button class="btn btn--sm" id="dockInfo" aria-label="Room information" aria-expanded="false" aria-controls="panelLeft"><svg viewBox="0 0 24 24"><use href="#i-info"/></svg> <span>Room</span></button>
+      <button class="btn btn--sm dock-ico" id="dockPhotos" aria-label="Photographs" hidden><svg viewBox="0 0 24 24"><use href="#i-gallery"/></svg> <span>Photos</span></button>
+      <button class="btn btn--sm" id="dockDetails" aria-label="Property details" aria-haspopup="dialog" aria-controls="sheet" hidden><svg viewBox="0 0 24 24"><use href="#i-building"/></svg> <span>Details</span></button>
+      <button class="btn btn--sm" id="dockMap" aria-label="Floor plan" aria-expanded="false" aria-controls="panelRight"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg> <span>Plan</span></button>
+      <button class="btn btn--sm dock-ico" id="dockPlay" aria-label="Play the guided tour" aria-pressed="false"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg> <span>Play</span></button>
+      <button class="btn btn--sm dock-ico" id="dockMore" aria-label="More" aria-haspopup="dialog" aria-controls="palette"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg> <span>More</span></button>
     </div>
 
-    <nav class="tour-ui" id="filmstrip" aria-label="All positions">
+    <nav class="tour-ui" id="filmstrip" aria-label="All rooms">
       <div class="strip-wrap scroll" id="stripWrap"></div>
     </nav>
   </section>
@@ -404,7 +418,7 @@
             <button class="icon-btn icon-btn--sm" id="btnRedo" title="Redo  ·  Ctrl Shift Z" aria-label="Redo" disabled>
               <svg viewBox="0 0 24 24"><use href="#i-redo"/></svg>
             </button>
-            <span class="chip" id="saveState"><i></i> Saved</span>
+            <span class="chip savestate" id="saveState" role="status" aria-live="polite"><i></i> Saved</span>
             <button class="btn btn--sm btn--primary" id="btnStudioPublish">
               <svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Publish
             </button>
@@ -435,10 +449,10 @@
   <div class="panel palette" id="palette" role="dialog" aria-modal="true" aria-label="Search">
     <div class="palette-input">
       <svg viewBox="0 0 24 24"><use href="#i-search"/></svg>
-      <input id="paletteInput" type="text" placeholder="Search rooms, hotspots and actions…" autocomplete="off" spellcheck="false">
+      <input id="paletteInput" type="text" placeholder="Search rooms, hotspots and actions…" autocomplete="off" spellcheck="false" aria-label="Search rooms, hotspots and actions" role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list">
       <span class="kbd">esc</span>
     </div>
-    <div class="palette-list scroll" id="paletteList"></div>
+    <div class="palette-list scroll" id="paletteList" role="listbox" aria-label="Results"></div>
     <div class="palette-foot">
       <span><span class="kbd">↑</span><span class="kbd">↓</span> navigate</span>
       <span><span class="kbd">↵</span> open</span>
@@ -473,20 +487,23 @@
         </span>
       </div>
       <div class="loader-bar"><span class="loader-fill" id="loadFill"></span></div>
-      <div class="loader-row"><span id="loadStage">Calibrating optics</span><span id="loadPct">0%</span></div>
+      <div class="loader-row"><span id="loadStage">Loading…</span><span id="loadPct">0%</span></div>
       <p class="t-body" style="margin-top:26px;font-size:.8rem" id="loadNote"></p>
     </div>
   </div>
 </div>
 
-<script src="config.js?v=20260816m"></script>
-<script src="qr.js?v=20260816m"></script>
-<script src="tour.js?v=20260816m"></script>
-<script src="tour-ashby.js?v=20260816m"></script>
-<script src="tour-homes.js?v=20260816m"></script>
-<script src="tour-megacity.js?v=20260816m"></script>
-<script src="engine.js?v=20260816m"></script>
+<script src="config.js?v=20260907a"></script>
+<script src="qr.js?v=20260907a"></script>
+<script src="tour.js?v=20260907a"></script>
+<script src="tour-ashby.js?v=20260907a"></script>
+<script src="tour-homes.js?v=20260907a"></script>
+<script src="tour-megacity.js?v=20260907a"></script>
+<script src="engine.js?v=20260907a"></script>
+<script src="plan.js?v=20260907a"></script>
+<script src="details.js?v=20260907a"></script>
+<script src="sync.js?v=20260907a"></script>
 <!-- store.js decides where the tour lives (browser, public API or the Studio) and then loads app.js -->
-<script src="store.js?v=20260902s"></script>
+<script src="store.js?v=20260907a"></script>
 </body>
 </html>

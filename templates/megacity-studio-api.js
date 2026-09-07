@@ -432,7 +432,20 @@
       return { id: l.id, version: 1, project: {}, rooms: rooms };
     }
     (function () { var l = DB.listings[0], t = skeleton(l); DB.tours[l.id] = { tour: t, status: "draft", version: 1, health: null, roomCount: t.rooms.length, liveAt: null, updatedAt: ago(20), updatedBy: ME.id }; })();
-    function tourSummary(t) { return { status: t.status, version: t.version, health: t.health, roomCount: t.roomCount, liveAt: t.liveAt, updatedAt: t.updatedAt }; }
+    function tourSummary(t, l) {
+      l = l || DB.listings.filter(function (x) { return DB.tours[x.id] === t; })[0];
+      return { status: t.status, version: t.version, health: t.health, roomCount: t.roomCount, liveAt: t.liveAt, updatedAt: t.updatedAt, updatedBy: t.updatedBy,
+        liveVersion: t.liveVersion == null ? null : t.liveVersion, listingLive: !!(l && l.status === "live" && !l.hidden && !l.bin), gate: DB.settings.tourGateScore == null ? 70 : DB.settings.tourGateScore,
+        publicUrl: location.origin + "/billy360/?site=" + encodeURIComponent(l ? l.id : ""), embedOrigin: location.origin };
+    }
+    /* a media row the draft or live tour still points at cannot be deleted (S3's 409) */
+    function tourUsing(l, med) {
+      var t = DB.tours[l.id]; if (!t || !med) return null;
+      var urls = [med.pano, med.url, med.thumb, med.orig].filter(Boolean);
+      var hit = null;
+      (t.tour && t.tour.rooms || []).forEach(function (r) { if (!hit && r.pano && urls.indexOf(r.pano) >= 0) hit = "room " + (r.name || r.id); });
+      return hit;
+    }
 
     /* pages: one live area page, one draft — all copy is plainly sample text */
     var LADYWELL_COVER = DB.listings[0].media[0].id;
@@ -648,33 +661,37 @@
         var tl = DB.listings.filter(function (x) { return x.id === m[1] && !x.bin; })[0];
         if (!tl) fail(404, { error: "No such listing." });
         var tt = DB.tours[m[1]];
-        if (method === "GET") { if (!tt) fail(404, { error: "No tour yet for this listing.", canCreate: true, listing: { id: tl.id, title: tl.title } }); return Object.assign({ tour: clone(tt.tour) }, tourSummary(tt)); }
+        if (method === "GET") { if (!tt) fail(404, { error: "No tour yet for this listing.", canCreate: true, listing: { id: tl.id, title: tl.title } }); return Object.assign({ tour: clone(tt.tour) }, tourSummary(tt, tl)); }
         if (method === "POST") {
           if (tt) fail(409, { error: "This listing already has a tour." });
           var built = body.tour ? body.tour : skeleton(tl);
-          DB.tours[tl.id] = { tour: built, status: "draft", version: 1, health: null, roomCount: (built.rooms || []).length, liveAt: null, updatedAt: new Date().toISOString(), updatedBy: ME.id };
+          DB.tours[tl.id] = { tour: built, status: "draft", version: 1, liveVersion: null, health: null, roomCount: (built.rooms || []).length, liveAt: null, updatedAt: new Date().toISOString(), updatedBy: ME.id };
           audit("tour.created", "listing", tl.id);
-          return Object.assign({ tour: clone(built) }, tourSummary(DB.tours[tl.id]));
+          return Object.assign({ tour: clone(built) }, tourSummary(DB.tours[tl.id], tl));
         }
         if (method === "PUT") {
           if (!tt) fail(404, { error: "No tour yet for this listing. Create it first.", canCreate: true });
           if (body.version != null && Number(body.version) !== tt.version) fail(409, { error: "Someone else saved this tour since you opened it. Reload to see their changes.", version: tt.version });
           tt.tour = body.tour || tt.tour; tt.version++; if (body.health != null) tt.health = Math.max(0, Math.min(100, Number(body.health) || 0)); tt.roomCount = (tt.tour.rooms || []).length; tt.updatedAt = new Date().toISOString();
-          return { ok: true, version: tt.version, updatedAt: tt.updatedAt, health: tt.health };
+          return Object.assign({ ok: true }, tourSummary(tt, tl));
         }
         if (method === "DELETE") { delete DB.tours[m[1]]; return { ok: true }; }
       }
       if ((m = /^\/tours\/([^/]+)\/(publish|unpublish)$/.exec(p)) && method === "POST") {
         var tp = DB.tours[m[1]];
         if (!tp) fail(404, { error: "No tour yet for this listing." });
-        if (m[2] === "unpublish") { tp.status = "draft"; tp.updatedAt = new Date().toISOString(); audit("tour.unpublished", "listing", m[1]); return { ok: true, status: "draft" }; }
+        var tpl = DB.listings.filter(function (x) { return x.id === m[1]; })[0];
+        if (m[2] === "unpublish") { tp.status = "draft"; tp.liveAt = null; tp.updatedAt = new Date().toISOString(); audit("tour.unpublished", "listing", m[1]); return Object.assign({ ok: true }, tourSummary(tp, tpl)); }
         var gate = DB.settings.tourGateScore == null ? 70 : DB.settings.tourGateScore, health = body.health == null ? tp.health : Number(body.health), tpr = [];
         if (!tp.tour || !(tp.tour.rooms || []).length) tpr.push("The tour has no rooms.");
         if (!(tp.tour.rooms || []).some(function (r) { return r.pano; })) tpr.push("No room has a 360° capture yet.");
         if (health != null && health < gate) tpr.push("The quality score is " + health + "; it needs at least " + gate + " to go live.");
-        if (tpr.length) return { ok: false, problems: tpr, health: health, gate: gate };
-        tp.status = "live"; tp.liveAt = tp.updatedAt = new Date().toISOString(); tp.health = health; audit("tour.published", "listing", m[1]);
-        return { ok: true, status: "live", liveAt: tp.liveAt, health: health, url: "/billy360/?site=" + encodeURIComponent(m[1]) };
+        if (tpr.length) return Object.assign({ ok: false, problems: tpr }, tourSummary(tp, tpl), { health: health });
+        if (!tp.liveAt) tp.liveAt = new Date().toISOString();          /* first publish only (G6) */
+        tp.status = "live"; tp.liveVersion = tp.version; tp.updatedAt = new Date().toISOString(); tp.health = health; audit("tour.published", "listing", m[1]);
+        var pres = Object.assign({ ok: true, problems: [], url: "/billy360/?site=" + encodeURIComponent(m[1]) }, tourSummary(tp, tpl));
+        if (!pres.listingLive) pres.note = "Published, but the listing is not live yet, so nobody can see it until the listing goes live.";
+        return pres;
       }
 
       /* pages */
@@ -876,6 +893,8 @@
         if (!med) fail(404, { error: "Media not found" });
         if (method === "PATCH") { ["alt", "caption", "roomLabel", "role"].forEach(function (k) { if (k in body) med[k] = body[k]; }); touch(owner); return clone(med); }
         if (method === "DELETE") {
+          var used = tourUsing(owner, med);
+          if (used) fail(409, { error: "This " + (med.kind === "pano" ? "360" : "image") + " is used by the tour (" + used + ") — replace it there first.", usedBy: used });
           owner.media = owner.media.filter(function (x) { return x !== med; });
           if (owner.coverMediaId === med.id) owner.coverMediaId = null;
           touch(owner); audit("media.delete", "media", med.id);

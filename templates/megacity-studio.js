@@ -285,9 +285,24 @@
     }
     return { name: "notfound", params: [], pub: false, path: h };
   }
-  var SCREENS = {};
+  var SCREENS = {}, routeToken = 0, guardSkip = false;
+  /* the 360 tab's iframe reports dirty/saving; leaving mid-save loses the capture (F27 F155) */
+  function tourGuard(r) {
+    if (guardSkip) { guardSkip = false; return false; }
+    if (!ed || !ed.frame || !tourBusy() || !state.route) return false;
+    if (r.name === "editor" && r.params[0] === ed.id && (r.params[1] || "details") === "tour") return false;
+    var target = location.hash, back = "#" + state.route.path;
+    if (location.hash !== back) history.replaceState(null, "", back);
+    confirmModal({ title: "The tour is still saving", body: "A change in the 360 Studio has not reached the server yet. Leave now and it may be lost.", confirm: "Leave anyway", cancel: "Stay" }).then(function (ok) {
+      if (!ok || !target) return;
+      guardSkip = true; if (location.hash === target) route(); else location.hash = target;
+    });
+    return true;
+  }
   function route() {
     var r = parseRoute();
+    if (tourGuard(r)) return;
+    routeToken++;
     closeDrawer(); closeModal(false); closeUserMenu(); closeCmdk(); closeRowMenus(); closeBell();
     if (state.route && state.route.name === "editor" && !(r.name === "editor" && r.params[0] === state.route.params[0])) editorLeave();
     if (state.route && state.route.name === "pageEditor" && !(r.name === "pageEditor" && r.params[0] === state.route.params[0])) pageLeave();
@@ -496,7 +511,9 @@
   SCREENS.dashboard = function () {
     setTop({ title: "Home" });
     view.innerHTML = loading();
+    var token = routeToken;
     API.dashboard.get().then(function (d) {
+      if (token !== routeToken) return;
       var c = d.counts || {}, L = c.listings || {}, u = state.user || {}, E = d.enquiries || null, ev = d.events7 || null;
       state.liveCount = L.live; renderNav();
       var showImport = (L.total || 0) === 0;
@@ -512,7 +529,7 @@
         '<section class="st-card"><div class="st-card-head"><h2>Quick actions</h2></div><div class="st-team">' +
         quickAction("#/listings/new", I.plus, "New listing", "Start a draft, add photos, advertise when ready") + quickAction("#/enquiries", I.inbox, "Enquiries", "Reply, ring back, mark handled") +
         quickAction("#/listings", I.list, "All listings", "Search, filter, publish and unpublish") + quickAction("#/settings", I.cog, "Settings", "Branding, notifications and 10ninety links") + quickAction("#/team", I.users, "Team", "Invite staff and manage access") + "</div></section></div>";
-    }).catch(showError);
+    }).catch(function (err) { if (token === routeToken) showError(err); });
   };
 
   /* ── listings ────────────────────────────────────────────────────── */
@@ -674,9 +691,10 @@
     if (!ed) return;
     var E = ed; clearTimeout(E.timer); stopTourPoll();
     if (Object.keys(E.dirty).length && !E.saving) edSave(E);
+    E.frame = null; view.removeAttribute("data-ed");
     ed = null; topChip.innerHTML = "";
   }
-  window.addEventListener("beforeunload", function (e) { if ((ed && (Object.keys(ed.dirty).length || ed.saving)) || (pg && (Object.keys(pg.dirty).length || pg.saving))) { e.preventDefault(); e.returnValue = ""; } });
+  window.addEventListener("beforeunload", function (e) { if ((ed && (Object.keys(ed.dirty).length || ed.saving || tourBusy())) || (pg && (Object.keys(pg.dirty).length || pg.saving))) { e.preventDefault(); e.returnValue = ""; } });
 
   function chipMarkup(s, savedAt) {
     var txt, cls;
@@ -706,17 +724,30 @@
       E.saving = false;
       Object.keys(sent).forEach(function (k) { if (k !== "updatedAt" && same(E.doc[k], sent[k])) { delete E.dirty[k]; E.doc[k] = clone(l[k]); } });
       Object.keys(l).forEach(function (k) { if (!E.dirty[k]) E.doc[k] = clone(l[k]); });
-      E.base = l; E.savedAt = Date.now(); state.listIndex = null;
+      E.base = l; E.savedAt = Date.now(); state.listIndex = null; E.retried409 = false;
       if (ed === E) { setChip(Object.keys(E.dirty).length ? "dirty" : "saved"); refreshHeader(); }
       if (E.again || Object.keys(E.dirty).length) { E.again = false; E.timer = setTimeout(function () { edSave(E); }, 500); }
     }).catch(function (err) {
       E.saving = false; E.again = false;
+      if (err.status === 409 && !E.retried409 && err.body && err.body.listing && onlyServerOwnedMoved(E, err.body.listing)) {
+        /* an upload (a 360 captured in the tour iframe, a Media-tab photo) touched updated_at — nobody edited the fields we hold (G1) */
+        E.retried409 = true; adoptInto(E, err.body.listing);
+        if (ed === E) { refreshHeader(); if (E.tab === "media") renderMediaGrid(); }
+        edSave(E); return;
+      }
       if (ed === E) setChip("error");
       if (err.status === 409) toast("Someone else saved this listing — reload to see their changes", { kind: "warn", ttl: 20000, action: { label: "Reload", run: function () { if (ed === E) { ed = null; route(); } } } });
       else toast(err.message || "Could not save", { kind: "bad", action: { label: "Retry", run: function () { edSave(E); } } });
     });
   }
-  function edAdopt(l) { var E = ed; E.base = l; var nd = clone(l); Object.keys(E.dirty).forEach(function (k) { nd[k] = E.doc[k]; }); E.doc = nd; state.listIndex = null; }
+  function edAdopt(l) { adoptInto(ed, l); }
+  function adoptInto(E, l) { E.base = l; var nd = clone(l); Object.keys(E.dirty).forEach(function (k) { nd[k] = E.doc[k]; }); E.doc = nd; state.listIndex = null; }
+  /* fields the server moves on its own when media changes — never something the user typed here */
+  var SERVER_OWNED = { updatedAt: 1, updatedBy: 1, media: 1, coverMediaId: 1, tour: 1, mediaCount: 1, syncedAt: 1 };
+  function onlyServerOwnedMoved(E, srv) {
+    var keys = {}; Object.keys(srv).concat(Object.keys(E.base || {})).forEach(function (k) { keys[k] = 1; });
+    return Object.keys(keys).every(function (k) { return same(srv[k], E.base[k]) || (SERVER_OWNED[k] && !(E.dirty[k] && k !== "updatedAt" && k !== "updatedBy")); });
+  }
 
   function tabsHtml() {
     var d = ed.doc, probs = problemsOf(d);
@@ -733,7 +764,11 @@
   function renderEditor() {
     var d = ed.doc;
     setTop({ title: d.title || "Untitled listing", sub: [d.ref, optLabel("area", d.address && d.address.area)].filter(Boolean).join(" · "), back: "#/listings", chip: chipHtml() });
-    view.innerHTML = tabsHtml() + headHtml() + '<div id="edPanel"></div>';
+    /* a tab change only repaints #edPanel — #edTour (the 360 Studio iframe) survives the switch (F67) */
+    if (view.getAttribute("data-ed") !== ed.id || !$("#edPanel", view) || !$("#edTour", view)) {
+      view.innerHTML = tabsHtml() + headHtml() + '<div id="edPanel"></div><div id="edTour" hidden></div>';
+      view.setAttribute("data-ed", ed.id); ed.frame = null;
+    } else { refreshTabs(); var hh = $(".st-ehead", view); if (hh) hh.outerHTML = headHtml(); }
     renderTab();
   }
   function refreshHeader() { var d = ed.doc; var h = $(".st-ehead", view); if (h) h.outerHTML = headHtml(); topSub.textContent = [d.ref, optLabel("area", d.address && d.address.area)].filter(Boolean).join(" · "); topSub.hidden = !topSub.textContent; refreshTabs(); }
@@ -741,6 +776,7 @@
   function renderTab() {
     var panel = $("#edPanel"); if (!panel) return;
     stopTourPoll();
+    var tf = $("#edTour"); if (tf) tf.hidden = true;
     if (ed.tab === "details") panel.innerHTML = detailsHtml();
     else if (ed.tab === "home") panel.innerHTML = homeHtml();
     else if (ed.tab === "media") { panel.innerHTML = mediaHtml(); bindMedia(panel); }
@@ -937,7 +973,7 @@
       '<div class="st-field"><label class="st-label" for="ma_' + id + '">Alt text</label><input class="st-in" id="ma_' + id + '" type="text" data-mfield="alt" data-mid="' + id + '" value="' + esc(m.alt || "") + '" placeholder="Living room with corner sofa"></div>' +
       '<div class="st-field"><label class="st-label" for="mro_' + id + '">Use as</label><div class="st-select"><select id="mro_' + id + '" data-mfield="role" data-mid="' + id + '">' + optList("mediaRole").filter(function (o) { return o.value !== "cover"; }).map(function (o) { return '<option value="' + esc(o.value) + '"' + ((m.role === "cover" ? "gallery" : m.role) === o.value ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div></div>" +
       (aiOn() && isPhoto(m) ? '<div class="st-mai"><button type="button" class="st-btn st-btn--sm" data-mai="classify" data-mid="' + id + '">' + I.spark + 'What room is this?</button><button type="button" class="st-btn st-btn--sm" data-mai="alt" data-mid="' + id + '">Suggest alt text</button></div>' : "") +
-      (m.isPano || m.kind === "pano" ? '<p class="st-mtour">360° panorama · <a href="#/listings/' + esc(encodeURIComponent(ed.id)) + '/tour">Add it to the tour</a></p>' : "") +
+      (m.isPano || m.kind === "pano" ? '<p class="st-mtour">360° panorama · offered to the rooms in the <a href="#/listings/' + esc(encodeURIComponent(ed.id)) + '/tour">360 Tour</a> tab</p>' : "") +
       '<div class="st-mactions">' +
       '<button type="button" class="st-btn st-btn--icon st-star' + (isCover ? " is-on" : "") + '" data-mact="cover" data-mid="' + id + '" aria-pressed="' + (isCover ? "true" : "false") + '" aria-label="' + (isCover ? "This is the cover photo" : "Use as the cover photo") + '"' + (isPhoto(m) ? "" : " disabled") + ">" + I.star + "</button>" +
       '<button type="button" class="st-btn st-btn--icon" data-mact="up" data-mid="' + id + '" aria-label="Move earlier"' + (i === 0 ? " disabled" : "") + ">" + I.up + "</button>" +
@@ -956,7 +992,7 @@
     var grid = $("#edMedia");
     if (grid) grid.innerHTML = (ed.doc.media || []).map(mediaCard).join("");
     else if (ed.tab === "media") renderTab();
-    refreshTabs();
+    refreshTabs(); postTourMedia(ed);
   }
   function bindMedia(panel) {
     var drop = $("#edDrop", panel), input = $("#edFile", panel);
@@ -1009,7 +1045,11 @@
           delete E.notes[mid];
           renderMediaGrid(); toast("Deleted");
         });
-      }).catch(errToast);
+      }).catch(function (err) {
+        /* 409: the draft or live tour still points at this 360/logo/plan — the server says which room */
+        if (err && err.status === 409) toast(err.message || "This file is used by the 360 tour — replace it there first.", { kind: "warn", ttl: 9000 });
+        else errToast(err);
+      });
     }
   }
 
@@ -1019,11 +1059,12 @@
     imageAsync: function (file, opts) {
       opts = opts || {};
       return loadImage(file).then(function (img) {
-        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, maxEdge = opts.maxEdge || 1600;
+        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, isPano = w / h >= 1.9 && w / h < 2.1 && w >= 1024;
+        var maxEdge = isPano ? Math.max(opts.panoEdge || 0, opts.maxEdge || 1600) : (opts.maxEdge || 1600);   /* same rule as MCIntake: a 360 keeps its 4096 */
         var scale = Math.min(1, maxEdge / Math.max(w, h)), ow = Math.max(1, Math.round(w * scale)), oh = Math.max(1, Math.round(h * scale));
         var c = document.createElement("canvas"); c.width = ow; c.height = oh; c.getContext("2d").drawImage(img, 0, 0, ow, oh);
         if (img.close) img.close();
-        return { src: c.toDataURL("image/jpeg", opts.quality || 0.82), w: w, h: h, outW: ow, outH: oh, isPano: w / h >= 1.9, name: file.name, luma: null, sharp: null, hash: null, savedKB: null, notes: [] };
+        return { src: c.toDataURL("image/jpeg", opts.quality || 0.82), w: w, h: h, outW: ow, outH: oh, isPano: isPano, name: file.name, luma: null, sharp: null, hash: null, savedKB: null, notes: [] };
       });
     }
   };
@@ -1040,12 +1081,29 @@
     });
   }
   function intake() { return (window.MCIntake && window.MCIntake.imageAsync) ? window.MCIntake : fallbackIntake; }
+  /* one decode of the original (MCIntake, which also measures brightness/sharpness); the smaller
+     sizes are drawn from that first JPEG rather than decoding a 4096-px file three times (F165) */
   function intakeAll(file) {
     var IN = intake();
-    return IN.imageAsync(file, { maxEdge: 1600, quality: 0.82 }).then(function (large) {
-      return IN.imageAsync(file, { maxEdge: 480, quality: 0.75 }).then(function (thumb) {
-        if (!large.isPano) return { large: large, thumb: thumb, pano: null };
-        return IN.imageAsync(file, { maxEdge: 4096, panoEdge: 4096, quality: 0.86 }).then(function (pano) { return { large: large, thumb: thumb, pano: pano }; });
+    return IN.imageAsync(file, { maxEdge: 1600, panoEdge: 4096, quality: 0.86 }).then(function (first) {
+      if (!first.isPano) return shrink(first, 480, 0.75).then(function (thumb) { return { large: first, thumb: thumb, pano: null, pano2048: null }; });
+      return shrink(first, 1600, 0.82).then(function (large) {
+        return shrink(large, 480, 0.75).then(function (thumb) {
+          return shrink(first, 2048, 0.86).then(function (p2k) { return { large: large, thumb: thumb, pano: first, pano2048: p2k }; });
+        });
+      });
+    });
+  }
+  function shrink(r, maxEdge, quality) {
+    return loadImage(dataUrlToBlob(r.src)).then(function (img) {
+      var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, scale = Math.min(1, maxEdge / Math.max(w, h));
+      var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w * scale)); c.height = Math.max(1, Math.round(h * scale));
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      if (img.close) img.close();
+      return new Promise(function (resolve) {
+        function done(src) { var o = {}; Object.keys(r).forEach(function (k) { o[k] = r[k]; }); o.src = src; o.outW = c.width; o.outH = c.height; resolve(o); }
+        if (c.toBlob) c.toBlob(function (b) { if (!b) { done(c.toDataURL("image/jpeg", quality)); return; } var fr = new FileReader(); fr.onload = function () { done(fr.result); }; fr.onerror = function () { done(c.toDataURL("image/jpeg", quality)); }; fr.readAsDataURL(b); }, "image/jpeg", quality);
+        else done(c.toDataURL("image/jpeg", quality));
       });
     });
   }
@@ -1065,6 +1123,7 @@
     fd.append("large", dataUrlToBlob(r.large.src), "large.jpg");
     fd.append("thumb", dataUrlToBlob(r.thumb.src), "thumb.jpg");
     if (r.pano) fd.append("pano", dataUrlToBlob(r.pano.src), "pano.jpg");
+    if (r.pano2048) fd.append("pano2048", dataUrlToBlob(r.pano2048.src), "pano2048.jpg");
     return fd;
   }
   function uploadRow(name) {
@@ -1079,9 +1138,17 @@
       fail: function (msg) { el.classList.add("is-error"); s.textContent = msg; $(".st-progress", el).hidden = true; el.insertAdjacentHTML("beforeend", '<button type="button" class="st-btn st-btn--sm" data-dismiss style="grid-column:1/-1;justify-self:start">Dismiss</button>'); }
     };
   }
-  function addFiles(files) { var E = ed; if (!E) return; Array.prototype.slice.call(files || []).forEach(function (f) { uploadOne(E, f); }); }
-  function uploadOne(E, file) {
-    var row = uploadRow(file.name);
+  /* one file at a time: a phone cannot hold twenty decoded 360s at once (F165) */
+  var uploadChain = Promise.resolve();
+  function addFiles(files) {
+    var E = ed; if (!E) return;
+    Array.prototype.slice.call(files || []).forEach(function (f) {
+      var row = uploadRow(f.name);
+      uploadChain = uploadChain.then(function () { return uploadOne(E, f, row); }).catch(function () { /* reported on the row */ });
+    });
+  }
+  function uploadOne(E, file, row) {
+    row = row || uploadRow(file.name);
     if (file.size > MAX_BYTES) { row.fail("Over 60 MB — trim the video or export a smaller file, then try again."); return; }
     if (isHeic(file)) { row.fail(HEIC_MSG); return; }
     var kind = fileKind(file);
@@ -1097,11 +1164,12 @@
       row.status("Uploading…");
       p = API.media.stream(file, { listingId: E.id, kind: kind, role: kind === "pdf" ? "floorplan" : "gallery", filename: file.name }, row.progress);
     }
-    p.then(function (m) {
+    return p.then(function (m) {
       row.done();
       if (ed !== E) return;
       E.doc.media = (E.doc.media || []).concat([m]); E.base.media = clone(E.doc.media);
-      if (!E.doc.coverMediaId && isPhoto(m)) { E.doc.coverMediaId = m.id; edMark("coverMediaId"); edSave(E); }
+      if (m.listingUpdatedAt && E.base) E.base.updatedAt = m.listingUpdatedAt;
+      if (!E.doc.coverMediaId && isPhoto(m) && m.kind !== "pano" && m.role !== "tour" && m.role !== "logo") { E.doc.coverMediaId = m.id; edMark("coverMediaId"); edSave(E); }
       renderMediaGrid();
     }).catch(function (err) { row.fail(err && err.message || "Upload failed"); });
   }
@@ -1298,7 +1366,8 @@
   SCREENS.team = function () {
     setTop({ title: "Team" });
     view.innerHTML = loading();
-    API.team.list().then(renderTeam).catch(showError);
+    var token = routeToken;
+    API.team.list().then(function (res) { if (token === routeToken) renderTeam(res); }).catch(function (err) { if (token === routeToken) showError(err); });
   };
   function personHtml(u, owner) {
     var me = state.user && state.user.id === u.id;
@@ -1461,22 +1530,43 @@
   $("#btnSearch").addEventListener("click", openCmdk);
 
   /* ── 360 Tour tab ────────────────────────────────────────────────── */
-  var tourTimer = null;
+  /* The billy360 Studio runs in an iframe that is created once per editor
+     session and only hidden on tab switches (F67). It talks to us with
+     postMessage (source:'billy360', same origin): ready / state / room /
+     height / flushed / flush-failed / published / signin; we send flush /
+     status / media. The strip is repainted from GET /tours/:id every 20 s. */
+  var tourTimer = null, tourFlushWait = null, tourQrLoad = null, reLoginOpen = false;
+  var PHONE_MQ = window.matchMedia ? window.matchMedia("(max-width:719.98px)") : null;
+  function phoneLayout() { return !!(PHONE_MQ && PHONE_MQ.matches); }
   function tourUrl(id, office) { return location.origin + "/billy360/?site=" + encodeURIComponent(id) + (office ? "&office=1#/studio/rooms" : ""); }
-  function embedCode(id) { return '<div data-billy360="' + id + '" data-height="16:9"></div>\n<script src="' + location.origin + '/billy360/embed.js" defer><' + '/script>'; }
+  /* links come from the server (G26): the canonical /tour/<id> once the domain has moved */
+  function tourLink(t) { return (t && typeof t.publicUrl === "string" && /^https?:\/\//i.test(t.publicUrl)) ? t.publicUrl : tourUrl(ed.id, false); }
+  function embedCode(id, t) {
+    var origin = (t && typeof t.embedOrigin === "string" && /^https?:\/\//i.test(t.embedOrigin)) ? t.embedOrigin.replace(/\/+$/, "") : location.origin;
+    return '<div data-billy360="' + id + '" data-height="16:9"></div>\n<script src="' + origin + '/billy360/embed.js" defer><' + '/script>';
+  }
+  function hostOf(u) { try { return new URL(u).hostname; } catch (e) { return ""; } }
+  function tourStale(t) { return t.status === "live" && t.liveVersion != null && Number(t.version) > Number(t.liveVersion); }
+  function tourBusy() { var S = ed && ed.tourState; return !!(S && (S.dirty || S.saving)); }
   function stopTourPoll() { if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } }
   function startTourPoll() {
     stopTourPoll();
     var E = ed;
-    tourTimer = setInterval(function () { if (ed !== E || E.tab !== "tour") { stopTourPoll(); return; } loadTour(E, true); }, 20000);
+    tourTimer = setInterval(function () {
+      if (ed !== E || E.tab !== "tour") { stopTourPoll(); return; }
+      if (E.tourState && E.tourState.saving) return;          /* never poll over a save; the strip catches up on the next tick */
+      loadTour(E, true);
+    }, 20000);
   }
   function loadTour(E, quiet) {
     return API.tours.get(E.id).then(function (t) {
       if (ed !== E) return;
-      E.tour = { data: t, canCreate: false }; paintTour(quiet);
+      E.tour = { data: t, canCreate: false }; paintTour(quiet); postTourStatus(E);
     }, function (err) {
       if (ed !== E) return;
       if (err.status === 404) { E.tour = { data: null, canCreate: !!(err.body && err.body.canCreate) }; paintTour(quiet); }
+      else if (err.status === 401) { /* the sign-in modal takes over (F167); the iframe and the strip stay put */ }
+      else if (err.status === 503 || err.status === 410) { E.tour = { data: null, canCreate: false, err: err }; paintTour(quiet); }
       else if (!quiet) { var p = $("#edPanel"); if (p) p.innerHTML = errorHtml(err); }
     });
   }
@@ -1485,65 +1575,268 @@
     loadTour(ed, !!ed.tour);
     startTourPoll();
   }
+  var LOCK_TITLE = "Publish first — the link shows nothing until the tour is live";
   function tourStripHtml(t) {
-    var live = t.status === "live", h = t.health;
+    var live = t.status === "live", stale = tourStale(t), h = t.health, gate = t.gate == null ? 70 : Number(t.gate), phone = phoneLayout();
+    var link = tourLink(t), demoHost = /(^|\.)billydigitals\.com$/i.test(hostOf(link));
+    var ring = h == null ? " is-empty" : h >= gate ? " is-good" : h >= gate - 30 ? " is-mid" : " is-low";
+    var lock = live ? "" : ' disabled title="' + LOCK_TITLE + '"';
     return '<div class="st-tourbar" id="tourStrip">' +
-      '<div class="st-ring' + (h == null ? " is-empty" : h >= 70 ? " is-good" : h >= 40 ? " is-mid" : " is-low") + '" style="--p:' + (h == null ? 0 : Number(h)) + '" role="img" aria-label="Quality score ' + (h == null ? "not measured yet" : h + " out of 100") + '"><b>' + (h == null ? "—" : esc(h)) + "</b></div>" +
-      '<div class="st-tourbar-meta"><b>' + plural(t.roomCount || 0, "room") + "</b><small>" + (h == null ? "The quality score appears after the first save in the studio." : "Quality score · it needs 70 to go live.") + "</small></div>" +
+      '<div class="st-ring' + ring + '" style="--p:' + (h == null ? 0 : Number(h)) + '" role="img" aria-label="Quality score ' + (h == null ? "not measured yet" : h + " out of 100") + '"><b>' + (h == null ? "—" : esc(h)) + "</b></div>" +
+      '<div class="st-tourbar-meta"><b>' + plural(t.roomCount || 0, "room") + "</b><small>" + (h == null ? "The quality score appears after the first save in the studio." : "Quality score · it needs " + esc(gate) + " to go live.") + '</small><span class="st-tourbar-sync" id="tourSync" role="status"></span></div>' +
       statusPill(live ? "live" : "draft") + (live && t.liveAt ? '<span class="st-hint">live since ' + esc(fmtDate(t.liveAt)) + "</span>" : "") +
+      (stale ? '<span class="st-tournote st-tournote--warn" data-tournote="stale">Changes not live — Publish latest changes</span>' : "") +
+      (live && t.listingLive === false ? '<span class="st-tournote st-tournote--warn" data-tournote="listing">Published, but the listing is not live yet, so nobody can see it until the listing goes live.</span>' : "") +
       '<div class="st-actions st-tourbar-actions">' +
-      '<a class="st-btn st-btn--sm" href="' + esc(tourUrl(ed.id, true)) + '" target="_blank" rel="noopener">' + I.expand + "Open full screen</a>" +
-      '<button type="button" class="st-btn st-btn--sm" data-tact="copy-link">' + I.link + "Copy tour link for 10ninety</button>" +
-      '<button type="button" class="st-btn st-btn--sm" data-tact="copy-embed">' + I.copy + "Copy embed code</button>" +
-      (live ? '<button type="button" class="st-btn st-btn--sm" data-tact="unpublish">Take it off the listing</button>' : '<button type="button" class="st-btn st-btn--sm st-btn--fill" data-tact="publish">' + I.eye + "Publish tour</button>") +
-      "</div></div>";
+      (phone ? '<a class="st-btn st-btn--sm st-btn--fill" href="' + esc(tourUrl(ed.id, true)) + '" data-tact="open-studio">' + I.expand + "Open the tour Studio</a>" :
+        '<button type="button" class="st-btn st-btn--sm" data-tact="fullscreen">' + I.expand + "Open full screen</button>") +
+      '<button type="button" class="st-btn st-btn--sm" data-tact="copy-link"' + lock + ">" + I.link + "Copy tour link for 10ninety</button>" +
+      '<button type="button" class="st-btn st-btn--sm" data-tact="copy-embed"' + lock + ">" + I.copy + "Copy embed code</button>" +
+      (live && !stale ? "" : '<button type="button" class="st-btn st-btn--sm st-btn--fill" data-tact="publish">' + I.eye + (live ? "Publish latest changes" : "Publish tour") + "</button>") +
+      (live ? '<button type="button" class="st-btn st-btn--sm" data-tact="unpublish">Take it off the listing</button>' : "") +
+      '<button type="button" class="st-btn st-btn--sm st-btn--danger" data-tact="restart">Start again</button>' +
+      "</div>" +
+      (phone ? '<p class="st-hint st-tourbar-note">The tour Studio opens in this tab — use Back to return here. Captures save on their own.</p>' : "") +
+      (!live ? '<p class="st-hint st-tourbar-note">Publish first — the link, embed code and QR code show nothing until the tour is live.</p>' : "") +
+      (live && demoHost ? '<p class="st-hint st-tourbar-note" data-tournote="domain">Links point at billydigitals.com until the domain moves — re-paste into 10ninety after go-live.</p>' : "") +
+      "</div>";
+  }
+  function qrCardHtml(t) {
+    var live = t.status === "live";
+    return '<section class="st-card st-qrcard" id="tourQrCard"><div class="st-card-head"><div><h2>Phone preview and print</h2><p>' +
+      (live ? "Scan it with a phone to check the tour, or download it for the window card and brochures." : "Publish first — the QR code points at the tour link, which shows nothing until the tour is live.") + "</p></div></div>" +
+      '<div class="st-qr' + (live ? "" : " is-off") + '"><div class="st-qr-box" id="tourQr" role="img" aria-label="QR code for the tour link"></div>' +
+      '<div class="st-qr-side"><code class="st-qr-link">' + esc(tourLink(t)) + '</code><div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-tact="qr-download"' + (live ? "" : ' disabled title="' + LOCK_TITLE + '"') + ">" + I.down + "Download QR (PNG)</button></div></div></div></section>";
+  }
+  function tourTopHtml(t) {
+    var probs = ed.tourProblems || [];
+    return '<div id="tourTop"><section class="st-card st-tourcard">' + tourStripHtml(t) + '<ul class="st-problems" id="tourProblems"' + (probs.length ? "" : " hidden") + ">" + probs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></section>" + qrCardHtml(t) + "</div>";
+  }
+  function readinessHtml(err) {
+    if (err.status === 410) return '<div class="st-empty"><h3>This listing is in the Bin</h3><p>Restore it to keep editing the tour.</p></div>';
+    return '<div class="st-empty" id="tourReadiness"><h3>Tours need the database</h3><p>The Studio is not connected to D1 and R2 on this deployment yet — see the runbook in docs/megacity-studio.md. Nothing else in the Studio is affected.</p></div>';
   }
   function paintTour(quiet) {
     var panel = $("#edPanel"); if (!panel || !ed || ed.tab !== "tour") return;
-    var T = ed.tour;
+    var T = ed.tour, host = $("#edTour");
     if (!T) { panel.innerHTML = loading(); return; }
     if (!T.data) {
-      panel.innerHTML = T.canCreate ?
+      if (host) host.hidden = true;
+      panel.innerHTML = T.err ? readinessHtml(T.err) : T.canCreate ?
         '<section class="st-card"><div class="st-card-head"><div><h2>No tour yet</h2><p>Build it from this listing: a room for each space in The home tab — hallway, living spaces, kitchen, bedrooms, bathrooms, garden and driveway — with the doors already linked. Then capture each room’s 360° in the studio.</p></div></div><div class="st-actions"><button type="button" class="st-btn st-btn--fill st-btn--lg" data-tact="create">' + I.plus + "Build the tour from this listing</button></div></section>" :
         '<div class="st-empty"><h3>No tour for this listing</h3><p>It cannot be created from here.</p></div>';
       return;
     }
-    var strip = $("#tourStrip", panel);
-    if (quiet && strip && $(".st-tour-frame", panel)) { strip.outerHTML = tourStripHtml(T.data); return; }
-    panel.innerHTML = '<section class="st-card st-tourcard">' + tourStripHtml(T.data) + '<ul class="st-problems" id="tourProblems" hidden></ul></section>' +
-      '<iframe class="st-tour-frame" src="' + esc(tourUrl(ed.id, true)) + '" title="360° tour studio for ' + esc(ed.doc.title || ed.id) + '" allow="fullscreen; accelerometer; gyroscope" allowfullscreen loading="lazy"></iframe>' +
-      '<p class="st-note">Changes made in the studio save on their own. This page checks every 20 seconds so the score and status stay current.</p>';
+    var top = $("#tourTop", panel);
+    if (quiet && top) top.outerHTML = tourTopHtml(T.data);
+    else panel.innerHTML = tourTopHtml(T.data);
+    paintTourSync(ed); paintQr(T.data);
+    if (phoneLayout()) { if (host) host.hidden = true; return; }   /* F69: no inlined editor on a phone */
+    mountTourFrame(host);
+  }
+  function mountTourFrame(host) {
+    var E = ed; if (!host) return;
+    if (!E.frame || !document.contains(E.frame)) {
+      var f = document.createElement("iframe");
+      f.className = "st-tour-frame"; f.src = tourUrl(E.id, true); f.title = "360° tour studio for " + (E.doc.title || E.id);
+      f.setAttribute("allow", "fullscreen; accelerometer; gyroscope; web-share; clipboard-write"); f.setAttribute("allowfullscreen", "");
+      f.setAttribute("data-session", Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
+      E.frame = f; E.tourState = { ready: false, dirty: false, saving: false, status: "idle" };
+      host.innerHTML = ""; host.appendChild(f);
+      host.insertAdjacentHTML("beforeend", '<p class="st-note">Changes made in the studio save on their own. This page checks every 20 seconds so the score and status stay current.</p>');
+    }
+    host.hidden = false;
+  }
+  if (PHONE_MQ && PHONE_MQ.addEventListener) PHONE_MQ.addEventListener("change", function () { if (ed && ed.tab === "tour" && ed.tour && ed.tour.data) paintTour(false); });
+  function paintTourSync(E) {
+    var el = $("#tourSync"), S = E && E.tourState; if (!el) return;
+    var txt = !S ? "" : S.saving ? "Saving…" : S.dirty ? "Not saved yet" : S.status === "error" || S.status === "conflict" ? "Not saved" : "";
+    el.textContent = txt; el.className = "st-tourbar-sync" + (S && S.saving ? " is-saving" : txt ? " is-dirty" : "");
+  }
+  /* parent → iframe */
+  function postTour(E, msg) {
+    if (!E || !E.frame || !E.frame.contentWindow) return;
+    var m = { source: "billy360" }; Object.keys(msg).forEach(function (k) { m[k] = msg[k]; });
+    try { E.frame.contentWindow.postMessage(m, location.origin); } catch (e) { /* frame mid-navigation */ }
+  }
+  function postTourStatus(E) {
+    var t = E && E.tour && E.tour.data; if (!t) return;
+    postTour(E, { type: "billy360:status", status: t.status, health: t.health == null ? null : t.health, version: t.version, liveVersion: t.liveVersion == null ? null : t.liveVersion, gate: t.gate == null ? null : t.gate });
+  }
+  /* 360s uploaded in the Media tab are offered to the tour's rooms (F161 F56) */
+  function tourMediaItems(E) {
+    return ((E && E.doc && E.doc.media) || []).filter(function (m) { return (m.kind === "pano" || m.isPano) && typeof m.pano === "string" && m.pano; })
+      .map(function (m) { return { id: m.id, pano: m.pano, pano2048: m.pano2048 || null, thumb: m.thumb || m.url || null, roomLabel: m.roomLabel || "" }; });
+  }
+  function postTourMedia(E) { if (E && E.frame) postTour(E, { type: "billy360:media", items: tourMediaItems(E) }); }
+  window.addEventListener("message", function (e) {
+    var d = e.data; if (!d || d.source !== "billy360" || e.origin !== location.origin) return;
+    var E = ed; if (!E || !E.frame || e.source !== E.frame.contentWindow) return;
+    var S = E.tourState || (E.tourState = { ready: false, dirty: false, saving: false, status: "idle" });
+    if (d.type === "billy360:ready") { S.ready = true; postTourStatus(E); postTourMedia(E); }
+    else if (d.type === "billy360:state") { S.dirty = !!d.dirty; S.saving = !!d.saving; if (typeof d.status === "string") S.status = d.status; paintTourSync(E); }
+    else if (d.type === "billy360:flushed") { if (tourFlushWait) tourFlushWait.ok(d.version); }
+    else if (d.type === "billy360:flush-failed") { if (tourFlushWait) tourFlushWait.fail(d.reason); }
+    else if (d.type === "billy360:published") { if (ed === E) loadTour(E, true); }
+    else if (d.type === "billy360:signin") { reLogin(E); }
+    /* billy360:room / billy360:height: the frame has a fixed size here, nothing to do */
+  });
+  function tourFlush(E) {
+    return new Promise(function (resolve, reject) {
+      var timer = setTimeout(function () { tourFlushWait = null; var e = new Error("Still saving — try again in a moment"); e.timeout = true; reject(e); }, 5000);
+      tourFlushWait = {
+        ok: function (v) { clearTimeout(timer); tourFlushWait = null; resolve(v); },
+        fail: function (reason) { clearTimeout(timer); tourFlushWait = null; reject(new Error(reason || "The tour could not be saved — fix that first, then publish")); }
+      };
+      postTour(E, { type: "billy360:flush" });
+    });
+  }
+  /* the strip's Publish drains the iframe's save queue first, so the copy D1 publishes is the one on screen (G2 G3) */
+  function tourPublish(E, btn) {
+    btn.disabled = true;
+    var S = E.tourState, pre = (E.frame && S && S.ready) ? tourFlush(E) : Promise.resolve();
+    pre.then(function () {
+      if (ed !== E) return;
+      return API.tours.publish(E.id, {}).then(function (res) {
+        if (ed !== E) return;
+        if (res.ok) {
+          E.tourProblems = null;
+          if (res.listingLive === false) toast(res.note || "Published, but the listing is not live yet, so nobody can see it until the listing goes live.", { kind: "warn", ttl: 9000 });
+          else toast("Tour published — the listing page picks it up within a minute", { kind: "good", ttl: 7000 });
+          state.listIndex = null;
+          return loadTour(E, true);
+        }
+        E.tourProblems = res.problems || ["The tour could not be published."];
+        paintTour(true); postTourStatus(E);
+      });
+    }, function (err) {
+      if (ed !== E) return;
+      btn.disabled = false;
+      toast(err && err.message || "Still saving — try again in a moment", { kind: "warn" });
+    }).catch(function (err) { errToast(err); btn.disabled = false; });
+  }
+  /* QR: /billy360/qr.js is loaded once, on demand */
+  function loadQr() {
+    if (window.BILLY360QR) return Promise.resolve(window.BILLY360QR);
+    if (!tourQrLoad) tourQrLoad = new Promise(function (resolve, reject) {
+      var sc = document.createElement("script"); sc.src = "/billy360/qr.js";
+      sc.onload = function () { if (window.BILLY360QR) resolve(window.BILLY360QR); else reject(new Error("qr")); };
+      sc.onerror = function () { tourQrLoad = null; reject(new Error("qr")); };
+      document.head.appendChild(sc);
+    });
+    return tourQrLoad;
+  }
+  function paintQr(t) {
+    var E = ed, link = tourLink(t);
+    loadQr().then(function (Q) {
+      var box = $("#tourQr"); if (ed !== E || !box) return;
+      var c = Q.canvas(link, 4, 4); if (!c) return;
+      c.setAttribute("aria-hidden", "true"); box.innerHTML = ""; box.appendChild(c);
+    }).catch(function () { var box = $("#tourQr"); if (box) box.innerHTML = '<span class="st-hint">QR unavailable</span>'; });
+  }
+  /* print-size PNG: the QR at 1000 px or more, the listing title above, the wordmark and link below */
+  function qrPng(Q, t) {
+    var link = tourLink(t), M = Q.matrix(link); if (!M) return null;
+    var scale = Math.ceil(1000 / (M.length + 8)), qr = Q.canvas(link, scale, 4);
+    var pad = 96, W = Math.max(1024, qr.width + pad * 2), H = qr.height + pad * 2 + 300;
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d");
+    x.fillStyle = "#FFFFFF"; x.fillRect(0, 0, W, H);
+    x.fillStyle = "#0C1E3A"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.font = "600 54px Inter, system-ui, sans-serif";
+    var title = String(ed.doc.title || ed.id).slice(0, 60);
+    while (x.measureText(title).width > W - pad * 2 && title.length > 8) title = title.slice(0, -4) + "…";
+    x.fillText(title, W / 2, pad + 40);
+    x.drawImage(qr, (W - qr.width) / 2, pad + 110);
+    x.font = "700 46px Inter, system-ui, sans-serif";
+    x.fillText("M E G A C I T Y   P R O P E R T I E S", W / 2, H - pad - 78);
+    x.fillStyle = "#4B5563"; x.font = "400 30px Inter, system-ui, sans-serif";
+    x.fillText("Scan for the 360° tour · " + link.replace(/^https?:\/\//, ""), W / 2, H - pad - 14);
+    return c;
+  }
+  function downloadQr(E) {
+    var t = E.tour && E.tour.data; if (!t) return;
+    loadQr().then(function (Q) {
+      var c = qrPng(Q, t); if (!c) throw new Error("The link is too long for a QR code");
+      var a = document.createElement("a"); a.href = c.toDataURL("image/png"); a.download = "megacity-360-" + E.id + "-qr.png";
+      document.body.appendChild(a); a.click(); a.remove();
+      toast("QR downloaded — " + c.width + " × " + c.height + " px, ready to print", { kind: "good" });
+    }).catch(function (err) { toast(err && err.message || "Could not build the QR code", { kind: "bad" }); });
+  }
+  /* the Studio login ended mid-edit: sign in over the top, keep the iframe, then let it retry (F167) */
+  function reLogin(E) {
+    if (reLoginOpen) return;
+    reLoginOpen = true;
+    var email = (state.user && state.user.email) || "";
+    var m = openModal('<h2 id="modalTitle">Your Studio session has ended</h2><div class="st-modal-body"><p>Sign in again to carry on. The 360 Studio below keeps your unsaved work and sends it once you are back in.</p><form novalidate id="reLoginForm">' +
+      fieldHtml({ label: "Email address", name: "email", type: "email", auto: "username", required: true, inputmode: "email", value: email }) +
+      fieldHtml({ label: "Password", name: "password", type: "password", auto: "current-password", required: true }) +
+      '<p class="st-err" data-form-err hidden></p><div class="st-modal-foot"><button type="button" class="st-btn" data-modal="cancel">Not now</button><button type="submit" class="st-btn st-btn--fill">Sign in</button></div></form></div>');
+    modalResolve = function () { reLoginOpen = false; };
+    var pw = $('#reLoginForm input[name="password"]', m); if (pw && email) pw.focus();
+    bindForm($("#reLoginForm", m), function (d) {
+      if (!d.email || !d.password) throw new Error("Enter your email address and password");
+      return API.auth.login(d.email.trim(), d.password).then(function (res) {
+        state.user = res.user; closeModal(true); renderNav(); ensureNotifPoll();
+        toast("Signed in — carrying on", { kind: "good" });
+        if (ed === E) { postTour(E, { type: "billy360:flush" }); loadTour(E, true); if (E.tab === "tour") startTourPoll(); }
+      });
+    });
   }
   function tourAction(act, btn) {
     var E = ed; if (!E) return;
+    var t = E.tour && E.tour.data;
     if (act === "create") {
       btn.disabled = true;
-      API.tours.create(E.id, {}).then(function (t) {
+      API.tours.create(E.id, {}).then(function (nt) {
         if (ed !== E) return;
-        E.tour = { data: t, canCreate: false };
-        toast("Tour built with " + plural(t.roomCount || ((t.tour && t.tour.rooms) || []).length, "room"), { kind: "good" });
+        E.tour = { data: nt, canCreate: false }; E.tourProblems = null;
+        toast("Tour built with " + plural(nt.roomCount || ((nt.tour && nt.tour.rooms) || []).length, "room"), { kind: "good" });
         paintTour(false); startTourPoll(); state.listIndex = null;
       }).catch(function (err) { errToast(err); btn.disabled = false; });
       return;
     }
-    if (act === "copy-link") { copyText(tourUrl(E.id, false)).then(function () { toast("Tour link copied — paste it into 10ninety's virtual tour box", { kind: "good" }); }, function () { toast("Copy failed — the link is " + tourUrl(E.id, false), { kind: "warn", ttl: 12000 }); }); return; }
-    if (act === "copy-embed") { copyText(embedCode(E.id)).then(function () { toast("Embed code copied", { kind: "good" }); }, function () { toast("Copy failed — open full screen and use Share there", { kind: "warn" }); }); return; }
-    if (act === "publish") {
-      btn.disabled = true;
-      API.tours.publish(E.id, {}).then(function (res) {
-        if (ed !== E) return;
-        var pl = $("#tourProblems");
-        if (res.ok) { if (pl) pl.hidden = true; toast("The tour is live on the listing", { kind: "good" }); state.listIndex = null; return loadTour(E, true); }
-        if (pl) { pl.hidden = false; pl.innerHTML = (res.problems || []).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join(""); }
-        btn.disabled = false;
-      }).catch(function (err) { errToast(err); btn.disabled = false; });
+    if (act === "open-studio") return;                              /* a plain link: same tab, F69 */
+    if (act === "fullscreen") {
+      var f = E.frame;
+      if (f && document.contains(f) && f.requestFullscreen) f.requestFullscreen().catch(function () { toast("Full screen was blocked by the browser", { kind: "warn" }); });
+      else if (f && f.webkitRequestFullscreen) f.webkitRequestFullscreen();
+      else toast("Full screen is not available in this browser", { kind: "warn" });
       return;
     }
+    if (!t) return;
+    var live = t.status === "live";
+    if (act === "copy-link") {
+      if (!live) { toast(LOCK_TITLE, { kind: "warn" }); return; }
+      copyText(tourLink(t)).then(function () { toast("Tour link copied — paste it into 10ninety's virtual tour box", { kind: "good" }); }, function () { toast("Copy failed — the link is " + tourLink(t), { kind: "warn", ttl: 12000 }); });
+      return;
+    }
+    if (act === "copy-embed") {
+      if (!live) { toast(LOCK_TITLE, { kind: "warn" }); return; }
+      copyText(embedCode(E.id, t)).then(function () { toast("Embed code copied", { kind: "good" }); }, function () { toast("Copy failed — open full screen and use Share there", { kind: "warn" }); });
+      return;
+    }
+    if (act === "qr-download") { if (!live) { toast(LOCK_TITLE, { kind: "warn" }); return; } downloadQr(E); return; }
+    if (act === "publish") { tourPublish(E, btn); return; }
     if (act === "unpublish") {
       confirmModal({ title: "Take the tour off the listing?", body: "Visitors stop seeing it straight away. The draft stays in the studio and you can publish again any time.", confirm: "Take it off" }).then(function (ok) {
         if (!ok || ed !== E) return;
         return API.tours.unpublish(E.id).then(function () { toast("Tour taken off the listing"); state.listIndex = null; return loadTour(E, true); });
       }).catch(errToast);
+      return;
+    }
+    if (act === "restart") {
+      confirmModal({ title: "Start the tour again?", body: "Every room, door and capture in the current tour is deleted and a fresh skeleton is built from this listing. 360s uploaded in the Media tab are kept and offered again.", confirm: "Start again", danger: true }).then(function (ok) {
+        if (!ok || ed !== E) return;
+        btn.disabled = true;
+        var host = $("#edTour"); if (E.frame && E.frame.parentNode) E.frame.parentNode.removeChild(E.frame); E.frame = null; E.tourState = null; if (host) { host.innerHTML = ""; host.hidden = true; }
+        return API.tours.remove(E.id).then(function () { return API.tours.create(E.id, {}); }).then(function (nt) {
+          if (ed !== E) return;
+          E.tour = { data: nt, canCreate: false }; E.tourProblems = null; state.listIndex = null;
+          toast("Fresh tour built with " + plural(nt.roomCount || ((nt.tour && nt.tour.rooms) || []).length, "room"), { kind: "good" });
+          paintTour(false); startTourPoll();
+        });
+      }).catch(function (err) { errToast(err); if (ed === E) loadTour(E, false); });
     }
   }
 
@@ -2136,8 +2429,9 @@
   SCREENS.integrations = function () {
     setTop({ title: "Integrations" });
     view.innerHTML = loading();
-    var owner = state.user && state.user.role === "owner";
+    var owner = state.user && state.user.role === "owner", token = routeToken;
     Promise.all([API.settings.get(), aiOn() ? API.ai.usage().catch(function () { return null; }) : Promise.resolve(null)]).then(function (r) {
+      if (token !== routeToken) return;
       var s = r[0].settings || {}, usage = r[1], ro = owner ? "" : " readonly";
       var lockNote = owner ? "" : '<p class="st-lock">' + I.key + "Only the owner can change the IDs above. The banner wording is yours to edit.</p>";
       view.innerHTML = '<div class="st-stack" style="max-width:860px">' +
@@ -2210,6 +2504,7 @@
   });
   document.addEventListener("studio:signedout", function () {
     if (!state.user) return;
+    if (ed && ed.frame && document.contains(ed.frame)) { stopNotifPoll(); stopTourPoll(); reLogin(ed); return; }
     state.user = null; state.listIndex = null; ed = null; stopNotifPoll(); stopTourPoll();
     state.intended = location.hash && location.hash !== "#/login" ? location.hash : null;
     toast("Your session has ended — sign in again to carry on", { kind: "warn" });

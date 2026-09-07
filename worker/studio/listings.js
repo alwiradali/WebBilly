@@ -5,7 +5,7 @@
 
 import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, toBool, parseJson, slugify, audit, safeHref } from "./db.js";
 import { valid } from "./options.js";
-import { listForListing, deleteAllForListing, mediaUrl } from "./media.js";
+import { listForListing, deleteAllForListing, mediaUrl, isPhoto, PHOTO_SQL } from "./media.js";
 
 /* camelCase → column, with the coercion to apply. */
 const FIELDS = {
@@ -169,7 +169,7 @@ export async function list(c) {
     `SELECT l.*, t.status AS tour_status, t.health_score AS tour_health,
             (SELECT COUNT(*) FROM media m WHERE m.listing_id=l.id) AS media_count,
             (SELECT key_thumb FROM media m WHERE m.id=l.cover_media_id) AS cover_thumb,
-            (SELECT key_thumb FROM media m WHERE m.listing_id=l.id AND m.kind IN ('photo','pano') ORDER BY m.sort LIMIT 1) AS first_thumb
+            (SELECT key_thumb FROM media m WHERE m.listing_id=l.id AND ${PHOTO_SQL} ORDER BY m.sort LIMIT 1) AS first_thumb
        FROM listings l LEFT JOIN tours t ON t.listing_id=l.id
       WHERE ${where.join(" AND ")} ORDER BY ${sort} LIMIT 500`
   ).bind(...binds).all();
@@ -274,7 +274,8 @@ export async function problemsFor(db, l) {
   if (!(l.rentPcm > 0)) problems.push("Enter the monthly rent.");
   if (!l.address || !l.address.area) problems.push("Choose the area.");
   if (l.letType !== "room" && !(l.bedrooms >= 0 && l.bedrooms != null)) problems.push("Enter the number of bedrooms.");
-  const photos = (l.media || []).filter((m) => m.kind === "photo" || m.kind === "pano");
+  /* a 360° capture, the logo or a floor plan is not a listing photo (F50 F63 F171) */
+  const photos = (l.media || []).filter(isPhoto);
   if (!photos.length) problems.push("Add at least one photo.");
   if (!l.summary && !l.description) problems.push("Write a summary or description.");
   return problems;
@@ -286,7 +287,7 @@ export async function publish(c) {
   const problems = await problemsFor(c.db, l);
   if (problems.length) return json({ ok: false, problems });
   if (!l.coverMediaId) {
-    const first = l.media.find((m) => m.kind === "photo" || m.kind === "pano");
+    const first = l.media.find(isPhoto);
     if (first) await c.db.prepare(`UPDATE listings SET cover_media_id=?1 WHERE id=?2`).bind(first.id, row.id).run();
   }
   const now = nowIso();

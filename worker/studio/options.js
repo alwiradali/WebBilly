@@ -114,6 +114,7 @@ export const OPTIONS = {
     ["cover", "Cover"],
     ["epc", "EPC certificate"],
     ["floorplan", "Floor plan"],
+    ["logo", "Brand logo"],
     ["tour", "360° panorama"],
   ],
   tourRoom: [
