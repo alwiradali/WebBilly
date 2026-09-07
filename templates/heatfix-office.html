@@ -133,6 +133,31 @@
               <div class="hfo-field"><label for="cPost">Postcode</label><input id="cPost" autocapitalize="characters" placeholder="M14 5AB"></div>
               <div class="hfo-field"><label for="iDue">Payment due by <span class="hint">(optional)</span></label><input id="iDue" type="date"></div>
             </div>
+
+            <!-- When the invoice goes to a company he subcontracts for, the
+                 householder's details are not theirs to have. Per invoice,
+                 because it depends who is receiving this one. -->
+            <div class="hfo-field" style="margin-top:4px">
+              <label>What goes on the invoice <span class="hint">(untick to keep it off)</span></label>
+              <div class="hfo-checkrow">
+                <label class="hfo-check"><input type="checkbox" id="iShowName" checked> Customer name</label>
+                <label class="hfo-check"><input type="checkbox" id="iShowAddr" checked> Address</label>
+                <label class="hfo-check"><input type="checkbox" id="iShowPhone"> Phone number</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="hfo-card">
+            <h3>Numbers and payment</h3>
+            <div class="hfo-grid-3">
+              <div class="hfo-field"><label for="iNumber">Invoice number</label>
+                <input id="iNumber" placeholder="HF-1001"></div>
+              <div class="hfo-field"><label for="iJobNo">Job no. <span class="hint">(yours)</span></label>
+                <input id="iJobNo" placeholder="J-204"></div>
+              <div class="hfo-field"><label for="iBank">Pay into</label>
+                <select id="iBank"></select></div>
+            </div>
+            <p class="hfo-sub" id="bankHint" style="margin-top:2px"></p>
           </div>
 
           <div class="hfo-card">
@@ -143,7 +168,7 @@
               <input id="iSummary" placeholder="Boiler service and new thermostat"></div>
 
             <div class="hfo-linehead">
-              <span>Description</span><span>Qty</span><span>Unit price</span><span>Amount</span><span></span>
+              <span>Description</span><span>Type</span><span>Qty</span><span>Unit price</span><span>Amount</span><span></span>
             </div>
             <div class="hfo-lines" id="lines"></div>
             <div class="hfo-btnrow" style="margin-top:12px">
@@ -267,6 +292,17 @@
           <div class="hfo-field"><label for="bSort">Sort code</label><input id="bSort" placeholder="00-00-00"></div>
           <div class="hfo-field"><label for="bAcct">Account number</label><input id="bAcct" placeholder="12345678"></div>
         </div>
+        <p class="hfo-sub">The fallback above is only used if you have no accounts
+          set up below.</p>
+
+        <!-- He invoices from more than one account and picks per invoice. -->
+        <h3 style="margin-top:26px">Bank accounts</h3>
+        <p class="hfo-sub">Whichever one you pick on an invoice is copied onto it,
+          so changing an account here never rewrites an invoice you have already sent.</p>
+        <div id="bankList"></div>
+        <div class="hfo-btnrow" style="margin-top:12px">
+          <button class="btn btn-sm" id="addBank">+ Add an account</button>
+        </div>
         <div class="hfo-field"><label for="bTerms">Payment terms</label><textarea id="bTerms" rows="2"></textarea></div>
         <div class="hfo-grid">
           <div class="hfo-field"><label for="bPrefix">Invoice number starts with</label><input id="bPrefix" placeholder="HF-"></div>
@@ -362,7 +398,7 @@
     tplPreview: null    /* template chosen on this invoice only */
   };
 
-  const blankLine = () => ({ description: "", qty: 1, unit: "" });
+  const blankLine = () => ({ description: "", qty: 1, unit: "", kind: "labour" });
 
   /* --------------------------------------------------------------- gate */
   $("gateForm").addEventListener("submit", async (e) => {
@@ -606,6 +642,10 @@
     host.innerHTML = S.lines.map((l, i) =>
       '<div class="hfo-line" data-i="' + i + '">' +
       '<input class="d" placeholder="What you did or fitted" value="' + esc(l.description) + '">' +
+      '<select class="k" aria-label="Labour or parts">' +
+        '<option value="labour"' + (l.kind !== "parts" ? " selected" : "") + '>Labour</option>' +
+        '<option value="parts"' + (l.kind === "parts" ? " selected" : "") + '>Parts</option>' +
+      '</select>' +
       '<input class="q" inputmode="decimal" value="' + esc(l.qty) + '" aria-label="Quantity">' +
       '<input class="u" inputmode="decimal" placeholder="0.00" value="' + esc(l.unit) + '" aria-label="Unit price">' +
       '<div class="amt">' + money(lineTotal(l)) + "</div>" +
@@ -615,6 +655,7 @@
     host.querySelectorAll(".hfo-line").forEach((row) => {
       const i = Number(row.dataset.i);
       row.querySelector(".d").addEventListener("input", (e) => { S.lines[i].description = e.target.value; refresh(false); });
+      row.querySelector(".k").addEventListener("change", (e) => { S.lines[i].kind = e.target.value; refresh(false); });
       row.querySelector(".q").addEventListener("input", (e) => { S.lines[i].qty = e.target.value; amounts(); refresh(false); });
       row.querySelector(".u").addEventListener("input", (e) => { S.lines[i].unit = e.target.value; amounts(); refresh(false); });
       row.querySelector(".kill").addEventListener("click", () => {
@@ -676,16 +717,23 @@
     const c = computed();
     return {
       invoice: {
-        number: S.inv ? S.inv.number : (S.settings.invoice_prefix || "HF-") + (S.settings.next_number || 1001),
+        number: $("iNumber").value.trim() ||
+                (S.inv ? S.inv.number : (S.settings.invoice_prefix || "HF-") + (S.settings.next_number || 1001)),
+        job_no: $("iJobNo").value.trim(),
         status: S.inv ? S.inv.status : "draft",
         created_at: S.inv ? S.inv.created_at : new Date().toISOString(),
         issued_at: S.inv ? S.inv.issued_at : null,
         due_at: $("iDue").value,
-        cust_name: $("cName").value,
-        cust_email: $("cEmail").value,
-        cust_phone: $("cPhone").value,
-        cust_address: $("cAddr").value,
-        cust_postcode: $("cPost").value.toUpperCase(),
+        /* The preview honours the tickboxes, so what he approves is what the
+           customer receives -- the server blanks these too. */
+        cust_name: $("iShowName").checked ? $("cName").value : "",
+        cust_email: "",
+        cust_phone: $("iShowPhone").checked ? $("cPhone").value : "",
+        cust_address: $("iShowAddr").checked ? $("cAddr").value : "",
+        cust_postcode: $("iShowAddr").checked ? $("cPost").value.toUpperCase() : "",
+        show_cust_name: $("iShowName").checked ? 1 : 0,
+        show_cust_address: $("iShowAddr").checked ? 1 : 0,
+        show_cust_phone: $("iShowPhone").checked ? 1 : 0,
         work_summary: $("iSummary").value,
         notes: $("iNotes").value,
         net_pence: c.net, vat_pence: c.vat, gross_pence: c.gross,
@@ -693,7 +741,7 @@
         vat_rate: c.rateBp,
         items: S.lines.map((l) => ({
           description: l.description, qty: Number(l.qty) || 0,
-          unit_pence: pence(l.unit), line_pence: lineTotal(l)
+          unit_pence: pence(l.unit), line_pence: lineTotal(l), kind: l.kind || "labour"
         })).filter((r) => r.description || r.line_pence)
       },
       business: businessFromSettings(),
@@ -708,11 +756,141 @@
       address: s.address, postcode: s.postcode, phone: s.phone, email: s.email,
       website: s.website, vat_number: Number(s.vat_registered) ? s.vat_number : "",
       company_no: s.company_no, gas_safe_no: s.gas_safe_no, logo_data: s.logo_data,
-      bank_name: s.bank_name, bank_account: s.bank_account, bank_sort: s.bank_sort,
+      /* Follow the dropdown so the preview shows the account this invoice will
+         actually be paid into. */
+      ...bankForPreview(),
       payment_terms: s.payment_terms, accent: s.accent, template: s.template,
       review_url: s.review_url
     };
   }
+
+  /* ------------------------------------------------------- bank accounts */
+  async function loadBanks() {
+    const d = await get("banks");
+    S.banks = d.banks || [];
+    fillBankSelect();
+    drawBankList();
+  }
+
+  function drawBankList() {
+    const host = $("bankList");
+    if (!host) return;
+    if (!S.banks.length) {
+      host.innerHTML = '<div class="hfo-empty">No accounts yet. Add the one you want ' +
+        'invoices paid into.</div>';
+      return;
+    }
+    host.innerHTML = S.banks.map((b) =>
+      '<div class="hfo-bank" data-id="' + esc(b.id) + '">' +
+        '<div class="hfo-grid-3">' +
+          '<div class="hfo-field"><label>Name it</label><input data-f="label" value="' + esc(b.label || "") + '"></div>' +
+          '<div class="hfo-field"><label>Pay to</label><input data-f="account_name" value="' + esc(b.account_name || "") + '"></div>' +
+          '<div class="hfo-field"><label>Bank</label><input data-f="bank_name" value="' + esc(b.bank_name || "") + '"></div>' +
+        '</div>' +
+        '<div class="hfo-grid-3">' +
+          '<div class="hfo-field"><label>Sort code</label><input data-f="sort_code" value="' + esc(b.sort_code || "") + '"></div>' +
+          '<div class="hfo-field"><label>Account number</label><input data-f="account_no" value="' + esc(b.account_no || "") + '"></div>' +
+          '<div class="hfo-field" style="align-self:end">' +
+            '<label class="hfo-check"><input type="checkbox" data-f="is_default"' +
+              (Number(b.is_default) ? " checked" : "") + '> Use this one by default</label>' +
+          '</div>' +
+        '</div>' +
+        '<div class="hfo-btnrow">' +
+          '<button class="btn btn-sm btn-primary" data-bank-save>Save this account</button>' +
+          '<button class="btn btn-sm btn-ghost" data-bank-del>Remove</button>' +
+        '</div>' +
+      '</div>').join("");
+
+    host.querySelectorAll("[data-bank-save]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const card = btn.closest("[data-id]");
+        const body = {};
+        card.querySelectorAll("[data-f]").forEach((el) => {
+          body[el.dataset.f] = el.type === "checkbox" ? (el.checked ? 1 : 0) : el.value.trim();
+        });
+        try { await put("banks/" + card.dataset.id, body); await loadBanks(); flash("Account saved."); }
+        catch (e) { flash(e.message, true); }
+      });
+    });
+    host.querySelectorAll("[data-bank-del]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const card = btn.closest("[data-id]");
+        if (!confirm("Remove this account? Invoices already raised keep the details they were given.")) return;
+        try { await del("banks/" + card.dataset.id); await loadBanks(); }
+        catch (e) { flash(e.message, true); }
+      });
+    });
+  }
+
+  if ($("addBank")) {
+    $("addBank").addEventListener("click", async () => {
+      try {
+        await post("banks", { label: "New account", is_default: S.banks.length ? 0 : 1 });
+        await loadBanks();
+      } catch (e) { flash(e.message, true); }
+    });
+  }
+
+
+  function bankForPreview() {
+    const s = S.settings;
+    const b = (S.banks || []).find((x) => x.id === ($("iBank") ? $("iBank").value : ""));
+    if (!b) {
+      return { bank_account_name: s.business_name, bank_name: s.bank_name,
+               bank_account: s.bank_account, bank_sort: s.bank_sort };
+    }
+    return { bank_account_name: b.account_name, bank_name: b.bank_name,
+             bank_account: b.account_no, bank_sort: b.sort_code };
+  }
+
+  function fillBankSelect() {
+    const sel = $("iBank");
+    if (!sel) return;
+    const keep = sel.value;
+    sel.innerHTML = (S.banks || []).map((b) =>
+      '<option value="' + esc(b.id) + '">' + esc(b.label) +
+      (b.account_no ? " — " + esc(String(b.account_no).slice(-4).padStart(8, "•")) : "") +
+      "</option>").join("");
+    if (!S.banks || !S.banks.length) {
+      sel.innerHTML = '<option value="">Set one up in My details</option>';
+    }
+    if (keep && S.banks.some((b) => b.id === keep)) sel.value = keep;
+    showBankHint();
+  }
+
+  function selectDefaultBank() {
+    const d = (S.banks || []).find((b) => Number(b.is_default)) || (S.banks || [])[0];
+    if (d && $("iBank")) $("iBank").value = d.id;
+    showBankHint();
+  }
+
+  function matchBankTo(inv) {
+    /* An invoice carries a COPY of the details, not the account id, so match
+       on the number. If that account has since been deleted or edited, the
+       dropdown falls back rather than silently showing different details than
+       the customer was given. */
+    const hit = (S.banks || []).find((b) => b.account_no && b.account_no === inv.bank_account);
+    if (hit) { $("iBank").value = hit.id; } else { selectDefaultBank(); }
+    showBankHint();
+  }
+
+  function showBankHint() {
+    const el = $("bankHint");
+    if (!el) return;
+    const b = bankForPreview();
+    el.textContent = b.bank_account
+      ? "Pay to " + (b.bank_account_name || "") + " · " + (b.bank_sort || "") + " · " + b.bank_account
+      : "No bank account set up yet — add one under My details.";
+  }
+
+  /* Anything that changes what the document says must redraw it, or he
+     approves a preview that is not the invoice. */
+  ["iNumber", "iJobNo", "iShowName", "iShowAddr", "iShowPhone", "iBank"].forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener(el.type === "checkbox" || el.tagName === "SELECT" ? "change" : "input",
+      () => { if (id === "iBank") showBankHint(); refresh(false); });
+  });
 
   function drawPreview() {
     $("paper").srcdoc = window.HFInvoice.doc(currentData());
@@ -734,8 +912,13 @@
   function newInvoice() {
     S.inv = null;
     S.lines = [blankLine()];
-    ["cName", "cPhone", "cEmail", "cAddr", "cPost", "iDue", "iSummary", "iNotes", "iPaid"]
-      .forEach((id) => { $(id).value = ""; });
+    ["cName", "cPhone", "cEmail", "cAddr", "cPost", "iDue", "iSummary", "iNotes", "iPaid",
+     "iNumber", "iJobNo"].forEach((id) => { $(id).value = ""; });
+    $("iShowName").checked = true;
+    $("iShowAddr").checked = true;
+    $("iShowPhone").checked = false;
+    $("iNumber").placeholder = (S.settings.invoice_prefix || "HF-") + (S.settings.next_number || 1001);
+    selectDefaultBank();
     $("iTpl").value = S.settings.template || "classic";
     $("edTitle").textContent = "New invoice";
     $("edStatus").className = "pill pill-draft";
@@ -753,7 +936,8 @@
     S.lines = (inv.items || []).map((it) => ({
       description: it.description,
       qty: it.qty,
-      unit: (it.unit_pence / 100).toFixed(2)
+      unit: (it.unit_pence / 100).toFixed(2),
+      kind: it.kind === "parts" ? "parts" : "labour"
     }));
     if (!S.lines.length) S.lines = [blankLine()];
     $("cName").value = inv.cust_name || "";
@@ -766,6 +950,12 @@
     $("iNotes").value = inv.notes || "";
     $("iPaid").value = inv.paid_pence ? (inv.paid_pence / 100).toFixed(2) : "";
     $("iTpl").value = inv.template || S.settings.template || "classic";
+    $("iNumber").value = inv.number || "";
+    $("iJobNo").value = inv.job_no || "";
+    $("iShowName").checked = Number(inv.show_cust_name) !== 0;
+    $("iShowAddr").checked = Number(inv.show_cust_address) !== 0;
+    $("iShowPhone").checked = Number(inv.show_cust_phone) === 1;
+    matchBankTo(inv);
     $("edTitle").textContent = "Invoice " + inv.number;
     $("edStatus").className = "pill pill-" + inv.status;
     $("edStatus").textContent = { draft: "Draft", sent: "Sent", paid: "Paid", void: "Void" }[inv.status] || inv.status;
@@ -813,7 +1003,16 @@
       notes: $("iNotes").value,
       paid: $("iPaid").value,
       template: $("iTpl").value,
-      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit }))
+      number: $("iNumber").value.trim(),
+      job_no: $("iJobNo").value.trim(),
+      bank_id: $("iBank").value,
+      /* The customer's details always reach his customer book. The tickboxes
+         decide what is printed and what the public link gives out, not what
+         he is allowed to keep for himself. */
+      show_cust_name: $("iShowName").checked ? 1 : 0,
+      show_cust_address: $("iShowAddr").checked ? 1 : 0,
+      show_cust_phone: $("iShowPhone").checked ? 1 : 0,
+      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, kind: l.kind || "labour" }))
     };
   }
 
@@ -1122,6 +1321,8 @@
     /* The dashboard tile and the nav badge have to be right before he has
        opened the Enquiries tab, or a new lead sits there unseen. */
     try { await loadEnquiries(); } catch (e) { /* an older database has no table yet */ }
+    try { await loadBanks(); } catch (e) { /* ditto for bank accounts */ }
+    selectDefaultBank();
     show("home");
   }
 

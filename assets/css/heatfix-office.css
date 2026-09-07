@@ -277,11 +277,12 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
   display: grid;
   /* minmax(0,1fr), not 1fr: an input's intrinsic width is wide enough to
      push the whole row off a phone screen if the track cannot shrink. */
-  grid-template-columns: minmax(0, 1fr) 74px 108px 96px 40px;
+  /* description | labour-or-parts | qty | unit | amount | remove */
+  grid-template-columns: minmax(0, 1fr) 104px 62px 96px 92px 38px;
   gap: 8px;
   align-items: start;
 }
-.hfo-line input { padding: 10px 11px; min-width: 0; width: 100%; }
+.hfo-line input, .hfo-line select { padding: 10px 11px; min-width: 0; width: 100%; }
 .hfo-line .amt {
   display: flex;
   align-items: center;
@@ -305,7 +306,8 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
 .hfo-line .kill:hover { color: var(--o-red); border-color: #f0c8c2; }
 .hfo-linehead {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 74px 108px 96px 40px;
+  /* description | labour-or-parts | qty | unit | amount | remove */
+  grid-template-columns: minmax(0, 1fr) 104px 62px 96px 92px 38px;
   gap: 8px;
   font-size: 11px;
   letter-spacing: .12em;
@@ -313,9 +315,12 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
   color: var(--o-mut);
   margin-bottom: 8px;
 }
-.hfo-linehead span:nth-child(2),
+/* Type stays left with its dropdown; Qty, Unit and Amount are numbers and
+   line up on the right. Adding the Type column shifted every one of these
+   along by one, so the old 2/3/4 was right-aligning the wrong headings. */
 .hfo-linehead span:nth-child(3),
-.hfo-linehead span:nth-child(4) { text-align: right; }
+.hfo-linehead span:nth-child(4),
+.hfo-linehead span:nth-child(5) { text-align: right; }
 
 .hfo-sums { margin: 18px 0 0 auto; width: min(320px, 100%); }
 .hfo-sumrow { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; font-size: 14.5px; }
@@ -479,8 +484,13 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
   .hfo-main { padding: 16px 14px 80px; }
   .hfo-card { padding: 16px; border-radius: 12px; }
   .hfo-tablewrap { margin: 0 -16px; padding: 0 16px; }
-  .hfo-line { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "d d" "q u" "a k"; }
+  /* On a phone each line becomes its own little card: description across the
+     top, then labour-or-parts beside the quantity, then unit price, then the
+     amount and the remove button. */
+  .hfo-line { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+              grid-template-areas: "d d" "k2 q" "u u" "a k"; }
   .hfo-line .d { grid-area: d; }
+  .hfo-line .k { grid-area: k2; }
   .hfo-line .q { grid-area: q; }
   .hfo-line .u { grid-area: u; }
   .hfo-line .amt { grid-area: a; justify-content: flex-start; padding-left: 2px; }
@@ -525,3 +535,14 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
   .hfo-enq-when{margin-left:0;width:100%}
   .hfo-enq-acts .btn{flex:1 1 auto}
 }
+
+/* ──────────────────────────────────── bank accounts & privacy ──
+   He invoices from more than one account, and some invoices go to a company
+   he subcontracts for rather than to the householder. */
+.hfo-bank{border:1px solid var(--line,#e2e8f2);border-radius:10px;
+  padding:14px 16px 10px;margin-bottom:12px;background:#fbfcfe}
+.hfo-checkrow{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:6px}
+.hfo-check{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;
+  color:#2c3e57;cursor:pointer;user-select:none}
+.hfo-check input{width:17px;height:17px;flex:none;margin:0;accent-color:#0b2e63}
+@media(max-width:560px){ .hfo-checkrow{flex-direction:column;gap:10px} }

@@ -108,6 +108,16 @@
     return bits.join(" &nbsp;·&nbsp; ");
   }
 
+  /* The name he chose to keep off the invoice arrives blank from the API, so
+     the eight designs must not print an empty <b></b> where it used to be.
+     Falling back to the job number keeps the document identifiable to the
+     company receiving it without naming the householder. */
+  function toName(inv) {
+    if (inv.cust_name) return esc(inv.cust_name);
+    if (inv.job_no) return "Job " + esc(inv.job_no);
+    return "&mdash;";
+  }
+
   function toBlock(inv) {
     var bits = [];
     if (inv.cust_address) bits.push(escLines(inv.cust_address));
@@ -127,19 +137,37 @@
     return bits.join(" &nbsp;·&nbsp; ");
   }
 
+  function itemLine(it) {
+    return '<tr>' +
+      '<td class="hf-desc">' + escLines(it.description) + '</td>' +
+      '<td class="hf-num">' + qty(it.qty) + '</td>' +
+      '<td class="hf-num">' + money(it.unit_pence) + '</td>' +
+      '<td class="hf-num hf-line">' + money(it.line_pence) + '</td>' +
+      '</tr>';
+  }
+
+  /* Labour and parts read as two things on a trades invoice: what he did, and
+     what he fitted. A single undifferentiated list makes a customer add up in
+     their head to find what the visit itself cost, and it is the first thing a
+     landlord or a letting agent asks. Only split when there is something to
+     split -- a service with no parts should not grow a heading and an empty
+     section to prove a point. */
   function itemRows(inv) {
     var items = inv.items || [];
     if (!items.length) {
       return '<tr class="hf-empty"><td colspan="4">No work has been listed on this invoice yet.</td></tr>';
     }
-    return items.map(function (it) {
-      return '<tr>' +
-        '<td class="hf-desc">' + escLines(it.description) + '</td>' +
-        '<td class="hf-num">' + qty(it.qty) + '</td>' +
-        '<td class="hf-num">' + money(it.unit_pence) + '</td>' +
-        '<td class="hf-num hf-line">' + money(it.line_pence) + '</td>' +
-        '</tr>';
-    }).join("");
+    var labour = items.filter(function (i) { return i.kind !== "parts"; });
+    var parts  = items.filter(function (i) { return i.kind === "parts"; });
+    if (!labour.length || !parts.length) return items.map(itemLine).join("");
+
+    function section(title, rows) {
+      var sum = rows.reduce(function (a, r) { return a + (r.line_pence || 0); }, 0);
+      return '<tr class="hf-sect"><td colspan="3">' + title + '</td>' +
+             '<td class="hf-num hf-line">' + money(sum) + '</td></tr>' +
+             rows.map(itemLine).join("");
+    }
+    return section("Labour", labour) + section("Parts &amp; materials", parts);
   }
 
   function itemsTable(inv) {
@@ -170,6 +198,9 @@
 
   function payBlock(b) {
     var bits = [];
+    /* Name first: it is what the customer types into their banking app, and a
+       mismatch is what leaves a payment sitting unmatched. */
+    if (b.bank_account_name) bits.push('<div><span>Pay to</span>' + esc(b.bank_account_name) + '</div>');
     if (b.bank_name) bits.push('<div><span>Bank</span>' + esc(b.bank_name) + '</div>');
     if (b.bank_sort) bits.push('<div><span>Sort code</span>' + esc(b.bank_sort) + '</div>');
     if (b.bank_account) bits.push('<div><span>Account</span>' + esc(b.bank_account) + '</div>');
@@ -216,6 +247,7 @@
 
   function metaRows(inv, b) {
     var rows = [["Invoice", esc(inv.number)]];
+    if (inv.job_no) rows.push(["Job no.", esc(inv.job_no)]);
     rows.push(["Date", date(inv.issued_at || inv.created_at)]);
     if (inv.due_at) rows.push(["Due", date(inv.due_at)]);
     if (b.vat_number) rows.push(["VAT no.", esc(b.vat_number)]);
@@ -235,7 +267,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -254,7 +286,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>To</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>To</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -277,7 +309,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols hf-cols2">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
           itemsTable(inv) + totalsBlock(inv, b) +
@@ -297,7 +329,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -316,7 +348,7 @@
         '<div class="hf-body">' +
           '<div class="hf-title">Invoice</div>' +
           '<div class="hf-cols hf-cols2">' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -336,7 +368,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -360,7 +392,7 @@
         '<div class="hf-body">' +
           '<div class="hf-cols">' +
             '<div class="hf-party"><h4>From</h4><b>' + esc(b.name) + '</b><p>' + fromBlock(b) + '</p></div>' +
-            '<div class="hf-party"><h4>Invoice to</h4><b>' + esc(inv.cust_name) + '</b><p>' + toBlock(inv) + '</p></div>' +
+            '<div class="hf-party"><h4>Invoice to</h4><b>' + toName(inv) + '</b><p>' + toBlock(inv) + '</p></div>' +
             '<div class="hf-meta">' + metaRows(inv, b) + badge + '</div>' +
           '</div>' +
           (inv.work_summary ? '<p class="hf-summary">' + escLines(inv.work_summary) + '</p>' : "") +
@@ -385,7 +417,7 @@
              registered advertises a gap that is not a gap. When there is no
              number, the cell carries the Gas Safe registration instead, which
              is the number a customer actually wants to see. */
-          '<tr><th>Invoice to</th><td>' + esc(inv.cust_name) + '</td>' +
+          '<tr><th>Invoice to</th><td>' + toName(inv) + '</td>' +
               (b.vat_number
                 ? '<th>VAT number</th><td>' + esc(b.vat_number) + '</td>'
                 : (b.gas_safe_no
@@ -450,6 +482,12 @@
     '.hfdoc .hf-items .hf-line{font-weight:600}' +
     '.hfdoc .hf-items .hf-desc{width:auto}' +
     '.hfdoc .hf-items th.hf-num{text-align:right}' +
+    /* The Labour / Parts headings. Their own subtotal sits on the right, so a
+       customer can see what the visit cost without adding the lines up. */
+    '.hfdoc .hf-sect td{padding-top:11px;padding-bottom:5px;border-bottom:1px solid currentColor;' +
+      'font:800 9.5px/1 Montserrat,Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.72}' +
+    '.hfdoc .hf-sect td.hf-num{font-size:10.5px;letter-spacing:.02em;opacity:.9}' +
+    '.hfdoc .hf-sect + tr td{padding-top:9px}' +
     '.hfdoc .hf-empty td{color:var(--mut);font-style:italic;text-align:center;padding:22px 0}' +
 
     '.hfdoc .hf-totals{margin:18px 0 0;margin-left:auto;width:290px}' +

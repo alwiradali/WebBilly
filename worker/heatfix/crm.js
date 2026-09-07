@@ -159,7 +159,10 @@ function totals(items, vatRateBp, vatRegistered) {
     const unit = pence(it.unit);
     const line = Math.round(qty * unit);
     net += line;
-    return { position: i, description: clean(it.description, 400), qty, unit_pence: unit, line_pence: line };
+    /* Anything not explicitly parts is labour: that is the commoner line, and
+       an unrecognised value must not invent a third section on the document. */
+    const kind = clean(it.kind, 12) === "parts" ? "parts" : "labour";
+    return { position: i, description: clean(it.description, 400), qty, unit_pence: unit, line_pence: line, kind };
   }).filter((r) => r.description || r.line_pence);
   const vat = vatRegistered ? Math.round(net * vatRateBp / 10000) : 0;
   return { rows, net, vat, gross: net + vat };
@@ -195,7 +198,7 @@ async function readInvoice(env, id) {
   const inv = await env.HF_DB.prepare("SELECT * FROM hf_invoices WHERE id = ?").bind(id).first();
   if (!inv) return null;
   const items = (await env.HF_DB
-    .prepare("SELECT description, qty, unit_pence, line_pence FROM hf_invoice_items WHERE invoice_id = ? ORDER BY position")
+    .prepare("SELECT description, qty, unit_pence, line_pence, kind FROM hf_invoice_items WHERE invoice_id = ? ORDER BY position")
     .bind(id).all()).results || [];
   return { ...inv, items };
 }
@@ -226,7 +229,37 @@ async function saveInvoice(env, id, body) {
 
   const customerId = await upsertCustomer(env, body);
   const invId = id || newId();
-  const number = existing ? existing.number : (clean(body.number, 40) || await nextNumber(env));
+
+  /* Copy the bank details onto the invoice rather than pointing at the
+     account row. Pointing would rewrite every invoice he has ever sent the
+     day he edits an account, and a customer holding a permanent link would
+     see different details from the ones they paid into. */
+  let bank = null;
+  if (clean(body.bank_id, 60)) {
+    bank = await env.HF_DB.prepare("SELECT * FROM hf_bank_accounts WHERE id = ?")
+      .bind(clean(body.bank_id, 60)).first();
+  }
+  if (!bank) {
+    bank = await env.HF_DB.prepare(
+      "SELECT * FROM hf_bank_accounts ORDER BY is_default DESC, position, rowid LIMIT 1").first();
+  }
+  /* His own number wins if he typed one. A draft can be renumbered too --
+     he asked to write his own, and a draft is not a document anyone holds
+     yet. Uniqueness is enforced by the column, so check first and say
+     something useful rather than letting a constraint error surface. */
+  const wanted = clean(body.number, 40);
+  let number;
+  if (existing) {
+    number = wanted && wanted !== existing.number ? wanted : existing.number;
+  } else {
+    number = wanted || await nextNumber(env);
+  }
+  if (number !== (existing && existing.number)) {
+    const clash = await env.HF_DB
+      .prepare("SELECT id FROM hf_invoices WHERE number = ? AND id <> ?")
+      .bind(number, invId).first();
+    if (clash) return { error: `Invoice number ${number} is already used.`, status: 409 };
+  }
 
   const row = {
     id: invId,
@@ -248,35 +281,53 @@ async function saveInvoice(env, id, body) {
     vat_rate: vatRate,
     vat_number: clean(s.vat_number, 40),
     template: clean(body.template || s.template || "classic", 40),
+    job_no: clean(body.job_no, 60),
+    bank_label:        bank ? clean(bank.label, 60)        : "",
+    bank_account_name: bank ? clean(bank.account_name, 120) : clean(s.business_name, 120),
+    bank_name:         bank ? clean(bank.bank_name, 80)     : clean(s.bank_name, 80),
+    bank_sort:         bank ? clean(bank.sort_code, 20)     : clean(s.bank_sort, 20),
+    bank_account:      bank ? clean(bank.account_no, 30)    : clean(s.bank_account, 30),
+    /* Defaults match the columns: a name and an address on, the phone off. */
+    show_cust_name:    body.show_cust_name    === undefined ? 1 : (body.show_cust_name    ? 1 : 0),
+    show_cust_address: body.show_cust_address === undefined ? 1 : (body.show_cust_address ? 1 : 0),
+    show_cust_phone:   body.show_cust_phone   === undefined ? 0 : (body.show_cust_phone   ? 1 : 0),
   };
 
   if (existing) {
     await env.HF_DB.prepare(
-      `UPDATE hf_invoices SET due_at=?, customer_id=?, cust_name=?, cust_email=?, cust_phone=?,
+      `UPDATE hf_invoices SET number=?, due_at=?, customer_id=?, cust_name=?, cust_email=?, cust_phone=?,
         cust_address=?, cust_postcode=?, work_summary=?, notes=?, net_pence=?, vat_pence=?,
-        gross_pence=?, paid_pence=?, vat_rate=?, vat_number=?, template=? WHERE id=?`
-    ).bind(row.due_at, row.customer_id, row.cust_name, row.cust_email, row.cust_phone,
+        gross_pence=?, paid_pence=?, vat_rate=?, vat_number=?, template=?, job_no=?,
+        bank_label=?, bank_account_name=?, bank_name=?, bank_sort=?, bank_account=?,
+        show_cust_name=?, show_cust_address=?, show_cust_phone=? WHERE id=?`
+    ).bind(row.number, row.due_at, row.customer_id, row.cust_name, row.cust_email, row.cust_phone,
       row.cust_address, row.cust_postcode, row.work_summary, row.notes, row.net_pence,
       row.vat_pence, row.gross_pence, row.paid_pence, row.vat_rate, row.vat_number,
-      row.template, invId).run();
+      row.template, row.job_no, row.bank_label, row.bank_account_name, row.bank_name,
+      row.bank_sort, row.bank_account, row.show_cust_name, row.show_cust_address,
+      row.show_cust_phone, invId).run();
   } else {
     await env.HF_DB.prepare(
       `INSERT INTO hf_invoices (id, number, created_at, due_at, status, customer_id, cust_name,
         cust_email, cust_phone, cust_address, cust_postcode, work_summary, notes, net_pence,
-        vat_pence, gross_pence, paid_pence, vat_rate, vat_number, template)
-       VALUES (?,?,?,?, 'draft', ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+        vat_pence, gross_pence, paid_pence, vat_rate, vat_number, template, job_no,
+        bank_label, bank_account_name, bank_name, bank_sort, bank_account,
+        show_cust_name, show_cust_address, show_cust_phone)
+       VALUES (?,?,?,?, 'draft', ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
     ).bind(invId, row.number, row.created_at, row.due_at, row.customer_id, row.cust_name,
       row.cust_email, row.cust_phone, row.cust_address, row.cust_postcode, row.work_summary,
       row.notes, row.net_pence, row.vat_pence, row.gross_pence, row.paid_pence, row.vat_rate,
-      row.vat_number, row.template).run();
+      row.vat_number, row.template, row.job_no, row.bank_label, row.bank_account_name,
+      row.bank_name, row.bank_sort, row.bank_account, row.show_cust_name,
+      row.show_cust_address, row.show_cust_phone).run();
   }
 
   await env.HF_DB.prepare("DELETE FROM hf_invoice_items WHERE invoice_id = ?").bind(invId).run();
   for (const r of t.rows) {
     await env.HF_DB.prepare(
-      `INSERT INTO hf_invoice_items (invoice_id, position, description, qty, unit_pence, line_pence)
-       VALUES (?,?,?,?,?,?)`
-    ).bind(invId, r.position, r.description, r.qty, r.unit_pence, r.line_pence).run();
+      `INSERT INTO hf_invoice_items (invoice_id, position, description, qty, unit_pence, line_pence, kind)
+       VALUES (?,?,?,?,?,?,?)`
+    ).bind(invId, r.position, r.description, r.qty, r.unit_pence, r.line_pence, r.kind).run();
   }
   return { invoice: await readInvoice(env, invId) };
 }
@@ -428,6 +479,45 @@ export async function handleHfCrm(request, env, url) {
       if (method === "PUT")  return json({ settings: await saveSettings(env, body) });
     }
 
+    if (seg[0] === "banks") {
+      if (method === "GET") {
+        return json({ banks: (await env.HF_DB.prepare(
+          "SELECT * FROM hf_bank_accounts ORDER BY is_default DESC, position, rowid").all()).results || [] });
+      }
+      if (method === "POST" || (method === "PUT" && seg[1])) {
+        const bid = seg[1] || newId();
+        const f = [
+          clean(body.label, 60) || "Account",
+          clean(body.account_name, 120),
+          clean(body.bank_name, 80),
+          clean(body.sort_code, 20),
+          clean(body.account_no, 30),
+          body.is_default ? 1 : 0,
+          Math.round(num(body.position, 0)),
+        ];
+        if (seg[1]) {
+          await env.HF_DB.prepare(
+            `UPDATE hf_bank_accounts SET label=?, account_name=?, bank_name=?, sort_code=?,
+              account_no=?, is_default=?, position=? WHERE id=?`).bind(...f, bid).run();
+        } else {
+          await env.HF_DB.prepare(
+            `INSERT INTO hf_bank_accounts (label, account_name, bank_name, sort_code,
+              account_no, is_default, position, id) VALUES (?,?,?,?,?,?,?,?)`).bind(...f, bid).run();
+        }
+        /* Only one default, or the dropdown picks a different account each
+           time depending on row order. */
+        if (f[5]) {
+          await env.HF_DB.prepare("UPDATE hf_bank_accounts SET is_default = 0 WHERE id <> ?")
+            .bind(bid).run();
+        }
+        return json({ ok: true, id: bid });
+      }
+      if (method === "DELETE" && seg[1]) {
+        await env.HF_DB.prepare("DELETE FROM hf_bank_accounts WHERE id = ?").bind(seg[1]).run();
+        return json({ ok: true });
+      }
+    }
+
     if (seg[0] === "enquiries") {
       if (method === "GET") {
         const rows = (await env.HF_DB.prepare(
@@ -505,15 +595,35 @@ export async function handleHfCrm(request, env, url) {
 /* The customer's copy is public but unguessable — the id is a UUID. */
 export async function readPublicInvoice(env, id) {
   if (!env.HF_DB) return null;
-  const inv = await readInvoice(env, id);
-  if (!inv || inv.status === "draft") return null;
+  const full = await readInvoice(env, id);
+  if (!full || full.status === "draft") return null;
   const s = await getSettings(env);
+
+  /* Whatever he chose to keep off the invoice is REMOVED here, not merely
+     hidden by the template. This response is public to anyone holding the
+     link -- often the company he subcontracts for -- so a field the template
+     does not draw would still be sitting in the JSON for anyone who looked.
+     Hiding it in the markup would not be privacy, it would be the appearance
+     of it. */
+  const inv = { ...full };
+  if (!Number(inv.show_cust_name))    inv.cust_name = "";
+  if (!Number(inv.show_cust_address)) { inv.cust_address = ""; inv.cust_postcode = ""; }
+  if (!Number(inv.show_cust_phone))   inv.cust_phone = "";
+  /* The customer's email is never on the document either way. */
+  delete inv.cust_email;
+  delete inv.customer_id;
+
   return { invoice: inv, business: {
     name: s.business_name, address: s.address, postcode: s.postcode, phone: s.phone,
     email: s.email, website: s.website, vat_number: s.vat_number, company_no: s.company_no,
     gas_safe_no: s.gas_safe_no, logo_data: s.logo_data, review_url: s.review_url,
-    bank_name: s.bank_name,
-    bank_account: s.bank_account, bank_sort: s.bank_sort, payment_terms: s.payment_terms,
+    /* The account this invoice was raised against, as it stood that day --
+       not whatever is current in settings now. */
+    bank_account_name: inv.bank_account_name || s.business_name,
+    bank_name:    inv.bank_name    || s.bank_name,
+    bank_account: inv.bank_account || s.bank_account,
+    bank_sort:    inv.bank_sort    || s.bank_sort,
+    payment_terms: s.payment_terms,
     template: s.template, accent: s.accent,
   } };
 }
