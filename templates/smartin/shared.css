@@ -54,19 +54,31 @@ section:not(.alt):not(.dark){background:rgba(255,255,255,.66)}
 footer{background:rgba(231,241,249,.90)}
 
 /* ---------- brand lockup ---------- */
-.brand{display:flex;align-items:center;gap:11px}
-.brand .mark{width:44px;height:44px;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:13px}
+/* 44px in a 66px bar left the lockup floating in space. The mark is served
+   from the 512px source now, so it stays crisp at any of these sizes. */
+.brand .mark{width:56px;height:56px;flex:0 0 auto}
+@media(max-width:520px){.brand .mark{width:46px;height:46px}
+  .wm b{font-size:1.2rem}.wm em{font-size:.82rem}}
 .wm{display:grid;line-height:1;font-family:var(--dis)}
-.wm b{font-weight:700;font-size:1.12rem;letter-spacing:.005em;color:var(--blue)}
+.wm b{font-weight:700;font-size:1.42rem;letter-spacing:.004em;color:var(--blue)}
 .wm b i{font-style:normal;color:var(--amber)}   /* the deck sets the "in" in amber */
-.wm em{font-style:normal;font-weight:600;font-size:.83rem;letter-spacing:.30em;color:var(--teal);margin-top:3px}
+.wm em{font-style:normal;font-weight:600;font-size:.96rem;letter-spacing:.28em;color:var(--teal);margin-top:4px}
 .brand:hover .mark{transform:rotate(-8deg) scale(1.04)}
 .brand .mark{transition:transform .5s cubic-bezier(.22,1,.36,1)}
 
 /* ---------- nav ---------- */
-.nav{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line)}
-.nav-in{display:flex;align-items:center;gap:14px;padding:11px 0}
+/* A flat white bar sat oddly over the blue-green ground the rest of the page
+   uses. This is the same tint, glazed, with the brand gradient as the hairline
+   underneath instead of a grey rule — so the bar belongs to the palette rather
+   than sitting on top of it. */
+.nav{position:sticky;top:0;z-index:80;
+  background:linear-gradient(180deg,rgba(247,251,253,.94),rgba(238,247,251,.90));
+  backdrop-filter:blur(16px) saturate(1.15);
+  border-bottom:0;box-shadow:0 1px 0 rgba(4,87,172,.10)}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+  background:var(--grad);opacity:.55}
+.nav-in{display:flex;align-items:center;gap:14px;padding:9px 0}
 .nav .sp{flex:1}
 .nlinks{display:none;gap:26px;font-size:14.4px;font-weight:500;color:var(--body)}
 .nlinks a{position:relative;padding:5px 0}
