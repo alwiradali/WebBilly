@@ -213,6 +213,24 @@
      with a button that sent them to Payhip. The feed is under 2KB and the
      Worker answers it from a committed snapshot, so a fresh fetch each
      visit costs nothing worth having. */
+    /* ---------------------------------------------------------------
+       Where her shop lives.
+
+       Payhip serves a seller's store from their own domain once a custom
+       domain is connected, and the direct checkout link becomes
+       <her domain>/buy?link=<product key> rather than payhip.com/buy.
+       shop.molecularmiracleschemistrytuition.co.uk is connected and waiting
+       on Payhip to finish verifying it.
+
+       Until it is live this stays payhip.com, and the direct Buy button is
+       not rendered at all — sending someone to payhip.com the moment they
+       show interest is exactly the behaviour we removed. Change this one
+       line when the subdomain answers and the button appears, pointing at
+       her own domain, with no other edit needed.
+       --------------------------------------------------------------- */
+    var SHOP_ORIGIN = 'https://payhip.com';
+    var OWN_DOMAIN = SHOP_ORIGIN.indexOf('payhip.com') === -1;
+
   fetch('/api/mm-shop?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
@@ -252,8 +270,18 @@
            ever threw the customer out to payhip.com mid-journey. Sending them
            there once, at the card-details step, from a basket they have already
            reviewed here, is the closest thing to the intended experience. */
+        /* Direct checkout on her own domain. Only rendered once the custom
+           domain is live: on payhip.com this would be the old behaviour of
+           throwing the customer out of her site mid-journey. */
+        if (OWN_DOMAIN) {
+          var buy = document.createElement('a');
+          buy.className = 'btn btn-p';
+          buy.href = SHOP_ORIGIN + '/buy?link=' + encodeURIComponent(key);
+          buy.textContent = 'Buy now';
+          row.appendChild(buy);
+        }
         var add = document.createElement('a');
-        add.className = 'btn btn-p payhip-add-to-cart-button';
+        add.className = 'btn ' + (OWN_DOMAIN ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
         add.href = p.link; add.rel = 'noopener';
         add.setAttribute('data-product', key);
         add.setAttribute('data-theme', 'none');
