@@ -25,7 +25,7 @@ const HOUSE_RULES =
   "Never mention that you are an AI.";
 
 function requireKey(env) {
-  if (!env.ANTHROPIC_API_KEY) throw new HttpError(503, "AI is not configured. Add the ANTHROPIC_API_KEY secret to the Worker.", { configured: false });
+  if (!env.ANTHROPIC_API_KEY) throw new HttpError(503, "AI is not switched on yet. Add the API key to the Worker.", { configured: false });
 }
 
 async function limit(c, route) {

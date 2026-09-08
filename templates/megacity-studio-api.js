@@ -487,7 +487,7 @@
     function blUrl(v, field) { var t = String(v || "").trim().slice(0, 500); if (!t || !/^https?:\/\/[^\s]+$/i.test(t)) fail(400, { error: field + " must be a full address starting with https://" }); return t; }
 
     function aiUse(route) { DB.aiUsage.push({ at: new Date().toISOString(), route: route, ok: 1, inputTokens: 0, outputTokens: 0 }); }
-    function needAi() { if (!DB.ai) fail(503, { error: "AI is not configured. Add the ANTHROPIC_API_KEY secret to the Worker.", configured: false }); }
+    function needAi() { if (!DB.ai) fail(503, { error: "AI is not switched on yet. Add the API key to the Worker.", configured: false }); }
 
     DB.listings.forEach(function (l) { DB.audit.push({ at: l.updatedAt, action: "listing.import", entity: "listing", entityId: l.id, user: ME.name }); });
     DB.audit.push({ at: ago(2), action: "user.login", entity: "user", entityId: ME.id, user: ME.name });
@@ -776,7 +776,7 @@
           var beds = al.bedrooms != null ? al.bedrooms + "-bedroom " : "", where = (al.address && al.address.town) || mockLabel("area", al.address && al.address.area) || "Greater Manchester";
           aiUse("listing-copy");
           return { summary: "Sample AI summary (" + (body.tone || "standard") + "): a " + beds + (mockLabel("type", al.type) || "home").toLowerCase() + " in " + where + ", written from the listing's own facts.",
-            description: "Sample AI paragraph one for \u201C" + al.title + "\u201D. In the real Studio this is written by Claude from the facts on the Details and The home tabs only.\n\nSample AI paragraph two: rent " + (al.rentPcm ? "\u00A3" + al.rentPcm + " pcm" : "not stated") + ", " + (al.furnishing ? mockLabel("furnishing", al.furnishing).toLowerCase() : "furnishing not stated") + ".",
+            description: "Sample AI paragraph one for \u201C" + al.title + "\u201D. In the real Studio this is written by AI from the facts on the Details and The home tabs only.\n\nSample AI paragraph two: rent " + (al.rentPcm ? "\u00A3" + al.rentPcm + " pcm" : "not stated") + ", " + (al.furnishing ? mockLabel("furnishing", al.furnishing).toLowerCase() : "furnishing not stated") + ".",
             features: (al.features || []).slice(0, 4).map(function (f) { return "Sample: " + f; }).concat(["Sample feature written by the mock"]),
             seoTitle: ("Sample: " + al.title).slice(0, 60), seoDescription: ("Sample search description for " + al.title + " in " + where + ".").slice(0, 155) };
         }
@@ -802,7 +802,7 @@
           aiUse("page-draft");
           var subj = parea || "the subject in the brief";
           return { title: "Sample draft: " + (pkind === "area" ? "Renting in " + subj : pkind === "guide" ? "A guide to " + subj : subj), seoTitle: ("Sample: " + subj + " | Megacity Properties").slice(0, 60), seoDescription: ("Sample search description drafted for " + subj + ".").slice(0, 155),
-            blocks: [{ type: "h2", text: "Sample heading about " + subj }, { type: "p", text: "Sample paragraph one. The real draft is written by Claude from the brief and the live listings, without invented statistics." }, { type: "list", items: ["Sample point one", "Sample point two", "Sample point three"] }, { type: "p", text: "Sample paragraph two" + (pbrief ? ", following the brief: " + pbrief.slice(0, 120) : ".") }, { type: "cta", text: "Talk to the office", items: [] }],
+            blocks: [{ type: "h2", text: "Sample heading about " + subj }, { type: "p", text: "Sample paragraph one. The real draft is written by AI from the brief and the live listings, without invented statistics." }, { type: "list", items: ["Sample point one", "Sample point two", "Sample point three"] }, { type: "p", text: "Sample paragraph two" + (pbrief ? ", following the brief: " + pbrief.slice(0, 120) : ".") }, { type: "cta", text: "Talk to the office", items: [] }],
             faq: [{ q: "Sample question about " + subj + "?", a: "Sample answer." }, { q: "Sample second question?", a: "Sample second answer." }] };
         }
       }

@@ -28,7 +28,7 @@ is running, then push and check that it actually went live:
 ```
 git add -A && node scripts/stamp.mjs && git add version.json
 git commit ...
-git push -u origin claude/3d-animation-billy-templates-g3ked5
+git push -u origin <branch>
 git checkout main -q && git merge --ff-only <branch> -q && git push origin main
 git checkout <branch> -q
 node scripts/deploy-verify.mjs          # after Cloudflare finishes the build
@@ -37,5 +37,4 @@ node scripts/deploy-verify.mjs          # after Cloudflare finishes the build
 `deploy-verify.mjs` compares the live bytes with this working copy and exits
 non-zero on an older build — billydigitals.com has twice served a month-old
 deployment while Workers Builds reported success, and nothing else catches it.
-Commit messages end with the required `Co-Authored-By:` and `Claude-Session:`
-trailers.
+Commit messages end with the required attribution and session trailers.

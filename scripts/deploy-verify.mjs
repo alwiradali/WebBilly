@@ -59,8 +59,11 @@ const CANARIES = [
   "assets/css/style.css",
   "index.html",
 ];
-/* Excluded from upload — a 200 here means an old build is being served. */
-const MUST_BE_ABSENT = ["migrations/0001_m2l.sql", "docs/billy360.md"];
+/* Excluded from upload — a 200 here means an old build is being served, or
+   something that should never have been public has been put back. The last two
+   were served at the web root until 8 September: working notes that gave away
+   the deploy procedure, and a one-off build script leaking a local path. */
+const MUST_BE_ABSENT = ["migrations/0001_m2l.sql", "docs/billy360.md", "PROJECT-NOTES.md", "flyer-build.py", "CLAUDE.md"];
 
 const TMP = join(tmpdir(), `deploy-verify-${process.pid}`);
 function get(path) {

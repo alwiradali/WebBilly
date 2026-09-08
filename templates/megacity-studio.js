@@ -2021,7 +2021,7 @@
     if (btn) { btn.disabled = true; btn.innerHTML = '<span class="st-spin" aria-hidden="true"></span> ' + label; }
     return promise.then(function (r) { if (btn && document.contains(btn)) { btn.disabled = false; btn.innerHTML = label; } return r; }, function (err) {
       if (btn && document.contains(btn)) { btn.disabled = false; btn.innerHTML = label; }
-      if (err && err.status === 503) { state.features.ai = false; toast("AI is off until the ANTHROPIC_API_KEY secret is added", { kind: "warn", ttl: 8000 }); route(); }
+      if (err && err.status === 503) { state.features.ai = false; toast("AI is off until the API key is added", { kind: "warn", ttl: 8000 }); route(); }
       else toast((err && err.message) || "The AI service did not answer", { kind: "bad", ttl: 7000 });
       throw err;
     });
@@ -2030,7 +2030,7 @@
   function aiCopyCardHtml() {
     if (!aiOn()) return "";
     if (ed.doc.source === "tenninety") return '<section class="st-card st-ai"><div class="st-card-head"><div><h2>Write the listing for me</h2><p>Copy is managed in 10ninety for this listing.</p></div></div></section>';
-    return '<section class="st-card st-ai" id="aiCopy"><div class="st-card-head"><div><h2>Write the listing for me</h2><p>Claude writes a summary, description, features and search text from the facts on this page and The home tab. Nothing is saved until you choose what to use.</p></div></div>' +
+    return '<section class="st-card st-ai" id="aiCopy"><div class="st-card-head"><div><h2>Write the listing for me</h2><p>AI writes a summary, description, features and search text from the facts on this page and The home tab. Nothing is saved until you choose what to use.</p></div></div>' +
       '<div class="st-ai-row"><div class="st-select"><label class="st-vh" for="aiTone">Tone</label><select id="aiTone"><option value="standard">Standard</option><option value="warm">Warm</option><option value="concise">Concise</option></select></div>' +
       '<button type="button" class="st-btn st-btn--blue" data-ai="listing-copy">' + I.spark + 'Write the listing for me</button></div><div id="aiReview"></div></section>';
   }
@@ -2337,7 +2337,7 @@
   modalWrap.addEventListener("change", function (e) { if (e.target.hasAttribute && e.target.hasAttribute("data-pick-listing")) renderPickGrid(+e.target.value); });
   function pageDraftDialog() {
     var P = pg; if (!P) return;
-    openModal('<h2 id="modalTitle">Draft with AI</h2><div class="st-modal-body"><p>Claude drafts the page from a short brief and the homes we let there — no statistics, prices or claims that are not in the brief. You review it before anything changes.</p><form novalidate class="st-stack" id="draftForm">' +
+    openModal('<h2 id="modalTitle">Draft with AI</h2><div class="st-modal-body"><p>AI drafts the page from a short brief and the homes we let there — no statistics, prices or claims that are not in the brief. You review it before anything changes.</p><form novalidate class="st-stack" id="draftForm">' +
       '<dl class="st-kv"><dt>Kind</dt><dd>' + esc(KIND_LABEL[P.doc.kind] || P.doc.kind) + "</dd></dl>" +
       fieldHtml({ label: "Area", name: "area", ph: "Salford", value: P.doc.kind === "area" ? (P.doc.title || "").replace(/^(renting|living) in /i, "") : "" }) +
       '<div class="st-field"><label class="st-label" for="f_brief">Brief <span class="st-opt">what the page should cover</span></label><textarea class="st-ta" id="f_brief" name="brief" rows="4" placeholder="Who it is for, what to mention, what to leave out"></textarea></div>' +
@@ -2442,8 +2442,8 @@
         '<div class="st-field"><label class="st-label" for="f_gscVerification">Google Search Console verification</label><input class="st-in" id="f_gscVerification" name="gscVerification" value="' + esc(s.gscVerification || "") + '" autocomplete="off" spellcheck="false"' + ro + '><span class="st-hint">Proves to Google that this is our site so it reports search clicks and indexing. In Search Console choose the HTML tag method and paste only the <code>content</code> value of the meta tag it gives you; the site puts the tag on every page.</span></div>' +
         '<div class="st-field"><label class="st-label" for="f_consentText">Cookie banner wording</label><textarea class="st-ta" id="f_consentText" name="consentText" rows="3">' + esc(s.consentText || "") + '</textarea><span class="st-hint">Shown on the banner every visitor sees first. Analytics and the pixel only load once they accept.</span></div>' +
         lockNote + '<p class="st-err" data-form-err role="alert" hidden></p><div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Save changes</button></div></form></section>' +
-        '<section class="st-card"><div class="st-card-head"><div><h2>AI</h2><p>' + (aiOn() ? "Claude writes listing copy, share kits and page drafts from the facts in the Studio; staff review before anything is saved." : "") + "</p></div></div>" +
-        (aiOn() ? usageHtml(usage) : '<p class="st-hint">AI is off until the ANTHROPIC_API_KEY secret is added.</p>') + "</section></div>";
+        '<section class="st-card"><div class="st-card-head"><div><h2>AI</h2><p>' + (aiOn() ? "AI writes listing copy, share kits and page drafts from the facts in the Studio; staff review before anything is saved." : "") + "</p></div></div>" +
+        (aiOn() ? usageHtml(usage) : '<p class="st-hint">AI is off until the API key is added.</p>') + "</section></div>";
       bindForm($("#intForm"), function (d) {
         var partial = { consentText: d.consentText.trim() };
         if (owner) { partial.ga4Id = d.ga4Id.trim(); partial.gtmId = d.gtmId.trim(); partial.metaPixelId = d.metaPixelId.trim(); partial.gscVerification = d.gscVerification.trim(); }

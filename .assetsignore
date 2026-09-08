@@ -16,6 +16,12 @@ wrangler.toml
 .assetsignore
 .nojekyll
 README.md
+# Working notes for whoever is building the site, and the one-off script that
+# built the flyer. Neither is site content, and both were being served at the
+# web root: the notes gave away the deploy procedure and the internal docs
+# paths, and the flyer script leaks a local build path.
+PROJECT-NOTES.md
+flyer-build.py
 billy-digitals-logo.zip
 worker.js
 worker
