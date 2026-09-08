@@ -157,6 +157,16 @@ section{padding:66px 0}
 .trustrow li::before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:800}
 .trustrow b{color:var(--ink);font-weight:600}
 
+/* The three questions under the hero lead. Rod's amendments open the page by
+   naming the situations parents arrive with, rather than describing the
+   service — so they are set as questions, indented off a query mark, and kept
+   quieter than the trust row beneath them so the eye still lands on the CTA. */
+.askrow{display:grid;gap:11px;margin-top:22px;list-style:none;padding:0;max-width:560px}
+.askrow li{position:relative;padding-left:26px;color:var(--body);font-size:15px;line-height:1.55}
+.askrow li::before{content:"?";position:absolute;left:0;top:-1px;color:var(--teal);
+  font-weight:800;font-size:17px;line-height:1.5}
+@media(max-width:640px){.askrow li{font-size:14.4px}}
+
 /* ---------- hero stage: a real 3D scene ----------
    .hero-stage owns the perspective; .tilt is the single preserve-3d
    layer that the pointer/gyro rotates. Every child sits at its own
@@ -649,3 +659,37 @@ footer a:hover{color:var(--green)}
   .card,.panel,.val,.wkcard,.step2,.cmp,.stat,.slist,.q,.form,.post,.fq,.tile{
     animation:none}
 }
+
+/* Consolidate carries three follow-on commitments in Rod's amendments —
+   home learning, video reinforcement and revision notes. They sit under the
+   phase description as a list so the paragraph does not swallow them. */
+.phaselist{margin:10px 0 0;padding:0 0 0 18px;display:grid;gap:6px;
+  color:var(--mut);font-size:14px;line-height:1.5}
+.phaselist li::marker{color:var(--teal)}
+
+/* ---- Rod's amendments: What we cover / National Curriculum ---- */
+/* A sub-heading inside a section that already has its own sec-head — the
+   National Curriculum block asks two separate questions and each needs its
+   own line above its grid. */
+.subh{text-align:center;font-size:clamp(1.05rem,2.6vw,1.3rem);margin:0 0 20px;
+  color:var(--ink);font-weight:600}
+/* Rod's credentials, listed under What We Cover. Two columns on desktop so six
+   items do not become a long thin ladder. */
+.credlist{list-style:none;padding:0;margin:30px auto 0;max-width:900px;
+  display:grid;gap:12px 30px}
+@media(min-width:800px){.credlist{grid-template-columns:1fr 1fr}}
+.credlist li{position:relative;padding-left:26px;color:var(--body);
+  font-size:14.6px;line-height:1.55}
+.credlist li::before{content:"✓";position:absolute;left:0;top:0;
+  color:var(--green);font-weight:800}
+/* guided-learning-hours line on the course cards */
+.glh{color:var(--teal);font-weight:600;font-size:13.4px;margin:2px 0 8px}
+
+/* A card carrying only a label — the subjects we cover, and the four exam
+   boards. In the full card padding these render as tall empty boxes, so the
+   compact variant sizes to its content and centres it. */
+.card.mini{padding:22px 18px;text-align:center;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px}
+.card.mini h3{margin:0;font-size:1.06rem}
+.card.mini p{margin:0;color:var(--mut);font-size:13px}
+.card.mini .ic{margin:0 0 4px}
