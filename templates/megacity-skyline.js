@@ -271,7 +271,6 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   if (!burger || !menu) return;
   let open = false, lastFocus = null;
   const setOpen = (v) => {
-    if (v) refreshHomes();
     open = v;
     burger.setAttribute("aria-expanded", v ? "true" : "false");
     burger.setAttribute("aria-label", v ? "Close menu" : "Open menu");
@@ -384,6 +383,12 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
 
   let open = false, lastFocus = null;
   const setOpen = (v) => {
+    /* The live list is fetched the first time search opens. This call used to
+       sit in the mega menu's setOpen, one IIFE up, where refreshHomes is not in
+       scope: opening the menu threw a ReferenceError on the handler's first
+       line, so the burger did nothing on a phone — where it is the only nav —
+       and search never fetched anything either. */
+    if (v) refreshHomes();
     open = v;
     btn.setAttribute("aria-expanded", v ? "true" : "false");
     document.body.classList.toggle("sl-open", v);

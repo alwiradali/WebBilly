@@ -72,6 +72,39 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       ok(!styles.length, path + " has no relative url() left in inline styles");
     }
   }
+  /* The phone nav. Below 1360px the burger is the ONLY navigation — .nav-links
+     is hidden — so if it does not open, a phone visitor cannot leave the page.
+     It shipped broken because the handler threw on its first line, and nothing
+     here pressed it: the loop above records console errors, but this one only
+     fires on interaction. Open and close it on a real touch context. */
+  {
+    const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3, ignoreHTTPSErrors: true });
+    await phone.route(/fonts\.googleapis\.com/, (r) => r.fulfill({ contentType: "text/css", body: fontCss || "" }));
+    await phone.route(/fonts\.gstatic\.com|google\.com\/maps|googletagmanager|facebook\.net/, (r) => r.fulfill({ status: 204, body: "" }));
+    for (const path of [P("skyline"), P("properties")]) {
+      const pp = await phone.newPage();
+      const errs = [];
+      pp.on("console", (m) => { if (m.type() === "error" && !/401 \(Unauthorized\)/.test(m.text())) errs.push(m.text()); });
+      pp.on("pageerror", (e) => errs.push(String(e)));
+      await pp.goto(BASE + path, { waitUntil: "load" });
+      await pp.tap("#burger");
+      await pp.waitForTimeout(450);
+      const open = await pp.evaluate(() => {
+        const m = document.getElementById("megamenu"), b = document.getElementById("burger"), a = m && m.querySelector("a");
+        return { hidden: m.hidden, cls: m.className, aria: b.getAttribute("aria-expanded"), link: !!(a && a.getBoundingClientRect().height > 0) };
+      });
+      ok(open.hidden === false && /is-open/.test(open.cls) && open.aria === "true" && open.link,
+         path + " menu opens on a phone (" + open.cls + ", aria-expanded=" + open.aria + ")");
+      await pp.tap("#burger");
+      await pp.waitForTimeout(450);
+      const shut = await pp.evaluate(() => ({ aria: document.getElementById("burger").getAttribute("aria-expanded"), body: document.body.className }));
+      ok(shut.aria === "false" && !/mm-open/.test(shut.body), path + " menu closes again on a phone");
+      ok(!errs.length, path + " no errors opening the phone menu" + (errs.length ? ": " + errs.slice(0, 2).join(" | ") : ""));
+      await pp.close();
+    }
+    await phone.close();
+  }
+
   /* the 360 tour: the listing page reserves the frame's box before embed.js
      runs, and the frame opens on the panorama of the listing's cover room. */
   {
