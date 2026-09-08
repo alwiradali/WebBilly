@@ -1,0 +1,174 @@
+/* Molecular Miracles — the shop, wherever it appears.
+   Loaded by /masterclasses and /resources, which sell out of the same Payhip
+   store and now render it identically. Tokens come from shared.css. */
+
+/* Level filter. Twenty-seven cards in one grid opens with nine National 5
+   classes, so a parent who came for Higher sees a screen of the wrong course
+   and has no way to know they are in the right place. These chips deep-link
+   (?level=higher), so arriving from the homepage lands on that level alone
+   with the chip lit.
+
+   The :not([hidden]) matters. A bare .lvlbar{display:flex} is an author
+   declaration and beats the user agent's [hidden]{display:none}, so the bar
+   was never actually hidden: when there was only one level to show, or when
+   the feed failed, an empty role="group" called "Filter by level" stayed in
+   the accessibility tree with nothing inside it. */
+.lvlbar:not([hidden]){display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:0 0 30px}
+.lvlbar button{border-radius:999px;padding:10px 20px;font-family:inherit;font-weight:600;font-size:14.2px;
+  border:1.6px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;transition:.25s}
+.lvlbar button:hover{border-color:var(--teal);color:var(--teal)}
+.lvlbar button[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent;
+  box-shadow:0 12px 26px -14px rgba(59,130,246,.8)}
+.lvlbar button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+/* Three columns, one per level, side by side. All three levels are then on
+   screen at once, so nobody has to work out whether they are looking at their
+   own course — which no amount of sorting a single list achieves.
+
+   The track count is --cols, set from the number of columns actually built.
+   It used to be a hardcoded repeat(3,1fr) while the column count came from
+   her data, so the fourth column that the code deliberately creates for an
+   unrecognised product had no track to sit in: it wrapped under National 5
+   with no row gap and, being a sibling, took the divider with it — a stray
+   vertical rule hanging outside the page's left edge. */
+.shopcols{display:grid;grid-template-columns:1fr;gap:34px;align-items:start}
+@media(min-width:900px){
+  .shopcols{grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))}
+}
+.lvlcol{display:flex;flex-direction:column;gap:18px;padding:0 0 10px}
+@media(min-width:900px){
+  /* A rule between columns, as on her sketch. Drawn on the column rather than
+     between rows so it runs the full height of the tallest one.
+
+     The pull and the padding must match. With padding-left:34px against a
+     -17px margin, columns two and three lost 18px of content that column one
+     kept — National 5's cards rendered 357px wide against 339px for the other
+     two at 1280px — and each rule sat 17px from the cards on its left and 34px
+     from those on its right. On a layout whose whole argument is that the
+     three levels are equal peers, one was visibly bigger and both rules were
+     visibly off-centre. */
+  .lvlcol + .lvlcol{border-left:1px solid var(--line);padding-left:17px;margin-left:-17px}
+}
+
+/* Column heading. Centred over its column, set large in her gradient — this
+   is the thing a parent scans for, so it should read as a title and not as a
+   caption. Sticky, so the level stays named while they scroll nine dates. */
+.lvlhead{text-align:center;padding:16px 0 15px;margin-bottom:6px;
+  border-bottom:2px solid var(--line);
+  /* Tinted to match the section it sits in, not white — on this panel a white
+     band reads as another card. Blurred like the nav so the molecule
+     background still moves under it while a column scrolls past. */
+  position:sticky;top:60px;z-index:2;
+  background:rgba(243,250,250,.93);backdrop-filter:blur(8px)}
+.lvlhead h3{font-size:clamp(1.7rem,3.4vw,2.2rem);font-weight:700;line-height:1.1;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lvlcount{display:block;margin-top:5px;font-size:12.4px;font-weight:600;
+  letter-spacing:1.4px;text-transform:uppercase;color:var(--mut)}
+
+.buyrow{display:grid;gap:8px}
+.buyrow .btn{width:100%;justify-content:center}
+
+/* "View your basket" is a real button, not an anchor wearing role="button".
+   As an <a href="#"> it promised Space activation that anchors do not give,
+   and on any path where the feed did not arrive it was an unbound control
+   whose only effect was to throw the reader to the top of the page. */
+button.btn{font:inherit;font-weight:600;font-size:14.6px;cursor:pointer;border:0;background:none}
+button.btn:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+/* The pass leads its column: it is the offer she most wants taken, and the
+   one a parent is actually deciding about. An ember travels its outline —
+   one per level, in that level's own colour, taken from the three stops of
+   her brand gradient rather than invented:
+     National 5 teal · Higher blue · Advanced Higher violet.
+   Only the passes carry it. If every card glowed it would be wallpaper and
+   would single out nothing. */
+@property --ember-a{syntax:'<angle>';initial-value:0deg;inherits:false}
+
+.lvlcol{--ember:#12A594}                    /* so the ring never renders unstyled */
+.lvlcol[data-level="n5"]{--ember:#12A594}
+.lvlcol[data-level="hi"]{--ember:#3B82F6}
+.lvlcol[data-level="ah"]{--ember:#8B5CF6}
+.lvlcol[data-level="other"]{--ember:#F0A500}
+
+/* The border is tinted, not transparent, and the ring paints in the 1.5px
+   band outside it. Two separate things can stop the ring rendering — no
+   @property (the angle cannot interpolate, so the whole background is
+   invalid) and no color-mix() (the declaration is dropped at parse time) —
+   and on a transparent border either one left the three pass cards as the
+   only cards on the page with no outline at all: bare white rectangles,
+   on exactly the product she most wants bought.
+
+   There used to be an @supports guard for this. It could never match:
+   a declaration containing var() is treated as valid at parse time in every
+   browser, including ones with no @property at all, so `@supports not
+   (background:conic-gradient(from var(--ember-a),red,blue))` was false
+   everywhere and the fallback inside it never ran. Making the border the
+   base state needs no feature test and covers both causes. */
+.card.is-pass{position:relative;border-color:var(--ember);
+  box-shadow:0 16px 34px -20px color-mix(in srgb,var(--ember) 70%,transparent)}
+.card.is-pass::after{
+  content:"";position:absolute;inset:-1.5px;border-radius:inherit;padding:1.5px;
+  pointer-events:none;
+  /* A dim ring for the whole outline, with one bright ember riding round it. */
+  background:
+    conic-gradient(from var(--ember-a,0deg),
+      color-mix(in srgb,var(--ember) 22%,transparent) 0 68%,
+      color-mix(in srgb,var(--ember) 60%,transparent) 79%,
+      var(--ember) 86%,
+      #fff 89%,
+      var(--ember) 92%,
+      color-mix(in srgb,var(--ember) 30%,transparent) 97%,
+      color-mix(in srgb,var(--ember) 22%,transparent) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  animation:ember 5.5s linear infinite;
+}
+/* Staggered so the passes are not in lockstep, which reads as a single
+   mechanism rather than three cards. */
+.lvlcol[data-level="hi"] .card.is-pass::after{animation-delay:-1.8s}
+.lvlcol[data-level="ah"] .card.is-pass::after{animation-delay:-3.6s}
+@keyframes ember{to{--ember-a:360deg}}
+
+/* shared.css kills animation with *{animation:none!important}, and the
+   universal selector matches elements, not pseudo-elements. This rule is
+   what actually stops the ember, and is not redundant. */
+@media (prefers-reduced-motion:reduce){
+  .card.is-pass::after{animation:none}
+  .lvlbar button{transition:none}
+}
+
+/* Filtering hides whole columns — one attribute, so a heading and its cards
+   can never disagree about whether they are showing. On a phone, where the
+   columns stack and National 5 would sit on top of everyone again, this is
+   what keeps a Higher parent looking at Higher. */
+.shopcols:not([data-filter="all"]){grid-template-columns:1fr}
+.shopcols:not([data-filter="all"]) .lvlcol{
+  border-left:0;padding-left:0;margin-left:0;
+  /* One level on its own gets the full width back, rather than staying a
+     narrow strip where two columns used to be. */
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px}
+.shopcols:not([data-filter="all"]) .lvlhead{grid-column:1/-1}
+
+/* Hiding comes last and names .lvlcol deliberately. The rule above sets
+   display:grid on the same elements at equal specificity, so written the
+   other way round the filter silently stopped working — every column stayed
+   on screen and only the chip looked selected. */
+.shopcols[data-filter="n5"] > .lvlcol:not([data-level="n5"]),
+.shopcols[data-filter="hi"] > .lvlcol:not([data-level="hi"]),
+.shopcols[data-filter="ah"] > .lvlcol:not([data-level="ah"]),
+.shopcols[data-filter="other"] > .lvlcol:not([data-level="other"]){display:none}
+
+/* While the feed is in flight. The section used to carry `hidden` until the
+   products arrived, which made every button pointing at it a dead click for
+   as long as the fetch took — including the hero's own "Browse the Shop".
+   The section is always there now; only its contents change. */
+.shopwait{grid-column:1/-1;text-align:center}
+.shopwait p{margin-bottom:14px}
+
+/* Announcements for anything that has no visible confirmation of its own —
+   adding to the basket opens a cross-origin Payhip drawer at the end of
+   <body>, which is announced to nobody. */
+.shop-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}

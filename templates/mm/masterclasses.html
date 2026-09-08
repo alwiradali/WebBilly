@@ -12,8 +12,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="shop.css">
 <style>
-/* Masterclass programme — page-local styles, tokens from shared.css */
+/* Masterclass programme — page-local styles, tokens from shared.css.
+   Everything that draws the shop itself lives in shop.css, shared with
+   /resources so the two pages cannot drift apart again. */
 .mc-price{display:flex;align-items:baseline;gap:8px;margin:14px 0 4px}
 .mc-price b{font-family:var(--ser);font-size:2rem;color:var(--ink);line-height:1}
 .mc-price span{font-size:.86rem;color:var(--mut)}
@@ -23,124 +26,7 @@
   color:#0B7F72;background:var(--tint2);border-radius:999px;padding:5px 12px;margin:10px 0 2px}
 .lvl .btn{width:100%;justify-content:center;margin-top:8px}
 .lvl .btn + .btn{margin-top:9px}
-.buyrow{display:grid;gap:8px}
-.buyrow .btn{width:100%;justify-content:center}
 
-/* Level filter. Twenty-seven cards in one grid opens with nine National 5
-   classes, so a parent who came for Higher sees a screen of the wrong course
-   and has no way to know they are in the right place. These chips deep-link
-   (?level=higher), so arriving from the homepage lands on that level alone
-   with the chip lit. */
-.lvlbar{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:0 0 30px}
-.lvlbar button{border-radius:999px;padding:10px 20px;font-family:inherit;font-weight:600;font-size:14.2px;
-  border:1.6px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;transition:.25s}
-.lvlbar button:hover{border-color:var(--teal);color:var(--teal)}
-.lvlbar button[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent;
-  box-shadow:0 12px 26px -14px rgba(59,130,246,.8)}
-.lvlbar button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
-
-/* Three columns, one per level, side by side. All three levels are then on
-   screen at once, so nobody has to work out whether they are looking at their
-   own course — which no amount of sorting a single list achieves. */
-#mc-grid{display:grid;grid-template-columns:1fr;gap:0 34px;align-items:start}
-@media(min-width:900px){#mc-grid{grid-template-columns:repeat(3,1fr)}}
-.lvlcol{display:flex;flex-direction:column;gap:18px;padding:0 0 10px}
-@media(min-width:900px){
-  /* A rule between columns, as on her sketch. Drawn on the column rather than
-     between rows so it runs the full height of the tallest one. */
-  .lvlcol + .lvlcol{border-left:1px solid var(--line);padding-left:34px;margin-left:-17px}
-}
-
-/* Column heading. Centred over its column, set large in her gradient — this
-   is the thing a parent scans for, so it should read as a title and not as a
-   caption. Sticky, so the level stays named while they scroll nine dates. */
-.lvlhead{text-align:center;padding:16px 0 15px;margin-bottom:6px;
-  border-bottom:2px solid var(--line);
-  /* Tinted to match the section it sits in, not white — on this panel a white
-     band reads as another card. Blurred like the nav so the molecule
-     background still moves under it while a column scrolls past. */
-  position:sticky;top:60px;z-index:2;
-  background:rgba(243,250,250,.93);backdrop-filter:blur(8px)}
-.lvlhead h3{font-size:clamp(1.7rem,3.4vw,2.2rem);font-weight:700;line-height:1.1;
-  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lvlcount{display:block;margin-top:5px;font-size:12.4px;font-weight:600;
-  letter-spacing:1.4px;text-transform:uppercase;color:var(--mut)}
-
-/* The pass leads its column: it is the offer she most wants taken, and the
-   one a parent is actually deciding about. An ember travels its outline —
-   one per level, in that level's own colour, taken from the three stops of
-   her brand gradient rather than invented:
-     National 5 teal · Higher blue · Advanced Higher violet.
-   Only the three passes carry it. If every card glowed it would be wallpaper
-   and would single out nothing. */
-@property --ember-a{syntax:'<angle>';initial-value:0deg;inherits:false}
-
-.lvlcol{--ember:#12A594}                    /* so the ring never renders unstyled */
-.lvlcol[data-level="n5"]{--ember:#12A594}
-.lvlcol[data-level="hi"]{--ember:#3B82F6}
-.lvlcol[data-level="ah"]{--ember:#8B5CF6}
-.lvlcol[data-level="other"]{--ember:#F0A500}
-
-.card.is-pass{position:relative;border-color:transparent;
-  box-shadow:0 16px 34px -20px color-mix(in srgb,var(--ember) 70%,transparent)}
-.card.is-pass::after{
-  content:"";position:absolute;inset:-1.5px;border-radius:inherit;padding:1.5px;
-  pointer-events:none;
-  /* A dim ring for the whole outline, with one bright ember riding round it. */
-  background:
-    conic-gradient(from var(--ember-a),
-      color-mix(in srgb,var(--ember) 22%,transparent) 0 68%,
-      color-mix(in srgb,var(--ember) 60%,transparent) 79%,
-      var(--ember) 86%,
-      #fff 89%,
-      var(--ember) 92%,
-      color-mix(in srgb,var(--ember) 30%,transparent) 97%,
-      color-mix(in srgb,var(--ember) 22%,transparent) 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-          mask-composite:exclude;
-  animation:ember 5.5s linear infinite;
-}
-/* Staggered so the three passes are not in lockstep, which reads as a single
-   mechanism rather than three cards. */
-.lvlcol[data-level="hi"] .card.is-pass::after{animation-delay:-1.8s}
-.lvlcol[data-level="ah"] .card.is-pass::after{animation-delay:-3.6s}
-@keyframes ember{to{--ember-a:360deg}}
-
-/* Where @property is unsupported the angle cannot interpolate, so the ring
-   would sit frozen at one position. A plain tinted border is the better
-   still image. */
-@supports not (background:conic-gradient(from var(--ember-a),red,blue)){
-  .card.is-pass::after{display:none}
-  .card.is-pass{border-color:var(--ember)}
-}
-@media (prefers-reduced-motion:reduce){
-  .card.is-pass::after{animation:none}
-}
-
-/* Filtering hides whole columns — one attribute, so a heading and its cards
-   can never disagree about whether they are showing. On a phone, where the
-   columns stack and National 5 would sit on top of everyone again, this is
-   what keeps a Higher parent looking at Higher. */
-#mc-grid:not([data-filter="all"]){grid-template-columns:1fr}
-#mc-grid:not([data-filter="all"]) .lvlcol{
-  border-left:0;padding-left:0;margin-left:0;
-  /* One level on its own gets the full width back, rather than staying a
-     narrow strip where two columns used to be. */
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px}
-#mc-grid:not([data-filter="all"]) .lvlhead{grid-column:1/-1}
-
-/* Hiding comes last and names .lvlcol deliberately. The rule above sets
-   display:grid on the same elements at equal specificity, so written the
-   other way round the filter silently stopped working — every column stayed
-   on screen and only the chip looked selected. */
-#mc-grid[data-filter="n5"] > .lvlcol:not([data-level="n5"]),
-#mc-grid[data-filter="hi"] > .lvlcol:not([data-level="hi"]),
-#mc-grid[data-filter="ah"] > .lvlcol:not([data-level="ah"]),
-#mc-grid[data-filter="other"] > .lvlcol:not([data-level="other"]){display:none}
-
-@media (prefers-reduced-motion:reduce){.lvlbar button{transition:none}}
 </style>
 </head>
 <body>
@@ -237,7 +123,7 @@
   </div>
 </section>
 
-<section class="alt" id="book" hidden>
+<section class="alt" id="book">
   <div class="wrap">
     <div class="sec-head rv in">
       <span class="pill">Bookable now</span>
@@ -245,11 +131,21 @@
       <p>Every masterclass Lynsey currently has open, straight from the shop. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
     </div>
     <div class="rv in" style="text-align:center;margin:-6px 0 26px">
-      <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
+      <button type="button" class="btn btn-g payhip-open-cart-button">View your basket →</button>
     </div>
     <div class="lvlbar rv in" id="lvlbar" role="group" aria-label="Filter masterclasses by level" hidden></div>
     <p class="rv in" id="lvlsay" aria-live="polite" style="text-align:center;margin:-16px 0 24px;color:var(--mut);font-size:.92rem"></p>
-    <div class="grid g3" id="mc-grid" data-filter="all"></div>
+    <!-- The section used to carry `hidden` until the feed answered, which made
+         every button aimed at it — including the hero's own — a dead click for
+         as long as the fetch took. It is always here now; this card is what
+         stands in until the classes arrive, and it is a working link to the
+         shop for anyone whose browser never runs the script at all. -->
+    <div class="shopcols" id="mc-grid" data-filter="all">
+      <div class="card shopwait">
+        <p>Loading the masterclasses Lynsey has open&hellip;</p>
+        <a class="btn btn-g" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Open the shop →</a>
+      </div>
+    </div>
     <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your place and all the relevant information are then sent to you by email.</p>
   </div>
 </section>
@@ -298,69 +194,25 @@
 </footer>
 <script src="molecules.js" defer></script>
 <script src="content.js" defer></script>
+<script src="shop.js" defer></script>
 <script>
 /* The masterclasses Lynsey has open right now, read from her shop through this
-   site's own /api/mm-shop. Payhip's embed then turns each card into an overlay
-   checkout that opens ON this page — the customer browses and buys without
-   ever being sent to payhip.com. Payhip stays in the background doing what it
-   is good at: taking the payment and delivering the materials.
-
-   If the feed is empty or unreachable the section stays hidden and the page
-   reads exactly as it shipped. */
-(function () {
-
-  /* Payhip calls this by name when a purchase completes, so the customer is
-     thanked on Lynsey's site rather than being left looking at a closed
-     overlay wondering whether it worked. */
-  window.mmPurchaseDone = function () {
-    var n = document.createElement('div');
-    n.setAttribute('role', 'status');
-    n.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9999;' +
-      'background:#0B7F72;color:#fff;padding:16px 24px;border-radius:18px;font-weight:500;line-height:1.45;' +
-      'box-shadow:0 18px 44px -18px rgba(0,0,0,.4);max-width:92vw;text-align:center';
-    n.innerHTML = '<b>Thank you for your purchase!</b><br>Everything you need is on its way to your email.';
-    document.body.appendChild(n);
-    setTimeout(function () { n.style.transition = 'opacity .6s'; n.style.opacity = '0'; }, 9000);
-    setTimeout(function () { n.remove(); }, 9800);
-  };
-  /* Her shop holds masterclasses and resources together, and only some names
-     carry the word "masterclass" — but every masterclass is named with the
-     date it runs. So a date in the name is what marks one, with the explicit
-     word accepted too. */
-  var DATED = /\b\d{1,2}\s*(st|nd|rd|th)?\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
-  var isMasterclass = function (n) { return DATED.test(n) || /masterclass/i.test(n); };
-
-  /* If the feed cannot answer, the section must still appear. It is the target
-     of every buy button on the page, and a button pointing at a hidden element
-     silently does nothing — which is worse than sending someone to the shop. */
-  function showFallback(grid, sectionId) {
-    var sec = document.getElementById(sectionId);
-    if (!sec) return;
-    grid.innerHTML = '';
-    var box = document.createElement('div');
-    box.className = 'card rv in';
-    box.style.cssText = 'grid-column:1/-1;text-align:center';
-    var p = document.createElement('p');
-    p.textContent = 'The live list is not loading at the moment. Everything is still available in the shop.';
-    p.style.marginBottom = '14px';
-    var a = document.createElement('a');
-    a.className = 'btn btn-p';
-    a.href = 'https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu';
-    a.target = '_blank'; a.rel = 'noopener';
-    a.textContent = 'Open the shop →';
-    box.appendChild(p); box.appendChild(a);
-    grid.appendChild(box);
-    sec.hidden = false;
-  }
-
-
-  /* Cache-bust deliberately. Her zone applies a four-hour browser cache to
-     this response, which overrides the Worker's own no-store on an empty
-     result — so a visitor who once got a failed or empty feed kept being
-     shown the "not loading" fallback for hours after the site was fixed,
-     with a button that sent them to Payhip. The feed is under 2KB and the
-     Worker answers it from a committed snapshot, so a fresh fetch each
-     visit costs nothing worth having. */
+   site's own /api/mm-shop. Only the wording and the ids are page-specific;
+   everything that builds, groups, filters and sells the cards lives in
+   shop.js, shared with /resources. */
+document.addEventListener('DOMContentLoaded', function () {
+  MMShop.mount({
+    grid: 'mc-grid',
+    section: 'book',
+    bar: 'lvlbar',
+    say: 'lvlsay',
+    /* This page sells the Sunday classes only. Her shop holds her revision
+       downloads too, and they are not bookable hours on Zoom. */
+    masterclassesOnly: true,
+    otherLabel: 'More masterclasses',
+    noun: ['class', 'classes'],
+    sayAll: function (n) { return 'Showing all ' + n + ' masterclasses.'; },
+    sayOne: function (n, label) { return 'Showing the ' + n + ' ' + label + ' masterclasses.'; },
     /* ---------------------------------------------------------------
        Where her shop lives.
 
@@ -370,315 +222,15 @@
        shop.molecularmiracleschemistrytuition.co.uk is connected and waiting
        on Payhip to finish verifying it.
 
-       Until it is live this stays payhip.com, and the direct Buy button is
-       not rendered at all — sending someone to payhip.com the moment they
-       show interest is exactly the behaviour we removed. Change this one
-       line when the subdomain answers and the button appears, pointing at
-       her own domain, with no other edit needed.
+       Until it is live this stays payhip.com and the direct Buy button is not
+       rendered at all — sending someone to payhip.com the moment they show
+       interest is exactly the behaviour we removed. Change this one line when
+       the subdomain answers, on this page and on /resources.
        --------------------------------------------------------------- */
-    var SHOP_ORIGIN = 'https://payhip.com';
-    var OWN_DOMAIN = SHOP_ORIGIN.indexOf('payhip.com') === -1;
-
-  fetch('/api/mm-shop?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }).then(function (d) {
-    var grid = document.getElementById('mc-grid');
-    var items = (d.products || []).filter(function (p) { return isMasterclass(p.name || ''); });
-    if (!items.length) { showFallback(grid, 'book'); return; }
-    /* Show every masterclass she sells. This used to cut the list at nine,
-       which was every product she had when it was written — she now has 27,
-       so two thirds of her shop was invisible on the page that exists to sell
-       it, including all of Advanced Higher.
-
-       Sorted by level so the grid groups National 5, then Higher, then
-       Advanced Higher, rather than interleaving three courses by whatever
-       order the shop returns. Matching follows her naming in Payhip: "N5
-       Chemistry...", "Higher Chemistry...", "AH Chemistry...". */
-    var GROUPS = [
-      { key: 'n5', label: 'National 5',      slug: 'national-5',      test: /^n5\b|national 5/i },
-      { key: 'hi', label: 'Higher',          slug: 'higher',          test: /^higher\b/i },
-      { key: 'ah', label: 'Advanced Higher', slug: 'advanced-higher', test: /^ah\b|advanced higher/i }
-    ];
-    var keyOf = function (n) {
-      for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].test.test(n)) return GROUPS[i].key;
-      return 'other';
-    };
-    var rank = function (n) {
-      var k = keyOf(n), i;
-      for (i = 0; i < GROUPS.length; i++) if (GROUPS[i].key === k) return i;
-      return GROUPS.length;   /* anything unrecognised sorts to the end */
-    };
-    items = items.slice().sort(function (a, b) {
-      return rank(a.name || '') - rank(b.name || '');
-    });
-
-    var counts = {};
-    items.forEach(function (p) {
-      var k = keyOf(p.name || '');
-      counts[k] = (counts[k] || 0) + 1;
-    });
-
-    /* One column per level, side by side, each led by its pass — the three
-       levels are then visible at once and nobody has to work out whether they
-       are looking at their own course. On a phone the columns stack, which
-       would put National 5 back on top of everyone, so the level chips stay:
-       they hide the other columns entirely. */
-    function makeCard(p, i) {
-      var wrap = document.createElement('div');
-      wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
-      var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
-
-      if (p.img) {
-        var im = document.createElement('img');
-        im.src = p.img; im.alt = ''; im.loading = 'lazy';
-        im.style.cssText = 'border-radius:12px;margin-bottom:14px;width:100%;aspect-ratio:16/10;object-fit:cover';
-        wrap.appendChild(im);
-      }
-      var h = document.createElement('h3'); h.textContent = p.name; wrap.appendChild(h);
-      var pr = document.createElement('p');
-      pr.textContent = p.price || '';
-      pr.style.cssText = 'font-weight:600;color:var(--teal);margin-bottom:12px';
-      wrap.appendChild(pr);
-
-      var row = document.createElement('div'); row.className = 'buyrow';
-      if (key) {
-        /* One action, and it is the one that keeps them here: add to basket.
-           Payhip's basket is an iframe drawer over this page, so browsing,
-           adding, changing quantities and reviewing the order all happen on
-           molecularmiracleschemistrytuition.co.uk.
-
-           There is deliberately no "Buy now" button. Payhip's own embed script
-           (payhip.js?v=24u69015) ends Checkout.open() with an unconditional
-           redirectPage(buildCheckoutUrl(..., "fallback_direct")) — it builds an
-           overlay URL and then navigates anyway. createCheckoutIframe() is
-           still in their file but nothing calls it. So a Buy-now button cannot
-           be made to stay on this site by any means available to us; it only
-           ever threw the customer out to payhip.com mid-journey. Sending them
-           there once, at the card-details step, from a basket they have already
-           reviewed here, is the closest thing to the intended experience. */
-        /* Direct checkout on her own domain. Only rendered once the custom
-           domain is live: on payhip.com this would be the old behaviour of
-           throwing the customer out of her site mid-journey. */
-        if (OWN_DOMAIN) {
-          var buy = document.createElement('a');
-          buy.className = 'btn btn-p';
-          buy.href = SHOP_ORIGIN + '/buy?link=' + encodeURIComponent(key);
-          buy.textContent = 'Buy now';
-          row.appendChild(buy);
-        }
-        var add = document.createElement('a');
-        add.className = 'btn ' + (OWN_DOMAIN ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
-        add.href = p.link; add.rel = 'noopener';
-        add.setAttribute('data-product', key);
-        add.setAttribute('data-theme', 'none');
-        add.textContent = 'Add to basket';
-        /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
-           walks the page once; these cards arrive later from a fetch, so that
-           scan is a race, and when it loses the anchor keeps its href and the
-           click just navigates. Cart.addItem is public, so calling it directly
-           is deterministic. The href stays as the fallback for anyone whose
-           browser never loads their script — a working link beats a dead one. */
-        add.addEventListener('click', function (ev) {
-          if (!window.Payhip || !window.Payhip.Cart) return;  /* let the link work */
-          ev.preventDefault();
-          window.Payhip.Cart.addItem({ product: key });
-          if (window.Payhip.Cart.displayCartAndLauncher) {
-            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
-          }
-        });
-        row.appendChild(add);
-      } else {
-        /* no readable key — fall back to the product's own page */
-        var only = document.createElement('a');
-        only.className = 'btn btn-p'; only.href = p.link;
-        only.target = '_blank'; only.rel = 'noopener';
-        only.textContent = 'View';
-        row.appendChild(only);
-      }
-      wrap.appendChild(row);
-      return wrap;
-    }
-
-    /* Build the columns. Within a level the pass goes first — it is the offer
-       she most wants taken and the one a parent is deciding between, so it
-       should not sit at the bottom of nine dates. The classes keep the order
-       the shop returns them in, which is her running order through the year. */
-    /* Anything her naming does not place into one of the three levels still
-       gets a column. Without this a product she calls something unexpected —
-       "Nat 5 Chemistry", a bundle, anything new — passes the masterclass
-       filter and is then dropped on the floor, because no column exists to
-       put it in. It would vanish from the page with nothing to show it had
-       ever been there, which is exactly how the nine-product cap hid. */
-    var COLUMNS = GROUPS.slice();
-    if (counts.other) {
-      COLUMNS.push({ key: 'other', label: 'More masterclasses', slug: 'more' });
-    }
-
-    COLUMNS.forEach(function (g) {
-      var mine = items.filter(function (p) { return keyOf(p.name || '') === g.key; });
-      if (!mine.length) return;
-
-      var col = document.createElement('div');
-      col.className = 'lvlcol';
-      col.setAttribute('data-level', g.key);
-      col.id = g.slug;
-
-      var head = document.createElement('div');
-      head.className = 'lvlhead';
-      var ht = document.createElement('h3'); ht.textContent = g.label; head.appendChild(ht);
-      var hc = document.createElement('span');
-      hc.className = 'lvlcount';
-      var classCount = mine.filter(function (p) { return !/pass/i.test(p.name || ''); }).length;
-      hc.textContent = classCount + (classCount === 1 ? ' class' : ' classes');
-      head.appendChild(hc);
-      col.appendChild(head);
-
-      var passes = mine.filter(function (p) { return /pass/i.test(p.name || ''); });
-      var singles = mine.filter(function (p) { return !/pass/i.test(p.name || ''); });
-      passes.concat(singles).forEach(function (p, i) {
-        var c = makeCard(p, i);
-        if (/pass/i.test(p.name || '')) c.classList.add('is-pass');
-        col.appendChild(c);
-      });
-
-      grid.appendChild(col);
-    });
-    document.getElementById('book').hidden = false;
-
-    /* ---- Level filter -------------------------------------------------
-       The three "Book Higher →" buttons above all pointed at #book, which
-       is the top of a twenty-seven card grid that opens with nine National 5
-       classes. A parent who came for Higher saw a screen of the wrong course
-       with nothing to tell them they had arrived anywhere in particular.
-
-       Each button now carries its own level. Selecting one shows that level
-       alone, lights the matching chip and writes ?level= to the address bar,
-       so the state is visible, shareable and survives a refresh. The chips
-       are the way back to the full list.
-
-       The anchors are real (#higher resolves to the group heading), so with
-       no JavaScript the buttons still land on the right part of the page
-       instead of the top of the wrong one. */
-    var bar = document.getElementById('lvlbar');
-    var say = document.getElementById('lvlsay');
-    var present = COLUMNS.filter(function (g) { return counts[g.key]; });
-
-    function describe(k) {
-      if (k === 'all') return 'Showing all ' + items.length + ' masterclasses.';
-      var g = present.filter(function (x) { return x.key === k; })[0];
-      if (!g) return '';
-      return 'Showing the ' + counts[g.key] + ' ' + g.label + ' masterclasses.';
-    }
-
-    function apply(k, push) {
-      grid.setAttribute('data-filter', k);
-      [].forEach.call(bar.querySelectorAll('button'), function (b) {
-        b.setAttribute('aria-pressed', String(b.getAttribute('data-key') === k));
-      });
-      say.textContent = describe(k);
-      if (push && window.history && history.replaceState) {
-        var g = present.filter(function (x) { return x.key === k; })[0];
-        history.replaceState(null, '', g ? '?level=' + g.slug : location.pathname);
-      }
-    }
-
-    /* Only worth showing when there is more than one level to choose between. */
-    if (present.length > 1) {
-      var mk = function (key, label) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.setAttribute('data-key', key);
-        b.setAttribute('aria-pressed', 'false');
-        b.textContent = label;
-        b.addEventListener('click', function () { apply(key, true); });
-        bar.appendChild(b);
-        return b;
-      };
-      mk('all', 'All levels');
-      present.forEach(function (g) { mk(g.key, g.label); });
-      bar.hidden = false;
-    }
-
-    /* Read the level the visitor asked for: ?level=higher from the homepage,
-       or #higher from the buttons on this page. */
-    function requested() {
-      var m = (location.search.match(/[?&]level=([^&]+)/) || [])[1];
-      var want = m ? decodeURIComponent(m) : (location.hash || '').replace('#', '');
-      if (!want) return null;
-      want = want.toLowerCase();
-      var hit = COLUMNS.filter(function (g) {
-        return g.slug === want || g.key === want;
-      })[0];
-      return hit && counts[hit.key] ? hit.key : null;
-    }
-
-    var start = requested();
-    apply(start || 'all', false);
-    if (start) {
-      /* The section was hidden until the feed arrived, so the browser could
-         not act on the hash by itself — it had nothing to scroll to. */
-      var sec = document.getElementById('book');
-      if (sec && sec.scrollIntoView) {
-        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-
-    /* Same-page level buttons: filter in place rather than jumping. */
-    [].forEach.call(document.querySelectorAll('[data-golevel]'), function (a) {
-      a.addEventListener('click', function (ev) {
-        var k = a.getAttribute('data-golevel');
-        if (!counts[k]) return;              /* nothing of that level — let the anchor do its thing */
-        ev.preventDefault();
-        apply(k, true);
-        document.getElementById('book').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-    /* Payhip's embed does not bind anything by itself here. Reading their
-       script: Payhip.Setup() is what calls Button.initiate(), it refuses to
-       run twice (window.PayhipSetupFinished), and the basket only exists if
-       enableCart was set BEFORE Setup ran — `enableCart === true && Cart.initiate()`.
-       Their loader also appends the real script asynchronously, so its own
-       onload fires before Payhip exists. Hence: set the config, load it, poll
-       for the object, then Setup once. Without this the buttons keep their
-       href and the click just navigates to Payhip, which is what was
-       happening. */
-    window.PayhipConfig = window.PayhipConfig || { enableCart: true };
-    if (!window.__payhipLoading) {
-      window.__payhipLoading = true;
-      var ps = document.createElement('script');
-      ps.src = 'https://payhip.com/payhip.js';
-      document.body.appendChild(ps);
-    }
-    (function waitForPayhip(tries) {
-      tries = tries || 0;
-      if (window.Payhip && typeof window.Payhip.Setup === 'function') {
-        if (!window.PayhipSetupFinished) window.Payhip.Setup();
-        bindBasketButtons();
-        return;
-      }
-      if (tries < 120) setTimeout(function () { waitForPayhip(tries + 1); }, 100);
-    })();
-
-    /* Setup() binds .payhip-open-cart-button on its single DOM pass, but only
-       reveals the drawer if the cart iframe has already reported in. Bind it
-       ourselves too so the button works the moment someone presses it. */
-    function bindBasketButtons() {
-      var list = document.getElementsByClassName('payhip-open-cart-button');
-      for (var i = 0; i < list.length; i++) {
-        list[i].addEventListener('click', function (ev) {
-          ev.preventDefault();
-          if (window.Payhip && window.Payhip.Cart && window.Payhip.Cart.displayCartAndLauncher) {
-            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
-          }
-        });
-      }
-    }
-  }).catch(function (e) {
-    console.info('[masterclasses] live list unavailable —', e && e.message ? e.message : e);
-    showFallback(document.getElementById('mc-grid'), 'book');
+    shopOrigin: 'https://payhip.com',
+    ownDomain: false
   });
-})();
+});
 </script>
 <script>
   document.getElementById('bg').onclick=function(){this.classList.toggle('on');document.getElementById('mm').classList.toggle('on')};

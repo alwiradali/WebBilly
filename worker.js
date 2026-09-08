@@ -195,7 +195,7 @@ function parsePayhipStore(html) {
 
   function cardTheme(html) {
     var out = [], seen = {};
-    var re = /card__heading[^"]*productName[^>]*>\s*<a\s+href="(https:\/\/payhip\.com\/b\/[A-Za-z0-9]+)"[^>]*>\s*([\s\S]*?)\s*<\/a>/g;
+    var re = /card__heading[^"]*productName[^>]*>\s*<a\s+href="(https:\/\/payhip\.com\/b\/[A-Za-z0-9_-]+)"[^>]*>\s*([\s\S]*?)\s*<\/a>/g;
     var m;
     while ((m = re.exec(html)) !== null) {
       if (seen[m[1]]) continue;
@@ -218,7 +218,7 @@ function parsePayhipStore(html) {
     while ((m = re.exec(html)) !== null) starts.push(m.index);
     for (var i = 0; i < starts.length; i++) {
       var block = html.slice(starts[i], starts[i + 1] || starts[i] + 6000);
-      var link = (block.match(/grid-item-link[^>]*href="((?:https:\/\/payhip\.com)?\/b\/[A-Za-z0-9]+)"/) || [])[1];
+      var link = (block.match(/grid-item-link[^>]*href="((?:https:\/\/payhip\.com)?\/b\/[A-Za-z0-9_-]+)"/) || [])[1];
       if (!link) continue;
       if (link.charAt(0) === '/') link = 'https://payhip.com' + link;
       if (seen[link]) continue;
