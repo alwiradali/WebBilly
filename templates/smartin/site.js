@@ -12,9 +12,9 @@
      out to a dead number.
      ------------------------------------------------------------------ */
   var CONTACT = {
-    whatsapp: '',                       // digits only, e.g. 447700900123
+    whatsapp: '447979448323',           // digits only, international format
     email: 'roddymartin80@gmail.com',
-    phone: ''                           // e.g. 07700 900123
+    phone: '07979 448323'
   };
 
   /* Web3Forms access key — paste Rod's key here and the booking form starts
@@ -22,7 +22,7 @@
      sign up at web3forms.com with his email and copy the access key. */
   var W3F_KEY = '';
 
-  var WA_MSG = "Hi Rod, I'd like to ask about the 4-week GCSE Science course.";
+  var WA_MSG = "Hi Rod, I found SMARTin SCIENCE online. I'd like to ask about GCSE science tuition for my child.";
 
   function waHref() {
     return CONTACT.whatsapp
