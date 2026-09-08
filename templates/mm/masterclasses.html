@@ -25,6 +25,35 @@
 .lvl .btn + .btn{margin-top:9px}
 .buyrow{display:grid;gap:8px}
 .buyrow .btn{width:100%;justify-content:center}
+
+/* Level filter. Twenty-seven cards in one grid opens with nine National 5
+   classes, so a parent who came for Higher sees a screen of the wrong course
+   and has no way to know they are in the right place. These chips deep-link
+   (?level=higher), so arriving from the homepage lands on that level alone
+   with the chip lit. */
+.lvlbar{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:0 0 30px}
+.lvlbar button{border-radius:999px;padding:10px 20px;font-family:inherit;font-weight:600;font-size:14.2px;
+  border:1.6px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;transition:.25s}
+.lvlbar button:hover{border-color:var(--teal);color:var(--teal)}
+.lvlbar button[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent;
+  box-shadow:0 12px 26px -14px rgba(59,130,246,.8)}
+.lvlbar button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+/* Group headings, so the level is legible while scrolling the full list too —
+   not only when a filter is on. */
+.lvlhead{grid-column:1/-1;display:flex;align-items:center;gap:16px;margin:20px 0 -4px}
+.lvlhead:first-child{margin-top:0}
+.lvlhead h3{font-size:clamp(1.25rem,3vw,1.6rem);white-space:nowrap}
+.lvlhead::after{content:"";flex:1;height:1px;background:var(--line)}
+.lvlcount{font-size:13.4px;color:var(--mut);font-weight:500;white-space:nowrap}
+
+/* Filtering hides whole groups. Done in CSS off one attribute so a card and
+   its heading can never disagree about whether they are showing. */
+#mc-grid[data-filter="n5"] > :not([data-level="n5"]),
+#mc-grid[data-filter="hi"] > :not([data-level="hi"]),
+#mc-grid[data-filter="ah"] > :not([data-level="ah"]){display:none}
+
+@media (prefers-reduced-motion:reduce){.lvlbar button{transition:none}}
 </style>
 </head>
 <body>
@@ -84,7 +113,7 @@
         <span class="mc-time">Sundays · 10:00–11:00</span>
         <div class="mc-price"><b>£18</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £119</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="#book">Book National 5 →</a>
+        <a class="btn btn-p" href="#national-5" data-golevel="n5">Book National 5 &rarr;</a>
       </div>
       <div class="lvl rv d1">
         <div class="sqa">SQA Higher</div>
@@ -92,7 +121,7 @@
         <span class="mc-time">Sundays · 12:00–1:00</span>
         <div class="mc-price"><b>£22</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £145</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="#book">Book Higher →</a>
+        <a class="btn btn-p" href="#higher" data-golevel="hi">Book Higher &rarr;</a>
       </div>
       <div class="lvl rv d2">
         <div class="sqa">SQA Advanced Higher</div>
@@ -100,7 +129,7 @@
         <span class="mc-time">Sundays · 2:00–3:00</span>
         <div class="mc-price"><b>£26</b><span>per masterclass</span></div>
         <p class="mc-pass"><b>8-Masterclass Pass — £169</b> · all eight Sundays for the price of six and a half</p>
-        <a class="btn btn-p" href="#book">Book Advanced Higher →</a>
+        <a class="btn btn-p" href="#advanced-higher" data-golevel="ah">Book Advanced Higher &rarr;</a>
       </div>
     </div>
   </div>
@@ -131,7 +160,9 @@
     <div class="rv in" style="text-align:center;margin:-6px 0 26px">
       <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
     </div>
-    <div class="grid g3" id="mc-grid"></div>
+    <div class="lvlbar rv in" id="lvlbar" role="group" aria-label="Filter masterclasses by level" hidden></div>
+    <p class="rv in" id="lvlsay" aria-live="polite" style="text-align:center;margin:-16px 0 24px;color:var(--mut);font-size:.92rem"></p>
+    <div class="grid g3" id="mc-grid" data-filter="all"></div>
     <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your place and all the relevant information are then sent to you by email.</p>
   </div>
 </section>
@@ -277,16 +308,52 @@
        Advanced Higher, rather than interleaving three courses by whatever
        order the shop returns. Matching follows her naming in Payhip: "N5
        Chemistry...", "Higher Chemistry...", "AH Chemistry...". */
-    var LEVEL = function (n) {
-      if (/^n5\b|national 5/i.test(n)) return 0;
-      if (/^higher\b/i.test(n)) return 1;
-      if (/^ah\b|advanced higher/i.test(n)) return 2;
-      return 3;
+    var GROUPS = [
+      { key: 'n5', label: 'National 5',      slug: 'national-5',      test: /^n5\b|national 5/i },
+      { key: 'hi', label: 'Higher',          slug: 'higher',          test: /^higher\b/i },
+      { key: 'ah', label: 'Advanced Higher', slug: 'advanced-higher', test: /^ah\b|advanced higher/i }
+    ];
+    var keyOf = function (n) {
+      for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].test.test(n)) return GROUPS[i].key;
+      return 'other';
+    };
+    var rank = function (n) {
+      var k = keyOf(n), i;
+      for (i = 0; i < GROUPS.length; i++) if (GROUPS[i].key === k) return i;
+      return GROUPS.length;   /* anything unrecognised sorts to the end */
     };
     items = items.slice().sort(function (a, b) {
-      return LEVEL(a.name || '') - LEVEL(b.name || '');
+      return rank(a.name || '') - rank(b.name || '');
     });
+
+    var counts = {};
+    items.forEach(function (p) {
+      var k = keyOf(p.name || '');
+      counts[k] = (counts[k] || 0) + 1;
+    });
+
+    var lastKey = null;
     items.forEach(function (p, i) {
+      /* A heading before the first card of each level. It earns its place even
+         with no filter applied: scrolling twenty-seven cards, the level is
+         otherwise only inferable from the product names. */
+      var lk = keyOf(p.name || '');
+      if (lk !== lastKey) {
+        lastKey = lk;
+        var g = GROUPS.filter(function (x) { return x.key === lk; })[0];
+        var head = document.createElement('div');
+        head.className = 'lvlhead';
+        head.setAttribute('data-level', lk);
+        if (g) head.id = g.slug;
+        var ht = document.createElement('h3');
+        ht.textContent = g ? g.label : 'More';
+        head.appendChild(ht);
+        var hc = document.createElement('span');
+        hc.className = 'lvlcount';
+        hc.textContent = counts[lk] + (counts[lk] === 1 ? ' class' : ' classes');
+        head.appendChild(hc);
+        grid.appendChild(head);
+      }
       var wrap = document.createElement('div');
       wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
@@ -358,10 +425,100 @@
         only.textContent = 'View';
         row.appendChild(only);
       }
+      wrap.setAttribute('data-level', lk);
       wrap.appendChild(row);
       grid.appendChild(wrap);
     });
     document.getElementById('book').hidden = false;
+
+    /* ---- Level filter -------------------------------------------------
+       The three "Book Higher →" buttons above all pointed at #book, which
+       is the top of a twenty-seven card grid that opens with nine National 5
+       classes. A parent who came for Higher saw a screen of the wrong course
+       with nothing to tell them they had arrived anywhere in particular.
+
+       Each button now carries its own level. Selecting one shows that level
+       alone, lights the matching chip and writes ?level= to the address bar,
+       so the state is visible, shareable and survives a refresh. The chips
+       are the way back to the full list.
+
+       The anchors are real (#higher resolves to the group heading), so with
+       no JavaScript the buttons still land on the right part of the page
+       instead of the top of the wrong one. */
+    var bar = document.getElementById('lvlbar');
+    var say = document.getElementById('lvlsay');
+    var present = GROUPS.filter(function (g) { return counts[g.key]; });
+
+    function describe(k) {
+      if (k === 'all') return 'Showing all ' + items.length + ' masterclasses.';
+      var g = present.filter(function (x) { return x.key === k; })[0];
+      if (!g) return '';
+      return 'Showing the ' + counts[g.key] + ' ' + g.label + ' masterclasses.';
+    }
+
+    function apply(k, push) {
+      grid.setAttribute('data-filter', k);
+      [].forEach.call(bar.querySelectorAll('button'), function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-key') === k));
+      });
+      say.textContent = describe(k);
+      if (push && window.history && history.replaceState) {
+        var g = present.filter(function (x) { return x.key === k; })[0];
+        history.replaceState(null, '', g ? '?level=' + g.slug : location.pathname);
+      }
+    }
+
+    /* Only worth showing when there is more than one level to choose between. */
+    if (present.length > 1) {
+      var mk = function (key, label) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('data-key', key);
+        b.setAttribute('aria-pressed', 'false');
+        b.textContent = label;
+        b.addEventListener('click', function () { apply(key, true); });
+        bar.appendChild(b);
+        return b;
+      };
+      mk('all', 'All levels');
+      present.forEach(function (g) { mk(g.key, g.label); });
+      bar.hidden = false;
+    }
+
+    /* Read the level the visitor asked for: ?level=higher from the homepage,
+       or #higher from the buttons on this page. */
+    function requested() {
+      var m = (location.search.match(/[?&]level=([^&]+)/) || [])[1];
+      var want = m ? decodeURIComponent(m) : (location.hash || '').replace('#', '');
+      if (!want) return null;
+      want = want.toLowerCase();
+      var hit = GROUPS.filter(function (g) {
+        return g.slug === want || g.key === want;
+      })[0];
+      return hit && counts[hit.key] ? hit.key : null;
+    }
+
+    var start = requested();
+    apply(start || 'all', false);
+    if (start) {
+      /* The section was hidden until the feed arrived, so the browser could
+         not act on the hash by itself — it had nothing to scroll to. */
+      var sec = document.getElementById('book');
+      if (sec && sec.scrollIntoView) {
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    /* Same-page level buttons: filter in place rather than jumping. */
+    [].forEach.call(document.querySelectorAll('[data-golevel]'), function (a) {
+      a.addEventListener('click', function (ev) {
+        var k = a.getAttribute('data-golevel');
+        if (!counts[k]) return;              /* nothing of that level — let the anchor do its thing */
+        ev.preventDefault();
+        apply(k, true);
+        document.getElementById('book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
     /* Payhip's embed does not bind anything by itself here. Reading their
        script: Payhip.Setup() is what calls Button.initiate(), it refuses to
        run twice (window.PayhipSetupFinished), and the basket only exists if
