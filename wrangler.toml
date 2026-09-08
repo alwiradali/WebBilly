@@ -152,6 +152,13 @@ database_id = "497bcc16-15d2-4d61-b98c-9d7c09e6c9a5"
 # and would run Mumbai2London's schema into his customer database.
 migrations_dir = "migrations/heatfix"
 
+# HF_WEB3FORMS_KEY is deliberately NOT here. It is a Cloudflare secret on the
+# HeatFix account, because this repository is public. Set it with:
+#   CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
+#   npx wrangler secret put HF_WEB3FORMS_KEY --env heatfix
+# or in the dashboard under the heatfixmcr Worker's Variables and Secrets.
+# Without it the enquiry form still records the lead; he just is not emailed,
+# which is what should happen on billydigitals.com.
 [env.heatfix.vars]
 M2L_HOST = ""
 HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"

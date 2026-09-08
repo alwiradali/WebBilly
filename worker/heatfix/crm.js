@@ -461,6 +461,60 @@ function escape_(s) {
   return String(s ?? "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
 }
 
+/* Tell him a lead has come in, by way of Web3Forms.
+ *
+ * Called from the Worker rather than from the page on purpose. The usual way
+ * to use Web3Forms is to put the access key in the form's HTML, but this
+ * repository is public and the key would then also sit in the page source of
+ * every visitor, where scrapers collect them and spam the address behind it.
+ * From here the key never leaves Cloudflare.
+ *
+ * The enquiry is already committed to his database before this runs, so an
+ * outage at Web3Forms costs him a notification, never the lead itself — hence
+ * the catch that deliberately swallows everything, and the timeout that stops
+ * a hanging request holding up the customer's confirmation.
+ *
+ * With no key configured it simply does nothing, which is what happens on
+ * billydigitals.com, where the preview copy of the site must not be able to
+ * send anything to him.
+ */
+const ENQUIRY_LABELS = {
+  name: "Name", phone: "Phone", email: "Email", address: "Address",
+  town: "Town", postcode: "Postcode", job: "Job", slot: "Preferred time",
+  details: "Details", source: "Came from",
+};
+
+async function notifyEnquiry(env, enquiry) {
+  const key = clean(env.HF_WEB3FORMS_KEY, 120);
+  if (!key) return;
+
+  const fields = {};
+  for (const [k, label] of Object.entries(ENQUIRY_LABELS)) {
+    if (enquiry[k]) fields[label] = enquiry[k];      /* blank rows read as broken */
+  }
+
+  const payload = {
+    access_key: key,
+    subject: `New enquiry from ${enquiry.name} — HeatFix website`,
+    from_name: "HeatFix website",
+    ...fields,
+    "Open the back office": "https://heatfixmcrlimited.co.uk/office",
+  };
+  /* So he can hit reply in his inbox and reach the customer directly. */
+  if (enquiry.email) payload.replyto = enquiry.email;
+
+  try {
+    await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch {
+    /* Saved already; the email is a courtesy, not the record. */
+  }
+}
+
 /* ------------------------------------------------------------- the router */
 export function isHfCrmPath(pathname) {
   return pathname.startsWith("/api/hf/");
@@ -586,6 +640,14 @@ ignore it &mdash; nothing has changed.</p>`,
       clean(b.details, 2000), clean(b.source, 80),
       clean(request.headers.get("user-agent"), 200)
     ).run();
+
+    await notifyEnquiry(env, {
+      id, name, phone,
+      email: clean(b.email, 160), address: clean(b.address, 200),
+      town: clean(b.town, 80), postcode: clean(b.postcode, 16).toUpperCase(),
+      job: clean(b.job, 120), slot: clean(b.slot, 120),
+      details: clean(b.details, 2000), source: clean(b.source, 80),
+    });
 
     return json({ ok: true, id });
   }
