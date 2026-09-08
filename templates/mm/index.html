@@ -522,7 +522,7 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
   var grid = document.getElementById('whatson-grid');
   if (!grid) return;
 
-  function card(level, items, blurb) {
+  function card(level, items, blurb, slug) {
     if (!items.length) return null;
     var prices = items.map(function (p) {
       return parseFloat(String(p.price || '').replace(/[^0-9.]/g, '')) || 0;
@@ -546,6 +546,16 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
       pp.textContent = pass.name.replace(/^.*?(Pass.*)$/i, '$1') + ' — ' + (pass.price || '');
       d.appendChild(pp);
     }
+    /* Straight to that level, not to the top of a list that opens with
+       National 5. Without this a parent reading the Higher panel clicks
+       through and lands on nine N5 classes, with nothing to confirm they
+       are in the right place. */
+    var go = document.createElement('a');
+    go.className = 'btn btn-g';
+    go.href = '/masterclasses?level=' + slug;
+    go.style.cssText = 'margin-top:16px';
+    go.textContent = 'See ' + level + ' dates →';
+    d.appendChild(go);
     return d;
   }
 
@@ -560,9 +570,9 @@ document.getElementById('bkForm').addEventListener('submit',function(e){
       var n5 = all.filter(function (p) { return /^n5\b|national 5/i.test(p.name); });
       var hi = all.filter(function (p) { return /^higher\b/i.test(p.name); });
       var ah = all.filter(function (p) { return /^ah\b|advanced higher/i.test(p.name); });
-      [ card('National 5', n5, 'The topics N5 students lose most marks on, taken one at a time.'),
-        card('Higher', hi, 'Bonding, calculations, open-ended questions — the ones that separate an A from a B.'),
-        card('Advanced Higher', ah, 'The trickiest content on the course, taken slowly enough to actually land.')
+      [ card('National 5', n5, 'The topics N5 students lose most marks on, taken one at a time.', 'national-5'),
+        card('Higher', hi, 'Bonding, calculations, open-ended questions — the ones that separate an A from a B.', 'higher'),
+        card('Advanced Higher', ah, 'The trickiest content on the course, taken slowly enough to actually land.', 'advanced-higher')
       ].forEach(function (c) { if (c) grid.appendChild(c); });
     })
     .catch(function () {
