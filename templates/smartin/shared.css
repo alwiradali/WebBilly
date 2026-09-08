@@ -132,6 +132,19 @@ section{padding:66px 0}
   margin-bottom:16px;background:#E4F8ED;border:1px solid #BCEBD1}
 .card h3{font-size:1.2rem;margin-bottom:9px}
 .card p{color:var(--mut);font-size:.95rem}
+/* A card that is itself a link, for the routes off the homepage. */
+a.card{display:block;color:inherit}
+a.card:hover{border-color:#BCEBD1}
+.card .more{display:inline-block;margin-top:14px;color:var(--green);font-weight:600;
+  font-size:.9rem;font-family:var(--dis)}
+
+/* The places Rod teaches. Seventeen area pages existed with nothing linking to
+   them from anywhere on the site — no nav, no footer, no page — so nobody
+   could reach one without already knowing the URL. */
+.arealist{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:900px;margin:0 auto}
+.arealist a{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;
+  font-size:.88rem;font-weight:500;color:var(--ink);transition:transform .25s,border-color .25s,color .25s}
+.arealist a:hover{border-color:#BCEBD1;color:var(--teal);transform:translateY(-2px)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;padding:46px 0 62px;background:transparent!important}
@@ -487,9 +500,14 @@ section{padding:66px 0}
 /* ---------- footer ---------- */
 footer{border-top:1px solid var(--line);padding:52px 0 28px;color:var(--mut);font-size:.9rem}
 .fgrid{display:grid;gap:30px;margin-bottom:28px}
-@media(min-width:800px){.fgrid{grid-template-columns:1.7fr 1fr 1fr;gap:36px}}
+@media(min-width:620px){.fgrid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(min-width:980px){.fgrid{grid-template-columns:1.6fr 1fr 1fr 1.15fr;gap:36px}}
 footer h4{font-family:var(--dis);font-weight:600;color:var(--ink);font-size:.95rem;margin-bottom:14px}
 footer ul{display:grid;gap:9px}
+/* The area column runs two abreast so it does not tower over its neighbours.
+   It has to be a grid rule, not `columns:2` — footer ul above is already a
+   grid container, and multi-column layout does not apply to one. */
+@media(min-width:620px){.fareas{grid-template-columns:1fr 1fr;column-gap:18px}}
 footer a:hover{color:var(--green)}
 .fbot{border-top:1px solid var(--line);padding-top:20px;text-align:center;font-size:.8rem}
 .fbot a{color:var(--teal)}
