@@ -535,6 +535,150 @@
   </div>
 </section>
 
+<section class="sec sec--dark" id="register">
+  <div class="sec-in">
+    <p class="no">Register</p>
+    <h2>Tell us about<br>your <em>property.</em></h2>
+    <p class="lede">Fill in what you know and we will come back with an achievable rent and the right level of
+      service. Only your name, number, email and the address are needed &mdash; everything else helps us give you a
+      straight answer first time, but you can leave it blank.</p>
+
+    <form class="lreg" id="landlordForm" data-landlord>
+      <fieldset class="lreg-set">
+        <legend>About you</legend>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrName">Your name</label>
+            <input id="lrName" name="name" required maxlength="120" autocomplete="name"></p>
+          <p class="lreg-f"><label for="lrPhone">Phone number</label>
+            <input id="lrPhone" name="phone" type="tel" required maxlength="60" autocomplete="tel"></p>
+        </div>
+        <p class="lreg-f"><label for="lrEmail">Email</label>
+          <input id="lrEmail" name="email" type="email" required maxlength="160" autocomplete="email"></p>
+      </fieldset>
+
+      <fieldset class="lreg-set">
+        <legend>Your property</legend>
+        <div class="lreg-row lreg-row--addr">
+          <p class="lreg-f"><label for="lrAddress">Address</label>
+            <input id="lrAddress" name="address" required maxlength="200" autocomplete="street-address"
+              placeholder="First line and street"></p>
+          <p class="lreg-f"><label for="lrPostcode">Postcode</label>
+            <input id="lrPostcode" name="postcode" maxlength="12" autocomplete="postal-code"></p>
+        </div>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrArea">Area</label>
+            <select id="lrArea" name="area">
+              <option value="">Choose an area</option>
+              <option value="manchester">Manchester</option>
+              <option value="salford">Salford</option>
+              <option value="trafford">Trafford</option>
+              <option value="stockport">Stockport</option>
+              <option value="bury">Bury</option>
+              <option value="oldham">Oldham</option>
+              <option value="tameside">Tameside</option>
+              <option value="rochdale">Rochdale</option>
+              <option value="bolton">Bolton</option>
+              <option value="wigan">Wigan</option>
+            </select></p>
+          <p class="lreg-f"><label for="lrType">Property type</label>
+            <select id="lrType" name="propertyType">
+              <option value="">Choose a type</option>
+              <option value="apartment">Apartment</option>
+              <option value="studio">Studio</option>
+              <option value="house_terraced">Terraced house</option>
+              <option value="house_semi">Semi-detached house</option>
+              <option value="house_detached">Detached house</option>
+              <option value="maisonette">Maisonette</option>
+              <option value="bungalow">Bungalow</option>
+              <option value="room_in_share">Room in a shared house</option>
+              <option value="hmo_whole">Whole HMO</option>
+              <option value="commercial">Commercial unit</option>
+            </select></p>
+        </div>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrBeds">Bedrooms</label>
+            <input id="lrBeds" name="bedrooms" type="number" min="0" max="20" inputmode="numeric"></p>
+          <p class="lreg-f"><label for="lrFurn">Furnishing</label>
+            <select id="lrFurn" name="furnishing">
+              <option value="">Choose</option>
+              <option value="furnished">Furnished</option>
+              <option value="part">Part-furnished</option>
+              <option value="unfurnished">Unfurnished</option>
+            </select></p>
+        </div>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrEpc">EPC rating</label>
+            <select id="lrEpc" name="epc">
+              <option value="">Choose</option>
+              <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+              <option value="D">D</option><option value="E">E</option><option value="F">F</option>
+              <option value="G">G</option>
+              <option value="pending">Certificate pending</option>
+            </select></p>
+          <p class="lreg-f"><label for="lrParking">Parking</label>
+            <select id="lrParking" name="parking">
+              <option value="">Choose</option>
+              <option value="0">No allocated parking</option>
+              <option value="1">1 space</option>
+              <option value="2">2 spaces</option>
+              <option value="3">3 spaces</option>
+              <option value="4">4 spaces</option>
+            </select></p>
+        </div>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrSituation">Where it is up to</label>
+            <select id="lrSituation" name="situation">
+              <option value="">Choose</option>
+              <option value="Empty now">Empty now</option>
+              <option value="Tenanted">Tenanted</option>
+              <option value="Tenants leaving soon">Tenants leaving soon</option>
+              <option value="Just purchased">Just purchased</option>
+              <option value="Being refurbished">Being refurbished</option>
+            </select></p>
+          <p class="lreg-f"><label for="lrRent">Rent you have in mind</label>
+            <input id="lrRent" name="rent" type="number" min="0" max="99999" inputmode="numeric"
+              placeholder="&pound; per month"></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="lreg-set">
+        <legend>What you need</legend>
+        <div class="lreg-row">
+          <p class="lreg-f"><label for="lrService">Service</label>
+            <select id="lrService" name="service">
+              <option value="">Not sure yet, advise me</option>
+              <option value="Let Only (&pound;295)">Let Only &mdash; &pound;295</option>
+              <option value="Rent Collection (5%)">Rent Collection &mdash; 5%</option>
+              <option value="Full Management (10%)">Full Management &mdash; 10%</option>
+            </select></p>
+          <p class="lreg-f"><label for="lrPortfolio">Properties you let</label>
+            <select id="lrPortfolio" name="portfolio">
+              <option value="">Choose</option>
+              <option value="1">Just this one</option>
+              <option value="2-4">2 to 4</option>
+              <option value="5-9">5 to 9</option>
+              <option value="10+">10 or more</option>
+            </select></p>
+        </div>
+        <p class="lreg-f"><label for="lrMessage">Anything else we should know</label>
+          <textarea id="lrMessage" name="message" rows="4" maxlength="3000"
+            placeholder="Access, current agent, works planned, anything at all"></textarea></p>
+      </fieldset>
+
+      <input type="text" name="botcheck" class="vis-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" class="btn btn--fill">Register my property</button>
+      <p class="pd-vnote" aria-live="polite"></p>
+    </form>
+    <p class="pd-vdone" hidden>Thank you &mdash; your property is with the office. We will call you, usually within
+      one working day, with an achievable rent and the service that suits it.</p>
+
+    <div class="phead-ctas">
+      <a class="btn" href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
+      <a class="btn" href="tel:+441612201763">0161 220 1763</a>
+    </div>
+  </div>
+</section>
+
 <section class="sec">
   <div class="sec-in">
     <p class="no">Landlord questions</p>
@@ -580,13 +724,13 @@
   </div>
 </section>
 
-<section class="endcta" id="register">
+<section class="endcta">
   <h2>Let&rsquo;s talk about<br>your <em>property.</em></h2>
   <p>A professional valuation costs nothing and commits you to nothing, just an honest number from the team
     that lets homes on your street.</p>
   <div class="ctas">
     <a class="btn btn--fill" href="megacity-skyline#valuation-form">Book a professional valuation</a>
-    <a class="btn" href="megacity-valuation">Register as a landlord</a>
+    <a class="btn" href="#register">Register as a landlord</a>
     <a class="btn" href="https://wa.me/447804900719" target="_blank" rel="noopener">WhatsApp us</a>
   </div>
 </section>

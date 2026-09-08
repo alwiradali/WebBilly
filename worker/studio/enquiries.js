@@ -9,16 +9,45 @@ import { officeDb, uid, nowIso, json, HttpError, readJsonBody, clampStr, isEmail
 import { valid, label } from "./options.js";
 import { sendEmail, layout, esc } from "./email.js";
 
-export const FALLBACK_TO = "hello@billydigitals.com";
+export const OFFICE_TO = "info@megacityproperties.co.uk";
+export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
 
-/* where office notifications go: Settings → Notifications, else the demo inbox */
-export async function notifyTo(env) {
+/* Which inbox each form reaches. Landlord business goes to the office; anything
+   a tenant sends goes to lettings; the general contact form could be either, so
+   it goes to both rather than making the sender guess.
+   These are the addresses the enquiry ACTUALLY lands in: the Studio's inbox only
+   exists once the database is bound, so until then the email is the only record
+   and there is no copy anywhere else. */
+const ROUTE = {
+  landlord: [OFFICE_TO],
+  valuation: [OFFICE_TO],
+  contact: [OFFICE_TO, LETTINGS_TO],
+  register: [LETTINGS_TO],
+  viewing: [LETTINGS_TO],
+  application: [LETTINGS_TO],
+  maintenance: [LETTINGS_TO],
+  tour: [LETTINGS_TO],
+};
+export const FALLBACK_TO = OFFICE_TO;
+
+/* Where a notification goes: Settings → Notifications wins for every form when
+   it is set, so the office can redirect the lot from one screen; otherwise the
+   table above decides by form. An unknown kind goes to the office. */
+export async function notifyTo(env, kind) {
+  const route = ROUTE[kind] || [FALLBACK_TO];
   const db = officeDb(env);
-  if (!db) return [FALLBACK_TO];
+  if (!db) return route;
   try {
     const list = await getSetting(db, "notifyEmails", []);
-    return Array.isArray(list) && list.length ? list : [FALLBACK_TO];
-  } catch { return [FALLBACK_TO]; }
+    return Array.isArray(list) && list.length ? list : route;
+  } catch { return route; }
+}
+
+/* The contact endpoint carries three different forms, told apart only by their
+   topic, so the inbox has to be decided the same way the Studio decides the
+   enquiry's source — same regexes, kept side by side so they cannot drift. */
+export function kindFromTopic(topic) {
+  return sourceFrom(topic, "contact");
 }
 
 /* The legacy website forms: a handful of messages per connection per hour is
@@ -203,7 +232,7 @@ export async function publicLead(request, env, ctx) {
   const roomLabel = clampStr(body.roomName, 80) || clampStr(body.room, 80);
   const message = [body.date ? "Preferred date: " + clampStr(body.date, 40) : null, body.room ? "Room: " + roomLabel : null, clampStr(body.message, 2000)].filter(Boolean).join("\n");
   const id = await recordEnquiry(env, { source: "tour", name, email, phone, listingId, property, message, preferredDay: body.date, attr: { landing: body.url, referrer: request.headers.get("referer") } });
-  const to = await notifyTo(env);
+  const to = await notifyTo(env, "tour");
   const html = layout("Viewing request from the 360° tour",
     `<p><b>${esc(name)}</b> asked to view <b>${esc(property)}</b> while walking the virtual tour${body.room ? " (they were in " + esc(roomLabel) + ")" : ""}.</p>` +
     `<p>Email: ${esc(email)}<br>Phone: ${esc(phone || "—")}<br>Preferred date: ${esc(body.date || "any")}</p>` +

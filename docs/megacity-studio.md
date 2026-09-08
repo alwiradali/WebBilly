@@ -311,7 +311,29 @@ which the listing pages already carry.
 ### Enquiries, notifications, events
 | Route | Purpose |
 |---|---|
-| `POST /api/megacity-viewing`, `-contact`, `-maintenance` (existing) | still email the office (Settings → Notifications addresses, else the demo inbox) **and** insert an `enquiries` row + a notification. Bodies may carry `listingId` and `attr` (`{utm_source, utm_medium, utm_campaign, referrer, landing}`, captured by the site script) |
+| `POST /api/megacity-viewing`, `-contact`, `-maintenance`, `-apply`, `-landlord` | email the office **and** insert an `enquiries` row + a notification. Bodies may carry `listingId` and `attr` (`{utm_source, utm_medium, utm_campaign, referrer, landing}`, captured by the site script) |
+**Which inbox each form reaches** — `notifyTo(env, kind)` in
+`worker/studio/enquiries.js`. Landlord business goes to
+`info@megacityproperties.co.uk`; anything a tenant sends goes to
+`lettings@megacityproperties.co.uk`; the general contact form goes to both,
+because the sender cannot be told apart:
+
+| Form | Inbox |
+|---|---|
+| Landlord registration (`/landlords#register`), valuation request | info@ |
+| Viewing, tenant registration, tenancy application, maintenance, 360° tour lead | lettings@ |
+| General contact form | both |
+
+Settings → Notifications overrides all of it: set any address there and every
+form goes to that list instead, from one screen. The contact endpoint carries
+three different forms and tells them apart by `topic`, using the same regexes
+that decide the enquiry's `source`, so the inbox and the filing can never
+disagree. `node scripts/megacity-routing-check.mjs` asserts the whole table
+against the real Worker, including the address handed to Resend.
+
+Note the stakes while the database is unbound: `recordEnquiry` writes nothing,
+so the email is the only record of an enquiry, and no copy goes anywhere else.
+
 | `POST /api/public/lead` | billy360's "Book a viewing" (`{property, site, name, email, phone, date, message, room, url}`) → enquiry `source:"tour"` + email |
 | `POST /api/public/event` | `sendBeacon` body `{name, listingId}` (`listing_view`, `tour_open`, …) or billy360's `{ev, site}`; stored 90 days with a daily-rotating session hash, no cookies |
 | `GET /api/studio/enquiries?status=&source=&listingId=` → `{items, counts}`; `GET/PATCH /api/studio/enquiries/:id` (`{status:new|handled|spam, note}`) | the inbox |

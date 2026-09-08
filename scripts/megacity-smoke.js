@@ -67,6 +67,17 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       ok(DEMO ? /megacity-let-/.test(first) : first.startsWith("/let/"), "first property card links to " + first);
     }
     if (path === P("renting")) ok(!!(await page.$("[data-register]")), "tenant register form is on the page");
+    if (path === P("for-landlords")) {
+      /* /landlords/register/ on the old site 301s to this anchor, so the anchor
+         has to BE the form — it was a band of buttons until 8 September. */
+      const reg = await page.evaluate(() => {
+        const sec = document.getElementById("register");
+        const f = document.querySelector("[data-landlord]");
+        return { isForm: !!(sec && sec.querySelector("[data-landlord]")), selects: f ? f.querySelectorAll("select").length : 0 };
+      });
+      ok(reg.isForm, "#register on the landlords page is the registration form");
+      ok(reg.selects >= 8, "the landlord form asks about the property (" + reg.selects + " dropdowns)");
+    }
     if (path === P("tenant-application-form")) ok(!!(await page.$("[data-apply]")), "application form is on the page");
     if (!DEMO) {
       const styles = await page.$$eval("[style]", (els) => els.map((e) => e.getAttribute("style")).filter((s) => /url\(['"]?assets\//.test(s)));

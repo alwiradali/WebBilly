@@ -1999,6 +1999,30 @@ body.sl-open{overflow:hidden}
 .pd-vdone{font:600 15.5px/1.5 var(--ff-u);color:#fff;background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:13px 15px;margin-bottom:16px}
 
+/* ── landlord registration, the one long form on the site ────────────────
+   .pd-vform above is placeholder-only and styles input alone; a select has no
+   placeholder and needs a label, so this is its labelled sibling. Same white
+   fields on the dark band, two columns on a desktop and one on a phone, and
+   16px text everywhere so iOS does not zoom the page on focus. */
+.lreg{display:grid;gap:26px;max-width:720px;margin-bottom:16px}
+.lreg-set{border:0;padding:0;margin:0;display:grid;gap:12px;min-width:0}
+.lreg-set legend{padding:0;margin-bottom:2px;font:700 12.6px/1.4 var(--ff-u);
+  color:rgba(255,255,255,.62);text-transform:uppercase;letter-spacing:.11em}
+.lreg-row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.lreg-row--addr{grid-template-columns:2fr 1fr}
+.lreg-f{display:grid;gap:7px;margin:0;min-width:0}
+.lreg-f label{font:600 14px/1.4 var(--ff-u);color:rgba(255,255,255,.9)}
+.lreg-f input,.lreg-f select,.lreg-f textarea{width:100%;border:0;border-radius:10px;
+  padding:14px 15px;font:500 16px/1.3 var(--ff-u);color:var(--navy-ink);background:#fff}
+.lreg-f textarea{font-weight:400;resize:vertical;min-height:104px}
+.lreg-f input::placeholder,.lreg-f textarea::placeholder{color:#5A6280}
+.lreg-f input:focus,.lreg-f select:focus,.lreg-f textarea:focus{outline:0;
+  box-shadow:0 0 0 3px rgba(79,163,220,.6)}
+.lreg .btn{margin-bottom:0;justify-self:start}
+@media (max-width:720px){
+  .lreg-row,.lreg-row--addr{grid-template-columns:1fr}
+}
+
 /* ── floating valuation pill ─────────────────────────────────────────── */
 .fab-val{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:205;
   display:inline-flex;align-items:center;gap:9px;background:var(--grad);color:#fff;

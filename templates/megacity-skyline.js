@@ -836,6 +836,43 @@ window.mcBeacon = (name, extra) => {
 /* ── tenancy application → the office inbox ─────────────────────────────
    /tenant-application-form. The property and listing come in on the query
    string from the "Apply for this property" button. */
+/* Landlord registration, /landlords#register. Long form, and every field past
+   the contact details is optional, so it posts whatever was filled in and lets
+   the office chase the rest. */
+(() => {
+  const f = document.querySelector("[data-landlord]");
+  if (!f) return;
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const note = f.querySelector(".pd-vnote");
+    const btn = f.querySelector("button[type=submit]");
+    btn.disabled = true; btn.style.opacity = ".6"; note.textContent = "";
+    const v = (n) => (f.elements[n] ? f.elements[n].value.trim() : "");
+    try {
+      const r = await fetch("/api/megacity-landlord", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: v("name"), phone: v("phone"), email: v("email"),
+          address: v("address"), postcode: v("postcode"), area: v("area"),
+          propertyType: v("propertyType"), bedrooms: v("bedrooms"), furnishing: v("furnishing"),
+          epc: v("epc"), parking: v("parking"), situation: v("situation"), rent: v("rent"),
+          service: v("service"), portfolio: v("portfolio"), message: v("message"),
+          attr: window.mcAttr || {}, botcheck: v("botcheck")
+        })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the registration did not go through");
+      f.hidden = true;
+      const done = f.parentElement.querySelector(".pd-vdone");
+      if (done) done.hidden = false;
+      if (window.mcTrack) window.mcTrack("generate_lead", { form: "landlord" });
+    } catch (err) {
+      btn.disabled = false; btn.style.opacity = "";
+      note.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will take your details over the phone.";
+    }
+  });
+})();
+
 (() => {
   const f = document.querySelector("[data-apply]");
   if (!f) return;

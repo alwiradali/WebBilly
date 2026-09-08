@@ -23,7 +23,8 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 /* Megacity Studio — the client's back office (docs/megacity-studio.md).
    Lives in worker/studio/*; bundled into this Worker at deploy time. */
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
-import { recordEnquiry, notifyTo, formAllowed } from "./worker/studio/enquiries.js";
+import { recordEnquiry, notifyTo, formAllowed, kindFromTopic } from "./worker/studio/enquiries.js";
+import { label as optionLabel } from "./worker/studio/options.js";
 import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
 import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
@@ -108,6 +109,10 @@ export default {
     if (url.pathname === "/api/megacity-apply") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleMegacityApply(request, env, ctx);
+    }
+    if (url.pathname === "/api/megacity-landlord") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityLandlord(request, env, ctx);
     }
     // Mumbai2London is parked — see M2L_PARKED below. The code all still
     // works; flip the flag and the pages come back with it.
@@ -747,11 +752,12 @@ billydigitals.com`;
 /* ── Megacity Properties — tenant maintenance reports ────────────────────
    The office manages every job in 10ninety and updates the landlord from
    there; this endpoint just gets the report to them instantly, structured.
-   DEMO: reports go to our own inbox. At go-live, point MEGACITY_MAINT_TO
-   at the office inbox (info@megacityproperties.co.uk) or the 10ninety
-   intake address once their support confirms one, and add the client's
-   domain to originOk. */
-const MEGACITY_MAINT_TO = "hello@billydigitals.com";
+   Reports reach the lettings inbox: notifyTo(env, kind) in worker/studio/
+   enquiries.js decides which of the office's addresses each form goes to.
+   (A MEGACITY_MAINT_TO constant used to sit here with a note to point it at
+   the office at go-live. Nothing ever read it — the recipient has come from
+   notifyTo for a long time — so editing it would have looked like the fix and
+   changed nothing. Removed.) */
 const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
 
 async function handleMegacityMaintenance(request, env, ctx) {
@@ -785,7 +791,7 @@ async function handleMegacityMaintenance(request, env, ctx) {
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
-  const payload = { from: MEGACITY_FROM, to: await notifyTo(env), subject, html, text };
+  const payload = { from: MEGACITY_FROM, to: await notifyTo(env, "maintenance"), subject, html, text };
   if (isEmail) payload.reply_to = contact;
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -856,7 +862,7 @@ async function handleMegacityViewing(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "viewing"), reply_to: email, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
@@ -914,7 +920,7 @@ async function handleMegacityContact(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, kindFromTopic(topic)), reply_to: email, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
@@ -927,6 +933,75 @@ async function handleMegacityContact(request, env, ctx) {
 /* Tenancy application from /tenant-application-form (the old site's
    10ninety form went with the old site). Emailed to the office and kept in
    the Studio inbox as a "Tenancy application". */
+/* ── Megacity Properties — landlord registration ─────────────────────────
+   The old site had a /landlords/register/ page; ours is the form at
+   /landlords#register. Everything past the contact details is optional, so a
+   landlord can leave four fields and go, and the office still gets enough to
+   value the property when they fill the rest in. Goes to the office inbox, not
+   lettings — see notifyTo in worker/studio/enquiries.js. */
+async function handleMegacityLandlord(request, env, ctx) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
+  if (body.botcheck) return json({ ok: true });
+  const s = (k, n) => String(body[k] || "").trim().slice(0, n);
+  const name = s("name", 120), email = s("email", 160), phone = s("phone", 60);
+  const address = s("address", 200), postcode = s("postcode", 12).toUpperCase();
+  const area = s("area", 40), ptype = s("propertyType", 40), bedrooms = s("bedrooms", 4);
+  const furnishing = s("furnishing", 40), epc = s("epc", 20), parking = s("parking", 4);
+  const situation = s("situation", 40), rent = s("rent", 12);
+  const service = s("service", 60), portfolio = s("portfolio", 20), message = s("message", 3000);
+  if (!name || !phone) return json({ error: "Please include your name and a phone number." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "A valid email address is required." }, 400);
+  if (!address) return json({ error: "Please include the property address." }, 400);
+
+  const where = [address, postcode].filter(Boolean).join(", ");
+  /* The form posts the Studio's own values (house_semi, epc pending, …) so the
+     answers stay comparable with a listing; the email shows the labels. */
+  const areaL = optionLabel("area", area), typeL = optionLabel("type", ptype);
+  const furnL = optionLabel("furnishing", furnishing), epcL = optionLabel("epcRating", epc);
+  const parkL = optionLabel("parkingSpaces", parking);
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const pairs = [
+    ["Name", name], ["Phone", phone], ["Email", email],
+    ["Address", address], ["Postcode", postcode || "—"], ["Area", areaL || "—"],
+    ["Property type", typeL || "—"], ["Bedrooms", bedrooms || "—"], ["Furnishing", furnL || "—"],
+    ["EPC", epcL || "—"], ["Parking", parkL || "—"], ["Situation", situation || "—"],
+    ["Rent expected", rent ? "£" + rent + " pcm" : "—"],
+    ["Service wanted", service || "—"], ["Properties owned", portfolio || "—"],
+    ["Anything else", message || "—"],
+  ];
+  const rows = pairs.map(([k, v]) =>
+    `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:130px;">${k}</td>` +
+    `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`).join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Landlord registration <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the landlord. Fields they left blank show as a dash.</div></div>`;
+  const text = ["Landlord registration"].concat(pairs.map(([k, v]) => k + ": " + v)).join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "landlord"), reply_to: email, subject: "Landlord registration — " + (where || name) + " · " + name, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, {
+    source: "landlord", name, email, phone, property: where || null,
+    message: pairs.slice(3).map(([k, v]) => k + ": " + v).join("\n"),
+    attr: body.attr,
+  }));
+  return json({ ok: true });
+}
+
 async function handleMegacityApply(request, env, ctx) {
   if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
@@ -959,7 +1034,7 @@ async function handleMegacityApply(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "application"), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
