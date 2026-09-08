@@ -711,3 +711,13 @@ footer a:hover{color:var(--green)}
 .card.mini h3{margin:0;font-size:1.06rem}
 .card.mini p{margin:0;color:var(--mut);font-size:13px}
 .card.mini .ic{margin:0 0 4px}
+
+/* The areas index, grouped by region. Forty-five online places as cards is a
+   wall nobody reads to the bottom of, so they are plain lists under regional
+   headings instead. */
+.regions{display:grid;gap:28px}
+@media(min-width:640px){.regions{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.regions{grid-template-columns:repeat(3,1fr)}}
+.regcol h3{font-size:1rem;letter-spacing:.02em;margin-bottom:12px;color:var(--ink)}
+.regcol .arealist{justify-content:flex-start;gap:8px}
+.regcol .arealist a{font-size:.84rem;padding:7px 13px}

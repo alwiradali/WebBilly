@@ -18,12 +18,15 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(__file__), '..', 'templates', 'smartin')
 
-# Areas listed in the footer, shortest journey first. The full sixteen live on
-# areas/index.html, which the "All areas" link points at.
+# The footer lists the in-person places — which means Leeds — and then the one
+# page that covers everywhere else. Mixing in Bradford or Harrogate under a
+# heading that says "where Rod teaches" reads as an offer to turn up there.
+# The full fifty-seven live on areas/index.html, behind "All areas".
 FOOTER_AREAS = [
     ('leeds', 'Leeds'), ('headingley', 'Headingley'), ('roundhay', 'Roundhay'),
-    ('horsforth', 'Horsforth'), ('harrogate', 'Harrogate'), ('wakefield', 'Wakefield'),
-    ('bradford', 'Bradford'), ('online-uk', 'Online, UK-wide'),
+    ('horsforth', 'Horsforth'), ('chapel-allerton', 'Chapel Allerton'),
+    ('morley', 'Morley'), ('pudsey', 'Pudsey'),
+    ('online-uk', 'Online, England &amp; Wales'),
 ]
 
 NAV = '''<nav class="nav">
@@ -36,8 +39,8 @@ NAV = '''<nav class="nav">
       <span class="sp"></span>
       <div class="nlinks">
         <a href="{p}course.html">GCSE Courses</a>
+        <a href="{p}daytime.html">Daytime</a>
         <a href="{p}timetable.html">Timetable</a>
-        <a href="{p}masterclasses.html">Masterclasses</a>
         <a href="{p}workshops.html">STEM Activities</a>
         <a href="{p}about.html">About Rod</a>
         <a href="{p}faqs.html">FAQs</a>
@@ -70,7 +73,7 @@ FOOTER = '''<footer>
           <img class="mark" src="{a}assets/smartin/flask.png" alt="">
           <span class="wm"><b>SMART<i>in</i></b><em>SCIENCE</em></span>
         </a>
-        <p style="max-width:36ch">Science made simple. Results made real. GCSE Science tuition, workshops and clubs with Rod Martin — Leeds-based, and online across the UK.</p>
+        <p style="max-width:36ch">Science made simple. Results made real. GCSE Science tuition, workshops and clubs with Rod Martin — Leeds-based, and online across England and Wales.</p>
         <p style="margin-top:18px"><a class="btn btn-g" href="{p}index.html#booking">Enquire about a place →</a></p>
       </div>
       <div>
