@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="shop.css">
 </head>
 <body>
 <canvas id="molecules" aria-hidden="true"></canvas>
@@ -84,17 +85,29 @@
   </div>
 </section>
 
-<section class="alt" id="mm-shop-live" hidden>
+<section class="alt" id="mm-shop-live">
   <div class="wrap">
     <div class="sec-head rv in">
       <span class="pill">In the shop right now</span>
       <h2>Ready to <span class="g">buy today</span></h2>
-      <p>Straight from the shop &mdash; whatever Lynsey has live right now, exactly as she named it. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
+      <p>Everything Lynsey has live, grouped by level so you only read your own course. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
     </div>
     <div class="rv in" style="text-align:center;margin:-6px 0 26px">
-      <a class="btn btn-g payhip-open-cart-button" href="#" role="button">View your basket →</a>
+      <button type="button" class="btn btn-g payhip-open-cart-button">View your basket →</button>
     </div>
-    <div class="grid g3" id="mm-shop-grid"></div>
+    <div class="lvlbar rv in" id="shop-lvlbar" role="group" aria-label="Filter the shop by level" hidden></div>
+    <p class="rv in" id="shop-lvlsay" aria-live="polite" style="text-align:center;margin:-16px 0 24px;color:var(--mut);font-size:.92rem"></p>
+    <!-- The section used to carry `hidden` until the feed answered, which made
+         the hero's own "Browse the Shop" a dead click for as long as the fetch
+         took. It is always here now; this card is what stands in until the
+         products arrive, and it is a working link to the shop for anyone whose
+         browser never runs the script at all. -->
+    <div class="shopcols" id="mm-shop-grid" data-filter="all">
+      <div class="card shopwait">
+        <p>Loading what&rsquo;s in the shop&hellip;</p>
+        <a class="btn btn-g" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Open the shop →</a>
+      </div>
+    </div>
     <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your resources and all the relevant information are then sent to you by email.</p>
   </div>
 </section>
@@ -162,204 +175,38 @@
 </footer>
 <script src="molecules.js" defer></script>
 <script src="content.js" defer></script>
+<script src="shop.js" defer></script>
 <script>
-/* What's in the shop right now — read from Lynsey's Payhip store via this
-   site's own /api/mm-shop, so a product she adds appears here with no site
-   change at all. If the shop is empty or unreachable the section simply
-   stays hidden and the page reads exactly as shipped. */
-(function () {
+/* What's in the shop right now, read from Lynsey's Payhip store through this
+   site's own /api/mm-shop — so a product she adds appears here with no site
+   change at all.
 
-  /* Payhip calls this by name when a purchase completes, so the customer is
-     thanked on Lynsey's site rather than being left looking at a closed
-     overlay wondering whether it worked. */
-  window.mmPurchaseDone = function () {
-    var n = document.createElement('div');
-    n.setAttribute('role', 'status');
-    n.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9999;' +
-      'background:#0B7F72;color:#fff;padding:16px 24px;border-radius:18px;font-weight:500;line-height:1.45;' +
-      'box-shadow:0 18px 44px -18px rgba(0,0,0,.4);max-width:92vw;text-align:center';
-    n.innerHTML = '<b>Thank you for your purchase!</b><br>Everything you need is on its way to your email.';
-    document.body.appendChild(n);
-    setTimeout(function () { n.style.transition = 'opacity .6s'; n.style.opacity = '0'; }, 9000);
-    setTimeout(function () { n.remove(); }, 9800);
-  };
-  /* If the feed cannot answer, the section must still appear. It is the target
-     of every buy button on the page, and a button pointing at a hidden element
-     silently does nothing — which is worse than sending someone to the shop. */
-  function showFallback(grid, sectionId) {
-    var sec = document.getElementById(sectionId);
-    if (!sec) return;
-    grid.innerHTML = '';
-    var box = document.createElement('div');
-    box.className = 'card rv in';
-    box.style.cssText = 'grid-column:1/-1;text-align:center';
-    var p = document.createElement('p');
-    p.textContent = 'The live list is not loading at the moment. Everything is still available in the shop.';
-    p.style.marginBottom = '14px';
-    var a = document.createElement('a');
-    a.className = 'btn btn-p';
-    a.href = 'https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu';
-    a.target = '_blank'; a.rel = 'noopener';
-    a.textContent = 'Open the shop →';
-    box.appendChild(p); box.appendChild(a);
-    grid.appendChild(box);
-    sec.hidden = false;
-  }
+   Grouped by level, the same way /masterclasses is, because that is the
+   question a parent actually arrives with: not "what downloads do you have",
+   but "what have you got for Higher". A revision pack named "Higher
+   Chemistry ..." therefore sits in the Higher column beside the Higher
+   classes, rather than in a separate bin of its own.
 
-  /* Cache-bust deliberately. Her zone applies a four-hour browser cache to
-     this response, which overrides the Worker's own no-store on an empty
-     result — so a visitor who once got a failed or empty feed kept being
-     shown the "not loading" fallback for hours after the site was fixed,
-     with a button that sent them to Payhip. The feed is under 2KB and the
-     Worker answers it from a committed snapshot, so a fresh fetch each
-     visit costs nothing worth having. */
-    /* ---------------------------------------------------------------
-       Where her shop lives.
-
-       Payhip serves a seller's store from their own domain once a custom
-       domain is connected, and the direct checkout link becomes
-       <her domain>/buy?link=<product key> rather than payhip.com/buy.
-       shop.molecularmiracleschemistrytuition.co.uk is connected and waiting
-       on Payhip to finish verifying it.
-
-       Until it is live this stays payhip.com, and the direct Buy button is
-       not rendered at all — sending someone to payhip.com the moment they
-       show interest is exactly the behaviour we removed. Change this one
-       line when the subdomain answers and the button appears, pointing at
-       her own domain, with no other edit needed.
-       --------------------------------------------------------------- */
-    var SHOP_ORIGIN = 'https://payhip.com';
-    var OWN_DOMAIN = SHOP_ORIGIN.indexOf('payhip.com') === -1;
-
-  fetch('/api/mm-shop?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }).then(function (d) {
-    var grid = document.getElementById('mm-shop-grid');
-    if (!d.products || !d.products.length) { showFallback(grid, 'mm-shop-live'); return; }
-    /* Was capped at nine, which hid two thirds of her shop once she went from
-       9 products to 27. */
-    d.products.forEach(function (p, i) {
-      var wrap = document.createElement('div');
-      wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
-      var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
-
-      if (p.img) {
-        var im = document.createElement('img');
-        im.src = p.img; im.alt = ''; im.loading = 'lazy';
-        im.style.cssText = 'border-radius:12px;margin-bottom:14px;width:100%;aspect-ratio:16/10;object-fit:cover';
-        wrap.appendChild(im);
-      }
-      var h = document.createElement('h3'); h.textContent = p.name; wrap.appendChild(h);
-      var pr = document.createElement('p');
-      pr.textContent = p.price || '';
-      pr.style.cssText = 'font-weight:600;color:var(--teal);margin-bottom:12px';
-      wrap.appendChild(pr);
-
-      var row = document.createElement('div'); row.className = 'buyrow';
-      if (key) {
-        /* One action, and it is the one that keeps them here: add to basket.
-           Payhip's basket is an iframe drawer over this page, so browsing,
-           adding, changing quantities and reviewing the order all happen on
-           molecularmiracleschemistrytuition.co.uk.
-
-           There is deliberately no "Buy now" button. Payhip's own embed script
-           (payhip.js?v=24u69015) ends Checkout.open() with an unconditional
-           redirectPage(buildCheckoutUrl(..., "fallback_direct")) — it builds an
-           overlay URL and then navigates anyway. createCheckoutIframe() is
-           still in their file but nothing calls it. So a Buy-now button cannot
-           be made to stay on this site by any means available to us; it only
-           ever threw the customer out to payhip.com mid-journey. Sending them
-           there once, at the card-details step, from a basket they have already
-           reviewed here, is the closest thing to the intended experience. */
-        /* Direct checkout on her own domain. Only rendered once the custom
-           domain is live: on payhip.com this would be the old behaviour of
-           throwing the customer out of her site mid-journey. */
-        if (OWN_DOMAIN) {
-          var buy = document.createElement('a');
-          buy.className = 'btn btn-p';
-          buy.href = SHOP_ORIGIN + '/buy?link=' + encodeURIComponent(key);
-          buy.textContent = 'Buy now';
-          row.appendChild(buy);
-        }
-        var add = document.createElement('a');
-        add.className = 'btn ' + (OWN_DOMAIN ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
-        add.href = p.link; add.rel = 'noopener';
-        add.setAttribute('data-product', key);
-        add.setAttribute('data-theme', 'none');
-        add.textContent = 'Add to basket';
-        /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
-           walks the page once; these cards arrive later from a fetch, so that
-           scan is a race, and when it loses the anchor keeps its href and the
-           click just navigates. Cart.addItem is public, so calling it directly
-           is deterministic. The href stays as the fallback for anyone whose
-           browser never loads their script — a working link beats a dead one. */
-        add.addEventListener('click', function (ev) {
-          if (!window.Payhip || !window.Payhip.Cart) return;  /* let the link work */
-          ev.preventDefault();
-          window.Payhip.Cart.addItem({ product: key });
-          if (window.Payhip.Cart.displayCartAndLauncher) {
-            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
-          }
-        });
-        row.appendChild(add);
-      } else {
-        /* no readable key — fall back to the product's own page */
-        var only = document.createElement('a');
-        only.className = 'btn btn-p'; only.href = p.link;
-        only.target = '_blank'; only.rel = 'noopener';
-        only.textContent = 'View';
-        row.appendChild(only);
-      }
-      wrap.appendChild(row);
-      grid.appendChild(wrap);
-    });
-    document.getElementById('mm-shop-live').hidden = false;
-    /* Payhip's embed does not bind anything by itself here. Reading their
-       script: Payhip.Setup() is what calls Button.initiate(), it refuses to
-       run twice (window.PayhipSetupFinished), and the basket only exists if
-       enableCart was set BEFORE Setup ran — `enableCart === true && Cart.initiate()`.
-       Their loader also appends the real script asynchronously, so its own
-       onload fires before Payhip exists. Hence: set the config, load it, poll
-       for the object, then Setup once. Without this the buttons keep their
-       href and the click just navigates to Payhip, which is what was
-       happening. */
-    window.PayhipConfig = window.PayhipConfig || { enableCart: true };
-    if (!window.__payhipLoading) {
-      window.__payhipLoading = true;
-      var ps = document.createElement('script');
-      ps.src = 'https://payhip.com/payhip.js';
-      document.body.appendChild(ps);
-    }
-    (function waitForPayhip(tries) {
-      tries = tries || 0;
-      if (window.Payhip && typeof window.Payhip.Setup === 'function') {
-        if (!window.PayhipSetupFinished) window.Payhip.Setup();
-        bindBasketButtons();
-        return;
-      }
-      if (tries < 120) setTimeout(function () { waitForPayhip(tries + 1); }, 100);
-    })();
-
-    /* Setup() binds .payhip-open-cart-button on its single DOM pass, but only
-       reveals the drawer if the cart iframe has already reported in. Bind it
-       ourselves too so the button works the moment someone presses it. */
-    function bindBasketButtons() {
-      var list = document.getElementsByClassName('payhip-open-cart-button');
-      for (var i = 0; i < list.length; i++) {
-        list[i].addEventListener('click', function (ev) {
-          ev.preventDefault();
-          if (window.Payhip && window.Payhip.Cart && window.Payhip.Cart.displayCartAndLauncher) {
-            try { window.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
-          }
-        });
-      }
-    }
-  }).catch(function (e) {
-    console.info('[shop] live products unavailable —', e && e.message ? e.message : e);
-    showFallback(document.getElementById('mm-shop-grid'), 'mm-shop-live');
+   Everything that builds, groups, filters and sells the cards lives in
+   shop.js, shared with /masterclasses. */
+document.addEventListener('DOMContentLoaded', function () {
+  MMShop.mount({
+    grid: 'mm-shop-grid',
+    section: 'mm-shop-live',
+    bar: 'shop-lvlbar',
+    say: 'shop-lvlsay',
+    /* This is the whole shop, not just the Sunday classes. */
+    masterclassesOnly: false,
+    otherLabel: 'Everything else',
+    noun: ['item', 'items'],
+    sayAll: function (n) { return 'Showing all ' + n + ' items in the shop.'; },
+    sayOne: function (n, label) { return 'Showing the ' + n + ' ' + label + ' items.'; },
+    /* Flip these two together with the pair on /masterclasses when Payhip
+       finishes verifying shop.molecularmiracleschemistrytuition.co.uk. */
+    shopOrigin: 'https://payhip.com',
+    ownDomain: false
   });
-})();
+});
 </script>
 <script>
   document.getElementById('bg').onclick=function(){this.classList.toggle('on');document.getElementById('mm').classList.toggle('on')};

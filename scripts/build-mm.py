@@ -70,7 +70,7 @@ def rewrite(html, domain, canonical_path):
     html = re.sub(r'(?:\.\./)+assets/mm/', '/assets/', html)
 
     # shared css/js, referenced as ../x from areas and bare x from the root
-    html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|molecules\.js|schedule\.js|reviews\.js|content\.js)"',
+    html = re.sub(r'(?:href|src)="(?:\.\./)?(shared\.css|shop\.css|molecules\.js|schedule\.js|reviews\.js|content\.js|shop\.js)"',
                   lambda m: m.group(0).split('=')[0] + '="/' + m.group(1) + '"', html)
 
     # Internal links -> absolute clean URLs, so the host serves them without a
@@ -200,7 +200,7 @@ function normaliseApi(body) {
   const out = [];
   for (const p of raw) {
     const link = String(pick(p, ["link", "url", "permalink", "product_url"]));
-    let keyPart = (link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
+    let keyPart = (link.match(/\/b\/([A-Za-z0-9_-]+)/) || [])[1];
     if (!keyPart) keyPart = String(pick(p, ["key", "product_key", "permalink_key", "slug"]));
     if (!keyPart) continue;
 
@@ -299,7 +299,7 @@ function parsePayhipStore(html) {
 
   function cardTheme(html) {
     var out = [], seen = {};
-    var re = /card__heading[^"]*productName[^>]*>\s*<a\s+href="(https:\/\/payhip\.com\/b\/[A-Za-z0-9]+)"[^>]*>\s*([\s\S]*?)\s*<\/a>/g;
+    var re = /card__heading[^"]*productName[^>]*>\s*<a\s+href="(https:\/\/payhip\.com\/b\/[A-Za-z0-9_-]+)"[^>]*>\s*([\s\S]*?)\s*<\/a>/g;
     var m;
     while ((m = re.exec(html)) !== null) {
       if (seen[m[1]]) continue;
@@ -322,7 +322,7 @@ function parsePayhipStore(html) {
     while ((m = re.exec(html)) !== null) starts.push(m.index);
     for (var i = 0; i < starts.length; i++) {
       var block = html.slice(starts[i], starts[i + 1] || starts[i] + 6000);
-      var link = (block.match(/grid-item-link[^>]*href="((?:https:\/\/payhip\.com)?\/b\/[A-Za-z0-9]+)"/) || [])[1];
+      var link = (block.match(/grid-item-link[^>]*href="((?:https:\/\/payhip\.com)?\/b\/[A-Za-z0-9_-]+)"/) || [])[1];
       if (!link) continue;
       if (link.charAt(0) === '/') link = 'https://payhip.com' + link;
       if (seen[link]) continue;
@@ -395,13 +395,13 @@ def fetch_shop_products():
             break
         pages.append(nxt)
         # stop as soon as a page introduces no product links we have not seen
-        if not _re.search(r'href="https://payhip\.com/b/[A-Za-z0-9]+"', nxt):
+        if not _re.search(r'href="https://payhip\.com/b/[A-Za-z0-9_-]+"', nxt):
             break
     page = "\n".join(pages)
 
     out, seen = [], set()
     pattern = _re.compile(
-        r'card__heading[^"]*productName[^>]*>\s*<a\s+href="(https://payhip\.com/b/[A-Za-z0-9]+)"[^>]*>\s*(.*?)\s*</a>',
+        r'card__heading[^"]*productName[^>]*>\s*<a\s+href="(https://payhip\.com/b/[A-Za-z0-9_-]+)"[^>]*>\s*(.*?)\s*</a>',
         _re.S)
     for m in pattern.finditer(page):
         link, raw = m.group(1), m.group(2)
