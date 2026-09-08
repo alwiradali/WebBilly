@@ -20,9 +20,72 @@ const FROM = "Billy Digitals <hello@billydigitals.com>";
 const REPLY_TO = "hello@billydigitals.com";
 const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 
+/* Megacity Studio — the client's back office (docs/megacity-studio.md).
+   Lives in worker/studio/*; bundled into this Worker at deploy time. */
+import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
+import { recordEnquiry, notifyTo, formAllowed, kindFromTopic } from "./worker/studio/enquiries.js";
+import { label as optionLabel } from "./worker/studio/options.js";
+import { serveMegacityHost } from "./worker/studio/host.js";
+import { isMegacityHost } from "./worker/studio/urls.js";
+import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    /* Which build is actually live. Twice on 7 September this host served an
+       August deployment — whole directories 404ing while the build reported
+       success — and nothing on the site could say so. version.json is written
+       by scripts/stamp.mjs and deployed with everything else, so it goes stale
+       exactly when the rest of the deployment does.
+       no-store matters: those stale 404s came back cf-cache-status: HIT, and a
+       cached stamp would name a build that is no longer being served.
+       Answered before any host branch, on every hostname: the client domains
+       deploy from this repository too and need the same check, and a build
+       hash tells a visitor nothing. */
+    if (url.pathname === "/version.json") {
+      const stamped = await env.ASSETS.fetch(new Request(new URL("/version.json", url.origin), request));
+      const headers = new Headers(stamped.headers);   // keep whatever _headers applied
+      headers.set("content-type", "application/json; charset=utf-8");
+      headers.set("cache-control", "no-store");
+      headers.delete("etag");                          // no-store and an etag disagree
+      return new Response(stamped.body, { status: stamped.status, headers });
+    }
+    /* HeatFix's domain runs HeatFix's API and nothing else. /api/book,
+       /api/quote, /api/send-review and the Megacity form endpoints all send
+       mail without a session, so answering them here would put an open mailer
+       on his domain — spam sent from his address, billed to his Resend key,
+       burning his sending reputation. This runs before the API routes below
+       because they are matched by path and would otherwise claim the request
+       whatever host it arrived on. */
+    if (isClientHost(url.hostname, env, "HEATFIX_HOST") &&
+        url.pathname.startsWith("/api/") && !isHfCrmPath(url.pathname)) {
+      return json({ error: "Not found" }, 404);
+    }
+    /* HeatFix has its own domain now, so nothing of it is served from
+       billydigitals.com any more — not the pages, not the back office, not the
+       artwork, not the API.
+       The FILES cannot simply be deleted: heatfixmcrlimited.co.uk is deployed
+       from this same repository and serves these exact templates and assets,
+       so removing them would take his live site down with them. They stay in
+       the repository and stop existing on this host instead. */
+    if (!isClientHost(url.hostname, env, "HEATFIX_HOST") && isHeatfixPath(url.pathname)) {
+      return env.ASSETS.fetch(new Request(new URL("/404.html", url.origin), request))
+        .then((r) => new Response(r.body, { status: 404, headers: r.headers }))
+        .catch(() => new Response("Not found", { status: 404 }));
+    }
+
+    // Megacity Properties on its own domain (MEGACITY_HOST): the Worker owns
+    // every path there — pages at root, old addresses redirected, branded 404.
+    if (isMegacityHost(env, url.hostname)) {
+      const served = await serveMegacityHost(request, env, ctx, url);
+      if (served) return served;
+    }
+    /* A client's own domain owns every path on it. isMegacityPath claims a few
+       paths on every hostname — /billy360/ among them — and without this guard
+       they slip past serveClient and answer with Billy Digitals' 404 advert on
+       the client's domain, which is the failure mode serveClient exists to
+       stop. The Megacity host itself is already handled above. */
+    if (isMegacityPath(url) && !isOwnClientHost(url.hostname, env)) return handleMegacity(request, env, ctx, url);
     if (url.pathname === "/api/send-review") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleSendReview(request, env);
@@ -31,23 +94,52 @@ export default {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleQuote(request, env);
     }
-    if (url.pathname === "/api/m2l-book") {
-      return handleM2LBook(request, env);
-    }
-    if (url.pathname === "/api/m2l/availability") {
-      return handleAvailability(request, env);
-    }
-    if (url.pathname.startsWith("/api/m2l/admin/")) {
-      return handleM2LAdmin(request, env, url);
-    }
-    if (url.pathname === "/api/m2l-invoice/send") {
+    if (url.pathname === "/api/megacity-maintenance") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleInvoiceSend(request, env);
+      return handleMegacityMaintenance(request, env, ctx);
     }
-    if (url.pathname === "/api/m2l-invoice/sign") {
+    if (url.pathname === "/api/megacity-viewing") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-      return handleInvoiceSign(request, env);
+      return handleMegacityViewing(request, env, ctx);
     }
+    if (url.pathname === "/api/megacity-contact") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityContact(request, env, ctx);
+    }
+    if (url.pathname === "/api/megacity-apply") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityApply(request, env, ctx);
+    }
+    if (url.pathname === "/api/megacity-landlord") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return handleMegacityLandlord(request, env, ctx);
+    }
+    // Mumbai2London is parked — see M2L_PARKED below. The code all still
+    // works; flip the flag and the pages come back with it.
+    if (!M2L_PARKED) {
+      if (url.pathname === "/api/m2l-book") {
+        return handleM2LBook(request, env);
+      }
+      if (url.pathname === "/api/m2l/availability") {
+        return handleAvailability(request, env);
+      }
+      if (url.pathname.startsWith("/api/m2l/admin/")) {
+        return handleM2LAdmin(request, env, url);
+      }
+      if (url.pathname === "/api/m2l-invoice/send") {
+        if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+        return handleInvoiceSend(request, env);
+      }
+      if (url.pathname === "/api/m2l-invoice/sign") {
+        if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+        return handleInvoiceSign(request, env);
+      }
+    }
+    // HeatFix back office: his invoices, customers and settings.
+    if (isHfCrmPath(url.pathname)) {
+      return handleHfCrm(request, env, url);
+    }
+
     if (url.pathname === "/api/book") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleBook(request, env);
@@ -57,12 +149,43 @@ export default {
     }
     // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
     // at clean root URLs, and is indexable.
-    if (isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
+    if (!M2L_PARKED && isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
+
+    // HeatFix Mcr Limited on heatfixmcrlimited.co.uk (HEATFIX_HOST).
+    if (isClientHost(url.hostname, env, "HEATFIX_HOST")) {
+      /* One canonical host. Both names resolve, and serveClient writes the
+         canonical tag from whichever one was asked for, so without this
+         Google finds two complete self-canonicalising copies of the site and
+         splits the ranking signals — on a business whose whole acquisition
+         channel is Manchester local search. It also splits his session
+         cookie, which is set without a Domain: signing in on one name leaves
+         him signed out on the other. The FIRST host in HEATFIX_HOST wins. */
+      const canonical = clientHosts(env, "HEATFIX_HOST")[0];
+      if (canonical && url.hostname.toLowerCase() !== canonical) {
+        return new Response(null, {
+          status: 301,
+          headers: {
+            location: "https://" + canonical + url.pathname + url.search,
+            "cache-control": "public, max-age=3600",
+          },
+        });
+      }
+      return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
+    }
 
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
 };
+
+/* Mumbai2London is parked.
+   The whole build — pages, booking diary, invoice signing, the lot — is kept
+   in this repository and still compiles, but nothing of it is served: the
+   pages are excluded from the asset upload in .assetsignore and every /api/m2l
+   route is switched off below.
+   To bring it back: set this to false and delete the four M2L lines from
+   .assetsignore. Nothing else needs changing. */
+const M2L_PARKED = true;
 
 /* ------------------------------------------------------------------
    Client-domain hosting
@@ -130,14 +253,214 @@ async function serveM2L(request, url, env) {
   return rw.transform(new Response(res.body, res));
 }
 
+/* ------------------------------------------------------------------
+   HeatFix Mcr Limited — heatfixmcrlimited.co.uk
+
+   Set HEATFIX_HOST in wrangler.toml (or as a secret) to the client's own
+   hostnames, comma separated. Requests to those hosts get:
+       /         -> the HeatFix website          (indexed)
+       /book     -> the request-a-visit page      (indexed)
+       /invoice  -> the invoice builder (his tool, noindex)
+       /i        -> the customer's invoice view   (noindex)
+------------------------------------------------------------------- */
+const HEATFIX_PAGES = {
+  "/": "/templates/heatfixmcr.html",
+  "/book": "/templates/heatfix-book.html",
+  "/about": "/templates/heatfix-about.html",
+  "/faqs": "/templates/heatfix-faqs.html",
+  "/blog": "/templates/heatfix-blog.html",
+  "/safety-tips": "/templates/heatfix-safety-tips.html",
+  "/boilers-and-radiators": "/templates/heatfix-boilers-radiators.html",
+  "/plumbing": "/templates/heatfix-plumbing.html",
+  "/gas-safety-certificate": "/templates/heatfix-gas-safety-certificate.html",
+  "/manufacturers-warranty": "/templates/heatfix-manufacturers-warranty.html",
+  "/privacy": "/templates/heatfix-privacy.html",
+  "/terms": "/templates/heatfix-terms.html",
+  "/invoice": "/templates/heatfix-invoice.html",
+  "/i": "/templates/heatfix-invoice-view.html",
+  "/office": "/templates/heatfix-office.html",
+};
+/* Everything except the two back-office tools should be indexable. */
+const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips",
+                        "/boilers-and-radiators", "/plumbing", "/gas-safety-certificate",
+                        "/manufacturers-warranty", "/privacy", "/terms"];
+/* Old URLs that must not simply 404. /plumbing-gas-safety was one page doing
+   two jobs, and every service card on the home page pointed at it — three
+   different services, one destination. It is split into /plumbing and
+   /gas-safety-certificate; anything already linking to the old address lands
+   on the plumbing half. */
+const HEATFIX_GONE = { "/plumbing-gas-safety": "/plumbing" };
+/* Blog articles live at /blog/<slug>. */
+const HEATFIX_BLOG = /^\/blog\/([a-z0-9-]{2,60})$/;
+/* The same slugs again, written out, for the sitemap on his own domain. A
+   Worker cannot list the asset directory, so the articles have to be named
+   somewhere; serving them does not need this list, only advertising them does.
+   Add a slug here when you add templates/heatfix-blog-<slug>.html. */
+const HEATFIX_ARTICLES = [
+  "boiler-losing-pressure",
+  "cold-radiators",
+  "gas-cooker-rules",
+  "limescale-hot-water",
+];
+/* A customer's invoice lives at /i/<uuid> — unguessable, and noindex. */
+const HEATFIX_INVOICE = /^\/i\/[0-9a-f-]{16,64}$/i;
+
+/* Everything of HeatFix's, wherever it lives in the repository: his pages,
+   his back office, his invoice tools, his photographs and logos, his
+   stylesheets and scripts, and his API. Matched by path so a file added to
+   any of these folders later is covered without anyone remembering to come
+   back here. */
+const HEATFIX_ASSET = /^\/(templates\/heatfix|assets\/heatfix\/|assets\/js\/heatfix-|assets\/css\/heatfix)/i;
+function isHeatfixPath(p) {
+  return HEATFIX_ASSET.test(p) || isHfCrmPath(p) || HEATFIX_INVOICE.test(p);
+}
+
+function clientHosts(env, key) {
+  return String((env && env[key]) || "")
+    .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+}
+function isClientHost(hostname, env, key) {
+  return clientHosts(env, key).includes(String(hostname || "").toLowerCase());
+}
+/* The hosts whose own site answers every path on them (serveM2L, serveClient). */
+function isOwnClientHost(hostname, env) {
+  return (!M2L_PARKED && isM2LHost(hostname, env)) || isClientHost(hostname, env, "HEATFIX_HOST");
+}
+
+/* Generic version of serveM2L for any client domain. */
+/* robots.txt and sitemap.xml for a client's own domain.
+   These used to fall through to the repository's own files, which is wrong on
+   anyone else's hostname: the sitemap lists only billydigitals.com URLs — a
+   cross-domain sitemap, which Search Console rejects, so none of the client's
+   pages would ever be submitted — and robots.txt ends with a Sitemap: line
+   pointing at the agency. Both are generated per host instead. */
+function clientRobots(url, PAGES, PUBLIC) {
+  const priv = Object.keys(PAGES).filter((p) => PUBLIC.indexOf(p) === -1);
+  return new Response([
+    "User-agent: *",
+    /* The whole repository is uploaded as assets, so every other client's
+       build is fetchable on this domain too. Keep it out of the index. */
+    "Disallow: /templates/",
+    /* His own tools: the back office and the customers' invoice links. */
+    ...priv.map((p) => "Disallow: " + p),
+    "Allow: /",
+    "",
+    "Sitemap: https://" + url.hostname + "/sitemap.xml",
+    "",
+  ].join("\n"), {
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "public, max-age=3600",
+    },
+  });
+}
+
+function clientSitemap(url, PAGES, PUBLIC) {
+  const base = "https://" + url.hostname;
+  const paths = PUBLIC.slice();
+  if (PAGES === HEATFIX_PAGES) {
+    for (const slug of HEATFIX_ARTICLES) paths.push("/blog/" + slug);
+  }
+  /* No lastmod/changefreq/priority: there is no build step to source a real
+     modification date from, Google ignores the other two, and a made-up date
+     is worse than none. */
+  return new Response(
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    paths.map((p) => "  <url><loc>" + base + p + "</loc></url>\n").join("") +
+    "</urlset>\n",
+    {
+      headers: {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "public, max-age=3600",
+      },
+    }
+  );
+}
+
+/* Fetch one of our own templates out of the asset store.
+   The asset router can answer a .html path with a redirect to its
+   extensionless form — the clean-URL behaviour billydigitals.com is built on,
+   and the wrong thing to hand a visitor on a client domain, where it would
+   bounce them from their clean URL to our internal /templates/… path.
+   html_handling = "none" on the client env stops it arising; following it
+   here stops it mattering if that setting is ever lost. */
+async function fetchAsset(env, url, request, path) {
+  const res = await env.ASSETS.fetch(new Request(new URL(path, url.origin), request));
+  if (res.status >= 300 && res.status < 400) {
+    const to = res.headers.get("location");
+    if (to) return env.ASSETS.fetch(new Request(new URL(to, url.origin), request));
+  }
+  return res;
+}
+
+async function serveClient(request, url, env, PAGES, PUBLIC) {
+  let p = url.pathname.replace(/\/+$/, "") || "/";
+
+  if (p === "/robots.txt") return clientRobots(url, PAGES, PUBLIC);
+  if (p === "/sitemap.xml") return clientSitemap(url, PAGES, PUBLIC);
+  if (p.startsWith("/assets/") || p === "/favicon.ico") {
+    return env.ASSETS.fetch(request);
+  }
+
+  if (PAGES === HEATFIX_PAGES && HEATFIX_GONE[p]) {
+    return new Response(null, {
+      status: 301,
+      headers: { location: HEATFIX_GONE[p], "cache-control": "public, max-age=3600" },
+    });
+  }
+
+  let target = PAGES[p], publicPage = PUBLIC.indexOf(p) !== -1;
+
+  // Blog articles: /blog/<slug> -> /templates/heatfix-blog-<slug>.html
+  if (!target && PAGES === HEATFIX_PAGES) {
+    const m = HEATFIX_BLOG.exec(p);
+    if (m) { target = "/templates/heatfix-blog-" + m[1] + ".html"; publicPage = true; }
+    // A customer's own copy of an invoice: /i/<uuid>. The page reads the id
+    // out of the path itself and asks the API for it.
+    else if (HEATFIX_INVOICE.test(p)) { target = "/templates/heatfix-invoice-view.html"; }
+  }
+  if (!target) {
+    /* The most-visited non-page on any new site. It used to be answered by
+       the asset router with Billy Digitals' 404 — a full-page advert for a
+       web design agency, on the client's own domain. */
+    if (PAGES === HEATFIX_PAGES) {
+      const miss = await fetchAsset(env, url, request, "/templates/heatfix-404.html");
+      if (miss.ok) {
+        return new Response(miss.body, {
+          status: 404,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+    }
+    return new Response("Not found", { status: 404, headers: { "content-type": "text/plain" } });
+  }
+
+  const res = await fetchAsset(env, url, request, target);
+  if (!res.ok) return res;
+
+  const canonical = "https://" + url.hostname + (p === "/" ? "/" : p);
+
+  let rw = new HTMLRewriter().on('meta[name="robots"]', {
+    element: (el) => (publicPage ? el.remove() : el.setAttribute("content", "noindex,nofollow")),
+  });
+  if (publicPage) {
+    rw = rw
+      .on('link[rel="canonical"]', { element: (el) => el.setAttribute("href", canonical) })
+      .on('meta[property="og:url"]', { element: (el) => el.setAttribute("content", canonical) });
+  }
+  return rw.transform(new Response(res.body, res));
+}
+
 /* Same-origin guard: accept posts from our own site, and from the client
-   domains listed in M2L_HOST once their site is pointed at this worker. */
+   domains listed in M2L_HOST / HEATFIX_HOST once their sites point here. */
 function originOk(request, env) {
   const origin = request.headers.get("origin") || "";
   if (!origin) return true;
   if (/^https?:\/\/(www\.)?billydigitals\.com$/i.test(origin)) return true;
   try {
-    return isM2LHost(new URL(origin).hostname, env);
+    const h = new URL(origin).hostname;
+    return isM2LHost(h, env) || isClientHost(h, env, "HEATFIX_HOST") || isClientHost(h, env, "MEGACITY_HOST");
   } catch (_) {
     return false;
   }
@@ -422,6 +745,333 @@ billydigitals.com`;
   </td></tr></table>
 </body></html>`;
 
+  return { html, text };
+}
+
+
+/* ── Megacity Properties — tenant maintenance reports ────────────────────
+   The office manages every job in 10ninety and updates the landlord from
+   there; this endpoint just gets the report to them instantly, structured.
+   Reports reach the property management inbox: notifyTo(env, kind) in
+   worker/studio/enquiries.js decides which office address each form goes to.
+   (A MEGACITY_MAINT_TO constant used to sit here with a note to point it at
+   the office at go-live. Nothing ever read it — the recipient has come from
+   notifyTo for a long time — so editing it would have looked like the fix and
+   changed nothing. Removed.) */
+const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
+
+async function handleMegacityMaintenance(request, env, ctx) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim().slice(0, 120);
+  const contact = String(body.contact || "").trim().slice(0, 160);
+  const address = String(body.address || "").trim().slice(0, 240);
+  const urgency = String(body.urgency || "Routine").trim().slice(0, 80);
+  const issue = String(body.issue || "").trim().slice(0, 4000);
+  const access = String(body.access || "").trim().slice(0, 500);
+
+  if (!name || !contact || !address || !issue) {
+    return json({ error: "Please fill in your name, contact, the property address and the problem." }, 400);
+  }
+
+  const isEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact);
+  const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
+  const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const payload = { from: MEGACITY_FROM, to: await notifyTo(env, "maintenance"), subject, html, text };
+  if (isEmail) payload.reply_to = contact;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "maintenance", name, email: isEmail ? contact : null, phone: isEmail ? null : contact, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr }));
+  return json({ ok: true });
+}
+
+
+/* Viewing requests from property pages — same delivery route as
+   maintenance: instant structured email to the office (demo: our inbox),
+   with the tenant as reply-to so one tap answers them. */
+async function handleMegacityViewing(request, env, ctx) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim().slice(0, 120);
+  const phone = String(body.phone || "").trim().slice(0, 60);
+  const email = String(body.email || "").trim().slice(0, 160);
+  const day = String(body.day || "").trim().slice(0, 40);
+  const time = String(body.time || "").trim().slice(0, 40);
+  const message = String(body.message || "").trim().slice(0, 2000);
+  const property = String(body.property || "").trim().slice(0, 200);
+
+  if (!name || !property) return json({ error: "Please include your name." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+
+  const subject = "Viewing request — " + property;
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rows = [
+    ["Property", property], ["Name", name], ["Phone", phone || "—"], ["Email", email],
+    ["Preferred", (day || "any day") + " · " + (time || "any time")], ["Notes", message || "—"],
+  ]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:110px;">${k}</td>` +
+        `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`
+    )
+    .join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Viewing request <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply to confirm the viewing — reply-to is set to the applicant.</div></div>`;
+  const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many requests from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "viewing"), reply_to: email, subject, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
+  return json({ ok: true });
+}
+
+
+/* General enquiries from the contact page — same route as the rest. */
+async function handleMegacityContact(request, env, ctx) {
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+  if (body.botcheck) return json({ ok: true });
+
+  const name = String(body.name || "").trim().slice(0, 120);
+  const phone = String(body.phone || "").trim().slice(0, 60);
+  const email = String(body.email || "").trim().slice(0, 160);
+  const topic = String(body.topic || "General").trim().slice(0, 80);
+  const message = String(body.message || "").trim().slice(0, 4000);
+
+  if (!name || !message) return json({ error: "Please include your name and a message." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "A valid email address is required." }, 400);
+  }
+
+  const subject = "Website enquiry — " + topic + " · " + name;
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rows = [["Name", name], ["Phone", phone || "—"], ["Email", email], ["About", topic], ["Message", message]]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:110px;">${k}</td>` +
+        `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`
+    )
+    .join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Website enquiry <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the sender — replying answers them directly.</div></div>`;
+  const text = ["Website enquiry", "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "About: " + topic, "Message: " + message].join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, kindFromTopic(topic)), reply_to: email, subject, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
+  return json({ ok: true });
+}
+
+/* Tenancy application from /tenant-application-form (the old site's
+   10ninety form went with the old site). Emailed to the office and kept in
+   the Studio inbox as a "Tenancy application". */
+/* ── Megacity Properties — landlord registration ─────────────────────────
+   The old site had a /landlords/register/ page; ours is the form at
+   /landlords#register. Everything past the contact details is optional, so a
+   landlord can leave four fields and go, and the office still gets enough to
+   value the property when they fill the rest in. Goes to the office inbox, not
+   lettings — see notifyTo in worker/studio/enquiries.js. */
+async function handleMegacityLandlord(request, env, ctx) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
+  if (body.botcheck) return json({ ok: true });
+  const s = (k, n) => String(body[k] || "").trim().slice(0, n);
+  const name = s("name", 120), email = s("email", 160), phone = s("phone", 60);
+  const address = s("address", 200), postcode = s("postcode", 12).toUpperCase();
+  const area = s("area", 40), ptype = s("propertyType", 40), bedrooms = s("bedrooms", 4);
+  const furnishing = s("furnishing", 40), epc = s("epc", 20), parking = s("parking", 4);
+  const situation = s("situation", 40), rent = s("rent", 12);
+  const service = s("service", 60), portfolio = s("portfolio", 20), message = s("message", 3000);
+  if (!name || !phone) return json({ error: "Please include your name and a phone number." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "A valid email address is required." }, 400);
+  if (!address) return json({ error: "Please include the property address." }, 400);
+
+  const where = [address, postcode].filter(Boolean).join(", ");
+  /* The form posts the Studio's own values (house_semi, epc pending, …) so the
+     answers stay comparable with a listing; the email shows the labels. */
+  const areaL = optionLabel("area", area), typeL = optionLabel("type", ptype);
+  const furnL = optionLabel("furnishing", furnishing), epcL = optionLabel("epcRating", epc);
+  const parkL = optionLabel("parkingSpaces", parking);
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const pairs = [
+    ["Name", name], ["Phone", phone], ["Email", email],
+    ["Address", address], ["Postcode", postcode || "—"], ["Area", areaL || "—"],
+    ["Property type", typeL || "—"], ["Bedrooms", bedrooms || "—"], ["Furnishing", furnL || "—"],
+    ["EPC", epcL || "—"], ["Parking", parkL || "—"], ["Situation", situation || "—"],
+    ["Rent expected", rent ? "£" + rent + " pcm" : "—"],
+    ["Service wanted", service || "—"], ["Properties owned", portfolio || "—"],
+    ["Anything else", message || "—"],
+  ];
+  const rows = pairs.map(([k, v]) =>
+    `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:130px;">${k}</td>` +
+    `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`).join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Landlord registration <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the landlord. Fields they left blank show as a dash.</div></div>`;
+  const text = ["Landlord registration"].concat(pairs.map(([k, v]) => k + ": " + v)).join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "landlord"), reply_to: email, subject: "Landlord registration — " + (where || name) + " · " + name, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, {
+    source: "landlord", name, email, phone, property: where || null,
+    message: pairs.slice(3).map(([k, v]) => k + ": " + v).join("\n"),
+    attr: body.attr,
+  }));
+  return json({ ok: true });
+}
+
+async function handleMegacityApply(request, env, ctx) {
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
+  let body;
+  try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
+  if (body.botcheck) return json({ ok: true });
+  const s = (k, n) => String(body[k] || "").trim().slice(0, n);
+  const name = s("name", 120), email = s("email", 160), phone = s("phone", 60);
+  const property = s("property", 160) || "a Megacity property";
+  const listingId = s("listingId", 80).toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const moveIn = s("moveIn", 60), occupants = s("occupants", 160), employment = s("employment", 240), message = s("message", 3000);
+  if (!name || !phone) return json({ error: "Please include your name and a phone number." }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "A valid email address is required." }, 400);
+
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const pairs = [["Name", name], ["Phone", phone], ["Email", email], ["Property", property], ["Move-in date", moveIn || "—"], ["Who will live there", occupants || "—"], ["Employment / income", employment || "—"], ["Anything else", message || "—"]];
+  const rows = pairs.map(([k, v]) =>
+    `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:130px;">${k}</td>` +
+    `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`).join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Tenancy application <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply-to is set to the applicant. Reference and right-to-rent checks still happen in 10ninety as usual.</div></div>`;
+  const text = ["Tenancy application"].concat(pairs.map(([k, v]) => k + ": " + v)).join("\n");
+
+  const rl = await formAllowed(env, request);
+  if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "application"), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    return json({ error: "Email provider rejected the request", detail }, 502);
+  }
+  if (ctx) ctx.waitUntil(recordEnquiry(env, {
+    source: "application", name, email, phone, listingId: listingId || null, property,
+    message: ["Move-in: " + (moveIn || "—"), "Who will live there: " + (occupants || "—"), "Employment / income: " + (employment || "—"), message].filter(Boolean).join("\n"),
+    attr: body.attr,
+  }));
+  return json({ ok: true });
+}
+
+function megacityMaintEmail(d) {
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rows = [
+    ["Tenant", d.name],
+    ["Contact", d.contact],
+    ["Property", d.address],
+    ["Urgency", d.urgency],
+    ["Problem", d.issue],
+    ["Access", d.access || "—"],
+  ]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:9px 14px;font:600 12px/1.4 Arial,sans-serif;color:#5A617D;text-transform:uppercase;letter-spacing:.08em;vertical-align:top;width:110px;">${k}</td>` +
+        `<td style="padding:9px 14px;font:400 14px/1.6 Arial,sans-serif;color:#12142B;white-space:pre-wrap;">${esc(v)}</td></tr>`
+    )
+    .join("");
+  const html =
+    `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
+    `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Maintenance report <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
+    `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Log this job in 10ninety, then reply to the tenant directly — reply-to is set when they left an email address.</div></div>`;
+  const text = rows
+    ? ["Maintenance report", "Tenant: " + d.name, "Contact: " + d.contact, "Property: " + d.address, "Urgency: " + d.urgency, "Problem: " + d.issue, "Access: " + (d.access || "—")].join("\n")
+    : "";
   return { html, text };
 }
 
