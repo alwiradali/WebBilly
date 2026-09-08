@@ -13,13 +13,20 @@
      ------------------------------------------------------------------ */
   var CONTACT = {
     whatsapp: '447979448323',           // digits only, international format
-    email: 'roddymartin80@gmail.com',
+    email: 'rod@smartinscience.co.uk',
     phone: '07979 448323'
   };
 
   /* Web3Forms access key — paste Rod's key here and the booking form starts
-     delivering enquiries straight to his inbox. Free, no backend needed:
-     sign up at web3forms.com with his email and copy the access key. */
+     delivering enquiries straight to his inbox. Free, no backend needed.
+
+     Generate it at web3forms.com signed in as rod@smartinscience.co.uk, not
+     the old Gmail: the key IS the destination, so whichever address creates
+     it is where every enquiry lands. Nothing goes in DNS for this — Web3Forms
+     posts TO his inbox, it never sends AS his domain, so it cannot clash with
+     Google Workspace.
+
+     Until this is set the form fails silently and WhatsApp is the only way in. */
   var W3F_KEY = '';
 
   var WA_MSG = "Hi Rod, I found SMARTin SCIENCE online. I'd like to ask about GCSE science tuition for my child.";
