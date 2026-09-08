@@ -459,7 +459,13 @@ async function sectionPublic(br) {
 
     const deep = await ctx.newPage();
     await deep.goto(S + "/billy360/?site=x#/tour/a?y=45&p=3&f=50", { waitUntil: "load" });
-    await ready(deep); await settle(deep);
+    await ready(deep);
+    /* Idle drift is a visitor feature, and settle() waits long enough for it to
+       turn the camera off the yaw the deep link asked for — this asserted 45
+       and got 55 once, on a loaded machine. Hold the camera still so the check
+       measures the deep link and not how busy the box was. */
+    await deep.evaluate(() => window.BILLY360App.engine().idleDrift(false));
+    await settle(deep);
     const at = await deep.evaluate(() => ({ room: document.querySelector("#roomName").textContent, cam: window.BILLY360App.engine().camera() }));
     ok("the documented deep link #/tour/<room>?y=&p=&f= opens that room at that view",
        at.room === "Hallway" && Math.abs(at.cam.yaw - 45) < 1 && Math.abs(at.cam.fov - 50) < 1, at);
