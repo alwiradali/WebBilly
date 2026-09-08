@@ -268,7 +268,25 @@
     var grid = document.getElementById('mc-grid');
     var items = (d.products || []).filter(function (p) { return isMasterclass(p.name || ''); });
     if (!items.length) { showFallback(grid, 'book'); return; }
-    items.slice(0, 9).forEach(function (p, i) {
+    /* Show every masterclass she sells. This used to cut the list at nine,
+       which was every product she had when it was written — she now has 27,
+       so two thirds of her shop was invisible on the page that exists to sell
+       it, including all of Advanced Higher.
+
+       Sorted by level so the grid groups National 5, then Higher, then
+       Advanced Higher, rather than interleaving three courses by whatever
+       order the shop returns. Matching follows her naming in Payhip: "N5
+       Chemistry...", "Higher Chemistry...", "AH Chemistry...". */
+    var LEVEL = function (n) {
+      if (/^n5\b|national 5/i.test(n)) return 0;
+      if (/^higher\b/i.test(n)) return 1;
+      if (/^ah\b|advanced higher/i.test(n)) return 2;
+      return 3;
+    };
+    items = items.slice().sort(function (a, b) {
+      return LEVEL(a.name || '') - LEVEL(b.name || '');
+    });
+    items.forEach(function (p, i) {
       var wrap = document.createElement('div');
       wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
