@@ -100,13 +100,13 @@
     <!-- The section used to carry `hidden` until the feed answered, which made
          the hero's own "Browse the Shop" a dead click for as long as the fetch
          took. It is always here now; this card is what stands in until the
-         products arrive, and it is a working link to the shop for anyone whose
-         browser never runs the script at all. -->
+         products arrive. It deliberately carries no link to the Payhip
+         storefront: sending customers there is the behaviour this site was
+         built to stop, and a standing link in the waiting state would show it
+         to everyone on every load. The one storefront link left anywhere is
+         the escape hatch in shop.js, which renders only if the feed fails. -->
     <div class="shopcols" id="mm-shop-grid" data-filter="all">
-      <div class="card shopwait">
-        <p>Loading what&rsquo;s in the shop&hellip;</p>
-        <a class="btn btn-g" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Open the shop →</a>
-      </div>
+      <div class="card shopwait"><p>Loading what&rsquo;s in the shop&hellip;</p></div>
     </div>
     <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your resources and all the relevant information are then sent to you by email.</p>
   </div>
