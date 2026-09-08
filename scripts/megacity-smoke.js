@@ -77,6 +77,21 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       });
       ok(reg.isForm, "#register on the landlords page is the registration form");
       ok(reg.selects >= 8, "the landlord form asks about the property (" + reg.selects + " dropdowns)");
+      /* The 8% introductory rate is a published fee for a regulated agent, so
+         it may never appear without the basis it is charged on and the tenancy
+         it covers. An edit that trims either turns it into a misleading price. */
+      const claims = await page.evaluate(() => {
+        const INLINE = /^(B|STRONG|EM|I|SPAN|SMALL|A|ABBR)$/, out = [];
+        (function walk(n) { for (const c of n.children) {
+          const deeper = [...c.children].some((k) => /8%/.test(k.textContent) && !INLINE.test(k.tagName));
+          if (/8%/.test(c.textContent) && !deeper && !INLINE.test(c.tagName)) out.push(c.textContent.replace(/\s+/g, " ").trim());
+          walk(c); } })(document.body);
+        return out;
+      });
+      ok(claims.length > 0, "the introductory offer is on the landlords page");
+      const vague = claims.filter((c) => !/inc\. ?VAT/i.test(c) || !/first tenancy/i.test(c));
+      ok(!vague.length, "every 8% claim states inc. VAT and the tenancy it covers" +
+         (vague.length ? ": " + vague[0].slice(0, 90) : ""));
     }
     if (path === P("tenant-application-form")) ok(!!(await page.$("[data-apply]")), "application form is on the page");
     if (!DEMO) {
