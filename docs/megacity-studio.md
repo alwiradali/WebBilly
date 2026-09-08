@@ -313,16 +313,15 @@ which the listing pages already carry.
 |---|---|
 | `POST /api/megacity-viewing`, `-contact`, `-maintenance`, `-apply`, `-landlord` | email the office **and** insert an `enquiries` row + a notification. Bodies may carry `listingId` and `attr` (`{utm_source, utm_medium, utm_campaign, referrer, landing}`, captured by the site script) |
 **Which inbox each form reaches** — `notifyTo(env, kind)` in
-`worker/studio/enquiries.js`. Landlord business goes to
-`info@megacityproperties.co.uk`; anything a tenant sends goes to
-`lettings@megacityproperties.co.uk`; the general contact form goes to both,
-because the sender cannot be told apart:
+`worker/studio/enquiries.js`. The office runs three Microsoft 365 mailboxes and
+each form goes to the team that acts on it:
 
 | Form | Inbox |
 |---|---|
 | Landlord registration (`/landlords#register`), valuation request | info@ |
-| Viewing, tenant registration, tenancy application, maintenance, 360° tour lead | lettings@ |
-| General contact form | both |
+| Viewing, tenant registration, tenancy application, 360° tour lead | lettings@ |
+| Maintenance and repair reports | management@ |
+| General contact form | info@ **and** lettings@, since the sender cannot be told apart |
 
 Settings → Notifications overrides all of it: set any address there and every
 form goes to that list instead, from one screen. The contact endpoint carries

@@ -752,8 +752,8 @@ billydigitals.com`;
 /* ── Megacity Properties — tenant maintenance reports ────────────────────
    The office manages every job in 10ninety and updates the landlord from
    there; this endpoint just gets the report to them instantly, structured.
-   Reports reach the lettings inbox: notifyTo(env, kind) in worker/studio/
-   enquiries.js decides which of the office's addresses each form goes to.
+   Reports reach the property management inbox: notifyTo(env, kind) in
+   worker/studio/enquiries.js decides which office address each form goes to.
    (A MEGACITY_MAINT_TO constant used to sit here with a note to point it at
    the office at go-live. Nothing ever read it — the recipient has come from
    notifyTo for a long time — so editing it would have looked like the fix and

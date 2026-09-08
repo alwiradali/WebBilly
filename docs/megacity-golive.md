@@ -115,11 +115,11 @@ from the host it is served on.
 - **Weekly for six weeks**: Search Console → Pages (redirect errors, not
   found) and Studio → Redirects & 404s. Add a redirect for anything with real
   visitors behind it.
-- **Email recipients** are already Walid's own: landlord enquiries to
-  `info@megacityproperties.co.uk`, tenant enquiries to
-  `lettings@megacityproperties.co.uk` (see docs/megacity-studio.md). Both
-  mailboxes must exist and be watched — nothing is copied to the agency, and
-  with the database unbound the email is the only record of an enquiry.
+- **Email recipients** are already Walid's own three Microsoft 365 mailboxes:
+  landlord enquiries to `info@`, tenant enquiries to `lettings@`, repairs to
+  `management@` (see docs/megacity-studio.md). All three must be watched —
+  nothing is copied to the agency, and with the database unbound the email is
+  the only record an enquiry ever existed.
 - **Email sender**: add `megacityproperties.co.uk` in Resend, publish its
   DKIM records and merge its SPF include into the ONE existing `v=spf1`
   record (never add a second one), then change `MEGACITY_FROM` in

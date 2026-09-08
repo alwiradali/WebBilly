@@ -8,10 +8,11 @@
    nobody to notice. This asserts the table directly.
 
      node scripts/megacity-routing-check.mjs        (exits 1 on a wrong inbox) */
-import { notifyTo, kindFromTopic, OFFICE_TO, LETTINGS_TO } from "../worker/studio/enquiries.js";
+import { notifyTo, kindFromTopic, OFFICE_TO, LETTINGS_TO, MANAGEMENT_TO } from "../worker/studio/enquiries.js";
 
 const OFFICE = [OFFICE_TO];
 const LETTINGS = [LETTINGS_TO];
+const MANAGEMENT = [MANAGEMENT_TO];
 const BOTH = [OFFICE_TO, LETTINGS_TO];
 
 /* env with no MEGACITY_DB — exactly the state production is in today. */
@@ -24,7 +25,7 @@ const cases = [
   ["register", LETTINGS, "tenant registration"],
   ["viewing", LETTINGS, "viewing request"],
   ["application", LETTINGS, "tenancy application"],
-  ["maintenance", LETTINGS, "maintenance report"],
+  ["maintenance", MANAGEMENT, "maintenance report"],
   ["tour", LETTINGS, "360° tour lead"],
 ];
 
@@ -110,7 +111,7 @@ const posts = [
   ["/api/megacity-contact", { ...person, topic: "General", message: "x" }, BOTH, "general contact"],
   ["/api/megacity-viewing", { ...person, property: "12 Example Street" }, LETTINGS, "viewing request"],
   ["/api/megacity-apply", { ...person, property: "12 Example Street" }, LETTINGS, "tenancy application"],
-  ["/api/megacity-maintenance", { name: person.name, contact: person.email, address: "12 Example Street", issue: "Leak" }, LETTINGS, "maintenance report"],
+  ["/api/megacity-maintenance", { name: person.name, contact: person.email, address: "12 Example Street", issue: "Leak" }, MANAGEMENT, "maintenance report"],
 ];
 
 for (const [path, body, want, what] of posts) {

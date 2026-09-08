@@ -11,10 +11,13 @@ import { sendEmail, layout, esc } from "./email.js";
 
 export const OFFICE_TO = "info@megacityproperties.co.uk";
 export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
+export const MANAGEMENT_TO = "management@megacityproperties.co.uk";
 
-/* Which inbox each form reaches. Landlord business goes to the office; anything
-   a tenant sends goes to lettings; the general contact form could be either, so
-   it goes to both rather than making the sender guess.
+/* Which inbox each form reaches. Landlord business goes to the office; what a
+   tenant sends about renting goes to lettings; repairs go to management, who
+   are the people who actually fix them; and the general contact form could be
+   any of them, so it goes to the office and lettings rather than making the
+   sender guess.
    These are the addresses the enquiry ACTUALLY lands in: the Studio's inbox only
    exists once the database is bound, so until then the email is the only record
    and there is no copy anywhere else. */
@@ -25,7 +28,7 @@ const ROUTE = {
   register: [LETTINGS_TO],
   viewing: [LETTINGS_TO],
   application: [LETTINGS_TO],
-  maintenance: [LETTINGS_TO],
+  maintenance: [MANAGEMENT_TO],
   tour: [LETTINGS_TO],
 };
 export const FALLBACK_TO = OFFICE_TO;
