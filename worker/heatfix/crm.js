@@ -446,6 +446,12 @@ async function emailInvoice(env, id, origin, message) {
       from: `${s.business_name || "HeatFix Mcr Limited"} <${env.HF_MAIL_FROM || "invoices@heatfixmcrlimited.co.uk"}>`,
       reply_to: s.email || undefined,
       to: [inv.cust_email],
+      /* A copy to himself, because the mail is sent by the server and so never
+         appears in his own Sent items. Without this his only record is the
+         "Sent" flag in the back office, and an invoice he cannot produce from
+         his own inbox years later is a poor record of a debt. Blind, so the
+         customer never sees his personal address. */
+      bcc: s.email ? [s.email] : undefined,
       subject: `Invoice ${inv.number} from ${s.business_name || "HeatFix Mcr Limited"}`,
       html,
     }),
