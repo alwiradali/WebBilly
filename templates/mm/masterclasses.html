@@ -75,9 +75,11 @@
    and would single out nothing. */
 @property --ember-a{syntax:'<angle>';initial-value:0deg;inherits:false}
 
+.lvlcol{--ember:#12A594}                    /* so the ring never renders unstyled */
 .lvlcol[data-level="n5"]{--ember:#12A594}
 .lvlcol[data-level="hi"]{--ember:#3B82F6}
 .lvlcol[data-level="ah"]{--ember:#8B5CF6}
+.lvlcol[data-level="other"]{--ember:#F0A500}
 
 .card.is-pass{position:relative;border-color:transparent;
   box-shadow:0 16px 34px -20px color-mix(in srgb,var(--ember) 70%,transparent)}
@@ -135,7 +137,8 @@
    on screen and only the chip looked selected. */
 #mc-grid[data-filter="n5"] > .lvlcol:not([data-level="n5"]),
 #mc-grid[data-filter="hi"] > .lvlcol:not([data-level="hi"]),
-#mc-grid[data-filter="ah"] > .lvlcol:not([data-level="ah"]){display:none}
+#mc-grid[data-filter="ah"] > .lvlcol:not([data-level="ah"]),
+#mc-grid[data-filter="other"] > .lvlcol:not([data-level="other"]){display:none}
 
 @media (prefers-reduced-motion:reduce){.lvlbar button{transition:none}}
 </style>
@@ -501,7 +504,18 @@
        she most wants taken and the one a parent is deciding between, so it
        should not sit at the bottom of nine dates. The classes keep the order
        the shop returns them in, which is her running order through the year. */
-    GROUPS.forEach(function (g) {
+    /* Anything her naming does not place into one of the three levels still
+       gets a column. Without this a product she calls something unexpected —
+       "Nat 5 Chemistry", a bundle, anything new — passes the masterclass
+       filter and is then dropped on the floor, because no column exists to
+       put it in. It would vanish from the page with nothing to show it had
+       ever been there, which is exactly how the nine-product cap hid. */
+    var COLUMNS = GROUPS.slice();
+    if (counts.other) {
+      COLUMNS.push({ key: 'other', label: 'More masterclasses', slug: 'more' });
+    }
+
+    COLUMNS.forEach(function (g) {
       var mine = items.filter(function (p) { return keyOf(p.name || '') === g.key; });
       if (!mine.length) return;
 
@@ -548,7 +562,7 @@
        instead of the top of the wrong one. */
     var bar = document.getElementById('lvlbar');
     var say = document.getElementById('lvlsay');
-    var present = GROUPS.filter(function (g) { return counts[g.key]; });
+    var present = COLUMNS.filter(function (g) { return counts[g.key]; });
 
     function describe(k) {
       if (k === 'all') return 'Showing all ' + items.length + ' masterclasses.';
@@ -593,7 +607,7 @@
       var want = m ? decodeURIComponent(m) : (location.hash || '').replace('#', '');
       if (!want) return null;
       want = want.toLowerCase();
-      var hit = GROUPS.filter(function (g) {
+      var hit = COLUMNS.filter(function (g) {
         return g.slug === want || g.key === want;
       })[0];
       return hit && counts[hit.key] ? hit.key : null;
