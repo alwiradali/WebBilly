@@ -237,7 +237,9 @@
   }).then(function (d) {
     var grid = document.getElementById('mm-shop-grid');
     if (!d.products || !d.products.length) { showFallback(grid, 'mm-shop-live'); return; }
-    d.products.slice(0, 9).forEach(function (p, i) {
+    /* Was capped at nine, which hid two thirds of her shop once she went from
+       9 products to 27. */
+    d.products.forEach(function (p, i) {
       var wrap = document.createElement('div');
       wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
