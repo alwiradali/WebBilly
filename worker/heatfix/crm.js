@@ -110,6 +110,66 @@ async function sha256Hex(s) {
    recovery password so a forgotten password with no email configured is not a
    locked door -- the back office says as much, rather than leaving him to
    find out. */
+/* ---- how many wrong guesses before the door shuts, and for how long ----
+   Login is generous, because the person most likely to get it wrong repeatedly
+   is Mohammad on a phone keyboard. Reset requests are tighter, because each one
+   sends him an email and nobody needs three an hour legitimately. */
+const LIMITS = {
+  login:  { max: 8, windowMs: 15 * 60000, lockMs: 15 * 60000 },
+  forgot: { max: 3, windowMs: 60 * 60000, lockMs: 60 * 60000 },
+};
+
+function callerIp(request) {
+  return clean(request.headers.get("cf-connecting-ip"), 60) || "unknown";
+}
+
+/* Returns the number of seconds left on a lock, or 0 when the caller is free
+   to try. An expired lock resets the count rather than lingering. */
+async function lockedFor(env, scope, ip) {
+  const row = await env.HF_DB.prepare(
+    "SELECT fails, first_at, locked_until FROM hf_login_attempts WHERE id = ?"
+  ).bind(scope + ":" + ip).first();
+  if (!row || !row.locked_until) return 0;
+  const left = Date.parse(row.locked_until) - Date.now();
+  if (left > 0) return Math.ceil(left / 1000);
+  await clearAttempts(env, scope, ip);
+  return 0;
+}
+
+async function noteFailure(env, scope, ip) {
+  const lim = LIMITS[scope];
+  const id = scope + ":" + ip;
+  const now = Date.now();
+  const row = await env.HF_DB.prepare(
+    "SELECT fails, first_at FROM hf_login_attempts WHERE id = ?"
+  ).bind(id).first();
+
+  /* Outside the window the count starts again, so an occasional typo weeks
+     apart never accumulates into a lockout. */
+  const fresh = !row || (now - Date.parse(row.first_at)) > lim.windowMs;
+  const fails = fresh ? 1 : row.fails + 1;
+  const firstAt = fresh ? new Date(now).toISOString() : row.first_at;
+  const lockedUntil = fails >= lim.max ? new Date(now + lim.lockMs).toISOString() : null;
+
+  await env.HF_DB.prepare(
+    `INSERT INTO hf_login_attempts (id, scope, ip, fails, first_at, locked_until)
+     VALUES (?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET fails = ?, first_at = ?, locked_until = ?`
+  ).bind(id, scope, ip, fails, firstAt, lockedUntil, fails, firstAt, lockedUntil).run();
+
+  /* Housekeeping, on the write rather than a timer: anything untouched for a
+     day is of no further interest. */
+  await env.HF_DB.prepare("DELETE FROM hf_login_attempts WHERE first_at < ?")
+    .bind(new Date(now - 24 * 3600000).toISOString()).run();
+
+  return lockedUntil ? Math.ceil(lim.lockMs / 1000) : 0;
+}
+
+async function clearAttempts(env, scope, ip) {
+  await env.HF_DB.prepare("DELETE FROM hf_login_attempts WHERE id = ?")
+    .bind(scope + ":" + ip).run();
+}
+
 async function passwordOk(env, s, attempt) {
   if (s && s.password_hash && s.password_salt) {
     if (safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash)) return true;
@@ -539,11 +599,21 @@ export async function handleHfCrm(request, env, url) {
     if (!hasPassword || !env.HF_SESSION_SECRET) {
       return json({ error: "No password is set for the back office yet." }, 503);
     }
+    const ip = callerIp(request);
+    const wait = await lockedFor(env, "login", ip);
+    if (wait) {
+      return json({ error: `Too many wrong passwords. Try again in ${Math.ceil(wait / 60)} minutes.` }, 429);
+    }
     if (!(await passwordOk(env, s, body.password || ""))) {
       /* a beat, so the endpoint cannot be hammered quickly */
       await new Promise((r) => setTimeout(r, 600));
+      const locked = await noteFailure(env, "login", ip);
+      if (locked) {
+        return json({ error: `Too many wrong passwords. Try again in ${Math.ceil(locked / 60)} minutes.` }, 429);
+      }
       return json({ error: "That password is not right." }, 401);
     }
+    await clearAttempts(env, "login", ip);
     return json({ ok: true }, 200, { "set-cookie": cookieHeader(await issueSession(env), SESSION_HOURS * 3600) });
   }
 
@@ -552,6 +622,14 @@ export async function handleHfCrm(request, env, url) {
      the request always answers the same way whether or not an email address is
      configured, so it cannot be used to find out. */
   if (path === "password/forgot" && method === "POST") {
+    /* Each call sends him an email, so without a limit this is a way to bury
+       his inbox — and to keep replacing a reset token he is trying to use. */
+    const fip = callerIp(request);
+    const fwait = await lockedFor(env, "forgot", fip);
+    if (fwait) {
+      return json({ error: `Too many reset requests. Try again in ${Math.ceil(fwait / 60)} minutes.` }, 429);
+    }
+    await noteFailure(env, "forgot", fip);   /* every request counts, not just failures */
     const s = await getSettings(env);
     const to = clean(s.email, 160);
     const same = json({ ok: true, sent: true });
@@ -603,6 +681,11 @@ ignore it &mdash; nothing has changed.</p>`,
       return json({ error: "That reset link is not valid any more." }, 400);
     }
     await setPassword(env, next);      /* clears the token as it goes */
+    /* He has just proved he holds the mailbox, so wipe both counters: locking
+       him out immediately after a successful reset would be absurd. */
+    const rip = callerIp(request);
+    await clearAttempts(env, "login", rip);
+    await clearAttempts(env, "forgot", rip);
     return json({ ok: true }, 200, { "set-cookie": cookieHeader(await issueSession(env), SESSION_HOURS * 3600) });
   }
   if (path === "logout") {

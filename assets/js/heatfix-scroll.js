@@ -39,3 +39,53 @@
     });
   }
 })();
+
+/* ---- the menu, for anyone not using a mouse ----
+ *
+ * Every page that uses this drawer carries its own inline open/close handler.
+ * This adds only what all of them were missing, in one place rather than
+ * twelve: Escape to shut it, a tap on the space around the links to shut it,
+ * focus moved into the menu when it opens and handed back to the button when
+ * it closes, and Tab kept inside it while it is open.
+ *
+ * It deliberately lives here rather than in heatfix-links.js, which returns
+ * immediately unless the page is being previewed under /templates/ — code put
+ * there would have worked everywhere except his own website.
+ */
+(function () {
+  var drawer = document.getElementById("drawer");
+  var burger = document.getElementById("burger");
+  if (!drawer || !burger || !drawer.classList.contains("drawer")) return;
+
+  function isOpen() { return drawer.classList.contains("on"); }
+  function close(restore) {
+    drawer.classList.remove("on");
+    burger.classList.remove("on");
+    burger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+    if (restore) burger.focus();
+  }
+
+  /* addEventListener runs after the page's own inline onclick, so by now the
+     class reflects the new state. */
+  burger.addEventListener("click", function () {
+    if (!isOpen()) return;
+    var first = drawer.querySelector("a");
+    if (first) first.focus();
+  });
+
+  drawer.addEventListener("click", function (e) {
+    if (e.target === drawer) close(true);        /* the space around the links */
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!isOpen()) return;
+    if (e.key === "Escape") { close(true); return; }
+    if (e.key !== "Tab") return;
+    var items = drawer.querySelectorAll("a");
+    if (!items.length) return;
+    var first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+})();

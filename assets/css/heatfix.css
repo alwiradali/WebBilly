@@ -213,9 +213,15 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   position:fixed;inset:0;z-index:79;background:rgba(246,248,252,.97);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   display:grid;place-content:center;gap:6px;text-align:center;
-  opacity:0;pointer-events:none;transition:opacity .3s;
+  /* visibility, not opacity alone. An element at opacity:0 is still in the
+     page and still focusable, so tabbing through any of these pages walked
+     through five to eight menu links nobody could see. The delay keeps the
+     fade: visibility flips only once the fade-out has finished. */
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .3s, visibility 0s linear .3s;
 }
-.drawer.on{opacity:1;pointer-events:auto}
+.drawer.on{opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .3s, visibility 0s}
 .drawer a{
   font-family:var(--dis);font-weight:800;font-size:clamp(1.5rem,7vw,2.2rem);padding:10px 30px;color:var(--navy);
   opacity:0;transform:translateY(18px);transition:.5s cubic-bezier(.2,.8,.2,1);

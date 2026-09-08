@@ -460,7 +460,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
   </div>
 </nav>
 
-<div class="hfdrawer" id="drawer">
+<div class="hfdrawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="hfdrawer-in">
     <a href="#top">Home</a>
     <a href="#services">Services</a>
@@ -1475,13 +1475,33 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
   if(!nav||!b||!d) return;
   addEventListener('scroll',onScroll,{passive:true}); onScroll();
-  b.addEventListener('click',function(){
-    var on=d.classList.toggle('on'); b.classList.toggle('on',on);
-    b.setAttribute('aria-expanded',on); document.body.style.overflow=on?'hidden':'';
-  });
+  /* The drawer is display:none when shut, so its links are already out of the
+     tab order. What was missing was a way out of it: no Escape, no tap on the
+     dimmed backdrop, and Tab walked straight past the menu into the page
+     hidden behind it — leaving a keyboard user moving an invisible cursor
+     around a page they cannot see. */
+  function setDrawer(on, restoreFocus){
+    d.classList.toggle('on',on); b.classList.toggle('on',on);
+    b.setAttribute('aria-expanded',on?'true':'false');
+    document.body.style.overflow=on?'hidden':'';
+    if(on){ var first=d.querySelector('a'); if(first) first.focus(); }
+    else if(restoreFocus) b.focus();
+  }
+  b.addEventListener('click',function(){ setDrawer(!d.classList.contains('on'),true); });
   d.addEventListener('click',function(e){
-    if(e.target.tagName==='A'){d.classList.remove('on');b.classList.remove('on');
-      b.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+    /* a link, or the dimmed area outside the panel itself */
+    if(e.target.tagName==='A'||e.target===d) setDrawer(false,e.target===d);
+  });
+  document.addEventListener('keydown',function(e){
+    if(!d.classList.contains('on')) return;
+    if(e.key==='Escape'){ setDrawer(false,true); return; }
+    if(e.key!=='Tab') return;
+    var items=d.querySelectorAll('a');
+    if(!items.length) return;
+    var first=items[0], last=items[items.length-1];
+    /* Keep Tab inside the menu while it is open. */
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
   });
 })();
 

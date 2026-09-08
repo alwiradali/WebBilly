@@ -267,7 +267,10 @@
 
 <footer class="foot">
   <div class="wrap footbar" style="margin-top:0;border:0;padding-top:0">
-    <span>© <span id="yr">2026</span> HeatFix Mcr Limited · <a href="tel:+447890452629">07890 452629</a> · heatfixmcrlimited.co.uk</span>
+    <!-- This is the page that asks for a name, address and phone number, so
+         it is the page that most needs to say what happens to them. -->
+    <span>© <span id="yr">2026</span> HeatFix Mcr Limited · <a href="tel:+447890452629">07890 452629</a> ·
+      <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></span>
     <span>Website by <a href="https://billydigitals.com" target="_blank" rel="noopener" style="color:var(--muted)">Billy Digitals</a></span>
   </div>
 </footer>
@@ -280,7 +283,6 @@
 <script src="../assets/js/scroll-fx.js" defer></script>
 <script src="../assets/js/heatfix-bg.js" defer></script>
 <script>
-var W3F_KEY = "";                       /* paste your Web3Forms access key here */
 var HF_PHONE = "447890452629";
 var HF_EMAIL = "heatfixmcr@hotmail.com";
 var HF_GAS_SAFE_NO = "627019";   /* The Gas Safe registration number */
@@ -376,11 +378,12 @@ f.addEventListener('input',sync); f.addEventListener('change',sync); sync();
        inside WhatsApp, and on a desktop, where WhatsApp Web wants a QR login,
        most never do. So the page said the request had been sent when nothing
        had, and the lead existed nowhere. */
-    function handover(){
-      /* Stored, but still worth putting it in front of him now. */
-      window.open('https://wa.me/'+HF_PHONE+'?text='+encodeURIComponent(lines),'_blank');
-      finish();
-    }
+    /* This used to open a WhatsApp draft on top of the confirmation, because
+       storing the lead was all the page could do and nothing told him about
+       it. The Worker now emails him as the enquiry lands, so the pop-up is
+       just a second window nobody asked for — and browsers block it anyway
+       when it is opened from a promise rather than a click. WhatsApp is still
+       one tap away on the confirmation screen for anyone in a hurry. */
     function couldNotSend(){
       /* Never claim it went. Give them the two things that always work. */
       btn.disabled=false; btn.textContent='Send my request';
@@ -399,14 +402,10 @@ f.addEventListener('input',sync); f.addEventListener('change',sync); sync();
     }).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function(j){
         if(!j.ok) return Promise.reject('no ok');
-        if(!W3F_KEY) return handover();
-        /* Stored already; the email is a courtesy, so its failure is not the
-           visitor's problem and must not turn a real booking into an error. */
-        return fetch('https://api.web3forms.com/submit',{
-          method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-          body:JSON.stringify({access_key:W3F_KEY,subject:'VISIT REQUEST — '+when+' — '+d.name+' ('+d.postcode+')',
-            from_name:'HeatFix Mcr website',replyto:d.email,when:when,...d,message:lines})
-        }).then(function(){ finish(); }).catch(function(){ finish(); });
+        /* Stored, and the Worker has sent his notification. The browser used
+           to post to Web3Forms a second time from here, which would now send
+           him the same enquiry twice the moment a key was pasted in. */
+        finish();
       })
       .catch(couldNotSend);
   });
