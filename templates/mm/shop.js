@@ -76,6 +76,48 @@
     }
   }
 
+  /* ---- can the on-site basket actually work here? ---------------------
+     Payhip's basket is a cross-origin iframe on payhip.com that holds the
+     cart. Two separate things stop it working, and both were failing in
+     silence — the customer tapped "Add to basket", nothing happened, and the
+     cart they eventually reached on payhip.com read "No items in cart".
+
+     1. The iframe has to have loaded. Cart.addItem ends in
+        postMessageToCartIframe, which is
+        `PayhipCartIframe.contentWindow.postMessage(msg, "*")` with no
+        readiness check and no queue — so a tap before that frame's document
+        is up posts into about:blank and the item is simply gone. Payhip's own
+        State.cartPageLoaded is the flag that says the frame is listening, and
+        their own open-cart button checks it before opening. Ours did not.
+
+     2. The browser has to allow payhip.com third-party storage. Payhip's
+        script already refuses to use the iframe in the Facebook and Instagram
+        in-app browsers — Checkout.open forces a full-page redirect there —
+        but Cart.addItem carries no such guard. Lynsey advertises on Facebook,
+        so every visitor from that ad arrives in precisely the browser Payhip
+        themselves will not run a basket in: the add went into a partitioned
+        iframe, and the payhip.com they landed on afterwards read its own,
+        empty cart.
+
+     Where the basket cannot work, one tap goes straight to Payhip's own
+     checkout for that class instead — the same URL their script redirects to
+     when the overlay is unavailable. Checked against her live shop: it
+     returns her branded checkout page at the right price. */
+  var INAPP = /FBAN|FBAV|Instagram/.test(navigator.userAgent || navigator.vendor || '');
+
+  function cartReady() {
+    if (INAPP) return false;
+    if (!w.Payhip || !w.Payhip.Cart || !w.PayhipCartIframe) return false;
+    var st = w.Payhip.State;
+    return !!(st && st.cartPageLoaded && !st.cookieBugDetected);
+  }
+
+  /* Payhip's direct checkout: buildCheckoutUrl() with type=fallback_direct. */
+  function checkoutUrl(key) {
+    return 'https://payhip.com/buy?link%5B%5D=' + encodeURIComponent(key) +
+      '&type=fallback_direct&parentUrl=' + encodeURIComponent(location.href);
+  }
+
   /* ---- Payhip ---------------------------------------------------------
      Loaded and bound at parse time rather than inside the feed's success
      handler. It used to live in there, which meant that on any path where the
@@ -108,9 +150,9 @@
   }
 
   function openBasket() {
-    if (w.Payhip && w.Payhip.Cart && w.Payhip.Cart.displayCartAndLauncher) {
-      try { w.Payhip.Cart.displayCartAndLauncher(); } catch (e) {}
-    }
+    if (!cartReady() || !w.Payhip.Cart.displayCartAndLauncher) return false;
+    try { w.Payhip.Cart.displayCartAndLauncher(); } catch (e) { return false; }
+    return true;
   }
 
   /* Setup() binds .payhip-open-cart-button on its single DOM pass, but only
@@ -121,7 +163,10 @@
     for (var i = 0; i < list.length; i++) {
       list[i].addEventListener('click', function (ev) {
         ev.preventDefault();
-        openBasket();
+        /* If the drawer will not open — the frame is still loading, or this
+           browser will not give it storage — show them the cart on payhip.com
+           rather than showing them nothing at all. */
+        if (!openBasket()) w.location.href = 'https://payhip.com/cartv2?session_enabled=1';
       });
     }
   }
@@ -161,8 +206,26 @@
     alerts.setAttribute('aria-live', 'polite');
     grid.parentNode.insertBefore(alerts, grid);
 
-    payhip();
-    bindBasketButtons();
+    if (INAPP) {
+      /* Their script has nothing to do here — no basket, and no add-to-cart
+         anchors for it to bind — so it is not loaded at all. And a button that
+         opens a basket this browser cannot hold is a button that does nothing,
+         so it goes: buying is one tap, on Payhip, per class. */
+      var cartBtns = d.getElementsByClassName('payhip-open-cart-button');
+      for (var b = cartBtns.length - 1; b >= 0; b--) {
+        cartBtns[b].style.display = 'none';
+      }
+      /* And the page must stop telling them to build a basket they cannot
+         have. Each paragraph that describes the basket carries the wording
+         for this case in data-inapp. */
+      var swaps = d.querySelectorAll('[data-inapp]');
+      for (var t = 0; t < swaps.length; t++) {
+        swaps[t].textContent = swaps[t].getAttribute('data-inapp');
+      }
+    } else {
+      payhip();
+      bindBasketButtons();
+    }
 
     function fallback() {
       grid.innerHTML = '';
@@ -216,31 +279,50 @@
           row.appendChild(buy);
         }
         var add = d.createElement('a');
-        add.className = 'btn ' + (opts.ownDomain ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
-        add.href = p.link; add.rel = 'noopener';
-        add.setAttribute('data-product', key);
-        add.setAttribute('data-theme', 'none');
-        add.textContent = 'Add to basket';
-        /* Twenty-seven anchors all reading "Add to basket" are impossible to
-           tell apart in a screen reader's list of links. */
-        add.setAttribute('aria-label', 'Add ' + p.name + ' to basket');
-        /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
-           walks the page once; these cards arrive later from a fetch, so that
-           scan is a race, and when it loses, the anchor keeps its href and the
-           click just navigates. Cart.addItem is public, so calling it directly
-           is deterministic. The href stays as the fallback for anyone whose
-           browser never loads their script — a working link beats a dead one. */
-        add.addEventListener('click', function (ev) {
-          if (!w.Payhip || !w.Payhip.Cart) return;  /* let the link work */
-          ev.preventDefault();
-          w.Payhip.Cart.addItem({ product: key });
-          openBasket();
-          /* The only confirmation Payhip gives is inside a cross-origin drawer
-             appended to the end of <body> — not announced, and nowhere near
-             the button that was just pressed. Without this a blind parent
-             cannot tell whether the add worked, presses again, and buys two. */
-          alerts.textContent = p.name + ' added to your basket.';
-        });
+        add.rel = 'noopener';
+
+        if (INAPP) {
+          /* No basket in this browser, so do not offer one. A plain link
+             straight to Payhip's checkout for this class: no script involved,
+             nothing to race, and it says what it does. Deliberately without
+             the payhip-add-to-cart-button class, so their Setup() cannot bind
+             an add-to-cart handler that has nowhere to put the item. */
+          add.className = 'btn btn-p';
+          add.href = checkoutUrl(key);
+          add.textContent = 'Buy now \u2192';
+          add.setAttribute('aria-label', 'Buy ' + p.name);
+        } else {
+          add.className = 'btn ' + (opts.ownDomain ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
+          add.href = p.link;
+          add.setAttribute('data-product', key);
+          add.setAttribute('data-theme', 'none');
+          add.textContent = 'Add to basket';
+          /* Twenty-seven anchors all reading "Add to basket" are impossible to
+             tell apart in a screen reader's list of links. */
+          add.setAttribute('aria-label', 'Add ' + p.name + ' to basket');
+          /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
+             walks the page once; these cards arrive later from a fetch, so that
+             scan is a race, and when it loses, the anchor keeps its href and the
+             click just navigates. */
+          add.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            if (cartReady()) {
+              w.Payhip.Cart.addItem({ product: key });
+              openBasket();
+              /* The only confirmation Payhip gives is inside a cross-origin
+                 drawer appended to the end of <body> \u2014 not announced, and
+                 nowhere near the button that was just pressed. Without this a
+                 blind parent cannot tell whether the add worked, presses
+                 again, and buys two. */
+              alerts.textContent = p.name + ' added to your basket.';
+              return;
+            }
+            /* There is no basket to add to. Never swallow the tap: take them
+               to Payhip's checkout for this class, which works whatever the
+               browser has decided about third-party storage. */
+            w.location.href = checkoutUrl(key);
+          });
+        }
         row.appendChild(add);
       } else {
         /* no readable key — fall back to the product's own page */
