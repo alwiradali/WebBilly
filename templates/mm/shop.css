@@ -68,11 +68,19 @@
 .buyrow{display:grid;gap:8px}
 .buyrow .btn{width:100%;justify-content:center}
 
-/* "View your basket" is a real button, not an anchor wearing role="button".
-   As an <a href="#"> it promised Space activation that anchors do not give,
-   and on any path where the feed did not arrive it was an unbound control
-   whose only effect was to throw the reader to the top of the page. */
+/* The buy and basket controls are real buttons, not anchors wearing
+   role="button": as <a href="#"> they promised Space activation that anchors
+   do not give, and an unbound one only ever threw the reader to the top of
+   the page.
+
+   The colour modifiers have to be restated here. .btn-p and .btn-g are plain
+   class selectors in shared.css, so the element+class reset below outranks
+   them — which left "Add to basket" painting as a blank white pill with the
+   gradient stripped off it. */
 button.btn{font:inherit;font-weight:600;font-size:14.6px;cursor:pointer;border:0;background:none}
+button.btn-p{background:var(--grad);color:#fff}
+button.btn-g{border:1.6px solid var(--line);background:#fff;color:var(--ink)}
+button.btn-g:hover{border-color:var(--teal);color:var(--teal)}
 button.btn:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
 
 /* The pass leads its column: it is the offer she most wants taken, and the
@@ -172,3 +180,100 @@ button.btn:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
    <body>, which is announced to nobody. */
 .shop-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* ---------- the basket -------------------------------------------------
+   Hers, on her own domain. Payhip's cart was a cross-origin iframe that
+   Safari and the in-app browsers refuse to give storage to, so the whole
+   thing lives here now and Payhip only sees it at the checkout step.
+
+   Every [hidden] rule below is written as its own attribute selector rather
+   than trusting the user agent's [hidden]{display:none}: an author display
+   rule beats the UA sheet, which is exactly how the level filter bar ended
+   up "hidden" and still on screen. */
+
+/* the bar along the bottom, once there is something to check out */
+.bk-bar{position:fixed;left:0;right:0;bottom:0;z-index:95;
+  display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.94);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);box-shadow:0 -10px 30px -22px rgba(14,59,71,.5)}
+.bk-bar[hidden]{display:none}
+.bk-sum{font-weight:600;color:var(--ink);font-size:.95rem}
+/* the WhatsApp button sits bottom-right and would land underneath it */
+body.has-basket .wa-float{bottom:84px}
+/* And the page has to be able to scroll clear of the bar. Without this the
+   bar sits over the Add to basket button of whichever card is at the bottom
+   of the screen, and the tap lands on the bar instead of the card. */
+body.has-basket{padding-bottom:76px}
+
+.bk-scrim{position:fixed;inset:0;z-index:96;background:rgba(6,25,32,.44);
+  backdrop-filter:blur(2px)}
+.bk-scrim[hidden]{display:none}
+body.bk-open{overflow:hidden}
+
+.bk-panel{position:fixed;z-index:97;right:0;top:0;bottom:0;width:min(430px,100%);
+  display:flex;flex-direction:column;background:var(--paper);
+  border-left:1px solid var(--line);box-shadow:-24px 0 60px -30px rgba(14,59,71,.5)}
+.bk-panel[hidden]{display:none}
+@media(max-width:520px){
+  /* A sheet from the bottom on a phone, where a full-height side panel reads
+     as the page having been replaced. */
+  .bk-panel{top:auto;left:0;width:100%;max-height:86vh;border-left:0;
+    border-top-left-radius:22px;border-top-right-radius:22px;
+    border-top:1px solid var(--line)}
+}
+.bk-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.bk-head h3{font-size:1.3rem}
+.bk-x{width:38px;height:38px;flex:0 0 auto;border:1px solid var(--line);background:#fff;
+  border-radius:50%;font-size:1.3rem;line-height:1;color:var(--ink);cursor:pointer;
+  font-family:inherit;transition:.25s}
+.bk-x:hover{border-color:var(--teal);color:var(--teal)}
+
+.bk-items{flex:1;overflow-y:auto;padding:8px 20px;-webkit-overflow-scrolling:touch}
+.bk-empty{text-align:center;color:var(--mut);padding:36px 0}
+.bk-row{display:grid;grid-template-columns:56px 1fr auto auto;gap:12px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--line)}
+.bk-row:last-child{border-bottom:0}
+.bk-row img{width:56px;height:40px;object-fit:cover;border-radius:8px}
+/* min-width:0 or a long unbroken product name — "Formula/balancedequations"
+   — holds the column open at its min-content width and shoves the quantity
+   and remove controls off the edge of the panel. */
+.bk-meta{min-width:0}
+.bk-meta b{display:block;font-family:var(--ser);font-size:.97rem;color:var(--ink);
+  line-height:1.25;font-weight:600;overflow-wrap:anywhere}
+.bk-meta span{font-size:.84rem;color:var(--mut)}
+.bk-qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line);
+  border-radius:999px;padding:2px;flex:0 0 auto}
+.bk-qty button{width:28px;height:28px;border:0;background:none;border-radius:50%;
+  font-size:1rem;line-height:1;color:var(--ink);cursor:pointer;font-family:inherit}
+.bk-qty button:hover{background:var(--tint2);color:var(--teal)}
+.bk-qty span{min-width:20px;text-align:center;font-weight:600;font-size:.9rem}
+.bk-rm{width:30px;height:30px;border:0;background:none;color:var(--mut);
+  font-size:1.15rem;line-height:1;cursor:pointer;border-radius:50%;font-family:inherit}
+.bk-rm:hover{background:#FDECEC;color:#C0392B}
+
+.bk-foot{padding:16px 20px calc(18px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);background:var(--tint)}
+.bk-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.bk-total[hidden]{display:none}
+.bk-total span{color:var(--mut);font-size:.92rem}
+.bk-total b{font-family:var(--ser);font-size:1.5rem;color:var(--ink)}
+.bk-foot .btn{width:100%;justify-content:center}
+.bk-foot .btn + .btn{margin-top:9px}
+.bk-go[hidden]{display:none}
+.bk-note{margin-top:12px;font-size:.8rem;color:var(--mut);line-height:1.5;text-align:center}
+.bk-clear{display:block;margin:10px auto 0;border:0;background:none;font-family:inherit;
+  font-size:.82rem;color:var(--mut);text-decoration:underline;cursor:pointer}
+.bk-clear:hover{color:#C0392B}
+
+/* "Added ✓", briefly, so a tap that deliberately does not open the basket
+   still visibly did something. */
+.bk-add.is-added{background:#0B7F72;box-shadow:none}
+
+.bk-x:focus-visible,.bk-qty button:focus-visible,.bk-rm:focus-visible,
+.bk-clear:focus-visible,.bk-add:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+@media (prefers-reduced-motion:reduce){
+  .bk-x,.bk-add{transition:none}
+}

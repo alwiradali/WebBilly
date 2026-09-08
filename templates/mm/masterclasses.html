@@ -128,10 +128,10 @@
     <div class="sec-head rv in">
       <span class="pill">Bookable now</span>
       <h2>Reserve your <span class="g">masterclass</span></h2>
-      <p data-inapp="Every masterclass Lynsey currently has open, straight from the shop. Tap a class to pay for it on Payhip’s secure page.">Every masterclass Lynsey currently has open, straight from the shop. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
+      <p>Every masterclass Lynsey currently has open, straight from the shop. Build your basket here, then pay on Payhip&rsquo;s secure page.</p>
     </div>
     <div class="rv in" style="text-align:center;margin:-6px 0 26px">
-      <button type="button" class="btn btn-g payhip-open-cart-button">View your basket →</button>
+      <button type="button" class="btn btn-g bk-view">View your basket<span class="bk-count"></span> →</button>
     </div>
     <div class="lvlbar rv in" id="lvlbar" role="group" aria-label="Filter masterclasses by level" hidden></div>
     <p class="rv in" id="lvlsay" aria-live="polite" style="text-align:center;margin:-16px 0 24px;color:var(--mut);font-size:.92rem"></p>
@@ -146,7 +146,7 @@
         <a class="btn btn-g" href="https://payhip.com/molecularmiraclesChemistryResourcesScottishCurricu" target="_blank" rel="noopener">Open the shop →</a>
       </div>
     </div>
-    <p class="rv in" data-inapp="Tap a masterclass to go straight to its checkout. Payment is taken by Payhip on a secure page — card or PayPal. Your place and all the relevant information are then sent to you by email." style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your place and all the relevant information are then sent to you by email.</p>
+    <p class="rv in" style="text-align:center;margin-top:26px;color:var(--mut);font-size:.94rem">Add what you want to your basket here. When you check out, payment is taken by Payhip on a secure page &mdash; card or PayPal. Your place and all the relevant information are then sent to you by email.</p>
   </div>
 </section>
 
@@ -212,23 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
     otherLabel: 'More masterclasses',
     noun: ['class', 'classes'],
     sayAll: function (n) { return 'Showing all ' + n + ' masterclasses.'; },
-    sayOne: function (n, label) { return 'Showing the ' + n + ' ' + label + ' masterclasses.'; },
-    /* ---------------------------------------------------------------
-       Where her shop lives.
-
-       Payhip serves a seller's store from their own domain once a custom
-       domain is connected, and the direct checkout link becomes
-       <her domain>/buy?link=<product key> rather than payhip.com/buy.
-       shop.molecularmiracleschemistrytuition.co.uk is connected and waiting
-       on Payhip to finish verifying it.
-
-       Until it is live this stays payhip.com and the direct Buy button is not
-       rendered at all — sending someone to payhip.com the moment they show
-       interest is exactly the behaviour we removed. Change this one line when
-       the subdomain answers, on this page and on /resources.
-       --------------------------------------------------------------- */
-    shopOrigin: 'https://payhip.com',
-    ownDomain: false
+    sayOne: function (n, label) { return 'Showing the ' + n + ' ' + label + ' masterclasses.'; }
   });
 });
 </script>

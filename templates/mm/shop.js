@@ -6,9 +6,8 @@
    one page and left standing on the other, and every fault an audit turned up
    existed twice over. One module now, configured twice.
 
-   Payhip's embed turns each card into a basket that opens ON her site — the
-   customer browses and adds without being sent to payhip.com, and only meets
-   Payhip at the card-details step. */
+   The basket is this site's own — see below for why it is no longer Payhip's.
+   Payhip is not involved until the customer chooses to check out. */
 (function (w, d) {
   'use strict';
 
@@ -76,115 +75,292 @@
     }
   }
 
-  /* ---- can the on-site basket actually work here? ---------------------
-     Payhip's basket is a cross-origin iframe on payhip.com that holds the
-     cart. Two separate things stop it working, and both were failing in
-     silence — the customer tapped "Add to basket", nothing happened, and the
-     cart they eventually reached on payhip.com read "No items in cart".
+  /* ---- the basket ------------------------------------------------------
+     Hers, on her own domain.
 
-     1. The iframe has to have loaded. Cart.addItem ends in
-        postMessageToCartIframe, which is
-        `PayhipCartIframe.contentWindow.postMessage(msg, "*")` with no
-        readiness check and no queue — so a tap before that frame's document
-        is up posts into about:blank and the item is simply gone. Payhip's own
-        State.cartPageLoaded is the flag that says the frame is listening, and
-        their own open-cart button checks it before opening. Ours did not.
+     It used to be Payhip's: a cross-origin iframe on payhip.com that held the
+     cart, with "Add to basket" posting a message into it. That cannot work for
+     most of her customers. Safari blocks third-party storage by default, and
+     the Facebook and Instagram in-app browsers — where every visitor from her
+     ads arrives — partition it away entirely. Payhip's own script knows this
+     and refuses to use the cart in those browsers, which is why tapping Add to
+     basket put the item somewhere the checkout could not read it and the cart
+     came up empty.
 
-     2. The browser has to allow payhip.com third-party storage. Payhip's
-        script already refuses to use the iframe in the Facebook and Instagram
-        in-app browsers — Checkout.open forces a full-page redirect there —
-        but Cart.addItem carries no such guard. Lynsey advertises on Facebook,
-        so every visitor from that ad arrives in precisely the browser Payhip
-        themselves will not run a basket in: the add went into a partitioned
-        iframe, and the payhip.com they landed on afterwards read its own,
-        empty cart.
+     So the basket is kept here instead, in this site's own localStorage, which
+     is first-party and works in every browser. Payhip is not involved until
+     the customer chooses to check out, at which point the whole basket goes
+     over in one URL: /buy?link[]=A&link[]=B&qty[A]=2. Checked against her live
+     shop — two classes come to £36, two classes and a pass to £155.
 
-     Where the basket cannot work, one tap goes straight to Payhip's own
-     checkout for that class instead — the same URL their script redirects to
-     when the overlay is unavailable. Checked against her live shop: it
-     returns her branded checkout page at the right price. */
-  var INAPP = /FBAN|FBAV|Instagram/.test(navigator.userAgent || navigator.vendor || '');
+     What that buys is a shop that behaves like a shop: adding an item adds it
+     and leaves the customer where they were, the basket says how many are in
+     it, and they open it when they are ready — with a way back out. */
 
-  function cartReady() {
-    if (INAPP) return false;
-    if (!w.Payhip || !w.Payhip.Cart || !w.PayhipCartIframe) return false;
-    var st = w.Payhip.State;
-    return !!(st && st.cartPageLoaded && !st.cookieBugDetected);
+  /* Payhip serves a seller's checkout from their own domain once a custom
+     domain is verified. shop.molecularmiracleschemistrytuition.co.uk is
+     connected and waiting on them. Change this one line when it answers and
+     every checkout link on both pages follows. */
+  var CHECKOUT_ORIGIN = 'https://payhip.com';
+
+  var STORE = 'mm-basket';
+  var basket = [];
+  try { basket = JSON.parse(w.localStorage.getItem(STORE)) || []; } catch (e) {}
+  if (!Array.isArray(basket)) basket = [];
+
+  function persist() {
+    /* Private browsing throws on write. The basket then lasts for this visit
+       only, which is still worth having; it must never break the shop. */
+    try { w.localStorage.setItem(STORE, JSON.stringify(basket)); } catch (e) {}
   }
 
-  /* Payhip's direct checkout: buildCheckoutUrl() with type=fallback_direct. */
-  function checkoutUrl(key) {
-    return 'https://payhip.com/buy?link%5B%5D=' + encodeURIComponent(key) +
-      '&type=fallback_direct&parentUrl=' + encodeURIComponent(location.href);
+  function money(v) {
+    var m = String(v == null ? '' : v).replace(/,/g, '')
+      .match(/([£$€])?\s*(\d+(?:\.\d{1,2})?)/);
+    return m ? { cur: m[1] || '£', v: parseFloat(m[2]) } : null;
   }
+  function fmt(m) { return m.cur + m.v.toFixed(2); }
 
-  /* ---- Payhip ---------------------------------------------------------
-     Loaded and bound at parse time rather than inside the feed's success
-     handler. It used to live in there, which meant that on any path where the
-     products did not arrive — the fetch failing, or simply a feed with
-     nothing in it — the "View your basket" button was rendered, announced as
-     a button, and had no listener at all: pressing it appended "#" to the URL
-     and threw the reader to the top of the page. Payhip's basket persists
-     across visits, so the customer most likely to press it is the one who
-     already has something in it. */
-  function payhip() {
-    w.PayhipConfig = w.PayhipConfig || { enableCart: true };
-    if (!w.__payhipLoading) {
-      w.__payhipLoading = true;
-      var ps = d.createElement('script');
-      ps.src = 'https://payhip.com/payhip.js';
-      d.body.appendChild(ps);
+  function total() {
+    var cur = null, sum = 0;
+    for (var i = 0; i < basket.length; i++) {
+      var m = money(basket[i].price);
+      if (!m) return null;        /* one price we cannot read, so no total at all */
+      cur = cur || m.cur;
+      sum += m.v * (basket[i].qty || 1);
     }
-    /* Their loader appends the real script asynchronously, so its own onload
-       fires before Payhip exists. Setup() is what binds anything, refuses to
-       run twice, and only creates a basket if enableCart was set before it
-       ran. Hence: set the config, load, poll, then Setup once. */
-    (function wait(tries) {
-      tries = tries || 0;
-      if (w.Payhip && typeof w.Payhip.Setup === 'function') {
-        if (!w.PayhipSetupFinished) w.Payhip.Setup();
-        return;
-      }
-      if (tries < 120) setTimeout(function () { wait(tries + 1); }, 100);
-    })(0);
+    return { cur: cur || '£', v: sum };
   }
 
-  function openBasket() {
-    if (!cartReady() || !w.Payhip.Cart.displayCartAndLauncher) return false;
-    try { w.Payhip.Cart.displayCartAndLauncher(); } catch (e) { return false; }
-    return true;
+  function count() {
+    var n = 0;
+    for (var i = 0; i < basket.length; i++) n += basket[i].qty || 1;
+    return n;
+  }
+  function summary() {
+    var n = count();
+    return n === 1 ? '1 item in your basket.' : n + ' items in your basket.';
+  }
+  function find(key) {
+    for (var i = 0; i < basket.length; i++) if (basket[i].key === key) return i;
+    return -1;
   }
 
-  /* Setup() binds .payhip-open-cart-button on its single DOM pass, but only
-     reveals the drawer once the cart iframe has reported in. Bind it here too
-     so the button works the moment someone presses it. */
-  function bindBasketButtons() {
-    var list = d.getElementsByClassName('payhip-open-cart-button');
-    for (var i = 0; i < list.length; i++) {
-      list[i].addEventListener('click', function (ev) {
-        ev.preventDefault();
-        /* If the drawer will not open — the frame is still loading, or this
-           browser will not give it storage — show them the cart on payhip.com
-           rather than showing them nothing at all. */
-        if (!openBasket()) w.location.href = 'https://payhip.com/cartv2?session_enabled=1';
-      });
+  /* The whole basket, handed to Payhip in one URL. */
+  function checkoutHref() {
+    var q = [];
+    for (var i = 0; i < basket.length; i++) {
+      var it = basket[i], n = it.qty || 1;
+      q.push('link%5B%5D=' + encodeURIComponent(it.key));
+      if (n > 1) q.push('qty%5B' + encodeURIComponent(it.key) + '%5D=' + n);
+    }
+    q.push('type=fallback_direct');
+    q.push('parentUrl=' + encodeURIComponent(location.href));
+    return CHECKOUT_ORIGIN + '/buy?' + q.join('&');
+  }
+
+  /* ---- the basket, on screen ---------------------------------------- */
+
+  var ui = null, announce = null, lastFocus = null;
+
+  function el(tag, cls, text) {
+    var n = d.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function build() {
+    if (ui) return ui;
+
+    /* A bar along the bottom, only once there is something in the basket. It
+       is how a customer who has scrolled into the middle of twenty-seven
+       classes gets to the checkout without hunting back up the page. */
+    var bar = el('div', 'bk-bar');
+    bar.hidden = true;
+    var sum = el('span', 'bk-sum');
+    var openBtn = el('button', 'btn btn-p bk-open', 'View basket →');
+    openBtn.type = 'button';
+    bar.appendChild(sum); bar.appendChild(openBtn);
+
+    var scrim = el('div', 'bk-scrim');
+    scrim.hidden = true;
+
+    var panel = el('aside', 'bk-panel');
+    panel.hidden = true;
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('aria-label', 'Your basket');
+
+    var head = el('div', 'bk-head');
+    head.appendChild(el('h3', null, 'Your basket'));
+    var x = el('button', 'bk-x', '×');
+    x.type = 'button';
+    x.setAttribute('aria-label', 'Close the basket');
+    head.appendChild(x);
+
+    var items = el('div', 'bk-items');
+
+    var foot = el('div', 'bk-foot');
+    var tot = el('div', 'bk-total');
+    tot.appendChild(el('span', null, 'Subtotal'));
+    var totV = el('b');
+    tot.appendChild(totV);
+    var go = el('a', 'btn btn-p bk-go', 'Checkout securely →');
+    var back = el('button', 'btn btn-g bk-back', '← Continue shopping');
+    back.type = 'button';
+    var note = el('p', 'bk-note', 'Payment is taken by Payhip on a secure page — ' +
+      'card or PayPal. Your place and all the relevant information are then emailed to you.');
+    var clear = el('button', 'bk-clear', 'Empty the basket');
+    clear.type = 'button';
+    foot.appendChild(tot); foot.appendChild(go); foot.appendChild(back);
+    foot.appendChild(note); foot.appendChild(clear);
+
+    panel.appendChild(head); panel.appendChild(items); panel.appendChild(foot);
+    d.body.appendChild(bar); d.body.appendChild(scrim); d.body.appendChild(panel);
+
+    openBtn.addEventListener('click', function () { openPanel(openBtn); });
+    x.addEventListener('click', closePanel);
+    back.addEventListener('click', closePanel);
+    scrim.addEventListener('click', closePanel);
+    d.addEventListener('keydown', function (ev) {
+      if ((ev.key === 'Escape' || ev.keyCode === 27) && !panel.hidden) closePanel();
+    });
+    clear.addEventListener('click', function () {
+      basket = []; persist(); paint();
+      if (announce) announce.textContent = 'Your basket is empty.';
+    });
+
+    ui = { bar: bar, sum: sum, scrim: scrim, panel: panel, items: items,
+           tot: tot, totV: totV, go: go, x: x };
+    return ui;
+  }
+
+  function openPanel(from) {
+    build();
+    lastFocus = from || d.activeElement;
+    paint();
+    ui.scrim.hidden = false;
+    ui.panel.hidden = false;
+    d.body.classList.add('bk-open');
+    ui.x.focus();
+  }
+
+  function closePanel() {
+    if (!ui || ui.panel.hidden) return;
+    ui.panel.hidden = true;
+    ui.scrim.hidden = true;
+    d.body.classList.remove('bk-open');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    lastFocus = null;
+  }
+
+  function row(it) {
+    var r = el('div', 'bk-row');
+    if (it.img) {
+      var im = el('img');
+      im.src = it.img; im.alt = ''; im.loading = 'lazy';
+      r.appendChild(im);
+    }
+    var meta = el('div', 'bk-meta');
+    meta.appendChild(el('b', null, it.name));
+    var m = money(it.price);
+    meta.appendChild(el('span', null, m ? fmt(m) + ' each' : (it.price || '')));
+    r.appendChild(meta);
+
+    var qty = el('div', 'bk-qty');
+    var less = el('button', null, '−');
+    less.type = 'button';
+    less.setAttribute('aria-label', 'One fewer place on ' + it.name);
+    var num = el('span', null, String(it.qty || 1));
+    var more = el('button', null, '+');
+    more.type = 'button';
+    more.setAttribute('aria-label', 'One more place on ' + it.name);
+    less.addEventListener('click', function () { bump(it.key, -1); });
+    more.addEventListener('click', function () { bump(it.key, 1); });
+    qty.appendChild(less); qty.appendChild(num); qty.appendChild(more);
+    r.appendChild(qty);
+
+    var rm = el('button', 'bk-rm', '×');
+    rm.type = 'button';
+    rm.setAttribute('aria-label', 'Remove ' + it.name + ' from your basket');
+    rm.addEventListener('click', function () { drop(it.key); });
+    r.appendChild(rm);
+    return r;
+  }
+
+  function paint() {
+    build();
+    var n = count(), t = total();
+
+    ui.bar.hidden = n === 0;
+    d.body.classList.toggle('has-basket', n > 0);
+    ui.sum.textContent = (n === 1 ? '1 item' : n + ' items') + (t ? ' · ' + fmt(t) : '');
+
+    /* Every "view basket" control on the page carries the count, so a customer
+       can see something happened without opening anything. */
+    var tags = d.getElementsByClassName('bk-count');
+    for (var i = 0; i < tags.length; i++) tags[i].textContent = n ? ' (' + n + ')' : '';
+
+    ui.items.innerHTML = '';
+    if (!n) {
+      ui.items.appendChild(el('p', 'bk-empty', 'Your basket is empty.'));
+      ui.tot.hidden = true;
+      ui.go.hidden = true;
+    } else {
+      ui.tot.hidden = !t;
+      ui.go.hidden = false;
+      ui.go.href = checkoutHref();
+      if (t) ui.totV.textContent = fmt(t);
+      for (var j = 0; j < basket.length; j++) ui.items.appendChild(row(basket[j]));
     }
   }
 
-  /* Payhip calls this by name when a purchase completes, so the customer is
-     thanked on Lynsey's site rather than left looking at a closed overlay
-     wondering whether it worked. */
-  w.mmPurchaseDone = function () {
-    var n = d.createElement('div');
-    n.setAttribute('role', 'status');
-    n.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9999;' +
-      'background:#0B7F72;color:#fff;padding:16px 24px;border-radius:18px;font-weight:500;line-height:1.45;' +
-      'box-shadow:0 18px 44px -18px rgba(0,0,0,.4);max-width:92vw;text-align:center';
-    n.innerHTML = '<b>Thank you for your purchase!</b><br>Everything you need is on its way to your email.';
-    d.body.appendChild(n);
-    setTimeout(function () { n.style.transition = 'opacity .6s'; n.style.opacity = '0'; }, 9000);
-    setTimeout(function () { n.remove(); }, 9800);
-  };
+  function bump(key, by) {
+    var i = find(key);
+    if (i < 0) return;
+    var next = (basket[i].qty || 1) + by;
+    if (next < 1) return drop(key);
+    basket[i].qty = next;
+    persist(); paint();
+    if (announce) announce.textContent = basket[i].name + ': ' + next + '. ' + summary();
+  }
+
+  function drop(key) {
+    var i = find(key);
+    if (i < 0) return;
+    var name = basket[i].name;
+    basket.splice(i, 1);
+    persist(); paint();
+    if (announce) announce.textContent = name + ' removed. ' + summary();
+  }
+
+  /* The button says so itself for a moment. Without this, adding without
+     opening the basket looks like nothing happened — which is the complaint
+     that started all of this, from the other direction. */
+  function flash(btn) {
+    if (btn.__t) clearTimeout(btn.__t);
+    else btn.__label = btn.textContent;
+    btn.textContent = 'Added ✓';
+    btn.classList.add('is-added');
+    btn.__t = setTimeout(function () {
+      btn.textContent = btn.__label;
+      btn.classList.remove('is-added');
+      btn.__t = null;
+    }, 1500);
+  }
+
+  function addToBasket(item) {
+    var i = find(item.key);
+    if (i < 0) {
+      basket.push({ key: item.key, name: item.name, price: item.price,
+                    img: item.img, qty: 1 });
+    } else {
+      basket[i].qty = (basket[i].qty || 1) + 1;
+    }
+    persist(); paint();
+    if (announce) announce.textContent = item.name + ' added. ' + summary();
+  }
 
   /* ---- one shop section ---------------------------------------------- */
 
@@ -206,26 +382,18 @@
     alerts.setAttribute('aria-live', 'polite');
     grid.parentNode.insertBefore(alerts, grid);
 
-    if (INAPP) {
-      /* Their script has nothing to do here — no basket, and no add-to-cart
-         anchors for it to bind — so it is not loaded at all. And a button that
-         opens a basket this browser cannot hold is a button that does nothing,
-         so it goes: buying is one tap, on Payhip, per class. */
-      var cartBtns = d.getElementsByClassName('payhip-open-cart-button');
-      for (var b = cartBtns.length - 1; b >= 0; b--) {
-        cartBtns[b].style.display = 'none';
-      }
-      /* And the page must stop telling them to build a basket they cannot
-         have. Each paragraph that describes the basket carries the wording
-         for this case in data-inapp. */
-      var swaps = d.querySelectorAll('[data-inapp]');
-      for (var t = 0; t < swaps.length; t++) {
-        swaps[t].textContent = swaps[t].getAttribute('data-inapp');
-      }
-    } else {
-      payhip();
-      bindBasketButtons();
+    announce = alerts;
+
+    /* Every "View your basket" control on the page opens the panel. Painting
+       now rather than on the first add means a customer who left with three
+       classes in the basket comes back and can still see them. */
+    var openers = d.getElementsByClassName('bk-view');
+    for (var v = 0; v < openers.length; v++) {
+      (function (o) {
+        o.addEventListener('click', function (ev) { ev.preventDefault(); openPanel(o); });
+      })(openers[v]);
     }
+    paint();
 
     function fallback() {
       grid.innerHTML = '';
@@ -261,68 +429,21 @@
 
       var row = d.createElement('div'); row.className = 'buyrow';
       if (key) {
-        /* One action, and it is the one that keeps them here: add to basket.
-           Payhip's basket is an iframe drawer over this page, so browsing,
-           adding, changing quantities and reviewing the order all happen on
-           molecularmiracleschemistrytuition.co.uk.
-
-           There is deliberately no "Buy now" button while the shop is still on
-           payhip.com. Payhip's own embed ends Checkout.open() with an
-           unconditional redirect — it builds an overlay URL and then navigates
-           anyway — so a Buy-now button cannot be made to stay on this site.
-           It only ever threw the customer out mid-journey. */
-        if (opts.ownDomain) {
-          var buy = d.createElement('a');
-          buy.className = 'btn btn-p';
-          buy.href = opts.shopOrigin + '/buy?link=' + encodeURIComponent(key);
-          buy.textContent = 'Buy now';
-          row.appendChild(buy);
-        }
-        var add = d.createElement('a');
-        add.rel = 'noopener';
-
-        if (INAPP) {
-          /* No basket in this browser, so do not offer one. A plain link
-             straight to Payhip's checkout for this class: no script involved,
-             nothing to race, and it says what it does. Deliberately without
-             the payhip-add-to-cart-button class, so their Setup() cannot bind
-             an add-to-cart handler that has nowhere to put the item. */
-          add.className = 'btn btn-p';
-          add.href = checkoutUrl(key);
-          add.textContent = 'Buy now \u2192';
-          add.setAttribute('aria-label', 'Buy ' + p.name);
-        } else {
-          add.className = 'btn ' + (opts.ownDomain ? 'btn-g' : 'btn-p') + ' payhip-add-to-cart-button';
-          add.href = p.link;
-          add.setAttribute('data-product', key);
-          add.setAttribute('data-theme', 'none');
-          add.textContent = 'Add to basket';
-          /* Twenty-seven anchors all reading "Add to basket" are impossible to
-             tell apart in a screen reader's list of links. */
-          add.setAttribute('aria-label', 'Add ' + p.name + ' to basket');
-          /* Bind it ourselves rather than trusting Payhip's DOM scan. Setup()
-             walks the page once; these cards arrive later from a fetch, so that
-             scan is a race, and when it loses, the anchor keeps its href and the
-             click just navigates. */
-          add.addEventListener('click', function (ev) {
-            ev.preventDefault();
-            if (cartReady()) {
-              w.Payhip.Cart.addItem({ product: key });
-              openBasket();
-              /* The only confirmation Payhip gives is inside a cross-origin
-                 drawer appended to the end of <body> \u2014 not announced, and
-                 nowhere near the button that was just pressed. Without this a
-                 blind parent cannot tell whether the add worked, presses
-                 again, and buys two. */
-              alerts.textContent = p.name + ' added to your basket.';
-              return;
-            }
-            /* There is no basket to add to. Never swallow the tap: take them
-               to Payhip's checkout for this class, which works whatever the
-               browser has decided about third-party storage. */
-            w.location.href = checkoutUrl(key);
-          });
-        }
+        /* Adding adds, and nothing else. It used to open the basket drawer in
+           the same breath, which threw the customer out of the list they were
+           reading after every single tap. The count on the bar and the word on
+           the button are the confirmation; the basket opens when they ask. */
+        var add = d.createElement('button');
+        add.type = 'button';
+        add.className = 'btn btn-p bk-add';
+        add.textContent = 'Add to basket';
+        /* Twenty-seven buttons all reading "Add to basket" are impossible to
+           tell apart in a screen reader's list of controls. */
+        add.setAttribute('aria-label', 'Add ' + p.name + ' to basket');
+        add.addEventListener('click', function () {
+          addToBasket({ key: key, name: p.name, price: p.price, img: p.img });
+          flash(add);
+        });
         row.appendChild(add);
       } else {
         /* no readable key — fall back to the product's own page */
