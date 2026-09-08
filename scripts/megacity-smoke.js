@@ -6,6 +6,7 @@
    every picture loads, search results link to listings, the 404 page, the
    Studio. Playwright + Chromium (CHROME=path to the browser); set FONT_CSS to
    a saved Google Fonts stylesheet to run offline. */
+module.paths.push("/opt/node22/lib/node_modules");   // playwright is installed globally on the build box
 const { chromium } = require("playwright");
 const fs = require("fs");
 
@@ -93,12 +94,16 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
         const m = document.getElementById("megamenu"), b = document.getElementById("burger"), a = m && m.querySelector("a");
         return { hidden: m.hidden, cls: m.className, aria: b.getAttribute("aria-expanded"), link: !!(a && a.getBoundingClientRect().height > 0) };
       });
-      ok(open.hidden === false && /is-open/.test(open.cls) && open.aria === "true" && open.link,
-         path + " menu opens on a phone (" + open.cls + ", aria-expanded=" + open.aria + ")");
-      await pp.tap("#burger");
-      await pp.waitForTimeout(450);
-      const shut = await pp.evaluate(() => ({ aria: document.getElementById("burger").getAttribute("aria-expanded"), body: document.body.className }));
-      ok(shut.aria === "false" && !/mm-open/.test(shut.body), path + " menu closes again on a phone");
+      const opened = open.hidden === false && /is-open/.test(open.cls) && open.aria === "true" && open.link;
+      ok(opened, path + " menu opens on a phone (" + open.cls + ", aria-expanded=" + open.aria + ")");
+      /* only meaningful if it opened — otherwise "still shut" passes for the
+         wrong reason and reads as a pass next to the real failure */
+      if (opened) {
+        await pp.tap("#burger");
+        await pp.waitForTimeout(450);
+        const shut = await pp.evaluate(() => ({ aria: document.getElementById("burger").getAttribute("aria-expanded"), body: document.body.className }));
+        ok(shut.aria === "false" && !/mm-open/.test(shut.body), path + " menu closes again on a phone");
+      }
       ok(!errs.length, path + " no errors opening the phone menu" + (errs.length ? ": " + errs.slice(0, 2).join(" | ") : ""));
       await pp.close();
     }
