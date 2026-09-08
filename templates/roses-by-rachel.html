@@ -1769,7 +1769,13 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       }).then(done).catch(function () {
         copyText(txt, 'Could not send — message copied, paste it to Rachel ♥');
       });
-    } else { done(); }
+    } else {
+      /* With no key configured nothing is sent, so do NOT show the "On its way
+         to Rachel" panel. A customer who is told their order has gone waits for
+         a reply that cannot come, and Rachel never learns she lost the sale.
+         Fall back to the same route as a failed send. */
+      copyText(txt, 'Message copied — paste it to Rachel on WhatsApp or Instagram ♥');
+    }
   });
   compose();
 
@@ -1787,8 +1793,9 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       }).then(function () { $('newsform').style.display = 'none'; say('You’re on the list — thank you ♥'); })
         .catch(function () { say('That didn’t send — message Rachel on Instagram and she’ll add you.'); });
     } else {
-      $('newsform').style.display = 'none';
-      say('You’re on the list — thank you ♥  (Demo: add Rachel’s email key to go live.)');
+      /* Nothing was sent, so the form stays up and says so. The old text told
+         her she was on the list and then explained the demo to the customer. */
+      say('Signups aren’t open yet — message Rachel on Instagram and she’ll add you ♥');
     }
   });
 
@@ -2018,7 +2025,10 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
           body: JSON.stringify({ access_key: key, subject: 'Rose List — 10% popup signup',
             email: RR_EMAIL, message: 'Popup signup: ' + mail })
         }).then(ok).catch(function () { $('popmsg').textContent = 'That didn’t send — try the form at the bottom of the page.'; });
-      } else { ok(); }
+      } else {
+        /* Never promise a discount code that nothing is going to send. */
+        $('popmsg').textContent = 'Signups aren’t open yet — message Rachel on Instagram for your code ♥';
+      }
     });
     /* leaving on desktop, or a good scroll then a pause on touch */
     document.addEventListener('mouseout', function (e) {
