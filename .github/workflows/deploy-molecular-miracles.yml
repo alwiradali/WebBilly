@@ -94,21 +94,33 @@ jobs:
           test "$pages" -ge 20
           # No page may ship markup that routes customers to the Payhip
           # storefront — that was the whole complaint. The ONE permitted
-          # mention is the escape hatch inside showFallback(), which renders
-          # only if the product feed itself fails: a working shop link beats a
-          # dead page. So this checks for real anchor hrefs, and separately
-          # holds the fallback to a single occurrence so a buy button cannot
-          # quietly reappear as a JS-assigned href.
+          # mention is the escape hatch inside fallback(), which renders only
+          # if the product feed itself fails: a working shop link beats a dead
+          # page.
+          #
+          # That code now lives in shop.js rather than inline in each page, so
+          # this counts it there. It caught a real regression on the way: a
+          # standing "Open the shop →" link in the shop section's waiting
+          # state, which every visitor would have seen on every load until the
+          # feed answered. Four deploys failed here before anyone noticed the
+          # site was not updating, so the check works — but see the step below,
+          # which is what makes a failure visible instead of silent.
           if grep -rq 'href="https://payhip.com/molecularmiracles' dist/molecular-miracles/*.html; then
             echo "a page links out to the Payhip storefront in its markup"; exit 1
           fi
           for f in masterclasses resources; do
             n=$(grep -c 'payhip.com/molecularmiracles' "dist/molecular-miracles/$f.html" || true)
             echo "  $f.html: $n storefront reference(s)"
-            if [ "$n" -gt 1 ]; then
-              echo "$f.html has more than the one permitted fallback link"; exit 1
+            if [ "$n" -gt 0 ]; then
+              echo "$f.html routes customers to the storefront; only shop.js may, and only on feed failure"
+              exit 1
             fi
           done
+          n=$(grep -c 'payhip.com/molecularmiracles' dist/molecular-miracles/shop.js || true)
+          echo "  shop.js: $n storefront reference(s)"
+          if [ "$n" -ne 1 ]; then
+            echo "shop.js should carry exactly one storefront link, the feed-failure fallback"; exit 1
+          fi
 
       - name: Check wrangler will deploy to HER worker
         # Guard rail, learned the hard way. If [env.mm] is missing from
@@ -167,18 +179,34 @@ jobs:
             exit 1
           fi
 
-      - name: Confirm the live site answers
+      - name: Confirm the live site is actually THIS build
         if: steps.creds.outputs.ready == 'true'
+        # A 200 only proves something is there — the site answered 200
+        # throughout four consecutive failed deploys while serving a copy that
+        # was days out of date. So this compares the live page against the one
+        # just built: same shop script, same byte length. A stale deploy now
+        # fails here instead of looking fine.
         run: |
+          set -e
+          SITE=https://molecularmiracleschemistrytuition.co.uk
+          want=$(wc -c < dist/molecular-miracles/shop.js)
           for i in 1 2 3 4 5 6; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' https://molecularmiracleschemistrytuition.co.uk/ || true)
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/" || true)
             echo "attempt $i: homepage $code"
             if [ "$code" = "200" ]; then
-              n=$(curl -s https://molecularmiracleschemistrytuition.co.uk/api/mm-shop \
+              n=$(curl -s "$SITE/api/mm-shop" \
                   | python3 -c 'import sys,json; print(len(json.load(sys.stdin).get("products",[])))' || echo 0)
               echo "shop feed is carrying $n products"
               # An empty shop is a broken shop — she always has products live.
               test "$n" -ge 1
+              got=$(curl -s "$SITE/shop.js" | wc -c)
+              echo "shop.js: built $want bytes, live $got bytes"
+              if [ "$want" != "$got" ]; then
+                echo "::error::The live site is not serving this build — shop.js differs."
+                exit 1
+              fi
+              curl -s "$SITE/masterclasses" | grep -q 'shop.js'
+              echo "::notice::Live site is serving this build."
               exit 0
             fi
             sleep 10
