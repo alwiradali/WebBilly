@@ -80,7 +80,8 @@ footer{background:rgba(231,241,249,.90)}
   background:var(--grad);opacity:.55}
 .nav-in{display:flex;align-items:center;gap:14px;padding:9px 0}
 .nav .sp{flex:1}
-.nlinks{display:none;gap:26px;font-size:14.4px;font-weight:500;color:var(--body)}
+.nlinks{display:none;gap:20px;font-size:14.2px;font-weight:500;color:var(--body);white-space:nowrap}
+@media(min-width:1240px){.nlinks{gap:26px;font-size:14.4px}}
 .nlinks a{position:relative;padding:5px 0}
 .nlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--grad);
   transform:scaleX(0);transform-origin:0;transition:transform .35s cubic-bezier(.22,1,.36,1)}

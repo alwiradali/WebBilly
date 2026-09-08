@@ -41,6 +41,7 @@ NAV = '''<nav class="nav">
         <a href="{p}course.html">GCSE Courses</a>
         <a href="{p}daytime.html">Daytime</a>
         <a href="{p}timetable.html">Timetable</a>
+        <a href="{p}masterclasses.html">Masterclasses</a>
         <a href="{p}workshops.html">STEM Activities</a>
         <a href="{p}about.html">About Rod</a>
         <a href="{p}faqs.html">FAQs</a>
