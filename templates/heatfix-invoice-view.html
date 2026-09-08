@@ -149,8 +149,34 @@
     if (b.phone) bits.push('<a class="call" href="tel:' + esc(String(b.phone).replace(/\s+/g, "")) + '">Ring ' + esc(b.phone) + "</a>");
     if (b.phone) bits.push('<a href="https://wa.me/' +
       esc(String(b.phone).replace(/[^0-9]/g, "").replace(/^0/, "44")) + '">WhatsApp</a>');
-    if (b.email) bits.push('<a href="mailto:' + esc(b.email) + '">Email</a>');
+    if (b.email) bits.push('<a id="mailBtn" href="mailto:' + esc(b.email) +
+      '?subject=' + encodeURIComponent("Invoice " + (data.invoice.number || "")) +
+      '">Email</a>');
     if (bits.length) { row.innerHTML = bits.join(""); document.getElementById("after").hidden = false; }
+
+    /* A mailto does nothing at all on a machine with no mail app set up, and
+       the customer is left pressing a dead button. If we are still here a
+       moment after the click, nothing handled it — so put the address on the
+       clipboard and say so, which is what they needed anyway. */
+    var mailBtn = document.getElementById("mailBtn");
+    if (mailBtn) {
+      mailBtn.addEventListener("click", function () {
+        var addr = b.email;
+        setTimeout(function () {
+          if (document.hidden) return;              /* the mail app took over */
+          function shown(msg) {
+            mailBtn.textContent = msg;
+            setTimeout(function () { mailBtn.textContent = "Email"; }, 2600);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(addr).then(
+              function () { shown("Copied " + addr); },
+              function () { shown(addr); }
+            );
+          } else { shown(addr); }
+        }, 700);
+      });
+    }
 
     /* Wait for the logo before measuring, or the sheet is sized short. */
     var imgs = Array.prototype.slice.call(host.querySelectorAll("img"));
