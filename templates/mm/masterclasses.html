@@ -39,19 +39,103 @@
   box-shadow:0 12px 26px -14px rgba(59,130,246,.8)}
 .lvlbar button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
 
-/* Group headings, so the level is legible while scrolling the full list too —
-   not only when a filter is on. */
-.lvlhead{grid-column:1/-1;display:flex;align-items:center;gap:16px;margin:20px 0 -4px}
-.lvlhead:first-child{margin-top:0}
-.lvlhead h3{font-size:clamp(1.25rem,3vw,1.6rem);white-space:nowrap}
-.lvlhead::after{content:"";flex:1;height:1px;background:var(--line)}
-.lvlcount{font-size:13.4px;color:var(--mut);font-weight:500;white-space:nowrap}
+/* Three columns, one per level, side by side. All three levels are then on
+   screen at once, so nobody has to work out whether they are looking at their
+   own course — which no amount of sorting a single list achieves. */
+#mc-grid{display:grid;grid-template-columns:1fr;gap:0 34px;align-items:start}
+@media(min-width:900px){#mc-grid{grid-template-columns:repeat(3,1fr)}}
+.lvlcol{display:flex;flex-direction:column;gap:18px;padding:0 0 10px}
+@media(min-width:900px){
+  /* A rule between columns, as on her sketch. Drawn on the column rather than
+     between rows so it runs the full height of the tallest one. */
+  .lvlcol + .lvlcol{border-left:1px solid var(--line);padding-left:34px;margin-left:-17px}
+}
 
-/* Filtering hides whole groups. Done in CSS off one attribute so a card and
-   its heading can never disagree about whether they are showing. */
-#mc-grid[data-filter="n5"] > :not([data-level="n5"]),
-#mc-grid[data-filter="hi"] > :not([data-level="hi"]),
-#mc-grid[data-filter="ah"] > :not([data-level="ah"]){display:none}
+/* Column heading. Centred over its column, set large in her gradient — this
+   is the thing a parent scans for, so it should read as a title and not as a
+   caption. Sticky, so the level stays named while they scroll nine dates. */
+.lvlhead{text-align:center;padding:16px 0 15px;margin-bottom:6px;
+  border-bottom:2px solid var(--line);
+  /* Tinted to match the section it sits in, not white — on this panel a white
+     band reads as another card. Blurred like the nav so the molecule
+     background still moves under it while a column scrolls past. */
+  position:sticky;top:60px;z-index:2;
+  background:rgba(243,250,250,.93);backdrop-filter:blur(8px)}
+.lvlhead h3{font-size:clamp(1.7rem,3.4vw,2.2rem);font-weight:700;line-height:1.1;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lvlcount{display:block;margin-top:5px;font-size:12.4px;font-weight:600;
+  letter-spacing:1.4px;text-transform:uppercase;color:var(--mut)}
+
+/* The pass leads its column: it is the offer she most wants taken, and the
+   one a parent is actually deciding about. An ember travels its outline —
+   one per level, in that level's own colour, taken from the three stops of
+   her brand gradient rather than invented:
+     National 5 teal · Higher blue · Advanced Higher violet.
+   Only the three passes carry it. If every card glowed it would be wallpaper
+   and would single out nothing. */
+@property --ember-a{syntax:'<angle>';initial-value:0deg;inherits:false}
+
+.lvlcol[data-level="n5"]{--ember:#12A594}
+.lvlcol[data-level="hi"]{--ember:#3B82F6}
+.lvlcol[data-level="ah"]{--ember:#8B5CF6}
+
+.card.is-pass{position:relative;border-color:transparent;
+  box-shadow:0 16px 34px -20px color-mix(in srgb,var(--ember) 70%,transparent)}
+.card.is-pass::after{
+  content:"";position:absolute;inset:-1.5px;border-radius:inherit;padding:1.5px;
+  pointer-events:none;
+  /* A dim ring for the whole outline, with one bright ember riding round it. */
+  background:
+    conic-gradient(from var(--ember-a),
+      color-mix(in srgb,var(--ember) 22%,transparent) 0 68%,
+      color-mix(in srgb,var(--ember) 60%,transparent) 79%,
+      var(--ember) 86%,
+      #fff 89%,
+      var(--ember) 92%,
+      color-mix(in srgb,var(--ember) 30%,transparent) 97%,
+      color-mix(in srgb,var(--ember) 22%,transparent) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  animation:ember 5.5s linear infinite;
+}
+/* Staggered so the three passes are not in lockstep, which reads as a single
+   mechanism rather than three cards. */
+.lvlcol[data-level="hi"] .card.is-pass::after{animation-delay:-1.8s}
+.lvlcol[data-level="ah"] .card.is-pass::after{animation-delay:-3.6s}
+@keyframes ember{to{--ember-a:360deg}}
+
+/* Where @property is unsupported the angle cannot interpolate, so the ring
+   would sit frozen at one position. A plain tinted border is the better
+   still image. */
+@supports not (background:conic-gradient(from var(--ember-a),red,blue)){
+  .card.is-pass::after{display:none}
+  .card.is-pass{border-color:var(--ember)}
+}
+@media (prefers-reduced-motion:reduce){
+  .card.is-pass::after{animation:none}
+}
+
+/* Filtering hides whole columns — one attribute, so a heading and its cards
+   can never disagree about whether they are showing. On a phone, where the
+   columns stack and National 5 would sit on top of everyone again, this is
+   what keeps a Higher parent looking at Higher. */
+#mc-grid:not([data-filter="all"]){grid-template-columns:1fr}
+#mc-grid:not([data-filter="all"]) .lvlcol{
+  border-left:0;padding-left:0;margin-left:0;
+  /* One level on its own gets the full width back, rather than staying a
+     narrow strip where two columns used to be. */
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px}
+#mc-grid:not([data-filter="all"]) .lvlhead{grid-column:1/-1}
+
+/* Hiding comes last and names .lvlcol deliberately. The rule above sets
+   display:grid on the same elements at equal specificity, so written the
+   other way round the filter silently stopped working — every column stayed
+   on screen and only the chip looked selected. */
+#mc-grid[data-filter="n5"] > .lvlcol:not([data-level="n5"]),
+#mc-grid[data-filter="hi"] > .lvlcol:not([data-level="hi"]),
+#mc-grid[data-filter="ah"] > .lvlcol:not([data-level="ah"]){display:none}
 
 @media (prefers-reduced-motion:reduce){.lvlbar button{transition:none}}
 </style>
@@ -332,28 +416,12 @@
       counts[k] = (counts[k] || 0) + 1;
     });
 
-    var lastKey = null;
-    items.forEach(function (p, i) {
-      /* A heading before the first card of each level. It earns its place even
-         with no filter applied: scrolling twenty-seven cards, the level is
-         otherwise only inferable from the product names. */
-      var lk = keyOf(p.name || '');
-      if (lk !== lastKey) {
-        lastKey = lk;
-        var g = GROUPS.filter(function (x) { return x.key === lk; })[0];
-        var head = document.createElement('div');
-        head.className = 'lvlhead';
-        head.setAttribute('data-level', lk);
-        if (g) head.id = g.slug;
-        var ht = document.createElement('h3');
-        ht.textContent = g ? g.label : 'More';
-        head.appendChild(ht);
-        var hc = document.createElement('span');
-        hc.className = 'lvlcount';
-        hc.textContent = counts[lk] + (counts[lk] === 1 ? ' class' : ' classes');
-        head.appendChild(hc);
-        grid.appendChild(head);
-      }
+    /* One column per level, side by side, each led by its pass — the three
+       levels are then visible at once and nobody has to work out whether they
+       are looking at their own course. On a phone the columns stack, which
+       would put National 5 back on top of everyone, so the level chips stay:
+       they hide the other columns entirely. */
+    function makeCard(p, i) {
       var wrap = document.createElement('div');
       wrap.className = 'card rv in' + (i % 3 === 1 ? ' d1' : i % 3 === 2 ? ' d2' : '');
       var key = (p.link.match(/\/b\/([A-Za-z0-9]+)/) || [])[1];
@@ -425,9 +493,42 @@
         only.textContent = 'View';
         row.appendChild(only);
       }
-      wrap.setAttribute('data-level', lk);
       wrap.appendChild(row);
-      grid.appendChild(wrap);
+      return wrap;
+    }
+
+    /* Build the columns. Within a level the pass goes first — it is the offer
+       she most wants taken and the one a parent is deciding between, so it
+       should not sit at the bottom of nine dates. The classes keep the order
+       the shop returns them in, which is her running order through the year. */
+    GROUPS.forEach(function (g) {
+      var mine = items.filter(function (p) { return keyOf(p.name || '') === g.key; });
+      if (!mine.length) return;
+
+      var col = document.createElement('div');
+      col.className = 'lvlcol';
+      col.setAttribute('data-level', g.key);
+      col.id = g.slug;
+
+      var head = document.createElement('div');
+      head.className = 'lvlhead';
+      var ht = document.createElement('h3'); ht.textContent = g.label; head.appendChild(ht);
+      var hc = document.createElement('span');
+      hc.className = 'lvlcount';
+      var classCount = mine.filter(function (p) { return !/pass/i.test(p.name || ''); }).length;
+      hc.textContent = classCount + (classCount === 1 ? ' class' : ' classes');
+      head.appendChild(hc);
+      col.appendChild(head);
+
+      var passes = mine.filter(function (p) { return /pass/i.test(p.name || ''); });
+      var singles = mine.filter(function (p) { return !/pass/i.test(p.name || ''); });
+      passes.concat(singles).forEach(function (p, i) {
+        var c = makeCard(p, i);
+        if (/pass/i.test(p.name || '')) c.classList.add('is-pass');
+        col.appendChild(c);
+      });
+
+      grid.appendChild(col);
     });
     document.getElementById('book').hidden = false;
 
