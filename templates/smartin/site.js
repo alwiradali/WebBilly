@@ -26,8 +26,11 @@
      posts TO his inbox, it never sends AS his domain, so it cannot clash with
      Google Workspace.
 
-     Until this is set the form fails silently and WhatsApp is the only way in. */
-  var W3F_KEY = '';
+     This is Web3Forms' PUBLIC key — their own wording, on the page that issues
+     it. It is meant to sit in client-side code and identifies the destination
+     inbox; it grants nothing else, so it belongs in the repo rather than in a
+     secret. */
+  var W3F_KEY = 'd09dfb52-ab60-4399-838c-5b0faf3b0a6f';
 
   var WA_MSG = "Hi Rod, I found SMARTin SCIENCE online. I'd like to ask about GCSE science tuition for my child.";
 
