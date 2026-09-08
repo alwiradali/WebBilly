@@ -75,6 +75,8 @@ h1,h2,h3{font-family:var(--ser);font-weight:600;line-height:1.14;letter-spacing:
 @media(min-width:900px){.hero h1{margin:20px 0 18px}}
 .hero .lead{color:var(--body);font-size:clamp(1rem,1.4vw,1.13rem);max-width:52ch}
 .hero-cta{display:flex;gap:11px;flex-wrap:wrap;margin-top:26px}
+.hero-buy{margin-top:14px;font-size:.93rem;color:var(--mut)}
+.hero-buy b{color:var(--ink);font-weight:600}
 .hero-cta .btn{flex:1 1 auto;justify-content:center}
 @media(min-width:520px){.hero-cta .btn{flex:0 0 auto}}
 .trustrow{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:28px}
