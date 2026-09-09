@@ -976,32 +976,63 @@ footer p{font-size:.96rem}
 .route,.jcard{position:relative;isolation:isolate;border-color:var(--gold-pale)}
 .route::before,.jcard::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
+  /* Tighter than a coal and with a hot white core, so it reads as a charge
+     running the wire rather than a slow glow. */
   background:conic-gradient(from var(--ember-a,120deg),
     rgba(192,152,42,0) 0deg,
-    rgba(192,152,42,0) 150deg,
-    rgba(230,213,162,.85) 200deg,
-    #C0982A 236deg,
-    #FFF1C9 252deg,
-    #C0982A 268deg,
-    rgba(230,213,162,.85) 300deg,
-    rgba(192,152,42,0) 340deg,
+    rgba(192,152,42,0) 186deg,
+    rgba(230,213,162,.7) 214deg,
+    #C0982A 238deg,
+    #FFFDF2 250deg,
+    #C0982A 262deg,
+    rgba(230,213,162,.7) 286deg,
+    rgba(192,152,42,0) 314deg,
+    rgba(192,152,42,0) 360deg);
+  filter:drop-shadow(0 0 3px rgba(192,152,42,.5));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:ember-turn 3.6s linear infinite;
+  pointer-events:none;z-index:1}
+/* A second charge running the opposite way at a different speed. Where the two
+   cross they brighten and then part again, which is what makes it read as
+   current in a wire rather than one lamp going round and round. Separate
+   registered angle, because two animations cannot drive one property. */
+@property --ember-b{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes ember-turn-b{to{--ember-b:-360deg}}
+.route::after,.jcard::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--ember-b,300deg),
+    rgba(192,152,42,0) 0deg,
+    rgba(192,152,42,0) 200deg,
+    rgba(230,213,162,.55) 226deg,
+    #E6D5A2 244deg,
+    #FFFBEA 252deg,
+    #E6D5A2 260deg,
+    rgba(230,213,162,.55) 278deg,
+    rgba(192,152,42,0) 304deg,
     rgba(192,152,42,0) 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
-  animation:ember-turn 12s linear infinite;
+  animation:ember-turn-b 5.9s linear infinite;
   pointer-events:none;z-index:1}
+.routegrid > :nth-child(2)::after{animation-delay:-1.4s}
+.routegrid > :nth-child(3)::after{animation-delay:-2.8s}
+.routegrid > :nth-child(4)::after{animation-delay:-4.2s}
+
 /* Staggered, so four tiles side by side are four separate coals rather than
    one bar of light sweeping across the row. */
-.routegrid > :nth-child(2)::before,.jgrid > :nth-child(2)::before{animation-delay:-3s}
-.routegrid > :nth-child(3)::before,.jgrid > :nth-child(3)::before{animation-delay:-6s}
-.routegrid > :nth-child(4)::before{animation-delay:-9s}
-.nextgrid > :nth-child(2)::before{animation-delay:-4s}
+.routegrid > :nth-child(2)::before,.jgrid > :nth-child(2)::before{animation-delay:-.9s}
+.routegrid > :nth-child(3)::before,.jgrid > :nth-child(3)::before{animation-delay:-1.8s}
+.routegrid > :nth-child(4)::before{animation-delay:-2.7s}
+.nextgrid > :nth-child(2)::before{animation-delay:-1.2s}
 .nextgrid > :nth-child(3)::before{animation-delay:-8s}
 .route:hover::before,.jcard:hover::before{animation-duration:5s}
 @media(prefers-reduced-motion:reduce){
-  .route::before,.jcard::before{animation:none}
+  .route::before,.jcard::before,.route::after,.jcard::after{animation:none}
 }
 
 /* ---------- the tiles read stronger ----------
