@@ -14,59 +14,17 @@ routes = [
   { pattern = "billydigitals.com", custom_domain = true },
   { pattern = "www.billydigitals.com", custom_domain = true }
   # Client sites on their own domains — uncomment and set the real hostname
-  # once the domain's nameservers point at Cloudflare.
-  # Mumbai2London is parked (M2L_PARKED in worker.js); its routes stay
-  # commented out until it is brought back.
+  # once the domain's nameservers point at Cloudflare, then add the same
+  # hostnames to M2L_HOST below.
   # ,{ pattern = "mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
-  # ,{ pattern = "heatfixmcrlimited.co.uk", custom_domain = true }
-  # ,{ pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
-  # Megacity Properties — go-live day (docs/megacity-golive.md): uncomment both
-  # once the zone is on Cloudflare and the imported A/www records are deleted,
-  # and set MEGACITY_HOST below in the same commit.
-  # ,{ pattern = "www.megacityproperties.co.uk", custom_domain = true }
-  # ,{ pattern = "megacityproperties.co.uk", custom_domain = true }
 ]
 
 [vars]
 # Comma-separated hostnames that should serve ONLY the Mumbai2London site,
 # at clean root URLs (/, /admin, /invoice, /sign) and indexable by Google.
-# Has no effect while M2L_PARKED is true in worker.js.
+# Leave empty and everything stays as it is on billydigitals.com.
 M2L_HOST = ""
-
-# Comma-separated hostnames for HeatFix Mcr Limited. Set these once the
-# domain's nameservers point at Cloudflare, and add the matching custom
-# domain routes above.
-HEATFIX_HOST = ""
-
-# Megacity Properties. Leave MEGACITY_HOST empty until their nameservers are
-# on Cloudflare and the two routes above are in (docs/megacity-golive.md).
-# The FIRST hostname is the canonical one every other listed host 301s to:
-#   MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
-# MEGACITY_PUBLIC_BASE is where canonical/OG/sitemap links point while the
-# site lives on the demo host only.
-MEGACITY_HOST = ""
-MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
-
-# ── Megacity Studio (docs/megacity-studio.md) ───────────────────────────────
-# The back office needs a D1 database and an R2 bucket. Create them first:
-#   npx wrangler r2 bucket create megacity-media     (R2 must be enabled in the dashboard)
-#   npx wrangler d1 create megacity                  (prints the database_id)
-# then paste the REAL database_id below, uncomment BOTH blocks, commit, and run:
-#   npx wrangler d1 migrations apply megacity --remote
-# Never commit a placeholder id — Cloudflare rejects the whole deploy (see the
-# M2L note below). `node scripts/check-wrangler.mjs` refuses to deploy one.
-# Until the blocks are live, worker/studio answers 503 {connected:false} and
-# nothing else on the site changes.
-# [[d1_databases]]
-# binding = "MEGACITY_DB"
-# database_name = "megacity"
-# database_id = "PASTE_REAL_ID_HERE"
-# migrations_dir = "migrations/megacity"
-#
-# [[r2_buckets]]
-# binding = "MEDIA"
-# bucket_name = "megacity-media"
 
 # D1 database for Mumbai2London enquiries + booking diary.
 # Create it once with:  npx wrangler d1 create m2l
@@ -86,17 +44,6 @@ MEGACITY_PUBLIC_BASE = "https://billydigitals.com/templates/"
 # database_name = "m2l"
 # database_id = "PASTE_REAL_ID_HERE"
 
-# ---------------------------------------------------------------------------
-# HeatFix back office. Invoices, customers and his own details live here, so
-# they survive a lost phone and follow him between the van and the laptop.
-#
-# There is deliberately NO HF_DB binding on this (Billy Digitals) worker. His
-# customers' names, addresses and phone numbers make HeatFix the data
-# controller, so the database lives on the HeatFix Cloudflare account and is
-# bound under [env.heatfix] at the bottom of this file. On billydigitals.com
-# the back office answers 503 "database not connected", which is correct: the
-# preview copy of the site should not be able to read his customer book.
-
 [assets]
 directory = "."
 not_found_handling = "404-page"
@@ -110,86 +57,9 @@ binding = "ASSETS"
 # the quote form, the review emails and the whole Mumbai2London booking,
 # chat, admin and invoice layer were dead in production because of it.
 #
-# Every request now goes through the Worker. A client domain
-# (megacityproperties.co.uk) needs the Worker on EVERY path — its old
-# addresses (/property/…, /landlords/register/…), its root pages, its own
-# robots.txt and a branded, logged 404 — and this list is matched by path,
-# not by host, so no list can say "everything, but only on that host". The
-# Worker still hands every plain asset to env.ASSETS, so billydigitals.com is
-# unchanged; the cost is one Worker invocation per asset request (fine on
-# Workers Paid, which the Studio's password hashing already wants).
-# The old path list is kept below in case it ever has to come back.
-run_worker_first = true
-# run_worker_first = [
-#   "/api/*", "/media/*", "/templates/megacity-*",
-#   "/", "/admin", "/invoice", "/sign", "/book", "/i",
-#   "/about", "/faqs", "/blog", "/blog/*", "/safety-tips",
-#   "/manufacturers-warranty", "/privacy", "/terms",
-# ]
-
-# ---------------------------------------------------------------------------
-# HeatFix Mcr Limited on the client's own Cloudflare account.
-# Deploy with:  CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
-#               npx wrangler deploy --env heatfix
-# Envs do not inherit routes/vars/assets, so everything is declared again.
-[env.heatfix]
-name = "heatfixmcr"
-account_id = "c6db9dcf342f60c2fd1959a44386342d"
-routes = [
-  { pattern = "heatfixmcrlimited.co.uk", custom_domain = true },
-  { pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
-]
-
-# The back office database, on HeatFix's own Cloudflare account. Apply the
-# schema once with:
-#   CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
-#   npx wrangler d1 migrations apply hfcrm --env heatfix --remote
-[[env.heatfix.d1_databases]]
-binding = "HF_DB"
-database_name = "hfcrm"
-database_id = "497bcc16-15d2-4d61-b98c-9d7c09e6c9a5"
-# Without this, `wrangler d1 migrations apply hfcrm` defaults to ./migrations
-# and would run Mumbai2London's schema into his customer database.
-migrations_dir = "migrations/heatfix"
-
-# HF_WEB3FORMS_KEY is deliberately NOT here. It is a Cloudflare secret on the
-# HeatFix account, because this repository is public. Set it with:
-#   CLOUDFLARE_API_TOKEN=<token from the HeatFix account> \
-#   npx wrangler secret put HF_WEB3FORMS_KEY --env heatfix
-# or in the dashboard under the heatfixmcr Worker's Variables and Secrets.
-# Without it the enquiry form still records the lead; he just is not emailed,
-# which is what should happen on billydigitals.com.
-[env.heatfix.vars]
-M2L_HOST = ""
-HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"
-
-[env.heatfix.assets]
-directory = "."
-not_found_handling = "404-page"
-# Without this the asset router answers /templates/heatfix-about.html with a
-# 307 to /templates/heatfix-about — its clean-URL behaviour, which is what
-# billydigitals.com wants and his domain must not have. serveClient fetches
-# the .html path internally to build every page, so that redirect was being
-# handed to the visitor: every clean URL on his site bounced them to the
-# internal /templates/… path. His clean URLs come from HEATFIX_PAGES in the
-# Worker, so the router should serve files here and nothing else.
-html_handling = "none"
-binding = "ASSETS"
-# The Worker owns every path on his domain, exactly as it does on
-# billydigitals.com and for the same reason.
-#
-# A path LIST cannot work here. The asset directory is the whole repository,
-# so anything not named in the list is answered by the asset router from
-# Billy Digitals' files: /admin served the agency's Admin Console, some fifty
-# root pages served the agency's marketing site, and every mistyped URL
-# served the agency's 404 advert — all on the gas engineer's domain. No list
-# can fix that, because the list would have to name every path that must NOT
-# be served, and that set is the entire repository.
-#
-# With the Worker first, serveClient answers the paths in HEATFIX_PAGES,
-# passes /assets/* and the favicon through, and refuses everything else with
-# his own 404 page.
-run_worker_first = true
+# The rest let a client domain serve its site at "/" instead of the Billy
+# Digitals homepage. If wrangler is too old for the array form, use `true`.
+run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
 
 # ---------------------------------------------------------------------------
 # Molecular Miracles on Lynsey's own Cloudflare account.
@@ -201,6 +71,11 @@ run_worker_first = true
 # clean URLs, canonicals, a sitemap and its own _worker.js — so the Worker and
 # the assets both come from there and nothing of any other client is reachable
 # on her domain. Build before deploying, or you ship whatever was last built.
+#
+# Do NOT let this block go missing. Without it `--env mm` silently falls back
+# to the top-level config: it deploys a worker called billydigitals-mm, serves
+# the ENTIRE repository as its assets, and leaves her real site untouched on
+# the worker below. That has happened once already.
 #
 # The name MUST match the Worker already serving her domain. Deploying under a
 # different name creates a second Worker and quietly leaves her site on the old
@@ -222,3 +97,33 @@ not_found_handling = "404-page"
 # The Worker owns /api/mm-shop and hands everything else to the asset router,
 # which is what resolves /daytime to daytime.html.
 run_worker_first = false
+
+# ---------------------------------------------------------------------------
+# Rod Martin — SMARTin SCIENCE, on HIS OWN Cloudflare account.
+#
+# Same arrangement as Lynsey's: his account is not connected to this
+# repository and does not need to be. A scoped API token travels one way,
+# from his Cloudflare into GitHub Secrets, and is never written down here.
+# account_id therefore comes from CLOUDFLARE_ACCOUNT_ID at deploy time rather
+# than sitting in a public repo.
+#
+# Static only — no `main`. His site has no API of its own: the enquiry form
+# posts straight to Web3Forms from the browser, so there is no Worker code to
+# run and nothing server-side to get wrong.
+#
+# As with [env.mm], do not let this block go missing: `--env smartin` would
+# then silently fall back to the top-level config and deploy the entire
+# repository to his account under the wrong name, while his real site sat
+# untouched somewhere else looking like a deploy that did nothing.
+[env.smartin]
+name = "smartin-science"
+routes = [
+  { pattern = "smartinscience.co.uk", custom_domain = true },
+  { pattern = "www.smartinscience.co.uk", custom_domain = true }
+]
+
+[env.smartin.assets]
+directory = "dist/smartin-science"
+# The build writes about.html and links to /about, so the server has to resolve
+# the extensionless URL. This is wrangler's default, stated so it cannot drift.
+html_handling = "auto-trailing-slash"

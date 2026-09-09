@@ -1,0 +1,192 @@
+# SMARTin SCIENCE → Rod's Cloudflare Worker
+#
+# A push to main that touches his site rebuilds and redeploys it.
+#
+# Deploys through the Cloudflare API with a token in GitHub Secrets. Rod's
+# Cloudflare account is NOT connected to this repository and does not need to
+# be — the token travels one way, from his account into a secret here.
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#
+#   CLOUDFLARE_API_TOKEN_SMARTIN  — from ROD's Cloudflare account, with BOTH
+#                                     Account → Workers Scripts → Edit
+#                                     Zone    → Workers Routes  → Edit
+#                                   on smartinscience.co.uk. The zone
+#                                   permission is what lets wrangler bind his
+#                                   domain to the Worker; without it the first
+#                                   deploy uploads fine and the domain keeps
+#                                   showing GoDaddy's holding page, which reads
+#                                   as a deploy that did nothing.
+#   CLOUDFLARE_ACCOUNT_ID_SMARTIN — his account ID, on the right of any page
+#                                   in his Cloudflare dashboard.
+#
+# Without them the job builds and checks but does not deploy, so a fork or a
+# credential-less checkout does not show a red tick for something it was never
+# meant to do.
+
+name: Deploy SMARTin SCIENCE
+
+on:
+  push:
+    branches: [main]
+    # Only what actually changes his site.
+    paths:
+      - 'templates/smartin/**'
+      - 'assets/smartin/**'
+      - 'assets/css/**'
+      - 'assets/js/**'
+      - 'assets/fonts/**'
+      - 'scripts/build-smartin.py'
+      - 'scripts/smartin-chrome.py'
+      - 'scripts/gen-smartin-pages.py'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-smartin.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-smartin
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          # Wrangler requires Node >= 22 and refuses to start below it.
+          node-version: '22'
+
+      - name: Build the site
+        run: python3 scripts/build-smartin.py smartinscience.co.uk
+
+      - name: Check the build looks right
+        # A deploy that succeeds having published an empty or half-built
+        # directory is worse than one that fails, because nobody looks.
+        run: |
+          set -e
+          test -f dist/smartin-science/index.html
+          test -f dist/smartin-science/sitemap.xml
+          test -f dist/smartin-science/robots.txt
+          test -d dist/smartin-science/assets
+          pages=$(find dist/smartin-science -name '*.html' | wc -l)
+          echo "built $pages pages"
+          test "$pages" -ge 60
+
+          # Every internal link and image must resolve. The site is 68 pages of
+          # cross-links now; one rename with a missed reference is invisible in
+          # review and obvious to a visitor.
+          python3 - <<'PY'
+          import glob, os, re, sys
+          root = 'dist/smartin-science'
+          bad = []
+          for f in glob.glob(root + '/**/*.html', recursive=True):
+              s = open(f).read()
+              for href in re.findall(r'href="([^"]+)"', s):
+                  if href.startswith(('http', 'mailto:', 'tel:', '#', 'data:')) or not href:
+                      continue
+                  path = href.split('#')[0].split('?')[0]
+                  if not path:
+                      continue
+                  # clean URLs: /about -> about.html, /areas/ -> areas/index.html
+                  cand = path.lstrip('/')
+                  targets = [os.path.join(root, cand),
+                             os.path.join(root, cand + '.html'),
+                             os.path.join(root, cand, 'index.html')]
+                  if not any(os.path.exists(t) for t in targets):
+                      bad.append((os.path.relpath(f, root), href))
+              for src in re.findall(r'src="([^"]+)"', s):
+                  if src.startswith(('http', 'data:')):
+                      continue
+                  if not os.path.exists(os.path.join(root, src.lstrip('/'))):
+                      bad.append((os.path.relpath(f, root), 'src ' + src))
+          if bad:
+              for f, h in bad[:25]:
+                  print(f'  broken: {f} -> {h}')
+              sys.exit(f'{len(bad)} broken link(s) or image(s) in the build')
+          print('every internal link and image resolves')
+          PY
+
+          # He is on Google Workspace; his address must be the one on the site.
+          if grep -rq 'roddymartin80@gmail.com' dist/smartin-science/; then
+            echo "the old Gmail address is still in the build"; exit 1
+          fi
+
+      - name: Check wrangler will deploy to HIS worker
+        # Guard rail, learned on the other client's site. If [env.smartin] is
+        # missing from wrangler.toml, `wrangler deploy --env smartin` does not
+        # fail — it falls back to the top-level config, deploys a worker named
+        # billydigitals-smartin, uploads the ENTIRE repository (every other
+        # client's files) to his Cloudflare account as static assets, and
+        # leaves his real site untouched. It looks like a successful deploy.
+        run: |
+          set -e
+          grep -q '^\[env\.smartin\]' wrangler.toml
+          grep -q '^name = "smartin-science"' wrangler.toml
+          grep -q '^directory = "dist/smartin-science"' wrangler.toml
+          echo "wrangler.toml targets smartin-science from dist/smartin-science"
+
+      - name: Are the credentials present?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN_SMARTIN }}" ] \
+          && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID_SMARTIN }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials not set — built and checked, but not deployed."
+          fi
+
+      - name: Deploy to his Cloudflare Worker
+        if: steps.creds.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_SMARTIN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_SMARTIN }}
+        # Judge the deploy on whether the Worker was actually uploaded, not on
+        # wrangler's exit code: it can exit 1 having uploaded successfully when
+        # the token cannot re-assert the custom-domain routes.
+        run: |
+          set -o pipefail
+          npx --yes wrangler@latest deploy --env smartin 2>&1 | tee deploy.log || true
+          if grep -q 'Uploaded smartin-science' deploy.log; then
+            echo "::notice::Worker uploaded to smartin-science."
+            if grep -qi 'workers/routes\|Authentication error' deploy.log; then
+              echo "::warning::Uploaded, but the custom domain could not be bound. The token needs Zone -> Workers Routes on smartinscience.co.uk, or the domain stays on its old records."
+            fi
+          else
+            echo "::error::Wrangler did not upload the Worker."
+            exit 1
+          fi
+
+      - name: Confirm the live site is actually THIS build
+        if: steps.creds.outputs.ready == 'true'
+        # A 200 only proves something is there — his domain answered 200 for
+        # weeks while serving GoDaddy's "Launching Soon" page. This compares
+        # the live site against the one just built, by the byte length of
+        # shared.css, and retries rather than failing on the first look: the
+        # upload takes a few seconds to reach the edge, and a check that fails
+        # during those seconds paints a good deploy red.
+        run: |
+          SITE=https://smartinscience.co.uk
+          want=$(wc -c < dist/smartin-science/shared.css)
+          for i in 1 2 3 4 5 6 7 8; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/" || true)
+            got=$(curl -s "$SITE/shared.css" | wc -c || echo 0)
+            echo "attempt $i: homepage $code · shared.css built $want live $got"
+            if [ "$code" = "200" ] && [ "$want" = "$got" ]; then
+              if curl -s "$SITE/" | grep -qi 'launching soon'; then
+                echo "::error::The domain is still serving GoDaddy's holding page."
+                exit 1
+              fi
+              echo "::notice::Live site is serving this build."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::The live site never came to match this build. If the upload succeeded, the domain is probably still pointed at its old records — the token needs Zone -> Workers Routes."
+          exit 1
