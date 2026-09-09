@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="HeatFix Mcr Limited — installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
+<meta property="og:image:alt" content="HeatFix Mcr Limited, installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
@@ -355,6 +355,19 @@ h1.hh em{font-style:normal;color:var(--ice)}
 /* ===================== QUOTE ===================== */
 .quote-wrap{display:grid;gap:clamp(32px,5vw,56px);grid-template-columns:minmax(0,1fr);align-items:start}
 @media(min-width:960px){.quote-wrap{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+/* Below 960 the column stacks, and it stacked headline, blurb, card of phone
+   numbers, THEN the form -- so a tap on "Contact" landed on a card the phone
+   already duplicates in its own Call/WhatsApp dock, with the form somewhere
+   below the fold. On a phone the form now comes first and the card follows it.
+   display:contents lifts the copy column's children into the same flex flow,
+   which is what lets `order` reach the card at all; the gap goes to 0 because
+   a flex gap would otherwise be applied between the headline and its blurb. */
+@media(max-width:959px){
+  .quote-wrap{display:flex;flex-direction:column;gap:0}
+  .quote-wrap>div:first-child{display:contents}
+  .quote-wrap .qcard{order:2;margin-top:26px}
+  .quote-wrap .side-card{order:3;margin-top:26px}
+}
 .qcard{
   padding:clamp(24px,3.4vw,38px);border-radius:var(--rl);background:var(--card);
   border:1px solid var(--line);position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
@@ -450,7 +463,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <a href="#top">Home</a>
       <a href="/services">Services</a>
       <a href="/about">About</a>
-      <a href="#quote">Contact</a>
+      <a href="#quoteForm">Contact</a>
     </div>
     <a class="hfnav-tel" href="tel:+447890452629">07890 452629</a>
     <a class="hfbtn" href="#quote">Get a free quote</a>
@@ -465,7 +478,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
     <a href="#top">Home</a>
     <a href="/services">Services</a>
     <a href="/about">About</a>
-    <a href="#quote">Contact</a>
+    <a href="#quoteForm">Contact</a>
     <a href="tel:+447890452629">07890 452629</a>
     <a class="hfbtn" href="#quote">Get a free quote</a>
   </div>
@@ -622,7 +635,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
   <a class="hfport-tease" href="/services#landlords">
     <span class="pt-txt">
       <b>Landlord, letting agent or more than one property?</b>
-      <span class="pt-sub">Send us the list and it comes back as a single written quote &mdash; certificates and servicing priced as a portfolio, not as a stack of separate call-outs.</span>
+      <span class="pt-sub">Send us the list and it comes back as a single written quote. Certificates and servicing priced as a portfolio, not as a stack of separate call-outs.</span>
     </span>
     <span class="pt-go">See how it works &rarr;</span>
   </a>
@@ -1205,7 +1218,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
       </div>
     </details>
     <p class="areanote" data-fx="reveal" data-fx-delay="220">
-      Not on the list? Ring and ask &mdash; if the day works, we'll come.
+      Not on the list? Ring and ask, if the day works, we'll come.
     </p>
   </div>
 </section>

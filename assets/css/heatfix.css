@@ -662,9 +662,9 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
    having gone somewhere else entirely. Applies to the hero card's scroll and
    to every #anchor link, including "Areas we cover" in the footer.
    102px on desktop, 72px once the nav shrinks, plus a little breathing room. */
-#top,#about,#services,#quote,#areas,#contact{scroll-margin-top:116px}
+#top,#about,#services,#quote,#quoteForm,#areas,#contact{scroll-margin-top:116px}
 @media(max-width:900px){
-  #top,#about,#services,#quote,#areas,#contact{scroll-margin-top:86px}
+  #top,#about,#services,#quote,#quoteForm,#areas,#contact{scroll-margin-top:86px}
 }
 
 .hfnav{position:fixed;inset:0 0 auto;z-index:90;background:var(--hf-navy);
