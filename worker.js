@@ -273,6 +273,7 @@ const HEATFIX_PAGES = {
   "/": "/templates/heatfixmcr.html",
   "/book": "/templates/heatfix-book.html",
   "/about": "/templates/heatfix-about.html",
+  "/services": "/templates/heatfix-services.html",
   "/faqs": "/templates/heatfix-faqs.html",
   "/blog": "/templates/heatfix-blog.html",
   "/safety-tips": "/templates/heatfix-safety-tips.html",
@@ -287,7 +288,7 @@ const HEATFIX_PAGES = {
   "/office": "/templates/heatfix-office.html",
 };
 /* Everything except the two back-office tools should be indexable. */
-const HEATFIX_PUBLIC = ["/", "/book", "/about", "/faqs", "/blog", "/safety-tips",
+const HEATFIX_PUBLIC = ["/", "/book", "/about", "/services", "/faqs", "/blog", "/safety-tips",
                         "/boilers-and-radiators", "/plumbing", "/gas-safety-certificate",
                         "/manufacturers-warranty", "/privacy", "/terms"];
 /* Old URLs that must not simply 404. /plumbing-gas-safety was one page doing
