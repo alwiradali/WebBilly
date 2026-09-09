@@ -432,7 +432,7 @@ function main(p) {
 <nav class="pd-actions" aria-label="Property actions">
   <button type="button" class="pd-act" data-print>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4v-6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 20 11v6h-3"/><path d="M7 14h10v7H7z"/></svg>
-    View brochure</button>
+    Print / save as PDF</button>
   <a class="pd-act" href="#tour360">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>
     360&deg; virtual tour</a>

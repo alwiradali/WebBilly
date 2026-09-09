@@ -223,7 +223,7 @@ export function orgJsonLd(origin) {
     name: "Megacity Properties Ltd", legalName: "Megacity Properties Ltd", url: origin + "/",
     telephone: "+441612201763", email: "info@megacityproperties.co.uk",
     logo: origin + "/templates/assets/mcr/logo.png",
-    address: { "@type": "PostalAddress", streetAddress: "Office 18, The Tube Business Centre, 86 North Street", addressLocality: "Manchester", postalCode: "M8 8RA", addressCountry: "GB" },
+    address: { "@type": "PostalAddress", streetAddress: "Office 21, The Tube Business Centre, 86 North Street", addressLocality: "Manchester", postalCode: "M8 8RA", addressCountry: "GB" },
     areaServed: [{ "@type": "City", name: "Manchester" }, { "@type": "City", name: "Salford" }, { "@type": "AdministrativeArea", name: "Greater Manchester" }],
     sameAs: ["https://www.facebook.com/profile.php?id=61587577978118", "https://www.linkedin.com/in/megacity-properties-0a6ba6241", "https://www.zoopla.co.uk/find-agents/branch/megacity-properties-salford-115884/"],
     memberOf: [{ "@type": "Organization", name: "ARLA Propertymark", url: "https://www.propertymark.co.uk/" }, { "@type": "Organization", name: "The Property Ombudsman", url: "https://www.tpos.co.uk/" }],

@@ -279,7 +279,7 @@
       ],
       invites: [],
       settings: {
-        brand: { name: "Megacity Properties", phone: "0161 220 1763", whatsapp: "", email: "info@megacityproperties.co.uk", address: "Office 18, The Tube Business Centre, 86 North Street, Manchester M8 8RA" },
+        brand: { name: "Megacity Properties", phone: "0161 220 1763", whatsapp: "", email: "info@megacityproperties.co.uk", address: "Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA" },
         notifyEmails: ["info@megacityproperties.co.uk"],
         links10ninety: { maintenance: "", apply: "", registerTenant: "", registerLandlord: "" },
         tourGateScore: null, ga4Id: "", gtmId: "", metaPixelId: "", gscVerification: "", consentText: "", redirects: []
