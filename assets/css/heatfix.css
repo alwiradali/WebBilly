@@ -580,6 +580,16 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .prose .callout::before{content:"";position:absolute;top:0;left:20px;right:20px;height:2px;background:var(--goldline)}
 .prose .callout p:last-child{margin-bottom:0}
 .prose .callout b{color:var(--navy)}
+/* A "ring us now" row inside an article. Both rules below are needed, not
+   belt and braces: `.prose a` is a more specific selector than `.btn`, so a
+   button dropped into a prose page comes out underlined and painted link-blue
+   on a gold background — unreadable, and it stops looking like a button. */
+.prose .hf-ring{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 6px}
+.prose .hf-ring .btn{text-decoration:none;color:#fff}
+.prose .hf-ring .btn.gold{color:#1d1400}
+.prose .hf-ring .btn.ghost{color:var(--navy)}
+/* An emergency reads as an emergency: fire above the box instead of gold. */
+.prose .callout.now::before{background:var(--fire)}
 .prose table{width:100%;border-collapse:collapse;margin:22px 0;font-size:.93rem}
 .prose th,.prose td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);color:#3a4a60}
 .prose th{font-family:var(--dis);font-weight:800;font-size:.7rem;letter-spacing:.13em;
