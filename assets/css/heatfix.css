@@ -638,6 +638,20 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 }
 
 /* ---------- navy bar ---------- */
+/* Every in-page target has to clear the fixed nav, or a jump to it lands
+   UNDER the header: the section heading and the first form fields sit behind
+   the navy bar and the visitor arrives halfway down something with no title
+   on it. That is what "Request a call back" looked like — it did reach the
+   quote form and did carry the answers over, but it put the email field at
+   the top of the screen and hid the name and phone above it, so it read as
+   having gone somewhere else entirely. Applies to the hero card's scroll and
+   to every #anchor link, including "Areas we cover" in the footer.
+   102px on desktop, 72px once the nav shrinks, plus a little breathing room. */
+#top,#about,#services,#quote,#areas,#contact{scroll-margin-top:116px}
+@media(max-width:900px){
+  #top,#about,#services,#quote,#areas,#contact{scroll-margin-top:86px}
+}
+
 .hfnav{position:fixed;inset:0 0 auto;z-index:90;background:var(--hf-navy);
   box-shadow:0 2px 18px -6px rgba(4,14,36,.55)}
 .hfnav-in{max-width:1400px;margin:0 auto;padding:10px 26px;display:flex;align-items:center;gap:22px}

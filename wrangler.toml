@@ -44,30 +44,6 @@ M2L_HOST = ""
 # database_name = "m2l"
 # database_id = "PASTE_REAL_ID_HERE"
 
-# ---------------------------------------------------------------------------
-# HeatFix back office — D1, and a WARNING.
-#
-# The HeatFix CRM (worker/heatfix/crm.js, reached at /api/hf/*) runs on THIS
-# Worker and reads env.HF_DB. That binding is not declared here: it was added
-# by hand in the Cloudflare dashboard. Bindings a Worker gets from the
-# dashboard are replaced by whatever the config says on the next CLI deploy,
-# so `npx wrangler deploy` from this repository as it stands would publish the
-# Worker WITHOUT HF_DB and take the whole back office down — invoices,
-# customers, enquiries and the sign-in — with the API answering "The back
-# office database is not connected yet."
-#
-# Before the next CLI deploy, uncomment the four lines below and paste the
-# real database_id from the dashboard (D1 -> the HeatFix database -> the id
-# beside the name). Do NOT uncomment them with a placeholder: Cloudflare
-# rejects the whole deploy on a malformed id, which is what happened to
-# M2L_DB above and broke every push until it was commented out again.
-#
-# [[d1_databases]]
-# binding = "HF_DB"
-# database_name = "heatfix"
-# database_id = "PASTE_REAL_ID_HERE"
-# migrations_dir = "migrations/heatfix"
-
 [assets]
 directory = "."
 not_found_handling = "404-page"
@@ -151,3 +127,63 @@ directory = "dist/smartin-science"
 # The build writes about.html and links to /about, so the server has to resolve
 # the extensionless URL. This is wrangler's default, stated so it cannot drift.
 html_handling = "auto-trailing-slash"
+
+# ---------------------------------------------------------------------------
+# HeatFix Mcr Limited — on HIS OWN Cloudflare account (heatfixmcr@hotmail.com).
+#
+# Deploy with:  CLOUDFLARE_API_TOKEN=<token from HIS account> \
+#               npx wrangler deploy --env heatfix
+#
+# THIS BLOCK WENT MISSING ONCE AND MUST NOT GO MISSING AGAIN. The live Worker
+# still carried the tags `cf:service=billydigitals` and `cf:environment=heatfix`
+# from the last time it was deployed this way, but the config that produced it
+# was gone from the repository — so the only record of how his site is wired
+# was the deployed Worker itself.
+#
+# Without this block `--env heatfix` does not fail. It falls back to the
+# top-level config and deploys a Worker called billydigitals-heatfix carrying
+# no HF_DB, while his real site sits untouched on `heatfixmcr`. That looks
+# exactly like a deploy that did nothing. Worse, a plain `wrangler deploy`
+# would publish to the wrong name entirely.
+#
+# Every value below was read back off the live Worker, not guessed:
+#   worker name   heatfixmcr
+#   account       c6db9dcf342f60c2fd1959a44386342d
+#   D1            hfcrm  497bcc16-15d2-4d61-b98c-9d7c09e6c9a5  (binding HF_DB)
+#   custom domains  heatfixmcrlimited.co.uk, www.heatfixmcrlimited.co.uk
+#
+# The four secrets it also carries — HF_ADMIN_PASSWORD, HF_SESSION_SECRET,
+# HF_WEB3FORMS_KEY and RESEND_API_KEY — are set with `wrangler secret put` and
+# are deliberately NOT listed here. Wrangler preserves secrets across a deploy;
+# plain vars, by contrast, are replaced by whatever this file says, which is
+# why HEATFIX_HOST and M2L_HOST have to be repeated below.
+[env.heatfix]
+name = "heatfixmcr"
+account_id = "c6db9dcf342f60c2fd1959a44386342d"
+main = "worker.js"
+routes = [
+  { pattern = "heatfixmcrlimited.co.uk", custom_domain = true },
+  { pattern = "www.heatfixmcrlimited.co.uk", custom_domain = true }
+]
+
+[env.heatfix.vars]
+# Tells worker.js to serve the HeatFix site at the root of these hostnames
+# instead of the Billy Digitals homepage.
+HEATFIX_HOST = "heatfixmcrlimited.co.uk,www.heatfixmcrlimited.co.uk"
+M2L_HOST = ""
+
+[[env.heatfix.d1_databases]]
+binding = "HF_DB"
+database_name = "hfcrm"
+database_id = "497bcc16-15d2-4d61-b98c-9d7c09e6c9a5"
+migrations_dir = "migrations/heatfix"
+
+[env.heatfix.assets]
+directory = "."
+binding = "ASSETS"
+not_found_handling = "404-page"
+# "/api/*" is what makes the back office reachable at all: with
+# not_found_handling set, the asset router answers unmatched paths itself and
+# never falls through to the Worker. "/" lets his site own the root of his own
+# domain rather than serving the Billy Digitals homepage.
+run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
