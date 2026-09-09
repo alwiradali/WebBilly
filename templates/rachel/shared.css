@@ -973,8 +973,8 @@ footer p{font-size:.96rem}
 @property --ember-a{syntax:'<angle>';inherits:false;initial-value:0deg}
 @keyframes ember-turn{to{--ember-a:360deg}}
 
-.route,.jcard{position:relative;isolation:isolate;border-color:var(--gold-pale)}
-.route::before,.jcard::before{
+.route,.jcard,.card,.plan,.also,.stem,.pcard{position:relative;isolation:isolate;border-color:var(--gold-pale)}
+.route::before,.jcard::before,.card::before,.plan::before,.also::before,.stem::before,.pcard::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
   /* Tighter than a coal and with a hot white core, so it reads as a charge
      running the wire rather than a slow glow. */
@@ -1001,7 +1001,7 @@ footer p{font-size:.96rem}
    registered angle, because two animations cannot drive one property. */
 @property --ember-b{syntax:'<angle>';inherits:false;initial-value:0deg}
 @keyframes ember-turn-b{to{--ember-b:-360deg}}
-.route::after,.jcard::after{
+.route::after,.jcard::after,.plan::after,.pcard::after{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
   background:conic-gradient(from var(--ember-b,300deg),
     rgba(192,152,42,0) 0deg,
@@ -1032,7 +1032,7 @@ footer p{font-size:.96rem}
 .nextgrid > :nth-child(3)::before{animation-delay:-8s}
 .route:hover::before,.jcard:hover::before{animation-duration:5s}
 @media(prefers-reduced-motion:reduce){
-  .route::before,.jcard::before,.route::after,.jcard::after{animation:none}
+  .route::before,.jcard::before,.route::after,.jcard::after,.plan::after,.pcard::after{animation:none}
 }
 
 /* ---------- the tiles read stronger ----------
@@ -1051,3 +1051,37 @@ footer p{font-size:.96rem}
    once, here, underneath. */
 .plans-inc{max-width:60ch;margin:22px auto 0;text-align:center;
   font-size:1rem;color:var(--burg-soft)}
+
+/* ---------- the ember on every tile ----------
+   Widened from the four route tiles to the bouquet cards, the plans, the
+   stems and the smaller tiles, so the whole site shares one behaviour rather
+   than one section having a trick the rest does not.
+
+   Two concessions to how many there now are. A shop page carries twelve
+   bouquet cards and the build page more stems again; a drop-shadow on each is
+   a real repaint cost on a phone, so only the tiles that appear a few at a
+   time keep the glow. And the many-at-once tiles run one arc rather than two,
+   at a slower lap, so a grid reads as a field of coals catching rather than a
+   fairground. */
+.card::before,.stem::before,.also::before{filter:none;animation-duration:7s}
+.card::before{padding:1.5px}
+.stem::before{padding:1.2px}
+
+/* Offsets so a grid never pulses in unison. Prime-ish fractions rather than a
+   neat sequence, because a neat sequence reads as a wave crossing the page. */
+.cards > :nth-child(3n+1)::before{animation-delay:-.4s}
+.cards > :nth-child(3n+2)::before{animation-delay:-2.9s}
+.cards > :nth-child(3n+3)::before{animation-delay:-5.1s}
+.cards > :nth-child(4n)::before{animation-delay:-1.7s}
+.stems > :nth-child(2n)::before{animation-delay:-3.3s}
+.stems > :nth-child(3n)::before{animation-delay:-5.8s}
+.plans > :nth-child(2)::before{animation-delay:-1.2s}
+.plans > :nth-child(3)::before{animation-delay:-2.4s}
+.plans > :nth-child(2)::after{animation-delay:-2.1s}
+.plans > :nth-child(3)::after{animation-delay:-4.2s}
+.alsorow > :nth-child(2)::before{animation-delay:-2.4s}
+.alsorow > :nth-child(3)::before{animation-delay:-4.8s}
+
+/* The bouquet card clips its photograph, which would clip the ring with it. */
+.card{overflow:visible}
+.card .ph{border-radius:15px 15px 0 0;overflow:hidden}
