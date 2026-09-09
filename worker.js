@@ -312,6 +312,18 @@ const HEATFIX_ARTICLES = [
 /* A customer's invoice lives at /i/<uuid> — unguessable, and noindex. */
 const HEATFIX_INVOICE = /^\/i\/[0-9a-f-]{16,64}$/i;
 
+/* Search Console verification.
+   Google proves you own a domain by fetching a file it names at the root, and
+   on this domain nothing reaches the root by accident: serveClient owns every
+   path and answers anything it does not recognise with the 404 page. So the
+   file has to be routed deliberately or verification simply fails, with no
+   clue as to why.
+   The files themselves live in /verify/<client>/ rather than the repository
+   root, so one client's token can never be served on another client's domain,
+   and the root does not slowly fill with other people's verification files.
+   To add one: drop it in verify/heatfix/ exactly as Google names it. */
+const VERIFY_FILE = /^\/google[a-z0-9]+\.html$/;
+
 /* Everything of HeatFix's, wherever it lives in the repository: his pages,
    his back office, his invoice tools, his photographs and logos, his
    stylesheets and scripts, and his API. Matched by path so a file added to
@@ -408,6 +420,15 @@ async function serveClient(request, url, env, PAGES, PUBLIC) {
   if (p === "/sitemap.xml") return clientSitemap(url, PAGES, PUBLIC);
   if (p.startsWith("/assets/") || p === "/favicon.ico") {
     return env.ASSETS.fetch(request);
+  }
+  if (PAGES === HEATFIX_PAGES && VERIFY_FILE.test(p)) {
+    const v = await fetchAsset(env, url, request, "/verify/heatfix" + p);
+    if (v.ok) {
+      return new Response(v.body, {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" },
+      });
+    }
   }
 
   if (PAGES === HEATFIX_PAGES && HEATFIX_GONE[p]) {
