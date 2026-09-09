@@ -30,7 +30,13 @@
   (function petals() {
     var c = $('petals'); if (!c) return;
     var x = c.getContext('2d'), W, H, bits = [], raf, last = 0;
-    var PINKS = ['#F6C9C2', '#F2B9B4', '#F8D8D0', '#EFA9A6', '#FBE3DC'];
+    /* Real petals are not one flat colour: nearly translucent at the edge,
+       holding more colour where they met the flower. Each pair is
+       [edge, heart]. */
+    var PINKS = [
+      ['#FDEDE8', '#EFB3AC'], ['#FBE2DB', '#E79E99'], ['#FDF2EE', '#F2C0B8'],
+      ['#F8DDD6', '#DE8F8C'], ['#FFF6F3', '#E9AFA8']
+    ];
     function size() {
       W = c.width = innerWidth; H = c.height = innerHeight;
       var n = Math.round(Math.min(64, W / 26));
@@ -43,7 +49,13 @@
       return { t: 'p', x: Math.random() * W, y: any ? Math.random() * H : -40,
         s: s, sp: 0.22 + Math.random() * 0.55, dr: (Math.random() - 0.5) * 0.5,
         a: Math.random() * Math.PI * 2, va: (Math.random() - 0.5) * 0.016,
-        o: 0.30 + Math.random() * 0.55, blur: Math.random() < 0.35 ? 2.5 + Math.random() * 3 : 0,
+        o: 0.26 + Math.random() * 0.42,
+        /* Depth of field: the ones nearest the camera are the blurred ones. */
+        blur: Math.random() < 0.42 ? 1.5 + Math.random() * 3.5 : 0,
+        /* The turn. A falling petal twists, showing its face and then its
+           edge, which is most of what separates a real one from a pink blob. */
+        fl: Math.random() * Math.PI * 2, vf: 0.012 + Math.random() * 0.028,
+        cup: 0.62 + Math.random() * 0.5,
         col: PINKS[(Math.random() * PINKS.length) | 0] };
     }
     function spark() {
@@ -52,14 +64,43 @@
         ph: Math.random() * Math.PI * 2, vp: 0.012 + Math.random() * 0.03 };
     }
     function petal(b) {
-      x.save(); x.translate(b.x, b.y); x.rotate(b.a);
-      x.globalAlpha = b.o; x.fillStyle = b.col;
+      /* Squashing the width as the flutter phase turns is what reads as a
+         petal rolling over in the air. It never reaches zero, so it thins to
+         an edge rather than disappearing. */
+      var turn = 0.18 + 0.82 * Math.abs(Math.cos(b.fl));
+      var s = b.s;
+      x.save();
+      x.translate(b.x, b.y);
+      x.rotate(b.a);
+      x.scale(turn, 1);
+      x.globalAlpha = b.o;
       if (b.blur) x.filter = 'blur(' + b.blur + 'px)';
+
+      var g = x.createLinearGradient(0, -s * 0.5, 0, s * 0.52);
+      g.addColorStop(0, b.col[0]);
+      g.addColorStop(0.55, b.col[1]);
+      g.addColorStop(1, b.col[0]);
+      x.fillStyle = g;
+
+      /* Asymmetric, because a rose petal is: one shoulder fuller than the
+         other, and a notch where it met the stem. */
       x.beginPath();
-      x.moveTo(0, -b.s * 0.5);
-      x.bezierCurveTo(b.s * 0.62, -b.s * 0.34, b.s * 0.5, b.s * 0.42, 0, b.s * 0.52);
-      x.bezierCurveTo(-b.s * 0.5, b.s * 0.42, -b.s * 0.62, -b.s * 0.34, 0, -b.s * 0.5);
-      x.fill(); x.restore();
+      x.moveTo(0, -s * 0.5);
+      x.bezierCurveTo(s * 0.66 * b.cup, -s * 0.36, s * 0.52, s * 0.40, s * 0.05, s * 0.52);
+      x.bezierCurveTo(-s * 0.46, s * 0.44, -s * 0.60 * b.cup, -s * 0.30, 0, -s * 0.5);
+      x.fill();
+
+      /* The fold down the middle, which catches the light on a real one. */
+      if (!b.blur && turn > 0.45) {
+        x.globalAlpha = b.o * 0.42;
+        x.strokeStyle = b.col[0];
+        x.lineWidth = Math.max(0.6, s * 0.045);
+        x.beginPath();
+        x.moveTo(0, -s * 0.42);
+        x.quadraticCurveTo(s * 0.06, 0, s * 0.02, s * 0.44);
+        x.stroke();
+      }
+      x.restore();
     }
     function draw(ts) {
       raf = requestAnimationFrame(draw);
@@ -69,6 +110,7 @@
         var b = bits[i];
         if (b.t === 'p') {
           b.y += b.sp; b.x += b.dr + Math.sin(b.y / 90) * 0.35; b.a += b.va;
+          b.fl += b.vf;
           if (b.y > H + 50) { bits[i] = make(false); continue; }
           petal(b);
         } else {
