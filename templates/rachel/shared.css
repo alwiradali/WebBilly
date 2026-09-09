@@ -587,6 +587,11 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 .plan .prule{display:flex;align-items:center;gap:12px;margin:12px auto;max-width:190px;color:var(--gold)}
 .plan .prule::before,.plan .prule::after{content:"";height:1px;flex:1;background:var(--gold)}
 .plan .prule svg{width:11px;height:11px;fill:var(--gold);flex:none}
+/* What the plan actually includes. It comes from the product description in
+   Stripe, so it is however long Rachel makes it; the card has to hold a line
+   or a short paragraph equally well, and the price stays pinned below it. */
+.plan .pdesc{margin:14px auto 18px;max-width:30ch;font-size:1.04rem;line-height:1.62;
+  color:var(--burg-soft);flex:1}
 .plan .amt{font-family:var(--disp);font-weight:500;font-size:3.1rem;line-height:1}
 .plan .per{font-size:1rem;color:var(--burg-soft);margin-top:2px}
 .plan ul{list-style:none;margin:20px 0 24px;padding:0;text-align:left;display:inline-block;flex:1}

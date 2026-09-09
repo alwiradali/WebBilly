@@ -13,6 +13,8 @@
  * endpoints have to be open to the public.
  */
 
+import { catalogue } from "./catalogue.js";
+
 const RESEND = "https://api.resend.com";
 
 const clean = (v, max = 400) => String(v ?? "").trim().slice(0, max);
@@ -26,7 +28,8 @@ function json(body, status = 200) {
 }
 
 export function isRachelPath(p) {
-  return p === "/api/rbr/order" || p === "/api/rbr/subscribe";
+  return p === "/api/rbr/order" || p === "/api/rbr/subscribe" ||
+         p === "/api/rbr/catalogue";
 }
 
 function settings(env) {
@@ -128,6 +131,12 @@ async function subscribe(env, body) {
 }
 
 export async function handleRachel(request, env, url) {
+  /* The shop is a read, so it is the one route here that is a GET. */
+  if (url.pathname === "/api/rbr/catalogue") {
+    if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+    return catalogue(request, env);
+  }
+
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
   if (clean(body.botcheck, 40)) return json({ ok: true });   /* a bot: look normal, do nothing */
