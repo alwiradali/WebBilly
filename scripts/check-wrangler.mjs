@@ -21,6 +21,17 @@ for (const m of active.matchAll(/database_id\s*=\s*"([^"]*)"/g)) {
     problems.push(`database_id "${m[1]}" is not a UUID.`);
   }
 }
+/* A client domain must be routed to this Worker AND named in its host var.
+   With a route but no host var the domain serves the Billy Digitals homepage;
+   with a host var but no route nothing reaches the Worker at all. Both look
+   like "the deploy did nothing" and both are seen by the client first. */
+for (const [host, v] of [["megacityproperties.co.uk", "MEGACITY_HOST"], ["mumbai2london.co.uk", "M2L_HOST"]]) {
+  const routed = new RegExp(`pattern\\s*=\\s*"(www\\.)?${host.replace(/\./g, "\\.")}"`).test(active);
+  const named = new RegExp(`${v}\\s*=\\s*"[^"]*${host.replace(/\./g, "\\.")}`).test(active);
+  if (routed && !named) problems.push(`${host} is routed to this Worker but not listed in ${v} — it would serve the Billy Digitals site.`);
+  if (named && !routed) problems.push(`${host} is listed in ${v} but has no route — no request would ever reach the Worker.`);
+}
+
 if (problems.length) {
   console.error("check-wrangler: refusing to deploy.\n - " + problems.join("\n - "));
   process.exit(1);

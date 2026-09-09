@@ -18,6 +18,16 @@ routes = [
   # hostnames to M2L_HOST below.
   # ,{ pattern = "mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
+  #
+  # Megacity Properties. DO NOT UNCOMMENT THESE UNTIL megacityproperties.co.uk
+  # is an Active zone in THIS Cloudflare account. A custom_domain route for a
+  # zone the account does not hold makes `wrangler deploy` fail, and a failed
+  # deploy freezes billydigitals.com and every other client site on this
+  # Worker — the same way the placeholder D1 id did. Uncomment these two lines
+  # and MEGACITY_HOST below in the SAME commit; check-wrangler.mjs fails the
+  # build if one is set without the other.
+  # ,{ pattern = "megacityproperties.co.uk", custom_domain = true }
+  # ,{ pattern = "www.megacityproperties.co.uk", custom_domain = true }
 ]
 
 [vars]
@@ -25,6 +35,16 @@ routes = [
 # at clean root URLs (/, /admin, /invoice, /sign) and indexable by Google.
 # Leave empty and everything stays as it is on billydigitals.com.
 M2L_HOST = ""
+
+# Hostnames that serve ONLY the Megacity Properties site, at root addresses
+# ("/lettings", "/let/<id>"), with the old site's addresses redirected and the
+# domain's own robots.txt and sitemap. The FIRST hostname is canonical: every
+# other one 301s to it. Empty means Megacity stays on the demo host only.
+#
+# Turn on together with the two Megacity routes above, not before — see the
+# note there, and docs/megacity-golive.md.
+# MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
+MEGACITY_HOST = ""
 
 # D1 database for Mumbai2London enquiries + booking diary.
 # Create it once with:  npx wrangler d1 create m2l

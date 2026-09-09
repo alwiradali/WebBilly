@@ -48,9 +48,9 @@ for (const k in ROOT_MAP) PATH_TO_SLUG[ROOT_MAP[k]] = k;
 
 /* the hand-built pages, in sitemap order */
 const PUBLIC_STATIC_SLUGS = ["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "tenant-application-form"];
-/* the five hand-built listing pages: the fallback while the database is empty */
-/* Walid's own portfolio: these pages ship with the site, so a 10ninety sync
-   can never take them down. See PROJECT-NOTES.md, "properties that stay". */
+/* The hand-built listing pages: the fallback while the database is empty, and
+   Walid's own portfolio, which ships with the site so a 10ninety sync can never
+   take it down. See PROJECT-NOTES.md, "the properties that stay". */
 const STATIC_LET_SLUGS = ["denmark-road", "ladywell-point", "room-3", "room-5", "room-7",
   "north-street-hyde", "carlton-road-5", "carlton-road-9", "drayton-street",
   "adelphi-apartments", "grove-house", "anvil-place", "rope-works", "whitworth-street"];

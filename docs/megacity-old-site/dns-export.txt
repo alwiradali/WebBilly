@@ -1,0 +1,44 @@
+# megacityproperties.co.uk — DNS as it stands BEFORE anything moves to Cloudflare
+# Captured 2026-09-09 19:09 UTC from public DNS. No account access was needed or used.
+# Authoritative nameservers at capture: ns15.domaincontrol.com, ns16.domaincontrol.com (GoDaddy)
+# Website at capture: 77.68.34.162 (Windows/IIS + Plesk, classic ASP — the old 10ninety site)
+# Mail at capture: Microsoft 365, sold through GoDaddy
+#
+# HOW TO USE THIS FILE
+#   Every record below must exist in Cloudflare BEFORE the nameservers are
+#   changed at GoDaddy. Cloudflare's import scan usually finds most of them;
+#   it does NOT reliably find SRV records. Tick each line off by hand.
+#
+#   Proxy status: DNS only (grey cloud) for EVERY record in this file.
+#   Only the website A/CNAME is ever proxied, and the Worker creates that
+#   itself. An orange cloud on a mail record breaks mail.
+#
+# WHAT BREAKS IF A LINE IS MISSED
+#   MX                      inbound mail stops. info@, lettings@, management@
+#   TXT v=spf1              outbound mail starts landing in spam
+#   TXT NETORGFT...         Microsoft can no longer verify the domain
+#   _dmarc TXT              reporting policy lost
+#   autodiscover CNAME      Outlook and phones stop auto-configuring
+#   msoid / sip / lyncdiscover / _sip / _sipfederationtls    Teams sign-in
+#   email CNAME             GoDaddy's email marketing links
+#   _domainconnect CNAME    GoDaddy one-click setup; harmless to drop
+
+NAME                       TYPE   TTL    VALUE
+--------------------------------------------------------------------------------------------
+@                          A      600    77.68.34.162
+@                          MX     3600   0 megacityproperties-co-uk.mail.protection.outlook.com.
+@                          TXT    3600   "v=spf1 include:secureserver.net -all"
+@                          TXT    3600   "NETORGFT5794257.onmicrosoft.com"
+www                        CNAME  3600   megacityproperties.co.uk.
+autodiscover               CNAME  3600   autodiscover.outlook.com.
+email                      CNAME  3600   email.secureserver.net.
+sip                        CNAME  3600   sipdir.online.lync.com.
+lyncdiscover               CNAME  3600   webdir.online.lync.com.
+msoid                      CNAME  3600   clientconfig.microsoftonline-p.net.
+_domainconnect             CNAME  3600   _domainconnect.gd.domaincontrol.com.
+_dmarc                     TXT    3600   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100;rf=afrf"
+_sip._tls                  SRV    3600   100 1 443 sipdir.online.lync.com
+_sipfederationtls._tcp     SRV    3600   100 1 5061 sipfed.online.lync.com
+
+# 14 records. Anything the Cloudflare scan adds that is NOT in this
+# list should be questioned before it is kept.

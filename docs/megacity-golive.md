@@ -48,28 +48,80 @@ node scripts/megacity-smoke.js http://www.megacityproperties.co.uk:8787   # add 
 node scripts/megacity-smoke.js http://localhost:8787 --demo
 ```
 
-## Stage B — DNS day (Billy with Walid; about an hour)
+## Stage B — DNS day (Billy with Walid)
 
-1. **Capture the old site and its DNS first.** Run
-   `scripts/megacity-capture-old-site.sh` (saves every old page into
-   `docs/megacity-old-site/`). Then, at the current DNS provider, write down
-   every record — MX, SPF (TXT), DKIM, DMARC, `mail`, `webmail`,
-   `autodiscover`, anything else — into `docs/megacity-old-site/dns-export.txt`.
-   **If the MX record is lost, info@megacityproperties.co.uk stops receiving
-   email.**
-2. In Cloudflare → *Add a site* → `megacityproperties.co.uk` (Free plan is
-   fine). Check the imported records against the export and add any that are
-   missing (grey cloud for `mail`/`webmail`). **Delete the imported `A`
-   record for the apex and the `www` record that point at the old server
-   (77.68.34.162)** — a Worker custom domain cannot be created over them.
-   SSL/TLS → Full. Edge Certificates → *Always Use HTTPS* on.
-3. Walid changes the two nameservers at his registrar to the ones Cloudflare
-   shows. Wait until Cloudflare reports the zone as *Active*.
-4. In `wrangler.toml`: uncomment the two Megacity routes and set
-   `MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"`
-   (the first hostname is the one everything redirects to). Run
-   `node scripts/check-wrangler.mjs`, commit, push to `main`.
-5. `scripts/megacity-golive-check.sh` against the live domain. Everything
+**Do this as two separate sittings, not one.** B1 moves the DNS and touches
+Walid's email; the website does not change and nobody notices anything. B2
+switches the website and cannot touch email at all. Keeping them apart means
+that if something goes wrong you always know which change caused it, and each
+one is reversible on its own. Doing both at once is how agencies lose a
+client's mailbox on a Friday afternoon.
+
+Before either sitting: **fix the Workers Builds production branch** (Cloudflare
+→ Workers & Pages → billydigitals → Settings → Builds → production branch
+`main`, non-production branches must not deploy to production). Until that is
+set, a push to the other branch in this repository replaces the deployment —
+and after go-live that would put a tree with no Megacity in it on the client's
+own domain. See PROJECT-NOTES.md.
+
+### B1 — move DNS to Cloudflare, with the old website still serving
+
+The state of the domain before anything moved is recorded in
+`docs/megacity-old-site/dns-export.txt`: 14 records, captured from public DNS.
+Mail is **Microsoft 365 sold through GoDaddy** — `info@`, `lettings@` and
+`management@` all depend on the MX, SPF, `autodiscover` and `_dmarc` records in
+that file.
+
+1. **Capture the old site.** `scripts/megacity-capture-old-site.sh` saves every
+   old page into `docs/megacity-old-site/`. Confirm the DNS inventory is still
+   current: `node scripts/megacity-dns-check.mjs` — all 14 must pass.
+2. Cloudflare → *Add a site* → `megacityproperties.co.uk`, Free plan.
+   Cloudflare scans and imports what it can find. **It does not reliably import
+   SRV records**, so go through `dns-export.txt` line by line and add anything
+   missing. Every record in that file is **DNS only (grey cloud)**.
+   Leave the apex `A` on `77.68.34.162` and `www` as it is — the old site keeps
+   serving throughout B1, which is the point.
+3. SSL/TLS → **Full**. Do not use Flexible: the old server already does HTTPS.
+4. **Prove it before you switch.** Cloudflare shows two assigned nameservers.
+   Ask them directly, while the live domain is still on GoDaddy and nothing has
+   changed for anyone:
+   ```
+   node scripts/megacity-dns-check.mjs --ns=<the first nameserver Cloudflare shows>
+   ```
+   Every line must say `ok`. A `STOP` line is an email record — fix it in
+   Cloudflare and run it again. Do not go to step 5 until this passes.
+5. Walid changes the two nameservers at GoDaddy to the ones Cloudflare shows.
+   GoDaddy will warn that this affects his email; that is expected, and it is
+   safe **because step 4 passed**. Wait for Cloudflare to report *Active*
+   (usually minutes, occasionally a few hours).
+6. `node scripts/megacity-dns-check.mjs` — public DNS now. All 14 pass.
+   Then have Walid send a test email to `info@`, `lettings@` and `management@`
+   and reply from each. **B1 is not finished until he has done that.**
+   The website is still the old one, unchanged, on the old server.
+
+   *If mail misbehaves:* put the two GoDaddy nameservers back
+   (`ns15.domaincontrol.com`, `ns16.domaincontrol.com`). Nothing else has been
+   touched.
+
+   *One consequence to know:* GoDaddy can no longer auto-manage the Microsoft
+   365 records once DNS is at Cloudflare. If Microsoft ever changes them, they
+   are changed by hand in Cloudflare.
+
+### B2 — switch the website to the new site
+
+Email is not involved in any step below.
+
+1. In `wrangler.toml`: uncomment the two Megacity routes **and**
+   `MEGACITY_HOST` (the first hostname is the one everything redirects to).
+   Both together — `node scripts/check-wrangler.mjs` fails the build if one is
+   set without the other, and an active route for a zone Cloudflare does not
+   hold fails the deploy for every client on this Worker.
+2. In Cloudflare DNS, delete the apex `A` (`77.68.34.162`) and the `www`
+   record. A Worker custom domain cannot be created over them. The site is now
+   down for the minute this takes — do it when the office is quiet.
+3. Commit and push to `main`. When the build finishes, Cloudflare creates the
+   two custom domains and their proxied records automatically.
+4. `scripts/megacity-golive-check.sh` against the live domain. Everything
    must print `ok`. (Before the nameservers change it can be run against the
    Cloudflare edge with `--resolve www.megacityproperties.co.uk:443:<ip>`.)
    Its **360 tours** section checks that `/billy360/` and `/billy360/embed.js`
@@ -83,6 +135,13 @@ node scripts/megacity-smoke.js http://localhost:8787 --demo
    from the manifest, or the one named in `MEGACITY_TOUR_CANARY`; with no live
    tour it prints a warning instead. `scripts/megacity-setup.sh verify` runs the
    same probes.
+5. `node scripts/megacity-dns-check.mjs` once more. The apex and `www` lines
+   will now say `MISS` — correct, they are the Worker's records — and every
+   email line must still say `ok`.
+
+   *If the site is wrong:* re-add the apex `A` `77.68.34.162` and the `www`
+   `CNAME` in Cloudflare, and the old site is back within the TTL. Email is
+   unaffected either way.
 6. Sign in at `https://www.megacityproperties.co.uk/studio` (the login cookie
    is per host, so everyone signs in again). Settings → Integrations: enter
    the existing Google Analytics id **G-HP7S96BP9Y** and Tag Manager id
