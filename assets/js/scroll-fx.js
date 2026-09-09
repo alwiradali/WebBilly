@@ -149,24 +149,51 @@
     });
   }
 
-  /* ---------- reveal/stagger/text via IntersectionObserver ---------- */
-  var io;
+  /* ---------- reveal/stagger/text via IntersectionObserver ----------
+
+     A threshold is a fraction of the ELEMENT, not of the screen, and that is
+     a trap for anything tall. An article wrapped around a whole page of text
+     is several thousand pixels high on a phone; twelve per cent of it is more
+     than a phone screen holds, so the threshold can never be met, the entry
+     never fires, and the element sits at opacity 0 for ever. The reader gets
+     a blank page and no way to unstick it — no amount of scrolling helps.
+
+     That is not hypothetical. The safety tips page did exactly this: 5,513px
+     of article inside a 660px viewport, where the tallest revealable element
+     is 5,060px. It came apart at a certain phone size and worked on the next
+     one up, which is the worst way for a bug like this to behave.
+
+     So anything taller than half the screen is watched at threshold 0 — the
+     moment any part of it arrives, it is shown. Shorter elements keep the
+     12% threshold, which is what gives the effect its beat. */
+  var io, ioTall;
   function markIn(el) {
     el.classList.add("fx-in");
     [].forEach.call(el.querySelectorAll(".fx-stagger-item, .fx-word-inner"),
       function (i) { i.classList.add("fx-in"); });
   }
+  function makeIo(threshold, which) {
+    return new IntersectionObserver(function (en) {
+      en.forEach(function (e) {
+        if (e.isIntersecting) { markIn(e.target); which().unobserve(e.target); }
+      });
+    }, { threshold: threshold, rootMargin: "0px 0px -8% 0px" });
+  }
   function observe(root) {
     root = root || doc;
     var els = [].slice.call(root.querySelectorAll('[data-fx="reveal"],[data-fx="stagger"],[data-fx="text"]'));
     if (reduce) { els.forEach(markIn); return; }
-    if (!io && "IntersectionObserver" in window) {
-      io = new IntersectionObserver(function (en) {
-        en.forEach(function (e) { if (e.isIntersecting) { markIn(e.target); io.unobserve(e.target); } });
-      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    if (!("IntersectionObserver" in window)) { els.forEach(markIn); return; }  // no IO → just show
+    if (!io) {
+      io = makeIo(0.12, function () { return io; });
+      ioTall = makeIo(0, function () { return ioTall; });
     }
-    if (!io) { els.forEach(markIn); return; }        // no IO support → just show
-    els.forEach(function (el) { if (!el.__ob) { el.__ob = 1; io.observe(el); } });
+    els.forEach(function (el) {
+      if (el.__ob) return;
+      el.__ob = 1;
+      var tall = el.getBoundingClientRect().height > window.innerHeight * 0.5;
+      (tall ? ioTall : io).observe(el);
+    });
   }
 
   /* ---------- scroll-driven: parallax/pin/horizontal/progressbar ---------- */
