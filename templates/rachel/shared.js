@@ -345,15 +345,22 @@
         if (!d || d.source !== 'stripe') return;
         if (adoptCatalogue(d.products) && cardsEl) renderCards(currentCat());
         renderPlans(d.plans);
+        /* A link shared for a bouquet that only exists in Stripe could not be
+           matched a moment ago, because the built-in list was all we had. */
+        openShared();
       })
       .catch(function () { /* the built-in collection is already on screen */ });
   }
 
   /* ---------------- share ---------------- */
   var sheet = $('sharesheet'), shWhat = '';
+  /* Writing the link and reading it back have to agree exactly, so both go
+     through here. "Rachel's Choice" becomes "rachel-s-choice" either way. */
+  function slug(name) {
+    return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
   function shareUrl() {
-    return location.origin + location.pathname + '?f=' +
-      encodeURIComponent(shWhat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+    return location.origin + location.pathname + '?f=' + slug(shWhat);
   }
   function openShare(what) {
     shWhat = what; $('shtitle').textContent = what;
@@ -722,7 +729,37 @@
     $('pdp').scrollTop = 0;
     track('view_item', { item: name, value: p.p });
   }
-  function closePDP() { $('pdp').classList.remove('on'); document.body.style.overflow = ''; }
+  function closePDP() {
+    $('pdp').classList.remove('on'); document.body.style.overflow = '';
+    /* Take the shared flower back out of the address, so a refresh does not
+       reopen the window they have just closed. */
+    if (/[?&]f=/.test(location.search) && history.replaceState) {
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  }
+
+  /* Opening a link somebody shared.
+     The share button has always written "?f=velvet-romance" into the address
+     and nothing has ever read it back, so every link Rachel or a customer
+     sent landed at the top of the page with no sign of the flower they were
+     showing somebody. This is the other half of it. */
+  var sharedOpened = false;
+  function openShared() {
+    if (sharedOpened || !$('pdp')) return false;
+    var raw = (location.search.match(/[?&]f=([^&]*)/) || [])[1];
+    if (!raw) return false;
+    var want = slug(decodeURIComponent(raw.replace(/\+/g, ' ')));
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (slug(PRODUCTS[i].n) === want) {
+        sharedOpened = true;
+        openPDP(PRODUCTS[i].n);
+        return true;
+      }
+    }
+    /* Not one of ours — an old link, or something since taken off sale. The
+       page is still the shop, so say nothing and let them browse. */
+    return false;
+  }
   function openCart() {
     paintCart(); $('cart').classList.add('on'); document.body.style.overflow = 'hidden';
     $('cart').scrollTop = 0; track('view_cart', { value: cartTotal() });
@@ -754,6 +791,7 @@
 
   $('checkout').addEventListener('click', openCheckout);
   paintCount(); paintCart();
+  openShared();
 
   /* ---------------- checkout ----------------
      The card boxes are Stripe Elements: Stripe drops its own iframed inputs
