@@ -33,6 +33,23 @@ git checkout main -q && git merge --ff-only <branch> -q && git push origin main
 git checkout <branch> -q
 node scripts/deploy-verify.mjs          # after Cloudflare finishes the build
 ```
+**Why the live site twice served a month-old build (found 9 Sep).** This
+repository has TWO UNRELATED COMMIT HISTORIES — `git rev-list --max-parents=0
+--all` returns two root commits, and `git merge-base` between them returns
+nothing. `main` is one line; `claude/unclear-request-8u6hgo` (691 commits, still
+being pushed to) is the other. That branch's tree has no `billy360/`, no
+`halcyon/`, no Megacity, and still uploads `migrations/` — which is exactly what
+billydigitals.com served during both outages, down to `index.html` and
+`assets/css/style.css` being byte-identical to main while whole directories
+404'd. Cloudflare deploys whichever branch was pushed last, so a push to that
+branch takes every other client's pages off the web until someone pushes main
+again.
+
+Fix is in the Cloudflare dashboard, not in this repo: Workers Builds → set the
+production branch to `main` and stop non-production branches deploying to
+production. Until that is done, run `node scripts/deploy-verify.mjs` after any
+push, and before showing the site to anyone.
+
 `node scripts/stamp.mjs --check` fails if `version.json` is stale.
 `deploy-verify.mjs` compares the live bytes with this working copy and exits
 non-zero on an older build — billydigitals.com has twice served a month-old
