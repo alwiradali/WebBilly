@@ -57,6 +57,22 @@ that if something goes wrong you always know which change caused it, and each
 one is reversible on its own. Doing both at once is how agencies lose a
 client's mailbox on a Friday afternoon.
 
+**Which Cloudflare account holds the zone decides how B2 is done.** The zone is
+going into **Walid's own account**, which is the right way round — he owns his
+domain and his mail, and he can hand it to someone else one day without asking
+anybody. B1 below is unaffected by that choice: it is DNS only.
+
+B2 is affected, and the current B2 steps assume otherwise. **A Worker custom
+domain can only be created for a zone in the same account as the Worker**, and
+the Worker behind billydigitals.com is in Billy's account. So before B2 the
+Megacity site has to be deployed into Walid's account of its own: a
+`[env.megacity]` section, a scoped API token of his in GitHub Secrets, and a
+`dist/megacity` build — exactly the pattern `[env.mm]` and `[env.smartin]`
+already follow. The `dist/` build is not a nicety: `wrangler deploy --env
+megacity` without one falls back to the top-level config and uploads the whole
+repository — every other client's files — into the client's account. That has
+happened here before. None of that work is done yet, and none of it blocks B1.
+
 Before either sitting: **fix the Workers Builds production branch** (Cloudflare
 → Workers & Pages → billydigitals → Settings → Builds → production branch
 `main`, non-production branches must not deploy to production). Until that is
@@ -74,11 +90,23 @@ that file.
 
 1. **Capture the old site.** `scripts/megacity-capture-old-site.sh` saves every
    old page into `docs/megacity-old-site/`. Confirm the DNS inventory is still
-   current: `node scripts/megacity-dns-check.mjs` — all 14 must pass.
+   current: `node scripts/megacity-dns-check.mjs` — all 14 must pass. If any
+   line disagrees, the domain has changed since capture: update
+   `dns-export.txt` to match reality and re-run
+   `node scripts/megacity-dns-zonefile.mjs` before going on.
 2. Cloudflare → *Add a site* → `megacityproperties.co.uk`, Free plan.
-   Cloudflare scans and imports what it can find. **It does not reliably import
-   SRV records**, so go through `dns-export.txt` line by line and add anything
-   missing. Every record in that file is **DNS only (grey cloud)**.
+   Cloudflare scans the domain itself, but **it does not reliably find SRV
+   records**, and fourteen records typed by hand is how a mailbox gets lost.
+   Import the file instead:
+
+   ```
+   node scripts/megacity-dns-zonefile.mjs        # docs/megacity-old-site/megacityproperties.co.uk.zone
+   ```
+
+   DNS → Records → *Import and Export* → *Import DNS records* → choose that
+   file → leave **Proxy imported DNS records OFF**. Then compare the list on
+   screen against `dns-export.txt`: 14 records, every one **DNS only (grey
+   cloud)**, and delete anything the scan added that is not in that file.
    Leave the apex `A` on `77.68.34.162` and `www` as it is — the old site keeps
    serving throughout B1, which is the point.
 3. SSL/TLS → **Full**. Do not use Flexible: the old server already does HTTPS.

@@ -1,0 +1,29 @@
+; megacityproperties.co.uk — the zone exactly as it stood before anything moved to Cloudflare.
+; Generated from docs/megacity-old-site/dns-export.txt by scripts/megacity-dns-zonefile.mjs. Do not edit by hand.
+;
+; Import: Cloudflare → DNS → Records → Import and Export → Import DNS records.
+;         Leave "Proxy imported DNS records" OFF. Every record here is DNS only
+;         (grey cloud); an orange cloud on a mail record breaks mail.
+;
+; The apex A record still points at the old website. That is deliberate: DNS
+; moves first and the website second, so nobody notices B1 at all.
+;
+; SOA and NS records are deliberately absent — Cloudflare writes its own.
+
+$ORIGIN megacityproperties.co.uk.
+$TTL 3600
+
+megacityproperties.co.uk.                         600 IN A     77.68.34.162
+megacityproperties.co.uk.                        3600 IN MX    0 megacityproperties-co-uk.mail.protection.outlook.com.
+megacityproperties.co.uk.                        3600 IN TXT   "v=spf1 include:secureserver.net -all"
+megacityproperties.co.uk.                        3600 IN TXT   "NETORGFT5794257.onmicrosoft.com"
+www.megacityproperties.co.uk.                    3600 IN CNAME megacityproperties.co.uk.
+autodiscover.megacityproperties.co.uk.           3600 IN CNAME autodiscover.outlook.com.
+email.megacityproperties.co.uk.                  3600 IN CNAME email.secureserver.net.
+sip.megacityproperties.co.uk.                    3600 IN CNAME sipdir.online.lync.com.
+lyncdiscover.megacityproperties.co.uk.           3600 IN CNAME webdir.online.lync.com.
+msoid.megacityproperties.co.uk.                  3600 IN CNAME clientconfig.microsoftonline-p.net.
+_domainconnect.megacityproperties.co.uk.         3600 IN CNAME _domainconnect.gd.domaincontrol.com.
+_dmarc.megacityproperties.co.uk.                 3600 IN TXT   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100;rf=afrf"
+_sip._tls.megacityproperties.co.uk.              3600 IN SRV   100 1 443 sipdir.online.lync.com.
+_sipfederationtls._tcp.megacityproperties.co.uk. 3600 IN SRV   100 1 5061 sipfed.online.lync.com.
