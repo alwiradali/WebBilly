@@ -222,7 +222,18 @@
       alt: 'Sunflowers, alstroemeria and yellow chrysanthemum in a box',
       d: 'Sunflowers, white alstroemeria and yellow chrysanthemum, boxed so it stands up on a table the moment it arrives. Hard to be miserable near.' }
   ];
-  var SHARE_ICON = '<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.1c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8c-.5-.5-1.2-.8-2-.8-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
+  /* A product that came from Stripe carries its own photograph on Stripe's
+     servers. One that shipped with the site is a file in assets/rachel. Every
+     place that draws a product goes through these two, so neither has to know
+     which kind it is holding. */
+  function imgSmall(p) {
+    return p.imgUrl || ('../../assets/rachel/' + p.img + '-sm.webp');
+  }
+  function imgBig(p) {
+    return p.imgUrl || ('../../assets/rachel/' + (p.big || p.img) + '.webp');
+  }
+
+  var SHARE_ICON ='<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.1c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8c-.5-.5-1.2-.8-2-.8-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
   var cardsEl = $('cards');
   function renderCards(cat) {
     if (!cardsEl) return;
@@ -235,7 +246,7 @@
       a.className = 'card';
       a.innerHTML =
         '<div class="ph" data-open="' + pr.n + '" role="button" tabindex="0" aria-label="View ' + pr.n + '">' +
-        '<img src="../../assets/rachel/' + pr.img + '-sm.webp" alt="' + pr.alt + '" loading="lazy" width="451" height="563"></div>' +
+        '<img src="' + imgSmall(pr) + '" alt="' + pr.alt + '" loading="lazy" width="451" height="563"></div>' +
         '<div class="bd"><h3 data-open="' + pr.n + '" style="cursor:pointer">' + pr.n + '</h3><p class="pr">' + money(pr.p) + '</p>' +
         '<button class="add" type="button" data-add="' + pr.n + '">Add to Cart</button>' +
         '<div class="shr"><small>Share</small>' +
@@ -257,11 +268,99 @@
     });
   }
 
+  /* ---------------- the collection, live from Stripe ----------------
+
+     Rachel keeps the shop in Stripe: adds a bouquet, changes a price, takes
+     one off sale. The page draws its own list first so there is never a blank
+     grid, then asks the Worker what Stripe currently holds and redraws if the
+     answer is different. If Stripe is unreachable, or the key has not been
+     set, nothing happens and the built-in collection stands.
+
+     PRODUCTS is replaced in place rather than reassigned, because the cart,
+     the product window and the checkout all close over this same array. */
+  function currentCat() {
+    var b = document.querySelector('.filters button[aria-pressed="true"]');
+    return (b && b.getAttribute('data-cat')) ||
+      (cardsEl && cardsEl.getAttribute('data-only')) || 'all';
+  }
+
+  function adoptCatalogue(list) {
+    if (!list || !list.length) return false;
+    PRODUCTS.length = 0;
+    list.forEach(function (p) { PRODUCTS.push(p); });
+
+    /* A bouquet somebody added to their cart last week may have come off sale
+       since. Leaving the line in shows a row with no price and a total that
+       does not add up, so it goes. */
+    var before = cart.length;
+    cart = cart.filter(function (l) { return !!findProduct(l.n); });
+    if (cart.length !== before) { saveCart(); paintCount(); }
+    return true;
+  }
+
+  /* The subscription plans come from the same catalogue: a Stripe product with
+     a recurring price. What each plan actually includes is its Stripe
+     description, so Rachel writes it once, in the place she is already
+     working, and it appears here. */
+  var plansEl = document.querySelector('.plans');
+  function renderPlans(plans) {
+    if (!plansEl || !plans || !plans.length) return;
+    var ROSE = plansEl.querySelector('.rosemark');
+    var RULE = plansEl.querySelector('.prule');
+    if (!ROSE || !RULE) return;
+    var rose = ROSE.outerHTML, rule = RULE.outerHTML;
+    var per = { month: 'per month', year: 'per year', week: 'per week' };
+
+    plansEl.innerHTML = plans.map(function (pl, i) {
+      var featured = /popular|best|favourite/i.test(pl.badge || '') ||
+        (plans.length === 3 && i === 1 && !plans.some(function (o) { return o.badge; }));
+      var label = 'Subscription: ' + pl.n + ', ' + money(pl.p) + ' a ' + pl.interval;
+      /* No data-fx here on purpose. The reveal observer takes its list of
+         elements once, at load; anything built afterwards is never seen by it
+         and would sit at opacity 0 for ever. These arrive already visible. */
+      return '<article class="plan' + (featured ? ' featured' : '') + '">' +
+        (pl.badge ? '<span class="tag">' + esc(pl.badge) + '</span>' : '') +
+        rose +
+        '<h3>' + esc(pl.n) + '</h3>' +
+        rule +
+        (pl.d ? '<p class="pdesc">' + esc(pl.d) + '</p>' : '') +
+        '<p class="amt">' + money(pl.p) + '</p>' +
+        '<p class="per">' + (per[pl.interval] || ('per ' + pl.interval)) + '</p>' +
+        '<button class="btn' + (featured ? ' burg' : '') + '" type="button" data-order="' +
+          esc(label) + '">Subscribe</button>' +
+      '</article>';
+    }).join('');
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  if (cardsEl || plansEl) {
+    fetch('/api/rbr/catalogue', { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || d.source !== 'stripe') return;
+        if (adoptCatalogue(d.products) && cardsEl) renderCards(currentCat());
+        renderPlans(d.plans);
+        /* A link shared for a bouquet that only exists in Stripe could not be
+           matched a moment ago, because the built-in list was all we had. */
+        openShared();
+      })
+      .catch(function () { /* the built-in collection is already on screen */ });
+  }
+
   /* ---------------- share ---------------- */
   var sheet = $('sharesheet'), shWhat = '';
+  /* Writing the link and reading it back have to agree exactly, so both go
+     through here. "Rachel's Choice" becomes "rachel-s-choice" either way. */
+  function slug(name) {
+    return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
   function shareUrl() {
-    return location.origin + location.pathname + '?f=' +
-      encodeURIComponent(shWhat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+    return location.origin + location.pathname + '?f=' + slug(shWhat);
   }
   function openShare(what) {
     shWhat = what; $('shtitle').textContent = what;
@@ -580,7 +679,7 @@
     box.innerHTML = cart.map(function (l) {
       var p = findProduct(l.n); if (!p) return '';
       return '<div class="citem" data-line="' + p.n + '">' +
-        '<img src="../../assets/rachel/' + p.img + '-sm.webp" alt="' + p.alt + '" loading="lazy">' +
+        '<img src="' + imgSmall(p) + '" alt="' + p.alt + '" loading="lazy">' +
         '<h3>' + p.n + '</h3>' +
         '<p class="ip">' + money(p.p) + '</p>' +
         '<div class="ctrl"><div class="stepper">' +
@@ -619,7 +718,7 @@
   function openPDP(name) {
     var p = findProduct(name); if (!p) return;
     pdpCurrent = p; pdpQty = 1;
-    $('pdpImg').src = '../../assets/rachel/' + (p.big || p.img) + '.webp';
+    $('pdpImg').src = imgBig(p);
     $('pdpImg').alt = p.alt;
     $('pdpName').textContent = p.n;
     $('pdpPrice').textContent = money(p.p);
@@ -630,7 +729,37 @@
     $('pdp').scrollTop = 0;
     track('view_item', { item: name, value: p.p });
   }
-  function closePDP() { $('pdp').classList.remove('on'); document.body.style.overflow = ''; }
+  function closePDP() {
+    $('pdp').classList.remove('on'); document.body.style.overflow = '';
+    /* Take the shared flower back out of the address, so a refresh does not
+       reopen the window they have just closed. */
+    if (/[?&]f=/.test(location.search) && history.replaceState) {
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  }
+
+  /* Opening a link somebody shared.
+     The share button has always written "?f=velvet-romance" into the address
+     and nothing has ever read it back, so every link Rachel or a customer
+     sent landed at the top of the page with no sign of the flower they were
+     showing somebody. This is the other half of it. */
+  var sharedOpened = false;
+  function openShared() {
+    if (sharedOpened || !$('pdp')) return false;
+    var raw = (location.search.match(/[?&]f=([^&]*)/) || [])[1];
+    if (!raw) return false;
+    var want = slug(decodeURIComponent(raw.replace(/\+/g, ' ')));
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (slug(PRODUCTS[i].n) === want) {
+        sharedOpened = true;
+        openPDP(PRODUCTS[i].n);
+        return true;
+      }
+    }
+    /* Not one of ours — an old link, or something since taken off sale. The
+       page is still the shop, so say nothing and let them browse. */
+    return false;
+  }
   function openCart() {
     paintCart(); $('cart').classList.add('on'); document.body.style.overflow = 'hidden';
     $('cart').scrollTop = 0; track('view_cart', { value: cartTotal() });
@@ -662,6 +791,7 @@
 
   $('checkout').addEventListener('click', openCheckout);
   paintCount(); paintCart();
+  openShared();
 
   /* ---------------- checkout ----------------
      The card boxes are Stripe Elements: Stripe drops its own iframed inputs
@@ -690,7 +820,7 @@
     $('coLines').innerHTML = cart.map(function (l) {
       var p = findProduct(l.n); if (!p) return '';
       return '<div class="coline">' +
-        '<img src="../../assets/rachel/' + p.img + '-sm.webp" alt="' + p.alt + '" loading="lazy">' +
+        '<img src="' + imgSmall(p) + '" alt="' + p.alt + '" loading="lazy">' +
         '<span><b>' + p.n + '</b>' + (l.q > 1 ? '<small>Quantity ' + l.q + '</small>' : '') + '</span>' +
         '<span class="p">' + money(p.p * l.q) + '</span></div>';
     }).join('');
