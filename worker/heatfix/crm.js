@@ -1112,6 +1112,12 @@ ignore it &mdash; nothing has changed.</p>`,
       if (method === "DELETE" && seg[1]) {
         const inv = await env.HF_DB.prepare("SELECT status FROM hf_invoices WHERE id = ?").bind(seg[1]).first();
         if (inv && inv.status !== "draft") return json({ error: "Only a draft can be deleted. Void a sent invoice instead." }, 409);
+        /* The photos carry ON DELETE CASCADE, but that only fires where
+           foreign keys are enforced. Photographs are the biggest rows in the
+           database, so an orphan is not a tidiness problem -- it is storage
+           kept forever for an invoice that no longer exists. Delete them
+           outright and the question never arises. */
+        await env.HF_DB.prepare("DELETE FROM hf_invoice_photos WHERE invoice_id = ?").bind(seg[1]).run();
         await env.HF_DB.prepare("DELETE FROM hf_invoices WHERE id = ?").bind(seg[1]).run();
         return json({ ok: true });
       }

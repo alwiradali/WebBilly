@@ -12,6 +12,11 @@
 -- the back office can say "saved, but the email did not send" instead of
 -- leaving him to notice the gap himself.
 
-ALTER TABLE hf_enquiries ADD COLUMN notified      TEXT;  -- 'sent' | 'failed' | NULL when not attempted
-ALTER TABLE hf_enquiries ADD COLUMN notify_via    TEXT;  -- 'resend' | 'web3forms'
-ALTER TABLE hf_enquiries ADD COLUMN notify_error  TEXT;  -- why, when it failed
+-- 'sent', 'failed', or NULL when no attempt was made.
+ALTER TABLE hf_enquiries ADD COLUMN notified TEXT;
+
+-- 'resend' or 'web3forms' — which one carried it.
+ALTER TABLE hf_enquiries ADD COLUMN notify_via TEXT;
+
+-- Why, when it failed.
+ALTER TABLE hf_enquiries ADD COLUMN notify_error TEXT;

@@ -44,6 +44,30 @@ M2L_HOST = ""
 # database_name = "m2l"
 # database_id = "PASTE_REAL_ID_HERE"
 
+# ---------------------------------------------------------------------------
+# HeatFix back office — D1, and a WARNING.
+#
+# The HeatFix CRM (worker/heatfix/crm.js, reached at /api/hf/*) runs on THIS
+# Worker and reads env.HF_DB. That binding is not declared here: it was added
+# by hand in the Cloudflare dashboard. Bindings a Worker gets from the
+# dashboard are replaced by whatever the config says on the next CLI deploy,
+# so `npx wrangler deploy` from this repository as it stands would publish the
+# Worker WITHOUT HF_DB and take the whole back office down — invoices,
+# customers, enquiries and the sign-in — with the API answering "The back
+# office database is not connected yet."
+#
+# Before the next CLI deploy, uncomment the four lines below and paste the
+# real database_id from the dashboard (D1 -> the HeatFix database -> the id
+# beside the name). Do NOT uncomment them with a placeholder: Cloudflare
+# rejects the whole deploy on a malformed id, which is what happened to
+# M2L_DB above and broke every push until it was commented out again.
+#
+# [[d1_databases]]
+# binding = "HF_DB"
+# database_name = "heatfix"
+# database_id = "PASTE_REAL_ID_HERE"
+# migrations_dir = "migrations/heatfix"
+
 [assets]
 directory = "."
 not_found_handling = "404-page"
