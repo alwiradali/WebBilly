@@ -97,3 +97,33 @@ not_found_handling = "404-page"
 # The Worker owns /api/mm-shop and hands everything else to the asset router,
 # which is what resolves /daytime to daytime.html.
 run_worker_first = false
+
+# ---------------------------------------------------------------------------
+# Rod Martin — SMARTin SCIENCE, on HIS OWN Cloudflare account.
+#
+# Same arrangement as Lynsey's: his account is not connected to this
+# repository and does not need to be. A scoped API token travels one way,
+# from his Cloudflare into GitHub Secrets, and is never written down here.
+# account_id therefore comes from CLOUDFLARE_ACCOUNT_ID at deploy time rather
+# than sitting in a public repo.
+#
+# Static only — no `main`. His site has no API of its own: the enquiry form
+# posts straight to Web3Forms from the browser, so there is no Worker code to
+# run and nothing server-side to get wrong.
+#
+# As with [env.mm], do not let this block go missing: `--env smartin` would
+# then silently fall back to the top-level config and deploy the entire
+# repository to his account under the wrong name, while his real site sat
+# untouched somewhere else looking like a deploy that did nothing.
+[env.smartin]
+name = "smartin-science"
+routes = [
+  { pattern = "smartinscience.co.uk", custom_domain = true },
+  { pattern = "www.smartinscience.co.uk", custom_domain = true }
+]
+
+[env.smartin.assets]
+directory = "dist/smartin-science"
+# The build writes about.html and links to /about, so the server has to resolve
+# the extensionless URL. This is wrangler's default, stated so it cannot drift.
+html_handling = "auto-trailing-slash"

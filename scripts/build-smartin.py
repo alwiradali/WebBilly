@@ -14,6 +14,7 @@ Upload the folder to Cloudflare Pages in Rod's account.
 """
 
 import os
+import posixpath
 import re
 import shutil
 import sys
@@ -28,18 +29,30 @@ def rewrite(html, domain, path):
     # asset paths: any depth of ../ ending in assets/ becomes root-absolute
     html = re.sub(r'(?:\.\./)+assets/', '/assets/', html)
 
-    # page links become clean root URLs, from either depth
-    def clean(m):
-        target = m.group(2)
-        if target == 'index.html':
-            return m.group(1) + '/'
-        for section in ('blog/', 'areas/'):
-            if target.startswith(section):
-                return m.group(1) + '/' + target[:-5].replace('/index', '/')
-        return m.group(1) + '/' + target[:-5]
-    html = re.sub(r'(href=")(?:\.\./)*((?:blog/|areas/)?[a-z0-9-]+\.html)', clean, html)
-    html = html.replace('href="/blog/index"', 'href="/blog/"')
-    html = html.replace('href="/areas/index"', 'href="/areas/"')
+    # Page links become clean root URLs, resolved against the page's OWN
+    # directory. The previous version matched a bare "cardiff.html" and emitted
+    # "/cardiff" wherever it appeared, so every chip on every area page pointed
+    # at a root URL that does not exist — 740 dead links in the build, none of
+    # them visible in the source, because there the relative link is correct.
+    page_dir = path if path.endswith('/') else posixpath.dirname(path)
+    if not page_dir.endswith('/'):
+        page_dir += '/'          # dirname('/faqs') is already '/', don't double it
+
+    def resolve(m):
+        href = m.group(1)
+        if re.match(r'(?:[a-z]+:|//|/|#)', href):
+            return m.group(0)    # already absolute, external, or a bare fragment
+        target, _, frag = href.partition('#')
+        if not target.endswith('.html'):
+            return m.group(0)
+        out = posixpath.normpath(posixpath.join(page_dir, target))
+        if posixpath.basename(out) == 'index.html':
+            out = posixpath.dirname(out).rstrip('/') + '/'
+        else:
+            out = out[:-len('.html')]
+        return 'href="%s%s"' % (out, '#' + frag if frag else '')
+
+    html = re.sub(r'href="([^"]+)"', resolve, html)
 
     # local css/js referenced relatively from blog pages
     html = html.replace('href="../shared.css"', 'href="/shared.css"')
