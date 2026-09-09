@@ -5,7 +5,9 @@
    survives a lost phone and follows him between the van and the laptop.
 
    Secrets (set with `wrangler secret put … --env heatfix`):
-     HF_ADMIN_PASSWORD  — the one password that opens the back office
+     HF_ADMIN_PASSWORD  — the FIRST password, and only until he sets his own.
+                          The moment a password is saved in the back office this
+                          one stops opening the door. See passwordOk.
      HF_SESSION_SECRET  — any long random string; signs the session cookie
      RESEND_API_KEY     — already used by the review emails; sends invoices
 
@@ -114,10 +116,23 @@ async function sha256Hex(s) {
   return toHex(await crypto.subtle.digest("SHA-256", enc.encode(String(s))));
 }
 
-/* His own password if he has set one. HF_ADMIN_PASSWORD keeps working as a
-   recovery password so a forgotten password with no email configured is not a
-   locked door -- the back office says as much, rather than leaving him to
-   find out. */
+/* HF_ADMIN_PASSWORD is a starter password, not a permanent master key.
+
+   It used to keep working alongside his own as a recovery route, which sounds
+   prudent and is in fact the opposite: changing your password and finding the
+   old one still lets you in is not a recovery feature, it is a password change
+   that did nothing. Anyone who ever knew the starter password -- and the point
+   of changing it is usually that somebody does -- still had the door.
+
+   So the rule is now the one anybody would expect: the moment he saves a
+   password of his own, that is the only password. HF_ADMIN_PASSWORD opens the
+   back office only while no password has been set, which is exactly the window
+   it exists for -- the very first sign-in.
+
+   Locked out is still not a dead end. "Forgotten password" mails a 45-minute
+   link to the address in My details (heatfixmcr@hotmail.com, checked before
+   this change went in), and failing that the stored hash can be cleared from
+   the D1 console, which puts him back to the starter password above. */
 /* ---- how many wrong guesses before the door shuts, and for how long ----
    Login is generous, because the person most likely to get it wrong repeatedly
    is Mohammad on a phone keyboard. Reset requests are tighter, because each one
@@ -179,8 +194,11 @@ async function clearAttempts(env, scope, ip) {
 }
 
 async function passwordOk(env, s, attempt) {
+  /* His own password, once set, is the only one. Note the `return` rather than
+     falling through: a wrong attempt against his hash must fail here and not
+     get a second look against the starter password below. */
   if (s && s.password_hash && s.password_salt) {
-    if (safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash)) return true;
+    return safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash);
   }
   if (env.HF_ADMIN_PASSWORD && safeEqual(attempt, env.HF_ADMIN_PASSWORD)) return true;
   return false;
