@@ -25,5 +25,8 @@ lyncdiscover.megacityproperties.co.uk.           3600 IN CNAME webdir.online.lyn
 msoid.megacityproperties.co.uk.                  3600 IN CNAME clientconfig.microsoftonline-p.net.
 _domainconnect.megacityproperties.co.uk.         3600 IN CNAME _domainconnect.gd.domaincontrol.com.
 _dmarc.megacityproperties.co.uk.                 3600 IN TXT   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100;rf=afrf"
+s1._domainkey.megacityproperties.co.uk.          1800 IN CNAME s1.domainkey.u2309198.wl199.sendgrid.net.
+s2._domainkey.megacityproperties.co.uk.          1800 IN CNAME s2.domainkey.u2309198.wl199.sendgrid.net.
+_amazonses.megacityproperties.co.uk.             3600 IN TXT   "juNkJZcd/CGB2doV4qI/mEtLARs10FM7N5qWd/9Q1Og="
 _sip._tls.megacityproperties.co.uk.              3600 IN SRV   100 1 443 sipdir.online.lync.com.
 _sipfederationtls._tcp.megacityproperties.co.uk. 3600 IN SRV   100 1 5061 sipfed.online.lync.com.

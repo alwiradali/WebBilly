@@ -35,8 +35,11 @@ const DOM = "megacityproperties.co.uk";
 const EXPORT = join(ROOT, "docs/megacity-old-site/dns-export.txt");
 
 /* Records that carry email. Everything else is a nuisance if lost; these
-   stop the agency receiving enquiries. */
-const CRITICAL = new Set(["@ MX", "@ TXT", "autodiscover CNAME", "_dmarc TXT"]);
+   stop the agency receiving enquiries, or stop the email it sends being
+   believed. The two _domainkey selectors and _amazonses were missed by the
+   first capture and found by Cloudflare's scan — see dns-export.txt. */
+const CRITICAL = new Set(["@ MX", "@ TXT", "autodiscover CNAME", "_dmarc TXT",
+  "s1._domainkey CNAME", "s2._domainkey CNAME", "_amazonses TXT"]);
 
 const ns = (process.argv.find((a) => a.startsWith("--ns=")) || "").slice(5);
 const quiet = process.argv.includes("--quiet");

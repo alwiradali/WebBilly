@@ -6,8 +6,19 @@
 #
 # HOW TO USE THIS FILE
 #   Every record below must exist in Cloudflare BEFORE the nameservers are
-#   changed at GoDaddy. Cloudflare's import scan usually finds most of them;
-#   it does NOT reliably find SRV records. Tick each line off by hand.
+#   changed at GoDaddy. Tick each line off by hand.
+#
+# THIS LIST CANNOT BE PROVED COMPLETE FROM OUTSIDE
+#   DNS has no "list the zone" query. Everything here was found by asking for
+#   a name and seeing whether it answered, so a record whose name nobody
+#   guessed does not appear. The first capture (2026-09-09 19:09 UTC) found 14
+#   this way; Cloudflare's own scan, which uses a much larger dictionary, then
+#   turned up three more — the two SendGrid DKIM selectors and the Amazon SES
+#   verification, all three of them email records. They were added on
+#   2026-09-09 21:45 UTC after being confirmed against public DNS.
+#
+#   The only authoritative list is GoDaddy's own DNS page for the domain.
+#   Read it before the nameservers change and reconcile it against this file.
 #
 #   Proxy status: DNS only (grey cloud) for EVERY record in this file.
 #   Only the website A/CNAME is ever proxied, and the Worker creates that
@@ -19,6 +30,12 @@
 #   TXT NETORGFT...         Microsoft can no longer verify the domain
 #   _dmarc TXT              reporting policy lost
 #   autodiscover CNAME      Outlook and phones stop auto-configuring
+#   s1/s2._domainkey CNAME  whatever sends through SendGrid as this domain
+#                           (10ninety, on the evidence) loses its DKIM
+#                           signature, so those emails start failing DMARC
+#                           alignment and landing in spam
+#   _amazonses TXT          Amazon SES stops treating the domain as verified,
+#                           so whatever sends through SES stops sending
 #   msoid / sip / lyncdiscover / _sip / _sipfederationtls    Teams sign-in
 #   email CNAME             GoDaddy's email marketing links
 #   _domainconnect CNAME    GoDaddy one-click setup; harmless to drop
@@ -37,8 +54,12 @@ lyncdiscover               CNAME  3600   webdir.online.lync.com.
 msoid                      CNAME  3600   clientconfig.microsoftonline-p.net.
 _domainconnect             CNAME  3600   _domainconnect.gd.domaincontrol.com.
 _dmarc                     TXT    3600   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100;rf=afrf"
+s1._domainkey              CNAME  1800   s1.domainkey.u2309198.wl199.sendgrid.net.
+s2._domainkey              CNAME  1800   s2.domainkey.u2309198.wl199.sendgrid.net.
+_amazonses                 TXT    3600   "juNkJZcd/CGB2doV4qI/mEtLARs10FM7N5qWd/9Q1Og="
 _sip._tls                  SRV    3600   100 1 443 sipdir.online.lync.com
 _sipfederationtls._tcp     SRV    3600   100 1 5061 sipfed.online.lync.com
 
-# 14 records. Anything the Cloudflare scan adds that is NOT in this
-# list should be questioned before it is kept.
+# 17 records. Anything the Cloudflare scan adds that is NOT in this
+# list should be questioned before it is kept — and anything in GoDaddy's
+# DNS page that is not here should be added, not questioned.

@@ -95,18 +95,35 @@ that file.
    `dns-export.txt` to match reality and re-run
    `node scripts/megacity-dns-zonefile.mjs` before going on.
 2. Cloudflare → *Add a site* → `megacityproperties.co.uk`, Free plan.
-   Cloudflare scans the domain itself, but **it does not reliably find SRV
-   records**, and fourteen records typed by hand is how a mailbox gets lost.
-   Import the file instead:
+   Cloudflare scans the domain and shows what it found.
+
+   **What actually happened here, 2026-09-09.** The scan found all 17 records,
+   SRVs included — better than expected. But it arrived **proxied (orange
+   cloud) on all 10 records that can be proxied**, including `autodiscover`
+   and both `_domainkey` selectors. A proxied record answers with Cloudflare's
+   own addresses instead of the real target, so leaving them orange would have
+   broken Outlook auto-setup, Teams sign-in and DKIM signing the moment the
+   nameservers changed. The scan also found three records the first capture had
+   missed, all three of them email records.
+
+   So: **turn every orange cloud grey**, then read the list against
+   `dns-export.txt` — 17 records, all **DNS only**. Delete anything the scan
+   added that is not in that file, and add anything in the file the scan did
+   not find.
+
+   If the scan comes back thin, or you would rather not click through 17 rows,
+   import instead:
 
    ```
    node scripts/megacity-dns-zonefile.mjs        # docs/megacity-old-site/megacityproperties.co.uk.zone
    ```
 
    DNS → Records → *Import and Export* → *Import DNS records* → choose that
-   file → leave **Proxy imported DNS records OFF**. Then compare the list on
-   screen against `dns-export.txt`: 14 records, every one **DNS only (grey
-   cloud)**, and delete anything the scan added that is not in that file.
+   file → leave **Proxy imported DNS records OFF**. Deleting every scanned
+   record first and importing over the empty zone gives the most predictable
+   result, and it is safe: until the nameservers change, this zone is inert and
+   nothing on the internet reads it.
+
    Leave the apex `A` on `77.68.34.162` and `www` as it is — the old site keeps
    serving throughout B1, which is the point.
 3. SSL/TLS → **Full**. Do not use Flexible: the old server already does HTTPS.
