@@ -38,7 +38,7 @@ LINKS = [
     ('airport.html', 'Airport Arrivals'),
     ('corporate.html', 'Corporate'),
     ('journal.html', 'Journal'),
-    ('about.html', 'Meet Rachel'),
+    ('about.html', 'About Us'),
 ]
 DRAWER_LINKS = LINKS + [('faqs.html', 'Questions'), ('contact.html', 'Contact')]
 
@@ -57,11 +57,11 @@ FOOTER_COLS = [
               ('shop-gifts.html', 'Gifts'), ('build.html', 'Build your own')]),
     ('Services', [('subscriptions.html', 'Subscriptions'), ('weddings.html', 'Weddings &amp; occasions'),
                   ('airport.html', 'Airport arrivals'), ('corporate.html', 'Corporate &amp; contract')]),
-    ('More', [('about.html', 'Meet Rachel'), ('journal.html', 'The journal'),
+    ('More', [('about.html', 'About Us'), ('journal.html', 'The journal'),
               ('faqs.html', 'Questions &amp; answers'), ('contact.html', 'Place an order')]),
 ]
 
-WA = ('https://wa.me/447306063563?text=Hi%20Rachel%2C%20I%20found%20you%20through%20'
+WA = ('https://wa.me/447306063563?text=Hi%2C%20I%20found%20you%20through%20'
       'your%20website%20and%20I%27d%20love%20to%20ask%20about%20ordering%20some%20flowers.')
 
 LOADER = '''<div class="rrload" id="rrload" role="status" aria-live="polite" aria-label="Loading Roses by Rachel">
@@ -177,7 +177,7 @@ def footer():
              people press send without changing a word, and a half-finished
              line would arrive looking like a mistake. -->
         <div><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/><path d="M8.5 7.5c.3 0 .5.4.7.9l.6 1.4-.7.8c.5 1 1.3 1.8 2.3 2.3l.8-.7 1.4.6c.5.2.9.4.9.7 0 .8-.7 1.5-1.6 1.5-2.9 0-5.9-3-5.9-5.9 0-.9.7-1.6 1.5-1.6z" stroke-linejoin="round"/></svg>
-          <span><b>WhatsApp</b><a href="%s" target="_blank" rel="noopener">Message Rachel</a></span></div>
+          <span><b>WhatsApp</b><a href="%s" target="_blank" rel="noopener">Message us</a></span></div>
       </div>
       <div class="fsocial">
         <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" aria-label="Instagram"><span><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg></span>Instagram</a>

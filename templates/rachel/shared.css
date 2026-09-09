@@ -949,34 +949,46 @@ footer p{font-size:.96rem}
 
 /* ---------- golden embers on the tiles ----------
    A gold arc travelling slowly around the edge of each tile, like a coal
-   catching along a rim. It is drawn as a conic gradient in a ring one pixel
-   thick — the padding-box is masked out of the border-box, so only the border
-   itself is painted and the card's own background is untouched.
+   catching along a rim.
+
+   Two layers, deliberately. The tile keeps a real gold border of its own, so
+   there is always a visible outline even where the moving part cannot be
+   drawn; the arc is then painted over it in a ring, by masking the padding
+   box out of the border box so only the border itself is lit and the card's
+   background is untouched.
+
+   Nothing in the gradient uses colour-mix or any other function a slightly
+   older Safari would choke on — one unknown function invalidates the whole
+   background declaration and the ring disappears with no warning, which is
+   exactly how this failed the first time. The two mask shorthands are written
+   before the two composite properties, because the shorthand resets them.
 
    The angle is a registered custom property, which is what lets a browser
-   interpolate it; @property is not detectable from @supports, so the fallback
-   is written into the var() itself. Where it is unsupported the ring sits
-   still at 120 degrees, which is a static gold edge rather than nothing.
+   interpolate it at all; @property cannot be felt out from @supports, so the
+   fallback is written into the var() itself. Where it is unsupported the arc
+   sits still at 120 degrees, which is a gold edge rather than nothing.
 
-   It is deliberately slow — twelve seconds a lap — and it stops entirely for
-   anyone who has asked for reduced motion. A shimmer that draws the eye every
-   two seconds would be jewellery, not a rim of light. */
+   Twelve seconds a lap, offset per tile so a row reads as separate coals
+   rather than one bar of light, and stopped outright for reduced motion. */
 @property --ember-a{syntax:'<angle>';inherits:false;initial-value:0deg}
 @keyframes ember-turn{to{--ember-a:360deg}}
 
-.route,.jcard{position:relative;isolation:isolate}
+.route,.jcard{position:relative;isolation:isolate;border-color:var(--gold-pale)}
 .route::before,.jcard::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
   background:conic-gradient(from var(--ember-a,120deg),
-    transparent 0 46%,
-    color-mix(in srgb,var(--gold-pale) 60%,transparent) 56%,
-    var(--gold) 64%,
-    #FBEBBE 68%,
-    var(--gold) 72%,
-    color-mix(in srgb,var(--gold-pale) 60%,transparent) 80%,
-    transparent 90% 100%);
+    rgba(192,152,42,0) 0deg,
+    rgba(192,152,42,0) 150deg,
+    rgba(230,213,162,.85) 200deg,
+    #C0982A 236deg,
+    #FFF1C9 252deg,
+    #C0982A 268deg,
+    rgba(230,213,162,.85) 300deg,
+    rgba(192,152,42,0) 340deg,
+    rgba(192,152,42,0) 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
   mask-composite:exclude;
   animation:ember-turn 12s linear infinite;
   pointer-events:none;z-index:1}

@@ -1,10 +1,10 @@
 /* ============================================================
    ROSES BY RACHEL
    FILL IN WHEN RACHEL HAS THEM
-                  land in her inbox
+                  land in their inbox
      RR_GA4     — "G-XXXXXXX" from Google Analytics
      RR_PIXEL   — the long number from Meta Events Manager
-     RR_PAYLINK — her Stripe payment link
+     RR_PAYLINK — the Stripe payment link
    Leave any of them empty and the site still works, it just
    doesn't send / track / take payment.
    ============================================================ */
@@ -430,7 +430,7 @@
     $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   on('copyBtn', 'click', function () {
-    copyText(compose(), 'Message copied. Paste it in Rachel’s DMs');
+    copyText(compose(), 'Message copied. Paste it into our DMs');
   });
   on('sendBtn', 'click', function () {
     var txt = compose();
@@ -441,7 +441,7 @@
       $('sentPanel').classList.add('on');
       if (RR_PAYLINK) window.open(RR_PAYLINK, '_blank', 'noopener');
     }
-    /* Straight to Rachel's inbox. The page carries no key: the Worker holds
+    /* Straight to our inbox. The page carries no key: the Worker holds
        it and does the sending. "On its way" is only ever shown once the
        server has actually accepted the order. */
     var btn = $('sendBtn'), was = btn.textContent;
@@ -464,7 +464,7 @@
       .catch(function () {
         btn.disabled = false; btn.textContent = was;
         /* Never claim it went. Hand them the message so the sale is not lost. */
-        copyText(txt, 'Could not send. Message copied, paste it to Rachel on WhatsApp');
+        copyText(txt, 'Could not send. Message copied, paste it to us on WhatsApp');
       });
   });
   if ($('oform')) {
@@ -493,7 +493,7 @@
         $('newsform').style.display = 'none';
         say('You’re on the list. Thank you');
       })
-      .catch(function () { say('That didn’t send. Message Rachel on Instagram and she’ll add you.'); });
+      .catch(function () { say('That didn’t send. Message us on Instagram and we’ll add you.'); });
   });
 
   /* ---------------- product page + cart ---------------- */
@@ -623,9 +623,9 @@
 
   /* ---------------- checkout ----------------
      The card boxes are Stripe Elements: Stripe drops its own iframed inputs
-     into them, so a card number never touches this page or Rachel's server.
-     Put her publishable key in RR_STRIPE_PK and it goes live. Building the
-     card fields as ordinary inputs would put her in full PCI scope and mean
+     into them, so a card number never touches this page or our server.
+     Put the publishable key in RR_STRIPE_PK and it goes live. Building the
+     card fields as ordinary inputs would put us in full PCI scope and mean
      card numbers arriving by email — so this is the only way it is done. */
   var RR_STRIPE_PK = '';
   var stripe = null, coCard = null;
@@ -688,7 +688,7 @@
 
     if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
 
-    /* no Stripe yet: send it to Rachel as a written order so nothing is lost */
+    /* no Stripe yet: send it to us as a written order so nothing is lost */
     var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
     var notes = 'Checkout order: ' + lines + ', total ' + money(cartTotal()) +
       '\nDeliver to: ' + addr + ', ' + city + ' ' + post;
@@ -700,7 +700,7 @@
       $('fPostcode').value = post;
       applyOrder('Something bespoke, help me choose', notes);
       $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toast('Nearly there. Press Send my order and it goes to Rachel');
+      toast('Nearly there. Press Send my order and it comes to us');
     } else {
       goOrder('Something bespoke, help me choose', notes + '\nEmail: ' + email);
     }
