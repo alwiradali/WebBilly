@@ -1113,3 +1113,18 @@ footer p{font-size:.96rem}
   .svcgrid.prices .ptable b{font-size:1.52rem}
   .svcgrid.prices .ptable div{padding:20px 0}
 }
+
+/* The ember ring sits at z-index 1, and the tags that straddle a tile's top
+   edge had no stacking order of their own, so the travelling light was drawn
+   straight through the words "Most Popular". Anything sitting on the border
+   has to be above the thing that runs along it. */
+.plan .tag,.sub-c .tag,.rtag{z-index:3}
+
+/* ---------- postcode suggestions ---------- */
+.pcbox{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;
+  margin:0;padding:6px;list-style:none;max-height:264px;overflow-y:auto;
+  background:#fff;border:1px solid var(--gold-pale);border-radius:12px;
+  box-shadow:0 22px 44px -24px rgba(106,46,58,.45)}
+.pcbox li{padding:11px 14px;border-radius:8px;cursor:pointer;
+  font-family:var(--ui);font-size:1rem;letter-spacing:.04em;color:var(--burg-ink)}
+.pcbox li.on,.pcbox li:hover{background:var(--blush);color:var(--burg)}

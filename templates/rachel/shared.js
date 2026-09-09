@@ -813,3 +813,122 @@
 
   redraw();
 })();
+
+/* ---------------- postcode suggestions ----------------
+ *
+ * Typing a postcode is where a delivery order gets abandoned: people are not
+ * sure of the last three characters, they guess, and the order arrives with an
+ * address that cannot be delivered to.
+ *
+ * This is postcodes.io, which is the Royal Mail's postcode file published by
+ * the Ordnance Survey as open data. It needs no key, no account and no card,
+ * which matters: the alternative is Google Places, and that needs a Google
+ * Cloud project with billing switched on before it will return a single
+ * result. It also fills the town in from the postcode, so nobody types it.
+ *
+ * Strictly an enhancement. If the service is slow or unreachable the field
+ * stays an ordinary text box and the order still goes through.
+ */
+(function () {
+  'use strict';
+  var API = 'https://api.postcodes.io/postcodes/';
+
+  function attachPostcode(input, townInput) {
+    if (!input || input.dataset.pcOn) return;
+    input.dataset.pcOn = '1';
+    input.setAttribute('autocomplete', 'postal-code');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-autocomplete', 'list');
+
+    var box = document.createElement('ul');
+    box.className = 'pcbox';
+    box.setAttribute('role', 'listbox');
+    box.hidden = true;
+    var wrap = input.parentNode;
+    if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+    wrap.appendChild(box);
+
+    var items = [], at = -1, timer = null, seq = 0;
+
+    function close() {
+      box.hidden = true; box.innerHTML = ''; items = []; at = -1;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
+    function highlight() {
+      [].forEach.call(box.children, function (li, i) {
+        li.classList.toggle('on', i === at);
+        if (i === at) input.setAttribute('aria-activedescendant', li.id);
+      });
+    }
+    function choose(v) {
+      input.value = v;
+      close();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      fillTown(v);
+    }
+    function fillTown(pc) {
+      if (!townInput || townInput.value.trim()) return;
+      fetch(API + encodeURIComponent(pc.replace(/\s+/g, '')), { signal: AbortSignal.timeout(5000) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          var t = j && j.result && (j.result.post_town || j.result.admin_district);
+          if (t && !townInput.value.trim()) townInput.value = t;
+        })
+        .catch(function () {});
+    }
+    function render(list) {
+      box.innerHTML = '';
+      items = list;
+      list.forEach(function (pc, i) {
+        var li = document.createElement('li');
+        li.id = 'pc-' + (input.id || 'x') + '-' + i;
+        li.setAttribute('role', 'option');
+        li.textContent = pc;
+        li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(pc); });
+        box.appendChild(li);
+      });
+      box.hidden = !list.length;
+      input.setAttribute('aria-expanded', list.length ? 'true' : 'false');
+      at = -1;
+    }
+
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+      clearTimeout(timer);
+      if (q.length < 2) { close(); return; }
+      var mine = ++seq;
+      timer = setTimeout(function () {
+        fetch(API + encodeURIComponent(q) + '/autocomplete', { signal: AbortSignal.timeout(5000) })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) {
+            /* a slow answer to an old keystroke must not replace a newer one */
+            if (mine !== seq) return;
+            render((j && j.result) ? j.result.slice(0, 7) : []);
+          })
+          .catch(function () { close(); });
+      }, 180);
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (box.hidden || !items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); at = (at + 1) % items.length; highlight(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); at = (at - 1 + items.length) % items.length; highlight(); }
+      else if (e.key === 'Enter' && at > -1) { e.preventDefault(); choose(items[at]); }
+      else if (e.key === 'Escape') { close(); }
+    });
+    input.addEventListener('blur', function () {
+      setTimeout(close, 120);
+      var v = input.value.trim();
+      if (v.length >= 5) fillTown(v);
+    });
+  }
+
+  function start() {
+    attachPostcode(document.getElementById('fPostcode'));
+    attachPostcode(document.getElementById('coPost'), document.getElementById('coCity'));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
