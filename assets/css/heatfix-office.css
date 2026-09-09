@@ -546,3 +546,34 @@ table.hfo-t tbody tr.tap:hover { background: #f7f9fc; }
   color:#2c3e57;cursor:pointer;user-select:none}
 .hfo-check input{width:17px;height:17px;flex:none;margin:0;accent-color:#0b2e63}
 @media(max-width:560px){ .hfo-checkrow{flex-direction:column;gap:10px} }
+
+/* ──────────────────────────────────────── photos of the work ──
+   Shot on a phone in a customer's kitchen, added from the same phone, and
+   shown to the customer on the invoice page. The thumbnails are square and
+   uniform on purpose: he is scanning for "did I get the flue photo", not
+   admiring the composition, and a ragged grid makes a missing one harder
+   to spot. */
+.hfo-shots{display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.hfo-shot{border:1px solid var(--line,#e2e8f2);border-radius:10px;
+  overflow:hidden;background:#fbfcfe;display:flex;flex-direction:column}
+.hfo-shot img{width:100%;height:120px;object-fit:cover;display:block;
+  background:#eef2f8}
+.hfo-shot .cap{border:0;border-top:1px solid var(--line,#e2e8f2);
+  padding:8px 10px;font:400 13px Inter,system-ui,sans-serif;color:#2c3e57;
+  width:100%;background:#fff}
+.hfo-shot .cap:focus{outline:2px solid #0b2e63;outline-offset:-2px}
+.hfo-shot .rm{border:0;border-top:1px solid var(--line,#e2e8f2);
+  padding:7px 10px;background:#fff;color:var(--o-red,#c0392b);cursor:pointer;
+  font:600 12.5px Inter,system-ui,sans-serif;text-align:left}
+.hfo-shot .rm:hover{background:#fdf1ef}
+.hfo-shot.busy{opacity:.55}
+.hfo-shots-empty{grid-column:1/-1;margin:0;padding:18px;text-align:center;
+  border:1px dashed var(--line,#e2e8f2);border-radius:10px;
+  color:#68788d;font-size:14px;background:#fbfcfe}
+
+/* A lead that arrived but whose email alert did not. The lead itself is
+   safe — it is on the screen — so this warns without shouting. */
+.hfo-enq-warn{margin:8px 0 0;padding:8px 11px;border-radius:7px;
+  background:#fdf1ef;border:1px solid #f0c8c2;color:#8d2f1d;
+  font-size:13px;line-height:1.45}

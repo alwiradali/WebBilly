@@ -208,6 +208,18 @@
           </div>
 
           <div class="hfo-card">
+            <h3>Photos of the work</h3>
+            <p class="hfo-sub">Take them on your phone and add them here. The customer
+              sees them on the same page as the invoice — they are not emailed as
+              attachments, so nothing gets blocked or lands in junk.</p>
+            <div class="hfo-btnrow" style="margin-bottom:14px">
+              <label class="btn btn-sm">Add photos<input type="file" id="shotFiles" accept="image/*" multiple hidden></label>
+              <span class="hfo-sub" id="shotCount" style="align-self:center"></span>
+            </div>
+            <div class="hfo-shots" id="shotList"></div>
+          </div>
+
+          <div class="hfo-card">
             <h3>Save and send</h3>
             <p class="hfo-sub" id="sendHelp">Save it first. Once it is sent the figures are locked, because the customer is holding that document.</p>
             <div class="hfo-btnrow">
@@ -429,6 +441,7 @@
     filter: "",
     inv: null,          /* the invoice being edited, null until saved */
     lines: [],
+    photos: [],         /* photos of the work on the invoice being edited */
     tplPreview: null    /* template chosen on this invoice only */
   };
 
@@ -623,6 +636,13 @@
         (e.job ? '<p class="hfo-enq-job">' + esc(e.job) + (e.slot ? ' &middot; ' + esc(e.slot) : "") + '</p>' : "") +
         (where ? '<p class="hfo-enq-addr">' + esc(where) + '</p>' : "") +
         (e.details ? '<p class="hfo-enq-note">' + esc(e.details) + '</p>' : "") +
+        /* The lead is safe either way — it is on this screen. But if the
+           email never went, he needs telling here rather than finding out
+           by wondering why his inbox has been quiet. */
+        (e.notified === "failed"
+          ? '<p class="hfo-enq-warn">Saved here, but the email alert did not send' +
+            (e.notify_error ? ': ' + esc(e.notify_error) : "") + '</p>'
+          : "") +
         '<div class="hfo-enq-acts">' +
           '<a class="btn btn-sm" href="tel:' + esc(String(e.phone).replace(/\s+/g, "")) + '">Ring ' + esc(e.phone) + '</a>' +
           (wa ? '<a class="btn btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc(wa) + '">WhatsApp</a>' : "") +
@@ -1025,6 +1045,8 @@
     $("edStatus").className = "pill pill-draft";
     $("edStatus").textContent = "Draft";
     $("edLink").textContent = "";
+    S.photos = [];
+    drawShots();
     drawLines();
     lockForStatus();
     refresh();
@@ -1065,6 +1087,9 @@
     lockForStatus();
     show("editor");
     refresh();
+    /* Not awaited: the editor should be on screen and usable while a dozen
+       thumbnails come down. */
+    loadShots();
   }
 
   function showLink() {
@@ -1286,6 +1311,135 @@
   async function reloadSettings() {
     S.settings = (await get("settings")).settings || {};
   }
+
+  /* ------------------------------------------------- photos of the work
+
+     A phone camera produces four megabytes and 4032 pixels across. Nothing
+     on the customer's page is wider than about 1100, and he is often adding
+     these from a van on mobile data, so every photo is shrunk in the browser
+     before a byte of it is uploaded. What arrives is a couple of hundred
+     kilobytes -- small enough to live in the database beside the invoice. */
+  const SHOT_MAX_EDGE = 1400;
+  const SHOT_QUALITY = 0.72;
+
+  function shrinkPhoto(file) {
+    return new Promise((resolve, reject) => {
+      if (!/^image\//.test(file.type)) { reject(new Error(file.name + " is not an image.")); return; }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error(file.name + " would not open."));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error(file.name + " would not open."));
+        img.onload = () => {
+          const scale = Math.min(1, SHOT_MAX_EDGE / Math.max(img.width, img.height));
+          const cv = document.createElement("canvas");
+          cv.width = Math.round(img.width * scale);
+          cv.height = Math.round(img.height * scale);
+          const ctx = cv.getContext("2d");
+          /* A photo has no transparency to keep, and JPEG at this size is a
+             third of what PNG costs. Paint white underneath in case one
+             does arrive with an alpha channel, or it turns black. */
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, cv.width, cv.height);
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          resolve(cv.toDataURL("image/jpeg", SHOT_QUALITY));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function drawShots() {
+    const host = $("shotList");
+    const list = S.photos || [];
+    $("shotCount").textContent = list.length
+      ? list.length + (list.length === 1 ? " photo" : " photos")
+      : "";
+
+    if (!list.length) {
+      host.innerHTML = '<p class="hfo-shots-empty">No photos yet. ' +
+        "Add a few and the customer sees them with the invoice.</p>";
+      return;
+    }
+    host.innerHTML = list.map((p) =>
+      '<figure class="hfo-shot" data-id="' + esc(p.id) + '">' +
+        '<img src="/api/hf/photo/' + encodeURIComponent(p.id) + '" alt="" loading="lazy">' +
+        '<input class="cap" value="' + esc(p.caption || "") + '" maxlength="120" ' +
+          'placeholder="Say what it shows (optional)" aria-label="Caption for this photo">' +
+        '<button type="button" class="rm">Remove</button>' +
+      "</figure>").join("");
+  }
+
+  async function loadShots() {
+    if (!S.inv) { S.photos = []; drawShots(); return; }
+    try {
+      S.photos = (await get("invoices/" + S.inv.id + "/photos")).photos || [];
+    } catch (e) { S.photos = []; }
+    drawShots();
+  }
+
+  $("shotFiles").addEventListener("change", async (e) => {
+    const files = Array.prototype.slice.call(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+
+    /* Photos hang off an invoice, so there has to be one. Saving the draft
+       for him beats telling him to go and press a different button first. */
+    if (!S.inv) {
+      try { await save(true); } catch (err) { toast("Save the invoice first: " + err.message, "bad"); return; }
+      /* save() returns null without throwing when the customer name is
+         blank, and has already said so. Stop rather than walk into a null. */
+      if (!S.inv) return;
+    }
+
+    toast(files.length === 1 ? "Adding the photo…" : "Adding " + files.length + " photos…");
+    let added = 0;
+    for (const file of files) {
+      try {
+        const data = await shrinkPhoto(file);
+        const r = await post("invoices/" + S.inv.id + "/photos", { data });
+        S.photos.push({ id: r.id, caption: "" });
+        added++;
+        drawShots();          /* one at a time, so he can see it working */
+      } catch (err) {
+        toast(err.message, "bad");
+        break;                /* the limit was hit, or the file was no good */
+      }
+    }
+    if (added) toast(added === 1 ? "Photo added." : added + " photos added.", "good");
+  });
+
+  /* Captions save when he clicks away, not on every keystroke. */
+  $("shotList").addEventListener("change", async (e) => {
+    const cap = e.target.closest("input.cap");
+    if (!cap) return;
+    const id = cap.closest(".hfo-shot").getAttribute("data-id");
+    try {
+      await put("invoices/" + S.inv.id + "/photos/" + id, { caption: cap.value });
+      const p = (S.photos || []).find((x) => x.id === id);
+      if (p) p.caption = cap.value;
+      toast("Caption saved.", "good");
+    } catch (err) { toast(err.message, "bad"); }
+  });
+
+  $("shotList").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.rm");
+    if (!btn) return;
+    const fig = btn.closest(".hfo-shot");
+    const id = fig.getAttribute("data-id");
+    if (!confirm("Remove this photo? The customer will no longer see it.")) return;
+    fig.classList.add("busy");
+    try {
+      await del("invoices/" + S.inv.id + "/photos/" + id);
+      S.photos = (S.photos || []).filter((x) => x.id !== id);
+      drawShots();
+      toast("Photo removed.", "good");
+    } catch (err) {
+      fig.classList.remove("busy");
+      toast(err.message, "bad");
+    }
+  });
 
   /* The logo is stored with the data, not as a file, so it travels with
      the invoice and cannot go missing later. Big photos are shrunk first. */

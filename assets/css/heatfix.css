@@ -328,6 +328,22 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .foot li{list-style:none;margin-bottom:9px;color:#bcc8d8;font-size:.94rem}
 .foot li a:hover{color:var(--gold2)}
 .foot p{color:#bcc8d8}
+
+/* "Areas we cover" is a link to another page, not another area. Sat as the
+   last <li> it read as one — a sixth patch of Manchester called "Areas we
+   cover". Out of the list, set apart by a rule and the brand gold, it reads
+   as the way through to the rest. */
+.foot .foot-more{margin-top:14px;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.13)}
+.foot .foot-more a{color:var(--gold2);font-weight:700;font-size:.9rem;
+  display:inline-flex;align-items:center;gap:7px}
+.foot .foot-more a::after{content:"\2192";transition:transform .2s ease}
+.foot .foot-more a:hover{color:#fff}
+.foot .foot-more a:hover::after{transform:translateX(3px)}
+@media(prefers-reduced-motion:reduce){
+  .foot .foot-more a::after{transition:none}
+  .foot .foot-more a:hover::after{transform:none}
+}
 .footbar{
   margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.13);
   display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;color:#93a2b5;font-size:.82rem;
