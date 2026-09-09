@@ -179,11 +179,19 @@ from the host it is served on.
   `management@` (see docs/megacity-studio.md). All three must be watched —
   nothing is copied to the agency, and with the database unbound the email is
   the only record an enquiry ever existed.
-- **Email sender**: add `megacityproperties.co.uk` in Resend, publish its
-  DKIM records and merge its SPF include into the ONE existing `v=spf1`
-  record (never add a second one), then change `MEGACITY_FROM` in
-  `worker.js` and `STUDIO_FROM` in `worker/studio/email.js` to an
-  `@megacityproperties.co.uk` address.
+- **Email sender.** The site currently sends as
+  `hello@billydigitals.com` (`MEGACITY_FROM` in `worker.js`, `STUDIO_FROM` in
+  `worker/studio/email.js`). To send as the agency, add the domain in Resend
+  **as a subdomain** — `send.megacityproperties.co.uk` — and publish the
+  records Resend gives you under that subdomain only.
+
+  Do it that way round rather than merging an include into the root `v=spf1`.
+  The existing record is correct and already covers Microsoft 365
+  (`include:secureserver.net` → `spf-0.secureserver.net` →
+  `include:spf.protection.outlook.com`), it is close enough to SPF's ten-lookup
+  limit to be worth leaving alone, and a subdomain sender cannot affect the
+  mailboxes at all. Never add a second `v=spf1` record to the root: two records
+  is an SPF failure, and it would break outbound mail for all three inboxes.
 - Zoopla, Facebook and LinkedIn all link to the home page, which has not
   changed. Nothing to update there.
 - Expect a few weeks of small movement in rankings, as with any redesign on

@@ -50,6 +50,16 @@ production branch to `main` and stop non-production branches deploying to
 production. Until that is done, run `node scripts/deploy-verify.mjs` after any
 push, and before showing the site to anyone.
 
+**Caught in the act, 9 Sep 19:13 UTC.** A push to
+`claude/megacity-properties-redesign-nt4l0n` (commit `0be6a50`, stamp
+`45d2b27f1541`) went to production while `main` was at `39c7ff4`
+(stamp `7948bfeb18f9`). `version.json` on billydigitals.com read
+`45d2b27f1541` — a stamp that exists in no commit on `main`. So this is not an
+inference from the two histories any more: **a push to any branch deploys to
+production.** Fix the production-branch setting BEFORE a client's own domain is
+routed to this Worker, or a stray branch push puts the wrong tree on the
+client's live site.
+
 `node scripts/stamp.mjs --check` fails if `version.json` is stale.
 `deploy-verify.mjs` compares the live bytes with this working copy and exits
 non-zero on an older build — billydigitals.com has twice served a month-old
