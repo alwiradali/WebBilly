@@ -1,0 +1,190 @@
+<!-- checkout -->
+<div class="screen" id="checkoutScreen" role="dialog" aria-modal="true" aria-label="Checkout">
+  <div class="co-bar">
+    <img class="co-rose" src="../../assets/rachel/rose-ornament.webp" alt="" width="315" height="361" aria-hidden="true">
+    <div class="nav-in">
+      <a class="brand" href="index.html" id="coHome">
+        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+      </a>
+      <button class="closebtn" id="cox" type="button" aria-label="Back to your cart">&times;</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="cogrid">
+      <form id="coform" onsubmit="return false">
+        <h2>Checkout</h2>
+
+        <div class="cofield"><label for="coEmail">Email Address</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
+            <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
+
+        <div class="cofield"><label for="coAddr">Delivery Address</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
+
+        <div class="corow">
+          <div class="cofield"><label for="coCity">City</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 21V8l6-4v17M10 21V9l8 3v9M3 21h18"/><path d="M13 14h2M13 17h2"/></svg>
+              <input id="coCity" type="text" autocomplete="address-level2" placeholder="Manchester" required name="city" autocapitalize="words"></div></div>
+          <div class="cofield"><label for="coPost">Postcode</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
+              <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
+        </div>
+
+        <div id="coCardLive" hidden>
+          <div class="cofield"><label for="co-card">Card Number</label>
+            <div class="coinput"><svg viewBox="0 0 24 24"><path d="M2 6h20v12H2z"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+              <div class="stripe-el" id="co-card"></div></div></div>
+          <div class="corow">
+            <div class="cofield"><label for="co-exp">Expiry Date</label>
+              <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+                <div class="stripe-el" id="co-exp"></div></div></div>
+            <div class="cofield"><label for="co-cvc">CVC</label>
+              <div class="coinput"><svg viewBox="0 0 24 24"><path d="M6 11h12v9H6z"/><path d="M9 11V7.5a3 3 0 0 1 6 0V11"/></svg>
+                <div class="stripe-el" id="co-cvc"></div></div></div>
+          </div>
+        </div>
+
+        <div class="copay" id="coCardOff">
+          <b>Card payment is not switched on yet</b>
+          <p>Rachel's Stripe account has not been connected, so the card boxes are not live.
+             Press Pay Securely and your order goes straight to her instead, and she will confirm the
+             price and send you a payment link the same day.</p>
+        </div>
+
+        <button class="btn burg cobtn" id="coPay" type="submit">
+          <svg viewBox="0 0 24 24"><path d="M6 11h12v9H6z"/><path d="M9 11V7.5a3 3 0 0 1 6 0V11"/></svg>
+          Pay Securely
+        </button>
+        <p class="conote" id="coNote">Card details are entered on Stripe's own secure fields, so they never touch this website.</p>
+      </form>
+
+      <aside class="cosummary">
+        <h3>Order Summary</h3>
+        <div id="coLines"></div>
+        <div style="margin-top:16px">
+          <div class="cotot"><span>Subtotal</span><b id="coSub">£0</b></div>
+          <div class="cotot"><span>Delivery</span><b>Free</b></div>
+          <div class="cotot grand"><span>Total</span><b id="coTot">£0</b></div>
+        </div>
+        <div class="cosecure">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+          Secured by Stripe · PCI compliant
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- product page -->
+<div class="screen" id="pdp" role="dialog" aria-modal="true" aria-label="Product">
+  <div class="screen-bar">
+    <div class="nav-in">
+      <a class="brand" href="index.html" id="pdpHome">
+        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+      </a>
+      <button class="closebtn" id="pdpx" type="button" aria-label="Back to the collection">&times;</button>
+    </div>
+  </div>
+  <div class="pdp">
+    <div class="pdp-ph"><img id="pdpImg" alt=""></div>
+    <div class="pdp-bd">
+      <h2 id="pdpName"></h2>
+      <p class="pdp-price" id="pdpPrice"></p>
+      <div class="orn left" aria-hidden="true">
+        <svg viewBox="0 0 64 16"><path d="M2 8h18M44 8h18M24 8c2-4 5-4 5 0s-3 4-5 0zm16 0c-2-4-5-4-5 0s3 4 5 0z"/><circle cx="32" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <p class="desc" id="pdpDesc"></p>
+      <div class="qtyrow">
+        <div class="stepper"><button type="button" id="pdpMinus" aria-label="One fewer">&minus;</button><i id="pdpQty">1</i><button type="button" id="pdpPlus" aria-label="One more">+</button></div>
+      </div>
+      <button class="btn" id="pdpAdd" type="button">Add to Cart</button>
+      <button class="btn burg" id="pdpBuy" type="button">Buy Now</button>
+      <div class="assur">
+        <div><span><svg viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l4 3v3h-8z" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></span>Free Delivery</div>
+        <div><span><svg viewBox="0 0 24 24"><path d="M12 5c-3 0-5 1.8-5 4.3 0 2.1 1.7 3.8 3.9 4.1-1.7-.5-2.7-1.7-2.7-3.3 0-1.7 1.6-2.9 3.8-2.9s3.8 1.2 3.8 2.9c0 1.6-1 2.8-2.7 3.3 2.2-.3 3.9-2 3.9-4.1C17 6.8 15 5 12 5z"/><path d="M12 13.5V20"/></svg></span>Hand-Arranged</div>
+        <div><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 1.8" stroke-linecap="round"/></svg></span>Same-Day Freshness</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- cart -->
+<div class="screen" id="cart" role="dialog" aria-modal="true" aria-label="Your cart">
+  <div class="screen-bar">
+    <div class="nav-in">
+      <a class="brand" href="index.html" id="cartHome">
+        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+      </a>
+      <button class="closebtn" id="cartx" type="button" aria-label="Close the cart">&times;</button>
+    </div>
+  </div>
+  <div class="wrap" style="padding-block:clamp(34px,5vw,60px)">
+    <h2>Your Cart</h2>
+    <div class="orn left" aria-hidden="true">
+      <svg viewBox="0 0 64 16"><path d="M2 8h18M44 8h18M24 8c2-4 5-4 5 0s-3 4-5 0zm16 0c-2-4-5-4-5 0s3 4 5 0z"/><circle cx="32" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg>
+    </div>
+    <div class="cartgrid" style="margin-top:34px">
+      <div id="cartItems"></div>
+      <aside class="summary" id="cartSummary">
+        <h3>Order Summary</h3>
+        <div class="orn" style="margin-top:10px" aria-hidden="true">
+          <svg viewBox="0 0 64 16"><path d="M2 8h18M44 8h18M24 8c2-4 5-4 5 0s-3 4-5 0zm16 0c-2-4-5-4-5 0s3 4 5 0z"/><circle cx="32" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div style="margin-top:18px">
+          <div class="sline"><span>Subtotal</span><b id="cSub">£0</b></div>
+          <div class="sline"><span>Delivery</span><b>Free</b></div>
+          <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
+        </div>
+        <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
+        <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- rose list popup -->
+<div class="pop" id="pop" role="dialog" aria-modal="true" aria-label="Join the Rose List">
+  <div class="popcard">
+    <button class="x" id="popx" type="button" aria-label="Close">&times;</button>
+    <div class="popin">
+      <h3>Wait, before you go!</h3>
+      <div class="prule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l1.4 4.6L12 6l-4.6 1.4L6 12 4.6 7.4 0 6l4.6-1.4z"/></svg></div>
+      <p>Get 10% off your first bouquet.<br>Enter your email to claim it.</p>
+      <form id="popform">
+        <input type="email" id="popmail" placeholder="Enter your email" aria-label="Your email address" required name="email" autocomplete="email" inputmode="email">
+        <button class="btn burg" type="submit">Claim My Discount</button>
+      </form>
+      <p id="popmsg" style="margin-top:10px;font-size:.86rem"></p>
+    </div>
+  </div>
+</div>
+
+<!-- overlays -->
+<div class="sharesheet" id="sharesheet" role="dialog" aria-modal="true" aria-label="Share">
+  <div class="sharecard">
+    <button class="x" type="button" id="shx" aria-label="Close">&times;</button>
+    <h3 id="shtitle">Share this</h3>
+    <p class="sb">Send it to someone who needs to see it.</p>
+    <div class="shgrid">
+      <a id="sh-wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2 .9c.2.1.4.2.4.3.1.2.1.7-.1 1.4z"/></svg>WhatsApp</a>
+      <a id="sh-fb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</a>
+      <a id="sh-x" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18.2 2h3.3l-7.2 8.3L22.8 22h-6.6l-5.2-6.8L5.1 22H1.8l7.7-8.8L1.5 2h6.8l4.7 6.2L18.2 2zm-1.2 18h1.8L7.1 3.9H5.2L17 20z"/></svg>X</a>
+      <a id="sh-mail"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>
+      <button type="button" id="sh-native"><svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.1c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8c-.5-.5-1.2-.8-2-.8-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>More apps</button>
+      <button type="button" id="sh-ig"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.1a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z"/></svg>Instagram</button>
+      <button type="button" id="sh-copy"><svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>Copy link</button>
+      <a id="sh-sms"><svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM7 9h10v2H7V9zm0 4h7v2H7v-2z"/></svg>Messages</a>
+    </div>
+  </div>
+</div>
+
+<div class="cbar" id="cbar" role="region" aria-label="Cookie choice">
+  <p><b>A quick one about cookies.</b> I'd like to use Google Analytics and the Meta pixel to see which
+    flowers people love and which posts bring them here. Nothing loads until you say yes.</p>
+  <div class="cb">
+    <button class="btn sm" type="button" id="cok">Allow</button>
+    <button class="btn sm ghost" type="button" id="cno">No thanks</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
