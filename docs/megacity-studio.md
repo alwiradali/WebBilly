@@ -312,6 +312,22 @@ which the listing pages already carry.
 | Route | Purpose |
 |---|---|
 | `POST /api/megacity-viewing`, `-contact`, `-maintenance`, `-apply`, `-landlord` | email the office **and** insert an `enquiries` row + a notification. Bodies may carry `listingId` and `attr` (`{utm_source, utm_medium, utm_campaign, referrer, landing}`, captured by the site script) |
+### Properties that stay on the website
+
+Walid asked for properties 10ninety can never take off the site. `listings.pinned`
+(migration `0005_listings_pinned.sql`) is that flag, set by **Keep on the website**
+on the listing's Publish tab and shown as a "Kept" pill in the listings table.
+
+Today nothing can remove a listing — there is no 10ninety sync, so every listing
+is ours. What the flag does now: `DELETE /api/studio/listings/:id` refuses with a
+409 while the listing is pinned, and a duplicate does not inherit the pin.
+
+**The rule the sync adapter must obey when it is written** (`worker/studio/tenninety.js`,
+blocked on the Web API key): a pinned listing is never deleted, hidden,
+unpublished or withdrawn by a sync, and none of its fields are overwritten — a
+sync may only append to `external_json`. Write the adapter against that sentence;
+it is the reason the column exists before the adapter does.
+
 **Which inbox each form reaches** — `notifyTo(env, kind)` in
 `worker/studio/enquiries.js`. The office runs three Microsoft 365 mailboxes and
 each form goes to the team that acts on it:

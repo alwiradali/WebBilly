@@ -167,45 +167,19 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   $$(".shead").forEach(el => gsap.fromTo(el, { autoAlpha: 0, y: 46 },
     { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out",
       scrollTrigger: { trigger: el, start: "top 84%" } }));
-  gsap.fromTo(".svc", { autoAlpha: 0, y: 54 },
-    { autoAlpha: 1, y: 0, duration: .9, ease: "power3.out", stagger: .12,
-      scrollTrigger: { trigger: ".svc-grid", start: "top 82%" } });
+  /* homes: inner-image parallax. This one is real, but only on the tenants
+     page — one script serves all 27, so ask before animating rather than
+     letting GSAP warn on every other page. */
+  if (document.querySelector(".homes-grid")) {
+    $$("[data-par] img").forEach(img => gsap.fromTo(img, { yPercent: -9 }, {
+      yPercent: 0, ease: "none",
+      scrollTrigger: { trigger: img.closest(".home"), start: "top bottom", end: "bottom top", scrub: true },
+    }));
+    gsap.fromTo(".home", { autoAlpha: 0, y: 60 },
+      { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out", stagger: .08,
+        scrollTrigger: { trigger: ".homes-grid", start: "top 84%" } });
+  }
 
-  /* city band scale + copy */
-  gsap.fromTo("#cityband video, #cityband .poster", { scale: 1.16 }, {
-    scale: 1, ease: "none",
-    scrollTrigger: { trigger: "#cityband", start: "top bottom", end: "bottom top", scrub: true },
-  });
-  gsap.fromTo(".band-copy > *", { autoAlpha: 0, y: 40 },
-    { autoAlpha: 1, y: 0, duration: 1, stagger: .12, ease: "power3.out",
-      scrollTrigger: { trigger: "#cityband", start: "top 55%" } });
-
-  /* The four steps used to sit on a pinned horizontal rail: the page stopped
-     moving down and the cards slid sideways instead. It was already off on
-     touch because the swipe was unreliable, and on desktop it took the scroll
-     away from the reader in the middle of the page, which is the thing that
-     makes people give up. They are a plain grid now and just reveal in place. */
-  gsap.fromTo(".step", { autoAlpha: 0, y: 40 },
-    { autoAlpha: 1, y: 0, duration: .85, stagger: .1, ease: "power3.out",
-      scrollTrigger: { trigger: ".proc-track", start: "top 82%" } });
-
-  /* homes: inner-image parallax */
-  $$("[data-par] img").forEach(img => gsap.fromTo(img, { yPercent: -9 }, {
-    yPercent: 0, ease: "none",
-    scrollTrigger: { trigger: img.closest(".home"), start: "top bottom", end: "bottom top", scrub: true },
-  }));
-  gsap.fromTo(".home", { autoAlpha: 0, y: 60 },
-    { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out", stagger: .08,
-      scrollTrigger: { trigger: ".homes-grid", start: "top 84%" } });
-
-  /* split + duo + creds + contact reveals */
-  gsap.fromTo(".split-copy > *", { autoAlpha: 0, y: 34 },
-    { autoAlpha: 1, y: 0, duration: .9, stagger: .1, ease: "power3.out",
-      scrollTrigger: { trigger: ".split", start: "top 62%" } });
-  gsap.fromTo("#homeVideo, .split-media .poster", { yPercent: -6 }, {
-    yPercent: 0, ease: "none",
-    scrollTrigger: { trigger: ".split", start: "top bottom", end: "bottom top", scrub: true },
-  });
   /* landlord service sections */
   $$(".lsec").forEach(sec => {
     gsap.fromTo(sec.querySelectorAll(".lsec-copy > *"), { autoAlpha: 0, y: 34 },
@@ -219,9 +193,6 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   gsap.fromTo(".cred", { autoAlpha: 0, y: 34 },
     { autoAlpha: 1, y: 0, duration: .8, stagger: .09, ease: "power3.out",
       scrollTrigger: { trigger: ".creds", start: "top 80%" } });
-  gsap.fromTo(".contact h2", { autoAlpha: 0, y: 50 },
-    { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out",
-      scrollTrigger: { trigger: ".contact", start: "top 78%" } });
   gsap.fromTo(".footer-word", { yPercent: 42 }, {
     yPercent: 0, ease: "none",
     scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true },

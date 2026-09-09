@@ -586,7 +586,7 @@
     return {
       cover: l.cover && l.cover.thumb ? '<img class="st-thumb" src="' + esc(l.cover.thumb) + '" alt="" loading="lazy">' : '<span class="st-thumb st-thumb--ph" aria-hidden="true">' + I.image + "</span>",
       sub: [l.ref, placeTxt].filter(Boolean).join(" · "),
-      pill: ls.bin ? '<span class="st-pill st-pill--bin">In the Bin</span>' : statusPill(l.status) + (l.hidden ? ' <span class="st-pill st-pill--hidden">Hidden</span>' : ""),
+      pill: ls.bin ? '<span class="st-pill st-pill--bin">In the Bin</span>' : statusPill(l.status) + (l.hidden ? ' <span class="st-pill st-pill--hidden">Hidden</span>' : "") + (l.pinned ? ' <span class="st-pill st-pill--pin" title="Stays on the website: a sync cannot remove it">Kept</span>' : ""),
       src: l.source && l.source !== "manual" ? '<span class="st-src">' + esc(l.source) + "</span>" : "",
       rent: l.rentPcm != null ? money(l.rentPcm) + " pcm" : "",
       bb: [l.bedrooms != null ? l.bedrooms + " bed" : "", l.bathrooms ? l.bathrooms + " bath" : ""].filter(Boolean).join(" · "),
@@ -758,7 +758,7 @@
   }
   function headHtml() {
     var d = ed.doc;
-    return '<div class="st-ehead">' + statusPill(d.status) + (d.hidden ? '<span class="st-pill st-pill--hidden">Hidden from the website</span>' : "") + (d.source && d.source !== "manual" ? '<span class="st-src" title="Read-only once the 10ninety feed is live">' + esc(d.source) + "</span>" : "") +
+    return '<div class="st-ehead">' + statusPill(d.status) + (d.hidden ? '<span class="st-pill st-pill--hidden">Hidden from the website</span>' : "") + (d.pinned ? '<span class="st-pill st-pill--pin">Kept on the website</span>' : "") + (d.source && d.source !== "manual" ? '<span class="st-src" title="Read-only once the 10ninety feed is live">' + esc(d.source) + "</span>" : "") +
       '<span class="st-hint">Updated ' + esc(rel(d.updatedAt)) + "</span></div>";
   }
   function renderEditor() {
@@ -1196,7 +1196,14 @@
         '<a class="st-btn" href="' + esc(PUB.listing(encodeURIComponent(d.id))) + '" target="_blank" rel="noopener">' + I.eye + 'View on the website</a></div>' +
         '<div class="st-form" style="margin-top:16px"><div class="st-field c6"><label class="st-label" for="edStatus">Status</label><div class="st-select"><select id="edStatus" data-status>' + optList("status").filter(function (o) { return o.value !== "draft"; }).map(function (o) { return '<option value="' + esc(o.value) + '"' + (o.value === d.status ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div></div>" +
         '<div class="st-field c6" style="justify-content:flex-end"><button type="button" class="st-btn" data-eact="unpublish">Take off the website</button></div></div></section>' : "") +
-      '<section class="st-card"><div class="st-card-head"><div><h2>Visibility</h2><p>Hide the listing without taking it off — handy while the photos are being redone.</p></div></div>' + fld({ k: "hidden", label: "Hidden from the website", type: "toggle" }) + "</section>" + shareKitCardHtml();
+      '<section class="st-card"><div class="st-card-head"><div><h2>Visibility</h2><p>Hide the listing without taking it off — handy while the photos are being redone.</p></div></div>' +
+      fld({ k: "hidden", label: "Hidden from the website", type: "toggle" }) +
+      /* Walid asked for properties that stay put. Nothing syncs from 10ninety
+         yet, but when it does this flag is what stops it removing them, and it
+         also refuses the delete button here. */
+      fld({ k: "pinned", label: "Keep on the website", type: "toggle",
+            hint: "Stays on the site permanently: a 10ninety sync can never remove, hide or overwrite it, and it cannot be deleted until this is switched off." }) +
+      "</section>" + shareKitCardHtml();
   }
   function editorAction(act, btn) {
     var E = ed; if (!E) return;

@@ -140,7 +140,7 @@ button{font:inherit;cursor:pointer}
 .asearch button:hover{background:#fff;color:var(--navy)}
 
 /* ── burger + mega menu ─────────────────────────────────────────────── */
-.burger{width:42px;height:42px;border:0;background:transparent;display:grid;place-content:center;gap:5px;padding:0;flex:none}
+.burger{width:44px;height:44px;border:0;background:transparent;display:grid;place-content:center;gap:5px;padding:0;flex:none}
 .burger span{display:block;width:22px;height:2px;background:var(--navy-ink);border-radius:2px;transition:transform .3s,opacity .25s}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
@@ -645,7 +645,13 @@ form.enq{display:grid;gap:18px;align-content:start}
      centred: without this they inherit the left-aligned flex above and the
      brand marks slide off to one side of the circle */
   .footer .foot-grid .foot-social a{display:grid;place-items:center;padding:0}
-  .foot-legal a,.footer-in a{min-height:44px;display:inline-flex;align-items:center}
+  .foot-legal a,.footer-in a{min-height:44px;min-width:44px;display:inline-flex;
+    align-items:center;justify-content:center}
+  /* the breadcrumb back to the property list was 26px tall */
+  .pd-crumb a{min-height:44px;display:inline-flex;align-items:center}
+  /* the logo (37px once the strapline stacks) and standalone read-on links */
+  .brand{min-height:44px}
+  .jr-link{min-height:44px;display:inline-flex;align-items:center}
   .foot-legal{display:flex;flex-wrap:wrap;gap:0 18px}
   .nav-find{min-width:44px;min-height:44px;justify-content:center}
   .nd-panel a,.nd-grid a{min-height:44px;display:flex;align-items:center}
@@ -1915,8 +1921,10 @@ body.mm-open{overflow:hidden}
 @media (max-width:380px){
   .brand-strap{display:none}
   .nav{gap:8px;padding-left:11px;padding-right:11px}
-  .nav-search{width:42px;height:42px}
-  .burger{width:38px}
+  .nav-search{width:44px;height:44px}
+  /* was 38px to save room in the bar; on a phone this is the ONLY way to
+     open the menu, so it keeps the 44px hit area and the bar gives way. */
+  .burger{width:44px}
 }
 
 .tools-reset-wrap{margin-top:26px}
@@ -2052,7 +2060,7 @@ body.sl-open{overflow:hidden}
 
 /* ── floating valuation pill ─────────────────────────────────────────── */
 .fab-val{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:205;
-  display:inline-flex;align-items:center;gap:9px;background:var(--grad);color:#fff;
+  display:inline-flex;align-items:center;min-height:44px;gap:9px;background:var(--grad);color:#fff;
   border-radius:999px;padding:15px 21px;font:700 13.4px/1 var(--ff-u);letter-spacing:.05em;
   box-shadow:0 12px 30px rgba(12,14,34,.35);
   transition:opacity .3s ease,transform .3s ease}

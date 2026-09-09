@@ -218,6 +218,8 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .st-pill--withdrawn{background:var(--bad-soft);color:var(--bad)}
 .st-pill--bin{background:#F1E9E9;color:#7A2E28}
 .st-pill--hidden{background:var(--sky-soft);color:var(--blue-deep)}
+/* "Kept on the website": a sync can never remove this one */
+.st-pill--pin{background:#E8F6EC;color:#1B6B37}
 .st-pill--tour{background:var(--sky-soft);color:var(--blue-deep)}
 .st-pill--tour::before{display:none}
 .st-src{display:inline-flex;align-items:center;font:600 10.5px/1 var(--ff-u);letter-spacing:.08em;text-transform:uppercase;padding:4px 6px;border-radius:5px;background:var(--sky-soft);color:var(--blue-deep)}

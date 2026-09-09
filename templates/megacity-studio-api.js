@@ -303,7 +303,7 @@
     function listing(o) {
       var media = (o.photos || []).map(function (p, i) { return photo(o.id, p[0], i, p[1], p[2]); });
       var base = {
-        id: o.id, source: "manual", externalId: null, ref: null, status: "live", hidden: false,
+        id: o.id, source: "manual", externalId: null, ref: null, status: "live", hidden: false, pinned: !!o.pinned,
         title: "", headline: null, type: null, letType: null, furnishing: null,
         rentPcm: null, deposit: null, bills: null, billsNote: null,
         availability: null, availableFrom: null, minTerm: null, councilTaxBand: null, epcRating: null,

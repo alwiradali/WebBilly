@@ -12,6 +12,9 @@ const FIELDS = {
   ref: ["ref", (v) => clampStr(v, 40)],
   legacyId: ["legacy_id", (v) => clampStr(v, 40)],
   hidden: ["hidden", (v) => toBool(v) ?? 0],
+  /* "Keep on the website": a sync may never remove, hide or overwrite this
+     listing, and it cannot be deleted here until the pin comes off. */
+  pinned: ["pinned", (v) => toBool(v) ?? 0],
   title: ["title", (v) => clampStr(v, 160)],
   headline: ["headline", (v) => clampStr(v, 160)],
   type: ["type", (v) => opt("type", v)],
@@ -98,7 +101,7 @@ function toColumns(body) {
 export function rowToListing(r, media, tour) {
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
   return {
-    id: r.id, source: r.source, externalId: r.external_id, legacyId: r.legacy_id || null, ref: r.ref, status: r.status, hidden: !!r.hidden,
+    id: r.id, source: r.source, externalId: r.external_id, legacyId: r.legacy_id || null, ref: r.ref, status: r.status, hidden: !!r.hidden, pinned: !!r.pinned,
     title: r.title, headline: r.headline, type: r.type, letType: r.let_type, furnishing: r.furnishing,
     rentPcm: r.rent_pcm, deposit: r.deposit, bills: r.bills, billsNote: r.bills_note,
     availability: r.availability, availableFrom: r.available_from, minTerm: r.min_term,
@@ -118,7 +121,7 @@ export function rowToListing(r, media, tour) {
 
 function summaryRow(r) {
   return {
-    id: r.id, source: r.source, ref: r.ref, status: r.status, hidden: !!r.hidden, title: r.title,
+    id: r.id, source: r.source, ref: r.ref, status: r.status, hidden: !!r.hidden, pinned: !!r.pinned, title: r.title,
     area: r.area, town: r.town, rentPcm: r.rent_pcm, bedrooms: r.bedrooms, bathrooms: r.bathrooms, type: r.type, letType: r.let_type,
     cover: r.cover_thumb || r.first_thumb ? { thumb: mediaUrl(r.cover_thumb || r.first_thumb) } : null,
     mediaCount: Number(r.media_count) || 0,
@@ -210,7 +213,7 @@ export async function patch(c) {
   }
   if (row.source === "tenninety") {
     // Synced listings: only the website "extras" may change here; the rest lives in 10ninety.
-    const allowed = ["hidden", "parkingSpaces", "parkingNote", "seoTitle", "seoDescription", "coverMediaId", "headline", "home", "pets"];
+    const allowed = ["hidden", "pinned", "parkingSpaces", "parkingNote", "seoTitle", "seoDescription", "coverMediaId", "headline", "home", "pets"];
     for (const k of Object.keys(body)) if (!allowed.includes(k) && k !== "updatedAt") throw new HttpError(400, `"${k}" is managed in 10ninety for this listing.`);
   }
   const cols = toColumns(body);
@@ -233,6 +236,12 @@ export async function patch(c) {
 
 export async function remove(c) {
   const row = await mustGet(c.db, c.params.id, { allowDeleted: true });
+  /* The whole point of the pin: this property stays on the website. Refuse the
+     delete rather than asking twice — an accident here is a listing gone from
+     a client's site, and the 10ninety sync will read the same flag. */
+  if (row.pinned) {
+    throw new HttpError(409, "This property is set to stay on the website. Turn off \u201CKeep on the website\u201D on the Publish tab first.");
+  }
   if (c.url.searchParams.get("hard") === "1") {
     if (c.user.role !== "owner") throw new HttpError(403, "Only an owner can delete a listing for good.");
     await deleteAllForListing(c.env, c.db, row.id, c.url.origin);
@@ -255,7 +264,7 @@ export async function restore(c) {
 export async function duplicate(c) {
   const row = await mustGet(c.db, c.params.id);
   const id = await uniqueId(c.db, row.id + "-copy");
-  const skip = new Set(["id", "status", "hidden", "deleted_at", "cover_media_id", "external_id", "legacy_id", "source", "synced_at", "published_at", "created_at", "updated_at", "created_by", "updated_by", "ref", "external_json"]);
+  const skip = new Set(["id", "status", "hidden", "pinned", "deleted_at", "cover_media_id", "external_id", "legacy_id", "source", "synced_at", "published_at", "created_at", "updated_at", "created_by", "updated_by", "ref", "external_json"]);
   const cols = {};
   for (const k of Object.keys(row)) if (!skip.has(k)) cols[k] = row[k];
   const now = nowIso();
