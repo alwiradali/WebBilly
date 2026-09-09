@@ -181,9 +181,15 @@ migrations_dir = "migrations/heatfix"
 [env.heatfix.assets]
 directory = "."
 binding = "ASSETS"
-not_found_handling = "404-page"
-# "/api/*" is what makes the back office reachable at all: with
-# not_found_handling set, the asset router answers unmatched paths itself and
-# never falls through to the Worker. "/" lets his site own the root of his own
-# domain rather than serving the Billy Digitals homepage.
-run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
+# EVERY path goes to the Worker first on this domain, and that is not the same
+# choice as the top-level config's path list. worker.js owns the whole of the
+# HeatFix site: serveClient maps clean URLs (/book, /faqs, /boilers-and-
+# radiators, /blog/<slug>, /office, /i/<invoice>) onto templates/heatfix-*.html
+# and falls through to env.ASSETS.fetch for real files. Hand the asset router
+# anything other than those files and it answers "/book" itself, finds no
+# /book asset, and serves the Billy Digitals 404 page.
+#
+# That is exactly what happened when this block was first restored with the
+# top-level path list copied into it: every page except "/" went 404 and /blog
+# served the Billy Digitals blog. Do not narrow this to a list.
+run_worker_first = true
