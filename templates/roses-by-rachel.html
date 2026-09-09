@@ -29,7 +29,7 @@
 {"@context":"https://schema.org","@type":"Florist","name":"Roses by Rachel","telephone":"+447306063563","sameAs":["https://www.instagram.com/rosesbyrachelx"],
 "description":"Manchester florist. Hand-arranged roses and bouquets for weddings, subscriptions, corporate contracts and Manchester Airport arrivals.",
 "url":"https://rosesbyrachel.co.uk/","image":"https://rosesbyrachel.co.uk/assets/rachel/hero-bouquet.webp",
-"logo":"https://rosesbyrachel.co.uk/assets/rachel/logo-lockup.png","priceRange":"££","currenciesAccepted":"GBP",
+"logo":"https://rosesbyrachel.co.uk/assets/rachel/logo-official.png","priceRange":"££","currenciesAccepted":"GBP",
 "paymentAccepted":"Visa, Mastercard, American Express, Apple Pay, Google Pay, Bank transfer",
 "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressRegion":"Greater Manchester","addressCountry":"GB"},
 "areaServed":[{"@type":"City","name":"Manchester"},{"@type":"Place","name":"Manchester Airport"},{"@type":"City","name":"Stockport"},{"@type":"City","name":"Salford"}],
@@ -119,9 +119,17 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .nav.stuck{box-shadow:0 10px 30px -22px rgba(106,46,58,.5)}
 .nav-in{max-width:1240px;margin:0 auto;padding:11px 26px;display:flex;align-items:center;gap:20px}
 .brand{display:flex;align-items:center;gap:12px;margin-right:auto;flex:none}
-.brand img.mk{width:46px;height:auto}
-.brand img.wd{width:132px;height:auto;display:none}
-@media(min-width:1180px){.brand img.wd{display:block}}
+.brand img.mk{height:44px;width:auto}
+@media(min-width:520px){.brand img.mk{height:52px}}
+@media(min-width:900px){.brand img.mk{height:64px}}
+/* On a narrow phone the order button, cart and menu together were wider
+   than the screen, so the menu button sat off the right edge. The button
+   shortens to "Order" and the row tightens until there is room. */
+@media(max-width:600px){
+  .nav-in{padding:9px 14px;gap:10px}
+  .navbtn{padding:11px 16px;font-size:.82rem}
+}
+@media(max-width:400px){ .navbtn{display:none} }
 .navlinks{display:none;gap:20px;margin:0 auto}
 .navlinks a{font-family:var(--ser);font-weight:600;font-size:.78rem;letter-spacing:.15em;
   text-transform:uppercase;color:var(--burg);white-space:nowrap;position:relative;padding:4px 0}
@@ -724,8 +732,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 <nav class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="#top" aria-label="Roses by Rachel, home">
-      <img class="mk" src="../assets/rachel/logo-mark.webp" alt="" width="796" height="603">
-      <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+      <img class="mk" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
     </a>
     <div class="navlinks">
       <a href="#shop">Shop</a>
@@ -777,7 +784,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
           </defs>
           <text><textPath href="#rrRing" startOffset="0">ROSES BY RACHEL &#183; ROSES BY RACHEL &#183; </textPath></text>
         </svg>
-        <img class="rrbadge-mk" src="../assets/rachel/logo-mark-gold.webp" alt="" width="796" height="603" loading="lazy">
+        <img class="rrbadge-mk" src="../assets/rachel/logo-official.webp" alt="" width="557" height="464" loading="lazy">
       </a>
 </header>
 
@@ -1150,7 +1157,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 <footer>
   <div class="wrap">
     <div class="fmain">
-      <img class="m" src="../assets/rachel/logo-mark-gold.webp" alt="Roses by Rachel" width="796" height="603" style="width:96px;height:auto;margin:0 auto">
+      <img class="m" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464" style="width:96px;height:auto;margin:0 auto">
       <div class="fdiv" aria-hidden="true"></div>
       <div class="fcontact">
         <div><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
@@ -1189,8 +1196,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
     <img class="co-rose" src="../assets/rachel/rose-ornament.webp" alt="" width="315" height="361" aria-hidden="true">
     <div class="nav-in">
       <a class="brand" href="#top" id="coHome">
-        <img class="mk" src="../assets/rachel/logo-mark.webp" alt="" width="796" height="603">
-        <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+        <img class="mk" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="cox" type="button" aria-label="Back to your cart">&times;</button>
     </div>
@@ -1267,14 +1273,13 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   <div class="screen-bar">
     <div class="nav-in">
       <a class="brand" href="#top" id="pdpHome">
-        <img class="mk" src="../assets/rachel/logo-mark.webp" alt="" width="796" height="603">
-        <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+        <img class="mk" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="pdpx" type="button" aria-label="Back to the collection">&times;</button>
     </div>
   </div>
   <div class="pdp">
-    <div class="pdp-ph"><img id="pdpImg" src="" alt=""></div>
+    <div class="pdp-ph"><img id="pdpImg" alt=""></div>
     <div class="pdp-bd">
       <h2 id="pdpName"></h2>
       <p class="pdp-price" id="pdpPrice"></p>
@@ -1301,8 +1306,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   <div class="screen-bar">
     <div class="nav-in">
       <a class="brand" href="#top" id="cartHome">
-        <img class="mk" src="../assets/rachel/logo-mark.webp" alt="" width="796" height="603">
-        <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+        <img class="mk" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="cartx" type="button" aria-label="Close the cart">&times;</button>
     </div>
