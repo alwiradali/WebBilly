@@ -388,12 +388,49 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       requestAnimationFrame(() => {
         lay.classList.add("is-open");
         input.focus();
+        fitToKeyboard();
       });
     } else {
       lay.classList.remove("is-open");
+      lay.style.height = "";
       setTimeout(() => { if (!open) lay.hidden = true; }, 260);
     }
   };
+
+  /* On a phone the keyboard covers the page rather than shrinking it, so the
+     bottom of the results sat underneath it with nowhere to scroll to. The
+     overlay is therefore sized to the VISUAL viewport — the part you can
+     actually see — for as long as it is open. */
+  const vv = window.visualViewport;
+  function fitToKeyboard() {
+    if (!vv || !open) return;
+    lay.style.height = Math.round(vv.height) + "px";
+  }
+  if (vv) {
+    vv.addEventListener("resize", fitToKeyboard);
+    vv.addEventListener("scroll", fitToKeyboard);
+  }
+
+  /* And scrolling puts the keyboard away, the way a phone's own search does:
+     you get the whole screen for the results, and tapping the bar brings the
+     keyboard back. Only a real drag counts — a tap that wobbles is not a
+     scroll, or the keyboard would flicker every time someone missed a link. */
+  let touchY = null;
+  lay.addEventListener("touchstart", (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+  lay.addEventListener("touchmove", (e) => {
+    if (touchY === null || document.activeElement !== input) return;
+    if (Math.abs(e.touches[0].clientY - touchY) < 8) return;
+    touchY = null;
+    input.blur();
+  }, { passive: true });
+  lay.addEventListener("touchend", () => { touchY = null; }, { passive: true });
+
+  /* Tapping anywhere on the bar puts it back. This runs inside the tap, which
+     is the only time iOS will reopen a keyboard from script. */
+  lay.querySelector(".sl-bar").addEventListener("click", (e) => {
+    if (e.target.closest(".sl-close")) return;
+    if (document.activeElement !== input) input.focus();
+  });
 
   btn.addEventListener("click", () => setOpen(!open));
   const navEl = $("#nav");

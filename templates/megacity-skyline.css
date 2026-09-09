@@ -1952,9 +1952,18 @@ h1 em, h2 em, h3 em{
 
 
 /* ── site search overlay ──────────────────────────────────────────────── */
-.searchlay{position:fixed;inset:0;z-index:320;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+/* A phone keyboard does not shrink the layout viewport, it covers it, so a
+   full-height overlay leaves the end of the results list underneath the
+   keyboard with nowhere left to scroll. The fix for that is in
+   megacity-skyline.js, which sizes this box from visualViewport while it is
+   open — the height below is only the baseline before any of that runs.
+   dvh instead of vh so browser chrome is accounted for, and height rather than
+   `inset:0` so the dimension JS drives is the one stated here. */
+.searchlay{position:fixed;left:0;right:0;top:0;height:100vh;height:100dvh;
+  z-index:320;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;
   background:linear-gradient(165deg,rgba(12,14,34,.97) 0%,rgba(27,53,96,.96) 55%,rgba(17,80,111,.95) 100%);
-  backdrop-filter:blur(10px);padding:calc(30px + env(safe-area-inset-top,0px)) var(--gut) 60px;
+  backdrop-filter:blur(10px);
+  padding:calc(30px + env(safe-area-inset-top,0px)) var(--gut) calc(60px + env(safe-area-inset-bottom,0px));
   opacity:0;transition:opacity .26s ease}
 .searchlay.is-open{opacity:1}
 body.sl-open{overflow:hidden}
