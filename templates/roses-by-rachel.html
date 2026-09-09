@@ -178,15 +178,24 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
    the middle holds the logo, the right holds the controls, and the left is
    empty on purpose so the logo sits truly centred. The links run underneath,
    centred on the same axis. */
+/* Hidden until the header has three real columns to hold. */
+.navside{display:none}
 @media(min-width:1060px){
-  .nav-in{grid-template-columns:1fr auto 1fr;row-gap:2px;padding:8px 22px 4px}
+  .nav-in{grid-template-columns:1fr auto 1fr;row-gap:0;padding:4px 22px 2px}
+  .navside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:3px;
+    justify-self:start;max-width:22ch}
+  .navtel{font-family:var(--ser);font-weight:600;font-size:.94rem;letter-spacing:.06em;
+    color:var(--burg)}
+  .navtel:hover{color:var(--gold-dk)}
+  .navsep{width:26px;height:1px;background:var(--gold-fade)}
+  .navwhere{font-family:var(--ui);font-size:.7rem;line-height:1.45;color:var(--burg-soft)}
   .brand{grid-column:2;grid-row:1;justify-self:center}
   .navutil{grid-column:3;grid-row:1}
   .navlinks{grid-column:1 / -1;grid-row:2;justify-content:center;margin:0;
-    gap:clamp(18px,2.1vw,30px);padding:0 0 8px}
-  .brand img.mk{height:92px}
+    gap:clamp(16px,1.9vw,26px);padding:0 0 6px}
+  .brand img.mk{height:78px}
 }
-@media(min-width:1300px){ .brand img.mk{height:104px} }
+@media(min-width:1300px){ .brand img.mk{height:86px} }
 /* On a narrow phone the order button, cart and menu together were wider
    than the screen, so the menu button sat off the right edge. The button
    shortens to "Order" and the row tightens until there is room. */
@@ -839,6 +848,11 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 <!-- ===================== NAV ===================== -->
 <nav class="nav" id="nav">
   <div class="nav-in">
+    <div class="navside">
+      <a class="navtel" href="tel:+447306063563">07306 063563</a>
+      <span class="navsep" aria-hidden="true"></span>
+      <span class="navwhere">Manchester &amp; delivery across Greater Manchester</span>
+    </div>
     <a class="brand" href="#top" aria-label="Roses by Rachel, home">
       <img class="mk" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
     </a>
