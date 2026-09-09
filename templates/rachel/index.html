@@ -29,7 +29,7 @@
 "description":"Manchester florist. Hand-arranged roses and bouquets for weddings, subscriptions, corporate contracts and Manchester Airport arrivals.",
 "url":"https://rosesbyrachel.co.uk/","image":"https://rosesbyrachel.co.uk/assets/rachel/hero-bouquet.webp",
 "logo":"https://rosesbyrachel.co.uk/assets/rachel/logo-official.png","priceRange":"££","currenciesAccepted":"GBP",
-"paymentAccepted":"Visa, Mastercard, American Express, Apple Pay, Google Pay, Bank transfer",
+"paymentAccepted":"Visa, Mastercard, American Express, Apple Pay, Google Pay",
 "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressRegion":"Greater Manchester","addressCountry":"GB"},
 "areaServed":[{"@type":"City","name":"Manchester"},{"@type":"Place","name":"Manchester Airport"},{"@type":"City","name":"Stockport"},{"@type":"City","name":"Salford"}],
 "makesOffer":[
@@ -270,8 +270,12 @@
       <div><b>Sympathy</b><small>Family tributes</small></div>
     </div>
     <div class="pays" data-fx="reveal" data-fx-delay="110">
-      <span>Visa</span><span>Mastercard</span><span>Amex</span><span>Apple&nbsp;Pay</span>
-      <span>Google&nbsp;Pay</span><span>Klarna</span><span>Bank transfer</span>
+      <!-- Only what Stripe gives a UK account by itself. Klarna and bank
+           transfer each have to be switched on in her dashboard, and a badge
+           for a method the checkout will not offer is a promise it cannot
+           keep. Put them back the day they are turned on. -->
+      <span>Visa</span><span>Mastercard</span><span>Amex</span>
+      <span>Apple&nbsp;Pay</span><span>Google&nbsp;Pay</span>
     </div>
     <p class="paysline">Card payments are handled by <b>Stripe</b>, so your details never touch this website.</p>
   </div>
