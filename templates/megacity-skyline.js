@@ -315,6 +315,15 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
     { t: "Furnished double room, licensed HMO, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-3", k: "room double share hmo salford bills furnished" },
     { t: "Double room, high spec house share, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-5", k: "room double share house salford bills spec" },
     { t: "Large double room, licensed HMO, Salford", d: "Double room \u00b7 bills included", u: "megacity-let-room-7", k: "room double large share hmo salford bills" },
+    { t: "28 North Street, Hyde", d: "House \u00b7 available from 1 August 2027", u: "megacity-let-north-street-hyde", k: "house hyde north street tameside conservatory garden unfurnished" },
+    { t: "5 Carlton Road, Salford", d: "House \u00b7 available from 1 August 2027", u: "megacity-let-carlton-road-5", k: "house salford carlton road m6 furnished share student" },
+    { t: "9 Carlton Road, Salford", d: "House \u00b7 available from 1 August 2027", u: "megacity-let-carlton-road-9", k: "house salford carlton road m6 furnished share student" },
+    { t: "93 Drayton Street, Manchester", d: "Available from 1 August 2027", u: "megacity-let-drayton-street", k: "drayton street manchester m15 hulme furnished" },
+    { t: "Adelphi Apartments", d: "Studio apartment \u00b7 available from 1 August 2027", u: "megacity-let-adelphi-apartments", k: "adelphi apartments studio furnished" },
+    { t: "Apartment 12, Grove House", d: "Apartment \u00b7 available from 1 August 2027", u: "megacity-let-grove-house", k: "grove house apartment flat furnished" },
+    { t: "Apartment 17, 6 Anvil Place", d: "Apartment \u00b7 available from 1 August 2027", u: "megacity-let-anvil-place", k: "anvil place apartment flat balcony" },
+    { t: "Apartment 5, The Rope Works", d: "Apartment \u00b7 available from 1 August 2027", u: "megacity-let-rope-works", k: "rope works apartment flat furnished" },
+    { t: "Apartment 508, 51 Whitworth Street, Manchester", d: "Apartment \u00b7 available from 1 August 2027", u: "megacity-let-whitworth-street", k: "whitworth street manchester m1 city centre apartment flat furnished" },
   ];
 
   /* Homes come from the Studio's live feed when it exists; the list above is

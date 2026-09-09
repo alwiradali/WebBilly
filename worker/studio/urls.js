@@ -49,7 +49,11 @@ for (const k in ROOT_MAP) PATH_TO_SLUG[ROOT_MAP[k]] = k;
 /* the hand-built pages, in sitemap order */
 const PUBLIC_STATIC_SLUGS = ["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "tenant-application-form"];
 /* the five hand-built listing pages: the fallback while the database is empty */
-const STATIC_LET_SLUGS = ["denmark-road", "ladywell-point", "room-3", "room-5", "room-7"];
+/* Walid's own portfolio: these pages ship with the site, so a 10ninety sync
+   can never take them down. See PROJECT-NOTES.md, "properties that stay". */
+const STATIC_LET_SLUGS = ["denmark-road", "ladywell-point", "room-3", "room-5", "room-7",
+  "north-street-hyde", "carlton-road-5", "carlton-road-9", "drayton-street",
+  "adelphi-apartments", "grove-house", "anvil-place", "rope-works", "whitworth-street"];
 /* old-site /property/<id>/ numbers -> our slugs, for the listings we know */
 const LEGACY_LISTINGS = { "226": "denmark-road", "225": "ladywell-point", "102": "room-7", "108": "room-3", "110": "room-5" };
 /* root paths a Studio page may never take */

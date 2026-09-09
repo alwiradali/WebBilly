@@ -930,6 +930,8 @@ form.enq{display:grid;gap:18px;align-content:start}
 .pd-head h1{font:700 clamp(29.68px,3.6vw,47.38px)/1.1 var(--ff-d);color:var(--navy-ink)}
 .pd-price{font:500 clamp(27.56px,3.18vw,39.14px)/1 var(--ff-d);color:var(--navy);margin:16px 0 0}
 .pd-price span{font:600 14.82px/1 var(--ff-u);color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+/* No figure yet: says so at a readable size instead of shouting it like a price. */
+.pd-price--ask{font:600 clamp(19.2px,1.9vw,23.04px)/1.25 var(--ff-u);color:var(--mut)}
 .pd-quick{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
 .pd-quick li{font:500 14.82px/1 var(--ff-u);color:var(--navy);background:var(--surface);
   border:1px solid var(--line);border-radius:999px;padding:9px 14px}
@@ -970,6 +972,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .pd-facts div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:9px}
 .pd-facts dt{font:600 15.39px/1.4 var(--ff-u);color:var(--mut)}
 .pd-facts dd{font:600 15.39px/1.4 var(--ff-u);color:var(--navy-ink);margin:0;text-align:right}
+.pd-facts-note{font:400 14.24px/1.5 var(--ff-u);color:var(--mut);margin:14px 0 0}
 .pd-card--cta{background:var(--grad);border-color:transparent;color:#fff}
 .pd-card--cta h3{color:#fff}
 .pd-card--cta p{font:400 15.95px/1.65 var(--ff-u);color:rgba(255,255,255,.86);margin-bottom:18px}
