@@ -182,6 +182,7 @@
               <option>New boiler survey &amp; quote</option>
               <option>Boiler service</option>
               <option>Landlord gas safety certificate (CP12)</option>
+              <option>Several properties &mdash; landlord or agent quote</option>
               <option>Hot water cylinder</option>
               <option>Gas cooker, hob or fire</option>
               <option>Bathroom, shower or taps</option>
@@ -290,6 +291,24 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 (function(){
   var el = document.getElementById('gsNoBook'), n = (HF_GAS_SAFE_NO || '').trim();
   if (el && n) el.textContent = 'Reg. no. ' + n;
+})();
+
+/* The services page sends landlords and agents here with ?job=portfolio, so the
+   form opens on the right thing instead of asking them to find it. Matching on
+   a keyword rather than the exact label means rewording the option later does
+   not quietly break the link. */
+(function(){
+  var want = new URLSearchParams(location.search).get('job');
+  if (!want) return;
+  var key = { portfolio: 'several properties', cp12: 'landlord gas safety',
+              boiler: 'boiler not working', quote: 'new boiler survey',
+              service: 'boiler service', leak: 'leak or emergency' }[want.toLowerCase()];
+  if (!key) return;
+  var sel = document.getElementById('fJob');
+  if (!sel) return;
+  for (var i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text.toLowerCase().indexOf(key) === 0) { sel.selectedIndex = i; return; }
+  }
 })();
 
 /* nav + dock */

@@ -856,6 +856,50 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
   padding:13px 0;border-bottom:1px solid #e6ebf3}
 .hfduo li:first-child{border-top:1px solid #e6ebf3}
 
+/* ---------- landlords, agents and property companies ----------------------
+   The one dark block on a page of white ones, and deliberately so: everything
+   above it is written for somebody with a broken boiler in their own house,
+   and this is written for somebody holding a spreadsheet of addresses. Making
+   it look like the other sections would bury it in them. */
+.hfport{position:relative;background:var(--hf-navy-d);overflow:hidden;isolation:isolate}
+.hfport::before{content:"";position:absolute;inset:-30% -10% auto auto;width:60vw;height:60vw;
+  background:radial-gradient(circle,rgba(239,91,24,.22),transparent 62%);z-index:-1;pointer-events:none}
+.hfport-in{display:grid;gap:clamp(28px,3.6vw,56px);grid-template-columns:minmax(0,1fr);
+  padding:clamp(52px,6.4vw,96px) 0}
+@media(min-width:960px){
+  .hfport-in{grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);align-items:start}
+}
+.hfport h2{font-family:var(--dis);font-weight:900;color:#fff;text-transform:uppercase;
+  letter-spacing:-.022em;line-height:1.04;font-size:clamp(1.7rem,3.5vw,3rem);margin:14px 0 18px}
+.hfport p{color:#c3d2e6;font-size:clamp(1rem,1.28vw,1.12rem);line-height:1.66;margin:0 0 18px;max-width:58ch}
+.hfport strong,.hfport b{color:#fff}
+.hfport-list{list-style:none;margin:26px 0 0;padding:0}
+.hfport-list li{position:relative;padding:13px 0 13px 30px;border-bottom:1px solid rgba(255,255,255,.13);
+  font-family:var(--dis);font-weight:600;color:#dbe6f4;font-size:clamp(.99rem,1.4vw,1.12rem);line-height:1.4}
+.hfport-list li:first-child{border-top:1px solid rgba(255,255,255,.13)}
+/* A tick drawn in CSS rather than eleven copies of the same inline SVG. */
+.hfport-list li::before{content:"";position:absolute;left:2px;top:calc(50% - 7px);
+  width:7px;height:12px;border:solid var(--hf-orange-l);border-width:0 2.4px 2.4px 0;transform:rotate(43deg)}
+.hfport-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--rl);padding:clamp(24px,2.7vw,36px);backdrop-filter:blur(8px)}
+.hfport-card h3{font-family:var(--dis);font-weight:800;color:#fff;text-transform:uppercase;
+  letter-spacing:.02em;font-size:clamp(1.02rem,1.5vw,1.22rem);margin:0 0 6px}
+.hfport-card>p{font-size:.97rem;margin-bottom:20px}
+.hfport-card ol{list-style:none;counter-reset:pq;margin:0;padding:0}
+.hfport-card li{counter-increment:pq;position:relative;padding:0 0 16px 40px;color:#dbe6f4;
+  font-size:clamp(.97rem,1.25vw,1.04rem);line-height:1.5}
+.hfport-card li::before{content:counter(pq);position:absolute;left:0;top:-1px;
+  width:26px;height:26px;border-radius:50%;background:var(--fire);color:#2c1400;
+  font-family:var(--dis);font-weight:800;font-size:.82rem;display:grid;place-items:center}
+.hfport-card li:last-child{padding-bottom:0}
+.hfport-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hfport-cta .btn{text-decoration:none}
+/* Scoped to .hfport twice on purpose: `.hfport p` above is a class-plus-type
+   selector, so a lone .hfport-note loses to it and the margin never applies —
+   which left the note sitting on top of the last numbered step. */
+.hfport .hfport-note{font-size:.9rem;color:#9fb2ca;line-height:1.55;
+  margin:26px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}
+
 /* ---------- about: ember band, taken straight from the approved artwork ---------- */
 .hfember-band{position:relative;background:var(--hf-navy-d);overflow:hidden;
   padding-top:clamp(84px,10vw,108px)}
