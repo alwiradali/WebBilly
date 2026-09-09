@@ -19,14 +19,16 @@
         sees it:
           node scripts/megacity-dns-check.mjs
 
-   Querying a named nameserver needs `dig` (macOS and Linux have it). Without
-   --ns it uses DNS-over-HTTPS and needs nothing.
+   Needs nothing installed either way: --ns asks the named nameserver through
+   Node's own resolver, and without --ns it uses DNS-over-HTTPS. (It used to
+   shell out to `dig`, which ruled out Windows and any container without
+   dnsutils — including the one this was first run in.)
 
    Exit code is 1 if any record marked CRITICAL is wrong. Those are the ones
    carrying Walid's email: lose one and info@, lettings@ and management@ stop. */
 
 import { readFileSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { Resolver, promises as dnsp } from "node:dns";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -61,19 +63,38 @@ function expected() {
 
 const fqdn = (name) => (name === "@" ? DOM : `${name}.${DOM}`);
 
-function viaDig(name, type) {
-  const args = ["+short", "+time=5", "+tries=2", type, fqdn(name)];
-  if (ns) args.unshift("@" + ns);
+/* Asking one named nameserver. Node's Resolver wants an address, not a name,
+   so the nameserver itself is looked up the ordinary way first — that lookup
+   is of cloudflare.com, not of the domain being checked, so it tells us
+   nothing about the zone and cannot mask a missing record. */
+let resolver = null;
+async function nameserver() {
+  if (resolver) return resolver;
+  let addrs;
   try {
-    return execFileSync("dig", args, { encoding: "utf8" })
-      .split("\n").map((s) => s.trim()).filter(Boolean);
-  } catch (e) {
-    if (e.code === "ENOENT") {
-      console.error("dig is not installed, so --ns cannot be used. Run without --ns to use DNS-over-HTTPS,\n" +
-        "or run this on a machine with dig (macOS and most Linux have it).");
-      process.exit(2);
-    }
-    return [];
+    addrs = await dnsp.resolve4(ns);
+  } catch {
+    console.error(`Cannot find the address of nameserver "${ns}". Check the spelling.`);
+    process.exit(2);
+  }
+  resolver = new Resolver({ timeout: 5000, tries: 2 });
+  resolver.setServers(addrs);
+  return resolver;
+}
+
+async function viaNs(name, type) {
+  const r = await nameserver();
+  const n = fqdn(name);
+  const call = (fn) => new Promise((res) => r[fn](n, (err, out) => res(err ? [] : out)));
+  switch (type) {
+    case "A": return call("resolve4");
+    case "AAAA": return call("resolve6");
+    case "CNAME": return call("resolveCname");
+    case "NS": return call("resolveNs");
+    case "TXT": return (await call("resolveTxt")).map((parts) => parts.join(""));
+    case "MX": return (await call("resolveMx")).map((m) => `${m.priority} ${m.exchange}`);
+    case "SRV": return (await call("resolveSrv")).map((s) => `${s.priority} ${s.weight} ${s.port} ${s.name}`);
+    default: return [];
   }
 }
 
@@ -91,7 +112,7 @@ async function viaDoh(name, type) {
     .map((a) => a.data);
 }
 
-const lookup = (name, type) => (ns ? Promise.resolve(viaDig(name, type)) : viaDoh(name, type));
+const lookup = (name, type) => (ns ? viaNs(name, type) : viaDoh(name, type));
 
 /* Compare loosely enough to survive formatting differences between dig, DoH
    and Cloudflare's editor: trailing dots, quoting, whitespace, case. */
