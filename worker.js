@@ -28,6 +28,7 @@ import { label as optionLabel } from "./worker/studio/options.js";
 import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
 import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
+import { isRachelPath, handleRachel } from "./worker/rachel/orders.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -89,6 +90,11 @@ export default {
     if (url.pathname === "/api/send-review") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return handleSendReview(request, env);
+    }
+    /* Roses by Rachel: her order form and newsletter. Server side so her
+       Resend key never reaches the page. */
+    if (isRachelPath(url.pathname)) {
+      return handleRachel(request, env, url);
     }
     if (url.pathname === "/api/quote") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);

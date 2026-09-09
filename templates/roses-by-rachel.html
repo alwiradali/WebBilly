@@ -1081,9 +1081,9 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       <form class="oform" id="oform" data-fx="reveal" onsubmit="return false">
         <div id="formBody">
           <label for="fName">Your name</label>
-          <input id="fName" type="text" autocomplete="name" placeholder="Jane Smith">
+          <input id="fName" type="text" autocomplete="name" placeholder="Jane Smith" name="name" autocapitalize="words">
           <label for="fEmail">Email or mobile</label>
-          <input id="fEmail" type="text" autocomplete="email" placeholder="jane@email.com">
+          <input id="fEmail" type="text" autocomplete="email" placeholder="jane@email.com" name="contact" inputmode="email">
           <label for="fStyle">What would you like?</label>
           <select id="fStyle">
             <option>Blush Garden, £45</option><option>Velvet Romance, £62</option>
@@ -1096,7 +1096,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
             <option>Hand-tied wrap, no box</option><option>In a gift box</option><option>In a vase</option>
           </select>
           <label for="fOcc">Occasion</label>
-          <input id="fOcc" type="text" placeholder="Birthday, anniversary, just because…">
+          <input id="fOcc" type="text" placeholder="Birthday, anniversary, just because…" name="occasion" autocomplete="off">
           <label>Delivery or collection?</label>
           <div class="seg">
             <label><input type="radio" name="fulfil" value="Delivery" checked><span>Delivery</span></label>
@@ -1104,14 +1104,14 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
           </div>
           <div id="deliveryRow" class="on">
             <label for="fPostcode">Delivery postcode</label>
-            <input id="fPostcode" type="text" placeholder="M14 …">
+            <input id="fPostcode" type="text" placeholder="M14 …" name="postcode" autocomplete="postal-code" autocapitalize="characters">
           </div>
           <div class="orow">
-            <div><label for="fDate">Date needed</label><input id="fDate" type="date"></div>
-            <div><label for="fBudget">Budget</label><input id="fBudget" type="text" placeholder="£45"></div>
+            <div><label for="fDate">Date needed</label><input id="fDate" type="date" name="date" autocomplete="off"></div>
+            <div><label for="fBudget">Budget</label><input id="fBudget" type="text" placeholder="£45" name="budget" autocomplete="off" inputmode="numeric"></div>
           </div>
           <label for="fColours">Colours you love</label>
-          <input id="fColours" type="text" placeholder="Blush, ivory, deep red…">
+          <input id="fColours" type="text" placeholder="Blush, ivory, deep red…" name="colours" autocomplete="off">
           <label for="fNotes">Anything else</label>
           <textarea id="fNotes" placeholder="Card message, flight number, delivery notes…"></textarea>
           <button class="btn" id="sendBtn" type="button">Send my order</button>
@@ -1146,7 +1146,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
     <p class="lede" style="margin:20px auto 0">A short note when the seasonal flowers land, and a nudge before
       Valentine's and Mother's Day so you are not the one buying petrol-station carnations at 6pm.</p>
     <form class="newsform" id="newsform" data-fx="reveal" data-fx-delay="160">
-      <input type="email" id="newsmail" placeholder="your email address" aria-label="Your email address" required>
+      <input type="email" id="newsmail" placeholder="your email address" aria-label="Your email address" required name="email" autocomplete="email" inputmode="email">
       <button type="submit">Join</button>
     </form>
     <p class="small" id="newsmsg">One email a month at most. Unsubscribe in one tap.</p>
@@ -1208,19 +1208,19 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 
         <div class="cofield"><label for="coEmail">Email Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
-            <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required></div></div>
+            <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
 
         <div class="cofield"><label for="coAddr">Delivery Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-            <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required></div></div>
+            <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
 
         <div class="corow">
           <div class="cofield"><label for="coCity">City</label>
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 21V8l6-4v17M10 21V9l8 3v9M3 21h18"/><path d="M13 14h2M13 17h2"/></svg>
-              <input id="coCity" type="text" autocomplete="address-level2" placeholder="Manchester" required></div></div>
+              <input id="coCity" type="text" autocomplete="address-level2" placeholder="Manchester" required name="city" autocapitalize="words"></div></div>
           <div class="cofield"><label for="coPost">Postcode</label>
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
-              <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required></div></div>
+              <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
 
         <div id="coCardLive" hidden>
@@ -1344,7 +1344,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       <div class="prule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l1.4 4.6L12 6l-4.6 1.4L6 12 4.6 7.4 0 6l4.6-1.4z"/></svg></div>
       <p>Get 10% off your first bouquet.<br>Enter your email to claim it.</p>
       <form id="popform">
-        <input type="email" id="popmail" placeholder="Enter your email" aria-label="Your email address" required>
+        <input type="email" id="popmail" placeholder="Enter your email" aria-label="Your email address" required name="email" autocomplete="email" inputmode="email">
         <button class="btn burg" type="submit">Claim My Discount</button>
       </form>
       <p id="popmsg" style="margin-top:10px;font-size:.86rem"></p>
@@ -1385,7 +1385,6 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 /* ============================================================
    ROSES BY RACHEL
    FILL IN WHEN RACHEL HAS THEM
-     RR_W3F_KEY — Web3Forms key, so orders and newsletter sign-ups
                   land in her inbox
      RR_GA4     — "G-XXXXXXX" from Google Analytics
      RR_PIXEL   — the long number from Meta Events Manager
@@ -1396,7 +1395,6 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 (function () {
   'use strict';
   var RR_EMAIL   = 'info@rosesbyrachel.co.uk';
-  var RR_W3F_KEY = '';
   var RR_GA4     = '';
   var RR_PIXEL   = '';
   var RR_PAYLINK = '';
@@ -1765,21 +1763,31 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       $('sentPanel').classList.add('on');
       if (RR_PAYLINK) window.open(RR_PAYLINK, '_blank', 'noopener');
     }
-    if (RR_W3F_KEY) {
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ access_key: RR_W3F_KEY, subject: 'New order from the Roses by Rachel website',
-          from_name: val('fName'), email: RR_EMAIL, replyto: val('fEmail'), message: txt })
-      }).then(done).catch(function () {
-        copyText(txt, 'Could not send. Message copied, paste it to Rachel ♥');
+    /* Straight to Rachel's inbox. The page carries no key: the Worker holds
+       it and does the sending. "On its way" is only ever shown once the
+       server has actually accepted the order. */
+    var btn = $('sendBtn'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch('/api/rbr/order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: val('fName'), contact: val('fEmail'), style: val('fStyle'),
+        presentation: val('fPres'), occasion: val('fOcc'),
+        fulfilment: (document.querySelector('input[name=fulfil]:checked') || {}).value || '',
+        postcode: val('fPostcode'), date: val('fDate'), budget: val('fBudget'),
+        colours: val('fColours'), notes: val('fNotes'), botcheck: val('botcheck')
+      })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = was;
+        if (!res.ok || !res.j.ok) throw new Error(res.j.error || 'not sent');
+        done();
+      })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = was;
+        /* Never claim it went. Hand them the message so the sale is not lost. */
+        copyText(txt, 'Could not send. Message copied, paste it to Rachel on WhatsApp ♥');
       });
-    } else {
-      /* With no key configured nothing is sent, so do NOT show the "On its way
-         to Rachel" panel. A customer who is told their order has gone waits for
-         a reply that cannot come, and Rachel never learns she lost the sale.
-         Fall back to the same route as a failed send. */
-      copyText(txt, 'Message copied. Paste it to Rachel on WhatsApp or Instagram ♥');
-    }
   });
   compose();
 
@@ -1789,18 +1797,17 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
     var mail = val('newsmail'); if (!mail) return;
     track('newsletter_signup');
     var say = function (t) { $('newsmsg').textContent = t; };
-    if (RR_W3F_KEY) {
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ access_key: RR_W3F_KEY, subject: 'New Flower Note subscriber',
-          email: RR_EMAIL, message: 'New newsletter signup: ' + mail })
-      }).then(function () { $('newsform').style.display = 'none'; say('You’re on the list. Thank you ♥'); })
-        .catch(function () { say('That didn’t send. Message Rachel on Instagram and she’ll add you.'); });
-    } else {
-      /* Nothing was sent, so the form stays up and says so. The old text told
-         her she was on the list and then explained the demo to the customer. */
-      say('Signups aren’t open yet. Message Rachel on Instagram and she’ll add you ♥');
-    }
+    say('One moment…');
+    fetch('/api/rbr/subscribe', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: mail })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j.ok) throw new Error('no');
+        $('newsform').style.display = 'none';
+        say('You’re on the list. Thank you ♥');
+      })
+      .catch(function () { say('That didn’t send. Message Rachel on Instagram and she’ll add you.'); });
   });
 
   /* ---------------- product page + cart ---------------- */
@@ -2018,21 +2025,17 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
       e.preventDefault();
       var mail = ($('popmail').value || '').trim(); if (!mail) return;
       track('newsletter_signup', { source: 'popup' });
-      var key = RR_W3F_KEY;
-      var ok = function () {
-        $('popform').style.display = 'none';
-        $('popmsg').textContent = 'Thank you. Your 10% code is on its way ♥';
-      };
-      if (key) {
-        fetch('https://api.web3forms.com/submit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ access_key: key, subject: 'Rose List, 10% popup signup',
-            email: RR_EMAIL, message: 'Popup signup: ' + mail })
-        }).then(ok).catch(function () { $('popmsg').textContent = 'That didn’t send. Try the form at the bottom of the page.'; });
-      } else {
-        /* Never promise a discount code that nothing is going to send. */
-        $('popmsg').textContent = 'Signups aren’t open yet. Message Rachel on Instagram for your code ♥';
-      }
+      $('popmsg').textContent = 'One moment…';
+      fetch('/api/rbr/subscribe', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: mail, source: 'popup' })
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.j.ok) throw new Error('no');
+          $('popform').style.display = 'none';
+          $('popmsg').textContent = 'Thank you. You are on the list ♥';
+        })
+        .catch(function () { $('popmsg').textContent = 'That didn’t send. Try the form at the bottom of the page.'; });
     });
     /* leaving on desktop, or a good scroll then a pause on touch */
     document.addEventListener('mouseout', function (e) {
