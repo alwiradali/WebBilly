@@ -316,7 +316,6 @@ p{text-wrap:pretty}
 .qcard .small a{color:var(--text);font-weight:600;border-bottom:1px solid var(--line2)}
 
 /* --------------------------------------------------------------- inputs - */
-.fld{position:relative}
 input,select,textarea{
   width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:12px;
   background:var(--steel2);color:var(--white);font-size:.96rem;
@@ -333,7 +332,9 @@ select{
   background-repeat:no-repeat;background-position:right 13px center;background-size:17px;padding-right:40px;
 }
 select:invalid,select option[value=""]{color:var(--dim)}
-label.lb{display:block;font-family:var(--dis);font-weight:600;font-size:.8rem;letter-spacing:.05em;
+/* named .flab, not .lb — .lb is the lightbox overlay further down, and the
+   collision hid every label on the enquiry form */
+label.flab{display:block;font-family:var(--dis);font-weight:600;font-size:.8rem;letter-spacing:.05em;
   text-transform:uppercase;color:var(--muted);margin-bottom:7px}
 .hp{position:absolute;left:-9999px;opacity:0;pointer-events:none}
 .formmsg{
@@ -435,7 +436,6 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   box-shadow:var(--shadow-lg);
 }
 .shot img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/3}
-.shot.tall img{aspect-ratio:3/4}
 /* the frame corner marks — a nod to workshop layout drawings */
 .shot::before,.shot::after{
   content:"";position:absolute;width:34px;height:34px;z-index:2;pointer-events:none;
@@ -682,6 +682,9 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 @media(max-width:759px){.wafab{bottom:calc(env(safe-area-inset-bottom,0px) + 78px)}}
 
 /* the phone-only bottom dock: call and WhatsApp, always reachable */
+@media(max-width:759px){
+  body{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))}
+}
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:75;display:grid;grid-template-columns:1fr 1fr;
   background:rgba(14,14,15,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);
@@ -749,4 +752,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   /* with motion off the pin is pointless: the four steps simply stack */
   .step{opacity:1;transform:none;position:relative;margin-bottom:40px}
   .steps-sticky,.steps-frame{position:static;height:auto;min-height:0;overflow:visible}
+  /* the progress rail tracks which step is pinned; stacked, it means nothing
+     and sits on top of the copy */
+  .step-rail{display:none}
 }
