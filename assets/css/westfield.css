@@ -173,8 +173,11 @@ p{text-wrap:pretty}
 .brand{display:flex;align-items:center;gap:12px;flex:none;margin-right:auto}
 /* HIS logo — traced from the signage, never re-typeset. currentColor keeps it
    white here and lets it go charcoal on light surfaces. */
-.brand .logo{width:clamp(168px,20vw,238px);color:var(--white);transition:width .4s}
-.nav.stuck .brand .logo{width:clamp(150px,17vw,198px)}
+/* 20vw worked out at 78px on a phone and clamped to the 168px floor, which
+   left the wordmark small next to a 46px burger with 130px of space going
+   spare. It now takes the room that is actually there. */
+.brand .logo{width:clamp(200px,54vw,238px);color:var(--white);transition:width .4s}
+.nav.stuck .brand .logo{width:clamp(178px,48vw,198px)}
 .nav-links{display:none;gap:clamp(14px,2vw,26px);align-items:center}
 @media(min-width:1080px){.nav-links{display:flex}}
 .nav-links a{
@@ -240,8 +243,30 @@ p{text-wrap:pretty}
     linear-gradient(180deg,rgba(10,10,11,.86),transparent 24%,transparent 62%,rgba(10,10,11,.94));
 }
 @media(max-width:1023px){
-  .hero-scrim{background:
-    linear-gradient(180deg,rgba(10,10,11,.86) 0%,rgba(10,10,11,.72) 34%,rgba(10,10,11,.9) 64%,var(--ink) 92%)}
+  /* A phone hero is ~1600px tall against a 390px width. Covering all of that
+     with a 3:2 photograph meant showing a 300px-wide vertical slice of an
+     1800px-wide picture, blown up — you saw abstract bodywork, not a garage.
+     So on a phone the photograph keeps its own band at the top at a sane
+     crop, and the rest of the hero is flat brand black. The scrim tracks the
+     band rather than the whole hero, so it cannot drift out of step with it. */
+  .hero{background:var(--ink)}
+  .hero-bg{inset:-5% 0 auto;height:clamp(400px,58svh,540px)}
+  .hero-bg img{object-position:50% 46%}
+  .hero-scrim{inset:0 0 auto;height:clamp(400px,58svh,540px);background:
+    linear-gradient(180deg,
+      rgba(10,10,11,.66) 0%,
+      rgba(10,10,11,.28) 22%,
+      rgba(10,10,11,.42) 52%,
+      rgba(10,10,11,.80) 78%,
+      rgba(10,10,11,.97) 94%,
+      var(--ink) 100%)}
+  /* readability comes from the type where it crosses the picture, not from
+     hiding the picture */
+  .hero h1{text-shadow:0 2px 18px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
+  .hero-mark{filter:drop-shadow(0 3px 14px rgba(0,0,0,.65))}
+  /* the red/yellow sweep belongs to the photograph, so it stops with it */
+  .hero-sweep{inset:0 0 auto;height:clamp(400px,58svh,540px)}
+  .hero-grid{display:none}
 }
 /* the one moving thing behind the words: a slow sweep of workshop light */
 .hero-sweep{
@@ -479,17 +504,21 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 .steps-frame{position:relative;min-height:min(560px,68svh);display:grid;align-content:center}
 .step{
   position:absolute;inset:0;display:grid;align-content:center;align-items:center;
-  gap:clamp(24px,4vw,56px);
+  gap:clamp(20px,4vw,56px);
+  /* keeps the content clear of the progress rail pinned to the frame's floor */
+  padding-bottom:clamp(30px,5vh,58px);
   opacity:0;transform:translateY(28px);pointer-events:none;
   transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);
 }
-/* From tablet up each step carries its own photograph, so the sequence shows
-   the job rather than only describing it. Below that the picture is dropped —
-   at phone width the type alone fills the frame and an image would crowd it. */
+/* Every step carries its own photograph, so the sequence shows the job rather
+   than only describing it. It used to be hidden below 900px on the theory that
+   the type alone would fill the frame — it did not, and the section read as a
+   black void on a phone. The picture now sits under the copy at phone width
+   and beside it from 900px up. */
 @media(min-width:900px){.step{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
-.step-shot{display:none;position:relative;border-radius:var(--rl);overflow:hidden;
-  aspect-ratio:4/3;background:var(--steel);box-shadow:var(--shadow-lg)}
-@media(min-width:900px){.step-shot{display:block}}
+.step-shot{display:block;position:relative;border-radius:var(--rl);overflow:hidden;
+  aspect-ratio:16/10;background:var(--steel);box-shadow:var(--shadow-lg)}
+@media(min-width:900px){.step-shot{aspect-ratio:4/3}}
 .step-shot img{width:100%;height:100%;object-fit:cover;
   filter:grayscale(.3) brightness(.86);transform:scale(1.09);
   transition:transform 1.4s cubic-bezier(.22,1,.36,1),filter 1s}
