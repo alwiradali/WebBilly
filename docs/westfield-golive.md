@@ -4,11 +4,29 @@ The demo is finished and lives at `/templates/westfield-garage`, `noindex` and
 disallowed in `robots.txt`. This is the list of everything between there and a
 site on his own domain, in the order it has to happen.
 
+## The domain is bought — checked 13 Sep
+
+**`westfieldgarageintlimited.co.uk`**, in his own Cloudflare account, bought
+through Cloudflare Registrar. Public DNS confirms it:
+
+- Nameservers are `grannbo.ns.cloudflare.com` / `salvador.ns.cloudflare.com`,
+  so the zone is live on Cloudflare and Phase 2 steps 1–4 are done.
+- **No MX, no TXT, no A record.** There is no email on this domain and nothing
+  is served on it yet, so the one genuinely risky step in Phase 2 — carrying
+  his mail across before the nameservers move — does not apply. There is
+  nothing to break.
+
+It is a long name for something he has to say over the phone. Worth £10 to
+also buy the short **westfieldgarage.co.uk** if it is free and redirect it at
+this one: it is what a customer will actually type, and it stops somebody else
+taking it. Not a blocker either way — the long name matches his registered
+company name exactly, which is no bad thing on a trading site.
+
 **The short version of what you need to buy or sign up for:**
 
 | Thing | Needed? | Cost |
 |---|---|---|
-| A domain | **Yes — this is the blocker** | £10–15/yr |
+| A domain | **Bought** — westfieldgarageintlimited.co.uk | £10–15/yr |
 | Cloudflare (his own account) | **Yes** — you have it | Free |
 | **Web3Forms** — enquiry form delivery | **Yes** | Free |
 | **Resend** | **No** | — |
@@ -43,7 +61,7 @@ where every enquiry lands.** Create it signed in as `westfieldgarage45@gmail.com
 (or as his new `info@` address once that exists), not as yours.
 
 Resend is worth revisiting later if he wants branded auto-replies going out
-*as* `westfieldgarage.co.uk`. It is not worth it for launch.
+*as* `westfieldgarageintlimited.co.uk`. It is not worth it for launch.
 
 ### The one code change Web3Forms needs
 
@@ -68,12 +86,10 @@ many people landed, on what, from where. One line of script.
 
 Nothing below Phase 1 can start without the first item.
 
-1. **A domain, bought in his name.** Send him `docs/client-domain-guide.md`
-   more or less as it stands — it already covers what to buy, what to refuse
-   at checkout, and the renewal trap. Suggest, in this order:
-   `westfieldgarage.co.uk`, `westfieldgaragelevenshulme.co.uk`,
-   `westfieldgarage.com`. Register it in **his** name and his business's, not
-   yours. Turn auto-renew on.
+1. ~~**A domain, bought in his name.**~~ **Done** —
+   `westfieldgarageintlimited.co.uk`, on Cloudflare Registrar in his own
+   account. Check **auto-renew is on**; a lapsed domain is the single most
+   common way a small business loses its website.
 
 2. **His company number.** The signage says *Westfield Garage Int Limited*. A
    limited company has to show its registered name, registered number and
@@ -140,19 +156,18 @@ Everything here is listed in `docs/westfield-handoff.md` too.
 
 ## Phase 2 — the domain onto Cloudflare
 
-Same shape as Rod's. His Cloudflare account, not yours and not Billy Digitals'.
+**Steps 1–4 of this phase are already done** — he bought at Cloudflare
+Registrar, so the domain went straight into his own account with Cloudflare's
+nameservers on it, and there is no email on the zone to carry across. Left to
+do here is only the optional one.
 
-1. In **his** Cloudflare: *Add a site* → the domain → Free plan.
-2. Cloudflare gives two nameservers. Paste them into the registrar where he
-   bought the domain. If he bought at Cloudflare Registrar there is nothing
-   to paste — skip this.
-3. **Before you switch anything, check his existing email records come
-   across.** If `@westfieldgarage.co.uk` addresses already exist anywhere,
-   the MX, SPF and DMARC records must be in Cloudflare *before* the
-   nameservers move, or his email stops. If he is on plain Gmail with no
-   domain email, there is nothing to carry and this is a non-issue — which
-   is almost certainly the case here.
-4. Wait for the zone to read **Active**. Usually minutes, occasionally hours.
+1. ~~Add the site in his Cloudflare, Free plan.~~ Done.
+2. ~~Paste the nameservers into the registrar.~~ Nothing to paste — bought at
+   Cloudflare Registrar.
+3. ~~Carry his existing email records across first.~~ Nothing to carry: the
+   zone has no MX and no TXT records at all.
+4. ~~Wait for the zone to read Active.~~ Done — public DNS answers with
+   Cloudflare's nameservers.
 5. **Cloudflare Email Routing** (optional but cheap in effort): turn it on,
    add `info@westfieldgarage.co.uk` → forwards into his Gmail. He gets a
    professional address on business cards without paying for a mailbox. Note
@@ -224,7 +239,7 @@ its own Worker in his own account, exactly like Rod's and Lynsey's.
    the build.
 2. Open the real domain on a phone and on a laptop and click everything:
    call, WhatsApp, directions, both forms, the lightbox, the review buttons.
-3. **Google Search Console** — add the domain property, verify with the DNS
+3. **Google Search Console** — add `westfieldgarageintlimited.co.uk` as a domain property, verify with the DNS
    TXT record (two minutes, since Cloudflare holds DNS now), submit
    `https://<domain>/sitemap.xml`.
 4. **Put the website address on his Google Business Profile.** This is the
@@ -238,7 +253,7 @@ its own Worker in his own account, exactly like Rod's and Lynsey's.
 
 - Diary the domain renewal date. A client whose domain expires blames the web
   person, every time.
-- Add `westfieldgarage.co.uk` to the Billy Digitals portfolio page.
+- Add `westfieldgarageintlimited.co.uk` to the Billy Digitals portfolio page.
 - `/templates/westfield-garage` stays `noindex` and disallowed so the demo and
   the real site never compete in search. Do not remove the robots meta there.
 - Revisit Resend only if he wants branded auto-replies.
