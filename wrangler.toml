@@ -147,3 +147,39 @@ directory = "dist/smartin-science"
 # The build writes about.html and links to /about, so the server has to resolve
 # the extensionless URL. This is wrangler's default, stated so it cannot drift.
 html_handling = "auto-trailing-slash"
+
+# ---------------------------------------------------------------------------
+# Westfield Garage Int Limited — Levenshulme, on HIS OWN Cloudflare account.
+#
+# Same arrangement as Rod's and Lynsey's: his account is not connected to this
+# repository and does not need to be. A scoped API token travels one way, from
+# his Cloudflare into GitHub Secrets, and is never written down here.
+# account_id therefore comes from CLOUDFLARE_ACCOUNT_ID at deploy time rather
+# than sitting in a public repo.
+#
+# His domain is deliberately NOT on the billydigitals Worker above. A push to
+# any branch of this repository deploys that Worker to production (see
+# PROJECT-NOTES.md), so a stray branch push would put the wrong tree on a
+# client's live site. His own Worker in his own account cannot be reached that
+# way at all.
+#
+# Static only — no `main`. The enquiry forms post straight to Web3Forms from
+# the browser, so there is no Worker code to run and nothing server-side to
+# get wrong.
+#
+# As with [env.mm] and [env.smartin], do not let this block go missing:
+# `wrangler deploy --env westfield` would then silently fall back to the
+# top-level config and upload the ENTIRE repository — every other client's
+# files — into his Cloudflare account under the wrong worker name, while his
+# real site sat untouched somewhere else looking like a deploy that did
+# nothing. deploy-westfield.yml checks for it before every deploy.
+[env.westfield]
+name = "westfield-garage"
+routes = [
+  { pattern = "westfieldgarageintlimited.co.uk", custom_domain = true },
+  { pattern = "www.westfieldgarageintlimited.co.uk", custom_domain = true }
+]
+
+[env.westfield.assets]
+directory = "dist/westfield-garage"
+not_found_handling = "404-page"

@@ -190,7 +190,9 @@ repository deploys to production there (see `PROJECT-NOTES.md`), so a stray
 branch push would put the wrong tree on a client's live site. His site gets
 its own Worker in his own account, exactly like Rod's and Lynsey's.
 
-1. **`scripts/build-westfield.py`** — takes the domain as an argument and
+**Written — 13 Sep. Only the two secrets are left.**
+
+1. ✓ **`scripts/build-westfield.py`** — takes the domain as an argument and
    writes `dist/westfield-garage/`:
    - `templates/westfield-garage.html` → `index.html`
    - `../assets/` → `/assets/`, `vendor/lenis.min.js` → `/vendor/lenis.min.js`
@@ -199,12 +201,21 @@ its own Worker in his own account, exactly like Rod's and Lynsey's.
    - its own `robots.txt` (allow everything) and `sitemap.xml`
    - only the assets this page actually uses copied over — not the whole
      repository
+   - notes marked `data-demo` stripped, and every HTML comment with them: they
+     earn their place on the demo and have no business on his website
+   - `--analytics <token>` injects the Cloudflare Web Analytics beacon
 
-2. **`[env.westfield]` in `wrangler.toml`**, with `name`, `routes` for the
+   **It refuses to build** while the page still carries the invented reviews
+   (`data-demo-reviews` on the `.revs` block) or a social link pointing at a
+   network's own home page, and prints the fix for each. A demo cannot become
+   his live website by accident, and nobody reads a checklist at that moment.
+   Clearing a blocker is the fix, never deleting the check.
+
+2. ✓ **`[env.westfield]` in `wrangler.toml`**, with `name`, `routes` for the
    apex and `www`, and `[env.westfield.assets] directory = "dist/westfield-garage"`.
    Static only — no `main`, because with Web3Forms there is no server code.
 
-3. **`.github/workflows/deploy-westfield.yml`**, copied from
+3. ✓ **`.github/workflows/deploy-westfield.yml`**, copied from
    `deploy-smartin.yml`, with the same three guards that workflow learned
    the hard way:
    - the build is checked before it deploys (a deploy that publishes an empty
@@ -216,7 +227,8 @@ its own Worker in his own account, exactly like Rod's and Lynsey's.
    - the live site is compared against the build byte-for-byte afterwards,
      because a 200 only proves that something is there
 
-4. **Two GitHub secrets** (Settings → Secrets and variables → Actions):
+4. **Two GitHub secrets** — **this is the next thing to do**
+   (Settings → Secrets and variables → Actions):
    - `CLOUDFLARE_API_TOKEN_WESTFIELD` — created in **his** Cloudflare, with
      **both** Account → Workers Scripts → Edit **and** Zone → Workers Routes →
      Edit on his zone. Without the zone permission the first deploy uploads
@@ -225,17 +237,21 @@ its own Worker in his own account, exactly like Rod's and Lynsey's.
    - `CLOUDFLARE_ACCOUNT_ID_WESTFIELD` — on the right of any page in his
      dashboard.
 
+   A third is optional: `CLOUDFLARE_WEB_ANALYTICS_WESTFIELD`. Set it and the
+   beacon goes into the build; leave it unset and it does not.
+
    **Use a scoped API token, not his login.** You should not be holding a
    password for an asset that is not yours, and a token can be revoked by him
    in one click.
 
-5. **Web3Forms**: create the key signed in as his address, put it in
-   `CONFIG.web3formsKey`, set `CONFIG.endpoint` to
-   `https://api.web3forms.com/submit`, make the code change described above.
-   Then **send a real test enquiry through both forms** and confirm it arrives.
+   With no secrets set the workflow still builds and checks on every push — it
+   just does not deploy — so it is safe to merge before they exist.
 
-6. **Cloudflare Web Analytics**: add the site in his dashboard, drop the one
-   script line into the build.
+5. ✓ **Web3Forms** — key in, code changed, all four outcomes verified.
+   Delivery itself still has to be proved from a real browser; see above.
+
+6. **Cloudflare Web Analytics**: add the site in his dashboard and put the
+   token in `CLOUDFLARE_WEB_ANALYTICS_WESTFIELD`. The build does the rest.
 
 ---
 

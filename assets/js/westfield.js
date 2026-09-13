@@ -42,8 +42,8 @@
        Profile and use
          https://search.google.com/local/writereview?placeid=<PLACE_ID>
        ------------------------------------------------------------------- */
-    facebook:     "https://www.facebook.com/",
-    instagram:    "https://www.instagram.com/",
+    facebook:     "",
+    instagram:    "",
     google:       "https://www.google.com/maps/search/?api=1&query=" +
                   "Westfield%20Garage%20Levenshulme%2C%202%20Broom%20Ln%2C%20Manchester%20M19%202TW",
     googleReview: "https://www.google.com/maps/search/?api=1&query=" +

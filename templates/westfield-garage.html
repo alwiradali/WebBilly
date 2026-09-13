@@ -524,7 +524,7 @@
       <figure><img src="../assets/westfield/wheel-sm.webp" srcset="../assets/westfield/wheel-sm.webp 900w, ../assets/westfield/wheel.webp 1800w" sizes="(min-width:900px) 33vw, 50vw" data-full="../assets/westfield/wheel.webp" alt="A wheel being refitted and torqued" loading="lazy"><figcaption>Wheels off</figcaption></figure>
       <figure><img src="../assets/westfield/hero-alt-sm.webp" srcset="../assets/westfield/hero-alt-sm.webp 900w, ../assets/westfield/hero-alt.webp 1800w" sizes="(min-width:900px) 33vw, 50vw" data-full="../assets/westfield/hero-alt.webp" alt="The workshop lit up at the end of the day" loading="lazy"><figcaption>End of the day</figcaption></figure>
     </div>
-    <p class="note centre mt" data-fx="reveal">Photography is placeholder stock while we wait on photographs of the garage itself — see the handoff note.</p>
+    <p class="note centre mt" data-demo data-fx="reveal">Photography is placeholder stock while we wait on photographs of the garage itself — see the handoff note.</p>
   </div>
 </section>
 
@@ -557,8 +557,12 @@
       </div>
     </div>
 
-    <!-- PLACEHOLDER REVIEWS — replace with the garage's real Google reviews -->
-    <div class="revs" data-fx="stagger" data-fx-step="90">
+    <!-- PLACEHOLDER REVIEWS. data-demo-reviews is what stops
+         scripts/build-westfield.py building his live site: invented
+         testimonials on a trading website are an offence, not a style choice.
+         Paste three of his real Google reviews in and DELETE THE ATTRIBUTE,
+         or delete this whole section. -->
+    <div class="revs" data-demo-reviews data-fx="stagger" data-fx-step="90">
       <article class="rev">
         <div class="stars" aria-label="5 out of 5">
           <svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .7-5.2 4.7 1.5 7L12 17.4 5.7 21l1.5-7L2 9.3l7-.7Z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .7-5.2 4.7 1.5 7L12 17.4 5.7 21l1.5-7L2 9.3l7-.7Z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .7-5.2 4.7 1.5 7L12 17.4 5.7 21l1.5-7L2 9.3l7-.7Z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .7-5.2 4.7 1.5 7L12 17.4 5.7 21l1.5-7L2 9.3l7-.7Z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7 .7-5.2 4.7 1.5 7L12 17.4 5.7 21l1.5-7L2 9.3l7-.7Z"/></svg>
@@ -589,7 +593,7 @@
         </div>
       </article>
     </div>
-    <p class="note centre mt" data-fx="reveal">Example reviews, shown so the layout can be judged. They come out the moment the real Google feed goes in.</p>
+    <p class="note centre mt" data-demo data-fx="reveal">Example reviews, shown so the layout can be judged. They come out the moment the real Google feed goes in.</p>
   </div>
 </section>
 
@@ -724,7 +728,7 @@
           </a>
           <a class="btn ghost" data-wf="google" href="#">See us on Google</a>
         </div>
-        <p class="note mt">An embedded map can drop straight in here — it is left out for now so the page makes no third-party requests. See the handoff note.</p>
+        <p class="note mt" data-demo>An embedded map can drop straight in here — it is left out for now so the page makes no third-party requests. See the handoff note.</p>
       </div>
     </div>
   </div>
@@ -867,7 +871,7 @@
   <button class="p" type="button" aria-label="Previous">‹</button>
   <button class="n" type="button" aria-label="Next">›</button>
   <div>
-    <img id="lbi" src="" alt="">
+    <img id="lbi" alt="">
     <div class="lb-cap" id="lbc"></div>
   </div>
 </div>
