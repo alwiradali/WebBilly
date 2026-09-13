@@ -49,10 +49,21 @@
     googleReview: "https://www.google.com/maps/search/?api=1&query=" +
                   "Westfield%20Garage%20Levenshulme%2C%202%20Broom%20Ln%2C%20Manchester%20M19%202TW",
 
-    /* Optional: a POST endpoint for the enquiry forms. Left empty, the forms
-       hand off to WhatsApp with the enquiry pre-written, and offer email as
-       the alternative — which needs no server and no secrets. */
-    endpoint:     ""
+    /* Where the enquiry forms deliver. Web3Forms posts straight from the
+       browser, so the site still needs no server of its own.
+
+       The access key is PUBLIC by design — their own wording on the page
+       that issues it. It names the destination inbox and grants nothing
+       else, so it belongs here rather than in a secret. It was created
+       signed in as westfieldgarage45@gmail.com, and THAT is where every
+       enquiry lands: to move them to a different inbox, make a new key
+       signed in as that address rather than editing anything here.
+
+       Set endpoint to "" and both forms fall back to the WhatsApp handoff.
+       They also fall back to it if a post fails, so an enquiry is never
+       silently lost. */
+    endpoint:     "https://api.web3forms.com/submit",
+    web3formsKey: "d0d929d0-8241-4fb9-8e7f-5df82a4debbb"
   };
   window.WESTFIELD = CONFIG;
 
@@ -362,7 +373,7 @@
         }
 
         /* --- collect, in the order a human would want to read it --- */
-        var data = {}, lines = ["New enquiry — Westfield Garage website", ""];
+        var data = {}, labelled = {}, lines = ["New enquiry — Westfield Garage website", ""];
         $$("input,select,textarea", f).forEach(function (el) {
           if (!el.name || el.name === "botcheck" || !el.value.trim()) return;
           /* the reg field is upper-cased in CSS, which is presentation only —
@@ -372,6 +383,7 @@
           data[el.name] = v;
           var nice = el.getAttribute("data-label") ||
                      el.name.charAt(0).toUpperCase() + el.name.slice(1);
+          labelled[nice] = v;
           lines.push(nice + ": " + v);
         });
         var text = lines.join("\n");
@@ -387,21 +399,70 @@
 
         if (!CONFIG.endpoint) { handoff(); return; }
 
+        /* Sent with the labels the form itself uses — "Make & model", not
+           "car" — so the email reads like a job sheet rather than a dump of
+           input names. replyto means hitting reply in his inbox answers the
+           customer instead of the form service. */
+        var payload = {};
+        Object.keys(labelled).forEach(function (k) { payload[k] = labelled[k]; });
+        payload.subject = "Westfield Garage website — " + (data.job || "enquiry");
+        payload.from_name = "Westfield Garage website";
+        if (data.email) payload.replyto = data.email;
+        if (CONFIG.web3formsKey) payload.access_key = CONFIG.web3formsKey;
+
+        /* Two ways an enquiry gets lost, and neither of them is allowed here:
+           being told it arrived when it did not, and a request that simply
+           never answers leaving the button on "Send…" for ever. So every
+           outcome — delivered, refused, failed, or eight seconds of silence —
+           ends in exactly one of finish() or fail(), and fail() always hands
+           the visitor to WhatsApp with the enquiry already written out.
+           The timeout does the handoff itself rather than trusting abort() to
+           reject, because a fetch that ignores its signal would otherwise
+           leave the visitor waiting on nothing. */
+        var settled = false, ctl = window.AbortController ? new AbortController() : null;
+
+        function fail(why) {
+          if (settled) return;
+          settled = true; clearTimeout(giveUp);
+          console.error("[enquiry] not delivered —", why);
+          handoff();
+        }
+        function finish() {
+          if (settled) return;
+          settled = true; clearTimeout(giveUp);
+          f.reset();
+          $$("[aria-invalid]", f).forEach(function (el) { el.setAttribute("aria-invalid", "false"); });
+          say("Thanks " + (data.name || "").split(" ")[0] +
+              " — that's come through. We'll be in touch shortly. If it's urgent, ring "
+              + CONFIG.phone + ".", "ok");
+          reset();
+        }
+
+        var giveUp = setTimeout(function () {
+          if (ctl) { try { ctl.abort(); } catch (e) {} }
+          fail("no answer after 8 seconds");
+        }, 8000);
+
         fetch(CONFIG.endpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload),
+          signal: ctl ? ctl.signal : undefined
         })
-          .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
-          .then(function () {
-            f.reset();
-            $$("[aria-invalid]", f).forEach(function (el) { el.setAttribute("aria-invalid", "false"); });
-            say("Thanks " + (data.name || "").split(" ")[0] +
-                " — that's come through. We'll be in touch shortly. If it's urgent, ring "
-                + CONFIG.phone + ".", "ok");
-            reset();
+          .then(function (r) {
+            return r.json().then(function (b) { return { ok: r.ok, body: b }; },
+                                 function ()  { return { ok: r.ok, body: null }; });
           })
-          .catch(handoff);
+          .then(function (res) {
+            /* Web3Forms answers a bad or revoked key with HTTP 200 and
+               success:false, so the status code is not the answer. */
+            var delivered = CONFIG.web3formsKey
+              ? !!(res.body && res.body.success === true)
+              : res.ok;
+            if (delivered) finish();
+            else fail((res.body && res.body.message) || ("HTTP " + res.ok));
+          })
+          .catch(function (e) { fail((e && e.message) || e); });
       });
 
       /* clear the red ring as soon as they start fixing it */

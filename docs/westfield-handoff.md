@@ -145,14 +145,37 @@ HTML comment at the point of use.
 Both forms (the hero card and the main enquiry form) share one code path in
 `westfield.js`.
 
-**As it stands, `CONFIG.endpoint` is empty**, so a submission opens WhatsApp
-with the whole enquiry pre-written into the message. That works today, needs no
-server and no secrets, and lands where a garage actually reads things.
+**They go to `westfieldgarage45@gmail.com` through Web3Forms**, which posts
+straight from the browser — so the site still needs no server and holds no
+secret. `CONFIG.endpoint` is the Web3Forms API and `CONFIG.web3formsKey` is the
+access key, which is **public by design**: it names the destination inbox and
+grants nothing else, which is why it sits in the repo rather than in a secret.
 
-To post to an inbox instead, set `CONFIG.endpoint` to a URL that accepts a JSON
-body. On failure it still falls back to the WhatsApp handoff, so an enquiry is
-never silently lost. Field names sent: `name`, `phone`, `email`, `car`, `reg`,
-`job`, `notes`.
+**The key IS the destination.** It was created signed in as
+`westfieldgarage45@gmail.com`, and that is where every enquiry lands. To move
+them to a different inbox, sign in as that address and make a new key — there
+is nothing else to change.
+
+Fields are sent under the labels the form itself shows ("Make & model", not
+`car`), so the email reads like a job sheet. `replyto` is set to the customer's
+address, so hitting reply in his inbox answers them and not the form service.
+
+Four outcomes, and every one of them ends somewhere:
+
+| What happens | What the visitor gets |
+|---|---|
+| Delivered | "Thanks — that's come through", form cleared |
+| Key wrong or revoked (Web3Forms answers 200 with `success:false`) | WhatsApp, enquiry pre-written, form kept so nothing is retyped |
+| Network failure | the same |
+| No answer within 8 seconds | the same |
+
+The visitor is **never** told an enquiry arrived unless Web3Forms confirmed it,
+and the button can never be left on "Sending…". The real reason always goes to
+the browser console.
+
+Set `CONFIG.endpoint` to `""` and both forms go back to the WhatsApp handoff for
+everything. Any other JSON endpoint also works: with no `web3formsKey` set, the
+HTTP status decides instead of `body.success`.
 
 ---
 

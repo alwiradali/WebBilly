@@ -63,14 +63,20 @@ where every enquiry lands.** Create it signed in as `westfieldgarage45@gmail.com
 Resend is worth revisiting later if he wants branded auto-replies going out
 *as* `westfieldgarageintlimited.co.uk`. It is not worth it for launch.
 
-### The one code change Web3Forms needs
+### Done — 13 Sep
 
-`assets/js/westfield.js` posts the raw field object to `CONFIG.endpoint`.
-Web3Forms wants `access_key` in that body and answers `{success:true}`. So the
-form code needs a `CONFIG.web3formsKey`, merged into the payload, and a success
-check on `body.success` rather than on the HTTP status. Ten minutes. The
-WhatsApp fallback stays exactly as it is, so an enquiry is still never lost if
-the post fails.
+The key is in `CONFIG.web3formsKey` and `CONFIG.endpoint` is the Web3Forms API.
+The form now sends `access_key` in the body, reads `body.success` rather than
+the HTTP status (Web3Forms answers a bad key with a **200** and
+`success:false`), and gives up after 8 seconds. All four outcomes fall back to
+the WhatsApp handoff except a confirmed delivery.
+
+**Delivery itself is still unverified.** Web3Forms' free tier refuses
+server-side calls — `403 "Use our API in client side"` — and this build
+environment's browser has no route to the internet, so neither a curl nor a
+headless run can prove the key works. **Send one enquiry from a real browser and
+confirm it lands.** Check his spam folder: the first message from a new sender
+often does, and once it is marked "not spam" it never does again.
 
 ### Why not Google Analytics
 
