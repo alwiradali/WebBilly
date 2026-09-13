@@ -386,7 +386,7 @@ def area_page(a):
         <img src="{ast}assets/smartin/icons/globe.png" alt="" width="18" height="18">{where}
       </span>
       <h1 style="font-size:clamp(2rem,4.6vw,3.2rem);margin:18px 0 16px" data-fx="text" data-fx-step="45">{h1}</h1>
-      <p style="color:var(--mut);font-size:1.06rem" data-fx="reveal" data-fx-delay="200">{a['blurb']} Taught by Rod Martin — an expert STEM tutor and former Head of Science with over twenty years in UK classrooms.</p>
+      <p style="color:var(--mut);font-size:1.06rem" data-fx="reveal" data-fx-delay="200">{a['blurb']} Taught by Rod Martin — an expert science tutor and former Head of Science with over twenty years in UK classrooms.</p>
       <div class="hero-cta" data-fx="reveal" data-fx-delay="320">
         <a class="btn btn-p" href="{up}index.html#booking">Book a Free Chat →</a>
         <a class="btn btn-g" href="{up}course.html">See How It Works</a>
