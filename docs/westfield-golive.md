@@ -1,0 +1,260 @@
+# Westfield Garage — go-live
+
+The demo is finished and lives at `/templates/westfield-garage`, `noindex` and
+disallowed in `robots.txt`. This is the list of everything between there and a
+site on his own domain, in the order it has to happen.
+
+**The short version of what you need to buy or sign up for:**
+
+| Thing | Needed? | Cost |
+|---|---|---|
+| A domain | **Yes — this is the blocker** | £10–15/yr |
+| Cloudflare (his own account) | **Yes** — you have it | Free |
+| **Web3Forms** — enquiry form delivery | **Yes** | Free |
+| **Resend** | **No** | — |
+| Cloudflare Email Routing — `info@` → his Gmail | Recommended | Free |
+| Cloudflare Web Analytics | Recommended | Free |
+| Google Workspace (real mailboxes on the domain) | Optional, later | ~£5/user/mo |
+| Google Search Console | Yes, launch day | Free |
+| Google Analytics | **No** — see below | — |
+
+So: **one domain, and nothing else costs money.** Everything on this page that
+is not the domain is free.
+
+---
+
+## Why Web3Forms and not Resend
+
+Resend is an email-sending API. Its key has to stay server-side, which means
+this site would need a Worker of its own with an `/api/enquiry` route and a
+Cloudflare secret, and to send *from* his domain you have to verify the domain
+in Resend with SPF and DKIM records. That is three more moving parts and two
+more DNS records, on a site that otherwise needs no server at all.
+
+Web3Forms posts straight from the browser to a hosted endpoint and the enquiry
+lands in whichever inbox created the key. Its access key is public by design —
+it identifies the destination inbox and grants nothing else — so it lives in
+the repo, not in a secret. Nothing goes in DNS, so it cannot clash with his
+email. This is what Rod's site already uses (`templates/smartin/site.js`) and
+it has been reliable.
+
+**The thing that matters about the key: whichever email address creates it is
+where every enquiry lands.** Create it signed in as `westfieldgarage45@gmail.com`
+(or as his new `info@` address once that exists), not as yours.
+
+Resend is worth revisiting later if he wants branded auto-replies going out
+*as* `westfieldgarage.co.uk`. It is not worth it for launch.
+
+### The one code change Web3Forms needs
+
+`assets/js/westfield.js` posts the raw field object to `CONFIG.endpoint`.
+Web3Forms wants `access_key` in that body and answers `{success:true}`. So the
+form code needs a `CONFIG.web3formsKey`, merged into the payload, and a success
+check on `body.success` rather than on the HTTP status. Ten minutes. The
+WhatsApp fallback stays exactly as it is, so an enquiry is still never lost if
+the post fails.
+
+### Why not Google Analytics
+
+GA4 sets cookies, which means a consent banner, which means a cookie policy —
+real work and a worse first impression, on a site whose job is to get somebody
+to ring a phone number. **Cloudflare Web Analytics** is free, cookieless,
+needs no banner, and tells you the same thing that actually matters here: how
+many people landed, on what, from where. One line of script.
+
+---
+
+## Phase 0 — what you need from him
+
+Nothing below Phase 1 can start without the first item.
+
+1. **A domain, bought in his name.** Send him `docs/client-domain-guide.md`
+   more or less as it stands — it already covers what to buy, what to refuse
+   at checkout, and the renewal trap. Suggest, in this order:
+   `westfieldgarage.co.uk`, `westfieldgaragelevenshulme.co.uk`,
+   `westfieldgarage.com`. Register it in **his** name and his business's, not
+   yours. Turn auto-renew on.
+
+2. **His company number.** The signage says *Westfield Garage Int Limited*. A
+   limited company has to show its registered name, registered number and
+   registered office address on its website — it is a trading-disclosure
+   requirement, not a nicety, and the site has none of it yet. Get the number
+   and the registered office off his paperwork or from Companies House.
+
+3. **Opening and closing times.** The 9:30am open is his, off his Google
+   profile. The 6pm close and the whole Saturday row are still guesses.
+
+4. **Facebook and Instagram URLs**, if he has them. If he genuinely has none,
+   say so and the buttons come off the page rather than pointing nowhere.
+
+5. **Is the pre-MOT check free or not?** It is badged *Pre-test* rather than
+   *Free* because nobody has told us.
+
+6. **Does he issue MOT certificates, or only check?** The copy is deliberately
+   written as "we check what a tester checks". If he is an actual MOT test
+   station that is worth saying loudly and the copy should change.
+
+---
+
+## Phase 1 — kill the placeholders (no domain needed, do this first)
+
+All of this can be done today, on the demo, while the domain is being bought.
+Everything here is listed in `docs/westfield-handoff.md` too.
+
+1. **Replace the three example reviews with real ones.** He has 45 five-star
+   reviews on Google. Take three, word for word, with the reviewer's first
+   name and initial as Google shows them. Then delete the visible "example
+   reviews" note under them. **Do this before anything is indexed** — invented
+   testimonials on a live trading site are a consumer-protection problem, not
+   a style choice.
+
+2. **Google Place ID → the review button.** Sign in to his Business Profile,
+   get the Place ID, and set
+   `CONFIG.googleReview = "https://search.google.com/local/writereview?placeid=<ID>"`.
+   Right now both `google` and `googleReview` point at a Maps search — it
+   works and lands on his listing, but the direct link opens the review box.
+
+3. **Real photographs of his garage.** His Business Profile already has
+   photos of the shopfront and the workshop. Pull them down. Every photo on
+   the site is licensed stock and this is the single biggest visible upgrade
+   available. Keep the same filenames in `assets/westfield/` and no markup
+   changes at all: `hero`, `bay-wide`, `bay-lift`, `engine`, `tools`,
+   `wheel`, `mechanic`, `hero-alt`, and the eleven `svc-*` tiles.
+
+4. **Hours.** Correct the table in `#find`; `data-open`/`data-close` are
+   minutes past midnight. Then add `openingHours` to the JSON-LD in the head,
+   which is deliberately absent while the times are a guess.
+
+5. **Company details in the footer** — registered name, number and registered
+   office, once you have them.
+
+6. **A privacy page.** The forms collect a name, phone and email, so UK GDPR
+   wants a privacy notice: who holds the data, what for, how long, and how to
+   ask for it back. One short page, linked from the footer and from under both
+   forms. Nothing elaborate — a garage enquiry form is the simplest case there
+   is.
+
+7. **Facebook and Instagram**, or remove them.
+
+---
+
+## Phase 2 — the domain onto Cloudflare
+
+Same shape as Rod's. His Cloudflare account, not yours and not Billy Digitals'.
+
+1. In **his** Cloudflare: *Add a site* → the domain → Free plan.
+2. Cloudflare gives two nameservers. Paste them into the registrar where he
+   bought the domain. If he bought at Cloudflare Registrar there is nothing
+   to paste — skip this.
+3. **Before you switch anything, check his existing email records come
+   across.** If `@westfieldgarage.co.uk` addresses already exist anywhere,
+   the MX, SPF and DMARC records must be in Cloudflare *before* the
+   nameservers move, or his email stops. If he is on plain Gmail with no
+   domain email, there is nothing to carry and this is a non-issue — which
+   is almost certainly the case here.
+4. Wait for the zone to read **Active**. Usually minutes, occasionally hours.
+5. **Cloudflare Email Routing** (optional but cheap in effort): turn it on,
+   add `info@westfieldgarage.co.uk` → forwards into his Gmail. He gets a
+   professional address on business cards without paying for a mailbox. Note
+   it only *receives*: replies still go out from his Gmail unless he later
+   pays for Workspace, so do not promise him more than that.
+
+---
+
+## Phase 3 — the build and the deploy pipeline
+
+This is the engineering, and it copies `[env.smartin]` line for line. **Do not
+put his domain on the billydigitals Worker.** A push to any branch of this
+repository deploys to production there (see `PROJECT-NOTES.md`), so a stray
+branch push would put the wrong tree on a client's live site. His site gets
+its own Worker in his own account, exactly like Rod's and Lynsey's.
+
+1. **`scripts/build-westfield.py`** — takes the domain as an argument and
+   writes `dist/westfield-garage/`:
+   - `templates/westfield-garage.html` → `index.html`
+   - `../assets/` → `/assets/`, `vendor/lenis.min.js` → `/vendor/lenis.min.js`
+   - `noindex, nofollow` **removed**, a `<link rel="canonical">` added
+   - the OG image path made absolute, which it has to be to work
+   - its own `robots.txt` (allow everything) and `sitemap.xml`
+   - only the assets this page actually uses copied over — not the whole
+     repository
+
+2. **`[env.westfield]` in `wrangler.toml`**, with `name`, `routes` for the
+   apex and `www`, and `[env.westfield.assets] directory = "dist/westfield-garage"`.
+   Static only — no `main`, because with Web3Forms there is no server code.
+
+3. **`.github/workflows/deploy-westfield.yml`**, copied from
+   `deploy-smartin.yml`, with the same three guards that workflow learned
+   the hard way:
+   - the build is checked before it deploys (a deploy that publishes an empty
+     directory is worse than one that fails, because nobody looks)
+   - `wrangler.toml` is checked to target *his* worker, because
+     `--env westfield` with a missing block does not fail: it silently falls
+     back to the top-level config and uploads **the entire repository** —
+     every other client's files — into his Cloudflare account
+   - the live site is compared against the build byte-for-byte afterwards,
+     because a 200 only proves that something is there
+
+4. **Two GitHub secrets** (Settings → Secrets and variables → Actions):
+   - `CLOUDFLARE_API_TOKEN_WESTFIELD` — created in **his** Cloudflare, with
+     **both** Account → Workers Scripts → Edit **and** Zone → Workers Routes →
+     Edit on his zone. Without the zone permission the first deploy uploads
+     fine and the domain keeps showing the registrar's holding page, which
+     reads as a deploy that did nothing.
+   - `CLOUDFLARE_ACCOUNT_ID_WESTFIELD` — on the right of any page in his
+     dashboard.
+
+   **Use a scoped API token, not his login.** You should not be holding a
+   password for an asset that is not yours, and a token can be revoked by him
+   in one click.
+
+5. **Web3Forms**: create the key signed in as his address, put it in
+   `CONFIG.web3formsKey`, set `CONFIG.endpoint` to
+   `https://api.web3forms.com/submit`, make the code change described above.
+   Then **send a real test enquiry through both forms** and confirm it arrives.
+
+6. **Cloudflare Web Analytics**: add the site in his dashboard, drop the one
+   script line into the build.
+
+---
+
+## Phase 4 — launch day
+
+1. Push. The workflow builds, checks, deploys, and verifies the live site is
+   the build.
+2. Open the real domain on a phone and on a laptop and click everything:
+   call, WhatsApp, directions, both forms, the lightbox, the review buttons.
+3. **Google Search Console** — add the domain property, verify with the DNS
+   TXT record (two minutes, since Cloudflare holds DNS now), submit
+   `https://<domain>/sitemap.xml`.
+4. **Put the website address on his Google Business Profile.** This is the
+   single biggest local-SEO signal available and it is one field.
+5. **Test the enquiry forms once more on the live domain**, not just locally.
+6. Tell him to put the address on his signage, his invoices and his van.
+
+---
+
+## Phase 5 — after it is live
+
+- Diary the domain renewal date. A client whose domain expires blames the web
+  person, every time.
+- Add `westfieldgarage.co.uk` to the Billy Digitals portfolio page.
+- `/templates/westfield-garage` stays `noindex` and disallowed so the demo and
+  the real site never compete in search. Do not remove the robots meta there.
+- Revisit Resend only if he wants branded auto-replies.
+
+---
+
+## The two things to say to him before he signs off
+
+**The DPF wording is deliberate.** Removing a diesel particulate filter from a
+road car is an automatic MOT failure and it is an offence to advertise the
+work — the ASA and trading standards both act on it. So the DPF & EGR tile,
+the remapping tile and two FAQ answers are written around checking, cleaning
+and unblocking, and around maps that leave every emissions part where the
+factory put it. If he wants that changed, that is a conversation with him, not
+a quiet copy edit.
+
+**The reviews on the page now are examples and have to come out.** Say it
+plainly. It is the one item on this whole list that could actually cost him
+something.

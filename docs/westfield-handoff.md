@@ -12,6 +12,7 @@ to search engines until we decide otherwise.
 | Behaviour + CONFIG | `assets/js/westfield.js` |
 | Logo, photography, icons, fonts | `assets/westfield/` |
 | Stock photo credits | `docs/westfield-photo-credits.md` |
+| Go-live runbook | `docs/westfield-golive.md` |
 
 Shared, not client-specific: `assets/css/scroll-fx.css` + `assets/js/scroll-fx.js`
 (the house `data-fx` toolkit) and `templates/vendor/lenis.min.js` (smooth scroll).
