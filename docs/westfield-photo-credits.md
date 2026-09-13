@@ -33,8 +33,11 @@ provenance and re-source a file later.
 | `svc-suspensions` | Services tile 06 | FBO Media | [33024451](https://www.pexels.com/photo/close-up-of-custom-vehicle-suspension-system-in-workshop-33024451/) |
 | `svc-gearbox` | Services tile 07 | Akshit Jhanwar | [28721763](https://www.pexels.com/photo/intricate-car-transmission-cutaway-display-28721763/) |
 | `svc-timing` | Services tile 08 | Hebert Santos | [5121549](https://www.pexels.com/photo/timing-bell-on-camshaft-sprocket-5121549/) |
+| `svc-hybrid` | Services tile 09 | César Baciero | [8349487](https://www.pexels.com/photo/8349487/) |
+| `svc-dpf` | Services tile 10 | cottonbro studio | [7565164](https://www.pexels.com/photo/7565164/) |
+| `svc-remap` | Services tile 11 | Fatih Erden | [10490631](https://www.pexels.com/photo/10490631/) |
 
-## Two notes on what is in frame
+## Notes on what is in frame
 
 - **`svc-clutches`** shows a technician working under a raised car rather than a
   clutch plate on a bench. Free stock has almost no true clutch-disc photography
@@ -44,6 +47,18 @@ provenance and re-source a file later.
 - **`svc-gearbox`** is a sectioned exhibition transmission, not a workshop bench
   shot. It reads unmistakably as a gearbox at tile size, which is what the slot
   needs.
+- **`svc-hybrid`** is a charge flap with the lead in it, shot in monochrome. The
+  photographer’s own caption calls it an electric vehicle; it was chosen anyway
+  because a plugged-in car is the one image that reads as "hybrid work done
+  here" at tile size, and the battery half of that tile is carried by the copy.
+  A photograph of a hybrid battery pack on his bench would beat it outright.
+- **`svc-dpf`** is a carbon-caked turbocharger on the bench rather than a DPF
+  itself. Free stock has no usable DPF photography, and a sooted-up diesel
+  component is the honest picture of what a blocked-filter job looks like.
+- **`svc-remap`** has a VW roundel on the steering wheel and `svc-brakes` and
+  others carry manufacturer detail too. That is unavoidable in garage stock and
+  implies no affiliation, but if he would rather have no badges in frame, say so
+  and they can be re-sourced.
 
 ## Fonts
 

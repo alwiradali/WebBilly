@@ -22,15 +22,32 @@
     whatsapp:     "447949859112",
     email:        "westfieldgarage45@gmail.com",
 
+    /* His address, off his Google Business Profile. It is written into the
+       top strip, the drawer, Find us and the footer from here, so there is
+       one copy of it and the maps link can never drift out of step. */
+    address:      "2 Broom Ln, Stockport Rd, Levenshulme, Manchester M19 2TW",
+    addressShort: "2 Broom Ln, Levenshulme, M19 2TW",   /* the phone-width strip */
+    maps:         "https://www.google.com/maps/dir/?api=1&destination=" +
+                  "Westfield%20Garage%2C%202%20Broom%20Ln%2C%20Levenshulme%2C%20Manchester%20M19%202TW",
+
     /* --- LINKS TO SWAP BEFORE GOING LIVE -------------------------------
-       These are placeholders. Paste the garage's real profile URLs in and
-       every button, card and footer icon on the page follows automatically.
+       facebook and instagram are still placeholders — paste his real profile
+       URLs in and every button, card and footer icon follows automatically.
        Leave one blank ("") and its button is removed rather than pointing
-       nowhere. ------------------------------------------------------------ */
+       nowhere.
+
+       google and googleReview both point at a Maps search for the garage,
+       which lands on his real listing. They work, but the direct
+       write-a-review deep link is better: get the Place ID off his Business
+       Profile and use
+         https://search.google.com/local/writereview?placeid=<PLACE_ID>
+       ------------------------------------------------------------------- */
     facebook:     "https://www.facebook.com/",
     instagram:    "https://www.instagram.com/",
-    google:       "https://www.google.com/maps",       /* the Business Profile */
-    googleReview: "https://search.google.com/local/writereview?placeid=",
+    google:       "https://www.google.com/maps/search/?api=1&query=" +
+                  "Westfield%20Garage%20Levenshulme%2C%202%20Broom%20Ln%2C%20Manchester%20M19%202TW",
+    googleReview: "https://www.google.com/maps/search/?api=1&query=" +
+                  "Westfield%20Garage%20Levenshulme%2C%202%20Broom%20Ln%2C%20Manchester%20M19%202TW",
 
     /* Optional: a POST endpoint for the enquiry forms. Left empty, the forms
        hand off to WhatsApp with the enquiry pre-written, and offer email as
@@ -46,7 +63,8 @@
 
   /* ------------------------------------------------- 1. contact details --
      Written into the page from CONFIG so the number lives in exactly one
-     place. data-wf="tel|dial|wa|mail|fb|ig|google|review" marks the targets. */
+     place. data-wf="tel|dial|wa|mail|addr|addr2|maps|fb|ig|google|review"
+     marks the targets. */
   function waLink(text) {
     return "https://wa.me/" + CONFIG.whatsapp +
            (text ? "?text=" + encodeURIComponent(text) : "");
@@ -60,7 +78,17 @@
                             el.setAttribute("target", "_blank");
                             el.setAttribute("rel", "noopener"); }
       if (k === "mail")   { el.setAttribute("href", "mailto:" + CONFIG.email);
-                            if (el.hasAttribute("data-wf-fill")) el.textContent = CONFIG.email; }
+                            /* writing to el.textContent here would take the
+                               icon out with the old address, so the address
+                               gets its own slot to be written into */
+                            if (el.hasAttribute("data-wf-fill")) {
+                              var slot = el.querySelector("[data-wf-slot]");
+                              if (slot) slot.textContent = CONFIG.email;
+                              else el.textContent = CONFIG.email;
+                            } }
+      if (k === "addr")   { el.textContent = CONFIG.address; }
+      if (k === "addr2")  { el.textContent = CONFIG.addressShort; }
+      if (k === "maps")   { link(el, CONFIG.maps); }
       if (k === "fb")     { link(el, CONFIG.facebook); }
       if (k === "ig")     { link(el, CONFIG.instagram); }
       if (k === "google") { link(el, CONFIG.google); }

@@ -52,8 +52,35 @@ red `#ed1b24`, hazard yellow `#fef200`. Nothing was invented.
 
 - Phone **07949 859112**, dialled as `+447949859112`, WhatsApp `447949859112`
 - Email **westfieldgarage45@gmail.com**
-- The eight specialisms: Services, Diagnostics, Brakes, Clutches, Exhausts,
-  Suspensions, Gearbox, Timing Belt
+- Address **2 Broom Ln, Stockport Rd, Levenshulme, Manchester M19 2TW** — off
+  his Google Business Profile, where he is listed as *Westfield garage
+  Levenshulme*
+- **5.0 stars from 45 Google reviews**, same source
+- Monday opens **9:30am**, same source
+- The eleven specialisms: Services, Diagnostics, Brakes, Clutches, Exhausts,
+  Suspensions, Gearbox, Timing Belt — the eight off the sign — plus
+  **Hybrid & Battery**, **DPF & EGR** and **Remapping**, which he asked for
+- The free checks he asked for: **free MOT check**, **pre-MOT check**,
+  **free oil check**, **free tyre pressure check**
+
+### Where the address lives
+
+In exactly one place: `CONFIG.address` and `CONFIG.maps` at the top of
+`assets/js/westfield.js`. It is written into the strip above the nav, the
+mobile menu, the Find us column, the address card and the footer from there,
+and the `LocalBusiness` JSON-LD in the page head carries the same figures. If
+he moves, change those two lines and the JSON-LD block, and nothing else.
+
+### One thing to say to him before this goes live
+
+**DPF removal is not on the table and the page says so.** Taking a diesel
+particulate filter off a road car is an automatic MOT failure, and advertising
+the work is an offence under the Consumer Protection from Unfair Trading
+Regulations — the ASA and trading standards both act on it. So the DPF & EGR
+tile, the remapping tile and two of the FAQ answers are written around
+**checking, cleaning and unblocking**, and around maps that leave every
+emissions part where the factory put it. If he does want to advertise deletes,
+that is a conversation to have with him, not a copy change to make quietly.
 
 ---
 
@@ -62,21 +89,21 @@ red `#ed1b24`, hazard yellow `#fef200`. Nothing was invented.
 Everything below is invented for layout purposes only. It is all marked with an
 HTML comment at the point of use.
 
-1. **The three social links.** `CONFIG.facebook`, `CONFIG.instagram`,
-   `CONFIG.google` at the top of `assets/js/westfield.js` currently point at the
-   networks' home pages. Paste his real profile URLs in and the footer icons,
-   the review buttons and everything else follow automatically. **Set one to
-   `""` and its button is removed from the page** rather than left pointing
-   nowhere — so an unanswered question costs nothing.
+1. **Facebook and Instagram.** `CONFIG.facebook` and `CONFIG.instagram` at the
+   top of `assets/js/westfield.js` still point at the networks' home pages.
+   Paste his real profile URLs in and the footer icons follow automatically.
+   **Set one to `""` and its button is removed from the page** rather than left
+   pointing nowhere — so an unanswered question costs nothing.
 
-2. **`CONFIG.googleReview`** ends `...writereview?placeid=` with no place ID.
-   Get the Place ID from his Google Business Profile and append it, or drop in
-   the short link Google generates under "Ask for reviews".
+2. **`CONFIG.googleReview`** now points at a Maps search that lands on his real
+   listing, so the button works — but the direct write-a-review deep link is
+   better. Get the Place ID off his Business Profile and use
+   `https://search.google.com/local/writereview?placeid=<PLACE_ID>`.
 
-3. **The four counters** (`data-count` in the stats band): `8` specialisms is
-   real — it is his own list. `4.9` average rating, `12+` years and `100%`
-   quoted-first are **not confirmed**. Ask him, or delete the ones he can't
-   stand behind.
+3. **One of the four counters.** `11` specialisms is his own list; `5.0` and
+   `45` are straight off his Google profile. `100%` quoted-before-we-start is
+   the promise the page is built on rather than a measured figure — it stays
+   or goes on his say-so.
 
 4. **The three reviews.** Written by us, attributed to invented first names.
    They must be replaced with real Google reviews or removed entirely — a made-up
@@ -84,18 +111,28 @@ HTML comment at the point of use.
    choice. There is a visible note under them saying so; delete the note when
    the real ones go in.
 
-5. **Opening hours.** Mon–Fri 8:30–18:00, Sat 9:00–16:00, Sun closed — a guess.
-   Each row in `#hours` carries `data-day` (0 = Sunday) and `data-open` /
-   `data-close` in *minutes past midnight* (`510` = 8:30). The "Open now" pill
+5. **Closing times and Saturday.** The **9:30am** opening is his — his Google
+   profile says so. The 6:00pm close and the whole Saturday row are still a
+   guess. Each row in `#hours` carries `data-day` (0 = Sunday) and `data-open` /
+   `data-close` in *minutes past midnight* (`570` = 9:30). The "Open now" pill
    reads those attributes, so correcting the table corrects the pill; there is
-   no second copy to keep in step.
+   no second copy to keep in step. The JSON-LD deliberately carries **no**
+   `openingHours` until the times are confirmed — absent beats wrong.
 
-6. **The address and map.** Not supplied, so the page says so rather than
-   guessing at a town. Once we have it: add it to the Find us column, drop an
-   embedded map into the `.shot` beside it, and add `LocalBusiness`
-   structured data.
+6. **The map.** The address is in and "Get directions" works. There is no
+   *embedded* map, on purpose: an iframe would be the page's only third-party
+   request and would hand Google every visitor's IP before they had clicked
+   anything. If he wants one anyway it drops into `.findcard` in a minute.
 
-7. **All photography is licensed stock**, not his garage. Credits and licences:
+7. **What the two MOT checks actually cover.** He asked for a free MOT check
+   *and* a pre-MOT check as separate things, so the page shows both. We have no
+   price for the pre-MOT check, so it is badged **Pre-test** rather than
+   **Free** (`.check .tag.ghost`) — don't promote it until he says. The wording
+   is careful not to imply he is an MOT test station: it says he checks the
+   things a tester checks, not that he issues certificates. If he *is* a test
+   station, that is worth saying loudly and the copy should change.
+
+8. **All photography is licensed stock**, not his garage. Credits and licences:
    `docs/westfield-photo-credits.md`. Swapping in real photos of the workshop is
    the single biggest upgrade available — replace the files in
    `assets/westfield/` keeping the same names and the page needs no edits.
@@ -137,6 +174,14 @@ never silently lost. Field names sent: `name`, `phone`, `email`, `car`, `reg`,
   font-swap flash on a slow connection.
 - **The visual system is one idea:** his wordmark leans right, so everything
   that leans on this page leans the same 12° (`--lean`). Nothing rotates.
+- **The address strip lives inside `.nav`**, above `.nav-bar`. The nav's own
+  padding moved onto `.nav-bar` so the strip can collapse to zero height on
+  scroll (`.nav.stuck .topbar`) without the logo row moving with it. Don't put
+  padding back on `.nav`.
+- **The twelfth service card is not a twelfth service.** `.tile.plain` is the
+  "not on the list, ring us" prompt; it carries no photograph and squares the
+  grid off at two, three and four columns. The heading still says eleven, and
+  that is correct.
 - Deploy is the usual `PROJECT-NOTES.md` procedure — stamp, push the branch,
   fast-forward `main`, then `node scripts/deploy-verify.mjs`. Remember a push to
   *any* branch currently deploys to production.

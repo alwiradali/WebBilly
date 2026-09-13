@@ -126,6 +126,7 @@ p{text-wrap:pretty}
 .sect-head{max-width:66ch;margin-bottom:clamp(32px,4.5vw,56px)}
 .sect-head.mid{margin-inline:auto;text-align:center}
 .sect-head.mid .eyebrow::before{display:none}
+.sect-head.mid .lede{margin-inline:auto}
 
 /* the slanted rule that echoes the wordmark */
 .slash{height:4px;width:64px;background:var(--fire);transform:skewX(var(--lean));margin:20px 0}
@@ -163,12 +164,44 @@ p{text-wrap:pretty}
 /* --------------------------------------------------------------- the nav - */
 .nav{
   position:fixed;inset:0 0 auto;z-index:80;
-  padding:16px 0;transition:background .4s,backdrop-filter .4s,padding .4s,box-shadow .4s;
+  transition:background .4s,backdrop-filter .4s,box-shadow .4s;
 }
 .nav.stuck{
   background:rgba(14,14,15,.82);backdrop-filter:blur(16px) saturate(140%);
-  padding:10px 0;box-shadow:0 1px 0 var(--line),0 18px 40px -30px #000;
+  box-shadow:0 1px 0 var(--line),0 18px 40px -30px #000;
 }
+/* the padding lives here rather than on .nav so the address strip above can
+   collapse to nothing without the logo row moving with it */
+.nav-bar{padding:16px 0;transition:padding .4s}
+.nav.stuck .nav-bar{padding:10px 0}
+
+/* ------------------------------------------------------ address strip --- */
+/* His address is the first thing on the page, on his own charcoal. It rolls
+   away as soon as you scroll: a fixed header that eats 110px of a 390px
+   phone is a fixed header nobody wants, and the address is repeated in the
+   menu, in Find us and in the footer for anyone who has gone past it. */
+.topbar{
+  background:var(--charcoal);border-bottom:1px solid rgba(255,255,255,.10);
+  overflow:hidden;max-height:78px;opacity:1;
+  transition:max-height .45s cubic-bezier(.22,1,.36,1),opacity .3s,border-color .3s;
+}
+.nav.stuck .topbar{max-height:0;opacity:0;border-bottom-color:transparent}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:8px 0}
+.addr{display:inline-flex;align-items:center;gap:9px;min-width:0;font-size:.79rem;line-height:1.4;color:#eaeaec}
+.addr svg{width:15px;height:15px;flex:none;color:var(--yellow)}
+.addr b{
+  flex:none;font-family:var(--dis);font-weight:800;font-size:.69rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--yellow);border-bottom:1.5px solid rgba(254,242,0,.45);
+  transition:border-color .25s;
+}
+.addr:hover b{border-bottom-color:var(--yellow)}
+.a-short{display:none}
+@media(max-width:559px){.a-long{display:none}.a-short{display:inline}}
+.topbar-offer{
+  display:none;flex:none;font-family:var(--dis);font-weight:700;font-size:.72rem;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--yellow);white-space:nowrap;
+}
+@media(min-width:900px){.topbar-offer{display:inline}}
 .nav-in{display:flex;align-items:center;gap:clamp(16px,3vw,36px)}
 .brand{display:flex;align-items:center;gap:12px;flex:none;margin-right:auto}
 /* HIS logo — traced from the signage, never re-typeset. currentColor keeps it
@@ -200,7 +233,11 @@ p{text-wrap:pretty}
 .nav-tel:hover{color:var(--yellow)}
 
 .burger{
-  display:grid;place-items:center;width:46px;height:46px;flex:none;
+  /* flex, not grid: a grid stretches its three auto rows to fill 46px, which
+     put the bars 15px apart while the open-state transform below assumes the
+     7px the margins actually give them — so the cross came out as a chevron */
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:46px;height:46px;flex:none;
   background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;cursor:pointer;
 }
 @media(min-width:1080px){.burger{display:none}}
@@ -225,6 +262,16 @@ p{text-wrap:pretty}
 .drawer.on a{opacity:1;transform:translateY(0) skewX(0deg)}
 .drawer a:hover{color:var(--red)}
 .drawer .drawer-foot{margin-top:24px;display:grid;gap:10px}
+/* .drawer a sets the big display type for the menu links, so this has to
+   out-specify it rather than sit next to it */
+.drawer .drawer-addr{
+  display:flex;align-items:flex-start;gap:10px;margin-bottom:4px;padding:13px 15px;
+  border:1px solid var(--line);border-radius:var(--r);background:rgba(255,255,255,.05);
+  font-family:var(--ui);font-weight:500;font-size:.88rem;line-height:1.5;
+  letter-spacing:0;color:var(--text);text-transform:none;
+}
+.drawer .drawer-addr svg{width:17px;height:17px;flex:none;margin-top:3px;color:var(--red)}
+.drawer .drawer-addr:hover{color:var(--white);border-color:var(--line2)}
 
 /* ---------------------------------------------------------------- hero -- */
 .hero{
@@ -451,6 +498,51 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 }
 .tile:hover::after,.tile:focus-within::after{transform:scaleX(1)}
 
+/* the twelfth card is a prompt, not a service: no photograph, no lean number,
+   and it sits back a step so it never competes with the eleven real ones */
+.tile.plain{
+  background:var(--charcoal);border-color:var(--line2);
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.tile.plain .num{background:rgba(0,0,0,.35);color:var(--yellow);border-color:rgba(254,242,0,.4)}
+.tile.plain p{max-height:220px;opacity:1;color:#d6d6da}
+.tile.plain .more{color:var(--yellow)}
+.tile.plain:hover{background:var(--charcoal2)}
+.tile.plain::after{background:var(--yellow)}
+
+/* ------------------------------------------------------- the free checks - */
+/* Raised a step off the page floor so the band reads as a different kind of
+   thing from the service tiles either side of it: those are jobs you pay
+   for, these are not. */
+.checks{background:var(--ink2);border-block:1px solid var(--line)}
+.checks h2 em{font-style:italic;color:var(--yellow)}
+.checks-grid{display:grid;gap:clamp(16px,2vw,22px);grid-template-columns:1fr}
+@media(min-width:620px){.checks-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1080px){.checks-grid{grid-template-columns:repeat(4,1fr)}}
+.check{
+  position:relative;background:var(--steel);border:1px solid var(--line);
+  border-radius:var(--rl);padding:clamp(24px,2.8vw,30px);
+  display:grid;align-content:start;gap:13px;
+  transition:transform .35s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .35s;
+}
+.check:hover{transform:translateY(-6px);border-color:var(--line2);box-shadow:var(--shadow-lg)}
+/* the price tag, leaning like everything else on the page */
+.check .tag{
+  position:absolute;top:0;right:clamp(18px,2.4vw,26px);z-index:2;
+  transform:translateY(-50%) skewX(var(--lean));
+  background:var(--yellow);color:#101011;padding:6px 15px;
+  font-family:var(--dis);font-weight:800;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+}
+/* the pre-MOT check has no price from him yet, so it does not get to say Free */
+.check .tag.ghost{background:var(--charcoal);color:var(--white);box-shadow:inset 0 0 0 1.5px var(--line2)}
+.check .ico{
+  width:48px;height:48px;display:grid;place-items:center;border-radius:13px;
+  background:rgba(237,27,36,.13);border:1px solid rgba(237,27,36,.32);color:var(--red2);
+}
+.check .ico svg{width:24px;height:24px}
+.check h3{font-size:clamp(1.1rem,1.6vw,1.25rem);text-transform:uppercase;font-style:italic}
+.check p{font-size:.9rem;color:var(--muted);line-height:1.62}
+
 /* ------------------------------------------------------------- split row - */
 .split{display:grid;gap:clamp(30px,5vw,64px);align-items:center}
 @media(min-width:900px){.split{grid-template-columns:1fr 1fr}
@@ -627,6 +719,17 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 .open-pill i{width:8px;height:8px;border-radius:50%;background:currentColor}
 .open-pill.yes i{animation:pulse 2.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ------------------------------------------------------- the address card */
+.findcard{
+  background:var(--ink2);border:1px solid var(--line);border-radius:var(--rl);
+  padding:clamp(22px,2.8vw,30px);
+}
+.addr-block{
+  font-family:var(--dis);font-weight:700;font-size:clamp(1.05rem,1.9vw,1.3rem);
+  line-height:1.45;color:var(--white);margin-bottom:22px;letter-spacing:-.01em;
+}
+.addr-block b{color:var(--yellow);font-weight:800}
 
 /* ---------------------------------------------------------------- band -- */
 .band{
