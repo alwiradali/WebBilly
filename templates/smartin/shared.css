@@ -309,7 +309,6 @@ a.card:hover{border-color:#BCEBD1}
 /* ---------- session anatomy ---------- */
 .anat{display:grid;gap:16px}
 @media(min-width:700px){.anat{grid-template-columns:1fr 1fr}}
-@media(min-width:1020px){.anat{grid-template-columns:repeat(3,1fr)}}
 .step2{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px;
   transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,border-color .4s}
 .step2:hover{transform:translateY(-5px);box-shadow:var(--sh)}
@@ -697,9 +696,14 @@ footer a:hover{color:var(--green)}
 /* Consolidate carries three follow-on commitments in Rod's amendments —
    home learning, video reinforcement and revision notes. They sit under the
    phase description as a list so the paragraph does not swallow them. */
-.phaselist{margin:10px 0 0;padding:0 0 0 18px;display:grid;gap:6px;
-  color:var(--mut);font-size:14px;line-height:1.5}
-.phaselist li::marker{color:var(--teal)}
+/* Rod asked for these as bullet points, and they have to LOOK like bullet
+   points: the reset above turns every list marker off, so without putting one
+   back the lines just sit indented, which is exactly the "writing has jumped
+   to the right" he reported in the Consolidate box. */
+.phaselist{margin:10px 0 0;padding:0 0 0 20px;display:grid;gap:8px;
+  list-style:disc outside;color:var(--mut);font-size:14px;line-height:1.5}
+.phaselist li{list-style:disc outside}
+.phaselist li::marker{color:var(--teal);font-size:.9em}
 
 /* ---- Rod's amendments: What we cover / National Curriculum ---- */
 /* A sub-heading inside a section that already has its own sec-head — the
