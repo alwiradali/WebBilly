@@ -123,18 +123,55 @@ Nothing below Phase 1 can start without the first item.
 All of this can be done today, on the demo, while the domain is being bought.
 Everything here is listed in `docs/westfield-handoff.md` too.
 
-1. **Replace the three example reviews with real ones.** He has 45 five-star
-   reviews on Google. Take three, word for word, with the reviewer's first
-   name and initial as Google shows them. Then delete the visible "example
-   reviews" note under them. **Do this before anything is indexed** — invented
-   testimonials on a live trading site are a consumer-protection problem, not
-   a style choice.
+1. **Replace the three example reviews with real ones — via Featurable.**
+   Decided 14 Sep. Featurable is free, connects to his Google Business
+   Profile, and hands back his real reviews over an API.
 
-2. **Google Place ID → the review button.** Sign in to his Business Profile,
-   get the Place ID, and set
+   **Its `X-API-Key` is mandatory, so it is a real secret and cannot go in
+   client-side code.** That settles the architecture: the reviews are fetched
+   **at build time, not in the visitor's browser**. Which is the better answer
+   anyway —
+
+   - the reviews land in his own `.rev` cards, in the page's own design,
+     rather than in somebody else's iframe;
+   - they are in the HTML, so Google can read them — a JS widget's contents
+     often are not indexed;
+   - the page makes no third-party request and cannot show an empty box on
+     the day Featurable is down or slow.
+
+   `GET https://featurable.com/api/v2/widgets/<uuid>` with the `X-API-Key`
+   header returns `widget.reviews` and, usefully,
+   `widget.gbpLocationSummary.{rating, reviewsCount, writeAReviewUri}` — so
+   the same call also settles the **5.0**, the **45**, and the direct
+   write-a-review link that `CONFIG.googleReview` is still missing.
+
+   It also returns **`isExampleReviews`**. If that is true, Featurable is
+   handing back its own samples rather than his, and the script must refuse —
+   swapping our invented reviews for somebody else's is not an improvement.
+
+   Baking them into `templates/westfield-garage.html` and committing them
+   means the demo and the live site both show real reviews, the build needs no
+   network, and the site keeps working if Featurable ever goes away. A weekly
+   scheduled workflow can re-run the fetch and commit any change, so new
+   reviews appear on their own.
+
+   **Do this before anything is indexed** — invented testimonials on a live
+   trading site are a consumer-protection problem, not a style choice, and
+   `scripts/build-westfield.py` refuses to build until they are gone.
+
+2. **Google Place ID → the review button.** Featurable's
+   `gbpLocationSummary.writeAReviewUri` gives this for free once the widget
+   exists, so it comes with item 1. Failing that, get the Place ID off his
+   Business Profile and set
    `CONFIG.googleReview = "https://search.google.com/local/writereview?placeid=<ID>"`.
    Right now both `google` and `googleReview` point at a Maps search — it
    works and lands on his listing, but the direct link opens the review box.
+
+   **Take it from his own dashboard, never from a web search.** There is at
+   least one other "Westfield Garage" on a "Broom Lane" in Greater Manchester
+   (Hazel Grove, SK7 4EL) and search engines already conflate the two. Pulling
+   a rating, a review or a Place ID for the wrong business is the sort of
+   mistake that looks fine and is completely wrong.
 
 3. **Real photographs of his garage.** His Business Profile already has
    photos of the shopfront and the workshop. Pull them down. Every photo on
