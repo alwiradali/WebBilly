@@ -144,6 +144,10 @@ HTML comment at the point of use.
 
 ## Where the enquiries go
 
+**Proven 14 Sep 2026:** a test enquiry from the live domain landed in his
+Gmail. Web3Forms key `d0d929d0-…` in `CONFIG.web3formsKey`, delivering to
+westfieldgarage45@gmail.com.
+
 Both forms (the hero card and the main enquiry form) share one code path in
 `westfield.js`.
 

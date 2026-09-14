@@ -35,9 +35,10 @@ Sitemaps, Request indexing on the homepage, and add yourself as a user.
 Use HTTPS → On**. Plain `http://` currently answers 200 with the page instead
 of redirecting; harmless to a visitor, untidy for Google.
 
-**Not yet proven:** one real enquiry through the form on the live domain,
-landing in westfieldgarage45@gmail.com. Web3Forms' bot wall blocks anything
-that is not a browser, so it cannot be tested from a script — send one.
+**The form is proven.** A real enquiry sent from the live domain on 14 Sep
+arrived in westfieldgarage45@gmail.com. (Web3Forms' bot wall blocks anything
+that is not a browser, so this could only ever be proven by hand — if the key
+is ever rotated, send one again.)
 
 ---
 
