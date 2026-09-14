@@ -112,7 +112,14 @@ Nothing below Phase 1 can start without the first item.
 5. **Is the pre-MOT check free or not?** It is badged *Pre-test* rather than
    *Free* because nobody has told us.
 
-6. **Does he issue MOT certificates, or only check?** The copy is deliberately
+6. **One Google profile, or two?** A search for his name and phone number
+   also turns up a Westfield Garage at a **Hazel Grove, SK7 4EL** address.
+   Same phone number, so it is his. Ask him whether he has moved, whether he
+   runs two sites, or whether there is a duplicate Google listing that should
+   be merged — see Phase 1 item 2. Two profiles means his 45 reviews are split
+   between them and both rank worse for it.
+
+7. **Does he issue MOT certificates, or only check?** The copy is deliberately
    written as "we check what a tester checks". If he is an actual MOT test
    station that is worth saying loudly and the copy should change.
 
@@ -167,11 +174,30 @@ Everything here is listed in `docs/westfield-handoff.md` too.
    Right now both `google` and `googleReview` point at a Maps search — it
    works and lands on his listing, but the direct link opens the review box.
 
-   **Take it from his own dashboard, never from a web search.** There is at
-   least one other "Westfield Garage" on a "Broom Lane" in Greater Manchester
-   (Hazel Grove, SK7 4EL) and search engines already conflate the two. Pulling
-   a rating, a review or a Place ID for the wrong business is the sort of
-   mistake that looks fine and is completely wrong.
+   **Take it from his own dashboard, never from a web search** — but not for
+   the reason first written here. The "Westfield Garage, Hazel Grove, SK7 4EL"
+   that comes back from a search is **not a different business**: it carries
+   his phone number, 07949 859112. It is his, under an old or duplicated
+   address.
+
+   That is a bigger problem than a name clash would have been, and it is the
+   one open question on this page that could change what the site says:
+
+   - **If there are two Google Business Profiles**, his 45 reviews are split
+     across them, each one ranks worse than a single merged profile would,
+     and Featurable will only ever pull from whichever one it is connected
+     to. Duplicates should be merged in Google Business Profile, not left.
+   - **If he has moved** from Hazel Grove to Levenshulme, the old address is
+     still sitting in directory listings. An address and phone number that
+     disagree across the web is one of the few things that genuinely damages
+     local search ranking, and it is cheap to fix.
+   - **If he genuinely runs two sites**, the website should say so, and the
+     `PostalAddress` in the JSON-LD needs to become the right one of the two
+     with the second stated as well.
+
+   Until he answers, the site carries the address on his own Business Profile
+   — 2 Broom Ln, Stockport Rd, Levenshulme, M19 2TW — which is correct under
+   every one of those three readings.
 
 3. **Real photographs of his garage.** His Business Profile already has
    photos of the shopfront and the workshop. Pull them down. Every photo on
