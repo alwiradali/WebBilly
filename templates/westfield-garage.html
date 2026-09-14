@@ -69,6 +69,7 @@
     { "@type": "OpeningHoursSpecification",
       "dayOfWeek": "Saturday", "opens": "09:30", "closes": "15:00" }
   ],
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Westfield%20Garage%20Levenshulme%2C%202%20Broom%20Ln%2C%20Manchester%20M19%202TW",
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "5.0",
@@ -727,7 +728,14 @@
           </a>
           <a class="btn ghost" data-wf="google" href="#">See us on Google</a>
         </div>
-        <p class="note mt" data-demo>An embedded map can drop straight in here — it is left out for now so the page makes no third-party requests. See the handoff note.</p>
+        <!-- Google's keyless embed: no API key, no script, one iframe that
+             loads lazily when the visitor scrolls to it. The query is his
+             name and address so the pin lands on his listing. -->
+        <div class="map mt">
+          <iframe title="Map showing Westfield Garage, 2 Broom Lane, Levenshulme, Manchester M19 2TW"
+                  src="https://www.google.com/maps/embed?origin=mfe&amp;pb=!1m3!2m1!1sWestfield+Garage,+2+Broom+Ln,+Levenshulme,+Manchester+M19+2TW!6i16"
+                  loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
       </div>
     </div>
   </div>
