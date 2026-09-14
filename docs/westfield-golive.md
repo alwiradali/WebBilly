@@ -130,57 +130,29 @@ Nothing below Phase 1 can start without the first item.
 All of this can be done today, on the demo, while the domain is being bought.
 Everything here is listed in `docs/westfield-handoff.md` too.
 
-1. **Replace the three example reviews with real ones — via Featurable.**
-   Decided 14 Sep. Featurable is free, connects to his Google Business
-   Profile, and hands back his real reviews over an API.
+1. ~~**Replace the three example reviews with real ones.**~~ **Done — 14 Sep,
+   via Featurable.** `scripts/fetch-westfield-reviews.py` reads his widget and
+   writes the page: three real reviews, his real 5.0, his real 45, and the
+   write-a-review link carrying his Place ID. Run it again when he gets new
+   reviews and commit the diff. `--list` shows all 38 with text and their ids;
+   `--check` exits non-zero if the page has fallen behind.
 
-   **Its `X-API-Key` is mandatory, so it is a real secret and cannot go in
-   client-side code.** That settles the architecture: the reviews are fetched
-   **at build time, not in the visitor's browser**. Which is the better answer
-   anyway —
+   **No API key, in the end.** The documented v2 endpoint demands one; the v1
+   endpoint his own embed script uses does not, and the widget is published
+   with `allowedDomains: []`. So there is no secret here and nothing to
+   rotate — the whole "key is a secret, so fetch at build time" argument below
+   still lands on the same architecture, just for a simpler reason.
 
-   - the reviews land in his own `.rev` cards, in the page's own design,
-     rather than in somebody else's iframe;
-   - they are in the HTML, so Google can read them — a JS widget's contents
-     often are not indexed;
-   - the page makes no third-party request and cannot show an empty box on
-     the day Featurable is down or slow.
+   The reviews are **committed into the page**, not fetched in the browser.
+   They are in the HTML so Google reads the words rather than having to run
+   somebody's JavaScript; the page makes no third-party request; and it cannot
+   show an empty box on the day Featurable is slow.
 
-   `GET https://api.featurable.com/v2/widgets/<uuid>` with the `X-API-Key`
-   header returns `widget.reviews` and, usefully,
+   His Place ID, for anything else that needs it:
+   **`ChIJxyph9VK1e0gRIYnoS26cc3s`**
 
-   — note the host. The documented `featurable.com/api/v2/...` **308s** to
-   `api.featurable.com/v2/...`, and a client that does not follow redirects
-   silently gets nothing. Call the real host directly. An id that does not
-   resolve answers `{"success":false,"error":{"key":"widget_not_found"}}`
-   with a 404, with or without a key — so a wrong id and an unauthorised one
-   look identical, and neither looks like an auth failure.
-
-   `widget.gbpLocationSummary.{rating, reviewsCount, writeAReviewUri}` — so
-   the same call also settles the **5.0**, the **45**, and the direct
-   write-a-review link that `CONFIG.googleReview` is still missing.
-
-   It also returns **`isExampleReviews`**. If that is true, Featurable is
-   handing back its own samples rather than his, and the script must refuse —
-   swapping our invented reviews for somebody else's is not an improvement.
-
-   Baking them into `templates/westfield-garage.html` and committing them
-   means the demo and the live site both show real reviews, the build needs no
-   network, and the site keeps working if Featurable ever goes away. A weekly
-   scheduled workflow can re-run the fetch and commit any change, so new
-   reviews appear on their own.
-
-   **Do this before anything is indexed** — invented testimonials on a live
-   trading site are a consumer-protection problem, not a style choice, and
-   `scripts/build-westfield.py` refuses to build until they are gone.
-
-2. **Google Place ID → the review button.** Featurable's
-   `gbpLocationSummary.writeAReviewUri` gives this for free once the widget
-   exists, so it comes with item 1. Failing that, get the Place ID off his
-   Business Profile and set
-   `CONFIG.googleReview = "https://search.google.com/local/writereview?placeid=<ID>"`.
-   Right now both `google` and `googleReview` point at a Maps search — it
-   works and lands on his listing, but the direct link opens the review box.
+2. ~~**Google Place ID → the review button.**~~ **Done** — it came with item 1.
+   `CONFIG.googleReview` now opens his review box directly.
 
    **Take it from his own dashboard, never from a web search** — but not for
    the reason first written here. The "Westfield Garage, Hazel Grove, SK7 4EL"

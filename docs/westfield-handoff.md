@@ -106,11 +106,10 @@ HTML comment at the point of use.
    the promise the page is built on rather than a measured figure — it stays
    or goes on his say-so.
 
-4. **The three reviews.** Written by us, attributed to invented first names.
-   They must be replaced with real Google reviews or removed entirely — a made-up
-   testimonial on a live site is a consumer-protection problem, not a style
-   choice. There is a visible note under them saying so; delete the note when
-   the real ones go in.
+4. ~~**The three reviews.**~~ **Done.** They are his real Google reviews now,
+   pulled from Featurable by `scripts/fetch-westfield-reviews.py` and committed
+   into the page. Run that script again when he gets new ones. It needs no API
+   key and no secret.
 
 5. **Closing times and Saturday.** The **9:30am** opening is his — his Google
    profile says so. The 6:00pm close and the whole Saturday row are still a
