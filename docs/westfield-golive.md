@@ -146,8 +146,16 @@ Everything here is listed in `docs/westfield-handoff.md` too.
    - the page makes no third-party request and cannot show an empty box on
      the day Featurable is down or slow.
 
-   `GET https://featurable.com/api/v2/widgets/<uuid>` with the `X-API-Key`
+   `GET https://api.featurable.com/v2/widgets/<uuid>` with the `X-API-Key`
    header returns `widget.reviews` and, usefully,
+
+   — note the host. The documented `featurable.com/api/v2/...` **308s** to
+   `api.featurable.com/v2/...`, and a client that does not follow redirects
+   silently gets nothing. Call the real host directly. An id that does not
+   resolve answers `{"success":false,"error":{"key":"widget_not_found"}}`
+   with a 404, with or without a key — so a wrong id and an unauthorised one
+   look identical, and neither looks like an auth failure.
+
    `widget.gbpLocationSummary.{rating, reviewsCount, writeAReviewUri}` — so
    the same call also settles the **5.0**, the **45**, and the direct
    write-a-review link that `CONFIG.googleReview` is still missing.
