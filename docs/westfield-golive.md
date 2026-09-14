@@ -24,6 +24,13 @@ and upload the new zip. Or add the two secrets from Phase 3 and push to
 Worker cannot be renamed, so the config was changed to match it, not the
 other way round).
 
+**Search Console — verified 14 Sep**, in his Google account
+(westfieldgarage45@gmail.com), URL-prefix property for
+`https://westfieldgarageintlimited.co.uk/`, by the HTML file that
+`templates/westfield-root/` keeps at the root of every build. Left to do in
+it: submit `https://westfieldgarageintlimited.co.uk/sitemap.xml` under
+Sitemaps, Request indexing on the homepage, and add yourself as a user.
+
 **Still to flick in his Cloudflare:** SSL/TLS → Edge Certificates → **Always
 Use HTTPS → On**. Plain `http://` currently answers 200 with the page instead
 of redirecting; harmless to a visitor, untidy for Google.
