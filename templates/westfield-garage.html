@@ -30,12 +30,11 @@
 
 <!--
   ==========================================================================
-  PLACEHOLDER CONTENT — everything listed in docs/westfield-handoff.md still
-  needs the garage's own numbers before this goes near a search engine:
-  the closing times, the Saturday hours, the review quotes, the two social
-  links and one counter. The address, the phone number, the email address,
-  the Google rating and review count and the eleven specialisms are his own
-  — off the signage and off his Google Business Profile — and are correct.
+  The address, the phone number, the email address, the hours, the Google
+  rating and review count, the three reviews, the company number and the
+  registered office are his own — off the signage, his Google Business
+  Profile and Companies House — and are correct. What is still open is
+  listed in docs/westfield-handoff.md.
 
   The logo is a vector trace of the artwork he supplied — assets/westfield/
   logo-*.svg — not a re-set in a lookalike font. Do not substitute a
@@ -46,8 +45,7 @@
 <!-- LocalBusiness, straight off his Google Business Profile. It does nothing
      while the page is noindex; it is here so that the day the robots meta
      comes off, Google already has the address, the phone and the rating in a
-     form it can read. The closing times still need confirming — see the
-     handoff note — so openingHours is deliberately absent rather than wrong. -->
+     form it can read. The hours are his, off the same profile. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -64,6 +62,13 @@
     "postalCode": "M19 2TW",
     "addressCountry": "GB"
   },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:30", "closes": "18:00" },
+    { "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday", "opens": "09:30", "closes": "15:00" }
+  ],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "5.0",
@@ -680,13 +685,13 @@
         <span class="note" id="openHint"></span>
       </div>
 
-      <!-- The 9:30am opening is his own — it is what his Google Business
-           Profile says. The closing time and the Saturday row are still
-           guesses: confirm both before this page is indexed. data-open and
-           data-close are minutes past midnight (570 = 9:30). -->
+      <!-- His hours, off his Google Business Profile (Mon–Fri 9:30–6, Sat
+           9:30–3, Sun closed). data-open and data-close are minutes past
+           midnight (570 = 9:30, 900 = 3:00); the "Open now" pill reads them,
+           and the JSON-LD openingHoursSpecification above must match. -->
       <div class="hours" id="hours" data-fx="reveal" data-fx-delay="220">
         <div class="row" data-day="1,2,3,4,5" data-open="570" data-close="1080"><b>Monday – Friday</b><span>9:30am – 6:00pm</span></div>
-        <div class="row" data-day="6" data-open="540" data-close="960"><b>Saturday</b><span>9:00am – 4:00pm</span></div>
+        <div class="row" data-day="6" data-open="570" data-close="900"><b>Saturday</b><span>9:30am – 3:00pm</span></div>
         <div class="row" data-day="0"><b>Sunday</b><span>Closed</span></div>
       </div>
 
@@ -838,6 +843,7 @@
     <div class="foot-btm">
       <span>© <span id="yr">2026</span> Westfield Garage Int Limited. All rights reserved.</span>
       <span>Site by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></span>
+      <span class="foot-legal">Westfield Garage Int Limited is a private limited company registered in England and Wales, company number 12312093. Registered office: 2 Broom Lane, Manchester M19 2TW.</span>
     </div>
   </div>
 </footer>

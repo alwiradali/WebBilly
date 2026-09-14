@@ -111,13 +111,12 @@ HTML comment at the point of use.
    into the page. Run that script again when he gets new ones. It needs no API
    key and no secret.
 
-5. **Closing times and Saturday.** The **9:30am** opening is his — his Google
-   profile says so. The 6:00pm close and the whole Saturday row are still a
-   guess. Each row in `#hours` carries `data-day` (0 = Sunday) and `data-open` /
-   `data-close` in *minutes past midnight* (`570` = 9:30). The "Open now" pill
-   reads those attributes, so correcting the table corrects the pill; there is
-   no second copy to keep in step. The JSON-LD deliberately carries **no**
-   `openingHours` until the times are confirmed — absent beats wrong.
+5. ~~**Closing times and Saturday.**~~ **Done.** Mon–Fri 9:30–6:00, Saturday
+   9:30–3:00, Sunday closed — off his Google Business Profile, 14 Sep. Each row
+   in `#hours` carries `data-day` (0 = Sunday) and `data-open` / `data-close`
+   in *minutes past midnight* (`570` = 9:30, `900` = 3:00). The "Open now" pill
+   reads those attributes, so if his hours change, correct the table and the
+   `openingHoursSpecification` in the JSON-LD, and nothing else.
 
 6. **The map.** The address is in and "Get directions" works. There is no
    *embedded* map, on purpose: an iframe would be the page's only third-party

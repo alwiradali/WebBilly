@@ -97,14 +97,14 @@ Nothing below Phase 1 can start without the first item.
    account. Check **auto-renew is on**; a lapsed domain is the single most
    common way a small business loses its website.
 
-2. **His company number.** The signage says *Westfield Garage Int Limited*. A
-   limited company has to show its registered name, registered number and
-   registered office address on its website — it is a trading-disclosure
-   requirement, not a nicety, and the site has none of it yet. Get the number
-   and the registered office off his paperwork or from Companies House.
+2. ~~**His company number.**~~ **Done.** Companies House, 14 Sep: *Westfield
+   Garage Int Limited*, company number **12312093**, private limited company,
+   incorporated 13 November 2019, registered office **2 Broom Lane,
+   Manchester, M19 2TW**. The trading-disclosure line is in the footer.
 
-3. **Opening and closing times.** The 9:30am open is his, off his Google
-   profile. The 6pm close and the whole Saturday row are still guesses.
+3. ~~**Opening and closing times.**~~ **Done.** Mon–Fri 9:30–6:00, Saturday
+   9:30–3:00, Sunday closed, off his Google Business Profile. In the hours
+   table and the JSON-LD.
 
 4. **Facebook and Instagram URLs**, if he has them. If he genuinely has none,
    say so and the buttons come off the page rather than pointing nowhere.
