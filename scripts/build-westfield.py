@@ -17,6 +17,10 @@ beacon script (cookieless, so no consent banner):
 
 Output lands in dist/westfield-garage/ (gitignored, like the other builds).
 
+Anything in templates/westfield-root/ is copied to the ROOT of the build as-is:
+that is where Google's Search Console verification file lives, and where any
+other must-sit-at-the-root file for his domain goes.
+
 IT REFUSES TO BUILD while the page still carries anything that is fine on a
 demo and not fine on a business's live website — see BLOCKERS below. That list
 is the point of this script as much as the copying is: a demo becomes a live
@@ -31,6 +35,7 @@ from datetime import date
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 PAGE = os.path.join(ROOT, 'templates', 'westfield-garage.html')
+ROOTFILES = os.path.join(ROOT, 'templates', 'westfield-root')
 OUT = os.path.join(ROOT, 'dist', 'westfield-garage')
 
 # Things that must not reach his customers. Each is (needle, why, how to fix).
@@ -212,6 +217,11 @@ def main():
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                  '  <url><loc>https://%s/</loc><lastmod>%s</lastmod></url>\n'
                  '</urlset>\n' % (domain, date.today().isoformat()))
+
+    # files that have to sit at the root of his domain, byte for byte
+    if os.path.isdir(ROOTFILES):
+        for name in sorted(os.listdir(ROOTFILES)):
+            shutil.copy(os.path.join(ROOTFILES, name), os.path.join(OUT, name))
 
     verify(built)
 
