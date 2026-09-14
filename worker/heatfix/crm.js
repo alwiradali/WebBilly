@@ -299,6 +299,11 @@ async function upsertCustomer(env, c) {
 }
 
 /* --------------------------------------------------------------- invoices */
+/* What a line on an invoice can be. The first two are the original pair and
+   every existing row in the database is one of them; the other three were
+   asked for because a real job is usually not cleanly one or the other. */
+const LINE_KINDS = ["labour", "parts", "parts_labour", "parts_labour_parking", "callout"];
+
 /* Worked out here so the browser cannot post its own totals. */
 function totals(items, vatRateBp, vatRegistered) {
   let net = 0;
@@ -307,9 +312,12 @@ function totals(items, vatRateBp, vatRegistered) {
     const unit = pence(it.unit);
     const line = Math.round(qty * unit);
     net += line;
-    /* Anything not explicitly parts is labour: that is the commoner line, and
-       an unrecognised value must not invent a third section on the document. */
-    const kind = clean(it.kind, 12) === "parts" ? "parts" : "labour";
+    /* Whitelisted, not trusted. An unrecognised value falls back to labour --
+       the commoner line -- rather than inventing a section on the document.
+       Keep LINE_KINDS, the dropdown in templates/heatfix-office.html and the
+       section titles in assets/js/heatfix-invoice-templates.js in step: a
+       value stored here with no title there prints an untitled section. */
+    const kind = LINE_KINDS.indexOf(clean(it.kind, 24)) !== -1 ? clean(it.kind, 24) : "labour";
     return { position: i, description: clean(it.description, 400), qty, unit_pence: unit, line_pence: line, kind };
   }).filter((r) => r.description || r.line_pence);
   const vat = vatRegistered ? Math.round(net * vatRateBp / 10000) : 0;

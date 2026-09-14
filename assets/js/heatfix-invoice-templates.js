@@ -157,9 +157,30 @@
     if (!items.length) {
       return '<tr class="hf-empty"><td colspan="4">No work has been listed on this invoice yet.</td></tr>';
     }
-    var labour = items.filter(function (i) { return i.kind !== "parts"; });
-    var parts  = items.filter(function (i) { return i.kind === "parts"; });
-    if (!labour.length || !parts.length) return items.map(itemLine).join("");
+    /* The order these print in, and what each one is called on the document.
+       Must match LINE_KINDS in worker/heatfix/crm.js and the KINDS list in
+       templates/heatfix-office.html. Anything unrecognised is treated as
+       labour rather than printed under a heading nobody wrote. */
+    var SECTIONS = [
+      ["labour", "Labour"],
+      ["parts", "Parts &amp; materials"],
+      ["parts_labour", "Parts and labour"],
+      ["parts_labour_parking", "Parts, labour and parking"],
+      ["callout", "Call-out"]
+    ];
+    var known = {};
+    SECTIONS.forEach(function (s) { known[s[0]] = true; });
+
+    var groups = SECTIONS.map(function (s) {
+      return { title: s[1], rows: items.filter(function (i) {
+        return (known[i.kind] ? i.kind : "labour") === s[0];
+      }) };
+    }).filter(function (g) { return g.rows.length; });
+
+    /* One kind on the invoice means there is nothing to separate, so it prints
+       as a plain list. A heading over every line of a single-kind invoice is
+       filing, not information. */
+    if (groups.length < 2) return items.map(itemLine).join("");
 
     function section(title, rows) {
       var sum = rows.reduce(function (a, r) { return a + (r.line_pence || 0); }, 0);
@@ -167,7 +188,7 @@
              '<td class="hf-num hf-line">' + money(sum) + '</td></tr>' +
              rows.map(itemLine).join("");
     }
-    return section("Labour", labour) + section("Parts &amp; materials", parts);
+    return groups.map(function (g) { return section(g.title, g.rows); }).join("");
   }
 
   function itemsTable(inv) {

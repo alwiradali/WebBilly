@@ -445,6 +445,20 @@
     tplPreview: null    /* template chosen on this invoice only */
   };
 
+  /* What a line can be. The value is what gets stored, the label is what he
+     picks from and what prints as the section heading on the invoice. It has
+     to match LINE_KINDS in worker/heatfix/crm.js, which rejects anything else,
+     and the titles in assets/js/heatfix-invoice-templates.js, which prints
+     them. Anything unrecognised -- an old row, a bad value -- reads as labour. */
+  const KINDS = [
+    ["labour", "Labour"],
+    ["parts", "Parts"],
+    ["parts_labour", "Parts and labour"],
+    ["parts_labour_parking", "Parts, labour and parking"],
+    ["callout", "Call-out"],
+  ];
+  const kindOf = (l) => (KINDS.some((k) => k[0] === l.kind) ? l.kind : "labour");
+
   const blankLine = () => ({ description: "", qty: 1, unit: "", kind: "labour" });
 
   /* --------------------------------------------------------------- gate */
@@ -763,9 +777,10 @@
     host.innerHTML = S.lines.map((l, i) =>
       '<div class="hfo-line" data-i="' + i + '">' +
       '<input class="d" placeholder="What you did or fitted" value="' + esc(l.description) + '">' +
-      '<select class="k" aria-label="Labour or parts">' +
-        '<option value="labour"' + (l.kind !== "parts" ? " selected" : "") + '>Labour</option>' +
-        '<option value="parts"' + (l.kind === "parts" ? " selected" : "") + '>Parts</option>' +
+      '<select class="k" aria-label="What this line is for">' +
+        KINDS.map((k) =>
+          '<option value="' + k[0] + '"' + (kindOf(l) === k[0] ? " selected" : "") + ">" + k[1] + "</option>"
+        ).join("") +
       '</select>' +
       '<input class="q" inputmode="decimal" value="' + esc(l.qty) + '" aria-label="Quantity">' +
       '<input class="u" inputmode="decimal" placeholder="0.00" value="' + esc(l.unit) + '" aria-label="Unit price">' +
@@ -862,7 +877,7 @@
         vat_rate: c.rateBp,
         items: S.lines.map((l) => ({
           description: l.description, qty: Number(l.qty) || 0,
-          unit_pence: pence(l.unit), line_pence: lineTotal(l), kind: l.kind || "labour"
+          unit_pence: pence(l.unit), line_pence: lineTotal(l), kind: kindOf(l)
         })).filter((r) => r.description || r.line_pence)
       },
       business: businessFromSettings(),
@@ -1060,7 +1075,7 @@
       description: it.description,
       qty: it.qty,
       unit: (it.unit_pence / 100).toFixed(2),
-      kind: it.kind === "parts" ? "parts" : "labour"
+      kind: kindOf(it)
     }));
     if (!S.lines.length) S.lines = [blankLine()];
     $("cName").value = inv.cust_name || "";
@@ -1138,7 +1153,7 @@
       show_cust_name: $("iShowName").checked ? 1 : 0,
       show_cust_address: $("iShowAddr").checked ? 1 : 0,
       show_cust_phone: $("iShowPhone").checked ? 1 : 0,
-      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, kind: l.kind || "labour" }))
+      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, kind: kindOf(l) }))
     };
   }
 
