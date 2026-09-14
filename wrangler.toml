@@ -174,7 +174,11 @@ html_handling = "auto-trailing-slash"
 # real site sat untouched somewhere else looking like a deploy that did
 # nothing. deploy-westfield.yml checks for it before every deploy.
 [env.westfield]
-name = "westfield-garage"
+# The Worker he created in his own dashboard on 14 Sep and attached both
+# domains to. Workers cannot be renamed, so the config carries its name: a
+# deploy with this env updates that Worker in place rather than creating a
+# second one that could never bind the domains.
+name = "noisy-forest-8b27"
 routes = [
   { pattern = "westfieldgarageintlimited.co.uk", custom_domain = true },
   { pattern = "www.westfieldgarageintlimited.co.uk", custom_domain = true }

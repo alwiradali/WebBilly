@@ -1,5 +1,11 @@
 # Westfield Garage → his own Cloudflare Worker
 #
+# LIVE since 14 Sep 2026 on westfieldgarageintlimited.co.uk, served by the
+# Worker `noisy-forest-8b27` in his account, which he created in the dashboard
+# and uploaded the built zip to. This workflow updates THAT Worker in place
+# once the two secrets below exist. Until then, updates are: build, zip, upload
+# in his dashboard — see docs/westfield-golive.md.
+#
 # A push to main that touches his site rebuilds and redeploys it.
 #
 # Deploys through the Cloudflare API with a token in GitHub Secrets. His
@@ -126,10 +132,10 @@ jobs:
         run: |
           set -e
           grep -q '^\[env\.westfield\]' wrangler.toml
-          grep -q '^name = "westfield-garage"' wrangler.toml
+          grep -q '^name = "noisy-forest-8b27"' wrangler.toml
           grep -q '^directory = "dist/westfield-garage"' wrangler.toml
           node scripts/check-wrangler.mjs
-          echo "wrangler.toml targets westfield-garage from dist/westfield-garage"
+          echo "wrangler.toml targets his Worker noisy-forest-8b27 from dist/westfield-garage"
 
       - name: Are the credentials present?
         id: creds
@@ -153,8 +159,8 @@ jobs:
         run: |
           set -o pipefail
           npx --yes wrangler@latest deploy --env westfield 2>&1 | tee deploy.log || true
-          if grep -q 'Uploaded westfield-garage' deploy.log; then
-            echo "::notice::Worker uploaded to westfield-garage."
+          if grep -q 'Uploaded noisy-forest-8b27' deploy.log; then
+            echo "::notice::Worker uploaded to noisy-forest-8b27 (his)."
             if grep -qi 'workers/routes\|Authentication error' deploy.log; then
               echo "::warning::Uploaded, but the custom domain could not be bound. The token needs Zone -> Workers Routes on $DOMAIN, or the domain serves nothing."
             fi

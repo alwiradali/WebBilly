@@ -1,8 +1,42 @@
 # Westfield Garage — go-live
 
-The demo is finished and lives at `/templates/westfield-garage`, `noindex` and
-disallowed in `robots.txt`. This is the list of everything between there and a
-site on his own domain, in the order it has to happen.
+## LIVE — 14 September 2026
+
+**https://westfieldgarageintlimited.co.uk** (and `www.`) is his site, on his
+own Cloudflare account. Verified from outside: HTTP 200, `westfield.css`
+byte-identical to the build, three real reviews, company number, Saturday
+hours, canonical pointing at itself, no `noindex`, robots and sitemap served.
+
+**How it went live** — not through the GitHub pipeline (no secrets yet):
+
+1. `python3 scripts/build-westfield.py westfieldgarageintlimited.co.uk`
+2. zipped the *contents* of `dist/westfield-garage/` (index.html at the zip
+   root)
+3. he created a Worker in **his** dashboard — it got the generated name
+   **`noisy-forest-8b27`** — and uploaded the zip as its static assets
+4. Worker → Settings → Domains & Routes → **Add Domain**, twice: the bare
+   domain and `www`. Cloudflare wrote the DNS records and the certificate.
+
+**To update the site now:** steps 1–2, then in his dashboard open that Worker
+and upload the new zip. Or add the two secrets from Phase 3 and push to
+`main`: `wrangler.toml` `[env.westfield]` now carries the name
+`noisy-forest-8b27`, so the pipeline updates that same Worker in place (a
+Worker cannot be renamed, so the config was changed to match it, not the
+other way round).
+
+**Still to flick in his Cloudflare:** SSL/TLS → Edge Certificates → **Always
+Use HTTPS → On**. Plain `http://` currently answers 200 with the page instead
+of redirecting; harmless to a visitor, untidy for Google.
+
+**Not yet proven:** one real enquiry through the form on the live domain,
+landing in westfieldgarage45@gmail.com. Web3Forms' bot wall blocks anything
+that is not a browser, so it cannot be tested from a script — send one.
+
+---
+
+The rest of this page is the runbook as it was written, kept for the
+reasoning. The demo is at `/templates/westfield-garage`, `noindex` and
+disallowed in `robots.txt`, and stays as the demo.
 
 ## The domain is bought — checked 13 Sep
 

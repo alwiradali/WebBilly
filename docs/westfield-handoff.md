@@ -1,5 +1,9 @@
 # Westfield Garage Int Limited — handoff
 
+**Live since 14 Sep 2026 at https://westfieldgarageintlimited.co.uk**, on his
+own Cloudflare account (Worker `noisy-forest-8b27`). How, and how to update it:
+`docs/westfield-golive.md`, top section.
+
 The demo lives at **`/templates/westfield-garage`** (source:
 `templates/westfield-garage.html`). It is `noindex, nofollow` and `/templates/`
 is disallowed in `robots.txt`, so it is shareable with the client but invisible
