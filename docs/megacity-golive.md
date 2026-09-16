@@ -83,36 +83,41 @@ own domain. See PROJECT-NOTES.md.
 ### B1 — move DNS to Cloudflare, with the old website still serving
 
 The state of the domain before anything moved is recorded in
-`docs/megacity-old-site/dns-export.txt`: 14 records, captured from public DNS.
+`docs/megacity-old-site/dns-export.txt`: 30 records confirmed so far, against
+the 33 GoDaddy says the zone holds.
 Mail is **Microsoft 365 sold through GoDaddy** — `info@`, `lettings@` and
 `management@` all depend on the MX, SPF, `autodiscover` and `_dmarc` records in
 that file.
 
 1. **Capture the old site.** `scripts/megacity-capture-old-site.sh` saves every
    old page into `docs/megacity-old-site/`. Confirm the DNS inventory is still
-   current: `node scripts/megacity-dns-check.mjs` — all 14 must pass. If any
+   current: `node scripts/megacity-dns-check.mjs` — all must pass. If any
    line disagrees, the domain has changed since capture: update
    `dns-export.txt` to match reality and re-run
    `node scripts/megacity-dns-zonefile.mjs` before going on.
 2. Cloudflare → *Add a site* → `megacityproperties.co.uk`, Free plan.
    Cloudflare scans the domain and shows what it found.
 
-   **What actually happened here, 2026-09-09.** The scan found all 17 records,
-   SRVs included — better than expected. But it arrived **proxied (orange
-   cloud) on all 10 records that can be proxied**, including `autodiscover`
-   and both `_domainkey` selectors. A proxied record answers with Cloudflare's
-   own addresses instead of the real target, so leaving them orange would have
-   broken Outlook auto-setup, Teams sign-in and DKIM signing the moment the
-   nameservers changed. The scan also found three records the first capture had
-   missed, all three of them email records.
+   **What actually happened here, 2026-09-09 to 09-16.** The scan found 17
+   records and arrived **proxied (orange cloud) on all 10 that can be
+   proxied**, including `autodiscover` and both `_domainkey` selectors. A
+   proxied record answers with Cloudflare's own addresses instead of the real
+   target, so leaving them orange would have broken Outlook auto-setup, Teams
+   sign-in and DKIM signing the moment the nameservers changed.
 
-   So: **turn every orange cloud grey**, then read the list against
-   `dns-export.txt` — 17 records, all **DNS only**. Delete anything the scan
-   added that is not in that file, and add anything in the file the scan did
-   not find.
+   **17 was not the zone.** GoDaddy's own DNS page says **33 records**. The
+   difference is mostly seven Amazon SES DKIM selectors whose names are random
+   32-character strings — nothing could have guessed them, and neither
+   Cloudflare's scan nor a sweep of six hundred common names found them. Read
+   the registrar's list, not a scan.
 
-   If the scan comes back thin, or you would rather not click through 17 rows,
-   import instead:
+   So: **turn every orange cloud grey**, then reconcile against GoDaddy's
+   export record by record. Every one **DNS only**. Delete anything the scan
+   added that is not in the export, and add everything in the export that
+   Cloudflare does not have.
+
+   The quickest reliable way is to import rather than click through 30-odd
+   rows:
 
    ```
    node scripts/megacity-dns-zonefile.mjs        # docs/megacity-old-site/megacityproperties.co.uk.zone
@@ -127,14 +132,23 @@ that file.
    Leave the apex `A` on `77.68.34.162` and `www` as it is — the old site keeps
    serving throughout B1, which is the point.
 3. SSL/TLS → **Full**. Do not use Flexible: the old server already does HTTPS.
-4. **Prove it before you switch.** Cloudflare shows two assigned nameservers.
-   Ask them directly, while the live domain is still on GoDaddy and nothing has
-   changed for anyone:
+4. **Prove it before you switch — and run this from your own machine.**
+   Cloudflare shows two assigned nameservers. Ask them directly, while the live
+   domain is still on GoDaddy and nothing has changed for anyone:
    ```
    node scripts/megacity-dns-check.mjs --ns=<the first nameserver Cloudflare shows>
    ```
    Every line must say `ok`. A `STOP` line is an email record — fix it in
    Cloudflare and run it again. Do not go to step 5 until this passes.
+
+   **Not from a sandbox.** In the container this project is developed in, every
+   DNS query is answered locally by a recursive resolver no matter which server
+   you name, so this check "passed" three times while actually reading public
+   DNS — which is still GoDaddy's zone. It was reporting the old zone as proof
+   that the new one was right. The script now asks for the zone's SOA, demands
+   the authoritative bit, asks the same server about bbc.co.uk and demands
+   silence, and refuses to report anything if either fails. If you see that
+   refusal, the machine cannot do this check; run it somewhere that can.
 5. Walid changes the two nameservers at GoDaddy to the ones Cloudflare shows.
    GoDaddy will warn that this affects his email; that is expected, and it is
    safe **because step 4 passed**. Wait for Cloudflare to report *Active*

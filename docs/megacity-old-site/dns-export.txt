@@ -11,14 +11,24 @@
 # THIS LIST CANNOT BE PROVED COMPLETE FROM OUTSIDE
 #   DNS has no "list the zone" query. Everything here was found by asking for
 #   a name and seeing whether it answered, so a record whose name nobody
-#   guessed does not appear. The first capture (2026-09-09 19:09 UTC) found 14
-#   this way; Cloudflare's own scan, which uses a much larger dictionary, then
-#   turned up three more — the two SendGrid DKIM selectors and the Amazon SES
-#   verification, all three of them email records. They were added on
-#   2026-09-09 21:45 UTC after being confirmed against public DNS.
+#   guessed does not appear, and each pass has found more:
 #
-#   The only authoritative list is GoDaddy's own DNS page for the domain.
-#   Read it before the nameservers change and reconcile it against this file.
+#     14  the first capture, 2026-09-09 19:09 UTC, from public DNS
+#     17  after Cloudflare's own scan, which has a much larger dictionary:
+#         the two SendGrid DKIM selectors and the Amazon SES verification
+#     30  after reading GoDaddy's DNS page, 2026-09-16: seven Amazon SES DKIM
+#         selectors, five stray duplicates of them, and em745
+#     33  what GoDaddy says the zone actually holds. Three are still unknown.
+#
+#   The Amazon SES selectors are the point. Their names are random 32-character
+#   strings — "x3ipgewk5oycfue3kjbb7zveverhize6._domainkey" — so no dictionary
+#   could ever have guessed them, and neither Cloudflare's scan nor a sweep of
+#   six hundred common names came anywhere near. Only the registrar's own list
+#   shows them. Every one was confirmed against ns15.domaincontrol.com before
+#   being written here.
+#
+#   The only authoritative list is GoDaddy's own zone, and the way to get it
+#   exactly is DNS → Actions → Export. Do that before the nameservers change.
 #
 #   Proxy status: DNS only (grey cloud) for EVERY record in this file.
 #   Only the website A/CNAME is ever proxied, and the Worker creates that
@@ -36,6 +46,9 @@
 #                           alignment and landing in spam
 #   _amazonses TXT          Amazon SES stops treating the domain as verified,
 #                           so whatever sends through SES stops sending
+#   <32 chars>._domainkey   the seven Amazon SES DKIM selectors. Lose these and
+#                           SES mail sent as this domain is no longer signed,
+#                           so it fails DMARC alignment and lands in spam
 #   msoid / sip / lyncdiscover / _sip / _sipfederationtls    Teams sign-in
 #   email CNAME             GoDaddy's email marketing links
 #   _domainconnect CNAME    GoDaddy one-click setup; harmless to drop
@@ -57,9 +70,30 @@ _dmarc                     TXT    3600   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100
 s1._domainkey              CNAME  1800   s1.domainkey.u2309198.wl199.sendgrid.net.
 s2._domainkey              CNAME  1800   s2.domainkey.u2309198.wl199.sendgrid.net.
 _amazonses                 TXT    3600   "juNkJZcd/CGB2doV4qI/mEtLARs10FM7N5qWd/9Q1Og="
+em745                      CNAME  1800   u2309198.wl199.sendgrid.net.
+62zagzysyi7rx3cljaovqjieup4xeykv._domainkey CNAME  3600   62zagzysyi7rx3cljaovqjieup4xeykv.dkim.amazonses.com.
+gk4cochnh4zbwhx2thlrsyudhuavrmw3._domainkey CNAME  3600   gk4cochnh4zbwhx2thlrsyudhuavrmw3.dkim.amazonses.com.
+pdu572aq43bln7g2eyxqv7stwalebogb._domainkey CNAME  3600   pdu572aq43bln7g2eyxqv7stwalebogb.dkim.amazonses.com.
+pihh6gmszpslvdosnlmt3bczqu6syiyx._domainkey CNAME  3600   pihh6gmszpslvdosnlmt3bczqu6syiyx.dkim.amazonses.com.
+seleeskrjtgcr4z5kpfz4jnglgf7s6gm._domainkey CNAME  3600   seleeskrjtgcr4z5kpfz4jnglgf7s6gm.dkim.amazonses.com.
+whbcly5m7njtje6fkhyo7gmtjrh54e74._domainkey CNAME  3600   whbcly5m7njtje6fkhyo7gmtjrh54e74.dkim.amazonses.com.
+x3ipgewk5oycfue3kjbb7zveverhize6._domainkey CNAME  3600   x3ipgewk5oycfue3kjbb7zveverhize6.dkim.amazonses.com.
+62zagzysyi7rx3cljaovqjieup4xeykv._domainkey.megacityproperties.co.uk CNAME  3600   62zagzysyi7rx3cljaovqjieup4xeykv.dkim.amazonses.com.
+gk4cochnh4zbwhx2thlrsyudhuavrmw3._domainkey.megacityproperties.co.uk CNAME  3600   gk4cochnh4zbwhx2thlrsyudhuavrmw3.dkim.amazonses.com.
+pdu572aq43bln7g2eyxqv7stwalebogb._domainkey.megacityproperties.co.uk CNAME  3600   pdu572aq43bln7g2eyxqv7stwalebogb.dkim.amazonses.com.
+whbcly5m7njtje6fkhyo7gmtjrh54e74._domainkey.megacityproperties.co.uk CNAME  3600   whbcly5m7njtje6fkhyo7gmtjrh54e74.dkim.amazonses.com.
+x3ipgewk5oycfue3kjbb7zveverhize6._domainkey.megacityproperties.co.uk CNAME  3600   x3ipgewk5oycfue3kjbb7zveverhize6.dkim.amazonses.com.
 _sip._tls                  SRV    3600   100 1 443 sipdir.online.lync.com
 _sipfederationtls._tcp     SRV    3600   100 1 5061 sipfed.online.lync.com
 
-# 17 records. Anything the Cloudflare scan adds that is NOT in this
-# list should be questioned before it is kept — and anything in GoDaddy's
-# DNS page that is not here should be added, not questioned.
+# 30 records — and GoDaddy's own page says the zone holds 33.
+#
+# THREE RECORDS ARE STILL UNIDENTIFIED. The screen recording of GoDaddy's DNS
+# page (2026-09-16) never showed the first three rows of page 1, and the other
+# thirty are all accounted for above. Do not change the nameservers until those
+# three are known: GoDaddy → the domain → DNS → Actions → Export, which writes
+# the whole zone to a file and settles it exactly.
+#
+# Anything the Cloudflare scan adds that is NOT in this list should be
+# questioned before it is kept — and anything in GoDaddy's export that is not
+# here should be added, not questioned.

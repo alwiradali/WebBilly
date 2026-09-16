@@ -24,7 +24,8 @@
    before the nameservers change. This narrows the gap; it does not close it. */
 
 import { readFileSync } from "node:fs";
-import { Resolver, promises as dnsp } from "node:dns";
+import { promises as dnsp } from "node:dns";
+import { queryRaw, isAuthoritative } from "./lib/dns-raw.mjs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -95,9 +96,9 @@ const SRV_NAMES = [
 
 const fqdn = (name) => (name === "@" ? DOM : `${name}.${DOM}`);
 
-let resolver = null;
+let serverIp = null;
 async function server() {
-  if (resolver) return resolver;
+  if (serverIp) return serverIp;
   let addrs;
   try {
     addrs = await dnsp.resolve4(ns);
@@ -105,34 +106,27 @@ async function server() {
     console.error(`Cannot find the address of nameserver "${ns}". Check the spelling.`);
     process.exit(2);
   }
-  resolver = new Resolver({ timeout: 5000, tries: 2 });
-  resolver.setServers(addrs);
-  return resolver;
+  for (const ip of addrs) {
+    const verdict = await isAuthoritative(DOM, ip);
+    if (verdict.ok) { serverIp = ip; return ip; }
+    console.error(`  ${ip}: ${verdict.why}`);
+  }
+  console.error(`\nSTOP: cannot sweep ${ns} from here. Nothing reached it as an authoritative\n`
+    + `server, so an empty result would mean "something in the way answered for it", not\n`
+    + `"the zone holds nothing else". Run this from a machine with ordinary outbound DNS.`);
+  process.exit(2);
 }
-
-const FN = { A: "resolve4", CNAME: "resolveCname", MX: "resolveMx", SRV: "resolveSrv", TXT: "resolveTxt" };
 
 /* "No such record" and "the server did not answer" are completely different
    results, and a sweep that treats them the same reports an empty zone when it
-   is really being rate-limited. NOTFOUND and NODATA are answers. Anything else
-   — a timeout, SERVFAIL, a refusal — is retried, and if it still will not
-   answer it is counted as unknown rather than quietly passed off as absent. */
-const DEFINITIVE = new Set(["ENOTFOUND", "ENODATA"]);
-
-function shape(type, out) {
-  if (type === "MX") return out.map((m) => `${m.priority} ${m.exchange}`);
-  if (type === "SRV") return out.map((s) => `${s.priority} ${s.weight} ${s.port} ${s.name}`);
-  if (type === "TXT") return out.map((p) => p.join(""));
-  return out;
-}
-
+   is really being rate-limited. NXDOMAIN and an empty NOERROR are answers;
+   anything else is retried, and if it still will not answer it is counted as
+   unknown rather than quietly passed off as absent. */
 async function ask(name, type, tries = 4) {
-  const r = await server();
-  const n = fqdn(name);
+  const ip = await server();
   for (let i = 0; i < tries; i++) {
-    const res = await new Promise((done) => r[FN[type]](n, (err, out) => done({ err, out })));
-    if (!res.err) return { values: shape(type, res.out), answered: true };
-    if (DEFINITIVE.has(res.err.code)) return { values: [], answered: true };
+    const r = await queryRaw(fqdn(name), type, ip);
+    if (r.rcode === 0 || r.rcode === 3) return { values: r.values || [], answered: true };
     await new Promise((s) => setTimeout(s, 250 * (i + 1)));
   }
   return { values: [], answered: false };
