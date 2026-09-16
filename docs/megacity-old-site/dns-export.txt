@@ -18,7 +18,13 @@
 #         the two SendGrid DKIM selectors and the Amazon SES verification
 #     30  after reading GoDaddy's DNS page, 2026-09-16: seven Amazon SES DKIM
 #         selectors, five stray duplicates of them, and em745
-#     33  what GoDaddy says the zone actually holds. Three are still unknown.
+#
+#   SETTLED 2026-09-16 by GoDaddy's own zone export, saved beside this file as
+#   godaddy-export-2026-09-16.txt. It holds 33 records: these 30, plus an SOA
+#   and two apex NS records, which say who serves the zone and which Cloudflare
+#   writes itself. So this file is now COMPLETE, not merely the best guess —
+#   `node scripts/megacity-dns-reconcile.mjs` proves it and fails if either
+#   side ever drifts.
 #
 #   The Amazon SES selectors are the point. Their names are random 32-character
 #   strings — "x3ipgewk5oycfue3kjbb7zveverhize6._domainkey" — so no dictionary
@@ -86,14 +92,15 @@ x3ipgewk5oycfue3kjbb7zveverhize6._domainkey.megacityproperties.co.uk CNAME  3600
 _sip._tls                  SRV    3600   100 1 443 sipdir.online.lync.com
 _sipfederationtls._tcp     SRV    3600   100 1 5061 sipfed.online.lync.com
 
-# 30 records — and GoDaddy's own page says the zone holds 33.
+# 30 records, reconciled against GoDaddy's own export. Nothing is outstanding.
 #
-# THREE RECORDS ARE STILL UNIDENTIFIED. The screen recording of GoDaddy's DNS
-# page (2026-09-16) never showed the first three rows of page 1, and the other
-# thirty are all accounted for above. Do not change the nameservers until those
-# three are known: GoDaddy → the domain → DNS → Actions → Export, which writes
-# the whole zone to a file and settles it exactly.
+# Five of them are junk and are here deliberately. The names ending
+# "._domainkey.megacityproperties.co.uk" were typed into GoDaddy with the domain
+# already appended, so they really live at
+# "<selector>._domainkey.megacityproperties.co.uk.megacityproperties.co.uk" —
+# a name nothing will ever ask for. They are copied across anyway, because a
+# migration should move the zone as it stands and nothing else. Delete them
+# afterwards, as their own small change, once B1 has settled.
 #
 # Anything the Cloudflare scan adds that is NOT in this list should be
-# questioned before it is kept — and anything in GoDaddy's export that is not
-# here should be added, not questioned.
+# questioned before it is kept.
