@@ -54,8 +54,10 @@ const EXPORT = join(ROOT, "docs/megacity-old-site/dns-export.txt");
    names are random 32-character strings, so a hand-written list would go stale
    the moment SES issues another one. See dns-export.txt. */
 const CRITICAL = new Set(["@ MX", "@ TXT", "autodiscover CNAME", "_dmarc TXT", "_amazonses TXT"]);
+const doubled = (name) => name.toLowerCase().endsWith("." + DOM);   /* see dns-export.txt */
 const isCritical = (name, type) =>
-  CRITICAL.has(`${name} ${type}`) || (type === "CNAME" && /(^|\.)_domainkey(\.|$)/.test(name));
+  CRITICAL.has(`${name} ${type}`) ||
+  (type === "CNAME" && /(^|\.)_domainkey(\.|$)/.test(name) && !doubled(name));
 
 const ns = (process.argv.find((a) => a.startsWith("--ns=")) || "").slice(5);
 const quiet = process.argv.includes("--quiet");
