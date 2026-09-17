@@ -14,6 +14,16 @@
 
      node scripts/megacity-dns-zonefile.mjs            # write it
      node scripts/megacity-dns-zonefile.mjs --check    # fail if it has drifted
+     node scripts/megacity-dns-zonefile.mjs --ttl=300  # same records, short TTLs, to stdout
+
+   --ttl exists because of how a cutover actually goes wrong. If something in
+   the new zone turns out to be incorrect, the fast remedy is to correct the
+   record in Cloudflare, which reaches resolvers within one record TTL. Putting
+   the old nameservers back is NOT the fast remedy: a delegation change is slow
+   in both directions, so it is the answer only if Cloudflare itself is
+   unreachable. Importing with short TTLs therefore shortens the one lever that
+   helps in a bad moment, from an hour to five minutes. Raise them again once
+   the move has settled.
 
    Two things this fixes that a copy-and-paste would not:
 
@@ -76,6 +86,17 @@ function value(r) {
   return r.value; /* A, AAAA */
 }
 
+const ttlOverride = (() => {
+  const a = process.argv.find((x) => x.startsWith("--ttl="));
+  if (!a) return null;
+  const n = Number(a.slice(6));
+  if (!Number.isInteger(n) || n < 60 || n > 86400) {
+    console.error("--ttl must be a whole number of seconds between 60 and 86400.");
+    process.exit(2);
+  }
+  return n;
+})();
+
 function build(rows) {
   const head = [
     `; ${DOM} — the zone exactly as it stood before anything moved to Cloudflare.`,
@@ -89,13 +110,23 @@ function build(rows) {
     "; moves first and the website second, so nobody notices B1 at all.",
     ";",
     "; SOA and NS records are deliberately absent — Cloudflare writes its own.",
+    ...(ttlOverride === null ? [] : [
+      ";",
+      `; TTLs here are ALL ${ttlOverride}s, not the values the old zone published. That is`,
+      "; deliberate, for the cutover only: it means a correction made in Cloudflare",
+      `; reaches resolvers in ${Math.round(ttlOverride / 60)} minute(s) rather than an hour. Put the`,
+      "; real TTLs back (re-run without --ttl) once the move has settled.",
+    ]),
     "",
     `$ORIGIN ${DOM}.`,
     "$TTL 3600",
     "",
   ];
   const w = Math.max(...rows.map((r) => fqdn(r.name).length));
-  const body = rows.map((r) => `${fqdn(r.name).padEnd(w)} ${String(r.ttl).padStart(4)} IN ${r.type.padEnd(5)} ${value(r)}`);
+  const body = rows.map((r) => {
+    const ttl = ttlOverride === null ? r.ttl : ttlOverride;
+    return `${fqdn(r.name).padEnd(w)} ${String(ttl).padStart(5)} IN ${r.type.padEnd(5)} ${value(r)}`;
+  });
   return head.concat(body, "").join("\n");
 }
 
@@ -138,6 +169,11 @@ function verify(rows, text) {
 const rows = inventory();
 const text = build(rows);
 verify(rows, text);
+
+if (ttlOverride !== null) {
+  process.stdout.write(text);
+  process.exit(0);
+}
 
 if (process.argv.includes("--check")) {
   let on_disk = null;
