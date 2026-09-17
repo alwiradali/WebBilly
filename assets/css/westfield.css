@@ -491,6 +491,12 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   text-transform:uppercase;color:var(--yellow);
 }
 .tile .more svg{width:15px;height:15px;transition:transform .4s}
+/* the arrow is the link, and its ::before stretches over the whole card, so
+   the tile is clickable anywhere and the hover states above still apply */
+.tile .more::before{content:"";position:absolute;inset:0;z-index:2}
+.tile .more:focus-visible{outline:none}
+.tile:has(.more:focus-visible){box-shadow:0 0 0 3px var(--yellow)}
+.tile.plain .more::before{display:none}
 .tile:hover .more svg{transform:translateX(5px)}
 .tile::after{ /* the red hairline that draws in along the bottom */
   content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--fire);
@@ -874,6 +880,20 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 }
 .faq[open] summary::after{transform:rotate(-135deg) translateY(-3px)}
 .faq .a{padding:0 clamp(16px,2vw,22px) 19px;color:var(--muted);font-size:.95rem;line-height:1.7}
+
+/* the jobs in detail: the FAQ pattern with a number, two lists and a CTA */
+.job{scroll-margin-top:92px} /* a hash arrival lands under the fixed nav, not behind it */
+.job summary{align-items:baseline}
+.job .n{font-size:.72rem;letter-spacing:.14em;color:var(--yellow);font-weight:800;margin-right:14px;font-style:italic}
+.job .t{flex:1;text-transform:uppercase;font-style:italic;letter-spacing:-.01em;font-size:1.06rem}
+.job .a p{color:#cbcbd2}
+.job-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:clamp(14px,2vw,26px);margin-top:16px}
+.job h4{font-family:var(--dis);font-weight:700;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--white);margin-bottom:8px}
+.job ul{list-style:none;padding:0;margin:0}
+.job li{position:relative;padding-left:16px;margin-bottom:6px}
+.job li::before{content:"";position:absolute;left:0;top:.66em;width:7px;height:3px;background:var(--red);transform:skewX(var(--lean))}
+.job .btn-row{margin-top:20px}
+.job .btn svg{width:15px;height:15px}
 
 .note{font-size:.8rem;color:var(--dim);line-height:1.6}
 .centre{text-align:center}

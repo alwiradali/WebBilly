@@ -143,8 +143,24 @@
     if (id.length < 2 || !$(id)) return;
     e.preventDefault();
     closeDrawer();
+    /* a tile's arrow lands on a <details>: open it, then scroll to it */
+    var el = $(id);
+    if (el.tagName === "DETAILS" && !el.open) el.open = true;
+    /* "Book this in" carries the job, so the form arrives already filled in */
+    var job = a.getAttribute("data-job"), sel = $("#q-job");
+    if (job && sel) sel.value = job;
     scrollTo(id);
   });
+  /* arriving on #svc-brakes from a link, a search result or the back
+     button: open that one */
+  function openHash() {
+    try {
+      var here = location.hash.length > 1 && $(location.hash);
+      if (here && here.tagName === "DETAILS") here.open = true;
+    } catch (err) {}
+  }
+  openHash();
+  window.addEventListener("hashchange", openHash);
 
   /* ------------------------------------------------------------ 3. nav --- */
   var nav = $("#nav"), burger = $("#burger"), drawer = $("#drawer");

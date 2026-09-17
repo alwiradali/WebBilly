@@ -185,6 +185,20 @@ HTTP status decides instead of `body.success`.
 
 ---
 
+## The tiles link to "Each job, explained" (added 17 Sep)
+
+His ask: the arrow on each service tile should go somewhere. It now does.
+Every tile is a link (the arrow is the `<a>`, its `::before` covers the card)
+to `#svc-<slug>` in a new section straight after the grid: one `<details>`
+per specialism — a paragraph, "Signs it's this", "What we do", and two
+buttons. **Book this in** carries `data-job`, which pre-selects that job in
+the quote form's `#q-job` select (the value must match the option text
+exactly). Arriving on `#svc-brakes` from a link opens that one. The copy is
+generic garage practice consistent with the tiles and the FAQ; it names no
+price, no equipment and no accreditation. To change a job's text, edit the
+`<details>` in the page; to add one, add a tile, a `<details>` and an option
+in the form.
+
 ## Notes for whoever picks this up next
 
 - **Scroll effects are the shared `data-fx` toolkit**, per the house convention
