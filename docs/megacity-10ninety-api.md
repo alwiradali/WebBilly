@@ -5,6 +5,19 @@ currently say — rent, deposit, bedrooms, **bathrooms**, EPC, council tax band,
 reference — is in there, and Walid has told us so himself ("You can see
 marketing details on 10nintey"). Billy has been given API access.
 
+## Where things are
+
+**The back office:** <https://megacityproperties.10ninety.co.uk> — redirects to
+`/Account/LogOn`, username and password. Same subdomain pattern as the tenant
+maintenance portal already linked from the site,
+`megacityproperties-maintenance.10ninety.co.uk`.
+
+Inside it: **Marketing → Portals** is the portal exports table, **Marketing →
+Websites** is the old website's CMS, and **Admin** holds the API settings.
+
+Walid's credentials are his. We do not need them and must not ask for them —
+everything here is either public or something he can read out.
+
 ## Where the documentation is
 
 10ninety's own page for this is
