@@ -286,8 +286,10 @@ from the host it is served on.
   found) and Studio → Redirects & 404s. Add a redirect for anything with real
   visitors behind it.
 - **Email recipients** are already Walid's own three Microsoft 365 mailboxes:
-  landlord enquiries to `info@`, tenant enquiries to `lettings@`, repairs to
-  `management@` (see docs/megacity-studio.md). All three must be watched —
+  landlord enquiries and the general contact form to `info@`, everything a
+  tenant sends to `lettings@`, repairs to `management@` (see
+  docs/megacity-studio.md). Walid reads `info@` himself and asked for it that
+  way round. All three must be watched —
   nothing is copied to the agency, and with the database unbound the email is
   the only record an enquiry ever existed.
 - **Email sender.** The site currently sends as
