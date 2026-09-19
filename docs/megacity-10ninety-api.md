@@ -31,6 +31,31 @@ Two ways round it, in order of effort:
    URL, how a request authenticates (header or parameter name), and the
    endpoint that lists properties.
 
+## The Web API is a portal export, not a separate thing
+
+Seen in 10ninety's back office, 2026-09-19, under **Marketing → Portals →
+Portal Exports**:
+
+| Portal | Account name | Account ID | Property types |
+|---|---|---|---|
+| Wordpress Feed | **Web API Feed** | **1000** | Sales, Lettings |
+| Zoopla | Default | 115884 | Lettings |
+
+This is the most useful thing learned about the API so far, and it changes the
+order of the work. The Web API is addressed the same way Zoopla is: a property
+reaches it by being **selected for that portal export**. So:
+
+- **A property not ticked for the Web API Feed will not appear in the API**, and
+  the API will not say why — it will simply return a shorter list. Anyone wiring
+  this up and getting nothing back would look at the key, the URL and the
+  authentication long before suspecting the export selection.
+- **1000 is the account ID to try first** when the endpoint wants one.
+- The feed carries **Sales and Lettings**, where Zoopla's carries Lettings only.
+
+So before any code: check in 10ninety that all of Walid's properties are
+selected for the Web API Feed export. That is what makes rent, deposit,
+bedrooms, bathrooms, EPC and the reference reachable at all.
+
 ## The other route in: the property feed
 
 The same page says properties can be exported in **Rightmove BLM** or **XML**:
