@@ -99,11 +99,23 @@ def main():
             shutil.copy(os.path.join(SRC, f), os.path.join(OUT, f))
 
     pages = []
+    held = []
     for dirpath, _dirs, files in os.walk(SRC):
         rel_dir = os.path.relpath(dirpath, SRC)
         rel_dir = '' if rel_dir == '.' else rel_dir
         for name in sorted(f for f in files if f.endswith('.html')):
             rel = os.path.join(rel_dir, name) if rel_dir else name
+            # Rod asked for the blog on 08.09: "I'd rather not put up anything
+            # yet until I have the content written by myself and checked.
+            # There's information on it that I don't agree with." The drafts
+            # stay in the repo so he can read them on the preview, where every
+            # page is noindex — but this build strips the robots meta and puts
+            # every page it writes into sitemap.xml, so publishing them here
+            # would submit copy he has not approved to Google under his name.
+            # The blog index ships; it says the first article is coming.
+            if rel_dir == 'blog' and name != 'index.html':
+                held.append(rel)
+                continue
             if name == 'index.html':
                 path = '/' + (rel_dir + '/' if rel_dir else '')
             else:
@@ -128,6 +140,9 @@ def main():
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
     print(f'built {len(pages)} pages into dist/smartin-science/ for {domain}')
+    if held:
+        print(f'  held back {len(held)} unapproved blog draft(s): '
+              + ', '.join(sorted(held)))
 
 
 if __name__ == '__main__':
