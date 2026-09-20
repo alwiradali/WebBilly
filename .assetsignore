@@ -9,6 +9,12 @@
 .gitignore
 # Build and check scripts are not site content.
 scripts
+# Per-client builds. Each one is a copy of that client's files, assembled for
+# deploying to THEIR Cloudflare account — dist/megacity is 46 MB of Walid's
+# photographs. Uploading them here would put a second copy of every client's
+# site on billydigitals.com, reachable at /dist/..., and grow this deploy by
+# tens of megabytes for no reason.
+dist
 node_modules
 package.json
 package-lock.json
