@@ -379,6 +379,14 @@ function head(p) {
 
 const photoFile = (p, i) => `${p.slug}-${String(p.photos[i][0]).padStart(2, "0")}.jpg`;
 
+/* There is deliberately no 360 block on these pages. A property says nothing
+   about a virtual tour unless that property actually has one: the Worker adds
+   the block for a listing whose tour is live, and none of these hand-built
+   pages has a tour. What was here promised "every home we manage gets
+   professional photography and a 360 walkthrough" on properties with neither —
+   untrue to the reader, and a service the agency had been committed to on
+   every listing without being asked. */
+
 function facts(p) {
   /* Only rows we were actually given. Rent, deposit, beds, baths, council tax,
      EPC and the reference are not among them yet. */
@@ -433,9 +441,6 @@ function main(p) {
   <button type="button" class="pd-act" data-print>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4v-6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 20 11v6h-3"/><path d="M7 14h10v7H7z"/></svg>
     Print / save as PDF</button>
-  <a class="pd-act" href="#tour360">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>
-    360&deg; virtual tour</a>
   <a class="pd-act" href="#epc">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>
     EPC</a>
@@ -473,13 +478,6 @@ ${p.features.map((f) => `      <li>${enc(f)}</li>`).join("\n")}
       <h3>Energy performance</h3>
       <p>Ask the office for this property&rsquo;s certificate and we will send it over with the brochure
         and the floor plan.</p>
-    </div>
-
-    <div class="pd-block" id="tour360">
-      <h3>360&deg; virtual tour</h3>
-      <p>Every home we manage gets professional photography and a 360&deg; walkthrough. Ask us for this
-        home&rsquo;s tour, or a video of anything you want a closer look at, before you travel.</p>
-      <a class="btn" href="https://wa.me/447804900719?text=${u("Hello, please could you send me the 360 tour of " + p.name + " when it is ready?")}" target="_blank" rel="noopener">Ask for the tour on WhatsApp</a>
     </div>
 
     <div class="pd-block">

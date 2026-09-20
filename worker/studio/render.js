@@ -152,12 +152,14 @@ function tourHtml(v, env, url) {
       <p><a class="jr-link" href="${esc(full)}" target="_blank" rel="noopener">Open the tour full screen &rarr;</a></p>
       <script src="/billy360/embed.js" defer></script>`;
   }
-  const ask = v.waDigits
-    ? `<a class="btn" href="https://wa.me/${v.waDigits}?text=${encodeURIComponent("Hello, please could you send me the 360 tour of " + v.title + " when it is ready?")}" target="_blank" rel="noopener">Ask for the tour on WhatsApp</a>`
-    : `<a class="btn" href="${esc(v.phoneHref)}">Call ${esc(v.phone)} to ask for the tour</a>`;
-  return `<h3>360&deg; virtual tour</h3>
-      <p>Every home we manage gets professional photography and a 360&deg; walkthrough. Ask us for this home&rsquo;s tour, or a video of anything you want a closer look at, before you travel.</p>
-      ${ask}`;
+  /* No tour, no mention of one. The page used to promise that "every home we
+     manage gets professional photography and a 360 walkthrough" and offer a
+     button to ask for it — on a property that had none, and at a point where
+     the agency had never built one. A tenant reading that has been told
+     something untrue about this home, and the agency has been committed to a
+     service on every property it lists. Say nothing instead: the block and its
+     jump link are removed by the caller when this returns empty. */
+  return "";
 }
 
 function factsHtml(v) {
@@ -239,7 +241,8 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="gallery"]', { element: (e) => { if (frag.gallery) e.setInnerContent(frag.gallery, { html: true }); else e.remove(); } })
     .on('[data-slot="main"]', { element: (e) => { e.replace(frag.main, { html: true }); } })
     .on('[data-slot="epc"]', { element: (e) => { if (epc) e.setInnerContent(epc, { html: true }); else e.remove(); } })
-    .on('[data-slot="tour"]', { element: (e) => e.setInnerContent(frag.tour, { html: true }) })
+    .on('[data-slot="tour"]', { element: (e) => { if (frag.tour) e.setInnerContent(frag.tour, { html: true }); else e.remove(); } })
+    .on('[data-slot="tour-link"]', { element: (e) => { if (!frag.tour) e.remove(); } })
     .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
     .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
