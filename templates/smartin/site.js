@@ -124,9 +124,13 @@
     els.forEach(function (e) { io.observe(e); });
   }
 
-  /* ---- FAQ: only one answer open at a time ---- */
+  /* ---- FAQ: only one answer open at a time ----
+     Two markups exist: the home page's short FAQ uses .faq .q, the full FAQ
+     page uses details.fq. Matching only the first meant the rule never
+     applied on /faqs — the page with 24 questions on it, and the one place
+     where answers stacking open actually buries the next question. */
   function faq() {
-    var qs = [].slice.call(document.querySelectorAll('.faq .q'));
+    var qs = [].slice.call(document.querySelectorAll('.faq .q, details.fq'));
     qs.forEach(function (q) {
       q.addEventListener('toggle', function () {
         if (!q.open) return;
