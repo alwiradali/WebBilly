@@ -140,15 +140,13 @@ def main():
         rel_dir = '' if rel_dir == '.' else rel_dir
         for name in sorted(f for f in files if f.endswith('.html')):
             rel = os.path.join(rel_dir, name) if rel_dir else name
-            # Rod asked for the blog on 08.09: "I'd rather not put up anything
-            # yet until I have the content written by myself and checked.
-            # There's information on it that I don't agree with." The drafts
-            # stay in the repo so he can read them on the preview, where every
-            # page is noindex — but this build strips the robots meta and puts
-            # every page it writes into sitemap.xml, so publishing them here
-            # would submit copy he has not approved to Google under his name.
-            # The blog index ships; it says the first article is coming.
-            if rel_dir == 'blog' and name != 'index.html':
+            # Rod does not want a blog. He first asked on 08.09 to hold the
+            # drafts back ("I'd rather not put up anything yet until I have
+            # the content written by myself and checked"), and has since said
+            # he does not want the section at all. Nothing under blog/ is
+            # published, and no page links to it. The drafts stay in the
+            # repository, so turning it back on is deleting these three lines.
+            if rel_dir == 'blog':
                 held.append(rel)
                 continue
             if name == 'index.html':

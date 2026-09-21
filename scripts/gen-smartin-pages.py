@@ -285,7 +285,6 @@ def nav(depth):
         <a href="{up}workshops.html">Workshops &amp; Clubs</a>
         <a href="{up}about.html">About Rod</a>
         <a href="{up}areas/index.html">Areas</a>
-        <a href="{up}blog/index.html">Blog</a>
         <a href="{up}faqs.html">FAQs</a>
       </div>
       <a class="btn btn-p" href="{up}index.html#booking">Book a Free Chat</a>
@@ -296,7 +295,6 @@ def nav(depth):
       <a href="{up}workshops.html">Workshops &amp; Clubs</a>
       <a href="{up}about.html">About Rod</a>
       <a href="{up}areas/index.html">Areas We Cover</a>
-      <a href="{up}blog/index.html">Blog</a>
       <a href="{up}faqs.html">FAQs</a>
       <a href="{up}index.html#booking">Book a Free Chat</a>
     </div>
@@ -331,7 +329,6 @@ def footer(depth):
         <h4>SMARTin SCIENCE</h4>
         <ul>
           <li><a href="{up}about.html">About Rod Martin</a></li>
-          <li><a href="{up}blog/index.html">Blog</a></li>
           <li><a href="{up}faqs.html">Questions</a></li>
           <li><a data-c="mail">Email Rod</a></li>
         </ul>

@@ -373,16 +373,29 @@ a.card:hover{border-color:#BCEBD1}
 .stat .l{color:var(--mut);font-size:.82rem;margin-top:7px;line-height:1.45}
 
 /* ---------- about Rod ---------- */
-.rod{display:grid;gap:34px;align-items:center}
+/* The card is short and the prose beside it is very long, so centring the two
+   parked the card level with the middle of the text and left the top of the
+   page empty down the whole left-hand side. It now starts at the top and
+   stays with the reader as they scroll. */
+.rod{display:grid;gap:34px;align-items:start}
 /* Without the card beside it the prose is the only column, so it reads
    as a column rather than stretching the full width of the page. */
 .rod.solo{max-width:760px;margin:0 auto}
-@media(min-width:960px){.rod:not(.solo){grid-template-columns:.86fr 1.14fr;gap:52px}}
+@media(min-width:960px){
+  .rod:not(.solo){grid-template-columns:.86fr 1.14fr;gap:52px}
+  /* Only once there is a column to stay beside; the nav is 74px, so it stops
+     clear of it. */
+  .rod:not(.solo)>:first-child{position:sticky;top:96px}
+}
 .mono{position:relative;border-radius:26px;padding:38px 30px;overflow:hidden;box-shadow:var(--sh-lg);
   background:linear-gradient(140deg,#03335f,#0457ac 52%,#308fac);color:#fff;text-align:center}
 .mono .ini{width:120px;height:120px;margin:0 auto 20px;border-radius:34px;display:grid;place-items:center;
   font-family:var(--dis);font-weight:700;font-size:2.6rem;letter-spacing:.02em;color:#03335f;background:var(--grad-b);
   box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
+/* A photograph rather than the 120px disc. It is the first thing on the page
+   about him, so it is worth the space. */
+.mono .face{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;
+  border-radius:18px;margin:0 0 22px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
 .mono h3{color:#fff;font-size:1.6rem}
 .mono .role{color:#B9E2F0;font-size:.9rem;margin-top:6px}
 .mono ul{display:grid;gap:11px;margin-top:24px;text-align:left}
