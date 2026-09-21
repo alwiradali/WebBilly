@@ -63,6 +63,12 @@ jobs:
           node-version: '22'
 
       - name: Build the site
+        # The calendar the timetable page reads, if one has been set up. Both
+        # are optional: without them the build still succeeds and the page
+        # keeps the wording it has always had. See docs/smartin-calendar.md.
+        env:
+          SMARTIN_GCAL_ID: ${{ secrets.SMARTIN_GCAL_ID }}
+          SMARTIN_GCAL_KEY: ${{ secrets.SMARTIN_GCAL_KEY }}
         run: python3 scripts/build-smartin.py smartinscience.co.uk
 
       - name: Check the build looks right

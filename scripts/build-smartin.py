@@ -13,6 +13,7 @@ Output lands in dist/smartin-science/ (gitignored, like the mm build).
 Upload the folder to Cloudflare Pages in Rod's account.
 """
 
+import html as htmlmod
 import os
 import posixpath
 import re
@@ -23,6 +24,31 @@ from datetime import date
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 SRC = os.path.join(ROOT, 'templates', 'smartin')
 OUT = os.path.join(ROOT, 'dist', 'smartin-science')
+
+# Rod's class calendar. The timetable page reads a public Google Calendar of
+# his and lists the sessions in it; these two values say which calendar and
+# with which API key. They are injected here rather than committed, so the key
+# lives in the repository's secrets and not in the repository — the same rule
+# as every other client credential.
+#
+# Absent, the page keeps the wording it has always had and fetches nothing, so
+# a build without them is not a broken build. docs/smartin-calendar.md has the
+# setup and explains why the key is safe to serve in the page but still should
+# not be committed.
+GCAL_ID = os.environ.get('SMARTIN_GCAL_ID', '').strip()
+GCAL_KEY = os.environ.get('SMARTIN_GCAL_KEY', '').strip()
+
+
+def inject_calendar(html):
+    """Fill in the calendar attributes on the one page that has them."""
+    if 'id="gcal"' not in html or not (GCAL_ID and GCAL_KEY):
+        return html
+    for attr, value in (('data-calendar-id', GCAL_ID), ('data-api-key', GCAL_KEY)):
+        old = '%s=""' % attr
+        if old not in html:
+            sys.exit('timetable page no longer has an empty %s to fill' % attr)
+        html = html.replace(old, '%s="%s"' % (attr, htmlmod.escape(value, quote=True)), 1)
+    return html
 
 
 def rewrite(html, domain, path):
@@ -60,8 +86,11 @@ def rewrite(html, domain, path):
     html = html.replace('src="site.js"', 'src="/site.js"')
     html = html.replace('src="letters.js"', 'src="/letters.js"')
     html = html.replace('src="book-hero.js"', 'src="/book-hero.js"')
+    html = html.replace('src="calendar.js"', 'src="/calendar.js"')
     html = html.replace('href="shared.css"', 'href="/shared.css"')
     html = html.replace('href="book-hero.css"', 'href="/book-hero.css"')
+
+    html = inject_calendar(html)
 
     # the demo is noindex; the real site is very much not
     html = re.sub(r'<meta name="robots"[^>]*>\n?', '', html)
@@ -140,6 +169,12 @@ def main():
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
     print(f'built {len(pages)} pages into dist/smartin-science/ for {domain}')
+    # Never print the key itself — only whether the build found one.
+    if GCAL_ID and GCAL_KEY:
+        print('  timetable reads his Google Calendar (id ends %s)' % GCAL_ID[-12:])
+    else:
+        print('  no calendar configured — the timetable keeps "confirmed when '
+              'you enquire" (see docs/smartin-calendar.md)')
     if held:
         print(f'  held back {len(held)} unapproved blog draft(s): '
               + ', '.join(sorted(held)))

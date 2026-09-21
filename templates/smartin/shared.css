@@ -746,3 +746,32 @@ footer a:hover{color:var(--green)}
 .regcol h3{font-size:1rem;letter-spacing:.02em;margin-bottom:12px;color:var(--ink)}
 .regcol .arealist{justify-content:flex-start;gap:8px}
 .regcol .arealist a{font-size:.84rem;padding:7px 13px}
+
+/* ---------- timetable from Rod's calendar ----------
+   Hidden until it has something to show: an empty list under a heading that
+   promises dates is worse than the page saying dates come on enquiry. */
+#gcal[hidden]{display:none}
+.gcal-list{list-style:none;margin:26px auto 0;padding:0;max-width:560px;text-align:left}
+.gcal-month{font-family:var(--dis);font-weight:600;font-size:.82rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--teal);margin:22px 0 10px;padding-bottom:7px;
+  border-bottom:1px solid var(--line)}
+.gcal-month:first-child{margin-top:0}
+.gcal-item{display:flex;gap:16px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+.gcal-item:last-child{border-bottom:0}
+/* The date block is a fixed column so every row's title starts on the same
+   line, which is what makes a list of dates scannable rather than ragged. */
+.gcal-when{flex:0 0 52px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--tint2);border:1px solid var(--line);border-radius:10px;padding:7px 0;line-height:1.1}
+.gcal-dow{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.gcal-day{font-family:var(--dis);font-weight:600;font-size:1.22rem;color:var(--ink)}
+.gcal-what{min-width:0;padding-top:2px}
+.gcal-what b{display:block;color:var(--ink);font-size:1rem;line-height:1.35}
+.gcal-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;font-size:.87rem;color:var(--mut)}
+.gcal-time{color:var(--body);font-weight:500}
+.gcal-where{min-width:0;overflow-wrap:anywhere}
+/* The page's .prose styling numbers every <li> with a badge, which is right
+   for a list of steps and wrong for a list of dates — it was stamping 1..6
+   down the timetable, month headings included. Off, inside this list only. */
+.prose .gcal-list{counter-reset:none;display:block;gap:0}
+.prose .gcal-list li{padding-left:0}
+.prose .gcal-list li::before{content:none;counter-increment:none}
