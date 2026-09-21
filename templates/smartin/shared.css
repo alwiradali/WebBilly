@@ -231,6 +231,20 @@ a.card:hover{border-color:#BCEBD1}
 .ring .mid b{font-family:var(--dis);font-size:2.9rem;font-weight:700;line-height:1;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ring .mid span{display:block;font-family:var(--dis);font-size:10.6px;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-top:5px}
+/* The hero panel as a portrait of Rod. The card keeps its white shell and
+   gradient top edge so it still belongs to the rest of the page; the photo
+   fills the rest of it, with his name over the foot of the picture. */
+.panel.pf{padding:20px}
+/* The floating element tiles overlap the card's top corners, so a label
+   row there gets clipped by Carbon — it read "ET ROD". The caption over
+   the photo names him, so the row is not needed. */
+.pshot{position:relative;margin:0;border-radius:18px;overflow:hidden;background:var(--tint)}
+.pshot img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.pshot figcaption{position:absolute;left:0;right:0;bottom:0;padding:44px 16px 14px;color:#fff;
+  background:linear-gradient(to top,rgba(4,26,52,.88),rgba(4,26,52,.55) 45%,rgba(4,26,52,0))}
+.pshot figcaption b{display:block;font-family:var(--dis);font-size:1.16rem;font-weight:700;line-height:1.2}
+.pshot figcaption span{display:block;font-size:.78rem;opacity:.92;margin-top:3px}
+
 .wklist{display:grid;gap:9px;list-style:none;margin:0;padding:0}
 .wkrow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--tint);
   border:1px solid var(--line);font-size:.9rem;color:var(--ink)}
@@ -360,7 +374,10 @@ a.card:hover{border-color:#BCEBD1}
 
 /* ---------- about Rod ---------- */
 .rod{display:grid;gap:34px;align-items:center}
-@media(min-width:960px){.rod{grid-template-columns:.86fr 1.14fr;gap:52px}}
+/* Without the card beside it the prose is the only column, so it reads
+   as a column rather than stretching the full width of the page. */
+.rod.solo{max-width:760px;margin:0 auto}
+@media(min-width:960px){.rod:not(.solo){grid-template-columns:.86fr 1.14fr;gap:52px}}
 .mono{position:relative;border-radius:26px;padding:38px 30px;overflow:hidden;box-shadow:var(--sh-lg);
   background:linear-gradient(140deg,#03335f,#0457ac 52%,#308fac);color:#fff;text-align:center}
 .mono .ini{width:120px;height:120px;margin:0 auto 20px;border-radius:34px;display:grid;place-items:center;
