@@ -199,14 +199,52 @@
           // actually be diagnosed later.
           var why = ex && ex.message ? ex.message : String(ex);
           console.error('[booking form] enquiry not sent —', why);
+
+          /* Carry what they typed into the fallback. A parent who has just
+             filled in eight fields and been told it failed will not fill them
+             in again — they leave, and Rod never knows there was an enquiry.
+             The WhatsApp and email links in this panel now open already
+             written, so it is one tap and he has the lot. */
+          var detail = [
+            ['Parent', v('pname')], ['Email', v('email')], ['Phone', v('phone')],
+            ['Student', v('sname')], ['Year group', v('year')],
+            ['Exam board', v('board')], ['Preferred times', v('mode')],
+            ['Based', v('area')], ['Notes', v('msg')]
+          ].filter(function (p) { return p[1]; })
+           .map(function (p) { return p[0] + ': ' + p[1]; });
+          var body = 'GCSE Science enquiry from the website\n\n' + detail.join('\n');
+
+          var wa = err.querySelector('[data-c="wa"]');
+          if (wa && CONTACT.whatsapp) {
+            wa.setAttribute('href', 'https://wa.me/' + CONTACT.whatsapp +
+              '?text=' + encodeURIComponent(body));
+          }
+          var ml = err.querySelector('[data-c="mail"]');
+          if (ml && CONTACT.email) {
+            ml.setAttribute('href', 'mailto:' + CONTACT.email +
+              '?subject=' + encodeURIComponent('GCSE Science enquiry — ' + v('year')) +
+              '&body=' + encodeURIComponent(body));
+          }
           /* The reason on screen as well as in the console. Web3Forms says
              exactly why it refused a key, and that sentence is the whole
              diagnosis — but it was only ever visible to someone who thought
              to open developer tools, which rules out a phone entirely. It is
              the form service's own wording about a public key, not anything
              private. Remove this line once the form is known good. */
+          /* "Failed to fetch" is what a browser says when the request never
+             came back readable at all, which covers both a blocker stopping
+             it and the form service refusing the caller — it answers a
+             refusal with no CORS header, so the browser cannot read the
+             reason either way. Saying that plainly is more use than the
+             browser's own wording. */
           var wh = document.getElementById('bkWhy');
-          if (wh) { wh.textContent = why; wh.hidden = false; }
+          if (wh) {
+            wh.textContent = /failed to fetch|networkerror|load failed/i.test(why)
+              ? 'Could not reach the form service — an ad blocker, privacy ' +
+                'extension or network filter is the usual cause.'
+              : why;
+            wh.hidden = false;
+          }
           btn.disabled = false;
           btn.textContent = label;
           err.classList.add('on');
