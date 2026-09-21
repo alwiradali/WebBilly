@@ -33,11 +33,26 @@ In Google Calendar, on a computer:
 3. Same page, **Integrate calendar** → copy the **Calendar ID**. It looks like
    `abc123...@group.calendar.google.com`.
 
-Then put the classes in it. Whatever he types as the event title is what
-parents read, so "Y10 Biology — Week 1" reads better than "Y10 bio". Anything
-in the **location** field is shown too; the description is not. Repeating
-events are fine — Google expands them and each date is listed separately.
-Cancelling one occurrence removes just that date from the site.
+Then put the classes in it. The page draws a month grid with a filter per
+year group, so **put the year in the title**:
+
+| He types | Parents see |
+| --- | --- |
+| `Y10 Biology — Week 1` | under **Year 10**, chip reads "Biology — Week 1" |
+| `Y9-Y11 Masterclass: Required Practicals` | under **all three** years — a range is read as a range |
+| `STEM club at Alwoodley Primary` | under **Other sessions** |
+| `Off — half term` (all-day) | that day is struck through, no session drawn |
+
+Nothing is ever dropped for not matching a pattern: a title with no year still
+appears, under "Other sessions". Repeating events are fine — Google expands
+them, so "every Tuesday for four weeks" is listed as four dates, and
+cancelling a single occurrence removes just that date from the site.
+
+Tapping a session takes the parent to the enquiry form with that year group
+already selected.
+
+The grid opens on the first month that has something in it, so an empty
+current month during the holidays never reads as "no classes".
 
 ## Step 2 — an API key
 
@@ -81,13 +96,13 @@ The build says which state it is in, without ever printing the key:
 ```
 
 On the page itself, the heading changes from *Confirmed when you enquire* to
-*The next few weeks* only once real dates are on the screen. If the heading
+*What is running, and when* only once real dates are on the screen. If the heading
 has not changed, nothing was listed — open the browser console, where the
 reason is logged as `[timetable] calendar not shown — …`.
 
 Common causes: the calendar is not actually public; the key is restricted to
 the wrong domain; the API is not enabled on the project; or there is genuinely
-nothing in the next four months (the window the page asks for, set by
+nothing in the next six months (the window the page asks for, set by
 `data-months` on the page).
 
 ## A caveat worth saying out loud to him

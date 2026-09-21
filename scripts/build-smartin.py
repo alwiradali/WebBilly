@@ -41,7 +41,7 @@ GCAL_KEY = os.environ.get('SMARTIN_GCAL_KEY', '').strip()
 
 def inject_calendar(html):
     """Fill in the calendar attributes on the one page that has them."""
-    if 'id="gcal"' not in html or not (GCAL_ID and GCAL_KEY):
+    if 'id="timetable-body"' not in html or not (GCAL_ID and GCAL_KEY):
         return html
     for attr, value in (('data-calendar-id', GCAL_ID), ('data-api-key', GCAL_KEY)):
         old = '%s=""' % attr

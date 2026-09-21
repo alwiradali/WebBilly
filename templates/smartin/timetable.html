@@ -92,15 +92,21 @@
     <div class="prose" style="max-width:760px;margin:0 auto;text-align:center">
       <div data-fx="reveal"><span class="pill">Dates and times</span></div>
       <h2 id="dates-head" data-fx="reveal" style="margin-top:14px">Confirmed when you enquire</h2>
-      <!-- Filled from Rod's own Google Calendar when one is configured, and
-           left alone when it is not — see docs/smartin-calendar.md. The two
-           attributes are written at build time from the repository's secrets;
-           empty means the page keeps the wording below and nothing is
-           fetched. -->
-      <div id="gcal" hidden
-           data-calendar-id=""
-           data-api-key=""
-           data-months="4"></div>
+    </div>
+
+    <!-- The month grid, drawn from Rod's own Google Calendar when one is
+         configured and left alone when it is not — see
+         docs/smartin-calendar.md. The two attributes are written at build
+         time from the repository's secrets; empty means nothing is fetched
+         and the page keeps the wording below. It sits outside .prose so the
+         grid can use its own width, and because .prose numbers every list
+         item it contains. -->
+    <div id="timetable-body" hidden
+         data-calendar-id=""
+         data-api-key=""
+         data-months="6"></div>
+
+    <div class="prose" style="max-width:760px;margin:0 auto;text-align:center">
       <p id="dates-note" data-fx="reveal" data-fx-delay="90">Start dates, session times and group sizes are set block by block, so that they fit the students who are actually booked on. Send an enquiry and Rod will come back to you personally with the next start date, the times and the current rates.</p>
       <p data-fx="reveal" data-fx-delay="130">Separate science bolt-ons and weekend masterclasses are scheduled through the year alongside the main blocks — ask about these if your child is sitting Biology, Chemistry and Physics separately.</p>
       <div class="hero-cta" data-fx="reveal" data-fx-delay="180" style="justify-content:center">

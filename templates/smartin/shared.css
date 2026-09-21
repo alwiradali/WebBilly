@@ -747,31 +747,83 @@ footer a:hover{color:var(--green)}
 .regcol .arealist{justify-content:flex-start;gap:8px}
 .regcol .arealist a{font-size:.84rem;padding:7px 13px}
 
-/* ---------- timetable from Rod's calendar ----------
-   Hidden until it has something to show: an empty list under a heading that
-   promises dates is worse than the page saying dates come on enquiry. */
-#gcal[hidden]{display:none}
-.gcal-list{list-style:none;margin:26px auto 0;padding:0;max-width:560px;text-align:left}
-.gcal-month{font-family:var(--dis);font-weight:600;font-size:.82rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--teal);margin:22px 0 10px;padding-bottom:7px;
-  border-bottom:1px solid var(--line)}
-.gcal-month:first-child{margin-top:0}
-.gcal-item{display:flex;gap:16px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
-.gcal-item:last-child{border-bottom:0}
-/* The date block is a fixed column so every row's title starts on the same
-   line, which is what makes a list of dates scannable rather than ragged. */
-.gcal-when{flex:0 0 52px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--tint2);border:1px solid var(--line);border-radius:10px;padding:7px 0;line-height:1.1}
-.gcal-dow{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-.gcal-day{font-family:var(--dis);font-weight:600;font-size:1.22rem;color:var(--ink)}
-.gcal-what{min-width:0;padding-top:2px}
-.gcal-what b{display:block;color:var(--ink);font-size:1rem;line-height:1.35}
-.gcal-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;font-size:.87rem;color:var(--mut)}
-.gcal-time{color:var(--body);font-weight:500}
-.gcal-where{min-width:0;overflow-wrap:anywhere}
-/* The page's .prose styling numbers every <li> with a badge, which is right
-   for a list of steps and wrong for a list of dates — it was stamping 1..6
-   down the timetable, month headings included. Off, inside this list only. */
-.prose .gcal-list{counter-reset:none;display:block;gap:0}
-.prose .gcal-list li{padding-left:0}
-.prose .gcal-list li::before{content:none;counter-increment:none}
+/* ---------- the class calendar ----------
+   A month grid on the timetable page, drawn from Rod's own Google Calendar.
+   Hidden until it has something in it: an empty grid under a heading that
+   promises dates reads as broken, where the page's own wording does not. */
+.cal{max-width:940px;margin:0 auto}
+#timetable-body[hidden]{display:none}
+
+.cal-filters{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:0 0 26px}
+.cal-fil{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:.88rem;font-weight:600;
+  padding:9px 15px;border-radius:999px;border:1.4px solid var(--line);background:#fff;color:var(--body);
+  cursor:pointer;transition:.22s}
+.cal-fil:hover:not(:disabled){transform:translateY(-2px);border-color:var(--teal);color:var(--ink)}
+.cal-fil:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.cal-fil .cal-n{font-size:.74rem;font-weight:700;padding:1px 7px;border-radius:999px;
+  background:var(--tint2);color:var(--mut)}
+.cal-fil.on{color:#fff;border-color:transparent}
+.cal-fil.on .cal-n{background:rgba(255,255,255,.28);color:#fff}
+.cal-fil.all.on{background:var(--grad)}
+.cal-fil.y9.on{background:#0d7f8f}
+.cal-fil.y10.on{background:#0457ac}
+.cal-fil.y11.on{background:#2a8f56}
+.cal-fil.gen.on{background:var(--grey)}
+
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.cal-head h3{font-size:clamp(1.15rem,3vw,1.5rem);margin:0}
+.cal-nav{display:flex;gap:7px}
+.cal-btn{font-family:inherit;font-size:.83rem;font-weight:600;padding:8px 14px;border-radius:999px;
+  border:1.4px solid var(--line);background:#fff;color:var(--body);cursor:pointer;transition:.22s}
+.cal-btn.ico{width:38px;padding:8px 0;font-size:1.15rem;line-height:1}
+.cal-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.cal-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.cal-btn:disabled{opacity:.35;cursor:default}
+
+/* minmax(0,1fr) and min-width:0, both needed. A grid item's default
+   min-width is auto, so one long event title stops the column from
+   shrinking: a "Masterclass: Required Practicals" on a Saturday took
+   that column to 313px while the other six sat at 97, and the week
+   stopped lining up. */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cal-dow{text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--mut);padding:4px 0}
+/* A fixed floor per cell keeps the weeks on an even rhythm whether or not a
+   day has anything in it; without it a busy week towers over a quiet one. */
+.cal-cell{min-height:76px;min-width:0;border-radius:11px;padding:5px;background:var(--tint);
+  display:flex;flex-direction:column;gap:4px}
+.cal-cell.out{background:transparent}
+.cal-cell.has{background:#fff;border:1px solid var(--line)}
+.cal-cell.today{outline:2px solid var(--teal);outline-offset:-2px}
+.cal-cell.off{background:repeating-linear-gradient(135deg,var(--tint2),var(--tint2) 6px,#fff 6px,#fff 12px)}
+.cal-num{font-size:.75rem;font-weight:600;color:var(--mut);line-height:1.2}
+.cal-cell.today .cal-num{color:var(--teal)}
+.cal-off{font-size:.68rem;font-weight:600;color:var(--mut);letter-spacing:.3px}
+
+.cal-ev{font-family:inherit;width:100%;text-align:left;border:0;cursor:pointer;border-radius:7px;
+  padding:4px 6px;font-size:.7rem;line-height:1.25;transition:.18s;min-width:0}
+.cal-ev:hover{transform:translateY(-1px);filter:brightness(.96)}
+.cal-ev:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+.cal-ev b{display:block;font-weight:700}
+.cal-ev span{display:block;font-weight:500;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-ev.y9{background:#E1F2F5;color:#0d7f8f}
+.cal-ev.y10{background:#E4EEFA;color:#0457ac}
+.cal-ev.y11{background:#E4F5EB;color:#2a8f56}
+.cal-ev.gen{background:var(--tint2);color:var(--body)}
+
+.cal-none,.cal-key{text-align:center;color:var(--mut);font-size:.9rem;margin-top:20px;line-height:1.9}
+.cal-none a{color:var(--teal);font-weight:600;border-bottom:1px solid rgba(48,143,172,.4)}
+.cal-swatch{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 5px 0 14px;vertical-align:-1px}
+.cal-swatch.y9{background:#0d7f8f}.cal-swatch.y10{background:#0457ac}.cal-swatch.y11{background:#2a8f56}
+
+/* On a phone seven columns cannot hold a readable chip, so the day number
+   shrinks and the chip keeps only its time — the subject is in the title
+   and on the enquiry it leads to. */
+@media(max-width:620px){
+  .cal-grid{gap:3px}
+  .cal-cell{min-height:60px;padding:3px;border-radius:9px}
+  .cal-ev{padding:3px 4px;font-size:.62rem}
+  .cal-ev span{display:none}
+  .cal-head{flex-direction:column;align-items:stretch;text-align:center;gap:10px}
+  .cal-nav{justify-content:center}
+}
