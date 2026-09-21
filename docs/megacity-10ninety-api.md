@@ -53,9 +53,11 @@ error bodies — no key, no account, nothing but public GETs:
 | | |
 |---|---|
 | **Base URL** | **`https://webapi.10ninety.co.uk`** |
-| **A real endpoint** | **`GET /properties`** |
+| **List** | **`GET /properties`** |
+| **One property** | **`GET /properties/{property_ref}`** |
+| **Auth header** | **`10ninety-webapi-key: <key>`** |
 | Gateway | Azure API Management, on 51.104.28.68 |
-| Authentication | an APIM **subscription key** — header name not yet known |
+| The key | does not expire; `webteam@10ninety.co.uk` regenerates it on request |
 
 `webapi.10ninety.co.uk` resolves; `api.`, `web-api.` and `api.10ninety.com` do
 not. Every path on it answers with HTTP 400 carrying a JSON body, which is
@@ -69,20 +71,25 @@ Azure API Management's shape, and the body is the tell:
 
 So the resource is plural, unversioned and sits at the root.
 
-**The header name is genuinely unknown, and that is worth knowing.** Azure's
-default is `Ocp-Apim-Subscription-Key`. Sending exactly that with a junk value
-still returns *missing*, not *invalid* — and the proxy was confirmed to forward
-custom headers, so the request really did carry it. `api-key`, `X-API-Key`,
-`Subscription-Key`, `Authorization`, `X-10Ninety-Key` and the
-`?subscription-key=` query parameter all behave the same way. APIM says
-*missing* only when nothing matched the name it is configured for, so this API
-uses a custom one that has to come from 10ninety or from the Stoplight docs.
+### The header is `10ninety-webapi-key`
 
-That is the difference between a morning lost to guessing and one line in an
-email. **The only thing still needed to make a first call is the name of the
-header and the key itself** — and, from the section above, the properties have
-to be ticked for the Web API Feed (account 1000) or the list comes back short
-with no explanation.
+Not Azure's default, which is why six plausible names all failed. Found in the
+Stoplight "Try it" panel, then **confirmed against the live gateway** — the
+error text is the proof, and it is worth keeping the exact wording, because
+these two messages are how anyone tells a wrong header from a wrong key:
+
+| request | response |
+|---|---|
+| `10ninety-webapi-key: <junk>` | `Access denied due to **invalid** subscription key.` |
+| no header at all | `Access denied due to **missing** subscription key.` |
+
+*invalid* means the header name matched and only the value was wrong.
+*missing* means nothing matched the name at all. So a future failure is
+diagnosable from one word: **missing → the header name; invalid → the key.**
+
+That is the last thing needed to make a real call. The remaining trap is not
+authentication at all: from the section below, a property has to be ticked for
+the **Web API Feed (account 1000)** or it is silently absent from the response.
 
 ## The documentation, read at last (2026-09-21)
 
