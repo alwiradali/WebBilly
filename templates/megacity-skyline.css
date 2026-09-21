@@ -2131,6 +2131,29 @@ body.sl-open{overflow:hidden}
 .band-copy h2 em{color:#A8DEF2}
 
 
+/* ── the person, beside the paragraph that names him ────────────────── */
+/* Walid's photograph sits next to the copy about him, not in the photo strip
+   below: a face with no name next to three stock shots reads as another stock
+   shot. The caption carries only what the copy already says — his name and
+   what he does — so the picture cannot claim a job title nobody gave it.
+   Shared by the homepage team section and the about page. */
+.whois{display:grid;gap:clamp(26px,3.6vw,54px);align-items:start;
+  grid-template-columns:minmax(0,1fr) clamp(230px,26vw,345px)}
+.whois-copy{min-width:0}
+.whois-shot{margin:0}
+.whois-shot img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;
+  border-radius:18px;display:block;box-shadow:0 18px 44px rgba(12,14,34,.16)}
+.whois-shot figcaption{margin-top:15px;font:700 15.4px/1.35 var(--ff-u);color:var(--navy-ink)}
+.whois-shot figcaption span{display:block;margin-top:5px;font-weight:500;font-size:13.6px;
+  line-height:1.5;color:var(--mut)}
+/* Below the break the portrait goes first: on a phone the eye should meet the
+   person before the paragraph, and a full-width headshot is far too big. */
+@media (max-width:860px){
+  .whois{grid-template-columns:1fr;gap:26px}
+  .whois-shot{order:-1;max-width:230px}
+}
+
+
 /* buttons end on the deep blue: the light tail of the surface gradient
    reads as a pale tinge at pill size */
 :root{--gradbtn:linear-gradient(135deg,#1D2049 0%,#1B3560 55%,#11506F 100%)}
