@@ -437,6 +437,10 @@ a.card:hover{border-color:#BCEBD1}
   color:#8A5200;font-size:.88rem;margin-top:14px;line-height:1.55}
 .err.on{display:block}
 .err a{color:#0457ac;font-weight:600;text-decoration:underline}
+/* The form service's own reason, under the friendly sentence. Quiet enough
+   that it reads as small print rather than as the message. */
+.err-why{display:block;margin-top:8px;font-size:.78rem;opacity:.7;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
 .side .card{margin-bottom:16px}
 .step{display:flex;gap:13px;margin-bottom:20px}
 .step .n{width:34px;height:34px;border-radius:11px;background:var(--grad);color:#fff;display:grid;place-items:center;

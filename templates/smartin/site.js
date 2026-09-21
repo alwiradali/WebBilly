@@ -197,7 +197,16 @@
           // Never claim an enquiry was sent when it was not. The visitor gets a
           // friendly fallback; the real reason goes to the console so it can
           // actually be diagnosed later.
-          console.error('[booking form] enquiry not sent —', ex && ex.message ? ex.message : ex);
+          var why = ex && ex.message ? ex.message : String(ex);
+          console.error('[booking form] enquiry not sent —', why);
+          /* The reason on screen as well as in the console. Web3Forms says
+             exactly why it refused a key, and that sentence is the whole
+             diagnosis — but it was only ever visible to someone who thought
+             to open developer tools, which rules out a phone entirely. It is
+             the form service's own wording about a public key, not anything
+             private. Remove this line once the form is known good. */
+          var wh = document.getElementById('bkWhy');
+          if (wh) { wh.textContent = why; wh.hidden = false; }
           btn.disabled = false;
           btn.textContent = label;
           err.classList.add('on');
