@@ -144,7 +144,7 @@
 
             <div class="hfo-grid">
               <div class="hfo-field"><label for="cPhone">Phone</label><input id="cPhone" inputmode="tel" placeholder="07…"></div>
-              <div class="hfo-field"><label for="cEmail">Email <span class="hint">(needed to send by email)</span></label><input id="cEmail" type="email" inputmode="email"></div>
+              <div class="hfo-field hfo-suggest"><label for="cEmail">Email <span class="hint">(needed to send by email)</span></label><input id="cEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com"><div class="hfo-suggest-list" id="eSuggest" hidden></div></div>
             </div>
             <div class="hfo-field"><label for="cAddr">Address</label><textarea id="cAddr" rows="3" placeholder="12 Example Road&#10;Manchester"></textarea></div>
             <div class="hfo-grid">
@@ -771,6 +771,74 @@
     if (!suggest.contains(e.target) && e.target !== nameBox) suggest.hidden = true;
   });
 
+  /* ------------------------------------------------ email he has used before
+     He types the customer's address by hand every time, and the same people
+     come back -- a landlord with four properties, an agent, the neighbour of
+     last week's job. Retyping is where typos come from, and a typo here sends
+     the invoice nowhere at all, quietly.
+
+     So the field remembers. Tapping it lists every address already in the back
+     office, newest first; typing filters that list. The list is built server
+     side from his customers and his enquiries, so it is the same on the van
+     phone as on the laptop rather than living in one browser. */
+  const emailBox = $("cEmail"), eSuggest = $("eSuggest");
+  let knownEmails = null, emailLoading = null;
+
+  async function loadKnownEmails() {
+    if (knownEmails) return knownEmails;
+    if (!emailLoading) {
+      emailLoading = get("emails")
+        .then((d) => { knownEmails = d.emails || []; return knownEmails; })
+        .catch(() => { emailLoading = null; return []; });
+    }
+    return emailLoading;
+  }
+
+  function drawEmailList(list) {
+    if (!list.length) { eSuggest.hidden = true; return; }
+    eSuggest.innerHTML = list.slice(0, 8).map((e) =>
+      '<button type="button" data-email="' + esc(e.email) + '">' +
+      "<b>" + esc(e.email) + "</b>" +
+      "<small>" + esc(e.name || "no name saved") +
+      (e.src === "enquiry" ? " &middot; from an enquiry" : "") + "</small></button>"
+    ).join("");
+    eSuggest.hidden = false;
+    eSuggest.querySelectorAll("button").forEach((b) => {
+      /* mousedown, not click: blur fires first on a click and would hide the
+         list out from under the pointer. */
+      b.addEventListener("mousedown", (ev) => {
+        ev.preventDefault();
+        emailBox.value = b.dataset.email;
+        eSuggest.hidden = true;
+        refresh();
+      });
+    });
+  }
+
+  function matchEmails(q) {
+    const list = knownEmails || [];
+    const needle = q.trim().toLowerCase();
+    if (!needle) return list;
+    return list.filter((e) =>
+      e.email.toLowerCase().indexOf(needle) !== -1 ||
+      (e.name || "").toLowerCase().indexOf(needle) !== -1);
+  }
+
+  emailBox.addEventListener("focus", async () => {
+    await loadKnownEmails();
+    drawEmailList(matchEmails(emailBox.value));
+  });
+  emailBox.addEventListener("input", () => {
+    refresh();
+    if (knownEmails) drawEmailList(matchEmails(emailBox.value));
+  });
+  emailBox.addEventListener("blur", () => { setTimeout(() => { eSuggest.hidden = true; }, 120); });
+  emailBox.addEventListener("keydown", (e) => { if (e.key === "Escape") eSuggest.hidden = true; });
+
+  /* A new address typed on this invoice should be offered on the next one
+     without a reload, so drop the cache whenever the customer is saved. */
+  function forgetKnownEmails() { knownEmails = null; emailLoading = null; }
+
   /* --------------------------------------------------------- the lines */
   function drawLines() {
     const host = $("lines");
@@ -1162,6 +1230,9 @@
     const body = payload();
     const d = S.inv ? await put("invoices/" + S.inv.id, body) : await post("invoices", body);
     S.inv = d.invoice;
+    /* Saving writes the customer, so an address typed here is now one of the
+       remembered ones. Drop the cache or it will not appear until a reload. */
+    forgetKnownEmails();
     $("edTitle").textContent = "Invoice " + S.inv.number;
     lockForStatus();
     showLink();

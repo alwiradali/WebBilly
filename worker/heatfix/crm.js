@@ -259,6 +259,41 @@ async function saveSettings(env, body) {
 }
 
 /* -------------------------------------------------------------- customers */
+/* Every email address he has already typed, newest first.
+
+   He types the customer's address into the invoice by hand, and the same
+   people come back: a landlord with four properties, a letting agent, the
+   neighbour of the last job. Retyping it is where the typos come from, and a
+   typo here means the invoice quietly goes nowhere.
+
+   Two sources, because both are addresses he has used: customers he has
+   invoiced, and enquiries that came in through the website. Deduplicated by
+   the address itself, lower-cased for comparison but returned as it was
+   entered, and capped -- this feeds a dropdown, not a mailing list. */
+async function listKnownEmails(env) {
+  const rows = await env.HF_DB.prepare(
+    `SELECT email, name, created_at, 'customer' AS src FROM hf_customers
+      WHERE email IS NOT NULL AND TRIM(email) <> ''
+     UNION ALL
+     SELECT email, name, created_at, 'enquiry' AS src FROM hf_enquiries
+      WHERE email IS NOT NULL AND TRIM(email) <> ''
+     ORDER BY created_at DESC
+     LIMIT 400`
+  ).all();
+
+  const seen = new Set(), out = [];
+  for (const r of (rows.results || [])) {
+    const email = clean(r.email, 160).trim();
+    if (!email || email.indexOf("@") < 1) continue;
+    const key = email.toLowerCase();
+    if (seen.has(key)) continue;          /* the customer record wins: it is first */
+    seen.add(key);
+    out.push({ email, name: clean(r.name, 80), src: r.src });
+    if (out.length >= 60) break;
+  }
+  return out;
+}
+
 async function listCustomers(env, q) {
   const like = `%${(q || "").trim()}%`;
   const sql = q
@@ -1066,6 +1101,10 @@ ignore it &mdash; nothing has changed.</p>`,
         await env.HF_DB.prepare("DELETE FROM hf_enquiries WHERE id = ?").bind(seg[1]).run();
         return json({ ok: true });
       }
+    }
+
+    if (seg[0] === "emails" && method === "GET") {
+      return json({ emails: await listKnownEmails(env) });
     }
 
     if (seg[0] === "customers") {
