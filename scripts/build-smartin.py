@@ -171,6 +171,29 @@ def main():
             fh.write(f'  <url><loc>https://{domain}{p}</loc><lastmod>{today}</lastmod></url>\n')
         fh.write('</urlset>\n')
 
+    # A Worker of his own, and the reason it exists.
+    #
+    # wrangler inherits main from the top-level config into every [env.*] that
+    # does not set its own. [env.smartin] did not, so his domain was deployed
+    # running billydigitals' worker.js: every URL that was not a page threw
+    # Cloudflare error 1101 instead of returning a 404, and that worker's API
+    # routes were reachable on his hostname. This is the same shape as
+    # [env.mm], which has always set its own main and was never affected.
+    #
+    # It does one thing: hand the request to the static assets.
+    with open(os.path.join(OUT, '_worker.js'), 'w') as fh:
+        fh.write('export default {\n'
+                 '  async fetch(request, env) {\n'
+                 '    return env.ASSETS.fetch(request);\n'
+                 '  },\n'
+                 '};\n')
+
+    # Deployed as a Worker the entry script is uploaded as code, but it also
+    # sits in the asset directory, where the asset router would serve it to
+    # anyone asking for /_worker.js.
+    with open(os.path.join(OUT, '.assetsignore'), 'w') as fh:
+        fh.write('_worker.js\n')
+
     with open(os.path.join(OUT, 'robots.txt'), 'w') as fh:
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
