@@ -265,6 +265,24 @@
       [].forEach.call(root.querySelectorAll('.cal-ev'), function (b) {
         b.addEventListener('click', function () {
           var year = b.getAttribute('data-year');
+          /* The calendar is on the home page as well as /timetable, and the
+             form is on the home page. Reloading the page a visitor is already
+             on, to reach a form further down it, throws away their scroll
+             position for nothing. */
+          var form = d.getElementById('booking');
+          if (form) {
+            var sel = d.getElementById('year');
+            if (sel && year) {
+              for (var i = 0; i < sel.options.length; i++) {
+                if (sel.options[i].text.toLowerCase().indexOf(year.toLowerCase()) > -1) {
+                  sel.selectedIndex = i;
+                  break;
+                }
+              }
+            }
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
           w.location.href = 'index.html' + (year ? '?year=' + encodeURIComponent(year) : '') + '#booking';
         });
       });
@@ -312,9 +330,17 @@
         });
       });
 
-      if (!events.length && !Object.keys(offDays).length) {
-        throw new Error('nothing in the calendar');
-      }
+      /* An empty calendar still draws the calendar. It used to keep the page's
+         existing wording instead, which is defensible — nothing is promised
+         that cannot be shown — but it also means that before the first class
+         is entered the page looks untouched, and there is no way to tell a
+         working calendar from a broken one by looking at it. The grid, with
+         its own "nothing this month" line, says both things at once: this is
+         live, and there is nothing in it yet.
+
+         A failed fetch is different and still falls through to the catch: the
+         page cannot say anything truthful about a calendar it could not
+         read. */
 
       /* Open on the first month that has something in it. Term starts and
          holidays mean the current month is often empty while the next one is
@@ -330,16 +356,18 @@
 
       render();
 
-      /* Only now, with real dates on screen, is the heading above them
-         untrue. Changing it before the fetch would leave the page promising
-         a timetable it could not produce. */
-      var head = d.getElementById('dates-head');
-      if (head) head.textContent = 'What is running, and when';
-      var note = d.getElementById('dates-note');
-      if (note) {
-        note.textContent = 'These are the sessions currently in the diary. ' +
-          'Group sizes and rates are set block by block — send an enquiry ' +
-          'and Rod will come back to you with the detail.';
+      /* The heading changes only once there are real dates under it. With an
+         empty calendar the grid is on screen but "Confirmed when you enquire"
+         is still the true answer, so it stays. */
+      if (events.length) {
+        var head = d.getElementById('dates-head');
+        if (head) head.textContent = 'What is running, and when';
+        var note = d.getElementById('dates-note');
+        if (note) {
+          note.textContent = 'These are the sessions currently in the diary. ' +
+            'Group sizes and rates are set block by block — send an enquiry ' +
+            'and Rod will come back to you with the detail.';
+        }
       }
     }).catch(function (e) {
       /* The page is already correct without this, so there is nothing to tell

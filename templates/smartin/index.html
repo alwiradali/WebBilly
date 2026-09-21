@@ -304,6 +304,31 @@
   </div>
 </section>
 
+<!-- ==================== WHAT'S ON ====================
+     The same calendar as /timetable, drawn from Rod's own Google Calendar —
+     see docs/smartin-calendar.md. It sits here, straight after the four weeks
+     are explained, because "when does it run" is the next question a parent
+     asks and sending them to another page to find out loses some of them.
+     One script serves both pages; it mounts on whichever #timetable-body it
+     finds. -->
+<section class="alt" id="whats-on">
+  <div class="wrap">
+    <div class="sec-head" data-fx="reveal">
+      <span class="pill">What&rsquo;s on</span>
+      <h2>The next few <span class="g">weeks</span></h2>
+      <p>Sessions, bolt-ons and masterclasses, straight from Rod&rsquo;s own diary.
+        Tap one to enquire about that group.</p>
+    </div>
+    <div id="timetable-body" hidden
+         data-calendar-id="c_acb9133c2ddc099403dd16903402dd8524924fe57dc083194d729d78a40c23db@group.calendar.google.com"
+         data-api-key="AIzaSyB28du2AXEkypIrEVwR_tYT13kc5l_pWDw"
+         data-months="6"></div>
+    <p style="text-align:center;margin-top:30px" data-fx="reveal">
+      <a class="btn btn-g" href="timetable.html">How the four weeks run →</a>
+    </p>
+  </div>
+</section>
+
 <!-- ==================== WORKSHOPS & CLUBS ==================== -->
 <section id="workshops">
   <div class="wrap">
