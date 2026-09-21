@@ -472,6 +472,12 @@
           <div class="ok" id="ok">
             <h3>Thank you! 🎉</h3>
             <p>Your enquiry is on its way to Rod. You'll get a personal reply within 24 hours with the next start date, times and rates.</p>
+            <!-- A route out if the message never arrives. The form can only
+                 report what the form service tells it, and a service can
+                 accept an enquiry and deliver it nowhere — which is what
+                 happened here. Nobody should be left with a cheerful panel
+                 and no reply. -->
+            <p class="ok-alt">Not heard back within 24 hours? Message Rod on <a href="https://wa.me/447979448323">WhatsApp</a> or email <a href="mailto:rod@smartinscience.co.uk">rod@smartinscience.co.uk</a>.</p>
           </div>
           <form id="bkForm" novalidate>
             <div class="fld"><label for="pname">Parent / guardian name *</label><input type="text" id="pname" autocomplete="name" required></div>

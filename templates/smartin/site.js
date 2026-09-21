@@ -30,7 +30,14 @@
      it. It is meant to sit in client-side code and identifies the destination
      inbox; it grants nothing else, so it belongs in the repo rather than in a
      secret. */
-  var W3F_KEY = 'd09dfb52-ab60-4399-838c-5b0faf3b0a6f';
+  /* Replaced 21 Sep. The first key was requested by someone other than
+     Rod, and with Web3Forms the key IS the destination: enquiries went
+     to whichever inbox asked for it, not his. A real submission from the
+     live site came back success:true and showed the thank-you panel,
+     which is correct behaviour and exactly why it went unnoticed for two
+     weeks — Web3Forms had accepted it and delivered it somewhere else.
+     This one was requested from rod@smartinscience.co.uk. */
+  var W3F_KEY = '76f07e4c-7dd2-4a8d-9bfc-ee3b7e9936db';
 
   var WA_MSG = "Hi Rod, I found SMARTin SCIENCE online. I'd like to ask about GCSE science tuition for my child.";
 

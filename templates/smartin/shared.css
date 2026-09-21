@@ -842,3 +842,7 @@ footer a:hover{color:var(--green)}
 .prose figure.shot img{width:100%;height:auto;display:block;border-radius:20px;
   box-shadow:var(--sh-lg)}
 .prose figure.shot figcaption{margin-top:10px;font-size:.86rem;color:var(--mut);text-align:center}
+/* The fallback under the thank-you. Quieter than the confirmation above it —
+   it is there for the case where the confirmation turns out to be wrong. */
+.ok .ok-alt{margin-top:12px;font-size:.88rem;color:var(--mut)}
+.ok .ok-alt a{color:var(--teal);font-weight:600;border-bottom:1px solid rgba(48,143,172,.4)}
