@@ -92,6 +92,23 @@ npx wrangler secret put RESEND_API_KEY --env megacity
 npx wrangler secret put OFFICE_SETUP_TOKEN --env megacity
 ```
 
+Each one prompts for the value and stores it in Cloudflare. The value is never
+typed into this repository, into a chat window, or into anything that keeps a
+transcript — that is the whole point of the command.
+
+While signed in, the 10ninety key can go in the same way, even though nothing
+reads it yet:
+
+```
+npx wrangler secret put TENNINETY_API_KEY --env megacity
+```
+
+The sync is not written, so this changes nothing today. It is here because it
+is free to do while signed in to his account and saves going back. The thing
+actually blocking the sync is not the key but **the name of the header it goes
+in** — see `docs/megacity-10ninety-api.md`. That is configuration, not a
+secret, and 10ninety can answer it in one line.
+
 **9. Push to `main`.** The workflow builds `dist/megacity`, checks nothing else
 came with it, and deploys. Until the routes are uncommented the Worker is
 uploaded but his domain is not pointed at it — the workflow says so rather than
@@ -100,6 +117,31 @@ failing.
 **10. After the nameservers have moved and his zone reads Active**, uncomment
 the two routes in `[env.megacity]` and push again. That is the moment the
 website changes; everything before it is invisible to the public.
+
+## The order these have to happen in
+
+Two of these steps cannot be swapped, and both failures look like something
+else:
+
+1. **Nameservers move first, routes second.** A Worker custom domain can only
+   be created for a zone the account holds. Uncommenting the routes before his
+   zone reads Active fails the deploy — and reads as a broken config rather
+   than as a step taken early.
+2. **The website move is separate from the DNS move, on purpose.** Copying the
+   records and changing the nameservers does not touch the website: the records
+   are DNS-only, so mail and the old site carry on being served by whoever
+   serves them now. The site changes only at step 10. If anything looks wrong
+   after the nameserver change, it is a record, not the website — and fixing
+   the record in Cloudflare lands within one record TTL, where reverting the
+   delegation would take far longer in both directions.
+
+## The one thing that is not in his account at all
+
+Nothing pushed to `main` has reached the live agency site since 17 September,
+because Workers Builds is still building a different branch. Cloudflare →
+Workers & Pages → billydigitals → Settings → Builds → production branch
+`main`. That is in the **agency's** account, not his, and until it is changed
+the deploy verification here is checking work that never shipped.
 
 ## The thing to know about the Worker code
 
