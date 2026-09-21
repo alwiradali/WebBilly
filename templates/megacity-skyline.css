@@ -286,7 +286,13 @@ body.is-ready .veil{display:none}
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy-ink)}
 .hero-media picture{position:absolute;inset:0;display:block;width:100%;height:100%}
 .hero-media img.hero-still{position:absolute;inset:0;width:100%;height:100%;display:block;
-  object-fit:cover;object-position:center 52%;animation:herodrift 30s ease-in-out infinite alternate}
+  object-fit:cover;object-position:center 52%;animation:herodrift 30s ease-in-out infinite alternate;
+  /* The hero photograph is a dusk shot: measured mean 53/255, with 39.5% of it
+     nearly black. Lifting the scrim alone moved the page from 62 to 66, because
+     the darkness is in the picture, not over it. Brightness lifts it, the small
+     contrast cut stops the lift crushing the sky, and a touch of saturation
+     puts back what brightening takes out. */
+  filter:brightness(1.32) contrast(.94) saturate(1.08)}
 @media (max-width:760px){.hero-media img.hero-still{object-position:center 46%}}
 @keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
@@ -2259,11 +2265,18 @@ body.sl-open{overflow:hidden}
 .hero--ref .hero-foot{position:absolute;left:var(--gut);right:var(--gut);bottom:0;margin-top:0}
 .hero--ref h1 .ln{padding-left:.06em;margin-left:-.06em}
 .hero--ref img.hero-still{object-position:62% 50%}
+/* The scrim over the hero photograph. Lifted on request — the picture was
+   reading almost black (measured mean 62/255) while the white headline sat at
+   20.67:1 against a 4.5:1 requirement. That much contrast bought nothing and
+   hid the photograph. The left-hand stop stays the heaviest because that is
+   the only part the headline is over; the right-hand side, which is just
+   picture, is nearly clear. Re-measure if these are touched:
+   the headline must stay above 4.5:1 on both widths. */
 .hero--ref .hero-media::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(12,14,34,.86) 0%,rgba(12,14,34,.62) 30%,rgba(12,14,34,.18) 58%,rgba(12,14,34,.06) 100%),
-             linear-gradient(180deg,rgba(12,14,34,.30) 0%,transparent 28%,transparent 72%,rgba(12,14,34,.50) 100%)}
+  background:linear-gradient(90deg,rgba(12,14,34,.66) 0%,rgba(12,14,34,.42) 30%,rgba(12,14,34,.10) 58%,rgba(12,14,34,.03) 100%),
+             linear-gradient(180deg,rgba(12,14,34,.18) 0%,transparent 28%,transparent 72%,rgba(12,14,34,.42) 100%)}
 @media (max-width:760px){.hero--ref img.hero-still{object-position:50% 50%}
-  .hero--ref .hero-media::after{background:linear-gradient(180deg,rgba(12,14,34,.55) 0%,rgba(12,14,34,.35) 40%,rgba(12,14,34,.72) 100%)}}
+  .hero--ref .hero-media::after{background:linear-gradient(180deg,rgba(12,14,34,.38) 0%,rgba(12,14,34,.20) 40%,rgba(12,14,34,.62) 100%)}}
 .hero--ref h1{font-weight:400;letter-spacing:-.012em;line-height:1.0;max-width:none;
   font-size:clamp(42px,6.7vw,118px);color:#F5F2EA}
 .hero--ref h1 em{font-weight:400;font-style:normal;text-transform:none;font-size:1em;letter-spacing:inherit;color:#8FC4F5}
