@@ -231,18 +231,17 @@
              to open developer tools, which rules out a phone entirely. It is
              the form service's own wording about a public key, not anything
              private. Remove this line once the form is known good. */
-          /* "Failed to fetch" is what a browser says when the request never
-             came back readable at all, which covers both a blocker stopping
-             it and the form service refusing the caller — it answers a
-             refusal with no CORS header, so the browser cannot read the
-             reason either way. Saying that plainly is more use than the
-             browser's own wording. */
+          /* One line on screen, and only for the failure a visitor can do
+             something about. "Failed to fetch" is the browser saying the
+             request never came back readable, and on this form that is
+             almost always an ad blocker or privacy extension stopping the
+             call to the form service — which is worth telling them, because
+             they can turn it off. Every other failure is Rod's problem, not
+             theirs: it goes to the console and they just get the fallback. */
           var wh = document.getElementById('bkWhy');
-          if (wh) {
-            wh.textContent = /failed to fetch|networkerror|load failed/i.test(why)
-              ? 'Could not reach the form service — an ad blocker, privacy ' +
-                'extension or network filter is the usual cause.'
-              : why;
+          if (wh && /failed to fetch|networkerror|load failed/i.test(why)) {
+            wh.textContent = 'An ad blocker or privacy extension looks to be ' +
+              'blocking the form. WhatsApp or email will get straight through.';
             wh.hidden = false;
           }
           btn.disabled = false;
