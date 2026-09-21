@@ -44,6 +44,46 @@ Two ways round it, in order of effort:
    URL, how a request authenticates (header or parameter name), and the
    endpoint that lists properties.
 
+## The base URL, found without the documentation (2026-09-21)
+
+The documentation is still shut, but the gateway itself answers, and what it
+says identifies it. Found by resolving the obvious subdomains and reading the
+error bodies — no key, no account, nothing but public GETs:
+
+| | |
+|---|---|
+| **Base URL** | **`https://webapi.10ninety.co.uk`** |
+| **A real endpoint** | **`GET /properties`** |
+| Gateway | Azure API Management, on 51.104.28.68 |
+| Authentication | an APIM **subscription key** — header name not yet known |
+
+`webapi.10ninety.co.uk` resolves; `api.`, `web-api.` and `api.10ninety.com` do
+not. Every path on it answers with HTTP 400 carrying a JSON body, which is
+Azure API Management's shape, and the body is the tell:
+
+- `/properties` → `{ "statusCode": 401, "message": "Access denied due to
+  missing subscription key..." }` — the path exists and is protected.
+- `/property`, `/v1/properties`, `/api/properties`, `/1000/properties`,
+  `/lettings`, `/search` → `{ "statusCode": 404, "message": "Resource not
+  found" }` — no such operation.
+
+So the resource is plural, unversioned and sits at the root.
+
+**The header name is genuinely unknown, and that is worth knowing.** Azure's
+default is `Ocp-Apim-Subscription-Key`. Sending exactly that with a junk value
+still returns *missing*, not *invalid* — and the proxy was confirmed to forward
+custom headers, so the request really did carry it. `api-key`, `X-API-Key`,
+`Subscription-Key`, `Authorization`, `X-10Ninety-Key` and the
+`?subscription-key=` query parameter all behave the same way. APIM says
+*missing* only when nothing matched the name it is configured for, so this API
+uses a custom one that has to come from 10ninety or from the Stoplight docs.
+
+That is the difference between a morning lost to guessing and one line in an
+email. **The only thing still needed to make a first call is the name of the
+header and the key itself** — and, from the section above, the properties have
+to be ticked for the Web API Feed (account 1000) or the list comes back short
+with no explanation.
+
 ## The Web API is a portal export, not a separate thing
 
 Seen in 10ninety's back office, 2026-09-19, under **Marketing → Portals →
