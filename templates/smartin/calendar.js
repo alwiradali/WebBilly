@@ -125,6 +125,12 @@
     }
   }
 
+  /* An all-day entry has no time to print. "All day" in the slot a time would
+     occupy keeps the chip the same shape as a timed one. */
+  function timeLabel(e) {
+    return e.allDay ? 'All day' : fmtTime(e.start);
+  }
+
   function ymd(date) {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
   }
@@ -217,8 +223,8 @@
           var years = e.years.map(function (y) { return y.label; }).join(', ');
           html += '<button type="button" class="cal-ev ' + cls + '"' +
                   ' data-year="' + esc(e.years.length === 1 ? e.years[0].pick : '') + '"' +
-                  ' title="' + esc(fmtTime(e.start) + ' · ' + e.title) + '">' +
-                  '<b>' + fmtTime(e.start) + '</b><span>' + esc(e.label) + '</span></button>';
+                  ' title="' + esc(timeLabel(e) + ' · ' + e.title) + '">' +
+                  '<b>' + timeLabel(e) + '</b><span>' + esc(e.label) + '</span></button>';
         });
         html += '</div>';
       }
@@ -319,11 +325,17 @@
           return;
         }
         var st = ev.start || {};
-        if (!st.dateTime) return;                  /* any other all-day entry */
-        var when = new Date(st.dateTime);
+        /* All-day is what you get when you add something on a phone without
+           opening the time fields: Google stores a date and no time. Dropping
+           those meant a class Rod had genuinely entered never reached the
+           page, so the site looked stuck rather than empty. An all-day
+           session shows on its date with "All day" where a time would go. */
+        var allDay = !st.dateTime && !!st.date;
+        var when = new Date(allDay ? st.date + 'T00:00:00' : st.dateTime);
         if (isNaN(when)) return;
         events.push({
           start: when,
+          allDay: allDay,
           title: (ev.summary || 'Session').trim(),
           label: labelOf(ev.summary),
           years: yearsOf(ev.summary)
