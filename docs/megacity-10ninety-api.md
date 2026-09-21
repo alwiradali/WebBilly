@@ -84,6 +84,98 @@ header and the key itself** — and, from the section above, the properties have
 to be ticked for the Web API Feed (account 1000) or the list comes back short
 with no explanation.
 
+## The documentation, read at last (2026-09-21)
+
+Billy signed in and the Stoplight contents appeared. What it says, and what
+each thing costs us.
+
+### The shape of it
+
+Four endpoints — `GET Property`, `GET Properties`, `GET Property Types`,
+`GET Searchable Areas` — and four schemas: `Property`, `SearchableArea`,
+`PropertyType`, `Paging`. So the list is paged, and areas and types are
+enumerations fetched from the API rather than guessed at.
+
+> Based on the well-known **Rightmove v3.5 BLM data feed format specification**,
+> with some additional custom properties.
+
+That settles the field names before we have a single sample response, and it
+settles **bathrooms** — BLM carries a bathroom count, so Walid's question has
+the answer he wanted.
+
+### Getting an account
+
+> To set up a new API account for an agent please contact us at
+> `webteam@10ninety.co.uk` with the agent's name. Please CC the agent in on
+> this email.
+
+The key arrives by email afterwards, goes **in a header on every request**, and
+**does not expire**. Regenerating it is an email to the same address — worth
+knowing, because it means a key that ever does leak can be replaced in an hour
+rather than being a permanent problem.
+
+**The header's name is still not written down here.** It is on the `Properties`
+endpoint page in the left-hand navigation, under its required headers. One
+click, and the last unknown is closed.
+
+### The thing that breaks the promise
+
+> **How often is the API data updated?**
+> The API data is updated whenever the agent runs the **Portal Export** from
+> within their system, and by the system automatically **overnight**.
+
+**The API is not live.** It serves the last Portal Export, not what is in
+10ninety this second. Walid has asked for a property to be on the website
+"within seconds" of him uploading it, and as it stands the chain is:
+
+1. he adds the property in 10ninety — the API still does not have it
+2. he runs **Portal Export** — now the API has it
+3. our site reads the API — now the website has it
+
+Miss step 2 and the property appears overnight, not in seconds. No amount of
+polling on our side fixes that, because the data we would be polling has not
+changed.
+
+What *is* achievable, and should be what he is promised:
+
+- **Poll on a schedule** (a Cron Trigger on the Worker) so anything exported
+  turns up within the polling interval without anyone touching the website.
+- **A "Refresh from 10ninety" button in the Studio**, so after he runs the
+  Portal Export he can have the site match within seconds rather than waiting
+  for the next poll.
+- **Tell him step 2 exists.** It is one click in software he already uses every
+  day, and it is the difference between seconds and overnight. A promise that
+  depends on a step nobody mentioned is how a client comes to believe the
+  website is broken.
+
+### Let and Sold are not in the feed unless asked for
+
+> This API can include Sold and Let properties **upon request** — send requests
+> to `webteam@10ninety.co.uk`. `status_id` values: **Sold: 6, Let: 7**.
+
+Worth requesting. Without it a let property simply vanishes from the response,
+and "gone from the list" and "never in the list" are the same thing to the
+sync — which is exactly the ambiguity that makes a sync delete things it should
+not. With the statuses enabled, a let property arrives *saying* it is let, and
+the site can take it down deliberately and for a stated reason.
+
+### They generate links into our website
+
+> The standard format for these links is
+> `https://<client_domain>/properties/<property_ref>`. Please make sure the
+> corresponding url on the site has been set up which displays the appropriate
+> property based on the `<property_ref>` passed in.
+
+10ninety puts these in the marketing emails it sends applicants. This site uses
+`/let/<slug>`, so **`/properties/<ref>` has to resolve** or every link in every
+marketing email Walid sends lands on a 404 — on the website, from software that
+is working exactly as designed, and nobody would think to look at the API.
+
+They offer to change the format on request. Better not to depend on it: serving
+`/properties/<ref>` ourselves and redirecting to the real page is a small
+addition to `worker/studio/urls.js`, needs no support ticket, and keeps working
+if the format is ever changed back.
+
 ## The Web API is a portal export, not a separate thing
 
 Seen in 10ninety's back office, 2026-09-19, under **Marketing → Portals →
