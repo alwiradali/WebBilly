@@ -809,7 +809,23 @@ footer a:hover{color:var(--green)}
 .cal-ev:hover{transform:translateY(-1px);filter:brightness(.96)}
 .cal-ev:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
 .cal-ev b{display:block;font-weight:700}
-.cal-ev span{display:block;font-weight:500;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Two lines before it gives up, rather than one. A month cell is narrow, and
+   "2 Hour Fast Track Course" was being cut to "2 Hour Fast Track …" on a full
+   size screen — the part a parent needs is the part that was missing. */
+.cal-ev span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  font-weight:500;opacity:.85;overflow:hidden;overflow-wrap:break-word}
+.cal-ev i{display:none}
+
+/* The month as a list. Hidden until the grid runs out of room — see the
+   phone rules at the end of this file. */
+.cal-list{display:none;list-style:none;margin:0;padding:0}
+.cal-li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cal-li:last-child{border-bottom:0}
+.cal-li-d{flex:0 0 42px;text-align:center;padding-top:2px}
+.cal-li-d b{display:block;font-size:1.15rem;font-weight:700;line-height:1.1;color:var(--body)}
+.cal-li-d span{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mut)}
+.cal-li.today .cal-li-d b,.cal-li.today .cal-li-d span{color:var(--teal)}
+.cal-li-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
 .cal-ev.y9{background:#E1F2F5;color:#0d7f8f}
 .cal-ev.y10{background:#E4EEFA;color:#0457ac}
 .cal-ev.y11{background:#E4F5EB;color:#2a8f56}
@@ -824,10 +840,14 @@ footer a:hover{color:var(--green)}
    shrinks and the chip keeps only its time — the subject is in the title
    and on the enquiry it leads to. */
 @media(max-width:620px){
-  .cal-grid{gap:3px}
-  .cal-cell{min-height:60px;padding:3px;border-radius:9px}
-  .cal-ev{padding:3px 4px;font-size:.62rem}
-  .cal-ev span{display:none}
+  /* The grid gives way to the list here. Hiding the title to make it fit,
+     which is what this used to do, left "10am" and nothing else. */
+  .cal-grid{display:none}
+  .cal-list{display:block}
+  .cal-ev{padding:8px 10px;font-size:.82rem;border-radius:9px}
+  .cal-ev b{display:inline;font-weight:700}
+  .cal-ev span{display:inline;-webkit-line-clamp:none;margin-left:7px}
+  .cal-ev i{display:block;font-style:normal;font-size:.72rem;opacity:.75;margin-top:2px}
   .cal-head{flex-direction:column;align-items:stretch;text-align:center;gap:10px}
   .cal-nav{justify-content:center}
 }

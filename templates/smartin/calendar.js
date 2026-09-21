@@ -232,6 +232,40 @@
       for (var t = 0; t < trail; t++) html += '<div class="cal-cell out"></div>';
       html += '</div>';
 
+      /* The same month as a list, for phones.
+
+         Seven columns across a 390px screen leaves about 50px a day, which
+         is not enough for a class title — so the title used to be hidden
+         there, and a parent saw "10am" with no way of knowing what it was.
+         A list gets the full width of the screen, which is what a phone has
+         plenty of, and says the whole thing.
+
+         Both are always rendered and CSS shows whichever fits, so there is
+         no resize handling to get wrong and no second code path to keep in
+         step: the list is built from the same events as the grid. */
+      html += '<ul class="cal-list">';
+      for (var ld = 1; ld <= count; ld++) {
+        var ldate = new Date(view.getFullYear(), view.getMonth(), ld);
+        var llist = (byDay[ymd(ldate)] || []).sort(function (a, b) { return a.start - b.start; });
+        var loff = offDays[ymd(ldate)];
+        if (!llist.length && !loff) continue;
+        var dayName = DAYS[(ldate.getDay() + 6) % 7];
+        html += '<li class="cal-li' + (ymd(ldate) === ymd(today) ? ' today' : '') + '">' +
+                '<div class="cal-li-d"><b>' + ld + '</b><span>' + dayName + '</span></div>' +
+                '<div class="cal-li-b">';
+        if (loff && !llist.length) html += '<span class="cal-off">' + esc(loff) + '</span>';
+        llist.forEach(function (e) {
+          var cls = e.years.length === 1 ? e.years[0].cls : 'gen';
+          html += '<button type="button" class="cal-ev ' + cls + '"' +
+                  ' data-year="' + esc(e.years.length === 1 ? e.years[0].pick : '') + '">' +
+                  '<b>' + timeLabel(e) + '</b><span>' + esc(e.label) + '</span>' +
+                  (e.years.length ? '<i>' + esc(e.years.map(function (y) { return y.label; }).join(', ')) + '</i>' : '') +
+                  '</button>';
+        });
+        html += '</div></li>';
+      }
+      html += '</ul>';
+
       var inMonth = shown.filter(function (e) { return sameMonth(e.start, view); });
       if (!inMonth.length) {
         html += '<p class="cal-none">Nothing scheduled in ' + MONTHS[view.getMonth()] +
