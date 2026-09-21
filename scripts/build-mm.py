@@ -125,9 +125,95 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/mm-shop") return handleMMShop(request, env);
+    if (url.pathname === "/api/mm-subscribe") return handleSubscribe(request, env);
     return env.ASSETS.fetch(request);
   },
 };
+
+/* ------------------------------------------------------------------
+   Her mailing list.
+
+   She asked to start collecting parents' addresses. They are stored in her
+   own Cloudflare account, on her own domain, and are not sent to any list
+   service — that was the point of doing it this way.
+
+   D1 is the store. The binding does not exist until the database is created
+   in her dashboard (see docs/molecular-miracles-list.md), and a signup
+   arriving before then would otherwise be lost, so the fallback hands it to
+   the same Web3Forms inbox her enquiry form already uses. The box therefore
+   works the day it ships and upgrades itself the moment the binding appears,
+   with nothing dropped in between.
+
+   The consent check is not optional and is deliberately duplicated in the
+   page. An address given while enquiring about tuition was given for that
+   enquiry; adding it to a mailing list needs its own yes.
+   ------------------------------------------------------------------ */
+const MM_W3F_KEY = "a3984088-da60-451e-9ccf-0512998a15d4";
+
+async function handleSubscribe(request, env) {
+  if (request.method !== "POST") return json({ error: "POST only" }, 405);
+
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad request" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "bad request" }, 400);
+
+  /* A field no person ever sees and a bot fills in. Answer as if it worked:
+     telling a bot it was caught only teaches whoever wrote it. */
+  if (body.company) return json({ ok: true });
+
+  const email = String(body.email || "").trim().toLowerCase();
+  /* Loose on purpose. The only thing worth rejecting is something that cannot
+     be an address at all; anything stricter turns real addresses away, and
+     the address proves itself the first time she mails it. */
+  if (email.length > 254 || !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "that does not look like an email address" }, 400);
+  }
+  if (body.consent !== true) return json({ error: "consent is required" }, 400);
+
+  const source = String(body.source || "").slice(0, 60);
+  const now = new Date().toISOString();
+
+  if (env.SUBSCRIBERS) {
+    try {
+      /* Signing up twice is not an error and must not look like one. A second
+         yes also clears an earlier unsubscribe — it is the newer instruction. */
+      await env.SUBSCRIBERS.prepare(
+        "INSERT INTO subscribers (email, source, consented_at) VALUES (?1, ?2, ?3) " +
+        "ON CONFLICT(email) DO UPDATE SET source = excluded.source, " +
+        "consented_at = excluded.consented_at, unsubscribed_at = NULL"
+      ).bind(email, source, now).run();
+      return json({ ok: true, stored: "database" });
+    } catch (e) {
+      /* fall through to the inbox rather than lose the signup */
+    }
+  }
+
+  try {
+    const r = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: MM_W3F_KEY,
+        subject: "Mailing list signup — " + email,
+        from_name: "Molecular Miracles website",
+        replyto: email,
+        email: email,
+        "Signed up from": source || "the website",
+        "Consent": "ticked the box on " + now.slice(0, 10),
+      }),
+    });
+    if (r.ok) return json({ ok: true, stored: "email" });
+  } catch (e) { /* answered below */ }
+
+  return json({ error: "could not sign you up just now" }, 502);
+}
+
+function json(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status: status || 200,
+    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+  });
+}
 
 /* Payhip's official product API. Preferred over reading the storefront HTML,
    which depends on their markup staying put. Only used when a key is present

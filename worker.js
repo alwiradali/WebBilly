@@ -153,6 +153,16 @@ export default {
     if (url.pathname === "/api/mm-shop") {
       return handleMMShop(request);
     }
+    /* The mailing-list signup exists on the demo copy of Lynsey's site under
+       /templates/mm, and the real one lives on her own Worker. Answering it
+       here keeps the form on the demo from failing in front of whoever is
+       being shown it — but it stores nothing and mails nobody, because a
+       signup typed into a demo is not a parent asking to hear from her, and
+       her inbox and her list should never see it. */
+    if (url.pathname === "/api/mm-subscribe") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return json({ ok: true, stored: "nowhere — this is the demo copy" });
+    }
     // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
     // at clean root URLs, and is indexable.
     if (!M2L_PARKED && isM2LHost(url.hostname, env)) return serveM2L(request, url, env);

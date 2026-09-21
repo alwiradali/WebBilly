@@ -33,7 +33,7 @@ NAV = '''<nav class="nav">
   <div class="wrap">
     <div class="nav-in">
       <a class="brand" href="{p}index.html" aria-label="SMARTin SCIENCE home">
-        <img class="mark" src="{a}assets/smartin/flask-512.png" alt="">
+        <img class="mark" src="{a}assets/smartin/flask-512.png" alt="" width="56" height="56">
         <span class="wm"><b>SMART<i>in</i></b><em>SCIENCE</em></span>
       </a>
       <span class="sp"></span>
@@ -71,7 +71,7 @@ FOOTER = '''<footer>
     <div class="fgrid">
       <div>
         <a class="brand" href="{p}index.html" style="margin-bottom:16px">
-          <img class="mark" src="{a}assets/smartin/flask-512.png" alt="">
+          <img class="mark" src="{a}assets/smartin/flask-512.png" alt="" width="56" height="56">
           <span class="wm"><b>SMART<i>in</i></b><em>SCIENCE</em></span>
         </a>
         <p style="max-width:36ch">Science made simple. Results made real. GCSE Science tuition, workshops and clubs with Rod Martin — Leeds-based, and online across England and Wales.</p>

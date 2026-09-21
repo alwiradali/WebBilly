@@ -587,6 +587,11 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 .plan .prule{display:flex;align-items:center;gap:12px;margin:12px auto;max-width:190px;color:var(--gold)}
 .plan .prule::before,.plan .prule::after{content:"";height:1px;flex:1;background:var(--gold)}
 .plan .prule svg{width:11px;height:11px;fill:var(--gold);flex:none}
+/* What the plan actually includes. It comes from the product description in
+   Stripe, so it is however long Rachel makes it; the card has to hold a line
+   or a short paragraph equally well, and the price stays pinned below it. */
+.plan .pdesc{margin:14px auto 18px;max-width:30ch;font-size:1.04rem;line-height:1.62;
+  color:var(--burg-soft);flex:1}
 .plan .amt{font-family:var(--disp);font-weight:500;font-size:3.1rem;line-height:1}
 .plan .per{font-size:1rem;color:var(--burg-soft);margin-top:2px}
 .plan ul{list-style:none;margin:20px 0 24px;padding:0;text-align:left;display:inline-block;flex:1}
@@ -942,6 +947,43 @@ footer p{font-size:.96rem}
 .fcols a{font-family:var(--ser);font-size:1.04rem;color:#E0CDC0;border:0}
 .fcols a:hover{color:#FDF4EC}
 @media(max-width:659px){.fcols{text-align:center}}
+
+/* ---------- the footer on a phone ----------
+   Three faults, all of them visible at 390px and none of them on a desktop.
+
+   The logo sits inside a link, and every link down here carries an underline.
+   On a phone that link is a full-width grid cell, so the underline ran about
+   three times the width of the logo and read as a stray gold rule ruled across
+   the page under her name.
+
+   Each contact row was centred on its own, so the envelope, the handset and
+   the WhatsApp mark each landed on a different vertical line and the block
+   looked scattered rather than set. Letting the three rows share one grid puts
+   every mark on one axis and every word on another, and centres the block as a
+   whole — which is what "centred" actually means here.
+
+   And the spacing was a desktop's, on a screen a third of the width. */
+footer .fmain > a{border-bottom:0}
+
+@media(max-width:659px){
+  footer{padding:34px 0 30px}
+  .fmain{gap:22px}
+
+  /* One grid for all three rows. display:contents lets each row hand its icon
+     and its words straight to the parent's columns. */
+  .fcontact{grid-template-columns:22px minmax(0,auto);justify-content:center;
+    align-items:start;gap:15px 13px;text-align:left}
+  .fcontact > div{display:contents}
+
+  .fsocial{margin-top:2px}
+  .fcols{gap:20px;margin:26px auto 0}
+  .fcols ul{margin-top:9px;gap:7px}
+  /* The serif carries a lot of leading, which on one-line links reads as a
+     gap nobody asked for. */
+  .fcols li{line-height:1.3}
+  .fcols a{font-size:1rem}
+  .fbottom{margin-top:24px;padding-top:18px}
+}
 
 /* Six across made every bouquet the size of a stamp. Four gives each
    photograph room to be the reason somebody buys it. */
