@@ -827,3 +827,18 @@ footer a:hover{color:var(--green)}
   .cal-head{flex-direction:column;align-items:stretch;text-align:center;gap:10px}
   .cal-nav{justify-content:center}
 }
+
+/* ---------- Rod ----------
+   His own photograph where the initials were. The block keeps its 120px and
+   its corner radius, so the card's proportions are untouched; the image fills
+   it and is cropped by the radius rather than letterboxed inside it. */
+.mono .ini{padding:0;overflow:hidden}
+.mono .ini img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* A photograph inside a column of prose. Kept to the column's width and given
+   the same radius as everything else on the page, so it reads as part of the
+   writing rather than an advert dropped into it. */
+.prose figure.shot{margin:26px 0 30px}
+.prose figure.shot img{width:100%;height:auto;display:block;border-radius:20px;
+  box-shadow:var(--sh-lg)}
+.prose figure.shot figcaption{margin-top:10px;font-size:.86rem;color:var(--mut);text-align:center}
