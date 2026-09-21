@@ -25,29 +25,35 @@ ROOT = os.path.join(os.path.dirname(__file__), '..')
 SRC = os.path.join(ROOT, 'templates', 'smartin')
 OUT = os.path.join(ROOT, 'dist', 'smartin-science')
 
-# Rod's class calendar. The timetable page reads a public Google Calendar of
-# his and lists the sessions in it; these two values say which calendar and
-# with which API key. They are injected here rather than committed, so the key
-# lives in the repository's secrets and not in the repository — the same rule
-# as every other client credential.
+# Rod's class calendar. The timetable page carries the calendar id and the
+# browser key in its own markup. The key is restricted to the Calendar API and
+# to his two domains, and the calendar it reads is public, so it grants nothing
+# that was not already public and cannot be used from anywhere else — checked:
+# smartinscience.co.uk and www answer 200, every other referer and no referer
+# at all are refused. It is served in the page the moment this deploys either
+# way, which is how Google intends a browser key to work.
 #
-# Absent, the page keeps the wording it has always had and fetches nothing, so
-# a build without them is not a broken build. docs/smartin-calendar.md has the
-# setup and explains why the key is safe to serve in the page but still should
-# not be committed.
+# These two environment variables override what is in the page, so the key can
+# be rotated through a repository secret without touching the markup. Setting
+# neither is the ordinary case and changes nothing.
 GCAL_ID = os.environ.get('SMARTIN_GCAL_ID', '').strip()
 GCAL_KEY = os.environ.get('SMARTIN_GCAL_KEY', '').strip()
 
 
 def inject_calendar(html):
-    """Fill in the calendar attributes on the one page that has them."""
+    """Override the calendar attributes on the one page that has them."""
     if 'id="timetable-body"' not in html or not (GCAL_ID and GCAL_KEY):
         return html
     for attr, value in (('data-calendar-id', GCAL_ID), ('data-api-key', GCAL_KEY)):
-        old = '%s=""' % attr
-        if old not in html:
-            sys.exit('timetable page no longer has an empty %s to fill' % attr)
-        html = html.replace(old, '%s="%s"' % (attr, htmlmod.escape(value, quote=True)), 1)
+        # Replace whatever is there rather than only an empty value: the page
+        # now ships with real ones, and an override has to win over them.
+        pattern = r'(%s=")[^"]*(")' % re.escape(attr)
+        html, hits = re.subn(
+            pattern,
+            lambda m: m.group(1) + htmlmod.escape(value, quote=True) + m.group(2),
+            html, count=1)
+        if not hits:
+            sys.exit('timetable page no longer has a %s to override' % attr)
     return html
 
 
@@ -169,11 +175,19 @@ def main():
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
     print(f'built {len(pages)} pages into dist/smartin-science/ for {domain}')
-    # Never print the key itself — only whether the build found one.
-    if GCAL_ID and GCAL_KEY:
-        print('  timetable reads his Google Calendar (id ends %s)' % GCAL_ID[-12:])
+    # Report what the built page actually carries, and never the key itself.
+    built = os.path.join(OUT, 'timetable.html')
+    has_cal = False
+    if os.path.exists(built):
+        with open(built) as fh:
+            page = fh.read()
+        has_cal = bool(re.search(r'data-api-key="[^"]+"', page)
+                       and re.search(r'data-calendar-id="[^"]+"', page))
+    if has_cal:
+        print('  timetable reads his Google Calendar%s'
+              % (' (overridden from the environment)' if GCAL_ID and GCAL_KEY else ''))
     else:
-        print('  no calendar configured — the timetable keeps "confirmed when '
+        print('  no calendar in the timetable page — it keeps "confirmed when '
               'you enquire" (see docs/smartin-calendar.md)')
     if held:
         print(f'  held back {len(held)} unapproved blog draft(s): '

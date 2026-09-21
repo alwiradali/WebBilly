@@ -1,40 +1,52 @@
 # SMARTin SCIENCE — the timetable, from Rod's Google Calendar
 
-Rod keeps class dates in Google Calendar. The timetable page reads that
-calendar and lists the sessions in it, so the page shows real dates instead of
-saying they are confirmed on enquiry. He adds a class on his phone; the site
-shows it within minutes.
+Rod keeps his class dates in a Google Calendar on his phone. The timetable
+page reads that calendar and draws a month grid from it, so he adds a class
+and the site shows it. One direction only: the site never writes to his
+calendar, never books anything, and never asks a visitor to sign in.
 
-**One direction only.** The site never writes to his calendar, never books
-anything, and never asks a visitor to sign in. Nothing of his is stored on
-the site.
+**This is set up and working.** What follows is what was done, how to change
+it, and the two things that are still waiting on something else.
 
-## Until it is set up, nothing changes
+## What is wired up
 
-The two values below are absent by default. Without them the page fetches
-nothing and keeps exactly the words it has today. A build with no calendar is
-not a broken build, and the site never shows an empty timetable under a
-heading promising dates — if the calendar is unreachable, empty, or the answer
-is not what we expect, the page silently stays as it was.
+| | |
+| --- | --- |
+| Calendar | `SMARTin Science website classes`, in Rod's own Workspace account, public |
+| Calendar ID | `c_acb9133c2ddc099403dd16903402dd8524924fe57dc083194d729d78a40c23db@group.calendar.google.com` |
+| API key | in `templates/smartin/timetable.html`, restricted (below) |
+| Page | `/timetable` |
 
-## Step 1 — a calendar made for this, not his own
+Both values are attributes on `#timetable-body` in the timetable page. The
+build can override them from `SMARTIN_GCAL_ID` and `SMARTIN_GCAL_KEY` if those
+repository secrets exist, so the key can be rotated without a code change;
+neither being set is the ordinary case.
 
-**Make a new calendar. Do not use his personal one.** The calendar has to be
-public for the site to read it, and public means anyone who finds the address
-can read every event in it — every title, every time. His own diary will have
-things in it that are nobody's business.
+## Why the key is in the page
 
-In Google Calendar, on a computer:
+Because that is where Google expects a browser key to be, and because it
+cannot do anything that was not already possible. The calendar is public — its
+`.ics` feed is readable by anyone who has the address — and the key is
+restricted to the Calendar API and to Rod's two domains. Checked from outside:
 
-1. **Other calendars → + → Create new calendar.** Name it something like
-   `SMARTin SCIENCE classes`. Create it.
-2. Open **Settings for that calendar** → **Access permissions for events** →
-   tick **Make available to public**. Leave it on *See all event details*.
-3. Same page, **Integrate calendar** → copy the **Calendar ID**. It looks like
-   `abc123...@group.calendar.google.com`.
+```
+https://smartinscience.co.uk/        200   reads the calendar
+https://www.smartinscience.co.uk/    200   reads the calendar
+https://billydigitals.com/           403   blocked
+no referer at all                    403   blocked
+```
 
-Then put the classes in it. The page draws a month grid with a filter per
-year group, so **put the year in the title**:
+**Do not remove those restrictions.** Unrestricted, the key is readable in the
+page source and usable by anyone, against Rod's quota. Restricted, it reads
+one public calendar from one site.
+
+If it ever does need replacing: new key in the same Google Cloud project,
+restrict it the same way, put it in the page (or in `SMARTIN_GCAL_KEY` and
+leave the page alone), then delete the old one.
+
+## Naming events
+
+The grid filters by year group, so put the year in the title:
 
 | He types | Parents see |
 | --- | --- |
@@ -43,70 +55,51 @@ year group, so **put the year in the title**:
 | `STEM club at Alwoodley Primary` | under **Other sessions** |
 | `Off — half term` (all-day) | that day is struck through, no session drawn |
 
-Nothing is ever dropped for not matching a pattern: a title with no year still
+Nothing is dropped for not matching a pattern: a title with no year still
 appears, under "Other sessions". Repeating events are fine — Google expands
-them, so "every Tuesday for four weeks" is listed as four dates, and
-cancelling a single occurrence removes just that date from the site.
+them, so "every Tuesday for four weeks" lists as four dates, and cancelling a
+single occurrence removes just that date from the site. The **location** field
+is shown; the description is not.
 
 Tapping a session takes the parent to the enquiry form with that year group
-already selected.
+already selected. The grid opens on the first month that has something in it,
+so an empty current month during the holidays never reads as "no classes".
 
-The grid opens on the first month that has something in it, so an empty
-current month during the holidays never reads as "no classes".
+**Nothing in that calendar is private.** If a student's name goes in an event
+title, that name is on the internet. Titles are the class, never the child.
 
-## Step 2 — an API key
+## The two things still waiting
 
-The page reads the calendar through Google's Calendar API, which needs a key.
+**It is not visible anywhere yet.** The key deliberately does not allow
+`billydigitals.com`, so the preview copy keeps the "Confirmed when you
+enquire" wording — correctly, that is the restriction working. The only place
+it can appear is `smartinscience.co.uk`, and that domain has never had a
+deploy: the workflow's deploy step is skipped because
+`CLOUDFLARE_API_TOKEN_SMARTIN` and `CLOUDFLARE_ACCOUNT_ID_SMARTIN` are not set.
+Set those two and his site goes up with the calendar on it.
 
-1. <https://console.cloud.google.com> → create a project (any name).
-2. **APIs & Services → Library →** enable **Google Calendar API**.
-3. **Credentials → Create credentials → API key.**
-4. **Restrict the key** before leaving the page. Both restrictions matter:
-   - **API restrictions:** Google Calendar API only.
-   - **Application restrictions:** Websites, and add
-     `https://smartinscience.co.uk/*` and `https://www.smartinscience.co.uk/*`.
-     Add `https://billydigitals.com/*` too if the preview copy should show the
-     timetable as well.
+To see it on the preview before then, add `https://billydigitals.com/*` to the
+key's website restrictions in Google Cloud, and take it off again afterwards.
 
-A key restricted that way can do one thing: read a calendar that is already
-public, from his own site. It is served in the page, which is how Google
-intends this to work — but it still does not belong in the repository, for the
-same reason no other client credential does.
+**The calendar is empty.** Until Rod puts a class in it, the page has nothing
+to show and keeps its existing wording — which is the intended behaviour, not
+a failure.
 
-## Step 3 — tell the build
+## Checking it
 
-Two repository secrets, in GitHub → Settings → Secrets and variables →
-Actions:
-
-| Secret | Value |
-| --- | --- |
-| `SMARTIN_GCAL_ID` | the Calendar ID from step 1 |
-| `SMARTIN_GCAL_KEY` | the API key from step 2 |
-
-The deploy workflow passes both to the build, which writes them into the
-timetable page. Push anything, and the next deploy has it.
-
-## Checking it worked
-
-The build says which state it is in, without ever printing the key:
+The build says what the page carries, without printing the key:
 
 ```
-  timetable reads his Google Calendar (id ends ...)
-  no calendar configured — the timetable keeps "confirmed when you enquire"
+  timetable reads his Google Calendar
+  no calendar in the timetable page — it keeps "confirmed when you enquire"
 ```
 
-On the page itself, the heading changes from *Confirmed when you enquire* to
-*What is running, and when* only once real dates are on the screen. If the heading
-has not changed, nothing was listed — open the browser console, where the
-reason is logged as `[timetable] calendar not shown — …`.
+On the page, the heading changes from *Confirmed when you enquire* to *What is
+running, and when* only once real dates are on screen. If it has not changed,
+nothing was listed — the browser console says why, as
+`[timetable] calendar not shown — …`.
 
-Common causes: the calendar is not actually public; the key is restricted to
-the wrong domain; the API is not enabled on the project; or there is genuinely
-nothing in the next six months (the window the page asks for, set by
-`data-months` on the page).
-
-## A caveat worth saying out loud to him
-
-Everything in that calendar is public the moment he adds it. If he puts a
-student's name in an event title, that name is on the internet. Titles should
-be the class, never the child.
+Likely causes, in order: the calendar is genuinely empty for the next six
+months (the window the page asks for, set by `data-months`); the page is being
+viewed on a domain the key does not allow; the key was replaced without the
+restrictions being reapplied; the calendar stopped being public.

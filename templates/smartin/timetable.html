@@ -94,16 +94,24 @@
       <h2 id="dates-head" data-fx="reveal" style="margin-top:14px">Confirmed when you enquire</h2>
     </div>
 
-    <!-- The month grid, drawn from Rod's own Google Calendar when one is
-         configured and left alone when it is not — see
-         docs/smartin-calendar.md. The two attributes are written at build
-         time from the repository's secrets; empty means nothing is fetched
-         and the page keeps the wording below. It sits outside .prose so the
-         grid can use its own width, and because .prose numbers every list
-         item it contains. -->
+    <!-- The month grid, drawn from Rod's own Google Calendar — see
+         docs/smartin-calendar.md.
+
+         The key is in the page on purpose. It is restricted to the Calendar
+         API and to smartinscience.co.uk, and the calendar it reads is public,
+         so it grants nothing that was not already public and cannot be used
+         from anywhere else — verified: his two domains answer 200, every
+         other referer and no referer at all are refused. It is served in the
+         page the moment this deploys regardless, which is how Google intends
+         a browser key to work. SMARTIN_GCAL_ID and SMARTIN_GCAL_KEY still
+         override both at build time, so rotating the key needs no code
+         change.
+
+         It sits outside .prose so the grid can use its own width, and
+         because .prose numbers every list item it contains. -->
     <div id="timetable-body" hidden
-         data-calendar-id=""
-         data-api-key=""
+         data-calendar-id="c_acb9133c2ddc099403dd16903402dd8524924fe57dc083194d729d78a40c23db@group.calendar.google.com"
+         data-api-key="AIzaSyB28du2AXEkypIrEVwR_tYT13kc5l_pWDw"
          data-months="6"></div>
 
     <div class="prose" style="max-width:760px;margin:0 auto;text-align:center">
