@@ -153,7 +153,7 @@
         return el ? el.value.trim() : '';
       };
       if (!v('pname') || !v('email') || !v('year')) {
-        alert('Please fill in your name, email and your child’s year group.');
+        alert('Please fill in your name, email and your child\'s year group.');
         return;
       }
 
