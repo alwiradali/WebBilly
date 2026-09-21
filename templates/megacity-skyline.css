@@ -2177,7 +2177,14 @@ body.sl-open{overflow:hidden}
 .feerow{display:grid;gap:10px 34px;grid-template-columns:minmax(0,1fr);padding:34px 6px;
   border-bottom:1px solid var(--line-strong);color:inherit;
   transition:background .25s ease,padding-left .25s ease}
-@media (min-width:900px){.feerow{grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) auto;align-items:center}}
+/* Two columns, because the homepage no longer shows a price: Walid asked for
+   the fees to live on the landlord pages only, where there is room to say
+   what each one covers. The third column comes back on its own if a row ever
+   carries a price again, so the rule does not have to be remembered. */
+@media (min-width:900px){
+  .feerow{grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);align-items:center}
+  .feerow:has(.fr-price){grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) auto}
+}
 .feerow:hover{background:rgba(29,32,73,.03);padding-left:14px}
 .fr-name{display:block;font:700 clamp(24px,2.6vw,33px)/1.15 var(--ff-d);color:var(--navy-ink)}
 .fr-note{display:block;margin-top:7px;font:600 12.2px/1.4 var(--ff-u);letter-spacing:.15em;text-transform:uppercase;color:var(--mut)}
