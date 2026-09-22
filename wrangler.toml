@@ -277,6 +277,18 @@ run_worker_first = true
 [[env.megacity.d1_databases]]
 binding = "MEGACITY_DB"
 database_name = "megacity"
+# WITHOUT THIS, `wrangler d1 migrations apply --env megacity` reads the
+# TOP-LEVEL migrations/ folder, which holds Mumbai2London's and Molecular
+# Miracles' schemas. It does not fail: it applies them, reports success, and
+# leaves the client's database holding another client's tables.
+#
+# That happened on 22 September, into Walid's database. The reason it is worth
+# this many lines: both that folder and this one define a table called
+# `enquiries`, with different columns, and both use CREATE TABLE IF NOT EXISTS.
+# So the next run would have SKIPPED Megacity's enquiries table as "already
+# there" and his site would have written viewing requests into a table shaped
+# for event bookings — no error anywhere, just enquiries quietly failing.
+migrations_dir = "migrations/megacity"
 # Created in HIS account on 22 September, Western Europe. A database id is an
 # identifier, not a credential — it is useless without a token for the account
 # that holds it, which is why it can live here while the account id cannot.

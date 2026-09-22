@@ -88,6 +88,22 @@ for (const env of envs) {
   }
 }
 
+/* ── a D1 binding without a migrations_dir reads somebody else's schema ─── */
+
+/* wrangler defaults to ./migrations, which in a repository that serves more
+   than one client holds the FIRST client's migrations. It does not fail — it
+   applies them to the wrong database and reports success. Worse where two
+   schemas name the same table: CREATE TABLE IF NOT EXISTS then skips the
+   right one, and the site runs against the wrong shape with no error at all. */
+for (const env of envs) {
+  if (env.name === "(top level)") continue;
+  if (!/\[\[env\.[a-z0-9_-]+\.d1_databases\]\]/.test(env.active)) continue;
+  if (!/migrations_dir\s*=/.test(env.active)) {
+    problems.push(`[env.${env.name}] binds a D1 database but sets no migrations_dir — ` +
+      `wrangler would apply ./migrations, which is another client's schema.`);
+  }
+}
+
 if (problems.length) {
   console.error("check-wrangler: refusing to deploy.\n - " + problems.join("\n - "));
   process.exit(1);
