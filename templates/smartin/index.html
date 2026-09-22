@@ -67,7 +67,6 @@
       <a href="about.html">About Rod</a>
       <a href="faqs.html">FAQs</a>
       <a href="areas/index.html">Areas</a>
-      <a href="blog/index.html">Blog</a>
       <a href="index.html#booking">Enquiry</a>
     </div>
   </div>
@@ -332,19 +331,9 @@
 </section>
 
 <!-- STATS removed: 20+ years, 3 sciences, Y9-Y11 and 4 weeks are each already stated above -- in the hero, the credentials list and the section headings -->
-<!-- ==================== AREAS ==================== -->
-<section>
-  <div class="wrap">
-    <div class="sec-head" data-fx="reveal">
-      <span class="pill">Where Rod teaches</span>
-      <h2>Leeds in person, <span class="g">England and Wales online</span></h2>
-      <p>In-person sessions run across Leeds. Everywhere else in England and Wales, the same course runs online — same worksheets, same homework, same feedback.</p>
-    </div>
-    <p style="text-align:center" data-fx="reveal">
-      <a class="btn btn-p" href="areas/index.html">See where Rod teaches →</a>
-    </p>
-  </div>
-</section>
+<!-- "Where Rod teaches" moved to the About page: it is a fact about
+     him rather than a reason to enquire, and the home page said it
+     already in the hero's own trust row. -->
 
 <!-- BLOG PREVIEW removed: there are no published articles yet, so it promised a parent something that is not there. Blog stays in the nav -->
 <!-- ==================== FAQ ==================== -->
@@ -390,24 +379,38 @@
             <p class="ok-alt">Not heard back within 24 hours? Message Rod on <a href="https://wa.me/447979448323">WhatsApp</a> or email <a href="mailto:rod@smartinscience.co.uk">rod@smartinscience.co.uk</a>.</p>
           </div>
           <form id="bkForm" novalidate>
-            <div class="fld"><label for="pname">Parent / guardian name *</label><input type="text" id="pname" autocomplete="name" required></div>
+            <!-- One form for both sides of the business. A school booking a
+                 STEM workshop was being asked for a year group and an exam
+                 board, and had nowhere to put the name of the school; a
+                 parent booking tuition should not be asked any of the
+                 workshop questions. Answering this first question hides the
+                 half that does not apply. -->
+            <div class="fld"><label for="etype">What is your enquiry about? *</label>
+              <select id="etype" required>
+                <option value="tuition">GCSE science tuition</option>
+                <option value="stem">STEM workshops, clubs or activities</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+            <div class="fld"><label for="pname">Name (Parent / Guardian / Enquirer) *</label><input type="text" id="pname" autocomplete="name" required></div>
             <div class="fld"><label for="email">Email address *</label><input type="email" id="email" autocomplete="email" required></div>
             <div class="fld"><label for="phone">Phone / WhatsApp</label><input type="tel" id="phone" autocomplete="tel"></div>
-            <div class="fld"><label for="sname">Student's first name</label><input type="text" id="sname"></div>
-            <div class="fld"><label for="year">Year group *</label>
-              <select id="year" required>
+            <div class="fld" data-for="tuition"><label for="sname">Student's first name</label><input type="text" id="sname"></div>
+            <div class="fld" data-for="tuition"><label for="year">Year group *</label>
+              <select id="year">
                 <option value="">Please choose…</option>
                 <option>Year 10</option>
                 <option>Year 11</option>
                 <option>Year 9 — planning ahead</option>
               </select>
             </div>
-            <div class="fld"><label for="board">Exam board</label>
+            <div class="fld" data-for="tuition"><label for="board">Exam Board</label>
               <select id="board">
                 <option>Not sure</option><option>AQA</option><option>Edexcel</option><option>OCR</option><option>Other</option>
               </select>
             </div>
-            <div class="fld"><label for="mode">Preferred times</label>
+            <div class="fld" data-for="stem"><label for="org">Company / Organisation</label><input type="text" id="org" autocomplete="organization" placeholder="School, group or company"></div>
+            <div class="fld" data-for="tuition"><label for="mode">Preferred times</label>
               <select id="mode">
                 <option>Weekday evenings</option><option>Weekends</option><option>After school</option><option>Either is fine</option>
               </select>
@@ -465,7 +468,6 @@
           <li><a href="workshops.html#stem">STEM workshops</a></li>
           <li><a href="workshops.html#clubs">After-school clubs</a></li>
           <li><a href="workshops.html#holiday">Holiday clubs</a></li>
-          <li><a href="blog/index.html">Blog &amp; free guides</a></li>
           <li><a href="faqs.html">Questions</a></li>
         </ul>
       </div>

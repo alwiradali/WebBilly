@@ -272,11 +272,6 @@
                 (filter === 'all' ? '' : ' for that year group') + '. ' +
                 '<a href="index.html#booking">Send an enquiry</a> and Rod will tell you ' +
                 'when the next block runs.</p>';
-      } else {
-        html += '<p class="cal-key">Tap a session to enquire about that group.' +
-                '<span class="cal-swatch y9"></span>Year 9' +
-                '<span class="cal-swatch y10"></span>Year 10' +
-                '<span class="cal-swatch y11"></span>Year 11</p>';
       }
 
       html += '</div>';

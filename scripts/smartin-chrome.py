@@ -60,7 +60,6 @@ NAV = '''<nav class="nav">
       <a href="{p}about.html">About Rod</a>
       <a href="{p}faqs.html">FAQs</a>
       <a href="{p}areas/index.html">Areas</a>
-      <a href="{p}blog/index.html">Blog</a>
       <a href="{p}index.html#booking">Enquiry</a>
     </div>
   </div>
@@ -93,7 +92,6 @@ FOOTER = '''<footer>
           <li><a href="{p}workshops.html#stem">STEM workshops</a></li>
           <li><a href="{p}workshops.html#clubs">After-school clubs</a></li>
           <li><a href="{p}workshops.html#holiday">Holiday clubs</a></li>
-          <li><a href="{p}blog/index.html">Blog &amp; free guides</a></li>
           <li><a href="{p}faqs.html">Questions</a></li>
         </ul>
       </div>

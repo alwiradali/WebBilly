@@ -79,7 +79,13 @@ binding = "ASSETS"
 #
 # The rest let a client domain serve its site at "/" instead of the Billy
 # Digitals homepage. If wrangler is too old for the array form, use `true`.
-run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
+# The preview aliases and the /vendor/ rewrite (PREVIEW_ALIASES in worker.js)
+# are not assets, and with not_found_handling = "404-page" the asset router
+# answers an unmatched path with the 404 page itself, never reaching the
+# Worker, unless the path is listed here. Both capitalisations, because the
+# address gets typed from a text message.
+run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign",
+                    "/westfield", "/westfield/", "/Westfield", "/Westfield/", "/vendor/*"]
 
 # ---------------------------------------------------------------------------
 # Molecular Miracles on Lynsey's own Cloudflare account.

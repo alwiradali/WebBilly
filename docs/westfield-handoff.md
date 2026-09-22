@@ -4,7 +4,9 @@
 own Cloudflare account (Worker `noisy-forest-8b27`). How, and how to update it:
 `docs/westfield-golive.md`, top section.
 
-The demo lives at **`/templates/westfield-garage`** (source:
+The demo lives at **`/templates/westfield-garage`**, and answers at the short
+address **billydigitals.com/westfield** too (any capitalisation; an alias in
+`worker.js`, still `noindex`) (source:
 `templates/westfield-garage.html`). It is `noindex, nofollow` and `/templates/`
 is disallowed in `robots.txt`, so it is shareable with the client but invisible
 to search engines until we decide otherwise.
@@ -184,6 +186,19 @@ everything. Any other JSON endpoint also works: with no `web3formsKey` set, the
 HTTP status decides instead of `body.success`.
 
 ---
+
+## His photographs are in (22 Sep)
+
+Five photographs of the workshop arrived on 22 Sep and now fill the hero, the
+about split, both gallery workshop shots, the bench, the wheel and process
+steps 01, 02 and 04. Each is cut to 3:2 to fit its slot; the customer's number
+plate is pixelated in every frame it appears in. Still stock and still to be
+replaced: the eleven service tiles (they illustrate the job, not the garage)
+and `engine`. A second batch — the front of the building with the
+signage, both bays with two cars up, an Audi with its bonnet up — was sent but
+did not arrive as files; when it does, the exterior with the sign becomes the
+hero and the current hero moves to the gallery. The 26-second handheld video he
+sent is 848×480 and too shaky to use on the page.
 
 ## The tiles link to "Each job, explained" (added 17 Sep)
 

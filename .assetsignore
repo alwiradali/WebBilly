@@ -9,12 +9,6 @@
 .gitignore
 # Build and check scripts are not site content.
 scripts
-# Per-client builds. Each one is a copy of that client's files, assembled for
-# deploying to THEIR Cloudflare account — dist/megacity is 46 MB of Walid's
-# photographs. Uploading them here would put a second copy of every client's
-# site on billydigitals.com, reachable at /dist/..., and grow this deploy by
-# tens of megabytes for no reason.
-dist
 node_modules
 package.json
 package-lock.json
@@ -97,19 +91,6 @@ templates/amabilis
 # HeatFix — the untouched camera originals stay in git, not on the web.
 assets/heatfix/src
 
-# Client sites that now live on their own domains. The files stay in the
-# repository because they are the SOURCE their own build reads, but nothing
-# under here is served on billydigitals.com any more — a second public copy
-# of a client's site competes with their own domain in search, and carries
-# their form key and API key on a hostname their key restrictions do not
-# cover.
-#
-# SMARTin SCIENCE — live at smartinscience.co.uk (see deploy-smartin.yml).
-templates/smartin
-templates/smartin-book
-assets/smartin
-assets/fonts/fonts-smartin.css
-
 # Megacity Properties — earlier builds and lab pages, kept in git, never
 # served: on the client's own domain they would only be duplicate content.
 templates/megacity.html
@@ -125,3 +106,21 @@ templates/megacity-data.js
 templates/megacity-admin.html
 templates/megacity-admin.js
 templates/megacity-hero-lab.html
+
+# Client sites that now live on their own domains. The files stay in the
+# repository because they are the SOURCE their own build reads, but nothing
+# under here is served on billydigitals.com any more — a second public copy
+# of a client's site competes with their own domain in search, and carries
+# their form key and API key on a hostname their key restrictions do not
+# cover.
+#
+# SMARTin SCIENCE — live at smartinscience.co.uk (see deploy-smartin.yml).
+templates/smartin
+templates/smartin-book
+assets/smartin
+assets/fonts/fonts-smartin.css
+
+# Built client sites. Generated into dist/ by scripts/build-*.py and deployed
+# to the client's own Cloudflare account, never from here. Kept out in case a
+# deploy is ever run by hand from a working copy that has been built in.
+dist
