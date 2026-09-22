@@ -88,6 +88,21 @@ for (const env of envs) {
   }
 }
 
+/* ── an environment with no routes of its own inherits the agency's ─────── */
+
+/* wrangler warns about this and then does it anyway. A client environment that
+   omits `routes` inherits billydigitals.com from the top level, so deploying
+   it reassigns the AGENCY's live domain to a Worker in the client's account.
+   `routes = []` inherits nothing; no routes line at all inherits everything. */
+for (const env of envs) {
+  if (env.name === "(top level)") continue;
+  if (!/^\s*routes\s*=/m.test(env.active)) {
+    problems.push(`[env.${env.name}] declares no routes, so it INHERITS the top-level ones ` +
+      `(billydigitals.com). Deploying it would move the agency's domain to this Worker. ` +
+      `Use routes = [] to inherit nothing.`);
+  }
+}
+
 /* ── a D1 binding without a migrations_dir reads somebody else's schema ─── */
 
 /* wrangler defaults to ./migrations, which in a repository that serves more

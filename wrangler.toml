@@ -241,10 +241,26 @@ not_found_handling = "404-page"
 [env.megacity]
 name = "megacity-properties"
 main = "worker.js"
-# The routes stay commented until the nameservers have moved and the zone reads
-# Active in HIS account. A custom_domain route for a zone the account does not
-# hold fails the deploy — and unlike the top-level block, a failure here only
-# affects his site, not every other client's.
+# routes = [] IS NOT THE SAME AS NO routes LINE, and the difference is the
+# agency's own website.
+#
+# An environment with no routes of its own INHERITS the top-level ones, which
+# are billydigitals.com and www.billydigitals.com. wrangler says so plainly
+# when you run it: "Deploying this environment will reassign these custom
+# domains away from the top-level Worker." So `wrangler deploy --env megacity`
+# with the routes merely commented out would have pointed the agency's live
+# domain at a Worker in a client's account.
+#
+# An empty list inherits nothing. It is what keeps this deploy incapable of
+# touching any domain at all, which is exactly right between the DNS move and
+# the website move.
+routes = []
+#
+# THE REAL ROUTES, for when his nameservers have moved and the zone reads
+# Active in his account. Replace the line above with these two — a custom_domain
+# route for a zone the account does not hold fails the deploy, so they cannot
+# go in before then.
+#
 # routes = [
 #   { pattern = "megacityproperties.co.uk", custom_domain = true },
 #   { pattern = "www.megacityproperties.co.uk", custom_domain = true }
