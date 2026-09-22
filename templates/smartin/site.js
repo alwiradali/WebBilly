@@ -30,7 +30,14 @@
      it. It is meant to sit in client-side code and identifies the destination
      inbox; it grants nothing else, so it belongs in the repo rather than in a
      secret. */
-  var W3F_KEY = 'd09dfb52-ab60-4399-838c-5b0faf3b0a6f';
+  /* Replaced 21 Sep. The first key was requested by someone other than
+     Rod, and with Web3Forms the key IS the destination: enquiries went
+     to whichever inbox asked for it, not his. A real submission from the
+     live site came back success:true and showed the thank-you panel,
+     which is correct behaviour and exactly why it went unnoticed for two
+     weeks — Web3Forms had accepted it and delivered it somewhere else.
+     This one was requested from rod@smartinscience.co.uk. */
+  var W3F_KEY = '76f07e4c-7dd2-4a8d-9bfc-ee3b7e9936db';
 
   var WA_MSG = "Hi Rod, I found SMARTin SCIENCE online. I'd like to ask about GCSE science tuition for my child.";
 
@@ -53,6 +60,40 @@
       a.setAttribute('href', CONTACT.phone ? 'tel:' + CONTACT.phone.replace(/\s/g, '') : '#booking');
       if (CONTACT.phone && a.dataset.fill === 'text') a.textContent = CONTACT.phone;
     });
+  }
+
+  /* ---- land on the right section -----------------------------------
+     A link like /#booking jumps the moment the HTML is parsed, which is
+     before the calendar has drawn itself and before the images further up
+     have reserved their space. The page is shorter at that instant than it
+     will be a second later, so the browser scrolls as far as it can and then
+     stays put while the page grows underneath — which put "Enquire About a
+     Session" 700px above the form, looking at the FAQs.
+
+     So the position is taken again once things settle. It stops as soon as
+     the target stops moving, and any scroll by the visitor cancels it, so it
+     can never fight someone who has started reading. */
+  function landOnHash() {
+    var id = (window.location.hash || '').slice(1);
+    if (!id) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+
+    var cancelled = false, last = null, tries = 0;
+    var stop = function () { cancelled = true; };
+    window.addEventListener('wheel', stop, { passive: true, once: true });
+    window.addEventListener('touchstart', stop, { passive: true, once: true });
+    window.addEventListener('keydown', stop, { once: true });
+
+    (function settle() {
+      if (cancelled || tries++ > 12) return;
+      var top = Math.round(target.getBoundingClientRect().top + window.pageYOffset);
+      if (top !== last) {
+        last = top;
+        target.scrollIntoView();
+      }
+      setTimeout(settle, 120);
+    })();
   }
 
   /* ---- nav ---- */
@@ -117,9 +158,13 @@
     els.forEach(function (e) { io.observe(e); });
   }
 
-  /* ---- FAQ: only one answer open at a time ---- */
+  /* ---- FAQ: only one answer open at a time ----
+     Two markups exist: the home page's short FAQ uses .faq .q, the full FAQ
+     page uses details.fq. Matching only the first meant the rule never
+     applied on /faqs — the page with 24 questions on it, and the one place
+     where answers stacking open actually buries the next question. */
   function faq() {
-    var qs = [].slice.call(document.querySelectorAll('.faq .q'));
+    var qs = [].slice.call(document.querySelectorAll('.faq .q, details.fq'));
     qs.forEach(function (q) {
       q.addEventListener('toggle', function () {
         if (!q.open) return;
@@ -133,9 +178,62 @@
      static with no Worker of its own. The success panel is shown ONLY on
      a confirmed success:true — never optimistically, so an enquiry can
      never be silently lost while the visitor is told it arrived.       */
+  /* Which half of the enquiry form applies, and the wording that goes with it.
+     A school booking a workshop and a parent booking tuition need different
+     questions; asking everyone everything is how forms get abandoned. */
+  var ENQUIRY = {
+    tuition: {
+      show: { tuition: true },
+      hint: 'Current grade, the topics they find hardest, any additional support needs…'
+    },
+    stem: {
+      show: { stem: true },
+      hint: 'Is there a theme? How many children are involved? Rough dates?'
+    },
+    both: {
+      show: { tuition: true, stem: true },
+      hint: 'For tuition: current grade and the topics they find hardest. ' +
+            'For STEM: a theme, and how many children are involved.'
+    }
+  };
+
+  function enquiryKind() {
+    var sel = document.getElementById('etype');
+    return (sel && ENQUIRY[sel.value]) ? sel.value : 'tuition';
+  }
+
+  function applyEnquiryKind() {
+    var kind = enquiryKind(), cfg = ENQUIRY[kind];
+    var form = document.getElementById('bkForm');
+    if (!form) return;
+    [].forEach.call(form.querySelectorAll('.fld[data-for]'), function (fld) {
+      var on = !!cfg.show[fld.getAttribute('data-for')];
+      fld.hidden = !on;
+      /* A hidden field must not be required, or the browser refuses to submit
+         a form over a box nobody can see. */
+      [].forEach.call(fld.querySelectorAll('input,select,textarea'), function (el) {
+        el.disabled = !on;
+      });
+    });
+    var msg = document.getElementById('msg');
+    if (msg) msg.setAttribute('placeholder', cfg.hint);
+  }
+
   function booking() {
     var form = document.getElementById('bkForm');
     if (!form) return;
+
+    var about = document.getElementById('etype');
+    if (about) {
+      /* Arriving from the workshops page, where the button says STEM. */
+      var want = (window.location.search || '').match(/[?&]about=([^&]+)/);
+      if (want) {
+        var k = decodeURIComponent(want[1]).toLowerCase();
+        if (ENQUIRY[k]) about.value = k;
+      }
+      about.addEventListener('change', applyEnquiryKind);
+    }
+    applyEnquiryKind();
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -143,10 +241,15 @@
 
       var v = function (id) {
         var el = document.getElementById(id);
-        return el ? el.value.trim() : '';
+        return el && !el.disabled ? el.value.trim() : '';
       };
-      if (!v('pname') || !v('email') || !v('year')) {
-        alert('Please fill in your name, email and your child’s year group.');
+      var kind = enquiryKind();
+      if (!v('pname') || !v('email')) {
+        alert('Please fill in your name and email address.');
+        return;
+      }
+      if (ENQUIRY[kind].show.tuition && !v('year')) {
+        alert('Please choose your child\'s year group.');
         return;
       }
 
@@ -169,12 +272,18 @@
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           access_key: W3F_KEY,
-          subject: 'GCSE Science enquiry — ' + v('year'),
+          /* The subject line is the only thing Rod sees before opening it, so
+             it says which side of the business the enquiry is for. */
+          subject: kind === 'stem'
+            ? 'STEM activities enquiry — ' + (v('org') || v('pname'))
+            : 'GCSE Science enquiry — ' + (v('year') || v('pname')),
           from_name: 'SMARTin SCIENCE website',
           // so hitting reply answers the parent, not the form service
           replyto: v('email'),
           name: v('pname'), email: v('email'), phone: v('phone'),
+          'Enquiry about': about ? about.options[about.selectedIndex].text : '',
           'Student': v('sname'), 'Year group': v('year'), 'Exam board': v('board'),
+          'Company / Organisation': v('org'),
           'Preferred times': v('mode'), 'Where are you based': v('area'), 'Notes': v('msg')
         })
       })
@@ -190,7 +299,57 @@
           // Never claim an enquiry was sent when it was not. The visitor gets a
           // friendly fallback; the real reason goes to the console so it can
           // actually be diagnosed later.
-          console.error('[booking form] enquiry not sent —', ex && ex.message ? ex.message : ex);
+          var why = ex && ex.message ? ex.message : String(ex);
+          console.error('[booking form] enquiry not sent —', why);
+
+          /* Carry what they typed into the fallback. A parent who has just
+             filled in eight fields and been told it failed will not fill them
+             in again — they leave, and Rod never knows there was an enquiry.
+             The WhatsApp and email links in this panel now open already
+             written, so it is one tap and he has the lot. */
+          var detail = [
+            ['Enquiry about', about ? about.options[about.selectedIndex].text : ''],
+            ['Name', v('pname')], ['Email', v('email')], ['Phone', v('phone')],
+            ['Student', v('sname')], ['Year group', v('year')],
+            ['Exam board', v('board')], ['Company / Organisation', v('org')],
+            ['Preferred times', v('mode')],
+            ['Based', v('area')], ['Notes', v('msg')]
+          ].filter(function (p) { return p[1]; })
+           .map(function (p) { return p[0] + ': ' + p[1]; });
+          var body = 'Enquiry from the website\n\n' + detail.join('\n');
+
+          var wa = err.querySelector('[data-c="wa"]');
+          if (wa && CONTACT.whatsapp) {
+            wa.setAttribute('href', 'https://wa.me/' + CONTACT.whatsapp +
+              '?text=' + encodeURIComponent(body));
+          }
+          var ml = err.querySelector('[data-c="mail"]');
+          if (ml && CONTACT.email) {
+            ml.setAttribute('href', 'mailto:' + CONTACT.email +
+              '?subject=' + encodeURIComponent(kind === 'stem'
+                ? 'STEM activities enquiry — ' + (v('org') || v('pname'))
+                : 'GCSE Science enquiry — ' + (v('year') || v('pname'))) +
+              '&body=' + encodeURIComponent(body));
+          }
+          /* The reason on screen as well as in the console. Web3Forms says
+             exactly why it refused a key, and that sentence is the whole
+             diagnosis — but it was only ever visible to someone who thought
+             to open developer tools, which rules out a phone entirely. It is
+             the form service's own wording about a public key, not anything
+             private. Remove this line once the form is known good. */
+          /* One line on screen, and only for the failure a visitor can do
+             something about. "Failed to fetch" is the browser saying the
+             request never came back readable, and on this form that is
+             almost always an ad blocker or privacy extension stopping the
+             call to the form service — which is worth telling them, because
+             they can turn it off. Every other failure is Rod's problem, not
+             theirs: it goes to the console and they just get the fallback. */
+          var wh = document.getElementById('bkWhy');
+          if (wh && /failed to fetch|networkerror|load failed/i.test(why)) {
+            wh.textContent = 'An ad blocker or privacy extension looks to be ' +
+              'blocking the form. WhatsApp or email will get straight through.';
+            wh.hidden = false;
+          }
           btn.disabled = false;
           btn.textContent = label;
           err.classList.add('on');
@@ -274,6 +433,7 @@
   function init() {
     applyContact(); nav(); marquees(); reveals(); counters(); faq(); booking(); heroTilt();
     tileCharge();
+    landOnHash();
   }
 
   document.readyState === 'loading'

@@ -14,6 +14,7 @@ Rewrites templates/smartin/areas/*.html only. Never touches the hand-built
 pages. Safe to re-run.
 """
 
+import json
 import os
 
 ROOT = os.path.join(os.path.dirname(__file__), '..', 'templates', 'smartin')
@@ -275,7 +276,7 @@ def nav(depth):
   <div class="wrap">
     <div class="nav-in">
       <a class="brand" href="{up}index.html" aria-label="SMARTin SCIENCE home">
-        <img class="mark" src="{ast}assets/smartin/flask-512.png" alt="">
+        <img class="mark" src="{ast}assets/smartin/flask-512.png" alt="" width="56" height="56">
         <span class="wm"><b>SMART<i>in</i></b><em>SCIENCE</em></span>
       </a>
       <span class="sp"></span>
@@ -284,7 +285,6 @@ def nav(depth):
         <a href="{up}workshops.html">Workshops &amp; Clubs</a>
         <a href="{up}about.html">About Rod</a>
         <a href="{up}areas/index.html">Areas</a>
-        <a href="{up}blog/index.html">Blog</a>
         <a href="{up}faqs.html">FAQs</a>
       </div>
       <a class="btn btn-p" href="{up}index.html#booking">Book a Free Chat</a>
@@ -295,7 +295,6 @@ def nav(depth):
       <a href="{up}workshops.html">Workshops &amp; Clubs</a>
       <a href="{up}about.html">About Rod</a>
       <a href="{up}areas/index.html">Areas We Cover</a>
-      <a href="{up}blog/index.html">Blog</a>
       <a href="{up}faqs.html">FAQs</a>
       <a href="{up}index.html#booking">Book a Free Chat</a>
     </div>
@@ -312,7 +311,7 @@ def footer(depth):
     <div class="fgrid">
       <div>
         <a class="brand" href="{up}index.html" style="margin-bottom:16px">
-          <img class="mark" src="{ast}assets/smartin/flask-512.png" alt="">
+          <img class="mark" src="{ast}assets/smartin/flask-512.png" alt="" width="56" height="56">
           <span class="wm"><b>SMART<i>in</i></b><em>SCIENCE</em></span>
         </a>
         <p style="max-width:36ch">Science made simple. Results made real. GCSE Combined Science tuition, workshops and clubs with Rod Martin — Leeds-based, and online across England and Wales.</p>
@@ -330,7 +329,6 @@ def footer(depth):
         <h4>SMARTin SCIENCE</h4>
         <ul>
           <li><a href="{up}about.html">About Rod Martin</a></li>
-          <li><a href="{up}blog/index.html">Blog</a></li>
           <li><a href="{up}faqs.html">Questions</a></li>
           <li><a data-c="mail">Email Rod</a></li>
         </ul>
@@ -362,17 +360,35 @@ def area_page(a):
     ast = '../../../'
     online_only = a['mode'] == 'online'
     where = 'Online, England &amp; Wales' if online_only else f"In person around {a['name']} · Online anywhere"
-    title = (f"Online GCSE Science Tuition UK | SMARTin SCIENCE" if online_only
-             else f"GCSE Science Tutor in {a['name']} | SMARTin SCIENCE")
+    # One title for forty-five different towns is forty-five pages competing
+    # with each other for the same words, which is the opposite of what a page
+    # per town is for. The place goes in the title either way; only the wording
+    # differs, because online-only places are not somewhere he travels to.
+    # The place goes in the title, because one title shared by forty-five towns
+    # is forty-five pages competing for the same words — the opposite of what a
+    # page per town is for.
+    #
+    # Two things the obvious version gets wrong. The online-uk entry is a
+    # region, not a town, so "in Online across England & Wales" is not a
+    # sentence. And a long place name pushes the title past the width Google
+    # shows, so the longer wording is dropped before the place is.
+    if a['slug'] == 'online-uk':
+        title = "Online GCSE Science Tuition, England & Wales | SMARTin SCIENCE"
+    elif online_only:
+        title = f"Online GCSE Science Tuition in {a['name']} | SMARTin SCIENCE"
+        if len(title) > 65:
+            title = f"GCSE Science Tuition in {a['name']} | SMARTin SCIENCE"
+    else:
+        title = f"GCSE Science Tutor in {a['name']} | SMARTin SCIENCE"
     h1 = (f'Online GCSE science tuition, <span class="g">anywhere in England and Wales</span>' if online_only
           else f'GCSE science tuition in <span class="g">{a["name"]}</span>')
     jsonld = f'''<script type="application/ld+json">
 {{"@context":"https://schema.org","@type":"EducationalOrganization",
 "name":"SMARTin SCIENCE","url":"https://smartinscience.co.uk/areas/{a['slug']}",
-"description":{a['blurb']!r},
+"description":{json.dumps(a["blurb"])},
 "email":"rod@smartinscience.co.uk",
 "areaServed":{{"@type":"Place","name":"{a['name']}"}},
-"founder":{{"@type":"Person","name":"Rod Martin","jobTitle":"STEM Tutor and former Head of Science"}},
+"founder":{{"@type":"Person","name":"Rod Martin","jobTitle":"Science Tutor and former Head of Science"}},
 "address":{{"@type":"PostalAddress","addressLocality":"Leeds","addressRegion":"West Yorkshire","addressCountry":"GB"}}}}
 </script>
 '''
@@ -525,7 +541,7 @@ def areas_index():
         </div>
       </div>''')
 
-    return (head(1, 'Areas We Cover | GCSE Science Tuition in Leeds &amp; Online | SMARTin SCIENCE',
+    return (head(1, 'Areas We Cover | GCSE Science Tuition | SMARTin SCIENCE',
                  'GCSE Combined Science tuition in person across Leeds, and online for students anywhere in England and Wales, with former Head of Science Rod Martin.',
                  '/areas/') + nav(1) + '''
 <section class="areahero">

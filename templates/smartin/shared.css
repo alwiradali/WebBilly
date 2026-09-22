@@ -131,6 +131,11 @@ section{padding:66px 0}
 .pill{display:inline-block;font-family:var(--dis);font-size:12.6px;font-weight:600;letter-spacing:1.6px;
   text-transform:uppercase;color:#075567;background:#E3F3F8;border:1px solid #A9D9E7;padding:7px 15px;
   border-radius:999px;margin-bottom:14px}
+/* The brand keeps its own casing inside a label. Rod writes it SMARTin
+   SCIENCE and holds the "in" lowercase even mid-capitals — his own heading
+   reads "WHY SMARTin SCIENCE?" — but these labels are uppercased by CSS,
+   which was rendering the one on the home page as SMARTIN. */
+.pill .asis,.eyebrow .asis{text-transform:none}
 .sec-head{max-width:720px;margin:0 auto 42px;text-align:center}
 @media(min-width:900px){.sec-head{margin-bottom:54px}}
 .sec-head h2{font-size:clamp(1.72rem,4.6vw,2.75rem)}
@@ -226,6 +231,20 @@ a.card:hover{border-color:#BCEBD1}
 .ring .mid b{font-family:var(--dis);font-size:2.9rem;font-weight:700;line-height:1;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ring .mid span{display:block;font-family:var(--dis);font-size:10.6px;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-top:5px}
+/* The hero panel as a portrait of Rod. The card keeps its white shell and
+   gradient top edge so it still belongs to the rest of the page; the photo
+   fills the rest of it, with his name over the foot of the picture. */
+.panel.pf{padding:20px}
+/* The floating element tiles overlap the card's top corners, so a label
+   row there gets clipped by Carbon — it read "ET ROD". The caption over
+   the photo names him, so the row is not needed. */
+.pshot{position:relative;margin:0;border-radius:18px;overflow:hidden;background:var(--tint)}
+.pshot img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.pshot figcaption{position:absolute;left:0;right:0;bottom:0;padding:44px 16px 14px;color:#fff;
+  background:linear-gradient(to top,rgba(4,26,52,.88),rgba(4,26,52,.55) 45%,rgba(4,26,52,0))}
+.pshot figcaption b{display:block;font-family:var(--dis);font-size:1.16rem;font-weight:700;line-height:1.2}
+.pshot figcaption span{display:block;font-size:.78rem;opacity:.92;margin-top:3px}
+
 .wklist{display:grid;gap:9px;list-style:none;margin:0;padding:0}
 .wkrow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--tint);
   border:1px solid var(--line);font-size:.9rem;color:var(--ink)}
@@ -354,13 +373,29 @@ a.card:hover{border-color:#BCEBD1}
 .stat .l{color:var(--mut);font-size:.82rem;margin-top:7px;line-height:1.45}
 
 /* ---------- about Rod ---------- */
-.rod{display:grid;gap:34px;align-items:center}
-@media(min-width:960px){.rod{grid-template-columns:.86fr 1.14fr;gap:52px}}
+/* The card is short and the prose beside it is very long, so centring the two
+   parked the card level with the middle of the text and left the top of the
+   page empty down the whole left-hand side. It now starts at the top and
+   stays with the reader as they scroll. */
+.rod{display:grid;gap:34px;align-items:start}
+/* Without the card beside it the prose is the only column, so it reads
+   as a column rather than stretching the full width of the page. */
+.rod.solo{max-width:760px;margin:0 auto}
+@media(min-width:960px){
+  .rod:not(.solo){grid-template-columns:.86fr 1.14fr;gap:52px}
+  /* Only once there is a column to stay beside; the nav is 74px, so it stops
+     clear of it. */
+  .rod:not(.solo)>:first-child{position:sticky;top:96px}
+}
 .mono{position:relative;border-radius:26px;padding:38px 30px;overflow:hidden;box-shadow:var(--sh-lg);
   background:linear-gradient(140deg,#03335f,#0457ac 52%,#308fac);color:#fff;text-align:center}
 .mono .ini{width:120px;height:120px;margin:0 auto 20px;border-radius:34px;display:grid;place-items:center;
   font-family:var(--dis);font-weight:700;font-size:2.6rem;letter-spacing:.02em;color:#03335f;background:var(--grad-b);
   box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
+/* A photograph rather than the 120px disc. It is the first thing on the page
+   about him, so it is worth the space. */
+.mono .face{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;
+  border-radius:18px;margin:0 0 22px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
 .mono h3{color:#fff;font-size:1.6rem}
 .mono .role{color:#B9E2F0;font-size:.9rem;margin-top:6px}
 .mono ul{display:grid;gap:11px;margin-top:24px;text-align:left}
@@ -432,6 +467,10 @@ a.card:hover{border-color:#BCEBD1}
   color:#8A5200;font-size:.88rem;margin-top:14px;line-height:1.55}
 .err.on{display:block}
 .err a{color:#0457ac;font-weight:600;text-decoration:underline}
+/* The form service's own reason, under the friendly sentence. Quiet enough
+   that it reads as small print rather than as the message. */
+.err-why{display:block;margin-top:8px;font-size:.78rem;opacity:.7;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
 .side .card{margin-bottom:16px}
 .step{display:flex;gap:13px;margin-bottom:20px}
 .step .n{width:34px;height:34px;border-radius:11px;background:var(--grad);color:#fff;display:grid;place-items:center;
@@ -741,3 +780,123 @@ footer a:hover{color:var(--green)}
 .regcol h3{font-size:1rem;letter-spacing:.02em;margin-bottom:12px;color:var(--ink)}
 .regcol .arealist{justify-content:flex-start;gap:8px}
 .regcol .arealist a{font-size:.84rem;padding:7px 13px}
+
+/* ---------- the class calendar ----------
+   A month grid on the timetable page, drawn from Rod's own Google Calendar.
+   Hidden until it has something in it: an empty grid under a heading that
+   promises dates reads as broken, where the page's own wording does not. */
+.cal{max-width:940px;margin:0 auto}
+#timetable-body[hidden]{display:none}
+
+.cal-filters{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:0 0 26px}
+.cal-fil{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:.88rem;font-weight:600;
+  padding:9px 15px;border-radius:999px;border:1.4px solid var(--line);background:#fff;color:var(--body);
+  cursor:pointer;transition:.22s}
+.cal-fil:hover:not(:disabled){transform:translateY(-2px);border-color:var(--teal);color:var(--ink)}
+.cal-fil:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.cal-fil .cal-n{font-size:.74rem;font-weight:700;padding:1px 7px;border-radius:999px;
+  background:var(--tint2);color:var(--mut)}
+.cal-fil.on{color:#fff;border-color:transparent}
+.cal-fil.on .cal-n{background:rgba(255,255,255,.28);color:#fff}
+.cal-fil.all.on{background:var(--grad)}
+.cal-fil.y9.on{background:#0d7f8f}
+.cal-fil.y10.on{background:#0457ac}
+.cal-fil.y11.on{background:#2a8f56}
+.cal-fil.gen.on{background:var(--grey)}
+
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.cal-head h3{font-size:clamp(1.15rem,3vw,1.5rem);margin:0}
+.cal-nav{display:flex;gap:7px}
+.cal-btn{font-family:inherit;font-size:.83rem;font-weight:600;padding:8px 14px;border-radius:999px;
+  border:1.4px solid var(--line);background:#fff;color:var(--body);cursor:pointer;transition:.22s}
+.cal-btn.ico{width:38px;padding:8px 0;font-size:1.15rem;line-height:1}
+.cal-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.cal-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.cal-btn:disabled{opacity:.35;cursor:default}
+
+/* minmax(0,1fr) and min-width:0, both needed. A grid item's default
+   min-width is auto, so one long event title stops the column from
+   shrinking: a "Masterclass: Required Practicals" on a Saturday took
+   that column to 313px while the other six sat at 97, and the week
+   stopped lining up. */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cal-dow{text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--mut);padding:4px 0}
+/* A fixed floor per cell keeps the weeks on an even rhythm whether or not a
+   day has anything in it; without it a busy week towers over a quiet one. */
+.cal-cell{min-height:76px;min-width:0;border-radius:11px;padding:5px;background:var(--tint);
+  display:flex;flex-direction:column;gap:4px}
+.cal-cell.out{background:transparent}
+.cal-cell.has{background:#fff;border:1px solid var(--line)}
+.cal-cell.today{outline:2px solid var(--teal);outline-offset:-2px}
+.cal-cell.off{background:repeating-linear-gradient(135deg,var(--tint2),var(--tint2) 6px,#fff 6px,#fff 12px)}
+.cal-num{font-size:.75rem;font-weight:600;color:var(--mut);line-height:1.2}
+.cal-cell.today .cal-num{color:var(--teal)}
+.cal-off{font-size:.68rem;font-weight:600;color:var(--mut);letter-spacing:.3px}
+
+.cal-ev{font-family:inherit;width:100%;text-align:left;border:0;cursor:pointer;border-radius:7px;
+  padding:4px 6px;font-size:.7rem;line-height:1.25;transition:.18s;min-width:0}
+.cal-ev:hover{transform:translateY(-1px);filter:brightness(.96)}
+.cal-ev:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+.cal-ev b{display:block;font-weight:700}
+/* Two lines before it gives up, rather than one. A month cell is narrow, and
+   "2 Hour Fast Track Course" was being cut to "2 Hour Fast Track …" on a full
+   size screen — the part a parent needs is the part that was missing. */
+.cal-ev span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  font-weight:500;opacity:.85;overflow:hidden;overflow-wrap:break-word}
+.cal-ev i{display:none}
+
+/* The month as a list. Hidden until the grid runs out of room — see the
+   phone rules at the end of this file. */
+.cal-list{display:none;list-style:none;margin:0;padding:0}
+.cal-li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cal-li:last-child{border-bottom:0}
+.cal-li-d{flex:0 0 42px;text-align:center;padding-top:2px}
+.cal-li-d b{display:block;font-size:1.15rem;font-weight:700;line-height:1.1;color:var(--body)}
+.cal-li-d span{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mut)}
+.cal-li.today .cal-li-d b,.cal-li.today .cal-li-d span{color:var(--teal)}
+.cal-li-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
+.cal-ev.y9{background:#E1F2F5;color:#0d7f8f}
+.cal-ev.y10{background:#E4EEFA;color:#0457ac}
+.cal-ev.y11{background:#E4F5EB;color:#2a8f56}
+.cal-ev.gen{background:var(--tint2);color:var(--body)}
+
+.cal-none,.cal-key{text-align:center;color:var(--mut);font-size:.9rem;margin-top:20px;line-height:1.9}
+.cal-none a{color:var(--teal);font-weight:600;border-bottom:1px solid rgba(48,143,172,.4)}
+.cal-swatch{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 5px 0 14px;vertical-align:-1px}
+.cal-swatch.y9{background:#0d7f8f}.cal-swatch.y10{background:#0457ac}.cal-swatch.y11{background:#2a8f56}
+
+/* On a phone seven columns cannot hold a readable chip, so the day number
+   shrinks and the chip keeps only its time — the subject is in the title
+   and on the enquiry it leads to. */
+@media(max-width:620px){
+  /* The grid gives way to the list here. Hiding the title to make it fit,
+     which is what this used to do, left "10am" and nothing else. */
+  .cal-grid{display:none}
+  .cal-list{display:block}
+  .cal-ev{padding:8px 10px;font-size:.82rem;border-radius:9px}
+  .cal-ev b{display:inline;font-weight:700}
+  .cal-ev span{display:inline;-webkit-line-clamp:none;margin-left:7px}
+  .cal-ev i{display:block;font-style:normal;font-size:.72rem;opacity:.75;margin-top:2px}
+  .cal-head{flex-direction:column;align-items:stretch;text-align:center;gap:10px}
+  .cal-nav{justify-content:center}
+}
+
+/* ---------- Rod ----------
+   His own photograph where the initials were. The block keeps its 120px and
+   its corner radius, so the card's proportions are untouched; the image fills
+   it and is cropped by the radius rather than letterboxed inside it. */
+.mono .ini{padding:0;overflow:hidden}
+.mono .ini img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* A photograph inside a column of prose. Kept to the column's width and given
+   the same radius as everything else on the page, so it reads as part of the
+   writing rather than an advert dropped into it. */
+.prose figure.shot{margin:26px 0 30px}
+.prose figure.shot img{width:100%;height:auto;display:block;border-radius:20px;
+  box-shadow:var(--sh-lg)}
+.prose figure.shot figcaption{margin-top:10px;font-size:.86rem;color:var(--mut);text-align:center}
+/* The fallback under the thank-you. Quieter than the confirmation above it —
+   it is there for the case where the confirmation turns out to be wrong. */
+.ok .ok-alt{margin-top:12px;font-size:.88rem;color:var(--mut)}
+.ok .ok-alt a{color:var(--teal);font-weight:600;border-bottom:1px solid rgba(48,143,172,.4)}

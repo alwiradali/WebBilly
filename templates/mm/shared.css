@@ -431,3 +431,38 @@ footer{background:rgba(233,245,246,.86);backdrop-filter:blur(2px)}
    share the row whatever the count. */
 #whatson-grid{display:grid;gap:20px;max-width:900px;margin:0 auto;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}
+
+/* ---------- mailing list ----------
+   A band above the footer on every page. Deliberately quiet: it is the last
+   thing before the footer, it asks for one field, and it never competes with
+   the booking form, which is the thing she actually wants people to do. */
+.sub-band{background:var(--tint2);border-top:1px solid rgba(11,127,114,.14)}
+.sub-in{display:grid;gap:26px;padding:52px 0;align-items:center}
+@media(min-width:860px){.sub-in{grid-template-columns:1.1fr .9fr;gap:48px}}
+.sub-in h2{font-size:clamp(1.4rem,2.6vw,1.9rem);margin:12px 0 10px;color:var(--ink)}
+.sub-in > div > p{color:var(--body);font-size:.97rem;max-width:52ch}
+.sub-form{display:grid;gap:12px}
+.sub-form input[type=email]{width:100%;padding:14px 16px;border:1px solid #CADDE4;border-radius:12px;
+  font:inherit;font-size:1rem;background:#fff;color:var(--ink)}
+.sub-form input[type=email]:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.sub-consent{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:var(--body);line-height:1.45}
+.sub-consent input{margin-top:3px;width:17px;height:17px;flex:0 0 auto;accent-color:var(--teal)}
+.sub-form .btn{justify-self:start}
+/* The honeypot: off-screen rather than display:none, because some bots skip
+   anything hidden and a person never reaches it — it is out of the tab order
+   and hidden from the accessibility tree. */
+.sub-pot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sub-say{font-size:.9rem;margin:0;min-height:1.2em}
+.sub-say.is-bad{color:#A8324A}
+.sub-done{font-size:1rem;color:var(--ink);font-weight:500;margin:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* One button on the home page — "See every area we cover across Scotland" —
+   comes out 401px wide, because .btn is nowrap. On a 390px phone that pushed
+   the whole page 31px sideways: every page on her site scrolled horizontally
+   for anyone who touched it. Buttons keep nowrap wherever there is room for
+   it; below that a long label wraps instead of taking the page with it. */
+@media(max-width:430px){
+  .btn{white-space:normal;max-width:100%;text-align:center;justify-content:center}
+}

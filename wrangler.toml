@@ -137,6 +137,12 @@ run_worker_first = false
 # untouched somewhere else looking like a deploy that did nothing.
 [env.smartin]
 name = "smartin-science"
+# His own entry script. Without this, wrangler inherits the top-level
+# main = "worker.js" and deploys BILLYDIGITALS' worker to his account:
+# every path that is not a page throws Cloudflare error 1101 instead of
+# returning a 404, and that worker's API routes answer on his hostname.
+# It happened. [env.mm] sets its own main and was never affected.
+main = "dist/smartin-science/_worker.js"
 routes = [
   { pattern = "smartinscience.co.uk", custom_domain = true },
   { pattern = "www.smartinscience.co.uk", custom_domain = true }
@@ -147,6 +153,14 @@ directory = "dist/smartin-science"
 # The build writes about.html and links to /about, so the server has to resolve
 # the extensionless URL. This is wrangler's default, stated so it cannot drift.
 html_handling = "auto-trailing-slash"
+
+# binding is what creates env.ASSETS. Without it his Worker had no way to
+# reach the files, so every path that was not already an asset threw and
+# Cloudflare answered 1101 instead of 404. [env.mm.assets] has always had
+# these three lines; this block never did.
+binding = "ASSETS"
+not_found_handling = "404-page"
+run_worker_first = false
 
 # ---------------------------------------------------------------------------
 # Westfield Garage Int Limited — Levenshulme, on HIS OWN Cloudflare account.

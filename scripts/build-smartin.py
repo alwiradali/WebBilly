@@ -13,6 +13,7 @@ Output lands in dist/smartin-science/ (gitignored, like the mm build).
 Upload the folder to Cloudflare Pages in Rod's account.
 """
 
+import html as htmlmod
 import os
 import posixpath
 import re
@@ -23,6 +24,37 @@ from datetime import date
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 SRC = os.path.join(ROOT, 'templates', 'smartin')
 OUT = os.path.join(ROOT, 'dist', 'smartin-science')
+
+# Rod's class calendar. The timetable page carries the calendar id and the
+# browser key in its own markup. The key is restricted to the Calendar API and
+# to his two domains, and the calendar it reads is public, so it grants nothing
+# that was not already public and cannot be used from anywhere else — checked:
+# smartinscience.co.uk and www answer 200, every other referer and no referer
+# at all are refused. It is served in the page the moment this deploys either
+# way, which is how Google intends a browser key to work.
+#
+# These two environment variables override what is in the page, so the key can
+# be rotated through a repository secret without touching the markup. Setting
+# neither is the ordinary case and changes nothing.
+GCAL_ID = os.environ.get('SMARTIN_GCAL_ID', '').strip()
+GCAL_KEY = os.environ.get('SMARTIN_GCAL_KEY', '').strip()
+
+
+def inject_calendar(html):
+    """Override the calendar attributes on the one page that has them."""
+    if 'id="timetable-body"' not in html or not (GCAL_ID and GCAL_KEY):
+        return html
+    for attr, value in (('data-calendar-id', GCAL_ID), ('data-api-key', GCAL_KEY)):
+        # Replace whatever is there rather than only an empty value: the page
+        # now ships with real ones, and an override has to win over them.
+        pattern = r'(%s=")[^"]*(")' % re.escape(attr)
+        html, hits = re.subn(
+            pattern,
+            lambda m: m.group(1) + htmlmod.escape(value, quote=True) + m.group(2),
+            html, count=1)
+        if not hits:
+            sys.exit('timetable page no longer has a %s to override' % attr)
+    return html
 
 
 def rewrite(html, domain, path):
@@ -60,8 +92,11 @@ def rewrite(html, domain, path):
     html = html.replace('src="site.js"', 'src="/site.js"')
     html = html.replace('src="letters.js"', 'src="/letters.js"')
     html = html.replace('src="book-hero.js"', 'src="/book-hero.js"')
+    html = html.replace('src="calendar.js"', 'src="/calendar.js"')
     html = html.replace('href="shared.css"', 'href="/shared.css"')
     html = html.replace('href="book-hero.css"', 'href="/book-hero.css"')
+
+    html = inject_calendar(html)
 
     # the demo is noindex; the real site is very much not
     html = re.sub(r'<meta name="robots"[^>]*>\n?', '', html)
@@ -99,11 +134,21 @@ def main():
             shutil.copy(os.path.join(SRC, f), os.path.join(OUT, f))
 
     pages = []
+    held = []
     for dirpath, _dirs, files in os.walk(SRC):
         rel_dir = os.path.relpath(dirpath, SRC)
         rel_dir = '' if rel_dir == '.' else rel_dir
         for name in sorted(f for f in files if f.endswith('.html')):
             rel = os.path.join(rel_dir, name) if rel_dir else name
+            # Rod does not want a blog. He first asked on 08.09 to hold the
+            # drafts back ("I'd rather not put up anything yet until I have
+            # the content written by myself and checked"), and has since said
+            # he does not want the section at all. Nothing under blog/ is
+            # published, and no page links to it. The drafts stay in the
+            # repository, so turning it back on is deleting these three lines.
+            if rel_dir == 'blog':
+                held.append(rel)
+                continue
             if name == 'index.html':
                 path = '/' + (rel_dir + '/' if rel_dir else '')
             else:
@@ -124,10 +169,50 @@ def main():
             fh.write(f'  <url><loc>https://{domain}{p}</loc><lastmod>{today}</lastmod></url>\n')
         fh.write('</urlset>\n')
 
+    # A Worker of his own, and the reason it exists.
+    #
+    # wrangler inherits main from the top-level config into every [env.*] that
+    # does not set its own. [env.smartin] did not, so his domain was deployed
+    # running billydigitals' worker.js: every URL that was not a page threw
+    # Cloudflare error 1101 instead of returning a 404, and that worker's API
+    # routes were reachable on his hostname. This is the same shape as
+    # [env.mm], which has always set its own main and was never affected.
+    #
+    # It does one thing: hand the request to the static assets.
+    with open(os.path.join(OUT, '_worker.js'), 'w') as fh:
+        fh.write('export default {\n'
+                 '  async fetch(request, env) {\n'
+                 '    return env.ASSETS.fetch(request);\n'
+                 '  },\n'
+                 '};\n')
+
+    # Deployed as a Worker the entry script is uploaded as code, but it also
+    # sits in the asset directory, where the asset router would serve it to
+    # anyone asking for /_worker.js.
+    with open(os.path.join(OUT, '.assetsignore'), 'w') as fh:
+        fh.write('_worker.js\n')
+
     with open(os.path.join(OUT, 'robots.txt'), 'w') as fh:
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
     print(f'built {len(pages)} pages into dist/smartin-science/ for {domain}')
+    # Report what the built page actually carries, and never the key itself.
+    built = os.path.join(OUT, 'timetable.html')
+    has_cal = False
+    if os.path.exists(built):
+        with open(built) as fh:
+            page = fh.read()
+        has_cal = bool(re.search(r'data-api-key="[^"]+"', page)
+                       and re.search(r'data-calendar-id="[^"]+"', page))
+    if has_cal:
+        print('  timetable reads his Google Calendar%s'
+              % (' (overridden from the environment)' if GCAL_ID and GCAL_KEY else ''))
+    else:
+        print('  no calendar in the timetable page — it keeps "confirmed when '
+              'you enquire" (see docs/smartin-calendar.md)')
+    if held:
+        print(f'  held back {len(held)} unapproved blog draft(s): '
+              + ', '.join(sorted(held)))
 
 
 if __name__ == '__main__':
