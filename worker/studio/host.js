@@ -101,6 +101,10 @@ export async function serveMegacityHost(request, env, ctx, url) {
   if (legacy) return redirect(origin + legacy + url.search, 301, ONE_HOUR);
   const pm = /^\/property\/(\d+)(\/.*)?$/.exec(p);
   if (pm) return redirect(origin + (await legacyListingPath(db, pm[1])), 301, ONE_HOUR);
+  /* 10ninety builds these into the marketing emails it sends applicants, and
+     it has megacityproperties.co.uk on file, so they arrive here. */
+  const rm = /^\/properties\/([A-Za-z0-9._-]{1,48})\/?$/.exec(p);
+  if (rm) { const hit = await refListingPath(db, rm[1]); return redirect(origin + hit.to, hit.status, hit.status === 301 ? ONE_HOUR : FIVE_MIN); }
   if (/^\/property(\/.*)?$/.test(p)) return redirect(origin + "/lettings", 301, ONE_HOUR);
   if (LEGACY_FILE.test(p)) return notFoundResponse(request, env, ctx, url, raw, "legacy");
 
@@ -177,6 +181,40 @@ function demoShaped(p) {
 async function customRedirect(db, p) {
   for (const r of await liveRedirects(db)) if (r && r.from === p && r.to) return { to: r.to, status: r.status === 302 ? 302 : 301 };
   return null;
+}
+
+/* /properties/<property_ref> -> the listing with that reference.
+   10ninety generates this address itself, for the marketing emails it sends
+   to applicants: "the standard format for these links is
+   https://<client_domain>/properties/<property_ref>", and the domain it holds
+   for this account is megacityproperties.co.uk. So these arrive whether or not
+   anything here was built for them, and before this they were a 404 — sent by
+   software working exactly as designed, to people who had asked about a
+   property, and nobody would have thought to blame the API.
+
+   A miss is TEMPORARY on purpose. A reference the sync has not reached yet is
+   the normal state of an email sent minutes after a property goes on, and a
+   301 to /lettings would be cached by the recipient's browser for good: the
+   property would then be unreachable at its own address for that person even
+   after the listing existed. */
+async function refListingPath(db, ref) {
+  if (db) {
+    try {
+      const row = await db.prepare(
+        `SELECT id, status, hidden, deleted_at FROM listings
+          WHERE ref=?1 COLLATE NOCASE OR external_id=?1 OR legacy_id=?1 OR id=?1
+          ORDER BY (status='live') DESC LIMIT 1`).bind(ref).first();
+      if (row) {
+        const live = row.status === "live" && !row.hidden && !row.deleted_at;
+        if (live || urls.STATIC_LET_SLUGS.includes(row.id)) return { to: urls.listingPath("root", row.id), status: 301 };
+        return { to: "/lettings", status: 302 };
+      }
+    } catch (e) { console.error("ref lookup", e); }
+  }
+  /* the hand-built pages are addressed by slug, so a reference that happens to
+     be one resolves even with no database behind it */
+  if (urls.STATIC_LET_SLUGS.includes(ref)) return { to: urls.listingPath("root", ref), status: 301 };
+  return { to: "/lettings", status: 302 };
 }
 
 /* /property/<id>/… from the old site -> the listing, by its old id */
