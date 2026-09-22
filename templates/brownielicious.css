@@ -158,7 +158,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 }
 .nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none}
 .nav-logo img.mark{width:44px;height:44px;border-radius:50%;transition:transform .5s var(--ease)}
-.nav-logo img.word{width:clamp(126px,15vw,168px);height:auto}
+.nav-logo img.word{width:clamp(158px,19vw,215px);height:auto}
 .nav-logo:hover img.mark{transform:rotate(-8deg) scale(1.05)}
 .nav-links{display:flex;gap:clamp(12px,1.7vw,26px);margin-left:auto}
 .nav-links a{
@@ -193,7 +193,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 }
 .drawer.open{clip-path:circle(150% at calc(100% - 44px) 40px)}
 .drawer a{
-  font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,7vw,44px);
+  font-family:'Fraunces',serif;font-weight:600;font-size:clamp(23px,5.6vw,38px);
   color:var(--brown);text-decoration:none;
   opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);
 }
@@ -270,20 +270,19 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   background:var(--brown);color:var(--plate);overflow:hidden;
   padding:16px 0;border-block:1px solid rgba(255,231,253,.12);
 }
-/* The strip is built in JS out of runs just wide enough to cover the band,
-   because iOS Safari cannot paint a moving layer wider than about 4096
-   DEVICE pixels — on a 3x phone that is only ~1365 CSS px, and a strip built
-   by simply doubling the word list came to 3286 CSS px (9858 device px) and
-   rendered as an empty brown bar. --run is one run's width; the animation
-   slides exactly that far and starts again, which is seamless. */
+/* Nothing here is animated with a transform. The strip is SCROLLED — the
+   band is an overflow box and the JS moves its scrollLeft — because a
+   scrolling box is tiled and painted by the browser as it goes, with no
+   composited layer whose width can run past what iOS will paint. That is
+   what made this an empty brown bar on a phone twice over. It also means
+   every word can be in one run, so the list flows instead of restarting. */
 .band-track{display:flex;width:max-content}
-.band-run{display:flex;flex:none;animation:roll var(--dur,14s) linear infinite}
+.band-run{display:flex;flex:none}
 .band-track span{
   display:inline-flex;align-items:center;gap:20px;padding-inline:20px;white-space:nowrap;
   font-family:'Fraunces',serif;font-style:italic;font-size:clamp(17px,2vw,23px);
 }
 .band-track span::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--pink);flex:none}
-@keyframes roll{to{transform:translate3d(calc(var(--run,50%) * -1),0,0)}}
 .band:hover .band-track{animation-play-state:paused}
 
 /* ================================================================== about */
@@ -750,7 +749,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .nav-links a{padding-block:10px}
   .foot li{padding-block:2px}
   .foot a{display:inline-block;padding-block:9px}
-  .fld .chip,.flav-tab{padding-block:.62em}
+  .fld .chip,.flav-tab,.chips .chip{padding-block:.62em}
   .chips .f{padding-block:.6em}
   .cal-grid b{min-height:40px}
 }
@@ -780,4 +779,227 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .hero{padding-top:clamp(108px,14svh,160px);padding-bottom:clamp(58px,8svh,96px)}
   .quote{min-height:clamp(320px,52svh,480px)}
   @media (max-height:820px) and (min-width:820px){ .hero{padding-top:clamp(92px,12svh,120px)} }
+}
+
+/* =========================================================================
+   ORDERING — the basket button, the box builder, the basket and the
+   example checkout. Everything below is the shop half of the page.
+   ========================================================================= */
+
+/* ------------------------------------------------------- basket button */
+.bag{
+  position:relative;flex:none;width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;cursor:pointer;
+  background:rgba(255,255,255,.6);border:1px solid var(--line);color:var(--brown);
+  transition:transform .4s var(--ease),background .3s;
+  margin-left:14px;
+}
+.nav-links + .bag{margin-left:18px}
+.bag:hover{transform:translateY(-2px);background:#fff}
+.bag svg{width:21px;height:21px}
+.bag-n{
+  position:absolute;top:-4px;right:-4px;min-width:21px;height:21px;padding:0 5px;
+  border-radius:999px;background:var(--pink);color:#fff;
+  font-size:.7rem;font-weight:700;display:grid;place-items:center;line-height:1;
+  box-shadow:0 4px 10px -4px rgba(59,21,18,.6);
+}
+.bag-n[hidden]{display:none}
+.bag.pop{animation:bagpop .5s var(--ease)}
+@keyframes bagpop{40%{transform:scale(1.16)}100%{transform:none}}
+
+/* ---------------------------------------------------------- the builder */
+.build-sec{
+  background:
+    radial-gradient(60% 45% at 100% 0,rgba(255,231,253,.85),transparent 60%),
+    linear-gradient(180deg,var(--blush),#fdf3f8 60%,var(--blush));
+}
+.builder{display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(20px,3vw,44px);align-items:start}
+.bd-steps{display:grid;gap:clamp(16px,2.2vw,26px)}
+.bd-step{
+  background:var(--cream);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  padding:clamp(18px,2.4vw,26px);box-shadow:0 18px 40px -34px rgba(59,21,18,.5);
+}
+.bd-step h3{display:flex;align-items:center;gap:12px;font-size:1.12rem;margin-bottom:16px}
+.bd-step h3 i{
+  font-style:normal;width:30px;height:30px;border-radius:50%;flex:none;
+  display:grid;place-items:center;background:var(--plate);color:var(--brown);
+  font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;
+}
+.bd-hint{font-size:.86rem;color:var(--ink-soft);margin:-6px 0 14px}
+
+.bd-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}
+.bd-item{
+  border:1px solid var(--line-soft);background:rgba(255,255,255,.6);border-radius:18px;
+  padding:0;overflow:hidden;cursor:pointer;text-align:left;
+  transition:transform .4s var(--ease),border-color .3s,box-shadow .4s var(--ease);
+}
+.bd-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.bd-item span{display:block;padding:10px 12px 12px}
+.bd-item b{display:block;font-family:'Fraunces',serif;font-size:.98rem;color:var(--brown);line-height:1.2}
+.bd-item small{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:3px}
+.bd-item:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.bd-item.on{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink) inset,var(--shadow)}
+
+.bd-flavs .f{cursor:pointer;user-select:none;border:1px solid var(--line-soft)}
+.bd-flavs .f.on{background:var(--brown);color:var(--plate);border-color:var(--brown)}
+.bd-flavs .f.prem::after{content:" ✦";color:var(--olive);font-size:.8em}
+.bd-flavs .f.on.prem::after{color:var(--rose-deep)}
+.bd-flavs .f.full{opacity:.42}
+
+/* ------------------------------------------------ the selection, summary */
+.bd-side{position:sticky;top:96px}
+.bd-card{
+  background:var(--cream);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.bd-pic{aspect-ratio:4/3;overflow:hidden;background:var(--rose)}
+.bd-pic img{width:100%;height:100%;object-fit:cover}
+.bd-body{padding:20px 22px 24px}
+.bd-body h4{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--brown);margin:0}
+.bd-meta{font-size:.86rem;color:var(--ink-soft);margin:4px 0 0}
+.bd-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.bd-list li{
+  font-size:.78rem;background:var(--plate);color:var(--brown);
+  border-radius:999px;padding:.3em .7em;
+}
+.bd-list li.none{background:transparent;color:var(--ink-soft);padding-inline:0}
+.bd-qty{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;font-size:.9rem}
+.qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:999px;padding:3px}
+.qty button{
+  width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;
+  color:var(--brown);font-size:1.1rem;line-height:1;transition:background .25s;
+}
+.qty button:hover{background:var(--plate)}
+.qty output{min-width:28px;text-align:center;font-weight:600}
+.bd-price{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin:16px 0 16px;padding-top:14px;border-top:1px solid var(--line-soft);font-size:.9rem;
+}
+.bd-price b{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--brown)}
+.bd-small{font-size:.78rem;color:var(--ink-soft);margin-top:12px;text-align:center}
+
+/* ------------------------------------------------ basket + checkout sheet */
+.sheet{position:fixed;inset:0;z-index:140}
+.sheet[hidden]{display:none}
+.sheet-bg{
+  position:absolute;inset:0;background:rgba(59,21,18,.45);
+  opacity:0;transition:opacity .45s var(--ease);
+}
+.sheet.in .sheet-bg{opacity:1}
+.basket,.checkout{
+  position:absolute;top:0;right:0;bottom:0;width:min(440px,100%);
+  background:var(--blush);display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .5s var(--ease);
+  box-shadow:-30px 0 70px -40px rgba(59,21,18,.6);
+}
+.checkout{width:min(520px,100%)}
+.sheet.in .basket{transform:none}
+.sheet.co .basket{transform:translateX(100%)}
+.sheet.co .checkout{transform:none}
+.bk-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:20px var(--sp,22px);border-bottom:1px solid var(--line-soft);flex:none;
+}
+.bk-head h3{font-size:1.25rem;display:flex;align-items:center;gap:10px}
+.bk-head button{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;
+  cursor:pointer;color:var(--brown);display:grid;place-items:center;flex:none;
+}
+.bk-head button svg{width:17px;height:17px}
+.ex-chip{
+  font-family:'DM Sans',sans-serif;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--olive);color:#fff;border-radius:999px;padding:.34em .7em;font-weight:700;
+}
+.bk-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:20px var(--sp,22px) 8px;-webkit-overflow-scrolling:touch}
+.bk-foot{flex:none;padding:16px var(--sp,22px) calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--line-soft);background:var(--cream)}
+
+.bk-line{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line-soft)}
+.bk-line:last-child{border-bottom:0}
+.bk-line img{width:66px;height:66px;border-radius:14px;object-fit:cover;flex:none}
+.bk-line .bl-main{flex:1;min-width:0}
+.bk-line b{display:block;font-family:'Fraunces',serif;font-size:1rem;color:var(--brown)}
+.bk-line small{display:block;font-size:.79rem;color:var(--ink-soft);margin-top:2px}
+.bk-line .bl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+.bk-line .qty button{width:28px;height:28px;font-size:1rem}
+.bk-line .bl-price{font-weight:600;font-size:.95rem;color:var(--brown)}
+.bl-drop{
+  background:none;border:0;cursor:pointer;color:var(--ink-soft);font-size:.76rem;
+  text-decoration:underline;padding:0;margin-top:7px;
+}
+.bk-empty{text-align:center;padding:42px 10px;color:var(--ink-soft)}
+.bk-empty svg{width:42px;height:42px;color:var(--rose-deep);margin-bottom:14px}
+
+.bk-sum{display:grid;gap:7px;margin-bottom:14px;font-size:.9rem}
+.bk-sum div{display:flex;justify-content:space-between;gap:12px}
+.bk-sum .tot{
+  border-top:1px solid var(--line-soft);padding-top:10px;margin-top:3px;
+  font-family:'Fraunces',serif;font-size:1.2rem;color:var(--brown);
+}
+.bk-sum small{color:var(--ink-soft);font-size:.8rem}
+.bk-quote{font-size:.8rem;color:var(--ink-soft);margin-bottom:12px}
+
+.co-opts{display:grid;gap:9px;margin-bottom:18px}
+.co-opt{
+  display:flex;gap:12px;align-items:flex-start;cursor:pointer;
+  border:1px solid var(--line-soft);border-radius:16px;padding:13px 15px;
+  background:rgba(255,255,255,.6);transition:border-color .3s,background .3s;
+}
+.co-opt.on{border-color:var(--pink);background:#fff}
+.co-opt i{
+  width:18px;height:18px;border-radius:50%;border:1.6px solid var(--line);flex:none;margin-top:2px;
+  display:grid;place-items:center;
+}
+.co-opt.on i{border-color:var(--pink)}
+.co-opt.on i::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--pink)}
+.co-opt b{display:block;font-size:.94rem;color:var(--brown)}
+.co-opt small{display:block;font-size:.8rem;color:var(--ink-soft);margin-top:2px}
+.co-h{
+  font-family:'Fraunces',serif;font-size:1.05rem;color:var(--brown);
+  margin:22px 0 12px;display:flex;align-items:center;gap:9px;
+}
+.co-note{
+  background:var(--plate);border:1px solid var(--rose-deep);border-radius:16px;
+  padding:14px 16px;font-size:.86rem;color:var(--ink);margin-bottom:20px;
+}
+.co-card,.co-bank{background:rgba(255,255,255,.55);border:1px solid var(--line-soft);border-radius:16px;padding:16px 16px 6px}
+.co-card[hidden],.co-bank[hidden]{display:none}
+.co-small{font-size:.78rem;color:var(--ink-soft);margin:6px 0 12px}
+.co-total{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  margin:22px 0 16px;padding-top:14px;border-top:1px solid var(--line-soft);
+  font-family:'Fraunces',serif;font-size:1.2rem;color:var(--brown);
+}
+.co-done{display:none;text-align:center;padding:26px 6px 40px}
+.co-done.on{display:block}
+.co-done p{font-size:.94rem;color:var(--ink-soft);margin-top:.4em}
+.co-done .btn-row{justify-content:center;margin-top:20px}
+
+/* ---------------------------------------------------------------- toast */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,24px);z-index:150;
+  background:var(--cocoa);color:var(--plate);border-radius:999px;
+  padding:.8em 1.4em;font-size:.9rem;box-shadow:var(--shadow-lg);
+  opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease);
+  max-width:calc(100% - 32px);text-align:center;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ----------------------------------------------------------- responsive */
+@media (max-width:1000px){
+  .builder{grid-template-columns:1fr}
+  .bd-side{position:static}
+  .bd-pic{aspect-ratio:16/7}
+}
+@media (max-width:640px){
+  .sheet{--sp:18px}
+  .basket,.checkout{width:100%}
+  .bd-items{grid-template-columns:repeat(auto-fit,minmax(112px,1fr))}
+  .bag{margin-left:auto}
+  .nav-burger{margin-left:10px}
+  /* the bar the basket sits in, so a thumb can always reach it */
+  .bk-foot{position:sticky;bottom:0}
+}
+@media (pointer:coarse){
+  .bd-item,.co-opt{min-height:44px}
+  .qty button{width:38px;height:38px}
 }

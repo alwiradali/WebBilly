@@ -1,5 +1,6 @@
 /* ===========================================================================
-   Brownielicious — page behaviour
+   Brownielicious — page behaviour, the box builder, the basket and the
+   example checkout.
    ---------------------------------------------------------------------------
    Vanilla, no build step, one file. Everything that will need changing when
    she sends the outstanding details is in CONFIG at the top, so nobody has to
@@ -18,12 +19,12 @@
        not rendered, rather than sitting there as a dead link. */
     facebook: '',
 
-    /* An address for the enquiry form to fall back to. Empty means the
+    /* An address for orders and enquiries to fall back to. Empty means the
        fallback offers Instagram and WhatsApp only — never a broken mailto. */
     email: '',
 
     /* WhatsApp: international format, digits only, no + and no spaces,
-       e.g. '447700900123'. While this is empty the floating bubble opens an
+       e.g. '447700900123'. While this is empty the floating button opens an
        Instagram DM instead — which is where her bio already sends people. */
     whatsapp: '',
 
@@ -39,74 +40,142 @@
     area: 'Stoke-on-Trent'
   };
 
-  /* Web3Forms delivers the enquiry form to her inbox. Create the key free at
-     web3forms.com against her email address and paste it here. With no key
-     the form still works: it hands the visitor everything they typed, already
-     written out, one tap from a DM — so an order is never lost just because
-     the key has not been set up yet. */
+  /* -------------------------------------------------------------- CHECKOUT
+     The basket, the quantities and the totals are real. No card is charged:
+     the order is sent to her the same way an enquiry is, and she confirms the
+     final price, the postage and how to pay. The checkout panel says so on
+     screen, in the first paragraph, before anything is filled in.
+
+     `postage` is null because her postage prices are not known yet. While it
+     is null the basket and the checkout both say postage is confirmed with
+     the order, and no invented number is ever shown or added to a total. Put
+     a number in and it is added, shown and totalled automatically.
+
+     To take real payment later, this is the seam: send the basket to a
+     payment provider from sendOrder() instead of e-mailing it. */
+  var CHECKOUT = {
+    live: false,            // true only when a real payment provider is wired in
+    postage: null,          // e.g. 4.95 — null means "confirmed with your order"
+    collectionFree: true
+  };
+
+  /* Web3Forms delivers orders and enquiries to her inbox. Create the key free
+     at web3forms.com against her email address and paste it here. With no key
+     nothing is lost: the visitor is handed everything they chose, already
+     written out, one tap from a DM. */
   var W3F_KEY = '';
 
   /* ------------------------------------------------------------------ MENU
-     Taken straight off her own menu graphic. A price of '' shows "Ask" —
+     Taken straight off her own menu graphic. A price of null shows "Ask",
      which is what her menu does for the minis and the wrapped items. */
   var MENU = [
     { name: 'Minis', price: '', sub: 'Box of 10, 20 or 30',
-      text: 'Bite-sized. Perfect when there are a lot of you.',
+      text: 'Bite-sized brownies and blondies.',
       opt: 'Brownies & blondies', img: 'mn-mini' },
     { name: 'Small box', price: '£10', sub: 'Box of 6',
-      text: 'Six pieces. A little treat, or a present.',
+      text: 'Six pieces, mixed as you like.',
       opt: 'Brownies · blondies · brookies', img: 'mn-small' },
     { name: 'Regular box', price: '£15', sub: 'Box of 9',
-      text: 'The one most people go for.',
+      text: 'Nine pieces — the most popular size.',
       opt: 'Brownies · blondies · brookies', img: 'mn-regular' },
     { name: 'Large box', price: '£20', sub: 'Box of 12',
-      text: 'Twelve, mixed however you like them.',
+      text: 'Twelve pieces for sharing.',
       opt: 'Brownies · blondies · brookies', img: 'mn-large' },
     { name: 'Personalised slab', price: '£20', sub: 'One whole slab',
-      text: 'A full slab with your message on it.',
-      opt: 'Brownie or blondie slab', img: 'mn-slab' },
+      text: 'A full slab, decorated and written on.',
+      opt: 'Brownie or blondie', img: 'mn-slab' },
     { name: 'NYC cookies', price: '£2', sub: 'Each · premium £3',
-      text: 'Thick, soft in the middle. As they should be.',
+      text: 'Thick, soft-centred cookies.',
       opt: 'Standard & premium flavours', img: 'mn-cookies' },
     { name: 'Cake pops', price: '£1.50', sub: 'Each',
-      text: 'Little ones love them.',
-      opt: 'Brownie or blondie flavour', img: 'mn-pops' },
+      text: 'In brownie or blondie.',
+      opt: 'Brownie or blondie', img: 'mn-pops' },
     { name: 'Individually wrapped', price: '', sub: 'Priced per item',
-      text: 'Favours, hampers, goody bags and postals.',
+      text: 'For favours, hampers and party bags.',
       opt: 'Cookies · brownies · blondies · brookies', img: 'mn-wrapped' }
   ];
 
   /* -------------------------------------------------------------- FLAVOURS */
+  var BAKE_STD = ['Oreo', 'Biscoff', 'Nutella', 'Milk choc', 'White choc', 'Dark choc',
+    'Jammie Dodger', 'Kinder sticks', 'Fresh strawberry'];
+  var BAKE_PREM = ['Hazelnut crème', 'Pistachio', 'Kinder Bueno', 'Ferrero Rocher / Raffaello',
+    'Mini egg', "Reese's cups", "Terry's Chocolate Orange", 'Dried raspberry'];
+  var COOKIE_STD = ['Oreo', 'Biscoff', 'Milk choc chip', 'White choc chip', 'Dark choc chip', 'Kinder sticks'];
+  var COOKIE_PREM = ['Pistachio & white choc', 'Kinder Bueno', 'Ferrero Rocher / Raffaello', 'Mini egg',
+    "Reese's cups", "Terry's Chocolate Orange", 'Raspberry & white choc', 'Matcha & white choc'];
+
   var FLAVOURS = [
-    { tab: 'Brownies & blondies',
-      standard: ['Oreo', 'Biscoff', 'Nutella', 'Milk choc', 'White choc', 'Dark choc',
-                 'Jammie Dodger', 'Kinder sticks', 'Fresh strawberry'],
-      premium: ['Hazelnut crème', 'Pistachio', 'Kinder Bueno', 'Ferrero Rocher / Raffaello',
-                'Mini egg', "Reese's cups", "Terry's Chocolate Orange", 'Dried raspberry'] },
-    { tab: 'NYC cookies',
-      standard: ['Oreo', 'Biscoff', 'Milk choc chip', 'White choc chip', 'Dark choc chip', 'Kinder sticks'],
-      premium: ['Pistachio & white choc', 'Kinder Bueno', 'Ferrero Rocher / Raffaello', 'Mini egg',
-                "Reese's cups", "Terry's Chocolate Orange", 'Raspberry & white choc', 'Matcha & white choc'] }
+    { tab: 'Brownies & blondies', standard: BAKE_STD, premium: BAKE_PREM },
+    { tab: 'NYC cookies', standard: COOKIE_STD, premium: COOKIE_PREM }
   ];
+
+  /* ------------------------------------------------------- WHAT SHE SELLS
+     The builder is driven entirely by this. `price: null` means the price is
+     not published — that line goes in the basket as "price on confirmation"
+     and is never guessed at or added to a total. */
+  var ITEMS = [
+    { id: 'brownies', name: 'Brownies', img: 'mn-regular', from: 'from £10', set: 'bake',
+      sizes: [
+        { id: 'm10', label: 'Minis — box of 10', price: null, pieces: 10 },
+        { id: 'm20', label: 'Minis — box of 20', price: null, pieces: 20 },
+        { id: 'm30', label: 'Minis — box of 30', price: null, pieces: 30 },
+        { id: 's6', label: 'Box of 6', price: 10, pieces: 6 },
+        { id: 'r9', label: 'Box of 9', price: 15, pieces: 9 },
+        { id: 'l12', label: 'Box of 12', price: 20, pieces: 12 }
+      ] },
+    { id: 'blondies', name: 'Blondies', img: 'mn-slab', from: 'from £10', set: 'bake',
+      sizes: [
+        { id: 'm10', label: 'Minis — box of 10', price: null, pieces: 10 },
+        { id: 'm20', label: 'Minis — box of 20', price: null, pieces: 20 },
+        { id: 'm30', label: 'Minis — box of 30', price: null, pieces: 30 },
+        { id: 's6', label: 'Box of 6', price: 10, pieces: 6 },
+        { id: 'r9', label: 'Box of 9', price: 15, pieces: 9 },
+        { id: 'l12', label: 'Box of 12', price: 20, pieces: 12 }
+      ] },
+    /* her menu offers brookies in the boxes, but not as minis */
+    { id: 'brookies', name: 'Brookies', img: 'mn-small', from: 'from £10', set: 'bake',
+      sizes: [
+        { id: 's6', label: 'Box of 6', price: 10, pieces: 6 },
+        { id: 'r9', label: 'Box of 9', price: 15, pieces: 9 },
+        { id: 'l12', label: 'Box of 12', price: 20, pieces: 12 }
+      ] },
+    { id: 'cookies', name: 'NYC cookies', img: 'mn-cookies', from: '£2 each', set: 'cookie', each: true,
+      sizes: [
+        { id: 'std', label: 'Standard flavour', price: 2, pieces: 1, std: true },
+        { id: 'prem', label: 'Premium flavour', price: 3, pieces: 1, prem: true }
+      ] },
+    { id: 'pops', name: 'Cake pops', img: 'mn-pops', from: '£1.50 each', set: 'pop', each: true,
+      sizes: [{ id: 'pop', label: 'Each', price: 1.5, pieces: 1 }] },
+    { id: 'slab', name: 'Personalised slab', img: 'mn-slab', from: '£20', set: 'bake', message: true,
+      sizes: [{ id: 'slab', label: 'One whole slab', price: 20, pieces: 1 }] },
+    { id: 'wrapped', name: 'Individually wrapped', img: 'mn-wrapped', from: 'priced per item', set: 'bake', each: true,
+      sizes: [{ id: 'w', label: 'Per item', price: null, pieces: 1 }] }
+  ];
+
+  function flavourList(set, which) {
+    if (set === 'cookie') return which === 'prem' ? COOKIE_PREM : COOKIE_STD;
+    if (set === 'pop') return which === 'prem' ? [] : ['Brownie', 'Blondie'];
+    return which === 'prem' ? BAKE_PREM : BAKE_STD;
+  }
 
   /* ------------------------------------------------------------- OCCASIONS */
   var OCCASIONS = [
-    { title: 'Eid', text: 'Eid boxes and specials, up on my page as the date comes round.', img: 'oc-eid', tall: true },
-    { title: 'Birthdays', text: 'Slabs with the name on, and boxes for the table.', img: 'oc-birthday' },
-    { title: 'Ramadan', text: 'Orders all month, and bakes put out for charity.', img: 'oc-ramadan' },
+    { title: 'Eid', text: 'Eid boxes and specials, announced as the date comes round.', img: 'oc-eid', tall: true },
+    { title: 'Birthdays', text: 'Slabs written on for the day, and boxes for the table.', img: 'oc-birthday' },
+    { title: 'Ramadan', text: 'Orders through the month, and bakes for charity.', img: 'oc-ramadan' },
     { title: 'Baby showers', text: 'Pastel boxes and cake pops to match your theme.', img: 'oc-baby', tall: true },
-    { title: 'Favours', text: 'Wrapped singles for weddings, nikkahs and party bags.', img: 'oc-favours' },
+    { title: 'Favours', text: 'Individually wrapped for weddings, nikkahs and party bags.', img: 'oc-favours' },
     { title: 'Thank-yous', text: 'A box posted to someone who deserves one.', img: 'oc-thanks' }
   ];
 
   /* ---------------------------------------------------------- AVAILABILITY
-     An example month, laid out the way she posts it on her story. `booked`
-     is a list of day numbers. Set it each month, or clear `example` once the
-     dates are real so the "Example" chip and the note come off. */
+     An example month, laid out the way she posts it on her story. `booked` is
+     a list of day numbers. Set it each month, or clear `example` once the
+     dates are real so the chip and the note come off. */
   var AVAILABILITY = {
     example: true,
     booked: [3, 4, 5, 6, 10, 11, 12, 20, 21, 22, 24, 28, 29],
-    note: 'I post each month’s availability on Instagram. This one is an example of how it will look here — the dates are not the real ones yet.'
+    note: 'Availability is posted on Instagram each month. This calendar is an example of how it will look here — the dates are not the real ones yet.'
   };
 
   /* ---------------------------------------------------------------- REVIEWS
@@ -120,15 +189,15 @@
     count: 0,
     items: [
       { name: 'Hafsa B.', when: 'Box of 12, posted to Leeds',
-        text: 'Ordered for my sister’s birthday and they arrived perfect, nothing broken. The biscoff one did not make it to the evening.' },
+        text: 'Ordered for my sister’s birthday and everything arrived perfect, nothing broken. The biscoff one did not make it to the evening.' },
       { name: 'Aaliyah R.', when: 'Eid boxes, collection',
-        text: 'Got four boxes for Eid and every single person asked where they were from. Beautifully packaged as well, I did not want to open them.' },
+        text: 'Four boxes for Eid and every single person asked where they were from. Beautifully packaged as well.' },
       { name: 'Zain M.', when: 'NYC cookies, Stoke',
-        text: 'The kinder bueno cookie is unreal. Thick, still soft in the middle. I have ordered three times since and I am not stopping.' },
+        text: 'The kinder bueno cookie is unreal — thick and still soft in the middle. I have ordered three times since.' },
       { name: 'Chloe W.', when: 'Personalised slab',
-        text: 'Asked for a slab with a message on it for an anniversary and she got it spot on. Tasted even better than it looked.' },
+        text: 'Asked for a slab with a message on it for an anniversary and it was spot on. Tasted even better than it looked.' },
       { name: 'Nadia K.', when: 'Favours, posted UK-wide',
-        text: 'Ordered individually wrapped ones for our nikkah favours. Arrived early, packed properly, and the guests kept asking for the page.' }
+        text: 'Individually wrapped favours for our nikkah. Arrived early, packed properly, and the guests kept asking for the page.' }
     ]
   };
 
@@ -150,6 +219,7 @@
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c];
     });
   }
+  function money(n) { return '£' + Number(n).toFixed(2); }
   function fxRefresh() { if (window.ScrollFXKit) window.ScrollFXKit.refresh(); }
 
   /* The icons, once. */
@@ -160,9 +230,8 @@
     fb: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V7c0-.7.5-1 1-1h2V3h-2.7C11.6 3 10.5 4.6 10.5 7v1.5H8V12h2.5v9H14v-9h2.6l.4-3.5H14z"/></svg>',
     mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>',
     pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
-    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8l9-4 9 4v8l-9 4-9-4z"/><path d="M3 8l9 4 9-4M12 12v8"/></svg>',
+    bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>',
     star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5-4.8-4.6 6.6-.9z"/></svg>',
-    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.8c0 4.8-7 9.2-7 9.2z"/></svg>',
     google: '<svg viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24.3c0-1.5-.1-2.9-.4-4.3H24v8.1h11.8c-.5 2.7-2 5-4.3 6.6v5.5h7c4.1-3.8 6.5-9.4 6.5-15.9z"/><path fill="#34A853" d="M24 46c5.8 0 10.7-1.9 14.3-5.3l-7-5.5c-1.9 1.3-4.4 2.1-7.3 2.1-5.6 0-10.4-3.8-12.1-8.9H4.7v5.6C8.3 41.2 15.6 46 24 46z"/><path fill="#FBBC05" d="M11.9 28.4a13.2 13.2 0 0 1 0-8.8v-5.6H4.7a22 22 0 0 0 0 20l7.2-5.6z"/><path fill="#EA4335" d="M24 9.9c3.2 0 6 1.1 8.2 3.2l6.2-6.2C34.7 3.4 29.8 1.4 24 1.4 15.6 1.4 8.3 6.2 4.7 13.2l7.2 5.6c1.7-5.1 6.5-8.9 12.1-8.9z"/></svg>'
   };
 
@@ -170,9 +239,9 @@
      actually goes. One decision, used by every button on the page. */
 
   function waHref(text) {
-    var msg = encodeURIComponent(text || 'Hi Brownielicious — I’d like to order some brownies please.');
+    var msg = encodeURIComponent(text || 'Hi Brownielicious — I’d like to place an order please.');
     if (CONTACT.whatsapp) return 'https://wa.me/' + CONTACT.whatsapp + '?text=' + msg;
-    return CONTACT.instagram;          // her bio's own route: DM to order
+    return CONTACT.instagram;
   }
   var hasWA = !!CONTACT.whatsapp;
 
@@ -198,15 +267,19 @@
     requestAnimationFrame(raf);
   }
 
-  /* Holding the page still behind the drawer and the lightbox. With Lenis
-     driving the scroll, lenis.stop() is enough. Without it — every touch
-     device now — `overflow:hidden` on the body is famously not enough on
+  /* Holding the page still behind the drawer, the basket and the lightbox.
+     With Lenis driving the scroll, lenis.stop() is enough. Without it — every
+     touch device now — `overflow:hidden` on the body is famously not enough on
      iOS, so the body is pinned in place and put back where it was after. */
-  var lockedAt = 0;
+  var lockedAt = 0, locks = 0;
   function lockScroll(on) {
+    locks = Math.max(0, locks + (on ? 1 : -1));
+    if (on && locks > 1) return;
+    if (!on && locks > 0) return;
     var b = document.body;
     if (on) {
       lockedAt = window.scrollY || document.documentElement.scrollTop || 0;
+      if (lenis) lenis.stop();
       b.style.overflow = 'hidden';
       if (!lenis) {
         b.style.position = 'fixed';
@@ -215,6 +288,7 @@
         b.style.right = '0';
       }
     } else {
+      if (lenis) lenis.start();
       b.style.overflow = '';
       if (!lenis) {
         b.style.position = '';
@@ -229,14 +303,14 @@
     }
   }
 
-  /* `jump` means put me there, now. Watching the whole page fly past on the
-     way to a section is a lot of motion to sit through, especially from a
-     menu, so every menu link and everything on a touch screen jumps. */
   /* The sticky header's height. The smooth-scroll library, the instant jump
      and the browser's own scroll-margin-top must all use the same number or
      a section lands in a slightly different place depending on the route. */
   var HEAD = 84;
 
+  /* `jump` means put me there, now. Watching the whole page fly past on the
+     way to a section is a lot of motion to sit through, especially from a
+     menu, so every menu link and everything on a touch screen jumps. */
   function scrollToHash(hash, jump) {
     var target = hash && hash.length > 1 ? document.getElementById(hash.slice(1)) : null;
     if (!target) return false;
@@ -262,7 +336,6 @@
     burger.classList.remove('on');
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Open menu');
-    if (lenis) lenis.start();
     lockScroll(false);
   }
 
@@ -278,6 +351,7 @@
     var wasOpen = drawer.classList.contains('open');
     var jump = wasOpen || !fine || !!a.closest('.nav, .drawer');
     closeDrawer();
+    closeSheet();
     if (wasOpen && !lenis) requestAnimationFrame(function () { scrollToHash(hash, jump); });
     else scrollToHash(hash, jump);
     history.replaceState(null, '', hash);
@@ -290,7 +364,7 @@
       var l = $('#loader');
       if (l) l.classList.add('gone');
       $('#chat').classList.add('in');
-    }, reduced ? 0 : 850);
+    }, reduced ? 0 : 800);
   });
 
   /* ==================================================== nav, drawer, header */
@@ -301,13 +375,15 @@
     burger.classList.toggle('on', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    if (lenis) { open ? lenis.stop() : lenis.start(); }
     lockScroll(open);
     $$('a', drawer).forEach(function (a, i) {
-      a.style.transitionDelay = open ? (0.12 + i * 0.05) + 's' : '0s';
+      a.style.transitionDelay = open ? (0.1 + i * 0.04) + 's' : '0s';
     });
   });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeDrawer(); closeLb(); } });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    closeDrawer(); closeLb(); closeSheet();
+  });
 
   function onScroll() {
     nav.classList.toggle('stuck', (window.scrollY || document.documentElement.scrollTop) > 40);
@@ -319,14 +395,10 @@
   /* Hundreds-and-thousands, drifting. Drawn as plain elements rather than
      emoji or cut-out photographs: a photographed sprinkle over a photograph
      of a brownie looks like a mistake, a soft coloured capsule reads as
-     texture. Size, tint, drift and duration are random per sprinkle, and the
-     whole thing is skipped when the visitor asks for reduced motion. */
+     texture. Skipped entirely when the visitor asks for reduced motion. */
 
   (function sprinkles() {
     var TINTS = ['#e87cbb', '#f2c2dc', '#ffe7fd', '#6b2626', '#8a4b2a', '#71804a', '#f3b94d'];
-    /* A blurred, composited layer costs a phone something on every scroll
-       frame, and thirty of them cost it thirty times that. Small screens get
-       fewer and no blur. */
     var small = Math.min(window.innerWidth, window.innerHeight) < 760;
 
     $$('[data-sprinkles]').forEach(function (field) {
@@ -363,54 +435,74 @@
   }());
 
   /* =============================================================== marquee */
+  /* Twice this strip came out as an empty brown bar on her phone while being
+     perfect in every desktop browser. Both times the cause was the same: a
+     moving layer wider than iOS will paint (about 4096 device pixels, which
+     on a 3x screen is only ~1365 CSS px). Cutting it shorter cannot fix it,
+     because to cover a wide screen the moving element has to be at least as
+     wide as the screen.
 
-  /* iOS and iPadOS will not paint a moving layer wider than about 4096
-     DEVICE pixels, and they fail silently: the band came out as an empty
-     brown bar on her phone and was perfect in every desktop browser.
-     Making one long strip and animating it cannot be fixed by making the
-     strip shorter, because to cover a 2560px band the moving element has
-     to BE 2560px — 5120 device pixels on a retina screen. So nothing long
-     moves here. The strip is cut into short runs, each of which animates
-     itself by exactly its own width. They are identical and they move in
-     lockstep, so the row reads as one continuous strip, while no layer is
-     ever wider than one run whatever the screen. */
+     So nothing moves. The band is an overflow box and this scrolls it. A
+     scrolling box is tiled and painted by the browser as it goes, so there is
+     no composited layer to overflow — at any screen size — and every word
+     fits in one run, so the list flows past instead of restarting after four. */
+
   (function marquee() {
     var track = $('#marquee');
     if (!track) return;
     var band = track.parentNode;
     var words = ['Brownies', 'Blondies', 'Brookies', 'NYC cookies', 'Cake pops',
-      'Personalised slabs', 'Halal', 'UK-wide postals', 'Made with love'];
+      'Personalised slabs', 'Halal', 'Baked in ' + CONTACT.area, 'UK-wide postals',
+      'Made with love'];
+    var runW = 0;
 
     function build() {
-      var wide = band.clientWidth || 360;
-      /* One run's own layer is all that has to stay small. The limit is in
-         device pixels, so a 3x phone can afford a third of what a 1x screen
-         can; 1600 device pixels leaves plenty of room under it. */
-      var dpr = window.devicePixelRatio || 1;
-      var target = Math.min(wide, Math.max(420, 1600 / dpr));
-
       track.innerHTML = '';
-      var run = el('div', { class: 'band-run' });
+      var run = el('div', { class: 'band-run' },
+        words.map(function (w) { return '<span>' + esc(w) + '</span>'; }).join(''));
       track.appendChild(run);
-      for (var i = 0; i < 40 && run.getBoundingClientRect().width < target; i++) {
-        run.insertAdjacentHTML('beforeend', '<span>' + esc(words[i % words.length]) + '</span>');
-      }
-      var runW = run.getBoundingClientRect().width;
+      runW = run.getBoundingClientRect().width;
       if (!runW) return;
-
-      /* Every run slides one run's width and repeats. At any moment the
-         runs cover (k-1) runs of band, so k-1 runs must span it. */
-      var runs = Math.ceil(wide / runW) + 1;
-      for (var c = 1; c < runs; c++) track.appendChild(run.cloneNode(true));
-      track.style.setProperty('--run', runW.toFixed(1) + 'px');
-      track.style.setProperty('--dur', Math.max(7, Math.round(runW / 48)) + 's');
+      /* The strip must span the band plus one run, so that when a run has
+         slid its own width away there is still something behind it. That is
+         the minimum, and the minimum is what is built: every extra copy is
+         more DOM and more paint for nothing. */
+      var copies = Math.ceil((band.clientWidth + runW) / runW);
+      for (var c = 1; c < copies; c++) track.appendChild(run.cloneNode(true));
+      band.scrollLeft = 0;
     }
 
     build();
     var t;
     window.addEventListener('resize', function () {
-      clearTimeout(t); t = setTimeout(build, 250);
+      clearTimeout(t);
+      t = setTimeout(function () { build(); x = 0; }, 250);
     });
+
+    if (reduced) return;                     // no drift for anyone who asked
+
+    var x = 0, last = 0, running = true;
+    var SPEED = 42;                          // px per second
+    document.addEventListener('visibilitychange', function () {
+      running = !document.hidden; last = 0;
+    });
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {
+        running = es[0].isIntersecting && !document.hidden;
+        last = 0;
+      }).observe(band);
+    }
+
+    (function frame(now) {
+      requestAnimationFrame(frame);
+      if (!running || !runW) { last = now; return; }
+      if (!last) { last = now; return; }
+      var dt = Math.min(64, now - last);     // a tab that was asleep must not lurch
+      last = now;
+      x += SPEED * dt / 1000;
+      if (x >= runW) x -= runW;              // one run on, and round again
+      band.scrollLeft = x;
+    }(0));
   }());
 
   /* ================================================================== menu */
@@ -430,7 +522,8 @@
         '</div>' +
         '<div class="item-body">' +
           '<h3>' + esc(m.name) + '</h3>' +
-          '<p><b>' + esc(m.sub) + '</b> — ' + esc(m.text) + '</p>' +
+          '<p><b>' + esc(m.sub) + '</b></p>' +
+          '<p>' + esc(m.text) + '</p>' +
           '<span class="opt">' + esc(m.opt) + '</span>' +
         '</div>';
       host.appendChild(card);
@@ -473,6 +566,501 @@
     });
   }());
 
+  /* ================================================================ basket
+     Kept in this site's own localStorage so a basket survives a reload and a
+     closed tab. Private browsing throws on write; the basket then lasts for
+     this visit only, which is still worth having, and must never break the
+     page — hence the try/catch on both sides. */
+
+  var STORE = 'bnl-basket';
+  var basket = [];
+  try { basket = JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) {}
+  if (!Array.isArray(basket)) basket = [];
+
+  function persist() {
+    try { localStorage.setItem(STORE, JSON.stringify(basket)); } catch (e) {}
+  }
+  function basketCount() {
+    return basket.reduce(function (n, l) { return n + (l.qty || 1); }, 0);
+  }
+  /* Lines with no published price are never guessed at. They are counted,
+     listed and sent with the order, and left out of the subtotal. */
+  function subtotal() {
+    return basket.reduce(function (n, l) { return n + (l.price == null ? 0 : l.price * l.qty); }, 0);
+  }
+  function hasQuoteLines() {
+    return basket.some(function (l) { return l.price == null || l.premium; });
+  }
+
+  var FULFIL = 'post';
+  try { FULFIL = localStorage.getItem(STORE + '-fulfil') || 'post'; } catch (e) {}
+
+  function postageCost() {
+    if (FULFIL === 'collect') return 0;
+    return CHECKOUT.postage == null ? null : CHECKOUT.postage;
+  }
+  function orderTotal() {
+    var p = postageCost();
+    return p == null ? null : subtotal() + p;
+  }
+
+  /* ---------------------------------------------------------- the toast */
+  var toastEl = $('#toast'), toastT;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 2400);
+  }
+
+  /* ------------------------------------------------------- the bag button */
+  var bagBtn = $('#bagBtn'), bagCount = $('#bagCount');
+  function paintBag(pop) {
+    var n = basketCount();
+    bagCount.textContent = n;
+    bagCount.hidden = n === 0;
+    bagBtn.setAttribute('aria-label', n ? 'Open your basket — ' + n + ' item' + (n === 1 ? '' : 's') : 'Open your basket');
+    if (pop) {
+      bagBtn.classList.remove('pop');
+      void bagBtn.offsetWidth;               // restart the animation
+      bagBtn.classList.add('pop');
+    }
+  }
+
+  /* ========================================================= the box builder */
+
+  var pick = { item: ITEMS[0], size: ITEMS[0].sizes[4], flavs: [], qty: 1, note: '' };
+
+  (function builder() {
+    var itemsHost = $('#bdItems'), sizesHost = $('#bdSizes'), flavsHost = $('#bdFlavs');
+    if (!itemsHost) return;
+    var hint = $('#bdHint'), noteIn = $('#bdNote'), noteLbl = $('#bdNoteLabel');
+
+    function maxFlavours() {
+      return Math.max(1, Math.min(pick.size.pieces, 6));
+    }
+
+    function drawItems() {
+      itemsHost.innerHTML = '';
+      ITEMS.forEach(function (it) {
+        var b = el('button', {
+          type: 'button', class: 'bd-item' + (it.id === pick.item.id ? ' on' : ''),
+          role: 'radio', 'aria-checked': it.id === pick.item.id ? 'true' : 'false'
+        },
+          '<img src="' + PH + it.img + '.jpg" alt="" width="900" height="900" loading="lazy">' +
+          '<span><b>' + esc(it.name) + '</b><small>' + esc(it.from) + '</small></span>');
+        b.addEventListener('click', function () {
+          pick.item = it;
+          pick.size = it.sizes[it.sizes.length > 4 ? 4 : 0];
+          pick.flavs = [];
+          pick.qty = 1;
+          drawAll();
+        });
+        itemsHost.appendChild(b);
+      });
+    }
+
+    function drawSizes() {
+      sizesHost.innerHTML = '';
+      pick.item.sizes.forEach(function (sz) {
+        var on = sz.id === pick.size.id;
+        var b = el('button', {
+          type: 'button', class: 'chip' + (on ? ' on' : ''),
+          role: 'radio', 'aria-checked': on ? 'true' : 'false'
+        }, esc(sz.label) + (sz.price == null ? ' · ask' : ' · ' + money(sz.price)));
+        b.addEventListener('click', function () {
+          pick.size = sz;
+          if (pick.flavs.length > Math.max(1, Math.min(sz.pieces, 6))) pick.flavs = [];
+          drawAll();
+        });
+        sizesHost.appendChild(b);
+      });
+    }
+
+    function drawFlavs() {
+      var prem = pick.item.set === 'cookie' ? (pick.size.prem ? 'prem' : 'std') : 'both';
+      var std = flavourList(pick.item.set, 'std');
+      var pr = prem === 'std' ? [] : flavourList(pick.item.set, 'prem');
+      if (prem === 'prem') std = [];
+
+      var max = maxFlavours();
+      hint.textContent = pick.item.each && pick.size.pieces === 1
+        ? 'Choose the flavour you’d like.'
+        : 'Choose up to ' + max + ' — they are mixed across the box.';
+
+      flavsHost.innerHTML = '';
+      function chip(name, isPrem) {
+        var on = pick.flavs.indexOf(name) > -1;
+        var full = !on && pick.flavs.length >= max;
+        var b = el('button', {
+          type: 'button',
+          class: 'f' + (on ? ' on' : '') + (isPrem ? ' prem' : '') + (full ? ' full' : ''),
+          'aria-pressed': on ? 'true' : 'false'
+        }, esc(name));
+        b.addEventListener('click', function () {
+          var i = pick.flavs.indexOf(name);
+          if (i > -1) pick.flavs.splice(i, 1);
+          else if (pick.flavs.length < max) pick.flavs.push(name);
+          else { toast('That is the most flavours for this size.'); return; }
+          drawFlavs(); drawSide();
+        });
+        flavsHost.appendChild(b);
+      }
+      std.forEach(function (f) { chip(f, false); });
+      pr.forEach(function (f) { chip(f, true); });
+    }
+
+    function isPremiumChosen() {
+      if (pick.item.set === 'cookie') return !!pick.size.prem;
+      var pr = flavourList(pick.item.set, 'prem');
+      return pick.flavs.some(function (f) { return pr.indexOf(f) > -1; });
+    }
+
+    function linePrice() {
+      return pick.size.price == null ? null : pick.size.price * pick.qty;
+    }
+
+    function drawSide() {
+      $('#bdPic').src = PH + pick.item.img + '.jpg';
+      $('#bdName').textContent = pick.item.name;
+      $('#bdMeta').textContent = pick.size.label +
+        (pick.size.price == null ? ' · price confirmed with your order' : '');
+
+      var list = $('#bdChosen');
+      list.innerHTML = '';
+      if (!pick.flavs.length) list.appendChild(el('li', { class: 'none' }, 'No flavours chosen yet'));
+      else pick.flavs.forEach(function (f) { list.appendChild(el('li', null, esc(f))); });
+
+      $('#bdQty').textContent = pick.qty;
+      var lp = linePrice();
+      $('#bdPrice').textContent = lp == null ? 'Ask' : money(lp);
+
+      var small = $('#bdSmall');
+      if (pick.size.price == null) {
+        small.textContent = 'This size is priced when your order is confirmed.';
+      } else if (isPremiumChosen() && pick.item.set !== 'cookie') {
+        small.textContent = 'Premium toppings are a little extra, confirmed with your order.';
+      } else {
+        small.textContent = FULFIL === 'collect'
+          ? 'Collection from ' + CONTACT.area + '.'
+          : 'Postage is confirmed with your order.';
+      }
+
+      noteLbl.innerHTML = pick.item.message
+        ? 'Message for the slab <span>(optional)</span>'
+        : 'Message or notes <span>(optional)</span>';
+      noteIn.placeholder = pick.item.message ? 'e.g. Happy Birthday Amina' : 'Anything I should know';
+    }
+
+    function drawAll() { drawItems(); drawSizes(); drawFlavs(); drawSide(); }
+
+    $('#bdMinus').addEventListener('click', function () {
+      pick.qty = Math.max(1, pick.qty - 1); drawSide();
+    });
+    $('#bdPlus').addEventListener('click', function () {
+      pick.qty = Math.min(99, pick.qty + 1); drawSide();
+    });
+    noteIn.addEventListener('input', function () { pick.note = noteIn.value.trim(); });
+
+    $('#bdAdd').addEventListener('click', function () {
+      if (!pick.flavs.length && pick.item.set !== 'pop') {
+        toast('Pick at least one flavour first.');
+        $('#bdFlavs').scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+        return;
+      }
+      var key = [pick.item.id, pick.size.id, pick.flavs.join('+'), pick.note].join('|');
+      var found = null;
+      for (var i = 0; i < basket.length; i++) if (basket[i].key === key) found = basket[i];
+      if (found) found.qty += pick.qty;
+      else basket.push({
+        key: key, item: pick.item.name, img: pick.item.img,
+        size: pick.size.label, flavs: pick.flavs.slice(),
+        note: pick.note, price: pick.size.price, qty: pick.qty,
+        premium: isPremiumChosen() && pick.item.set !== 'cookie'
+      });
+      persist(); paintBag(true); paintBasket();
+      toast(pick.qty + ' × ' + pick.item.name + ' added to your basket');
+      pick.qty = 1; drawSide();
+    });
+
+    drawAll();
+  }());
+
+  /* ======================================================= the basket panel */
+
+  var sheet = $('#sheet'), bkBody = $('#bkBody'), bkFoot = $('#bkFoot');
+
+  function paintBasket() {
+    if (!basket.length) {
+      bkBody.innerHTML =
+        '<div class="bk-empty">' + ICON.bag +
+        '<p>Your basket is empty.</p>' +
+        '<p style="font-size:.88rem">Build a box and it will appear here.</p></div>';
+      bkFoot.innerHTML = '<a class="btn" href="#build" style="width:100%;justify-content:center">Build your box</a>';
+      return;
+    }
+
+    bkBody.innerHTML = '';
+    basket.forEach(function (l, i) {
+      var line = el('div', { class: 'bk-line' });
+      line.innerHTML =
+        '<img src="' + PH + l.img + '.jpg" alt="" width="900" height="900" loading="lazy">' +
+        '<div class="bl-main">' +
+          '<b>' + esc(l.item) + '</b>' +
+          '<small>' + esc(l.size) + '</small>' +
+          (l.flavs.length ? '<small>' + esc(l.flavs.join(', ')) + '</small>' : '') +
+          (l.note ? '<small>“' + esc(l.note) + '”</small>' : '') +
+          (l.premium ? '<small>Premium toppings — confirmed with your order</small>' : '') +
+          '<div class="bl-row">' +
+            '<div class="qty">' +
+              '<button type="button" data-less="' + i + '" aria-label="One fewer">−</button>' +
+              '<output>' + l.qty + '</output>' +
+              '<button type="button" data-more="' + i + '" aria-label="One more">+</button>' +
+            '</div>' +
+            '<span class="bl-price">' + (l.price == null ? 'Ask' : money(l.price * l.qty)) + '</span>' +
+          '</div>' +
+          '<button class="bl-drop" type="button" data-drop="' + i + '">Remove</button>' +
+        '</div>';
+      bkBody.appendChild(line);
+    });
+
+    var post = postageCost();
+    var tot = orderTotal();
+    bkFoot.innerHTML =
+      '<div class="co-opts" style="margin-bottom:14px">' +
+        fulfilOption('collect', 'Collection', 'From ' + CONTACT.area) +
+        fulfilOption('post', 'Posted to me', 'UK-wide') +
+      '</div>' +
+      '<div class="bk-sum">' +
+        '<div><span>Subtotal</span><span>' + money(subtotal()) + '</span></div>' +
+        '<div><span>Postage</span><span>' +
+          (FULFIL === 'collect' ? 'Collection' : (post == null ? '<small>Confirmed with your order</small>' : money(post))) +
+        '</span></div>' +
+        '<div class="tot"><span>Total</span><span>' +
+          (tot == null ? money(subtotal()) + ' + postage' : money(tot)) +
+        '</span></div>' +
+      '</div>' +
+      (hasQuoteLines()
+        ? '<p class="bk-quote">Some items are priced when your order is confirmed — they are listed above and sent with your order.</p>'
+        : '') +
+      '<button class="btn" type="button" id="bkGo" style="width:100%;justify-content:center">Checkout</button>';
+
+    $$('[data-less]', bkBody).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = +b.getAttribute('data-less');
+        basket[i].qty -= 1;
+        if (basket[i].qty < 1) basket.splice(i, 1);
+        persist(); paintBag(); paintBasket();
+      });
+    });
+    $$('[data-more]', bkBody).forEach(function (b) {
+      b.addEventListener('click', function () {
+        basket[+b.getAttribute('data-more')].qty += 1;
+        persist(); paintBag(); paintBasket();
+      });
+    });
+    $$('[data-drop]', bkBody).forEach(function (b) {
+      b.addEventListener('click', function () {
+        basket.splice(+b.getAttribute('data-drop'), 1);
+        persist(); paintBag(); paintBasket();
+        toast('Removed from your basket');
+      });
+    });
+    $$('[data-fulfil]', bkFoot).forEach(function (b) {
+      b.addEventListener('click', function () {
+        FULFIL = b.getAttribute('data-fulfil');
+        try { localStorage.setItem(STORE + '-fulfil', FULFIL); } catch (e) {}
+        paintBasket(); paintCheckout();
+      });
+    });
+    var go = $('#bkGo');
+    if (go) go.addEventListener('click', openCheckout);
+  }
+
+  function fulfilOption(id, title, sub) {
+    return '<button class="co-opt' + (FULFIL === id ? ' on' : '') + '" type="button" data-fulfil="' + id + '">' +
+      '<i></i><span><b>' + title + '</b><small>' + sub + '</small></span></button>';
+  }
+
+  /* ------------------------------------------------------- opening/closing */
+  function openSheet(which) {
+    sheet.hidden = false;
+    void sheet.offsetWidth;
+    sheet.classList.add('in');
+    sheet.classList.toggle('co', which === 'co');
+    lockScroll(true);
+    setTimeout(function () {
+      var f = $(which === 'co' ? '#coClose' : '#bkClose');
+      if (f) f.focus();
+    }, 60);
+  }
+  function closeSheet() {
+    if (sheet.hidden || !sheet.classList.contains('in')) return;
+    sheet.classList.remove('in', 'co');
+    lockScroll(false);
+    setTimeout(function () { sheet.hidden = true; }, 480);
+  }
+  bagBtn.addEventListener('click', function () { paintBasket(); openSheet('bk'); });
+  $('#bkClose').addEventListener('click', closeSheet);
+  $('#coClose').addEventListener('click', function () { sheet.classList.remove('co'); });
+  $('#sheetBg').addEventListener('click', closeSheet);
+
+  /* ==================================================== the example checkout */
+
+  var PAY = 'card';
+
+  function paintCheckout() {
+    var host = $('#coFulfil');
+    if (!host) return;
+    host.innerHTML = fulfilOption('collect', 'Collection', 'From ' + CONTACT.area) +
+      fulfilOption('post', 'Posted to me', 'UK-wide');
+    $$('[data-fulfil]', host).forEach(function (b) {
+      b.addEventListener('click', function () {
+        FULFIL = b.getAttribute('data-fulfil');
+        try { localStorage.setItem(STORE + '-fulfil', FULFIL); } catch (e) {}
+        paintCheckout(); paintBasket();
+      });
+    });
+    $('#coAddrWrap').hidden = FULFIL === 'collect';
+
+    var pays = $('#coPay');
+    pays.innerHTML =
+      payOption('card', 'Card', 'Pay online when the price is confirmed') +
+      payOption('bank', 'Bank transfer', 'Details sent with your confirmation') +
+      payOption('deposit', 'Deposit', 'Secure the date now, the rest before collection');
+    $$('[data-pay]', pays).forEach(function (b) {
+      b.addEventListener('click', function () {
+        PAY = b.getAttribute('data-pay');
+        paintCheckout();
+      });
+    });
+    $('#coCard').hidden = PAY === 'bank';
+    $('#coBank').hidden = PAY !== 'bank';
+
+    var tot = orderTotal();
+    $('#coTotal').innerHTML =
+      '<span>' + (PAY === 'deposit' ? 'Deposit today' : 'To pay') + '</span><span>' +
+      (tot == null
+        ? (PAY === 'deposit' ? money(subtotal() / 2) + '*' : money(subtotal()) + ' + postage')
+        : (PAY === 'deposit' ? money(tot / 2) : money(tot))) +
+      '</span>';
+  }
+  function payOption(id, title, sub) {
+    return '<button class="co-opt' + (PAY === id ? ' on' : '') + '" type="button" data-pay="' + id + '">' +
+      '<i></i><span><b>' + title + '</b><small>' + sub + '</small></span></button>';
+  }
+
+  function openCheckout() {
+    if (!basket.length) { toast('Your basket is empty.'); return; }
+    paintCheckout();
+    $('#coDone').classList.remove('on');
+    $('#coForm').style.display = '';
+    sheet.classList.add('co');
+    setTimeout(function () { $('#coClose').focus(); }, 60);
+  }
+
+  /* Everything in the order, in one block of text. Used for the message that
+     goes to her and for the fallback, so the two can never disagree. */
+  function orderText(d) {
+    var out = ['Order from the Brownielicious website', ''];
+    basket.forEach(function (l) {
+      out.push('• ' + l.qty + ' × ' + l.item + ' — ' + l.size +
+        (l.price == null ? ' (price to confirm)' : ' — ' + money(l.price * l.qty)));
+      if (l.flavs.length) out.push('    flavours: ' + l.flavs.join(', '));
+      if (l.note) out.push('    message: ' + l.note);
+      if (l.premium) out.push('    includes premium toppings');
+    });
+    out.push('');
+    out.push('Subtotal: ' + money(subtotal()));
+    out.push('Fulfilment: ' + (FULFIL === 'collect' ? 'Collection from ' + CONTACT.area : 'Posted UK-wide'));
+    out.push('Postage: ' + (postageCost() == null ? 'to confirm' : money(postageCost())));
+    out.push('Payment preference: ' + PAY);
+    out.push('');
+    out.push('Name: ' + d.name);
+    out.push('Email: ' + d.email);
+    if (d.phone) out.push('Phone / Instagram: ' + d.phone);
+    if (d.date) out.push('Date needed: ' + d.date);
+    if (d.addr) out.push('Address: ' + d.addr);
+    return out.join('\n');
+  }
+
+  (function checkoutForm() {
+    var form = $('#coForm'), btn = $('#coSend'), msg = $('#coMsg');
+    if (!form) return;
+
+    function v(id) { var n = $('#' + id); return n ? n.value.trim() : ''; }
+    function show(kind, html) { msg.className = 'form-msg on ' + kind; msg.innerHTML = html; }
+
+    function details() {
+      return { name: v('co_name'), email: v('co_email'), phone: v('co_phone'),
+        date: v('co_date'), addr: FULFIL === 'collect' ? '' : v('co_addr') };
+    }
+
+    function fallback(reason) {
+      var body = orderText(details());
+      var mail = CONTACT.email
+        ? 'mailto:' + CONTACT.email + '?subject=' + encodeURIComponent('Order from the website') +
+          '&body=' + encodeURIComponent(body)
+        : '';
+      show('err',
+        '<b>We could not send that from here.</b><br>Nothing is lost — ' +
+        (mail ? '<a href="' + mail + '">open it as an email</a> or ' : '') +
+        '<a href="' + waHref(body) + '" target="_blank" rel="noopener">' +
+        (hasWA ? 'send it on WhatsApp' : 'send it as an Instagram message') +
+        '</a>, and your whole order is already written out for you.');
+      if (reason) console.warn('[order] ' + reason);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (v('co_company')) return;                   // honeypot
+      var d = details();
+      if (!d.name || !d.email) { show('err', 'Please give your name and an email address so I can reply.'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) { show('err', 'That email address does not look quite right.'); return; }
+      if (FULFIL === 'post' && !d.addr) { show('err', 'Please add the address it should be posted to.'); return; }
+
+      msg.className = 'form-msg';
+      if (!W3F_KEY) { fallback('no Web3Forms key set — see W3F_KEY in brownielicious.js'); return; }
+
+      btn.disabled = true;
+      var label = btn.textContent;
+      btn.textContent = 'Sending…';
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: W3F_KEY,
+          subject: 'Order — ' + basketCount() + ' item(s)' + (d.date ? ' for ' + d.date : ''),
+          from_name: 'Brownielicious website',
+          replyto: d.email,
+          order: orderText(d)
+        })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (body) {
+          if (!body || !body.success) throw new Error(body && body.message ? body.message : 'no success flag');
+          done();
+        })
+        .catch(function (ex) { fallback(ex && ex.message ? ex.message : String(ex)); })
+        .then(function () { btn.disabled = false; btn.textContent = label; });
+    });
+
+    function done() {
+      basket = [];
+      persist(); paintBag(); paintBasket();
+      form.style.display = 'none';
+      $('#coDone').classList.add('on');
+    }
+
+    $('#coDoneCta').innerHTML =
+      '<button class="btn" type="button" id="coDoneClose">Close</button>' +
+      '<a class="btn ghost" href="' + CONTACT.instagram + '" target="_blank" rel="noopener">Follow on Instagram</a>';
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'coDoneClose') closeSheet();
+    });
+  }());
+
   /* =============================================================== gallery */
 
   var GALLERY = [
@@ -508,15 +1096,12 @@
 
     var now = new Date();
     var y = now.getFullYear(), m = now.getMonth(), today = now.getDate();
-    var first = new Date(y, m, 1).getDay();            // 0 = Sunday
-    first = (first + 6) % 7;                           // week starts Monday
+    var first = (new Date(y, m, 1).getDay() + 6) % 7;      // week starts Monday
     var days = new Date(y, m + 1, 0).getDate();
 
     title.textContent = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) + ' availability';
 
-    var html = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(function (d) {
-      return '<i>' + d + '</i>';
-    }).join('');
+    var html = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(function (d) { return '<i>' + d + '</i>'; }).join('');
     for (var p = 0; p < first; p++) html += '<b class="pad"></b>';
     for (var d = 1; d <= days; d++) {
       var cls = [];
@@ -606,15 +1191,10 @@
      arrow along. Native overflow scrolling already handles the wheel and the
      touch flick; what it does not give you is a grab-and-throw with a mouse,
      or an arrow button that glides instead of jumping. Both are here, and
-     both leave the element's own scrollLeft as the single source of truth,
-     so the scrollbar, the snap points and the keyboard stay honest. */
+     both leave the element's own scrollLeft as the single source of truth. */
 
   (function rails() {
-    /* easeInOutCubic: starts slow, gets on with it, arrives slowly. An
-       ease-out alone leaves the first frames jumping away from your thumb. */
-    var ease = function (t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    };
+    var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
     /* Where a card edge would sit if it were parked at the left of the strip.
        Stepping to one of these, rather than by "one card width", is what makes
@@ -645,16 +1225,9 @@
     }
 
     /* Snapping and the browser's own smooth scrolling both want to own
-       scrollLeft. While we are animating it ourselves, they are switched off;
-       without that the two animations fight each other and the strip judders. */
-    function takeOver(rail) {
-      rail.style.scrollSnapType = 'none';
-      rail.style.scrollBehavior = 'auto';
-    }
-    function handBack(rail) {
-      rail.style.scrollSnapType = '';
-      rail.style.scrollBehavior = '';
-    }
+       scrollLeft. While we animate it ourselves, they are switched off. */
+    function takeOver(rail) { rail.style.scrollSnapType = 'none'; rail.style.scrollBehavior = 'auto'; }
+    function handBack(rail) { rail.style.scrollSnapType = ''; rail.style.scrollBehavior = ''; }
 
     function glide(rail, to) {
       var from = rail.scrollLeft;
@@ -667,7 +1240,6 @@
 
       rail.__to = to;
       takeOver(rail);
-      /* far to go, a little longer to get there — but never a crawl */
       var ms = Math.min(820, 320 + Math.abs(to - from) * 0.42);
       var t0 = performance.now();
       (function frame(now) {
@@ -687,8 +1259,6 @@
         var max = rail.scrollWidth - rail.clientWidth - 1;
         if (prev) prev.disabled = rail.scrollLeft <= 1;
         if (next) next.disabled = rail.scrollLeft >= max;
-        /* nothing to scroll — four steps on a wide screen, say — so the whole
-           row of arrows goes away rather than sitting there greyed out */
         if (ctrl) ctrl.hidden = max <= 1;
       }
       rail.addEventListener('scroll', ends, { passive: true });
@@ -707,8 +1277,6 @@
         if (e.key === 'End') { e.preventDefault(); glide(rail, rail.scrollWidth); }
       });
 
-      /* Grab and throw. Pointer events cover mouse and pen; touch is left to
-         the browser, which already does it better than we could. */
       var down = false, startX = 0, startLeft = 0, last = 0, lastT = 0, v = 0, moved = 0;
 
       rail.addEventListener('pointerdown', function (e) {
@@ -728,11 +1296,10 @@
         moved = Math.max(moved, Math.abs(dx));
         rail.scrollLeft = startLeft - dx;
         var now = performance.now(), dt = now - lastT;
-        if (dt > 0) v = (e.clientX - last) / dt;          // px per ms
+        if (dt > 0) v = (e.clientX - last) / dt;
         last = e.clientX; lastT = now;
       });
 
-      /* However it ended, finish on a card edge rather than halfway across one. */
       function settle() {
         var list = stops(rail), at = rail.scrollLeft, best = list[0];
         for (var i = 1; i < list.length; i++) {
@@ -747,9 +1314,9 @@
         down = false;
         rail.classList.remove('dragging');
         if (moved > 6) {
-          rail.__drag = Date.now();            // a click that ended a drag is not a click
+          rail.__drag = Date.now();
           if (!reduced && Math.abs(v) > 0.15) {
-            var speed = v * 16;                // carry the throw on
+            var speed = v * 16;
             (function decay() {
               speed *= 0.94;
               rail.scrollLeft -= speed;
@@ -769,7 +1336,7 @@
     });
   }());
 
-  /* ============================================== menu tiles: gentle tilt */
+  /* =============================================== menu tiles: gentle tilt */
 
   (function tilt() {
     if (reduced || window.matchMedia('(hover: none)').matches) return;
@@ -786,7 +1353,7 @@
     });
   }());
 
-  /* =============================================================== lightbox */
+  /* ================================================================ lightbox */
 
   var lb = $('#lb'), lbImg = $('#lbImg'), lbCap = $('#lbCap');
   var tiles = $$('[data-lb]'), lbAt = 0;
@@ -802,14 +1369,12 @@
           .map(function (n) { return n.textContent.trim(); }).join(' — ')
       : '';
     lb.classList.add('open');
-    if (lenis) lenis.stop();
     lockScroll(true);
     $('#lbX').focus();
   }
   function closeLb() {
     if (!lb.classList.contains('open')) return;
     lb.classList.remove('open');
-    if (lenis) lenis.start();
     lockScroll(false);
   }
   /* A tile inside a rail is also the drag handle for that rail, so a click
@@ -836,7 +1401,6 @@
   $$('.q button').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var q = btn.parentElement, panel = $('.q-a', q), open = q.classList.contains('on');
-      // one answer at a time, so the page never springs about
       $$('.q.on').forEach(function (o) {
         o.classList.remove('on');
         $('.q-a', o).style.height = '0px';
@@ -868,7 +1432,6 @@
     }
     ['#footSocial', '#sideSocial', '#drawerSocial'].forEach(function (s) { socialRow($(s)); });
 
-    /* the three ways to reach her, beside the form */
     var ways = $('#enqWays');
     if (ways) {
       ways.innerHTML =
@@ -877,11 +1440,11 @@
             '<span><b>WhatsApp</b><small>Quickest for a question about a date</small></span></a>'
           : '') +
         '<a class="way" href="' + CONTACT.instagram + '" target="_blank" rel="noopener">' + ICON.ig +
-          '<span><b>Instagram DM</b><small>@browniieliciousss — where most orders start</small></span></a>' +
+          '<span><b>Instagram</b><small>@browniieliciousss</small></span></a>' +
         '<a class="way" href="' + CONTACT.tiktok + '" target="_blank" rel="noopener">' + ICON.tt +
-          '<span><b>TikTok</b><small>New flavours and giveaways go up here first</small></span></a>' +
+          '<span><b>TikTok</b><small>New flavours and giveaways first</small></span></a>' +
         '<span class="way" style="cursor:default">' + ICON.pin +
-          '<span><b>' + esc(CONTACT.area) + '</b><small>Collect locally, or posted UK-wide</small></span></span>';
+          '<span><b>' + esc(CONTACT.area) + '</b><small>Collection locally, or posted UK-wide</small></span></span>';
     }
 
     var foot = $('#footContact');
@@ -892,15 +1455,15 @@
         (CONTACT.facebook ? '<li><a href="' + CONTACT.facebook + '" target="_blank" rel="noopener">Facebook</a></li>' : '') +
         (hasWA ? '<li><a href="' + waHref() + '" target="_blank" rel="noopener">WhatsApp</a></li>' : '') +
         (CONTACT.email ? '<li><a href="mailto:' + CONTACT.email + '">' + esc(CONTACT.email) + '</a></li>' : '') +
-        '<li><a href="#enquire">Order enquiry form</a></li>' +
+        '<li><a href="#build">Build your box</a></li>' +
         '<li>' + esc(CONTACT.area) + ' · UK-wide postals</li>';
     }
 
     var route = $('#msgRoute');
     if (route) {
       route.textContent = hasWA
-        ? 'Prefer to message? I am on WhatsApp and Instagram, and answer both.'
-        : 'Prefer to message? A DM on Instagram gets picked up fastest.';
+        ? 'WhatsApp and Instagram are both answered.'
+        : 'A DM on Instagram is usually quickest.';
     }
 
     var chat = $('#chat');
@@ -913,30 +1476,7 @@
     $('#yr').textContent = new Date().getFullYear();
   }());
 
-  /* ============================================================= want chips */
-
-  var WANTS = ['Brownies', 'Blondies', 'Brookies', 'NYC cookies', 'Cake pops',
-    'Personalised slab', 'A mixed box', 'Favours / wrapped'];
-
-  (function chips() {
-    var host = $('#wantChips'), hidden = $('#want');
-    if (!host) return;
-    WANTS.forEach(function (name, i) {
-      var b = el('button', {
-        type: 'button', class: 'chip' + (i === 0 ? ' on' : ''),
-        'aria-pressed': i === 0 ? 'true' : 'false'
-      }, esc(name));
-      b.addEventListener('click', function () {
-        $$('.chip', host).forEach(function (c) { c.classList.remove('on'); c.setAttribute('aria-pressed', 'false'); });
-        b.classList.add('on');
-        b.setAttribute('aria-pressed', 'true');
-        hidden.value = name;
-      });
-      host.appendChild(b);
-    });
-  }());
-
-  /* =========================================================== enquiry form */
+  /* ========================================================== enquiry form */
 
   (function form() {
     var form = $('#enqForm'), btn = $('#enqBtn'), msg = $('#formMsg');
@@ -944,72 +1484,46 @@
 
     function val(id) { var n = $('#' + id); return n ? n.value.trim() : ''; }
 
-    /* Everything they typed, in the order it was asked for. Used both for the
-       message that goes to her and for the fallback below — the two must never
-       disagree about what the order said. */
     function summary() {
       return [
-        ['Wants', val('want')],
-        ['Name', val('name')],
-        ['Email', val('email')],
-        ['Phone / Instagram', val('phone')],
-        ['Date needed', val('date')],
-        ['Box size', val('size')],
-        ['Collection or postal', val('how')],
-        ['Occasion', val('occasion')],
-        ['Flavours', val('flavs')],
-        ['Notes', val('msg')]
+        ['Name', val('name')], ['Email', val('email')],
+        ['Phone / Instagram', val('phone')], ['Date', val('date')],
+        ['Occasion', val('occasion')], ['Message', val('msg')]
       ].filter(function (p) { return p[1]; });
     }
+    function show(kind, html) { msg.className = 'form-msg on ' + kind; msg.innerHTML = html; }
 
-    function show(kind, html) {
-      msg.className = 'form-msg on ' + kind;
-      msg.innerHTML = html;
-    }
-
-    /* If the send fails — or was never configured — the visitor has just
-       filled in nine fields and will not do it twice. So hand them the whole
-       thing back, already written, one tap from her inbox. */
     function fallback(reason) {
-      var lines = summary().map(function (p) { return p[0] + ': ' + p[1]; }).join('\n');
-      var body = 'Order enquiry from the Brownielicious website\n\n' + lines;
-      var subject = 'Order enquiry — ' + val('want') + (val('date') ? ' for ' + val('date') : '');
+      var body = 'Message from the Brownielicious website\n\n' +
+        summary().map(function (p) { return p[0] + ': ' + p[1]; }).join('\n');
       var mail = CONTACT.email
-        ? 'mailto:' + CONTACT.email + '?subject=' + encodeURIComponent(subject) +
+        ? 'mailto:' + CONTACT.email + '?subject=' + encodeURIComponent('Website enquiry') +
           '&body=' + encodeURIComponent(body)
         : '';
       show('err',
-        '<b>We could not send that from here.</b><br>' +
-        'Nothing you typed is lost — ' +
+        '<b>We could not send that from here.</b><br>Nothing you typed is lost — ' +
         (mail ? '<a href="' + mail + '">open it as an email</a> or ' : '') +
         '<a href="' + waHref(body) + '" target="_blank" rel="noopener">' +
-        (hasWA ? 'send it on WhatsApp' : 'send it as an Instagram message') + '</a>, ' +
-        'and it is already written for you.');
+        (hasWA ? 'send it on WhatsApp' : 'send it as an Instagram message') +
+        '</a>, and it is already written for you.');
       if (reason) console.warn('[enquiry] ' + reason);
     }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (val('company')) return;                       // honeypot: a bot filled it
-
+      if (val('company')) return;
       if (!val('name') || !val('email')) {
-        show('err', 'Please give your name and an email address so I can reply.');
-        return;
+        show('err', 'Please give your name and an email address so I can reply.'); return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('email'))) {
-        show('err', 'That email address does not look quite right — could you check it?');
-        return;
+        show('err', 'That email address does not look quite right — could you check it?'); return;
       }
-
       msg.className = 'form-msg';
-
       if (!W3F_KEY) { fallback('no Web3Forms key set — see W3F_KEY in brownielicious.js'); return; }
 
       var payload = {
-        access_key: W3F_KEY,
-        subject: 'Order enquiry — ' + val('want') + (val('date') ? ' for ' + val('date') : ''),
-        from_name: 'Brownielicious website',
-        replyto: val('email')                            // reply goes to them, not the form service
+        access_key: W3F_KEY, subject: 'Website enquiry',
+        from_name: 'Brownielicious website', replyto: val('email')
       };
       summary().forEach(function (p) { payload[p[0]] = p[1]; });
 
@@ -1022,11 +1536,9 @@
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
       })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, body: d }; }); })
-        .then(function (res) {
-          if (!res.body || !res.body.success) {
-            throw new Error(res.body && res.body.message ? res.body.message : 'no success flag');
-          }
+        .then(function (r) { return r.json(); })
+        .then(function (body) {
+          if (!body || !body.success) throw new Error(body && body.message ? body.message : 'no success flag');
           form.style.display = 'none';
           $('#sentPanel').classList.add('on');
         })
@@ -1034,24 +1546,22 @@
         .then(function () { btn.disabled = false; btn.textContent = label; });
     });
 
-    // the two buttons on the thank-you panel
     $('#sentCta').innerHTML =
-      '<a class="btn" href="' + waHref() + '" target="_blank" rel="noopener">' +
-        (hasWA ? 'Message on WhatsApp' : 'Message on Instagram') + '</a>' +
-      '<a class="btn ghost" href="#gallery">Back to the gallery</a>';
+      '<a class="btn" href="#build">Build your box</a>' +
+      '<a class="btn ghost" href="' + CONTACT.instagram + '" target="_blank" rel="noopener">Instagram</a>';
   }());
 
   /* ======================================================== scroll reveals */
-  /* Handled by the global data-fx toolkit (assets/js/scroll-fx.js). Two
-     things it cannot know about on its own: everything above was built after
-     it first ran, and the hero is never scrolled INTO. */
 
+  paintBag();
+  paintBasket();
   fxRefresh();
 
   (function heroOnLoad() {
+    /* The hero is never scrolled INTO, so its reveals are fired outright. */
     $$('.hero [data-fx]').forEach(function (n, i) {
       if (n.getAttribute('data-fx') === 'parallax') return;
-      setTimeout(function () { n.classList.add('fx-in'); }, reduced ? 0 : 420 + i * 140);
+      setTimeout(function () { n.classList.add('fx-in'); }, reduced ? 0 : 400 + i * 130);
     });
   }());
 

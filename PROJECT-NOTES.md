@@ -123,15 +123,32 @@ drifts hundreds-and-thousands behind the hero; drawn, not photographed, and
 skipped under reduced motion. Lenis is gated behind `(pointer: fine)` so a
 phone keeps its own momentum scrolling.
 
-**iOS will not paint a moving layer wider than ~4096 DEVICE pixels.** The
-word marquee under the hero was built by doubling a list of ten words, which
-came to 3286 CSS px — fine on a 1x desktop, but 9858 device pixels on a 3x
-phone, and iOS Safari silently gave up and painted an empty brown bar. It
-looked perfect in every desktop browser. The strip is now built to fit: one
-run of words just wider than the band, repeated only as many times as it
-takes to stay covered while one run slides away, with the budget worked out
-from `devicePixelRatio`. Anything that animates across the full width of the
-page needs the same arithmetic done on it.
+**iOS will not paint a moving layer wider than ~4096 DEVICE pixels, and
+cutting the strip shorter does not fix it.** The word marquee under the hero
+came out as an empty brown bar on her phone, twice, while being perfect in
+every desktop browser. First it was a strip built by doubling a ten-word list:
+3286 CSS px, which is 9858 device pixels on a 3x phone. Then it was short runs
+each animating themselves — better, but to cover a 2560px band the moving
+element still has to be 2560px, 5120 device pixels on a retina Mac. The fix
+that holds is to stop moving anything: the band is an `overflow:hidden` box
+and the JS drives its `scrollLeft`. A scrolling box is tiled and painted by
+the browser as it goes, so there is no composited layer to overflow at any
+screen size, and the whole word list fits in one run so it flows past instead
+of restarting after four words. Anything that animates across the full width
+of the page needs the same treatment.
+
+**The order builder, the basket and the example checkout.** `ITEMS` in
+`brownielicious.js` drives the whole builder — item, sizes, prices, which
+flavour list applies. The basket is kept in this site's own localStorage
+(`bnl-basket`), wrapped in try/catch because private browsing throws on
+write; a basket then lasts the visit, which is still worth having. A size
+with `price: null` is one she has not published (the minis, the wrapped
+items): those lines say "price on confirmation", are never guessed at, and
+are left out of the subtotal but still sent with the order. `CHECKOUT.postage`
+is null for the same reason. The checkout is a working example and says so in
+its first paragraph: the card fields are `disabled`, no payment is taken, and
+the order goes to her the same way an enquiry does. `sendOrder` is the seam
+where a real payment provider would go.
 
 **An `img` with `width` and `height` attributes sets both dimensions.** Those
 attributes are presentational hints, so `aspect-ratio` in the CSS loses to
