@@ -18,6 +18,61 @@ elements with `data-fx="reveal|stagger|text|parallax|pin|horizontal|progressbar"
 Full reference: `docs/scroll-fx.md`. Do not hand-roll per-page one-offs unless
 the toolkit genuinely can't express the effect.
 
+## Bash n Boujee (event decor, London) — `templates/bashnboujee`
+
+One page, three files: `templates/bashnboujee.{html,css,js}`, plus her assets
+in `assets/bashnboujee/`. Noindex, like every client demo.
+
+**Her logo, and the one thing to know about it.** The supplied file,
+`assets/bashnboujee/logo.jpg`, is a foil-embossed mark printed on a blush
+plate (#f5e3dc). Knocking that plate out naively hollows the letterforms,
+because the specular highlights inside the strokes are lighter than the plate
+and a plain colour-distance cut takes them with it. `logo.png` is the cut-out
+that does work: ink is colour-distance from the plate, PLUS anything lighter
+than the plate (those highlights), PLUS the balloon's own enclosed shading,
+filled only inside the balloon's connected component so the counters of B, o
+and e stay open. That PNG is what every copy on the page uses, so the mark
+sits on cream and on the dark footer alike with no card behind it. If it is
+ever regenerated, check the balloon highlight and the insides of the letters
+before shipping it.
+
+**The pictures are stock photographs, and the page says so.** Every photo in
+`assets/bashnboujee/photos/` is a free Pexels image (free for commercial use,
+no attribution required) standing in for her own work, so the layout can be
+judged with real photography in it. The look book says in brackets that they
+are examples; the source id of each one is listed in a comment at the top of
+`templates/bashnboujee.html`. When her photos arrive, drop them in the same
+folder and swap the `src` on the `.svc-art` images (4:3, 1200x900) and the
+`.tile` images (4:5, 1000x1250). Nothing else needs to change.
+
+**The look book and the reviews are rails, not grids.** `[data-rail]` in
+`bashnboujee.js` gives each one grab-and-throw dragging, eased arrow buttons
+and arrow-key support, and leaves the element's own `scrollLeft` as the single
+source of truth so the scrollbar, the snap points and the keyboard all agree.
+Two things that are easy to lose: `scroll-padding-inline` on `.rail` (without
+it the snap ignores the rail's padding and parks the first card against the
+viewport edge before anyone has touched it), and `data-lenis-prevent` (without
+it the smooth-scroll library swallows the sideways gesture).
+
+**The floating balloons are drawn, and that is deliberate.** `[data-balloons]`
+on any section gets that many soft SVG balloons from `bashnboujee.js`. A
+photographic cut-out balloon over a photograph of a party reads as a mistake; a
+translucent drawn one reads as texture. They are skipped under reduced motion.
+
+**Still needed from her**, all in `CONTACT`/`REVIEWS` at the top of
+`bashnboujee.js`: a WhatsApp number (until then the floating bubble opens an
+Instagram DM, which is what her bio already tells people to do, rather than a
+dead `wa.me` link), a Google Business profile, real reviews, and a Web3Forms
+key. Every one of those degrades to something that works rather than something
+that breaks — with no form key the enquiry hands the visitor their own answers
+back as a pre-written email and WhatsApp/Instagram message, so an enquiry is
+never lost.
+
+**The sample reviews are labelled.** `REVIEWS.sample` is true, and while it is,
+every card carries a visible "Example" chip and the section says so in as many
+words. A made-up review presented as a real one is a lie told on her behalf.
+Set `sample: false` and fill `items` when the real ones exist.
+
 ## billy360 (the 360° tours) — run the tests before you push
 `node scripts/billy360-test.js` (add `--only=<demo|public|embed|devices|engine|office|data>`)
 and `node scripts/billy360-api.mjs --base=http://localhost:<port>`. Both need a
@@ -61,6 +116,17 @@ inference from the two histories any more: **a push to any branch deploys to
 production.** Fix the production-branch setting BEFORE a client's own domain is
 routed to this Worker, or a stray branch push puts the wrong tree on the
 client's live site.
+
+**Twice more in one hour, 22 Sep.** While `main` was at `d227898` and then
+`36cf027`, production twice reverted under it: first to a 9 Sep tree (stamp
+`62e267576474`, 1832 files), then to a 21 Sep one (stamp `f1e5675781e9`, head
+`d613da2`, 1846 files). Both times every page added since that tree — the whole
+of `templates/bashnboujee`, assets included — returned the 404 page on the live
+site while GitHub's `main` was perfectly correct. The only remedy from inside
+this repository is to push another commit to `main`, which wins until the next
+stray branch push. It is worth saying plainly: **this is not a flaky deploy, it
+is a setting.** Workers Builds → production branch `main`, and non-production
+branches must not deploy to production.
 
 `node scripts/stamp.mjs --check` fails if `version.json` is stale.
 `deploy-verify.mjs` compares the live bytes with this working copy and exits
