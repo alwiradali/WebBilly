@@ -16,6 +16,43 @@ elements with `data-fx="reveal|stagger|text|parallax|pin|horizontal|progressbar"
 Full reference: `docs/scroll-fx.md`. Do not hand-roll per-page one-offs unless
 the toolkit genuinely can't express the effect.
 
+## Bash'n'Boujee (event decor, London) — `templates/bashnboujee`
+
+One page, three files: `templates/bashnboujee.{html,css,js}`, plus her assets
+in `assets/bashnboujee/`. Noindex, like every client demo.
+
+**Her logo is foil-embossed, so it cannot be cut out.** The insides of the
+letters in `assets/bashnboujee/logo.jpg` are literally the blush plate it is
+printed on (#f5e3dc) — knock the background out and the letterforms hollow.
+So the file is used exactly as she supplied it and every surface it sits on is
+set to that same blush instead: the hero is flat `--cream` top to bottom, the
+sticky header matches it, and on the dark footer the mark keeps its plate and
+reads as a card. A soft radial mask on each copy covers a browser rendering
+the JPEG a shade off. Do not "fix" the logo by removing its background.
+
+**The pictures are drawn, not photographed.** `scripts/bnb-art.py` renders the
+balloon hoops, arches, garlands and stage sets in `assets/bashnboujee/art/` as
+SVG in her own rose-gold and blush — her Instagram photographs are not ours to
+copy, and AI stock pretending to be her work would be worse. Re-run
+`python3 scripts/bnb-art.py` after editing; each scene is seeded by name so an
+approved garland never reshuffles. When her photos arrive, drop them into
+`assets/bashnboujee/photos/` and swap the `src` on the `.svc-art` and `.tile`
+images — the layout is already sized for 4:3, 1:1, 4:5 and 21:9.
+
+**Still needed from her**, all in `CONTACT`/`REVIEWS` at the top of
+`bashnboujee.js`: a WhatsApp number (until then the floating bubble opens an
+Instagram DM, which is what her bio already tells people to do, rather than a
+dead `wa.me` link), a Google Business profile, real reviews, and a Web3Forms
+key. Every one of those degrades to something that works rather than something
+that breaks — with no form key the enquiry hands the visitor their own answers
+back as a pre-written email and WhatsApp/Instagram message, so an enquiry is
+never lost.
+
+**The sample reviews are labelled.** `REVIEWS.sample` is true, and while it is,
+every card carries a visible "Example" chip and the section says so in as many
+words. A made-up review presented as a real one is a lie told on her behalf.
+Set `sample: false` and fill `items` when the real ones exist.
+
 ## billy360 (the 360° tours) — run the tests before you push
 `node scripts/billy360-test.js` (add `--only=<demo|public|embed|devices|engine|office|data>`)
 and `node scripts/billy360-api.mjs --base=http://localhost:<port>`. Both need a
