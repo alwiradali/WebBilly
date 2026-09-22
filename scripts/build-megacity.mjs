@@ -88,6 +88,14 @@ const OTHER_CLIENTS = /(mumbai2london|m2l|molecular|smartin|rachel|roses|amabili
 
 /* ───────────────────────────────────────────────────────────────── walking */
 
+/* Paths are compared as strings throughout — against .assetsignore, against
+   MUST, against the other-clients pattern — and all of those are written with
+   forward slashes. node:path's join() and relative() use the platform
+   separator, so on Windows every one of those comparisons silently failed and
+   the build refused, claiming files were missing that were sitting right
+   there. Separators are a platform detail; the keys in this file are not. */
+const posix = (s) => s.split("\\").join("/");
+
 function walk(dir, depth, base = dir) {
   const out = [];
   if (!existsSync(dir)) return out;
@@ -97,7 +105,7 @@ function walk(dir, depth, base = dir) {
     if (st.isDirectory()) {
       if (depth > 0) out.push(...walk(full, depth - 1, base));
     } else {
-      out.push({ full, rel: relative(base, full), name });
+      out.push({ full, rel: posix(relative(base, full)), name });
     }
   }
   return out;
@@ -109,7 +117,7 @@ function collect() {
   for (const rule of ALLOW) {
     for (const f of walk(join(ROOT, rule.from), rule.depth)) {
       if (!rule.test(f.name, f.rel)) continue;
-      const dest = join(rule.to, f.rel);
+      const dest = posix(join(rule.to, f.rel));
       if (isIgnored(dest)) continue;
       if (seen.has(dest)) continue;
       seen.add(dest);
