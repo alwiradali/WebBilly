@@ -283,7 +283,7 @@
           name: v('pname'), email: v('email'), phone: v('phone'),
           'Enquiry about': about ? about.options[about.selectedIndex].text : '',
           'Student': v('sname'), 'Year group': v('year'), 'Exam board': v('board'),
-          'Company / organisation': v('org'),
+          'Company / Organisation': v('org'),
           'Preferred times': v('mode'), 'Where are you based': v('area'), 'Notes': v('msg')
         })
       })
@@ -311,7 +311,7 @@
             ['Enquiry about', about ? about.options[about.selectedIndex].text : ''],
             ['Name', v('pname')], ['Email', v('email')], ['Phone', v('phone')],
             ['Student', v('sname')], ['Year group', v('year')],
-            ['Exam board', v('board')], ['Company / organisation', v('org')],
+            ['Exam board', v('board')], ['Company / Organisation', v('org')],
             ['Preferred times', v('mode')],
             ['Based', v('area')], ['Notes', v('msg')]
           ].filter(function (p) { return p[1]; })
