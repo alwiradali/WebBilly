@@ -4,7 +4,9 @@
 own Cloudflare account (Worker `noisy-forest-8b27`). How, and how to update it:
 `docs/westfield-golive.md`, top section.
 
-The demo lives at **`/templates/westfield-garage`** (source:
+The demo lives at **`/templates/westfield-garage`**, and answers at the short
+address **billydigitals.com/westfield** too (any capitalisation; an alias in
+`worker.js`, still `noindex`) (source:
 `templates/westfield-garage.html`). It is `noindex, nofollow` and `/templates/`
 is disallowed in `robots.txt`, so it is shareable with the client but invisible
 to search engines until we decide otherwise.

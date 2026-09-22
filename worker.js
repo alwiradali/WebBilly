@@ -189,9 +189,38 @@ export default {
       return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
     }
 
+    /* Parked client previews at short root addresses: billydigitals.com/westfield
+       is easier to say down the phone than /templates/westfield-garage. The
+       page served is the one in /templates/, unchanged, so its relative
+       ../assets/ paths resolve from the root exactly as they do from
+       /templates/; the one relative path that is not under /assets/ is
+       vendor/lenis.min.js, hence the /vendor/ line. Own hosts only — a
+       client's domain owns every path on it. Case-insensitive, because the
+       address gets typed from a text message. Kept out of the index with the
+       header the /templates/ previews carry, and listed in robots.txt. */
+    if (!isOwnClientHost(url.hostname, env)) {
+      const alias = PREVIEW_ALIASES[url.pathname.toLowerCase().replace(/\/+$/, "")];
+      if (alias) {
+        const res = await fetchAsset(env, url, request, alias);
+        const headers = new Headers(res.headers);
+        headers.set("x-robots-tag", "noindex, nofollow, noarchive, nosnippet");
+        return new Response(res.body, { status: res.status, headers });
+      }
+      if (url.pathname.startsWith("/vendor/")) {
+        return env.ASSETS.fetch(new Request(new URL("/templates" + url.pathname, url.origin), request));
+      }
+    }
+
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
+};
+
+/* Short root addresses for unlisted client previews, lower-case, without a
+   trailing slash, each pointing at the template file it serves. Add a line
+   here and the same path to every group in robots.txt. */
+const PREVIEW_ALIASES = {
+  "/westfield": "/templates/westfield-garage.html",
 };
 
 /* Mumbai2London is parked.
