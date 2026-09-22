@@ -284,6 +284,31 @@ domain goes back to whatever the DNS records point at.
 
 ---
 
+## Doing it from GitHub instead
+
+Everything above can be done by hand, and the first time is worth doing by
+hand. But the two repository secrets are now set, so a push to `main` that
+touches his files does the same work with nobody watching:
+
+1. builds `dist/megacity` from the allow-list
+2. refuses to continue if another client's file is in it
+3. runs `check-wrangler.mjs`
+4. **applies the migrations** to his database
+5. deploys
+6. and, once the routes are uncommented, checks that his domain is actually
+   serving that build
+
+The migrations run **before** the deploy, because the Worker begins serving
+the moment it is uploaded and one whose tables do not exist answers every
+listing and every enquiry with an error. They are safe to repeat: D1 records
+what it has applied and skips it.
+
+What the workflow deliberately does not do is set the Worker's secrets. Those
+go in once, either with `wrangler secret put` as in step 6 or from the
+dashboard — Workers & Pages → `megacity-properties` → Settings → Variables
+and Secrets → Add — and putting their values into GitHub as well would be a
+second place for them to leak from.
+
 ## What is deliberately not automated
 
 `.github/workflows/deploy-megacity.yml` can do steps 4 and 7 on a push to

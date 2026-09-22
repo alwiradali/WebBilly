@@ -112,6 +112,25 @@ jobs:
             echo "::notice::His Cloudflare credentials are not set — built and checked, but not deployed."
           fi
 
+      - name: Apply migrations to his database
+        # Before the deploy, not after: the Worker starts serving the moment it
+        # is uploaded, and a Worker whose tables do not exist yet answers every
+        # listing and every enquiry with an error.
+        #
+        # Safe to run on every deploy. D1 records which migrations it has
+        # applied and skips them, so this is idempotent — and running it here
+        # removes a whole class of "did anyone run the migrations?" from a
+        # process where the answer is only discovered by a client.
+        if: steps.creds.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_MEGACITY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_MEGACITY }}
+        run: |
+          set -o pipefail
+          npx --yes wrangler@4 d1 migrations apply megacity --remote --env megacity 2>&1 | tee migrate.log
+          # "No migrations to apply" is the steady state, not a failure.
+          grep -qiE 'No migrations to apply|Successfully applied|migrations applied' migrate.log
+
       - name: Deploy to his Cloudflare Worker
         if: steps.creds.outputs.ready == 'true'
         env:
