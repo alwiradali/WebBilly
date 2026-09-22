@@ -1226,7 +1226,18 @@
   }
 
   async function save(quiet) {
-    if (!$("cName").value.trim()) { toast("Put the customer's name in first.", "bad"); return null; }
+    /* The customer's name used to be required here, and that one line was
+       doing far more damage than it looks. save() is what every other action
+       calls first: adding a photograph saves the draft, so does taking a
+       payment, so does sending. With no name it returned null, the caller hit
+       its own `if (!S.inv) return`, and the photograph simply did not happen --
+       no error he could act on, nothing saved, nothing said.
+
+       Nothing below needs it. The server already treats a nameless invoice as
+       one with no customer record attached, the list prints an em dash, and
+       the invoice itself falls back to the job number rather than an empty
+       line. He starts an invoice at the van with photographs and a couple of
+       lines, and puts the name on when he knows it. */
     const body = payload();
     const d = S.inv ? await put("invoices/" + S.inv.id, body) : await post("invoices", body);
     S.inv = d.invoice;
@@ -1474,8 +1485,9 @@
        for him beats telling him to go and press a different button first. */
     if (!S.inv) {
       try { await save(true); } catch (err) { toast("Save the invoice first: " + err.message, "bad"); return; }
-      /* save() returns null without throwing when the customer name is
-         blank, and has already said so. Stop rather than walk into a null. */
+      /* save() no longer refuses a nameless invoice, so this should not
+         happen; it stays as a guard against walking into a null if saving
+         ever fails without throwing. */
       if (!S.inv) return;
     }
 
