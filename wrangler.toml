@@ -274,11 +274,14 @@ run_worker_first = true
 #   npx wrangler r2 bucket create megacity-media
 #   npx wrangler d1 migrations apply megacity --remote --env megacity
 #
-# [[env.megacity.d1_databases]]
-# binding = "MEGACITY_DB"
-# database_name = "megacity"
-# database_id = "PASTE_REAL_ID_HERE"
-#
-# [[env.megacity.r2_buckets]]
-# binding = "MEDIA"
-# bucket_name = "megacity-media"
+[[env.megacity.d1_databases]]
+binding = "MEGACITY_DB"
+database_name = "megacity"
+# Created in HIS account on 22 September, Western Europe. A database id is an
+# identifier, not a credential — it is useless without a token for the account
+# that holds it, which is why it can live here while the account id cannot.
+database_id = "6b7c0475-b238-4949-ae07-b443f18a7a37"
+
+[[env.megacity.r2_buckets]]
+binding = "MEDIA"
+bucket_name = "megacity-media"
