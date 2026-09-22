@@ -232,17 +232,22 @@
   /* `jump` means put me there, now. Watching the whole page fly past on the
      way to a section is a lot of motion to sit through, especially from a
      menu, so every menu link and everything on a touch screen jumps. */
+  /* The sticky header's height. The smooth-scroll library, the instant jump
+     and the browser's own scroll-margin-top must all use the same number or
+     a section lands in a slightly different place depending on the route. */
+  var HEAD = 84;
+
   function scrollToHash(hash, jump) {
     var target = hash && hash.length > 1 ? document.getElementById(hash.slice(1)) : null;
     if (!target) return false;
     if (jump || reduced) {
       var html = document.documentElement, was = html.style.scrollBehavior;
       html.style.scrollBehavior = 'auto';
-      if (lenis) lenis.scrollTo(target, { offset: -70, immediate: true });
-      else window.scrollTo(0, target.getBoundingClientRect().top + (window.scrollY || 0) - 84);
+      if (lenis) lenis.scrollTo(target, { offset: -HEAD, immediate: true });
+      else window.scrollTo(0, target.getBoundingClientRect().top + (window.scrollY || 0) - HEAD);
       html.style.scrollBehavior = was;
     } else if (lenis) {
-      lenis.scrollTo(target, { offset: -70, duration: 1.3 });
+      lenis.scrollTo(target, { offset: -HEAD, duration: 1.3 });
     } else {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -359,13 +364,16 @@
 
   /* =============================================================== marquee */
 
-  /* iOS Safari will not paint a moving layer wider than about 4096 DEVICE
-     pixels. On a 3x phone that is roughly 1365 CSS px, and a strip made by
-     simply doubling this word list measured 3286 CSS px — so the band came
-     out as an empty brown bar on her phone and was perfect everywhere else.
-     So the strip is built to fit: one run of words just wider than the band,
-     then as few copies as it takes to keep the band covered while one run
-     slides away. The animation moves exactly one run and repeats. */
+  /* iOS and iPadOS will not paint a moving layer wider than about 4096
+     DEVICE pixels, and they fail silently: the band came out as an empty
+     brown bar on her phone and was perfect in every desktop browser.
+     Making one long strip and animating it cannot be fixed by making the
+     strip shorter, because to cover a 2560px band the moving element has
+     to BE 2560px — 5120 device pixels on a retina screen. So nothing long
+     moves here. The strip is cut into short runs, each of which animates
+     itself by exactly its own width. They are identical and they move in
+     lockstep, so the row reads as one continuous strip, while no layer is
+     ever wider than one run whatever the screen. */
   (function marquee() {
     var track = $('#marquee');
     if (!track) return;
@@ -375,11 +383,11 @@
 
     function build() {
       var wide = band.clientWidth || 360;
-      /* The limit is in DEVICE pixels, so a 3x phone can afford a third of
-         what a 1x screen can. Budget for it and size one run to half of it. */
+      /* One run's own layer is all that has to stay small. The limit is in
+         device pixels, so a 3x phone can afford a third of what a 1x screen
+         can; 1600 device pixels leaves plenty of room under it. */
       var dpr = window.devicePixelRatio || 1;
-      var budget = Math.max(900, 4000 / dpr);
-      var target = Math.min(wide + 40, budget / 2);
+      var target = Math.min(wide, Math.max(420, 1600 / dpr));
 
       track.innerHTML = '';
       var run = el('div', { class: 'band-run' });
@@ -389,11 +397,13 @@
       }
       var runW = run.getBoundingClientRect().width;
       if (!runW) return;
-      // enough of the strip to cover the band at every point of the slide
-      var copies = Math.ceil((wide + runW) / runW);
-      for (var c = 1; c < copies; c++) track.appendChild(run.cloneNode(true));
+
+      /* Every run slides one run's width and repeats. At any moment the
+         runs cover (k-1) runs of band, so k-1 runs must span it. */
+      var runs = Math.ceil(wide / runW) + 1;
+      for (var c = 1; c < runs; c++) track.appendChild(run.cloneNode(true));
       track.style.setProperty('--run', runW.toFixed(1) + 'px');
-      track.style.setProperty('--dur', Math.max(9, Math.round(runW / 48)) + 's');
+      track.style.setProperty('--dur', Math.max(7, Math.round(runW / 48)) + 's');
     }
 
     build();

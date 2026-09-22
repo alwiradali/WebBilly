@@ -10,6 +10,7 @@
 /* ================================================================== tokens */
 
 :root{
+  color-scheme:light;   /* or iOS dark mode inverts the form controls */
   --blush:#fdeaf3;          /* page */
   --rose:#f9dae9;           /* her menu pink */
   --rose-deep:#f2c2dc;
@@ -151,7 +152,8 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   transition:background .4s var(--ease),box-shadow .4s var(--ease),padding .4s var(--ease);
 }
 .nav.stuck{
-  background:rgba(253,234,243,.86);backdrop-filter:blur(14px);
+  background:rgba(253,234,243,.86);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   box-shadow:0 1px 0 var(--line-soft);padding-block:9px;
 }
 .nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none}
@@ -203,7 +205,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 
 .hero{
   position:relative;overflow:hidden;
-  padding:clamp(108px,14svh,160px) var(--pad) clamp(58px,8svh,96px);
+  padding:clamp(108px,14vh,160px) var(--pad) clamp(58px,8vh,96px);
   background:
     radial-gradient(70% 55% at 88% 6%,rgba(255,231,253,.95),transparent 62%),
     radial-gradient(65% 60% at 4% 92%,rgba(249,218,233,.92),transparent 60%),
@@ -274,8 +276,8 @@ section[id],div[id="top"]{scroll-margin-top:84px}
    by simply doubling the word list came to 3286 CSS px (9858 device px) and
    rendered as an empty brown bar. --run is one run's width; the animation
    slides exactly that far and starts again, which is seamless. */
-.band-track{display:flex;width:max-content;animation:roll var(--dur,22s) linear infinite}
-.band-run{display:flex;flex:none}
+.band-track{display:flex;width:max-content}
+.band-run{display:flex;flex:none;animation:roll var(--dur,14s) linear infinite}
 .band-track span{
   display:inline-flex;align-items:center;gap:20px;padding-inline:20px;white-space:nowrap;
   font-family:'Fraunces',serif;font-style:italic;font-size:clamp(17px,2vw,23px);
@@ -290,7 +292,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .about-art{position:relative}
 .about-art img{border-radius:var(--r-lg);box-shadow:var(--shadow);width:100%}
 .about-art .tag{
-  position:absolute;right:-14px;bottom:26px;background:var(--cream);color:var(--brown);
+  position:absolute;right:0;bottom:26px;background:var(--cream);color:var(--brown);
   border:1px solid var(--line-soft);
   border-radius:18px;padding:15px 20px;box-shadow:var(--shadow);max-width:230px;
 }
@@ -364,7 +366,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 /* =========================================================== quote band */
 
 .quote{
-  position:relative;min-height:clamp(320px,52svh,480px);display:grid;place-items:center;
+  position:relative;min-height:clamp(320px,52vh,480px);display:grid;place-items:center;
   overflow:hidden;text-align:center;color:var(--plate);padding:clamp(56px,9vh,96px) var(--pad);
 }
 .quote-bg{position:absolute;inset:-12% 0;z-index:0}
@@ -639,7 +641,8 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .foot-top{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:clamp(24px,4vw,56px)}
 .foot-logo{width:150px;height:auto;margin-bottom:20px}
 .foot h4{color:var(--plate);font-size:1rem;margin-bottom:14px;letter-spacing:.02em}
-.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.foot li{padding-block:7px}
 .foot li{font-size:.93rem}
 .foot a{color:rgba(255,231,253,.74);text-decoration:none;transition:color .3s}
 .foot a:hover{color:var(--plate)}
@@ -726,7 +729,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 /* ---- phones: fewer composited layers, so a thumb scroll stays smooth ---- */
 @media (max-width:900px){
   .grain{display:none}
-  .nav.stuck{background:rgba(253,234,243,.96);backdrop-filter:none}
+  .nav.stuck{background:rgba(253,234,243,.96);-webkit-backdrop-filter:none;backdrop-filter:none}
   .sfield i{filter:none!important}
   .hero-art figure,.hero-art .stamp{animation:none}
 }
@@ -738,4 +741,43 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   html{scroll-behavior:auto}
+}
+
+/* ============================================ touch: nothing under 40px */
+/* Measured across sixteen viewports: the footer links were 20px tall and
+   the nav links 31px on an iPad, both under what a thumb can reliably hit. */
+@media (pointer:coarse){
+  .nav-links a{padding-block:10px}
+  .foot li{padding-block:2px}
+  .foot a{display:inline-block;padding-block:9px}
+  .fld .chip,.flav-tab{padding-block:.62em}
+  .chips .f{padding-block:.6em}
+  .cal-grid b{min-height:40px}
+}
+
+/* ======================================== short screens (laptops, land) */
+/* On a 768-tall laptop and on a phone held sideways the headline alone was
+   337px, which pushed the buttons under the fold. */
+@media (max-height:820px) and (min-width:820px){
+  h1{font-size:clamp(40px,5.2vw,62px)}
+  .hero{padding-top:clamp(92px,12vh,120px)}
+  .hero .lead{font-size:1.02em;margin-bottom:1.2em}
+  .hero-notes{margin-top:1.4em}
+}
+@media (max-width:900px) and (max-height:560px) and (orientation:landscape){
+  h1{font-size:clamp(32px,5vw,44px)}
+  .hero{padding-top:88px}
+  .hero-art{max-width:300px}
+  .about-art .tag{position:static;margin:14px 0 0;max-width:none}
+}
+
+/* --------------------------------------- the widest desktops: stay put */
+@media (min-width:1700px){
+  :root{--maxw:1320px}
+}
+
+@supports (height:1svh){
+  .hero{padding-top:clamp(108px,14svh,160px);padding-bottom:clamp(58px,8svh,96px)}
+  .quote{min-height:clamp(320px,52svh,480px)}
+  @media (max-height:820px) and (min-width:820px){ .hero{padding-top:clamp(92px,12svh,120px)} }
 }

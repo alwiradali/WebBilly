@@ -140,6 +140,15 @@ height. `img{height:auto}` in the reset hands the height back; the few places
 that want it (`.hero-art figure img`, `.occ img`) take it again by being more
 specific.
 
+**Checked across the device matrix, not just a phone and a laptop.** 320px
+up to 2560px at 1x, 2x and 3x, portrait and landscape, touch and mouse:
+no horizontal scroll anywhere, nothing hanging off the side, the order
+button above the fold on every one, every tap target at least 34px on a
+touch screen, and one number (`HEAD` in the JS, `scroll-margin-top` in the
+CSS) shared by the smooth-scroll library, the instant jump and the
+browser's own anchor scrolling so a section lands in the same place
+whichever route took it there.
+
 **Still needed from her**, all in `CONTACT`/`REVIEWS` at the top of
 `brownielicious.js`: a WhatsApp number (until then the floating bubble opens an
 Instagram DM, which is what her bio already tells people to do), her Facebook
