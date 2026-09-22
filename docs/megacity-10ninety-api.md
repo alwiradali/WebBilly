@@ -166,6 +166,39 @@ sync — which is exactly the ambiguity that makes a sync delete things it shoul
 not. With the statuses enabled, a let property arrives *saying* it is let, and
 the site can take it down deliberately and for a stated reason.
 
+**Enabled on 21 September**, and it came with a change nobody asked for. Dave
+at 10ninety:
+
+> I've updated your system to **keep properties on the market** when you set
+> their status to Let or Sold, so that they continue to be included in the API
+> feed. When you're ready to remove them you'll need to manually take them off
+> the market.
+
+So the way the statuses reach the feed at all is by leaving the property **on
+the market** in 10ninety. Two things follow, and only one of them is ours.
+
+**Ours, and easy.** The sync must treat `status_id` 7 (Let) and 6 (Sold) as
+*not available*. A let property has to stop appearing as lettable the moment
+the feed says it is let — not stay up because it is technically still in the
+response. That is a rule in our code and it is the reason the statuses were
+worth asking for.
+
+**Not ours, and worth asking about.** 10ninety's portal exports are addressed
+the same way: Zoopla is another row in the same table. If "on the market" is
+what decides what goes to Rightmove, Zoopla and OnTheMarket, then a property
+Walid marks as Let now **stays on the portals as available** until he
+remembers a second, manual step. That is worse than a stale website: tenants
+enquire on a property that is gone, and portals penalise listings that never
+come down. It may well be that 10ninety sends Let separately to the portals
+and this only affects the API — but it has not said so, and the difference
+matters too much to assume.
+
+**It also changes Walid's job.** Before, setting a property to Let was the end
+of it. Now there is a second step — take it off the market — and if he forgets,
+nothing visibly breaks on the website, because our sync will have hidden it
+anyway. A workflow change that is invisible when you get it wrong is one he has
+to be told about in words, not left to discover.
+
 ### They generate links into our website
 
 > The standard format for these links is
