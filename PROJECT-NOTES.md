@@ -111,6 +111,17 @@ production.** Fix the production-branch setting BEFORE a client's own domain is
 routed to this Worker, or a stray branch push puts the wrong tree on the
 client's live site.
 
+**Twice more in one hour, 22 Sep.** While `main` was at `d227898` and then
+`36cf027`, production twice reverted under it: first to a 9 Sep tree (stamp
+`62e267576474`, 1832 files), then to a 21 Sep one (stamp `f1e5675781e9`, head
+`d613da2`, 1846 files). Both times every page added since that tree — the whole
+of `templates/bashnboujee`, assets included — returned the 404 page on the live
+site while GitHub's `main` was perfectly correct. The only remedy from inside
+this repository is to push another commit to `main`, which wins until the next
+stray branch push. It is worth saying plainly: **this is not a flaky deploy, it
+is a setting.** Workers Builds → production branch `main`, and non-production
+branches must not deploy to production.
+
 `node scripts/stamp.mjs --check` fails if `version.json` is stale.
 `deploy-verify.mjs` compares the live bytes with this working copy and exits
 non-zero on an older build — billydigitals.com has twice served a month-old
