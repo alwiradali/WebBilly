@@ -585,19 +585,22 @@ form.enq{display:grid;gap:18px;align-content:start}
   /* The bar is fixed across the bottom, so the last thing in the hero has to
      clear it or it is simply covered. The area marquee was, once the larger
      type made the hero copy taller. 62px of bar plus the safe area. */
-  .hero{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .hero{padding-bottom:calc(46px + env(safe-area-inset-bottom))}
+  /* 46px, not 62. On a phone this bar is permanent — it is over every page,
+     all the way down — so every pixel of it is a pixel of the property nobody
+     sees. It still clears the 44px minimum for a tap target. */
   .fab{left:0;right:0;bottom:0;top:auto;flex-direction:row;gap:0;padding:0 0 env(safe-area-inset-bottom);
     background:var(--navy-ink);box-shadow:0 -6px 24px rgba(14,11,43,.34)}
-  .fab .fab-b{flex:1;width:auto;height:62px;border-radius:0;border:0;box-shadow:none;
-    display:flex;align-items:center;justify-content:center;gap:9px;
-    font:700 14.25px/1 var(--ff-u);letter-spacing:.09em;text-transform:uppercase;color:#fff}
-  .fab .fab-b svg{width:20px;height:20px;flex:none}
+  .fab .fab-b{flex:1;width:auto;height:46px;border-radius:0;border:0;box-shadow:none;
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    font:700 12.4px/1 var(--ff-u);letter-spacing:.07em;text-transform:uppercase;color:#fff}
+  .fab .fab-b svg{width:17px;height:17px;flex:none}
   .fab .fab-b::after{content:attr(data-label)}
   .fab .fab-b:hover{transform:none}
   .fab .fab-wa{background:#1FA855}
   .fab .fab-call{background:var(--blue)}
   .fab .fab-mail{background:var(--navy)}
-  body{padding-bottom:62px}
+  body{padding-bottom:46px}
   .footer{padding-bottom:24px}
 }
 
@@ -2087,7 +2090,7 @@ body.sl-open{overflow:hidden}
 .fab-val.is-hidden{opacity:0;transform:translateY(14px);pointer-events:none}
 @media (max-width:700px){
   /* sit above the full-width contact bar */
-  .fab-val{left:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));padding:13px 17px;font-size:12.6px}
+  .fab-val{left:12px;bottom:calc(58px + env(safe-area-inset-bottom,0px));padding:11px 15px;font-size:12.2px}
 }
 
 /* ── print: the page becomes its own brochure ────────────────────────── */
