@@ -40,6 +40,10 @@ html{
   scroll-behavior:smooth;
   -webkit-text-size-adjust:100%;
 }
+/* body already clips sideways, but the toolkit's left/right reveal offsets
+   sit on the root's scroll box until they animate in, so the page could be
+   dragged ~20px sideways on a phone. clip (not hidden) keeps sticky working. */
+html{overflow-x:clip}
 html.lenis{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto}
 .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
@@ -323,22 +327,6 @@ p{margin:0 0 1.1em}
 .hero-meta span{display:flex;align-items:center;gap:9px}
 .hero-meta span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold)}
 
-/* on a short screen the cue lands on top of the meta row, so it steps out */
-@media (max-height:760px){.scroll-cue{display:none}}
-.scroll-cue{
-  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
-  z-index:2;display:grid;justify-items:center;gap:9px;
-  font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rose);
-}
-.scroll-cue i{
-  width:1px;height:46px;background:linear-gradient(var(--rose),transparent);
-  position:relative;overflow:hidden;
-}
-.scroll-cue i::after{
-  content:"";position:absolute;inset:0;background:var(--gold);
-  animation:cue 2.1s var(--ease) infinite;
-}
-@keyframes cue{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
 
 /* --------------------------------------------------------------- marquee */
 
