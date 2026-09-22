@@ -145,10 +145,25 @@ write; a basket then lasts the visit, which is still worth having. A size
 with `price: null` is one she has not published (the minis, the wrapped
 items): those lines say "price on confirmation", are never guessed at, and
 are left out of the subtotal but still sent with the order. `CHECKOUT.postage`
-is null for the same reason. The checkout is a working example and says so in
-its first paragraph: the card fields are `disabled`, no payment is taken, and
-the order goes to her the same way an enquiry does. `sendOrder` is the seam
-where a real payment provider would go.
+is set to a working figure. **Every price in `ITEMS` is hers, off her own
+menu.** The two numbers that are NOT on her menu — postage and what premium
+toppings add to a box — are in `CHECKOUT` at the top with a block comment
+saying exactly that, and each is shown to the customer on its own line rather
+than folded into a total. The sizes she has never published a price for (the
+minis, the individually wrapped items) are simply not in the shop: they stay
+on the menu marked "ask", so nothing in the basket is ever a guess.
+
+Bank transfer is the default payment because it is the one that works today;
+card is offered beside it with one line saying it switches on when a payment
+account is connected. The card inputs are `disabled` so nobody types a card
+number into a form that goes nowhere. `checkoutForm`'s fetch is the seam where
+a real provider goes.
+
+Buttons in the builder take focus with `preventScroll` and swallow `mousedown`,
+because clicking a card that is half off screen made the browser scroll to it
+and the page jumped under your thumb. The item cards are also built once and
+only re-classed, rather than re-rendered — re-rendering threw seven images away
+and fetched them again on every tap, which is what made choosing one flash.
 
 **An `img` with `width` and `height` attributes sets both dimensions.** Those
 attributes are presentational hints, so `aspect-ratio` in the CSS loses to

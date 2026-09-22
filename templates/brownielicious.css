@@ -1003,3 +1003,43 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .bd-item,.co-opt{min-height:44px}
   .qty button{width:38px;height:38px}
 }
+
+/* =========================================================================
+   The footer is light now. Her wordmark is dark brown ink with the pink
+   plate keyed out — on the old cocoa footer it could only be shown as the
+   round badge, which sat on the dark like a sticker. On blush it is just
+   her lettering, which is what it should be.
+   ========================================================================= */
+.foot{
+  background:linear-gradient(180deg,#fdf2f7,var(--rose));
+  color:var(--ink-soft);
+  border-top:1px solid var(--line-soft);
+}
+.foot h4{color:var(--brown)}
+.foot a{color:var(--ink-soft)}
+.foot a:hover{color:var(--brown)}
+.foot-bot{border-top:1px solid var(--line-soft)}
+.foot-logo{width:min(210px,62%);height:auto;margin-bottom:18px}
+
+/* the icons sit on a light background everywhere now */
+.socials a{border-color:var(--line);color:var(--brown)}
+.socials a:hover{background:rgba(255,255,255,.7)}
+.socials svg{display:block}
+
+.give.one{grid-template-columns:1fr}
+
+/* ---- the last of the dead air between sections, on a phone ---- */
+@media (max-width:640px){
+  .sec{padding:clamp(46px,6vh,132px) 0}
+  .sec-head{margin-bottom:24px}
+  .menu-note{margin-top:18px}
+  .foot{padding-top:clamp(44px,7vh,86px)}
+}
+
+/* two short lists sit side by side on a phone rather than making the footer
+   twice as long as it needs to be */
+@media (max-width:640px){
+  .foot-top{grid-template-columns:1fr 1fr;gap:20px}
+  .foot-top>:first-child{grid-column:1/-1}
+  .foot li{padding-block:6px}
+}
