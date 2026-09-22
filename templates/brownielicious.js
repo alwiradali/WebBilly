@@ -51,28 +51,28 @@
      which is what her menu does for the minis and the wrapped items. */
   var MENU = [
     { name: 'Minis', price: '', sub: 'Box of 10, 20 or 30',
-      text: 'Bite-sized, and the easiest thing to put on a table when there are a lot of you.',
+      text: 'Bite-sized. Perfect when there are a lot of you.',
       opt: 'Brownies & blondies', img: 'mn-mini' },
     { name: 'Small box', price: '£10', sub: 'Box of 6',
-      text: 'Six pieces. A present, a treat, or a Friday night that got out of hand.',
+      text: 'Six pieces. A little treat, or a present.',
       opt: 'Brownies · blondies · brookies', img: 'mn-small' },
     { name: 'Regular box', price: '£15', sub: 'Box of 9',
-      text: 'The one most people order. Enough to share, small enough not to.',
+      text: 'The one most people go for.',
       opt: 'Brownies · blondies · brookies', img: 'mn-regular' },
     { name: 'Large box', price: '£20', sub: 'Box of 12',
-      text: 'Twelve pieces, mixed however you like them. Birthdays and gatherings.',
+      text: 'Twelve, mixed however you like them.',
       opt: 'Brownies · blondies · brookies', img: 'mn-large' },
     { name: 'Personalised slab', price: '£20', sub: 'One whole slab',
-      text: 'A full slab, finished and written on for the occasion. Say the words and they go on it.',
+      text: 'A full slab with your message on it.',
       opt: 'Brownie or blondie slab', img: 'mn-slab' },
     { name: 'NYC cookies', price: '£2', sub: 'Each · premium £3',
-      text: 'Thick, soft in the middle, the way a New York cookie is supposed to be.',
+      text: 'Thick, soft in the middle. As they should be.',
       opt: 'Standard & premium flavours', img: 'mn-cookies' },
     { name: 'Cake pops', price: '£1.50', sub: 'Each',
-      text: 'Little ones love them and they photograph better than anything else on the table.',
+      text: 'Little ones love them.',
       opt: 'Brownie or blondie flavour', img: 'mn-pops' },
     { name: 'Individually wrapped', price: '', sub: 'Priced per item',
-      text: 'Wrapped singly for favours, hampers, goody bags and anything going in the post.',
+      text: 'Favours, hampers, goody bags and postals.',
       opt: 'Cookies · brownies · blondies · brookies', img: 'mn-wrapped' }
   ];
 
@@ -91,12 +91,12 @@
 
   /* ------------------------------------------------------------- OCCASIONS */
   var OCCASIONS = [
-    { title: 'Eid', text: 'Eid boxes and specials, announced on her page as the date comes round.', img: 'oc-eid', tall: true },
-    { title: 'Birthdays', text: 'Personalised slabs, dessert tables and boxes with the name on.', img: 'oc-birthday' },
-    { title: 'Ramadan', text: 'Orders through the month, and bakes put out for charity.', img: 'oc-ramadan' },
-    { title: 'Baby showers', text: 'Pastel boxes, cake pops and anything that matches a theme.', img: 'oc-baby', tall: true },
-    { title: 'Favours', text: 'Individually wrapped pieces for weddings, nikkahs and party bags.', img: 'oc-favours' },
-    { title: 'Thank-yous', text: 'A box posted to someone who deserves one. Message included.', img: 'oc-thanks' }
+    { title: 'Eid', text: 'Eid boxes and specials, up on my page as the date comes round.', img: 'oc-eid', tall: true },
+    { title: 'Birthdays', text: 'Slabs with the name on, and boxes for the table.', img: 'oc-birthday' },
+    { title: 'Ramadan', text: 'Orders all month, and bakes put out for charity.', img: 'oc-ramadan' },
+    { title: 'Baby showers', text: 'Pastel boxes and cake pops to match your theme.', img: 'oc-baby', tall: true },
+    { title: 'Favours', text: 'Wrapped singles for weddings, nikkahs and party bags.', img: 'oc-favours' },
+    { title: 'Thank-yous', text: 'A box posted to someone who deserves one.', img: 'oc-thanks' }
   ];
 
   /* ---------------------------------------------------------- AVAILABILITY
@@ -106,7 +106,7 @@
   var AVAILABILITY = {
     example: true,
     booked: [3, 4, 5, 6, 10, 11, 12, 20, 21, 22, 24, 28, 29],
-    note: 'She posts the month’s availability on Instagram. This calendar is an example of how it will look here — the dates are not her real ones yet.'
+    note: 'I post each month’s availability on Instagram. This one is an example of how it will look here — the dates are not the real ones yet.'
   };
 
   /* ---------------------------------------------------------------- REVIEWS
@@ -359,16 +359,48 @@
 
   /* =============================================================== marquee */
 
+  /* iOS Safari will not paint a moving layer wider than about 4096 DEVICE
+     pixels. On a 3x phone that is roughly 1365 CSS px, and a strip made by
+     simply doubling this word list measured 3286 CSS px — so the band came
+     out as an empty brown bar on her phone and was perfect everywhere else.
+     So the strip is built to fit: one run of words just wider than the band,
+     then as few copies as it takes to keep the band covered while one run
+     slides away. The animation moves exactly one run and repeats. */
   (function marquee() {
     var track = $('#marquee');
     if (!track) return;
+    var band = track.parentNode;
     var words = ['Brownies', 'Blondies', 'Brookies', 'NYC cookies', 'Cake pops',
-      'Personalised slabs', 'Halal', 'Baked in ' + CONTACT.area, 'UK-wide postals',
-      'Made with love'];
-    // twice through, so the -50% translate loops seamlessly
-    track.innerHTML = words.concat(words).map(function (w) {
-      return '<span>' + esc(w) + '</span>';
-    }).join('');
+      'Personalised slabs', 'Halal', 'UK-wide postals', 'Made with love'];
+
+    function build() {
+      var wide = band.clientWidth || 360;
+      /* The limit is in DEVICE pixels, so a 3x phone can afford a third of
+         what a 1x screen can. Budget for it and size one run to half of it. */
+      var dpr = window.devicePixelRatio || 1;
+      var budget = Math.max(900, 4000 / dpr);
+      var target = Math.min(wide + 40, budget / 2);
+
+      track.innerHTML = '';
+      var run = el('div', { class: 'band-run' });
+      track.appendChild(run);
+      for (var i = 0; i < 40 && run.getBoundingClientRect().width < target; i++) {
+        run.insertAdjacentHTML('beforeend', '<span>' + esc(words[i % words.length]) + '</span>');
+      }
+      var runW = run.getBoundingClientRect().width;
+      if (!runW) return;
+      // enough of the strip to cover the band at every point of the slide
+      var copies = Math.ceil((wide + runW) / runW);
+      for (var c = 1; c < copies; c++) track.appendChild(run.cloneNode(true));
+      track.style.setProperty('--run', runW.toFixed(1) + 'px');
+      track.style.setProperty('--dur', Math.max(9, Math.round(runW / 48)) + 's');
+    }
+
+    build();
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t); t = setTimeout(build, 250);
+    });
   }());
 
   /* ================================================================== menu */
@@ -530,10 +562,9 @@
         '<div><b>' + REVIEWS.rating + '</b>' + stars +
         '<small>Google reviews — example layout</small></div>';
       note.innerHTML =
-        'These cards are an example of how the Google reviews will look once ' +
-        'the Google Business profile is live. They are not real reviews, and ' +
-        'they are labelled as such until they are — see REVIEWS in ' +
-        'brownielicious.js.';
+        'These cards show how the Google reviews will look once the Google ' +
+        'Business profile is live. They are examples, labelled as such until ' +
+        'the real ones are in — see REVIEWS in brownielicious.js.';
     } else {
       score.innerHTML =
         '<span class="g">' + ICON.google + '</span>' +
@@ -840,7 +871,7 @@
         '<a class="way" href="' + CONTACT.tiktok + '" target="_blank" rel="noopener">' + ICON.tt +
           '<span><b>TikTok</b><small>New flavours and giveaways go up here first</small></span></a>' +
         '<span class="way" style="cursor:default">' + ICON.pin +
-          '<span><b>' + esc(CONTACT.area) + '</b><small>Collection locally, or posted UK-wide</small></span></span>';
+          '<span><b>' + esc(CONTACT.area) + '</b><small>Collect locally, or posted UK-wide</small></span></span>';
     }
 
     var foot = $('#footContact');
@@ -858,8 +889,8 @@
     var route = $('#msgRoute');
     if (route) {
       route.textContent = hasWA
-        ? 'Prefer to message? She is on WhatsApp and Instagram, and answers both.'
-        : 'Prefer to message? Send a DM on Instagram — it is where things get picked up fastest.';
+        ? 'Prefer to message? I am on WhatsApp and Instagram, and answer both.'
+        : 'Prefer to message? A DM on Instagram gets picked up fastest.';
     }
 
     var chat = $('#chat');
@@ -952,7 +983,7 @@
       if (val('company')) return;                       // honeypot: a bot filled it
 
       if (!val('name') || !val('email')) {
-        show('err', 'Please give your name and an email address so she can reply.');
+        show('err', 'Please give your name and an email address so I can reply.');
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('email'))) {

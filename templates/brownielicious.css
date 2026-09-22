@@ -77,7 +77,7 @@ p{margin:0 0 1.1em}
 p:last-child{margin-bottom:0}
 
 .wrap{width:min(100% - var(--pad)*2,var(--maxw));margin-inline:auto}
-.sec{position:relative;padding:clamp(72px,11vh,132px) 0}
+.sec{position:relative;padding:clamp(64px,9vh,116px) 0}
 section[id],div[id="top"]{scroll-margin-top:84px}
 
 .eyebrow{
@@ -88,7 +88,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:2px;flex:none}
 .eyebrow.mid{justify-content:center}
 .lead{font-size:1.06em;color:var(--ink-soft);max-width:58ch}
-.sec-head{max-width:66ch;margin-bottom:clamp(34px,5vh,58px)}
+.sec-head{max-width:66ch;margin-bottom:clamp(30px,4.2vh,50px)}
 .sec-head.mid{margin-inline:auto;text-align:center}
 .sec-head.mid .eyebrow{justify-content:center}
 .sec-head.mid .lead{margin-inline:auto}
@@ -268,13 +268,20 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   background:var(--brown);color:var(--plate);overflow:hidden;
   padding:16px 0;border-block:1px solid rgba(255,231,253,.12);
 }
-.band-track{display:flex;gap:0;width:max-content;animation:roll 34s linear infinite}
+/* The strip is built in JS out of runs just wide enough to cover the band,
+   because iOS Safari cannot paint a moving layer wider than about 4096
+   DEVICE pixels — on a 3x phone that is only ~1365 CSS px, and a strip built
+   by simply doubling the word list came to 3286 CSS px (9858 device px) and
+   rendered as an empty brown bar. --run is one run's width; the animation
+   slides exactly that far and starts again, which is seamless. */
+.band-track{display:flex;width:max-content;animation:roll var(--dur,22s) linear infinite}
+.band-run{display:flex;flex:none}
 .band-track span{
   display:inline-flex;align-items:center;gap:20px;padding-inline:20px;white-space:nowrap;
   font-family:'Fraunces',serif;font-style:italic;font-size:clamp(17px,2vw,23px);
 }
 .band-track span::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--pink);flex:none}
-@keyframes roll{to{transform:translateX(-50%)}}
+@keyframes roll{to{transform:translate3d(calc(var(--run,50%) * -1),0,0)}}
 .band:hover .band-track{animation-play-state:paused}
 
 /* ================================================================== about */
@@ -283,11 +290,12 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .about-art{position:relative}
 .about-art img{border-radius:var(--r-lg);box-shadow:var(--shadow);width:100%}
 .about-art .tag{
-  position:absolute;right:-14px;bottom:26px;background:var(--plate);color:var(--brown);
-  border-radius:18px;padding:16px 20px;box-shadow:var(--shadow);max-width:225px;
-  font-family:'Fraunces',serif;font-style:italic;font-size:1.02rem;line-height:1.35;
+  position:absolute;right:-14px;bottom:26px;background:var(--cream);color:var(--brown);
+  border:1px solid var(--line-soft);
+  border-radius:18px;padding:15px 20px;box-shadow:var(--shadow);max-width:230px;
 }
-.about-art .tag small{display:block;font-family:'DM Sans',sans-serif;font-style:normal;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin-top:8px}
+.about-art .tag b{display:block;font-family:'Fraunces',serif;font-size:1.05rem;line-height:1.25}
+.about-art .tag small{display:block;font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;color:var(--pink);margin-top:7px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
 .stat{background:rgba(255,255,255,.58);border:1px solid var(--line-soft);border-radius:var(--r);padding:18px 18px 16px}
 .stat b{display:block;font-family:'Fraunces',serif;font-size:1.55rem;color:var(--brown);line-height:1}
@@ -695,7 +703,13 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .rv-top{flex-direction:column;align-items:flex-start}
 }
 @media (max-width:640px){
-  .stats{grid-template-columns:1fr 1fr}
+  /* two rows with a hole in them, and a section gap you could park in */
+  .sec{padding:clamp(52px,7vh,132px) 0}
+  .stats{grid-template-columns:1fr;gap:9px;margin-top:26px}
+  .stat{display:flex;align-items:baseline;gap:11px;padding:13px 17px}
+  .stat b{font-size:1.2rem}
+  .stat span{margin-top:0}
+  .sec-head{margin-bottom:28px}
   .occ-grid{grid-template-columns:1fr}
   h1{font-size:clamp(37px,9.6vw,60px)}
   .hero-badge{font-size:.72rem;letter-spacing:.07em}
@@ -703,8 +717,8 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .rail-ctrl{justify-content:flex-start}
   .fld.two{grid-template-columns:1fr;gap:0}
   .foot-top{grid-template-columns:1fr}
-  .about-art .tag{position:static;margin-top:-30px;margin-inline:auto;max-width:none}
-  .hero-art .stamp{width:38%;left:38%}
+  .about-art .tag{position:static;margin:14px 0 0;max-width:none}
+  .hero-art .stamp{width:37%;left:0;bottom:2%}
   .chat span{display:none}
   .chat{padding:.92em}
 }

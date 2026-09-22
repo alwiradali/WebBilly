@@ -123,6 +123,16 @@ drifts hundreds-and-thousands behind the hero; drawn, not photographed, and
 skipped under reduced motion. Lenis is gated behind `(pointer: fine)` so a
 phone keeps its own momentum scrolling.
 
+**iOS will not paint a moving layer wider than ~4096 DEVICE pixels.** The
+word marquee under the hero was built by doubling a list of ten words, which
+came to 3286 CSS px — fine on a 1x desktop, but 9858 device pixels on a 3x
+phone, and iOS Safari silently gave up and painted an empty brown bar. It
+looked perfect in every desktop browser. The strip is now built to fit: one
+run of words just wider than the band, repeated only as many times as it
+takes to stay covered while one run slides away, with the budget worked out
+from `devicePixelRatio`. Anything that animates across the full width of the
+page needs the same arithmetic done on it.
+
 **An `img` with `width` and `height` attributes sets both dimensions.** Those
 attributes are presentational hints, so `aspect-ratio` in the CSS loses to
 them and every picture on the first build came out at its full intrinsic
