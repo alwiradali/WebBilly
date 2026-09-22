@@ -149,7 +149,11 @@
       parts: "Parts & materials",
       parts_labour: "Parts and labour",
       parts_labour_parking: "Parts, labour and parking",
-      callout: "Call-out"
+      callout: "Call-out",
+      callout_parking: "Call-out and parking",
+      ooh_callout: "Out of hours call-out",
+      ooh_parking_parts: "Out of hours, parking and parts",
+      ooh_parking: "Out of hours and parking"
     };
     return TITLES[kind] || TITLES.labour;
   }
@@ -184,7 +188,11 @@
       ["parts", "Parts &amp; materials"],
       ["parts_labour", "Parts and labour"],
       ["parts_labour_parking", "Parts, labour and parking"],
-      ["callout", "Call-out"]
+      ["callout", "Call-out"],
+      ["callout_parking", "Call-out and parking"],
+      ["ooh_callout", "Out of hours call-out"],
+      ["ooh_parking_parts", "Out of hours, parking and parts"],
+      ["ooh_parking", "Out of hours and parking"]
     ];
     var known = {};
     SECTIONS.forEach(function (s) { known[s[0]] = true; });

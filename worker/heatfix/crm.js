@@ -335,9 +335,13 @@ async function upsertCustomer(env, c) {
 
 /* --------------------------------------------------------------- invoices */
 /* What a line on an invoice can be. The first two are the original pair and
-   every existing row in the database is one of them; the other three were
-   asked for because a real job is usually not cleanly one or the other. */
-const LINE_KINDS = ["labour", "parts", "parts_labour", "parts_labour_parking", "callout"];
+   every existing row in the database is one of them; the rest are the
+   combinations he actually bills, in his own words -- a job is rarely cleanly
+   one thing, and out-of-hours work is its own rate before parking is counted. */
+const LINE_KINDS = [
+  "labour", "parts", "parts_labour", "parts_labour_parking", "callout",
+  "callout_parking", "ooh_callout", "ooh_parking_parts", "ooh_parking",
+];
 
 /* Worked out here so the browser cannot post its own totals. */
 function totals(items, vatRateBp, vatRegistered) {
