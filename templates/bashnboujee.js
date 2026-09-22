@@ -94,8 +94,15 @@
 
   /* ========================================================== smooth scroll */
 
+  /* Smooth scrolling is a desktop nicety. A phone already has momentum
+     scrolling of its own, done by the operating system on another thread, and
+     a library scrolling the page from a rAF loop while a thumb is dragging it
+     fights that: the page stutters, jumps back, or stops moving altogether.
+     So Lenis is for a mouse, and a touch screen keeps its native scroll. */
+  var fine = !window.matchMedia || window.matchMedia('(pointer: fine)').matches;
+
   var lenis = null;
-  if (!reduced && typeof window.Lenis === 'function') {
+  if (!reduced && fine && typeof window.Lenis === 'function') {
     lenis = new window.Lenis({
       duration: 1.15,
       easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
@@ -105,6 +112,39 @@
     });
     var raf = function (t) { lenis.raf(t); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
+  }
+
+  /* Holding the page still behind the drawer and the lightbox. With Lenis
+     driving the scroll, lenis.stop() is enough. Without it — every touch
+     device now — `overflow:hidden` on the body is famously not enough on
+     iOS, so the body is pinned in place and put back where it was after. */
+  var lockedAt = 0;
+  function lockScroll(on) {
+    var b = document.body;
+    if (on) {
+      lockedAt = window.scrollY || document.documentElement.scrollTop || 0;
+      b.style.overflow = 'hidden';
+      if (!lenis) {
+        b.style.position = 'fixed';
+        b.style.top = (-lockedAt) + 'px';
+        b.style.left = '0';
+        b.style.right = '0';
+      }
+    } else {
+      b.style.overflow = '';
+      if (!lenis) {
+        b.style.position = '';
+        b.style.top = '';
+        b.style.left = '';
+        b.style.right = '';
+        /* html has scroll-behavior:smooth, which would turn putting the page
+           back into a visible animation from the top. Put it back instantly. */
+        var html = document.documentElement, was = html.style.scrollBehavior;
+        html.style.scrollBehavior = 'auto';
+        window.scrollTo(0, lockedAt);
+        html.style.scrollBehavior = was;
+      }
+    }
   }
 
   function scrollToHash(hash) {
@@ -119,9 +159,15 @@
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a) return;
     var hash = a.getAttribute('href');
-    if (hash === '#' || !scrollToHash(hash)) return;
+    if (hash === '#' || !document.getElementById(hash.slice(1))) return;
     e.preventDefault();
+    /* Close first. Closing the drawer puts the page back where it was, which
+       would undo the scroll we are about to do, so the scroll goes after it —
+       on the next frame, once the page is unpinned and can move again. */
+    var wasOpen = drawer.classList.contains('open');
     closeDrawer();
+    if (wasOpen && !lenis) requestAnimationFrame(function () { scrollToHash(hash); });
+    else scrollToHash(hash);
     history.replaceState(null, '', hash);
   });
 
@@ -146,7 +192,7 @@
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Open menu');
     if (lenis) lenis.start();
-    document.body.style.overflow = '';
+    lockScroll(false);
   }
 
   burger.addEventListener('click', function () {
@@ -155,8 +201,8 @@
     burger.classList.toggle('on', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    document.body.style.overflow = open ? 'hidden' : '';
     if (lenis) { open ? lenis.stop() : lenis.start(); }
+    lockScroll(open);
     // the links cascade in, one after the other
     $$('a', drawer).forEach(function (a, i) {
       a.style.transitionDelay = open ? (0.12 + i * 0.055) + 's' : '0s';
@@ -209,9 +255,16 @@
       return svg;
     }
 
+    /* A blurred, composited layer costs a phone something on every scroll
+       frame, and thirty of them cost it thirty times that. Small screens get
+       fewer balloons and no blur — the CSS drops the blur too, this keeps the
+       elements themselves from being created in the first place. */
+    var small = Math.min(window.innerWidth, window.innerHeight) < 760;
+
     $$('[data-balloons]').forEach(function (field) {
       var n = parseInt(field.getAttribute('data-balloons'), 10) || 6;
       var scale = parseFloat(field.getAttribute('data-balloon-scale')) || 1;
+      if (small) n = Math.ceil(n / 2);
       if (reduced) n = Math.min(n, 4);
       for (var i = 0; i < n; i++) {
         var b = balloon(scale * (0.7 + Math.random() * 0.6));
@@ -220,7 +273,7 @@
           'left:' + (Math.random() * 96 - 3).toFixed(2) + '%;' +
           'top:' + (Math.random() * 92 - 4).toFixed(2) + '%;' +
           'opacity:' + (0.2 + deep * 0.34).toFixed(2) + ';' +
-          'filter:blur(' + ((1 - deep) * 1.6).toFixed(2) + 'px);' +
+          (small ? '' : 'filter:blur(' + ((1 - deep) * 1.6).toFixed(2) + 'px);') +
           '--dx:' + (Math.random() * 46 - 23).toFixed(0) + 'px;' +
           '--dy:' + (-28 - Math.random() * 54).toFixed(0) + 'px;' +
           '--r0:' + (Math.random() * 6 - 3).toFixed(1) + 'deg;' +
@@ -440,15 +493,15 @@
           .map(function (n) { return n.textContent.trim(); }).join(' — ')
       : '';
     lb.classList.add('open');
-    document.body.style.overflow = 'hidden';
     if (lenis) lenis.stop();
+    lockScroll(true);
     $('#lbX').focus();
   }
   function closeLb() {
     if (!lb.classList.contains('open')) return;
     lb.classList.remove('open');
-    document.body.style.overflow = '';
     if (lenis) lenis.start();
+    lockScroll(false);
   }
   /* A tile inside a rail is also the drag handle for that rail, so a click
      that ended a drag must not also open the picture. */

@@ -84,6 +84,9 @@ p{margin:0 0 1.1em}
 
 .wrap{width:min(1240px,100% - var(--pad)*2);margin-inline:auto}
 .sec{padding:clamp(72px,10vw,140px) 0;position:relative}
+/* the header is fixed, so an anchor has to stop short of it or the heading it
+   lands on sits underneath the logo */
+section[id],div[id="top"]{scroll-margin-top:86px}
 .sec>.wrap{position:relative;z-index:1}
 
 .eyebrow{
@@ -257,7 +260,9 @@ p{margin:0 0 1.1em}
 .hero{
   position:relative;min-height:100svh;
   display:grid;place-items:center;text-align:center;
-  padding:clamp(96px,13vh,150px) var(--pad) clamp(64px,10vh,110px);
+  /* svh, not vh: on a phone the URL bar collapses as you scroll, vh changes
+     with it, and the hero's padding would shift the page under your thumb. */
+  padding:clamp(96px,13svh,150px) var(--pad) clamp(64px,10svh,110px);
   overflow:hidden;
   /* Flat plate colour top to bottom behind the logo. Her mark is supplied on
      a blush rectangle and the insides of the letters are made of it, so it
@@ -284,7 +289,6 @@ p{margin:0 0 1.1em}
 .bfield svg{
   position:absolute;display:block;
   animation:float var(--d,26s) ease-in-out infinite alternate;
-  will-change:transform;
 }
 @keyframes float{
   from{transform:translate3d(0,0,0) rotate(var(--r0,-3deg))}
@@ -422,6 +426,12 @@ p{margin:0 0 1.1em}
   /* without this the snap ignores the rail's own padding and parks the first
      card hard against the viewport edge before anyone has touched it */
   scroll-padding-inline:var(--pad);
+  /* pan-x is the whole reason a phone can scroll past this thing: it tells the
+     browser this strip only handles sideways gestures, so an up-and-down swipe
+     that happens to start on a picture scrolls the page instead of fighting
+     the rail for the gesture. */
+  touch-action:pan-x;
+  overscroll-behavior:contain;
   padding:4px 2px 18px;
   margin-inline:calc(var(--pad)*-1);padding-inline:var(--pad);
   scrollbar-width:thin;scrollbar-color:var(--rose-lt) transparent;
@@ -501,7 +511,7 @@ p{margin:0 0 1.1em}
 }
 .lb.open{opacity:1;visibility:visible}
 .lb img{
-  max-width:min(1100px,92vw);max-height:84vh;border-radius:var(--r);
+  max-width:min(1100px,92vw);max-height:84svh;border-radius:var(--r);
   box-shadow:0 40px 90px -30px #000;
   transform:scale(.94);transition:transform .6s var(--ease);
 }
@@ -567,7 +577,7 @@ p{margin:0 0 1.1em}
 .rv-score small{display:block;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
 .stars{display:inline-flex;gap:2px;color:#f0b429}
 .stars svg{width:15px;height:15px}
-.rv-rail{scroll-snap-type:x mandatory}
+.rv-rail{scroll-snap-type:x proximity}
 .rv{
   flex:0 0 min(360px,82vw);scroll-snap-align:start;
   border:1px solid var(--line);border-radius:var(--r);
@@ -761,7 +771,9 @@ input:focus,select:focus,textarea:focus{
   .intro-grid,.enq-grid{grid-template-columns:1fr}
   .foot-top{grid-template-columns:1fr 1fr}
   .steps{
-    overflow-x:auto;scroll-snap-type:x mandatory;
+    overflow-x:auto;scroll-snap-type:x proximity;
+    scroll-padding-inline:var(--pad);
+    touch-action:pan-x;overscroll-behavior:contain;
     margin-inline:calc(var(--pad)*-1);padding-inline:var(--pad);
   }
   .step{flex:0 0 min(320px,78vw);scroll-snap-align:start}
@@ -776,6 +788,32 @@ input:focus,select:focus,textarea:focus{
   .chat span{display:none}
   .chat{padding:15px;border-radius:50%}
   .rv-head{flex-direction:column;align-items:flex-start}
+}
+
+/* --------------------------------------------- what a phone can afford */
+/* Everything below was measured on a phone, not guessed at. A fixed grain
+   layer with mix-blend-mode, a backdrop-filter behind the sticky header and a
+   field of blurred balloons each force the whole viewport to be re-composited
+   on every scroll frame; together they made scrolling stutter on an iPhone.
+   On a small screen they are dropped or simplified. The page looks all but
+   identical and scrolls like a page should. */
+@media (max-width:900px){
+  .grain{display:none}
+  .nav.stuck{
+    background:rgba(245,227,220,.96);
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+  .svc-no{
+    background:var(--cream);
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+  .rail-nav{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .bfield svg{filter:none!important;opacity:.26}
+}
+/* A coarse pointer means a touch screen, whatever the window is doing. */
+@media (pointer:coarse){
+  .grain{display:none}
+  .bfield svg{filter:none!important}
 }
 
 @media (prefers-reduced-motion:reduce){
