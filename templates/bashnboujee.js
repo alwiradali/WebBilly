@@ -147,11 +147,24 @@
     }
   }
 
-  function scrollToHash(hash) {
+  /* `jump` means put me there, now. Watching the whole page fly past on the
+     way to a section is a lot of motion to sit through, especially from a
+     menu, so every menu link and everything on a touch screen jumps. A
+     glide is left for a mouse clicking a button mid-page. */
+  function scrollToHash(hash, jump) {
     var target = hash && hash.length > 1 ? document.getElementById(hash.slice(1)) : null;
     if (!target) return false;
-    if (lenis) lenis.scrollTo(target, { offset: -70, duration: 1.3 });
-    else target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    if (jump || reduced) {
+      var html = document.documentElement, was = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
+      if (lenis) lenis.scrollTo(target, { offset: -70, immediate: true });
+      else window.scrollTo(0, target.getBoundingClientRect().top + (window.scrollY || 0) - 86);
+      html.style.scrollBehavior = was;
+    } else if (lenis) {
+      lenis.scrollTo(target, { offset: -70, duration: 1.3 });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     return true;
   }
 
@@ -165,9 +178,10 @@
        would undo the scroll we are about to do, so the scroll goes after it —
        on the next frame, once the page is unpinned and can move again. */
     var wasOpen = drawer.classList.contains('open');
+    var jump = wasOpen || !fine || !!a.closest('.nav, .drawer');
     closeDrawer();
-    if (wasOpen && !lenis) requestAnimationFrame(function () { scrollToHash(hash); });
-    else scrollToHash(hash);
+    if (wasOpen && !lenis) requestAnimationFrame(function () { scrollToHash(hash, jump); });
+    else scrollToHash(hash, jump);
     history.replaceState(null, '', hash);
   });
 
@@ -264,22 +278,27 @@
     $$('[data-balloons]').forEach(function (field) {
       var n = parseInt(field.getAttribute('data-balloons'), 10) || 6;
       var scale = parseFloat(field.getAttribute('data-balloon-scale')) || 1;
-      if (small) n = Math.ceil(n / 2);
+      if (small) n = Math.round(n * 0.8);
       if (reduced) n = Math.min(n, 4);
       for (var i = 0; i < n; i++) {
         var b = balloon(scale * (0.7 + Math.random() * 0.6));
         var deep = Math.random();                    // how far back it sits
+        var travel = 150 + Math.random() * 190;      // how far it rises
         b.style.cssText =
           'left:' + (Math.random() * 96 - 3).toFixed(2) + '%;' +
-          'top:' + (Math.random() * 92 - 4).toFixed(2) + '%;' +
+          'top:' + (Math.random() * 88 - 2).toFixed(2) + '%;' +
           'opacity:' + (0.2 + deep * 0.34).toFixed(2) + ';' +
           (small ? '' : 'filter:blur(' + ((1 - deep) * 1.6).toFixed(2) + 'px);') +
-          '--dx:' + (Math.random() * 46 - 23).toFixed(0) + 'px;' +
-          '--dy:' + (-28 - Math.random() * 54).toFixed(0) + 'px;' +
-          '--r0:' + (Math.random() * 6 - 3).toFixed(1) + 'deg;' +
-          '--r1:' + (Math.random() * 6 - 3).toFixed(1) + 'deg;' +
-          '--d:' + (16 + Math.random() * 18).toFixed(1) + 's;' +
-          'animation-delay:' + (-Math.random() * 18).toFixed(1) + 's';
+          '--y0:' + (travel * 0.42).toFixed(0) + 'px;' +
+          '--y1:' + (-travel * 0.58).toFixed(0) + 'px;' +
+          '--x0:' + (-10 - Math.random() * 22).toFixed(0) + 'px;' +
+          '--x1:' + (10 + Math.random() * 22).toFixed(0) + 'px;' +
+          '--r0:' + (-2 - Math.random() * 5).toFixed(1) + 'deg;' +
+          '--r1:' + (2 + Math.random() * 5).toFixed(1) + 'deg;' +
+          '--d:' + (13 + Math.random() * 11).toFixed(1) + 's;' +
+          '--s:' + (5 + Math.random() * 4).toFixed(1) + 's;' +
+          'animation-delay:' + (-Math.random() * 20).toFixed(1) + 's,' +
+                         '-' + (Math.random() * 8).toFixed(1) + 's';
         field.appendChild(b);
       }
     });
