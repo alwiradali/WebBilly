@@ -433,6 +433,10 @@ section[id],div[id="top"]{scroll-margin-top:86px}
      the rail for the gesture. */
   touch-action:pan-x;
   overscroll-behavior:contain;
+  /* the page sets scroll-behavior:smooth, and every scroll container inherits
+     it — including this one, where it would turn each frame of the arrow's
+     own animation into a second animation of the browser's. */
+  scroll-behavior:auto;
   padding:4px 2px 18px;
   margin-inline:calc(var(--pad)*-1);padding-inline:var(--pad);
   scrollbar-width:thin;scrollbar-color:var(--rose-lt) transparent;
@@ -796,7 +800,7 @@ input:focus,select:focus,textarea:focus{
   .steps{
     overflow-x:auto;scroll-snap-type:x proximity;
     scroll-padding-inline:var(--pad);
-    touch-action:pan-x;overscroll-behavior:contain;
+    touch-action:pan-x;overscroll-behavior:contain;scroll-behavior:auto;
     margin-inline:calc(var(--pad)*-1);padding-inline:var(--pad);
   }
   .step{flex:0 0 min(320px,78vw);scroll-snap-align:start}

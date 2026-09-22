@@ -313,35 +313,80 @@
      the snap points and the keyboard all stay honest. */
 
   (function rails() {
-    var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+    /* easeInOutCubic: starts slow, gets on with it, arrives slowly. An
+       ease-out alone leaves the first frames jumping away from your thumb. */
+    var ease = function (t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
 
-    function glide(rail, to, ms) {
-      var from = rail.scrollLeft;
+    /* Where a card edge would sit if it were parked at the left of the strip.
+       Stepping to one of these, rather than by "one card width", is what makes
+       the arrow land on a card every time instead of drifting out of step. */
+    function stops(rail) {
+      var rr = rail.getBoundingClientRect();
+      var pad = parseFloat(getComputedStyle(rail).paddingLeft) || 0;
       var max = rail.scrollWidth - rail.clientWidth;
-      to = Math.max(0, Math.min(max, to));
-      if (Math.abs(to - from) < 1) return;
-      if (reduced) { rail.scrollLeft = to; return; }
-      var t0 = performance.now();
-      cancelAnimationFrame(rail.__glide);
-      (function step(now) {
-        var k = Math.min(1, (now - t0) / ms);
-        rail.scrollLeft = from + (to - from) * ease(k);
-        if (k < 1) rail.__glide = requestAnimationFrame(step);
-      }(t0));
+      var out = [];
+      [].forEach.call(rail.children, function (c) {
+        if (c.nodeType !== 1 || c.hidden) return;
+        var at = Math.round(rail.scrollLeft + (c.getBoundingClientRect().left - rr.left) - pad);
+        out.push(Math.max(0, Math.min(max, at)));
+      });
+      out.push(max);
+      return out.sort(function (a, b) { return a - b; });
     }
 
-    function cardStep(rail) {
-      var card = rail.firstElementChild;
-      if (!card) return rail.clientWidth * 0.8;
-      var gap = parseFloat(getComputedStyle(rail).columnGap) || 16;
-      return Math.round(card.getBoundingClientRect().width + gap);
+    function stepTo(rail, dir) {
+      var from = rail.__to != null ? rail.__to : rail.scrollLeft;
+      var list = stops(rail), i;
+      if (dir > 0) {
+        for (i = 0; i < list.length; i++) if (list[i] > from + 4) return list[i];
+        return list[list.length - 1];
+      }
+      for (i = list.length - 1; i >= 0; i--) if (list[i] < from - 4) return list[i];
+      return 0;
+    }
+
+    /* Snapping and the browser's own smooth scrolling both want to own
+       scrollLeft. While we are animating it ourselves, they are switched off;
+       without that the two animations fight each other and the strip judders,
+       which is the whole reason the arrows felt rough. */
+    function takeOver(rail) {
+      rail.style.scrollSnapType = 'none';
+      rail.style.scrollBehavior = 'auto';
+    }
+    function handBack(rail) {
+      rail.style.scrollSnapType = '';
+      rail.style.scrollBehavior = '';
+    }
+
+    function glide(rail, to) {
+      var from = rail.scrollLeft;
+      var max = rail.scrollWidth - rail.clientWidth;
+      to = Math.max(0, Math.min(max, Math.round(to)));
+      cancelAnimationFrame(rail.__glide);
+      cancelAnimationFrame(rail.__flick);
+      if (Math.abs(to - from) < 1) { rail.__to = null; return; }
+      if (reduced) { takeOver(rail); rail.scrollLeft = to; handBack(rail); rail.__to = null; return; }
+
+      rail.__to = to;
+      takeOver(rail);
+      /* far to go, a little longer to get there — but never a crawl */
+      var ms = Math.min(820, 320 + Math.abs(to - from) * 0.42);
+      var t0 = performance.now();
+      (function frame(now) {
+        var k = Math.min(1, (now - t0) / ms);
+        rail.scrollLeft = from + (to - from) * ease(k);
+        if (k < 1) { rail.__glide = requestAnimationFrame(frame); }
+        else { rail.__to = null; handBack(rail); }
+      }(t0));
     }
 
     $$('[data-rail]').forEach(function (rail) {
       var prev = $('[data-rail-prev="' + rail.id + '"]');
       var next = $('[data-rail-next="' + rail.id + '"]');
-
       var ctrl = prev && prev.parentNode;
+
       function ends() {
         var max = rail.scrollWidth - rail.clientWidth - 1;
         if (prev) prev.disabled = rail.scrollLeft <= 1;
@@ -353,14 +398,17 @@
       rail.addEventListener('scroll', ends, { passive: true });
       window.addEventListener('resize', ends);
       setTimeout(ends, 80);
-      rail.__ends = ends;
+      window.addEventListener('load', ends);
 
-      if (prev) prev.addEventListener('click', function () { glide(rail, rail.scrollLeft - cardStep(rail), 620); });
-      if (next) next.addEventListener('click', function () { glide(rail, rail.scrollLeft + cardStep(rail), 620); });
+      function go(dir) { glide(rail, stepTo(rail, dir)); }
+      if (prev) prev.addEventListener('click', function () { go(-1); });
+      if (next) next.addEventListener('click', function () { go(1); });
 
       rail.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowRight') { e.preventDefault(); glide(rail, rail.scrollLeft + cardStep(rail), 620); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); glide(rail, rail.scrollLeft - cardStep(rail), 620); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+        if (e.key === 'Home') { e.preventDefault(); glide(rail, 0); }
+        if (e.key === 'End') { e.preventDefault(); glide(rail, rail.scrollWidth); }
       });
 
       /* Grab and throw. Pointer events cover mouse and pen; touch is left to
@@ -373,6 +421,8 @@
         startX = last = e.clientX; startLeft = rail.scrollLeft; lastT = performance.now();
         cancelAnimationFrame(rail.__glide);
         cancelAnimationFrame(rail.__flick);
+        rail.__to = null;
+        takeOver(rail);
       });
 
       window.addEventListener('pointermove', function (e) {
@@ -390,18 +440,31 @@
         if (!down) return;
         down = false;
         rail.classList.remove('dragging');
-        /* A click that followed a drag is not a click. */
         if (moved > 6) {
-          rail.__drag = Date.now();
+          rail.__drag = Date.now();            // a click that ended a drag is not a click
           if (!reduced && Math.abs(v) > 0.15) {
-            var speed = v * 16;                            // carry the throw on
+            var speed = v * 16;                // carry the throw on
             (function decay() {
               speed *= 0.94;
               rail.scrollLeft -= speed;
               if (Math.abs(speed) > 0.4) rail.__flick = requestAnimationFrame(decay);
+              else settle();
             }());
+            return;
           }
+          settle();
+          return;
         }
+        handBack(rail);
+      }
+      /* However it ended, finish on a card edge rather than halfway across one. */
+      function settle() {
+        var list = stops(rail), at = rail.scrollLeft, best = list[0];
+        for (var i = 1; i < list.length; i++) {
+          if (Math.abs(list[i] - at) < Math.abs(best - at)) best = list[i];
+        }
+        if (Math.abs(best - at) > 1) glide(rail, best);
+        else handBack(rail);
       }
       window.addEventListener('pointerup', release);
       window.addEventListener('pointercancel', release);
