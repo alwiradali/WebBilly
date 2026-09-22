@@ -389,24 +389,38 @@
             <p class="ok-alt">Not heard back within 24 hours? Message Rod on <a href="https://wa.me/447979448323">WhatsApp</a> or email <a href="mailto:rod@smartinscience.co.uk">rod@smartinscience.co.uk</a>.</p>
           </div>
           <form id="bkForm" novalidate>
-            <div class="fld"><label for="pname">Parent / guardian name *</label><input type="text" id="pname" autocomplete="name" required></div>
+            <!-- One form for both sides of the business. A school booking a
+                 STEM workshop was being asked for a year group and an exam
+                 board, and had nowhere to put the name of the school; a
+                 parent booking tuition should not be asked any of the
+                 workshop questions. Answering this first question hides the
+                 half that does not apply. -->
+            <div class="fld"><label for="etype">What is your enquiry about? *</label>
+              <select id="etype" required>
+                <option value="tuition">GCSE science tuition</option>
+                <option value="stem">STEM workshops, clubs or activities</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+            <div class="fld"><label for="pname">Name (parent / guardian / enquirer) *</label><input type="text" id="pname" autocomplete="name" required></div>
             <div class="fld"><label for="email">Email address *</label><input type="email" id="email" autocomplete="email" required></div>
             <div class="fld"><label for="phone">Phone / WhatsApp</label><input type="tel" id="phone" autocomplete="tel"></div>
-            <div class="fld"><label for="sname">Student's first name</label><input type="text" id="sname"></div>
-            <div class="fld"><label for="year">Year group *</label>
-              <select id="year" required>
+            <div class="fld" data-for="tuition"><label for="sname">Student's first name</label><input type="text" id="sname"></div>
+            <div class="fld" data-for="tuition"><label for="year">Year group *</label>
+              <select id="year">
                 <option value="">Please choose…</option>
                 <option>Year 10</option>
                 <option>Year 11</option>
                 <option>Year 9 — planning ahead</option>
               </select>
             </div>
-            <div class="fld"><label for="board">Exam board</label>
+            <div class="fld" data-for="tuition"><label for="board">Exam board</label>
               <select id="board">
                 <option>Not sure</option><option>AQA</option><option>Edexcel</option><option>OCR</option><option>Other</option>
               </select>
             </div>
-            <div class="fld"><label for="mode">Preferred times</label>
+            <div class="fld" data-for="stem"><label for="org">Company / organisation</label><input type="text" id="org" autocomplete="organization" placeholder="School, group or company"></div>
+            <div class="fld" data-for="tuition"><label for="mode">Preferred times</label>
               <select id="mode">
                 <option>Weekday evenings</option><option>Weekends</option><option>After school</option><option>Either is fine</option>
               </select>
