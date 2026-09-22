@@ -13,18 +13,26 @@ export const OFFICE_TO = "info@megacityproperties.co.uk";
 export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
 export const MANAGEMENT_TO = "management@megacityproperties.co.uk";
 
-/* Which inbox each form reaches. Landlord business goes to the office; what a
-   tenant sends about renting goes to lettings; repairs go to management, who
-   are the people who actually fix them; and the general contact form could be
-   any of them, so it goes to the office and lettings rather than making the
-   sender guess.
+/* Which inbox each form reaches, as the agency asked for it (Walid, 2026-09-19):
+   anything a tenant sends goes to lettings@, and everything else goes to info@,
+   which he reads himself. Repairs are the one thing that goes elsewhere —
+   management@ exists for them and those are the people who actually fix things.
+
+   The general contact form used to go to info@ AND lettings@, on the reasoning
+   that it could be either and the sender should not have to guess. That is
+   exactly what he did not want: it put every "Renting a home" message in his own
+   inbox and every "Letting my property" message in lettings. The sender does
+   pick — the form's "About" list is the answer — so route on it instead.
+
    These are the addresses the enquiry ACTUALLY lands in: the Studio's inbox only
    exists once the database is bound, so until then the email is the only record
-   and there is no copy anywhere else. */
-const ROUTE = {
+   and there is no copy anywhere else. Exported so the routing can be tested
+   without sending anything. */
+export const ROUTE = {
   landlord: [OFFICE_TO],
   valuation: [OFFICE_TO],
-  contact: [OFFICE_TO, LETTINGS_TO],
+  contact: [OFFICE_TO],
+  "contact-tenant": [LETTINGS_TO],
   register: [LETTINGS_TO],
   viewing: [LETTINGS_TO],
   application: [LETTINGS_TO],
@@ -46,11 +54,24 @@ export async function notifyTo(env, kind) {
   } catch { return route; }
 }
 
-/* The contact endpoint carries three different forms, told apart only by their
-   topic, so the inbox has to be decided the same way the Studio decides the
-   enquiry's source — same regexes, kept side by side so they cannot drift. */
+/* The contact form's "About" list is the only thing that says who should read a
+   message, so routing reads it. This deliberately asks a different question from
+   sourceFrom below, which the Studio uses to record WHAT the visitor filled in:
+   a tenant asking about renting still shows in the Studio as a contact-form
+   enquiry, it just arrives in lettings@ rather than in Walid's own inbox.
+
+   Word boundaries matter more than they look here. /rent\b/ alone matches
+   "current", which would send a landlord's message to the tenant inbox. */
+const TENANT_TOPIC = /\brent(ing|al)?\b|\btenant|\bviewing\b|\broom\b|\bdeposit\b/i;
+const REPAIR_TOPIC = /\bmaintenance\b|\brepair|\bleak|\bbroken\b/i;
+
 export function kindFromTopic(topic) {
-  return sourceFrom(topic, "contact");
+  const t = String(topic || "");
+  if (/valuation/i.test(t)) return "valuation";
+  if (/regist/i.test(t)) return "register";
+  if (REPAIR_TOPIC.test(t)) return "maintenance";
+  if (TENANT_TOPIC.test(t)) return "contact-tenant";
+  return "contact";
 }
 
 /* The legacy website forms: a handful of messages per connection per hour is

@@ -57,6 +57,22 @@ that if something goes wrong you always know which change caused it, and each
 one is reversible on its own. Doing both at once is how agencies lose a
 client's mailbox on a Friday afternoon.
 
+**Which Cloudflare account holds the zone decides how B2 is done.** The zone is
+going into **Walid's own account**, which is the right way round — he owns his
+domain and his mail, and he can hand it to someone else one day without asking
+anybody. B1 below is unaffected by that choice: it is DNS only.
+
+B2 is affected, and the current B2 steps assume otherwise. **A Worker custom
+domain can only be created for a zone in the same account as the Worker**, and
+the Worker behind billydigitals.com is in Billy's account. So before B2 the
+Megacity site has to be deployed into Walid's account of its own: a
+`[env.megacity]` section, a scoped API token of his in GitHub Secrets, and a
+`dist/megacity` build — exactly the pattern `[env.mm]` and `[env.smartin]`
+already follow. The `dist/` build is not a nicety: `wrangler deploy --env
+megacity` without one falls back to the top-level config and uploads the whole
+repository — every other client's files — into the client's account. That has
+happened here before. None of that work is done yet, and none of it blocks B1.
+
 Before either sitting: **fix the Workers Builds production branch** (Cloudflare
 → Workers & Pages → billydigitals → Settings → Builds → production branch
 `main`, non-production branches must not deploy to production). Until that is
@@ -67,41 +83,136 @@ own domain. See PROJECT-NOTES.md.
 ### B1 — move DNS to Cloudflare, with the old website still serving
 
 The state of the domain before anything moved is recorded in
-`docs/megacity-old-site/dns-export.txt`: 14 records, captured from public DNS.
+`docs/megacity-old-site/dns-export.txt`: 30 records, reconciled exactly against
+GoDaddy's own zone export (33 = these 30 plus an SOA and two apex NS records,
+which Cloudflare writes itself). `node scripts/megacity-dns-reconcile.mjs`
+re-proves it.
 Mail is **Microsoft 365 sold through GoDaddy** — `info@`, `lettings@` and
 `management@` all depend on the MX, SPF, `autodiscover` and `_dmarc` records in
 that file.
 
 1. **Capture the old site.** `scripts/megacity-capture-old-site.sh` saves every
    old page into `docs/megacity-old-site/`. Confirm the DNS inventory is still
-   current: `node scripts/megacity-dns-check.mjs` — all 14 must pass.
+   current: `node scripts/megacity-dns-check.mjs` — all must pass. If any
+   line disagrees, the domain has changed since capture: update
+   `dns-export.txt` to match reality and re-run
+   `node scripts/megacity-dns-zonefile.mjs` before going on.
 2. Cloudflare → *Add a site* → `megacityproperties.co.uk`, Free plan.
-   Cloudflare scans and imports what it can find. **It does not reliably import
-   SRV records**, so go through `dns-export.txt` line by line and add anything
-   missing. Every record in that file is **DNS only (grey cloud)**.
+   Cloudflare scans the domain and shows what it found.
+
+   **What actually happened here, 2026-09-09 to 09-16.** The scan found 17
+   records and arrived **proxied (orange cloud) on all 10 that can be
+   proxied**, including `autodiscover` and both `_domainkey` selectors. A
+   proxied record answers with Cloudflare's own addresses instead of the real
+   target, so leaving them orange would have broken Outlook auto-setup, Teams
+   sign-in and DKIM signing the moment the nameservers changed.
+
+   **17 was not the zone.** GoDaddy's own DNS page says **33 records**. The
+   difference is mostly seven Amazon SES DKIM selectors whose names are random
+   32-character strings — nothing could have guessed them, and neither
+   Cloudflare's scan nor a sweep of six hundred common names found them. Read
+   the registrar's list, not a scan.
+
+   So: **turn every orange cloud grey**, then reconcile against GoDaddy's
+   export record by record. Every one **DNS only**. Delete anything the scan
+   added that is not in the export, and add everything in the export that
+   Cloudflare does not have.
+
+   The quickest reliable way is to import rather than click through 30-odd
+   rows:
+
+   ```
+   node scripts/megacity-dns-zonefile.mjs                  # the zone as it stands
+   node scripts/megacity-dns-zonefile.mjs --ttl=300 > cutover.txt   # same, short TTLs
+   ```
+
+   Import the **short-TTL** one for the cutover. The records are identical; only
+   the caching changes. It means that if anything does need correcting after the
+   switch, the correction is live in five minutes instead of an hour — and
+   correcting the record is the fast remedy, not reverting the nameservers. Put
+   the real TTLs back a few days later by importing the first file.
+
+   DNS → Records → *Import and Export* → *Import DNS records* → choose that
+   file → leave **Proxy imported DNS records OFF**. Deleting every scanned
+   record first and importing over the empty zone gives the most predictable
+   result, and it is safe: until the nameservers change, this zone is inert and
+   nothing on the internet reads it.
+
    Leave the apex `A` on `77.68.34.162` and `www` as it is — the old site keeps
    serving throughout B1, which is the point.
 3. SSL/TLS → **Full**. Do not use Flexible: the old server already does HTTPS.
-4. **Prove it before you switch.** Cloudflare shows two assigned nameservers.
-   Ask them directly, while the live domain is still on GoDaddy and nothing has
-   changed for anyone:
+   (With every record grey, nothing routes through Cloudflare during B1, so this
+   only matters from B2 — set it now anyway so it is not a live change later.)
+
+   **Four buttons in Cloudflare's own interface will break this zone. None of
+   them is a mistake you can make by accident once you know they exist:**
+
+   - **Email Routing.** Its setup wizard replaces the domain's MX records with
+     Cloudflare's. That deletes Microsoft 365 mail flow for all three
+     mailboxes. Never open it on a domain with real mail.
+   - **"Flatten all CNAMEs"** (DNS → Settings). It resolves CNAMEs to addresses
+     at the edge, which destroys all nine DKIM selectors and `autodiscover` at
+     once. Apex flattening only is the default; leave it.
+   - **The "your domain is not protected" prompts**, and the Recommendations
+     panel. Accepting one re-proxies the records the import deliberately left
+     grey. Dismiss them.
+   - **DNSSEC.** Off today, confirmed at the registry. Enabling it mid-move
+     turns any recoverable problem into a total outage of the domain, email
+     included. Leave it off until well after B2.
+4. **Prove it before you switch — and run this from your own machine.**
+   Cloudflare shows two assigned nameservers. Ask them directly, while the live
+   domain is still on GoDaddy and nothing has changed for anyone:
    ```
    node scripts/megacity-dns-check.mjs --ns=<the first nameserver Cloudflare shows>
+   node scripts/megacity-dns-check.mjs --ns=<the second one>
    ```
-   Every line must say `ok`. A `STOP` line is an email record — fix it in
+   **Both** of them — Cloudflare assigns two and a zone is only as good as the
+   one a given resolver happens to ask. Every line must say `ok`. A `STOP` line is an email record — fix it in
    Cloudflare and run it again. Do not go to step 5 until this passes.
-5. Walid changes the two nameservers at GoDaddy to the ones Cloudflare shows.
+
+   **Not from a sandbox.** In the container this project is developed in, every
+   DNS query is answered locally by a recursive resolver no matter which server
+   you name, so this check "passed" three times while actually reading public
+   DNS — which is still GoDaddy's zone. It was reporting the old zone as proof
+   that the new one was right. The script now asks for the zone's SOA, demands
+   the authoritative bit, asks the same server about bbc.co.uk and demands
+   silence, and refuses to report anything if either fails. If you see that
+   refusal, the machine cannot do this check; run it somewhere that can.
+5. **Establish that the mail works BEFORE you change anything**, so that if it
+   misbehaves afterwards you know the change caused it. Send to `info@`,
+   `lettings@` and `management@` from an outside address and reply from each.
+   Keep the replies. Without this baseline, a mailbox that was already unwell
+   gets blamed on the cutover, and the reflex is to revert — which, per the
+   note below, fixes nothing.
+
+6. Walid changes the two nameservers at GoDaddy to the ones Cloudflare shows.
    GoDaddy will warn that this affects his email; that is expected, and it is
    safe **because step 4 passed**. Wait for Cloudflare to report *Active*
    (usually minutes, occasionally a few hours).
-6. `node scripts/megacity-dns-check.mjs` — public DNS now. All 14 pass.
+7. `node scripts/megacity-dns-check.mjs` — public DNS now. All 30 pass.
    Then have Walid send a test email to `info@`, `lettings@` and `management@`
    and reply from each. **B1 is not finished until he has done that.**
    The website is still the old one, unchanged, on the old server.
 
-   *If mail misbehaves:* put the two GoDaddy nameservers back
-   (`ns15.domaincontrol.com`, `ns16.domaincontrol.com`). Nothing else has been
-   touched.
+   *If mail misbehaves, fix it forward — do not revert the nameservers.*
+   Correct the record in Cloudflare. That reaches resolvers within one record
+   TTL, which is why the cutover import uses short ones
+   (`node scripts/megacity-dns-zonefile.mjs --ttl=300`): five minutes rather
+   than an hour.
+
+   Putting `ns15.domaincontrol.com` and `ns16.domaincontrol.com` back is the
+   second resort, not the first, and it is **slow**: a delegation change is slow
+   in both directions — the parent TTL Nominet publishes for `.uk` governs it —
+   so a resolver that has already moved to Cloudflare goes on asking Cloudflare
+   for a day or more after the revert. Reverting during a live mail incident
+   looks decisive and fixes nothing for those resolvers. Keep it for the one
+   case it actually answers: Cloudflare itself being unreachable.
+
+   None of this is likely, because both zones serve identical records — a
+   resolver still pointed at Cloudflare mid-revert gets the same answers it
+   would have got from GoDaddy. GoDaddy's zone also stays exactly as it was, and
+   `docs/megacity-old-site/godaddy-export-2026-09-16.txt` can rebuild it from
+   nothing if it ever came to that.
 
    *One consequence to know:* GoDaddy can no longer auto-manage the Microsoft
    365 records once DNS is at Cloudflare. If Microsoft ever changes them, they
@@ -175,8 +286,10 @@ from the host it is served on.
   found) and Studio → Redirects & 404s. Add a redirect for anything with real
   visitors behind it.
 - **Email recipients** are already Walid's own three Microsoft 365 mailboxes:
-  landlord enquiries to `info@`, tenant enquiries to `lettings@`, repairs to
-  `management@` (see docs/megacity-studio.md). All three must be watched —
+  landlord enquiries and the general contact form to `info@`, everything a
+  tenant sends to `lettings@`, repairs to `management@` (see
+  docs/megacity-studio.md). Walid reads `info@` himself and asked for it that
+  way round. All three must be watched —
   nothing is copied to the agency, and with the database unbound the email is
   the only record an enquiry ever existed.
 - **Email sender.** The site currently sends as

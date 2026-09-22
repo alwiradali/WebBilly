@@ -6,8 +6,35 @@
 #
 # HOW TO USE THIS FILE
 #   Every record below must exist in Cloudflare BEFORE the nameservers are
-#   changed at GoDaddy. Cloudflare's import scan usually finds most of them;
-#   it does NOT reliably find SRV records. Tick each line off by hand.
+#   changed at GoDaddy. Tick each line off by hand.
+#
+# THIS LIST CANNOT BE PROVED COMPLETE FROM OUTSIDE
+#   DNS has no "list the zone" query. Everything here was found by asking for
+#   a name and seeing whether it answered, so a record whose name nobody
+#   guessed does not appear, and each pass has found more:
+#
+#     14  the first capture, 2026-09-09 19:09 UTC, from public DNS
+#     17  after Cloudflare's own scan, which has a much larger dictionary:
+#         the two SendGrid DKIM selectors and the Amazon SES verification
+#     30  after reading GoDaddy's DNS page, 2026-09-16: seven Amazon SES DKIM
+#         selectors, five stray duplicates of them, and em745
+#
+#   SETTLED 2026-09-16 by GoDaddy's own zone export, saved beside this file as
+#   godaddy-export-2026-09-16.txt. It holds 33 records: these 30, plus an SOA
+#   and two apex NS records, which say who serves the zone and which Cloudflare
+#   writes itself. So this file is now COMPLETE, not merely the best guess —
+#   `node scripts/megacity-dns-reconcile.mjs` proves it and fails if either
+#   side ever drifts.
+#
+#   The Amazon SES selectors are the point. Their names are random 32-character
+#   strings — "x3ipgewk5oycfue3kjbb7zveverhize6._domainkey" — so no dictionary
+#   could ever have guessed them, and neither Cloudflare's scan nor a sweep of
+#   six hundred common names came anywhere near. Only the registrar's own list
+#   shows them. Every one was confirmed against ns15.domaincontrol.com before
+#   being written here.
+#
+#   The only authoritative list is GoDaddy's own zone, and the way to get it
+#   exactly is DNS → Actions → Export. Do that before the nameservers change.
 #
 #   Proxy status: DNS only (grey cloud) for EVERY record in this file.
 #   Only the website A/CNAME is ever proxied, and the Worker creates that
@@ -19,6 +46,15 @@
 #   TXT NETORGFT...         Microsoft can no longer verify the domain
 #   _dmarc TXT              reporting policy lost
 #   autodiscover CNAME      Outlook and phones stop auto-configuring
+#   s1/s2._domainkey CNAME  whatever sends through SendGrid as this domain
+#                           (10ninety, on the evidence) loses its DKIM
+#                           signature, so those emails start failing DMARC
+#                           alignment and landing in spam
+#   _amazonses TXT          Amazon SES stops treating the domain as verified,
+#                           so whatever sends through SES stops sending
+#   <32 chars>._domainkey   the seven Amazon SES DKIM selectors. Lose these and
+#                           SES mail sent as this domain is no longer signed,
+#                           so it fails DMARC alignment and lands in spam
 #   msoid / sip / lyncdiscover / _sip / _sipfederationtls    Teams sign-in
 #   email CNAME             GoDaddy's email marketing links
 #   _domainconnect CNAME    GoDaddy one-click setup; harmless to drop
@@ -37,8 +73,34 @@ lyncdiscover               CNAME  3600   webdir.online.lync.com.
 msoid                      CNAME  3600   clientconfig.microsoftonline-p.net.
 _domainconnect             CNAME  3600   _domainconnect.gd.domaincontrol.com.
 _dmarc                     TXT    3600   "v=DMARC1;p=none;adkim=r;aspf=r;pct=100;rf=afrf"
+s1._domainkey              CNAME  1800   s1.domainkey.u2309198.wl199.sendgrid.net.
+s2._domainkey              CNAME  1800   s2.domainkey.u2309198.wl199.sendgrid.net.
+_amazonses                 TXT    3600   "juNkJZcd/CGB2doV4qI/mEtLARs10FM7N5qWd/9Q1Og="
+em745                      CNAME  1800   u2309198.wl199.sendgrid.net.
+62zagzysyi7rx3cljaovqjieup4xeykv._domainkey CNAME  3600   62zagzysyi7rx3cljaovqjieup4xeykv.dkim.amazonses.com.
+gk4cochnh4zbwhx2thlrsyudhuavrmw3._domainkey CNAME  3600   gk4cochnh4zbwhx2thlrsyudhuavrmw3.dkim.amazonses.com.
+pdu572aq43bln7g2eyxqv7stwalebogb._domainkey CNAME  3600   pdu572aq43bln7g2eyxqv7stwalebogb.dkim.amazonses.com.
+pihh6gmszpslvdosnlmt3bczqu6syiyx._domainkey CNAME  3600   pihh6gmszpslvdosnlmt3bczqu6syiyx.dkim.amazonses.com.
+seleeskrjtgcr4z5kpfz4jnglgf7s6gm._domainkey CNAME  3600   seleeskrjtgcr4z5kpfz4jnglgf7s6gm.dkim.amazonses.com.
+whbcly5m7njtje6fkhyo7gmtjrh54e74._domainkey CNAME  3600   whbcly5m7njtje6fkhyo7gmtjrh54e74.dkim.amazonses.com.
+x3ipgewk5oycfue3kjbb7zveverhize6._domainkey CNAME  3600   x3ipgewk5oycfue3kjbb7zveverhize6.dkim.amazonses.com.
+62zagzysyi7rx3cljaovqjieup4xeykv._domainkey.megacityproperties.co.uk CNAME  3600   62zagzysyi7rx3cljaovqjieup4xeykv.dkim.amazonses.com.
+gk4cochnh4zbwhx2thlrsyudhuavrmw3._domainkey.megacityproperties.co.uk CNAME  3600   gk4cochnh4zbwhx2thlrsyudhuavrmw3.dkim.amazonses.com.
+pdu572aq43bln7g2eyxqv7stwalebogb._domainkey.megacityproperties.co.uk CNAME  3600   pdu572aq43bln7g2eyxqv7stwalebogb.dkim.amazonses.com.
+whbcly5m7njtje6fkhyo7gmtjrh54e74._domainkey.megacityproperties.co.uk CNAME  3600   whbcly5m7njtje6fkhyo7gmtjrh54e74.dkim.amazonses.com.
+x3ipgewk5oycfue3kjbb7zveverhize6._domainkey.megacityproperties.co.uk CNAME  3600   x3ipgewk5oycfue3kjbb7zveverhize6.dkim.amazonses.com.
 _sip._tls                  SRV    3600   100 1 443 sipdir.online.lync.com
 _sipfederationtls._tcp     SRV    3600   100 1 5061 sipfed.online.lync.com
 
-# 14 records. Anything the Cloudflare scan adds that is NOT in this
-# list should be questioned before it is kept.
+# 30 records, reconciled against GoDaddy's own export. Nothing is outstanding.
+#
+# Five of them are junk and are here deliberately. The names ending
+# "._domainkey.megacityproperties.co.uk" were typed into GoDaddy with the domain
+# already appended, so they really live at
+# "<selector>._domainkey.megacityproperties.co.uk.megacityproperties.co.uk" —
+# a name nothing will ever ask for. They are copied across anyway, because a
+# migration should move the zone as it stands and nothing else. Delete them
+# afterwards, as their own small change, once B1 has settled.
+#
+# Anything the Cloudflare scan adds that is NOT in this list should be
+# questioned before it is kept.
