@@ -341,10 +341,14 @@
       var prev = $('[data-rail-prev="' + rail.id + '"]');
       var next = $('[data-rail-next="' + rail.id + '"]');
 
+      var ctrl = prev && prev.parentNode;
       function ends() {
         var max = rail.scrollWidth - rail.clientWidth - 1;
         if (prev) prev.disabled = rail.scrollLeft <= 1;
         if (next) next.disabled = rail.scrollLeft >= max;
+        /* nothing to scroll — four steps on a wide screen, say — so the whole
+           row of arrows goes away rather than sitting there greyed out */
+        if (ctrl) ctrl.hidden = max <= 1;
       }
       rail.addEventListener('scroll', ends, { passive: true });
       window.addEventListener('resize', ends);

@@ -21,14 +21,18 @@ the toolkit genuinely can't express the effect.
 One page, three files: `templates/bashnboujee.{html,css,js}`, plus her assets
 in `assets/bashnboujee/`. Noindex, like every client demo.
 
-**Her logo is foil-embossed, so it cannot be cut out.** The insides of the
-letters in `assets/bashnboujee/logo.jpg` are literally the blush plate it is
-printed on (#f5e3dc) — knock the background out and the letterforms hollow.
-So the file is used exactly as she supplied it and every surface it sits on is
-set to that same blush instead: the hero is flat `--cream` top to bottom, the
-sticky header matches it, and on the dark footer the mark keeps its plate and
-reads as a card. A soft radial mask on each copy covers a browser rendering
-the JPEG a shade off. Do not "fix" the logo by removing its background.
+**Her logo, and the one thing to know about it.** The supplied file,
+`assets/bashnboujee/logo.jpg`, is a foil-embossed mark printed on a blush
+plate (#f5e3dc). Knocking that plate out naively hollows the letterforms,
+because the specular highlights inside the strokes are lighter than the plate
+and a plain colour-distance cut takes them with it. `logo.png` is the cut-out
+that does work: ink is colour-distance from the plate, PLUS anything lighter
+than the plate (those highlights), PLUS the balloon's own enclosed shading,
+filled only inside the balloon's connected component so the counters of B, o
+and e stay open. That PNG is what every copy on the page uses, so the mark
+sits on cream and on the dark footer alike with no card behind it. If it is
+ever regenerated, check the balloon highlight and the insides of the letters
+before shipping it.
 
 **The pictures are stock photographs, and the page says so.** Every photo in
 `assets/bashnboujee/photos/` is a free Pexels image (free for commercial use,

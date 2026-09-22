@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Parisienne&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="../assets/bashnboujee/logo.jpg">
+<link rel="preload" as="image" href="../assets/bashnboujee/logo.png">
 <link rel="stylesheet" href="../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="bashnboujee.css">
 
@@ -74,7 +74,7 @@
 
 <div class="loader" id="loader" aria-hidden="true">
   <div>
-    <img src="../assets/bashnboujee/logo.jpg" alt="" width="1290" height="1219">
+    <img src="../assets/bashnboujee/logo.png" alt="" width="900" height="670">
     <div class="loader-bar"><i></i></div>
   </div>
 </div>
@@ -84,7 +84,7 @@
 
 <header class="nav" id="nav">
   <a class="nav-logo" href="#top" aria-label="Bash n Boujee — home">
-    <img src="../assets/bashnboujee/logo.jpg" alt="Bash n Boujee" width="1290" height="1219">
+    <img src="../assets/bashnboujee/logo.png" alt="Bash n Boujee" width="900" height="670">
   </a>
   <nav class="nav-links" aria-label="Primary">
     <a href="#about">About</a>
@@ -118,8 +118,8 @@
     <div class="bfield" data-balloons="22" data-balloon-scale="1" aria-hidden="true"></div>
 
     <div class="hero-inner">
-      <img class="hero-logo" src="../assets/bashnboujee/logo.jpg"
-           alt="Bash n Boujee" width="1290" height="1219" fetchpriority="high">
+      <img class="hero-logo" src="../assets/bashnboujee/logo.png"
+           alt="Bash n Boujee" width="900" height="670" fetchpriority="high">
       <h1 data-fx="reveal">Rooms that make<br>everyone reach<br>for <em>their phone</em></h1>
       <p class="hero-sub" data-fx="reveal">
         Event decor and party styling across London. Balloon garlands, flower
@@ -267,8 +267,10 @@
         <button class="tile" data-fx="reveal" data-fx-delay="280" data-lb><img src="../assets/bashnboujee/photos/gal-baby-shower.jpg" alt="A cluster of pink and foil balloons around a baby-shower sign" width="1000" height="1250" loading="lazy"><span class="cap"><b>Balloon cluster</b><em>Baby shower</em></span></button>
         <button class="tile" data-fx="reveal" data-fx-delay="280" data-lb><img src="../assets/bashnboujee/photos/gal-white-gold.jpg" alt="A sage, ivory and gold balloon garland above plinths and favours" width="1000" height="1250" loading="lazy"><span class="cap"><b>Sage &amp; gold</b><em>Engagement party</em></span></button>
         </div>
-        <button class="rail-nav prev" type="button" data-rail-prev="gal" aria-label="Previous pictures"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button class="rail-nav next" type="button" data-rail-next="gal" aria-label="More pictures"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="rail-ctrl">
+          <button class="rail-nav prev" type="button" data-rail-prev="gal" aria-label="Previous pictures"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="rail-nav next" type="button" data-rail-next="gal" aria-label="More pictures"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
     </div>
   </section>
@@ -384,8 +386,10 @@
         <article class="step" data-fx="reveal" data-fx-delay="270"><b>04</b><h3>We set up</h3>
         <p>We arrive, build it, and leave you a room worth photographing. Collection is arranged around the time you booked the stand for.</p></article>
       </div>
-        <button class="rail-nav prev on-dark" type="button" data-rail-prev="steps" aria-label="Previous step"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button class="rail-nav next on-dark" type="button" data-rail-next="steps" aria-label="More steps"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="rail-ctrl">
+          <button class="rail-nav prev on-dark" type="button" data-rail-prev="steps" aria-label="Previous step"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="rail-nav next on-dark" type="button" data-rail-next="steps" aria-label="More steps"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
     </div>
   </section>
@@ -403,8 +407,10 @@
       </div>
       <div class="rail-wrap">
         <div class="rail rv-rail" id="rvRail" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Reviews — scroll sideways"></div>
-        <button class="rail-nav prev" type="button" data-rail-prev="rvRail" aria-label="Previous reviews"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button class="rail-nav next" type="button" data-rail-next="rvRail" aria-label="More reviews"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="rail-ctrl">
+          <button class="rail-nav prev" type="button" data-rail-prev="rvRail" aria-label="Previous reviews"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="rail-nav next" type="button" data-rail-next="rvRail" aria-label="More reviews"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
       <p class="form-note" id="rvNote" style="margin-top:18px"></p>
     </div>
@@ -448,7 +454,7 @@
   <div class="wrap">
     <div class="foot-top">
       <div>
-        <img class="foot-logo" src="../assets/bashnboujee/logo.jpg" alt="Bash n Boujee" width="1290" height="1219" loading="lazy">
+        <img class="foot-logo" src="../assets/bashnboujee/logo.png" alt="Bash n Boujee" width="900" height="670" loading="lazy">
         <p style="max-width:34ch">
           Event decor and party styling, London. Balloon garlands, flower
           arches and stage decor for the days that matter.
