@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brownielicious — Bespoke Brownies &amp; NYC Cookies, Stoke-on-Trent</title>
+<meta name="description" content="Brownielicious bakes bespoke brownies, blondies, brookies and NYC cookies in Stoke-on-Trent — halal, made to order, collected locally or posted UK-wide. Boxes from £10.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fdeaf3">
+<link rel="canonical" href="https://billydigitals.com/templates/brownielicious">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Brownielicious — Bespoke Brownies &amp; NYC Cookies">
+<meta property="og:description" content="Made with love, devored in seconds. Bespoke brownies, blondies, brookies and NYC cookies — halal, baked in Stoke-on-Trent, posted UK-wide.">
+<meta property="og:image" content="https://billydigitals.com/assets/brownielicious/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brownielicious/icon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../assets/brownielicious/icon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/brownielicious/icon-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../assets/brownielicious/logo.png">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="brownielicious.css">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Bakery",
+  "name":"Brownielicious",
+  "alternateName":"browniieliciousss",
+  "slogan":"Made with love, devored in seconds",
+  "description":"Bespoke brownies, blondies, brookies and NYC cookies. Halal, made to order in Stoke-on-Trent, collected locally or posted UK-wide.",
+  "image":"https://billydigitals.com/assets/brownielicious/og.jpg",
+  "servesCuisine":"Desserts",
+  "areaServed":"United Kingdom",
+  "address":{"@type":"PostalAddress","addressLocality":"Stoke-on-Trent","addressRegion":"Staffordshire","addressCountry":"GB"},
+  "priceRange":"££",
+  "sameAs":[
+    "https://www.instagram.com/browniieliciousss",
+    "https://www.tiktok.com/@browniieliciousss"
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- =========================================================================
+     THE PHOTOGRAPHS ON THIS PAGE ARE EXAMPLES
+
+     Every picture here is a free stock photo (Pexels licence — free for
+     commercial use, no attribution required) standing in for her own bakes,
+     so the layout can be judged with real photography in it.
+
+     TO PUT HER OWN PHOTOS IN: drop them into assets/brownielicious/photos/
+     and swap the src. The shapes are:
+        hero-*      4:5   900x1125      menu items  1:1   900x900
+        gal-*       4:5   1000x1250     occasions   3:2   1200x800
+     Nothing else has to change.
+
+     Her logo is hers, untouched — logo.png is the round badge lifted
+     straight off her profile, wordmark.png is the same artwork with the pink
+     plate keyed out so the lettering can sit on any background.
+
+     The stock photos used, in case a source is ever queried — each number is
+     its pexels.com/photo/<id> page:
+       hero-brownies 5773862   hero-cookies  8081573   hero-pops   10171574
+       about-oven    4149025   band-choc     15850680
+       mn-mini      14576526   mn-small       4597836  mn-regular  14565941
+       mn-large      4597837   mn-slab       13072135  mn-cookies   5847092
+       mn-pops      10171572   mn-wrapped    23025153
+       gal-1  23826283  gal-2 30759934  gal-3 36500586  gal-4  6390672
+       gal-5  10949479  gal-6 17741889  gal-7 33312981  gal-8 10949478
+       gal-9  20558711  gal-10 14275717  post-parcel 6348055
+       oc-eid 35829604  oc-birthday 2337816  oc-baby 7180271
+       oc-favours 15807279  oc-ramadan 32692732  oc-thanks 30353752
+
+     STILL NEEDED FROM HER, all in CONFIG at the top of brownielicious.js:
+       • a WhatsApp number (the floating bubble opens an Instagram DM until
+         it is set, which is where her bio already sends people)
+       • her Facebook page link
+       • an email address for the enquiry form, and a free Web3Forms key
+       • her Google Business profile, and real reviews
+       • whether the charity link in her bio is still current
+     ========================================================================= -->
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div>
+    <img src="../assets/brownielicious/logo.png" alt="" width="900" height="900">
+    <div class="loader-bar"><i></i></div>
+  </div>
+</div>
+
+<div class="progress" data-fx="progressbar" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav-logo" href="#top" aria-label="Brownielicious — home">
+    <img class="word" src="../assets/brownielicious/wordmark.png" alt="Brownielicious" width="1000" height="342">
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#about">About</a>
+    <a href="#menu">Menu</a>
+    <a href="#flavours">Flavours</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#order">Ordering</a>
+    <a href="#occasions">Occasions</a>
+    <a href="#reviews">Reviews</a>
+  </nav>
+  <a class="btn" href="#enquire">Order now</a>
+  <button class="nav-burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <a href="#about">About</a>
+  <a href="#menu">Menu</a>
+  <a href="#flavours">Flavours</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#order">Ordering</a>
+  <a href="#enquire">Order now</a>
+  <a href="#occasions">Occasions</a>
+  <a href="#reviews">Reviews</a>
+  <div class="socials drawer-social" id="drawerSocial"></div>
+</div>
+
+<main id="top">
+
+  <!-- ================================================================ hero -->
+  <section class="hero">
+    <div class="sfield" data-sprinkles="30" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="hero-badge" data-fx="reveal" data-fx-variant="down">
+          <b>Halal</b> Stoke-on-Trent · posted UK-wide
+        </span>
+
+        <h1 data-fx="text" data-fx-step="45">
+          Bespoke brownies, <em>blondies</em> &amp; NYC cookies.
+        </h1>
+
+        <p class="lead" data-fx="reveal" data-fx-delay="180">
+          Made to order in small batches, boxed by hand and sent out across the
+          country. Pick your box, pick your toppings, tell us the date —
+          <span class="flourish">made with love, devored in seconds.</span>
+        </p>
+
+        <div class="btn-row" data-fx="reveal" data-fx-delay="280">
+          <a class="btn" href="#enquire">Start an order</a>
+          <a class="btn ghost" href="#menu">See the menu</a>
+        </div>
+
+        <div class="hero-notes" data-fx="reveal" data-fx-delay="380">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7L9.5 17.5 4 12"/></svg> Boxes of 6, 9, 12 &amp; minis</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7L9.5 17.5 4 12"/></svg> Personalised slabs</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7L9.5 17.5 4 12"/></svg> Collection or UK postal</span>
+        </div>
+      </div>
+
+      <div class="hero-art" data-fx="reveal" data-fx-variant="scale" data-fx-delay="220">
+        <figure class="a1"><img src="../assets/brownielicious/photos/hero-brownies.jpg" alt="A stack of chocolate-topped brownies" width="900" height="1125" fetchpriority="high"></figure>
+        <figure class="a2"><img src="../assets/brownielicious/photos/hero-cookies.jpg" alt="Freshly baked NYC-style chocolate chip cookies" width="900" height="1125" loading="lazy"></figure>
+        <figure class="a3"><img src="../assets/brownielicious/photos/hero-pops.jpg" alt="Pink cake pops with sprinkles" width="900" height="1125" loading="lazy"></figure>
+        <img class="stamp" src="../assets/brownielicious/logo.png" alt="Brownielicious — made with love, devored in seconds" width="900" height="900">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= marquee -->
+  <div class="band" aria-hidden="true"><div class="band-track" id="marquee"></div></div>
+
+  <!-- =============================================================== about -->
+  <section class="sec" id="about">
+    <div class="wrap about-grid">
+      <div class="about-art" data-fx="reveal" data-fx-variant="left">
+        <img src="../assets/brownielicious/photos/about-oven.jpg" alt="A tray of cookies going into the oven" width="1100" height="1375" loading="lazy">
+        <div class="tag">
+          “Made with love, devored in seconds.”
+          <small>Her words, not ours</small>
+        </div>
+      </div>
+
+      <div data-fx="reveal" data-fx-variant="right">
+        <p class="eyebrow">The bakery</p>
+        <h2>A home kitchen in Stoke with a very long order book.</h2>
+        <p class="lead" style="margin-top:1.1em">
+          Brownielicious is a small halal bake-to-order kitchen. Everything is
+          made fresh for your date — fudgy brownies, buttery blondies, the
+          brookies that can't decide between the two, and thick NYC cookies
+          that come out of the oven the size of your palm.
+        </p>
+        <p class="lead">
+          Nothing sits on a shelf waiting. You choose the box, you choose the
+          toppings, and it is baked, boxed and finished the day it goes out to
+          you — whether you're collecting it in Stoke or it's going in the post.
+        </p>
+
+        <div class="stats">
+          <div class="stat"><b>Halal</b><span>Every single item</span></div>
+          <div class="stat"><b>UK-wide</b><span>Postals, packed to travel</span></div>
+          <div class="stat"><b>Bespoke</b><span>Your flavours, your message</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ menu -->
+  <section class="sec menu-sec" id="menu">
+    <div class="wrap">
+      <div class="sec-head mid">
+        <p class="eyebrow mid">The menu</p>
+        <h2 data-fx="text">Pick a box. Then pick what goes in it.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Brownies, blondies and brookies come in every box size. Cookies, cake
+          pops and individually wrapped items are priced each, so you can build
+          a table exactly as big as you need it.
+        </p>
+      </div>
+
+      <div class="menu-grid" id="menuGrid"></div>
+
+      <p class="menu-note" data-fx="reveal">
+        <span class="note-bracket">(These photographs are examples — we can put
+        her own pictures in their place, keep these as they are, or swap them
+        for different examples.)</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ flavours -->
+  <section class="sec" id="flavours">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Flavours</p>
+        <h2 data-fx="text">Standard, or go premium.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Mix and match across a box — there is no rule that says twelve
+          brownies have to be twelve of the same thing.
+        </p>
+      </div>
+
+      <div class="flav-tabs" id="flavTabs" role="tablist" aria-label="Flavour lists"></div>
+      <div id="flavPanels"></div>
+
+      <p class="flav-foot" data-fx="reveal">
+        Premium cookie flavours are <b>£3</b> each instead of £2. Premium
+        brownie and blondie toppings are quoted with your box — just say what
+        you fancy in the enquiry and we'll come back with a price.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================== quote band -->
+  <section class="quote">
+    <div class="quote-bg" data-fx="parallax" data-fx-speed="0.18">
+      <img src="../assets/brownielicious/photos/band-choc.jpg" alt="" width="1800" height="900" loading="lazy">
+    </div>
+    <div class="quote-in">
+      <h2 data-fx="text">Devored in seconds.</h2>
+      <p data-fx="reveal" data-fx-delay="140">
+        Which is the point, really. Nobody has ever posted a picture of a box
+        of these the next morning.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================= gallery -->
+  <section class="sec" id="gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The look book</p>
+        <h2 data-fx="text">Boxes that have gone out.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Drag the strip, or use the arrows. Tap any picture to see it bigger.
+        </p>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="rail" id="gal" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Gallery — scroll sideways"></div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev" type="button" data-rail-prev="gal" aria-label="Previous pictures">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next" type="button" data-rail-next="gal" aria-label="More pictures">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================== order -->
+  <section class="sec order-sec" id="order">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Ordering</p>
+        <h2 data-fx="text">How it works.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Four steps, and the only one that takes any thinking is the second one.
+        </p>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="steps" id="steps" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="How to order — scroll sideways">
+        <div class="step" data-fx="reveal"><b>1</b><h3>Pick your box</h3><p>A box of 6, 9 or 12, a tray of minis, a personalised slab, or cookies and cake pops by the piece.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="90"><b>2</b><h3>Choose the flavours</h3><p>Standard toppings are included. Premium ones are a small bit extra. Mix them across the box if you like.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="180"><b>3</b><h3>Send the enquiry</h3><p>Use the form below, or DM on Instagram or TikTok. You'll get a price, a date and a way to pay.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="270"><b>4</b><h3>Collect or we post it</h3><p>Collection from Stoke-on-Trent, or packed and sent out to anywhere in the UK.</p></div>
+      </div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev" type="button" data-rail-prev="steps" aria-label="Previous step">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next" type="button" data-rail-next="steps" aria-label="Next step">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="order-grid">
+        <div class="cal" data-fx="reveal" data-fx-variant="left">
+          <div class="cal-head">
+            <h3 id="calMonth">Availability</h3>
+            <span>Example</span>
+          </div>
+          <div class="cal-grid" id="calGrid" role="img" aria-labelledby="calMonth"></div>
+          <div class="cal-key">
+            <span><i></i> Open for orders</span>
+            <span><i class="x"></i> Already booked</span>
+            <span><i class="past"></i> Been and gone</span>
+          </div>
+          <p class="cal-note" id="calNote"></p>
+        </div>
+
+        <div class="post-card" data-fx="reveal" data-fx-variant="right">
+          <img src="../assets/brownielicious/photos/post-parcel.jpg" alt="A parcel being labelled up for posting" width="1200" height="900" loading="lazy">
+          <div class="pc-body">
+            <h3>UK-wide postals</h3>
+            <p style="font-size:.94rem;color:var(--ink-soft);margin-top:8px">
+              Not in Stoke? It still gets to you. Everything is packed to
+              travel and sent out so it lands fresh.
+            </p>
+            <ul>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Individually wrapped items available for favours and hampers</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Postage is quoted with your order</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Collection from Stoke-on-Trent if you'd rather</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= enquire -->
+  <section class="sec enq" id="enquire">
+    <div class="wrap enq-grid">
+
+      <div class="enq-side" data-fx="reveal" data-fx-variant="left">
+        <p class="eyebrow">Order</p>
+        <h2 style="max-width:13ch">Tell us what you'd like.</h2>
+        <p class="lead" style="margin-top:1.1em">
+          Fill this in and it comes straight through.
+          <span id="msgRoute">Prefer to message? Send a DM on Instagram.</span>
+        </p>
+
+        <div class="enq-ways" id="enqWays"></div>
+        <div class="socials" id="sideSocial" style="margin-top:22px"></div>
+      </div>
+
+      <div data-fx="reveal" data-fx-variant="right">
+        <form class="enq-form" id="enqForm" novalidate>
+          <input type="text" class="hp" id="company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div class="fld">
+            <label for="want">What are you after?</label>
+            <div class="chips" id="wantChips" role="group" aria-label="What you would like"></div>
+            <input type="hidden" id="want" name="want" value="Brownies">
+          </div>
+
+          <div class="fld two">
+            <div class="fld"><label for="name">Your name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required></div>
+            <div class="fld"><label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required></div>
+          </div>
+
+          <div class="fld two">
+            <div class="fld"><label for="phone">Phone or Instagram</label>
+              <input id="phone" name="phone" type="text" autocomplete="tel" placeholder="Optional"></div>
+            <div class="fld"><label for="date">Date you need it</label>
+              <input id="date" name="date" type="date"></div>
+          </div>
+
+          <div class="fld two">
+            <div class="fld"><label for="size">Box size</label>
+              <select id="size" name="size">
+                <option value="">Not sure yet</option>
+                <option>Minis — box of 10</option>
+                <option>Minis — box of 20</option>
+                <option>Minis — box of 30</option>
+                <option>Small — box of 6 (£10)</option>
+                <option>Regular — box of 9 (£15)</option>
+                <option>Large — box of 12 (£20)</option>
+                <option>Personalised slab (£20)</option>
+                <option>Cookies / cake pops by the piece</option>
+              </select></div>
+            <div class="fld"><label for="how">Collection or postal</label>
+              <select id="how" name="how">
+                <option>Posted to me (UK-wide)</option>
+                <option>Collection from Stoke-on-Trent</option>
+                <option>Not sure yet</option>
+              </select></div>
+          </div>
+
+          <div class="fld two">
+            <div class="fld"><label for="occasion">Occasion</label>
+              <input id="occasion" name="occasion" type="text" placeholder="e.g. Eid, a birthday, favours"></div>
+            <div class="fld"><label for="flavs">Flavours you'd like</label>
+              <input id="flavs" name="flavs" type="text" placeholder="e.g. biscoff, kinder bueno, oreo"></div>
+          </div>
+
+          <div class="fld">
+            <label for="msg">Anything else</label>
+            <textarea id="msg" name="msg" placeholder="Personalised message on a slab, a picture you've saved that you'd like matched, how many people you're feeding — anything that helps."></textarea>
+          </div>
+
+          <button class="btn" type="submit" id="enqBtn" style="width:100%;justify-content:center">
+            Send the order enquiry
+          </button>
+          <p class="form-note">
+            Please give as much notice as you can — dates fill up, especially
+            around Eid and the school holidays.
+          </p>
+          <div class="form-msg" id="formMsg" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="sent" id="sentPanel">
+          <span class="flourish">Thank you</span>
+          <h3 style="margin:.3em 0 .5em">Your order enquiry is on its way.</h3>
+          <p class="lead" style="margin-inline:auto">
+            You'll get a reply with a price and a date. If it's urgent, a
+            message is always quicker.
+          </p>
+          <div class="btn-row" id="sentCta"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== occasions -->
+  <section class="sec" id="occasions">
+    <div class="wrap">
+      <div class="sec-head mid">
+        <p class="eyebrow mid">Occasions</p>
+        <h2 data-fx="text">Eid, birthdays, favours, and “just because”.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Specials go up on Instagram around the big dates — Eid boxes,
+          Ramadan orders, and seasonal flavours that come and go.
+        </p>
+      </div>
+
+      <div class="occ-grid" id="occGrid"></div>
+
+      <div class="give">
+        <div class="give-card pink" data-fx="reveal" data-fx-variant="left">
+          <h3>Giveaways</h3>
+          <p>
+            She runs giveaways on Instagram and TikTok — follow, like, share and
+            tag, and a dessert box goes out to whoever wins. The next one is
+            announced on her page, so that's the place to be watching.
+          </p>
+          <div class="btn-row" id="giveCta"></div>
+        </div>
+        <div class="give-card" data-fx="reveal" data-fx-variant="right">
+          <h3>Baking for a cause</h3>
+          <p>
+            Some of what comes out of this kitchen is baked for charity rather
+            than for profit — fundraisers, Ramadan orders and community causes.
+            Whatever she is currently raising for is linked from her page.
+          </p>
+          <div class="btn-row" id="charityCta"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= reviews -->
+  <section class="sec rv-sec" id="reviews">
+    <div class="wrap">
+      <div class="rv-top">
+        <div class="sec-head" style="margin-bottom:0">
+          <p class="eyebrow">Reviews</p>
+          <h2 data-fx="text">What people say afterwards.</h2>
+        </div>
+        <div class="rv-score" id="rvScore"></div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="rail rv-rail" id="rvRail" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Reviews — scroll sideways"></div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev on-dark" type="button" data-rail-prev="rvRail" aria-label="Previous reviews">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next on-dark" type="button" data-rail-next="rvRail" aria-label="More reviews">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <p class="rv-note" id="rvNote"></p>
+    </div>
+  </section>
+
+  <!-- ==================================================== allergens + FAQ -->
+  <section class="sec" id="faq">
+    <div class="wrap faq-grid">
+      <div class="allerg" data-fx="reveal" data-fx-variant="left">
+        <h3>Allergens</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> <span>All menu items are <b>suitable for vegetarians</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>Items are <b>NOT catered to allergies</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>All menu items contain <b>wheat, flour and eggs</b>, and <b>may contain nuts</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12h7"/></svg> <span>Please make us aware of <b>any dietary requirements before ordering</b>.</span></li>
+        </ul>
+        <p class="src">Everything on the menu is halal.</p>
+      </div>
+
+      <div>
+        <p class="eyebrow">Good to know</p>
+        <h2 data-fx="text" style="margin-bottom:.6em">The usual questions.</h2>
+
+        <div class="q">
+          <button type="button" aria-expanded="false">How much notice do you need?</button>
+          <div class="q-a"><div>As much as you can give. Small orders can sometimes be squeezed in at short notice, but the busy dates — Eid, half terms, exam results week — go early. If your date is tight, ask anyway; the worst answer is no.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Is everything halal?</button>
+          <div class="q-a"><div>Yes. Every item on the menu is halal, and everything is suitable for vegetarians.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Can I mix flavours in one box?</button>
+          <div class="q-a"><div>Absolutely — that's most orders. Tell us what you'd like across the box and we'll work it out. Premium toppings are a little extra and are quoted with your order.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">How do the postals work?</button>
+          <div class="q-a"><div>Orders are packed to travel and posted out UK-wide, with postage quoted alongside your box. If you're local to Stoke-on-Trent you can collect instead and save it.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Do you do personalised boxes?</button>
+          <div class="q-a"><div>Yes. Personalised slabs are £20 in brownie or blondie, and boxes can be put together for birthdays, Eid, baby showers, favours and thank-yous. Tell us the occasion in the form and we'll suggest something.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">How do I pay, and is the date held?</button>
+          <div class="q-a"><div>You'll get payment details when your order is confirmed. The date is held once payment has gone through — until then it's still open to anybody else who asks for it.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <img class="foot-logo" src="../assets/brownielicious/logo.png" alt="Brownielicious" width="900" height="900" loading="lazy">
+        <p style="font-size:.93rem;max-width:34ch">
+          Bespoke brownies, blondies, brookies and NYC cookies. Halal, baked in
+          Stoke-on-Trent, posted UK-wide.
+        </p>
+        <div class="socials" id="footSocial" style="margin-top:18px"></div>
+      </div>
+      <div>
+        <h4>Have a look</h4>
+        <ul>
+          <li><a href="#menu">The menu</a></li>
+          <li><a href="#flavours">Flavours</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#order">How to order</a></li>
+          <li><a href="#occasions">Occasions</a></li>
+          <li><a href="#faq">Allergens</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul id="footContact"></ul>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© <span id="yr"></span> Brownielicious. Made with love, devored in seconds.</span>
+      <span>Website by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="chat" id="chat" type="button" aria-label="Message us"></button>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Picture">
+  <div>
+    <img id="lbImg" src="" alt="">
+    <p class="lb-cap" id="lbCap"></p>
+  </div>
+  <button id="lbX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button id="lbPrev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button id="lbNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+
+<script src="vendor/lenis.min.js" defer></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script src="brownielicious.js" defer></script>
+</body>
+</html>

@@ -73,6 +73,74 @@ every card carries a visible "Example" chip and the section says so in as many
 words. A made-up review presented as a real one is a lie told on her behalf.
 Set `sample: false` and fill `items` when the real ones exist.
 
+## Brownielicious (bespoke brownies, Stoke-on-Trent) — `templates/brownielicious`
+
+One page, three files: `templates/brownielicious.{html,css,js}`, plus her
+assets in `assets/brownielicious/`. Noindex, like every client demo. She is
+`@browniieliciousss` on Instagram and TikTok; halal, bakes to order, collection
+in Stoke or posted UK-wide.
+
+**Her logo, untouched, in two forms.** There was no logo file — only her
+Instagram profile picture. `assets/brownielicious/logo.png` is the round badge
+lifted straight out of that screenshot (centre 644,1261, radius 424, resampled
+to 900px) with everything outside the circle made transparent, so it is her
+artwork pixel for pixel on its own pink plate. `wordmark.png` is the same
+artwork with the plate (#ffe7fd) keyed out by colour distance, so the lettering
+alone can sit on any background — that is what the header and the drawer use.
+The badge is what goes on photographs and on the dark footer, where a keyed-out
+brown wordmark would disappear. If either is ever regenerated from a better
+source file, check the counters of B, o and e before shipping it.
+
+**The pictures are stock photographs, and the page says so.** Every photo in
+`assets/brownielicious/photos/` is a free Pexels image (free for commercial
+use, no attribution required) standing in for her own bakes. The menu says in
+brackets that they are examples; each source id is listed in a comment at the
+top of `templates/brownielicious.html`. When her photos arrive, drop them in
+the same folder and swap the `src`: hero 4:5 900x1125, menu items 1:1 900x900,
+gallery 4:5 1000x1250, occasions 3:2 1200x800.
+
+**The menu is her menu.** `MENU` and `FLAVOURS` in `brownielicious.js` are
+transcribed off her own menu graphic — boxes of 6/9/12 at £10/£15/£20, minis,
+£20 personalised slabs, £2 NYC cookies (£3 premium), £1.50 cake pops, and both
+topping lists for brownies and for cookies. A price of `''` renders "Ask",
+which is what her menu does for the minis and the wrapped items. The allergen
+panel is her wording verbatim, including that items are **not** catered to
+allergies.
+
+**The availability calendar is generated, not drawn.** `AVAILABILITY` holds a
+list of booked day numbers; the grid is built for the current month at page
+load, so it never goes stale, past days grey out on their own, and a booked day
+gets the cross she draws on her story — sized so the date underneath can still
+be read. `example: true` puts the "Example" chip and the disclaimer on it.
+
+**Rails, sprinkles, and the things that are easy to lose.** The gallery, the
+ordering steps and the reviews are `[data-rail]` strips with grab-and-throw
+dragging and eased arrow buttons, the same implementation as Bash n Boujee —
+including `scroll-padding-inline` on `.rail`, `data-lenis-prevent`, and
+`scroll-behavior:auto` (the page's smooth scrolling is inherited by every
+scroll container and would animate each frame a second time). `[data-sprinkles]`
+drifts hundreds-and-thousands behind the hero; drawn, not photographed, and
+skipped under reduced motion. Lenis is gated behind `(pointer: fine)` so a
+phone keeps its own momentum scrolling.
+
+**An `img` with `width` and `height` attributes sets both dimensions.** Those
+attributes are presentational hints, so `aspect-ratio` in the CSS loses to
+them and every picture on the first build came out at its full intrinsic
+height. `img{height:auto}` in the reset hands the height back; the few places
+that want it (`.hero-art figure img`, `.occ img`) take it again by being more
+specific.
+
+**Still needed from her**, all in `CONTACT`/`REVIEWS` at the top of
+`brownielicious.js`: a WhatsApp number (until then the floating bubble opens an
+Instagram DM, which is what her bio already tells people to do), her Facebook
+page, an email address and a Web3Forms key for the order form, a Google
+Business profile and real reviews, and whether the gofund.me link in her bio is
+still the current one. Every one degrades to something that works: with no form
+key the enquiry hands the visitor everything they typed, already written, one
+tap from a DM. `REVIEWS.sample` is true, so every review card carries a visible
+"Example" chip — a made-up review presented as a real one is a lie told on her
+behalf.
+
 ## billy360 (the 360° tours) — run the tests before you push
 `node scripts/billy360-test.js` (add `--only=<demo|public|embed|devices|engine|office|data>`)
 and `node scripts/billy360-api.mjs --base=http://localhost:<port>`. Both need a
