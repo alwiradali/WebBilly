@@ -1,5 +1,5 @@
 /* ===========================================================================
-   Bash'n'Boujee — page behaviour
+   Bash n Boujee — page behaviour
    ---------------------------------------------------------------------------
    Vanilla, no build step, one file. Everything that will need changing when
    she sends the outstanding details is in CONFIG at the top, so nobody has to
@@ -86,7 +86,7 @@
      actually goes. One decision, used by every button on the page. */
 
   function waHref(text) {
-    var msg = encodeURIComponent(text || 'Hi Bash\'n\'Boujee — I\'d like to enquire about decor for my event.');
+    var msg = encodeURIComponent(text || 'Hi Bash n Boujee — I\'d like to enquire about decor for my event.');
     if (CONTACT.whatsapp) return 'https://wa.me/' + CONTACT.whatsapp + '?text=' + msg;
     return CONTACT.instagram;          // her bio's own route: DM to enquire
   }
@@ -173,26 +173,164 @@
   (lenis ? lenis.on('scroll', onScroll) : window.addEventListener('scroll', onScroll, { passive: true }));
   onScroll();
 
-  /* ====================================================== hero orb drifting */
+  /* ==================================================== floating balloons */
+  /* Every [data-balloons] layer gets that many balloons, drawn as small SVGs
+     rather than emoji or photo cut-outs: a real balloon photographed on a
+     white background and dropped over a photograph of a party looks like a
+     mistake, a soft translucent one reads as texture. Size, tint, drift and
+     duration are random per balloon, so no two sections look alike, and the
+     whole thing is skipped when the visitor asks for reduced motion. */
 
-  (function orbs() {
-    var host = $('#orbs');
-    if (!host || reduced) return;
-    var cols = ['#e8bdae', '#f0d8d4', '#d9a38c', '#c9797f', '#f7efe9', '#c08a4e'];
-    for (var i = 0; i < 16; i++) {
-      var size = 10 + Math.random() * 46;
-      var s = el('span');
-      s.style.cssText =
-        'width:' + size + 'px;height:' + size + 'px;' +
-        'left:' + (Math.random() * 100) + '%;top:' + (Math.random() * 100) + '%;' +
-        '--c:' + cols[i % cols.length] + ';' +
-        '--dx:' + (Math.random() * 60 - 30) + 'px;' +
-        '--dy:' + (-30 - Math.random() * 60) + 'px;' +
-        '--d:' + (11 + Math.random() * 12) + 's;' +
-        'animation-delay:' + (-Math.random() * 12) + 's;' +
-        'opacity:' + (0.16 + Math.random() * 0.26);
-      host.appendChild(s);
+  (function balloons() {
+    var TINTS = [
+      ['#f3ded8', '#dfb0a3'], ['#e8c3b6', '#cf9280'], ['#f7efe9', '#e2cec5'],
+      ['#dda7a8', '#c07d7e'], ['#e3c08c', '#c08a4e'], ['#eccfc6', '#d6a394']
+    ];
+    var uid = 0;
+
+    function balloon(scale) {
+      var t = TINTS[(Math.random() * TINTS.length) | 0];
+      var id = 'bg' + (++uid);
+      var w = (34 + Math.random() * 56) * scale;
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 70 132');
+      svg.setAttribute('width', w.toFixed(1));
+      svg.setAttribute('height', (w * 132 / 70).toFixed(1));
+      svg.innerHTML =
+        '<defs><radialGradient id="' + id + '" cx="34%" cy="28%" r="78%">' +
+        '<stop offset="0" stop-color="#fff" stop-opacity=".92"/>' +
+        '<stop offset=".42" stop-color="' + t[0] + '"/>' +
+        '<stop offset="1" stop-color="' + t[1] + '"/></radialGradient></defs>' +
+        '<path d="M35 82c-2.6 3.2-2.6 5.6 0 8 2.6-2.4 2.6-4.8 0-8z" fill="' + t[1] + '"/>' +
+        '<path d="M35 88c6 10-7 14-1 24 3 5 2 12-2 20" fill="none" ' +
+        'stroke="' + t[1] + '" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>' +
+        '<ellipse cx="35" cy="45" rx="30" ry="38" fill="url(#' + id + ')"/>' +
+        '<ellipse cx="24" cy="30" rx="7" ry="11" fill="#fff" opacity=".45" transform="rotate(-18 24 30)"/>';
+      return svg;
     }
+
+    $$('[data-balloons]').forEach(function (field) {
+      var n = parseInt(field.getAttribute('data-balloons'), 10) || 6;
+      var scale = parseFloat(field.getAttribute('data-balloon-scale')) || 1;
+      if (reduced) n = Math.min(n, 4);
+      for (var i = 0; i < n; i++) {
+        var b = balloon(scale * (0.7 + Math.random() * 0.6));
+        var deep = Math.random();                    // how far back it sits
+        b.style.cssText =
+          'left:' + (Math.random() * 96 - 3).toFixed(2) + '%;' +
+          'top:' + (Math.random() * 92 - 4).toFixed(2) + '%;' +
+          'opacity:' + (0.2 + deep * 0.34).toFixed(2) + ';' +
+          'filter:blur(' + ((1 - deep) * 1.6).toFixed(2) + 'px);' +
+          '--dx:' + (Math.random() * 46 - 23).toFixed(0) + 'px;' +
+          '--dy:' + (-28 - Math.random() * 54).toFixed(0) + 'px;' +
+          '--r0:' + (Math.random() * 6 - 3).toFixed(1) + 'deg;' +
+          '--r1:' + (Math.random() * 6 - 3).toFixed(1) + 'deg;' +
+          '--d:' + (16 + Math.random() * 18).toFixed(1) + 's;' +
+          'animation-delay:' + (-Math.random() * 18).toFixed(1) + 's';
+        field.appendChild(b);
+      }
+    });
+  }());
+
+  /* ================================================================= rails */
+  /* The look book and the reviews are strips you drag, flick or arrow along.
+     Native overflow scrolling already handles the wheel and the touch flick;
+     what it does not give you is a grab-and-throw with a mouse, or an arrow
+     button that glides instead of jumping. Both are here, and both leave the
+     element's own scrollLeft as the single source of truth, so the scrollbar,
+     the snap points and the keyboard all stay honest. */
+
+  (function rails() {
+    var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+
+    function glide(rail, to, ms) {
+      var from = rail.scrollLeft;
+      var max = rail.scrollWidth - rail.clientWidth;
+      to = Math.max(0, Math.min(max, to));
+      if (Math.abs(to - from) < 1) return;
+      if (reduced) { rail.scrollLeft = to; return; }
+      var t0 = performance.now();
+      cancelAnimationFrame(rail.__glide);
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / ms);
+        rail.scrollLeft = from + (to - from) * ease(k);
+        if (k < 1) rail.__glide = requestAnimationFrame(step);
+      }(t0));
+    }
+
+    function cardStep(rail) {
+      var card = rail.firstElementChild;
+      if (!card) return rail.clientWidth * 0.8;
+      var gap = parseFloat(getComputedStyle(rail).columnGap) || 16;
+      return Math.round(card.getBoundingClientRect().width + gap);
+    }
+
+    $$('[data-rail]').forEach(function (rail) {
+      var prev = $('[data-rail-prev="' + rail.id + '"]');
+      var next = $('[data-rail-next="' + rail.id + '"]');
+
+      function ends() {
+        var max = rail.scrollWidth - rail.clientWidth - 1;
+        if (prev) prev.disabled = rail.scrollLeft <= 1;
+        if (next) next.disabled = rail.scrollLeft >= max;
+      }
+      rail.addEventListener('scroll', ends, { passive: true });
+      window.addEventListener('resize', ends);
+      setTimeout(ends, 80);
+      rail.__ends = ends;
+
+      if (prev) prev.addEventListener('click', function () { glide(rail, rail.scrollLeft - cardStep(rail), 620); });
+      if (next) next.addEventListener('click', function () { glide(rail, rail.scrollLeft + cardStep(rail), 620); });
+
+      rail.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); glide(rail, rail.scrollLeft + cardStep(rail), 620); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); glide(rail, rail.scrollLeft - cardStep(rail), 620); }
+      });
+
+      /* Grab and throw. Pointer events cover mouse and pen; touch is left to
+         the browser, which already does it better than we could. */
+      var down = false, startX = 0, startLeft = 0, last = 0, lastT = 0, v = 0, moved = 0;
+
+      rail.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'touch' || e.button !== 0) return;
+        down = true; moved = 0; v = 0;
+        startX = last = e.clientX; startLeft = rail.scrollLeft; lastT = performance.now();
+        cancelAnimationFrame(rail.__glide);
+        cancelAnimationFrame(rail.__flick);
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        if (!down) return;
+        var dx = e.clientX - startX;
+        if (!moved && Math.abs(dx) > 4) rail.classList.add('dragging');
+        moved = Math.max(moved, Math.abs(dx));
+        rail.scrollLeft = startLeft - dx;
+        var now = performance.now(), dt = now - lastT;
+        if (dt > 0) v = (e.clientX - last) / dt;          // px per ms
+        last = e.clientX; lastT = now;
+      });
+
+      function release() {
+        if (!down) return;
+        down = false;
+        rail.classList.remove('dragging');
+        /* A click that followed a drag is not a click. */
+        if (moved > 6) {
+          rail.__drag = Date.now();
+          if (!reduced && Math.abs(v) > 0.15) {
+            var speed = v * 16;                            // carry the throw on
+            (function decay() {
+              speed *= 0.94;
+              rail.scrollLeft -= speed;
+              if (Math.abs(speed) > 0.4) rail.__flick = requestAnimationFrame(decay);
+            }());
+          }
+        }
+      }
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+      rail.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    });
   }());
 
   /* ============================================================== marquee */
@@ -312,7 +450,15 @@
     document.body.style.overflow = '';
     if (lenis) lenis.start();
   }
-  tiles.forEach(function (t, i) { t.addEventListener('click', function () { openLb(i); }); });
+  /* A tile inside a rail is also the drag handle for that rail, so a click
+     that ended a drag must not also open the picture. */
+  tiles.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      var rail = t.closest('[data-rail]');
+      if (rail && rail.__drag && Date.now() - rail.__drag < 250) return;
+      openLb(i);
+    });
+  });
   $('#lbX').addEventListener('click', closeLb);
   $('#lbPrev').addEventListener('click', function () { openLb(lbAt - 1); });
   $('#lbNext').addEventListener('click', function () { openLb(lbAt + 1); });
@@ -358,24 +504,6 @@
         '<a href="mailto:' + CONTACT.email + '" aria-label="Email">' + ICON.mail + '</a>';
     }
     ['#footSocial', '#sideSocial', '#drawerSocial'].forEach(function (s) { socialRow($(s)); });
-
-    var list = $('#contactList');
-    if (list) {
-      var rows = [
-        ['mail', 'mailto:' + CONTACT.email, CONTACT.email],
-        ['ig', CONTACT.instagram, 'Instagram — @bashnboujeesa' + (hasWA ? '' : ' (DM to enquire)')],
-        ['fb', CONTACT.facebook, 'Facebook — Bash\'n\'Boujee'],
-        ['pin', null, 'London based — we travel across the city'],
-        ['clock', null, 'Two weeks\' notice, and three hours to set up']
-      ];
-      if (hasWA) rows.splice(1, 0, ['wa', waHref(), 'WhatsApp us']);
-      list.innerHTML = rows.map(function (r) {
-        var inner = '<span class="ic">' + ICON[r[0]] + '</span><span>' + r[2] + '</span>';
-        return '<li>' + (r[1]
-          ? '<a href="' + r[1] + '"' + (/^https/.test(r[1]) ? ' target="_blank" rel="noopener"' : '') + '>' + inner + '</a>'
-          : '<span>' + inner + '</span>') + '</li>';
-      }).join('');
-    }
 
     var route = $('#msgRoute');
     if (route) {
@@ -449,7 +577,7 @@
        thing back, already written, one tap from her inbox. */
     function fallback(reason) {
       var lines = summary().map(function (p) { return p[0] + ': ' + p[1]; }).join('\n');
-      var body = 'Enquiry from the Bash\'n\'Boujee website\n\n' + lines;
+      var body = 'Enquiry from the Bash n Boujee website\n\n' + lines;
       var subject = 'Decor enquiry — ' + val('ev') + (val('date') ? ' on ' + val('date') : '');
       var mail = 'mailto:' + CONTACT.email + '?subject=' + encodeURIComponent(subject) +
                  '&body=' + encodeURIComponent(body);
@@ -483,7 +611,7 @@
       var payload = {
         access_key: W3F_KEY,
         subject: 'Decor enquiry — ' + val('ev') + (val('date') ? ' on ' + val('date') : ''),
-        from_name: 'Bash\'n\'Boujee website',
+        from_name: 'Bash n Boujee website',
         replyto: val('email')                            // reply goes to them, not the form service
       };
       summary().forEach(function (p) { payload[p[0]] = p[1]; });

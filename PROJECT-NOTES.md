@@ -16,7 +16,7 @@ elements with `data-fx="reveal|stagger|text|parallax|pin|horizontal|progressbar"
 Full reference: `docs/scroll-fx.md`. Do not hand-roll per-page one-offs unless
 the toolkit genuinely can't express the effect.
 
-## Bash'n'Boujee (event decor, London) — `templates/bashnboujee`
+## Bash n Boujee (event decor, London) — `templates/bashnboujee`
 
 One page, three files: `templates/bashnboujee.{html,css,js}`, plus her assets
 in `assets/bashnboujee/`. Noindex, like every client demo.
@@ -30,14 +30,28 @@ sticky header matches it, and on the dark footer the mark keeps its plate and
 reads as a card. A soft radial mask on each copy covers a browser rendering
 the JPEG a shade off. Do not "fix" the logo by removing its background.
 
-**The pictures are drawn, not photographed.** `scripts/bnb-art.py` renders the
-balloon hoops, arches, garlands and stage sets in `assets/bashnboujee/art/` as
-SVG in her own rose-gold and blush — her Instagram photographs are not ours to
-copy, and AI stock pretending to be her work would be worse. Re-run
-`python3 scripts/bnb-art.py` after editing; each scene is seeded by name so an
-approved garland never reshuffles. When her photos arrive, drop them into
-`assets/bashnboujee/photos/` and swap the `src` on the `.svc-art` and `.tile`
-images — the layout is already sized for 4:3, 1:1, 4:5 and 21:9.
+**The pictures are stock photographs, and the page says so.** Every photo in
+`assets/bashnboujee/photos/` is a free Pexels image (free for commercial use,
+no attribution required) standing in for her own work, so the layout can be
+judged with real photography in it. The look book says in brackets that they
+are examples; the source id of each one is listed in a comment at the top of
+`templates/bashnboujee.html`. When her photos arrive, drop them in the same
+folder and swap the `src` on the `.svc-art` images (4:3, 1200x900) and the
+`.tile` images (4:5, 1000x1250). Nothing else needs to change.
+
+**The look book and the reviews are rails, not grids.** `[data-rail]` in
+`bashnboujee.js` gives each one grab-and-throw dragging, eased arrow buttons
+and arrow-key support, and leaves the element's own `scrollLeft` as the single
+source of truth so the scrollbar, the snap points and the keyboard all agree.
+Two things that are easy to lose: `scroll-padding-inline` on `.rail` (without
+it the snap ignores the rail's padding and parks the first card against the
+viewport edge before anyone has touched it), and `data-lenis-prevent` (without
+it the smooth-scroll library swallows the sideways gesture).
+
+**The floating balloons are drawn, and that is deliberate.** `[data-balloons]`
+on any section gets that many soft SVG balloons from `bashnboujee.js`. A
+photographic cut-out balloon over a photograph of a party reads as a mistake; a
+translucent drawn one reads as texture. They are skipped under reduced motion.
 
 **Still needed from her**, all in `CONTACT`/`REVIEWS` at the top of
 `bashnboujee.js`: a WhatsApp number (until then the floating bubble opens an
