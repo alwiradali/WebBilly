@@ -199,6 +199,34 @@ static server and, for the office and API sections, `wrangler dev`; the scripts
 print the command to start whichever is missing. Reference: `docs/billy360.md`.
 
 ## Deploy workflow (branch → main, static site goes live on push)
+### A push to ANY branch replaces production. Third time, 23 Sep 2026.
+
+`billydigitals.com` served stamp `f1e5675781e9` — built 21 Sep from head
+`d613da2` ("SMARTin SCIENCE: his calendar is wired up"), 1846 files — while
+`origin/main` was `896ef45` with 2009 files. Every Brownielicious URL 404ed:
+the page, its CSS, its JS and its images. Nothing was wrong with the branch,
+the merge or the build; main was correct throughout.
+
+What happened each time is the same: another branch was pushed
+(`claude/megacity-properties-redesign-nt4l0n`, that day), Cloudflare Workers
+Builds built THAT branch, and the result went to production because the
+project has no production branch set. Previous occurrences: `62e267576474`
+(9 Sep) and `f1e5675781e9` (21 Sep), both recorded below.
+
+The recovery is to push a commit to main and wait for the stamp to match
+again. That is a recovery, not a fix — the site is wrong for as long as it
+takes someone to notice.
+
+**The fix is one setting, and it is not in this repository.** In the
+Cloudflare dashboard: Workers & Pages → the project → Settings → Builds →
+set the production branch to `main`, and either disable preview builds or
+leave them as previews. Until that is set, any push to any branch can take
+the live site down, and the only warning is a stale stamp in
+`/version.json`. `node scripts/deploy-verify.mjs` catches it in seconds —
+run it after every deploy, and if a page 404s that you know you shipped,
+check the stamp before you debug anything else.
+
+
 Stamp the build before committing, so the deployed site can say which tree it
 is running, then push and check that it actually went live:
 ```
