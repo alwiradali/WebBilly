@@ -268,7 +268,11 @@ export async function duplicate(c) {
   const cols = {};
   for (const k of Object.keys(row)) if (!skip.has(k)) cols[k] = row[k];
   const now = nowIso();
-  const base = { id, source: "manual", status: "draft", hidden: 0, title: (row.title || "Listing") + " (copy)", created_at: now, updated_at: now, created_by: c.user.id, updated_by: c.user.id, ...cols, title: (row.title || "Listing") + " (copy)" };
+  /* title comes AFTER the spread on purpose: ...cols carries the original
+     title, and a duplicate that keeps the original's name is one nobody can
+     tell apart in a list. Everything else set here is in the skip set above,
+     so the spread cannot reach it. */
+  const base = { id, source: "manual", status: "draft", hidden: 0, created_at: now, updated_at: now, created_by: c.user.id, updated_by: c.user.id, ...cols, title: (row.title || "Listing") + " (copy)" };
   const keys = Object.keys(base);
   await c.db.prepare(`INSERT INTO listings (${keys.join(", ")}) VALUES (${keys.map((_, i) => "?" + (i + 1)).join(", ")})`).bind(...keys.map((k) => base[k])).run();
   await audit(c.db, { userId: c.user.id, action: "listing.duplicated", entity: "listing", entityId: id, detail: { from: row.id } });
