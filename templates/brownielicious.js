@@ -429,10 +429,12 @@
           '--x1:' + (8 + Math.random() * 20).toFixed(0) + 'px;' +
           '--r0:' + (-40 - Math.random() * 90).toFixed(0) + 'deg;' +
           '--r1:' + (40 + Math.random() * 120).toFixed(0) + 'deg;' +
-          '--d:' + (14 + Math.random() * 12).toFixed(1) + 's;' +
-          '--s:' + (5 + Math.random() * 5).toFixed(1) + 's;' +
-          'animation-delay:' + (-Math.random() * 20).toFixed(1) + 's,' +
-                         '-' + (Math.random() * 8).toFixed(1) + 's';
+          /* slow. A sprinkle should take the best part of a minute to
+             cross its patch of screen — noticed, never watched. */
+          '--d:' + (34 + Math.random() * 22).toFixed(1) + 's;' +
+          '--s:' + (13 + Math.random() * 10).toFixed(1) + 's;' +
+          'animation-delay:' + (-Math.random() * 40).toFixed(1) + 's,' +
+                         '-' + (Math.random() * 16).toFixed(1) + 's';
         field.appendChild(s);
       }
     });
@@ -907,7 +909,7 @@
 
   /* =============================================================== checkout */
 
-  var PAY = 'bank';
+  var PAY = 'card';
 
   function paintCheckout() {
     var host = $('#coFulfil');
@@ -925,8 +927,8 @@
 
     var pays = $('#coPay');
     pays.innerHTML =
-      payOption('bank', 'Bank transfer', 'Confirmed by message within hours') +
-      payOption('card', 'Card', 'Visa, Mastercard, Apple Pay');
+      payOption('card', 'Card', 'Visa, Mastercard, Apple Pay') +
+      payOption('bank', 'Bank transfer', 'Details sent with your confirmation');
     $$('[data-pay]', pays).forEach(function (b) {
       b.addEventListener('click', function () { PAY = b.getAttribute('data-pay'); paintCheckout(); });
     });
@@ -942,7 +944,7 @@
         '<div><span>Postage</span><span>' + (FULFIL === 'collect' ? 'Free' : money(CHECKOUT.postage)) + '</span></div>' +
         '<div class="tot"><span>Total</span><span>' + money(orderTotal()) + '</span></div>' +
       '</div>';
-    $('#coSend').textContent = 'Place order · ' + money(orderTotal());
+    $('#coSend').textContent = (PAY === 'card' ? 'Pay ' : 'Place order · ') + money(orderTotal());
   }
   function payOption(id, title, sub) {
     return '<button class="co-opt' + (PAY === id ? ' on' : '') + '" type="button" data-pay="' + id + '">' +

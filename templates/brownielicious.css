@@ -243,13 +243,13 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   transition:transform .8s var(--ease);
 }
 .hero-art figure img{width:100%;height:100%;object-fit:cover}
-.hero-art .a1{width:56%;aspect-ratio:4/5;left:0;top:4%;animation:floaty 9s ease-in-out infinite alternate}
-.hero-art .a2{width:45%;aspect-ratio:4/5;right:2%;top:0;animation:floaty 11s ease-in-out .9s infinite alternate-reverse}
-.hero-art .a3{width:47%;aspect-ratio:4/5;right:7%;bottom:0;animation:floaty 10s ease-in-out .4s infinite alternate}
+.hero-art .a1{width:56%;aspect-ratio:4/5;left:0;top:4%;animation:floaty 19s ease-in-out infinite alternate}
+.hero-art .a2{width:45%;aspect-ratio:4/5;right:2%;top:0;animation:floaty 23s ease-in-out .9s infinite alternate-reverse}
+.hero-art .a3{width:47%;aspect-ratio:4/5;right:7%;bottom:0;animation:floaty 21s ease-in-out .4s infinite alternate}
 .hero-art .stamp{
   position:absolute;left:1%;bottom:4%;width:34%;height:auto;z-index:3;
   filter:drop-shadow(0 18px 30px rgba(59,21,18,.28));
-  animation:spinin 1.2s var(--ease) both .5s,floaty 8s ease-in-out 1.6s infinite alternate;
+  animation:spinin 1.2s var(--ease) both .5s,floaty 17s ease-in-out 1.6s infinite alternate;
 }
 @keyframes floaty{from{transform:translateY(-9px)}to{transform:translateY(9px)}}
 @keyframes spinin{from{opacity:0;transform:scale(.6) rotate(-24deg)}to{opacity:1;transform:none}}
@@ -261,6 +261,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   animation:driftY var(--d,20s) ease-in-out infinite alternate,
             driftX var(--s,8s) ease-in-out infinite alternate;
 }
+/* duration comes from --d / --s, set per sprinkle in the JS */
 @keyframes driftY{from{transform:translate3d(0,var(--y0,40px),0)}to{transform:translate3d(0,var(--y1,-120px),0)}}
 @keyframes driftX{from{translate:var(--x0,-14px) 0;rotate:var(--r0,-20deg)}to{translate:var(--x1,14px) 0;rotate:var(--r1,40deg)}}
 
@@ -605,13 +606,15 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .fld input:focus,.fld select:focus,.fld textarea:focus{
   outline:0;border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(232,124,187,.13);
 }
-.fld .chip{
-  border:1px solid var(--line);background:transparent;border-radius:999px;
-  padding:.46em 1em;font-size:.86rem;cursor:pointer;color:var(--brown);
+.chip{
+  border:1px solid var(--line);background:rgba(255,255,255,.55);border-radius:999px;
+  padding:.56em 1.1em;font-size:.9rem;cursor:pointer;color:var(--brown);
+  font-family:inherit;line-height:1.35;
   transition:background .25s,color .25s,border-color .25s,transform .3s var(--ease);
 }
-.fld .chip:hover{transform:translateY(-2px)}
-.fld .chip.on{background:var(--brown);color:var(--plate);border-color:var(--brown)}
+.chip:hover{transform:translateY(-2px);background:#fff;border-color:var(--rose-deep)}
+.chip.on{background:var(--brown);color:var(--plate);border-color:var(--brown)}
+.chip.on:hover{background:var(--brown)}
 .fld .chips{gap:8px}
 .hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
 .form-note{font-size:.82rem;color:var(--ink-soft);margin-top:14px;text-align:center}
@@ -749,7 +752,7 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .nav-links a{padding-block:10px}
   .foot li{padding-block:2px}
   .foot a{display:inline-block;padding-block:9px}
-  .fld .chip,.flav-tab,.chips .chip{padding-block:.62em}
+  .chip,.flav-tab{padding-block:.66em}
   .chips .f{padding-block:.6em}
   .cal-grid b{min-height:40px}
 }

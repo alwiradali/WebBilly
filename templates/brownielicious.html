@@ -260,9 +260,8 @@
         <p class="eyebrow mid">Order</p>
         <h2 data-fx="text">Build your box.</h2>
         <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Choose what you'd like, pick your flavours and add it to your basket.
-          Nothing is charged here — your order is confirmed and priced before
-          you pay a penny.
+          Choose what you'd like, pick your flavours, and pay at the checkout.
+          Your total, postage included, is there before you pay.
         </p>
       </div>
 
@@ -328,361 +327,6 @@
     </div>
   </section>
 
-  <!-- ============================================================= gallery -->
-  <section class="sec" id="gallery">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">The look book</p>
-        <h2 data-fx="text">Recent boxes.</h2>
-        <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Swipe along, or tap a picture to see it larger.
-        </p>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="rail" id="gal" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Gallery — scroll sideways"></div>
-      <div class="rail-ctrl">
-        <button class="rail-nav prev" type="button" data-rail-prev="gal" aria-label="Previous pictures">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="rail-nav next" type="button" data-rail-next="gal" aria-label="More pictures">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================== occasions -->
-  <section class="sec" id="occasions">
-    <div class="wrap">
-      <div class="sec-head mid">
-        <p class="eyebrow mid">Occasions</p>
-        <h2 data-fx="text">Eid, birthdays, favours and thank-yous.</h2>
-        <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Seasonal boxes and specials are announced on Instagram as the dates
-          come round.
-        </p>
-      </div>
-
-      <div class="occ-grid" id="occGrid"></div>
-
-      <div class="give one">
-        <div class="give-card" data-fx="reveal">
-          <h3>Baking for a cause</h3>
-          <p>
-            Some of what comes out of this kitchen is baked for charity rather
-            than for profit. The current fundraiser is linked on my page.
-          </p>
-          <div class="btn-row" id="charityCta"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================ ordering -->
-  <section class="sec order-sec" id="ordering">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Ordering</p>
-        <h2 data-fx="text">How ordering works.</h2>
-        <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Four steps, and nothing is charged until your order is confirmed.
-        </p>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="steps" id="steps" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="How ordering works — scroll sideways">
-        <div class="step" data-fx="reveal"><b>1</b><h3>Build your box</h3><p>Choose your size and flavours and add them to your basket.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="90"><b>2</b><h3>Send your order</h3><p>Add your details and the date you need it. No payment is taken at this point.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="180"><b>3</b><h3>Confirmation</h3><p>You'll receive the final price, including postage, and how to pay.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="270"><b>4</b><h3>Collection or postal</h3><p>Collect from Stoke-on-Trent, or your box is packed and posted UK-wide.</p></div>
-      </div>
-      <div class="rail-ctrl">
-        <button class="rail-nav prev" type="button" data-rail-prev="steps" aria-label="Previous step">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="rail-nav next" type="button" data-rail-next="steps" aria-label="Next step">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-
-      <div class="order-grid">
-        <div class="cal" data-fx="reveal" data-fx-variant="left">
-          <div class="cal-head">
-            <h3 id="calMonth">Availability</h3>
-            <span>Example</span>
-          </div>
-          <div class="cal-grid" id="calGrid" role="img" aria-labelledby="calMonth"></div>
-          <div class="cal-key">
-            <span><i></i> Open for orders</span>
-            <span><i class="x"></i> Already booked</span>
-            <span><i class="past"></i> Been and gone</span>
-          </div>
-          <p class="cal-note" id="calNote"></p>
-        </div>
-
-        <div class="post-card" data-fx="reveal" data-fx-variant="right">
-          <img src="../assets/brownielicious/photos/post-parcel.jpg" alt="A parcel being labelled up for posting" width="1200" height="900" loading="lazy">
-          <div class="pc-body">
-            <h3>Collection and postage</h3>
-            <p style="font-size:.94rem;color:var(--ink-soft);margin-top:8px">
-              Collect from Stoke-on-Trent, or your box is packed to travel and
-              sent out so it arrives fresh.
-            </p>
-            <ul>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Postage is confirmed with your order</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Individually wrapped items for favours and hampers</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Please give as much notice as you can</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================= reviews -->
-  <section class="sec rv-sec" id="reviews">
-    <div class="wrap">
-      <div class="rv-top">
-        <div class="sec-head" style="margin-bottom:0">
-          <p class="eyebrow">Reviews</p>
-          <h2 data-fx="text">What customers say.</h2>
-        </div>
-        <div class="rv-score" id="rvScore"></div>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="rail rv-rail" id="rvRail" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Reviews — scroll sideways"></div>
-      <div class="rail-ctrl">
-        <button class="rail-nav prev on-dark" type="button" data-rail-prev="rvRail" aria-label="Previous reviews">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="rail-nav next on-dark" type="button" data-rail-next="rvRail" aria-label="More reviews">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-      <p class="rv-note" id="rvNote"></p>
-    </div>
-  </section>
-
-  <!-- ==================================================== allergens + FAQ -->
-  <section class="sec" id="faq">
-    <div class="wrap faq-grid">
-      <div class="allerg" data-fx="reveal" data-fx-variant="left">
-        <h3>Allergens</h3>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> <span>All menu items are <b>suitable for vegetarians</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>Items are <b>NOT catered to allergies</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>All menu items contain <b>wheat, flour and eggs</b>, and <b>may contain nuts</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12h7"/></svg> <span>Please make us aware of <b>any dietary requirements before ordering</b>.</span></li>
-        </ul>
-        <p class="src">Everything on the menu is halal.</p>
-      </div>
-
-      <div>
-        <p class="eyebrow">Good to know</p>
-        <h2 data-fx="text" style="margin-bottom:.6em">Common questions.</h2>
-
-        <div class="q">
-          <button type="button" aria-expanded="false">How much notice do you need?</button>
-          <div class="q-a"><div>As much as you can give. Smaller orders can sometimes be taken at shorter notice, but Eid and the school holidays book up early. If your date is close, please ask anyway.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Is everything halal?</button>
-          <div class="q-a"><div>Yes — every item on the menu is halal, and all of it is suitable for vegetarians.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Can I mix flavours in one box?</button>
-          <div class="q-a"><div>Yes, and most orders do. Choose your flavours as you build the box. Premium toppings are a little extra and are confirmed with your order.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">How does postage work?</button>
-          <div class="q-a"><div>Boxes are packed to travel and posted UK-wide. Postage is confirmed with your order. If you are local to Stoke-on-Trent you can collect instead.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Do you do personalised boxes?</button>
-          <div class="q-a"><div>Yes. Slabs are £20 and can be written on, and boxes can be put together for any occasion. Add your message as you build the box.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">When do I pay, and is my date held?</button>
-          <div class="q-a"><div>Nothing is charged when you send your order. You will receive the final price, including postage, and how to pay. Your date is held once payment has been made.</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================== occasions -->
-  <section class="sec" id="occasions">
-    <div class="wrap">
-      <div class="sec-head mid">
-        <p class="eyebrow mid">Occasions</p>
-        <h2 data-fx="text">Eid, birthdays, favours and thank-yous.</h2>
-        <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Seasonal boxes and specials are announced on Instagram as the dates
-          come round.
-        </p>
-      </div>
-
-      <div class="occ-grid" id="occGrid"></div>
-
-      <div class="give">
-        <div class="give-card pink" data-fx="reveal" data-fx-variant="left">
-          <h3>Giveaways</h3>
-          <p>
-            Giveaways run on Instagram and TikTok. Follow, like, share and tag
-            to enter — a dessert box goes out to the winner.
-          </p>
-          <div class="btn-row" id="giveCta"></div>
-        </div>
-        <div class="give-card" data-fx="reveal" data-fx-variant="right">
-          <h3>Baking for a cause</h3>
-          <p>
-            Some of what comes out of this kitchen is baked for charity rather
-            than for profit. The current fundraiser is linked on my page.
-          </p>
-          <div class="btn-row" id="charityCta"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================ ordering -->
-  <section class="sec order-sec" id="ordering">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Ordering</p>
-        <h2 data-fx="text">How ordering works.</h2>
-        <p class="lead" data-fx="reveal" data-fx-delay="120">
-          Four steps, and nothing is charged until your order is confirmed.
-        </p>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="steps" id="steps" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="How ordering works — scroll sideways">
-        <div class="step" data-fx="reveal"><b>1</b><h3>Build your box</h3><p>Choose your size and flavours and add them to your basket.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="90"><b>2</b><h3>Send your order</h3><p>Add your details and the date you need it. No payment is taken at this point.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="180"><b>3</b><h3>Confirmation</h3><p>You'll receive the final price, including postage, and how to pay.</p></div>
-        <div class="step" data-fx="reveal" data-fx-delay="270"><b>4</b><h3>Collection or postal</h3><p>Collect from Stoke-on-Trent, or your box is packed and posted UK-wide.</p></div>
-      </div>
-      <div class="rail-ctrl">
-        <button class="rail-nav prev" type="button" data-rail-prev="steps" aria-label="Previous step">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="rail-nav next" type="button" data-rail-next="steps" aria-label="Next step">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-
-      <div class="order-grid">
-        <div class="cal" data-fx="reveal" data-fx-variant="left">
-          <div class="cal-head">
-            <h3 id="calMonth">Availability</h3>
-            <span>Example</span>
-          </div>
-          <div class="cal-grid" id="calGrid" role="img" aria-labelledby="calMonth"></div>
-          <div class="cal-key">
-            <span><i></i> Open for orders</span>
-            <span><i class="x"></i> Already booked</span>
-            <span><i class="past"></i> Been and gone</span>
-          </div>
-          <p class="cal-note" id="calNote"></p>
-        </div>
-
-        <div class="post-card" data-fx="reveal" data-fx-variant="right">
-          <img src="../assets/brownielicious/photos/post-parcel.jpg" alt="A parcel being labelled up for posting" width="1200" height="900" loading="lazy">
-          <div class="pc-body">
-            <h3>Collection and postage</h3>
-            <p style="font-size:.94rem;color:var(--ink-soft);margin-top:8px">
-              Collect from Stoke-on-Trent, or your box is packed to travel and
-              sent out so it arrives fresh.
-            </p>
-            <ul>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Postage is confirmed with your order</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Individually wrapped items for favours and hampers</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Please give as much notice as you can</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================= reviews -->
-  <section class="sec rv-sec" id="reviews">
-    <div class="wrap">
-      <div class="rv-top">
-        <div class="sec-head" style="margin-bottom:0">
-          <p class="eyebrow">Reviews</p>
-          <h2 data-fx="text">What customers say.</h2>
-        </div>
-        <div class="rv-score" id="rvScore"></div>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="rail rv-rail" id="rvRail" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Reviews — scroll sideways"></div>
-      <div class="rail-ctrl">
-        <button class="rail-nav prev on-dark" type="button" data-rail-prev="rvRail" aria-label="Previous reviews">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="rail-nav next on-dark" type="button" data-rail-next="rvRail" aria-label="More reviews">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-      <p class="rv-note" id="rvNote"></p>
-    </div>
-  </section>
-
-  <!-- ==================================================== allergens + FAQ -->
-  <section class="sec" id="faq">
-    <div class="wrap faq-grid">
-      <div class="allerg" data-fx="reveal" data-fx-variant="left">
-        <h3>Allergens</h3>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> <span>All menu items are <b>suitable for vegetarians</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>Items are <b>NOT catered to allergies</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>All menu items contain <b>wheat, flour and eggs</b>, and <b>may contain nuts</b>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12h7"/></svg> <span>Please make us aware of <b>any dietary requirements before ordering</b>.</span></li>
-        </ul>
-        <p class="src">Everything on the menu is halal.</p>
-      </div>
-
-      <div>
-        <p class="eyebrow">Good to know</p>
-        <h2 data-fx="text" style="margin-bottom:.6em">Common questions.</h2>
-
-        <div class="q">
-          <button type="button" aria-expanded="false">How much notice do you need?</button>
-          <div class="q-a"><div>As much as you can give. Smaller orders can sometimes be taken at shorter notice, but Eid and the school holidays book up early. If your date is close, please ask anyway.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Is everything halal?</button>
-          <div class="q-a"><div>Yes — every item on the menu is halal, and all of it is suitable for vegetarians.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Can I mix flavours in one box?</button>
-          <div class="q-a"><div>Yes, and most orders do. Choose your flavours as you build the box. Premium toppings are a little extra and are confirmed with your order.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">How does postage work?</button>
-          <div class="q-a"><div>Boxes are packed to travel and posted UK-wide. Postage is confirmed with your order. If you are local to Stoke-on-Trent you can collect instead.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">Do you do personalised boxes?</button>
-          <div class="q-a"><div>Yes. Slabs are £20 and can be written on, and boxes can be put together for any occasion. Add your message as you build the box.</div></div>
-        </div>
-        <div class="q">
-          <button type="button" aria-expanded="false">When do I pay, and is my date held?</button>
-          <div class="q-a"><div>Nothing is charged when you send your order. You will receive the final price, including postage, and how to pay. Your date is held once payment has been made.</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============================================================= enquire -->
   <section class="sec enq" id="enquire">
     <div class="wrap enq-grid">
@@ -743,6 +387,192 @@
             I'll come back to you as soon as I can.
           </p>
           <div class="btn-row" id="sentCta"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= gallery -->
+  <section class="sec" id="gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The look book</p>
+        <h2 data-fx="text">Recent boxes.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Swipe along, or tap a picture to see it larger.
+        </p>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="rail" id="gal" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Gallery — scroll sideways"></div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev" type="button" data-rail-prev="gal" aria-label="Previous pictures">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next" type="button" data-rail-next="gal" aria-label="More pictures">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== occasions -->
+  <section class="sec" id="occasions">
+    <div class="wrap">
+      <div class="sec-head mid">
+        <p class="eyebrow mid">Occasions</p>
+        <h2 data-fx="text">Eid, birthdays, favours and thank-yous.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Seasonal boxes and specials are announced on Instagram as the dates
+          come round.
+        </p>
+      </div>
+
+      <div class="occ-grid" id="occGrid"></div>
+
+      <div class="give one">
+        <div class="give-card" data-fx="reveal">
+          <h3>Baking for a cause</h3>
+          <p>
+            Some of what comes out of this kitchen is baked for charity rather
+            than for profit. The current fundraiser is linked on my page.
+          </p>
+          <div class="btn-row" id="charityCta"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ ordering -->
+  <section class="sec order-sec" id="ordering">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Ordering</p>
+        <h2 data-fx="text">How ordering works.</h2>
+        <p class="lead" data-fx="reveal" data-fx-delay="120">
+          Four steps, start to finish, without leaving the page.
+        </p>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="steps" id="steps" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="How ordering works — scroll sideways">
+        <div class="step" data-fx="reveal"><b>1</b><h3>Build your box</h3><p>Choose your size and flavours and add them to your basket.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="90"><b>2</b><h3>Pay at the checkout</h3><p>Card or bank transfer. Your total, including postage, is shown before you pay.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="180"><b>3</b><h3>Confirmation</h3><p>Your order and the date it is baked for come straight back to you.</p></div>
+        <div class="step" data-fx="reveal" data-fx-delay="270"><b>4</b><h3>Collection or postal</h3><p>Collect from Stoke-on-Trent, or your box is packed and posted UK-wide.</p></div>
+      </div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev" type="button" data-rail-prev="steps" aria-label="Previous step">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next" type="button" data-rail-next="steps" aria-label="Next step">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="order-grid">
+        <div class="cal" data-fx="reveal" data-fx-variant="left">
+          <div class="cal-head">
+            <h3 id="calMonth">Availability</h3>
+            <span>Example</span>
+          </div>
+          <div class="cal-grid" id="calGrid" role="img" aria-labelledby="calMonth"></div>
+          <div class="cal-key">
+            <span><i></i> Open for orders</span>
+            <span><i class="x"></i> Already booked</span>
+            <span><i class="past"></i> Been and gone</span>
+          </div>
+          <p class="cal-note" id="calNote"></p>
+        </div>
+
+        <div class="post-card" data-fx="reveal" data-fx-variant="right">
+          <img src="../assets/brownielicious/photos/post-parcel.jpg" alt="A parcel being labelled up for posting" width="1200" height="900" loading="lazy">
+          <div class="pc-body">
+            <h3>Collection and postage</h3>
+            <p style="font-size:.94rem;color:var(--ink-soft);margin-top:8px">
+              Collect from Stoke-on-Trent, or your box is packed to travel and
+              sent out so it arrives fresh.
+            </p>
+            <ul>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Postage is confirmed with your order</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Individually wrapped items for favours and hampers</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> Please give as much notice as you can</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= reviews -->
+  <section class="sec rv-sec" id="reviews">
+    <div class="wrap">
+      <div class="rv-top">
+        <div class="sec-head" style="margin-bottom:0">
+          <p class="eyebrow">Reviews</p>
+          <h2 data-fx="text">What customers say.</h2>
+        </div>
+        <div class="rv-score" id="rvScore"></div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="rail rv-rail" id="rvRail" data-rail data-lenis-prevent tabindex="0" role="group" aria-label="Reviews — scroll sideways"></div>
+      <div class="rail-ctrl">
+        <button class="rail-nav prev on-dark" type="button" data-rail-prev="rvRail" aria-label="Previous reviews">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="rail-nav next on-dark" type="button" data-rail-next="rvRail" aria-label="More reviews">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <p class="rv-note" id="rvNote"></p>
+    </div>
+  </section>
+
+  <!-- ==================================================== allergens + FAQ -->
+  <section class="sec" id="faq">
+    <div class="wrap faq-grid">
+      <div class="allerg" data-fx="reveal" data-fx-variant="left">
+        <h3>Allergens</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9.5 17.5 4 12"/></svg> <span>All menu items are <b>suitable for vegetarians</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>Items are <b>NOT catered to allergies</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.3v.2"/></svg> <span>All menu items contain <b>wheat, flour and eggs</b>, and <b>may contain nuts</b>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12h7"/></svg> <span>Please make us aware of <b>any dietary requirements before ordering</b>.</span></li>
+        </ul>
+        <p class="src">Everything on the menu is halal.</p>
+      </div>
+
+      <div>
+        <p class="eyebrow">Good to know</p>
+        <h2 data-fx="text" style="margin-bottom:.6em">Common questions.</h2>
+
+        <div class="q">
+          <button type="button" aria-expanded="false">How much notice do you need?</button>
+          <div class="q-a"><div>As much as you can give. Smaller orders can sometimes be taken at shorter notice, but Eid and the school holidays book up early. If your date is close, please ask anyway.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Is everything halal?</button>
+          <div class="q-a"><div>Yes — every item on the menu is halal, and all of it is suitable for vegetarians.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Can I mix flavours in one box?</button>
+          <div class="q-a"><div>Yes, and most orders do. Choose your flavours as you build the box. Premium toppings are a little extra and are confirmed with your order.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">How does postage work?</button>
+          <div class="q-a"><div>Boxes are packed to travel and posted UK-wide. Postage is confirmed with your order. If you are local to Stoke-on-Trent you can collect instead.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">Do you do personalised boxes?</button>
+          <div class="q-a"><div>Yes. Slabs are £20 and can be written on, and boxes can be put together for any occasion. Add your message as you build the box.</div></div>
+        </div>
+        <div class="q">
+          <button type="button" aria-expanded="false">When do I pay, and is my date held?</button>
+          <div class="q-a"><div>You pay at the checkout, by card or bank transfer, with postage already in the total. Your date is held as soon as the payment goes through.</div></div>
         </div>
       </div>
     </div>
