@@ -15,7 +15,12 @@ export const STREAM_TYPES = { "video/mp4": "mp4", "video/webm": "webm", "applica
 const MAX_IMAGE = 40 * 1024 * 1024;
 const MAX_STREAM = 60 * 1024 * 1024;
 const MAX_DERIVED = { large: 6 * 1024 * 1024, thumb: 1024 * 1024, pano: 20 * 1024 * 1024, pano2048: 8 * 1024 * 1024 };
-const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg|pano2048\.jpg)$/;
+/* feed.jpg is a photograph that lives on 10ninety, not in R2 — see
+   migrations/megacity/0006. It has a key so that everything else about a
+   photo (the media row, mediaUrl, this route, the edge cache) works the same
+   whether the bytes are ours or theirs. */
+const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg|pano2048\.jpg|feed\.jpg)$/;
+const FEED_KEY_RE = /\/feed\.jpg$/;
 const ORIG_IMAGE_RE = /\/orig\.(jpe?g|png|webp|gif|avif)$/i;
 const NO_STORE = { "cache-control": "no-store" };
 
@@ -351,6 +356,54 @@ export async function listForListing(db, listingId) {
    path-derivable from any web-size URL, so they need the Studio session
    (F234). The brand logo's original is what the public viewer draws, so it
    stays public; video and PDF originals are the only copy and stay public. */
+
+/* One photograph that lives on 10ninety.
+ *
+ * The URL is read from the media row rather than encoded in the key, so a
+ * request cannot ask this Worker to fetch an arbitrary address — the only
+ * URLs reachable are ones a sync wrote, and the host is checked besides. An
+ * image proxy that will fetch whatever it is given is an open proxy wearing a
+ * different hat.
+ *
+ * A failure is cached briefly, not at all permanently: 10ninety being down
+ * for a minute should not blank a property page for a year. */
+const FEED_HOSTS = /(^|\.)10ninety\.co\.uk$/i;
+
+async function serveFeedImage(env, key, cacheKey, cache, request) {
+  const db = officeDb(env);
+  if (!db) return new Response("Not found", { status: 404, headers: { "cache-control": "public, max-age=60" } });
+  const row = await db.prepare(`SELECT source_url FROM media WHERE key_orig=?1`).bind(key).first().catch(() => null);
+  const src = row && row.source_url;
+  if (!src) return new Response("Not found", { status: 404, headers: { "cache-control": "public, max-age=60" } });
+
+  let u;
+  try { u = new URL(src); } catch { return new Response("Not found", { status: 404 }); }
+  if (u.protocol !== "https:" || !FEED_HOSTS.test(u.hostname)) {
+    console.error("feed image refused", u.hostname);
+    return new Response("Not found", { status: 404 });
+  }
+
+  const upstream = await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400 } }).catch(() => null);
+  if (!upstream || !upstream.ok) {
+    return new Response("Image unavailable", { status: 502, headers: { "cache-control": "public, max-age=30" } });
+  }
+  const type = upstream.headers.get("content-type") || "image/jpeg";
+  if (!/^image\//i.test(type)) return new Response("Not found", { status: 404 });
+
+  const headers = new Headers();
+  headers.set("content-type", type);
+  /* A day, not a year. The key is derived from the image's address on their
+     system, which stays the same when Walid replaces the picture behind it. */
+  headers.set("cache-control", "public, max-age=86400");
+  headers.set("x-content-type-options", "nosniff");
+  const out = new Response(upstream.body, { status: 200, headers });
+  if (request.method === "GET") {
+    const copy = out.clone();
+    try { await cache.put(cacheKey, copy); } catch (e) { console.error("feed cache put", e && e.message); }
+  }
+  return out;
+}
+
 export async function serve(request, env, url) {
   try {
     return await serveInner(request, env, url);
@@ -384,6 +437,14 @@ async function serveInner(request, env, url) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;
   }
+  /* A feed photograph has no object in R2. Fetch it from 10ninety and let the
+     edge hold the answer, because their server sends no-store and would
+     otherwise be asked for every photograph by every visitor. */
+  if (FEED_KEY_RE.test(key)) {
+    const res = await serveFeedImage(env, key, cacheKey, cache, request);
+    return res;
+  }
+
   const hasRange = request.headers.has("range");
   const obj = await env.MEDIA.get(key, hasRange ? { range: request.headers, onlyIf: request.headers } : { onlyIf: request.headers });
   if (!obj) return new Response("Not found", { status: 404, headers: { "cache-control": "public, max-age=60" } });

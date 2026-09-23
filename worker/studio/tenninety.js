@@ -186,6 +186,39 @@ function billsOf(p) {
   return null;
 }
 
+/* ── photographs ─────────────────────────────────────────────────────────── */
+
+/* A stable key for a photograph that stays on 10ninety.
+ *
+ * Derived from the image's PATH, not the whole URL. Their addresses carry a
+ * cache-busting "?at=<ticks>" that changes when the record is re-exported, so
+ * hashing the whole thing would mint a new key for the same photograph every
+ * time Walid runs an export — a new media row, a cold cache, and the old row
+ * orphaned, on repeat.
+ *
+ * Not a cryptographic hash and not pretending to be one: this only has to be
+ * stable and spread out. Nothing is authenticated by it, because the route
+ * reads the URL back out of the database rather than out of the key. */
+function hash10(s) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  let g = 0x2545f491;
+  for (let i = s.length - 1; i >= 0; i--) {
+    g ^= s.charCodeAt(i);
+    g = Math.imul(g, 0x85ebca6b) >>> 0;
+  }
+  return (h.toString(36) + g.toString(36) + "0000000000").slice(0, 10);
+}
+
+export function feedMediaKey(listingId, url) {
+  let path;
+  try { path = new URL(url).pathname; } catch { path = String(url || ""); }
+  return `l/${listingId}/m_${hash10(path)}/feed.jpg`;
+}
+
 /* ── one property ────────────────────────────────────────────────────────── */
 
 export function toListing(p, opts = {}) {
@@ -324,4 +357,4 @@ export function toListings(properties, opts = {}) {
   return { listings: kept, skipped };
 }
 
-export const _internals = { BASE, AUTH_HEADER, STATUS, SLUG_ALIASES, slugFor, areaOf, bathroomsOf, availabilityOf, billsOf, isRoom };
+export const _internals = { BASE, AUTH_HEADER, STATUS, SLUG_ALIASES, hash10, slugFor, areaOf, bathroomsOf, availabilityOf, billsOf, isRoom };

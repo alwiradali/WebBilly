@@ -9,7 +9,7 @@
  *   node scripts/megacity-tenninety-check.mjs
  */
 import { readFileSync } from "node:fs";
-import { toListings, toListing, _internals } from "../worker/studio/tenninety.js";
+import { toListings, toListing, feedMediaKey, _internals } from "../worker/studio/tenninety.js";
 
 const feed = JSON.parse(readFileSync(new URL("./fixtures/tenninety-sample.json", import.meta.url), "utf8"));
 const TODAY = "2026-09-22";
@@ -73,7 +73,7 @@ ok(none.availability === null, "no date at all stays blank rather than guessing"
 
 ok(listings.every((l) => l.status === "live"), "all nine are on the market today");
 const let7 = toListing({ ...feed.properties[0], status_id: 7 }, { today: TODAY });
-ok(let7.status === "let", "status_id 7 is let — the whole reason those statuses were enabled");
+ok(let7.status === "let", "status_id 7 still reads as let, though the revert means it will not arrive");
 ok(toListing({ ...feed.properties[0], status_id: 99 }, { today: TODAY }) === null, "a status we have not been told about is dropped, not guessed");
 ok(toListing({ ...feed.properties[0], trans_type_id: 1 }, { today: TODAY }) === null, "a sales record never becomes a letting");
 
@@ -89,6 +89,29 @@ ok(listings.every((l) => l.tourUrl === null), "no property claims a 360 tour, be
 ok(by("RL0144").rentPcm === 1350, "monthly rent comes through as pounds per month");
 const weekly = toListing({ ...feed.properties[0], let_rent_frequency: 2 }, { today: TODAY });
 ok(weekly.rentPcm === null, "a rent frequency that is not monthly is left unpriced rather than converted on a guess");
+
+/* ── photographs stay on 10ninety ─────────────────────────────────────────── */
+
+/* Walid's photos are not copied into his R2 bucket — only the 360 panoramas
+   are, because those are shot for this site and exist nowhere else. Each photo
+   gets a key so everything else about it works the same, and the bytes are
+   fetched from their server and held at Cloudflare's edge. */
+{
+  const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/feed\.jpg$/;
+  const keys = [];
+  for (const l of listings) for (const img of l.images) keys.push(feedMediaKey(l.id, img.url));
+  ok(keys.length === 107, `a key for every one of the 107 photographs (${keys.length})`);
+  ok(keys.every((k) => KEY_RE.test(k)), "every key is the shape the /media/ route accepts");
+  ok(new Set(keys).size === keys.length, "no two photographs collide on a key");
+
+  const u = listings[0].images[0].url;
+  ok(feedMediaKey("x", u) === feedMediaKey("x", u.split("?")[0] + "?at=99999999"),
+    "the key ignores 10ninety's ?at= cache-buster, so re-exporting does not re-key every photo");
+  ok(feedMediaKey("a", u) !== feedMediaKey("b", u),
+    "the same photo under two listings is two keys, so removing one cannot orphan the other");
+  ok(feedMediaKey("x", u) !== feedMediaKey("x", u.replace(/\/\d+/, "/999999")),
+    "a different image is a different key");
+}
 
 console.log();
 console.log(bad ? `10NINETY MAPPER: ${bad} FAILED` : "10NINETY MAPPER: ALL PASS — nothing is published that Walid did not supply.");
