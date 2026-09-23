@@ -62,3 +62,16 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/amabilis/*
   X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Brownielicious -----------------------------
+# Same arrangement as Amabilis above. robots.txt already keeps compliant
+# crawlers out of /templates/, but NOT out of /assets/ — so her logo and the
+# photographs could be reached and surfaced by image search on their own even
+# though the page itself is noindex. These headers close that, and cover
+# anything that fetches the page regardless of robots.txt.
+/templates/brownielicious
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/brownielicious.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/brownielicious/*
+  X-Robots-Tag: noindex, noimageindex
