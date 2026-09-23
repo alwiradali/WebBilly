@@ -38,7 +38,7 @@ function card(r, env, url) {
     bedrooms: isRoom ? 1 : r.bedrooms,
     bathrooms: r.bathrooms,
     type: r.type, typeLabel: label("type", r.type), typeShort: typeShort(r), letType: r.let_type,
-    furnishing: r.furnishing, pets: r.pets, availability: r.availability,
+    furnishing: r.furnishing, pets: r.pets, availability: r.availability, availableFrom: r.available_from || null,
     tag: r.headline ? null : (features[0] || null),
     cover: r.cover_key ? { url: mediaUrl(r.cover_large || r.cover_key), thumb: mediaUrl(r.cover_thumb || r.cover_key), alt: r.cover_alt || r.title } : null,
     tour: !!r.tour_live,

@@ -1869,6 +1869,16 @@ body.mm-open{overflow:hidden}
 .pl-body b{display:block;font:500 clamp(20px,1.9vw,23px)/1.2 var(--ff-d);color:var(--navy-ink)}
 .pl-facts{display:flex;gap:14px;flex-wrap:wrap;margin-top:11px}
 .pl-facts span{font:400 14.25px/1 var(--ff-u);color:var(--mut)}
+/* When it is free, on the card. Most of these are student lets dated a year
+   ahead, so a grid that says nothing about dates sends someone looking for
+   October to enquire about next September. Quiet by default; "Available now"
+   earns the accent, because that is the one a tenant is hunting for. */
+.pl-avail{display:inline-flex;align-items:center;gap:6px;margin-top:9px;
+  font:600 13.2px/1.2 var(--ff-u);color:var(--mut)}
+.pl-avail::before{content:"";width:6px;height:6px;border-radius:50%;
+  background:currentColor;opacity:.55;flex:none}
+.pl-avail.is-now{color:var(--blue-deep)}
+.pl-avail.is-now::before{opacity:1}
 .pl-go{display:inline-flex;align-items:center;gap:8px;margin-top:16px;
   font:600 14.8px/1 var(--ff-u);color:var(--navy)}
 .pl-go svg{width:15px;height:15px;transition:transform .3s ease}

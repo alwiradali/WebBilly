@@ -260,6 +260,14 @@ export async function renderListingPage(request, env, url, live, settings) {
   return new Response(res.body, { status: 200, headers });
 }
 
+/* "1 Sep 2027" — a card has no room for "1 September 2027", and the year is
+   the part that must not be dropped when the date is a year out. */
+function shortDate(iso) {
+  const d = new Date(iso + "T00:00:00Z");
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+}
+
 /* the properties index: the static page with its grid and filters replaced */
 export async function renderPropertiesPage(request, env, url, cards) {
   const page = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-properties.html", url).toString()));
@@ -269,6 +277,16 @@ export async function renderPropertiesPage(request, env, url, cards) {
     const facts = [c.typeShort === "room" ? "1 bedroom available" : (c.bedrooms != null ? c.bedrooms + " bed" : null),
       c.typeShort === "room" ? "Shared bath" : (c.bathrooms ? c.bathrooms + " bath" : null),
       c.typeShort === "room" ? "Room" : c.typeLabel].filter(Boolean);
+    /* When a property is available matters on the CARD, not only on the page
+       it opens. Most of Walid's are student lets advertised a year ahead — he
+       sets those dates deliberately — so a grid that shows nine properties
+       and says nothing about dates sends a tenant looking for somewhere in
+       October to enquire about a room for next September. That wastes their
+       time and fills the lettings inbox with enquiries nobody can answer. */
+    const when = c.availability === "available_now" ? "Available now"
+      : (c.availability === "from_date" && c.availableFrom
+         ? "Available " + shortDate(c.availableFrom)
+         : (c.availability === "let_agreed" ? "Let agreed" : null));
     const img = c.cover ? `<img src="${esc(c.cover.thumb || c.cover.url)}" alt="${esc(c.cover.alt || c.title)}" loading="lazy" decoding="async" width="1400" height="1050">` : "";
     return `<a class="pl-card" href="${esc(c.url)}" data-area="${esc(c.area || "")}" data-type="${esc(c.typeShort)}" data-beds="${esc(String(c.bedrooms ?? ""))}">
         <span class="pl-img">${img}</span>
@@ -277,6 +295,7 @@ export async function renderPropertiesPage(request, env, url, cards) {
           <span class="pl-area">${esc([c.line1, c.town].filter(Boolean).join(", ") || c.areaLabel)}</span>
           <b>${esc(c.title)}</b>
           <span class="pl-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join("")}</span>
+          ${when ? `<span class="pl-avail${c.availability === "available_now" ? " is-now" : ""}">${esc(when)}</span>` : ""}
           <span class="pl-go">View Property
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></span>
         </span>
