@@ -34,10 +34,15 @@ import { slugify } from "./db.js";
 const BASE = "https://webapi.10ninety.co.uk";
 const AUTH_HEADER = "10ninety-webapi-key";
 
-/* status_id, from 10ninety's FAQ. 0 is on the market; 6 and 7 exist only
-   because we asked for them to be enabled, and they arrive by the property
-   being LEFT on the market — so they are the only thing distinguishing a let
-   property from an available one. Treat them accordingly. */
+/* status_id, from 10ninety's FAQ. 0 is on the market, 6 is sold, 7 is let.
+   In practice only 0 arrives: a property Walid marks Let or Sold comes off the
+   market and therefore leaves the feed, which is the behaviour he has always
+   had and asked to keep. Removal is driven by that absence — see
+   tenninety-sync.js, which treats a short feed as a fault rather than as news.
+
+   6 and 7 are kept anyway. They cost nothing, they are right if 10ninety ever
+   sends them, and the alternative is a bare number falling through to "a
+   status nobody explained" and dropping a real property. */
 const STATUS = { 0: "live", 6: "let", 7: "let" };
 
 /* trans_type_id: 1 = Sales, 2 = Lettings. The feed carries both; this site

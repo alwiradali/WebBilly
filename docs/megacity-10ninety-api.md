@@ -166,8 +166,11 @@ sync — which is exactly the ambiguity that makes a sync delete things it shoul
 not. With the statuses enabled, a let property arrives *saying* it is let, and
 the site can take it down deliberately and for a stated reason.
 
-**Enabled on 21 September**, and it came with a change nobody asked for. Dave
-at 10ninety:
+**Asked for, enabled, and then reverted — all within two days.** Worth keeping
+the round trip, because the reason it was undone is the useful part.
+
+Enabled on 22 September, it came with a change nobody asked for. Dave at
+10ninety:
 
 > I've updated your system to **keep properties on the market** when you set
 > their status to Let or Sold, so that they continue to be included in the API
@@ -193,11 +196,33 @@ come down. It may well be that 10ninety sends Let separately to the portals
 and this only affects the API — but it has not said so, and the difference
 matters too much to assume.
 
-**It also changes Walid's job.** Before, setting a property to Let was the end
-of it. Now there is a second step — take it off the market — and if he forgets,
-nothing visibly breaks on the website, because our sync will have hidden it
-anyway. A workflow change that is invisible when you get it wrong is one he has
-to be told about in words, not left to discover.
+**It also changed Walid's job.** Before, setting a property to Let was the end
+of it. With the change there was a second step — take it off the market — and
+if he forgot, nothing visibly broke on the website, because our sync would have
+hidden it anyway. A workflow change that is invisible when you get it wrong is
+one he has to be told about in words rather than left to discover.
+
+### Reverted, 23 September
+
+Put to Walid, who said he wanted the mechanism he already had. Dave undid it
+the same afternoon: *"I've reversed that change so properties set to let or
+sold will be taken off the market."*
+
+So the statuses are not in the feed and are not needed. **Removal is driven by
+absence instead** — not in the feed, not on the website — which is what Walid
+described wanting in the first place, and it needs nothing of him beyond the
+one action he already takes.
+
+The objection that led to asking for the statuses was real: a sync cannot tell
+"Walid withdrew eight properties" from "10ninety had a bad minute", because
+both arrive as a short list. But that is a problem to solve in our code, not by
+bending how a client works. `worker/studio/tenninety-sync.js` refuses to act on
+a feed it could not read, never empties the site on an empty feed, and stops
+and reports if more than a third of the listings vanish at once.
+
+Which is the lesson worth keeping: the first instinct was to change the
+client's system to suit the sync. The right answer was to make the sync
+tolerate the client's system as it already was.
 
 ### They generate links into our website
 
