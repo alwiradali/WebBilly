@@ -322,7 +322,25 @@
       var html = document.documentElement, was = html.style.scrollBehavior;
       html.style.scrollBehavior = 'auto';
       if (lenis) lenis.scrollTo(target, { offset: -HEAD, immediate: true });
-      else window.scrollTo(0, target.getBoundingClientRect().top + (window.scrollY || 0) - HEAD);
+      else {
+        /* A smooth scroll already in flight is not cancelled by an instant
+           one — it resumes and finishes at ITS target, which drops you about
+           100px out if you tap a link while the page is still moving. So the
+           position is put back for a few frames, by which time the old
+           animation has run out. scrollIntoView is used rather than a
+           measured scrollTo because it honours scroll-margin-top, the same
+           header offset the CSS already declares. */
+        var land = function () {
+          var b = html.style.scrollBehavior;
+          html.style.scrollBehavior = 'auto';
+          target.scrollIntoView({ block: 'start' });
+          html.style.scrollBehavior = b;
+        };
+        land();
+        requestAnimationFrame(land);
+        setTimeout(land, 140);
+        setTimeout(land, 360);
+      }
       html.style.scrollBehavior = was;
     } else if (lenis) {
       lenis.scrollTo(target, { offset: -HEAD, duration: 1.3 });
@@ -530,11 +548,23 @@
           '<h3>' + esc(m.name) + '</h3>' +
           '<p><b>' + esc(m.sub) + '</b></p>' +
           '<p>' + esc(m.text) + '</p>' +
+          (m.ask
+            ? '<a class="item-ask" href="#enquire" data-ask="' + esc(m.name) + '">Ask for a price</a>'
+            : '<a class="item-ask" href="#build">Order this</a>') +
           '<span class="opt">' + esc(m.opt) + '</span>' +
         '</div>';
       host.appendChild(card);
     });
   }());
+
+  /* A menu card that cannot be bought sends you to the enquiry form with its
+     own name already filled in, so nobody has to explain what they meant. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-ask]');
+    if (!a) return;
+    var want = a.getAttribute('data-ask');
+    setTimeout(function () { setAbout(want); }, 60);
+  });
 
   /* ============================================================== flavours */
 
@@ -990,7 +1020,10 @@
     var form = $('#coForm'), btn = $('#coSend'), msg = $('#coMsg');
     if (!form) return;
 
-    function v(id) { var n = $('#' + id); return n ? n.value.trim() : ''; }
+    function v(id) {
+      var n = $('#' + id);
+      return n && typeof n.value === 'string' ? n.value.trim() : '';
+    }
     function show(kind, html) { msg.className = 'form-msg on ' + kind; msg.innerHTML = html; }
     function details() {
       return { name: v('co_name'), email: v('co_email'), phone: v('co_phone'),
@@ -1472,14 +1505,49 @@
 
   /* ========================================================== enquiry form */
 
+  var ABOUT = ['A question', 'Minis', 'Individually wrapped', 'A large order',
+    'Something bespoke'];
+  var setAbout = function () {};
+
+  (function aboutChips() {
+    var host = $('#aboutChips'), hidden = $('#enqAbout');
+    if (!host) return;
+    var btns = {};
+    ABOUT.forEach(function (name, i) {
+      var b = el('button', {
+        type: 'button', class: 'chip' + (i === 0 ? ' on' : ''),
+        'aria-pressed': i === 0 ? 'true' : 'false'
+      }, esc(name));
+      b.addEventListener('click', function () { setAbout(name); });
+      btns[name] = b;
+      host.appendChild(b);
+    });
+    setAbout = function (name) {
+      if (!btns[name]) name = ABOUT[0];
+      Object.keys(btns).forEach(function (k) {
+        var on = k === name;
+        btns[k].classList.toggle('on', on);
+        btns[k].setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      hidden.value = name;
+    };
+  }());
+
   (function form() {
     var form = $('#enqForm'), btn = $('#enqBtn'), msg = $('#formMsg');
     if (!form) return;
 
-    function val(id) { var n = $('#' + id); return n ? n.value.trim() : ''; }
+    /* `n.value` and not `n` — an id that collides with a section returns the
+       section, whose value is undefined, and the whole form throws. It has
+       happened twice now (#flavours, then #about). */
+    function val(id) {
+      var n = $('#' + id);
+      return n && typeof n.value === 'string' ? n.value.trim() : '';
+    }
 
     function summary() {
       return [
+        ['About', val('enqAbout')],
         ['Name', val('name')], ['Email', val('email')],
         ['Phone / Instagram', val('phone')], ['Date', val('date')],
         ['Occasion', val('occasion')], ['Message', val('msg')]
@@ -1516,7 +1584,7 @@
       if (!W3F_KEY) { fallback('no Web3Forms key set — see W3F_KEY in brownielicious.js'); return; }
 
       var payload = {
-        access_key: W3F_KEY, subject: 'Website enquiry',
+        access_key: W3F_KEY, subject: 'Enquiry — ' + (val('enqAbout') || 'a question'),
         from_name: 'Brownielicious website', replyto: val('email')
       };
       summary().forEach(function (p) { payload[p[0]] = p[1]; });

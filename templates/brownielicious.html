@@ -261,7 +261,8 @@
         <h2 data-fx="text">Build your box.</h2>
         <p class="lead" data-fx="reveal" data-fx-delay="120">
           Choose what you'd like, pick your flavours, and pay at the checkout.
-          Your total, postage included, is there before you pay.
+          Your total, postage included, is there before you pay —
+          or <a href="#enquire">send an enquiry</a> if you'd rather ask first.
         </p>
       </div>
 
@@ -332,10 +333,11 @@
     <div class="wrap enq-grid">
 
       <div class="enq-side" data-fx="reveal" data-fx-variant="left">
-        <p class="eyebrow">Contact</p>
-        <h2 style="max-width:14ch">Questions before you order?</h2>
+        <p class="eyebrow">Enquiries</p>
+        <h2 style="max-width:14ch">Or send an enquiry.</h2>
         <p class="lead" style="margin-top:1.1em">
-          Send a message and I'll come back to you.
+          For minis, individually wrapped items, large orders and anything
+          bespoke — tell me what you need and I'll come back with a price.
           <span id="msgRoute">A DM on Instagram is usually quickest.</span>
         </p>
 
@@ -346,6 +348,12 @@
       <div data-fx="reveal" data-fx-variant="right">
         <form class="enq-form" id="enqForm" novalidate>
           <input type="text" class="hp" id="company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div class="fld">
+            <label for="enqAbout">What is it about?</label>
+            <div class="chips" id="aboutChips" role="group" aria-label="What your enquiry is about"></div>
+            <input type="hidden" id="enqAbout" name="about" value="A question">
+          </div>
 
           <div class="fld two">
             <div class="fld"><label for="name">Your name</label>
@@ -375,7 +383,8 @@
             Send message
           </button>
           <p class="form-note">
-            To place an order, <a href="#build">build your box</a> — it takes a minute.
+            Know what you want already? <a href="#build">Build your box</a> and
+            pay on the site.
           </p>
           <div class="form-msg" id="formMsg" role="status" aria-live="polite"></div>
         </form>

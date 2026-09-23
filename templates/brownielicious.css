@@ -1048,3 +1048,16 @@ section[id],div[id="top"]{scroll-margin-top:84px}
   .foot-top>:first-child{grid-column:1/-1}
   .foot li{padding-block:6px}
 }
+
+/* The one line on a menu card that does something: buy it, or ask about the
+   two sizes she has never published a price for. */
+.item-ask{
+  align-self:flex-start;margin-top:4px;
+  font-size:.82rem;font-weight:500;color:var(--pink);text-decoration:none;
+  border-bottom:1px solid transparent;transition:border-color .3s,color .3s;
+}
+.item-ask::after{content:" →"}
+.item-ask:hover{color:var(--brown);border-bottom-color:var(--brown)}
+.menu-note a,.lead a{color:var(--pink);text-decoration:underline;text-underline-offset:3px}
+.menu-note a:hover,.lead a:hover{color:var(--brown)}
+@media (pointer:coarse){ .item-ask{padding-block:8px} }
