@@ -229,8 +229,10 @@
   var ICON = {
     wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>',
     ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>',
-    /* centred on the 24x24 box — the old one sat high and to the right */
-    tt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.6 2.2h2.7c.2 1.4.9 2.6 2 3.3.7.5 1.5.7 2.3.8v2.7c-1.5 0-2.9-.5-4.1-1.3v5.9c0 3.1-2.5 5.6-5.6 5.6s-5.6-2.5-5.6-5.6 2.5-5.6 5.6-5.6c.3 0 .6 0 .8.1v2.8c-.3-.1-.6-.1-.8-.1a2.9 2.9 0 1 0 2.9 2.9V2.2z"/></svg>',
+    /* The drawn shape spans y 2.2 to 19.2, so its own centre is 10.7 in a
+       24-unit box — a full pixel high once rendered, and visible. The group
+       translate puts the ink centre on 12,12 where the circle's centre is. */
+    tt: '<svg viewBox="0 0 24 24" fill="currentColor"><g transform="translate(0.05 1.3)"><path d="M12.6 2.2h2.7c.2 1.4.9 2.6 2 3.3.7.5 1.5.7 2.3.8v2.7c-1.5 0-2.9-.5-4.1-1.3v5.9c0 3.1-2.5 5.6-5.6 5.6s-5.6-2.5-5.6-5.6 2.5-5.6 5.6-5.6c.3 0 .6 0 .8.1v2.8c-.3-.1-.6-.1-.8-.1a2.9 2.9 0 1 0 2.9 2.9V2.2z"/></g></svg>',
     fb: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V7c0-.7.5-1 1-1h2V3h-2.7C11.6 3 10.5 4.6 10.5 7v1.5H8V12h2.5v9H14v-9h2.6l.4-3.5H14z"/></svg>',
     mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>',
     pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',

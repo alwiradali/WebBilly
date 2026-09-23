@@ -1061,3 +1061,13 @@ section[id],div[id="top"]{scroll-margin-top:84px}
 .menu-note a,.lead a{color:var(--pink);text-decoration:underline;text-underline-offset:3px}
 .menu-note a:hover,.lead a:hover{color:var(--brown)}
 @media (pointer:coarse){ .item-ask{padding-block:8px} }
+
+/* The icon circles centre with flex and a zeroed line box. `place-items`
+   alone left the glyph 1.5px high in some rows, because the anchor still
+   carried a text baseline for it to sit on. */
+.socials a{
+  display:flex;align-items:center;justify-content:center;
+  line-height:0;padding:0;
+}
+.socials a svg{display:block;flex:none}
+.chat svg{display:block;flex:none}
