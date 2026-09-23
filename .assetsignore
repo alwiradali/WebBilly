@@ -132,3 +132,11 @@ templates/brownielicious.html
 templates/brownielicious.css
 templates/brownielicious.js
 assets/brownielicious
+
+# Bash n Boujee — parked. Same as above: the files stay in the repository but
+# are not uploaded, so /templates/bashnboujee and its pictures answer 404.
+# Delete these four lines to put it back.
+templates/bashnboujee.html
+templates/bashnboujee.css
+templates/bashnboujee.js
+assets/bashnboujee
