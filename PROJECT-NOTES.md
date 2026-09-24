@@ -445,3 +445,22 @@ font arrives and would otherwise look short enough to leave alone.
 Lazy-loaded photographs also now fade up as they decode, over the card's own
 background rather than a hole in the page, with a 4-second safety timeout so a
 failed image can never leave a permanently invisible one.
+
+**Two things that were visible but not obvious, and are now guarded.**
+
+*An empty toast is still a padded, bordered pill.* `.toast` parked itself with
+`translate(-50%,140%)` — but 140% of its own 26px height is only 36px, and it
+sits `bottom:26px`, so 16px of an empty dark pill sat permanently at the
+bottom of every screen looking like a stray blob. It now hides with
+`opacity:0;visibility:hidden` and parks at `calc(100% + 40px)`. `qa.mjs` fails
+any viewport where a fixed element with no text and no icon is still painting
+inside the screen.
+
+*The shared `scroll-fx.js` drifts `.section-head h2` and `.section-head .tag`
+in opposite directions for depth.* Measured on this page it pushed the heading
+up to **40px down** — 23px **into** the paragraph underneath it on a laptop.
+These headings sit directly above their own sub-paragraph with ~14px of air,
+so there is nothing to drift into. `.section-head h2,.section-head .tag
+{transform:none!important}` stops it (inline styles only lose to
+`!important`), and `qa.mjs` fails any viewport where a section heading still
+carries a transform.
