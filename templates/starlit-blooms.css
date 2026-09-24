@@ -138,21 +138,45 @@ main,.nav,.foot,.dm-bubble{position:relative;z-index:2}
 .nav-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(3px) rotate(45deg)}
 .nav-burger[aria-expanded="true"] span:nth-child(2){transform:translateY(-3px) rotate(-45deg)}
 
+/* Ten links plus a button did not fit, and `justify-content:center` with no
+   overflow handling clips BOTH ends of a list that is too tall — so the first
+   item sat under the header and the last under the browser bar, with no way
+   to scroll to either. Sized to fit a normal phone outright, and scrollable
+   anyway for the short ones. */
 .drawer{
   position:fixed;inset:0;z-index:79;background:var(--night);
-  display:flex;flex-direction:column;justify-content:center;gap:28px;
-  padding:96px clamp(22px,7vw,56px) 40px;
+  display:flex;flex-direction:column;justify-content:flex-start;gap:18px;
+  /* --navh is measured from the real header in the JS: guessing it per
+     breakpoint kept tucking the first link underneath on one size or another */
+  padding:calc(var(--navh,72px) + 22px + env(safe-area-inset-top,0px)) clamp(20px,6vw,56px)
+          calc(28px + env(safe-area-inset-bottom,0px));
+  overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility .45s;
 }
 .drawer.open{opacity:1;visibility:visible}
-.drawer nav{display:flex;flex-direction:column;gap:2px}
+.drawer nav{display:flex;flex-direction:column;gap:0}
 .drawer nav a{
-  text-decoration:none;font-family:var(--serif);font-size:clamp(1.6rem,7vw,2.2rem);
-  padding:.26em 0;color:var(--ink);border-bottom:1px solid rgba(226,160,174,.08);
+  text-decoration:none;font-family:var(--serif);font-size:clamp(1.15rem,4.6vw,1.7rem);
+  line-height:1.3;padding:.44em 0;color:var(--ink);
+  border-bottom:1px solid rgba(226,160,174,.08);
   opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease);
 }
 .drawer.open nav a{opacity:1;transform:none}
-.drawer-foot{margin-top:8px}
+.drawer-foot{margin-top:auto;padding-top:14px}
+/* an older, shorter phone: tighten it so the whole menu still fits outright */
+@media (max-height:620px) and (orientation:portrait){
+  .drawer{gap:12px}
+  .drawer nav a{font-size:1.05rem;padding:.42em 0}
+}
+@media (max-height:560px) and (orientation:landscape){
+  .drawer{gap:12px}
+  .drawer nav a{font-size:1.05rem;padding:.34em 0}
+}
+/* a taller phone can afford more presence */
+@media (min-height:760px){
+  .drawer{gap:24px}
+  .drawer nav a{font-size:clamp(1.3rem,5.4vw,1.9rem);padding:.5em 0}
+}
 
 /* ---------- buttons ---------- */
 .btn{
@@ -669,6 +693,10 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
   .hero-facts{margin-top:1.2em}
   .hero-art{display:none}
   .loader img{width:clamp(130px,30vh,190px)}
+}
+
+@supports (height:1dvh){
+  .drawer{height:100dvh}
 }
 
 @supports (height:1svh){

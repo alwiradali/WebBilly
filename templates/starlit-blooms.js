@@ -271,7 +271,18 @@
     nav.classList.toggle('solid', (window.scrollY || 0) > 40);
   }, { passive: true });
 
+  /* The drawer clears the header by measuring it, not by guessing: a fixed
+     padding was always wrong on some size, tucking the first link underneath. */
+  function sizeDrawer() {
+    if (!nav || !drawer) return;
+    drawer.style.setProperty('--navh', Math.round(nav.getBoundingClientRect().height) + 'px');
+  }
+  sizeDrawer();
+  addEventListener('resize', sizeDrawer, { passive: true });
+  addEventListener('orientationchange', function () { setTimeout(sizeDrawer, 200); });
+
   function setDrawer(open) {
+    sizeDrawer();
     if (!drawer) return;
     if (open) drawer.hidden = false;
     requestAnimationFrame(function () { drawer.classList.toggle('open', open); });

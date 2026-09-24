@@ -474,3 +474,22 @@ first one instead of flashing the logo for a frame, and *not* waiting for
 on a real connection. Nothing is lost by going early, because the hero's own
 pictures fade in as they decode. Measured live: holds ~2.1–2.3s, hero fully
 there by ~3.0s. A 4.6s hard cap still calls `finish()` directly.
+
+**The mobile menu was clipped at both ends, not scrollable.** `.drawer` was
+`display:flex;justify-content:center` with no `overflow` — and centring a list
+taller than its box cuts off the TOP as well as the bottom, with no way to
+scroll to either. Ten links plus a button needed ~840px in a 664px screen, so
+the first item sat under the header and the button under the browser bar.
+
+Three parts to the fix: `justify-content:flex-start` plus `overflow-y:auto`
+(with `overscroll-behavior:contain`) so it can always scroll; smaller type and
+tighter padding, with breakpoints for short phones and landscape, so it
+actually fits outright on every portrait size; and — the part worth
+remembering — **the top padding is measured, not guessed**. `sizeDrawer()`
+writes the real header height into `--navh` on load, resize and orientation
+change. A hard-coded value was wrong on some size every time: 78px tucked the
+first link under the header on iPad, 94px was right there but still wrong in
+landscape. Measured, every size clears by exactly 22px.
+
+Guarded in the interaction suite: the drawer is opened and checked for a first
+link under the header, an unreachable last item, and `overflow:hidden`.
