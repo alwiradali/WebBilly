@@ -304,7 +304,7 @@ function normaliseApi(body) {
       img: String(pick(p, ["image", "image_url", "thumbnail", "cover", "cover_image"])),
     });
   }
-  return out.filter((p) => p.name).slice(0, 40);
+  return out.filter((p) => p.name).slice(0, 200);
 }
 
 async function handleMMShop(request, env) {
@@ -349,10 +349,8 @@ async function handleMMShop(request, env) {
     liveSource = "api";
   } else {
     try {
-      const r = await fetch(MM_SHOP_URL, {
-        headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
-      });
-      if (r.ok) { live = parsePayhipStore(await r.text()); liveSource = "storefront"; }
+      const fromStore = await fetchStorefront();
+      if (fromStore.length) { live = fromStore; liveSource = "storefront"; }
     } catch (e) { /* the snapshot below covers it */ }
   }
 
@@ -394,6 +392,67 @@ async function handleMMShop(request, env) {
   return res;
 }
 
+/* Her storefront paginates at 16 products a page, and this read only the
+   first one. That is the whole of the disappearing-classes bug: every
+   Advanced Higher masterclass and both series passes sit on page TWO, so a
+   live lookup that got through returned 16 of her 27 products and the site
+   dropped a third of her shop, Advanced Higher first. It matched her
+   screenshot exactly — 16 items, no Advanced Higher column at all.
+
+   The build-time fetch was taught to page through on 7 September. This one,
+   which runs in the Worker on every visitor request, was not, so the two
+   disagreed and whichever answered decided what she was selling that minute.
+
+   Page one is the storefront root; the rest come from the collection view,
+   whose ?page= parameter is an offset rather than a page number. */
+const MM_PER_PAGE = 16;
+
+async function fetchStorefront() {
+  const get = async (u) => {
+    const r = await fetch(u, {
+      headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
+    });
+    return r.ok ? await r.text() : null;
+  };
+
+  const first = await get(MM_SHOP_URL);
+  if (!first) return [];
+  const pages = [first];
+
+  /* Stop as soon as a page brings nothing new. Some storefronts answer an
+     out-of-range offset with page one again rather than an empty page, and
+     without this that reads as "there is always more" and walks the whole
+     range on every request — twelve sequential calls to Payhip while a
+     visitor waits. Counting distinct product keys ends it after the last
+     real page instead. */
+  const keys = new Set();
+  const keysIn = (html) => {
+    const out = new Set();
+    const re = /href="https:\/\/payhip\.com\/b\/([A-Za-z0-9_-]+)"/g;
+    let m;
+    while ((m = re.exec(html)) !== null) out.add(m[1]);
+    return out;
+  };
+  keysIn(first).forEach((k) => keys.add(k));
+
+  for (let offset = MM_PER_PAGE; offset < MM_PER_PAGE * 12; offset += MM_PER_PAGE) {
+    let nxt = null;
+    try {
+      nxt = await get(MM_SHOP_URL + "/collection/all?&page=" + offset);
+    } catch (e) {
+      break;                  /* a failed later page costs that page, not the lookup */
+    }
+    if (!nxt || nxt.indexOf("card__heading") === -1) break;
+    let fresh = 0;
+    keysIn(nxt).forEach((k) => { if (!keys.has(k)) { keys.add(k); fresh++; } });
+    if (!fresh) break;
+    pages.push(nxt);
+  }
+
+  MM_DIAG.push({ via: "storefront", pages: pages.length, products: keys.size });
+  return parsePayhipStore(pages.join("\n"));
+}
+
 function parsePayhipStore(html) {
   /* Payhip currently ships two storefront themes. Newer stores render each
      product as a "card" with the name inside a linked heading; older ones
@@ -403,7 +462,7 @@ function parsePayhipStore(html) {
      and a store that matches neither yields an empty list, never an error. */
   var out = cardTheme(html);
   if (!out.length) out = gridTheme(html);
-  return out.slice(0, 40);
+  return out.slice(0, 200);
 
   function cardTheme(html) {
     var out = [], seen = {};
