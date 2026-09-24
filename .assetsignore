@@ -140,3 +140,11 @@ templates/bashnboujee.html
 templates/bashnboujee.css
 templates/bashnboujee.js
 assets/bashnboujee
+
+# Starlit Blooms — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/starlit-blooms and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/starlit-blooms.html
+templates/starlit-blooms.css
+templates/starlit-blooms.js
+assets/starlit
