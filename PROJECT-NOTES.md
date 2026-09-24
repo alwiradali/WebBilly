@@ -307,3 +307,70 @@ Still unknown, worth asking before anyone guesses: the town for Adelphi
 Apartments, Grove House, The Rope Works and Anvil Place (their folders carried
 no postcode), and whether the Carlton Road houses are the ones behind the
 `room-3`/`room-5`/`room-7` listings.
+
+---
+
+## Starlit Blooms — `templates/starlit-blooms.{html,css,js}`
+
+Eternal satin roses, Manchester. `@starlitblooms_`. A client preview: unlisted
+(meta noindex, `X-Robots-Tag` on the page **and** on `/assets/starlit/*`,
+`robots.txt` already disallows `/templates/`, absent from the sitemap).
+
+**Her logo is hers.** There was no source file, so it came out of her Instagram
+profile picture: the circle is at (644, 1261.5) r=424 in the screenshot, giving
+a clean 848px badge. `assets/starlit/logo.png` is that badge with the corners
+made transparent. The other three are the artwork with the blush background
+*keyed out* — solving `P = A·I + (1−A)·B` per channel for the ink `#be7282`
+over the blush `#fde7ea`, which gives clean anti-aliased edges with no halo:
+`mark-full.png` (all of it), `monogram.png` (the SB and lilies),
+`wordmark.png` (the two lines of type, 1760x300 for the nav bar). Quantising
+to 128 colours afterwards cut them from 2.2MB to 495KB with no visible loss.
+
+**The photographs are stock, graded into one family.** CC0 / public-domain
+images from Openverse (rawpixel), listed with their licences in a comment at
+the top of the HTML. Unrelated stock never reads as one brand on its own, so
+every frame goes through the same grade: hues between 58° and 179° (greens,
+yellows, cyans) lose 86% of their saturation and 18% of their value, reds and
+magentas gain a little, the deepest shadows are lifted toward the page's plum,
+highlights are rolled off at 0.86 and a soft vignette is added. That is what
+turns a yellow field behind a bouquet into neutral bokeh. The one high-key
+frame (the gift box) is **blurred before it is darkened** — crushing gamma
+first amplified the source JPEG's blocking into visible squares.
+
+**The builder is the point of the page.** She takes orders by DM, so there is
+no checkout and no invented prices. `PRICES` in the JS is her own list off her
+Instagram highlight (£2 / £25 / £44 / £60 / £75, add-ons £1–£3, birthday £80,
+wedding £95). The builder totals size + add-ons live, then offers two routes:
+**Send this as an enquiry** fills in the form below and scrolls to it, and
+**Send it on Instagram** copies the order to the clipboard and opens
+`ig.me/m/starlitblooms_`, because nobody can pre-fill an Instagram DM. Gift
+boxes and hampers have no published price, so they are marked "quoted on
+enquiry" rather than guessed at.
+
+**Three bugs this build found that are worth remembering:**
+
+1. `[hidden]` is a UA rule with *no* type selector, so **any** class rule that
+   sets `display` beats it. `.lb{display:grid}` meant the lightbox stayed laid
+   out while "hidden" — an invisible full-screen layer swallowing every click
+   on the page. A single `[hidden]{display:none!important}` fixes the whole
+   class of bug (it also affected `.drawer` and the rail arrows).
+2. **Lenis and `html{scroll-behavior:smooth}` fight each other.** Lenis drives
+   the scroll from its own rAF loop; CSS then animates the same jump again and
+   anchor links land hundreds of pixels short (measured: 890px). Set
+   `scrollBehavior = 'auto'` as soon as Lenis is constructed.
+3. **A lightbox that re-locks on every next/prev leaves the page frozen.**
+   `open()` was calling `lockScroll(true)` each time, so arrowing through four
+   pictures took four locks and closing released one. Guard on `!lb.hidden`.
+
+**Still needed from her** — all in `CONTACT` at the top of the JS: an email +
+Web3Forms key (until then the form hands the enquiry back as copyable text
+with a link to her DMs, so nothing is silently swallowed), a Google Business
+profile for `googleReviews` / `googleWrite` / rating / count (the reviews are
+labelled examples until then), a TikTok or Facebook URL if she wants those
+icons, and her own photographs to drop over `assets/starlit/photos/`.
+
+**One thing to confirm with her:** the brief said "postage only, meaning she
+delivers it herself". The page reads that as *delivery only, by hand, around
+Manchester, no collection and no courier* — which is what the delivery section,
+the FAQ and the builder all say. If she actually posts nationwide as well, the
+Delivery section and FAQ need rewording.

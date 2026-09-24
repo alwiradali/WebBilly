@@ -75,3 +75,11 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/brownielicious/*
   X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Starlit Blooms -----------------------------
+/templates/starlit-blooms
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/starlit-blooms.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/starlit/*
+  X-Robots-Tag: noindex, noimageindex
