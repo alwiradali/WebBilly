@@ -256,6 +256,40 @@
     });
   }
 
+  function landing(id, target) {
+    if (id === '#top') return 0;
+    var pad = nav ? Math.round(nav.getBoundingClientRect().height) + 12 : 90;
+    return target.getBoundingClientRect().top + window.pageYOffset - pad;
+  }
+
+  /* A tap in the menu should arrive, not travel. The drawer already covers the
+     whole screen, so it doubles as the curtain: hold it opaque, jump under it,
+     then dissolve it away. Smooth, and none of the page in between. */
+  function arriveUnderDrawer(id, target) {
+    var links = $$('#drawer nav a');
+    links.forEach(function (l) { l.style.transitionDelay = '0ms'; l.style.transitionDuration = '0ms'; });
+    drawer.style.transition = 'none';
+
+    lockScroll(false);                       // gives the page its scroll back
+    burger.setAttribute('aria-expanded', 'false');
+    var b = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    window.scrollTo(0, Math.round(landing(id, target)));
+    html.style.scrollBehavior = b;
+    if (window.ScrollFXKit && window.ScrollFXKit.refresh) window.ScrollFXKit.refresh();
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        drawer.style.transition = '';        // back to the .45s dissolve
+        drawer.classList.remove('open');
+        setTimeout(function () {
+          if (!drawer.classList.contains('open')) drawer.hidden = true;
+          links.forEach(function (l) { l.style.transitionDelay = ''; l.style.transitionDuration = ''; });
+        }, 480);
+      });
+    });
+  }
+
   document.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
     if (!a) return;
@@ -265,16 +299,16 @@
     if (!target) return;
     e.preventDefault();
 
-    /* closing the drawer restores the scroll position it locked, so the
-       destination can only be measured afterwards */
+    if (drawer && drawer.classList.contains('open') && drawer.contains(a)) {
+      arriveUnderDrawer(id, target);
+      return;
+    }
     if (drawer && drawer.classList.contains('open')) setDrawer(false);
 
+    /* anything outside the menu — a hero button, a link in the copy — keeps
+       its journey, because there the page in between is the context */
     if (lenis) { lenis.scrollTo(id === '#top' ? 0 : target, { offset: -90, duration: 1.1 }); return; }
-    glideTo(function () {
-      if (id === '#top') return 0;
-      var pad = nav ? Math.round(nav.getBoundingClientRect().height) + 12 : 90;
-      return target.getBoundingClientRect().top + window.pageYOffset - pad;
-    });
+    glideTo(function () { return landing(id, target); });
   });
 
   /* ---------------- how pictures arrive ----------------

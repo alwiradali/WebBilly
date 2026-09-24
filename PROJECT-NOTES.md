@@ -787,3 +787,27 @@ before it. Measured: the list is two lines at 360, 390, 430 and 1024, and one
 line at 768 and 1440. On one line the pair reads as a separator and a full
 stop; stacked and centred on a phone it flanks the line, so the leading dot is
 no longer orphaned out to the left of a centred row.
+
+### Krem&Choc — a tap in the menu arrives, it does not travel
+
+The tween was the wrong answer. A menu tap should land on the section, not
+scroll the reader past everything between. But an instant jump on its own is a
+snap.
+
+The drawer already covers the whole screen, so it doubles as the curtain. On a
+link inside it: freeze its transition so it stays opaque, release the scroll
+lock, jump in one `scrollTo`, call `ScrollFXKit.refresh()` so the destination's
+reveals fire while it is still hidden, then two frames later restore the
+transition and let the drawer dissolve over its usual 450ms. Measured: **two
+distinct scroll positions** (0 → 10677), drawer opacity 1 at the moment of the
+jump, ten intermediate opacity frames after it. The reader sees the menu
+dissolve to reveal a section that is already assembled.
+
+Links *outside* the menu — a hero button, a link in the copy — keep the glide,
+because there the page in between is the context. Measured 75 scroll positions
+for the hero's "View the portfolio".
+
+**Flaky check fixed.** The marquee sub-pixel assertion sampled six rAF frames.
+At ~34px/s a step is ~0.57px, so one dropped or coalesced frame can leave every
+delta on a whole number by chance, and it failed a page that was moving
+perfectly — twice over a live run. It samples 24 frames now.
