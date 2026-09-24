@@ -410,10 +410,13 @@
     }).join('');
     if (CONTACT.googleRating) $('#gRating').textContent = CONTACT.googleRating;
     if (CONTACT.googleCount)  $('#gCount').textContent  = 'from ' + CONTACT.googleCount + ' reviews';
+    /* Until her Google Business profile is linked there is nowhere to send
+       anyone, and a button offering email from inside the reviews box only
+       muddles the enquiry route — so it is removed rather than repurposed. */
     var w = $('#gWrite');
     if (w) {
       if (CONTACT.googleWrite) w.href = CONTACT.googleWrite;
-      else { w.href = 'mailto:' + CONTACT.email; w.textContent = 'Email instead'; }
+      else w.parentNode.removeChild(w);
     }
   }());
 
@@ -502,7 +505,6 @@
     FLAVOURS.map(function (f) { return f.n; }).concat(['Not sure yet']));
 
   /* ---------------- clipboard + share ---------------- */
-  function canShare() { try { return typeof navigator.share === 'function'; } catch (e) { return false; } }
   function copy(text, cb) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () { cb(true); }, function () { cb(false); });
@@ -515,20 +517,6 @@
       var ok = document.execCommand('copy');
       document.body.removeChild(ta); cb(ok);
     } catch (e) { cb(false); }
-  }
-  function handOver(text, doneCb) {
-    if (canShare()) {
-      var p;
-      try { p = navigator.share({ text: text }); } catch (e) { p = null; }
-      if (p && p.then) {
-        p.then(function () { doneCb('shared'); }, function (err) {
-          if (err && err.name === 'AbortError') { doneCb('cancelled'); return; }
-          copy(text, function (ok) { doneCb(ok ? 'copied' : 'manual'); });
-        });
-        return;
-      }
-    }
-    copy(text, function (ok) { doneCb(ok ? 'copied' : 'manual'); });
   }
 
   var toastT;
@@ -569,23 +557,30 @@
         'Budget: ' + (val('enqBudget') || 'Not given') + '\n\n' +
         (val('enqMsg') || '(no further details)');
 
+      var subject = 'Cake enquiry — ' + (val('enqOccasion') || 'Something else') +
+                    (val('enqDate') ? ' — ' + val('enqDate') : '');
+
       if (!W3F_KEY) {
-        /* Not wired to an inbox yet, so nothing is silently swallowed: the
-           whole enquiry is handed over instead. */
-        say('Preparing your enquiry…');
-        handOver(plain, function (how) {
-          if (how === 'shared')    { f.reset(); say('Thank you — that is on its way.'); return; }
-          if (how === 'cancelled') { say('No problem — the form is still here when you want it.'); return; }
-          var mail = 'mailto:' + CONTACT.email +
-            '?subject=' + encodeURIComponent('Cake enquiry — ' + (val('enqOccasion') || 'Something else')) +
-            '&body=' + encodeURIComponent(plain);
-          if (how === 'copied') {
-            say('This demo form isn’t wired to an inbox yet, so your enquiry has been copied — ' +
-                '<a href="' + esc(mail) + '">open it in an email to ' + esc(CONTACT.email) + '</a> and it will arrive exactly as written.', true);
-            return;
-          }
-          say('Send this to <a href="' + esc(mail) + '">' + esc(CONTACT.email) + '</a>:<br><br>' +
-              esc(plain).replace(/\n/g, '<br>'), true);
+        /* No form endpoint is wired up, so the enquiry goes straight into her
+           inbox the only way a static page can do it honestly: the reader's own
+           mail app, opened with everything already filled in. This has to run
+           inside the submit gesture or Safari blocks the handover. */
+        var mail = 'mailto:' + CONTACT.email +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body='    + encodeURIComponent(plain);
+        var a = el('a'); a.href = mail; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        say('Opening your email to <a href="' + esc(mail) + '">' + esc(CONTACT.email) + '</a> ' +
+            'with your enquiry already written — just press send. ' +
+            '<button type="button" class="lnk-inline" id="enqCopy">Nothing happened? Copy it instead</button>', true);
+        var cp = $('#enqCopy');
+        if (cp) cp.addEventListener('click', function () {
+          copy(plain, function (ok) {
+            toast(ok ? 'Enquiry copied — paste it into an email to ' + CONTACT.email
+                     : 'Could not copy — please select the text below.');
+            if (!ok) say('Send this to <a href="' + esc(mail) + '">' + esc(CONTACT.email) + '</a>:<br><br>' +
+                         esc(plain).replace(/\n/g, '<br>'), true);
+          });
         });
         return;
       }
@@ -596,7 +591,7 @@
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           access_key: W3F_KEY,
-          subject: 'Cake enquiry — ' + (val('enqOccasion') || 'Something else'),
+          subject: subject,
           from_name: 'Krem&Choc website',
           name: name, email: email,
           message: plain

@@ -685,3 +685,44 @@ viewport because the blooms sit deliberately off-canvas. It now skips a node
 that is both `aria-hidden` and clipped by an ancestor with `overflow-x: hidden`
 or `clip` — such a node cannot spill onto the page, and real horizontal overflow
 is still caught by the `scrollWidth > clientWidth` check.
+
+### Krem&Choc — the enquiry goes straight to her inbox
+
+There is no form endpoint yet, and the old no-key path tried `navigator.share`
+first. On a phone that opens the system share sheet, and cancelling it landed
+the reader on "No problem — the form is still here when you want it", which
+reads like the site failed.
+
+Submitting now opens the reader's own mail app, addressed to her, with the
+subject naming the occasion and date and the whole enquiry already in the body.
+Two things it depends on:
+
+- it must happen inside the submit gesture, or Safari blocks the handover;
+- it clicks a temporary `<a href="mailto:…">` rather than assigning
+  `location.href` — more reliable across browsers, and testable by stubbing
+  `HTMLAnchorElement.prototype.click`.
+
+Underneath the confirmation there is a "Nothing happened? Copy it instead"
+button, because a desktop with no mail client configured does nothing visible.
+If the clipboard is also unavailable, the full text is printed to select by
+hand. The Web3Forms path is untouched and takes over the moment a key is set.
+
+The "Email instead" button inside the Google reviews box is gone. It only
+appeared because no Google Business profile is linked yet, and offering email
+from inside the reviews box competed with the enquiry form a few hundred pixels
+below. When there is no profile to link to, the button is removed outright.
+
+**Ambience, finished.** Every section now carries its own drift: eleven blocks,
+108 motes, six blooms. `will-change` came off the motes — a running transform
+animation is promoted anyway, and a hundred pre-promoted layers is a real cost
+on a cheap phone. Measured under a 6x CPU throttle at iPhone 13 size: 59fps
+idle, 58fps while scrolling the whole page.
+
+**Craft.** `text-wrap: balance` on every display line so a heading never ends on
+an orphan; Cormorant's own ligatures and old-style figures switched on, with
+slightly negative tracking at display sizes; a sheen that crosses the gold
+buttons on hover; and one slow sheen across her lockup after the page settles,
+masked to the artwork's own alpha so it lights the letterforms rather than a
+rectangle over them. That last one needed a symmetric ease — the site's
+overshoot curve made the light whip across and then crawl, which reads as a
+glitch. Measured: peak brightness 234 against a 149 baseline, over ~750ms.
