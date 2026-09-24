@@ -229,39 +229,61 @@ async function handleMMShop(request, env) {
   const hit = diag ? null : await cache.match(cacheKey);
   if (hit) return hit;
 
-  let products = [];
-  let source = "storefront";
+  /* The snapshot is read FIRST and used as the floor, not as a last resort.
+
+     It used to be the other way round: whatever a live lookup returned was
+     served, and the snapshot only appeared if the live paths gave nothing at
+     all. That is wrong for this shop. Payhip is behind Cloudflare and
+     normally answers a Worker with a 403 bot page, so the live paths fail and
+     the snapshot serves — but on the occasions one of them DID get through
+     and came back with a short list (a class sold out, unpublished for an
+     evening, or a storefront theme this parser reads badly), those classes
+     vanished from her site and the short answer was cached for five minutes.
+     That is exactly the complaint: masterclasses disappearing and coming back
+     on their own, a different level each time.
+
+     The snapshot is verified at build time and complete. A live result is now
+     only preferred when it is at least as complete, so a live lookup can add
+     to what she sells but can never silently take classes away. */
+  let snapshot = [];
+  try {
+    const snap = await env.ASSETS.fetch(new URL("/shop.json", request.url));
+    if (snap.ok) {
+      const d = await snap.json();
+      if (d && Array.isArray(d.products)) snapshot = d.products;
+    }
+  } catch (e) { /* no snapshot shipped; the live paths are all there is */ }
+
+  let live = [];
+  let liveSource = "";
 
   const viaApi = await fetchViaApi(env);
   if (viaApi && viaApi.length) {
-    products = viaApi;
-    source = "api";
+    live = viaApi;
+    liveSource = "api";
   } else {
     try {
       const r = await fetch(MM_SHOP_URL, {
         headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
       });
-      if (r.ok) products = parsePayhipStore(await r.text());
-    } catch (e) { /* snapshot below */ }
+      if (r.ok) { live = parsePayhipStore(await r.text()); liveSource = "storefront"; }
+    } catch (e) { /* the snapshot below covers it */ }
   }
 
-  /* Payhip is behind Cloudflare, and Cloudflare challenges requests coming
-     from a Worker — every live attempt above returns a 403 bot page. So the
-     product list is read at build time, where the request is ordinary and
-     works, and shipped with the site. This serves that snapshot. The live
-     attempts stay because they cost nothing and would be preferred the day
-     that block goes away. */
-  if (!products.length) {
-    try {
-      const snap = await env.ASSETS.fetch(new URL("/shop.json", request.url));
-      if (snap.ok) {
-        const d = await snap.json();
-        if (d && d.products && d.products.length) {
-          products = d.products;
-          source = "snapshot";
-        }
-      }
-    } catch (e) { /* nothing left to try */ }
+  /* "source" has to name what is actually being served, not which lookup was
+     last attempted. It previously said "storefront" even when the storefront
+     answered and parsed to nothing and the snapshot was what went out, which
+     made this fault hard to see from the outside. */
+  let products = snapshot;
+  let source = "snapshot";
+  if (live.length && live.length >= snapshot.length) {
+    products = live;
+    source = liveSource;
+  } else if (live.length) {
+    /* A live answer shorter than the snapshot is the failure mode described
+       above. Keep the snapshot and say so, rather than dropping her classes. */
+    MM_DIAG.push({ via: "guard", kept: "snapshot", live: live.length, snapshot: snapshot.length });
+    source = "snapshot (" + liveSource + " returned " + live.length + " of " + snapshot.length + ")";
   }
 
   /* "source" says which path answered — useful for checking the key landed,
@@ -269,13 +291,13 @@ async function handleMMShop(request, env) {
   const payload = { store: MM_SHOP_URL, source, products };
   if (diag) { payload.keyPresent = !!(env && env.PAYHIP_API_KEY); payload.attempts = MM_DIAG; }
 
-  /* Never cache an empty shop. A five-minute cache is right for a good answer
+  /* Never cache a short shop. A five-minute cache is right for a good answer
      and badly wrong for a bad one: one failed lookup pinned an empty product
      list in front of every visitor for five minutes, and the pages showed
      their "not loading" fallback the whole time even after the underlying
-     problem was fixed. An empty result is treated as a miss and retried on
-     the next request instead. */
-  const good = products.length > 0;
+     problem was fixed. Anything below the snapshot count gets the same
+     treatment — served once if it is all we have, never pinned. */
+  const good = products.length > 0 && products.length >= snapshot.length;
   const res = new Response(JSON.stringify(payload), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
