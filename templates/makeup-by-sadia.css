@@ -398,7 +398,6 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 .look-in span{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
 @keyframes sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
 .looks-cta{display:grid;justify-items:center;gap:.9em;margin-top:clamp(28px,3.4vw,44px);text-align:center}
-.looks-note{margin:0;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
 
 /* ---------- reviews ---------- */
 .gbox{border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:clamp(20px,2.4vw,30px)}
