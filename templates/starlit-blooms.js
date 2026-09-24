@@ -91,21 +91,21 @@
 
   var FAQ = [
     { q: 'What actually are eternal roses?',
-      a: 'Each rose is folded by hand from satin ribbon rather than grown. They look and sit like fresh roses, but they don’t wilt, drop petals or need water — so the bouquet stays exactly as it arrived.' },
+      a: 'I fold every rose by hand from satin ribbon rather than growing it. They look and sit like fresh roses, but they don’t wilt, drop petals or need water — so your bouquet stays exactly as it arrived.' },
     { q: 'How long do they last?',
-      a: 'Years. There is nothing in them to go off. Keep them out of direct sunlight and give them a gentle dust now and then and they’ll keep their colour.' },
+      a: 'Years. There is nothing in them to go off. Keep them out of direct sunlight and they will hold their colour.' },
     { q: 'How do I order?',
-      a: 'Build what you want on this page and send it over, fill in the enquiry form, or message her on Instagram — whichever you prefer. Everything is confirmed by message before anything is made.' },
+      a: 'Build what you want on this page and send it to me, fill in the enquiry form, or message me on Instagram — whichever suits you. I confirm everything by message before I start making anything.' },
     { q: 'How much notice do you need?',
-      a: 'Two weeks as a minimum. Every bouquet is made by hand to order, so the more warning she has the better — especially around Valentine’s, Mother’s Day and Eid.' },
+      a: 'Two weeks at the very least. I make everything by hand to order, so the more notice you can give me the better — especially around Valentine’s, Mother’s Day and Eid.' },
     { q: 'Do you deliver?',
-      a: 'Yes — every order is delivered in person around Manchester, so nothing gets crushed in transit. The day and a rough time are agreed with you once the order is confirmed. Further out, just ask.' },
+      a: 'Yes — I deliver every order in person around Manchester, so nothing gets crushed on the way. I agree the day and a rough time with you once your order is confirmed. If you are further out, just ask me.' },
     { q: 'Can I choose my own colours?',
-      a: 'That’s the whole idea. Red, black, white, champagne, pink, lilac or a mix — and if you have a particular shade in mind, send a picture and she’ll tell you whether she can match it.' },
+      a: 'That is the whole idea. Red, black, white, champagne, pink, lilac or a mix — and if you have a particular shade in mind, send me a picture and I will tell you whether I can match it.' },
     { q: 'Can you put a name or a message on it?',
-      a: 'Yes. Banners, crowns, butterflies and bows are all on the price list, and anything written is set out when you order so it’s spelled exactly how you want it.' },
+      a: 'Yes. Banners, crowns, butterflies and bows are all on the price list. Send me whatever you want written, spelled exactly as you want it, and that is how I will do it.' },
     { q: 'How do I pay?',
-      a: 'She’ll confirm the price and sort payment with you directly once the order is agreed. Nothing is taken through this website.' }
+      a: 'I confirm the price and sort payment with you directly once we have agreed the order. Nothing is taken through this website.' }
   ];
 
   /* ============================================================
@@ -302,17 +302,31 @@
     var band = track.parentNode;
     var words = ['Eternal roses', 'Gift boxes', 'Wrapped bouquets', 'Hampers',
                  'Made by hand', 'Manchester', 'Roses never fade'];
-    var runW = 0;
+    var cells = [], runW = 0, smooth = true;
 
     function build() {
       track.innerHTML = '';
-      var run = el('div', { class: 'band-run' },
+      var first = el('div', { class: 'band-run' },
         words.map(function (w) { return '<span>' + esc(w) + '</span>'; }).join(''));
-      track.appendChild(run);
-      runW = run.getBoundingClientRect().width;
+      track.appendChild(first);
+      runW = first.getBoundingClientRect().width;
       if (!runW) return;
       var copies = Math.ceil((band.clientWidth + runW) / runW) + 1;
-      for (var c = 1; c < copies; c++) track.appendChild(run.cloneNode(true));
+      for (var c = 1; c < copies; c++) track.appendChild(first.cloneNode(true));
+
+      /* iOS will not paint a moving (composited) layer wider than ~4096 DEVICE
+         pixels, and it fails silently — the strip just goes blank. So the thing
+         that moves is each WORD, not the strip: every span gets its own small
+         layer, and the widest is a couple of hundred pixels. Moving them all by
+         the same amount looks exactly like moving the strip. */
+      cells = [].slice.call(track.querySelectorAll('.band-run > span'));
+      var dpr = window.devicePixelRatio || 1, widest = 0;
+      cells.forEach(function (c2) {
+        var w = c2.getBoundingClientRect().width * dpr;
+        if (w > widest) widest = w;
+        c2.style.transform = '';
+      });
+      smooth = widest < 3800;              /* it never is; this is the seatbelt */
       band.scrollLeft = 0;
     }
     build();
@@ -321,8 +335,7 @@
 
     var x = 0, last = 0, SPEED = 34, seen = true;
     if (window.IntersectionObserver) {
-      new IntersectionObserver(function (es) { seen = es[0].isIntersecting; })
-        .observe(band);
+      new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }).observe(band);
     }
     (function frame(now) {
       requestAnimationFrame(frame);
@@ -331,7 +344,14 @@
       var dt = Math.min(64, now - last); last = now;
       x += SPEED * dt / 1000;
       if (x >= runW) x -= runW;
-      band.scrollLeft = x;
+      if (smooth) {
+        /* sub-pixel, so it glides. scrollLeft rounds to whole pixels, and at
+           34px a second that is ~0.57px a frame — which reads as a stutter. */
+        var t = 'translate3d(' + (-x).toFixed(2) + 'px,0,0)';
+        for (var i = 0; i < cells.length; i++) cells[i].style.transform = t;
+      } else {
+        band.scrollLeft = x;
+      }
     })(0);
   }());
 
@@ -478,8 +498,8 @@
 
       $('#bdPrice').textContent = money(total());
       $('#bdSmall').textContent = styleObj().quoted
-        ? 'A ' + styleObj().name.toLowerCase() + ' is priced when she replies — this is the roses and extras only.'
-        : 'Two weeks’ notice. Delivery around ' + CONTACT.area + ' is arranged when she confirms.';
+        ? 'I price a ' + styleObj().name.toLowerCase() + ' when I reply — this is the roses and extras only.'
+        : 'Two weeks’ notice, and I arrange delivery around ' + CONTACT.area + ' when I confirm your order.';
     }
 
     /* send it as an enquiry: fill the form in and take them to it */
@@ -502,24 +522,60 @@
       toast('Added to the enquiry form below');
     });
 
-    /* send it on Instagram: her DMs can't be pre-filled by anyone, so the
-       order is put on the clipboard and the DM opened ready to paste */
     var dmBtn = $('#bdDm');
     if (dmBtn) {
       dmBtn.href = CONTACT.dm || CONTACT.instagram;
-      dmBtn.addEventListener('click', function () {
+      dmBtn.addEventListener('click', function (e) {
         var text = 'Hi! I’d like ' + summary() + '. That comes to ' + money(total()) +
           ' on your website' + (styleObj().quoted ? ', plus the ' + styleObj().name.toLowerCase() : '') + '.';
+        var note = $('#bdCopy');
+        if (canShare()) {
+          e.preventDefault();
+          handOver(text, function (how) {
+            note.textContent =
+              how === 'shared'    ? 'Sent — your order went across with it.' :
+              how === 'cancelled' ? '' :
+              how === 'copied'    ? 'Copied — paste it into the message.' :
+                                    'Send me this: ' + text;
+            if (how === 'copied' || how === 'manual') openDm();
+          });
+          return;
+        }
         copy(text, function (ok) {
-          $('#bdCopy').textContent = ok
-            ? 'Copied — paste it straight into the message.'
-            : 'Send her this: ' + text;
+          note.textContent = ok ? 'Copied — paste it straight into the message.'
+                                : 'Send me this: ' + text;
         });
       });
     }
 
     paint();
   }());
+
+  /* Instagram gives no way to pre-fill a DM from a link — there is no URL
+     parameter for it, from anyone. The share sheet is the closest thing that
+     exists: on a phone it carries the text into whichever app is picked,
+     Instagram Direct included, so nothing has to be pasted. Everywhere else
+     the order goes on the clipboard and the DM opens ready for it. */
+  function canShare() {
+    try { return typeof navigator.share === 'function'; } catch (e) { return false; }
+  }
+  function openDm() {
+    try { window.open(CONTACT.dm || CONTACT.instagram, '_blank', 'noopener'); } catch (e) {}
+  }
+  function handOver(text, done) {
+    if (canShare()) {
+      var p;
+      try { p = navigator.share({ text: text }); } catch (e) { p = null; }
+      if (p && p.then) {
+        p.then(function () { done('shared'); }, function (err) {
+          if (err && err.name === 'AbortError') { done('cancelled'); return; }
+          copy(text, function (ok) { done(ok ? 'copied' : 'manual'); });
+        });
+        return;
+      }
+    }
+    copy(text, function (ok) { done(ok ? 'copied' : 'manual'); });
+  }
 
   function copy(text, cb) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -570,7 +626,7 @@
     var w = $('#gWrite');
     if (w) {
       if (CONTACT.googleWrite) w.href = CONTACT.googleWrite;
-      else { w.href = CONTACT.instagram; w.textContent = 'Message her instead'; }
+      else { w.href = CONTACT.instagram; w.textContent = 'Message me instead'; }
     }
   }());
 
@@ -713,9 +769,9 @@
       if (val('enqHp')) return;                        // honeypot
 
       var name = val('enqName'), reach = val('enqReach'), body = val('enqMsg');
-      if (!name)  { say('Please add your name so she knows who she’s replying to.'); $('#enqName').focus(); return; }
-      if (!reach) { say('Please add an Instagram handle, email or number so she can get back to you.'); $('#enqReach').focus(); return; }
-      if (!body)  { say('Tell her a little about what you’d like and she’ll take it from there.'); $('#enqMsg').focus(); return; }
+      if (!name)  { say('Please add your name so I know who I’m replying to.'); $('#enqName').focus(); return; }
+      if (!reach) { say('Please add an Instagram handle, email or number so I can get back to you.'); $('#enqReach').focus(); return; }
+      if (!body)  { say('Tell me a little about what you’d like and I’ll take it from there.'); $('#enqMsg').focus(); return; }
 
       var payload = {
         name: name, reach: reach,
@@ -732,12 +788,21 @@
         'Budget: ' + payload.budget + '\n\n' + payload.message;
 
       if (!W3F_KEY) {
-        /* Not wired up yet, so nothing is silently swallowed: the whole
-           enquiry is handed back, ready to send through her DMs. */
-        say('This demo form isn’t connected to an inbox yet. Your enquiry has been copied — ' +
-            '<a href="' + esc(CONTACT.dm || CONTACT.instagram) + '" target="_blank" rel="noopener">' +
-            'paste it into her Instagram DMs</a> and she’ll pick it up from there.', true);
-        copy(plain, function (ok) { if (!ok) say('Send her this:<br><br>' + esc(plain).replace(/\n/g, '<br>'), true); });
+        /* Not wired to an inbox yet, so nothing is silently swallowed: the
+           whole enquiry is handed over instead — through the share sheet
+           where there is one, the clipboard where there isn't. */
+        say('Opening your message…');
+        handOver(plain, function (how) {
+          if (how === 'shared')    { f.reset(); say('Thank you — that’s on its way to me.'); return; }
+          if (how === 'cancelled') { say('No problem — the form is still here when you want it.'); return; }
+          if (how === 'copied') {
+            say('This demo form isn’t wired to an inbox yet, so I’ve copied your enquiry — ' +
+                '<a href="' + esc(CONTACT.dm || CONTACT.instagram) + '" target="_blank" rel="noopener">' +
+                'paste it into my Instagram DMs</a> and I’ll pick it up from there.', true);
+            return;
+          }
+          say('Send me this on Instagram:<br><br>' + esc(plain).replace(/\n/g, '<br>'), true);
+        });
         return;
       }
 
@@ -754,11 +819,11 @@
         })
       }).then(function (r) { return r.json(); }).then(function (d) {
         btn.disabled = false; btn.textContent = 'Send enquiry';
-        if (d && d.success) { f.reset(); say('Sent — she’ll come back to you shortly. Thank you!'); }
-        else say('That didn’t send. Please try again, or message her on Instagram.');
+        if (d && d.success) { f.reset(); say('Sent — I’ll come back to you shortly. Thank you!'); }
+        else say('That didn’t send. Please try again, or message me on Instagram.');
       }).catch(function () {
         btn.disabled = false; btn.textContent = 'Send enquiry';
-        say('That didn’t send. Please try again, or message her on Instagram.');
+        say('That didn’t send. Please try again, or message me on Instagram.');
       });
     });
   }());

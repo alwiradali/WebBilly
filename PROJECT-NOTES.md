@@ -374,3 +374,36 @@ delivers it herself". The page reads that as *delivery only, by hand, around
 Manchester, no collection and no courier* — which is what the delivery section,
 the FAQ and the builder all say. If she actually posts nationwide as well, the
 Delivery section and FAQ need rewording.
+
+**Written in the first person, because it is her website.** Every line on the
+page is her talking — "I make every rose by hand", "I deliver in person",
+"tell me the occasion". The one deliberate exception is the reviews, where
+customers talk *about* her in the third person, which is how a real review
+reads.
+
+**The marquee moves each WORD, not the strip.** The scrolling-box version was
+safe but stuttered: `scrollLeft` rounds to whole pixels and at 34px/s that is
+0.57px a frame, so it alternated between moving and not. Transforming the
+track instead would be smooth but makes one composited layer as wide as the
+strip — straight back into the iOS 4096-device-pixel paint limit. So the
+transform goes on each `<span>`: every word is its own small layer (widest
+measured: 652dp against a ~4096 limit), they all move by the same sub-pixel
+amount, and it looks identical to moving the strip. A `smooth` flag falls
+back to `scrollLeft` if a cell ever measures over 3800dp.
+
+**An `!important` is what beats the parallax kit.** On a phone the hero tiles
+move from absolute positioning into normal flow, but `scroll-fx.js` keeps
+writing an inline `transform` — which dragged them up over the text below the
+buttons. Inline styles lose only to `!important`, so
+`.hero-tile{transform:none!important}` inside the mobile query is the fix; do
+not try to strip the attribute in JS, because a rotation puts it back.
+
+**Instagram DMs cannot be pre-filled, by anyone.** There is no URL parameter
+for it — `ig.me/m/<user>` opens the thread and that is all it does. The
+closest thing that exists is the Web Share API: `navigator.share({text})`
+opens the native share sheet, and picking Instagram carries the order text
+into the message with nothing to paste. `handOver()` in the JS does that where
+it is supported and falls back to clipboard-plus-open-DM everywhere else, so
+the order is never lost either way. If she ever publishes a WhatsApp number,
+that one *can* be fully pre-filled (`wa.me/<n>?text=`) and would be a better
+default.
