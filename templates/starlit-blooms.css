@@ -81,12 +81,12 @@ a{color:inherit}
 .loader{
   position:fixed;inset:0;z-index:120;display:grid;place-items:center;gap:26px;
   align-content:center;background:var(--night);
-  transition:opacity .6s var(--ease),visibility .6s;
+  transition:opacity .85s var(--ease),visibility .85s;
 }
-.loader img{width:clamp(210px,56vw,360px);height:auto;animation:lpop 1.2s var(--ease) both}
+.loader img{width:clamp(210px,56vw,360px);height:auto;animation:lpop 1.6s var(--ease) both}
 .loader-bar{display:block;width:clamp(120px,32vw,200px);height:1px;background:var(--line-2);overflow:hidden}
 .loader-bar i{display:block;height:100%;width:40%;background:var(--rose);animation:lbar 1.15s var(--ease) infinite}
-@keyframes lpop{from{opacity:0;transform:scale(.9) translateY(14px)}to{opacity:1;transform:none}}
+@keyframes lpop{from{opacity:0;transform:scale(.88) translateY(16px)}60%{opacity:1}to{opacity:1;transform:none}}
 @keyframes lbar{from{transform:translateX(-120%)}to{transform:translateX(320%)}}
 body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 

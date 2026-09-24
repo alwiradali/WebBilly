@@ -197,16 +197,25 @@
       });
   }());
 
-  /* ---------------- loader ---------------- */
-  var done = false;
-  function ready() {
+  /* ---------------- loader ----------------
+     A minimum on screen rather than a delay after load, so the intro is the
+     same beat whether the page is cached or cold — otherwise a second visit
+     flashes the logo for a frame and it reads as a glitch. */
+  var done = false, START = Date.now(), MIN_INTRO = 1900;
+  function finish() {
     if (done) return; done = true;
     document.body.classList.add('ready');
-    setTimeout(function () { var l = $('#loader'); if (l) l.remove(); }, 700);
-    setTimeout(function () { var b = $('#dmBubble'); if (b) b.classList.add('in'); }, 1200);
+    setTimeout(function () { var l = $('#loader'); if (l) l.remove(); }, 1000);
+    setTimeout(function () { var b = $('#dmBubble'); if (b) b.classList.add('in'); }, 1500);
   }
-  window.addEventListener('load', function () { setTimeout(ready, 380); });
-  setTimeout(ready, 3200);                       // never hold the page hostage
+  function ready() {
+    if (done) return;
+    var left = MIN_INTRO - (Date.now() - START);
+    if (left > 0) { setTimeout(finish, left); return; }
+    finish();
+  }
+  window.addEventListener('load', function () { setTimeout(ready, 260); });
+  setTimeout(finish, 4600);                      // never hold the page hostage
 
   /* ---------------- smooth scroll ----------------
      Lenis for a mouse wheel only. A library driving the page from a rAF loop
