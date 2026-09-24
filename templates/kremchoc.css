@@ -258,15 +258,57 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   78%{opacity:.3}
   100%{transform:translate3d(16px,-102vh,0) scale(1);opacity:0}
 }
-.amb i:nth-of-type(1){left:7%;animation-duration:30s;animation-delay:-2s}
-.amb i:nth-of-type(2){left:18%;animation-duration:41s;animation-delay:-14s;width:2px;height:2px}
-.amb i:nth-of-type(3){left:26%;animation-duration:35s;animation-delay:-25s}
-.amb i:nth-of-type(4){left:34%;animation-duration:47s;animation-delay:-8s;width:2px;height:2px}
-.amb i:nth-of-type(5){left:43%;animation-duration:33s;animation-delay:-31s}
-.amb i:nth-of-type(6){left:12%;animation-duration:44s;animation-delay:-19s;width:2px;height:2px}
-.amb i:nth-of-type(7){left:49%;animation-duration:39s;animation-delay:-5s;width:2px;height:2px}
-.amb i:nth-of-type(8){left:31%;animation-duration:52s;animation-delay:-37s}
-.amb i:nth-of-type(9){left:21%;animation-duration:37s;animation-delay:-45s;width:2px;height:2px}
+/* Nine positions, reused by every ambience block. A block with eighteen motes
+   simply runs the cycle twice at different sizes and speeds. */
+.amb i:nth-of-type(9n+1){left:7%}
+.amb i:nth-of-type(9n+2){left:18%;width:2px;height:2px}
+.amb i:nth-of-type(9n+3){left:27%}
+.amb i:nth-of-type(9n+4){left:38%;width:2px;height:2px}
+.amb i:nth-of-type(9n+5){left:47%}
+.amb i:nth-of-type(9n+6){left:59%;width:2px;height:2px}
+.amb i:nth-of-type(9n+7){left:68%}
+.amb i:nth-of-type(9n+8){left:79%;width:2px;height:2px}
+.amb i:nth-of-type(9n+9){left:90%}
+.amb i:nth-of-type(1){animation-duration:30s;animation-delay:-2s}
+.amb i:nth-of-type(2){animation-duration:41s;animation-delay:-14s}
+.amb i:nth-of-type(3){animation-duration:35s;animation-delay:-25s}
+.amb i:nth-of-type(4){animation-duration:47s;animation-delay:-8s}
+.amb i:nth-of-type(5){animation-duration:33s;animation-delay:-31s}
+.amb i:nth-of-type(6){animation-duration:44s;animation-delay:-19s}
+.amb i:nth-of-type(7){animation-duration:39s;animation-delay:-5s}
+.amb i:nth-of-type(8){animation-duration:52s;animation-delay:-37s}
+.amb i:nth-of-type(9){animation-duration:37s;animation-delay:-45s}
+.amb i:nth-of-type(10){animation-duration:58s;animation-delay:-11s;width:1px;height:1px}
+.amb i:nth-of-type(11){animation-duration:46s;animation-delay:-33s;width:1px;height:1px}
+.amb i:nth-of-type(12){animation-duration:63s;animation-delay:-21s;width:1px;height:1px}
+.amb i:nth-of-type(13){animation-duration:51s;animation-delay:-48s;width:1px;height:1px}
+.amb i:nth-of-type(14){animation-duration:55s;animation-delay:-6s;width:1px;height:1px}
+.amb i:nth-of-type(15){animation-duration:42s;animation-delay:-28s;width:1px;height:1px}
+.amb i:nth-of-type(16){animation-duration:67s;animation-delay:-16s;width:1px;height:1px}
+.amb i:nth-of-type(17){animation-duration:49s;animation-delay:-54s;width:1px;height:1px}
+.amb i:nth-of-type(18){animation-duration:60s;animation-delay:-40s;width:1px;height:1px}
+
+/* the same drift, further back, for the sections below the hero */
+.amb-quiet{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.amb-quiet i{opacity:0;animation-name:rise-quiet}
+@keyframes rise-quiet{
+  0%{transform:translate3d(0,0,0) scale(.5);opacity:0}
+  16%{opacity:.26}
+  76%{opacity:.16}
+  100%{transform:translate3d(20px,-96vh,0) scale(1);opacity:0}
+}
+.amb-d{
+  width:min(40vw,420px);aspect-ratio:1;right:-8%;top:8%;
+  background:radial-gradient(circle,rgba(201,160,98,.16),transparent 68%);
+  filter:blur(56px);animation:drift-b 61s ease-in-out infinite;
+}
+.amb-e{
+  width:min(46vw,480px);aspect-ratio:1;left:-10%;bottom:-10%;
+  background:radial-gradient(circle,rgba(126,158,118,.16),transparent 70%);
+  filter:blur(62px);animation:drift-a 57s ease-in-out infinite;
+}
+.sec-dark,.sec-tint{position:relative;overflow:hidden}
+.sec-dark>.wrap,.sec-tint>.wrap{position:relative;z-index:1}
 
 /* a single, still bloom behind the footer lockup */
 .amb-c{
@@ -274,7 +316,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   background:radial-gradient(circle,rgba(201,160,98,.16),transparent 66%);
   filter:blur(52px);z-index:0;
 }
-.foot-in>*:not(.amb-c){position:relative;z-index:1}
+.foot-in>*:not(.amb-c):not(.amb){position:relative;z-index:1}
 
 @media (prefers-reduced-motion: reduce){
   .amb-glow,.amb i{animation:none}
