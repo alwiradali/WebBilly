@@ -493,3 +493,59 @@ landscape. Measured, every size clears by exactly 22px.
 
 Guarded in the interaction suite: the drawer is opened and checked for a first
 link under the header, an unreachable last item, and `overflow:hidden`.
+
+---
+
+## Makeup by Sadia — `templates/makeup-by-sadia.{html,css,js}`
+
+Pre-launch makeup artist, `@makeup_bysadia0`. A client preview: unlisted
+(meta noindex, `X-Robots-Tag` on the page **and** on `/assets/sadia/*`).
+
+**Her logo is hers.** Lifted from her Instagram profile picture — circle at
+(644, 1238) r=424 in the screenshot, an 848px badge. `logo.png` is the round
+badge with transparent corners; `mark.png` is the artwork with the cream disc
+keyed out (solving `P = A·I + (1−A)·B` for black ink over `#faebe5`). One
+catch worth remembering: the disc's own antialiased **rim** is darker than the
+cream, so it keys as ink and comes out as a stray arc — mask at `0.90 × radius`
+rather than at the circle edge.
+
+**The page is type-led on purpose, and the portfolio is deliberately empty.**
+She told us she is "looking to build up a following first and get everything in
+place before I properly launch" — and her feed has zero posts. Two things
+follow from that. The CC0 pools have essentially no modern beauty photography,
+so every photo here is **still-life or texture**, never a face. And the gallery
+is a **"First looks, coming soon"** block: four framed spaces carrying her
+monogram, with the page saying plainly that they are being kept for the real
+thing rather than filled with somebody else's work. That is honest, it is what
+she asked for, and it sidesteps presenting strangers as her clients. Every
+frame is graded to one warm neutral so an unrelated set reads as one brand.
+
+**The diary is the centrepiece.** `DIARY` at the top of the JS holds the
+opening hours (08:00–18:00, hourly), the closed days, how far ahead people can
+book (this month + 2, i.e. through November) and a minimum notice. `BOOKED` is
+where real bookings go — a date is either `'all'` or a list of times. While
+`DIARY.example` is true, anything not in `BOOKED` is generated from a **stable
+hash of the date string**, never `Math.random()`: the example diary has to look
+identical on every reload and every device, or a client refreshing the page
+watches their chosen day change state. Weekends fill first, which is what a
+real makeup diary looks like.
+
+Two details that matter more than they look:
+
+* **It opens on a month people can actually book.** Landing on the tail of the
+  current month shows an almost empty grid, which reads as "nothing is
+  available" rather than "this month is nearly over". `openOnUseful()` walks
+  forward to the first month with at least six open days.
+* **The generated spread has to show all four states.** With too narrow a
+  range no day ever lands in the "a few times left" band and the legend has a
+  row nothing uses. Tuned until October shows 16 free, 8 nearly full and 3
+  fully booked.
+
+Picking a day and a time fills the enquiry form's date field and scrolls to
+it, so the booking and the enquiry are one flow rather than two.
+
+**Still needed from her**, all in `CONTACT`: an email + Web3Forms key (until
+then the form hands the enquiry to the share sheet, or the clipboard plus her
+DMs — nothing is silently swallowed), a Google Business profile, prices, and
+her own photographs for `assets/sadia/photos/`. Real availability replaces the
+generated example by filling in `BOOKED` and setting `DIARY.example = false`.

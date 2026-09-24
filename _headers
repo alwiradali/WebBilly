@@ -83,3 +83,11 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/starlit/*
   X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Makeup by Sadia ----------------------------
+/templates/makeup-by-sadia
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/makeup-by-sadia.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/sadia/*
+  X-Robots-Tag: noindex, noimageindex
