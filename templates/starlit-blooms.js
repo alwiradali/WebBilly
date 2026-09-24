@@ -201,7 +201,12 @@
      A minimum on screen rather than a delay after load, so the intro is the
      same beat whether the page is cached or cold — otherwise a second visit
      flashes the logo for a frame and it reads as a glitch. */
-  var done = false, START = Date.now(), MIN_INTRO = 2000;
+  /* performance.now() is milliseconds since the page STARTED loading, so this
+     anchors the intro to navigation rather than to whenever this script
+     finished downloading — otherwise the beat stretches by however long the
+     network took, which is what made it run to 3s on a real connection. */
+  var sinceNav = (window.performance && performance.now) ? performance.now() : 0;
+  var done = false, START = Date.now() - sinceNav, MIN_INTRO = 2000;
   function finish() {
     if (done) return; done = true;
     document.body.classList.add('ready');
