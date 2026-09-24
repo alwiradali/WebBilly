@@ -106,7 +106,20 @@
     <a href="#faq">Questions</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn btn-gold" id="drawerIg" href="#" target="_blank" rel="noopener">Follow on Instagram</a>
+    <div class="drawer-ways">
+      <a class="way" id="drawerIg" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+        <span><strong>@krem_choc</strong>Every cake, as it leaves</span>
+      </a>
+      <a class="way" id="drawerMail" href="mailto:kremchoc@gmail.com">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        <span><strong>kremchoc@gmail.com</strong>The quickest way to reach me</span>
+      </a>
+    </div>
+    <p class="drawer-where">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      Based in Leicester &middot; Midlands delivery
+    </p>
   </div>
 </div>
 
@@ -303,47 +316,104 @@
         event. Whether it's a wedding, a birthday or any other celebration,
         I'm here to turn your ideas into a delicious masterpiece.
       </p>
+      <p class="lede lede-2" data-fx="reveal" data-fx-delay="200">
+        Ready to take the next step? Whether you have a firm date, a question
+        about flavours, or only the beginning of an idea, this is where it
+        starts. The more you can tell me, the closer the first quote will be.
+      </p>
     </div>
 
     <form class="enq-form" id="enqForm" novalidate data-fx="reveal" data-fx-delay="120">
       <div class="fld-row">
         <div class="fld">
-          <label for="enqName">Your name</label>
+          <label for="enqName">Your name <span class="req" aria-hidden="true">*</span></label>
           <input type="text" id="enqName" name="name" autocomplete="name" required>
         </div>
         <div class="fld">
-          <label for="enqEmail">Email</label>
+          <label for="enqEmail">Email <span class="req" aria-hidden="true">*</span></label>
           <input type="email" id="enqEmail" name="email" autocomplete="email" required>
         </div>
       </div>
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqPhone">Contact number <span class="req" aria-hidden="true">*</span></label>
+          <input type="tel" id="enqPhone" name="phone" autocomplete="tel" inputmode="tel" required>
+        </div>
+        <div class="fld">
+          <label for="enqDate">Date required <span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="enqDate" name="date" required>
+        </div>
+      </div>
+
       <div class="fld">
         <label for="enqOccasion">Occasion</label>
         <div class="chips" id="occChips" role="group" aria-label="Occasion"></div>
         <input type="hidden" id="enqOccasion" name="occasion" value="Wedding">
       </div>
+
       <div class="fld-row">
         <div class="fld">
-          <label for="enqDate">Date of the event</label>
-          <input type="date" id="enqDate" name="date">
+          <label for="enqServes">Number of portions <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="enqServes" name="serves" inputmode="numeric" placeholder="e.g. 80" required>
+          <p class="fld-note">Usually 70&ndash;80% of your guest count.</p>
         </div>
         <div class="fld">
-          <label for="enqServes">Approximate servings</label>
-          <input type="text" id="enqServes" name="serves" placeholder="e.g. 80 guests">
+          <label for="enqTiers">Number of tiers</label>
+          <select id="enqTiers" name="tiers">
+            <option>Not sure yet</option>
+            <option>Single tier</option>
+            <option>Two tiers</option>
+            <option>Three tiers</option>
+            <option>Four tiers</option>
+            <option>Five or more</option>
+          </select>
+          <p class="fld-note">Dummy tiers are available if you want the height without the cake.</p>
         </div>
       </div>
+
       <div class="fld">
         <label for="enqFlavour">Flavour <span class="opt">if you know</span></label>
         <div class="chips" id="flavChips" role="group" aria-label="Flavour"></div>
         <input type="hidden" id="enqFlavour" name="flavour" value="Not sure yet">
+        <p class="fld-note">
+          Every flavour contains white chocolate, so it may carry traces of nuts &mdash; please
+          tell me below about any allergies. On a multi&#8209;tiered wedding or celebration cake,
+          the flavour of each tier is agreed after this enquiry.
+        </p>
       </div>
-      <div class="fld">
-        <label for="enqBudget">Budget <span class="opt">optional, but it helps</span></label>
-        <input type="text" id="enqBudget" name="budget" placeholder="e.g. around £450">
+
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqBudget">Approximate budget <span class="opt">optional, but it helps</span></label>
+          <input type="text" id="enqBudget" name="budget" inputmode="numeric" placeholder="e.g. around £450">
+          <p class="fld-note">A single tier serving around 15 starts at £70. Decoration and personalisation are quoted on top.</p>
+        </div>
+        <div class="fld">
+          <label for="enqPost">Delivery postcode <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="enqPost" name="postcode" autocomplete="postal-code" placeholder="e.g. LE2" required>
+          <p class="fld-note">Every cake is delivered by hand, so the distance shapes the quote.</p>
+        </div>
       </div>
+
       <div class="fld">
         <label for="enqMsg">Tell me about the cake</label>
-        <textarea id="enqMsg" name="message" rows="5" placeholder="The venue, the colours, the styling, anything you've seen and loved…"></textarea>
+        <textarea id="enqMsg" name="message" rows="5" placeholder="The venue, the colours, the styling, any allergies, anything you've seen and loved…"></textarea>
       </div>
+
+      <div class="fld">
+        <label for="enqSuggest">Would you like design suggestions from me?</label>
+        <div class="chips" id="sugChips" role="group" aria-label="Design suggestions"></div>
+        <input type="hidden" id="enqSuggest" name="suggestions" value="Yes please">
+        <p class="fld-note">If yes, I'll come back with ideas built around your theme rather than only quoting what you describe.</p>
+      </div>
+
+      <p class="fld-note fld-note-block">
+        <strong>Inspiration pictures.</strong> Attach them to the email that opens when you
+        submit &mdash; the cake you have in mind, your styling, your colour scheme. Everything
+        sent is looked at for inspiration only: I don't take on like&#8209;for&#8209;like copies of
+        another baker's cake, but your ideas shape something made for you and true to my work.
+      </p>
+
       <input type="text" class="hp" id="enqHp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn btn-gold btn-wide" id="enqBtn" type="submit">Submit enquiry</button>
       <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>

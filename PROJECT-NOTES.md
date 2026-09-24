@@ -726,3 +726,48 @@ masked to the artwork's own alpha so it lights the letterforms rather than a
 rectangle over them. That last one needed a symmetric ease — the site's
 overshoot curve made the light whip across and then crawl, which reads as a
 glitch. Measured: peak brightness 234 against a 149 baseline, over ~750ms.
+
+### Krem&Choc — the zoom bug, the teleporting menu, and her real form
+
+**The zoom bug.** Pinching or tapping a field left every line on the page
+displaced. The cause was not the zoom: `.fld input` computed to 15.5px
+(`.96rem` against a root of `clamp(15.5px,.55vw + 14px,17px)`), and **iOS
+zooms the whole page in the moment a field under 16px takes focus, and never
+zooms back out**. The fix is the font size under `(pointer: coarse)`, never
+`maximum-scale`, which would take pinch zoom away from anyone who needs it.
+
+Two layout faults rode along with it. `.fld-row` used plain `1fr`, which is
+`minmax(auto,1fr)` — a child whose min-content width exceeds its share
+overflows the track, and a native date control is exactly that, so its border
+ran past the form edge. It is `minmax(0,1fr)` now. And the date control brings
+its own intrinsic width and centres its value, so it needed
+`-webkit-appearance:none`, `text-align:left` and an explicit `min-height` to
+match the field beside it. The audit now checks, at every width, that no field
+escapes its column and that nothing on a coarse pointer is under 16px.
+
+**The teleporting menu.** Tapping a drawer link forced `scroll-behavior:auto`
+and re-asserted `scrollIntoView` over four frames. That was written to beat
+Lenis — but Lenis is gated behind `(pointer: fine)`, so on a phone it was
+simply a teleport. Touch now gets its own rAF tween that nothing can fight and
+a finger on the glass cancels (`touchstart`/`wheel` → `stopTween`).
+
+The destination is a **function, not a number**. Images decoding and tall
+reveal containers splitting as you pass them move the target mid-flight; a
+tween aimed at a pixel measured at the start landed 530px short. Re-aiming
+every frame lands it on 101px against a 92px target. The audit samples
+`pageYOffset` every 30ms and fails on fewer than 8 distinct positions, or on a
+single jump longer than half the journey.
+
+**Her real form.** The enquiry now asks what kremchoc.co.uk asks — contact
+number, date required, portions (with the 70-80%-of-guests hint), tiers (dummy
+tiers available), flavour (white chocolate, traces of nuts; per-tier flavours
+agreed after the enquiry), budget (single tier serving ~15 from £70), delivery
+postcode, and whether she should suggest designs. Inspiration pictures are
+asked for as attachments to the email that opens, which the mailto handover
+makes possible and which suits her "inspiration only, no like-for-like copies"
+rule. Required fields are checked in the order they are asked, so focus never
+jumps backwards up the page.
+
+The drawer's single Instagram button became an Instagram card, an email card
+and a line saying where she is based. Escape closes the drawer and returns
+focus to the burger, which it never did.

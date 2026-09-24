@@ -208,10 +208,55 @@
   if (burger) burger.addEventListener('click', function () {
     setDrawer(!drawer.classList.contains('open'));
   });
+  /* the menu covers the whole screen, so Escape has to let go of it */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || !drawer || !drawer.classList.contains('open')) return;
+    setDrawer(false);
+    if (burger) burger.focus();
+  });
 
   /* ---------------- anchor jumps ----------------
-     An instant scroll does not cancel a smooth one already in flight, so the
-     landing is re-asserted over the next few frames. */
+     On a fine pointer Lenis owns the scroll. On touch there is no Lenis, and
+     the old code forced scroll-behavior to auto and re-asserted the landing
+     over several frames — which is a teleport, not a journey. Every tap in the
+     menu snapped. So touch gets its own tween: one rAF loop we control, which
+     no smooth-scroll setting can fight and which a finger on the glass can
+     cancel. */
+  var tweenId = 0;
+  function stopTween() {
+    if (!tweenId) return;
+    cancelAnimationFrame(tweenId); tweenId = 0;
+    html.style.scrollBehavior = '';
+  }
+  window.addEventListener('touchstart', stopTween, { passive: true });
+  window.addEventListener('wheel', stopTween, { passive: true });
+
+  /* `where` is a function, not a number: images decoding and tall reveal
+     containers splitting as we pass them move the destination mid-flight, and
+     a tween aimed at a stale pixel lands hundreds of pixels short. */
+  function glideTo(where) {
+    stopTween();
+    function aim() {
+      var max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      return Math.max(0, Math.min(Math.round(where()), max));
+    }
+    var from = window.pageYOffset || html.scrollTop || 0, y = aim();
+    if (reduced || Math.abs(y - from) < 2) { window.scrollTo(0, y); return; }
+    /* long enough to read as travel, capped so the far end of a long page is
+       never a chore */
+    var dur = Math.min(1150, Math.max(560, Math.abs(y - from) * 0.42)), t0 = 0;
+    html.style.scrollBehavior = 'auto';
+    tweenId = requestAnimationFrame(function step(t) {
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / dur);
+      var e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      var to = aim();
+      window.scrollTo(0, Math.round(from + (to - from) * e));
+      if (p < 1) tweenId = requestAnimationFrame(step);
+      else { stopTween(); window.scrollTo(0, aim()); }
+    });
+  }
+
   document.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
     if (!a) return;
@@ -220,20 +265,17 @@
     var target = id === '#top' ? document.body : $(id);
     if (!target) return;
     e.preventDefault();
-    var wasOpen = drawer && drawer.classList.contains('open');
-    if (wasOpen) setDrawer(false);
-    var land = function () {
-      var b = html.style.scrollBehavior;
-      html.style.scrollBehavior = 'auto';
-      if (id === '#top') window.scrollTo(0, 0);
-      else target.scrollIntoView({ block: 'start' });
-      html.style.scrollBehavior = b;
-    };
-    setTimeout(function () {
-      if (lenis) { lenis.scrollTo(id === '#top' ? 0 : target, { offset: -90 }); return; }
-      land(); requestAnimationFrame(land);
-      setTimeout(land, 140); setTimeout(land, 360);
-    }, wasOpen ? 120 : 0);
+
+    /* closing the drawer restores the scroll position it locked, so the
+       destination can only be measured afterwards */
+    if (drawer && drawer.classList.contains('open')) setDrawer(false);
+
+    if (lenis) { lenis.scrollTo(id === '#top' ? 0 : target, { offset: -90, duration: 1.1 }); return; }
+    glideTo(function () {
+      if (id === '#top') return 0;
+      var pad = nav ? Math.round(nav.getBoundingClientRect().height) + 12 : 90;
+      return target.getBoundingClientRect().top + window.pageYOffset - pad;
+    });
   });
 
   /* ---------------- how pictures arrive ----------------
@@ -503,6 +545,7 @@
   chipGroup('#occChips', '#enqOccasion', OCCASIONS);
   chipGroup('#flavChips', '#enqFlavour',
     FLAVOURS.map(function (f) { return f.n; }).concat(['Not sure yet']));
+  chipGroup('#sugChips', '#enqSuggest', ['Yes please', 'No thank you']);
 
   /* ---------------- clipboard + share ---------------- */
   function copy(text, cb) {
@@ -541,21 +584,37 @@
       if (val('enqHp')) return;                       // honeypot
 
       var name = val('enqName'), email = val('enqEmail');
-      if (!name)  { say('Please add your name.'); $('#enqName').focus(); return; }
-      if (!email || email.indexOf('@') < 0) {
-        say('Please add an email address — it is how the reply and your quote will come back.');
-        $('#enqEmail').focus(); return;
+      /* the same fields her own form insists on, checked in the order they are
+         asked so focus never jumps backwards up the page */
+      var need = [
+        ['enqName',  !name,                                 'Please add your name.'],
+        ['enqEmail', !email || email.indexOf('@') < 0,      'Please add an email address — it is how the reply and your quote will come back.'],
+        ['enqPhone', !val('enqPhone'),                      'Please add a contact number.'],
+        ['enqDate',  !val('enqDate'),                       'Please add the date you need the cake for.'],
+        ['enqServes',!val('enqServes'),                     'Roughly how many portions do you need? Usually 70–80% of your guest count.'],
+        ['enqPost',  !val('enqPost'),                       'Please add the delivery postcode — every cake is delivered by hand, so the distance shapes the quote.']
+      ];
+      for (var i = 0; i < need.length; i++) {
+        if (need[i][1]) { say(need[i][2]); $('#' + need[i][0]).focus(); return; }
       }
 
-      var plain =
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Occasion: ' + (val('enqOccasion') || 'Something else') + '\n' +
-        'Date: ' + (val('enqDate') || 'Not given') + '\n' +
-        'Servings: ' + (val('enqServes') || 'Not given') + '\n' +
-        'Flavour: ' + (val('enqFlavour') || 'Not sure yet') + '\n' +
-        'Budget: ' + (val('enqBudget') || 'Not given') + '\n\n' +
-        (val('enqMsg') || '(no further details)');
+      var plain = [
+        'Name: ' + name,
+        'Email: ' + email,
+        'Contact number: ' + (val('enqPhone') || 'Not given'),
+        'Date required: ' + (val('enqDate') || 'Not given'),
+        'Occasion: ' + (val('enqOccasion') || 'Something else'),
+        'Portions: ' + (val('enqServes') || 'Not given'),
+        'Tiers: ' + (val('enqTiers') || 'Not sure yet'),
+        'Flavour: ' + (val('enqFlavour') || 'Not sure yet'),
+        'Budget: ' + (val('enqBudget') || 'Not given'),
+        'Delivery postcode: ' + (val('enqPost') || 'Not given'),
+        'Design suggestions: ' + (val('enqSuggest') || 'Yes please'),
+        '',
+        (val('enqMsg') || '(no further details)'),
+        '',
+        '— Inspiration pictures can be attached to this email before sending.'
+      ].join('\n');
 
       var subject = 'Cake enquiry — ' + (val('enqOccasion') || 'Something else') +
                     (val('enqDate') ? ' — ' + val('enqDate') : '');
