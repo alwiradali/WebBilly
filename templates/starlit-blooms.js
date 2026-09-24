@@ -142,6 +142,61 @@
     });
   }
 
+  /* ---------------- how pictures arrive ----------------
+     Two separate things made the collection cards pop into existence.
+
+     1. A [data-fx="stagger"] container fires ONCE, when the container
+        enters. Stacked on a phone the three cards are ~2500px tall, so all
+        three animate together while only the first is on screen — by the
+        time you scroll to the second and third they finished long ago and
+        simply appear. A container taller than the screen cannot stagger, so
+        its children are split into individually revealed elements instead.
+
+     2. The photographs are lazy-loaded, so the card faded in empty and the
+        image snapped in whenever it finished decoding. Each one now fades
+        up as it decodes, over the card's own background rather than a hole. */
+  (function pictureArrival() {
+    if (reduced) return;
+
+    function splitTall() {
+      var changed = false;
+      [].forEach.call(document.querySelectorAll('[data-fx="stagger"]'), function (c) {
+        if (c.classList.contains('fx-in')) return;          // already on screen
+        if (c.getBoundingClientRect().height <= innerHeight * 0.92) return;
+        var step = parseFloat(c.getAttribute('data-fx-step')) || 80;
+        c.removeAttribute('data-fx');
+        [].forEach.call(c.children, function (kid, i) {
+          kid.classList.remove('fx-stagger-item', 'fx-in');
+          kid.style.transitionDelay = '';
+          kid.setAttribute('data-fx', 'reveal');
+          /* a small, capped offset: enough to feel sequenced when two land
+             together, never enough to still be running when you reach one */
+          kid.setAttribute('data-fx-delay', String(Math.min(i, 2) * step));
+        });
+        changed = true;
+      });
+      if (changed && window.ScrollFXKit) window.ScrollFXKit.refresh();
+    }
+    /* measure now, and again once the webfonts have settled — a block of
+       text is shorter before its real font arrives, which is enough to make
+       a tall container look short enough to leave alone */
+    splitTall();
+    addEventListener('load', splitTall);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(splitTall);
+
+    [].forEach.call(
+      document.querySelectorAll('.col-card img, .tile img, .eternal-art img, .quote-bg img, .hero-tile img'),
+      function (img) {
+        if (img.complete && img.naturalWidth) return;      // already decoded
+        img.style.opacity = '0';
+        img.style.transition = 'opacity .75s var(--ease)';
+        var show = function () { img.style.opacity = '1'; };
+        img.addEventListener('load', show);
+        img.addEventListener('error', show);
+        setTimeout(show, 4000);                            // never stay hidden
+      });
+  }());
+
   /* ---------------- loader ---------------- */
   var done = false;
   function ready() {

@@ -419,3 +419,29 @@ it is supported and falls back to clipboard-plus-open-DM everywhere else, so
 the order is never lost either way. If she ever publishes a WhatsApp number,
 that one *can* be fully pre-filled (`wa.me/<n>?text=`) and would be a better
 default.
+
+**Why the cards "randomly appeared", and the general rule.** Two faults, one
+obvious and one not.
+
+The invisible one: **a component's own `transition` REPLACES the fx toolkit's
+rather than adding to it.** `.col-card` transitioned `transform` for its hover
+lift, which wiped out the `opacity` transition that `[data-fx="reveal"]`
+supplies — so the card went from opacity 0 to 1 in a single frame. Measured:
+one frame. `.steps li` and `.occ li` had the same fault. Anything carrying
+`data-fx` must keep `opacity` in its own transition list; `qa.mjs` now fails
+any viewport where an fx element does not transition opacity, so it cannot
+come back.
+
+The other: **a `[data-fx="stagger"]` container fires once, when the container
+enters.** Stacked on a phone the three collection cards are ~2138px tall, so
+all three animated together while only the first was on screen — by the time
+you scrolled to the second and third they had finished long ago and simply
+existed. `pictureArrival()` in the JS splits any stagger container taller than
+the viewport into individually revealed children (capped offsets so two that
+land together still feel sequenced), and re-measures on `load` and on
+`document.fonts.ready`, because a block of text is shorter before its real
+font arrives and would otherwise look short enough to leave alone.
+
+Lazy-loaded photographs also now fade up as they decode, over the card's own
+background rather than a hole in the page, with a 4-second safety timeout so a
+failed image can never leave a permanently invisible one.

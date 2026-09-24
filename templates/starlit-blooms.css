@@ -221,7 +221,7 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
   position:absolute;border-radius:var(--r);overflow:hidden;
   box-shadow:0 40px 90px -40px rgba(0,0,0,.95),0 0 0 1px rgba(226,160,174,.1);
 }
-.hero-tile img{width:100%;height:100%;object-fit:cover}
+.hero-tile img{width:100%;height:100%;object-fit:cover;background:var(--panel-2)}
 .hero-tile.t1{width:52%;aspect-ratio:4/5;top:0;left:2%}
 .hero-tile.t2{width:46%;aspect-ratio:3/4;top:22%;right:0}
 .hero-tile.t3{width:38%;aspect-ratio:1/1;bottom:0;left:22%}
@@ -248,7 +248,7 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
 /* ---------- eternal ---------- */
 .eternal-grid{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(30px,5vw,72px);align-items:center}
 .eternal-art{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:0 40px 90px -46px rgba(0,0,0,.9)}
-.eternal-art img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.eternal-art img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--panel-2)}
 .eternal-art figcaption{
   position:absolute;left:14px;bottom:14px;background:rgba(18,13,16,.7);backdrop-filter:blur(8px);
   padding:.4em .9em;border-radius:999px;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
@@ -265,12 +265,19 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
 
 /* ---------- collections ---------- */
 .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,26px)}
+/* Anything carrying data-fx has to keep `opacity` in its OWN transition
+   list. A component's transition replaces the toolkit's rather than adding
+   to it, so a card that only transitioned transform for its hover had no
+   opacity transition at all — it snapped straight from invisible to visible
+   with no fade, which is what "it randomly appears" looks like. */
 .col-card{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
-  display:flex;flex-direction:column;transition:transform .5s var(--ease),border-color .5s,box-shadow .5s;
+  display:flex;flex-direction:column;
+  transition:opacity var(--fx-dur,.9s) var(--fx-ease,ease),
+             transform .55s var(--ease),border-color .5s,box-shadow .5s;
 }
 .col-card:hover{transform:translateY(-6px);border-color:var(--line-2);box-shadow:0 38px 70px -40px rgba(0,0,0,.95)}
-.col-card figure{position:relative;overflow:hidden}
+.col-card figure{position:relative;overflow:hidden;background:var(--panel-2)}
 .col-card img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .9s var(--ease)}
 .col-card:hover img{transform:scale(1.05)}
 .ex{
@@ -429,7 +436,9 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
 .occ li{
   display:grid;gap:.7em;justify-items:center;text-align:center;
   padding:clamp(20px,2.4vw,30px) 12px;border:1px solid var(--line);border-radius:14px;
-  background:rgba(255,255,255,.015);transition:border-color .4s,background .4s,transform .4s var(--ease);
+  background:rgba(255,255,255,.015);
+  transition:opacity var(--fx-dur,.9s) var(--fx-ease,ease),
+             transform .4s var(--ease),border-color .4s,background .4s;
 }
 .occ li:hover{border-color:var(--rose);background:rgba(196,112,127,.08);transform:translateY(-4px)}
 .occ svg{width:30px;height:30px;color:var(--rose-lt)}
@@ -452,7 +461,7 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
   transition:transform .5s var(--ease),border-color .5s;
 }
 .tile:hover{transform:translateY(-5px);border-color:var(--line-2)}
-.tile img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .9s var(--ease)}
+.tile img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--panel-2);transition:transform .9s var(--ease)}
 .tile:hover img{transform:scale(1.06)}
 .tile figcaption{
   position:absolute;left:0;right:0;bottom:0;padding:2.6em 1em .9em;
@@ -496,7 +505,8 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
 .steps li{
   padding:clamp(20px,2.4vw,28px);border:1px solid var(--line);border-radius:14px;
   background:rgba(255,255,255,.015);display:grid;gap:.5em;align-content:start;
-  transition:border-color .4s,background .4s;
+  transition:opacity var(--fx-dur,.9s) var(--fx-ease,ease),
+             transform var(--fx-dur,.9s) var(--fx-ease,ease),border-color .4s,background .4s;
 }
 .steps li:hover{border-color:var(--line-2);background:rgba(196,112,127,.06)}
 .step-n{font-family:var(--serif);font-size:1.5rem;color:var(--rose)}
