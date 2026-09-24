@@ -82,7 +82,7 @@ main,.nav,.foot,.dm-bubble{position:relative;z-index:2}
   position:fixed;inset:0;z-index:120;display:grid;place-items:center;align-content:center;gap:28px;
   background:var(--green);transition:opacity .7s var(--ease),visibility .7s;
 }
-.loader img{width:clamp(74px,14vw,110px);height:auto;animation:lpop 1.6s var(--ease) both}
+.loader img{height:clamp(84px,15vh,124px);width:auto;animation:lpop 1.6s var(--ease) both}
 .loader-bar{display:block;width:clamp(110px,28vw,180px);height:1px;background:var(--line);overflow:hidden}
 .loader-bar i{display:block;height:100%;width:40%;background:var(--gold);animation:lbar 1.15s var(--ease) infinite}
 @keyframes lpop{from{opacity:0;transform:scale(.9) translateY(14px)}60%{opacity:1}to{opacity:1;transform:none}}
@@ -95,14 +95,12 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   padding:14px clamp(14px,4vw,44px);border-bottom:1px solid transparent;
   transition:background .45s var(--ease),backdrop-filter .45s,border-color .45s,padding .45s var(--ease);
 }
-.nav.solid{background:rgba(27,33,26,.88);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom-color:var(--line)}
-.nav-logo{display:flex;align-items:center;gap:.85em;line-height:0;flex:none;
+.nav.solid{background:rgba(27,33,26,.95);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom-color:var(--line)}
+.nav-logo{display:flex;align-items:center;line-height:0;flex:none;
   padding:10px 0;min-height:44px;text-decoration:none}
-.nav-logo img{width:auto;height:clamp(28px,3.4vw,36px)}
-.nav-logo span{
-  font-family:var(--serif);font-size:clamp(1.02rem,1.5vw,1.3rem);line-height:1;
-  letter-spacing:.14em;color:var(--cream);white-space:nowrap;
-}
+/* sized by height, never width: this lockup is 1.64:1, so a width in px lands
+   on whatever height it likes and pushes the hero call to action off screen */
+.nav-logo img{width:auto;height:clamp(40px,4.8vw,54px)}
 .nav-links{display:flex;gap:clamp(14px,2vw,34px);margin-left:auto}
 .nav-links a{
   text-decoration:none;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
@@ -129,7 +127,8 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 .drawer{
   position:fixed;inset:0;z-index:79;background:var(--green-2);
   display:flex;flex-direction:column;justify-content:flex-start;gap:18px;
-  padding:calc(var(--navh,72px) + 22px + env(safe-area-inset-top,0px)) clamp(20px,6vw,56px)
+  /* the same inline padding as the nav, so the menu lines up under her logo */
+  padding:calc(var(--navh,72px) + 22px + env(safe-area-inset-top,0px)) clamp(14px,4vw,44px)
           calc(28px + env(safe-area-inset-bottom,0px));
   overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility .45s;
@@ -211,10 +210,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   background:linear-gradient(180deg,rgba(20,24,19,.72),rgba(20,24,19,.34) 55%,transparent);
 }
 .eyebrow{font-size:.64rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin:0 0 1.6em}
-/* Her badge is a dark green disc on a dark green page. Rather than ring it and
-   have it sit ON the page like a sticker, badge.png has its rim feathered out
-   so the plate dissolves into the background and only the gold stays crisp. */
-.hero-word{height:clamp(104px,17vh,160px);width:auto;margin:0 0 clamp(22px,2.8vw,34px)}
+.hero-word{height:clamp(74px,11vh,112px);width:auto;margin:0 0 clamp(26px,3.4vw,42px)}
 .hero-sub{color:var(--ink-soft);max-width:42ch;margin:1.3em 0 0;font-size:clamp(.97rem,1.1vw,1.08rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:2em}
 .hero-facts{
@@ -514,7 +510,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 /* ---------- footer ---------- */
 .foot{position:relative;overflow:hidden;background:var(--green-2);border-top:1px solid var(--line);padding:clamp(56px,7vw,92px) 0 clamp(28px,4vw,46px);text-align:center}
 .foot-in{position:relative;display:grid;justify-items:center;gap:1.2em}
-.foot-logo{width:clamp(94px,11vw,124px);height:auto}
+.foot-logo{height:clamp(64px,7.4vw,88px);width:auto}
 .foot-line{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,2.3vw,1.6rem);color:var(--ink-soft);margin:0}
 .socials{display:flex;gap:12px;justify-content:center;margin:.3em 0}
 .socials a{
@@ -594,7 +590,8 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 @media (max-width:660px){
   .sec{padding:clamp(54px,7vh,92px) 0}
   .fld-row{grid-template-columns:1fr}
-  .nav{gap:10px;padding-inline:14px}
+  .nav,.drawer{padding-inline:14px}
+  .nav{gap:10px}
   .nav-cta{padding:.75em 1em;font-size:.64rem}
   .dm-bubble span{display:none}
   .dm-bubble{padding:1.05em;border-radius:50%}
@@ -607,7 +604,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 }
 
 @media (max-height:860px) and (min-width:861px){
-  .hero-word{height:clamp(90px,13vh,118px)}
+  .hero-word{height:clamp(70px,10vh,92px)}
   .hero-inner{padding-top:clamp(100px,12vh,128px);padding-bottom:clamp(44px,6vh,70px)}
   .hero h1{font-size:clamp(2.4rem,4.6vw,3.6rem)}
   .hero-sub{margin-top:1.1em}
@@ -619,7 +616,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   .drawer{gap:12px}
   .drawer nav a{font-size:1.05rem;padding:.42em 0}
   .hero-inner{padding-top:clamp(92px,13vh,112px);padding-bottom:26px}
-  .hero-word{height:clamp(68px,10vh,86px);margin-bottom:14px}
+  .hero-word{height:clamp(56px,8vh,74px);margin-bottom:16px}
   .eyebrow{margin-bottom:1.1em;font-size:.6rem}
   .hero h1{font-size:clamp(2.1rem,8.4vw,2.7rem)}
   .hero-sub{margin-top:.9em;font-size:.93rem}
@@ -631,13 +628,13 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   .drawer nav a{font-size:1.05rem;padding:.34em 0}
   .hero{min-height:auto}
   .hero-inner{padding-top:clamp(62px,15vh,84px);padding-bottom:18px}
-  .hero-word{height:clamp(48px,12vh,64px);margin-bottom:10px}
+  .hero-word{height:clamp(42px,10vh,56px);margin-bottom:12px}
   .eyebrow{margin-bottom:1em}
   .hero h1{font-size:clamp(1.9rem,5.4vh,2.7rem)}
   .hero-sub{margin-top:.8em;font-size:.9rem}
   .hero-facts{display:none}
   .hero-scroll{display:none}
-  .loader img{width:clamp(56px,13vh,80px)}
+  .loader img{height:clamp(62px,15vh,88px);width:auto}
 }
 
 /* svh/dvh only where understood: a clamp() holding an unsupported unit drops

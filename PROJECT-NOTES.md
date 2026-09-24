@@ -609,6 +609,45 @@ a Google Business profile for the review block, and higher-resolution versions
 of the Instagram photographs — the grid crops are 428px wide, fine for the
 portfolio tiles but not for anything larger.
 
+### Krem&Choc — her own lockup, in gold
+
+Final answer on the logo: her lockup from kremchoc.co.uk, in her gold, with the
+rule and the "Bespoke Cakes For Every Occasion" line cropped off — the arched KC
+mark with her name beneath it and nothing else.
+
+Assets, all cut from `wordmark.png` / `wordmark-cream.png` (703x560, which hold
+the full lockup including the rule and tagline):
+
+  lockup.png   723x440, 1.643:1  gold, arch + name        nav, hero, footer
+  arch.png     393x520, 0.756:1  gold, arch alone         loader
+
+Both are flat single-colour artwork over alpha, so FASTOCTREE at 48 colours
+takes them from 70-94KB to 16KB with no visible change. The row bands in the
+source are ink at 0-213 (arch), 276-426 (name), 489-490 (rule), 532-559
+(tagline), so the crop is everything above row 428.
+
+**Size by height, never width.** At 1.643:1 a width in px lands on whatever
+height it likes, and the hero call to action goes off screen — the same trap the
+1.26:1 wordmark set earlier. Heights: nav clamp(40,4.8vw,54), hero
+clamp(74,11vh,112), footer clamp(64,7.4vw,88).
+
+**Hierarchy.** A lockup that carries her name in type competes with the h1 in a
+way the round badge never did. It has to read as a signature above the headline,
+not as a second headline: roughly two thirds the h1's cap height, with a bigger
+gap beneath it than above.
+
+The round badge keyed from her Instagram stays as the favicon set — an outlined
+arch is far too fine to survive 32px, where the solid disc and monogram read
+cleanly. `logo.png` (the source disc) stays in the repo; `badge.png` was deleted
+along with the cream lockup, and PROJECT-NOTES below has the recipe if the
+feathered plate is ever wanted again.
+
+Two alignment fixes came with it: the drawer's inline padding now matches the
+nav's at every width, so the menu lines up under her logo instead of sitting 9px
+further in, and `.nav.solid` went from 0.88 to 0.95 alpha — at 0.88 a cream
+heading scrolling under the header ghosted through at about 25 levels, which is
+loud behind delicate gold line-work. At 0.95 it is 11 levels, a frosted veil.
+
 ### Krem&Choc — her badge, and the ambience layer
 
 Her real logo (the one on her Instagram, not the wordmark on kremchoc.co.uk) is
