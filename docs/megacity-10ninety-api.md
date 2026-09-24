@@ -241,6 +241,42 @@ They offer to change the format on request. Better not to depend on it: serving
 addition to `worker/studio/urls.js`, needs no support ticket, and keeps working
 if the format is ever changed back.
 
+## The OTHER API: 10ninety Open API (24 September)
+
+There are two, and they are not the same product.
+
+| | Web API | Open API |
+|---|---|---|
+| does | reads the properties on the market | writes leads and maintenance reports |
+| base | `https://webapi.10ninety.co.uk` | `https://<business-key>.10ninety.co.uk` |
+| header | `10ninety-webapi-key` | `10ninety.OpenApi.Key` |
+| key | one we already have | a second, separate key |
+| endpoints | Property, Properties, Property Types, Searchable Areas | **Register Lead**, **Report Maintenance Issue** |
+
+This is what makes the tenant registration work properly. Dave, asked whether
+there was a hosted form to link to: *"We don't have a hosted form but yes we
+have a separate Open API for interacting with the system, which you can use to
+register tenants into their system."*
+
+So the registration stays on Walid's own website, looking like his website,
+and the applicant lands in 10ninety as a record rather than as an email
+somebody re-types. Which is the outcome that was wanted; linking out was only
+ever the fallback.
+
+**The base URL in the documentation is a placeholder.** It reads
+`https://clientbusinesskey.10ninety.co.uk`, and `clientbusinesskey` is the
+client's business key, not a hostname — it does not resolve. Nor is it his
+back office: `megacityproperties.10ninety.co.uk` answers every path with a 302
+to `/Account/LogOn`, including `/register-lead`. So Megacity's own base URL has
+to come from 10ninety along with the key.
+
+**Report Maintenance Issue is the one nobody asked for and should be used.**
+The site already has a maintenance form, and it emails `management@` — which
+means a repair exists as an email until somebody enters it. Posting it to this
+endpoint puts it in the system where the certificates and the tenancies
+already are. Same argument as the tenant registration, for a form that already
+exists.
+
 ## The Web API is a portal export, not a separate thing
 
 Seen in 10ninety's back office, 2026-09-19, under **Marketing → Portals →
