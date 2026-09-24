@@ -85,6 +85,11 @@ const SLUG_ALIASES = {
   RL0089: "drayton-street",
   RL0140: "ladywell-point",
   RL0142: "denmark-road",
+  /* Not "83-manchester-road-manchester", which is what the address alone
+     produced. The property is on Manchester Road in SWINTON, M27 — the old
+     site had it at /property/227/3-bed-semi-detached-house-to-let-manchester-
+     road-swinton-manchester, so this keeps the words Google already has. */
+  RL0144: "manchester-road-swinton",
 };
 
 /* Anything not aliased is built from the address. Not from display_address,
@@ -104,11 +109,31 @@ function postcode(p) {
   return a && b ? `${a} ${b}` : a || b || null;
 }
 
-/* The town decides. searchable_areas is a marketing list and carries
-   neighbouring boroughs: Grove House and 83 Manchester Road are both in
-   Manchester and both list "Salford", which filed them under Salford when the
-   town and the areas were searched as one string. */
+/* The POSTCODE decides, because the town field does not.
+   83 Manchester Road arrives with town "Manchester" and postcode M27 5FX,
+   which is Swinton, in Salford — and the feed's own display_address says
+   "Manchester Road, Swinton, Manchester". Filing it under Manchester put a
+   Salford property in the wrong borough on a site whose whole filter is
+   borough, and it is exactly the kind of address the town field gets wrong:
+   the street is called Manchester Road.
+
+   Districts only where they are unambiguous. M3 straddles Manchester and
+   Salford and M16 straddles Trafford and Manchester, so neither is listed and
+   both fall through to the town. */
+const POSTCODE_AREAS = [
+  [/^M(5|6|7|27|28|30|44|50)$/i, "salford"],      /* incl. Swinton M27, Eccles M30 */
+  [/^M(17|31|32|33|41)$/i, "trafford"],
+  [/^WA1[45]$/i, "trafford"],
+  [/^M(25|26|45)$/i, "bury"],
+  [/^BL[89]$/i, "bury"],
+  [/^SK[1-8]$/i, "stockport"],
+  [/^OL[1-9]$/i, "oldham"],
+  [/^M([124]|[89]|1[1-59]|2[0-4]|40)$/i, "manchester"],
+];
+
 function areaOf(p) {
+  const out = clean(p.postcode_1) || "";
+  for (const [re, area] of POSTCODE_AREAS) if (re.test(out)) return area;
   const town = clean(p.town) || "";
   for (const [re, area] of AREAS) if (re.test(town)) return area;
   const hay = [p.address_2, p.display_address, ...(p.searchable_areas || []).map((a) => a && a.name)]

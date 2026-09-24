@@ -30,7 +30,15 @@ for (const [ref, slug] of Object.entries(_internals.SLUG_ALIASES)) {
   const row = by(ref);
   if (row) ok(row.id === slug, `${ref} keeps its existing address /let/${slug}`);
 }
-ok(by("RL0144").id === "83-manchester-road-manchester", "a property with no hand-built page gets one from its address");
+/* Every property in today's feed is aliased, so the derived path is exercised
+   with a property that is not — which is what a tenth one will be. */
+{
+  const fresh = toListing({ ...feed.properties[0], property_ref: "RL9999",
+    address_1: "12", address_2: "Example Street", town: "Bolton", postcode_1: "BL1", postcode_2: "1AA" }, { today: TODAY });
+  ok(fresh.id === "12-example-street-bolton", `a property with no hand-built page gets a slug from its address (${fresh.id})`);
+}
+ok(by("RL0144").id === "manchester-road-swinton",
+  "83 Manchester Road keeps the words the old site had — /property/227/...-manchester-road-swinton-...");
 ok(new Set(listings.map((l) => l.id)).size === 9, "no two properties share a slug");
 
 /* ── figures that are not figures ─────────────────────────────────────────── */
@@ -58,7 +66,12 @@ ok(by("RL0136").bedrooms === 0 && by("RL0136").type === "studio", "bedrooms 0 is
 /* searchable_areas is a marketing list and carries neighbours: Grove House and
    83 Manchester Road are in Manchester and both list "Salford". */
 ok(by("RL0093").area === "manchester", "Grove House is filed under Manchester, its town, not a neighbouring area");
-ok(by("RL0144").area === "manchester", "83 Manchester Road likewise");
+/* The one the town field gets wrong, and the reason the postcode decides:
+   town says "Manchester", the street is called Manchester Road, and M27 5FX
+   is Swinton, in Salford. The feed's own display_address agrees. */
+ok(by("RL0144").area === "salford", "83 Manchester Road is Salford — M27 is Swinton, whatever the town field says");
+ok(by("RL0140").area === "salford", "M50 Salford Quays is Salford");
+ok(by("RL0089").area === "manchester", "M15 Hulme is Manchester");
 ok(by("RL0060").area === "salford", "and a Salford property is still Salford");
 
 /* ── availability ─────────────────────────────────────────────────────────── */
