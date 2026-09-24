@@ -768,6 +768,9 @@ makes possible and which suits her "inspiration only, no like-for-like copies"
 rule. Required fields are checked in the order they are asked, so focus never
 jumps backwards up the page.
 
-The drawer's single Instagram button became an Instagram card, an email card
-and a line saying where she is based. Escape closes the drawer and returns
-focus to the burger, which it never did.
+The drawer's single Instagram button became two centred marks — Instagram and
+email, no labels — with where she is based underneath. The labelled cards that
+came first were two lines each and the bottom one was being cut off by the
+browser chrome on a phone, which is the whole reason the drawer foot has to
+stay short. Escape closes the drawer and returns focus to the burger, which it
+never did.

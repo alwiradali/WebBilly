@@ -149,22 +149,23 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease);
 }
 .drawer.open nav a{opacity:1;transform:none}
-.drawer-foot{margin-top:auto;padding-top:18px;display:grid;gap:12px}
-.drawer-ways{display:grid;gap:10px}
+/* two marks, centred, with where she is underneath — no labels: the drawer
+   is the last thing on a phone screen and a two-line card was being cut off
+   by the browser chrome */
+.drawer-foot{margin-top:auto;padding-top:18px;display:grid;justify-items:center;gap:14px}
+.drawer-ways{display:flex;gap:14px;justify-content:center}
 .way{
-  display:flex;align-items:center;gap:14px;text-decoration:none;
-  padding:.95em 1.1em;border:1px solid var(--line);color:var(--cream);
-  transition:border-color .35s var(--ease),background .35s var(--ease);
+  width:48px;height:48px;border-radius:50%;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;line-height:0;
+  color:var(--gold-2);text-decoration:none;
+  transition:border-color .3s,background .3s,transform .3s var(--ease);
 }
-.way:hover,.way:focus-visible{border-color:var(--line-2);background:rgba(201,160,98,.07)}
-.way svg{width:20px;height:20px;flex:none;color:var(--gold)}
-.way span{display:grid;gap:.15em;font-size:.78rem;line-height:1.4;color:var(--ink-dim)}
-.way strong{font-weight:400;font-size:.95rem;color:var(--cream);letter-spacing:.01em}
+.way:hover,.way:focus-visible{border-color:var(--gold);background:rgba(201,160,98,.09);transform:translateY(-3px)}
+.way svg{width:20px;height:20px;display:block;flex:none}
 .drawer-where{
-  display:flex;align-items:flex-start;gap:.7em;margin:0;padding-top:2px;
-  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+  margin:0;text-align:center;
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
 }
-.drawer-where svg{width:15px;height:15px;flex:none;margin-top:-1px;color:var(--gold-dim)}
 
 /* ---------- buttons ---------- */
 .btn{
