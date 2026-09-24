@@ -1,9 +1,31 @@
 /* Megacity Studio — transactional email through Resend.
-   Invites, password resets and (later) enquiry notifications. The sender is
-   the verified billydigitals.com address until the client's own domain is
-   verified in Resend. */
+   Invites, password resets and enquiry notifications.
 
-export const STUDIO_FROM = "Megacity Studio <hello@billydigitals.com>";
+   Nothing here is ever sent to a member of the public: every message goes to
+   Walid or his staff. So the sender address is seen only inside the agency,
+   which is why launching on the agency's already-verified domain costs
+   nothing and why moving to his own can wait for a quiet week.
+
+   MAIL_FROM makes that move a setting rather than a deploy. When his own
+   domain is verified in his own Resend account, set MAIL_FROM to
+   "Megacity Properties <website@megacityproperties.co.uk>" and swap
+   RESEND_API_KEY for his. Nothing else changes.
+
+   Verification puts its records on a send. subdomain and a
+   resend._domainkey TXT — his root MX and root SPF, and therefore his
+   Microsoft 365 mail, are not touched. */
+
+const DEFAULT_FROM = "Megacity Studio <hello@billydigitals.com>";
+
+/* A from address must be one the Resend key is allowed to send as. A typo
+   here is rejected by Resend for every email at once, so an obviously broken
+   value falls back rather than taking the mail with it. */
+export function mailFrom(env) {
+  const v = env && typeof env.MAIL_FROM === "string" ? env.MAIL_FROM.trim() : "";
+  return /@[a-z0-9.-]+\.[a-z]{2,}/i.test(v) ? v.slice(0, 200) : DEFAULT_FROM;
+}
+
+export const STUDIO_FROM = DEFAULT_FROM;
 
 export async function sendEmail(env, { to, subject, html, text, replyTo }) {
   if (!env.RESEND_API_KEY) return { ok: false, error: "RESEND_API_KEY is not set" };
@@ -11,7 +33,7 @@ export async function sendEmail(env, { to, subject, html, text, replyTo }) {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
     body: JSON.stringify({
-      from: STUDIO_FROM,
+      from: mailFrom(env),
       to: Array.isArray(to) ? to : [to],
       subject,
       html,
