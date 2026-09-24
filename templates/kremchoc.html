@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="../assets/kremchoc/wordmark.png">
+<link rel="preload" as="image" href="../assets/kremchoc/badge.png">
 <link rel="stylesheet" href="../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="kremchoc.css">
 
@@ -35,8 +35,8 @@
   "perdection"→"perfection", US "flavor"→"flavour").
 
   Logo: the round badge and the gold KC monogram are keyed from her Instagram
-  profile picture; the Krem&choc wordmark is the transparent PNG from her own
-  site, recoloured to her gold (#c9a062) and to cream. Her disc green is
+  profile picture — the green and gold badge is the logo she actually uses,
+  and it is what carries the hero, the nav and the footer. Her disc green is
   #282f27 and her gold #a9814c — the palette below is built from those.
 
   Photographs: all hers. hero / feature / about / band / quote are the two
@@ -75,7 +75,8 @@
 
 <header class="nav" id="nav">
   <a class="nav-logo" href="#top" aria-label="Krem&amp;Choc — home">
-    <img src="../assets/kremchoc/wordmark-cream.png" alt="Krem&amp;Choc" width="703" height="560">
+    <img src="../assets/kremchoc/mark.png" alt="" width="683" height="900" aria-hidden="true">
+    <span>Krem&amp;Choc</span>
   </a>
   <nav class="nav-links" aria-label="Primary">
     <a href="#philosophy">Philosophy</a>
@@ -111,9 +112,16 @@
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero">
+  <!-- Slow gold blooms and a few rising motes. Purely atmosphere, so it is
+       hidden from the reader and switched off for reduced motion. -->
+  <div class="amb" aria-hidden="true">
+    <span class="amb-glow amb-a"></span>
+    <span class="amb-glow amb-b"></span>
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
   <div class="hero-inner">
     <p class="eyebrow" data-fx="reveal">Leicester &middot; Est. by Zahra</p>
-    <img class="hero-word" src="../assets/kremchoc/wordmark.png" alt="Krem&amp;Choc" width="703" height="560">
+    <img class="hero-word" src="../assets/kremchoc/badge.png" alt="Krem&amp;Choc" width="640" height="640">
     <h1 data-fx="text" data-fx-step="70">Bespoke cakes for<br><em>every occasion</em></h1>
     <p class="hero-sub" data-fx="reveal" data-fx-delay="520">
       We don't just bake cakes. We craft exquisite, one of a kind creations that
@@ -394,7 +402,8 @@
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <img class="foot-logo" src="../assets/kremchoc/logo.png" alt="Krem&amp;Choc" width="900" height="900" loading="lazy">
+    <span class="amb-glow amb-c" aria-hidden="true"></span>
+    <img class="foot-logo" src="../assets/kremchoc/badge.png" alt="Krem&amp;Choc" width="640" height="640" loading="lazy">
     <p class="foot-line">Bespoke cakes for every occasion.</p>
     <div class="socials" id="socials"></div>
     <p class="foot-meta"><span>Leicester, UK</span><span>kremchoc@gmail.com</span><span>By enquiry only</span></p>

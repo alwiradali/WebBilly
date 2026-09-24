@@ -96,8 +96,13 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   transition:background .45s var(--ease),backdrop-filter .45s,border-color .45s,padding .45s var(--ease);
 }
 .nav.solid{background:rgba(27,33,26,.88);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom-color:var(--line)}
-.nav-logo{display:flex;align-items:center;line-height:0;flex:none;padding:10px 0;min-height:44px}
-.nav-logo img{width:auto;height:clamp(34px,4.6vw,46px)}
+.nav-logo{display:flex;align-items:center;gap:.85em;line-height:0;flex:none;
+  padding:10px 0;min-height:44px;text-decoration:none}
+.nav-logo img{width:auto;height:clamp(28px,3.4vw,36px)}
+.nav-logo span{
+  font-family:var(--serif);font-size:clamp(1.02rem,1.5vw,1.3rem);line-height:1;
+  letter-spacing:.14em;color:var(--cream);white-space:nowrap;
+}
 .nav-links{display:flex;gap:clamp(14px,2vw,34px);margin-left:auto}
 .nav-links a{
   text-decoration:none;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
@@ -206,7 +211,10 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   background:linear-gradient(180deg,rgba(20,24,19,.72),rgba(20,24,19,.34) 55%,transparent);
 }
 .eyebrow{font-size:.64rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin:0 0 1.6em}
-.hero-word{height:clamp(88px,15vh,150px);width:auto;margin:0 0 clamp(20px,2.6vw,32px)}
+/* Her badge is a dark green disc on a dark green page. Rather than ring it and
+   have it sit ON the page like a sticker, badge.png has its rim feathered out
+   so the plate dissolves into the background and only the gold stays crisp. */
+.hero-word{height:clamp(104px,17vh,160px);width:auto;margin:0 0 clamp(22px,2.8vw,34px)}
 .hero-sub{color:var(--ink-soft);max-width:42ch;margin:1.3em 0 0;font-size:clamp(.97rem,1.1vw,1.08rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:2em}
 .hero-facts{
@@ -218,6 +226,60 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 .hero-scroll{position:absolute;left:clamp(26px,5vw,80px);bottom:34px;z-index:3;width:1px;height:52px;background:var(--line);overflow:hidden}
 .hero-scroll i{display:block;width:100%;height:40%;background:var(--gold);animation:scrolldot 2.6s var(--ease) infinite}
 @keyframes scrolldot{0%{transform:translateY(-100%)}60%,100%{transform:translateY(250%)}}
+
+/* ---------- ambience ----------
+   Two very slow gold blooms drifting behind the hero copy, and a handful of
+   motes rising through it. Every layer here is small enough to stay well under
+   the iOS composited-layer ceiling, and the whole thing stops for reduced
+   motion. It is decoration only, so the markup is aria-hidden. */
+.amb{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.amb-glow{position:absolute;border-radius:50%;pointer-events:none;will-change:transform}
+.amb-a{
+  width:min(52vw,560px);aspect-ratio:1;left:-14%;top:2%;
+  background:radial-gradient(circle,rgba(201,160,98,.26),rgba(201,160,98,.07) 46%,transparent 70%);
+  filter:blur(46px);animation:drift-a 38s ease-in-out infinite;
+}
+.amb-b{
+  width:min(44vw,470px);aspect-ratio:1;left:30%;bottom:-16%;
+  background:radial-gradient(circle,rgba(126,158,118,.20),transparent 68%);
+  filter:blur(58px);animation:drift-b 52s ease-in-out infinite;
+}
+@keyframes drift-a{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(7%,-8%,0)}}
+@keyframes drift-b{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-9%,-5%,0)}}
+
+.amb i{
+  position:absolute;bottom:-8px;width:3px;height:3px;border-radius:50%;
+  background:var(--gold);opacity:0;will-change:transform,opacity;
+  animation:rise linear infinite;
+}
+@keyframes rise{
+  0%{transform:translate3d(0,0,0) scale(.5);opacity:0}
+  14%{opacity:.46}
+  78%{opacity:.3}
+  100%{transform:translate3d(16px,-102vh,0) scale(1);opacity:0}
+}
+.amb i:nth-of-type(1){left:7%;animation-duration:30s;animation-delay:-2s}
+.amb i:nth-of-type(2){left:18%;animation-duration:41s;animation-delay:-14s;width:2px;height:2px}
+.amb i:nth-of-type(3){left:26%;animation-duration:35s;animation-delay:-25s}
+.amb i:nth-of-type(4){left:34%;animation-duration:47s;animation-delay:-8s;width:2px;height:2px}
+.amb i:nth-of-type(5){left:43%;animation-duration:33s;animation-delay:-31s}
+.amb i:nth-of-type(6){left:12%;animation-duration:44s;animation-delay:-19s;width:2px;height:2px}
+.amb i:nth-of-type(7){left:49%;animation-duration:39s;animation-delay:-5s;width:2px;height:2px}
+.amb i:nth-of-type(8){left:31%;animation-duration:52s;animation-delay:-37s}
+.amb i:nth-of-type(9){left:21%;animation-duration:37s;animation-delay:-45s;width:2px;height:2px}
+
+/* a single, still bloom behind the footer lockup */
+.amb-c{
+  width:min(64vw,440px);aspect-ratio:1;left:50%;top:-78px;translate:-50% 0;
+  background:radial-gradient(circle,rgba(201,160,98,.16),transparent 66%);
+  filter:blur(52px);z-index:0;
+}
+.foot-in>*:not(.amb-c){position:relative;z-index:1}
+
+@media (prefers-reduced-motion: reduce){
+  .amb-glow,.amb i{animation:none}
+  .amb i{opacity:.3}
+}
 
 /* ---------- marquee ----------
    The runs are not animated. iOS refuses to paint a moving layer wider than
@@ -408,9 +470,9 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 .q-a p{margin:0 0 1.4em;color:var(--ink-soft);font-size:.96rem;padding-right:2em}
 
 /* ---------- footer ---------- */
-.foot{background:var(--green-2);border-top:1px solid var(--line);padding:clamp(56px,7vw,92px) 0 clamp(28px,4vw,46px);text-align:center}
-.foot-in{display:grid;justify-items:center;gap:1.2em}
-.foot-logo{width:clamp(94px,11vw,124px);height:auto;border-radius:50%}
+.foot{position:relative;overflow:hidden;background:var(--green-2);border-top:1px solid var(--line);padding:clamp(56px,7vw,92px) 0 clamp(28px,4vw,46px);text-align:center}
+.foot-in{position:relative;display:grid;justify-items:center;gap:1.2em}
+.foot-logo{width:clamp(94px,11vw,124px);height:auto}
 .foot-line{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,2.3vw,1.6rem);color:var(--ink-soft);margin:0}
 .socials{display:flex;gap:12px;justify-content:center;margin:.3em 0}
 .socials a{
@@ -503,7 +565,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 }
 
 @media (max-height:860px) and (min-width:861px){
-  .hero-word{height:clamp(80px,12vh,116px)}
+  .hero-word{height:clamp(90px,13vh,118px)}
   .hero-inner{padding-top:clamp(100px,12vh,128px);padding-bottom:clamp(44px,6vh,70px)}
   .hero h1{font-size:clamp(2.4rem,4.6vw,3.6rem)}
   .hero-sub{margin-top:1.1em}
@@ -515,7 +577,7 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   .drawer{gap:12px}
   .drawer nav a{font-size:1.05rem;padding:.42em 0}
   .hero-inner{padding-top:clamp(92px,13vh,112px);padding-bottom:26px}
-  .hero-word{height:clamp(64px,10vh,84px);margin-bottom:14px}
+  .hero-word{height:clamp(68px,10vh,86px);margin-bottom:14px}
   .eyebrow{margin-bottom:1.1em;font-size:.6rem}
   .hero h1{font-size:clamp(2.1rem,8.4vw,2.7rem)}
   .hero-sub{margin-top:.9em;font-size:.93rem}
@@ -526,8 +588,8 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
   .drawer{gap:12px}
   .drawer nav a{font-size:1.05rem;padding:.34em 0}
   .hero{min-height:auto}
-  .hero-inner{padding-top:clamp(70px,17vh,92px);padding-bottom:22px}
-  .hero-word{height:clamp(52px,13vh,70px);margin-bottom:12px}
+  .hero-inner{padding-top:clamp(62px,15vh,84px);padding-bottom:18px}
+  .hero-word{height:clamp(48px,12vh,64px);margin-bottom:10px}
   .eyebrow{margin-bottom:1em}
   .hero h1{font-size:clamp(1.9rem,5.4vh,2.7rem)}
   .hero-sub{margin-top:.8em;font-size:.9rem}

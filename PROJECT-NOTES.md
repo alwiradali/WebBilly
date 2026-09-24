@@ -608,3 +608,41 @@ the enquiry over as copyable text with a pre-addressed `mailto:` to her Gmail),
 a Google Business profile for the review block, and higher-resolution versions
 of the Instagram photographs — the grid crops are 428px wide, fine for the
 portfolio tiles but not for anything larger.
+
+### Krem&Choc — her badge, and the ambience layer
+
+Her real logo (the one on her Instagram, not the wordmark on kremchoc.co.uk) is
+a gold KC monogram on a dark green disc. That disc is almost exactly the page
+green, so pasting the badge straight onto the site produced a dull smudge with
+a hard circular edge — it read as a sticker sitting *on* the page.
+
+Ringing it in gold fixed the visibility but made it look pinned on. The answer
+was to feather the plate instead: `assets/kremchoc/badge.png` is the badge with
+its disc alpha ramped smoothly to zero over the outer third of the radius, while
+the gold monogram keeps full alpha. The plate now dissolves into whatever green
+is behind it and only the gold stays crisp, so the same file works over the hero
+(`--green-2`) and the footer (`--ink`) with no per-surface variant.
+
+Generation (source is the 900x900 `logo.png`):
+
+  r       = radial distance, normalised to the disc radius
+  feather = smoothstep(clamp((1 - r) / 0.34, 0, 1))
+  ink     = blur(1.2, (R - B > 22) and (luma > 55))     # the gold, softened
+  alpha   = plate * feather * 0.94  +  ink * (1 - that)  # gold always solid
+
+Resized to 640 and quantised to 128 colours with FASTOCTREE: 235KB to 32KB with
+no visible banding, because the image is one smooth gradient plus the monogram.
+Sized by CSS height, never width — see the wordmark note above.
+
+**Ambience.** `.amb` inside the hero carries two very slow blurred blooms and
+nine 2-3px gold motes rising on 30-52s loops, plus one still bloom behind the
+footer lockup. Everything is `aria-hidden`, clipped by `overflow:hidden` on
+`.hero`/`.amb`/`.foot`, and stopped under `prefers-reduced-motion`. The widest
+animated layer measured 1317 device pixels, comfortably inside the ~4096dp iOS
+paint ceiling.
+
+**Audit change.** The "element outside the viewport" check was failing on every
+viewport because the blooms sit deliberately off-canvas. It now skips a node
+that is both `aria-hidden` and clipped by an ancestor with `overflow-x: hidden`
+or `clip` — such a node cannot spill onto the page, and real horizontal overflow
+is still caught by the `scrollWidth > clientWidth` check.
