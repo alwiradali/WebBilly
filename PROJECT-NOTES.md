@@ -465,9 +465,12 @@ so there is nothing to drift into. `.section-head h2,.section-head .tag
 `!important`), and `qa.mjs` fails any viewport where a section heading still
 carries a transform.
 
-**The intro is a minimum, not a delay.** `finish()` is gated on
-`MIN_INTRO = 1900ms` measured from page start rather than a timeout after
-`load`, so the logo gets the same beat whether the page is cold or cached —
-otherwise a second visit flashes it for a frame or two and reads as a glitch.
-Measured: holds ~2.0s cached, ~2.4s cold, crossfaded into the hero by ~3.1s.
-A 4.6s hard cap still fires `finish()` directly if `load` never arrives.
+**The intro is a fixed beat, not a wait for `load`.** `finish()` is gated on
+`MIN_INTRO = 2000ms` measured from when the script runs, and `ready()` is
+called immediately rather than from the `load` handler. Both details matter:
+gating on a minimum means a cached second visit gets the same beat as a cold
+first one instead of flashing the logo for a frame, and *not* waiting for
+`load` keeps it off the webfont critical path — waiting stretched it to 3–4s
+on a real connection. Nothing is lost by going early, because the hero's own
+pictures fade in as they decode. Measured live: holds ~2.1–2.3s, hero fully
+there by ~3.0s. A 4.6s hard cap still calls `finish()` directly.

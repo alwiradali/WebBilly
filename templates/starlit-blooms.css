@@ -81,7 +81,7 @@ a{color:inherit}
 .loader{
   position:fixed;inset:0;z-index:120;display:grid;place-items:center;gap:26px;
   align-content:center;background:var(--night);
-  transition:opacity .85s var(--ease),visibility .85s;
+  transition:opacity .7s var(--ease),visibility .7s;
 }
 .loader img{width:clamp(210px,56vw,360px);height:auto;animation:lpop 1.6s var(--ease) both}
 .loader-bar{display:block;width:clamp(120px,32vw,200px);height:1px;background:var(--line-2);overflow:hidden}
