@@ -132,7 +132,6 @@
     if (done) return; done = true;
     document.body.classList.add('ready');
     setTimeout(function () { var l = $('#loader'); if (l) l.remove(); }, 850);
-    setTimeout(function () { var b = $('#dmBubble'); if (b) b.classList.add('in'); }, 1400);
   }
   function ready() {
     if (done) return;

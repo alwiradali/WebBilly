@@ -774,3 +774,16 @@ came first were two lines each and the bottom one was being cut off by the
 browser chrome on a phone, which is the whole reason the drawer foot has to
 stay short. Escape closes the drawer and returns focus to the burger, which it
 never did.
+
+### Krem&Choc — the floating enquire bubble is gone
+
+It duplicated the ENQUIRE button that is pinned in the header at every scroll
+position, and on a phone it sat over the hero facts. Removed outright: markup,
+CSS and the reveal timer that slid it in at 1400ms. The other three sites still
+carry their own `.dm-bubble`; this change is Krem&Choc only.
+
+The hero facts now carry a dot on both sides of the last item rather than only
+before it. Measured: the list is two lines at 360, 390, 430 and 1024, and one
+line at 768 and 1440. On one line the pair reads as a separator and a full
+stop; stacked and centred on a phone it flanks the line, so the leading dot is
+no longer orphaned out to the left of a centred row.
