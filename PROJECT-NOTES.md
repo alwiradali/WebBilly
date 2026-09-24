@@ -375,11 +375,23 @@ Manchester, no collection and no courier* — which is what the delivery section
 the FAQ and the builder all say. If she actually posts nationwide as well, the
 Delivery section and FAQ need rewording.
 
-**Written in the first person, because it is her website.** Every line on the
-page is her talking — "I make every rose by hand", "I deliver in person",
-"tell me the occasion". The one deliberate exception is the reviews, where
-customers talk *about* her in the third person, which is how a real review
-reads.
+**The voice is impersonal, not first or third person.** It went first person
+("I make every rose by hand"), and she asked for it to come back out — the
+page now says "every rose is made by hand", "orders need at least a fortnight
+ahead", "delivery is arranged once the order is confirmed". No "I", no "she",
+no "we". Two deliberate exceptions: the reviews, where customers talk *about*
+her in the third person because that is how a real review reads, and the
+builder's message preview, which is the **customer** speaking ("Hi! I'd like
+30 roses…") and so is correctly first person.
+
+**The builder ends in one button, and shows its own message first.** There
+used to be two — "send as an enquiry" and "send on Instagram" — which made
+people choose a route before they knew what either did. Now the exact text
+that will be sent is printed on the page under "Your message", and a single
+**Copy & send enquiry** does all three things: copies the message (or opens
+the share sheet where there is one, which skips the pasting), fills in the
+enquiry form below so the details are recorded either way, and opens her DMs.
+A quiet secondary link still goes to the form for anyone without Instagram.
 
 **The marquee moves each WORD, not the strip.** The scrolling-box version was
 safe but stuttered: `scrollLeft` rounds to whole pixels and at 34px/s that is

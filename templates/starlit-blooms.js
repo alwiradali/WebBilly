@@ -91,21 +91,21 @@
 
   var FAQ = [
     { q: 'What actually are eternal roses?',
-      a: 'I fold every rose by hand from satin ribbon rather than growing it. They look and sit like fresh roses, but they don’t wilt, drop petals or need water — so your bouquet stays exactly as it arrived.' },
+      a: 'Every rose is folded by hand from satin ribbon rather than grown. They look and sit like fresh roses, but they don’t wilt, drop petals or need water — so the bouquet stays exactly as it arrived.' },
     { q: 'How long do they last?',
-      a: 'Years. There is nothing in them to go off. Keep them out of direct sunlight and they will hold their colour.' },
+      a: 'Years. There is nothing in them to go off. Keep them out of direct sunlight and they hold their colour.' },
     { q: 'How do I order?',
-      a: 'Build what you want on this page and send it to me, fill in the enquiry form, or message me on Instagram — whichever suits you. I confirm everything by message before I start making anything.' },
+      a: 'Build what you want on this page and send it over, fill in the enquiry form, or message on Instagram. Everything is confirmed by message before anything is made.' },
     { q: 'How much notice do you need?',
-      a: 'Two weeks at the very least. I make everything by hand to order, so the more notice you can give me the better — especially around Valentine’s, Mother’s Day and Eid.' },
+      a: 'Two weeks at the very least. Everything is made by hand to order, so the more notice the better — especially around Valentine’s, Mother’s Day and Eid.' },
     { q: 'Do you deliver?',
-      a: 'Yes — I deliver every order in person around Manchester, so nothing gets crushed on the way. I agree the day and a rough time with you once your order is confirmed. If you are further out, just ask me.' },
+      a: 'Yes — every order is delivered in person around Manchester, so nothing gets crushed on the way. The day and a rough time are agreed once the order is confirmed. Further out, just ask.' },
     { q: 'Can I choose my own colours?',
-      a: 'That is the whole idea. Red, black, white, champagne, pink, lilac or a mix — and if you have a particular shade in mind, send me a picture and I will tell you whether I can match it.' },
+      a: 'That is the whole idea. Red, black, white, champagne, pink, lilac or a mix. If you have a particular shade in mind, send a picture and you’ll be told straight away whether it can be matched.' },
     { q: 'Can you put a name or a message on it?',
-      a: 'Yes. Banners, crowns, butterflies and bows are all on the price list. Send me whatever you want written, spelled exactly as you want it, and that is how I will do it.' },
+      a: 'Yes. Banners, crowns, butterflies and bows are all on the price list. Whatever you want written, send it spelled exactly as you want it and that is how it will be done.' },
     { q: 'How do I pay?',
-      a: 'I confirm the price and sort payment with you directly once we have agreed the order. Nothing is taken through this website.' }
+      a: 'The price is confirmed and payment arranged directly once the order is agreed. Nothing is taken through this website.' }
   ];
 
   /* ============================================================
@@ -463,6 +463,13 @@
       return a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
     }
 
+    /* the exact text that gets copied and sent — shown on the page first, so
+       nobody is tapping a button without knowing what it says */
+    function message() {
+      return 'Hi! I’d like ' + summary() + '. That comes to ' + money(total()) +
+        ' on your website' + (styleObj().quoted ? ', plus the ' + styleObj().name.toLowerCase() : '') + '.';
+    }
+
     function summary() {
       var cols = chosenColours(), ex = chosenExtras().map(function (a) { return a.name.toLowerCase(); });
       var bits = [SIZES[state.size].name];
@@ -498,55 +505,52 @@
 
       $('#bdPrice').textContent = money(total());
       $('#bdSmall').textContent = styleObj().quoted
-        ? 'I price a ' + styleObj().name.toLowerCase() + ' when I reply — this is the roses and extras only.'
-        : 'Two weeks’ notice, and I arrange delivery around ' + CONTACT.area + ' when I confirm your order.';
+        ? 'A ' + styleObj().name.toLowerCase() + ' is priced on enquiry — this is the roses and extras only.'
+        : 'Two weeks’ notice. Delivery around ' + CONTACT.area + ' is arranged once the order is confirmed.';
+      var m = $('#bdMsg');
+      if (m) m.textContent = message();
     }
 
-    /* send it as an enquiry: fill the form in and take them to it */
-    var sendBtn = $('#bdSend');
-    if (sendBtn) sendBtn.addEventListener('click', function () {
+    /* One action: the message goes on the clipboard (or straight into the
+       share sheet where there is one, which skips the pasting), the enquiry
+       form below is filled in so the details are recorded either way, and her
+       DMs open ready for it. */
+    function fillForm() {
       var msg = $('#enqMsg');
       if (msg) {
         msg.value = 'I’d like ' + summary() + '.\n\nTotal from the website: ' + money(total()) +
           (styleObj().quoted ? ' (plus the ' + styleObj().name.toLowerCase() + ')' : '') + '.';
       }
-      var sec = $('#enquire');
-      if (sec) {
-        if (lenis) lenis.scrollTo(sec, { offset: -84 });
-        else sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-      }
+    }
+    function gotoForm() {
+      var sec = $('#enquire'); if (!sec) return;
+      if (lenis) lenis.scrollTo(sec, { offset: -84 });
+      else sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
       setTimeout(function () {
-        var n = $('#enqName');
-        if (n) try { n.focus({ preventScroll: true }); } catch (e) {}
+        var nm = $('#enqName');
+        if (nm) try { nm.focus({ preventScroll: true }); } catch (e) {}
       }, 700);
-      toast('Added to the enquiry form below');
+    }
+
+    var sendBtn = $('#bdSend');
+    if (sendBtn) sendBtn.addEventListener('click', function () {
+      var text = message(), note = $('#bdCopy');
+      fillForm();
+      handOver(text, function (how) {
+        if (how === 'shared')    { note.textContent = 'Sent — your order went across with it.'; return; }
+        if (how === 'cancelled') { note.textContent = ''; return; }
+        if (how === 'copied')    { note.textContent = 'Copied — paste it into the message.'; }
+        else                     { note.textContent = 'Copy the message above and send it over.'; }
+        openDm();
+      });
+      toast('Copied — opening Instagram');
     });
 
-    var dmBtn = $('#bdDm');
-    if (dmBtn) {
-      dmBtn.href = CONTACT.dm || CONTACT.instagram;
-      dmBtn.addEventListener('click', function (e) {
-        var text = 'Hi! I’d like ' + summary() + '. That comes to ' + money(total()) +
-          ' on your website' + (styleObj().quoted ? ', plus the ' + styleObj().name.toLowerCase() : '') + '.';
-        var note = $('#bdCopy');
-        if (canShare()) {
-          e.preventDefault();
-          handOver(text, function (how) {
-            note.textContent =
-              how === 'shared'    ? 'Sent — your order went across with it.' :
-              how === 'cancelled' ? '' :
-              how === 'copied'    ? 'Copied — paste it into the message.' :
-                                    'Send me this: ' + text;
-            if (how === 'copied' || how === 'manual') openDm();
-          });
-          return;
-        }
-        copy(text, function (ok) {
-          note.textContent = ok ? 'Copied — paste it straight into the message.'
-                                : 'Send me this: ' + text;
-        });
-      });
-    }
+    var formBtn = $('#bdForm');
+    if (formBtn) formBtn.addEventListener('click', function () {
+      fillForm(); gotoForm();
+      toast('Added to the enquiry form below');
+    });
 
     paint();
   }());
@@ -626,7 +630,7 @@
     var w = $('#gWrite');
     if (w) {
       if (CONTACT.googleWrite) w.href = CONTACT.googleWrite;
-      else { w.href = CONTACT.instagram; w.textContent = 'Message me instead'; }
+      else { w.href = CONTACT.instagram; w.textContent = 'Message on Instagram'; }
     }
   }());
 
@@ -769,9 +773,9 @@
       if (val('enqHp')) return;                        // honeypot
 
       var name = val('enqName'), reach = val('enqReach'), body = val('enqMsg');
-      if (!name)  { say('Please add your name so I know who I’m replying to.'); $('#enqName').focus(); return; }
-      if (!reach) { say('Please add an Instagram handle, email or number so I can get back to you.'); $('#enqReach').focus(); return; }
-      if (!body)  { say('Tell me a little about what you’d like and I’ll take it from there.'); $('#enqMsg').focus(); return; }
+      if (!name)  { say('Please add your name.'); $('#enqName').focus(); return; }
+      if (!reach) { say('Please add an Instagram handle, email or number for the reply.'); $('#enqReach').focus(); return; }
+      if (!body)  { say('Add a little about what you’d like and it can go from there.'); $('#enqMsg').focus(); return; }
 
       var payload = {
         name: name, reach: reach,
@@ -793,15 +797,15 @@
            where there is one, the clipboard where there isn't. */
         say('Opening your message…');
         handOver(plain, function (how) {
-          if (how === 'shared')    { f.reset(); say('Thank you — that’s on its way to me.'); return; }
+          if (how === 'shared')    { f.reset(); say('Thank you — that’s on its way.'); return; }
           if (how === 'cancelled') { say('No problem — the form is still here when you want it.'); return; }
           if (how === 'copied') {
-            say('This demo form isn’t wired to an inbox yet, so I’ve copied your enquiry — ' +
+            say('This demo form isn’t wired to an inbox yet, so your enquiry has been copied — ' +
                 '<a href="' + esc(CONTACT.dm || CONTACT.instagram) + '" target="_blank" rel="noopener">' +
-                'paste it into my Instagram DMs</a> and I’ll pick it up from there.', true);
+                'paste it into the Instagram DMs</a> and it’ll be picked up from there.', true);
             return;
           }
-          say('Send me this on Instagram:<br><br>' + esc(plain).replace(/\n/g, '<br>'), true);
+          say('Send this on Instagram:<br><br>' + esc(plain).replace(/\n/g, '<br>'), true);
         });
         return;
       }
@@ -819,11 +823,11 @@
         })
       }).then(function (r) { return r.json(); }).then(function (d) {
         btn.disabled = false; btn.textContent = 'Send enquiry';
-        if (d && d.success) { f.reset(); say('Sent — I’ll come back to you shortly. Thank you!'); }
-        else say('That didn’t send. Please try again, or message me on Instagram.');
+        if (d && d.success) { f.reset(); say('Sent — you’ll get a reply shortly. Thank you!'); }
+        else say('That didn’t send. Please try again, or send it on Instagram.');
       }).catch(function () {
         btn.disabled = false; btn.textContent = 'Send enquiry';
-        say('That didn’t send. Please try again, or message me on Instagram.');
+        say('That didn’t send. Please try again, or send it on Instagram.');
       });
     });
   }());

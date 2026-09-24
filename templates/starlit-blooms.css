@@ -354,12 +354,28 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
 }
 .bd-total strong{font-family:var(--serif);font-size:2.2rem;color:var(--blush);letter-spacing:0;font-weight:500}
 .bd-small{font-size:.8rem;color:var(--ink-dim);margin:.8em 0 1.4em;min-height:1.2em}
+.bd-msg-t{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim);margin:1.6em 0 .6em}
+.bd-msg{
+  margin:0 0 1.3em;padding:.9em 1.1em;border-radius:12px;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);
+  font-size:.9rem;line-height:1.55;color:var(--ink-soft);
+}
 .bd-go{display:grid;gap:10px}
+.bd-alt{margin:.9em 0 0;text-align:center}
+.linkish{
+  background:none;border:0;padding:.7em 1em;min-height:44px;cursor:pointer;color:var(--ink-dim);
+  font-family:var(--sans);font-size:.84rem;text-decoration:underline;
+  text-underline-offset:3px;transition:color .3s;
+}
+.linkish:hover{color:var(--rose-lt)}
 .bd-copy{font-size:.82rem;color:var(--rose-lt);margin:.9em 0 0;min-height:1em}
 
 /* ---------- enquiry ---------- */
-.enq-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(30px,5vw,68px);align-items:start}
-.enq-points{list-style:none;margin:2em 0;padding:0;display:grid;gap:.7em;color:var(--ink-soft);font-size:.96rem}
+.enq-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(26px,4vw,60px);align-items:start}
+.enq-copy {grid-column:1;grid-row:1}
+.enq-extra{grid-column:1;grid-row:2}
+.enq-form {grid-column:2;grid-row:1/span 2}
+.enq-points{list-style:none;margin:0 0 1.6em;padding:0;display:grid;gap:.7em;color:var(--ink-soft);font-size:.96rem}
 .enq-points li{display:flex;gap:.8em;align-items:baseline}
 .enq-points span{color:var(--rose);font-size:.7em}
 .enq-ig{
@@ -567,6 +583,11 @@ h2 + .lede,h2 + .sub{margin-top:1.1em}
    ============================================================ */
 @media (max-width:1040px){
   .eternal-grid,.enq-grid,.del-grid,.faq-grid{grid-template-columns:1fr}
+  /* heading, then straight into the form — the detail follows it */
+  .enq-copy,.enq-form,.enq-extra{grid-column:1}
+  .enq-copy{grid-row:1}
+  .enq-form{grid-row:2}
+  .enq-extra{grid-row:3;margin-top:.4em}
   .faq-side{position:static}
   .eternal-art{max-width:460px}
   .builder{grid-template-columns:1fr}
