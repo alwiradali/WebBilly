@@ -549,3 +549,62 @@ then the form hands the enquiry to the share sheet, or the clipboard plus her
 DMs — nothing is silently swallowed), a Google Business profile, prices, and
 her own photographs for `assets/sadia/photos/`. Real availability replaces the
 generated example by filling in `BOOKED` and setting `DIARY.example = false`.
+
+---
+
+## Krem&Choc — `templates/kremchoc.{html,css,js}`
+
+Bespoke cake designer, Leicester. `@krem_choc`, `kremchoc@gmail.com`, founded
+by **Zahra**. A **remake of a real site** (kremchoc.co.uk), not a template —
+which changes what "unlisted" is for: the page carries her own copy and
+photographs, so an indexed copy would compete with her live site in search.
+`X-Robots-Tag` covers the page **and** `/assets/kremchoc/*`.
+
+**Everything on the page is hers.** No stock photography, no invented copy.
+
+*Her copy* came off kremchoc.co.uk. The site is a static export with the
+content in a JS bundle — `curl` returns the shell and nothing else, so it was
+rendered in Playwright and the text read off `document.body.innerText`. Her
+typos are corrected ("cantrepiece"→"centrepiece", "perdection"→"perfection",
+US "flavor"→"flavour"); everything else is verbatim, including her three-step
+booking process, which is the most valuable thing on her site and is
+reproduced in full.
+
+*Her logo* came from three places. The round green badge and the gold KC
+monogram are keyed from her Instagram profile picture; the "Krem&choc"
+wordmark is the transparent PNG on her own site, recoloured to her gold and
+to cream. Her disc is `#282f27` and her gold `#a9814c`, and the whole palette
+is built from those two.
+
+*Her photographs*: the two high-resolution images on her website carry the
+hero, the philosophy panel, the strip and the quote. The six portfolio tiles
+are cut out of her Instagram grid screenshot, cropped clear of the app's own
+pins, play buttons and dashboard overlays — and in two cases cropped in to the
+cake so her clients' faces are not on the page.
+
+**Three things worth remembering.**
+
+*Finding a circle in a screenshot when the disc is dark.* The light-background
+logos were easy to threshold; a dark green disc on a dark blurred background
+is not. Detecting "green dominant" missed the specular highlight and the
+shaded bottom. What worked: take the horizontal extent from the widest row,
+then pick the vertical centre by testing candidates for the one where the ring
+*outside* the crop reads neutral (R≈G≈B) and the inside reads green.
+
+*A hero overlay is the wrong instinct for a product business.* The first
+version put her cake behind a scrim heavy enough to carry white type, and the
+cake disappeared — on a cake designer's site, of all places. The split hero
+(copy on green, photograph full-bleed beside it) shows the work and keeps the
+type legible. The header still needs its own top scrim, or the nav links wash
+out against a pale cake.
+
+*Size a wordmark by height, not width.* `.hero-word` at `width:clamp(...,280px)`
+is 223px tall at a 1.26:1 ratio, which pushed the buttons off the first screen
+on every laptop. `height:clamp(88px,15vh,150px);width:auto` is the controllable
+axis, and two responsive rules were still overriding it by width.
+
+**Still needed from her**: a Web3Forms key or inbox (until then the form hands
+the enquiry over as copyable text with a pre-addressed `mailto:` to her Gmail),
+a Google Business profile for the review block, and higher-resolution versions
+of the Instagram photographs — the grid crops are 428px wide, fine for the
+portfolio tiles but not for anything larger.

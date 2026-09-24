@@ -91,3 +91,13 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/sadia/*
   X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Krem&Choc ---------------------------------
+# Doubly important here: this page carries her own copy and photographs from
+# kremchoc.co.uk, so an indexed copy would compete with her live site.
+/templates/kremchoc
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/kremchoc.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/kremchoc/*
+  X-Robots-Tag: noindex, noimageindex
