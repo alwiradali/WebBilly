@@ -1001,6 +1001,14 @@
     var MAXTEX = gl.getParameter(gl.MAX_TEXTURE_SIZE);
     function pot(v) { var n = 1; while (n * 2 <= v) n *= 2; return n; }
     var HI_W, LO_W, HI_H, LO_H, tiersLeft, qualityMode = "auto";
+    /* The ceiling for a BAKED panorama, which is only ever the procedural
+       placeholder shown in a room that has no photograph yet. A gradient has
+       no detail that 4096 pixels shows and 2048 does not, and the bake is
+       8.4 million pixels of raymarching either way. */
+    var PLACEHOLDER_W = 2048;
+    /* how much GPU time a whole placeholder bake may cost before it is not
+       worth having: a fifth of a second, spread over its bands */
+    var PLACEHOLDER_BUDGET_MS = 250;
 
     function applyQuality(q) {
       qualityMode = q || "auto";
@@ -1020,7 +1028,7 @@
       if (tiersLeft-- <= 0 || HI_W <= 512) return;
       HI_W = Math.max(512, HI_W / 2); HI_H = HI_W / 2;
       for (var i = queue.length - 1; i >= 0; i--) {
-        if (queue[i].kind === "hi" && !queue[i].target) { queue[i].w = HI_W; queue[i].h = HI_H; }
+        if (queue[i].kind === "hi" && !queue[i].target) { queue[i].w = Math.min(HI_W, PLACEHOLDER_W); queue[i].h = queue[i].w / 2; }
       }
       diag.push("quality downshift → " + HI_W + "×" + HI_H);
     }
@@ -1112,9 +1120,10 @@
 
     function enqueue(id, kind, priority) {
       for (var i = 0; i < queue.length; i++) if (queue[i].id === id && queue[i].kind === kind) return queue[i];
+      var hiW = Math.min(HI_W, PLACEHOLDER_W);
       var job = {
         id: id, kind: kind,
-        w: kind === "hi" ? HI_W : LO_W, h: kind === "hi" ? HI_H : LO_H,
+        w: kind === "hi" ? hiW : LO_W, h: kind === "hi" ? hiW / 2 : LO_H,
         rows: kind === "hi" ? (coarse ? 8 : 16) : LO_ROWS, row: 0, target: null, done: false
       };
       var pos = 0;
@@ -1562,6 +1571,20 @@
     function needHi(room, priority) {
       if (!room || !store[room.id] || store[room.id].hi) return;
       if (room.pano) return;                       // a capture is already full resolution
+      /* Everything that gets here is the procedural placeholder for a room
+         with no photograph — and raymarching it at full resolution is the
+         single largest piece of GPU work this engine can ask for.
+         It is asked for on the GPU process, which every tab in the browser
+         shares. A main-thread stall freezes one tab; wedging that process
+         freezes the browser. So this is not attempted at all until the GPU
+         has been measured (gpuMeasured, from one real band with a gl.finish
+         behind it) and the measurement says the whole bake is affordable.
+         A device that cannot afford it keeps the 1024x512 preview, which
+         best() already draws when there is no full-resolution texture, and
+         which is a gradient — there is very little in it to lose. */
+      if (!gpuMeasured) return;
+      var w = Math.min(HI_W, PLACEHOLDER_W);
+      if (perPx * w * (w / 2) > PLACEHOLDER_BUDGET_MS) return;
       enqueue(room.id, "hi", priority);
     }
     /* rooms the visitor can walk into from here: the nav hotspots (the
