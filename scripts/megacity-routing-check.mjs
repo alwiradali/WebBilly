@@ -113,8 +113,11 @@ const realFetch = globalThis.fetch;
 let sent = null, into = [];
 /* what 10ninety answers, per test: accept, or fail the way its host does */
 let tenninety = "accept";
+/* and what Resend answers: accept, or fail the way it does when it is down */
+let resend = "accept";
 globalThis.fetch = async (url, init) => {
   if (String(url).includes("api.resend.com")) {
+    if (resend === "fail") return new Response(JSON.stringify({ message: "service unavailable" }), { status: 503, headers: { "content-type": "application/json" } });
     sent = JSON.parse(init.body);
     return new Response(JSON.stringify({ id: "test" }), { status: 200, headers: { "content-type": "application/json" } });
   }
@@ -230,6 +233,34 @@ const own = await post("/api/megacity-viewing", { ...person, property: "x" }, { 
 ok(own.sent && own.sent.from === "Megacity Properties <website@megacityproperties.co.uk>", "forms send as MAIL_FROM when it is set — his Resend account only allows his domain", own.sent && own.sent.from);
 const def = await post("/api/megacity-viewing", { ...person, property: "x" });
 ok(def.sent && /billydigitals\.com>$/.test(def.sent.from), "and as before when it is not", def.sent && def.sent.from);
+
+/* ── the email failing must not lose the lead ─────────────────────────────
+   The 10ninety lead used to be sent only after the email had gone, so a
+   Resend outage — or a key not set yet — lost it from 10ninety and the
+   Studio too. The visitor is still told it did not go (so they ring), and
+   the lead goes in regardless. */
+resend = "fail";
+for (const [path, body, what] of [
+  ["/api/megacity-landlord", { ...person, address: "12 Example Street" }, "landlord registration"],
+  ["/api/megacity-contact", { ...person, topic: "Free landlord valuation", message: "x" }, "valuation request"],
+  ["/api/megacity-contact", { ...person, topic: "Tenant registration", message: "x" }, "tenant registration"],
+  ["/api/megacity-contact", { ...person, topic: "Renting a home", message: "x" }, "tenant contact"],
+  ["/api/megacity-viewing", { ...person, property: "12 Example Street" }, "viewing request"],
+  ["/api/megacity-apply", { ...person, property: "12 Example Street" }, "tenancy application"],
+]) {
+  const r = await post(path, body, OPEN);
+  ok(r.status === 502 && r.into.some((c) => c.path === "/OpenAPILead/Register"),
+     `${what}: the email fails, the visitor is told, and the lead still reaches 10ninety`, { status: r.status, into: r.into.map((c) => c.path) });
+}
+resend = "accept";
+const { RESEND_API_KEY: _k, ...NO_RESEND } = OPEN;
+const noKey = await post("/api/megacity-viewing", { ...person, property: "12 Example Street" }, NO_RESEND);
+ok(noKey.status === 500 && noKey.into.some((c) => c.path === "/OpenAPILead/Register"),
+   "no Resend key set yet: the visitor is told, and the lead still reaches 10ninety", { status: noKey.status, into: noKey.into.map((c) => c.path) });
+const botNoLead = await post("/api/megacity-viewing", { ...person, property: "x", botcheck: "spam" }, OPEN);
+ok(botNoLead.status === 200 && !botNoLead.into.length, "a bot filling the honeypot still makes no lead");
+const limitedNoLead = await post("/api/megacity-viewing", { name: "Sam", property: "x" }, OPEN);
+ok(limitedNoLead.status === 400 && !limitedNoLead.into.length, "an incomplete form still makes no lead");
 
 globalThis.fetch = realFetch;
 

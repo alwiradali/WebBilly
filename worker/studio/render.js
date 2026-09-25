@@ -12,6 +12,7 @@ import { label } from "./options.js";
 import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
+import { LETTINGS_TO } from "./enquiries.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = (n) => "£" + Number(n).toLocaleString("en-GB");
@@ -293,7 +294,9 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="video360"]', { element: (e) => { if (frag.video360) e.setInnerContent(frag.video360, { html: true }); else e.remove(); } })
     .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
-    .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
+    /* a tenant asking about a home to let: lettings@, by Walid's rule, not the
+       general office address in Settings */
+    .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + LETTINGS_TO + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
     .on('[data-slot="apply"]', { element: (e) => { if (v.links.apply) e.setAttribute("href", v.links.apply); else { e.setAttribute("href", v.applyHref); e.removeAttribute("target"); e.removeAttribute("rel"); } } })
     .on('[data-slot="map"]', { element: (e) => { e.setAttribute("src", "https://www.google.com/maps?q=" + mapQ + "&output=embed"); e.setAttribute("title", "Map showing " + v.addr); } })
     .on('[data-slot="mapsec"]', { element: (e) => { if (!v.addr) e.remove(); } })

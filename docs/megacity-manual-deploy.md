@@ -164,11 +164,28 @@ npx wrangler secret put OFFICE_SETUP_TOKEN --env megacity
 `OFFICE_SETUP_TOKEN` is one you invent — a long random string. It is what lets
 the first Studio account be created, once.
 
-The 10ninety key can go in at the same time, though nothing reads it yet:
+**10ninety has two keys, for two different jobs, and the site needs both:**
 
 ```
 npx wrangler secret put TENNINETY_API_KEY --env megacity
+npx wrangler secret put TENNINETY_OPEN_API_KEY --env megacity
 ```
+
+- `TENNINETY_API_KEY` — the **Web API** key. It READS his properties, so the
+  site lists what is on the market in 10ninety (every minute, and the Studio's
+  Refresh button).
+- `TENNINETY_OPEN_API_KEY` — the **Open API** key. It WRITES into 10ninety:
+  every enquiry becomes a lead there (tenant, landlord, viewing, valuation) and
+  every repair reported on the site becomes a maintenance issue. **Without it
+  nothing reaches 10ninety** — enquiries still reach the inboxes and the
+  Studio, but Walid's rule that everything goes into 10ninety too is not met,
+  and nothing on the site says so. Ask 10ninety support for it by that name;
+  it is issued separately from the Web API key.
+
+Both go in with `wrangler secret put` like the others — never pasted into chat
+or a file. The site assumes his 10ninety address is
+`megacityproperties.10ninety.co.uk`; if 10ninety say otherwise, set
+`TENNINETY_BUSINESS_KEY` (the part before `.10ninety.co.uk`) as a variable.
 
 **Check:**
 

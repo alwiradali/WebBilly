@@ -123,6 +123,24 @@ for (const [kind, list] of Object.entries(ROUTE)) {
   if (!Array.isArray(list) || !list.length) { bad++; console.log(`FAIL ${kind} has no inbox at all`); }
 }
 
+/* The "Email us" buttons. A tenant who taps the floating email button on a
+   tenant page is writing to lettings@, and on the repairs page to management@;
+   a listing's "Email the office" button is a tenant asking about a home. The
+   header and footer keep info@ — that is the company's address, on every page. */
+{
+  const fab = (page) => (/<a href="mailto:([^"@]+@megacityproperties\.co\.uk)" class="fab-b fab-mail"/.exec(
+    readFileSync(new URL(`../templates/megacity-${page}.html`, import.meta.url), "utf8")) || [])[1];
+  for (const [page, want] of [["renting", LETTINGS_TO], ["properties", LETTINGS_TO], ["let-template", LETTINGS_TO],
+    ["tenant-application-form", LETTINGS_TO], ["maintenance", MANAGEMENT_TO], ["for-landlords", OFFICE_TO], ["valuation", OFFICE_TO], ["contact-us", OFFICE_TO]]) {
+    const got = fab(page);
+    if (got !== want) { console.log(`FAIL the email button on ${page} → ${got}, expected ${want}`); bad++; }
+    else console.log(`ok   the email button on ${page} → ${want}`);
+  }
+  const render = readFileSync(new URL("../worker/studio/render.js", import.meta.url), "utf8");
+  if (/data-slot="mailto"[^\n]*"mailto:" \+ LETTINGS_TO/.test(render)) console.log("ok   a listing's Email button → " + LETTINGS_TO);
+  else { console.log("FAIL a listing's Email button does not go to " + LETTINGS_TO); bad++; }
+}
+
 console.log();
 if (bad) {
   console.log(`ENQUIRY ROUTING: ${bad} wrong. Enquiries would reach the wrong person.`);

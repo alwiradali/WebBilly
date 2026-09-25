@@ -833,6 +833,17 @@ const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
    agency's verified domain, as before. */
 const megacityFrom = (env) => (env && typeof env.MAIL_FROM === "string" && env.MAIL_FROM.trim() ? mailFrom(env) : MEGACITY_FROM);
 
+/* Walid's rule: every enquiry goes into 10ninety as well as an inbox. The
+   record (10ninety, and the Studio inbox) used to be written only after the
+   email had gone, so a Resend outage — or a key not set yet — lost the lead
+   from both. It is written first now, on its own, whatever the email does. A
+   visitor who is told to ring and tries again can make a second record; a
+   duplicate is found and deleted, a lost lead is never found at all. */
+function keepEnquiry(ctx, env, record) {
+  const p = recordEnquiry(env, record).catch((e) => console.error("recordEnquiry", e && e.message));
+  if (ctx) ctx.waitUntil(p);
+}
+
 async function handleMegacityMaintenance(request, env, ctx) {
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
@@ -874,10 +885,8 @@ async function handleMegacityMaintenance(request, env, ctx) {
     name, email, phone, propertyAddress: address, problem: "Other", subOption: urgency,
     message: issue + (access ? "\n\nAccess: " + access : ""),
   });
-  if (into.ok) {
-    if (ctx) ctx.waitUntil(recordEnquiry(env, record));
-    return json({ ok: true });
-  }
+  keepEnquiry(ctx, env, record);
+  if (into.ok) return json({ ok: true });
 
   if (!env.RESEND_API_KEY) {
     return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
@@ -897,7 +906,6 @@ async function handleMegacityMaintenance(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, record));
   return json({ ok: true });
 }
 
@@ -906,9 +914,6 @@ async function handleMegacityMaintenance(request, env, ctx) {
    maintenance: instant structured email to the office (demo: our inbox),
    with the tenant as reply-to so one tap answers them. */
 async function handleMegacityViewing(request, env, ctx) {
-  if (!env.RESEND_API_KEY) {
-    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
-  }
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
   let body;
@@ -957,6 +962,8 @@ async function handleMegacityViewing(request, env, ctx) {
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many requests from this connection. Please ring the office instead." }, 429);
+  keepEnquiry(ctx, env, { source: "viewing", name, email: emailOk ? email : null, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr });
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -966,16 +973,12 @@ async function handleMegacityViewing(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email: emailOk ? email : null, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
   return json({ ok: true });
 }
 
 
 /* General enquiries from the contact page — same route as the rest. */
 async function handleMegacityContact(request, env, ctx) {
-  if (!env.RESEND_API_KEY) {
-    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
-  }
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
   let body;
@@ -1015,6 +1018,16 @@ async function handleMegacityContact(request, env, ctx) {
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  /* The tenant registration form sends its answers as fields as well as in
+     the message, so the 10ninety lead carries the ones their record has a
+     place for — the address and the areas — instead of only prose. */
+  keepEnquiry(ctx, env, {
+    topic, leadKind: kindFromTopic(topic), name, email, phone, property: topic, message, attr: body.attr,
+    firstName: body.firstName, surname: body.surname,
+    address1: body.address1, address2: body.address2, town: body.town, postcode: body.postcode,
+    areaNames: Array.isArray(body.areaNames) ? body.areaNames.slice(0, 10).map((a) => String(a).slice(0, 80)) : undefined,
+  });
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -1024,15 +1037,6 @@ async function handleMegacityContact(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  /* The tenant registration form sends its answers as fields as well as in
-     the message, so the 10ninety lead carries the ones their record has a
-     place for — the address and the areas — instead of only prose. */
-  if (ctx) ctx.waitUntil(recordEnquiry(env, {
-    topic, leadKind: kindFromTopic(topic), name, email, phone, property: topic, message, attr: body.attr,
-    firstName: body.firstName, surname: body.surname,
-    address1: body.address1, address2: body.address2, town: body.town, postcode: body.postcode,
-    areaNames: Array.isArray(body.areaNames) ? body.areaNames.slice(0, 10).map((a) => String(a).slice(0, 80)) : undefined,
-  }));
   return json({ ok: true });
 }
 
@@ -1046,7 +1050,6 @@ async function handleMegacityContact(request, env, ctx) {
    value the property when they fill the rest in. Goes to the office inbox, not
    lettings — see notifyTo in worker/studio/enquiries.js. */
 async function handleMegacityLandlord(request, env, ctx) {
-  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
@@ -1095,6 +1098,14 @@ async function handleMegacityLandlord(request, env, ctx) {
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  keepEnquiry(ctx, env, {
+    source: "landlord", name, email, phone, property: where || null,
+    firstName: s("firstName", 80), surname: s("surname", 80),
+    address1: address, postcode, areaNames: areaL ? [areaL] : undefined,
+    message: pairs.slice(3).map(([k, v]) => k + ": " + v).join("\n"),
+    attr: body.attr,
+  });
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -1104,18 +1115,10 @@ async function handleMegacityLandlord(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, {
-    source: "landlord", name, email, phone, property: where || null,
-    firstName: s("firstName", 80), surname: s("surname", 80),
-    address1: address, postcode, areaNames: areaL ? [areaL] : undefined,
-    message: pairs.slice(3).map(([k, v]) => k + ": " + v).join("\n"),
-    attr: body.attr,
-  }));
   return json({ ok: true });
 }
 
 async function handleMegacityApply(request, env, ctx) {
-  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON body" }, 400); }
@@ -1143,6 +1146,12 @@ async function handleMegacityApply(request, env, ctx) {
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
+  keepEnquiry(ctx, env, {
+    source: "application", name, email, phone, listingId: listingId || null, property,
+    message: ["Move-in: " + (moveIn || "—"), "Who will live there: " + (occupants || "—"), "Employment / income: " + (employment || "—"), message].filter(Boolean).join("\n"),
+    attr: body.attr,
+  });
+  if (!env.RESEND_API_KEY) return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
@@ -1152,11 +1161,6 @@ async function handleMegacityApply(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, {
-    source: "application", name, email, phone, listingId: listingId || null, property,
-    message: ["Move-in: " + (moveIn || "—"), "Who will live there: " + (occupants || "—"), "Employment / income: " + (employment || "—"), message].filter(Boolean).join("\n"),
-    attr: body.attr,
-  }));
   return json({ ok: true });
 }
 
