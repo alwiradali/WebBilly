@@ -90,7 +90,9 @@ main,.nav,.foot{position:relative;z-index:2}
   position:fixed;inset:0;z-index:120;display:grid;place-items:center;align-content:center;gap:28px;
   background:var(--green);transition:opacity .7s var(--ease),visibility .7s;
 }
-.loader img{height:clamp(84px,15vh,124px);width:auto;animation:lpop 1.6s var(--ease) both}
+/* 108px, not 124: the arch is 326px tall at its true resolution, and 108 x 3
+   is 324 — exactly 1:1 on a three-times phone, so it never has to be enlarged */
+.loader img{height:clamp(80px,14vh,108px);width:auto;animation:lpop 1.6s var(--ease) both}
 .loader-bar{display:block;width:clamp(110px,28vw,180px);height:1px;background:var(--line);overflow:hidden}
 .loader-bar i{display:block;height:100%;width:40%;background:var(--gold);animation:lbar 1.15s var(--ease) infinite}
 @keyframes lpop{from{opacity:0;transform:scale(.9) translateY(14px)}60%{opacity:1}to{opacity:1;transform:none}}

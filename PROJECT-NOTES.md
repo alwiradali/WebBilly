@@ -893,3 +893,55 @@ heading is the section's own top padding and the landing should not add to it.
 The interaction checks used to assert "top is near 92px", which passed either
 way. They now assert the section's top edge sits within 2px of the header's
 bottom edge, which is the actual requirement.
+
+### Krem&Choc — why the mark looked blurry, and it was self-inflicted
+
+Two faults, both introduced when the logo assets were first cut:
+
+**1. The arch was enlarged 2.42x.** It was cropped out of `wordmark.png`
+(703x560), where the arch occupies only 161x215 px, and then resized up to
+393x520. No amount of care downstream recovers detail that was never there.
+
+**2. Both files were quantised to about a dozen alpha levels.** `quantize()`
+collapses the alpha channel along with the colour: `lockup.png` had 12 alpha
+levels and `arch.png` 11, with a maximum alpha of 244 — so it never even
+reached full opacity. Antialiased hairline curves need the full 256 steps;
+with eleven, every curve staircases, and that reads as blur. The earlier note
+claiming the quantisation cost nothing visible was wrong: it was checked by
+file size and a downscaled preview, not by looking at the alpha channel.
+
+**The source.** Her own site serves the lockup at **1600x1600** with a
+transparent background
+(`kremchoc.co.uk/_assets/media/49a8d930ed58d0cb3ba3086c5d09e0ca.png`). The arch
+inside it is 326px tall against the 215px that was being used — so both assets
+are now cut from that at native resolution and never enlarged.
+
+**Keeping the file small without wrecking the alpha.** The artwork is one flat
+colour plus an alpha ramp, so a PNG palette of 256 identical entries with tRNS
+carrying alpha 0..255 stores every alpha level at one byte per pixel:
+
+    im = Image.fromarray(alpha, 'P')
+    im.putpalette(list(GOLD) * 256)
+    im.save(out, optimize=True, transparency=bytes(range(256)))
+
+Verified byte-identical alpha afterwards. lockup 19KB, arch 8KB — both SMALLER
+than the broken quantised versions, with 256 alpha levels instead of eleven.
+
+The loader is sized `clamp(80px,14vh,108px)` rather than 124px so 108 x 3 = 324
+sits just inside the arch's true 326px and it is never enlarged on a phone.
+
+**What is still soft, and why it is not fixable here.** Her photographs are the
+limit, not the markup. `scripts`-free audit at four viewports, comparing each
+image's natural width against CSS width x DPR:
+
+    hero.jpg    900dp available, needs 2458dp on a 2x retina desktop  2.73x
+    band.jpg   1800dp available, needs 5120dp                         2.84x
+    quote.jpg  1600dp available, needs 5120dp                         3.20x
+    g1..g6      760dp available, needs  813dp on a 2x laptop          1.07x
+
+The originals on her own site are 1120x2398 and one 2048x1716 at 22KB. band and
+quote were themselves cut larger than their source, so they carry invented
+pixels — but re-cutting them means guessing the original crop box, and a fuzzy
+match would change WHICH part of her photograph is shown. Left alone
+deliberately. The fix is higher-resolution photographs from her, which is
+already on the outstanding list.
