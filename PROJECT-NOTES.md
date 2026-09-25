@@ -567,6 +567,15 @@ which changes what "unlisted" is for: the page carries her own copy and
 photographs, so an indexed copy would compete with her live site in search.
 `X-Robots-Tag` covers the page **and** `/assets/kremchoc/*`.
 
+**The page is written AS her, in her first person** — "so I know who I am
+holding the slot for", "I travel for bridal and for groups over three". Copy
+that talks *about* her breaks that the moment it appears, and it crept in twice:
+once with the calendar and once with the email routing, which between them said
+"she will confirm it by DM", "so she can reply", "she has your enquiry" and
+"Opening her DMs". `z-act.mjs` now walks every visible text node and fails on a
+third-person reference to her outside the reviews carousel, where a client
+saying "she" is the point.
+
 **Everything on the page is hers.** No stock photography, no invented copy.
 
 *Her copy* came off kremchoc.co.uk. The site is a static export with the
@@ -972,6 +981,15 @@ same instruction, and the first was answered when the second was wanted.
 What was asked for instead: richer, more expensive, more detailed, things
 floating in the background, a cuter font, a bigger logo, and the logo matching
 the background. All of that is in the cream build now.
+
+**The page is written AS her, in her first person** — "so I know who I am
+holding the slot for", "I travel for bridal and for groups over three". Copy
+that talks *about* her breaks that the moment it appears, and it crept in twice:
+once with the calendar and once with the email routing, which between them said
+"she will confirm it by DM", "so she can reply", "she has your enquiry" and
+"Opening her DMs". `z-act.mjs` now walks every visible text node and fails on a
+third-person reference to her outside the reviews carousel, where a client
+saying "she" is the point.
 
 **Everything on the page is hers.** The aftercare, the three policy groups and
 the five-item booking list are transcribed word for word from her Instagram

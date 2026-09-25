@@ -734,12 +734,12 @@
       var need = [
         ["enqName",  !val("enqName"),  "Please add your name."],
         ["enqEmail", needEmail && !mail,
-                     "Please add your email so she can reply \u2014 or send it as a DM instead."],
+                     "Please add your email so I can reply \u2014 or send it as a DM instead."],
         ["enqEmail", needEmail && !!mail && !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(mail),
                      "That email does not look right. Could you check it?"],
         ["enqDate",  !val("enqDate"),  "Please add the date you'd like \u2014 two to three days before the event."],
         ["enqTime",  !val("enqTime"),  "Please add roughly what time suits you."],
-        ["enqHands", !val("enqHands"), "Please say how many hands or people she's doing."]
+        ["enqHands", !val("enqHands"), "Please say how many hands or people I'm doing."]
       ];
       for (var i = 0; i < need.length; i++) {
         if (need[i][1]) { say(need[i][2]); $("#" + need[i][0]).focus(); return true; }
@@ -755,7 +755,7 @@
       copy(plain, function (ok) {
         if (ok) {
           toast("Copied \u2014 paste it into the DM that opens");
-          say('Your message is copied. <a href="' + esc(ig) + '" target="_blank" rel="noopener">Opening her DMs</a> ' +
+          say('Your message is copied. <a href="' + esc(ig) + '" target="_blank" rel="noopener">Opening my DMs</a> ' +
               "\u2014 paste it in, add your inspo pictures, and send. " +
               '<button type="button" class="lnk-inline" id="enqAgain">Copy it again</button>', true);
         } else {
@@ -822,7 +822,7 @@
           f.reset();
           $$("#occChips button").forEach(function (b) { b.classList.remove("on"); b.setAttribute("aria-pressed", "false"); });
           $$("#calGrid .is-picked").forEach(function (x) { x.classList.remove("is-picked"); x.removeAttribute("aria-pressed"); });
-          say("Sent. She has your enquiry and will come back with a time and a price, " +
+          say("Sent. I've got your enquiry and I'll come back with a time and a price, " +
               "usually within a day. Send your inspo pictures over on " +
               '<a href="' + esc(CONTACT.instagram) + '" target="_blank" rel="noopener">Instagram</a> ' +
               "whenever you like.", true);
