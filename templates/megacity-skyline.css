@@ -496,13 +496,23 @@ body.is-ready .veil{display:none}
 .home small{display:block;font:700 12.6px/1.8 var(--ff-u);letter-spacing:.2em;text-transform:uppercase;color:#B6E4F6}
 .home .beds{font:600 13.68px/1 var(--ff-u);background:rgba(250,251,255,.16);border:1px solid rgba(250,251,255,.35);
   backdrop-filter:blur(6px);border-radius:999px;padding:9px 14px;white-space:nowrap}
-.home:nth-child(1){grid-column:1/span 5}
-.home:nth-child(2){grid-column:6/span 4;margin-top:9vh}
-.home:nth-child(3){grid-column:10/span 3;margin-top:3vh}
-.home:nth-child(4){grid-column:2/span 4;margin-top:-4vh}
-.home:nth-child(5){grid-column:6/span 6;margin-top:6vh}
-.home:nth-child(5) .ph{aspect-ratio:16/9.5}
-@media (max-width:900px){.home{grid-column:1/-1!important;margin-top:0!important}.home .ph{aspect-ratio:4/3}}
+/* Four cards, two rows: wide then narrow, narrow then wide, and each row one
+   height. It was a staggered layout written for five, pulled into shape with
+   vh margins — with four cards the fourth rode up over the first by 17px at
+   every desktop width and the bottom right of the section sat empty. Fixed
+   heights per row replace the margins, so nothing can overlap whatever the
+   window size or the photographs. */
+.home:nth-child(1){grid-column:1/span 7}
+.home:nth-child(2){grid-column:8/span 5}
+.home:nth-child(3){grid-column:1/span 5}
+.home:nth-child(4){grid-column:6/span 7}
+.homes-grid .home .ph{aspect-ratio:auto;height:clamp(300px,31vw,440px)}
+@media (max-width:900px){
+  .homes-grid{grid-template-columns:1fr 1fr}
+  .home{grid-column:auto!important}
+  .homes-grid .home .ph{height:auto;aspect-ratio:4/3}
+}
+@media (max-width:560px){.homes-grid{grid-template-columns:1fr}}
 
 /* ── interior split ────────────────────────────────────────────────── */
 .split{display:grid;grid-template-columns:1.15fr 1fr;min-height:92svh;margin:8vh 0;background:var(--navy-deep);color:#fff}
