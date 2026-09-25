@@ -5,7 +5,7 @@
    notification, and records the site's own events (listing views, tour
    opens, enquiries) without any third-party tracking. */
 
-import { officeDb, uid, nowIso, json, HttpError, readJsonBody, clampStr, isEmail, clientIp, bump, audit, getSetting, parseJson, sha256Hex } from "./db.js";
+import { officeDb, uid, nowIso, json, HttpError, readJsonBody, clampStr, isEmail, clientIp, bump, audit, parseJson, sha256Hex } from "./db.js";
 import { valid, label } from "./options.js";
 import { sendEmail, layout, esc } from "./email.js";
 
@@ -13,10 +13,12 @@ export const OFFICE_TO = "info@megacityproperties.co.uk";
 export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
 export const MANAGEMENT_TO = "management@megacityproperties.co.uk";
 
-/* Which inbox each form reaches, as the agency asked for it (Walid, 2026-09-19):
-   anything a tenant sends goes to lettings@, and everything else goes to info@,
-   which he reads himself. Repairs are the one thing that goes elsewhere —
-   management@ exists for them and those are the people who actually fix things.
+/* Which inbox each form reaches, as the agency asked for it. Walid, 2026-09-19,
+   and again 2026-09-25 in almost the same words: "everything related to
+   tenants except maintenance report goes to letting, everything related to
+   landlords go into info and maintenance reports he gets an email on
+   management". And, the same day: repair reports go to the management inbox,
+   never to his own.
 
    The general contact form used to go to info@ AND lettings@, on the reasoning
    that it could be either and the sender should not have to guess. That is
@@ -31,6 +33,7 @@ export const MANAGEMENT_TO = "management@megacityproperties.co.uk";
 export const ROUTE = {
   landlord: [OFFICE_TO],
   valuation: [OFFICE_TO],
+  "contact-landlord": [OFFICE_TO],
   contact: [OFFICE_TO],
   "contact-tenant": [LETTINGS_TO],
   register: [LETTINGS_TO],
@@ -41,33 +44,46 @@ export const ROUTE = {
 };
 export const FALLBACK_TO = OFFICE_TO;
 
-/* Where a notification goes: Settings → Notifications wins for every form when
-   it is set, so the office can redirect the lot from one screen; otherwise the
-   table above decides by form. An unknown kind goes to the office. */
+/* Where a notification goes: the table above, and nothing else.
+
+   This used to defer to Settings → Notifications whenever that list had
+   anything in it, for every form at once — so one address typed into the
+   Studio (its placeholder was info@) would have sent tenant enquiries to info@
+   and repair reports to whoever was on the list, silently undoing the rule
+   above. A rule the owner stated twice is not a preference to be overridden
+   from a text box; it is fixed here, shown read-only in the Studio, and
+   changed in this file if it ever changes. Anything still saved in that
+   setting is ignored.
+
+   Async and taking env only so the callers did not have to change. */
 export async function notifyTo(env, kind) {
-  const route = ROUTE[kind] || [FALLBACK_TO];
-  const db = officeDb(env);
-  if (!db) return route;
-  try {
-    const list = await getSetting(db, "notifyEmails", []);
-    return Array.isArray(list) && list.length ? list : route;
-  } catch { return route; }
+  return (ROUTE[kind] || [FALLBACK_TO]).slice();
 }
 
+/* For the Studio's Notifications card: who reads what, in words. */
+export const ROUTING_SUMMARY = [
+  { who: "Tenants", what: "Viewing requests, registrations, applications, 360° tour enquiries and questions about renting", to: LETTINGS_TO },
+  { who: "Landlords", what: "Landlord registrations, valuation requests and questions about letting or managing a property", to: OFFICE_TO },
+  { who: "Repairs", what: "Maintenance reports — and only these", to: MANAGEMENT_TO },
+  { who: "Anything else", what: "A message that is not clearly from a tenant or a landlord", to: OFFICE_TO },
+];
+
 /* The contact form's "About" list is the only thing that says who should read a
-   message, so routing reads it. This deliberately asks a different question from
-   sourceFrom below, which the Studio uses to record WHAT the visitor filled in:
-   a tenant asking about renting still shows in the Studio as a contact-form
-   enquiry, it just arrives in lettings@ rather than in Walid's own inbox.
+   message, so routing reads it — and the same answer decides which kind of
+   contact the enquiry becomes in 10ninety.
 
    Word boundaries matter more than they look here. /rent\b/ alone matches
-   "current", which would send a landlord's message to the tenant inbox. */
+   "current", which would send a landlord's message to the tenant inbox. And
+   the landlord test runs before the tenant one: "Rent collection" is a
+   landlord service with the word "rent" in it. */
+const LANDLORD_TOPIC = /\blandlord|\bletting\b|\blet my\b|\bproperty management\b|\brent collection\b|\btenant find\b|\bswitch(ing)? agent|\bhmo\b/i;
 const TENANT_TOPIC = /\brent(ing|al)?\b|\btenant|\bviewing\b|\broom\b|\bdeposit\b/i;
 const REPAIR_TOPIC = /\bmaintenance\b|\brepair|\bleak|\bbroken\b/i;
 
 export function kindFromTopic(topic) {
   const t = String(topic || "");
   if (/valuation/i.test(t)) return "valuation";
+  if (LANDLORD_TOPIC.test(t)) return "contact-landlord";
   if (/regist/i.test(t)) return "register";
   if (REPAIR_TOPIC.test(t)) return "maintenance";
   if (TENANT_TOPIC.test(t)) return "contact-tenant";
@@ -90,6 +106,18 @@ function sourceFrom(topic, fallback) {
   return fallback;
 }
 
+/* The 10ninety reference of a listing, or undefined. Never throws: a missing
+   reference costs the lead its link to the property, not the lead. */
+async function refFor(env, listingId) {
+  const db = officeDb(env);
+  const id = String(listingId || "");
+  if (!db || !/^[a-z0-9-]{1,80}$/.test(id)) return undefined;
+  try {
+    const r = await db.prepare(`SELECT ref FROM listings WHERE id=?1 AND deleted_at IS NULL`).bind(id).first();
+    return (r && r.ref) || undefined;
+  } catch { return undefined; }
+}
+
 /* Best-effort: never throws, never blocks the email. */
 export async function recordEnquiry(env, e) {
   /* Into 10ninety as well as into the inbox.
@@ -105,9 +133,15 @@ export async function recordEnquiry(env, e) {
   try {
     const { sendLead, ROLE_FOR } = await import("./tenninety-lead.js");
     const source = valid("enquirySource", e.source) && e.source ? e.source : sourceFrom(e.topic, "contact");
+    /* The contact form passes the kind its topic routed to, so the question
+       that picked the inbox also picks Tenant or Landlord in 10ninety. */
     const kind = e.leadKind || source;
     if (ROLE_FOR[kind]) {
-      const r = await sendLead(env, { ...e, kind, formLabel: label("enquirySource", source) });
+      /* A viewing, an application or a tour enquiry is about one home. The
+         page only knows the listing's id; 10ninety knows the home by its own
+         reference, which the feed gave us and the listing row kept. */
+      const propertyRef = e.propertyRef || await refFor(env, e.listingId);
+      const r = await sendLead(env, { ...e, kind, propertyRef, formLabel: label("enquirySource", source) });
       if (!r.ok && !r.skipped) console.error("10ninety lead not created:", r.why);
     }
   } catch (err) { console.error("10ninety lead", err && err.message); }

@@ -23,10 +23,13 @@
     credit: "Platform by Billy Digitals", creditHref: "/virtual-tour-360"
   };
 
+  /* A viewing request from a tour is a tenant enquiry, so when the live
+     Studio endpoint is not there and "Book a viewing" falls back to an email,
+     it goes where every tenant enquiry goes: lettings@, not info@. */
   var AGENT = {
     name: "Megacity Properties",
     phone: "0161 220 1763",
-    email: "info@megacityproperties.co.uk",
+    email: "lettings@megacityproperties.co.uk",
     url: "/templates/megacity-skyline"
   };
 

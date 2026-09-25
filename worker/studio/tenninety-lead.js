@@ -15,11 +15,16 @@
  * find out — they have done nothing wrong and there is nothing for them to do
  * about it.
  *
- * So the email is the reliable path and this is the improvement on top: the
- * enquiry is emailed first, the post to 10ninety happens after the visitor has
- * been thanked, and a failure here is logged and recorded on the enquiry
- * rather than shown. Worst case the office re-keys one enquiry, which is what
- * they do for all of them today.
+ * So for leads the email is the reliable path and this is the improvement on
+ * top: the enquiry is emailed first, the post to 10ninety happens after the
+ * visitor has been thanked, and a failure here is logged rather than shown.
+ * Worst case the office re-keys one enquiry, which is what they do for all of
+ * them today.
+ *
+ * Repairs are the other way round (worker.js, handleMegacityMaintenance):
+ * 10ninety emails its own alert when a report lands in it, so the report goes
+ * to 10ninety first and the website only emails management@ itself when
+ * 10ninety did not confirm it — one email per repair, never none.
  */
 
 const LEAD_PATH = "/OpenAPILead/Register";
@@ -39,9 +44,17 @@ export const ROLE_FOR = {
   application: "Tenant",
   tour: "Tenant",
   "contact-tenant": "Tenant",
+  "contact-landlord": "Landlord",
   /* contact and maintenance are deliberately absent: a general contact form
-     has no role until someone reads it, and a repair is not a lead. */
+     has no role until someone reads it, and a repair is not a lead — it goes
+     to the maintenance endpoint below instead. */
 };
+
+/* The forms that are about one particular home. For these the lead names the
+   home in words as well as by reference: a reference only helps if it matches
+   one in his system, and the words always do. (The contact form puts its topic
+   in the same "property" field, so it is not on this list.) */
+const ABOUT_A_HOME = new Set(["viewing", "application", "tour"]);
 
 const clip = (v, n) => (v === null || v === undefined ? undefined : String(v).trim().slice(0, n) || undefined);
 
@@ -99,7 +112,8 @@ export function leadBody(e) {
   /* Everything the visitor actually wrote, plus where it came from. Whoever
      opens this in 10ninety should not have to go and find the website to
      understand what they are looking at. */
-  const extra = [clip(e.message, 900), e.wants ? "Looking for: " + clip(e.wants, 300) : null,
+  const home = ABOUT_A_HOME.has(e.kind) ? clip(e.property, 200) : undefined;
+  const extra = [home ? "Property: " + home : null, clip(e.message, 900), e.wants ? "Looking for: " + clip(e.wants, 300) : null,
     e.preferredDay ? "Preferred viewing: " + clip(e.preferredDay, 120) : null,
     "Submitted on megacityproperties.co.uk" + (e.formLabel ? " (" + clip(e.formLabel, 60) + ")" : "")]
     .filter(Boolean).join(" — ");
@@ -145,18 +159,28 @@ async function post(env, path, body, opts = {}) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), opts.timeout || TIMEOUT_MS);
   try {
+    /* redirect "manual": when this host fails it answers with a 302 to an
+       HTML error page that itself says 200. Following it would count a failed
+       report as a delivered one. */
     const res = await fetchImpl(baseUrl(env) + path, {
-      method: "POST", signal: ctl.signal,
+      method: "POST", signal: ctl.signal, redirect: "manual",
       headers: { [AUTH_HEADER]: key, Accept: "application/json", "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
     const text = await res.text().catch(() => "");
     let data = null;
     try { data = JSON.parse(text); } catch { /* their error pages are not JSON */ }
+    if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+      return { ok: false, why: `redirected (HTTP ${res.status || "3xx"})`, detail: String(res.headers && res.headers.get && res.headers.get("location") || "").slice(0, 200) };
+    }
     if (!res.ok) return { ok: false, why: `HTTP ${res.status}`, detail: text.slice(0, 200) };
     /* They answer 200 with IsSuccessful:false for a rejected record, so the
-       status code alone is not the answer. */
-    if (data && data.IsSuccessful === false) return { ok: false, why: clip(data.ErrorMessage, 200) || "rejected" };
+       status code alone is not the answer — and a 200 that is not their JSON
+       at all (a login page, an error page) is not an answer either. Callers
+       treat "not ok" as "not confirmed": the worst that does is send an email
+       the office also gets from 10ninety, never lose one. */
+    if (!data || typeof data !== "object") return { ok: false, why: "reply was not 10ninety's JSON", detail: text.slice(0, 200) };
+    if (data.IsSuccessful === false) return { ok: false, why: clip(data.ErrorMessage, 200) || "rejected" };
     return { ok: true, id: data && data.Id ? String(data.Id) : null };
   } catch (e) {
     return { ok: false, why: e && e.name === "AbortError" ? "timed out" : String(e && e.message || e).slice(0, 120) };

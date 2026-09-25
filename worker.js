@@ -24,6 +24,7 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
    Lives in worker/studio/*; bundled into this Worker at deploy time. */
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
 import { recordEnquiry, notifyTo, formAllowed, kindFromTopic } from "./worker/studio/enquiries.js";
+import { mailFrom } from "./worker/studio/email.js";
 import { label as optionLabel } from "./worker/studio/options.js";
 import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
@@ -825,11 +826,14 @@ billydigitals.com`;
    notifyTo for a long time — so editing it would have looked like the fix and
    changed nothing. Removed.) */
 const MEGACITY_FROM = "Megacity Properties website <hello@billydigitals.com>";
+/* The sender the Resend key is allowed to use. On his own Resend account that
+   is only his own domain, so once MAIL_FROM is set (docs/megacity-manual-deploy.md
+   §8b) every form must send as it — a fixed billydigitals.com sender would be
+   refused by his account for every enquiry at once. Until it is set, the
+   agency's verified domain, as before. */
+const megacityFrom = (env) => (env && typeof env.MAIL_FROM === "string" && env.MAIL_FROM.trim() ? mailFrom(env) : MEGACITY_FROM);
 
 async function handleMegacityMaintenance(request, env, ctx) {
-  if (!env.RESEND_API_KEY) {
-    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
-  }
   if (!originOk(request, env)) return json({ error: "Forbidden" }, 403);
 
   let body;
@@ -852,12 +856,36 @@ async function handleMegacityMaintenance(request, env, ctx) {
   }
 
   const isEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact);
-  const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
-  const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
-
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many messages from this connection. Please ring the office instead." }, 429);
-  const payload = { from: MEGACITY_FROM, to: await notifyTo(env, "maintenance"), subject, html, text };
+
+  const email = isEmail ? contact : null, phone = isEmail ? null : contact;
+  const record = { source: "maintenance", name, email, phone, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr };
+
+  /* Into 10ninety first. A report that lands there is where the office works
+     from, and 10ninety sends the alert Walid already knows ("Maintenance issue
+     reported via website"). Emailing management@ ourselves as well would put
+     every repair in that inbox twice. So the website's own email is the
+     fallback — sent only when 10ninety did not confirm it, so a repair is
+     never lost and never doubled. Who 10ninety's alert goes to is set in
+     10ninety, not here. */
+  const { sendMaintenance } = await import("./worker/studio/tenninety-lead.js");
+  const into = await sendMaintenance(env, {
+    name, email, phone, propertyAddress: address, problem: "Other", subOption: urgency,
+    message: issue + (access ? "\n\nAccess: " + access : ""),
+  });
+  if (into.ok) {
+    if (ctx) ctx.waitUntil(recordEnquiry(env, record));
+    return json({ ok: true });
+  }
+
+  if (!env.RESEND_API_KEY) {
+    return json({ error: "Email service not configured — set the RESEND_API_KEY secret." }, 500);
+  }
+  const subject = "Maintenance report — " + address + " · " + urgency.split(" ")[0];
+  const { html, text } = megacityMaintEmail({ name, contact, address, urgency, issue, access });
+  /* management@ and nowhere else: notifyTo("maintenance") is fixed. */
+  const payload = { from: megacityFrom(env), to: await notifyTo(env, "maintenance"), subject, html, text };
   if (isEmail) payload.reply_to = contact;
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -869,7 +897,7 @@ async function handleMegacityMaintenance(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "maintenance", name, email: isEmail ? contact : null, phone: isEmail ? null : contact, property: address, message: urgency + " — " + issue + (access ? "\nAccess: " + access : ""), attr: body.attr }));
+  if (ctx) ctx.waitUntil(recordEnquiry(env, record));
   return json({ ok: true });
 }
 
@@ -900,14 +928,18 @@ async function handleMegacityViewing(request, env, ctx) {
   const property = String(body.property || "").trim().slice(0, 200);
 
   if (!name || !property) return json({ error: "Please include your name." }, 400);
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return json({ error: "A valid email address is required." }, 400);
-  }
+  /* The form asks for a phone number and marks email "(optional)", so a
+     request with a phone and no email is a complete one. It used to be turned
+     away here with "A valid email address is required" — the tenant was told
+     off for leaving blank a box the form said they could leave blank. */
+  const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+  if (email && !emailOk) return json({ error: "Please check the email address." }, 400);
+  if (!emailOk && !phone) return json({ error: "Please include a phone number or an email address." }, 400);
 
   const subject = "Viewing request — " + property;
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const rows = [
-    ["Property", property], ["Name", name], ["Phone", phone || "—"], ["Email", email],
+    ["Property", property], ["Name", name], ["Phone", phone || "—"], ["Email", email || "—"],
     ["Preferred", (day || "any day") + " · " + (time || "any time")], ["Notes", message || "—"],
   ]
     .map(
@@ -920,21 +952,21 @@ async function handleMegacityViewing(request, env, ctx) {
     `<div style="max-width:600px;margin:0 auto;border:1px solid #E3E8F4;border-radius:12px;overflow:hidden;">` +
     `<div style="background:#2E3480;padding:18px 22px;font:700 16px/1.3 Arial,sans-serif;color:#fff;">Viewing request <span style="color:#4FA3DC;">· megacityproperties.co.uk</span></div>` +
     `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#fff;">${rows}</table>` +
-    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">Reply to confirm the viewing — reply-to is set to the applicant.</div></div>`;
-  const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + email, "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
+    `<div style="padding:12px 22px;background:#F1F5FC;font:400 12px/1.6 Arial,sans-serif;color:#5A617D;">${emailOk ? "Reply to confirm the viewing — reply-to is set to the applicant." : "No email given — ring them to confirm the viewing."}</div></div>`;
+  const text = ["Viewing request", "Property: " + property, "Name: " + name, "Phone: " + (phone || "—"), "Email: " + (email || "—"), "Preferred: " + (day || "any day") + " " + (time || "any time"), "Notes: " + (message || "—")].join("\n");
 
   const rl = await formAllowed(env, request);
   if (!rl.ok) return json({ error: "Too many requests from this connection. Please ring the office instead." }, 429);
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "viewing"), reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: megacityFrom(env), to: await notifyTo(env, "viewing"), ...(emailOk ? { reply_to: email } : {}), subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
+  if (ctx) ctx.waitUntil(recordEnquiry(env, { source: "viewing", name, email: emailOk ? email : null, phone, listingId: String(body.listingId || "").slice(0, 80) || null, property, message, preferredDay: [day, time].filter(Boolean).join(" "), attr: body.attr }));
   return json({ ok: true });
 }
 
@@ -986,7 +1018,7 @@ async function handleMegacityContact(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, kindFromTopic(topic)), reply_to: email, subject, html, text }),
+    body: JSON.stringify({ from: megacityFrom(env), to: await notifyTo(env, kindFromTopic(topic)), reply_to: email, subject, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
@@ -996,7 +1028,7 @@ async function handleMegacityContact(request, env, ctx) {
      the message, so the 10ninety lead carries the ones their record has a
      place for — the address and the areas — instead of only prose. */
   if (ctx) ctx.waitUntil(recordEnquiry(env, {
-    topic, name, email, phone, property: topic, message, attr: body.attr,
+    topic, leadKind: kindFromTopic(topic), name, email, phone, property: topic, message, attr: body.attr,
     firstName: body.firstName, surname: body.surname,
     address1: body.address1, address2: body.address2, town: body.town, postcode: body.postcode,
     areaNames: Array.isArray(body.areaNames) ? body.areaNames.slice(0, 10).map((a) => String(a).slice(0, 80)) : undefined,
@@ -1066,7 +1098,7 @@ async function handleMegacityLandlord(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "landlord"), reply_to: email, subject: "Landlord registration — " + (where || name) + " · " + name, html, text }),
+    body: JSON.stringify({ from: megacityFrom(env), to: await notifyTo(env, "landlord"), reply_to: email, subject: "Landlord registration — " + (where || name) + " · " + name, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();
@@ -1114,7 +1146,7 @@ async function handleMegacityApply(request, env, ctx) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ from: MEGACITY_FROM, to: await notifyTo(env, "application"), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
+    body: JSON.stringify({ from: megacityFrom(env), to: await notifyTo(env, "application"), reply_to: email, subject: "Tenancy application — " + property + " · " + name, html, text }),
   });
   if (!res.ok) {
     const detail = await res.text();

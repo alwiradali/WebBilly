@@ -115,6 +115,15 @@
   }
 
   /* ── shared dispatcher ───────────────────────────────────────────── */
+  /* The demo's copy of ROUTING_SUMMARY in worker/studio/enquiries.js — the
+     real Studio gets it from GET /settings. scripts/megacity-enquiry-routing-check.mjs
+     fails if the two disagree. */
+  var ROUTING = [
+    { who: "Tenants", what: "Viewing requests, registrations, applications, 360\u00b0 tour enquiries and questions about renting", to: "lettings@megacityproperties.co.uk" },
+    { who: "Landlords", what: "Landlord registrations, valuation requests and questions about letting or managing a property", to: "info@megacityproperties.co.uk" },
+    { who: "Repairs", what: "Maintenance reports \u2014 and only these", to: "management@megacityproperties.co.uk" },
+    { who: "Anything else", what: "A message that is not clearly from a tenant or a landlord", to: "info@megacityproperties.co.uk" }
+  ];
   var mock = null;
   function call(method, path, body) {
     var p = MOCK ? mock.call(method, path, body) : http(method, path, body);
@@ -275,7 +284,7 @@
       invites: [],
       settings: {
         brand: { name: "Megacity Properties", phone: "0161 220 1763", whatsapp: "", email: "info@megacityproperties.co.uk", address: "Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA" },
-        notifyEmails: ["info@megacityproperties.co.uk"],
+        notifyEmails: [],
         links10ninety: { maintenance: "", apply: "", registerTenant: "", registerLandlord: "" },
         tourGateScore: null, ga4Id: "", gtmId: "", metaPixelId: "", gscVerification: "", consentText: "", redirects: []
       },
@@ -573,7 +582,7 @@
       }
 
       /* settings */
-      if (p === "/settings" && method === "GET") return { settings: clone(DB.settings) };
+      if (p === "/settings" && method === "GET") return { settings: clone(DB.settings), routing: clone(ROUTING) };
       if (p.indexOf("/notfound") === 0 && method === "GET") return { days: 7, items: [
         { path: "/tenants/register/", kind: "page", count: 14, lastSeen: ago(2), referrer: "https://www.google.com/", bots: 1 },
         { path: "/property/225/", kind: "page", count: 6, lastSeen: ago(10), referrer: null, bots: 0 },

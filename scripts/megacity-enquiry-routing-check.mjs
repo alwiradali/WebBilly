@@ -16,7 +16,8 @@
 
    Exit code 1 on any disagreement. */
 
-import { ROUTE, kindFromTopic, OFFICE_TO, LETTINGS_TO, MANAGEMENT_TO } from "../worker/studio/enquiries.js";
+import { ROUTE, kindFromTopic, OFFICE_TO, LETTINGS_TO, MANAGEMENT_TO, ROUTING_SUMMARY } from "../worker/studio/enquiries.js";
+import { readFileSync } from "node:fs";
 
 const INBOX = { [OFFICE_TO]: "info@", [LETTINGS_TO]: "lettings@", [MANAGEMENT_TO]: "management@" };
 const show = (list) => list.map((a) => INBOX[a] || a).join(" + ");
@@ -70,6 +71,8 @@ for (const [topic, want] of [
   ["My current agent is letting me down", [OFFICE_TO]],
   ["Parental guarantor question", [OFFICE_TO]],
   ["Property management", [OFFICE_TO]],
+  ["Rent collection", [OFFICE_TO]],
+  ["Landlord registration", [OFFICE_TO]],
 ]) {
   check(`"${topic}"`, ROUTE[kindFromTopic(topic)] || [], want);
 }
@@ -78,7 +81,7 @@ for (const [topic, want] of [
 
 console.log("\nThe rule, both ways round:\n");
 const TENANT_FORMS = ["viewing", "register", "application", "tour", "contact-tenant"];
-const OFFICE_FORMS = ["landlord", "valuation", "contact"];
+const OFFICE_FORMS = ["landlord", "valuation", "contact", "contact-landlord"];
 
 for (const k of TENANT_FORMS) {
   const r = ROUTE[k] || [];
@@ -90,6 +93,28 @@ for (const k of OFFICE_FORMS) {
   if (r.includes(LETTINGS_TO)) { bad++; console.log(`FAIL ${k} reaches lettings@ — that is the tenant inbox`); }
   else console.log(`ok   ${k.padEnd(46)} never reaches lettings@`);
 }
+
+/* Repairs: management@ and nothing else, from every route that is a repair. */
+for (const [k, list] of Object.entries(ROUTE)) {
+  const hasMgmt = list.includes(MANAGEMENT_TO);
+  if (k === "maintenance" && (list.length !== 1 || !hasMgmt)) { bad++; console.log(`FAIL maintenance must go to management@ only, got ${show(list)}`); }
+  if (k !== "maintenance" && hasMgmt) { bad++; console.log(`FAIL ${k} reaches management@ — that inbox is for repairs`); }
+}
+console.log(`ok   ${"repairs".padEnd(46)} management@ only, and nothing else goes there`);
+
+/* What the Studio shows must be what the Worker does — and the demo Studio
+   carries its own copy of the same list. */
+const byWho = Object.fromEntries(ROUTING_SUMMARY.map((r) => [r.who, r.to]));
+check("Studio: Tenants", [byWho.Tenants], ROUTE.viewing);
+check("Studio: Landlords", [byWho.Landlords], ROUTE.landlord);
+check("Studio: Repairs", [byWho.Repairs], ROUTE.maintenance);
+check("Studio: Anything else", [byWho["Anything else"]], ROUTE.contact);
+const demo = readFileSync(new URL("../templates/megacity-studio-api.js", import.meta.url), "utf8");
+const demoList = demo.match(/var ROUTING = (\[[\s\S]*?\]);/);
+let demoRouting = null;
+try { demoRouting = demoList && Function("return " + demoList[1])(); } catch {}
+if (!demoRouting || JSON.stringify(demoRouting) !== JSON.stringify(ROUTING_SUMMARY)) { bad++; console.log("FAIL the demo Studio's ROUTING differs from ROUTING_SUMMARY"); }
+else console.log(`ok   ${"demo Studio routing".padEnd(46)} matches the Worker's`);
 
 /* Every route must actually go somewhere. An empty list sends the enquiry
    nowhere at all, and with no database bound nothing would record that it

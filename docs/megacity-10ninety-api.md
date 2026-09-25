@@ -270,12 +270,22 @@ back office: `megacityproperties.10ninety.co.uk` answers every path with a 302
 to `/Account/LogOn`, including `/register-lead`. So Megacity's own base URL has
 to come from 10ninety along with the key.
 
-**Report Maintenance Issue is the one nobody asked for and should be used.**
-The site already has a maintenance form, and it emails `management@` — which
-means a repair exists as an email until somebody enters it. Posting it to this
-endpoint puts it in the system where the certificates and the tenancies
-already are. Same argument as the tenant registration, for a form that already
-exists.
+**Report Maintenance Issue — how repairs actually travel (2026-09-25).**
+Tenants report repairs on 10ninety's own hosted page,
+`megacityproperties-maintenance.10ninety.co.uk`; every "Report a maintenance
+issue" button on the site links there. The report lands in 10ninety and
+10ninety emails its own alert ("Maintenance issue reported via website", from
+`support@10ninety.co.uk`). **Who that alert goes to is set in 10ninety, not in
+this code** — in September 2026 it went to "Megacity Properties; Management",
+and Walid wants repairs in the management inbox only, so the other recipient
+has to be removed on 10ninety's side (his settings there, or 10ninety support).
+
+The Worker's own `/api/megacity-maintenance` endpoint is served by no live
+page. It now posts to this Open API endpoint first and emails `management@`
+itself only when 10ninety did not confirm the report — so one repair produces
+one email, never two and never none. Everything the website itself emails
+about a repair goes to `management@` and nowhere else; `notifyTo` in
+`worker/studio/enquiries.js` is fixed and no Studio setting can change it.
 
 ## The Web API is a portal export, not a separate thing
 

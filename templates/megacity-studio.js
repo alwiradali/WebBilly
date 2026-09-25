@@ -1407,7 +1407,7 @@
     if (section === "redirects") { redirectsScreen(body); return; }
     API.settings.get().then(function (res) {
       var s = res.settings || {};
-      body.innerHTML = section === "branding" ? brandingHtml(s) : section === "notifications" ? notifyHtml(s) : linksHtml(s);
+      body.innerHTML = section === "branding" ? brandingHtml(s) : section === "notifications" ? notifyHtml(s, res.routing) : linksHtml(s);
       var form = $("form", body); if (form) bindSettingsForm(form, section);
     }).catch(function (err) { body.innerHTML = errorHtml(err); });
   };
@@ -1420,11 +1420,17 @@
       '<div class="st-field"><label class="st-label" for="f_brand_address">Office address</label><textarea class="st-ta" id="f_brand_address" name="brand.address" rows="2">' + esc(b.address || "") + "</textarea></div>" +
       '<div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Save changes</button></div></form></section>';
   }
-  function notifyHtml(s) {
-    var owner = state.user && state.user.role === "owner", list = s.notifyEmails || [];
-    return '<section class="st-card"><div class="st-card-head"><div><h2>Notifications</h2><p>Who gets an email when an enquiry, viewing request or maintenance report comes in.</p></div></div>' +
-      (owner ? '<form novalidate class="st-stack"><div class="st-field"><label class="st-label" for="f_notify">Email addresses <span class="st-opt">one per line</span></label><textarea class="st-ta" id="f_notify" name="notifyEmails" rows="4" placeholder="info@megacityproperties.co.uk">' + esc(list.join("\n")) + '</textarea></div><div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Save changes</button></div></form>' :
-        '<ul class="st-check">' + (list.length ? list.map(function (e) { return '<li class="is-ok"><i aria-hidden="true">' + I.check + "</i>" + esc(e) + "</li>"; }).join("") : "<li>No addresses set yet.</li>") + '</ul><p class="st-note">Only the owner can change who is notified.</p>') + "</section>";
+  /* Read-only on purpose: the routing is the agency's own rule (tenants to
+     lettings, landlords to info, repairs to management and nowhere else), and
+     it is fixed in worker/studio/enquiries.js. This used to be a free-text list
+     that silently replaced it for every form at once. */
+  function notifyHtml(s, routing) {
+    var rows = (routing || []).map(function (r) {
+      return '<li class="st-route"><div class="st-route-who"><b>' + esc(r.who) + "</b><span>" + esc(r.what) + '</span></div><a class="st-route-to" href="mailto:' + esc(r.to) + '">' + esc(r.to).replace("@", "<wbr>@") + "</a></li>";
+    }).join("");
+    return '<section class="st-card"><div class="st-card-head"><div><h2>Notifications</h2><p>Where each website form is emailed. Tenant and landlord enquiries also go into 10ninety as leads.</p></div></div>' +
+      (rows ? '<ul class="st-routes">' + rows + "</ul>" : '<p class="st-note">The routing could not be loaded.</p>') +
+      '<p class="st-note">Repairs reported on 10ninety\u2019s own maintenance page are emailed by 10ninety itself. Who receives those is set in 10ninety, not here.</p></section>';
   }
   function linksHtml(s) {
     var l = s.links10ninety || {};
@@ -1501,15 +1507,8 @@
   function bindSettingsForm(form, section) {
     bindForm(form, function (d) {
       var partial = {};
-      if (section === "notifications") {
-        var emails = String(d.notifyEmails || "").split(/[\n,;]+/).map(function (s) { return s.trim(); }).filter(Boolean);
-        var bad = emails.filter(function (e) { return !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e); });
-        if (bad.length) throw new Error("This does not look like an email address: " + bad[0]);
-        partial.notifyEmails = emails;
-      } else {
-        Object.keys(d).forEach(function (k) { setPath(partial, k, String(d[k]).trim()); });
-        if (section === "links") Object.keys(partial.links10ninety || {}).forEach(function (k) { var v = partial.links10ninety[k]; if (v && !/^https?:\/\//i.test(v)) throw new Error("Web addresses need to start with https://"); });
-      }
+      Object.keys(d).forEach(function (k) { setPath(partial, k, String(d[k]).trim()); });
+      if (section === "links") Object.keys(partial.links10ninety || {}).forEach(function (k) { var v = partial.links10ninety[k]; if (v && !/^https?:\/\//i.test(v)) throw new Error("Web addresses need to start with https://"); });
       return API.settings.put(partial).then(function () { toast("Saved", { kind: "good" }); });
     });
   }

@@ -1,6 +1,7 @@
 /* Megacity Studio — settings (JSON blobs in the settings table). */
 
 import { json, readJsonBody, HttpError, setSetting, clampStr, toInt, isEmail, audit } from "./db.js";
+import { ROUTING_SUMMARY } from "./enquiries.js";
 
 export const DEFAULTS = {
   brand: {
@@ -45,7 +46,7 @@ export async function readAll(db) {
 }
 
 export async function get(c) {
-  return json({ settings: await readAll(c.db) });
+  return json({ settings: await readAll(c.db), routing: ROUTING_SUMMARY });
 }
 
 /* Redirects: a lowercase root path -> a root path (optionally #section) or a

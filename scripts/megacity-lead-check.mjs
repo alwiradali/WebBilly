@@ -41,6 +41,12 @@ ok(v.PropertyReference === "RL0142", "a viewing carries the property reference, 
 ok(/Saturday morning/.test(v.AdditionalInfo), "what the visitor actually wrote is carried, not summarised away");
 ok(/megacityproperties\.co\.uk/.test(v.AdditionalInfo), "and where it came from, so the office is not guessing");
 
+const vn = leadBody({ kind: "viewing", name: "Sam Patel", phone: "07000 000000", property: "2 bed apartment, Ladywell Point" });
+ok(/^Property: 2 bed apartment, Ladywell Point/.test(vn.AdditionalInfo), "a viewing names the home in words too — a reference only helps if it matches his");
+const cn = leadBody({ kind: "contact-tenant", name: "Sam Patel", phone: "07000 000000", property: "Renting a home" });
+ok(!/Property:/.test(cn.AdditionalInfo), "the contact form's topic is not mistaken for a home");
+ok(ROLE_FOR["contact-landlord"] === "Landlord" && ROLE_FOR["contact-tenant"] === "Tenant", "the contact form's landlord and tenant topics have roles");
+
 const l = leadBody({ kind: "landlord", name: "Ann Owner", email: "a@o.uk",
   address1: "12 Example Street", town: "Salford", postcode: "M6 7EW" });
 ok(l.ContactRoleType === "Landlord" && l.Address.Postcode === "M6 7EW", "a landlord's property address goes in the Address object");
@@ -72,6 +78,13 @@ ok((await sendLead(exploding, base, { fetch: rejects })).ok === false, "a 200 ca
 const accepts = async () => new Response(JSON.stringify({ IsSuccessful: true, ErrorMessage: null, Name: "Jane Smith", Id: 56 }), { status: 200 });
 const good = await sendLead(exploding, base, { fetch: accepts });
 ok(good.ok === true && good.id === "56", "a real success returns their record id, so it can be written on the enquiry");
+
+/* When their host fails it answers a 302 to an HTML error page that says 200.
+   Followed, that looked like a delivered lead; it must read as a failure. */
+const redirects = async (u, init) => { ok(init.redirect === "manual", "redirects are not followed"); return new Response("", { status: 302, headers: { location: "/Error" } }); };
+ok((await sendLead(exploding, base, { fetch: redirects })).ok === false, "a 302 to their error page is a failure, not a success");
+const htmlPage = async () => new Response("<html>Log on</html>", { status: 200, headers: { "content-type": "text/html" } });
+ok((await sendLead(exploding, base, { fetch: htmlPage })).ok === false, "a 200 that is a web page rather than their JSON is not a success either");
 
 console.log();
 console.log(bad ? `10NINETY LEADS: ${bad} FAILED` : "10NINETY LEADS: ALL PASS — and a visitor never sees 10ninety fail.");
