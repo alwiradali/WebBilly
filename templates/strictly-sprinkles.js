@@ -105,9 +105,11 @@
         : c.items.length;
       var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""), href: "#order",
                         "data-cat": c.id, "data-rv": "", "data-rv-d": String((i % 3) + 1) });
-      a.appendChild(el("img", { src: A + c.img, alt: "", loading: "lazy" }));
+      var art = el("span", { class: "tile-art" });
+      art.appendChild(el("img", { src: A + c.img, alt: "", loading: "lazy" }));
+      a.appendChild(art);
       a.appendChild(el("span", { class: "tile-count" }, count + (count === 1 ? " option" : " options")));
-      var body = el("div", { class: "tile-body" });
+      var body = el("span", { class: "tile-body" });
       body.appendChild(el("h3", null, c.label));
       body.appendChild(el("p", null, c.note));
       body.appendChild(el("span", { class: "tile-from" }, priceFrom(c)));
@@ -181,7 +183,7 @@
         inn.appendChild(ul);
         var pr = el("div", { class: "price" });
         pr.appendChild(el("b", null, money(p.price)));
-        pr.appendChild(el("span", { class: "cnt" }, "Serves " + p.count));
+        pr.appendChild(el("span", { class: "cnt" }, "per platter"));
         inn.appendChild(pr);
         c.appendChild(inn);
         g.appendChild(c);
@@ -222,19 +224,27 @@
   /* -- gallery -- */
   (function gallery() {
     var host = $("#gallery"); if (!host) return;
+    /* All hers. Order is deliberate: the two showpieces open, then a rhythm
+       of box / cake / box so the masonry never stacks two cakes together. */
     var shots = [
-      ["work/baby-girl-box.jpg", "Baby shower treatbox"],
-      ["photos/hero-cake.webp", "Floral celebration cake"],
-      ["work/nikkah-cookies.jpg", "Nikkah cookies"],
-      ["photos/cakesicles.webp", "Cakesicles"],
-      ["work/lamborghini-cake.jpg", "Sculpted birthday cake"],
-      ["photos/platter.webp", "Party platter"],
-      ["work/anniversary-cake.jpg", "Anniversary cake"],
-      ["photos/cookies-stack.webp", "Cookies"],
-      ["work/baby-boy-box.jpg", "Baby box"],
-      ["photos/piping.webp", "Hand-piped finish"],
-      ["photos/gift-box.webp", "Dessert cups"],
-      ["photos/tiered.webp", "Tiered cake"]
+      ["work/nikkah-cake.webp",        "Nikkah cake — pearls and gold monogram"],
+      ["work/nikkah-box.webp",         "Nikkah treatbox"],
+      ["work/tiered-blue-gold.webp",   "Three-tier birthday cake"],
+      ["work/macaron-boxes.webp",      "Macarons, boxed"],
+      ["work/vintage-heart-cake.webp", "Vintage heart cake"],
+      ["work/baby-girl-box.webp",      "Baby announcement boxes"],
+      ["work/umrah-cupcakes.webp",     "Umrah Mubarak cupcakes"],
+      ["work/nikkah-cookies.webp",     "Personalised nikkah cookies"],
+      ["work/vintage-pink-cake.webp",  "Bridal shower cake"],
+      ["work/date-boxes.webp",         "Ramadan date boxes"],
+      ["work/duck-cake.webp",          "First birthday cake"],
+      ["work/mehndi-box.webp",         "Mehndi treatbox"],
+      ["work/dessert-table.webp",      "Mehndi dessert table"],
+      ["work/grad-cupcakes.webp",      "Black Forest graduation cupcakes"],
+      ["work/pawpatrol-cake.webp",     "Character birthday cake"],
+      ["work/baby-boy-box.webp",       "Baby announcement boxes"],
+      ["work/lamborghini-cake.webp",   "Sculpted birthday cake"],
+      ["work/chaat-table.webp",        "Chaat table"]
     ];
     shots.forEach(function (s, i) {
       var fig = el("figure", { "data-rv": "", "data-rv-d": String((i % 4) + 1) });
@@ -296,7 +306,7 @@
     sc.appendChild(stars(5));
     head.appendChild(sc);
     if (D.reviewsAreExamples) {
-      head.appendChild(el("span", { class: "rv-note" }, "Example layout — her real reviews replace these"));
+      head.appendChild(el("span", { class: "rv-note" }, "Examples only — her real reviews go here"));
     }
     var host = $("#rvs");
     D.reviews.forEach(function (r, i) {

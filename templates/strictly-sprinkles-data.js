@@ -40,44 +40,44 @@ window.SS = (function () {
      builder option groups apply, so a cake asks for sponge, filling
      and frosting while a pretzel box does not. */
   var cakes = [
-    { id: "bento",        name: "4\" bento cake",              price: 30,  img: "photos/bento.webp",
+    { id: "bento",        name: "4″ bento cake",              price: 30,  img: "work/vintage-pink-cake.webp",
       blurb: "The little one. Two people, one message piped on top." },
-    { id: "bento2",       name: "4\" bento cake + 2 cupcakes", price: 35,  img: "photos/cupcakes.webp",
+    { id: "bento2",       name: "4″ bento cake + 2 cupcakes", price: 35,  img: "work/umrah-cupcakes.webp",
       blurb: "The bento, with a pair of cupcakes alongside." },
-    { id: "bento8",       name: "4\" bento cake + 8 cupcakes", price: 50,  img: "photos/cupcakes.webp",
+    { id: "bento8",       name: "4″ bento cake + 8 cupcakes", price: 50,  img: "work/grad-cupcakes.webp",
       blurb: "Enough to go round a small table." },
-    { id: "tall4",        name: "4\" tall cake",               price: 45,  img: "photos/drip-white.webp",
+    { id: "tall4",        name: "4″ tall cake",               price: 45,  img: "work/duck-cake.webp",
       blurb: "Same footprint as the bento, twice the height." },
-    { id: "round6",       name: "6\" round cake",              price: 65,  img: "photos/turntable.webp",
-      blurb: "The usual birthday size — around 12 slices." },
-    { id: "round6tall",   name: "6\" round cake, tall",        price: 80,  img: "photos/piping.webp",
-      blurb: "Extra tiers of sponge, the same width." },
-    { id: "heart6",       name: "6\" heart cake",              price: 70,  img: "photos/bento.webp",
+    { id: "round6",       name: "6″ round cake",              price: 65,  img: "work/lamborghini-cake.webp",
+      blurb: "The usual birthday size." },
+    { id: "round6tall",   name: "6″ round cake, tall",        price: 80,  img: "work/pawpatrol-cake.webp",
+      blurb: "More layers of sponge, the same width." },
+    { id: "heart6",       name: "6″ heart cake",              price: 70,  img: "work/vintage-heart-cake.webp",
       blurb: "Heart tin. Engagements, anniversaries, Valentine's." },
-    { id: "round8",       name: "8\" round cake",              price: 85,  img: "photos/tiered.webp",
-      blurb: "Around 20 slices. The safe choice for a party." },
-    { id: "round8tall",   name: "8\" round cake, tall",        price: 100, img: "photos/hero-drip.webp",
+    { id: "round8",       name: "8″ round cake",              price: 85,  img: "work/nikkah-cake.webp",
+      blurb: "The bigger round, for a proper party." },
+    { id: "round8tall",   name: "8″ round cake, tall",        price: 100, img: "work/tiered-blue-gold.webp",
       blurb: "The showpiece. Tall, sharp edges, plenty to cut." },
-    { id: "heart8",       name: "8\" heart cake",              price: 95,  img: "photos/berries.webp",
+    { id: "heart8",       name: "8″ heart cake",              price: 95,  img: "work/vintage-heart-cake.webp",
       blurb: "The heart, scaled up for a proper crowd." }
   ];
 
   /* ---------- cookies ---------- */
   var cookies = [
-    { id: "ck-royal",   name: "Royal icing cookies", price: 36, unit: "per dozen", img: "work/nikkah-cookies.jpg",
+    { id: "ck-royal",   name: "Royal icing cookies", price: 36, unit: "per dozen", img: "work/nikkah-cookies.webp",
       blurb: "Flooded, hand-piped and personalised. Names, dates, florals." },
-    { id: "ck-fondant", name: "Fondant cookies",     price: 30, unit: "per dozen", img: "photos/cookies-tray.webp",
+    { id: "ck-fondant", name: "Fondant cookies",     price: 30, unit: "per dozen", img: "work/baby-girl-box.webp",
       blurb: "Smooth fondant tops, embossed detail, edible images." }
   ];
 
   /* ---------- party platters ----------
      Named and priced from her own Party Platters artwork. */
   var platters = [
-    { id: "pp-basic", name: "Basic Party Platter", count: 30, price: 70, img: "photos/cupcakes.webp",
+    { id: "pp-basic", name: "Basic Party Platter", count: 30, price: 70, img: "work/macaron-boxes.webp",
       includes: ["6 cakesicles", "6 small cheesecakes", "6 macarons", "6 pretzels", "6 Rice Krispies"] },
-    { id: "pp-regular", name: "Regular Party Platter", count: 60, price: 130, img: "photos/cakesicles.webp",
+    { id: "pp-regular", name: "Regular Party Platter", count: 60, price: 130, img: "work/chaat-table.webp",
       includes: ["12 cakesicles", "12 small cheesecakes", "12 macarons", "12 pretzels", "12 Rice Krispies"] },
-    { id: "pp-ultimate", name: "Ultimate Party Platter", count: 108, price: 225, img: "photos/platter.webp",
+    { id: "pp-ultimate", name: "Ultimate Party Platter", count: 108, price: 225, img: "work/dessert-table.webp",
       includes: ["12 cakesicles", "24 dessert cups", "12 macarons", "12 pretzels", "12 Rice Krispies",
                  "12 cookies", "12 chocolate strawberries, or a filled number or letter", "12 cupcakes"] }
   ];
@@ -85,24 +85,24 @@ window.SS = (function () {
   /* ---------- individual treats — per dozen only ---------- */
   var individual = [
     { group: "Sweets", items: [
-      { id: "iv-cakesicles", name: "Cakesicles",           price: 24, img: "photos/cakesicles.webp" },
-      { id: "iv-krispies",   name: "Rice Krispies",        price: 18, img: "photos/wrapped.webp" },
-      { id: "iv-pretzels",   name: "Pretzels",             price: 18, img: "photos/wrapped.webp" },
-      { id: "iv-strawb",     name: "Chocolate strawberries", price: 18, img: "photos/berries.webp" },
-      { id: "iv-brownies",   name: "Brownies",             price: 24, img: "photos/brownies.webp" }
+      { id: "iv-cakesicles", name: "Cakesicles",           price: 24, img: "work/date-boxes.webp" },
+      { id: "iv-krispies",   name: "Rice Krispies",        price: 18, img: "work/date-boxes.webp" },
+      { id: "iv-pretzels",   name: "Pretzels",             price: 18, img: "work/date-boxes.webp" },
+      { id: "iv-strawb",     name: "Chocolate strawberries", price: 18, img: "work/dessert-table.webp" },
+      { id: "iv-brownies",   name: "Brownies",             price: 24, img: "work/grad-cupcakes.webp" }
     ]},
     { group: "Dessert cups", items: [
-      { id: "iv-chs-sm",  name: "Small cheesecakes",   price: 12, img: "photos/gift-box.webp" },
-      { id: "iv-chs-rg",  name: "Regular cheesecakes", price: 24, img: "photos/gift-box.webp" },
-      { id: "iv-trifle",  name: "Trifles",             price: 24, img: "photos/gift-box.webp" },
-      { id: "iv-tira",    name: "Tiramisu",            price: 36, img: "photos/gift-box.webp" },
-      { id: "iv-milk",    name: "Milk cake",           price: 36, img: "photos/gift-box.webp" },
-      { id: "iv-pots",    name: "Cake pots",           price: 30, img: "photos/gift-box.webp" }
+      { id: "iv-chs-sm",  name: "Small cheesecakes",   price: 12, img: "work/dessert-table.webp" },
+      { id: "iv-chs-rg",  name: "Regular cheesecakes", price: 24, img: "work/dessert-table.webp" },
+      { id: "iv-trifle",  name: "Trifles",             price: 24, img: "work/dessert-table.webp" },
+      { id: "iv-tira",    name: "Tiramisu",            price: 36, img: "work/chaat-table.webp" },
+      { id: "iv-milk",    name: "Milk cake",           price: 36, img: "work/dessert-table.webp" },
+      { id: "iv-pots",    name: "Cake pots",           price: 30, img: "work/chaat-table.webp" }
     ]},
     { group: "Baked", items: [
-      { id: "iv-cupcakes", name: "Cupcakes",  price: 36, img: "photos/cupcakes.webp" },
-      { id: "iv-mini",     name: "Mini cakes", price: 36, img: "photos/bento.webp" },
-      { id: "iv-macarons", name: "Macarons",   price: 24, img: "photos/cakesicles.webp" }
+      { id: "iv-cupcakes", name: "Cupcakes",  price: 36, img: "work/umrah-cupcakes.webp" },
+      { id: "iv-mini",     name: "Mini cakes", price: 36, img: "work/vintage-pink-cake.webp" },
+      { id: "iv-macarons", name: "Macarons",   price: 24, img: "work/macaron-boxes.webp" }
     ]}
   ];
 
@@ -111,20 +111,20 @@ window.SS = (function () {
      rather than inventing a figure. Add `price: 45` to any of them and the
      figure appears and starts counting in the builder automatically. */
   var treatboxes = [
-    { id: "tb-small",   name: "Small treatbox",   price: null, img: "photos/box-hands.webp" },
-    { id: "tb-regular", name: "Regular treatbox", price: null, img: "photos/gift-box.webp" },
-    { id: "tb-large",   name: "Large treatbox",   price: null, img: "photos/boxes.webp" },
-    { id: "tb-xl",      name: "Extra large treatbox", price: null, img: "photos/wrapped.webp" },
-    { id: "tb-ult",     name: "Ultimate treatbox", price: null, img: "photos/platter.webp" }
+    { id: "tb-small",   name: "Small treatbox",   price: null, img: "work/macaron-boxes.webp" },
+    { id: "tb-regular", name: "Regular treatbox", price: null, img: "work/mehndi-box.webp" },
+    { id: "tb-large",   name: "Large treatbox",   price: null, img: "work/nikkah-box.webp" },
+    { id: "tb-xl",      name: "Extra large treatbox", price: null, img: "work/date-boxes.webp" },
+    { id: "tb-ult",     name: "Ultimate treatbox", price: null, img: "work/chaat-table.webp" }
   ];
 
   var babyboxes = [
-    { id: "bb-1",     name: "Baby box — option one", price: null, img: "work/baby-girl-box.jpg",
+    { id: "bb-1",     name: "Baby box — option one", price: null, img: "work/baby-girl-box.webp",
       blurb: "Iced cookies, macarons and cakesicles, boxed in your colours." },
-    { id: "bb-2",     name: "Baby box — option two", price: null, img: "work/baby-boy-box.jpg",
+    { id: "bb-2",     name: "Baby box — option two", price: null, img: "work/baby-boy-box.webp",
       blurb: "The larger arrangement, sectioned and ribboned." },
-    { id: "bb-bento", name: "Baby bento cakes",      price: null, img: "photos/bento.webp",
-      blurb: "A 4\" bento to match the box." }
+    { id: "bb-bento", name: "Baby bento cakes",      price: null, img: "work/vintage-pink-cake.webp",
+      blurb: "A 4″ bento to match the box." }
   ];
 
   /* ---------- flavours ----------
@@ -153,23 +153,23 @@ window.SS = (function () {
      Drop "filling" from a category and that step stops being asked. */
   var categories = [
     { id: "cakes",      label: "Cakes",            items: cakes,      unit: "cake",
-      opts: ["sponge", "filling", "frosting"], img: "work/lamborghini-cake.jpg",
+      opts: ["sponge", "filling", "frosting"], img: "work/tiered-blue-gold.webp",
       note: "Every cake is made to your design — send a picture and I'll price it." },
     { id: "cookies",    label: "Cookies",          items: cookies,    unit: "dozen",
-      opts: [], img: "work/nikkah-cookies.jpg",
+      opts: [], img: "work/nikkah-cookies.webp",
       note: "Personalised with names, dates and your colours." },
     { id: "platters",   label: "Party platters",   items: platters,   unit: "platter",
-      opts: ["platterFlavours"], img: "photos/platter.webp",
+      opts: ["platterFlavours"], img: "work/dessert-table.webp",
       note: "A little of everything, packed to match your theme." },
     { id: "individual", name: "Individual treats", label: "Individual treats",
       items: null, groups: individual, unit: "dozen",
-      opts: ["treatFlavour"], img: "photos/cakesicles.webp",
+      opts: ["treatFlavour"], img: "work/macaron-boxes.webp",
       note: "Per dozen only. Perfect for party extras and gift boxes." },
     { id: "treatboxes", label: "Treatboxes",       items: treatboxes, unit: "box",
-      opts: ["treatFlavour"], img: "work/baby-girl-box.jpg",
+      opts: ["treatFlavour"], img: "work/nikkah-box.webp",
       note: "Five sizes, filled with whichever treats you like." },
     { id: "babyboxes",  label: "Baby boxes",       items: babyboxes,  unit: "box",
-      opts: ["treatFlavour"], img: "work/baby-boy-box.jpg",
+      opts: ["treatFlavour"], img: "work/baby-girl-box.webp",
       note: "For showers, gender reveals and new arrivals." }
   ];
 
