@@ -1465,3 +1465,34 @@ body.is-embed #btnHome { display: none !important; }
   body.is-embed .side, body.is-embed .sheet { max-height: 86vh; }
   body.is-embed .palette { top: 4vh; max-height: 88vh; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE GRAPHICS CHIP — a ThinkPad froze solid opening a tour (2026-09-25)
+
+   Everything drawn OVER the live 3D view is composited again every frame the
+   view moves, and backdrop-filter re-blurs whatever is behind it each time.
+   So two full-height side panels at blur(28px) saturate(180%), a blurred ring
+   on every hotspot and a blurred label on each, meant a laptop's built-in
+   graphics re-blurring most of the screen sixty times a second while it was
+   also drawing the panorama — on the same chip that draws the rest of
+   Windows, which is why the whole machine stopped rather than one tab.
+
+   Over the tour there is no frosted glass: the same colours, solid enough to
+   read on any panorama. The phone rule above already did this for .icon-btn
+   and the dock; this does it everywhere the view is live.
+   ═══════════════════════════════════════════════════════════════════════════ */
+#viewTour .panel, #viewTour .hs-mark, #viewTour .hs-tag, #viewTour .icon-btn,
+#viewTour .mobile-dock .btn, #viewTour .scrim, .scrim, .ask-room {
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+#viewTour .panel { background: rgba(12,13,17,.92); }
+#viewTour .hs--nav .hs-mark { background: rgba(14,15,20,.42); }
+#viewTour .hs-tag { background: rgba(10,11,15,.94); }
+.scrim { background: rgba(4,4,6,.78); }
+.ask-room { background: rgba(6,8,16,.86); }
+
+/* The film grain was a full-screen layer with mix-blend-mode: overlay, which
+   makes the compositor blend the entire window rather than simply stack it —
+   and the portfolio's live preview sits underneath it. The phone rule already
+   switched it off for the same reason; it is off everywhere now. */
+.grain::after { display: none; }

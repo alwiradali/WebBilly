@@ -78,14 +78,19 @@
     var coarse = matchMedia("(pointer: coarse)").matches;
 
     /* ─────────────────────────────────────────────────────────────────────
-       GL CONTEXT — three attempts, then a real error rather than a hang
+       GL CONTEXT — two attempts, then a real error rather than a hang
        ───────────────────────────────────────────────────────────────────── */
     var diag = [], gl = null;
     /* no preserveDrawingBuffer: capture() renders synchronously before it
        reads the canvas, and keeping the back buffer costs tile GPUs a
        full-canvas copy every frame */
+    /* No powerPreference. This asked for "high-performance", which on a laptop
+       with two graphics chips (a ThinkPad with Intel and NVIDIA, most business
+       laptops) tells the browser to wake the second one and move to it — and
+       on 25 September a ThinkPad froze solid on opening a tour. A panorama is
+       one textured sphere; the built-in chip draws it without noticing, and
+       the browser's own choice is the safe one. */
     var tries = [
-      { antialias: false, alpha: false, powerPreference: "high-performance" },
       { antialias: false, alpha: false },
       {}
     ];
@@ -99,7 +104,7 @@
         message: "The tour renders in 3D, so it needs hardware acceleration switched on. In Edge or Chrome open " +
           "<b>Settings → System → Use graphics acceleration when available</b>, turn it on and restart the browser. " +
           "If it is already on, the graphics driver may need updating.",
-        detail: "canvas.getContext('webgl') returned null on all three attempts.",
+        detail: "canvas.getContext('webgl') returned null on every attempt.",
         diag: diag.join("\n")
       });
       return null;
