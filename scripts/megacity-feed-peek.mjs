@@ -13,16 +13,50 @@
  * It only READS. It touches no database, writes nothing, and never prints the
  * key. Run it on your own machine, where the key already is:
  *
- *   PowerShell:  $env:TENNINETY_KEY = "the key"
- *                node scripts/megacity-feed-peek.mjs
+ *   node scripts/megacity-feed-peek.mjs
  *
- *   bash:        TENNINETY_KEY="the key" node scripts/megacity-feed-peek.mjs
+ * and paste the key at the prompt. It is masked as you type, and because it
+ * never goes on the command line it cannot end up in the shell's history or
+ * be echoed back inside an error message.
+ *
+ * TENNINETY_KEY in the environment still works, for a script or a cron.
  */
 import { toListings, fetchProperties, fetchPropertyTypes } from "../worker/studio/tenninety.js";
 
-const KEY = (process.env.TENNINETY_KEY || process.env.TENNINETY_API_KEY || "").replace(/\s/g, "");
+/* Typed in, not passed in. A key on the command line is echoed back by the
+   shell's own parser error when the line is malformed, which is exactly how
+   this one has been exposed twice — so the safest place for it is a prompt
+   the shell never sees. Pasting works: input arrives as a chunk and every
+   character of it is masked. */
+function askHidden(question) {
+  return new Promise((resolve) => {
+    const stdin = process.stdin;
+    if (!stdin.isTTY) return resolve("");
+    process.stdout.write(question);
+    const wasRaw = stdin.isRaw;
+    stdin.setRawMode(true); stdin.resume(); stdin.setEncoding("utf8");
+    let buf = "";
+    const done = (val) => {
+      stdin.setRawMode(wasRaw); stdin.pause(); stdin.removeListener("data", onData);
+      process.stdout.write("\n"); resolve(val);
+    };
+    const onData = (chunk) => {
+      for (const ch of chunk) {
+        if (ch === "\r" || ch === "\n" || ch === "\u0004") return done(buf);
+        if (ch === "\u0003") { process.stdout.write("\n"); process.exit(130); }        /* ctrl-C */
+        if (ch === "\u007f" || ch === "\b") { if (buf) { buf = buf.slice(0, -1); process.stdout.write("\b \b"); } continue; }
+        if (ch < " ") continue;                                          /* other control keys */
+        buf += ch; process.stdout.write("*");
+      }
+    };
+    stdin.on("data", onData);
+  });
+}
+
+const fromEnv = (process.env.TENNINETY_KEY || process.env.TENNINETY_API_KEY || "").replace(/\s/g, "");
+const KEY = (fromEnv || await askHidden("Paste the 10ninety WEB API key (it will not be shown): ")).replace(/\s/g, "");
 if (!KEY) {
-  console.error("Set the key first. In PowerShell:\n  $env:TENNINETY_KEY = \"...\"\n  node scripts/megacity-feed-peek.mjs");
+  console.error("\nNo key given, so there is nothing to read. Run it again and paste the key\nfrom the 10ninety email at the prompt \u2014 the Web API one, the key that reads\nproperties, not the Open API key that writes enquiries.");
   process.exit(2);
 }
 /* The key arrives by email and email wraps long lines. A line break inside it
