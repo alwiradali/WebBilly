@@ -959,45 +959,112 @@ already on the outstanding list.
 @hennaabyzainab_ on Instagram (876 followers) and TikTok (33.8K, 1.6M likes).
 Unlisted and noindex until she has seen it.
 
-**This page was built twice.** The first version was correct and it was
-rejected, in these words: "it's like the same template on all the websites."
-It was — a split hero, a marquee, a card grid, a review carousel, an accordion,
-a top nav. Every page in this repository was reaching for the same shelf. The
-rebuild deliberately uses none of it, and the constraint is worth keeping: a
-page that is *assembled* from the house components will look assembled however
-good each component is.
+**This page has been built twice and the first one won.** A second version was
+made after "it's like the same template on all the websites" — dark plum,
+stations hung off a scroll-drawn vine, no nav bar. It was genuinely distinct
+and it was rejected outright: *"make actually the previous one, the first one…
+this one current is horrible."* The cream build is what ships. The lesson
+worth keeping is that "make it different" and "make it better" are not the
+same instruction, and the first was answered when the second was wanted.
 
-What it is instead: henna is a drawn line and a stain that changes over three
-days, so the page is built as that. One gold vine is drawn down the whole
-document by scroll (`stroke-dashoffset` against `getTotalLength()`, measured
-after layout because `preserveAspectRatio="none"` stretches the path). The
-content hangs off it as numbered stations alternating left and right. There is
-no top navigation bar — a fixed index rail down the right edge, a `Menu` word,
-and a `Book` pill. The stain is two full-bleed colour moments. The work is a
-pinned horizontal filmstrip. Terms are one editorial column, questions are
-running text. Type is Italiana + Spectral + Parisienne, none of them used
-anywhere else here. Ground is `#1a0f12`, so her cream disc reads as a lamp.
+What was asked for instead: richer, more expensive, more detailed, things
+floating in the background, a cuter font, a bigger logo, and the logo matching
+the background. All of that is in the cream build now.
 
-**Everything on the page is still hers.** The aftercare, the three policy
-groups and the five-item booking list are transcribed word for word from her
-Instagram highlights, not paraphrased — they are the terms a client agrees to,
-and rewording them changes what was agreed.
+**Everything on the page is hers.** The aftercare, the three policy groups and
+the five-item booking list are transcribed word for word from her Instagram
+highlights, not paraphrased — they are the terms a client agrees to, and
+rewording them changes what was agreed.
 
-**Assets.** Her logo came out of a full-screen screenshot: the disc is a bright
-field on a blurred backdrop, so the horizontal extent comes from the widest
-bright row, and the vertical extent from the rows whose bright count inside
-that x-range exceeds 55% of the diameter — the naive "tallest bright column"
-caught the background and put the centre 500px out. Circular alpha mask drawn
-at 4x and downsampled. Thirteen photographs were cut from her story
-screenshots; stacked pairs are separated at the row of largest inter-row
-difference within the middle third, not at a flat letterbox row.
+### Her mark
 
-**The stain section.** Her "fresh stain / fully developed stain" pair was first
-built as a drag-to-compare wipe. It was wrong: the two frames are the same hand
-two days apart but shot at different distances, so nothing lines up, and
-`object-fit:cover` on two different aspect ratios crops them differently on top
-of that. A wipe or a dissolve would have been pretending they register. It is a
-labelled pair now — which is how her own story shows it.
+Three things had to happen together or the disc still reads as a sticker
+pasted onto the page:
+
+1. **The ground is measured, not matched by eye.** Her plate reads
+   `rgb(253,242,235)` sampled in a ring between 0.55r and 0.80r — clear of the
+   script in the middle and of the antialiased rim. That is `--disc`, and the
+   halo behind the mark is painted in exactly it.
+2. **The halo bleeds outwards** so there is no step where the disc ends.
+3. **The shadow is a `drop-shadow`, never a `box-shadow`.** A box-shadow paints
+   the element BOX, which on a cut-out circle leaves a visible rectangle of
+   glow around it. A filter follows the alpha channel.
+
+It is also about 60% bigger than it was (236px at full size), with a hairline
+gold ring set off it so the mark has a setting rather than floating loose.
+
+### Type
+
+Marcellus out, **Gilda Display** in for headings — spaced Roman caps are
+handsome but austere, and "cute" was the ask. EB Garamond stays for the body
+(it is the voice her own cards are set in) and Parisienne stays for script
+accents (it is her brand). None of the three is used on another page here:
+Playfair, Cormorant Garamond, Fraunces, Prata and Bodoni Moda already are.
+
+### The things floating past
+
+Her mark is a little floral spray, so what drifts up the page is petals out of
+it rather than anonymous dots — two shared inline SVGs, so the whole layer is
+two image decodes however many are on screen. They live in the **one fixed
+layer** with the existing motes, composited once for the whole document.
+
+**Measured on a 6x-throttled phone**, scrolling: the whole fixed layer costs
+about 12fps, the dots about 5 of that, the petals about 2, the paper grain
+about 5 and the per-section glows about 4. A phone gets half the petals and
+half the dots, which bought all of it back — 59fps idle and 49fps scrolling,
+the same as before any of this was added.
+
+Two traps worth remembering:
+
+- **`animation: petal linear infinite` is a shorthand, so it resets
+  `animation-duration` to its initial `0s`** — and `.amb-sky b` (0,1,1)
+  outranks a bare `.pt-1` (0,1,0). Twelve petals were present, reported
+  correctly by every count, and completely motionless. The per-petal rules are
+  scoped `.amb-sky .pt-N` now, and `qa-z.mjs` fails the build if any petal
+  computes to a 0s duration.
+- **A petal with no `bottom` starts at the TOP of the layer.** The whole rise
+  then happens off screen: one visible out of twelve.
+- **`rotate` and `scale` both force the layer to re-rasterise every frame.**
+  The scale is gone; nobody could see it and it was costing frames.
+
+### Detail
+
+- Cards are a gradient rather than a flat fill, with a gold hairline ruled in
+  from the edge the way a printed card is, a corner of her floral spray, and
+  gold-gradient script numerals.
+- Section tags carry a drawn sprig instead of a plain rule, and headings a
+  hairline that fades out.
+- `.hero-mark` is `display:inline-block` — left inline, a `<span>` ignores
+  width and both rings resolved their percentages against the whole text
+  column, drawing a circle the size of the hero.
+- The eyebrow is `position:relative;z-index:1`: the halo bleeds well past the
+  disc and, as a later sibling, was painting over it.
+
+### Pictures
+
+`group.jpg` is a 653px portrait off her stories and it was being stretched
+across a full-width 16:9 band — **3.8x enlarged on an ordinary laptop**. It is
+a plate now: held at its own shape and size beside the line it illustrates,
+which is sharper and says more. 3.8x → 1.32x. `about.jpg` is capped the same
+way, 1.65x → 1.35x.
+
+**`hero.jpg` is the one I cannot fix in CSS.** It is 766px wide and it fills
+half the hero: 1.53x on a phone, 1.77x on a retina laptop, 3x on a 5K display.
+Capping the column just puts a paper sliver down one side of the photograph,
+which reads as a bug rather than a margin. Only a bigger original fixes this.
+
+### Faults the audits caught this time
+
+- The bigger mark pushed the booking button **under the fold on a landscape
+  phone** — the old rule sized `.hero-logo`'s own margin, which now sits inside
+  `.hero-mark` and counts for nothing.
+- `.nav-cta` was a **36px tap target** on a phone and `.lnk` 42px; em padding
+  alone does not reach 44.
+- Two test bugs of my own worth recording, because both would have passed a
+  broken page: the drawer's class is `open`, not `on`; and **Lenis takes over
+  wheel and touch while `lockScroll()` stops Lenis rather than pinning the
+  body**, so a `window.scrollTo` probe goes straight round the lock and every
+  page looks unlocked. The suite drives a real wheel now.
 
 **Bookings.** She publishes no email address; everything is Instagram DM.
 Instagram has no way to pre-fill a message from a link, so the form composes
@@ -1005,90 +1072,11 @@ the message in the exact order her How to Book highlight asks for — name, date
 time, hands/people — puts it on the clipboard and opens her DMs. The date is
 written out in full ("Saturday 18 April 2026"), not left as a form value.
 
-### What the rebuild's own audits caught
+**Suites.** `qa-z.mjs` (14 viewports), `z-act.mjs` (67 interaction checks),
+`sharp.mjs` with `P=henna-by-zainab` (image enlargement), `perf-z.mjs`, and
+`perf-why.mjs`, which attributes the frame cost layer by layer.
 
-Worth reading as a list of things that look fine in a screenshot and are not.
-
-- **`threshold` on an IntersectionObserver is a fraction of the TARGET's
-  area.** The index rail used `threshold: 0.35` with a `-25%/-45%` rootMargin,
-  which is a 270px band. Any station taller than about 2.6x that band can never
-  reach 0.35, so the rail silently stopped updating on exactly the long
-  sections. Replaced with a reading line 35% down the viewport and whichever
-  station covers it — height-independent, and it cannot fail quietly.
-- **iOS will not paint a moving layer wider than ~4096 DEVICE pixels.** Already
-  known from the marquee; it caught the filmstrip too. `#stripTrack` is 3312
-  CSS px, which on an iPhone 15 Pro Max is **9936 device px** — the whole strip
-  would have failed to render, silently, on the most common phone she will be
-  sending this to. Each `<figure>` is translated on its own now (1514dp worst
-  case) rather than the track.
-- **…and a translated child changes its parent's scrollable overflow.** Moving
-  to per-figure transforms broke the travel measurement, because `height()` read
-  `track.scrollWidth` *after* a move and fed a smaller number back in each frame
-  until the travel collapsed to zero. Measured from `offsetLeft + offsetWidth`
-  now, which a transform cannot touch.
-- **A `visibility:hidden` element is not focusable.** The menu faded in via
-  `visibility`, and `close.focus()` in the same frame was a silent no-op — a
-  keyboard visitor opened the menu and was left at the top of the document.
-  Driven by `opacity` + `pointer-events` now, with `[hidden]` for the shut state.
-- **`.menu` is its own stacking context.** `.menu-close` at `z-index:120` is
-  measured *inside* `.menu` at 110, so the `Menu` trigger outside it painted on
-  top and swallowed every click aimed at `Close`. The trigger is hidden while
-  the overlay is up, which is what it should look like anyway.
-- **A descendant selector is wider than it reads.** `.menu a { font-size:
-  clamp(1.5rem,5.4vw,3.2rem) }` also matched the two footer links, so
-  INSTAGRAM and TIKTOK were set at the same size as the navigation and pushed
-  off the bottom of the overlay. Scoped to `.menu ol a`.
-- **`minmax(0,1fr)`, never an implicit grid column.** `.strip-sticky` is a
-  grid whose track was sized by the 3200px flex row inside it, so the heading
-  and the hint were 3200px boxes too. Clipped, so nothing showed — but every
-  box in there was wrong.
-- **Padding insets the text, not the box.** `.strip-hint` is a grid item, so
-  right padding moved its text off the rail and left its border box underneath
-  it. `justify-self:start`.
-- **An absolutely positioned child is not in `getBoundingClientRect()`.** The
-  rail's station labels sit out to the left of the ticks, so a clash check
-  against `#rail`'s own box missed them entirely — and the label for the
-  current station was showing permanently, on top of the paragraph beside it.
-  The name appears on hover/focus only now, and the check takes the union of
-  `#rail, #rail *`.
-- **`!important` in the base rule kills the media query below it.** The
-  `max-width:520px` strip heights never applied, because the base rule carries
-  `!important` (it has to, to beat the `img` width attribute).
-- **`scroll-padding-top` with no fixed header.** 100px was left over from the
-  house template. The JS menu jump landed flush, a native anchor landed 100px
-  short — the exact defect complained about on Krem&Choc, reintroduced by a
-  line nobody was looking at.
-- **A full-bleed band needs a full-bleed source.** `group.jpg` is a 653px
-  portrait story frame and it was being stretched across a 21:9 band — **7.8x
-  enlarged** on a 2560px screen. It is a two-up portrait plate now, paired with
-  a 766px frame that was sitting unused, each shown near its own size. Worst
-  enlargement on the page went 7.84x → 1.38x.
-
-### Layout rules this page needs to keep
-
-- `--frame` (1560px) holds the stations' left/right swing inside a centred
-  measure. Pinned to the raw viewport edges, a 640px column left 800px of dead
-  wall beside it on a wide screen, which reads as a hole rather than as rhythm.
-- `--railw` (46px) is clearance kept free on the right for the index rail, on
-  `.stn-r`, `.open`, `.day`, `.strip-head`, `.ask-form` and `.end`. Dropped
-  below 1100px, where the rail is not shown.
-- The station measure is `min(100%, 640px, 42vw)` and the terms column
-  `min(100%, 700px, 46vw)` — tied to the viewport, not fixed, so neither ever
-  reaches the band the vine runs in. A fixed column crossed it on a narrow
-  desktop and the vine read as a strikethrough through the copy.
-  `z-vine.mjs` asserts this at twelve widths.
-- Below 1100px the stations are one column and the vine has nowhere to run
-  between them, so it becomes a narrow ribbon down the left margin instead.
-
-**Performance.** 61fps idle and 60fps scrolling under a 6x CPU throttle at
-phone size.
-
-**Suites.** `qa-z.mjs` (14 viewports, layout + furniture), `z-act.mjs` (90
-interaction checks), `z-vine.mjs` (vine clearance), `sharp.mjs` with
-`P=henna-by-zainab` (image enlargement), `perf-z.mjs`.
-
-**Still outstanding from her.** Higher-resolution photographs are the single
-biggest lift available to this page — everything here came off Instagram
-stories at 653–1100px, and the page is now built around what those pixels can
-actually carry rather than pretending otherwise. Also a Google Business profile
-if she wants reviews on the page.
+**Still outstanding from her.** Higher-resolution photographs, `hero.jpg` above
+all. Everything here came off Instagram stories at 653–1100px and the page is
+built around what those pixels honestly carry. Also a Google Business profile
+if she wants real reviews rather than the labelled placeholder layout.

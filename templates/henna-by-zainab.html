@@ -5,264 +5,446 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Henna by Zainab — Birmingham henna artist | Bridal, Eid, party &amp; events</title>
 <meta name="description" content="Natural henna and Jagua by Zainab, a Birmingham henna artist based in B20. Bridal mehndi, Eid, parties and events. Every design drawn freehand.">
-<meta name="theme-color" content="#1a0f12">
+<meta name="theme-color" content="#fbf3ed">
 <link rel="canonical" href="https://billydigitals.com/templates/henna-by-zainab">
+
 <meta property="og:type" content="website">
 <meta property="og:title" content="Henna by Zainab — Birmingham henna artist">
 <meta property="og:description" content="Natural henna and Jagua. Bridal, Eid, parties and events across Birmingham. Every design drawn freehand.">
 <meta property="og:image" content="https://billydigitals.com/assets/zainab/og.jpg">
 <meta property="og:url" content="https://billydigitals.com/templates/henna-by-zainab">
 <meta name="twitter:card" content="summary_large_image">
+
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/zainab/icon-32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="../assets/zainab/icon-96.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/zainab/icon-180.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Parisienne&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Parisienne&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="../assets/zainab/logo.png">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="henna-by-zainab.css">
 
 <!--
   Henna by Zainab — Birmingham, B20.  @hennaabyzainab_ on Instagram and TikTok.
 
-  This page is NOT laid out like the other sites in this repository, on purpose.
-  Henna is a drawn line and a stain that changes for three days, so the page is
-  built as that: one gold vine drawn down the whole document by scroll, with the
-  content hung off it as numbered stations, alternating left and right. The
-  reader travels the life of a stain — the enquiry, the sitting, the first
-  night, day one, day three — rather than scrolling a stack of cards.
+  EVERYTHING on this page is hers. The aftercare, the policies and the booking
+  list are transcribed word for word from her own Instagram highlights, because
+  they are the rules she actually works to and paraphrasing them would change
+  what a client is agreeing to. The photographs are her own posts, watermark
+  intact. The logo is the disc from her profile, untouched.
 
-  So there is deliberately no top navigation bar, no split hero, no marquee, no
-  card grid, no review carousel and no accordion. The index is a fixed rail of
-  station numbers down the right edge. The gallery is a filmstrip that travels
-  sideways while the page is pinned.
+  Her palette, sampled from that disc: paper #fcefe8, script ink #59402a.
+  Type follows her brand exactly — a script for accents, spaced Roman caps for
+  headings, Garamond italic for the voice her own cards are set in.
 
-  Everything written here is hers: the aftercare, the policies and the booking
-  list are transcribed word for word from her Instagram highlights, because they
-  are the terms a client agrees to. The photographs are her own posts, watermark
-  intact, and the logo is the disc from her profile.
-
-  Ground: #1a0f12, a warm plum-black, so her cream disc reads as a lamp and the
-  henna in the photographs glows rather than sinking.
+  She takes bookings by Instagram DM and publishes no email address, so the
+  enquiry form composes the message in the precise order her "How to Book"
+  highlight asks for, copies it, and opens her DMs. Instagram has no way to
+  pre-fill a message from a link — copy and hand over is the honest maximum.
 -->
 </head>
 
 <body id="top">
 
-<div class="veil" id="veil" aria-hidden="true">
+<!-- One page-wide drift of gold motes: fixed, so it is composited once and
+     costs the same whatever the page is doing. -->
+<!-- One fixed layer for everything that floats. Per-section blocks cost 15-20fps
+     on a photograph-heavy page because each dot repaints its own section; one
+     fixed layer is composited once. Flat fills and one shared SVG only. -->
+<div class="amb-sky" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="pt pt-1"></b><b class="pt pt-2"></b><b class="pt pt-3"></b><b class="pt pt-4"></b><b class="pt pt-5"></b><b class="pt pt-6"></b><b class="pt pt-7"></b><b class="pt pt-8"></b><b class="pt pt-9"></b><b class="pt pt-10"></b><b class="pt pt-11"></b><b class="pt pt-12"></b></div>
+
+<div class="loader" id="loader" aria-hidden="true">
   <img src="../assets/zainab/logo.png" alt="" width="760" height="760">
+  <span class="loader-bar"><i></i></span>
 </div>
 
-<a class="skip" href="#s1">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" data-fx="progressbar"></div>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- the only fixed chrome: her mark, one word, and a way to book -->
-<a class="mark" href="#top" aria-label="Henna by Zainab — top">
-  <img src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760">
-</a>
-<button class="menu-open" id="menuOpen" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
-<a class="book-pill" href="#s7">Book<span aria-hidden="true">&nbsp;&rarr;</span></a>
+<header class="nav" id="nav">
+  <a class="nav-logo" href="#top" aria-label="Henna by Zainab — home">
+    <img src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760">
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#welcome">Welcome</a>
+    <a href="#henna">The henna</a>
+    <a href="#stain">The stain</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#aftercare">Aftercare</a>
+    <a href="#booking">Booking</a>
+  </nav>
+  <a class="nav-cta" href="#enquire">Enquire</a>
+  <button class="nav-burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+</header>
 
-<!-- the index: stations down the right edge, replacing a navigation bar -->
-<nav class="rail" id="rail" aria-label="Sections">
-  <ol id="railList"></ol>
-</nav>
-
-<div class="menu" id="menu" hidden>
-  <button class="menu-close" id="menuClose" type="button" aria-label="Close menu">Close</button>
-  <ol id="menuList"></ol>
-  <div class="menu-foot">
-    <a id="menuIg" href="#" target="_blank" rel="noopener">Instagram</a>
-    <a id="menuTt" href="#" target="_blank" rel="noopener">TikTok</a>
-    <span>Birmingham &middot; B20</span>
+<div class="drawer" id="drawer" hidden>
+  <nav aria-label="Menu">
+    <a href="#welcome">Welcome</a>
+    <a href="#henna">The henna</a>
+    <a href="#stain">The stain</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#aftercare">Aftercare</a>
+    <a href="#booking">How to book</a>
+    <a href="#policies">Policies</a>
+    <a href="#enquire">Enquire</a>
+    <a href="#faq">Questions</a>
+  </nav>
+  <div class="drawer-foot">
+    <div class="drawer-ways">
+      <a class="way" id="drawerIg" href="#" target="_blank" rel="noopener" aria-label="Henna by Zainab on Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a class="way" id="drawerTt" href="#" target="_blank" rel="noopener" aria-label="Henna by Zainab on TikTok">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.5 3h-2.6v12.1a2.6 2.6 0 1 1-2.1-2.55V9.9a5.6 5.6 0 1 0 4.7 5.53V9.2a6.3 6.3 0 0 0 3.6 1.13V7.66A3.65 3.65 0 0 1 16.5 3Z"/></svg>
+      </a>
+    </div>
+    <p class="drawer-where">Birmingham &middot; B20</p>
   </div>
-</div>
-
-<!-- ============ the vine: one line, drawn by scroll, behind everything ============ -->
-<div class="spine" aria-hidden="true">
-  <svg id="vine" viewBox="0 0 100 1000" preserveAspectRatio="none">
-    <path id="vinePath" fill="none" stroke="currentColor" stroke-width="0.42" stroke-linecap="round"
-      d="M 49.86 0 C 49.86 35.72, 51.63 35.72, 51.63 71.43 C 51.63 107.15, 52.77 107.15, 52.77 142.86 C 52.77 178.57, 48.68 178.57, 48.68 214.29 C 48.68 250, 45.04 250, 45.04 285.71 C 45.04 321.42, 46.37 321.42, 46.37 357.14 C 46.37 392.86, 52.23 392.86, 52.23 428.57 C 52.23 464.28, 56.08 464.28, 56.08 500 C 56.08 535.71, 52.21 535.71, 52.21 571.43 C 52.21 607.14, 46.43 607.14, 46.43 642.86 C 46.43 678.58, 44.67 678.58, 44.67 714.29 C 44.67 750, 48.7 750, 48.7 785.71 C 48.7 821.42, 52.59 821.42, 52.59 857.14 C 52.59 892.86, 52.18 892.86, 52.18 928.57 C 52.18 964.29, 49.7 964.29, 49.7 1000"/>
-  </svg>
 </div>
 
 <main id="main">
 
-<!-- ============ opening ============ -->
-<header class="open" id="s0">
-  <p class="open-place">Birmingham &middot; B20</p>
-  <img class="open-mark" src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760">
-  <h1 class="open-title"><span>Natural</span> <span>henna,</span> <span>drawn</span> <span>by</span> <span>hand</span></h1>
-  <p class="open-sub">Bridal &middot; Eid &middot; Party &middot; Events &mdash; and a stain that keeps darkening for three days after I leave.</p>
-  <p class="open-scroll"><span>Follow the line</span></p>
-</header>
-
-<!-- ============ 01 the enquiry ============ -->
-<section class="stn stn-l" id="s1" data-station="The enquiry">
-  <p class="stn-no">01</p>
-  <h2 class="stn-h">Send five things<br>and the date is held</h2>
-  <p class="stn-p">Bookings come through my Instagram DMs. Send me these and I will come back with a time and a price.</p>
-  <ol class="ask" id="askList"></ol>
-  <ul class="fine" id="askFine"></ul>
-  <a class="go" href="#s7">Let the form write it for you <span aria-hidden="true">&rarr;</span></a>
-</section>
-
-<!-- ============ 02 the sitting ============ -->
-<section class="stn stn-r" id="s2" data-station="The sitting">
-  <p class="stn-no">02</p>
-  <h2 class="stn-h">What I sit down to do</h2>
-  <dl class="work" id="workList"></dl>
-</section>
-
-<!-- ============ a full-bleed breath ============ -->
-<!-- Two portraits rather than one band. These came off her stories at 653 and
-     766px wide, and a full-bleed 21:9 strip was blowing the first up more than
-     seven times on a large screen. Side by side they fill the same width while
-     each is shown at close to the size its pixels actually support. -->
-<figure class="plate" id="bleedA">
-  <div class="plate-pair">
-    <img src="../assets/zainab/photos/group.jpg" alt="A circle of hands after a group booking, every one of them finished" width="653" height="1100" loading="lazy">
-    <img src="../assets/zainab/photos/hero.jpg" alt="A finished bridal design down the back of one hand" width="766" height="1290" loading="lazy">
-  </div>
-  <figcaption><span class="scr">A group booking, and a bride</span> both finished</figcaption>
-</figure>
-
-<!-- ============ 03 before ============ -->
-<section class="stn stn-l" id="s3" data-station="Before">
-  <p class="stn-no">03</p>
-  <h2 class="stn-h">Before I start</h2>
-  <p class="stn-p">Three things, and they decide more than people expect. Word for word from my aftercare.</p>
-  <ul class="care" id="careBefore"></ul>
-</section>
-
-<!-- ============ 04 the first night ============ -->
-<section class="stn stn-r" id="s4" data-station="The first night">
-  <p class="stn-no">04</p>
-  <h2 class="stn-h">The first night<br>does the work</h2>
-  <ul class="care" id="careAfter"></ul>
-  <p class="warn"><span class="scr">Important</span> Minimal contact with water for the first 24 hours.</p>
-</section>
-
-<!-- ============ 05 / 06 the stain, as two colour moments ============ -->
-<section class="day day-one" id="s5" data-station="Day one">
-  <figure class="day-art">
-    <img src="../assets/zainab/photos/stain-a.jpg" alt="A henna design a few hours after the paste came off, still bright orange" width="1100" height="846" loading="lazy">
-  </figure>
-  <div class="day-copy">
-    <p class="stn-no">05</p>
-    <p class="day-when"><span class="scr">Day one</span></p>
-    <h2 class="stn-h">It comes off orange</h2>
-    <p class="stn-p">This is not the colour. A few hours after the paste crumbles away the stain is bright, shallow and disappointing to anyone who has not seen it before.</p>
-  </div>
-</section>
-
-<section class="day day-three" id="s6" data-station="Day three">
-  <figure class="day-art">
-    <img src="../assets/zainab/photos/stain-b.jpg" alt="The same hand two to three days later, a deep red-brown" width="1100" height="999" loading="lazy">
-  </figure>
-  <div class="day-copy">
-    <p class="stn-no">06</p>
-    <p class="day-when"><span class="scr">Day three</span></p>
-    <h2 class="stn-h">Then it goes deep</h2>
-    <p class="stn-p">The same hand, two to three days on. The stain takes 2&ndash;3 days to fully mature, which is why the appointment wants to be two or three days before the event &mdash; not the morning of it.</p>
-    <p class="stn-p stn-p-dim">Results vary depending on skin type, aftercare and body chemistry. The final outcome is not in my control.</p>
-  </div>
-</section>
-
-<!-- ============ the work: a filmstrip that travels sideways ============ -->
-<section class="strip" id="strip" data-station="The work">
-  <div class="strip-sticky">
-    <div class="strip-head">
-      <p class="stn-no">07</p>
-      <h2 class="stn-h">Hands I have<br>worked on</h2>
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <div class="amb" aria-hidden="true"><span class="amb-glow amb-a"></span><span class="amb-glow amb-b"></span></div>
+  <div class="hero-inner">
+    <p class="eyebrow" data-fx="reveal">Birmingham &middot; B20</p>
+    <span class="hero-mark">
+      <img class="hero-logo" src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760">
+    </span>
+    <h1 data-fx="text" data-fx-step="70">Natural henna for<br><em>the days that matter</em></h1>
+    <p class="hero-sub" data-fx="reveal" data-fx-delay="520">
+      Bridal, Eid, parties and events across Birmingham. Natural henna and
+      Jagua, every design drawn freehand with a cone in hand.
+    </p>
+    <div class="hero-cta" data-fx="reveal" data-fx-delay="660">
+      <a class="btn btn-solid" href="#enquire">Start a booking</a>
+      <a class="btn btn-line" href="#portfolio">See the work</a>
     </div>
-    <div class="strip-track" id="stripTrack"></div>
-    <p class="strip-hint" aria-hidden="true">Keep scrolling</p>
+    <ul class="hero-facts" data-fx="stagger" data-fx-delay="800" data-fx-step="90">
+      <li>Natural henna &amp; Jagua</li>
+      <li>Bridal &middot; Eid &middot; Party &middot; Events</li>
+    </ul>
+  </div>
+  <figure class="hero-art">
+    <img src="../assets/zainab/photos/hero.jpg" alt="Bridal mehndi across both hands, worn with gold and pearl bangles" width="766" height="1290" fetchpriority="high">
+  </figure>
+  <span class="hero-scroll" aria-hidden="true"><i></i></span>
+</section>
+
+<div class="band" aria-hidden="true"><div class="band-track" id="marquee"></div></div>
+
+<!-- ================= WELCOME ================= -->
+<section class="sec" id="welcome">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-c"></span></div>
+  <div class="wrap welcome-grid">
+    <figure class="welcome-art" data-fx="reveal">
+      <img src="../assets/zainab/photos/about.jpg" alt="A finished henna design resting on white satin in late sun" width="653" height="1100" loading="lazy">
+    </figure>
+    <div class="welcome-copy">
+      <p class="tag" data-fx="reveal">Welcome</p>
+      <h2 data-fx="reveal" data-fx-delay="80">A cone, a steady hand,<br><em>and your day</em></h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">
+        Henna by Zainab is a Birmingham henna studio for natural henna and
+        Jagua &mdash; bridal mehndi, Eid, parties and events. Nothing is traced
+        and nothing is stencilled: every design is drawn freehand, for the
+        person wearing it.
+      </p>
+      <p data-fx="reveal" data-fx-delay="200">
+        Most bookings are at home in B20. For bridal, and for groups of more
+        than three, I travel to you.
+      </p>
+      <a class="lnk" href="#booking" data-fx="reveal" data-fx-delay="260">How to book <span aria-hidden="true">&rarr;</span></a>
+    </div>
   </div>
 </section>
 
-<!-- ============ the terms ============ -->
-<section class="stn stn-l terms" id="s8" data-station="The terms">
-  <p class="stn-no">08</p>
-  <h2 class="stn-h">Please read<br>before booking</h2>
-  <div class="terms-body" id="termsBody"></div>
-</section>
-
-<!-- ============ questions ============ -->
-<section class="stn stn-r" id="s9" data-station="Questions">
-  <p class="stn-no">09</p>
-  <h2 class="stn-h">Before you ask</h2>
-  <div class="qa" id="qaList"></div>
-</section>
-
-<!-- ============ the enquiry form ============ -->
-<section class="ask-form" id="s7" data-station="Book">
-  <div class="ask-form-in">
-    <p class="stn-no">10</p>
-    <h2 class="stn-h">Let's find<br>you a date</h2>
-    <p class="stn-p">Fill this in and it writes your message for you, in the order I need it, ready to send straight to my DMs.</p>
-
-    <form id="enqForm" novalidate>
-      <div class="f2">
-        <p class="fld"><label for="enqName">Your name <i aria-hidden="true">*</i></label>
-          <input type="text" id="enqName" name="name" autocomplete="name" required></p>
-        <p class="fld"><label for="enqOccasion">Occasion</label>
-          <span class="chips" id="occChips" role="group" aria-label="Occasion"></span>
-          <input type="hidden" id="enqOccasion" name="occasion" value="Party"></p>
+<!-- ================= THE HENNA ================= -->
+<section class="sec sec-tint" id="henna">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-d"></span></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">The henna</p>
+      <h2 data-fx="reveal" data-fx-delay="80">What I take bookings for</h2>
+    </div>
+    <ul class="cards" id="serviceList" data-fx="stagger" data-fx-step="120"></ul>
+    <!-- A plate, not a band. This is a 653px portrait off her stories, and a
+         full-width 16:9 strip was blowing it up nearly four times on an
+         ordinary laptop. Held at its own shape and size, beside the line it
+         illustrates, it is sharp and it says more. -->
+    <figure class="plate" data-fx="reveal">
+      <div class="plate-art">
+        <img src="../assets/zainab/photos/group.jpg" alt="A circle of hands, every one of them finished, after a group booking" width="653" height="1100" loading="lazy">
       </div>
-      <div class="f2">
-        <p class="fld"><label for="enqDate">Date of booking <i aria-hidden="true">*</i></label>
+      <figcaption class="plate-say">
+        <span class="script">Groups are the best of it</span>
+        <p>Eight pairs of hands in one afternoon, everybody comparing, nobody
+          allowed to touch anything for an hour. I travel for more than three.</p>
+        <a class="lnk" href="#enquire">Book the group <span aria-hidden="true">&rarr;</span></a>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= THE STAIN ================= -->
+<section class="sec" id="stain">
+  <div class="amb amb-quiet" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">The stain</p>
+      <h2 data-fx="reveal" data-fx-delay="80">It darkens for days<br><em>after I leave</em></h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">
+        Henna does not arrive at its colour. It goes on orange and deepens for
+        two to three days after the paste comes off. The same hand, below, on
+        day one and day three.
+      </p>
+    </div>
+
+    <!-- Her own story shows these as a labelled pair, and that is the honest
+         way to present them: the two frames are the same hand two days apart,
+         but they were shot at different distances, so a wipe or a dissolve
+         would only pretend they line up. -->
+    <div class="pair">
+      <figure class="pair-a" data-fx="reveal">
+        <img src="../assets/zainab/photos/stain-a.jpg" alt="A henna design a few hours after the paste came off, still bright orange" width="1100" height="846" loading="lazy">
+        <figcaption><span class="pair-when">Day one</span>Fresh stain</figcaption>
+      </figure>
+      <span class="pair-arrow" aria-hidden="true"><i></i><i></i><i></i></span>
+      <figure class="pair-b" data-fx="reveal" data-fx-delay="220">
+        <img src="../assets/zainab/photos/stain-b.jpg" alt="The same hand two to three days later, a deep red-brown" width="1100" height="999" loading="lazy">
+        <figcaption><span class="pair-when">Day three</span>Fully developed</figcaption>
+      </figure>
+    </div>
+
+    <ul class="notes" id="stainNotes" data-fx="stagger" data-fx-step="110"></ul>
+  </div>
+</section>
+
+<!-- ================= PORTFOLIO ================= -->
+<section class="sec sec-tint" id="portfolio">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-c"></span></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Portfolio</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Hands I have worked on</h2>
+    </div>
+    <ul class="gal" id="gal" data-fx="stagger" data-fx-step="90"></ul>
+    <div class="gal-cta" data-fx="reveal">
+      <a class="btn btn-line" id="galIg" href="#" target="_blank" rel="noopener">More on Instagram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AFTERCARE ================= -->
+<section class="sec" id="aftercare">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-d"></span></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Aftercare</p>
+      <h2 data-fx="reveal" data-fx-delay="80">How to get the darkest stain</h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">
+        Word for word from my aftercare highlight. The colour you end up with
+        is mostly decided here.
+      </p>
+    </div>
+    <div class="care-grid">
+      <article class="care" data-fx="reveal">
+        <p class="script">Before Application</p>
+        <ul id="careBefore"></ul>
+      </article>
+      <article class="care" data-fx="reveal" data-fx-delay="120">
+        <p class="script">After Application</p>
+        <ul id="careAfter"></ul>
+        <p class="care-important"><strong>Important</strong> Minimal contact with water for the first 24 hours.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW TO BOOK ================= -->
+<section class="sec sec-tint" id="booking">
+  <div class="amb amb-quiet" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">How to book</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Five things, and the date is held</h2>
+    </div>
+    <ol class="steps" id="stepList" data-fx="stagger" data-fx-step="110"></ol>
+    <ul class="notes notes-flat" id="bookNotes" data-fx="stagger" data-fx-step="90"></ul>
+    <div class="gal-cta" data-fx="reveal">
+      <a class="btn btn-solid" href="#enquire">Fill it in here instead</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENQUIRE ================= -->
+<section class="sec" id="enquire">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-e"></span></div>
+  <div class="wrap enq-grid">
+    <div class="enq-copy">
+      <p class="tag" data-fx="reveal">Enquiries</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Let's find you a date</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">
+        Fill this in and it writes your message for you, in the order I need it,
+        ready to send straight to my DMs. The more you can tell me, the quicker
+        I can come back with a time and a price.
+      </p>
+      <div class="enq-extra" data-fx="reveal" data-fx-delay="200">
+        <a class="enq-card" id="enqIg" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+          <span><strong>@hennaabyzainab_</strong>Bookings and enquiries by DM</span>
+        </a>
+        <a class="enq-card" id="enqTt" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.5 3h-2.6v12.1a2.6 2.6 0 1 1-2.1-2.55V9.9a5.6 5.6 0 1 0 4.7 5.53V9.2a6.3 6.3 0 0 0 3.6 1.13V7.66A3.65 3.65 0 0 1 16.5 3Z"/></svg>
+          <span><strong>33.8K on TikTok</strong>1.6M likes on the work</span>
+        </a>
+      </div>
+    </div>
+
+    <form class="enq-form" id="enqForm" novalidate data-fx="reveal" data-fx-delay="120">
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqName">Your name <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="enqName" name="name" autocomplete="name" required>
+        </div>
+        <div class="fld">
+          <label for="enqOcc">Occasion</label>
+          <div class="chips" id="occChips" role="group" aria-label="Occasion"></div>
+          <input type="hidden" id="enqOccasion" name="occasion" value="Party">
+        </div>
+      </div>
+
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqDate">Date of booking <span class="req" aria-hidden="true">*</span></label>
           <input type="date" id="enqDate" name="date" required>
-          <small>Two to three days before the event, so the stain peaks on the day.</small></p>
-        <p class="fld"><label for="enqTime">Time of booking <i aria-hidden="true">*</i></label>
-          <input type="time" id="enqTime" name="time" required></p>
+          <p class="fld-note">Two to three days before the event, so the stain is at its darkest on the day.</p>
+        </div>
+        <div class="fld">
+          <label for="enqTime">Time of booking <span class="req" aria-hidden="true">*</span></label>
+          <input type="time" id="enqTime" name="time" required>
+        </div>
       </div>
-      <div class="f2">
-        <p class="fld"><label for="enqHands">How many hands / people <i aria-hidden="true">*</i></label>
+
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqHands">How many hands / people <span class="req" aria-hidden="true">*</span></label>
           <input type="text" id="enqHands" name="hands" placeholder="e.g. 2 hands, 1 person" required>
-          <small>I travel for bridal and for groups over three. Everything else is at mine, in B20.</small></p>
-        <p class="fld"><label for="enqWhere">Where</label>
+          <p class="fld-note">I travel for bridal and for groups over three. Everything else is at mine, in B20.</p>
+        </div>
+        <div class="fld">
+          <label for="enqWhere">Where</label>
           <select id="enqWhere" name="where">
             <option>At yours in B20</option>
             <option>I'd like you to travel to us</option>
             <option>Not sure yet</option>
-          </select></p>
+          </select>
+        </div>
       </div>
-      <p class="fld"><label for="enqMsg">Anything else</label>
-        <textarea id="enqMsg" name="message" rows="4" placeholder="The design you have in mind, allergies, anything I should know…"></textarea></p>
-      <p class="note"><span class="scr">Inspo pictures</span> Attach the designs you'd like straight to the DM once it opens &mdash; they tell me more than words do.</p>
+
+      <div class="fld">
+        <label for="enqMsg">Anything else</label>
+        <textarea id="enqMsg" name="message" rows="4" placeholder="The design you have in mind, allergies, anything I should know…"></textarea>
+      </div>
+
+      <p class="fld-note fld-note-block">
+        <strong>Inspo pictures.</strong> Attach the designs you'd like straight to
+        the DM once it opens &mdash; they tell me more than words do.
+      </p>
+
       <input type="text" class="hp" id="enqHp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button id="enqBtn" type="submit">Write my message</button>
+      <button class="btn btn-solid btn-wide" id="enqBtn" type="submit">Write my message</button>
       <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-      <p class="deposit">A non-refundable &pound;10 deposit secures the booking and comes off the final balance. No booking is confirmed without it.</p>
+      <p class="form-fine">A non-refundable &pound;10 deposit secures the booking and comes off the final balance. No booking is confirmed without it.</p>
     </form>
+  </div>
+</section>
+
+<!-- ================= POLICIES ================= -->
+<section class="sec sec-tint" id="policies">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-c"></span></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Policies</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Please read before booking</h2>
+    </div>
+    <div class="pol-grid" id="polGrid"></div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="sec" id="reviews">
+  <div class="amb amb-quiet" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Kind words</p>
+      <h2 data-fx="reveal" data-fx-delay="80">What clients say</h2>
+    </div>
+    <div class="gbox" data-fx="reveal">
+      <div class="gbox-head">
+        <span class="g" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.6Z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.6 14.7a7.2 7.2 0 0 1 0-4.6v-3H1.8a12 12 0 0 0 0 10.7l3.8-3Z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.6 11.6 0 0 0 12 0 12 12 0 0 0 1.8 6.1l3.8 3C6.5 6.7 9 4.8 12 4.8Z"/></svg>
+        </span>
+        <div>
+          <p class="gbox-t">Google reviews</p>
+          <p class="gbox-s"><span class="stars5" aria-hidden="true">★★★★★</span> <strong id="gRating">5.0</strong> <span id="gCount">from 24 reviews</span></p>
+        </div>
+        <a class="btn btn-line btn-sm" id="gWrite" href="#" target="_blank" rel="noopener">Leave a review</a>
+      </div>
+      <p class="gbox-note">An example of how Google reviews will appear once the business profile is linked. The cards below are placeholders showing the layout.</p>
+    </div>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="rvRail" data-rail data-lenis-prevent role="list"></div>
+    <div class="rail-arrows">
+      <button type="button" data-rail-prev="rvRail" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" data-rail-next="rvRail" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec sec-tint" id="faq">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-e"></span></div>
+  <div class="wrap faq-wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Questions</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Before you ask</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">Anything not covered here, put it in your enquiry.</p>
+    </div>
+    <div class="faq-list" id="faqList" data-fx="reveal" data-fx-delay="120"></div>
   </div>
 </section>
 
 </main>
 
-<footer class="end">
-  <img class="end-mark" src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760" loading="lazy">
-  <p class="end-line"><span class="scr">Natural henna &amp; Jagua</span></p>
-  <p class="end-where">Birmingham &middot; B20</p>
-  <p class="end-links">
-    <a id="endIg" href="#" target="_blank" rel="noopener">@hennaabyzainab_</a>
-    <a id="endTt" href="#" target="_blank" rel="noopener">TikTok</a>
-  </p>
-  <p class="end-fine">
-    Henna stain results vary depending on skin type, aftercare and body chemistry.
-    By booking you acknowledge that henna is applied at your own discretion.
-  </p>
+<footer class="foot">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-f"></span></div>
+  <div class="wrap foot-in">
+    <img class="foot-logo" src="../assets/zainab/logo.png" alt="Henna by Zainab" width="760" height="760" loading="lazy">
+    <p class="foot-line">Natural henna &amp; Jagua &middot; Birmingham</p>
+    <div class="socials" id="socials"></div>
+    <p class="foot-meta"><span>Birmingham, B20</span><span>@hennaabyzainab_</span><span>Bookings by DM</span></p>
+    <p class="foot-fine">
+      Henna stain results vary depending on skin type, aftercare and body chemistry.
+      By booking you acknowledge that henna is applied at your own discretion.
+    </p>
+  </div>
 </footer>
 
-<div class="view" id="view" hidden aria-modal="true" role="dialog" aria-label="Photograph">
-  <button type="button" id="viewX" aria-label="Close">&times;</button>
-  <button type="button" id="viewPrev" aria-label="Previous">&#8592;</button>
-  <button type="button" id="viewNext" aria-label="Next">&#8594;</button>
-  <figure><img id="viewImg" alt=""><figcaption id="viewCap"></figcaption></figure>
+<div class="lb" id="lb" hidden aria-modal="true" role="dialog" aria-label="Photograph">
+  <button type="button" id="lbX" aria-label="Close">&times;</button>
+  <button type="button" id="lbPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" id="lbNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
 </div>
 
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
+<script src="../assets/js/scroll-fx.js" defer></script>
 <script src="henna-by-zainab.js" defer></script>
 </body>
 </html>
