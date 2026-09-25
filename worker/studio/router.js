@@ -3,7 +3,8 @@
    Worker-rendered pages (Phase 3). Everything is same-origin: the Studio page,
    the API and the media live on one host, so there is no CORS. */
 
-import { officeDb, json, errorResponse, HttpError, parseJson } from "./db.js";
+import { officeDb, json, errorResponse, HttpError, parseJson, audit } from "./db.js";
+import { runSync } from "./tenninety-sync.js";
 import { asJson as optionsJson } from "./options.js";
 import * as auth from "./auth.js";
 import * as listings from "./listings.js";
@@ -28,6 +29,45 @@ import * as redirects from "./redirects.js";
 export const FRAME_ANCESTORS = "frame-ancestors 'self' https://megacityproperties.co.uk https://*.megacityproperties.co.uk https://billydigitals.com https://*.billydigitals.com";
 
 /* [method, pattern, handler, flags]  — flags: public (no session), owner */
+/* ── 10ninety ─────────────────────────────────────────────────────────────── */
+
+/* The website mirrors 10ninety, and their feed only moves when Walid runs a
+   Portal Export. So this button exists for the moment straight after he has:
+   press it and the website catches up, rather than waiting for the next
+   scheduled pull.
+
+   Owner-only, and throttled. A refresh is a request to somebody else's API
+   made from a client's account, and a button anyone can hold down is a way to
+   get that account rate limited. */
+let lastSyncAt = 0;
+const SYNC_COOLDOWN_MS = 10_000;
+
+async function tenninetySync(c) {
+  if (!c.env.TENNINETY_API_KEY) throw new HttpError(503, "The 10ninety key is not set on this Worker yet.");
+  const now = Date.now();
+  if (now - lastSyncAt < SYNC_COOLDOWN_MS) {
+    const wait = Math.ceil((SYNC_COOLDOWN_MS - (now - lastSyncAt)) / 1000);
+    return json({ ok: false, throttled: true, summary: `Just refreshed \u2014 try again in ${wait}s.` }, 429);
+  }
+  lastSyncAt = now;
+  const result = await runSync(c.env, c.db);
+  await audit(c.db, { userId: c.user.id, action: "listings.synced", entity: "listing", entityId: null,
+    detail: { created: result.created, updated: result.updated, removed: result.removed, ok: result.ok } });
+  /* 207 when the feed was read but something in it would not write: the
+     button should not say "done" over eight of nine properties. */
+  return json(result, result.ok ? 200 : 207);
+}
+
+async function tenninetyStatus(c) {
+  const row = await c.db.prepare(
+    `SELECT COUNT(*) n, MAX(synced_at) at FROM listings WHERE source='tenninety' AND deleted_at IS NULL`).first();
+  return json({
+    configured: !!c.env.TENNINETY_API_KEY,
+    count: Number((row && row.n) || 0),
+    lastSyncedAt: (row && row.at) || null,
+  });
+}
+
 const ROUTES = [
   ["GET", "/auth/me", auth.me, { public: true }],
   ["POST", "/auth/bootstrap", auth.bootstrap, { public: true }],
@@ -52,6 +92,8 @@ const ROUTES = [
   ["GET", "/listings", listings.list],
   ["POST", "/listings", listings.create],
   ["POST", "/import/legacy", listings.importLegacy],
+  ["POST", "/sync/tenninety", tenninetySync, { owner: true }],
+  ["GET", "/sync/tenninety", tenninetyStatus],
   ["GET", "/listings/:id", listings.get],
   ["PATCH", "/listings/:id", listings.patch],
   ["DELETE", "/listings/:id", listings.remove],
