@@ -153,6 +153,9 @@ const MUST = [
   "templates/megacity-skyline.css",
   "templates/megacity-skyline.js",
   "templates/megacity-video360.js",
+  /* his outreach signature is built from these two */
+  "templates/assets/mcr/logo.png",
+  "templates/assets/mcr/walid-mhana.jpg",
   "templates/megacity-studio.js",
   "billy360/embed.js",
   "billy360/index.html",

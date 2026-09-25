@@ -275,6 +275,11 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .st-sync{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 /* the 360 override, for a file whose metadata has been stripped */
 .st-force360{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;color:var(--navy);cursor:pointer}
+/* what the signature will look like where it lands */
+.st-sigpv{margin:12px 0 0;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px;background:var(--paper);overflow-x:auto}
+.st-sigpv table{border-collapse:collapse}
+.st-sigpv img{max-width:none}
+
 .st-force360 input{width:17px;height:17px;accent-color:var(--blue-deep);cursor:pointer}
 .st-drop .st-hint{max-width:62ch}
 

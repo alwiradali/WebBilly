@@ -51,6 +51,22 @@
   function go(hash) { if (location.hash === hash) route(); else location.hash = hash; }
   function hashQuery() { return new URLSearchParams((location.hash.split("?")[1]) || ""); }
   function copyText(text) { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text); return Promise.reject(new Error("no clipboard")); }
+  /* Two flavours of the same email on the clipboard at once. Gmail, Outlook
+     and Apple Mail take the HTML and the signature arrives with the logo and
+     the photograph; a plain-text box takes the other one and nothing is lost.
+     Falls back to plain text wherever ClipboardItem is not available, which is
+     every older browser and any page not served over https. */
+  function copyRich(html, text) {
+    try {
+      if (navigator.clipboard && window.ClipboardItem && navigator.clipboard.write) {
+        return navigator.clipboard.write([new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" })
+        })]).catch(function () { return copyText(text); });
+      }
+    } catch (e) { /* older engines throw on the constructor */ }
+    return copyText(text);
+  }
   function dayPart() { var h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; }
   function isPhoto(m) { return m && (m.kind === "photo" || m.kind === "pano"); }
   function statusPill(s) { return '<span class="st-pill st-pill--' + esc(s || "draft") + '">' + esc(optLabel("status", s) || s || "Draft") + "</span>"; }
@@ -2455,10 +2471,61 @@
 
   /* ── backlinks ──────────────────────────────────────────────────── */
   var blRows = [], BL_STATUS = [["planned", "Planned"], ["requested", "Requested"], ["live", "Live"], ["lost", "Lost"]];
+  /* His sign-off, in both flavours. Nothing here is invented: the name, the
+     office number and the address are his own, and the two pictures are files
+     already on the site. No job title — the Studio calls him "Owner" because
+     that is his permission level, not something to print in a letter.
+
+     The pictures are addressed from wherever this Studio is open, so once the
+     site is on megacityproperties.co.uk they carry his domain. Before that
+     they carry the workers.dev address, which is why the panel says to wait. */
+  var SIGN = {
+    name: "Walid Mhana",
+    firm: "Megacity Properties",
+    phone: "0161 220 1763",
+    email: "info@megacityproperties.co.uk",
+    site: "www.megacityproperties.co.uk"
+  };
+  function signAsset(f) { return location.origin + "/templates/assets/mcr/" + f; }
+  function signText() {
+    return SIGN.name + "\n" + SIGN.firm + "\n" + SIGN.phone + "\n" + SIGN.email + "\n" + SIGN.site;
+  }
+  /* Tables and inline styles on purpose: email clients strip stylesheets and
+     most of flexbox, and a signature that collapses is worse than none. */
+  function signHtml() {
+    return '<table cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;border-top:1px solid #dfe3ec;padding-top:14px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#2b3550">' +
+      '<tr>' +
+      '<td style="vertical-align:middle;padding-right:14px">' +
+        '<img src="' + esc(signAsset("walid-mhana.jpg")) + '" width="56" height="56" alt="' + esc(SIGN.name) + '" style="display:block;width:56px;height:56px;border-radius:50%;object-fit:cover">' +
+      "</td>" +
+      '<td style="vertical-align:middle;border-left:1px solid #dfe3ec;padding-left:14px">' +
+        '<div style="font-weight:bold;color:#0b1533">' + esc(SIGN.name) + "</div>" +
+        '<div style="padding-bottom:6px">' + esc(SIGN.firm) + "</div>" +
+        '<div><a href="tel:+441612201763" style="color:#2b3550;text-decoration:none">' + esc(SIGN.phone) + "</a></div>" +
+        '<div><a href="mailto:' + esc(SIGN.email) + '" style="color:#2b3550;text-decoration:none">' + esc(SIGN.email) + "</a></div>" +
+        '<div><a href="https://' + esc(SIGN.site) + '" style="color:#1b4ed8;text-decoration:none">' + esc(SIGN.site) + "</a></div>" +
+      "</td>" +
+      '<td style="vertical-align:middle;padding-left:18px">' +
+        '<img src="' + esc(signAsset("logo.png")) + '" height="40" alt="' + esc(SIGN.firm) + '" style="display:block;height:40px;width:auto">' +
+      "</td>" +
+      "</tr></table>";
+  }
+  /* the body as HTML: paragraphs, and the blank lines kept */
+  function mailHtml(body) {
+    var paras = String(body).split(/\n{2,}/).map(function (p) {
+      return '<p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#2b3550">' + esc(p).replace(/\n/g, "<br>") + "</p>";
+    }).join("");
+    return '<div style="max-width:620px">' + paras + signHtml() + "</div>";
+  }
+
+  /* The body only. The sign-off is the signature below, so his name, number,
+     address, photograph and logo are not typed out three times and cannot
+     drift apart. <angle brackets> are the parts that genuinely change per
+     recipient; the website address is not one of them, so it is written out. */
   var OUTREACH = [
-    ["Local directory", "Subject: Listing Megacity Properties in your directory\n\nHello,\n\nWe are Megacity Properties, a lettings and property management agency in Manchester, based at The Tube Business Centre on North Street. Could we be listed in your directory?\n\nMegacity Properties\n<website address>\n0161 220 1763\ninfo@megacityproperties.co.uk\n\nHappy to send a logo or a short description in whatever format suits you.\n\nThank you,\n<your name>\nMegacity Properties"],
-    ["Business association", "Subject: Our entry on your members page\n\nHello,\n\nMegacity Properties is a member of <association>. Could you check that our entry on the members page links to our website, <website address>? If there is a form or a preferred wording, tell me and I will send it straight back.\n\nThank you,\n<your name>\nMegacity Properties"],
-    ["Partner mention", "Subject: A link between our websites\n\nHello <name>,\n\nWe work with you on <what you do together> and mention you on our website. Would you be open to a short mention of Megacity Properties on yours, linking to <website address>? One sentence is plenty, and I can suggest wording if that helps.\n\nThank you,\n<your name>\nMegacity Properties"]
+    ["Local directory", "Subject: Listing Megacity Properties in your directory\n\nHello,\n\nWe are Megacity Properties, a lettings and property management agency in Manchester, based at The Tube Business Centre on North Street. Could we be listed in your directory?\n\nHappy to send a logo or a short description in whatever format suits you.\n\nThank you,"],
+    ["Business association", "Subject: Our entry on your members page\n\nHello,\n\nMegacity Properties is a member of <association>. Could you check that our entry on the members page links to our website, www.megacityproperties.co.uk? If there is a form or a preferred wording, tell me and I will send it straight back.\n\nThank you,"],
+    ["Partner mention", "Subject: A link between our websites\n\nHello <name>,\n\nWe work with you on <what you do together> and mention you on our website. Would you be open to a short mention of Megacity Properties on yours, linking to www.megacityproperties.co.uk? One sentence is plenty, and I can suggest wording if that helps.\n\nThank you,"]
   ];
   function blPill(s) { var l = BL_STATUS.filter(function (x) { return x[0] === s; })[0]; return '<span class="st-pill st-pill--' + esc(s) + '">' + esc(l ? l[1] : s) + "</span>"; }
   SCREENS.backlinks = function () {
@@ -2466,8 +2533,16 @@
     view.innerHTML = '<p class="st-hint" style="margin-bottom:12px">Links are earned by asking. This list tracks the ones you have asked for and checks they are still there.</p>' +
       '<div class="st-toolbar"><div class="st-counts" id="blCounts" style="margin:0;flex:1 1 200px"></div><button type="button" class="st-btn" data-blact="check-all">Check all</button><button type="button" class="st-btn st-btn--fill" data-blact="add">' + I.plus + 'Add a link</button></div>' +
       '<div id="blBody">' + loading() + "</div>" +
-      '<section class="st-card" style="margin-top:16px"><div class="st-card-head"><div><h2>Outreach templates</h2><p>Short and plain. Fill in the angle brackets before sending.</p></div></div><div class="st-tpl">' +
-      OUTREACH.map(function (t) { return '<details class="st-details"><summary>' + esc(t[0]) + "</summary><div><pre>" + esc(t[1]) + '</pre><div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-copy="' + esc(t[1]) + '">' + I.copy + "Copy email</button></div></div></details>"; }).join("") + "</div></section>";
+      '<section class="st-card" style="margin-top:16px"><div class="st-card-head"><div><h2>Outreach templates</h2><p>Short and plain. Fill in the angle brackets before sending.</p></div></div>' +
+      '<p class="st-hint" style="margin:0 0 12px">Copy pastes the signature with the logo and the photograph into Gmail, Outlook or Apple Mail, and plain text anywhere else. The two pictures are addressed from <b>' + esc(location.host) + '</b>, so send these once the site is on his own domain or they will carry this one.</p>' +
+      '<div class="st-tpl">' +
+      OUTREACH.map(function (t, i) {
+        var full = t[1] + "\n\n" + signText();
+        return '<details class="st-details"><summary>' + esc(t[0]) + "</summary><div><pre>" + esc(full) + "</pre>" +
+          '<div class="st-sigpv">' + signHtml() + "</div>" +
+          '<div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-copy-mail="' + i + '">' + I.copy + "Copy email</button>" +
+          '<button type="button" class="st-btn st-btn--sm" data-copy="' + esc(full) + '">' + I.doc + "Copy as plain text</button></div></div></details>";
+      }).join("") + "</div></section>";
     loadBacklinks();
   };
   function loadBacklinks() {
@@ -2560,6 +2635,14 @@
     var mai = e.target.closest("[data-mai]"); if (mai) { mediaAi(mai.getAttribute("data-mai"), mai.getAttribute("data-mid"), mai); return; }
     if (e.target.closest("[data-newpage]")) { newPageDrawer(); return; }
     if (pg) { var pa = e.target.closest("[data-pact],[data-bact],[data-addblock],[data-addfaq],[data-faq-rm],[data-hero]"); if (pa && pageClick(pa)) return; }
+    var cm = e.target.closest("[data-copy-mail]");
+    if (cm) {
+      var t = OUTREACH[Number(cm.getAttribute("data-copy-mail"))];
+      if (t) copyRich(mailHtml(t[1]), t[1] + "\n\n" + signText()).then(
+        function () { toast("Copied \u2014 paste into your email and the signature comes with it"); },
+        function () { toast("Could not copy \u2014 select the text and copy it by hand", { kind: "warn" }); });
+      return;
+    }
     var blb = e.target.closest("[data-blact]"); if (blb) { backlinkAction(blb.getAttribute("data-blact"), blb.getAttribute("data-bid"), blb); return; }
     if (!ed) return;
     var ea = e.target.closest("[data-eact]"); if (ea) { editorAction(ea.getAttribute("data-eact"), ea); return; }
