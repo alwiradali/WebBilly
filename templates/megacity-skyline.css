@@ -743,7 +743,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .lp-hero-in{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto}
 /* --blue-lift measured 3.76:1 against this hero, so both it and the
    italic below take the lighter blue used on the other dark bands. */
-.lp-hero .no{font:800 13.2px/1 var(--ff-u);letter-spacing:.28em;text-transform:uppercase;color:#8FC4F5;margin-bottom:20px}
+.lp-hero .no{font:800 13.2px/1.6 var(--ff-u);letter-spacing:.28em;text-transform:uppercase;color:#8FC4F5;margin-bottom:20px;max-width:none}
 .lp-hero h1{font:700 clamp(39.14px,6.78vw,86.52px)/1.02 var(--ff-d);letter-spacing:-.015em;max-width:16ch}
 .lp-hero h1 em{color:#8FC4F5}
 .lp-hero p{margin-top:22px;max-width:56ch;font-size:clamp(16.5px,1.48vw,19.61px);color:rgba(255,255,255,.8)}

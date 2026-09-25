@@ -473,31 +473,39 @@
      "id": "landlords-1",
      "kind": "text",
      "tag": "p",
-     "section": "Your property, managed properly.",
-     "html": "Property management · Manchester &amp; Salford",
-     "text": "Property management · Manchester & Salford"
+     "section": "Your property, expertly managed.",
+     "html": "Professional lettings &amp; property management across Greater Manchester",
+     "text": "Professional lettings & property management across Greater Manchester"
     },
     {
      "id": "landlords-2",
      "kind": "heading",
      "tag": "h1",
-     "section": "Your property, managed properly.",
-     "html": "Your property,<br><em>managed properly.</em>",
-     "text": "Your property, managed properly."
+     "section": "Your property, expertly managed.",
+     "html": "Your property,<br><em>expertly managed.</em>",
+     "text": "Your property, expertly managed."
     },
     {
      "id": "landlords-3",
      "kind": "text",
      "tag": "p",
-     "section": "Your property, managed properly.",
-     "html": "Megacity Properties is an ARLA Propertymark protected letting agent and property manager in Manchester and Salford. Your rent, your deposit, your property and your money are each protected by a named scheme, not just a promise. Here is exactly how, and exactly what we check before anyone gets a key.",
-     "text": "Megacity Properties is an ARLA Propertymark protected letting agent and property manager in Manchester and Salford. Your rent, your deposit, your property and your money are each protected by a named scheme, not just a promise. Here is exactly how, and exactly what we check before anyone gets a key."
+     "section": "Your property, expertly managed.",
+     "html": "Megacity Properties helps landlords let and manage their properties with confidence. As an ARLA Propertymark member, we provide professional tenant sourcing, thorough referencing, rent collection and ongoing property management across Manchester, Salford and the wider Greater Manchester area.",
+     "text": "Megacity Properties helps landlords let and manage their properties with confidence. As an ARLA Propertymark member, we provide professional tenant sourcing, thorough referencing, rent collection and ongoing property management across Manchester, Salford and the wider Greater Manchester area."
+    },
+    {
+     "id": "landlords-165",
+     "kind": "text",
+     "tag": "p",
+     "section": "Your property, expertly managed.",
+     "html": "Client money is protected through Propertymark&rsquo;s scheme, and tenancy deposits are protected with the Deposit Protection Service.",
+     "text": "Client money is protected through Propertymark's scheme, and tenancy deposits are protected with the Deposit Protection Service."
     },
     {
      "id": "landlords-4",
      "kind": "button",
      "tag": "a",
-     "section": "Your property, managed properly.",
+     "section": "Your property, expertly managed.",
      "html": "Book a professional valuation",
      "text": "Book a professional valuation"
     },
@@ -505,7 +513,7 @@
      "id": "landlords-5",
      "kind": "button",
      "tag": "a",
-     "section": "Your property, managed properly.",
+     "section": "Your property, expertly managed.",
      "html": "Call 0161 220 1763",
      "text": "Call 0161 220 1763"
     },
