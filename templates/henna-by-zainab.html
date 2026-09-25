@@ -220,6 +220,12 @@
         <div class="cal-head">
           <button type="button" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
           <p class="cal-month" id="calMonth" aria-live="polite"></p>
+          <!-- The word has to survive somewhere. The line under the calendar
+               sells the busy season now, so "example" moves up here, quiet and
+               always on screen: a grid that looks like a real diary with no
+               caveat anywhere is how somebody ends up believing a date is
+               theirs. The confirmation on picking a day carries the rest. -->
+          <span class="cal-eg">Example</span>
           <button type="button" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
         </div>
         <div class="cal-dow" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
@@ -229,9 +235,11 @@
           <span><i class="k-few"></i>Nearly full</span>
           <span><i class="k-gone"></i>Booked</span>
         </p>
-        <p class="cal-note">An example of how my diary will look once it is
-          linked. Nothing here is a live booking &mdash; pick a day to drop it
-          into the form and I'll confirm it by DM.</p>
+        <!-- One live line instead of a standing disclaimer. It says what to do
+             until a day is picked, then names the day and says plainly that
+             nothing is held yet -- which is the moment that actually matters,
+             because that is when someone might believe they have booked. -->
+        <p class="cal-say" id="calSay" role="status" aria-live="polite"></p>
       </div>
 
     </div>

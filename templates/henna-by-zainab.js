@@ -564,8 +564,10 @@
      the same day always shows the same state and it does not reshuffle every
      time you page back and forth. */
   (function calendar() {
-    var grid = $("#calGrid"), label = $("#calMonth");
+    var grid = $("#calGrid"), label = $("#calMonth"), say = $("#calSay");
     if (!grid || !label) return;
+    var IDLE = "Eid and wedding season go first \u2014 the earlier you ask, the more of my diary is still open.";
+    if (say) say.textContent = IDLE;
     var today = new Date(); today.setHours(0,0,0,0);
     /* open on next month when this one is nearly spent: a grid that is four
        fifths greyed out says nothing about when she is free */
@@ -619,6 +621,8 @@
     function shift(n) {
       view = new Date(view.getFullYear(), view.getMonth() + n, 1);
       draw();
+      /* the picked day is not on screen any more, so neither is its line */
+      if (say && !$("#calGrid .is-picked")) { say.textContent = IDLE; say.classList.remove("is-set"); }
     }
     $("#calPrev").addEventListener("click", function () { shift(-1); });
     $("#calNext").addEventListener("click", function () { shift(1); });
@@ -635,10 +639,18 @@
       $$("#calGrid .is-picked").forEach(function (x) {
         x.classList.remove("is-picked"); x.removeAttribute("aria-pressed");
       });
-      /* no toast: the day turns henna and the date field fills in, both of
-         which are on screen already -- a banner over the form on top of that
-         is just something in the way */
+      /* Said in place, under the calendar, rather than as a banner over the
+         form: the day turns henna and the date field fills in, both already on
+         screen, and this line names the day and keeps the one thing that has
+         to be said honest -- nothing is held until she confirms it. */
       b.classList.add("is-picked"); b.setAttribute("aria-pressed", "true");
+      if (say) {
+        var d = new Date(b.getAttribute("data-iso") + "T00:00:00");
+        say.textContent = d.toLocaleDateString("en-GB",
+          { weekday: "long", day: "numeric", month: "long" }) +
+          " is in your enquiry \u2014 nothing is held until I confirm it by DM.";
+        say.classList.add("is-set");
+      }
     });
 
     draw();

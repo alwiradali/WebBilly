@@ -700,7 +700,15 @@ main,.nav,.foot{position:relative;z-index:2}
   border:1px solid var(--line);
   box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 12px 30px -26px rgba(93,51,32,.5);
 }
-.cal-head{display:flex;align-items:center;justify-content:space-between;gap:.6em;margin-bottom:.9em}
+.cal-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6em;margin-bottom:.9em}
+.cal-head .cal-month{order:1;flex:1;text-align:center;min-width:0}
+/* flex-basis:100% only drops it to its own line because .cal-head wraps */
+.cal-eg{
+  order:3;flex:0 0 100%;text-align:center;
+  font-family:var(--display);font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--ink-dim);margin-top:.5em;
+}
+.cal-head #calNext{order:2}
 .cal-month{
   margin:0;font-family:var(--display);font-size:1.02rem;letter-spacing:.06em;color:var(--ink);
 }
@@ -744,7 +752,12 @@ button.cal-day:hover{background:var(--gold);border-color:var(--gold);color:var(-
 .cal-key .k-free{background:rgba(169,128,63,.16);border-color:var(--gold)}
 .cal-key .k-few{background:none;border-color:var(--line-2);border-style:dashed}
 .cal-key .k-gone{background:none;opacity:.45}
-.cal-note{margin:.7em 0 0;font-size:.8rem;font-style:italic;color:var(--ink-dim);text-wrap:pretty}
+.cal-say{
+  margin:.8em 0 0;font-size:.84rem;font-style:italic;color:var(--ink-soft);
+  text-wrap:pretty;min-height:1.6em;transition:color .35s var(--ease);
+}
+.cal-say.is-set{color:var(--henna);font-style:normal;font-family:var(--display);
+  font-size:.78rem;letter-spacing:.06em}
 /* A thumb needs 44px. Seven columns cannot be 44px WIDE on a 320px screen --
    that is 308px of cells before any gutter, padding or gap -- so the grid gives
    up its square cells and takes the 44 on the axis it can: height. Padding and

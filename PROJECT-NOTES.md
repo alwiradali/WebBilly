@@ -1184,9 +1184,21 @@ of the date, with weekends weighted busier. Page forward and back and the same
 month comes back identical, which a random fill would not. The suite asserts
 exactly that.
 
-Picking a day says nothing out loud: the day turns henna and the date field
-fills in, both already on screen, so a banner over the form on top of that was
-just something in the way.
+**One live line under it, not a standing disclaimer.** Idle, it sells the busy
+season: *"Eid and wedding season go first — the earlier you ask, the more of my
+diary is still open."* Pick a day and the same line names it and says plainly
+that **nothing is held until she confirms it by DM** — which is the moment that
+actually matters, because that is when somebody might believe they have booked.
+Paging to another month clears it, so a confirmation never outlives the day it
+names.
+
+That line no longer carries the word "example", so it moved into the calendar's
+header, quiet and always on screen. A grid that looks like a real diary with no
+caveat anywhere is how someone ends up believing a date is theirs.
+
+Picking a day says nothing over the form: the day turns henna and the date
+field fills in, both already on screen, so a banner on top of that was just
+something in the way.
 
 It opens on next month when this one is nearly spent — a grid that is four
 fifths greyed out says nothing about when she is free.
