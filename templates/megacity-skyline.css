@@ -1087,13 +1087,25 @@ form.enq{display:grid;gap:18px;align-content:start}
 
 /* ── Page header with a photograph behind it ─────────────────────────── */
 .phead--photo{position:relative;overflow:clip;isolation:isolate}
+/* Each page names its own photograph, where to hold it (--ph-pos), and a
+   smaller copy for phones (--ph-img-m). The tint is dark only where the words
+   are — on the left on a wide screen — and lets the room show on the right;
+   it used to sit at 38-86% navy over the whole photo, which is what made the
+   heroes look murky. */
 .phead--photo::before{content:"";position:absolute;inset:0;z-index:-2;
-  background-image:var(--ph-img);background-size:cover;background-position:center 62%}
+  background-image:var(--ph-img);background-size:cover;background-position:var(--ph-pos,center 62%)}
 .phead--photo::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(105deg,rgba(20,17,58,.86) 0%,rgba(20,17,58,.72) 42%,rgba(24,33,86,.50) 72%,rgba(30,60,130,.38) 100%)}
+  background:linear-gradient(100deg,rgba(20,17,58,.86) 0%,rgba(20,17,58,.80) 34%,rgba(20,17,58,.66) 50%,rgba(20,17,58,.30) 68%,rgba(20,17,58,.06) 100%)}
+/* a soft shadow under the words, for the odd bright patch the tint misses */
+.phead--photo .no,.phead--photo h1,.phead--photo .lede{text-shadow:0 1px 2px rgba(12,10,40,.35),0 0 24px rgba(12,10,40,.35)}
+.phead--photo .lede{color:#fff}
+/* a tablet's text runs further across the photo, so the dark band does too */
+@media (min-width:761px) and (max-width:1180px){
+  .phead--photo::after{background:linear-gradient(100deg,rgba(20,17,58,.86) 0%,rgba(20,17,58,.80) 44%,rgba(20,17,58,.66) 62%,rgba(20,17,58,.30) 82%,rgba(20,17,58,.10) 100%)}
+}
 @media (max-width:760px){
-  .phead--photo::before{background-position:center 58%}
-  .phead--photo::after{background:linear-gradient(178deg,rgba(20,17,58,.78) 0%,rgba(20,17,58,.62) 46%,rgba(24,40,102,.54) 100%)}
+  .phead--photo::before{background-image:var(--ph-img-m,var(--ph-img));background-position:var(--ph-pos-m,center 58%)}
+  .phead--photo::after{background:linear-gradient(180deg,rgba(20,17,58,.78) 0%,rgba(20,17,58,.68) 55%,rgba(20,17,58,.60) 100%)}
 }
 .pd-epc{margin:16px 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:420px}
 .pd-epc img{width:100%;height:auto;display:block}
