@@ -1116,7 +1116,9 @@
   function mediaHtml() {
     var m = ed.doc.media || [];
     return '<div class="st-drop" id="edDrop">' + I.upload + '<p><b>Drop photos here</b> or</p><label class="st-btn st-btn--fill">' + I.plus + 'Add photos<input type="file" id="edFile" accept="image/*,video/mp4,video/webm,application/pdf" multiple></label>' +
-      '<p class="st-hint">JPEG, PNG or WebP photos, MP4 or WebM video and PDF floor plans or EPCs, up to 60 MB each. Photos are resized on this device before they upload, so it is quick even on the phone.</p></div>' +
+      '<p class="st-hint">JPEG, PNG or WebP photos, MP4 or WebM video and PDF floor plans or EPCs, up to 60 MB each. Photos are resized on this device before they upload, so it is quick even on the phone.</p>' +
+      '<label class="st-force360"><input type="checkbox" id="edForce360"' + (force360 ? " checked" : "") + '><span>These are 360\u00b0 photos</span></label>' +
+      '<p class="st-hint">Only needed if a 360\u00b0 is not recognised on its own. Cameras normally say so in the file, and that is believed before anything is measured.</p></div>' +
       '<div class="st-uploads" id="edUploads"></div>' +
       (m.length ? '<p class="st-hint" style="margin-top:14px">' + plural(m.length, "item") + ' · drag to reorder, or use the arrows. The star sets the cover photo.</p><div class="st-media" id="edMedia">' + m.map(mediaCard).join("") + "</div>" : '<div class="st-empty" id="edMediaEmpty" style="margin-top:14px">' + I.image + "<h3>No photos yet</h3><p>Add at least one photo and choose a cover before advertising.</p></div>");
   }
@@ -1128,6 +1130,8 @@
   }
   function bindMedia(panel) {
     var drop = $("#edDrop", panel), input = $("#edFile", panel);
+    var box = $("#edForce360", panel);
+    if (box) box.addEventListener("change", function () { force360 = this.checked; });
     input.addEventListener("change", function () { addFiles(this.files); this.value = ""; });
     ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("is-over"); }); });
     ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("is-over"); }); });
@@ -1186,17 +1190,25 @@
   }
 
   /* intake + upload pipeline */
+  /* Normally the camera says whether a picture is a 360 and that is believed.
+     This is for the file that has had its metadata stripped — by an editor, a
+     messaging app, or an export — where nothing is left to read and the shape
+     is all there is. It is the person saying so, which outranks measuring. */
+  var force360 = false;
   var fallbackIntake = {
     isImageFile: function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|gif|avif|heic|heif)$/i.test(f.name || ""); },
     imageAsync: function (file, opts) {
       opts = opts || {};
       return loadImage(file).then(function (img) {
-        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, isPano = w / h >= 1.9 && w / h < 2.1 && w >= 1024;
+        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        /* the same rule as megacity-intake.js, minus the metadata it cannot
+           read here: this path only runs if that file failed to load */
+        var isPano = opts.forcePano === true || (w / h > 1.8 && w / h < 2.25 && w >= 1024);
         var maxEdge = isPano ? Math.max(opts.panoEdge || 0, opts.maxEdge || 1600) : (opts.maxEdge || 1600);   /* same rule as MCIntake: a 360 keeps its 4096 */
         var scale = Math.min(1, maxEdge / Math.max(w, h)), ow = Math.max(1, Math.round(w * scale)), oh = Math.max(1, Math.round(h * scale));
         var c = document.createElement("canvas"); c.width = ow; c.height = oh; c.getContext("2d").drawImage(img, 0, 0, ow, oh);
         if (img.close) img.close();
-        return { src: c.toDataURL("image/jpeg", opts.quality || 0.82), w: w, h: h, outW: ow, outH: oh, isPano: isPano, name: file.name, luma: null, sharp: null, hash: null, savedKB: null, notes: [] };
+        return { src: c.toDataURL("image/jpeg", opts.quality || 0.82), w: w, h: h, outW: ow, outH: oh, isPano: isPano, panoSource: isPano ? (opts.forcePano ? "told" : "shape") : null, panoPadded: false, name: file.name, luma: null, sharp: null, hash: null, savedKB: null, notes: [] };
       });
     }
   };
@@ -1215,9 +1227,9 @@
   function intake() { return (window.MCIntake && window.MCIntake.imageAsync) ? window.MCIntake : fallbackIntake; }
   /* one decode of the original (MCIntake, which also measures brightness/sharpness); the smaller
      sizes are drawn from that first JPEG rather than decoding a 4096-px file three times (F165) */
-  function intakeAll(file) {
+  function intakeAll(file, forcePano) {
     var IN = intake();
-    return IN.imageAsync(file, { maxEdge: 1600, panoEdge: 4096, quality: 0.86 }).then(function (first) {
+    return IN.imageAsync(file, { maxEdge: 1600, panoEdge: 4096, quality: 0.86, forcePano: !!forcePano }).then(function (first) {
       if (!first.isPano) return shrink(first, 480, 0.75).then(function (thumb) { return { large: first, thumb: thumb, pano: null, pano2048: null }; });
       return shrink(first, 1600, 0.82).then(function (large) {
         return shrink(large, 480, 0.75).then(function (thumb) {
@@ -1249,7 +1261,7 @@
   }
   function photoForm(listingId, file, r, extra) {
     var fd = new FormData();
-    var meta = { listingId: listingId, kind: r.large.isPano ? "pano" : "photo", role: (extra && extra.role) || "gallery", roomLabel: (extra && extra.roomLabel) || "", alt: (extra && extra.alt) || "", width: r.large.w, height: r.large.h, phash: r.large.hash || null, luma: r.large.luma == null ? null : r.large.luma, sharp: r.large.sharp == null ? null : r.large.sharp, isPano: !!r.large.isPano, filename: file.name };
+    var meta = { listingId: listingId, kind: r.large.isPano ? "pano" : "photo", role: (extra && extra.role) || "gallery", roomLabel: (extra && extra.roomLabel) || "", alt: (extra && extra.alt) || "", width: r.large.w, height: r.large.h, phash: r.large.hash || null, luma: r.large.luma == null ? null : r.large.luma, sharp: r.large.sharp == null ? null : r.large.sharp, isPano: !!r.large.isPano, panoSource: r.large.panoSource || null, panoPadded: !!r.large.panoPadded, filename: file.name };
     fd.append("meta", JSON.stringify(meta));
     fd.append("orig", file, file.name);
     fd.append("large", dataUrlToBlob(r.large.src), "large.jpg");
@@ -1288,7 +1300,7 @@
     var p;
     if (kind === "image") {
       row.status("Preparing…");
-      p = intakeAll(file).then(function (r) {
+      p = intakeAll(file, force360).then(function (r) {
         row.status("Uploading…");
         return API.media.upload(photoForm(E.id, file, r), row.progress).then(function (m) { E.notes[m.id] = r.large.notes || []; return m; });
       }, function (e) { throw new Error(isHeic(file) ? HEIC_MSG : ((e && e.message) || "Could not read this image. Try exporting it as a JPEG.")); });

@@ -847,6 +847,72 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
+     IS THIS A 360?
+     The shape a 360 usually has is not the same question as whether it is
+     one. Every 360 camera writes the answer into the XMP, in Google's GPano
+     namespace, and when the picture is a crop it also gives the size of the
+     full sphere and where this piece sits in it.
+     Kept byte-identical to templates/megacity-intake.js — see
+     scripts/megacity-pano-detect-check.mjs, which fails if they drift.
+     ═══════════════════════════════════════════════════════════════════════ */
+  /* the XMP packet is plain ASCII inside the file, so it can be found without
+     parsing the container: JPEG, PNG and WebP all carry it the same way. */
+  function findXmp(bytes) {
+    var open = "<x:xmpmeta", close = "</x:xmpmeta>";
+    var text = "";
+    for (var i = 0; i < bytes.length; i++) text += String.fromCharCode(bytes[i]);
+    var a = text.indexOf(open);
+    if (a < 0) { a = text.indexOf("<rdf:RDF"); if (a < 0) return null; }
+    var b = text.indexOf(close, a);
+    return b < 0 ? text.slice(a, a + 20000) : text.slice(a, b + close.length);
+  }
+
+  /* GPano fields appear as attributes on one element or as child elements,
+     and both forms are in the wild from the same manufacturers. */
+  function field(xmp, name) {
+    var m = new RegExp("GPano:" + name + '\\s*=\\s*"([^"]*)"').exec(xmp);
+    if (m) return m[1];
+    m = new RegExp("<GPano:" + name + "[^>]*>([^<]*)</GPano:" + name + ">").exec(xmp);
+    return m ? m[1].trim() : null;
+  }
+  function num(v) { var n = parseInt(v, 10); return isFinite(n) && n > 0 ? n : null; }
+
+  /* Pure, so it can be tested without a browser or a camera. */
+  function gpanoFromBytes(bytes) {
+    if (!bytes || !bytes.length) return null;
+    var xmp = findXmp(bytes);
+    if (!xmp || xmp.indexOf("GPano") < 0) return null;
+    var proj = (field(xmp, "ProjectionType") || "").toLowerCase();
+    var use = (field(xmp, "UsePanoramaViewer") || "").toLowerCase();
+    var fullW = num(field(xmp, "FullPanoWidthPixels")), fullH = num(field(xmp, "FullPanoHeightPixels"));
+    var cw = num(field(xmp, "CroppedAreaImageWidthPixels")), ch = num(field(xmp, "CroppedAreaImageHeightPixels"));
+    var cx = parseInt(field(xmp, "CroppedAreaLeftPixels") || "0", 10) || 0;
+    var cy = parseInt(field(xmp, "CroppedAreaTopPixels") || "0", 10) || 0;
+    /* equirectangular is the only projection this viewer draws. A file that
+       says "cylindrical" is a flat panorama and must NOT go on a sphere. */
+    var equirect = proj === "equirectangular" || (!proj && use === "true" && !!fullW);
+    if (!equirect) return proj ? { equirect: false, projection: proj } : null;
+    var cropped = !!(fullW && fullH && cw && ch && (cw !== fullW || ch !== fullH || cx || cy));
+    return { equirect: true, projection: "equirectangular",
+      fullW: fullW, fullH: fullH, cropW: cw, cropH: ch, cropX: cx, cropY: cy, cropped: cropped };
+  }
+
+  /* the first part of the file is enough: XMP sits near the front in every
+     format that carries it, and reading 512KB of a 30MB picture is free */
+  function readGPano(file) {
+    try {
+      var head = file.slice ? file.slice(0, 512 * 1024) : file;
+      if (head.arrayBuffer) return head.arrayBuffer().then(function (b) { return gpanoFromBytes(new Uint8Array(b)); }, function () { return null; });
+      return new Promise(function (resolve) {
+        var fr = new FileReader();
+        fr.onerror = function () { resolve(null); };
+        fr.onload = function () { try { resolve(gpanoFromBytes(new Uint8Array(fr.result))); } catch (e) { resolve(null); } };
+        fr.readAsArrayBuffer(head);
+      });
+    } catch (e) { return Promise.resolve(null); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
      IMAGE INTAKE
      Every image that enters the product goes through here: decoded, measured,
      downscaled and recompressed on the visitor's own machine, and checked for
@@ -916,6 +982,7 @@
     }
     var failed = false;
     function fail(msg) { if (failed) return; failed = true; cb({ error: msg }); }
+
     /* decode once. createImageBitmap decodes off the main thread and hands
        back pixels, no base64 copy of the file; an <img> on an object URL is
        the fallback (F207) */
@@ -937,25 +1004,54 @@
       objUrl = URL.createObjectURL(file);
       im.src = objUrl;
     }
-    if (typeof createImageBitmap === "function") {
-      var p = null;
-      try { p = createImageBitmap(file); } catch (e) { p = null; }
-      if (p && p.then) p.then(function (b) { bmp = b; process(b, b.width, b.height); }, function () { viaImage(); });
-      else viaImage();
-    } else viaImage();
+    /* Ask the file what it is before measuring it: every 360 camera writes
+       the answer into the XMP, and that outranks the shape. */
+    var gp = null;
+    readGPano(file).then(function (g) { gp = g; startDecode(); }, function () { startDecode(); });
+    function startDecode() {
+      if (typeof createImageBitmap === "function") {
+        var p = null;
+        try { p = createImageBitmap(file); } catch (e) { p = null; }
+        if (p && p.then) p.then(function (b) { bmp = b; process(b, b.width, b.height); }, function () { viaImage(); });
+        else viaImage();
+      } else viaImage();
+    }
 
     function process(src, w, h) {
       if (!w || !h) { release(); fail("“" + (file.name || "That image") + "” couldn't be decoded — it may be corrupted."); return; }
       var ratio = w / h;
-      var shape = ratio > 1.9 && ratio < 2.1;
-      var isPano = shape && w >= 1024;
+      /* Loosened, and second in line. A 360 cropped top and bottom — what a
+         phone and most one-shot cameras produce, because they cannot see
+         straight up — is nowhere near 2:1, and the old window called it an
+         ordinary photograph with no way to say otherwise. */
+      var shape = ratio > 1.8 && ratio < 2.25;
+      var told = opts.forcePano === true;
+      var isPano = told ? true
+        : (gp && gp.equirect === true) ? true
+        : (gp && gp.equirect === false) ? false
+        : (shape && w >= 1024);
       var edge = isPano ? Math.max(opts.panoEdge || 4096, maxEdge) : maxEdge;
-      var scale = Math.min(1, edge / Math.max(w, h));
-      var ow = Math.round(w * scale), oh = Math.round(h * scale);
+      var ow, oh, padded = false;
       var c = document.createElement("canvas");
-      c.width = ow; c.height = oh;
-      try { c.getContext("2d").drawImage(src, 0, 0, ow, oh); }
-      catch (e) { release(); fail("That image couldn't be processed."); return; }
+      try {
+        /* a cropped panorama is a slice of the sphere; put it back where it
+           belongs or the room is stretched and the horizon sits wrong */
+        if (isPano && gp && gp.cropped && gp.fullW && gp.fullH && gp.cropW && gp.cropH) {
+          var ps = Math.min(1, edge / gp.fullW);
+          ow = Math.round(gp.fullW * ps); oh = Math.round(gp.fullH * ps);
+          c.width = ow; c.height = oh;
+          var pctx = c.getContext("2d");
+          pctx.fillStyle = "#000"; pctx.fillRect(0, 0, ow, oh);
+          pctx.drawImage(src, Math.round(gp.cropX * ps), Math.round(gp.cropY * ps),
+            Math.max(1, Math.round(gp.cropW * ps)), Math.max(1, Math.round(gp.cropH * ps)));
+          padded = true;
+        } else {
+          var scale = Math.min(1, edge / Math.max(w, h));
+          ow = Math.round(w * scale); oh = Math.round(h * scale);
+          c.width = ow; c.height = oh;
+          c.getContext("2d").drawImage(src, 0, 0, ow, oh);
+        }
+      } catch (e) { release(); fail("That image couldn't be processed."); return; }
       release();   // the full-size pixels are not needed past this point
       /* honest, on-device media intelligence — brightness, sharpness and a
          small perceptual hash for duplicate detection. Measured from the
@@ -1004,6 +1100,7 @@
       function finish(srcUrl, thumbUrl) {
         c.width = 0; c.height = 0;   // free the backing store now, not at GC time
         var notes = [];
+      if (padded) notes.push("This 360\u00B0 does not cover the whole sphere \u2014 the missing part shows as black above and below, which is how the camera took it.");
         if (isPano && w < 4096) notes.push("On the low side for a 360° — 4096×2048 or better looks sharpest.");
         if (!isPano && w < 1200 && h < 1200) notes.push("Low resolution — it will look soft on large screens.");
         if (luma && luma < 58) notes.push("“" + (file.name || "This image") + "” is quite dark — lights on and re-shoot if you can.");
@@ -1012,7 +1109,7 @@
           if (cutOff) notes.unshift("“" + (file.name || "This image") + "” looks cut off — the file may not have transferred fully. Re-send it if the bottom is grey.");
           cb({
             src: srcUrl, thumb: thumbUrl || null, w: w, h: h, outW: ow, outH: oh,
-            isPano: isPano, small: shape && !isPano, name: file.name || "",
+            isPano: isPano, panoSource: !isPano ? null : told ? "told" : (gp && gp.equirect) ? "metadata" : "shape", panoPadded: padded, small: shape && !isPano && !(gp && gp.equirect === false), name: file.name || "",
             luma: Math.round(luma), sharp: Math.round(sharp), hash: hash, cutOff: cutOff,
             savedKB: Math.max(0, Math.round((file.size - srcUrl.length * 0.75) / 1024)),
             notes: notes

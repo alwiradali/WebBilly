@@ -273,6 +273,11 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .st-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
 /* ── refresh from 10ninety, and the 360 section ───────────────────── */
 .st-sync{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* the 360 override, for a file whose metadata has been stripped */
+.st-force360{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;color:var(--navy);cursor:pointer}
+.st-force360 input{width:17px;height:17px;accent-color:var(--blue-deep);cursor:pointer}
+.st-drop .st-hint{max-width:62ch}
+
 .st-sync .st-hint{white-space:nowrap}
 .st-toolbar--end{justify-content:flex-end;margin:12px 0}
 .st-tnote{margin-bottom:12px}
