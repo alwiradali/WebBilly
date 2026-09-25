@@ -1083,6 +1083,28 @@ a plate now: held at its own shape and size beside the line it illustrates.
   body**, so a `window.scrollTo` probe goes straight round the lock and every
   page looks unlocked. The suite drives a real wheel now.
 
+### The hero picture, and a bug only a real phone showed
+
+On a phone the hero photograph was sitting in a block about **63% of the
+screen** with the page showing through beside it. Every viewport in `qa-z.mjs`
+measured it at full width, because **Chromium renders it full width and Safari
+does not**: Safari resolves a grid item's width FROM its `aspect-ratio` and
+height, so `aspect-ratio: 4/5` on `.hero-art` in the one-column mobile hero
+produced a box narrower than its column. There is no WebKit build in this
+container to reproduce it in, so the fix is the one that removes the trap
+rather than works around it: the box states `width:100%` and the **ratio moves
+onto the `<img>`**, which no engine derives a container width from.
+
+Both suites now assert the picture reaches both edges — `z-act.mjs` at six
+widths, `qa-z.mjs` on every stacked viewport — so this cannot come back
+silently on an engine nothing here can run.
+
+While it was open: 4:5 is right on a phone and enormous on a tablet (960px of
+photograph at 768 wide), so between 600 and 860px the band goes to 16:10. It
+also carries the same inset gold hairline the other pictures do, and the
+gradient at its top hand off from the cream rather than starting on a hard
+edge.
+
 ### The example availability calendar
 
 She has no live diary to read from, and a calendar that **looks** real but is

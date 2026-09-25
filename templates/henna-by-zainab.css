@@ -733,7 +733,7 @@ button.cal-day:hover{background:var(--gold);border-color:var(--gold);color:var(-
 @media (pointer: coarse){
   .cal{padding:12px}
   .cal-dow,.cal-grid{gap:2px}
-  .cal-day{aspect-ratio:auto;min-height:44px;font-size:1rem}
+  .cal-day{aspect-ratio:auto;min-height:46px;font-size:1rem}   /* 44 exactly rounds to 43.x and misses */
   .cal-head button{width:44px;height:44px}
 }
 
@@ -869,11 +869,33 @@ button.cal-day:hover{background:var(--gold);border-color:var(--gold);color:var(-
   .hero-mark{margin-inline:auto}
   .hero-sub{margin-inline:auto}
   .hero-cta,.hero-facts{justify-content:center}
-  .hero-art{aspect-ratio:4/5;min-height:340px}
-  .hero-art::after{background:linear-gradient(180deg,rgba(251,243,237,.55),transparent 30%)}
+  /* The ratio goes on the IMAGE, never on this box. Safari resolves a grid
+     item's width FROM its aspect-ratio and height, so `aspect-ratio:4/5` here
+     produced a box about 63% of the column with the page showing through
+     beside it -- a photograph sitting on one side instead of spanning the
+     screen. Stating the width and letting the image carry the ratio holds
+     edge to edge in every engine. */
+  .hero-art{width:100%;aspect-ratio:auto;min-height:0}
+  .hero-art img{
+    position:static;display:block;width:100%;min-width:100%;height:auto;
+    aspect-ratio:4/5;object-fit:cover;object-position:50% 42%;
+  }
+  /* the band flows out of the cream rather than starting with a hard edge */
+  .hero-art::after{background:linear-gradient(180deg,rgba(251,243,237,.92),rgba(251,243,237,.28) 14%,transparent 34%)}
+  /* and carries the same inset gold hairline the other pictures do, so it
+     reads as a plate rather than a raw photograph dropped in */
+  .hero-art::before{
+    content:"";position:absolute;inset:clamp(10px,3vw,16px);z-index:2;pointer-events:none;
+    border:1px solid rgba(252,239,232,.42);
+  }
   .hero-scroll{display:none}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pol-grid{grid-template-columns:1fr}
+}
+/* 4:5 is right on a phone and enormous on a tablet -- 960px of photograph at
+   768 wide. Between phone and the split layout, the band gets wider. */
+@media (min-width:600px) and (max-width:860px){
+  .hero-art img{aspect-ratio:16/10}
 }
 @media (max-width:660px){
   .sec{padding:clamp(56px,7vh,92px) 0}
