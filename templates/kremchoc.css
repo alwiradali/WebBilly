@@ -543,7 +543,6 @@ body.ready .hero-mark .sheen{animation:sheen 2.4s cubic-bezier(.45,.05,.35,1) 1.
 }
 .fld select:focus{outline:none;border-color:var(--gold);background-color:rgba(20,24,19,.7)}
 .fld select option{background:var(--green-2);color:var(--cream)}
-.lede-2{margin-top:1.1em}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .form-msg{margin:0;font-size:.9rem;color:var(--cream);display:none;padding:1em 1.2em;border:1px solid var(--line-2);background:rgba(201,160,98,.08)}
 .form-msg.on{display:block}
