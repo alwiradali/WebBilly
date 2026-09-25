@@ -21,6 +21,7 @@ import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
 import * as urls from "./urls.js";
 import * as redirects from "./redirects.js";
+import * as site from "./site.js";
 
 /* The viewer is framed by the listing pages on both hosts, so /billy360/*
    drops the site-wide SAMEORIGIN for this allow-list (_headers has the same
@@ -140,6 +141,14 @@ const ROUTES = [
   ["DELETE", "/tours/:id", tours.remove],
   ["POST", "/tours/:id/publish", tours.publish],
   ["POST", "/tours/:id/unpublish", tours.unpublish],
+
+  /* Website: the words, photographs, logo and announcement bar (site.js) */
+  ["GET", "/site", site.overview],
+  ["GET", "/site/pages/:slug", site.page],
+  ["PUT", "/site/pages/:slug", site.savePage],
+  ["PUT", "/site/announcement", site.saveAnnouncement],
+  ["PUT", "/site/logo", site.saveLogo],
+  ["POST", "/site/upload", site.upload],
 
   ["POST", "/media", media.upload],
   ["PUT", "/media/stream", media.stream],

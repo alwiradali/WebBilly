@@ -2455,3 +2455,26 @@ body.sl-open{overflow:hidden}
 
 /* the "Why choose Megacity?" kicker sits a touch larger than the other section labels */
 .no.no--lg{font-size:14.4px;letter-spacing:.28em}
+
+/* ── Announcement bar (Studio → Website) ─────────────────────────────────
+   Injected by the Worker at the top of <body> only while one is switched on
+   and in date. It stays fixed above the header; the page and the header move
+   down by its measured height (--annc-h, set by its own script), and closing
+   it puts everything back. Brand navy, white words, the link in sky. */
+.annc{position:fixed;top:0;left:0;right:0;z-index:210;background:var(--navy);color:#fff;
+  padding:9px 48px;min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center;
+  box-shadow:0 1px 0 rgba(255,255,255,.08)}
+.annc-in{margin:0;font:500 14.4px/1.45 var(--ff-u);letter-spacing:.01em;max-width:1100px}
+.annc-link{color:#A8DEF2;font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.annc-link:hover{color:#fff}
+.annc-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;
+  border:0;background:transparent;color:#fff;font:400 22px/1 var(--ff-u);cursor:pointer;opacity:.8}
+.annc-x:hover,.annc-x:focus-visible{opacity:1;background:rgba(255,255,255,.12)}
+html.has-annc body{padding-top:var(--annc-h,40px)}
+html.has-annc .nav{top:var(--annc-h,40px)}
+html.has-annc .megamenu,html.has-annc .veil,html.has-annc .searchlay{top:var(--annc-h,40px)}
+@media (max-width:560px){.annc{padding:8px 44px 8px 14px}.annc-in{font-size:13.4px}}
+@media print{.annc{display:none}html.has-annc body{padding-top:0}}
+
+/* one uploaded logo, used on the dark footer too, drawn white there */
+.logo-on-dark{filter:brightness(0) invert(1)}

@@ -23,6 +23,7 @@ import * as tracking from "./tracking.js";
 import { readAll as readSettings, liveRedirects } from "./settings.js";
 import { pruneEvents } from "./enquiries.js";
 import { tourPage, isTourIndex } from "./router.js";
+import { sanitize, announcementLive, announcementHtml } from "./site.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
 const PASS_ASSET = /^\/(billy360\/|templates\/assets\/mcr\/|templates\/vendor\/|templates\/megacity-[a-z0-9-]+\.(css|js|json|map)$)/;
@@ -291,7 +292,50 @@ export function rootRewriter(response, { origin, path, isPublic, settings }) {
   const attr = (name, fn) => ({ element: (e) => { const v = e.getAttribute(name); if (v == null) return; const n = fn(v); if (n !== v) e.setAttribute(name, n); } });
   const apply = settings && settings.links10ninety && settings.links10ninety.apply;
   let sawOrg = false, ldBuf = "";
+  /* Website edits from the Studio (site.js). These handlers come first so the
+     original element is matched before anything else touches it. */
+  const siteText = (settings && settings.siteText) || {};
+  const siteImages = (settings && settings.siteImages) || {};
+  const logo = (settings && settings.logo) || {};
+  const annc = isPublic && settings && announcementLive(settings.announcement) ? settings.announcement : null;
+  /* inserted HTML is not seen by the handlers below, so its links are put in
+     root form here — the originals use the demo's relative names */
+  const rootLinks = (html) => html.replace(/ href="([^"]*)"/g, (all, h) => ' href="' + String(fix(h.replace(/&amp;/g, "&"))).replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"');
   return new HTMLRewriter()
+    .on("[data-e]", {
+      element: (e) => {
+        const id = e.getAttribute("data-e");
+        e.removeAttribute("data-e");
+        const im = siteImages[id];
+        if (e.tagName === "img") {
+          if (im && im.key) { e.setAttribute("src", "/media/" + im.key); e.removeAttribute("srcset"); e.removeAttribute("sizes"); }
+          return;
+        }
+        const st = e.getAttribute("style");
+        if (im && im.key && st != null && /--ph-img/.test(st)) {
+          e.setAttribute("style", st.replace(/--ph-img(-m)?\s*:\s*url\([^)]*\)/g, (all, m) => "--ph-img" + (m || "") + ":url('/media/" + im.key + "')"));
+          return;
+        }
+        const t = siteText[id];
+        if (typeof t === "string" && t) {
+          let clean = null;
+          try { clean = sanitize(t, { max: 100000 }); } catch { clean = null; }
+          if (clean) e.setInnerContent(rootLinks(clean), { html: true });
+        }
+      },
+    })
+    .on('img[src*="logo-nav"]', {
+      element: (e) => {
+        const white = /logo-nav-white/.test(e.getAttribute("src") || "");
+        const use = white ? (logo.dark || logo.light) : logo.light;
+        if (!use || !use.key) return;
+        e.setAttribute("src", "/media/" + use.key);
+        e.removeAttribute("srcset");
+        /* one logo for both backgrounds: shown white on the dark ones */
+        if (white && !logo.dark) e.setAttribute("class", ((e.getAttribute("class") || "") + " logo-on-dark").trim());
+      },
+    })
+    .on("body", { element: (e) => { if (annc) e.prepend(announcementHtml({ ...annc, href: annc.href ? fix(annc.href) : "" }), { html: true }); } })
     .on('meta[name="robots"]', { element: (e) => (isPublic ? e.remove() : e.setAttribute("content", "noindex,nofollow")) })
     .on('link[rel="canonical"]', { element: (e) => (isPublic ? e.setAttribute("href", canonical) : e.remove()) })
     .on('meta[property="og:url"]', { element: (e) => (isPublic ? e.setAttribute("content", canonical) : e.remove()) })

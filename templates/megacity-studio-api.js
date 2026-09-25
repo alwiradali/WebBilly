@@ -177,6 +177,15 @@
       get: function () { return call("GET", "/settings"); },
       put: function (partial) { return call("PUT", "/settings", partial); }
     },
+    /* Website: words, photos, logo, announcement bar (worker/studio/site.js) */
+    site: {
+      get: function () { return call("GET", "/site"); },
+      page: function (slug) { return call("GET", "/site/pages/" + encodeURIComponent(slug)); },
+      savePage: function (slug, changes) { return call("PUT", "/site/pages/" + encodeURIComponent(slug), changes); },
+      announcement: function (a) { return call("PUT", "/site/announcement", a); },
+      logo: function (l) { return call("PUT", "/site/logo", l); },
+      upload: function (blob, w, h, onProgress) { return upload("POST", "/site/upload" + query({ w: w, h: h }), blob, blob.type || "image/jpeg", onProgress); }
+    },
     listings: {
       list: function (params) { return call("GET", "/listings" + query(params)); },
       get: function (id) { return call("GET", "/listings/" + encodeURIComponent(id)); },
@@ -522,6 +531,49 @@
     var STATUSES = ["draft", "live", "let_agreed", "let", "withdrawn"];
     function uniqueId(base) { var id = base, n = 2; while (DB.listings.some(function (l) { return l.id === id; })) id = base + "-" + (n++); return id; }
 
+    var SITE = { text: {}, images: {}, uploads: {}, announcement: { on: false, text: "", linkText: "", href: "", until: "" }, logo: { light: null, dark: null } }, siteIndex = null;
+    function loadSiteIndex() {
+      if (!siteIndex) siteIndex = fetch("megacity-content.json", { credentials: "same-origin" }).then(function (r) { if (!r.ok) throw new ApiError(503, { error: "The page index is missing." }); return r.json(); });
+      return siteIndex;
+    }
+    function siteImg(v) { return v ? { key: v.key, w: v.w, h: v.h, url: SITE.uploads[v.key] || "/media/" + v.key } : null; }
+    function mockSite(method, p, body) {
+      return loadSiteIndex().then(function (idx) {
+        var pages = idx.pages || [], m;
+        if (p === "/site" && method === "GET") return {
+          announcement: clone(SITE.announcement), logo: { light: siteImg(SITE.logo.light), dark: siteImg(SITE.logo.dark) },
+          pages: pages.map(function (pg) { return { slug: pg.slug, title: pg.title, items: pg.items.length, edited: pg.items.filter(function (it) { return it.kind === "image" || it.kind === "hero" ? SITE.images[it.id] : SITE.text[it.id] != null; }).length }; })
+        };
+        if ((m = /^\/site\/pages\/([^/]+)$/.exec(p))) {
+          var pg = pages.filter(function (x) { return x.slug === decodeURIComponent(m[1]); })[0];
+          if (!pg) fail(404, { error: "No such page." });
+          if (method === "PUT") {
+            Object.keys(body.text || {}).forEach(function (id) {
+              var v = body.text[id];
+              if (v == null) { delete SITE.text[id]; return; }
+              var plain = String(v).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+              if (!plain) fail(400, { error: "Text cannot be left empty. Use \u201cPut the original back\u201d to undo a change instead." });
+              if (/(^|[^\d.])8\s?%/.test(plain) && !(/\bVAT\b/i.test(plain) && /first\s+tenancy/i.test(plain))) fail(400, { error: "Where it says 8%, it has to say \u201cinc. VAT\u201d and \u201cfirst tenancy\u201d too." });
+              SITE.text[id] = String(v).replace(/<(script|style)[\s\S]*?<\/\1>/gi, "");
+            });
+            Object.keys(body.images || {}).forEach(function (id) { if (body.images[id] == null) delete SITE.images[id]; else SITE.images[id] = body.images[id]; });
+            audit("website.page", "page", pg.slug);
+          }
+          return { slug: pg.slug, title: pg.title, items: pg.items.map(function (it) {
+            var o = clone(it);
+            o.current = it.kind === "image" || it.kind === "hero" ? siteImg(SITE.images[it.id]) : (SITE.text[it.id] != null ? SITE.text[it.id] : null);
+            return o;
+          }) };
+        }
+        if (p === "/site/announcement" && method === "PUT") {
+          if (body.on && !String(body.text || "").trim()) fail(400, { error: "Write the announcement before switching it on." });
+          SITE.announcement = { on: !!body.on, text: String(body.text || "").slice(0, 180), linkText: String(body.linkText || "").slice(0, 40), href: String(body.href || ""), until: String(body.until || "") };
+          return { announcement: clone(SITE.announcement) };
+        }
+        if (p === "/site/logo" && method === "PUT") { SITE.logo = { light: body.light || null, dark: body.dark || null }; return mockSite("GET", "/site", {}); }
+        fail(404, { error: "No such route in mock mode: " + method + " " + p });
+      });
+    }
     function handle(method, fullPath, body) {
       var parts = fullPath.split("?"), p = parts[0], q = new URLSearchParams(parts[1] || ""), m;
       body = body || {};
@@ -580,6 +632,9 @@
         audit("team.update", "user", u.id);
         return { ok: true, user: clone(u) };
       }
+
+      /* website (the demo keeps edits in memory; the index is the real file) */
+      if (p === "/site" || p.indexOf("/site/") === 0) { needAuth(); return mockSite(method, p, body); }
 
       /* settings */
       if (p === "/settings" && method === "GET") return { settings: clone(DB.settings), routing: clone(ROUTING) };
@@ -944,6 +999,11 @@
         return delay(60).then(function () {
           if (DB.offline) fail(503, { connected: false, error: "The Studio is not connected to its database yet." });
           needAuth();
+          if (fullPath.indexOf("/site/upload") === 0) {
+            var sq = new URLSearchParams(fullPath.split("?")[1] || ""), key = "s/m_" + Math.random().toString(36).slice(2, 12).padEnd(10, "0") + "/image.jpg";
+            SITE.uploads[key] = URL.createObjectURL(body);
+            return progressTicks(onProgress).then(function () { return { key: key, url: SITE.uploads[key], w: +sq.get("w") || null, h: +sq.get("h") || null }; });
+          }
           var parts = fullPath.split("?"), q = new URLSearchParams(parts[1] || "");
           var meta, orig, large = null, thumb = null, pano = null;
           if (method === "POST") {

@@ -19,7 +19,8 @@ const MAX_DERIVED = { large: 6 * 1024 * 1024, thumb: 1024 * 1024, pano: 20 * 102
    migrations/megacity/0006. It has a key so that everything else about a
    photo (the media row, mediaUrl, this route, the edge cache) works the same
    whether the bytes are ours or theirs. */
-const KEY_RE = /^l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg|pano2048\.jpg|feed\.jpg)$/;
+/* l/… a listing's files; s/… the website's own pictures (worker/studio/site.js) */
+const KEY_RE = /^(l\/[a-z0-9-]{1,80}\/m_[a-z0-9]{10}\/(orig\.[a-z0-9]{2,5}|w1600\.jpg|w480\.jpg|pano4096\.jpg|pano2048\.jpg|feed\.jpg)|s\/m_[a-z0-9]{10}\/image\.(jpg|png|webp))$/;
 const FEED_KEY_RE = /\/feed\.jpg$/;
 const ORIG_IMAGE_RE = /\/orig\.(jpe?g|png|webp|gif|avif)$/i;
 const NO_STORE = { "cache-control": "no-store" };

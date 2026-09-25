@@ -394,6 +394,46 @@ When a GA4 id, Meta Pixel id or Search Console token is set in Settings → Inte
 
 Blocks: `{type:"h2"|"p"|"list"|"cta"|"image", text?, items?, href?, mediaId?, caption?}`. FAQ: `[{q, a}]`.
 
+### Website: words, photos, logo, announcement bar (`worker/studio/site.js`)
+
+The owner changes the public pages himself from **Edit website**, without a
+developer and without touching a file.
+
+- **Words and photos.** Every heading, paragraph, button, list item and photo
+  inside `<main>` on the 19 public pages carries a `data-e="<page>-<n>"` id.
+  An edit is stored against its id (settings `siteText`, `siteImages`) and
+  `host.js` swaps it in on the way out; undo deletes the edit and the original
+  is back. Not editable, on purpose: header, menus, footer (one per page would
+  let pages disagree), forms, anything the Worker fills (`[data-slot]`).
+- **What an edit may contain:** emphasis, line breaks and safe links — nothing
+  else (`sanitize`). An 8% must keep "inc. VAT" and "first tenancy";
+  a percentage that said VAT must still say it (`feeProblem`).
+- **Announcement bar:** on/off, up to 180 characters, an optional link, an
+  optional last day (UK time). Injected at the top of `<body>` on every public
+  page; visitors can close it and it stays closed until the wording changes.
+- **Logo:** one for light backgrounds, optionally one for dark; with only one,
+  the footer draws it white.
+- **Pictures** are sized in the browser (logos ≤ 800px, photos ≤ 2000px) and
+  stored in R2 under `s/`, checked by their bytes, served publicly from
+  `/media/s/…`.
+
+| Method | Path | Body |
+|---|---|---|
+| GET | `/api/studio/site` | — the bar, the logo, the pages with counts |
+| GET | `/api/studio/site/pages/:slug` | — every editable element, original and current |
+| PUT | `/api/studio/site/pages/:slug` | `{text: {id: html\|null}, images: {id: {key,w,h}\|null}}` — `null` puts the original back |
+| PUT | `/api/studio/site/announcement` | `{on, text, linkText, href, until}` |
+| PUT | `/api/studio/site/logo` | `{light, dark}` |
+| POST | `/api/studio/site/upload?w=&h=` | raw JPEG/PNG/WebP |
+
+**When you edit a template:** run `node scripts/megacity-content-index.mjs`.
+New elements get the next free id and `templates/megacity-content.json` is
+rewritten; existing ids never move, so his edits stay on their elements. The
+build refuses to run while the index is stale, and
+`scripts/megacity-website-check.mjs` (add `--live <url> --token <setup token>`
+against `wrangler dev --env megacity --local`) proves the whole path, from
+upload to what a visitor receives.
+
 ### AI (Claude, key only in the `ANTHROPIC_API_KEY` secret)
 All answer `503 {configured:false}` until the secret exists; the Studio hides the buttons. 60 calls per person per hour; every call is logged in `ai_usage` (`GET /api/studio/ai/usage`). The model writes only from the facts in the record and never writes to the database itself: staff review, then save.
 

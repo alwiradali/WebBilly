@@ -222,7 +222,7 @@
     topBack.hidden = !o.back; if (o.back) topBack.setAttribute("href", o.back);
     topChip.innerHTML = o.chip || "";
   }
-  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["#/tours", "360\u00b0 tours", "tour"], ["Website"], ["#/pages", "Pages", "pages"], ["#/backlinks", "Backlinks", "link"], ["#/integrations", "Integrations", "plug"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
+  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["#/tours", "360\u00b0 tours", "tour"], ["Website"], ["#/website", "Edit website", "image"], ["#/pages", "Pages", "pages"], ["#/backlinks", "Backlinks", "link"], ["#/integrations", "Integrations", "plug"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
   function navKey() {
     var h = location.hash.replace(/^#/, "").split("?")[0] || "/";
     if (h === "/") return "#/";
@@ -230,6 +230,7 @@
     if (h.indexOf("/listings") === 0) return "#/listings";
     if (h.indexOf("/enquiries") === 0) return "#/enquiries";
     if (h.indexOf("/tours") === 0) return "#/tours";
+    if (h.indexOf("/website") === 0) return "#/website";
     if (h.indexOf("/pages") === 0) return "#/pages";
     if (h.indexOf("/backlinks") === 0) return "#/backlinks";
     if (h.indexOf("/integrations") === 0) return "#/integrations";
@@ -294,6 +295,7 @@
     [/^\/listings\/([^/]+)$/, "editor"], [/^\/listings\/([^/]+)\/(details|home|media|tour|publish)$/, "editor"],
     [/^\/enquiries$/, "enquiries"], [/^\/enquiries\/([^/]+)$/, "enquiries"],
     [/^\/tours$/, "tours"],
+    [/^\/website$/, "website"], [/^\/website\/page\/([^/]+)$/, "websitePage"],
     [/^\/pages$/, "pages"], [/^\/pages\/([^/]+)$/, "pageEditor"], [/^\/backlinks$/, "backlinks"], [/^\/integrations$/, "integrations"],
     [/^\/settings$/, "settings"], [/^\/settings\/([^/]+)$/, "settings"], [/^\/team$/, "team"], [/^\/account$/, "account"]
   ];
@@ -322,6 +324,8 @@
   function route() {
     var r = parseRoute();
     if (tourGuard(r)) return;
+    if (siteGuard(r)) return;
+    if (!(r.name === "websitePage" && site && r.params[0] === site.slug)) site = null;
     routeToken++;
     closeDrawer(); closeModal(false); closeUserMenu(); closeCmdk(); closeRowMenus(); closeBell();
     if (state.route && state.route.name === "editor" && !(r.name === "editor" && r.params[0] === state.route.params[0])) editorLeave();
@@ -626,6 +630,234 @@
      tours.js), because which host it should carry depends on where the Studio
      is being used and a wrong origin would put a dead link in his portal.  */
   var ts = { filter: "" }, tsRows = [], tsToken = 0;
+  /* ── Website: words, photos, logo, announcement bar (worker/studio/site.js) ──
+     Changes go live when Save is pressed, not while typing: this is the public
+     site. Every change can be put back to the original, one element at a time. */
+  var KIND_NAME = { heading: "Heading", text: "Text", button: "Button", item: "List item", image: "Photo", hero: "Banner photo" };
+  var site = null;           // the page being edited: {slug, title, items, dirty:{text:{}, images:{}}, previews:{}}
+  function siteDirtyCount() { return site ? Object.keys(site.dirty.text).length + Object.keys(site.dirty.images).length : 0; }
+  function siteGuard(r) {
+    if (!site || !siteDirtyCount() || (r.name === "websitePage" && r.params[0] === site.slug)) return false;
+    var target = location.hash, back = "#" + state.route.path;
+    if (location.hash !== back) history.replaceState(null, "", back);
+    confirmModal({ title: "Leave without saving?", body: plural(siteDirtyCount(), "change") + " on this page will not reach the website.", confirm: "Leave without saving", cancel: "Stay" }).then(function (ok) {
+      if (!ok || !target) return;
+      site = null; if (location.hash === target) route(); else location.hash = target;
+    });
+    return true;
+  }
+  window.addEventListener("beforeunload", function (e) { if (site && siteDirtyCount()) { e.preventDefault(); e.returnValue = ""; } });
+  function assetSrc(src) { return /^(\/|https?:|data:|blob:)/.test(src || "") ? src : "/templates/" + String(src || "").replace(/^\.?\//, ""); }
+  function pageHref(slug) { return window.MCUrls ? MCUrls.page(slug) : "megacity-" + slug; }
+  function feeWarning(t) {
+    t = String(t || "");
+    if (/(^|[^\d.])8\s?%/.test(t) && !(/\bVAT\b/i.test(t) && /first\s+tenancy/i.test(t))) return "Where it says 8%, it has to say “inc. VAT” and “first tenancy” too.";
+    return "";
+  }
+
+  /* a picture, sized in the browser before it is sent: logos up to 800px wide
+     and kept as PNG when they are (transparency), photos up to 2000px as JPEG */
+  function preparePicture(file, kind) {
+    return new Promise(function (resolve, reject) {
+      if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) { reject(new Error("Choose a JPEG, PNG or WebP picture.")); return; }
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var max = kind === "logo" ? 800 : 2000, w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, max / w);
+        var cw = Math.round(w * s), ch = Math.round(h * s), c = document.createElement("canvas");
+        c.width = cw; c.height = ch;
+        var g = c.getContext("2d");
+        var png = kind === "logo" && file.type !== "image/jpeg";
+        if (!png) { g.fillStyle = "#fff"; g.fillRect(0, 0, cw, ch); }
+        g.imageSmoothingQuality = "high"; g.drawImage(img, 0, 0, cw, ch);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? resolve({ blob: b, w: cw, h: ch, preview: c.toDataURL(png ? "image/png" : "image/jpeg", .8) }) : reject(new Error("That picture could not be read.")); }, png ? "image/png" : "image/jpeg", .86);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("That picture could not be read.")); };
+      img.src = url;
+    });
+  }
+  function pickFile(accept, cb) {
+    var inp = document.createElement("input"); inp.type = "file"; inp.accept = accept || "image/jpeg,image/png,image/webp";
+    inp.addEventListener("change", function () { if (inp.files && inp.files[0]) cb(inp.files[0]); });
+    inp.click();
+  }
+
+  SCREENS.website = function () {
+    site = null;
+    setTop({ title: "Edit the website", sub: "Announcement bar, logo, and the words and photos on every page" });
+    view.innerHTML = '<div id="wsBody">' + loading() + "</div>";
+    API.site.get().then(function (res) { renderWebsite(res); }).catch(function (err) { var b = $("#wsBody"); if (b) b.innerHTML = errorHtml(err); });
+  };
+  function renderWebsite(res) {
+    var b = $("#wsBody"); if (!b) return;
+    var a = res.announcement || {}, logo = res.logo || {};
+    var pageOpts = (res.pages || []).map(function (p) { return '<option value="' + esc(pageHref(p.slug)) + '">' + esc(p.title) + "</option>"; }).join("");
+    b.innerHTML =
+      '<section class="st-card"><div class="st-card-head"><div><h2>Announcement bar</h2><p>A strip across the top of every page, for a promotion or a notice. It shows until the end of the date you set, or until you switch it off.</p></div></div>' +
+      '<form novalidate class="st-stack" id="anncForm">' +
+      '<label class="st-switch"><input type="checkbox" name="on"' + (a.on ? " checked" : "") + '> <span>Show the announcement bar</span></label>' +
+      '<div class="st-field"><label class="st-label" for="an_text">What it says <span class="st-opt" id="anCount"></span></label><input class="st-in" id="an_text" name="text" maxlength="180" value="' + esc(a.text || "") + '" placeholder="e.g. Landlords: first month of management free for new instructions this October"></div>' +
+      '<div class="st-grid2"><div class="st-field"><label class="st-label" for="an_lt">Link words <span class="st-opt">optional</span></label><input class="st-in" id="an_lt" name="linkText" maxlength="40" value="' + esc(a.linkText || "") + '" placeholder="Book a valuation"></div>' +
+      '<div class="st-field"><label class="st-label" for="an_href">Link goes to <span class="st-opt">optional</span></label><input class="st-in" id="an_href" name="href" list="anPages" value="' + esc(a.href || "") + '" placeholder="/valuation or https://…"><datalist id="anPages">' + pageOpts + "</datalist></div></div>" +
+      '<div class="st-field st-field--narrow"><label class="st-label" for="an_until">Show until <span class="st-opt">the last day, optional</span></label><input class="st-in" type="date" id="an_until" name="until" value="' + esc(a.until || "") + '"></div>' +
+      '<p class="st-label">How it looks</p><div class="st-anpv" id="anPv"></div><p class="st-warn" id="anWarn" hidden></p>' +
+      '<p class="st-err" data-form-err role="alert" hidden></p><div class="st-actions st-actions--end"><button type="submit" class="st-btn st-btn--fill">Save announcement</button></div></form></section>' +
+
+      '<section class="st-card"><div class="st-card-head"><div><h2>Logo</h2><p>Used in the header of every page and, drawn white, in the footer. Upload a PNG with a transparent background for the best result. You can upload a separate version for dark backgrounds.</p></div></div>' +
+      '<div class="st-logos">' + logoSlot("light", "On light backgrounds (header)", logo.light) + logoSlot("dark", "On dark backgrounds (footer) — optional", logo.dark) + "</div></section>" +
+
+      '<section class="st-card"><div class="st-card-head"><div><h2>Pages</h2><p>The words and photos on each page. Headings, paragraphs, buttons, the tiles’ titles and text, and the photos can all be changed. Forms, menus and the property listings are not edited here.</p></div></div>' +
+      '<ul class="st-wpages">' + (res.pages || []).map(function (p) {
+        return '<li><a class="st-wpage" href="#/website/page/' + esc(p.slug) + '"><b>' + esc(p.title) + "</b><span>" + plural(p.items, "thing", "things") + " you can change" + (p.edited ? ' · <em class="st-pill st-pill--live">' + plural(p.edited, "change") + "</em>" : "") + "</span></a>" +
+          '<a class="st-btn st-btn--sm" href="' + esc(pageHref(p.slug)) + '" target="_blank" rel="noopener">' + I.eye + "View</a></li>";
+      }).join("") + "</ul></section>";
+    var f = $("#anncForm");
+    function pv() {
+      var d = { text: f.text.value.trim(), linkText: f.linkText.value.trim(), href: f.href.value.trim() };
+      $("#anCount").textContent = d.text.length + " / 180";
+      $("#anPv").innerHTML = d.text ? '<div class="annc annc--pv"><p class="annc-in"><span class="annc-text">' + esc(d.text) + "</span>" + (d.linkText && d.href ? ' <a class="annc-link" href="#" tabindex="-1">' + esc(d.linkText) + ' <span aria-hidden="true">→</span></a>' : "") + '</p><span class="annc-x" aria-hidden="true">×</span></div>' : '<p class="st-hint">Write something above to see it.</p>';
+      var w = feeWarning(d.text), el = $("#anWarn"); el.hidden = !w; el.textContent = w;
+    }
+    f.addEventListener("input", pv); pv();
+    bindForm(f, function (d) {
+      var body = { on: !!f.on.checked, text: f.text.value.trim(), linkText: f.linkText.value.trim(), href: f.href.value.trim(), until: f.until.value };
+      return API.site.announcement(body).then(function () { toast(body.on ? "Saved — the bar is on the website now" : "Saved — the bar is switched off", { kind: "good" }); });
+    });
+    b.addEventListener("click", onLogoClick);
+  }
+  function logoSlot(which, label, cur) {
+    var src = cur && cur.url ? cur.url : (which === "light" ? "/templates/assets/mcr/logo-nav.png" : "/templates/assets/mcr/logo-nav-white.png");
+    return '<div class="st-logo st-logo--' + which + '"><p class="st-label">' + esc(label) + '</p><div class="st-logo-pv"><img src="' + esc(src) + '" alt=""' + (which === "dark" && !cur ? ' class="st-logo-orig"' : "") + "></div>" +
+      '<div class="st-actions"><button type="button" class="st-btn st-btn--sm" data-logo-up="' + which + '">' + I.upload + (cur ? "Replace" : "Upload a new logo") + "</button>" +
+      (cur ? '<button type="button" class="st-btn st-btn--sm st-btn--ghost" data-logo-reset="' + which + '">Put the original back</button>' : "") + "</div></div>";
+  }
+  function onLogoClick(e) {
+    var up = e.target.closest("[data-logo-up]"), rs = e.target.closest("[data-logo-reset]");
+    if (!up && !rs) return;
+    API.site.get().then(function (res) {
+      var logo = { light: res.logo && res.logo.light ? res.logo.light : null, dark: res.logo && res.logo.dark ? res.logo.dark : null };
+      if (rs) { logo[rs.getAttribute("data-logo-reset")] = null; return API.site.logo(logo).then(function (r) { toast("The original logo is back", { kind: "good" }); renderWebsite(r); }); }
+      var which = up.getAttribute("data-logo-up");
+      pickFile("image/png,image/jpeg,image/webp", function (file) {
+        up.disabled = true;
+        preparePicture(file, "logo").then(function (p) {
+          return API.site.upload(p.blob, p.w, p.h);
+        }).then(function (u) {
+          logo[which] = { key: u.key, w: u.w, h: u.h };
+          return API.site.logo(logo);
+        }).then(function (r) { toast("Logo saved — it is on the website now", { kind: "good" }); renderWebsite(r); }).catch(function (err) { up.disabled = false; errToast(err); });
+      });
+    }).catch(errToast);
+  }
+
+  SCREENS.websitePage = function (slug) {
+    setTop({ title: "Edit the website", back: "#/website" });
+    view.innerHTML = '<div id="wpBody">' + loading() + "</div>";
+    API.site.page(slug).then(function (res) {
+      site = { slug: res.slug, title: res.title, items: res.items, dirty: { text: {}, images: {} }, previews: {} };
+      setTop({ title: res.title, sub: "Changes reach the website when you press Save", back: "#/website" });
+      renderSitePage();
+    }).catch(function (err) { var b = $("#wpBody"); if (b) b.innerHTML = errorHtml(err); });
+  };
+  function renderSitePage() {
+    var b = $("#wpBody"); if (!b || !site) return;
+    var groups = [], last = null;
+    site.items.forEach(function (it) { if (!last || last.name !== it.section) { last = { name: it.section, items: [] }; groups.push(last); } last.items.push(it); });
+    b.innerHTML = '<p class="st-hint st-wp-hint">Click into any text to change it. <b>Ctrl+B</b> for bold, <b>Ctrl+I</b> for italics. Photos are replaced with the button beside them. Nothing changes on the website until you press Save.</p>' +
+      groups.map(function (g) { return '<section class="st-card st-wgroup"><h2 class="st-wgroup-h">' + esc(g.name) + "</h2>" + g.items.map(siteItemHtml).join("") + "</section>"; }).join("") +
+      '<div class="st-wbar" id="wpBar"><span id="wpCount"></span><a class="st-btn" href="' + esc(pageHref(site.slug)) + '" target="_blank" rel="noopener">' + I.eye + 'View page</a><button type="button" class="st-btn st-btn--fill" id="wpSave" disabled>Save</button></div>';
+    siteBar();
+    b.oninput = onSiteInput; b.onclick = onSiteClick; b.onpaste = onSitePaste; b.onkeydown = onSiteKey;
+  }
+  function siteItemHtml(it) {
+    var changed = it.current != null || site.dirty.text[it.id] !== undefined || site.dirty.images[it.id] !== undefined;
+    var head = '<div class="st-witem-h"><span class="st-witem-k">' + esc(KIND_NAME[it.kind] || it.kind) + "</span>" + (changed ? '<span class="st-pill st-pill--live">Changed</span>' : "") +
+      (changed ? '<button type="button" class="st-link" data-orig="' + esc(it.id) + '">Put the original back</button>' : "") + "</div>";
+    if (it.kind === "image" || it.kind === "hero") {
+      var d = site.dirty.images[it.id];
+      var src = d === null ? assetSrc(it.src) : d ? site.previews[it.id] : it.current ? it.current.url : assetSrc(it.src);
+      return '<div class="st-witem st-witem--img" data-item="' + esc(it.id) + '">' + head + '<div class="st-wimg"><img src="' + esc(src) + '" alt="' + esc(it.alt || "") + '" loading="lazy"><button type="button" class="st-btn st-btn--sm" data-replace="' + esc(it.id) + '">' + I.image + "Replace photo</button></div></div>";
+    }
+    var dt = site.dirty.text[it.id];
+    var html = dt === null ? it.html : dt !== undefined ? dt : it.current != null ? it.current : it.html;
+    return '<div class="st-witem st-witem--' + esc(it.kind) + '" data-item="' + esc(it.id) + '">' + head +
+      '<div class="st-wedit st-wedit--' + esc(it.tag) + '" contenteditable="true" role="textbox" aria-multiline="' + (it.kind === "heading" || it.kind === "button" ? "false" : "true") + '" aria-label="' + esc(KIND_NAME[it.kind] + ": " + it.text.slice(0, 60)) + '" data-edit="' + esc(it.id) + '">' + stripUnsafe(html) + "</div>" +
+      '<p class="st-warn" data-warn="' + esc(it.id) + '" hidden></p></div>';
+  }
+  /* the editor shows the page's own inline markup; nothing that can run */
+  function stripUnsafe(html) {
+    var t = document.createElement("template"); t.innerHTML = String(html || "");
+    t.content.querySelectorAll("script,style,iframe,object,embed,img,svg").forEach(function (n) { n.remove(); });
+    t.content.querySelectorAll("*").forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { if (!(n.tagName === "A" && a.name === "href")) n.removeAttribute(a.name); }); });
+    return t.innerHTML;
+  }
+  function findItem(id) { for (var i = 0; i < site.items.length; i++) if (site.items[i].id === id) return site.items[i]; return null; }
+  function siteBar() {
+    var n = siteDirtyCount(), c = $("#wpCount"), s = $("#wpSave");
+    if (c) c.textContent = n ? plural(n, "unsaved change") : "No unsaved changes";
+    if (s) s.disabled = !n;
+    var bar = $("#wpBar"); if (bar) bar.classList.toggle("is-dirty", !!n);
+  }
+  function onSiteInput(e) {
+    var el = e.target.closest("[data-edit]"); if (!el || !site) return;
+    var id = el.getAttribute("data-edit"), it = findItem(id);
+    var saved = it.current != null ? it.current : it.html;
+    var now = el.innerHTML;
+    if (now === stripUnsafe(saved)) delete site.dirty.text[id]; else site.dirty.text[id] = now;
+    var w = feeWarning(el.textContent), warn = $('[data-warn="' + id + '"]');
+    if (warn) { warn.hidden = !w; warn.textContent = w; }
+    siteBar();
+  }
+  function onSiteKey(e) {
+    var el = e.target.closest && e.target.closest("[data-edit]"); if (!el || e.key !== "Enter") return;
+    var it = findItem(el.getAttribute("data-edit"));
+    e.preventDefault();
+    if (it && (it.kind === "text" || it.kind === "item" || it.kind === "heading")) document.execCommand("insertLineBreak");
+  }
+  /* pasting brings words, not another website's formatting */
+  function onSitePaste(e) {
+    var el = e.target.closest && e.target.closest("[data-edit]"); if (!el) return;
+    e.preventDefault();
+    var t = (e.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, t.replace(/\s*\n\s*/g, " "));
+  }
+  function onSiteClick(e) {
+    var o = e.target.closest("[data-orig]"), r = e.target.closest("[data-replace]");
+    if (e.target.id === "wpSave") { saveSitePage(); return; }
+    if (o) {
+      var id = o.getAttribute("data-orig"), it = findItem(id);
+      if (it.kind === "image" || it.kind === "hero") { if (it.current) site.dirty.images[id] = null; else delete site.dirty.images[id]; }
+      else if (it.current != null) site.dirty.text[id] = null; else delete site.dirty.text[id];
+      rerenderItem(id); siteBar(); return;
+    }
+    if (r) {
+      var rid = r.getAttribute("data-replace");
+      pickFile(null, function (file) {
+        r.disabled = true;
+        preparePicture(file, "photo").then(function (p) {
+          site.previews[rid] = p.preview;
+          return API.site.upload(p.blob, p.w, p.h);
+        }).then(function (u) { site.dirty.images[rid] = { key: u.key, w: u.w, h: u.h }; rerenderItem(rid); siteBar(); })
+          .catch(function (err) { r.disabled = false; errToast(err); });
+      });
+    }
+  }
+  function rerenderItem(id) {
+    var el = $('[data-item="' + id + '"]'), it = findItem(id); if (!el || !it) return;
+    var t = document.createElement("div"); t.innerHTML = siteItemHtml(it); el.replaceWith(t.firstChild);
+  }
+  function saveSitePage() {
+    if (!site || !siteDirtyCount()) return;
+    var btn = $("#wpSave"), S = site;
+    btn.disabled = true; btn.textContent = "Saving…";
+    API.site.savePage(S.slug, { text: S.dirty.text, images: S.dirty.images }).then(function (res) {
+      if (site !== S) return;
+      site.items = res.items; site.dirty = { text: {}, images: {} }; site.previews = {};
+      renderSitePage();
+      toast("Saved — the page shows your changes now", { kind: "good" });
+    }).catch(function (err) { btn.textContent = "Save"; siteBar(); errToast(err); });
+  }
+
   SCREENS.tours = function () {
     setTop({ title: "360\u00b0 tours" });
     view.innerHTML =

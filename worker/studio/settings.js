@@ -28,6 +28,13 @@ export const DEFAULTS = {
   /* [{from, to, status}] applied on the client domain before anything else (host.js) */
   redirects: [],
   consentText: "We use cookies to understand how the site is used and to measure our advertising. Essential cookies keep the site working.",
+  /* Website (worker/studio/site.js), saved only through /site/* — the generic
+     PUT /settings has no case for these keys, so it cannot write them
+     unvalidated. Listed here so readAll hands them to host.js. */
+  siteText: {},
+  siteImages: {},
+  announcement: { on: false, text: "", linkText: "", href: "", until: "" },
+  logo: { light: null, dark: null },
 };
 
 const OWNER_ONLY = new Set(["notifyEmails", "ga4Id", "metaPixelId", "gscVerification", "gtmId"]);

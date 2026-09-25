@@ -44,7 +44,8 @@ const check = process.argv.includes("--check");
    that matches nothing here does not reach the client's account. */
 const ALLOW = [
   { from: "templates", to: "templates", depth: 0,
-    test: (n) => /^megacity[-.].*\.(html|js|css)$/.test(n) },
+    /* megacity-content.json: what the Studio's Website section can edit */
+    test: (n) => /^megacity[-.].*\.(html|js|css)$/.test(n) || n === "megacity-content.json" },
   { from: "templates/assets/mcr", to: "templates/assets/mcr", depth: 99, test: () => true },
   { from: "templates/vendor", to: "templates/vendor", depth: 99, test: () => true },
   { from: "billy360", to: "billy360", depth: 99,
@@ -157,11 +158,23 @@ const MUST = [
   "templates/assets/mcr/logo.png",
   "templates/assets/mcr/walid-mhana.jpg",
   "templates/megacity-studio.js",
+  "templates/megacity-content.json",
   "billy360/embed.js",
   "billy360/index.html",
   "version.json",
 ];
 const missing = MUST.filter((m) => !files.some((f) => f.dest === m));
+/* An edit in the Studio is stored against an element's data-e id. A template
+   changed without re-running the index would ship elements the Studio cannot
+   see, so the build stops rather than deploying that. */
+{
+  const { build: contentIndex } = await import("./megacity-content-index.mjs");
+  const { problems } = contentIndex({ write: false });
+  if (problems.length) {
+    console.error("The Website edit index is out of step with the pages:\n  " + problems.join("\n  "));
+    process.exit(1);
+  }
+}
 if (missing.length) {
   console.error("REFUSING TO BUILD — these are missing and the site needs them:");
   for (const m of missing) console.error("  " + m);
