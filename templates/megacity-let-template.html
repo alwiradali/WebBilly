@@ -145,6 +145,9 @@
   <a class="pd-act" href="#tour360" data-slot="tour-link">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>
     360&deg; virtual tour</a>
+  <a class="pd-act" href="#walkthrough" data-slot="video-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 11 5-3v8l-5-3z"/></svg>
+    Video walkthrough</a>
   <a class="pd-act" href="#epc">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>
     EPC</a>
@@ -177,6 +180,15 @@
       <p>Every home we manage gets professional photography and a 360&deg; walkthrough. Ask us for this
         home&rsquo;s tour, or a video of anything you want a closer look at, before you travel.</p>
       <a class="btn" href="https://wa.me/447804900719?text=Hello%2C%20please%20could%20you%20send%20me%20the%20360%20tour%20of%20the%202%20bed%20apartment%2C%20Ladywell%20Point%2C%20Salford%20when%20it%20is%20ready%3F" target="_blank" rel="noopener">Ask for the tour on WhatsApp</a>
+    </div>
+
+    <!-- TEMPLATE: the Worker (render.js videoHtml) replaces this block with the
+         walkthrough when the listing has one, and removes it — and its jump link
+         above — when it does not. A property with no video says nothing about one. -->
+    <div class="pd-block" id="walkthrough" data-slot="video">
+      <h3>Video walkthrough</h3>
+      <p>Ask the office for a video of anything you want a closer look at before you travel.
+        <a class="jr-link" href="tel:+441612201763">Call 0161 220 1763</a></p>
     </div>
 
     <div class="pd-block">

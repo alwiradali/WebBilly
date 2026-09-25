@@ -1306,7 +1306,9 @@
       }, function (e) { throw new Error(isHeic(file) ? HEIC_MSG : ((e && e.message) || "Could not read this image. Try exporting it as a JPEG.")); });
     } else {
       row.status("Uploading…");
-      p = API.media.stream(file, { listingId: E.id, kind: kind, role: kind === "pdf" ? "floorplan" : "gallery", filename: file.name }, row.progress);
+      /* a video is a walkthrough until someone says otherwise — "Use as" on
+         the card switches it to a 360° video, which goes on the sphere */
+      p = API.media.stream(file, { listingId: E.id, kind: kind, role: kind === "pdf" ? "floorplan" : kind === "video" ? "video" : "gallery", filename: file.name }, row.progress);
     }
     return p.then(function (m) {
       row.done();

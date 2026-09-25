@@ -43,6 +43,12 @@ function view(env, url, { r, media }, settings) {
   const gallery = photos.filter((m) => m !== cover && m.role !== "epc" && m.role !== "og");
   const epcImg = media.find((m) => m.role === "epc");
   const floorplan = media.find((m) => m.role === "floorplan");
+  /* A walkthrough is an ordinary video of somebody walking through the place.
+     A 360° video is equirectangular and belongs on the sphere, not in a
+     rectangle — the two are told apart by the role the office set, because
+     nothing in the file says which it is. */
+  const walkthrough = media.find((m) => m.kind === "video" && m.role !== "video360") || null;
+  const video360 = media.find((m) => m.kind === "video" && m.role === "video360") || null;
   const addr = [r.address_1, r.address_2, r.town].filter(Boolean).join(", ");
   const addrShort = [r.address_1, r.town].filter(Boolean).join(", ");
   const typeLabel = label("type", r.type) || "Property";
@@ -67,7 +73,7 @@ function view(env, url, { r, media }, settings) {
   const canonical = urls.absUrl(env, url, "listing", r.id);
   const applyHref = urls.pagePath(urls.mode(env, url.hostname), "tenant-application-form") + "?property=" + encodeURIComponent(title) + "&listing=" + encodeURIComponent(r.id);
   const ogImage = cover ? absolute(env, url, cover.url) : absolute(env, url, "assets/mcr/ph-manchester.jpg");
-  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, floorplan, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage, applyHref };
+  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, floorplan, walkthrough, video360, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage, applyHref };
 }
 
 /* ── fragments ─────────────────────────────────────────────────────────── */
@@ -162,6 +168,27 @@ function tourHtml(v, env, url) {
   return "";
 }
 
+/* The walkthrough. preload="none" on purpose: a tenant on a slow connection
+   should not pay for a 40MB file they may never press play on, and on an old
+   phone the decode is the expensive part. The poster is the property's own
+   cover photograph, so the block looks like the property rather than a black
+   rectangle. playsinline keeps iPhones from taking over the whole screen. */
+function videoHtml(v) {
+  const m = v.walkthrough;
+  if (!m) return "";
+  const src = mediaUrl(m.key_orig);
+  if (!src) return "";
+  const poster = v.cover ? mediaUrl(v.cover.key_large || v.cover.key_orig) : null;
+  return `<h3>Video walkthrough</h3>
+      <p>A walk through ${esc(v.addrShort || "the property")}, filmed by the office.</p>
+      <video class="pd-video" controls preload="none" playsinline${poster ? ` poster="${esc(poster)}"` : ""}
+        ${m.width && m.height ? `width="${esc(m.width)}" height="${esc(m.height)}"` : ""}
+        aria-label="Video walkthrough of ${esc(v.addrShort || "the property")}">
+        <source src="${esc(src)}" type="${esc(m.mime || "video/mp4")}">
+        <p>Your browser cannot play this video. <a class="jr-link" href="${esc(src)}">Download it instead</a>.</p>
+      </video>`;
+}
+
 function factsHtml(v) {
   const r = v.r, rows = [];
   const row = (k, val) => { if (val != null && val !== "") rows.push(`<div><dt>${esc(k)}</dt><dd>${esc(val)}</dd></div>`); };
@@ -221,7 +248,7 @@ export async function renderListingPage(request, env, url, live, settings) {
   /* every fragment is built before the rewriter streams: a bad record throws
      into the router's fallback instead of truncating a half-sent page */
   const epc = epcHtml(v);
-  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v, env, url), facts: factsHtml(v) };
+  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v, env, url), video: videoHtml(v), facts: factsHtml(v) };
   const rewriter = new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(v.pageTitle) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", v.metaDesc) })
@@ -243,6 +270,8 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="epc"]', { element: (e) => { if (epc) e.setInnerContent(epc, { html: true }); else e.remove(); } })
     .on('[data-slot="tour"]', { element: (e) => { if (frag.tour) e.setInnerContent(frag.tour, { html: true }); else e.remove(); } })
     .on('[data-slot="tour-link"]', { element: (e) => { if (!frag.tour) e.remove(); } })
+    .on('[data-slot="video"]', { element: (e) => { if (frag.video) e.setInnerContent(frag.video, { html: true }); else e.remove(); } })
+    .on('[data-slot="video-link"]', { element: (e) => { if (!frag.video) e.remove(); } })
     .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
     .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
@@ -337,4 +366,6 @@ export async function sitemap(env, url, db) {
   return new Response(xml, { status: 200, headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=300, s-maxage=600" } });
 }
 
-export { mediaUrl, pageUrl };
+/* videoHtml is exported for scripts/megacity-video-check.mjs: what a tenant
+   is offered to download before they press play is worth asserting. */
+export { mediaUrl, pageUrl, videoHtml };

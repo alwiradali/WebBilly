@@ -104,7 +104,7 @@
     garden: [["private_rear", "Private rear garden"], ["private_front", "Private front garden"], ["shared", "Shared garden"], ["communal", "Communal garden"], ["yard", "Yard"], ["balcony", "Balcony"], ["terrace", "Terrace"]],
     driveway: [["driveway_1", "Driveway, one car"], ["driveway_2", "Driveway, two or more cars"], ["garage", "Garage"], ["off_street", "Off-street parking"]],
     status: [["draft", "Draft"], ["live", "Live"], ["let_agreed", "Let agreed"], ["let", "Let"], ["withdrawn", "Withdrawn"]],
-    mediaRole: [["gallery", "Gallery"], ["cover", "Cover"], ["epc", "EPC certificate"], ["floorplan", "Floor plan"], ["tour", "360° panorama"]],
+    mediaRole: [["gallery", "Gallery"], ["cover", "Cover"], ["epc", "EPC certificate"], ["floorplan", "Floor plan"], ["tour", "360° panorama"], ["video", "Walkthrough video"], ["video360", "360° video"]],
     tourRoom: [["hallway", "Hallway"], ["living", "Living room"], ["kitchen", "Kitchen"], ["bedroom", "Bedroom"], ["bathroom", "Bathroom"], ["en_suite", "En-suite"], ["garden", "Garden"], ["driveway", "Driveway"], ["landing", "Landing"], ["other", "Other"]],
     enquirySource: [["viewing", "Viewing request"], ["contact", "Contact form"], ["valuation", "Valuation request"], ["register", "Registration"], ["tour", "360° tour"], ["maintenance", "Maintenance"]]
   };

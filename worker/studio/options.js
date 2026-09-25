@@ -115,6 +115,8 @@ export const OPTIONS = {
     ["epc", "EPC certificate"],
     ["floorplan", "Floor plan"],
     ["tour", "360° panorama"],
+    ["video", "Walkthrough video"],
+    ["video360", "360° video"],
   ],
   tourRoom: [
     ["hallway", "Hallway"],
