@@ -59,12 +59,23 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       await page.waitForTimeout(800);
       const results = await page.$$eval("#slRes a", (as) => as.map((a) => a.getAttribute("href")));
       const homes = results.filter((h) => /let/.test(h));
-      ok(homes.length > 0 && homes.every((h) => (DEMO ? /megacity-let-/.test(h) : h.startsWith("/let/"))), "search results link to listings for this host (" + homes.slice(0, 2).join(", ") + ")");
+      /* Homes in search come from /api/public/listings now — there is no
+         hand-typed fallback list any more, so an empty database means no home
+         results and that is correct, not a failure. What must still hold is
+         that anything returned is addressed for THIS host. */
+      ok(homes.every((h) => (DEMO ? /megacity-let-/.test(h) : h.startsWith("/let/"))),
+        homes.length ? "search results link to listings for this host (" + homes.slice(0, 2).join(", ") + ")"
+                     : "search returned no listings (empty database) and invented none");
       await page.keyboard.press("Escape");
     }
     if (path === P("properties")) {
-      const first = await page.$eval(".pl-card", (a) => a.getAttribute("href"));
-      ok(DEMO ? /megacity-let-/.test(first) : first.startsWith("/let/"), "first property card links to " + first);
+      /* The grid is built from the database on every request (render.js). With
+         nothing in it the page falls back to a phone number, which is the whole
+         point of that fallback — so the check is "cards or the fallback, never
+         a dead link and never an empty page". */
+      const first = await page.$eval(".pl-card", (a) => a.getAttribute("href")).catch(() => null);
+      if (first) ok(DEMO ? /megacity-let-/.test(first) : first.startsWith("/let/"), "first property card links to " + first);
+      else ok(!!(await page.$(".pl-offline")), "no listings in the database, and the grid says so with the office number");
     }
     if (path === P("renting")) ok(!!(await page.$("[data-register]")), "tenant register form is on the page");
     if (path === P("for-landlords")) {

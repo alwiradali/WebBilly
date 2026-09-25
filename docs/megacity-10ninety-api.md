@@ -344,10 +344,13 @@ looks:
 - A listing carries a `source`. When it is `"tenninety"`, the editor refuses
   changes to anything 10ninety owns — only the website's own extras stay
   editable — so the office can never end up with two versions of the truth.
-- `STATIC_LET_SLUGS` in `worker/studio/urls.js` keeps Walid's own fourteen
-  pages served from the repository, so a sync that fails, or returns nothing,
-  can never take his portfolio off the website. See PROJECT-NOTES.md, "the
-  properties that stay".
+- `STATIC_LET_SLUGS` in `worker/studio/urls.js` is now empty. It used to hold
+  fourteen hand-built pages, served from the repository whenever a sync failed
+  or returned nothing. They are gone: each stated a rent and an availability
+  date typed by hand, and the sync already refuses to act on a feed it could
+  not read and never removes on an empty one, so the portfolio was never at the
+  risk those pages were guarding against. What still protects a listing from a
+  sync is `pinned`. See PROJECT-NOTES.md, "where a property comes from".
 
 ## The two facts a sync would settle
 

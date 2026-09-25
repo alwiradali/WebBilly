@@ -7,7 +7,7 @@ const R = (v) => u.rewriteHref(v, "root");
 const cases = [
   ["megacity-skyline", "/"], ["megacity-skyline#top", "/#top"], ["megacity-properties", "/lettings"],
   ["megacity-for-landlords#fees", "/landlords#fees"], ["megacity-renting#register", "/tenants#register"],
-  ["megacity-privacy#cookies", "/privacy-policy#cookies"], ["megacity-let-room-3", "/let/room-3"],
+  ["megacity-privacy#cookies", "/privacy-policy#cookies"], ["megacity-let-carlton-road-5", "/let/carlton-road-5"],
   ["megacity-studio", "/studio"], ["megacity-skyline.css", "/templates/megacity-skyline.css"],
   ["megacity-skyline.js", "/templates/megacity-skyline.js"], ["megacity-urls.js", "/templates/megacity-urls.js"],
   ["megacity-sitemap.xml", "/sitemap.xml"], ["megacity-renting-in-salford", "/renting-in-salford"],
@@ -29,7 +29,7 @@ assert.equal(u.rewriteStyle("background:url(\"/media/x.jpg\")", "root"), "backgr
 
 assert.deepEqual(u.resolveRoot("/"), { kind: "home", slug: "skyline" });
 assert.deepEqual(u.resolveRoot("/lettings"), { kind: "page", slug: "properties" });
-assert.deepEqual(u.resolveRoot("/let/room-3"), { kind: "listing", slug: "room-3" });
+assert.deepEqual(u.resolveRoot("/let/carlton-road-5"), { kind: "listing", slug: "carlton-road-5" });
 assert.deepEqual(u.resolveRoot("/studio"), { kind: "studio", slug: "studio" });
 assert.deepEqual(u.resolveRoot("/renting-in-salford"), { kind: "cms", slug: "renting-in-salford" });
 assert.equal(u.resolveRoot("/let/"), null); assert.equal(u.resolveRoot("/a/b"), null); assert.equal(u.resolveRoot("/x_y"), null);
@@ -37,7 +37,7 @@ assert.equal(u.resolveRoot("/let/"), null); assert.equal(u.resolveRoot("/a/b"), 
 assert.equal(u.legacyRedirect("/tenants/register"), "/tenants#register");
 assert.equal(u.legacyRedirect("/free-valuation/commercial"), "/valuation");
 assert.equal(u.legacyRedirect("/blog/some-post"), "/journal");
-assert.equal(u.legacyRedirect("/megacity-let-room-7"), "/let/room-7");
+assert.equal(u.legacyRedirect("/megacity-let-drayton-street"), "/let/drayton-street");
 assert.equal(u.legacyRedirect("/megacity-for-landlords"), "/landlords");
 assert.equal(u.legacyRedirect("/lettings"), null);
 
@@ -47,14 +47,14 @@ const demo = new URL("https://billydigitals.com/templates/megacity-properties");
 assert.equal(u.mode(envRoot, live.hostname), "root"); assert.equal(u.mode(envRoot, demo.hostname), "demo");
 assert.equal(u.canonicalHost(envRoot), "www.megacityproperties.co.uk");
 assert.equal(u.absUrl(envRoot, live, "page", "skyline"), "https://www.megacityproperties.co.uk/");
-assert.equal(u.absUrl(envRoot, live, "listing", "room-3"), "https://www.megacityproperties.co.uk/let/room-3");
+assert.equal(u.absUrl(envRoot, live, "listing", "carlton-road-5"), "https://www.megacityproperties.co.uk/let/carlton-road-5");
 assert.equal(u.absUrl(envRoot, live, "asset", "assets/mcr/ph.jpg"), "https://www.megacityproperties.co.uk/templates/assets/mcr/ph.jpg");
 assert.equal(u.absUrl(envRoot, live, "asset", "/media/l/x/w1600.jpg"), "https://www.megacityproperties.co.uk/media/l/x/w1600.jpg");
 assert.equal(u.absUrl(envRoot, live, "asset", "https://cdn.example/x.jpg"), "https://cdn.example/x.jpg");
 assert.equal(u.absUrl(envRoot, live, "studio"), "https://www.megacityproperties.co.uk/studio");
 assert.equal(u.absUrl(envRoot, live, "cms", "renting-in-salford"), "https://www.megacityproperties.co.uk/renting-in-salford");
 assert.equal(u.absUrl(envRoot, demo, "page", "skyline"), "https://billydigitals.com/templates/megacity-skyline");
-assert.equal(u.absUrl(envRoot, demo, "listing", "room-3"), "https://billydigitals.com/templates/megacity-let-room-3");
+assert.equal(u.absUrl(envRoot, demo, "listing", "carlton-road-5"), "https://billydigitals.com/templates/megacity-let-carlton-road-5");
 assert.equal(u.absUrl(envRoot, demo, "asset", "assets/mcr/ph.jpg"), "https://billydigitals.com/templates/assets/mcr/ph.jpg");
 assert.equal(u.absUrl(envRoot, demo, "asset", "/media/x.jpg"), "https://billydigitals.com/media/x.jpg");
 assert.equal(u.absUrl(envRoot, demo, "studio"), "https://billydigitals.com/templates/megacity-studio");

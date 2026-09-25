@@ -179,8 +179,7 @@
       publish: function (id) { return call("POST", "/listings/" + encodeURIComponent(id) + "/publish"); },
       unpublish: function (id) { return call("POST", "/listings/" + encodeURIComponent(id) + "/unpublish"); },
       setStatus: function (id, status) { return call("POST", "/listings/" + encodeURIComponent(id) + "/status", { status: status }); },
-      orderMedia: function (id, ids) { return call("PUT", "/listings/" + encodeURIComponent(id) + "/media/order", { ids: ids }); },
-      importLegacy: function (listings) { return call("POST", "/import/legacy", { listings: listings }); }
+      orderMedia: function (id, ids) { return call("PUT", "/listings/" + encodeURIComponent(id) + "/media/order", { ids: ids }); }
     },
     media: {
       /* formData: meta (JSON string) + orig + large + thumb (+ pano) */
@@ -243,17 +242,6 @@
       list: function () { return call("GET", "/notifications"); },
       /* ids: [] or nothing marks everything read */
       markRead: function (ids) { return call("POST", "/notifications/read", ids && ids.length ? { ids: ids } : {}); }
-    },
-    /* the hand-built seed (scripts/megacity-seed.mjs writes it) */
-    seed: {
-      get: function () {
-        var real = fetch("/templates/megacity-seed.json", { credentials: "same-origin" }).then(function (res) {
-          if (!res.ok) throw new ApiError(res.status, { error: res.status === 404 ? "The seed file (templates/megacity-seed.json) has not been built yet." : "Could not read the seed file." });
-          return res.json();
-        }, function () { throw new ApiError(0, null); });
-        /* mock mode prefers the real seed file when it is served, else its own copy */
-        return MOCK ? real.catch(function () { return mock.seed(); }) : real;
-      }
     },
     exportUrl: BASE + "/export"
   };
@@ -394,14 +382,6 @@
       publishedAt: ago(24 * 7), updatedAt: ago(24 * 6),
       photos: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function (i) { return ["room7-" + (i < 10 ? "0" + i : i) + ".jpg", "", "Room 7, HMO, Salford" + (i ? ", photo " + (i + 1) : "")]; })
     }));
-
-    /* the seed the Import flow reads, snapshotted before anything changes */
-    var SEED = { listings: DB.listings.map(function (l) {
-      var c = clone(l);
-      c.media = l.media.map(function (m, i) { return { src: m.url.replace("/templates/", ""), role: i === 0 ? "cover" : "gallery", roomLabel: m.roomLabel, alt: m.alt, kind: "photo" }; });
-      delete c.coverMediaId; delete c.tour; delete c.updatedAt; delete c.createdAt; delete c.updatedBy; delete c.publishedAt; delete c.syncedAt;
-      return c;
-    }) };
 
     /* sample enquiries — clearly labelled as samples, with Ofcom's reserved
        drama numbers (07700 900xxx) and example.com addresses */
@@ -971,8 +951,7 @@
             return clone(med);
           });
         });
-      },
-      seed: function () { return delay(120).then(function () { return clone(SEED); }); }
+      }
     };
   }
   if (MOCK) mock = buildMock();

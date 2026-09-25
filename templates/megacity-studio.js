@@ -521,11 +521,9 @@
       if (token !== routeToken) return;
       var c = d.counts || {}, L = c.listings || {}, u = state.user || {}, E = d.enquiries || null, ev = d.events7 || null;
       state.liveCount = L.live; renderNav();
-      var showImport = (L.total || 0) === 0;
       view.innerHTML =
         '<div class="st-hello"><div><h2>' + esc(dayPart()) + ", " + esc(firstName(u.name)) + ".</h2><p>" + (L.live ? plural(L.live, "listing is", "listings are") + " advertised on the website right now." : "Nothing is advertised on the website yet.") + (E && E.new ? " " + plural(E.new, "enquiry needs", "enquiries need") + " a reply." : "") + "</p></div>" +
         '<div class="st-actions"><a class="st-btn st-btn--fill" href="#/listings/new">' + I.plus + 'New listing</a><a class="st-btn" href="#/settings">' + I.cog + "Open settings</a></div></div>" +
-        (showImport ? '<section class="st-card st-import" style="margin-bottom:14px"><h2>Import the 5 current listings</h2><p>Bring in the five listings and their photos from the hand-built pages, so the website runs from the Studio. It takes a minute or two and can be re-run safely — anything already imported is skipped.</p><button type="button" class="st-btn" data-import>' + I.upload + "Import the current listings</button></section>" : "") +
         '<div class="st-tiles">' + tile("Live listings", L.live, "#/listings?status=live", "live") + tile("Drafts", L.draft, "#/listings?status=draft") + tile("All listings", L.total, "#/listings") + tile("Photos & files", c.media) + tile("Live tours", c.tours && c.tours.live) + "</div>" +
         '<div class="st-tiles">' + tile("New enquiries", E ? E.new : null, "#/enquiries?status=new", E && E.new ? "hot" : null) + tile("Enquiries this week", E ? E.last7 : null, "#/enquiries?status=") + tile("Listing views this week", ev ? ev.listing_view : null) + tile("Tour opens this week", ev ? ev.tour_open : null) + tile("404s this week", ev ? ev.not_found : null, "#/settings/redirects", ev && ev.not_found > 20 ? "hot" : null) + "</div>" +
         '<div class="st-grid2" style="margin-top:14px">' +
@@ -1407,8 +1405,7 @@
   }
   function wrap(html, cls) { return html.replace('class="st-field"', 'class="st-field ' + cls + '"'); }
   function dataHtml() {
-    return '<section class="st-card"><div class="st-card-head"><div><h2>Import the current listings</h2><p>Brings in the five listings and their photos from the hand-built pages. Listings that already have photos are skipped unless you say otherwise, so it is safe to run again.</p></div></div><button type="button" class="st-btn st-btn--fill" data-import>' + I.upload + "Import the current listings</button></section>" +
-      '<section class="st-card"><div class="st-card-head"><div><h2>Bin</h2><p>Listings you have moved to the Bin. Restore them, or the owner can delete them for good.</p></div></div><a class="st-btn" href="#/listings?status=bin">' + I.trash + "Open the Bin</a></section>";
+    return       '<section class="st-card"><div class="st-card-head"><div><h2>Bin</h2><p>Listings you have moved to the Bin. Restore them, or the owner can delete them for good.</p></div></div><a class="st-btn" href="#/listings?status=bin">' + I.trash + "Open the Bin</a></section>";
   }
   /* Missing addresses the live site answered with a 404, and the redirects
      that fix them. The Worker applies the list on megacityproperties.co.uk
@@ -1558,73 +1555,10 @@
     return false;
   }
 
-  /* ── import the five hand-built listings ─────────────────────────── */
-  function runImport() {
-    openModal('<h2 id="modalTitle">Import the current listings</h2><div class="st-modal-body"><p>Reading the seed and checking what is already here…</p></div>', { noEsc: true });
-    var listings, existing;
-    API.seed.get().then(function (seed) {
-      listings = (seed && seed.listings) || [];
-      if (!listings.length) throw new Error("The seed file has no listings in it.");
-      return Promise.all(listings.map(function (l) { return API.listings.get(l.id).then(function (x) { return x; }, function (err) { if (err.status === 404) return null; throw err; }); }));
-    }).then(function (ex) {
-      existing = ex;
-      var withMedia = existing.filter(function (x) { return x && (x.media || []).length; });
-      var skip = {};
-      if (!withMedia.length) return importRun(listings, skip);
-      return confirmModal({ title: plural(withMedia.length, "listing already has photos", "listings already have photos"), html: "<p>" + withMedia.map(function (x) { return "<b>" + esc(x.title) + "</b> (" + plural((x.media || []).length, "photo") + ")"; }).join(", ") + ".</p><p>Skipping them is the safe choice. Importing again adds a second copy of every photo.</p>", cancel: "Skip them", confirm: "Import their photos again" }).then(function (again) {
-        if (!again) withMedia.forEach(function (x) { skip[x.id] = true; });
-        return importRun(listings, skip);
-      });
-    }).catch(function (err) {
-      openModal('<h2 id="modalTitle">Import could not start</h2><div class="st-modal-body"><p>' + esc(err && err.message || "Something went wrong.") + '</p></div><div class="st-modal-foot"><button type="button" class="st-btn st-btn--fill" data-modal="cancel">Close</button></div>');
-    });
-  }
-  function importRun(listings, skip) {
-    var total = listings.reduce(function (n, l) { return n + (skip[l.id] ? 0 : 1 + (l.media || []).length); }, 0), done = 0;
-    var sum = { listings: 0, photos: 0, skipped: 0, failed: 0 };
-    openModal('<h2 id="modalTitle">Importing…</h2><div class="st-modal-body"><div class="st-imp-head" id="impHead"><b>Starting</b><span></span></div><div class="st-progress" id="impBar"><i></i></div><ul class="st-log" id="impLog" aria-live="polite"></ul></div><div class="st-modal-foot"><button type="button" class="st-btn st-btn--fill" data-modal="ok" id="impClose" disabled>Close</button></div>', { wide: true, noEsc: true });
-    var log = $("#impLog"), bar = $("#impBar i"), head = $("#impHead");
-    function tick(msg, cls) { log.insertAdjacentHTML("beforeend", '<li class="' + (cls || "") + '">' + esc(msg) + "</li>"); log.scrollTop = log.scrollHeight; bar.style.setProperty("--w", Math.round(100 * done / Math.max(total, 1)) + "%"); }
-    function setHead(a, b) { head.innerHTML = "<b>" + esc(a) + "</b><span>" + esc(b || "") + "</span>"; }
-    var chain = Promise.resolve();
-    listings.forEach(function (l, li) {
-      chain = chain.then(function () {
-        if (skip[l.id]) { sum.skipped++; tick("Skipped " + l.title + " — already has photos", "is-skip"); return; }
-        var media = l.media || [], body = Object.assign({}, l); delete body.media;
-        setHead(l.title, "Listing " + (li + 1) + " of " + listings.length);
-        return API.listings.importLegacy([body]).then(function () {
-          done++; sum.listings++; tick("Imported " + l.title, "is-ok");
-          var coverId = null, mchain = Promise.resolve();
-          media.forEach(function (m, mi) {
-            mchain = mchain.then(function () {
-              var name = String(m.src || "").split("/").pop();
-              setHead(l.title, "Photo " + (mi + 1) + " of " + media.length);
-              return fetch("/templates/" + m.src, { credentials: "same-origin" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.blob(); })
-                .then(function (blob) { var file = new File([blob], name, { type: blob.type || "image/jpeg" }); return importUpload(l.id, file, m); })
-                .then(function (med) { done++; sum.photos++; if (m.role === "cover" && !coverId) coverId = med.id; tick("  ↳ " + name + (m.roomLabel ? " · " + m.roomLabel : ""), "is-ok"); })
-                .catch(function (e) { done++; sum.failed++; tick("  ↳ " + name + " failed: " + (e && e.message || "unknown"), "is-bad"); });
-            });
-          });
-          return mchain.then(function () {
-            if (!coverId) return;
-            return API.listings.get(l.id).then(function (cur) { return API.listings.patch(l.id, { coverMediaId: coverId, updatedAt: cur.updatedAt }); }).then(function () { tick("  ↳ cover photo set", "is-ok"); }, function (e) { tick("  ↳ could not set the cover: " + e.message, "is-bad"); });
-          });
-        }).catch(function (e) { done++; sum.failed++; tick(l.title + " failed: " + (e && e.message || "unknown"), "is-bad"); });
-      });
-    });
-    return chain.then(function () {
-      setHead("Finished", "");
-      $("#modalTitle").textContent = "Import finished";
-      tick("Done — " + plural(sum.listings, "listing") + ", " + plural(sum.photos, "photo") + (sum.skipped ? ", " + sum.skipped + " skipped" : "") + (sum.failed ? ", " + sum.failed + " failed" : ""), sum.failed ? "is-bad" : "is-ok");
-      state.listIndex = null;
-      var close = $("#impClose"); close.disabled = false; close.focus();
-      modalResolve = function () { if (state.route && (state.route.name === "dashboard" || state.route.name === "listings")) route(); };
-    });
-  }
-  function importUpload(listingId, file, m) {
-    if (m.kind === "video" || m.kind === "pdf") return API.media.stream(file, { listingId: listingId, kind: m.kind, role: m.role || "gallery", filename: file.name });
-    return intakeAll(file).then(function (r) { return API.media.upload(photoForm(listingId, file, r, { role: m.role || "gallery", roomLabel: m.roomLabel, alt: m.alt })); });
-  }
+  /* The five hand-built listings used to be imported from a seed file here.
+     They are gone: 10ninety is the only copy of a property now, and an import
+     that wrote fourteen hand-typed rents on top of the synced ones would be a
+     way to put figures on the website that Walid never set. */
 
   /* ── ⌘K palette ──────────────────────────────────────────────────── */
   var cmdkWrap = $("#cmdkWrap"), cmdkInput = $("#cmdkInput"), cmdkList = $("#cmdkList"), cmdkRelease = null, cmdkItems = [], cmdkSel = 0;
@@ -1644,7 +1578,7 @@
   }
   function cmdkRender(q) {
     var ql = q.trim().toLowerCase(), items = [];
-    [["Home", "#/", "home"], ["Listings", "#/listings", "list"], ["New listing", "#/listings/new", "plus"], ["Enquiries", "#/enquiries", "inbox"], ["Pages", "#/pages", "pages"], ["Backlinks", "#/backlinks", "link"], ["Integrations", "#/integrations", "plug"], ["Settings", "#/settings", "cog"], ["Team", "#/team", "users"], ["Change password", "#/settings/account", "key"], ["Import the current listings", "import", "upload"]].forEach(function (s) {
+    [["Home", "#/", "home"], ["Listings", "#/listings", "list"], ["New listing", "#/listings/new", "plus"], ["Enquiries", "#/enquiries", "inbox"], ["Pages", "#/pages", "pages"], ["Backlinks", "#/backlinks", "link"], ["Integrations", "#/integrations", "plug"], ["Settings", "#/settings", "cog"], ["Team", "#/team", "users"], ["Change password", "#/settings/account", "key"]].forEach(function (s) {
       if (!ql || s[0].toLowerCase().indexOf(ql) >= 0) items.push({ label: s[0], k: "Screen", go: s[1], icon: s[2] });
     });
     (state.listIndex || []).forEach(function (l) {
@@ -1655,7 +1589,7 @@
     cmdkList.innerHTML = cmdkItems.length ? cmdkItems.map(function (it, i) { return '<li role="option" id="ck' + i + '" aria-selected="' + (i === 0 ? "true" : "false") + '" data-i="' + i + '">' + I[it.icon] + "<div>" + esc(it.label) + (it.sub ? ' <span class="st-ck-sub">' + esc(it.sub) + "</span>" : "") + '</div><span class="st-ck-k">' + esc(it.k) + "</span></li>"; }).join("") : '<li class="is-empty">Nothing matches “' + esc(q) + "”</li>";
     cmdkInput.setAttribute("aria-activedescendant", cmdkItems.length ? "ck0" : "");
   }
-  function cmdkGo(it) { closeCmdk(); if (!it) return; if (it.go === "import") runImport(); else go(it.go); }
+  function cmdkGo(it) { closeCmdk(); if (it) go(it.go); }
   cmdkInput.addEventListener("input", function () { cmdkRender(this.value); });
   cmdkInput.addEventListener("keydown", function (e) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -2602,7 +2536,6 @@
   view.addEventListener("input", function (e) { if (pg && onPgInput(e)) return; onEdInput(e); });
   view.addEventListener("change", function (e) { if (teamAction(e)) return; if (pg && onPgInput(e)) return; onEdInput(e); });
   view.addEventListener("click", function (e) {
-    if (e.target.closest("[data-import]")) { runImport(); return; }
     if (e.target.closest("[data-retry-route]")) { route(); return; }
     var c = e.target.closest("[data-copy]");
     if (c) { copyText(c.getAttribute("data-copy")).then(function () { toast("Copied"); }, function () { toast("Copy failed", { kind: "warn" }); }); return; }

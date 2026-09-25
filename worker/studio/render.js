@@ -317,7 +317,8 @@ export async function renderPropertiesPage(request, env, url, cards) {
 
 /* sitemap: the hand-built pages plus every live listing and Studio page,
    at whichever addresses this host uses (root or demo). Works without the
-   database too: then the five hand-built listings stand in. */
+   database too, and then carries no listings at all — which is right, because
+   without it there are none. */
 const SITEMAP_SKIP = new Set(["tenant-application-form"]);
 export async function sitemap(env, url, db) {
   const one = (loc, mod) => `<url><loc>${esc(loc)}</loc>${mod ? `<lastmod>${esc(String(mod).slice(0, 10))}</lastmod>` : ""}</url>`;
@@ -325,9 +326,10 @@ export async function sitemap(env, url, db) {
   if (db) {
     rows = (await db.prepare(`SELECT id, updated_at FROM listings WHERE status='live' AND hidden=0 AND deleted_at IS NULL`).all()).results || [];
     cms = (await db.prepare(`SELECT slug, updated_at FROM pages WHERE status='live'`).all().catch(() => ({ results: [] }))).results || [];
-  } else {
-    rows = urls.STATIC_LET_SLUGS.map((id) => ({ id, updated_at: null }));
   }
+  /* With no database there are no listings to name. There used to be fourteen
+     hand-built pages to fall back on; a sitemap that advertises pages which no
+     longer exist is worse than a short one. */
   const items = urls.PUBLIC_STATIC_SLUGS.filter((s) => !SITEMAP_SKIP.has(s)).map((s) => one(urls.absUrl(env, url, "page", s)))
     .concat(rows.map((r) => one(urls.absUrl(env, url, "listing", r.id), r.updated_at)))
     .concat(cms.map((p) => one(urls.absUrl(env, url, "cms", p.slug), p.updated_at)));

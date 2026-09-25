@@ -37,20 +37,32 @@ for (const k in ROOT_MAP) PATH_TO_SLUG[ROOT_MAP[k]] = k;
 
 /* the hand-built pages, in sitemap order */
 const PUBLIC_STATIC_SLUGS = ["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "tenant-application-form"];
-/* The hand-built listing pages: the fallback while the database is empty, and
-   Walid's own portfolio, which ships with the site so a 10ninety sync can never
-   take it down. See PROJECT-NOTES.md, "the properties that stay". */
-const STATIC_LET_SLUGS = ["denmark-road", "ladywell-point", "room-3", "room-5", "room-7",
-  "north-street-hyde", "carlton-road-5", "carlton-road-9", "drayton-street",
-  "adelphi-apartments", "grove-house", "anvil-place", "rope-works", "whitworth-street"];
+/* Empty, deliberately, and kept rather than deleted.
+
+   There were fourteen hand-built listing pages here. They existed because the
+   database was empty and the site had to advertise something; each one stated
+   a rent, a deposit and an availability date typed by hand. 10ninety is now
+   the only copy of that truth — nine properties came across on the first sync
+   with their own photographs — and a second, hand-maintained copy of a rent is
+   a wrong rent waiting to happen. Walid changes a figure in his system and the
+   website follows; nothing on this side can disagree with him any more.
+
+   The constant stays because it is what every route asks before falling back,
+   and an empty list is the honest answer to "is this slug hand-built?". The
+   page template they were built from does NOT go: render.js renders every
+   live listing into templates/megacity-let-template.html. */
+const STATIC_LET_SLUGS = [];
 /* old-site /property/<id>/ numbers -> our slugs.
    Every one of these was read off the old site while it was still up: its
    sitemap lists nine property URLs, and each of those pages prints the
    10ninety reference, which maps to a slug through SLUG_ALIASES. So this is
    transcribed, not guessed — and it is what stops nine indexed property pages
    redirecting to the grid instead of to themselves when the domain moves.
-   The room-* entries predate that and have no sitemap URL; they are kept
-   because links to them may exist off-site. */
+   The three room-* entries that used to sit here have gone with the pages
+   they pointed at. Those rooms are Off The Market in 10ninety — let, and not
+   advertised — so there is no page to send anyone to. With no entry here they
+   fall through to /lettings, which is the truthful answer: that room is gone,
+   here is everything that is not. */
 const LEGACY_LISTINGS = {
   "227": "manchester-road-swinton",  /* RL0144 */
   "226": "denmark-road",             /* RL0142 */
@@ -61,7 +73,6 @@ const LEGACY_LISTINGS = {
   "165": "drayton-street",           /* RL0089 */
   "105": "carlton-road-9",           /* RL0063 — £650, the double room */
   "95":  "carlton-road-5",           /* RL0060 — £625, the terraced house */
-  "102": "room-7", "108": "room-3", "110": "room-5",
 };
 /* root paths a Studio page may never take */
 const RESERVED_ROOT_SLUGS = ["lettings", "landlords", "tenants", "privacy-policy", "tenant-application-form", "let", "property", "tour", "api", "media", "billy360", "templates", "sitemap", "sitemap.xml", "robots", "robots.txt", "images", "css", "js", "free-valuation", "testimonials", "register", "blog", "sales", "buyers", "vendors", "commercial", "index", "home", "404", "favicon.ico", "apple-touch-icon.png"];

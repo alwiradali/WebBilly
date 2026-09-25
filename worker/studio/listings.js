@@ -357,41 +357,10 @@ function cleanExtras(item) {
   return extras;
 }
 
-export async function importLegacy(c) {
-  const body = await readJsonBody(c.request, 4_000_000);
-  const items = Array.isArray(body.listings) ? body.listings.slice(0, 50) : [];
-  const stmts = [];
-  const ids = [];
-  const now = nowIso();
-  for (const item of items) {
-    if (!item || !/^[a-z0-9-]{2,80}$/.test(String(item.id || ""))) continue;
-    const cols = toColumns(item);
-    if (!cols.title) continue;
-    /* the old website's /property/<id>/ number, so that address redirects here */
-    if (!cols.legacy_id && item.links && typeof item.links.tenninety === "string") {
-      const lm = /\/property\/(\d+)(?:\/|$)/.exec(item.links.tenninety);
-      if (lm) cols.legacy_id = lm[1];
-    }
-    const extras = cleanExtras(item);
-    /* a seed marked live is imported as a draft and goes live by itself the
-       moment its photos are in and it passes the same checks as everyone else */
-    if (item.status === "live") extras.importStatus = "live";
-    const exists = await c.db.prepare(`SELECT id FROM listings WHERE id=?1`).bind(item.id).first();
-    const base = { ...cols, status: "draft", external_json: Object.keys(extras).length ? JSON.stringify({ extras }) : null, updated_at: now, updated_by: c.user.id };
-    if (exists) {
-      const keys = Object.keys(base);
-      stmts.push(c.db.prepare(`UPDATE listings SET ${keys.map((k, i) => `${k}=?${i + 1}`).join(", ")}, deleted_at=NULL WHERE id=?${keys.length + 1}`).bind(...keys.map((k) => base[k]), item.id));
-    } else {
-      const full = { id: item.id, source: "manual", created_at: now, created_by: c.user.id, ...base };
-      const keys = Object.keys(full);
-      stmts.push(c.db.prepare(`INSERT INTO listings (${keys.join(", ")}) VALUES (${keys.map((_, i) => "?" + (i + 1)).join(", ")})`).bind(...keys.map((k) => full[k])));
-    }
-    ids.push(item.id);
-  }
-  if (stmts.length) await c.db.batch(stmts);       // all or nothing
-  await audit(c.db, { userId: c.user.id, action: "listing.imported", entity: "listing", entityId: null, detail: { count: ids.length, ids } });
-  return json({ ok: true, imported: ids.length });
-}
+/* importLegacy lived here: it read templates/megacity-seed.json and wrote the
+   fourteen hand-built listings into the database. Both are gone. 10ninety is
+   the only copy of a property now, and an import that put hand-typed rents on
+   top of the synced ones would be a way to publish a figure Walid never set. */
 
 /* Called after a photo lands: an imported listing that asked to be live goes
    live once it passes the publish checks. */

@@ -91,7 +91,6 @@ const ROUTES = [
 
   ["GET", "/listings", listings.list],
   ["POST", "/listings", listings.create],
-  ["POST", "/import/legacy", listings.importLegacy],
   ["POST", "/sync/tenninety", tenninetySync, { owner: true }],
   ["GET", "/sync/tenninety", tenninetyStatus],
   ["GET", "/listings/:id", listings.get],

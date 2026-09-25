@@ -32,14 +32,23 @@ ok(r.to === "/lettings" && r.status === 302, "a draft -> the grid, TEMPORARILY (
 r = await refListingPath(dbOf(null), "RS9999");
 ok(r.to === "/lettings" && r.status === 302, "a reference the sync has not reached -> the grid, TEMPORARILY (" + r.status + ")");
 
+/* There used to be fourteen hand-built pages to fall back on, and these two
+   cases proved a reference still resolved with no database behind it. They are
+   gone: a property is what 10ninety says it is, and nothing on this side can
+   name one any more. So the honest answer with no database is the grid — and,
+   crucially, a TEMPORARY one, because the reference is probably fine and it is
+   the database that is not. A 301 here would be cached by the browser and by
+   Google and would outlive the outage. */
 r = await refListingPath(null, "ladywell-point");
-ok(r.to === "/let/ladywell-point" && r.status === 301, "no database, but a hand-built page exists -> that page (" + r.to + ")");
+ok(r.to === "/lettings" && r.status === 302, "no database -> the grid, TEMPORARILY, even for a slug that exists (" + r.status + ")");
 
 r = await refListingPath(null, "RS0001");
-ok(r.to === "/lettings" && r.status === 302, "no database and no page -> the grid, never a 404 (" + r.status + ")");
+ok(r.to === "/lettings" && r.status === 302, "no database and an unknown reference -> the grid, never a 404 (" + r.status + ")");
 
 r = await refListingPath({ prepare: () => { throw new Error("D1 down"); } }, "ladywell-point");
-ok(r.to === "/let/ladywell-point", "the database throwing does not lose the link");
+ok(r.to === "/lettings" && r.status === 302, "the database throwing sends people on rather than dead-ending (" + r.status + ")");
+
+ok(urls.STATIC_LET_SLUGS.length === 0, "and there are no hand-built listing slugs left to fall back to");
 
 console.log(bad ? `\n${bad} FAILED` : "\nREF ROUTE: ALL PASS");
 process.exit(bad ? 1 : 0);
