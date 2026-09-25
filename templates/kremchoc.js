@@ -186,7 +186,11 @@
      wrong on some screen, tucking the first link underneath */
   function sizeDrawer() {
     if (!nav || !drawer) return;
-    drawer.style.setProperty('--navh', Math.round(nav.getBoundingClientRect().height) + 'px');
+    var nh = Math.round(nav.getBoundingClientRect().height);
+    drawer.style.setProperty('--navh', nh + 'px');
+    /* on the root as well, so scroll-padding-top tracks the real header
+       instead of a guessed 92px */
+    html.style.setProperty('--navh', nh + 'px');
   }
   sizeDrawer();
   addEventListener('resize', sizeDrawer, { passive: true });
@@ -256,9 +260,14 @@
     });
   }
 
+  /* Flush under the header, with nothing left over. The +12 that used to be
+     here left a 12px strip of the PREVIOUS section showing below the nav —
+     about 33 device pixels on a phone, which reads as landing in the wrong
+     place. The section's own top padding is the breathing room; the landing
+     does not need to add any. */
   function landing(id, target) {
     if (id === '#top') return 0;
-    var pad = nav ? Math.round(nav.getBoundingClientRect().height) + 12 : 90;
+    var pad = nav ? Math.round(nav.getBoundingClientRect().height) : 90;
     return target.getBoundingClientRect().top + window.pageYOffset - pad;
   }
 
@@ -307,7 +316,11 @@
 
     /* anything outside the menu — a hero button, a link in the copy — keeps
        its journey, because there the page in between is the context */
-    if (lenis) { lenis.scrollTo(id === '#top' ? 0 : target, { offset: -90, duration: 1.1 }); return; }
+    if (lenis) {
+      var pad = nav ? Math.round(nav.getBoundingClientRect().height) : 90;
+      lenis.scrollTo(id === '#top' ? 0 : target, { offset: -pad, duration: 1.1 });
+      return;
+    }
     glideTo(function () { return landing(id, target); });
   });
 

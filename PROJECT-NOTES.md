@@ -872,3 +872,24 @@ over the live Worker regardless of which branch is marked production. The
 command that makes a branch build harmless is `npx wrangler versions upload`,
 which uploads a version without giving it traffic; unticking non-production
 builds altogether does the same thing more bluntly.
+
+### Krem&Choc — landing flush, not twelve pixels low
+
+The anchor landing subtracted the header height PLUS 12px, so every jump left
+a 12px strip of the *previous* section showing under the header — a sliver of
+the photo band above Flavours, a bar of dark green above Philosophy. Twelve CSS
+pixels is about 33 device pixels on a phone, which is why it read as landing in
+the wrong place rather than as a hairline.
+
+The landing now subtracts the measured header height and nothing else, on all
+three paths: the drawer's jump, the tween for a link outside the menu, and
+Lenis on a fine pointer, which had its own hardcoded `offset: -90` against a
+103px header. Measured after: 0px on every one. The breathing room above a
+heading is the section's own top padding and the landing should not add to it.
+
+`--navh` is now written to the root as well as the drawer, so
+`scroll-padding-top` tracks the real header instead of a guessed 92px.
+
+The interaction checks used to assert "top is near 92px", which passed either
+way. They now assert the section's top edge sits within 2px of the header's
+bottom edge, which is the actual requirement.
