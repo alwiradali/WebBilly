@@ -31,6 +31,9 @@
  * None of that protects a property Walid genuinely let. It is meant not to.
  */
 
+import { toListings, fetchProperties, fetchPropertyTypes, feedMediaKey } from "./tenninety.js";
+import { uid, nowIso } from "./db.js";
+
 /* Above this fraction of existing listings disappearing at once, refuse to act
    and report instead. A third is chosen to be well clear of ordinary churn —
    with nine properties, three going in one sync is already unusual. */
@@ -137,4 +140,156 @@ export function describePlan(plan) {
   if (plan.held.length) bits.push(`${plan.held.length} kept (pinned)`);
   if (!bits.length) return `Up to date — ${plan.unchanged.length} properties, nothing changed.`;
   return bits.join(", ") + `, ${plan.unchanged.length} unchanged.`;
+}
+
+/* ─────────────────────────────────────────────────────────── writing it down */
+
+
+/* The columns a synced listing owns, in the order they are bound. Anything
+   not here — the SEO fields, the pinned flag, the cover choice once a human
+   has made one — belongs to the website and a sync never touches it. */
+const COLS = [
+  ["external_id", (r) => r.externalId], ["ref", (r) => r.ref], ["status", (r) => r.status],
+  ["title", (r) => r.title], ["headline", (r) => r.headline], ["type", (r) => r.type],
+  ["let_type", (r) => r.letType], ["rent_pcm", (r) => r.rentPcm], ["deposit", (r) => r.deposit],
+  ["bills", (r) => r.bills], ["availability", (r) => r.availability], ["available_from", (r) => r.availableFrom],
+  ["council_tax_band", (r) => r.councilTaxBand], ["bedrooms", (r) => r.bedrooms],
+  ["bathrooms", (r) => r.bathrooms], ["receptions", (r) => r.receptions],
+  ["hmo_licensed", (r) => r.hmoLicensed], ["address_1", (r) => r.address1], ["address_2", (r) => r.address2],
+  ["town", (r) => r.town], ["postcode", (r) => r.postcode], ["area", (r) => r.area],
+  ["lat", (r) => r.lat], ["lng", (r) => r.lng], ["summary", (r) => r.summary],
+  ["description", (r) => r.description],
+  ["features_json", (r) => JSON.stringify(r.features || [])],
+  ["external_json", (r) => JSON.stringify({ epcUrl: r.epcUrl, brochureUrl: r.brochureUrl, tourUrl: r.tourUrl, updatedAt: r.updatedAt })],
+];
+
+/* A photograph that stays on 10ninety: a media row with a synthetic key and
+   the real address in source_url. See migrations/megacity/0006. */
+function mediaStatements(db, row, now) {
+  const out = [];
+  /* Replace rather than merge: the feed is the whole truth about which
+     photographs a property has, and in what order. A photo Walid deleted in
+     10ninety must not survive here because it was here first. */
+  out.push(db.prepare(`DELETE FROM media WHERE listing_id=?1 AND key_orig LIKE '%/feed.jpg'`).bind(row.id));
+  let sort = 0, coverId = null;
+  for (const img of row.images || []) {
+    const id = uid("m");
+    if (!coverId) coverId = id;
+    out.push(db.prepare(
+      `INSERT INTO media (id, listing_id, kind, role, key_orig, source_url, mime, alt, sort, created_at)
+       VALUES (?1, ?2, 'photo', ?3, ?4, ?5, 'image/jpeg', ?6, ?7, ?8)`)
+      .bind(id, row.id, sort === 0 ? "cover" : "gallery", feedMediaKey(row.id, img.url), img.url,
+            img.text || row.title || null, sort, now));
+    sort += 1;
+  }
+  return { statements: out, coverId };
+}
+
+function upsertStatements(db, row, now, isNew) {
+  const { statements: media, coverId } = mediaStatements(db, row, now);
+  const names = COLS.map(([n]) => n);
+  const values = COLS.map(([, get]) => {
+    const v = get(row);
+    return v === undefined ? null : v;
+  });
+
+  const head = isNew
+    ? db.prepare(
+        `INSERT INTO listings (id, source, ${names.join(", ")}, cover_media_id, synced_at, created_at, updated_at, published_at)
+         VALUES (?1, 'tenninety', ${names.map((_, i) => "?" + (i + 2)).join(", ")}, ?${names.length + 2}, ?${names.length + 3}, ?${names.length + 4}, ?${names.length + 5}, ?${names.length + 6})`)
+        .bind(row.id, ...values, coverId, now, now, now, row.status === "live" ? now : null)
+    /* An update leaves created_at, published_at and everything the website
+       owns alone — including a cover a person chose, unless there was none. */
+    : db.prepare(
+        `UPDATE listings SET ${names.map((n, i) => n + "=?" + (i + 2)).join(", ")},
+           cover_media_id = COALESCE((SELECT id FROM media WHERE id=listings.cover_media_id AND key_orig NOT LIKE '%/feed.jpg'), ?${names.length + 2}),
+           synced_at=?${names.length + 3}, updated_at=?${names.length + 4}
+         WHERE id=?1`)
+        .bind(row.id, ...values, coverId, now, now);
+
+  return [head, ...media];
+}
+
+/**
+ * Carry out a plan. Batched so a half-written property cannot be served:
+ * D1 runs a batch in one transaction, so either a listing and its photographs
+ * are both there or neither is.
+ */
+export async function applyPlan(db, plan, opts = {}) {
+  const now = opts.now || nowIso();
+  const done = { created: 0, updated: 0, removed: 0, failed: [] };
+  if (!db) return { ...done, failed: [{ id: "*", why: "no database bound" }] };
+
+  for (const [rows, isNew, count] of [[plan.create, true, "created"], [plan.update, false, "updated"]]) {
+    for (const row of rows) {
+      try {
+        await db.batch(upsertStatements(db, row, now, isNew));
+        done[count] += 1;
+      } catch (e) {
+        /* One bad property does not stop the other eight. */
+        console.error("sync write", row.id, e && e.message);
+        done.failed.push({ id: row.id, why: String((e && e.message) || e).slice(0, 160) });
+      }
+    }
+  }
+
+  /* Gone from the feed: withdrawn, not deleted. It leaves the website
+     immediately — the public query wants status 'live' — and stays visible in
+     the Studio, so a property that vanished by mistake can be seen and put
+     back rather than quietly not existing. */
+  for (const row of plan.remove) {
+    try {
+      await db.prepare(`UPDATE listings SET status='withdrawn', synced_at=?2, updated_at=?2 WHERE id=?1 AND source='tenninety'`)
+        .bind(row.id, now).run();
+      done.removed += 1;
+    } catch (e) {
+      console.error("sync withdraw", row.id, e && e.message);
+      done.failed.push({ id: row.id, why: "withdraw failed" });
+    }
+  }
+  return done;
+}
+
+/* What the site already has from the feed, in the shape planSync compares. */
+export async function existingSynced(db) {
+  if (!db) return [];
+  const sql = `SELECT id, pinned, ${COLS.map(([n]) => n).filter((n) => n !== "features_json" && n !== "external_json").join(", ")}
+                 FROM listings WHERE source='tenninety' AND deleted_at IS NULL AND status != 'withdrawn'`;
+  const rows = (await db.prepare(sql).all()).results || [];
+  return rows.map((r) => ({
+    id: r.id, pinned: r.pinned, ref: r.ref, status: r.status, title: r.title, headline: r.headline,
+    type: r.type, letType: r.let_type, rentPcm: r.rent_pcm, deposit: r.deposit, bills: r.bills,
+    availability: r.availability, availableFrom: r.available_from, councilTaxBand: r.council_tax_band,
+    bedrooms: r.bedrooms, bathrooms: r.bathrooms, receptions: r.receptions, hmoLicensed: r.hmo_licensed,
+    address1: r.address_1, address2: r.address_2, town: r.town, postcode: r.postcode, area: r.area,
+    lat: r.lat, lng: r.lng, summary: r.summary, description: r.description,
+  }));
+}
+
+/* fetch -> map -> plan -> apply, with the feed's failure kept separate from
+   its contents. Never throws: a cron and a button both call this. */
+export async function runSync(env, db, opts = {}) {
+  let properties = null, feedOk = true, why = null;
+  try {
+    properties = await fetchProperties(env, opts);
+  } catch (e) {
+    feedOk = false;
+    why = String((e && e.message) || e).slice(0, 200);
+    console.error("10ninety feed", why);
+  }
+
+  const types = feedOk ? await fetchPropertyTypes(env, opts).catch(() => null) : null;
+  const { listings, skipped } = feedOk ? toListings(properties, { propertyTypes: types, today: opts.today }) : { listings: [], skipped: [] };
+  const existing = await existingSynced(db).catch(() => []);
+  const plan = planSync(existing, listings, { feedOk, ...opts });
+  const result = feedOk ? await applyPlan(db, plan, opts) : { created: 0, updated: 0, removed: 0, failed: [] };
+
+  return {
+    ok: feedOk && !result.failed.length,
+    feedOk, why: why || plan.reason,
+    counted: { feed: listings.length, existing: existing.length, skipped: skipped.length },
+    ...result,
+    summary: feedOk ? describePlan(plan) : `Nothing changed — the feed could not be read (${why}).`,
+    at: opts.now || nowIso(),
+  };
 }
