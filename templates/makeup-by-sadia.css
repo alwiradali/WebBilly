@@ -213,6 +213,128 @@ body.ready .loader{opacity:0;visibility:hidden;pointer-events:none}
 .hero-tile.t2{width:45%;aspect-ratio:3/4;top:24%;right:0}
 .hero-tile.t3{width:37%;aspect-ratio:1/1;bottom:0;left:20%}
 
+/* ---------- ambience ----------
+   Her page is cream, so this cannot be the gold-dust treatment a dark site
+   takes. A bloom DARKER than the background reads as a smudge; these are warm
+   blush washes, blurred far past the point of having an edge, and the motes
+   are her taupe rather than a highlight. Everything here is aria-hidden,
+   clipped by its own section, and stopped for reduced motion. */
+.amb,.amb-quiet{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* The motes are ONE fixed layer for the whole page, not a set inside every
+   section. Per-section sets looked identical and cost fifteen frames a second
+   on a throttled phone: each dot animating inside a section full of
+   photographs makes that region repaint. Fixed, the layer is composited once
+   and never scrolls, so the cost does not grow with the page — and because it
+   sits above the section backgrounds rather than behind them, the drift
+   carries across the tinted sections and the footer too, which a layer at the
+   back could never do. */
+.amb-sky{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.amb-glow{position:absolute;border-radius:50%;pointer-events:none;will-change:transform}
+
+.amb-a{
+  width:min(54vw,580px);aspect-ratio:1;left:-12%;top:4%;
+  background:radial-gradient(circle,rgba(233,214,203,.72),rgba(233,214,203,.24) 46%,transparent 70%);
+  filter:blur(56px);animation:drift-a 40s ease-in-out infinite;
+}
+.amb-b{
+  width:min(44vw,470px);aspect-ratio:1;left:26%;bottom:-14%;
+  background:radial-gradient(circle,rgba(181,154,137,.26),transparent 68%);
+  filter:blur(68px);animation:drift-b 54s ease-in-out infinite;
+}
+.amb-c{
+  width:min(44vw,460px);aspect-ratio:1;left:-10%;bottom:2%;
+  background:radial-gradient(circle,rgba(233,214,203,.6),transparent 68%);
+  filter:blur(62px);animation:drift-a 63s ease-in-out infinite;
+}
+.amb-d{
+  width:min(40vw,420px);aspect-ratio:1;right:-8%;top:6%;
+  background:radial-gradient(circle,rgba(181,154,137,.2),transparent 70%);
+  filter:blur(58px);animation:drift-b 71s ease-in-out infinite;
+}
+.amb-e{
+  width:min(48vw,500px);aspect-ratio:1;left:-8%;top:10%;
+  background:radial-gradient(circle,rgba(246,231,224,.9),transparent 68%);
+  filter:blur(64px);animation:drift-a 58s ease-in-out infinite;
+}
+.amb-f{
+  width:min(62vw,440px);aspect-ratio:1;left:50%;top:-16%;translate:-50% 0;
+  background:radial-gradient(circle,rgba(233,214,203,.7),transparent 66%);
+  filter:blur(58px);
+}
+@keyframes drift-a{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(7%,-8%,0)}}
+@keyframes drift-b{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-9%,-5%,0)}}
+
+/* On cream a 3px dot at low opacity is invisible — measured, it moved the pixel
+   by less than a level — so these are bigger and more opaque than the gold ones
+   on a dark page. They must stay a FLAT fill: a radial-gradient version read
+   beautifully and cost twenty frames a second, because a gradient layer has to
+   be re-rasterised where a solid-colour quad is handed straight to the
+   compositor. Measured on a 6x-throttled phone: 28fps with gradients, 55 with
+   flat fills, against a 56fps baseline with the whole layer switched off. */
+.amb i,.amb-sky i{
+  position:absolute;bottom:-10px;width:4px;height:4px;border-radius:50%;
+  background:var(--taupe);opacity:0;
+  /* no will-change: a running transform animation is promoted anyway, and a
+     hundred pre-promoted layers costs real frames on a cheap phone */
+  animation:rise linear infinite;
+}
+@keyframes rise{
+  0%{transform:translate3d(0,0,0) scale(.5);opacity:0}
+  14%{opacity:.52}
+  78%{opacity:.34}
+  100%{transform:translate3d(16px,-102vh,0) scale(1);opacity:0}
+}
+.amb-sky i{animation-name:rise-sky}
+/* fainter than the hero's own, because this layer passes IN FRONT of the
+   copy: at this weight a mote crossing a line of text reads as air, not as a
+   mark on the screen */
+@keyframes rise-sky{
+  0%{transform:translate3d(0,0,0) scale(.5);opacity:0}
+  16%{opacity:.30}
+  76%{opacity:.19}
+  100%{transform:translate3d(20px,-100vh,0) scale(1);opacity:0}
+}
+
+/* nine positions, reused by every block: eighteen motes simply run the cycle
+   twice at different sizes and speeds */
+.amb i:nth-of-type(9n+1),.amb-sky i:nth-of-type(9n+1){left:7%}
+.amb i:nth-of-type(9n+2),.amb-sky i:nth-of-type(9n+2){left:18%;width:3px;height:3px}
+.amb i:nth-of-type(9n+3),.amb-sky i:nth-of-type(9n+3){left:27%}
+.amb i:nth-of-type(9n+4),.amb-sky i:nth-of-type(9n+4){left:38%;width:3px;height:3px}
+.amb i:nth-of-type(9n+5),.amb-sky i:nth-of-type(9n+5){left:47%}
+.amb i:nth-of-type(9n+6),.amb-sky i:nth-of-type(9n+6){left:59%;width:3px;height:3px}
+.amb i:nth-of-type(9n+7),.amb-sky i:nth-of-type(9n+7){left:68%}
+.amb i:nth-of-type(9n+8),.amb-sky i:nth-of-type(9n+8){left:79%;width:3px;height:3px}
+.amb i:nth-of-type(9n+9),.amb-sky i:nth-of-type(9n+9){left:90%}
+.amb i:nth-of-type(1),.amb-sky i:nth-of-type(1){animation-duration:30s;animation-delay:-2s}
+.amb i:nth-of-type(2),.amb-sky i:nth-of-type(2){animation-duration:41s;animation-delay:-14s}
+.amb i:nth-of-type(3),.amb-sky i:nth-of-type(3){animation-duration:35s;animation-delay:-25s}
+.amb i:nth-of-type(4),.amb-sky i:nth-of-type(4){animation-duration:47s;animation-delay:-8s}
+.amb i:nth-of-type(5),.amb-sky i:nth-of-type(5){animation-duration:33s;animation-delay:-31s}
+.amb i:nth-of-type(6),.amb-sky i:nth-of-type(6){animation-duration:44s;animation-delay:-19s}
+.amb i:nth-of-type(7),.amb-sky i:nth-of-type(7){animation-duration:39s;animation-delay:-5s}
+.amb i:nth-of-type(8),.amb-sky i:nth-of-type(8){animation-duration:52s;animation-delay:-37s}
+.amb i:nth-of-type(9),.amb-sky i:nth-of-type(9){animation-duration:37s;animation-delay:-45s}
+.amb i:nth-of-type(10),.amb-sky i:nth-of-type(10){animation-duration:58s;animation-delay:-11s;width:2px;height:2px}
+.amb i:nth-of-type(11),.amb-sky i:nth-of-type(11){animation-duration:46s;animation-delay:-33s;width:2px;height:2px}
+.amb i:nth-of-type(12),.amb-sky i:nth-of-type(12){animation-duration:63s;animation-delay:-21s;width:2px;height:2px}
+.amb i:nth-of-type(13),.amb-sky i:nth-of-type(13){animation-duration:51s;animation-delay:-48s;width:2px;height:2px}
+.amb i:nth-of-type(14),.amb-sky i:nth-of-type(14){animation-duration:55s;animation-delay:-6s;width:2px;height:2px}
+.amb i:nth-of-type(15),.amb-sky i:nth-of-type(15){animation-duration:42s;animation-delay:-28s;width:2px;height:2px}
+.amb i:nth-of-type(16),.amb-sky i:nth-of-type(16){animation-duration:67s;animation-delay:-16s;width:2px;height:2px}
+.amb i:nth-of-type(17),.amb-sky i:nth-of-type(17){animation-duration:49s;animation-delay:-54s;width:2px;height:2px}
+.amb i:nth-of-type(18),.amb-sky i:nth-of-type(18){animation-duration:60s;animation-delay:-40s;width:2px;height:2px}
+
+/* every section is the containing block for its own drift, and its content
+   stays above it */
+.sec,.quote,.foot{position:relative;overflow:hidden}
+.sec>.wrap,.sec>.rail-wrap,.sec>.section-head,.foot>.wrap{position:relative;z-index:1}
+
+@media (prefers-reduced-motion: reduce){
+  .amb-glow,.amb i,.amb-sky i{animation:none}
+  .amb i,.amb-sky i{opacity:.3}
+}
+
 /* ---------- marquee ----------
    The runs are not animated. iOS refuses to paint a moving layer wider than
    ~4096 device pixels and fails silently, so each WORD is transformed

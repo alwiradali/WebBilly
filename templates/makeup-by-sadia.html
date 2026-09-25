@@ -63,6 +63,10 @@
 
 <body id="top">
 
+<!-- One page-wide drift rather than a set per section: fixed, so it is
+     composited once and costs the same whatever the page is doing. -->
+<div class="amb-sky" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
 <div class="loader" id="loader" aria-hidden="true">
   <img src="../assets/sadia/mark.png" alt="" width="633" height="400">
   <span class="loader-bar"><i></i></span>
@@ -110,6 +114,12 @@
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero">
   <div class="hero-wash" aria-hidden="true"></div>
+  <!-- Slow blush blooms and a drift of fine motes. Atmosphere only, so it is
+       hidden from the reader and stopped for reduced motion. -->
+  <div class="amb" aria-hidden="true">
+    <span class="amb-glow amb-a"></span>
+    <span class="amb-glow amb-b"></span>
+  </div>
   <div class="hero-inner">
     <div class="hero-copy">
       <p class="chip" data-fx="reveal"><span class="dot" aria-hidden="true"></span> Launching soon — bookings open now</p>
@@ -140,6 +150,8 @@
 
 <!-- ================= ABOUT ================= -->
 <section class="sec" id="about">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-c"></span></div>
+
   <div class="wrap about-grid">
     <figure class="about-art" data-fx="reveal" data-fx-variant="scale">
       <img src="../assets/sadia/photos/about.jpg" alt="Makeup brushes" width="900" height="1125" loading="lazy">
@@ -166,6 +178,8 @@
 
 <!-- ================= SERVICES ================= -->
 <section class="sec sec-tint" id="services">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-d"></span></div>
+
   <div class="wrap">
     <div class="section-head">
       <p class="tag" data-fx="reveal">The makeup</p>
@@ -201,6 +215,7 @@
 
 <!-- ================= OCCASIONS ================= -->
 <section class="sec" id="occasions">
+
   <div class="wrap">
     <div class="section-head">
       <p class="tag" data-fx="reveal">Occasions</p>
@@ -212,6 +227,8 @@
 
 <!-- ================= BOOKING ================= -->
 <section class="sec sec-tint" id="booking">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-e"></span></div>
+
   <div class="wrap">
     <div class="section-head">
       <p class="tag" data-fx="reveal">Availability</p>
@@ -262,6 +279,8 @@
 
 <!-- ================= ENQUIRE ================= -->
 <section class="sec" id="enquire">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-c"></span></div>
+
   <div class="wrap enq-grid">
     <div class="enq-copy">
       <p class="tag" data-fx="reveal">Enquiries</p>
@@ -340,6 +359,8 @@
 
 <!-- ================= LOOKS (pre-launch) ================= -->
 <section class="sec" id="looks">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-d"></span></div>
+
   <div class="wrap">
     <div class="section-head">
       <p class="tag" data-fx="reveal">The portfolio</p>
@@ -362,6 +383,7 @@
 
 <!-- ================= REVIEWS ================= -->
 <section class="sec sec-tint" id="reviews">
+
   <div class="wrap">
     <div class="section-head">
       <p class="tag" data-fx="reveal">Reviews</p>
@@ -392,6 +414,8 @@
 
 <!-- ================= FAQ ================= -->
 <section class="sec" id="faq">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-e"></span></div>
+
   <div class="wrap faq-grid">
     <div class="faq-side">
       <p class="tag" data-fx="reveal">Questions</p>
@@ -406,6 +430,8 @@
 </main>
 
 <footer class="foot">
+  <div class="amb amb-quiet" aria-hidden="true"><span class="amb-glow amb-f"></span></div>
+
   <div class="wrap foot-in">
     <img class="foot-logo" src="../assets/sadia/mark.png" alt="Makeup by Sadia" width="633" height="400" loading="lazy">
     <p class="foot-line">Makeup that still looks like you.</p>

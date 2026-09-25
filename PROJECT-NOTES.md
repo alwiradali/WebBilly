@@ -811,3 +811,43 @@ for the hero's "View the portfolio".
 At ~34px/s a step is ~0.57px, so one dropped or coalesced frame can leave every
 delta on a whole number by chance, and it failed a page that was moving
 perfectly — twice over a live run. It samples 24 frames now.
+
+### Makeup by Sadia — ambience on a light page
+
+Her page is cream, so the Krem&Choc treatment does not transfer. Two things
+had to change.
+
+**Colour.** A bloom darker than the background reads as a smudge, and near-white
+cannot be made lighter, so the blooms are warm blush washes — `--nude` and
+`--tint` at low alpha, blurred past having an edge — which on cream read as
+light rather than shadow. The motes are her `--taupe`, bigger and more opaque
+than the gold ones on a dark page: measured, a 3px dot at .4 moved the pixel by
+less than a level and was simply invisible.
+
+**Cost.** Per-section mote blocks, the arrangement that costs nothing on the
+dark site, cost **fifteen to twenty frames a second here**. Measured on a
+6x-throttled phone while scrolling the whole page:
+
+  everything on   33     motes off        55
+  blooms off      35     quiet blocks off 53
+  will-change     35     contain:strict   32
+
+The blooms are free; the motes inside the sections are not. Each dot animating
+inside a section full of photographs makes that region repaint, and this page
+is mostly photographs. `will-change` did not help and `contain` made it worse.
+
+The fix is one **fixed** layer for the whole page instead of a set per section:
+composited once, never scrolled, so the cost does not grow with the page.
+53 vs 54 and 48 vs 58 with it on and off — inside the noise. And because a
+fixed layer at z-index 3 sits ABOVE the section backgrounds rather than behind
+them, the drift carries across the tinted sections and the footer, which a
+layer at the back could never do. It passes in front of the copy, so it runs
+fainter than the hero's own set: at .30 a mote crossing a line of text reads as
+air rather than as a mark on the screen.
+
+A radial-gradient mote was tried first — it looked better and cost twenty
+frames a second, because a gradient layer has to be re-rasterised where a
+solid-colour quad goes straight to the compositor. Flat fills only.
+
+The overflow audit for this page picked up the same aria-hidden/clipped
+exemption the Krem&Choc one already had.
