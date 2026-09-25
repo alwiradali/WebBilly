@@ -251,20 +251,20 @@ main = "worker.js"
 # with the routes merely commented out would have pointed the agency's live
 # domain at a Worker in a client's account.
 #
-# An empty list inherits nothing. It is what keeps this deploy incapable of
-# touching any domain at all, which is exactly right between the DNS move and
-# the website move.
-routes = []
+# So this list must always name HIS domains and nothing else. Until the DNS
+# moved it was empty — an empty list inherits nothing — and on 2026-09-25 his
+# nameservers moved to Cloudflare, the zone read Active in his account, mail
+# was tested both ways, and these went in: the website move.
 #
-# THE REAL ROUTES, for when his nameservers have moved and the zone reads
-# Active in his account. Replace the line above with these two — a custom_domain
-# route for a zone the account does not hold fails the deploy, so they cannot
-# go in before then.
-#
-# routes = [
-#   { pattern = "megacityproperties.co.uk", custom_domain = true },
-#   { pattern = "www.megacityproperties.co.uk", custom_domain = true }
-# ]
+# Before a deploy with these can bind them, the old site's apex A
+# (77.68.34.162) and the www CNAME must be deleted in his Cloudflare DNS — a
+# custom domain cannot be created over an existing record. Only those two:
+# every mail record stays. To put the old site back, re-add those two records
+# and set this to routes = [] again.
+routes = [
+  { pattern = "megacityproperties.co.uk", custom_domain = true },
+  { pattern = "www.megacityproperties.co.uk", custom_domain = true }
+]
 
 # The website follows 10ninety on its own, rather than waiting for somebody to
 # press Refresh. Every minute it reads the feed and writes only what actually
@@ -287,6 +287,11 @@ crons = ["* * * * *"]
 # address redirected once, his own robots.txt and sitemap, branded 404. The
 # first hostname is the one everything redirects to.
 MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
+# The address the website's form emails come from. His own Resend account
+# (docs/megacity-manual-deploy.md §8b) only sends from his verified domain, so
+# this goes in together with his RESEND_API_KEY — set 2026-09-25, after
+# megacityproperties.co.uk verified in his Resend. Not a secret: an address.
+MAIL_FROM = "Megacity Properties <website@megacityproperties.co.uk>"
 
 [env.megacity.assets]
 directory = "dist/megacity"

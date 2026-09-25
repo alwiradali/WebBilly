@@ -266,8 +266,8 @@ on his. Nothing else changes.
 **Do this before step 9, not after.** Step 9 puts the public site on his
 domain, and a live site whose enquiry forms reach nobody is worse than a site
 that is not live yet. Without a working key the forms answer with an error
-and nothing is saved or sent to 10ninety — the visitor is told to ring
-instead, so nothing is lost silently, but nothing arrives either.
+and the visitor is told to ring. The enquiry is still saved in the Studio
+and sent to 10ninety (since dbea675), but nobody is emailed about it.
 
 The forms send **as `MAIL_FROM`** once it is set. His Resend account can only
 send from his own verified domain, so setting the key without `MAIL_FROM`
