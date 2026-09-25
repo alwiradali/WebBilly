@@ -1094,6 +1094,9 @@
        panoramas in video memory at once.
        ───────────────────────────────────────────────────────────────────── */
     var tour = null, rooms = [], byId = {}, store = {}, thumbSrc = {};
+    /* keyed by room + size + yaw, and holding the source it was cut from so a
+       new picture for the room replaces the old crop rather than outliving it */
+    var thumbCache = {};
     var queue = [], hiPool = [], HI_KEEP = coarse ? 2 : 3;
     /* measured GPU cost, ms per pixel. GL submits return immediately, so the
        CPU clock says nothing about what the GPU is being asked to chew — on a
@@ -1313,6 +1316,7 @@
 
     function panoStep(job) {
       var room = job.room, im = job.im;
+      var __t0 = now();
       try {
         var tw = Math.min(pot(im.width), panoCap()), th = tw / 2, src = im;
         if (im.width !== tw || im.height !== th) {
@@ -1336,6 +1340,7 @@
         tc.width = 640; tc.height = 320;
         tc.getContext("2d").drawImage(im, 0, 0, 640, 320);
         thumbSrc[room.id] = tc;
+        for (var ck0 in thumbCache) if (ck0.indexOf(room.id + "|") === 0) delete thumbCache[ck0];
         delete panoRetry[room.id]; delete panoFailed[room.id];
         if (opts.onThumb) opts.onThumb(room.id);
         if (job.cb) job.cb();
@@ -1343,6 +1348,11 @@
         diag.push("panorama upload failed: " + room.pano);
         if (room.space) enqueue(room.id, "lo", true);
       }
+      /* The resize and the texture upload both run here, on the main thread,
+         and there is no asynchronous way to do either in WebGL 1. So the only
+         honest lever is how many of them a device is asked to do. */
+      panoCost = Math.max(panoCost, now() - __t0);
+      considerRest();
     }
 
     /* Thumb first: a room that carries its w480 thumb (Studio uploads do)
@@ -1570,6 +1580,31 @@
        embed until the visitor has actually touched the tour (F100), and on a
        Save-Data connection the rest stays lazy */
     var preloaded = false, interacted = false;
+    /* how long one panorama cost this device, and whether the rest of the tour
+       is still wanted. Both exist because of what a 6x-throttled phone
+       measured: every room's picture was resized and uploaded at start-up, 13
+       of them at 284ms of blocked main thread each, while the visitor was
+       trying to look around the first one. */
+    var panoCost = 0, restWanted = false;
+    var REST_BUDGET = 80;   // ms of main thread for one picture; a dropped frame is 16
+
+    /* Decided after the first picture, not before, because nothing else tells
+       the truth about a device. Under the budget the whole tour is preloaded
+       exactly as it always was, so nothing changes on a machine that can
+       afford it. Over it, the rest stays lazy: walking into a room still
+       fetches it (needLo on arrival) and its neighbours are still fetched
+       ahead, so the tour works the same — it just stops paying for ten rooms
+       nobody has opened. */
+    function considerRest() {
+      if (!restWanted || !panoCost) return;
+      restWanted = false;
+      if (panoCost > REST_BUDGET) {
+        diag.push("rest of the tour stays lazy — one picture costs " + Math.round(panoCost) + "ms here");
+        return;
+      }
+      rooms.forEach(function (r) { needLo(r); });
+    }
+
     function preloadAll() {
       if (preloaded || !booted) return;
       preloaded = true;
@@ -1577,7 +1612,10 @@
       if (room) { needLo(room, true); prefetchAround(room); }
       var conn = navigator.connection;
       if (conn && conn.saveData) return;
-      rooms.forEach(function (r) { needLo(r); });
+      /* the room on screen and its neighbours are already on their way above;
+         whether the REST follows waits on what the first one cost */
+      restWanted = true;
+      considerRest();
     }
     function interact() {
       if (interacted) return;
@@ -2205,7 +2243,7 @@
         var oldStore = store, oldById = byId, oldThumb = thumbSrc;
         tour = t;
         rooms = t.rooms || [];
-        byId = {}; store = {}; thumbSrc = {};
+        byId = {}; store = {}; thumbSrc = {}; thumbCache = {};
         var sig = function (r) { return r.pano ? "p:" + r.pano : "s:" + JSON.stringify(r.space || null); };
         rooms.forEach(function (r, i) {
           r._i = i; byId[r.id] = r;
@@ -2333,11 +2371,20 @@
         var src = thumbSrc[id];
         if (!src) return null;
         var room = byId[id];
+        /* The room strip asks for the same crop over and over: paintThumb
+           redraws up to four canvases per room and paintAllThumbs walks every
+           room, each time a picture lands. Cropping is a high-quality
+           drawImage, and on a throttled phone it measured 2033ms of the main
+           thread across one tour. The answer only depends on the picture, the
+           size asked for and the yaw, so it is worth keeping. */
+        var ya0 = yaw != null ? yaw : ((room && room.view && room.view.yaw) || 0);
+        var ck = id + "|" + w + "x" + h + "|" + Math.round(ya0);
+        if (thumbCache[ck] && thumbCache[ck].src === src) return thumbCache[ck].c;
         var c = document.createElement("canvas");
         c.width = w; c.height = h;
         var ctx = c.getContext("2d");
         ctx.imageSmoothingQuality = "high";
-        var ya = yaw != null ? yaw : ((room && room.view && room.view.yaw) || 0);
+        var ya = ya0;
         var cx = ((-ya / 360) + 0.5) * src.width;
         var sw = src.width * 0.22, sh = sw * (h / w);
         var sy = src.height * 0.5 - sh * 0.5;
@@ -2349,6 +2396,7 @@
           ctx.drawImage(src, sx, sy, w1, sh, 0, 0, w * f, h);
           ctx.drawImage(src, 0, sy, sw - w1, sh, w * f, 0, w * (1 - f), h);
         }
+        thumbCache[ck] = { src: src, c: c };
         return c;
       },
       equirect: function (id) { return thumbSrc[id] || null; },
