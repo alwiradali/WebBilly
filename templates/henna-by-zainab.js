@@ -98,7 +98,7 @@
 
   var POLICIES = [
     { h: "Booking", l: [
-      "No booking is confirmed until all required information outlined in the “How to Book” highlight has been received.",
+      "No booking is confirmed until I have confirmed the date with you and your deposit has been paid.",
       "A £10 non-refundable deposit is required to secure your booking. This amount will be deducted from the final balance.",
       "Cancellations must be made at least 48 hours in advance.",
       "If, for any reason, I am unable to attend your booking, your deposit will be fully refunded."

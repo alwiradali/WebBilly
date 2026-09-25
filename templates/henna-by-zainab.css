@@ -126,8 +126,12 @@ main,.nav,.foot{position:relative;z-index:2}
   background:var(--paper);transition:opacity .7s var(--ease),visibility .7s;
 }
 .loader.gone{opacity:0;visibility:hidden}
-.loader img{width:clamp(108px,17vh,150px);height:auto;animation:lpop 1.7s var(--ease) both}
-@keyframes lpop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+/* no scale in the entrance: a transform-scaled layer is rasterised once and
+   resampled, which reads as a blurry mark for the whole 1.7s. translate moves
+   the same bitmap. the width is capped at 230px because the source is 673px
+   wide, so even at dpr 3 this never upscales. */
+.loader img{width:clamp(160px,24vh,230px);height:auto;animation:lpop 1.7s var(--ease) both}
+@keyframes lpop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .loader-bar{display:block;width:clamp(150px,26vw,260px);height:1px;background:var(--line)}
 .loader-bar i{display:block;height:100%;width:0;background:var(--henna);animation:lbar 2s var(--ease) forwards}
 @keyframes lbar{to{width:100%}}
@@ -997,5 +1001,5 @@ button.cal-day:hover{background:var(--gold);border-color:var(--gold);color:var(-
   .hero-cta{margin-top:.85em}
   .hero .btn{padding:1em 1.6em}
   .hero-facts,.hero-scroll{display:none}
-  .loader img{height:clamp(70px,16vh,96px);width:auto}
+  .loader img{height:clamp(92px,21vh,140px);width:auto}
 }
