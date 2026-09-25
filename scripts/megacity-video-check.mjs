@@ -9,7 +9,7 @@
  *
  *   node scripts/megacity-video-check.mjs
  */
-import { videoHtml } from "../worker/studio/render.js";
+import { videoHtml, video360Html } from "../worker/studio/render.js";
 import { mediaToJson } from "../worker/studio/media.js";
 
 let bad = 0;
@@ -62,6 +62,22 @@ ok(videoHtml(V({ walkthrough: vid("video", { key_orig: null }) })) === "",
 {
   const j = mediaToJson(vid("video"));
   ok(j.kind === "video" && j.role === "video", "the row keeps its kind and role through the public API");
+}
+
+/* ── the 360° video block ────────────────────────────────────────────────── */
+{
+  const env = { MEGACITY_HOST: "www.megacityproperties.co.uk" };
+  const url = new URL("https://www.megacityproperties.co.uk/let/carlton-road-5");
+  ok(video360Html(V(), env, url) === "", "no 360° video, no block");
+
+  const h = video360Html(V({ video360: vid("video360"), title: "Carlton Road, Salford" }), env, url);
+  ok(/class="pd-v360"/.test(h), "a 360° video gets the sphere viewer, not a flat player");
+  ok(!/<video/.test(h), "and no <video> tag in the page — the viewer makes its own when play is pressed");
+  ok(/data-src="\/media\/l\/carlton-road-5\/m_abc1234567\/orig\.mp4"/.test(h), "the file is handed to it by address only");
+  ok(/data-poster="\/media\/l\/carlton-road-5\/m_cover00000\/w1600\.jpg"/.test(h), "with the property's cover as the still");
+  ok(/megacity-video360\.js" defer/.test(h), "the viewer loads deferred, and only on a page that has one");
+  ok(/https:\/\/www\.megacityproperties\.co\.uk\/templates\/megacity-video360\.js/.test(h),
+    "addressed for this host rather than relatively, so it works at /let/<id>");
 }
 
 console.log();

@@ -189,6 +189,24 @@ function videoHtml(v) {
       </video>`;
 }
 
+/* 360° video. Its own small viewer (templates/megacity-video360.js), not the
+   tour engine: the tour is what a tenant's whole experience runs through and
+   it has been tuned to stay smooth on an old phone, and a per-frame texture
+   upload is exactly the work that broke it before. Nothing loads until the
+   visitor presses play. */
+function video360Html(v, env, url) {
+  const m = v.video360;
+  if (!m) return "";
+  const src = mediaUrl(m.key_orig);
+  if (!src) return "";
+  const poster = v.cover ? mediaUrl(v.cover.key_large || v.cover.key_orig) : "";
+  const js = urls.absUrl(env, url, "asset", "megacity-video360.js");
+  return `<h3>360&deg; video</h3>
+      <p>Filmed in 360&deg; at ${esc(v.addrShort || "the property")}. Press play, then drag to look around while it runs.</p>
+      <div class="pd-v360" data-src="${esc(src)}"${poster ? ` data-poster="${esc(poster)}"` : ""} data-title="${esc(v.title)} — 360° video"></div>
+      <script src="${esc(js)}" defer></script>`;
+}
+
 function factsHtml(v) {
   const r = v.r, rows = [];
   const row = (k, val) => { if (val != null && val !== "") rows.push(`<div><dt>${esc(k)}</dt><dd>${esc(val)}</dd></div>`); };
@@ -248,7 +266,7 @@ export async function renderListingPage(request, env, url, live, settings) {
   /* every fragment is built before the rewriter streams: a bad record throws
      into the router's fallback instead of truncating a half-sent page */
   const epc = epcHtml(v);
-  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v, env, url), video: videoHtml(v), facts: factsHtml(v) };
+  const frag = { ld: jsonLd(env, url, v), quick: quickHtml(v), gallery: v.gallery.length ? galleryHtml(v) : null, main: mainHtml(v), tour: tourHtml(v, env, url), video: videoHtml(v), video360: video360Html(v, env, url), facts: factsHtml(v) };
   const rewriter = new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(v.pageTitle) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", v.metaDesc) })
@@ -272,6 +290,7 @@ export async function renderListingPage(request, env, url, live, settings) {
     .on('[data-slot="tour-link"]', { element: (e) => { if (!frag.tour) e.remove(); } })
     .on('[data-slot="video"]', { element: (e) => { if (frag.video) e.setInnerContent(frag.video, { html: true }); else e.remove(); } })
     .on('[data-slot="video-link"]', { element: (e) => { if (!frag.video) e.remove(); } })
+    .on('[data-slot="video360"]', { element: (e) => { if (frag.video360) e.setInnerContent(frag.video360, { html: true }); else e.remove(); } })
     .on('[data-slot="facts"]', { element: (e) => e.setInnerContent(frag.facts, { html: true }) })
     .on('[data-slot="vform"]', { element: (e) => { e.setAttribute("data-property", v.title); e.setAttribute("data-listing", v.r.id); } })
     .on('[data-slot="mailto"]', { element: (e) => e.setAttribute("href", "mailto:" + (v.brand.email || "info@megacityproperties.co.uk") + "?subject=" + encodeURIComponent("Viewing enquiry: " + v.title)) })
@@ -368,4 +387,4 @@ export async function sitemap(env, url, db) {
 
 /* videoHtml is exported for scripts/megacity-video-check.mjs: what a tenant
    is offered to download before they press play is worth asserting. */
-export { mediaUrl, pageUrl, videoHtml };
+export { mediaUrl, pageUrl, videoHtml, video360Html };

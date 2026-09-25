@@ -1,0 +1,12 @@
+<!doctype html>
+<!-- Harness for scripts/megacity-video360-check.js. Served from the repo so the
+     page, the viewer and the video share an origin: the viewer asks for the
+     video with crossOrigin="anonymous", as it must to use it as a WebGL
+     texture, and a plain static server sends no CORS headers. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>360 video harness</title>
+<link rel="stylesheet" href="../../templates/megacity-skyline.css">
+<style>body{margin:0;background:#0b1020}</style>
+<div class="pd-v360" data-src="pano-test.webm" data-title="Harness"></div>
+<script src="../../templates/megacity-video360.js"></script>

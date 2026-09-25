@@ -152,6 +152,7 @@ const MUST = [
   "templates/megacity-404.html",
   "templates/megacity-skyline.css",
   "templates/megacity-skyline.js",
+  "templates/megacity-video360.js",
   "templates/megacity-studio.js",
   "billy360/embed.js",
   "billy360/index.html",

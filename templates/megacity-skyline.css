@@ -971,6 +971,23 @@ form.enq{display:grid;gap:18px;align-content:start}
 /* the walkthrough: the same box as the tour, so a property with one, the
    other or both reads as one page rather than three different shapes */
 .pd-video{display:block;width:100%;height:auto;aspect-ratio:16/9;margin:0 0 14px;border-radius:16px;background:#060b1a;object-fit:cover}
+/* 360° video: the same box as the tour and the walkthrough */
+.pd-v360{position:relative;width:100%;aspect-ratio:16/9;min-height:280px;margin:0 0 14px;border-radius:16px;overflow:hidden;background:#060b1a;touch-action:none}
+@media (max-width:700px){.pd-v360{min-height:60vh}}
+.pd-v360 .v360-canvas{display:block;width:100%;height:100%;cursor:grab}
+.pd-v360 .v360-canvas:active{cursor:grabbing}
+.v360-start{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:0;padding:0;background-color:#060b1a;background-size:cover;background-position:center;color:#fff;cursor:pointer}
+.v360-start::after{content:"";position:absolute;inset:0;background:rgba(6,11,26,.42)}
+.v360-play{position:relative;z-index:1;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center}
+.v360-play svg{width:30px;height:30px;fill:#0b1533;margin-left:3px}
+.v360-cap{position:relative;z-index:1;font:500 14px/1.4 var(--ff-b,system-ui,sans-serif);text-shadow:0 1px 3px rgba(0,0,0,.6);padding:0 18px;text-align:center}
+.v360-bar{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:99px;background:rgba(6,11,26,.66);backdrop-filter:blur(6px);color:#fff}
+.v360-btn{width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;cursor:pointer}
+.v360-btn svg{width:17px;height:17px;fill:#0b1533}
+.v360-hint{font:500 12.5px/1 var(--ff-b,system-ui,sans-serif)}
+@media (max-width:560px){.v360-hint{display:none}}
+.v360-fallback{display:grid;place-content:center;gap:8px;height:100%;padding:24px;text-align:center;color:#e9edf7}
+@media (prefers-reduced-motion:reduce){.v360-start{transition:none}}
 .pd-video:focus-visible{outline:3px solid var(--blue-deep,#1b4ed8);outline-offset:3px}
 .pd-tour iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
 @media (max-width:700px){.pd-tour{min-height:60vh}}
