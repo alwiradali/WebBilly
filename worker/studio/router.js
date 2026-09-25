@@ -133,6 +133,7 @@ const ROUTES = [
   ["POST", "/notifications/read", enq.markRead],
   ["GET", "/notfound", redirects.list404s],
 
+  ["GET", "/tours", tours.list],
   ["POST", "/tours/import", tours.importTours],
   ["GET", "/tours/:id", tours.get],
   ["POST", "/tours/:id", tours.create],

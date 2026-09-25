@@ -96,11 +96,12 @@
     tour: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M3.5 12c0 2.8 3.8 5 8.5 5s8.5-2.2 8.5-5-3.8-5-8.5-5-8.5 2.2-8.5 5z"/></svg>',
     spark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',
     pages: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M4 7v14h11"/></svg>',
-    plug: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg>'
+    plug: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg>',
+    sync: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 0 1-14.6 5.9M3.5 12a8.5 8.5 0 0 1 14.6-5.9"/><path d="M3.5 18.5V14H8M20.5 5.5V10H16"/></svg>'
   };
 
   /* ── state & shell nodes ─────────────────────────────────────────── */
-  var state = { user: null, features: {}, options: null, route: null, listIndex: null, listIndexAt: 0, intended: null, liveCount: null, notConnected: false, setup: {}, unread: 0, notifs: [], mediaIndex: null, mediaLists: null, mediaIndexAt: 0 };
+  var state = { user: null, features: {}, options: null, route: null, listIndex: null, listIndexAt: 0, intended: null, liveCount: null, notConnected: false, setup: {}, unread: 0, notifs: [], mediaIndex: null, mediaLists: null, mediaIndexAt: 0, sync: null };
   var view = $("#view"), app = $("#app"), authEl = $("#auth"), bootEl = $("#boot"), toasts = $("#toasts");
   var topTitle = $("#topTitle"), topSub = $("#topSub"), topChip = $("#topChip"), topBack = $("#topBack");
 
@@ -205,13 +206,14 @@
     topBack.hidden = !o.back; if (o.back) topBack.setAttribute("href", o.back);
     topChip.innerHTML = o.chip || "";
   }
-  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["Website"], ["#/pages", "Pages", "pages"], ["#/backlinks", "Backlinks", "link"], ["#/integrations", "Integrations", "plug"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
+  var NAV = [["Workspace"], ["#/", "Home", "home"], ["#/listings", "Listings", "list", "live"], ["#/listings/new", "New listing", "plus"], ["#/enquiries", "Enquiries", "inbox", "unread"], ["#/tours", "360\u00b0 tours", "tour"], ["Website"], ["#/pages", "Pages", "pages"], ["#/backlinks", "Backlinks", "link"], ["#/integrations", "Integrations", "plug"], ["Office"], ["#/settings", "Settings", "cog"], ["#/team", "Team", "users"]];
   function navKey() {
     var h = location.hash.replace(/^#/, "").split("?")[0] || "/";
     if (h === "/") return "#/";
     if (h.indexOf("/listings/new") === 0) return "#/listings/new";
     if (h.indexOf("/listings") === 0) return "#/listings";
     if (h.indexOf("/enquiries") === 0) return "#/enquiries";
+    if (h.indexOf("/tours") === 0) return "#/tours";
     if (h.indexOf("/pages") === 0) return "#/pages";
     if (h.indexOf("/backlinks") === 0) return "#/backlinks";
     if (h.indexOf("/integrations") === 0) return "#/integrations";
@@ -250,6 +252,7 @@
   function openMore() {
     var u = state.user || {};
     openDrawer("More", '<div class="st-menu-list">' +
+      '<a href="#/tours" data-close>' + I.tour + "360\u00b0 tours</a>" +
       '<a href="#/pages" data-close>' + I.pages + "Pages</a>" +
       '<a href="#/backlinks" data-close>' + I.link + "Backlinks</a>" +
       '<a href="#/integrations" data-close>' + I.plug + "Integrations</a>" +
@@ -274,6 +277,7 @@
     [/^\/?$/, "dashboard"], [/^\/listings$/, "listings"], [/^\/listings\/new$/, "newListing"],
     [/^\/listings\/([^/]+)$/, "editor"], [/^\/listings\/([^/]+)\/(details|home|media|tour|publish)$/, "editor"],
     [/^\/enquiries$/, "enquiries"], [/^\/enquiries\/([^/]+)$/, "enquiries"],
+    [/^\/tours$/, "tours"],
     [/^\/pages$/, "pages"], [/^\/pages\/([^/]+)$/, "pageEditor"], [/^\/backlinks$/, "backlinks"], [/^\/integrations$/, "integrations"],
     [/^\/settings$/, "settings"], [/^\/settings\/([^/]+)$/, "settings"], [/^\/team$/, "team"], [/^\/account$/, "account"]
   ];
@@ -543,6 +547,7 @@
       '<div class="st-field"><label class="st-vh" for="lsQ">Search</label><input class="st-in" id="lsQ" type="search" placeholder="Search title, reference or address…" value="' + esc(ls.q) + '" autocomplete="off"></div>' +
       '<div class="st-select"><label class="st-vh" for="lsArea">Area</label><select id="lsArea"><option value="">All areas</option>' + optList("area").map(function (o) { return '<option value="' + esc(o.value) + '"' + (ls.area === o.value ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") + "</select></div>" +
       '<div class="st-select"><label class="st-vh" for="lsSort">Sort</label><select id="lsSort">' + [["updated", "Recently updated"], ["rent", "Rent, high to low"], ["title", "Title, A to Z"]].map(function (s) { return '<option value="' + s[0] + '"' + (ls.sort === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") + "</select></div>" +
+      '<span id="lsSync" class="st-sync"></span>' +
       '<a class="st-btn st-btn--fill" href="#/listings/new">' + I.plus + "New listing</a></div>" +
       '<div id="lsBody">' + loading() + "</div>";
     var qIn = $("#lsQ");
@@ -552,8 +557,136 @@
     $("#lsChips").addEventListener("click", function (e) { var b = e.target.closest("[data-status]"); if (!b) return; var v = b.getAttribute("data-status"); ls.bin = v === "bin"; ls.status = ls.bin ? "" : v; loadListings(); });
     $("#lsBody").addEventListener("click", onListingsClick);
     $("#lsBody").addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-id][tabindex]")) { e.preventDefault(); go("#/listings/" + encodeURIComponent(e.target.getAttribute("data-id"))); } });
+    $(".st-toolbar").addEventListener("click", function (e) { if (e.target.closest("[data-sync]")) runSync(); });
     loadListings();
+    loadSyncStatus();
   };
+
+  /* ── refreshing from 10ninety ─────────────────────────────────────
+     His properties live in 10ninety; this website is a mirror of them. The
+     feed is not live — 10ninety rebuilds it when he runs Portal Export and
+     again overnight — so a shorter poll would re-read data that has not
+     moved. The honest control is therefore a button he presses after an
+     export, not a spinner that implies the site is watching.  */
+  var syncing = false;
+  function loadSyncStatus() {
+    API.sync.status().then(function (r) { state.sync = r; renderSyncBtn(); })
+      .catch(function () { state.sync = null; renderSyncBtn(); });
+  }
+  function renderSyncBtn() {
+    var el = $("#lsSync"); if (!el) return;
+    var s = state.sync;
+    if (!s) { el.innerHTML = ""; return; }
+    var when = s.lastSyncedAt ? '<span class="st-hint">Updated ' + esc(rel(s.lastSyncedAt)) + "</span>" : "";
+    if (!s.configured) { el.innerHTML = '<span class="st-hint" title="The 10ninety key has not been added to this site yet">10ninety not connected</span>'; return; }
+    /* Refreshing rewrites every synced listing, so it is the owner's. Everyone
+       else still sees when the properties last came across. */
+    if (!(state.user && state.user.role === "owner")) { el.innerHTML = when; return; }
+    el.innerHTML = '<button type="button" class="st-btn" data-sync' + (syncing ? " disabled" : "") + '>' +
+      (syncing ? '<span class="st-spin" aria-hidden="true"></span>' : I.sync) + (syncing ? "Refreshing\u2026" : "Refresh from 10ninety") + "</button>" + when;
+  }
+  function runSync() {
+    if (syncing) return;
+    syncing = true; renderSyncBtn();
+    API.sync.run().then(function (r) {
+      state.sync = { configured: true, count: (r.counted && r.counted.feed) || null, lastSyncedAt: r.at || new Date().toISOString() };
+      /* 207: the feed was read but part of it would not write. Saying "done"
+         over eight properties of nine is how a missing one goes unnoticed. */
+      toast(r.summary || "Refreshed from 10ninety.", r.ok ? {} : { kind: "warn", ttl: 14000 });
+      loadListings();
+    }).catch(function (err) {
+      var b = (err && err.body) || {};
+      if (err && err.status === 429) { toast(b.summary || "Just refreshed \u2014 give it a moment.", { kind: "warn" }); return; }
+      if (err && err.status === 503) { state.sync = { configured: false }; toast("10ninety is not connected to this website yet.", { kind: "warn", ttl: 9000 }); return; }
+      toast((err && err.message) || "The refresh did not run.", { kind: "bad", ttl: 10000 });
+    }).then(function () { syncing = false; renderSyncBtn(); });
+  }
+  /* ── 360° tours ───────────────────────────────────────────────────
+     Every property, the state of its tour, and the address to paste into
+     10ninety's Virtual Tour box.
+
+     The address is the point of this screen. /tour/<id> answers before a tour
+     exists, stays the same through a re-shoot, and does not change when the
+     tour goes from draft to live — so it is pasted into 10ninety ONCE per
+     property and never corrected. The server builds it (worker/studio/
+     tours.js), because which host it should carry depends on where the Studio
+     is being used and a wrong origin would put a dead link in his portal.  */
+  var ts = { filter: "" }, tsRows = [], tsToken = 0;
+  SCREENS.tours = function () {
+    setTop({ title: "360\u00b0 tours" });
+    view.innerHTML =
+      '<section class="st-card st-tnote"><h2>One address per property, pasted once</h2>' +
+      "<p>Each property below has a permanent 360\u00b0 address. Paste it into the <b>Virtual Tour</b> box against that property in 10ninety and leave it there \u2014 it keeps working when you re-shoot the tour, and it starts working the moment the tour goes live. Until then it shows the property\u2019s page.</p></section>" +
+      '<div class="st-filters" id="tsChips" role="group" aria-label="Filter by tour state"></div>' +
+      '<div id="tsBody">' + loading() + "</div>";
+    $("#tsChips").addEventListener("click", function (e) { var b = e.target.closest("[data-tf]"); if (!b) return; ts.filter = b.getAttribute("data-tf"); renderTours(); });
+    $("#tsBody").addEventListener("click", onToursClick);
+    loadTours();
+  };
+  function loadTours() {
+    var token = ++tsToken;
+    API.tours.list().then(function (res) {
+      if (token !== tsToken) return;
+      tsRows = res.items || [];
+      renderTours(res.counts);
+    }).catch(function (err) { if (token === tsToken) { var b = $("#tsBody"); if (b) b.innerHTML = errorHtml(err); } });
+  }
+  function tourState(i) { return !i.tour ? "none" : (i.tour.status === "live" ? "live" : "draft"); }
+  function renderTours(counts) {
+    var chips = $("#tsChips"), body = $("#tsBody");
+    if (!body) return;
+    if (chips) {
+      var c = counts || { total: tsRows.length, live: tsRows.filter(function (i) { return tourState(i) === "live"; }).length,
+        draft: tsRows.filter(function (i) { return tourState(i) === "draft"; }).length, none: tsRows.filter(function (i) { return tourState(i) === "none"; }).length };
+      chips.innerHTML = [["", "All", c.total], ["live", "Live", c.live], ["draft", "Draft", c.draft], ["none", "Not started", c.none]].map(function (ch) {
+        return '<button type="button" class="st-fchip' + (ts.filter === ch[0] ? " is-on" : "") + '" data-tf="' + ch[0] + '" aria-pressed="' + (ts.filter === ch[0] ? "true" : "false") + '">' + esc(ch[1]) + " <b>" + (ch[2] || 0) + "</b></button>";
+      }).join("");
+    }
+    var rows = tsRows.filter(function (i) { return !ts.filter || tourState(i) === ts.filter; });
+    if (!rows.length) {
+      body.innerHTML = '<div class="st-empty">' + I.tour + "<h3>" + (tsRows.length ? "Nothing in this group" : "No properties yet") + "</h3><p>" + (tsRows.length ? "Try another filter." : "Tours are built against a property, so add one first.") + "</p></div>";
+      return;
+    }
+    body.innerHTML = '<div class="st-toolbar st-toolbar--end"><button type="button" class="st-btn" data-copyall>' + I.copy + "Copy every address</button></div>" +
+      '<div class="st-tours">' + rows.map(tourCard).join("") + "</div>";
+  }
+  function tourCard(i) {
+    var st = tourState(i);
+    var pill = st === "live" ? '<span class="st-pill st-pill--live">Tour live</span>'
+      : st === "draft" ? '<span class="st-pill st-pill--draft">Tour in progress</span>'
+      : '<span class="st-pill st-pill--hidden">No tour yet</span>';
+    var facts = [
+      i.tour && i.tour.rooms ? plural(i.tour.rooms, "room") : "",
+      i.panos ? plural(i.panos, "panorama") : "no panoramas uploaded",
+      i.tour && i.tour.updatedAt ? "updated " + rel(i.tour.updatedAt) : ""
+    ].filter(Boolean).join(" \u00b7 ");
+    var sub = [i.ref, optLabel("area", i.area) || i.area, i.town].filter(Boolean).filter(function (v, n, arr) { return arr.indexOf(v) === n; }).join(" \u00b7 ");
+    var id = esc(encodeURIComponent(i.id));
+    return '<article class="st-tourc"><div class="st-tourc-h"><div style="min-width:0"><h3><a href="#/listings/' + id + '/tour">' + esc(i.title) + "</a></h3>" +
+      '<p class="st-sub">' + esc(sub) + "</p></div>" + pill + "</div>" +
+      '<p class="st-hint">' + esc(facts) + (i.listingLive ? "" : " \u00b7 not advertised on the website") + "</p>" +
+      '<div class="st-linkrow"><input class="st-in" readonly value="' + esc(i.publicUrl) + '" aria-label="360\u00b0 address for ' + esc(i.title) + '" data-link>' +
+      '<button type="button" class="st-btn st-btn--sm" data-copy="' + esc(i.publicUrl) + '">' + I.copy + "Copy</button>" +
+      '<a class="st-btn st-btn--sm" href="' + esc(i.publicUrl) + '" target="_blank" rel="noopener">' + I.eye + "Open</a>" +
+      '<a class="st-btn st-btn--sm st-btn--fill" href="#/listings/' + id + '/tour">' + I.tour + (st === "none" ? "Start" : "Edit") + "</a></div></article>";
+  }
+  function onToursClick(e) {
+    var inp = e.target.closest("[data-link]");
+    if (inp) { inp.select(); return; }
+    var all = e.target.closest("[data-copyall]");
+    if (all) {
+      var text = tsRows.map(function (i) { return [i.ref || i.id, i.title, i.publicUrl].join("\t"); }).join("\n");
+      copyText(text).then(function () { toast(plural(tsRows.length, "address") + " copied \u2014 paste into a spreadsheet"); },
+        function () { toast("Could not copy \u2014 select the address and copy it", { kind: "warn" }); });
+      return;
+    }
+    var btn = e.target.closest("[data-copy]");
+    if (btn) {
+      copyText(btn.getAttribute("data-copy")).then(function () { toast("Address copied \u2014 paste it into 10ninety"); },
+        function () { toast("Could not copy \u2014 select the address and copy it", { kind: "warn" }); });
+    }
+  }
+
   function loadListings() {
     var body = $("#lsBody"); if (!body) return;
     var token = ++lsToken;

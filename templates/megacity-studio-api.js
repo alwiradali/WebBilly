@@ -192,9 +192,16 @@
       patch: function (id, patch) { return call("PATCH", "/media/" + encodeURIComponent(id), patch); },
       remove: function (id) { return call("DELETE", "/media/" + encodeURIComponent(id)); }
     },
+    /* 10ninety: the feed is his system's, not ours. status says whether the
+       key is set and when it last landed; run() is the Refresh button. */
+    sync: {
+      status: function () { return call("GET", "/sync/tenninety"); },
+      run: function () { return call("POST", "/sync/tenninety"); }
+    },
     dashboard: { get: function () { return call("GET", "/dashboard"); } },
     notfound: { list: function (q) { return call("GET", "/notfound" + (q && q.days ? "?days=" + encodeURIComponent(q.days) : "")); } },
     tours: {
+      list: function () { return call("GET", "/tours"); },
       get: function (id) { return call("GET", "/tours/" + encodeURIComponent(id)); },
       create: function (id, body) { return call("POST", "/tours/" + encodeURIComponent(id), body || {}); },
       put: function (id, body) { return call("PUT", "/tours/" + encodeURIComponent(id), body); },
@@ -602,6 +609,31 @@
         });
         audit("settings.update", "settings", "settings");
         return { ok: true, settings: clone(DB.settings) };
+      }
+
+      /* 10ninety. The demo has no key and never invents one: the Refresh
+         button shows exactly the state Walid sees before his key is set. */
+      if (p === "/sync/tenninety" && method === "GET") return { configured: false, count: 0, lastSyncedAt: null };
+      if (p === "/sync/tenninety" && method === "POST") fail(503, { error: "The 10ninety key is not set on this Worker yet." });
+
+      /* the 360 section */
+      if (p === "/tours" && method === "GET") {
+        var items = DB.listings.filter(function (l) { return !l.bin; }).map(function (l) {
+          var t = DB.tours[l.id];
+          return { id: l.id, ref: l.ref, title: l.title, source: l.source, area: l.address && l.address.area, town: l.address && l.address.town,
+            status: l.status, listingLive: l.status === "live" && !l.hidden,
+            tour: t ? { status: t.status, rooms: t.roomCount == null ? null : t.roomCount, updatedAt: t.updatedAt, liveAt: t.liveAt } : null,
+            panos: l.media.filter(function (m) { return m.kind === "pano"; }).length,
+            publicUrl: location.origin + "/billy360/?site=" + encodeURIComponent(l.id),
+            embedOrigin: location.origin };
+        }).sort(function (x, y) {
+          var rank = function (i) { return i.tour ? (i.tour.status === "live" ? 0 : 1) : 2; };
+          return rank(x) - rank(y) || String(x.title).localeCompare(String(y.title));
+        });
+        return { items: items, counts: { total: items.length,
+          live: items.filter(function (i) { return i.tour && i.tour.status === "live"; }).length,
+          draft: items.filter(function (i) { return i.tour && i.tour.status !== "live"; }).length,
+          none: items.filter(function (i) { return !i.tour; }).length } };
       }
 
       /* dashboard */

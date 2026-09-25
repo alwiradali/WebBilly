@@ -316,6 +316,53 @@ export async function get(c) {
   return json({ tour: overlayListing(parseJson(t.draft_json, null), l), ...(await summary(c, t, l)) });
 }
 
+/* ── the 360 section ───────────────────────────────────────────────────── */
+
+/* Every property and the state of its tour, in one list, with the address to
+ * paste into 10ninety's Virtual Tour box.
+ *
+ * That address is /tour/<id> and the point of it is that it is PERMANENT. It
+ * is the same string before the tour exists, while it is a draft, after a
+ * re-shoot and after the panoramas are replaced — so Walid pastes it into
+ * 10ninety once per property and never has to go back and correct it. Nothing
+ * here is derived in the browser: the origin depends on which host the Studio
+ * is being used on, and getting that wrong would put a dead link in his
+ * portal.
+ */
+export async function list(c) {
+  const rows = (await c.db.prepare(
+    `SELECT l.id, l.ref, l.title, l.status, l.hidden, l.deleted_at, l.area, l.town, l.source,
+            t.status tour_status, t.room_count, t.updated_at tour_updated_at, t.live_at,
+            (SELECT COUNT(*) FROM media m WHERE m.listing_id = l.id AND m.kind = 'pano') panos
+       FROM listings l
+       LEFT JOIN tours t ON t.listing_id = l.id
+      WHERE l.deleted_at IS NULL
+      ORDER BY (t.status = 'live') DESC, (t.listing_id IS NOT NULL) DESC, l.title`).all()).results || [];
+
+  const items = rows.map((r) => ({
+    id: r.id, ref: r.ref, title: r.title, source: r.source, area: r.area, town: r.town,
+    status: r.status, listingLive: listingLive(r),
+    /* no row in `tours` means no tour has been started — which is different
+       from a tour that exists and is unpublished, and the screen says so. */
+    tour: r.tour_status
+      ? { status: r.tour_status, rooms: r.room_count == null ? null : Number(r.room_count),
+          updatedAt: r.tour_updated_at || null, liveAt: r.live_at || null }
+      : null,
+    panos: Number(r.panos || 0),
+    ...tourUrls(c.env, c.url, r.id),
+  }));
+
+  return json({
+    items,
+    counts: {
+      total: items.length,
+      live: items.filter((i) => i.tour && i.tour.status === "live").length,
+      draft: items.filter((i) => i.tour && i.tour.status !== "live").length,
+      none: items.filter((i) => !i.tour).length,
+    },
+  });
+}
+
 export async function create(c) {
   const listing = await getFull(c.db, c.params.id);
   if (!listing || listing.deletedAt) throw new HttpError(404, "No such listing.");

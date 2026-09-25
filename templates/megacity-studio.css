@@ -271,6 +271,26 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
 /* ── toolbar / filters ────────────────────────────────────────────── */
 .st-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+/* ── refresh from 10ninety, and the 360 section ───────────────────── */
+.st-sync{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.st-sync .st-hint{white-space:nowrap}
+.st-toolbar--end{justify-content:flex-end;margin:12px 0}
+.st-tnote{margin-bottom:12px}
+.st-tnote h2{font:600 16px/1.3 var(--ff-u);color:var(--navy);margin:0 0 6px}
+.st-tnote p{margin:0;font-size:13.5px;color:var(--mut);max-width:70ch}
+.st-tours{display:grid;gap:12px}
+.st-tourc{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px}
+.st-tourc-h{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.st-tourc h3{font:600 15px/1.35 var(--ff-u);color:var(--navy);margin:0}
+.st-tourc h3 a{color:inherit;text-decoration:none}
+.st-tourc h3 a:hover{text-decoration:underline}
+.st-tourc .st-sub{margin:2px 0 0}
+.st-tourc .st-hint{margin:8px 0 0}
+.st-linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+/* the address is the thing people came for, so it gets the room */
+.st-linkrow .st-in{flex:1 1 260px;min-width:0;min-height:38px;font-size:13px;font-family:var(--ff-m,ui-monospace,SFMono-Regular,Menlo,monospace);background:var(--sky-soft);color:var(--navy)}
+@media (max-width:560px){.st-linkrow .st-btn{flex:1 1 auto;justify-content:center}}
+
 .st-toolbar .st-field{flex:1 1 200px}
 .st-toolbar .st-select{flex:0 1 180px;min-width:140px}
 .st-toolbar .st-in,.st-toolbar select{min-height:40px;font-size:14px}
