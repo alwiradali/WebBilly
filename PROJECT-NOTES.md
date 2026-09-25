@@ -945,3 +945,51 @@ pixels — but re-cutting them means guessing the original crop box, and a fuzzy
 match would change WHICH part of her photograph is shown. Left alone
 deliberately. The fix is higher-resolution photographs from her, which is
 already on the outstanding list.
+
+## Henna by Zainab — Birmingham, B20
+
+`templates/henna-by-zainab.{html,css,js}`, `assets/zainab/`.
+@hennaabyzainab_ on Instagram (876 followers) and TikTok (33.8K, 1.6M likes).
+Unlisted and noindex until she has seen it.
+
+**Everything on the page is hers.** The aftercare, the three policy groups and
+the five-item booking list are transcribed word for word from her Instagram
+highlights, not paraphrased — they are the terms a client agrees to, and
+rewording them changes what was agreed. The photographs are her own posts with
+her watermark intact. The logo is the disc from her profile picture.
+
+**Assets.** Her logo came out of a full-screen screenshot: the disc is a bright
+field on a blurred backdrop, so the horizontal extent comes from the widest
+bright row, and the vertical extent from the rows whose bright count inside
+that x-range exceeds 55% of the diameter — the naive "tallest bright column"
+caught the background and put the centre 500px out. Circular alpha mask drawn
+at 4x and downsampled.
+
+Thirteen photographs were cut from her story screenshots. The stacked pairs do
+not separate on a flat letterbox row, so the seam is found as the row of
+largest inter-row difference within the middle third. Story chrome trimmed at
+y 330 and 2520. Nothing is enlarged: every source is 1290px wide and every
+output is a downscale.
+
+**The stain section.** Her "fresh stain / fully developed stain" pair was first
+built as a drag-to-compare wipe. It was wrong: the two frames are the same hand
+two days apart but shot at different distances, so nothing lines up, and
+`object-fit:cover` on two different aspect ratios crops them differently on top
+of that. A wipe or a dissolve would have been pretending they register. It is a
+labelled pair now — which is how her own story shows it.
+
+**Bookings.** She publishes no email address; everything is Instagram DM.
+Instagram has no way to pre-fill a message from a link, so the form composes
+the message in the exact order her How to Book highlight asks for — name, date,
+time, hands/people — puts it on the clipboard and opens her DMs. The date is
+written out in full ("2 December 2026"), not left as a form value.
+
+**Faults the audit caught on the first run**, all three of them familiar:
+the burger was a 33px tap target, the nav links were 33px on a tablet, and
+`scroll-fx.js` drifted the section heading onto the paragraph below it
+(`transform:none!important`, since an inline style only loses to that). The
+landscape-phone hero also had the CTA 14px under the fold.
+
+**Performance.** 59fps idle and 49fps scrolling under a 6x CPU throttle at
+phone size — better than the cream Makeup by Sadia page, because this one has
+one fixed mote layer from the start rather than per-section blocks.
