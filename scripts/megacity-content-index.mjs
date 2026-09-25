@@ -155,12 +155,18 @@ export function scan(html, file) {
   return { items: out, sections };
 }
 
-export function build({ write } = {}) {
+export function build({ write, root = ROOT } = {}) {
   const index = { version: 1, pages: [] };
   const problems = [];
   for (const [slug, key, title] of PAGES) {
-    const file = new URL(`templates/megacity-${slug}.html`, ROOT);
-    let html = readFileSync(file, "utf8");
+    const file = new URL(`templates/megacity-${slug}.html`, root);
+    /* A Windows checkout has CRLF line endings (Git's core.autocrlf), and the
+       deploy runs on Windows. The index is built from LF text either way, so
+       it comes out identical on every machine, and a page is written back
+       with the line endings it had. */
+    const raw = readFileSync(file, "utf8");
+    const crlf = raw.includes("\r\n");
+    let html = crlf ? raw.replace(/\r\n/g, "\n") : raw;
     const { items, sections } = scan(html, `megacity-${slug}.html`);
     /* ids already given are kept; new ones continue the page's numbering */
     const used = new Set(), taken = [];
@@ -179,7 +185,7 @@ export function build({ write } = {}) {
       if (!write) problems.push(`${slug}: ${inserts.length} editable element(s) have no data-e id — run node scripts/megacity-content-index.mjs`);
       else {
         for (const [at, s] of inserts.sort((x, y) => y[0] - x[0])) html = html.slice(0, at) + s + html.slice(at);
-        writeFileSync(file, html);
+        writeFileSync(file, crlf ? html.replace(/\n/g, "\r\n") : html);
       }
     }
     /* a label for each group: the first heading in its section */
@@ -198,9 +204,9 @@ export function build({ write } = {}) {
     });
   }
   const json = JSON.stringify(index, null, 1) + "\n";
-  const indexFile = new URL("templates/megacity-content.json", ROOT);
+  const indexFile = new URL("templates/megacity-content.json", root);
   let old = "";
-  try { old = readFileSync(indexFile, "utf8"); } catch {}
+  try { old = readFileSync(indexFile, "utf8").replace(/\r\n/g, "\n"); } catch {}
   if (old !== json) {
     if (write) writeFileSync(indexFile, json);
     else problems.push("templates/megacity-content.json is out of date — run node scripts/megacity-content-index.mjs");

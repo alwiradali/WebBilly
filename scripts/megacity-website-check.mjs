@@ -20,6 +20,10 @@
 import { build, PAGES } from "./megacity-content-index.mjs";
 import { sanitize, feeProblem, announcementLive, plainText } from "../worker/studio/site.js";
 import * as urls from "../worker/studio/urls.js";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { pathToFileURL } from "node:url";
 
 let bad = 0;
 const ok = (c, what, got) => { console.log((c ? "ok   " : "FAIL ") + what + (c || got === undefined ? "" : "   got " + JSON.stringify(got))); if (!c) bad++; };
@@ -31,6 +35,25 @@ ok(JSON.stringify(PAGES.map((p) => p[0]).sort()) === JSON.stringify([...urls.PUB
 const ids = index.pages.flatMap((p) => p.items.map((i) => i.id));
 ok(new Set(ids).size === ids.length, `${ids.length} ids, none used twice`);
 ok(!index.pages.some((p) => p.items.some((i) => /<(form|input|select|script|svg|img|div|p)\b/i.test(i.html || ""))), "no editable element contains a form field, a script, a picture or a block");
+/* The deploy is run from Windows, where Git checks files out with CRLF line
+   endings. On 25 September the index compared byte for byte, called itself
+   out of date on his machine, and stopped the build — so the deploy re-sent
+   the previous build and nothing changed. The same pages with CRLF endings
+   must give the same index and no problems. */
+{
+  const tmp = mkdtempSync(join(tmpdir(), "mc-crlf-"));
+  mkdirSync(join(tmp, "templates"));
+  for (const [slug] of PAGES) {
+    const f = `templates/megacity-${slug}.html`;
+    writeFileSync(join(tmp, f), readFileSync(new URL("../" + f, import.meta.url), "utf8").replace(/\n/g, "\r\n"));
+  }
+  writeFileSync(join(tmp, "templates/megacity-content.json"),
+    readFileSync(new URL("../templates/megacity-content.json", import.meta.url), "utf8").replace(/\n/g, "\r\n"));
+  const crlf = build({ write: false, root: pathToFileURL(tmp + "/") });
+  ok(!crlf.problems.length, "a Windows checkout (CRLF line endings) builds: the index is not called out of date", crlf.problems);
+  ok(JSON.stringify(crlf.index) === JSON.stringify(index), "and gives exactly the same index");
+  rmSync(tmp, { recursive: true, force: true });
+}
 const tenants = index.pages.find((p) => p.slug === "renting");
 ok(tenants.items.some((i) => i.kind === "hero") && tenants.items.some((i) => i.kind === "heading" && /Megacity/.test(i.text)), "the tenants page offers its banner photo and its headline");
 

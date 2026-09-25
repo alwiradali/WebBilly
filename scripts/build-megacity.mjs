@@ -30,7 +30,9 @@
  * rearrangement.
  */
 
-import { readdirSync, statSync, mkdirSync, copyFileSync, rmSync, existsSync, readFileSync } from "node:fs";
+import { readdirSync, statSync, mkdirSync, copyFileSync, rmSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -186,6 +188,7 @@ if (check) {
   for (const f of files) {
     const at = join(OUT, f.dest);
     if (!existsSync(at)) { console.log("MISSING  " + f.dest); bad++; continue; }
+    if (f.dest === "version.json") continue;           // rewritten by every build, below
     if (statSync(at).size !== statSync(f.src).size) { console.log("DIFFERS  " + f.dest); bad++; }
   }
   const extra = walk(OUT, 99).filter((f) => !files.some((x) => x.dest === f.rel));
@@ -205,6 +208,29 @@ for (const f of files) {
   bytes += statSync(at).size;
 }
 
+/* version.json says which build this is, and the copy at the repository root
+   cannot: it is stamped by hand for billydigitals.com and had not changed since
+   21 September, so a good deploy and a failed one answered the same. This one
+   is written by the build itself: a fingerprint of exactly the files sent, when
+   they were built, and from which commit. */
+{
+  const h = createHash("sha256");
+  for (const f of files) {
+    if (f.dest === "version.json") continue;
+    h.update(f.dest + "\0");
+    h.update(readFileSync(join(OUT, f.dest)));
+  }
+  const git = (...a) => { try { return execFileSync("git", a, { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { return null; } };
+  writeFileSync(join(OUT, "version.json"), JSON.stringify({
+    stamp: h.digest("hex").slice(0, 12),
+    built: new Date().toISOString().replace(/\.\d+Z$/, "Z"),
+    commit: git("rev-parse", "--short", "HEAD"),
+    branch: git("rev-parse", "--abbrev-ref", "HEAD"),
+    files: files.length,
+    note: "stamp is a fingerprint of the files in this build; commit is what it was built from",
+  }, null, 2) + "\n");
+}
+
 /* What the reader wants to know is not "did it copy" but "what did it send". */
 const byTop = {};
 for (const f of files) {
@@ -217,6 +243,7 @@ for (const [k, v] of Object.entries(byTop).sort((a, b) => b[1] - a[1])) {
 }
 const stamp = existsSync(join(OUT, "version.json"))
   ? JSON.parse(readFileSync(join(OUT, "version.json"), "utf8")).stamp : "(none)";
-console.log(`  stamp ${stamp}`);
+const v = JSON.parse(readFileSync(join(OUT, "version.json"), "utf8"));
+console.log(`  stamp ${stamp}, built ${v.built} from ${v.branch || "?"} @ ${v.commit || "?"}`);
 console.log("\nNothing from any other client is in here — the allow-list decides what travels,");
 console.log("and a second check refuses to build if another client's name appears in a path.");
