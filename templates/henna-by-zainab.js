@@ -70,20 +70,7 @@
     "The stain takes 2–3 days to fully mature."
   ];
 
-  var STEPS = [
-    { t: "Your name", d: "So I know who I am holding the slot for." },
-    { t: "Date of booking", d: "2–3 days before the event, so the stain peaks on the day." },
-    { t: "Time of booking", d: "Roughly when suits you." },
-    { t: "Inspo pictures", d: "The designs you'd like — send them in the DM." },
-    { t: "How many hands / people", d: "Hands, not just heads: one hand and two are different jobs." }
-  ];
 
-  var BOOK_NOTES = [
-    "I only travel for bridal and group bookings over 3 people.",
-    "All other bookings are home based to me (B20).",
-    "A non-refundable deposit is required to secure your booking.",
-    "No booking is confirmed without the deposit."
-  ];
 
   var POLICIES = [
     { h: "Booking", l: [
@@ -431,16 +418,7 @@
     if (cb) CARE_BEFORE.forEach(function (n) { cb.appendChild(el("li", null, n)); });
     if (ca) CARE_AFTER.forEach(function (n) { ca.appendChild(el("li", null, n)); });
 
-    var st = $("#stepList");
-    if (st) STEPS.forEach(function (x) {
-      var li = el("li");
-      li.appendChild(el("strong", null, x.t));
-      li.appendChild(el("span", null, x.d));
-      st.appendChild(li);
-    });
 
-    var bn = $("#bookNotes");
-    if (bn) BOOK_NOTES.forEach(function (n) { bn.appendChild(el("li", null, n)); });
 
     var pg = $("#polGrid");
     if (pg) POLICIES.forEach(function (p, i) {

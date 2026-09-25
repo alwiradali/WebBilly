@@ -1105,6 +1105,52 @@ also carries the same inset gold hairline the other pictures do, and the
 gradient at its top hand off from the cream rather than starting on a hard
 edge.
 
+### Type, measured rather than eyeballed
+
+"Make the font a bit more visible" turned out to be three separate faults,
+found by walking every run of text on the page and measuring it against the
+ground it actually sits on (`z-contrast.mjs`):
+
+- **`--ink-dim` was 3.17:1 on `--cream`** and `--gold` 3.02:1, both under the
+  4.5 body text needs. Those two carried the small italic notes and every
+  little gold label on the page. Now 4.6:1 and a separate `--gold-ink` at
+  4.9:1 — `--gold` itself stays where it was for rules and ornament, where
+  3.1 is the bar.
+- **Body size** went from 16.5–18.5px to 17.5–19.5px.
+- **The nav over the hero photograph** was 4.61:1 — clearing, but barely. The
+  header scrim is deeper and taller: 6.3–6.8:1.
+
+And one that only a pixel read could find. `z-overlay.mjs` renders the page
+with overlaid text made transparent, reads the **real backdrop pixels** behind
+every run of text that lands on a photograph, and takes the worst one. The
+stain captions measured **1.49:1 and 1.21:1** — against a pale hand and
+against her own watermark. A scrim over a photograph is only ever as good as
+the brightest pixel under it.
+
+So the captions came out of the pictures and sit under them, where the
+contrast is fixed and nothing competes. That also resolved a collision nobody
+had noticed: **her "Fresh stain" / "Fully developed stain" watermark is baked
+into those photographs at exactly the height the overlay caption sat**, so the
+page was saying it twice, on top of itself. The caption is just the day now.
+
+Both audits run against the live site as well as the local one.
+
+### The how-to-book section is gone
+
+Her five things and the form ask for exactly the same information in exactly
+the same order, so the section was the page saying it twice. One line of hers
+lived only there — *"Hands, not just heads: one hand and two are different
+jobs"* — and it moved into the form's note for that field rather than being
+lost. The deposit terms it also carried are in Policies and in the FAQ
+already. `STEPS` and `BOOK_NOTES` are deleted rather than left dead.
+
+Reviews moved to the end. The order is now: welcome → the henna → portfolio →
+**enquire** → the stain → aftercare → policies → questions → reviews, with the
+tints reassigned by position again and `qa-z.mjs` asserting both that an
+enquire section exists and that reviews is last. It also fails on any anchor
+pointing at a section that no longer exists, which is how a removal like this
+usually leaves a dead link behind.
+
 ### The example availability calendar
 
 She has no live diary to read from, and a calendar that **looks** real but is
