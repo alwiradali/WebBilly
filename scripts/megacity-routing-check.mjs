@@ -257,6 +257,13 @@ const { RESEND_API_KEY: _k, ...NO_RESEND } = OPEN;
 const noKey = await post("/api/megacity-viewing", { ...person, property: "12 Example Street" }, NO_RESEND);
 ok(noKey.status === 500 && noKey.into.some((c) => c.path === "/OpenAPILead/Register"),
    "no Resend key set yet: the visitor is told, and the lead still reaches 10ninety", { status: noKey.status, into: noKey.into.map((c) => c.path) });
+ok(noKey.json && noKey.json.error && !/RESEND|secret|api|key|resend/i.test(noKey.json.error),
+   "and what the visitor reads is plain words, not the name of a setting", noKey.json && noKey.json.error);
+resend = "fail";
+const refused = await post("/api/megacity-contact", { ...person, topic: "General", message: "x" }, OPEN);
+ok(refused.status === 502 && refused.json && !/resend|provider|detail/i.test(JSON.stringify(refused.json)),
+   "a refused email tells the visitor nothing about the provider either", refused.json);
+resend = "accept";
 const botNoLead = await post("/api/megacity-viewing", { ...person, property: "x", botcheck: "spam" }, OPEN);
 ok(botNoLead.status === 200 && !botNoLead.into.length, "a bot filling the honeypot still makes no lead");
 const limitedNoLead = await post("/api/megacity-viewing", { name: "Sam", property: "x" }, OPEN);
