@@ -119,3 +119,6 @@
 
 /assets/strictly/*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+/templates/strictly-sprinkles-menu
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

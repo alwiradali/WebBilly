@@ -205,6 +205,25 @@
     block("Baby boxes", "quoted per order", function (d) { d.appendChild(list(D.babyboxes)); }, colB);
   })();
 
+  /* -- seasonal collections (menu page) -- */
+  (function seasons() {
+    var host = $("#seasons"); if (!host || !D.seasonal) return;
+    D.seasonal.forEach(function (x, i) {
+      var c = el("article", { class: "season", "data-rv": "", "data-rv-d": String((i % 3) + 1) });
+      var art = el("div", { class: "season-art" });
+      art.appendChild(el("img", { src: A + x.img, alt: "", loading: "lazy" }));
+      c.appendChild(art);
+      var inn = el("div", { class: "season-in" });
+      inn.appendChild(el("p", { class: "season-when" }, x.when));
+      inn.appendChild(el("h3", null, x.name));
+      if (x.blurb) inn.appendChild(el("p", { class: "season-blurb" }, x.blurb));
+      inn.appendChild(el("p", { class: "season-price" },
+        typeof x.price === "number" ? money(x.price) : "Price on enquiry"));
+      c.appendChild(inn);
+      host.appendChild(c);
+    });
+  })();
+
   /* -- flavours -- */
   (function flavours() {
     var host = $("#flavours-grid"); if (!host) return;
@@ -218,7 +237,7 @@
         col.appendChild(ul);
         host.appendChild(col);
       });
-    $("#allergyNote").textContent = D.allergyNote;
+    var an = $("#allergyNote"); if (an) an.textContent = D.allergyNote;
   })();
 
   /* -- gallery -- */
@@ -256,7 +275,7 @@
 
   /* -- terms, care, faq -- */
   (function policies() {
-    var t = $("#termsCol");
+    var t = $("#termsCol"); if (!t) return;
     D.terms.forEach(function (sec, i) {
       var d = el("div", { class: "pol", "data-rv": "", "data-rv-d": String(i + 1) });
       if (i) d.style.marginTop = "34px";
@@ -289,6 +308,7 @@
 
   /* -- reviews -- */
   (function reviews() {
+    if (!$("#rvs")) return;
     function stars(n) {
       var w = el("span", { class: "stars", "aria-label": n + " out of 5" });
       for (var i = 0; i < n; i++) {
@@ -334,7 +354,7 @@
   }
 
   (function socials() {
-    var host = $("#socials"); if (!host) return;
+    var host = $("#socials");   /* only the contact grid is optional */
     var ICONS = {
       ig: "M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11a4.3 4.3 0 1 1 4.3-4.3 4.3 4.3 0 0 1-4.3 4.3zm6.9-11.2a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z",
       tt: "M16.6 5.8a4.8 4.8 0 0 1-1.2-3.2h-3v13a2.8 2.8 0 1 1-2-2.7v-3a5.8 5.8 0 1 0 5 5.7V9a7.8 7.8 0 0 0 4.5 1.4v-3a4.8 4.8 0 0 1-3.3-1.6z",
@@ -357,18 +377,20 @@
       return a;
     }
     var intro = "Hi! I found you through your website — I'd like to ask about an order.";
-    host.appendChild(card("wa", "WhatsApp", B.phone, waLink(intro)));
-    host.appendChild(card("ig", "Instagram", "@" + B.instagram, IG));
-    host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
-    host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
-    host.appendChild(card("fb", "Facebook", B.name, FB));
-    host.appendChild(card("ig", "The studio", "@" + B.instagramStudio, "https://instagram.com/" + B.instagramStudio));
+    if (host) {
+      host.appendChild(card("wa", "WhatsApp", B.phone, waLink(intro)));
+      host.appendChild(card("ig", "Instagram", "@" + B.instagram, IG));
+      host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
+      host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
+      host.appendChild(card("fb", "Facebook", B.name, FB));
+      host.appendChild(card("ig", "The studio", "@" + B.instagramStudio, "https://instagram.com/" + B.instagramStudio));
+    }
 
-    $("#igBtn").href = IG;
-    $("#dockWa").href = waLink(intro);
+    var ig = $("#igBtn"); if (ig) ig.href = IG;
+    var dw = $("#dockWa"); if (dw) dw.href = waLink(intro);
 
     var fc = $("#footContact");
-    [["WhatsApp " + B.phone, waLink(intro)],
+    if (fc) [["WhatsApp " + B.phone, waLink(intro)],
      ["@" + B.instagram, IG],
      [B.email, mailLink("Enquiry from your website", intro)],
      ["TikTok", TT], ["Facebook", FB]].forEach(function (p) {
@@ -376,9 +398,9 @@
       li.appendChild(el("a", { href: p[1], target: "_blank", rel: "noopener" }, p[0]));
       fc.appendChild(li);
     });
-    $("#footCopy").textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
+    var fcp = $("#footCopy"); if (fcp) fcp.textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
 
-    var cta = $("#notListedCta");
+    var cta = $("#notListedCta"); if (!cta) return;
     cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Ask on WhatsApp"));
     cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Ask by email"));
   })();
@@ -391,18 +413,22 @@
   var catOpts = $("#catOpts"), itemOpts = $("#itemOpts"),
       itemHeading = $("#itemHeading"), itemNote = $("#itemNote"),
       stepFlavour = $("#stepFlavour"), flavourFields = $("#flavourFields");
+  /* the menu page has no builder; every step below checks for it */
+  var HAS_BUILDER = !!catOpts;
 
-  D.categories.forEach(function (c) {
-    var b = el("button", { type: "button", class: "opt-btn", "aria-pressed": "false", "data-id": c.id }, c.label);
-    catOpts.appendChild(b);
-  });
-  catOpts.addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-id]"); if (b) setCat(b.getAttribute("data-id"));
-  });
+  if (HAS_BUILDER) {
+    D.categories.forEach(function (c) {
+      catOpts.appendChild(el("button", { type: "button", class: "opt-btn", "aria-pressed": "false", "data-id": c.id }, c.label));
+    });
+    catOpts.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-id]"); if (b) setCat(b.getAttribute("data-id"));
+    });
+  }
 
   function cat() { return D.categories.filter(function (c) { return c.id === state.cat; })[0]; }
 
   function setCat(id, silent) {
+    if (!HAS_BUILDER) return;
     state.cat = id; state.item = null; state.treat = "";
     $$("button", catOpts).forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-id") === id));
@@ -432,6 +458,7 @@
   }
 
   function renderItems(c) {
+    if (!itemOpts) return;
     itemOpts.textContent = "";
     if (c.groups) {
       c.groups.forEach(function (g) {
@@ -449,7 +476,7 @@
     }
   }
 
-  itemOpts.addEventListener("click", function (e) {
+  if (itemOpts) itemOpts.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-item]"); if (!b) return;
     var id = b.getAttribute("data-item");
     state.item = state.item === id ? null : id;
@@ -461,6 +488,7 @@
 
   /* which flavour questions this category asks */
   function renderFlavourStep(c) {
+    if (!flavourFields) return;
     flavourFields.textContent = "";
     var opts = c.opts || [];
     var asks = false;
@@ -512,13 +540,15 @@
 
   /* quantity stepper */
   var qty = $("#fQty");
-  $("#qtyMinus").addEventListener("click", function () { qty.value = Math.max(1, (+qty.value || 1) - 1); summarise(); });
-  $("#qtyPlus").addEventListener("click", function () { qty.value = Math.min(99, (+qty.value || 1) + 1); summarise(); });
-  qty.addEventListener("input", summarise);
+  if (qty) {
+    $("#qtyMinus").addEventListener("click", function () { qty.value = Math.max(1, (+qty.value || 1) - 1); summarise(); });
+    $("#qtyPlus").addEventListener("click", function () { qty.value = Math.min(99, (+qty.value || 1) + 1); summarise(); });
+    qty.addEventListener("input", summarise);
+  }
 
   /* occasions */
   (function occ() {
-    var s = $("#fOccasion");
+    var s = $("#fOccasion"); if (!s) return;
     s.appendChild(el("option", { value: "" }, "Choose one (optional)"));
     D.occasions.forEach(function (o) { s.appendChild(el("option", { value: o }, o)); });
     s.addEventListener("change", summarise);
@@ -526,7 +556,7 @@
 
   /* the date cannot be in the past */
   (function dateMin() {
-    var d = $("#fDate");
+    var d = $("#fDate"); if (!d) return;
     var t = new Date(); t.setHours(0, 0, 0, 0);
     d.min = t.toISOString().slice(0, 10);
     d.addEventListener("change", summarise);
@@ -553,6 +583,7 @@
 
   /* the summary panel and the running total */
   function summarise() {
+    if (!HAS_BUILDER || !qty) return;
     var c = cat(), it = chosenItem(), n = Math.max(1, +qty.value || 1);
     var rows = [];
     rows.push(["What", c ? c.label : ""]);
@@ -656,14 +687,14 @@
     setTimeout(function () { a.remove(); }, 0);
   }
 
-  $("#sendWa").addEventListener("click", function () {
+  if (HAS_BUILDER) $("#sendWa").addEventListener("click", function () {
     var m = missing();
     if (m) { say("err", m); flagFirst(); return; }
     handover(waLink(compose()));
     say("ok", "WhatsApp is opening with your order written out. Press send — and add your inspiration pictures straight into the chat.");
   });
 
-  $("#sendMail").addEventListener("click", function () {
+  if (HAS_BUILDER) $("#sendMail").addEventListener("click", function () {
     var m = missing();
     if (m) { say("err", m); flagFirst(); return; }
     var it = chosenItem();
@@ -671,10 +702,10 @@
     say("ok", "Your email app is opening with the order written out. Attach your inspiration pictures and send.");
   });
 
-  $("#builder").addEventListener("submit", function (e) { e.preventDefault(); });
-
-  /* start on cakes */
-  setCat(D.categories[0].id, true);
+  if (HAS_BUILDER) {
+    $("#builder").addEventListener("submit", function (e) { e.preventDefault(); });
+    setCat(D.categories[0].id, true);   /* start on cakes */
+  }
 
   /* ============================================================
      4. MOTION
@@ -763,6 +794,7 @@
 
   /* drawer */
   var menu = $("#menu"), menuOpen = $("#menuOpen"), menuClose = $("#menuClose");
+  if (!menu) { menu = el("div"); menuOpen = el("button"); menuClose = el("button"); }
   function openMenu() {
     menu.classList.add("open"); menu.setAttribute("aria-hidden", "false");
     menuOpen.setAttribute("aria-expanded", "true");

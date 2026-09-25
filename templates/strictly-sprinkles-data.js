@@ -127,6 +127,35 @@ window.SS = (function () {
       blurb: "A 4″ bento to match the box." }
   ];
 
+  /* ---------- seasonal ----------
+     These come and go with the calendar rather than sitting on the menu all
+     year, which is why they are their own list and their own section. No
+     prices: a figure published for one Ramadan should not still be on the
+     site the next. Add `price: 10` to any of them and it appears. */
+  var seasonal = [
+    { id: "sn-ramadan", name: "Ramadan date boxes", when: "Ramadan", price: null,
+      img: "work/date-boxes.webp",
+      blurb: "Chocolate-dipped dates, drizzled and dusted, ribboned and boxed." },
+    { id: "sn-eid", name: "Mini Eid treatboxes", when: "Eid", price: null,
+      img: "work/eid-box.webp",
+      blurb: "Hand-iced Eid cookies and dipped treats in a small gifting box." },
+    { id: "sn-paint", name: "Paint-your-own cookies", when: "Ramadan", price: null,
+      img: "work/paint-cookies.webp",
+      blurb: "A cookie, an edible palette and a brush — something for the little ones to do." },
+    { id: "sn-mothers", name: "Mother's Day collection", when: "Mother's Day", price: null,
+      img: "work/mothers-day.webp",
+      blurb: "Cupcake bouquets, mini cakes and dipped strawberries, boxed to give." },
+    { id: "sn-mehndi", name: "Mehndi treatboxes", when: "Mehndi season", price: null,
+      img: "work/mehndi-box.webp",
+      blurb: "Bangles, paisley and hearts, hand-piped in your wedding colours." },
+    { id: "sn-nikkah", name: "Nikkah favours and boxes", when: "Weddings", price: null,
+      img: "work/nikkah-box.webp",
+      blurb: "Personalised cookies for every guest, and a large box for the couple." },
+    { id: "sn-grad", name: "Graduation cupcakes", when: "Results season", price: null,
+      img: "work/grad-cupcakes.webp",
+      blurb: "Black Forest cupcakes with gold toppers, caps and stethoscopes." }
+  ];
+
   /* ---------- flavours ----------
      From her Flavour Options artwork, plus the per-treat flavour lists
      from her menu notes. */
@@ -225,7 +254,7 @@ window.SS = (function () {
   return {
     business: business, categories: categories, cakes: cakes, cookies: cookies,
     platters: platters, individual: individual, treatboxes: treatboxes,
-    babyboxes: babyboxes, flavours: flavours, allergyNote: allergyNote,
+    babyboxes: babyboxes, seasonal: seasonal, flavours: flavours, allergyNote: allergyNote,
     occasions: occasions, terms: terms, cakeCare: cakeCare,
     reviews: reviews, reviewsAreExamples: reviewsAreExamples, faq: faq
   };

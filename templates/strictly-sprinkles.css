@@ -21,6 +21,7 @@
   --on-grape-dim:#d9cbe4;   /* 6.1:1 */
   --gold:#b08a4a;            /* rules and hairlines */
   --gold-lit:#d9b477;        /* gold for WORDS on the dark ground — 7.3:1 */
+  --gold-ink:#8a6a2f;        /* gold for WORDS on a light ground — 5.1:1 */
   --gold-soft:rgba(176,138,74,.5);
   --line:rgba(78,65,117,.16);
   --line-2:rgba(78,65,117,.28);
@@ -776,4 +777,71 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   .hero{min-height:auto;padding-top:120px}
   .hero-scroll{display:none}
   .loader img{width:clamp(110px,26vh,170px)}
+}
+
+/* ============================================================
+   THE MENU PAGE
+   ============================================================ */
+.page-head{
+  background:var(--grape-dd);color:var(--on-grape);
+  padding:calc(var(--navh) + clamp(46px,8vh,92px)) 0 clamp(46px,8vh,88px);
+}
+.crumb{
+  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--on-grape-dim);margin-bottom:clamp(16px,2.4vh,24px);
+}
+/* padding gives the 44px target; the negative margin keeps the crumb
+   line the same height it looks */
+.crumb a{color:var(--gold-lit);text-decoration:none;display:inline-block;padding:14px 0;margin:-14px 0}
+.crumb a:hover{text-decoration:underline}
+.crumb span{padding:0 8px;opacity:.5}
+.page-head h1{
+  font-size:clamp(2.3rem,5.4vw,3.9rem);letter-spacing:-.03em;color:var(--cream);font-weight:400;
+}
+.page-head h1 em{font-style:italic;font-weight:300;color:#e9d7bd}
+.page-head .lede{color:var(--on-grape-dim);max-width:58ch;margin-top:18px}
+.page-head .hero-cta{margin-top:clamp(24px,3.4vh,34px)}
+
+.seasons{display:grid;gap:clamp(12px,1.8vw,20px)}
+@media (min-width:720px){.seasons{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1080px){.seasons{grid-template-columns:repeat(3,1fr)}}
+.season{
+  display:flex;flex-direction:column;overflow:hidden;background:var(--sheet);
+  border:1px solid var(--line);border-radius:var(--r);
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .45s var(--ease);
+}
+.season:hover{transform:translateY(-3px);border-color:var(--gold-soft);
+  box-shadow:0 26px 54px -34px rgba(44,36,66,.5)}
+.season-art{aspect-ratio:4/3.1;overflow:hidden;background:var(--paper-2)}
+.season-art img{width:100%;height:100%;object-fit:cover;transform:scale(1.045);transition:transform 1.2s var(--ease)}
+.season:hover .season-art img{transform:scale(1)}
+.season-in{display:flex;flex-direction:column;flex:1;padding:clamp(17px,2.1vw,24px)}
+.season-when{
+  font-family:var(--cond);font-weight:400;font-size:.67rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold-ink);margin-bottom:8px;
+}
+.season h3{font-size:clamp(1.1rem,2vw,1.4rem)}
+.season-blurb{margin-top:8px;color:var(--ink-soft);font-size:.92rem;line-height:1.55;flex:1}
+.season-price{
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
+  font-family:var(--cond);font-weight:400;font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-dim);
+}
+.endcap{text-align:center;display:grid;justify-items:center}
+.endcap .lede{margin-inline:auto}
+.endcap .hero-cta{justify-content:center}
+
+/* the band on the home page that sends people to the full menu */
+.tomenu{display:grid;gap:clamp(28px,4vw,56px);align-items:center}
+@media (min-width:900px){.tomenu{grid-template-columns:1.25fr .75fr}}
+.tomenu-figs{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tomenu-figs li{
+  display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+  padding:16px 0;border-bottom:1px solid var(--line);
+}
+.tomenu-figs li:first-child{border-top:1px solid var(--line)}
+.tomenu-figs b{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--grape);line-height:1}
+.tomenu-figs span{
+  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-dim);text-align:right;
 }

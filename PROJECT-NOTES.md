@@ -1295,6 +1295,25 @@ Four files: `templates/strictly-sprinkles.{html,css,js}` plus
 `templates/strictly-sprinkles-data.js`, and her assets in `assets/strictly/`.
 Noindex, like every client demo.
 
+**Two pages, one engine.** `strictly-sprinkles.html` is the home page and
+`strictly-sprinkles-menu.html` is the full menu: every price list, the flavour
+lists and the seasonal collections. Both load the same CSS, data and JS —
+every render step checks for its host element and no-ops if the page does not
+have it, so one file serves both. `HAS_BUILDER` guards the order builder,
+which only exists on the home page. The home page keeps the category tiles
+and a band that routes through to the menu.
+
+**Seasonal is its own list.** `seasonal` in the data file holds the things that
+come round with the calendar — Ramadan, Eid, Mehndi, Mother's Day, graduation
+— rather than sitting on the menu all year. They carry no prices on purpose: a
+figure published for one Ramadan should not still be on the site the next.
+Give one a `price` and it appears.
+
+**Test locally with `scratchpad/serve.py`, not `python -m http.server`.** The
+site uses clean URLs (`/templates/strictly-sprinkles`), which the plain module
+404s, so every cross-page link was untestable. serve.py maps `/foo` to
+`foo.html` the way the Worker does.
+
 **The data file is the site.** Every price, size, flavour, product and category
 lives in `strictly-sprinkles-data.js`. Nothing in the HTML or the CSS names a
 cake. Add an item to a list and it appears in the price list, in the category

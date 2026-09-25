@@ -40,8 +40,7 @@
     <b>Strictly<br>Sprinkles</b>
   </a>
   <nav class="nav-links" aria-label="Sections">
-    <a href="#menu-sec">The menu</a>
-    <a href="#flavours">Flavours</a>
+    <a href="/templates/strictly-sprinkles-menu">The menu</a>
     <a href="#work">The work</a>
     <a href="#terms">Ordering</a>
     <a href="#reviews">Reviews</a>
@@ -52,8 +51,7 @@
 
 <div class="menu" id="menu" aria-hidden="true">
   <button class="menu-close" id="menuClose" aria-label="Close the menu">&times;</button>
-  <a href="#menu-sec">The menu</a>
-  <a href="#flavours">Flavours</a>
+  <a href="/templates/strictly-sprinkles-menu">The menu</a>
   <a href="#order">Build an order</a>
   <a href="#work">The work</a>
   <a href="#terms">Ordering</a>
@@ -82,7 +80,7 @@
         </p>
         <div class="hero-cta" data-rv data-rv-d="4">
           <a class="btn btn-cream" href="#order">Build your order</a>
-          <a class="btn btn-ghost-cream" href="#menu-sec">See the menu</a>
+          <a class="btn btn-ghost-cream" href="/templates/strictly-sprinkles-menu">See the menu</a>
         </div>
         <ul class="hero-facts" data-rv data-rv-d="5">
           <li>Made to order</li>
@@ -125,28 +123,27 @@
   </div>
 </section>
 
-<!-- ==================== PRICE LISTS ==================== -->
-<section class="sec sec-cream" id="prices">
-  <div class="sprinkles" data-sprinkles="16" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="sec-head">
+<!-- ==================== TO THE MENU ==================== -->
+<section class="sec sec-cream" id="menu-cta">
+  <div class="sprinkles" data-sprinkles="12" aria-hidden="true"></div>
+  <div class="wrap tomenu">
+    <div>
       <p class="kicker" data-rv>The list</p>
-      <h2 class="big" data-rv data-rv-d="1">Sizes &amp; <em>prices</em></h2>
+      <h2 class="big" data-rv data-rv-d="1">Sizes, prices <em>and flavours</em></h2>
       <p class="lede" data-rv data-rv-d="2">
-        Prices start from the figures below. Detail — edible images, toppers, sculpted work,
-        a lot of hand-piping — is quoted on top, and I'll always tell you the number before you commit.
+        Every size and every price, the full flavour list, and the seasonal collections
+        for Ramadan, Eid, Mehndi and Mother&rsquo;s Day &mdash; all on one page.
       </p>
-    </div>
-    <div id="priceLists"></div>
-
-    <div class="notlisted" data-rv>
-      <div>
-        <h3>Interested in something that isn't listed?</h3>
-        <p>Bigger cakes, tiered cakes, a dessert table, a flavour you can't see — just ask.
-           Most of what I make started as somebody's photograph and a question.</p>
+      <div class="hero-cta" data-rv data-rv-d="3">
+        <a class="btn btn-fill" href="/templates/strictly-sprinkles-menu">See the full menu</a>
+        <a class="btn btn-line" href="#order">Build an order</a>
       </div>
-      <div class="notlisted-cta" id="notListedCta"></div>
     </div>
+    <ul class="tomenu-figs" data-rv data-rv-d="2">
+      <li><b>£30</b><span>Cakes from</span></li>
+      <li><b>£70</b><span>Party platters from</span></li>
+      <li><b>£12</b><span>Treats, per dozen from</span></li>
+    </ul>
   </div>
 </section>
 
@@ -156,22 +153,6 @@
   <div class="wrap">
     <blockquote>Send me the picture in your head.</blockquote>
     <cite>Every order starts the same way</cite>
-  </div>
-</section>
-
-<!-- ==================== FLAVOURS ==================== -->
-<section class="sec sec-grape on-grape" id="flavours">
-  <div class="sprinkles" data-sprinkles="22" data-sprinkles-light aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="kicker" data-rv>Flavour options</p>
-      <h2 class="big" data-rv data-rv-d="1">Build the <em>inside</em> too</h2>
-      <p class="lede" data-rv data-rv-d="2">
-        Every cake is a sponge, a filling and a frosting of your choosing. Mix them however you like.
-      </p>
-    </div>
-    <div class="flav" id="flavours-grid"></div>
-    <p class="allergy" data-rv><b>Please note</b><span id="allergyNote"></span></p>
   </div>
 </section>
 
@@ -389,8 +370,8 @@
     <div>
       <h4>The site</h4>
       <ul>
-        <li><a href="#menu-sec">The menu</a></li>
-        <li><a href="#flavours">Flavours</a></li>
+        <li><a href="/templates/strictly-sprinkles-menu">The menu &amp; prices</a></li>
+        <li><a href="/templates/strictly-sprinkles-menu#seasonal">Seasonal collections</a></li>
         <li><a href="#order">Build an order</a></li>
         <li><a href="#work">The work</a></li>
         <li><a href="#terms">Ordering &amp; care</a></li>
