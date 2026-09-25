@@ -51,14 +51,14 @@ while read -r p code to; do want "$(st "$BASE$p")" "$code $CANON$to" "$p"; done 
 /property/225/ 301 /let/ladywell-point
 /property/225/2-bed-apartment-to-let-apartment-ladywell-point-pilgrims-way-salford/ 301 /let/ladywell-point
 /property/226/2-bed-apartment-to-let-apartment--denmark-road-manchester/ 301 /let/denmark-road
-/property/102/1-bed-double-room-to-let-room-7/ 301 /let/room-7
-/property/108/1-bed-double-room-to-let-room-3/ 301 /let/room-3
-/property/110/8-bed-double-room-to-let-room-5/ 301 /let/room-5
+/property/102/1-bed-double-room-to-let-room-7/ 301 /lettings
+/property/108/1-bed-double-room-to-let-room-3/ 301 /lettings
+/property/110/8-bed-double-room-to-let-room-5/ 301 /lettings
 /property/9999/ 301 /lettings
 /property/goulden-street-salford-manchester/ 301 /lettings
 /property/default.asp 301 /lettings
 /templates/megacity-skyline 301 /
-/templates/megacity-let-room-3 301 /let/room-3
+/templates/megacity-let-ladywell-point 301 /let/ladywell-point
 /templates/megacity-studio 301 /studio
 /templates/megacity-sitemap.xml 301 /sitemap.xml
 /index.html 301 /
@@ -77,7 +77,7 @@ lacks "/" 'billydigitals.com/templates' "$BASE/"
 has "/" 'href="/lettings"' "$BASE/"
 has "/landlords" 'href="/tenants#register"' "$BASE/landlords"
 has "/lettings" 'href="/let/' "$BASE/lettings"
-has "/let/room-3" "rel=\"canonical\" href=\"$CANON/let/room-3\"" "$BASE/let/room-3"
+has "/let/ladywell-point" "rel=\"canonical\" href=\"$CANON/let/ladywell-point\"" "$BASE/let/ladywell-point"
 has "/tenants" 'data-register' "$BASE/tenants"
 has "/tenant-application-form" 'data-apply' "$BASE/tenant-application-form"
 echo "== studio, 404, robots, sitemap, api, assets"
