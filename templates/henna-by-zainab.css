@@ -137,7 +137,9 @@ main,.nav,.foot{position:relative;z-index:2}
 .nav-logo{display:flex;align-items:center;line-height:0;flex:none;padding:6px 0;min-height:44px}
 /* sized by height, never width — a width in px lands on whatever height it
    likes and pushes the hero call to action off screen */
-.nav-logo img{width:auto;height:clamp(48px,5.4vw,62px);border-radius:50%}
+/* the wordmark, not the full lockup: at 48px tall the three-line lockup is
+   an unreadable smudge, while the script alone is 3.5:1 and reads fine */
+.nav-logo img{width:auto;height:clamp(26px,2.8vw,34px)}
 .nav-links{display:flex;gap:clamp(14px,2vw,32px);margin-left:auto}
 .nav-links a{
   position:relative;text-decoration:none;font-family:var(--display);
@@ -269,29 +271,11 @@ main,.nav,.foot{position:relative;z-index:2}
    where the disc ends; and the shadow is a drop-shadow, which follows the
    alpha channel, NOT a box-shadow, which paints the element BOX and leaves a
    visible rectangle of glow around a cut-out circle. */
-.hero-mark{
-  /* inline-block, not inline: a <span> left inline ignores width, so the two
-     rings below resolved their percentages against the whole text column and
-     drew a circle the size of the hero */
-  display:inline-block;position:relative;line-height:0;
-  margin:0 0 clamp(26px,3.4vw,40px);isolation:isolate;
-}
-.hero-mark::before{
-  content:"";position:absolute;z-index:-1;left:50%;top:50%;translate:-50% -50%;
-  width:210%;aspect-ratio:1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,var(--disc) 34%,rgba(253,242,235,.72) 52%,rgba(253,242,235,0) 74%);
-}
-/* a hairline gold ring set off the disc, so the mark has a setting */
-.hero-mark::after{
-  content:"";position:absolute;z-index:-1;left:50%;top:50%;translate:-50% -50%;
-  width:118%;aspect-ratio:1;border-radius:50%;pointer-events:none;
-  border:1px solid var(--gold-line);
-  opacity:.55;
-}
-.hero-logo{
-  display:block;width:auto;height:clamp(158px,23vh,236px);border-radius:50%;
-  filter:drop-shadow(0 14px 30px rgba(93,51,32,.16));
-}
+/* Her mark with the plate and the drawn ring cut away, so there is no circle
+   at all -- nothing to blend into the page and nothing to round off. */
+.hero-mark{display:inline-block;position:relative;line-height:0;
+  margin:0 0 clamp(26px,3.4vw,40px)}
+.hero-logo{display:block;width:auto;height:clamp(132px,19vh,196px)}
 .hero-sub{color:var(--ink-soft);max-width:40ch;margin:1.2em 0 0;font-size:clamp(1.02rem,1.1vw,1.14rem);text-wrap:pretty}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:2em}
 .hero-facts{
@@ -690,6 +674,69 @@ main,.nav,.foot{position:relative;z-index:2}
 }
 .chip-b:hover{border-color:var(--henna);color:var(--henna)}
 .chip-b.on{background:var(--henna);border-color:var(--henna);color:var(--disc);font-style:normal;font-family:var(--display);font-size:.84rem;letter-spacing:.06em}
+/* ---------- the example availability calendar ---------- */
+.cal{
+  margin:0 0 clamp(22px,3vw,34px);padding:clamp(18px,2.2vw,26px);
+  background:linear-gradient(168deg,var(--disc),var(--paper) 55%,var(--cream));
+  border:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 12px 30px -26px rgba(93,51,32,.5);
+}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:.6em;margin-bottom:.9em}
+.cal-month{
+  margin:0;font-family:var(--display);font-size:1.02rem;letter-spacing:.06em;color:var(--ink);
+}
+.cal-head button{
+  display:grid;place-items:center;
+  background:none;border:1px solid var(--line-2);color:var(--ink);cursor:pointer;
+  width:36px;height:36px;flex:none;padding:0;
+  transition:border-color .3s,color .3s,background .3s;
+}
+.cal-head button:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.cal-head button:disabled{opacity:.3;cursor:default}
+.cal-head button svg{width:15px;height:15px}
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-dow{
+  margin-bottom:5px;font-family:var(--display);font-size:.62rem;letter-spacing:.2em;
+  color:var(--ink-dim);text-align:center;
+}
+.cal-day{
+  display:flex;align-items:center;justify-content:center;aspect-ratio:1;
+  font-family:var(--body);font-size:.92rem;border:1px solid transparent;
+  background:none;color:var(--ink);padding:0;
+  transition:background .3s,border-color .3s,color .3s;
+}
+button.cal-day{cursor:pointer}
+/* free and nearly-full have to be told apart at a glance, so they differ in
+   fill AND in edge rather than in two shades of the same beige */
+.cal-day.is-free{background:rgba(169,128,63,.16);border-color:var(--gold);color:var(--ink)}
+.cal-day.is-few {background:none;border-color:var(--line-2);border-style:dashed;color:var(--ink-soft)}
+.cal-day.is-gone,.cal-day.is-past{color:var(--ink-dim);opacity:.45}
+.cal-day.is-gone{text-decoration:line-through;text-decoration-thickness:1px}
+button.cal-day:hover{background:var(--gold);border-color:var(--gold);color:var(--disc)}
+.cal-day.is-picked,button.cal-day.is-picked:hover{
+  background:var(--henna);border-color:var(--henna);color:var(--disc);
+}
+.cal-key{
+  display:flex;flex-wrap:wrap;gap:.4em 1.1em;margin:1em 0 0;
+  font-size:.74rem;letter-spacing:.04em;color:var(--ink-soft);
+}
+.cal-key span{display:inline-flex;align-items:center;gap:.45em}
+.cal-key i{width:11px;height:11px;flex:none;border:1px solid var(--line)}
+.cal-key .k-free{background:rgba(169,128,63,.16);border-color:var(--gold)}
+.cal-key .k-few{background:none;border-color:var(--line-2);border-style:dashed}
+.cal-key .k-gone{background:none;opacity:.45}
+.cal-note{margin:.7em 0 0;font-size:.8rem;font-style:italic;color:var(--ink-dim);text-wrap:pretty}
+/* A thumb needs 44px. Seven columns cannot be 44px WIDE on a 320px screen --
+   that is 308px of cells before any gutter, padding or gap -- so the grid gives
+   up its square cells and takes the 44 on the axis it can: height. Padding and
+   gap come down too, which gets the width to 44 from about 390px up. */
+@media (pointer: coarse){
+  .cal{padding:12px}
+  .cal-dow,.cal-grid{gap:2px}
+  .cal-day{aspect-ratio:auto;min-height:44px;font-size:1rem}
+  .cal-head button{width:44px;height:44px}
+}
+
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .form-msg{margin:0;font-size:.96rem;display:none;padding:1em 1.2em;border:1px solid var(--line-2);background:rgba(182,144,94,.1)}
 .form-msg.on{display:block}
@@ -757,7 +804,7 @@ main,.nav,.foot{position:relative;z-index:2}
 .foot{position:relative;overflow:hidden;background:var(--cream);border-top:1px solid var(--line);padding:clamp(56px,7vw,92px) 0 clamp(28px,4vw,46px);text-align:center}
 .foot>.wrap{position:relative;z-index:1}
 .foot-in{display:grid;justify-items:center;gap:1.1em}
-.foot-logo{width:auto;height:clamp(94px,11vw,126px);border-radius:50%}
+.foot-logo{width:auto;height:clamp(96px,11vw,132px)}
 .foot-line{margin:0;font-family:var(--display);font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--ink)}
 .socials{display:flex;gap:12px;justify-content:center;margin:.3em 0}
 .socials a{
@@ -846,7 +893,7 @@ main,.nav,.foot{position:relative;z-index:2}
   .pair-arrow{transform:rotate(90deg);margin-inline:auto}
 }
 @media (max-height:860px) and (min-width:861px){
-  .hero-logo{height:clamp(124px,18vh,168px)}
+  .hero-logo{height:clamp(108px,15vh,144px)}
   .hero-inner{padding-top:clamp(96px,12vh,124px);padding-bottom:clamp(40px,6vh,66px)}
   .hero h1{font-size:clamp(2.3rem,4.4vw,3.4rem)}
 }
@@ -854,9 +901,8 @@ main,.nav,.foot{position:relative;z-index:2}
   .drawer{gap:12px}
   .drawer nav a{font-size:1.04rem;padding:.4em 0}
   .hero-inner{padding-top:clamp(90px,13vh,110px);padding-bottom:24px}
-  .hero-logo{height:clamp(84px,12vh,112px)}
+  .hero-logo{height:clamp(72px,10vh,96px)}
   .hero-mark{margin-bottom:14px}
-  .hero-mark::after{display:none}
   .eyebrow{margin-bottom:1em;font-size:.64rem}
   .hero h1{font-size:clamp(2rem,8vw,2.6rem)}
   .hero-sub{margin-top:.85em;font-size:.98rem}
@@ -870,9 +916,8 @@ main,.nav,.foot{position:relative;z-index:2}
   /* a landscape phone is 390px tall with a fixed header over it; every line
      here is tuned so the booking button still lands above the fold */
   .hero-inner{padding-top:clamp(48px,14vh,84px);padding-bottom:14px}
-  .hero-logo{height:clamp(36px,10vh,62px)}
+  .hero-logo{height:clamp(34px,9vh,54px)}
   .hero-mark{margin-bottom:6px}
-  .hero-mark::after{display:none}
   .eyebrow{margin-bottom:.75em}
   .hero h1{font-size:clamp(1.6rem,4.5vh,2.3rem)}
   .hero-sub{margin-top:.45em;font-size:.88rem}

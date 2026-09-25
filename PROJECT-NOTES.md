@@ -978,20 +978,35 @@ rewording them changes what was agreed.
 
 ### Her mark
 
-Three things had to happen together or the disc still reads as a sticker
-pasted onto the page:
+**There is no circle anywhere near it.** Her logo file is a disc: a cream plate
+with a ring drawn inside it at r 0.85–0.92, the wordmark, "HENNA ARTIST" and a
+floral spray. Blending the plate into the page got close but a disc is still a
+disc, so the plate and both rings are cut away and only the drawing is left.
 
-1. **The ground is measured, not matched by eye.** Her plate reads
-   `rgb(253,242,235)` sampled in a ring between 0.55r and 0.80r — clear of the
-   script in the middle and of the antialiased rim. That is `--disc`, and the
-   halo behind the mark is painted in exactly it.
-2. **The halo bleeds outwards** so there is no step where the disc ends.
-3. **The shadow is a `drop-shadow`, never a `box-shadow`.** A box-shadow paints
-   the element BOX, which on a cut-out circle leaves a visible rectangle of
-   glow around it. A filter follows the alpha channel.
+Cutting it took three passes, and the first two each lost something:
 
-It is also about 60% bigger than it was (236px at full size), with a hairline
-gold ring set off it so the mark has a setting rather than floating loose.
+1. **Alpha from ink distance**, not a threshold — every stroke keeps its own
+   antialiasing, which a hard cut staircases.
+2. **A cut on radius alone also took the little cone above the "b"**, which
+   sits at r 0.93, right inside the ring's band. The ring is the only mark that
+   goes all the way round, so it is found by connected component instead: a
+   long thin arc sitting at one radius. Two arcs, 8035px and 12902px, spanning
+   16 and 20 of 36 sectors.
+3. **Killing the labelled arcs still left a faint circle** — every
+   sub-threshold pixel of the ring's antialiasing survived. The band is
+   blanket-cleared now, with a disc around the cone protected.
+
+The colours are then **un-premultiplied against the plate**, or every
+antialiased edge keeps a ghost of the cream and the mark looks milky on
+anything darker than it.
+
+Two files come out of it: `mark.png`, the full lockup, and `wordmark.png`, the
+script line alone at 3.5:1 for the header — at 48px tall the three-line lockup
+is an unreadable smudge. `logo.png` is kept but no longer used by the page.
+
+`z-act.mjs` asserts there is no circle from both ends: nothing on the page
+draws one (no border-radius, no ring pseudo-element, no box-shadow) and the
+file itself has fully transparent corners and mid-edges.
 
 ### Type
 
@@ -1042,16 +1057,18 @@ Two traps worth remembering:
 
 ### Pictures
 
+**The hero photograph was changed, not re-cropped.** `hero.jpg` has the bride
+left of centre in her own frame with a third of gravel on the right, so on a
+phone the subject reads as off to one side and no crop fixes that. `g2.jpg` —
+two hands finished in a trailing pattern — fills the frame at every crop the
+page asks for and is 980px rather than 766, which also took the hero's
+enlargement from 3x to 2.46x on a 5K screen. The bridal shot moved into the
+gallery, where its framing is fine.
+
 `group.jpg` is a 653px portrait off her stories and it was being stretched
 across a full-width 16:9 band — **3.8x enlarged on an ordinary laptop**. It is
-a plate now: held at its own shape and size beside the line it illustrates,
-which is sharper and says more. 3.8x → 1.32x. `about.jpg` is capped the same
-way, 1.65x → 1.35x.
-
-**`hero.jpg` is the one I cannot fix in CSS.** It is 766px wide and it fills
-half the hero: 1.53x on a phone, 1.77x on a retina laptop, 3x on a 5K display.
-Capping the column just puts a paper sliver down one side of the photograph,
-which reads as a bug rather than a margin. Only a bigger original fixes this.
+a plate now: held at its own shape and size beside the line it illustrates.
+3.8x → 1.32x. `about.jpg` is capped the same way, 1.65x → 1.35x.
 
 ### Faults the audits caught this time
 
@@ -1065,6 +1082,39 @@ which reads as a bug rather than a margin. Only a bigger original fixes this.
   wheel and touch while `lockScroll()` stops Lenis rather than pinning the
   body**, so a `window.scrollTo` probe goes straight round the lock and every
   page looks unlocked. The suite drives a real wheel now.
+
+### The example availability calendar
+
+She has no live diary to read from, and a calendar that **looks** real but is
+invented would have someone believing a date is free when it is not. So it
+says what it is, in the same register as the Google reviews placeholder, and
+picking a day only drops it into the date field — it never claims to have held
+anything.
+
+The pattern is **deterministic from the date itself**, not random: a small hash
+of the date, with weekends weighted busier. Page forward and back and the same
+month comes back identical, which a random fill would not. The suite asserts
+exactly that.
+
+It opens on next month when this one is nearly spent — a grid that is four
+fifths greyed out says nothing about when she is free.
+
+**Seven columns cannot be 44px wide on a 320px screen**: that is 308px of cells
+before any gutter, padding or gap. The grid gives up its square cells on a
+touch screen and takes the 44 on the axis it can, height, with padding and gap
+reduced so the width reaches 44 from about 390px up. The viewport audit checks
+the height for these cells and says why in the code.
+
+### Order of the page
+
+Reordered so the persuasion comes before the ask and the reference material
+after it: welcome → the henna → portfolio → reviews → how to book → **enquire**
+→ the stain → aftercare → policies → questions. The nav and the drawer are
+built to match. Reordering also broke the tint alternation — two `sec-tint`
+sections landed side by side — so the classes are reassigned by position.
+
+The header carried both an "Enquire" link and an "Enquire" button, side by
+side. The link is gone.
 
 **Bookings.** She publishes no email address; everything is Instagram DM.
 Instagram has no way to pre-fill a message from a link, so the form composes

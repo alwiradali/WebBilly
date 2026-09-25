@@ -106,7 +106,7 @@
 
   var GALLERY = [
     { f: "g1.jpg", a: "Mehndi across both hands, worn with gold bangles" },
-    { f: "g2.jpg", a: "Two hands finished in a fine trailing pattern" },
+    { f: "hero.jpg", a: "Bridal mehndi across both hands, worn with gold and pearl bangles" },
     { f: "g3.jpg", a: "A mandala design on the back of the hand, against white embroidery" },
     { f: "g4.jpg", a: "Bridal mehndi against cream and gold work" },
     { f: "g5.jpg", a: "A floral design running from wrist to fingertip" },
@@ -556,6 +556,94 @@
       if (e.key === "ArrowLeft") open(at - 1);
       if (e.key === "ArrowRight") open(at + 1);
     });
+  }());
+
+  /* ===================== the example calendar =====================
+     She has no live diary to read from. A calendar that LOOKS real but is
+     invented would have someone believing a date is free when it is not, so
+     this one says what it is, every day is pickable, and picking one only
+     fills the date field -- it never claims to have held anything.
+
+     The pattern is deterministic from the date itself rather than random, so
+     the same day always shows the same state and it does not reshuffle every
+     time you page back and forth. */
+  (function calendar() {
+    var grid = $("#calGrid"), label = $("#calMonth");
+    if (!grid || !label) return;
+    var today = new Date(); today.setHours(0,0,0,0);
+    /* open on next month when this one is nearly spent: a grid that is four
+       fifths greyed out says nothing about when she is free */
+    var left = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate() - today.getDate();
+    var view = new Date(today.getFullYear(), today.getMonth() + (left < 8 ? 1 : 0), 1);
+    var MONTHS = ["January","February","March","April","May","June","July",
+                  "August","September","October","November","December"];
+
+    function state(d) {
+      /* weekends and the run-up to Eid are the busy end of her year; a small
+         hash of the date keeps it stable without being a straight pattern */
+      var key = d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+      var hash = (key * 2654435761) % 97;
+      var weekend = d.getDay() === 0 || d.getDay() === 6;
+      if (d < today) return "past";
+      if (weekend) return hash < 52 ? "gone" : (hash < 76 ? "few" : "free");
+      return hash < 22 ? "gone" : (hash < 42 ? "few" : "free");
+    }
+
+    function draw() {
+      label.textContent = MONTHS[view.getMonth()] + " " + view.getFullYear();
+      grid.innerHTML = "";
+      var first = new Date(view.getFullYear(), view.getMonth(), 1);
+      var lead  = (first.getDay() + 6) % 7;                 /* Monday first */
+      var days  = new Date(view.getFullYear(), view.getMonth()+1, 0).getDate();
+      for (var i = 0; i < lead; i++) grid.appendChild(el("span", { class: "cal-pad" }));
+      for (var day = 1; day <= days; day++) {
+        var d = new Date(view.getFullYear(), view.getMonth(), day);
+        var st = state(d);
+        if (st === "past" || st === "gone") {
+          var cell = el("span", { class: "cal-day is-" + st }, String(day));
+          cell.setAttribute("aria-hidden", "true");
+          grid.appendChild(cell);
+          continue;
+        }
+        var iso = d.getFullYear() + "-" +
+                  String(d.getMonth()+1).padStart(2,"0") + "-" +
+                  String(day).padStart(2,"0");
+        var b = el("button", {
+          type: "button", class: "cal-day is-" + st, "data-iso": iso,
+          "aria-label": day + " " + MONTHS[view.getMonth()] + ", " +
+                        (st === "few" ? "nearly full" : "free") + " in this example"
+        }, String(day));
+        grid.appendChild(b);
+      }
+      var prev = $("#calPrev");
+      if (prev) prev.disabled = view.getFullYear() === today.getFullYear() &&
+                                view.getMonth() === today.getMonth();
+    }
+
+    function shift(n) {
+      view = new Date(view.getFullYear(), view.getMonth() + n, 1);
+      draw();
+    }
+    $("#calPrev").addEventListener("click", function () { shift(-1); });
+    $("#calNext").addEventListener("click", function () { shift(1); });
+
+    grid.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("button[data-iso]");
+      if (!b) return;
+      var field = $("#enqDate");
+      if (field) {
+        field.value = b.getAttribute("data-iso");
+        /* the form reads .value, but anything listening for a change needs telling */
+        field.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      $$("#calGrid .is-picked").forEach(function (x) {
+        x.classList.remove("is-picked"); x.removeAttribute("aria-pressed");
+      });
+      b.classList.add("is-picked"); b.setAttribute("aria-pressed", "true");
+      toast("Added to the form \u2014 she will confirm it by DM");
+    });
+
+    draw();
   }());
 
   /* ===================== clipboard + toast ===================== */
