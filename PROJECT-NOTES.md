@@ -498,8 +498,15 @@ link under the header, an unreachable last item, and `overflow:hidden`.
 
 ## Makeup by Sadia — `templates/makeup-by-sadia.{html,css,js}`
 
-Pre-launch makeup artist, `@makeup_bysadia0`. A client preview: unlisted
-(meta noindex, `X-Robots-Tag` on the page **and** on `/assets/sadia/*`).
+Pre-launch makeup artist, `@makeup_bysadia0`.
+
+**Parked.** The page, its stylesheet, its script and `assets/sadia` are all in
+`.assetsignore`, so Cloudflare does not upload them and
+`/templates/makeup-by-sadia` answers 404 — link or no link. The files stay in
+the repository; delete those four lines to put it back. Its `_headers` block
+stays in place too, exactly as Brownielicious and Starlit Blooms do, so the
+noindex returns by itself if it is ever unparked rather than having to be
+remembered.
 
 **Her logo is hers.** Lifted from her Instagram profile picture — circle at
 (644, 1238) r=424 in the screenshot, an 848px badge. `logo.png` is the round

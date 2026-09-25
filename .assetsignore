@@ -148,3 +148,11 @@ templates/starlit-blooms.html
 templates/starlit-blooms.css
 templates/starlit-blooms.js
 assets/starlit
+
+# Makeup by Sadia — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/makeup-by-sadia and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/makeup-by-sadia.html
+templates/makeup-by-sadia.css
+templates/makeup-by-sadia.js
+assets/sadia
