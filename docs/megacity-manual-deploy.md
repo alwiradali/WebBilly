@@ -19,7 +19,7 @@ built and verified while his current site carries on serving.
 | This repository, up to date | `git pull` |
 | Walid signed in to Cloudflare | his account, not the agency's |
 | His payment card on the account | R2 needs one even on the free tier |
-| The Resend API key | the agency's |
+| The Resend API key | **his own account**, not the agency's |
 
 Walid's password is not on this list and never will be. `wrangler login` opens
 a browser and he signs in himself.
@@ -216,10 +216,48 @@ wrong — go back to step 3.
 
 ---
 
+## 8b. Resend — and why it comes AFTER the nameservers
+
+Resend verifies a sending domain by reading DNS. Its three records
+(`resend._domainkey` TXT and the `rsend` / `send` CNAMEs) are already in his
+Cloudflare zone, and a record in a zone that is not authoritative is not a
+record anyone can see. Until the nameservers move, GoDaddy is still answering
+for megacityproperties.co.uk and GoDaddy does not have them, so verification
+cannot succeed however many times it is pressed.
+
+After the move it is quick, because the records are already there:
+
+1. Add **megacityproperties.co.uk** as a domain in **his** Resend account.
+2. It should verify within a minute or two. If it does not, the zone has not
+   finished going Active — wait, do not re-add the records.
+3. Create an API key there, and set two things on the Worker:
+
+```
+npx wrangler secret put RESEND_API_KEY --env megacity
+```
+
+and, as a plain variable (not a secret — it is an address, not a credential):
+
+```
+MAIL_FROM = Megacity Properties <website@megacityproperties.co.uk>
+```
+
+`MAIL_FROM` is why this is a setting and not a deploy: until it is set, mail
+goes out on the agency's verified domain, and the moment it is set it goes out
+on his. Nothing else changes.
+
+**Do this before step 9, not after.** Step 9 puts the public site on his
+domain, and a live site whose enquiry forms reach nobody is worse than a site
+that is not live yet. Enquiries are still saved to the database and still
+posted into 10ninety without it — but nothing lands in an inbox.
+
+---
+
 ## 9. The moment the website changes
 
-Only once his nameservers have moved and the zone reads **Active** in his
-account. Check that first — the dashboard says so on the zone's overview.
+Only once his nameservers have moved, the zone reads **Active** in his
+account, and mail has been tested. Check that first — the dashboard says so on
+the zone's overview.
 
 Uncomment the two routes in `[env.megacity]`:
 
