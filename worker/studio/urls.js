@@ -226,8 +226,26 @@ function legacyRedirect(path) {
   return null;
 }
 
+/* A link written for the client's own domain ("/valuation", "/let/x") -> the
+   same page on the demo addresses (/templates/megacity-valuation). The Studio
+   stores Website edits and the announcement link in root form, because that
+   is where they will live; on the test address before go-live the same edit
+   has to point at the page there, or every link in it 404s. Anything already
+   under /templates, /media, /billy360 or /api, and anything absolute or
+   relative, is left as it is. */
+function demoHref(v) {
+  if (v == null) return v;
+  const s = String(v).trim();
+  const m = /^(\/[^?#]*)([?#].*)?$/.exec(s);
+  if (!m || /^\/(templates|media|billy360|api)(\/|$)/.test(m[1])) return v;
+  const r = resolveRoot(m[1].replace(/\/+$/, "") || "/");
+  if (!r) return v;
+  const out = r.kind === "listing" ? listingPath("demo", r.slug) : r.kind === "studio" ? studioPath("demo") : pagePath("demo", r.slug);
+  return out + (m[2] || "");
+}
+
 export {
   DEMO_HOSTS, FALLBACK_HOST, ROOT_MAP, PATH_TO_SLUG, PUBLIC_STATIC_SLUGS, STATIC_LET_SLUGS, LEGACY_LISTINGS, RESERVED_ROOT_SLUGS, LEGACY_REDIRECTS,
-  pagePath, listingPath, studioPath, assetPath, rewriteHref, rewriteSrcset, rewriteStyle, resolveRoot, slugOfPath,
+  pagePath, listingPath, studioPath, assetPath, rewriteHref, demoHref, rewriteSrcset, rewriteStyle, resolveRoot, slugOfPath,
   megacityHosts, isMegacityHost, canonicalHost, mode, publicBase, absUrl, legacyRedirect,
 };

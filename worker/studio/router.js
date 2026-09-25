@@ -231,7 +231,10 @@ export async function handleMegacity(request, env, ctx, url) {
     try { settings = await readSettings(db); } catch (e) { console.error("settings", e); }
     const finish = (res, how) => {
       const h = new Headers(res.headers); h.set("x-mc-render", how);
-      return tracking.inject(new Response(res.body, { status: res.status, headers: h }), settings, { mode: "demo" });
+      h.delete("content-length"); h.delete("etag");
+      /* the Studio's Website edits and announcement bar, here as on his domain */
+      const edited = site.siteEdits(new HTMLRewriter(), { settings, isPublic: true, fix: urls.demoHref }).transform(new Response(res.body, { status: res.status, headers: h }));
+      return tracking.inject(edited, settings, { mode: "demo" });
     };
     const passThrough = () => env.ASSETS.fetch(request).then((r) => finish(r, "static"));
     try {

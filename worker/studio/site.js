@@ -273,3 +273,55 @@ export function announcementHtml(a) {
   return `<div class="annc" id="annc" role="region" aria-label="Announcement" data-v="${esc(a.version || "")}"><p class="annc-in"><span class="annc-text">${esc(a.text)}</span>${link}</p><button type="button" class="annc-x" aria-label="Close the announcement">×</button></div>` +
     `<script>(function(){var b=document.getElementById("annc"),d=document.documentElement,k="mc-annc";if(!b)return;try{if(localStorage.getItem(k)===b.getAttribute("data-v")){b.remove();return}}catch(e){}d.classList.add("has-annc");function s(){d.style.setProperty("--annc-h",b.offsetHeight+"px")}s();addEventListener("resize",s);b.querySelector(".annc-x").addEventListener("click",function(){try{localStorage.setItem(k,b.getAttribute("data-v"))}catch(e){}b.remove();d.classList.remove("has-annc");d.style.removeProperty("--annc-h")})})();</script>`;
 }
+
+/* Website edits from the Studio: the words, photos, logo and the
+   announcement bar, added to a rewriter as its FIRST handlers so the original
+   element is matched before anything else touches it. Both addresses use it —
+   the client's domain (host.js rootRewriter, links in root form) and the demo/test
+   address before go-live (router.js, links in /templates/ form) — so what
+   Walid saves shows on the site he is looking at, not only after the switch.
+   `fix` turns a link into the form this address uses. */
+export function siteEdits(rw, { settings, isPublic, fix }) {
+  const siteText = (settings && settings.siteText) || {};
+  const siteImages = (settings && settings.siteImages) || {};
+  const logo = (settings && settings.logo) || {};
+  const annc = isPublic && settings && announcementLive(settings.announcement) ? settings.announcement : null;
+  /* inserted HTML is not seen by the handlers below, so its links are put in
+     root form here — the originals use the demo's relative names */
+  const rootLinks = (html) => html.replace(/ href="([^"]*)"/g, (all, h) => ' href="' + String(fix(h.replace(/&amp;/g, "&"))).replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"');
+  return rw
+    .on("[data-e]", {
+      element: (e) => {
+        const id = e.getAttribute("data-e");
+        e.removeAttribute("data-e");
+        const im = siteImages[id];
+        if (e.tagName === "img") {
+          if (im && im.key) { e.setAttribute("src", "/media/" + im.key); e.removeAttribute("srcset"); e.removeAttribute("sizes"); }
+          return;
+        }
+        const st = e.getAttribute("style");
+        if (im && im.key && st != null && /--ph-img/.test(st)) {
+          e.setAttribute("style", st.replace(/--ph-img(-m)?\s*:\s*url\([^)]*\)/g, (all, m) => "--ph-img" + (m || "") + ":url('/media/" + im.key + "')"));
+          return;
+        }
+        const t = siteText[id];
+        if (typeof t === "string" && t) {
+          let clean = null;
+          try { clean = sanitize(t, { max: 100000 }); } catch { clean = null; }
+          if (clean) e.setInnerContent(rootLinks(clean), { html: true });
+        }
+      },
+    })
+    .on('img[src*="logo-nav"]', {
+      element: (e) => {
+        const white = /logo-nav-white/.test(e.getAttribute("src") || "");
+        const use = white ? (logo.dark || logo.light) : logo.light;
+        if (!use || !use.key) return;
+        e.setAttribute("src", "/media/" + use.key);
+        e.removeAttribute("srcset");
+        /* one logo for both backgrounds: shown white on the dark ones */
+        if (white && !logo.dark) e.setAttribute("class", ((e.getAttribute("class") || "") + " logo-on-dark").trim());
+      },
+    })
+    .on("body", { element: (e) => { if (annc) e.prepend(announcementHtml({ ...annc, href: annc.href ? fix(annc.href) : "" }), { html: true }); } });
+}

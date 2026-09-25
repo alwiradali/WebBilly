@@ -89,10 +89,27 @@ ok(announcementLive({ ...a, until: "2026-09-30" }, new Date("2026-09-30T22:30:00
 ok(announcementLive({ ...a, on: false }) === false, "switched off is off");
 ok(announcementLive({ on: true, text: "" }) === false, "an empty bar never shows");
 
+/* ── the same edit on the test address, before go-live ──────────────────
+   Edits are stored with links in root form ("/valuation"); on the demo
+   address the page is /templates/megacity-valuation. On 25 September an
+   announcement saved in the Studio never appeared on the test site at all,
+   because the edits were only applied on his own domain. */
+ok(urls.demoHref("/valuation") === "/templates/megacity-valuation", "a root link points at the page on the test address");
+ok(urls.demoHref("/tenants") === "/templates/megacity-renting" && urls.demoHref("/") === "/templates/megacity-skyline", "…by the page's own name there");
+ok(urls.demoHref("/let/ladywell-point") === "/templates/megacity-let-ladywell-point", "a listing link too");
+ok(urls.demoHref("/valuation#book") === "/templates/megacity-valuation#book", "a link to a section keeps its section");
+ok(urls.demoHref("/templates/megacity-for-landlords") === "/templates/megacity-for-landlords", "a link already in test-address form is left alone");
+ok(urls.demoHref("https://wa.me/447804900719") === "https://wa.me/447804900719" && urls.demoHref("/media/s/x.jpg") === "/media/s/x.jpg", "outside links and uploaded photos are left alone");
+
 /* ── against a running Worker ─────────────────────────────────────────── */
 const li = process.argv.indexOf("--live");
 if (li > 0) {
   const BASE = process.argv[li + 1].replace(/\/$/, "");
+  /* --demo: the Worker is serving the test address (no MEGACITY_HOST), so
+     every page is at its /templates/ name and links read that way */
+  const DEMO = process.argv.includes("--demo");
+  const P = (root) => (DEMO ? urls.demoHref(root) : root);
+  const reEsc = (t) => t.replace(/[.*+?^${}()|[\]\\\/]/g, "\\$&");
   const TOKEN = process.argv[process.argv.indexOf("--token") + 1];
   let cookie = "";
   const api = async (method, path, body, raw) => {
@@ -136,18 +153,25 @@ if (li > 0) {
   const stillHome = (await api("GET", "/site/pages/skyline")).data.items.find((i) => i.id === "home-1");
   ok(stillHome && stillHome.current == null, "an id from another page is ignored");
 
-  let html = await page("/tenants");
+  let html = await page(P("/tenants"));
   ok(/<h1[^>]*>Renting made <em>simple<\/em><\/h1>/.test(html), "a visitor sees the new headline, emphasis kept");
   ok(!/<script>x<\/script>/.test(html) && !/onclick="bad\(\)"/.test(html), "and none of what was stripped");
-  ok(html.includes('<a href="/valuation">book</a>'), "the typed link points at the page on his domain");
+  ok(html.includes('<a href="' + P("/valuation") + '">book</a>'), "the typed link points at the page on this address");
   ok(html.includes(`--ph-img:url('/media/${up.key}')`) && html.includes(`--ph-img-m:url('/media/${up.key}')`), "the banner shows the uploaded photo on every screen size");
   ok(!/data-e=/.test(html), "no edit ids reach the visitor");
+  /* "live the second I save": the check above loads the page straight after
+     the save and sees the edit, so nothing on the server holds the old one.
+     What remains is a browser reusing its copy — it cannot if the page never
+     gives it a validator to revalidate with and says max-age=0. */
+  const hd = (await fetch(BASE + P("/tenants"))).headers;
+  ok(!hd.get("etag") && !hd.get("last-modified") && /max-age=0|no-cache|no-store/.test(hd.get("cache-control") || "no-cache"),
+     "the page tells browsers never to reuse an old copy, so a save shows on the next load", { etag: hd.get("etag"), lm: hd.get("last-modified"), cc: hd.get("cache-control") });
   const media = await fetch(BASE + "/media/" + up.key);
   ok(media.status === 200 && media.headers.get("content-type") === "image/png", "the uploaded photo is served to anyone, without a sign-in", media.status);
 
   /* the logo */
   r = await api("PUT", "/site/logo", { light: up, dark: null });
-  html = await page("/tenants");
+  html = await page(P("/tenants"));
   ok(html.includes(`class="brand-dark" src="/media/${up.key}"`), "the header shows the new logo");
   ok(/src="\/media\/[^"]+"[^>]*class="[^"]*logo-on-dark|class="[^"]*logo-on-dark[^"]*"[^>]*src="\/media\//.test(html) || /logo-on-dark/.test(html), "and the footer shows it drawn white");
 
@@ -156,20 +180,20 @@ if (li > 0) {
   ok(r.status === 400, "an announcement with 8% and no VAT is refused", r.status);
   r = await api("PUT", "/site/announcement", { on: true, text: "Free valuations this October", linkText: "Book one", href: "valuation", until: "2099-12-31" });
   ok(r.status === 200, "an announcement saves", r.data);
-  html = await page("/tenants");
-  ok(/<body[^>]*>\s*<div class="annc"[^>]*>.*Free valuations this October.*<a class="annc-link" href="\/valuation">Book one/s.test(html), "every page opens with the bar and its link");
-  ok(/<div class="annc"/.test(await page("/")), "the home page too");
-  const deep = await page("/lettings");
-  ok(/<a class="annc-link" href="\/valuation">/.test(deep), "the link points at /valuation from any page, not relative to it");
+  html = await page(P("/tenants"));
+  ok(new RegExp('<body[^>]*>\\s*<div class="annc"[^>]*>.*Free valuations this October.*<a class="annc-link" href="' + reEsc(P("/valuation")) + '">Book one', "s").test(html), "every page opens with the bar and its link");
+  ok(/<div class="annc"/.test(await page(P("/"))), "the home page too");
+  const deep = await page(P("/lettings"));
+  ok(deep.includes('<a class="annc-link" href="' + P("/valuation") + '">'), "the link points at the valuation page from any page, not relative to it");
   await api("PUT", "/site/announcement", { on: true, text: "Old news", until: "2000-01-01" });
-  ok(!/<div class="annc"/.test(await page("/tenants")), "a bar past its last day is gone");
+  ok(!/<div class="annc"/.test(await page(P("/tenants"))), "a bar past its last day is gone");
   await api("PUT", "/site/announcement", { on: false, text: "Free valuations this October" });
-  ok(!/<div class="annc"/.test(await page("/tenants")), "a bar switched off is gone");
+  ok(!/<div class="annc"/.test(await page(P("/tenants"))), "a bar switched off is gone");
 
   /* undo, all of it */
   await api("PUT", "/site/pages/renting", { text: { [h1.id]: null, [para.id]: null }, images: { [hero.id]: null } });
   await api("PUT", "/site/logo", { light: null, dark: null });
-  html = await page("/tenants");
+  html = await page(P("/tenants"));
   ok(/Everything you need<br>as a Megacity <em>tenant\.<\/em>/.test(html), "putting the original back restores the headline exactly");
   ok(html.includes("hero-renting.jpg") && html.includes("logo-nav.png"), "and the original banner and logo");
 }
