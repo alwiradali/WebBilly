@@ -1174,28 +1174,53 @@
       if (job.row >= job.rows) {
         job.done = true;
         if (job.kind === "hi") store[job.id].hi = job.target;
-        else { store[job.id].lo = job.target; readbackThumb(job); }
+        else { store[job.id].lo = job.target; if (!thumbSrc[job.id]) placeholderThumb(job.id); }
       }
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
-    /* the preview pass is already on the GPU — pull it back once and every
-       thumbnail in the interface is free after that */
-    function readbackThumb(job) {
+    /* A strip tile for a room that has no photograph yet.
+     *
+     * This used to be a gl.readPixels of the whole preview — "the preview pass
+     * is already on the GPU, pull it back once and every thumbnail is free
+     * after that". It is not free. readPixels is a synchronous stall: the CPU
+     * waits for the GPU to finish everything queued behind it, and it happens
+     * inside the bake loop, once per room, ignoring the frame budget that loop
+     * is built around.
+     *
+     * Measured on a freshly built tour, where every room is empty and so every
+     * room takes this path (a room WITH a panorama never gets here — it takes
+     * the loadPano path and its thumbnail is a plain drawImage of the decoded
+     * picture). Nine rooms, software renderer:
+     *
+     *     as it was ........................ main thread blocked 8384 ms
+     *     readback skipped .................              blocked   10 ms
+     *     readback at a sixteenth the size .              blocked 7530 ms
+     *
+     * The size makes no difference because the cost is the flush, not the
+     * bytes. And what it was flushing the pipeline for was a photograph of a
+     * procedural gradient — the same gradient in every empty room, carrying
+     * nothing about the room it stands for.
+     *
+     * So: no readback. A tile drawn on the CPU in the placeholder's own tone,
+     * which costs microseconds and says the same thing. When a panorama
+     * arrives, the real thumbnail replaces it. */
+    var EMPTY_TILE = null;
+    function placeholderThumb(id) {
       try {
-        var px = new Uint8Array(job.w * job.h * 4);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-        gl.readPixels(0, 0, job.w, job.h, gl.RGBA, gl.UNSIGNED_BYTE, px);
-        var c = document.createElement("canvas");
-        c.width = job.w; c.height = job.h;
-        var ctx = c.getContext("2d"), img = ctx.createImageData(job.w, job.h);
-        for (var y = 0; y < job.h; y++) {
-          var srow = (job.h - 1 - y) * job.w * 4;
-          img.data.set(px.subarray(srow, srow + job.w * 4), y * job.w * 4);
+        if (!EMPTY_TILE) {
+          var c = document.createElement("canvas");
+          c.width = 256; c.height = 128;
+          var ctx = c.getContext("2d");
+          /* the engine's own clear colour for an unpainted room, lifted
+             slightly towards the horizon so the tile is not a flat black */
+          var g = ctx.createLinearGradient(0, 0, 0, 128);
+          g.addColorStop(0, "#0d0d12"); g.addColorStop(0.55, "#14141c"); g.addColorStop(1, "#0a0a0e");
+          ctx.fillStyle = g; ctx.fillRect(0, 0, 256, 128);
+          EMPTY_TILE = c;
         }
-        ctx.putImageData(img, 0, 0);
-        thumbSrc[job.id] = c;
-        if (opts.onThumb) opts.onThumb(job.id);
+        thumbSrc[id] = EMPTY_TILE;
+        if (opts.onThumb) opts.onThumb(id);
       } catch (e) { /* a nicety, never a blocker */ }
     }
 
