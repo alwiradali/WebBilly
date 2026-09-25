@@ -746,6 +746,15 @@
       });
     }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
     items.forEach(function (n) { io.observe(n); });
+    /* Anything already on screen at load is revealed outright. The observer's
+       -12% bottom margin means an element sitting low in the first viewport
+       never intersects until you scroll, so it just sat there invisible —
+       which is what happened to the hero's fact row. */
+    requestAnimationFrame(function () {
+      items.forEach(function (n) {
+        if (n.getBoundingClientRect().top < innerHeight) { n.classList.add("in"); io.unobserve(n); }
+      });
+    });
     /* the hero headline plays on load, not on scroll */
     setTimeout(function () { $$(".rise").forEach(function (n) { n.classList.add("in"); }); }, 340);
   })();
@@ -788,11 +797,17 @@
        actually scrolled away. Switching at 40px turned it white while the
        hero photograph was still behind it, which put a white bar between two
        dark ones — it read as a fault, and it was. */
-    var darkTop = hero || $(".page-head");
+    /* [data-dark] marks the run of dark blocks at the top of the page — the
+       hero, the photograph under it and the marquee. The bar goes cream when
+       the last of them has gone, not before: a cream bar over any of them
+       reads as a fault. */
+    var darkRun = $$("[data-dark]");
+    var lastDark = darkRun.length ? darkRun[darkRun.length - 1] : null;
     function frame() {
-      var edge = darkTop ? Math.max(40, darkTop.offsetHeight - nav.offsetHeight) : 40;
+      var edge = 40;
+      if (lastDark) edge = Math.max(40, lastDark.offsetTop + lastDark.offsetHeight - nav.offsetHeight);
       nav.classList.toggle("solid", scrollY > edge);
-      if (dock && darkTop) dock.classList.toggle("up", scrollY > darkTop.offsetHeight * 0.7);
+      if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
     }
     addEventListener("scroll", frame, { passive: true });
     addEventListener("resize", frame);

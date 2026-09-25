@@ -1331,6 +1331,19 @@ renumber themselves. The composed message is built once by `compose()` and sent
 down either route — `wa.me` or `mailto:` — so WhatsApp and email can never
 drift apart.
 
+**Two cuts of her logo, and they are not interchangeable.** `logo.png` is the
+disc, cut from her profile picture; it works on any ground and is what the nav
+and the footer use. `mark.png` is the same artwork with the purple disc knocked
+out — the ink is her cream and nothing else, so it sits on the dark ground with
+no circle around it. That is the hero and the loader. **Never put `mark.png` on
+a light background:** cream ink on cream is invisible. A viewport check asserts
+it, so the mistake cannot ship.
+
+The knockout is a projection, not a threshold: for each pixel,
+`a = (C-D)·(M-D)/|M-D|²` where D is the disc colour and M the ink. That
+un-premultiplies the antialiased edges, so no purple fringe survives on any
+background — a plain colour-distance cut leaves a halo.
+
 **Her logo is used untouched.** `assets/strictly/logo.png` is the disc cut out of
 her Instagram profile picture at r=423.5 (425 is the first background pixel) with
 a 4× supersampled circular alpha, so it sits on cream and on purple with no

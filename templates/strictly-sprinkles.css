@@ -95,7 +95,7 @@ p{margin:0}
 }
 .loader.gone{opacity:0;visibility:hidden}
 /* capped at 240px: the source disc is 847px, so it never upscales */
-.loader img{width:clamp(150px,23vh,240px);height:auto;border-radius:50%;animation:lpop 1.5s var(--ease) both}
+.loader img{width:clamp(170px,26vh,270px);height:auto;animation:lpop 1.5s var(--ease) both}
 @keyframes lpop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .loader-bar{display:block;width:clamp(140px,24vw,240px);height:2px;background:rgba(253,234,232,.25);border-radius:2px;overflow:hidden}
 .loader-bar i{display:block;height:100%;width:0;background:var(--cream);animation:lbar 1.9s var(--ease) forwards}
@@ -283,77 +283,80 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 
 /* ============================================================
    HERO
-   A deep, full-bleed split: her ground colour on the left carrying
-   the type, her best photograph running to the right edge. No pastel
-   wash, no confetti, no second typeface — restraint is the whole
-   point. Cream on #2a2340 is 11.8:1.
+   A centred column on her ground colour: the mark cut free of its
+   disc so there is no circle edge against the purple, then the
+   headline, then her work as a full-bleed band directly beneath.
+   Cream on #2a2340 is 11.8:1.
    ============================================================ */
-.hero{position:relative;background:var(--grape-dd);color:var(--on-grape);overflow:hidden}
-.hero-inner{display:grid;min-height:100svh}
-@media (min-width:1000px){.hero-inner{grid-template-columns:1.04fr .96fr}}
-
-.hero-copy{
-  display:flex;align-items:center;
-  padding:calc(var(--navh) + clamp(40px,8vh,96px)) clamp(20px,5vw,72px) clamp(46px,8vh,88px);
-  /* line the copy up with .wrap's left edge on a wide screen, and fall back
-     to the ordinary page gutter on a narrow one */
-  padding-left:max(var(--pad),(100vw - var(--maxw))/2);
+.hero{
+  position:relative;background:var(--grape-dd);color:var(--on-grape);overflow:hidden;
+  min-height:100svh;display:grid;place-items:center;text-align:center;
+  padding:calc(var(--navh) + clamp(26px,5vh,60px)) var(--pad) clamp(44px,7vh,76px);
 }
-.hero-copy-in{max-width:34rem;width:100%}
+.hero-inner{display:grid;justify-items:center;width:min(100%,52rem)}
 
-/* her disc is the same purple as the ground it sits on — a gold hairline
-   lifts it off without touching the mark itself */
-.hero-mark{width:clamp(74px,7vw,92px);height:auto;border-radius:50%;display:block;
-  margin-bottom:clamp(22px,3.4vh,34px);box-shadow:0 0 0 1px rgba(217,180,119,.38)}
+/* mark.png is the logo with the purple disc knocked out, so it sits on the
+   ground with no circle around it. It is cream ink only — never place it on
+   a light background; logo.png (the disc) is the one for those. */
+.hero-mark{
+  width:clamp(140px,19vw,212px);height:auto;
+  margin-bottom:clamp(14px,2.2vh,24px);
+}
 .hero-eyebrow{
-  position:relative;padding-top:15px;margin-bottom:clamp(16px,2.4vh,24px);
-  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.3em;
+  position:relative;padding-top:14px;margin-bottom:clamp(12px,1.8vh,20px);
+  font-family:var(--cond);font-weight:300;font-size:.71rem;letter-spacing:.3em;
   text-transform:uppercase;color:var(--gold-lit);
 }
-.hero-eyebrow::before{content:"";position:absolute;top:0;left:0;width:46px;height:1px;background:var(--gold)}
-
+.hero-eyebrow::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:52px;height:1px;background:var(--gold);
+}
 .hero h1{
-  font-size:clamp(2.45rem,5.6vw,4.05rem);
-  line-height:1.04;letter-spacing:-.028em;color:var(--cream);font-weight:400;
+  font-size:clamp(2.15rem,5.1vw,3.55rem);
+  line-height:1.05;letter-spacing:-.028em;color:var(--cream);font-weight:400;
 }
-.hero h1 em{font-style:italic;font-weight:300;color:#e9d7bd}   /* gold-leaning cream, 9.6:1 */
-
+.hero h1 em{font-style:italic;font-weight:300;color:#e9d7bd}
 .hero-sub{
-  margin-top:clamp(18px,2.6vh,26px);max-width:40ch;
-  color:var(--on-grape-dim);font-size:1.02em;line-height:1.66;
+  margin-top:clamp(14px,2vh,22px);max-width:46ch;
+  color:var(--on-grape-dim);font-size:1em;line-height:1.62;
 }
-.hero-cta{display:flex;flex-wrap:wrap;gap:11px;margin-top:clamp(24px,3.4vh,36px)}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:11px;margin-top:clamp(20px,2.8vh,30px)}
 .hero-facts{
-  display:flex;flex-wrap:wrap;gap:9px 26px;list-style:none;padding:26px 0 0;margin:clamp(24px,3.6vh,38px) 0 0;
-  border-top:1px solid rgba(253,234,232,.18);
+  display:flex;flex-wrap:wrap;justify-content:center;gap:9px 26px;list-style:none;
+  padding:20px 0 0;margin:clamp(20px,2.8vh,30px) 0 0;
+  border-top:1px solid rgba(253,234,232,.18);width:min(100%,32rem);
 }
 .hero-facts li{
-  font-family:var(--cond);font-weight:300;font-size:.73rem;letter-spacing:.2em;
+  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.2em;
   text-transform:uppercase;color:var(--on-grape-dim);
 }
 
-.hero-shot{position:relative;margin:0;overflow:hidden;background:var(--grape-d);min-height:54vh}
-@media (min-width:1000px){.hero-shot{min-height:100%}}
-.hero-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-scroll{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:18px;z-index:2;
+  display:none;align-items:center;gap:12px;
+  font-family:var(--cond);font-weight:300;font-size:.63rem;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--on-grape-dim);
+}
+@media (min-width:900px) and (min-height:760px){.hero-scroll{display:flex}}
+.hero-scroll i{display:block;width:40px;height:1px;background:var(--gold-lit);transform-origin:left;
+  animation:sdown 2.4s var(--ease-io) infinite}
+@keyframes sdown{0%{transform:scaleX(0)}45%{transform:scaleX(1)}55%{transform:scaleX(1);transform-origin:right}
+  100%{transform:scaleX(0);transform-origin:right}}
+
+/* her work, full width, straight under the hero */
+.hero-shot{
+  position:relative;margin:0;overflow:hidden;background:var(--grape-d);
+  height:clamp(340px,64vh,660px);
+}
+.hero-shot img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block}
 .hero-shot figcaption{
-  position:absolute;left:0;right:0;bottom:0;z-index:1;
-  display:grid;gap:3px;padding:clamp(48px,8vw,80px) clamp(18px,3vw,30px) clamp(18px,3vw,26px);
+  position:absolute;left:0;right:0;bottom:0;z-index:1;display:grid;gap:3px;
+  padding:clamp(60px,9vw,110px) var(--pad) clamp(18px,3vw,28px);
+  padding-left:max(var(--pad),(100vw - var(--maxw))/2);
   background:linear-gradient(transparent,rgba(26,21,42,.62) 30%,rgba(26,21,42,.9) 58%,rgba(26,21,42,.96));
 }
 .hero-shot-k{font-family:var(--cond);font-weight:300;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-lit)}
 .hero-shot-v{font-family:var(--display);font-style:italic;font-weight:300;font-size:1.02rem;color:var(--cream)}
-
-.hero-scroll{
-  position:absolute;left:clamp(20px,5vw,72px);bottom:20px;z-index:2;
-  left:max(var(--pad),(100vw - var(--maxw))/2);
-  display:none;align-items:center;gap:12px;
-  font-family:var(--cond);font-weight:300;font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;color:var(--on-grape-dim);
-}
-@media (min-width:1000px) and (min-height:700px){.hero-scroll{display:flex}}
-.hero-scroll i{display:block;width:44px;height:1px;background:var(--gold-lit);transform-origin:left;
-  animation:sdown 2.4s var(--ease-io) infinite}
-@keyframes sdown{0%{transform:scaleX(0)}45%{transform:scaleX(1)}55%{transform:scaleX(1);transform-origin:right}
-  100%{transform:scaleX(0);transform-origin:right}}
 
 /* ---------- marquee ---------- */
 .mq{background:var(--grape);color:var(--cream);padding:17px 0;overflow:hidden;position:relative;z-index:2}
@@ -773,6 +776,11 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 }
 
 /* ---------- short viewports ---------- */
+@media (max-height:800px) and (min-width:700px){
+  .hero-mark{width:clamp(120px,15vw,168px)}
+  .hero h1{font-size:clamp(1.95rem,4.3vw,3rem)}
+  .hero-facts{display:none}
+}
 @media (max-height:600px) and (min-width:700px){
   .hero{min-height:auto;padding-top:120px}
   .hero-scroll{display:none}
