@@ -242,7 +242,7 @@ window.SS = (function () {
   ];
 
   var faq = [
-    { q: "How do I order?", a: "Use the order builder on this page — it walks through the size, the flavours and the date, then sends the whole thing to my WhatsApp or my inbox in one message. You can also DM me on Instagram if you would rather." },
+    { q: "How do I order?", a: "Use the enquiry form on this page — it walks through the size, the flavours and the date, then sends the whole thing to my WhatsApp or my inbox in one message. You can also DM me on Instagram if you would rather." },
     { q: "How far in advance should I order?", a: "The more notice the better, especially for a weekend. Deposits need five days' notice, so five days is the realistic minimum for anything over £30." },
     { q: "What secures the date?", a: "A 50% non-refundable deposit by bank transfer on anything over £30. The order is confirmed once that has been paid, and the balance is due 24 hours before collection." },
     { q: "Can you match a picture I've seen?", a: "Send it with your enquiry. Inspiration pictures are the fastest way to an accurate quote — I'll tell you honestly what I can and can't do." },

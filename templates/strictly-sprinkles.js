@@ -103,7 +103,7 @@
       var count = c.groups
         ? c.groups.reduce(function (a, g) { return a + g.items.length; }, 0)
         : c.items.length;
-      var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""), href: "#order",
+      var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""), href: "#enquire",
                         "data-cat": c.id, "data-rv": "", "data-rv-d": String((i % 3) + 1) });
       var art = el("span", { class: "tile-art" });
       art.appendChild(el("img", { src: A + c.img, alt: "", loading: "lazy" }));
@@ -440,7 +440,7 @@
     renderFlavourStep(c);
     summarise();
     if (!silent) {
-      var sec = $("#order");
+      var sec = $("#enquire");
       if (sec) sec.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
     }
   }
@@ -691,7 +691,7 @@
     var m = missing();
     if (m) { say("err", m); flagFirst(); return; }
     handover(waLink(compose()));
-    say("ok", "WhatsApp is opening with your order written out. Press send — and add your inspiration pictures straight into the chat.");
+    say("ok", "WhatsApp is opening with your enquiry written out. Press send — and add your inspiration pictures straight into the chat.");
   });
 
   if (HAS_BUILDER) $("#sendMail").addEventListener("click", function () {
@@ -699,7 +699,7 @@
     if (m) { say("err", m); flagFirst(); return; }
     var it = chosenItem();
     handover(mailLink("Order enquiry — " + (it ? it.name : "Strictly Sprinkles"), compose()));
-    say("ok", "Your email app is opening with the order written out. Attach your inspiration pictures and send.");
+    say("ok", "Your email app is opening with your enquiry written out. Attach your inspiration pictures and send.");
   });
 
   if (HAS_BUILDER) {
@@ -784,11 +784,18 @@
   /* nav state + the phone dock */
   (function chrome() {
     var nav = $("#nav"), dock = $("#dock"), hero = $("#hero");
+    /* The bar goes cream only once the dark block at the top of the page has
+       actually scrolled away. Switching at 40px turned it white while the
+       hero photograph was still behind it, which put a white bar between two
+       dark ones — it read as a fault, and it was. */
+    var darkTop = hero || $(".page-head");
     function frame() {
-      nav.classList.toggle("solid", scrollY > 40);
-      if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
+      var edge = darkTop ? Math.max(40, darkTop.offsetHeight - nav.offsetHeight) : 40;
+      nav.classList.toggle("solid", scrollY > edge);
+      if (dock && darkTop) dock.classList.toggle("up", scrollY > darkTop.offsetHeight * 0.7);
     }
     addEventListener("scroll", frame, { passive: true });
+    addEventListener("resize", frame);
     frame();
   })();
 
