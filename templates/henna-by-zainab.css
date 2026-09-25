@@ -620,7 +620,13 @@ main,.nav,.foot{position:relative;z-index:2}
 
 /* ---------- enquiry ---------- */
 .enq-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(30px,5vw,80px);align-items:start}
-.enq-extra{display:grid;gap:12px;margin-top:2em}
+.enq-extra{
+  /* below the form, across both columns: on a phone these two sat between the
+     calendar and the first field, which put a way out of the form in the
+     middle of filling it in */
+  grid-column:1/-1;display:grid;gap:12px;margin-top:clamp(26px,4vw,48px);
+}
+@media (min-width:861px){.enq-extra{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .enq-card{
   display:flex;align-items:center;gap:16px;text-decoration:none;
   padding:1.1em 1.3em;border:1px solid var(--line);background:var(--disc);

@@ -635,8 +635,10 @@
       $$("#calGrid .is-picked").forEach(function (x) {
         x.classList.remove("is-picked"); x.removeAttribute("aria-pressed");
       });
+      /* no toast: the day turns henna and the date field fills in, both of
+         which are on screen already -- a banner over the form on top of that
+         is just something in the way */
       b.classList.add("is-picked"); b.setAttribute("aria-pressed", "true");
-      toast("Added to the form \u2014 she will confirm it by DM");
     });
 
     draw();

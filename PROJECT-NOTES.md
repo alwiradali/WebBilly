@@ -1166,6 +1166,10 @@ of the date, with weekends weighted busier. Page forward and back and the same
 month comes back identical, which a random fill would not. The suite asserts
 exactly that.
 
+Picking a day says nothing out loud: the day turns henna and the date field
+fills in, both already on screen, so a banner over the form on top of that was
+just something in the way.
+
 It opens on next month when this one is nearly spent — a grid that is four
 fifths greyed out says nothing about when she is free.
 
@@ -1199,6 +1203,10 @@ returned success and showed the thank-you, because Web3Forms had accepted it
 and delivered it somewhere else. Until the key is set the send falls through to
 the DM route, which is how she takes every booking today, so nothing is broken
 in the meantime.
+
+The Instagram and TikTok cards sit **after** the form, across both columns. On
+a phone they had been between the calendar and the first field, which put a way
+out of the form in the middle of filling it in.
 
 An email field was added with it: the enquiry now lands in an inbox, so she
 needs somewhere to reply to, and `replyto` is set to the visitor rather than to
