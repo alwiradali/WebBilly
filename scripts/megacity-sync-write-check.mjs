@@ -114,6 +114,29 @@ function stubDb(opts = {}) {
   ok(!db.log.some((s) => /INSERT|UPDATE|DELETE/.test(s.sql)), "  not one write reached the database");
 }
 
+/* ── it runs on its own, not only when somebody presses a button ──────────── */
+
+/* Walid's point, and a fair one: he should not have to open the Studio and
+   press Refresh for his own website to say what his own system says. */
+{
+  const { readFileSync } = await import("node:fs");
+  const toml = readFileSync(new URL("../wrangler.toml", import.meta.url), "utf8");
+  const worker = readFileSync(new URL("../worker.js", import.meta.url), "utf8");
+
+  const mega = toml.slice(toml.indexOf("[env.megacity]"));
+  ok(/\[env\.megacity\.triggers\][\s\S]{0,400}?crons\s*=\s*\[/.test(mega), "megacity-properties has a cron trigger");
+  const cron = (/crons\s*=\s*\[\s*"([^"]+)"/.exec(mega) || [])[1];
+  ok(cron === "*/15 * * * *", `it runs every quarter of an hour (${cron})`);
+
+  ok(/async scheduled\(event, env, ctx\)/.test(worker), "the Worker has a scheduled handler for it to fire");
+  /* worker.js is shared by several clients; only one of them has a feed */
+  ok(/if \(!env\.MEGACITY_DB \|\| !env\.TENNINETY_API_KEY\) return;/.test(worker),
+    "which does nothing in a Worker with no Megacity database or no 10ninety key");
+  ok(/ctx\.waitUntil\(/.test(worker), "and the work is handed to waitUntil so the run is not cut short");
+  ok(!/throw/.test(worker.slice(worker.indexOf("async scheduled"), worker.indexOf("async fetch"))),
+    "it never throws — a failed cron invocation has nobody watching it");
+}
+
 console.log();
 console.log(bad ? `SYNC WRITE: ${bad} FAILED` : "SYNC WRITE: ALL PASS");
 process.exit(bad ? 1 : 0);

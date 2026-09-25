@@ -62,6 +62,16 @@ export function changedFields(existing, incoming) {
     if (a === null && b === null) continue;
     if (String(a) !== String(b)) out.push(f);
   }
+  /* Photographs are not one of the columns above, and leaving them out of this
+     comparison meant a property whose only change was a new photograph counted
+     as unchanged — so the photograph never reached the website. Walid adds a
+     picture in 10ninety, exports, and nothing happens, with nothing to say why.
+     The signature is the media keys in order, which is exactly what the sync
+     would write, so it changes when and only when the set of photographs does.
+     Deliberately not the URLs: 10ninety puts a ?at= cache-buster on those that
+     moves on every export, and comparing them would make every sync a write. */
+  const pa = val(existing && existing.photoSig), pb = val(incoming.photoSig);
+  if (pb !== null && String(pa) !== String(pb)) out.push("photos");
   return out;
 }
 
@@ -256,7 +266,7 @@ export async function existingSynced(db) {
   const sql = `SELECT id, pinned, ${COLS.map(([n]) => n).filter((n) => n !== "features_json" && n !== "external_json").join(", ")}
                  FROM listings WHERE source='tenninety' AND deleted_at IS NULL AND status != 'withdrawn'`;
   const rows = (await db.prepare(sql).all()).results || [];
-  return rows.map((r) => ({
+  const out = rows.map((r) => ({
     id: r.id, pinned: r.pinned, ref: r.ref, status: r.status, title: r.title, headline: r.headline,
     type: r.type, letType: r.let_type, rentPcm: r.rent_pcm, deposit: r.deposit, bills: r.bills,
     availability: r.availability, availableFrom: r.available_from, councilTaxBand: r.council_tax_band,
@@ -264,6 +274,16 @@ export async function existingSynced(db) {
     address1: r.address_1, address2: r.address_2, town: r.town, postcode: r.postcode, area: r.area,
     lat: r.lat, lng: r.lng, summary: r.summary, description: r.description,
   }));
+
+  /* one query for every listing's feed photographs, in the order they sit in,
+     rather than one per listing */
+  const media = (await db.prepare(
+    `SELECT listing_id, key_orig FROM media
+      WHERE key_orig LIKE '%/feed.jpg' ORDER BY listing_id, sort, rowid`).all().catch(() => ({ results: [] }))).results || [];
+  const sig = {};
+  for (const m of media) sig[m.listing_id] = (sig[m.listing_id] ? sig[m.listing_id] + "," : "") + m.key_orig;
+  for (const row of out) row.photoSig = sig[row.id] || "";
+  return out;
 }
 
 /* fetch -> map -> plan -> apply, with the feed's failure kept separate from
@@ -280,6 +300,9 @@ export async function runSync(env, db, opts = {}) {
 
   const types = feedOk ? await fetchPropertyTypes(env, opts).catch(() => null) : null;
   const { listings, skipped } = feedOk ? toListings(properties, { propertyTypes: types, today: opts.today }) : { listings: [], skipped: [] };
+  /* the same keys mediaStatements will write, in the same order, so a
+     property whose only change is a new photograph is seen as changed */
+  for (const row of listings) row.photoSig = (row.images || []).map((i) => feedMediaKey(row.id, i.url)).join(",");
   const existing = await existingSynced(db).catch(() => []);
   const plan = planSync(existing, listings, { feedOk, ...opts });
   const result = feedOk ? await applyPlan(db, plan, opts) : { created: 0, updated: 0, removed: 0, failed: [] };

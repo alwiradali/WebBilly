@@ -31,6 +31,27 @@ import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/cr
 import { isRachelPath, handleRachel } from "./worker/rachel/orders.js";
 
 export default {
+  /* Cron. Only megacity-properties carries one (wrangler.toml, [env.megacity.
+     triggers]), and the guards below mean this is a no-op in any Worker that
+     does not — this file is shared by several.
+
+     It never throws: runSync returns its failure rather than raising, and an
+     exception here would show up as a failed cron invocation with nobody
+     watching. A feed that cannot be read changes nothing at all, which is the
+     behaviour the button has too. */
+  async scheduled(event, env, ctx) {
+    if (!env.MEGACITY_DB || !env.TENNINETY_API_KEY) return;
+    const { officeDb } = await import("./worker/studio/db.js");
+    const { runSync } = await import("./worker/studio/tenninety-sync.js");
+    const db = officeDb(env);
+    if (!db) return;
+    const work = runSync(env, db).then(
+      (r) => { if (!r.ok || r.created || r.updated || r.removed) console.log("10ninety cron:", r.summary); },
+      (e) => console.error("10ninety cron threw", e && e.message)
+    );
+    ctx.waitUntil(work);
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     /* Which build is actually live. Twice on 7 September this host served an

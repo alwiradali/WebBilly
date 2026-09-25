@@ -8,7 +8,7 @@
  *   node scripts/megacity-sync-plan-check.mjs
  */
 import { readFileSync } from "node:fs";
-import { toListings } from "../worker/studio/tenninety.js";
+import { toListings, feedMediaKey } from "../worker/studio/tenninety.js";
 import { planSync, describePlan, changedFields, MAX_REMOVAL_FRACTION } from "../worker/studio/tenninety-sync.js";
 
 const feed = JSON.parse(readFileSync(new URL("./fixtures/tenninety-sample.json", import.meta.url), "utf8"));
@@ -89,6 +89,40 @@ ok(/Up to date/.test(describePlan(planSync(asRows(NINE), NINE))), "a no-op says 
 ok(/9 added/.test(describePlan(planSync([], NINE))), "a first run says nine were added");
 ok(/Nothing changed/.test(describePlan(planSync(asRows(NINE), [], { feedOk: false }))),
   "a failed read says nothing changed, not 'ok'");
+
+/* ── a new photograph is a change ─────────────────────────────────────────── */
+
+/* Walid adds a picture in 10ninety and exports. Nothing else about the
+   property moved — same rent, same description, same everything the columns
+   hold. Photographs are not one of those columns, so without a signature this
+   counted as unchanged and the picture never reached the website, with nothing
+   anywhere to say why. */
+{
+  const before = { ...NINE[0], photoSig: "a,b,c" };
+  const after = { ...NINE[0], photoSig: "a,b,c,d" };
+  const f = changedFields(before, after);
+  ok(f.includes("photos"), "a property whose only change is a new photograph is seen as changed");
+
+  ok(!changedFields({ ...NINE[0], photoSig: "a,b,c" }, { ...NINE[0], photoSig: "a,b,c" }).length,
+    "and the same photographs in the same order are still no change");
+  ok(changedFields({ ...NINE[0], photoSig: "a,b,c" }, { ...NINE[0], photoSig: "c,b,a" }).includes("photos"),
+    "re-ordering them counts too — the feed decides the order they appear in");
+  ok(changedFields({ ...NINE[0], photoSig: "a,b,c" }, { ...NINE[0], photoSig: "" }).includes("photos"),
+    "and so does removing the last one");
+
+  /* the whole point of hashing the PATH and not the URL: 10ninety puts a ?at=
+     cache-buster on every image address and it moves on every export. If that
+     reached the signature, every sync would rewrite every photograph. */
+  const p1 = feedMediaKey("carlton-road-5", "https://x.10ninety.co.uk/i/1.jpg?at=111");
+  const p2 = feedMediaKey("carlton-road-5", "https://x.10ninety.co.uk/i/1.jpg?at=999");
+  ok(p1 === p2, "a re-export that only moves the cache-buster is not a photograph change");
+
+  /* an existing row that predates the signature must not read as a change on
+     its own — otherwise the first sync after this shipped would rewrite all
+     nine properties and every photograph on them */
+  ok(!changedFields({ ...NINE[0] }, { ...NINE[0] }).includes("photos"),
+    "a listing with no signature on either side is not treated as changed");
+}
 
 console.log();
 console.log(`(threshold: more than ${Math.round(MAX_REMOVAL_FRACTION * 100)}% of listings disappearing at once stops the sync)`);
