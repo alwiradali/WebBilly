@@ -1238,6 +1238,30 @@ The Instagram and TikTok cards sit **after** the form, across both columns. On
 a phone they had been between the calendar and the first field, which put a way
 out of the form in the middle of filling it in.
 
+**The form reads as three short asks** — About you / The booking / Anything I
+should know — rather than one wall of fields. Optional fields say "optional"
+outright; the asterisks are gone, because they were `aria-hidden` and so told a
+screen reader nothing the input's own `required` did not.
+
+**The postcode is asked for only when it is needed.** Choose "Please travel to
+us" and it appears, required, directly under the Where it answers; choose
+anything else and it hides *and clears*, so no postcode is ever sent that
+nobody asked for. `[hidden]` is a type-less UA selector that any class rule
+setting `display` beats, which is why the stylesheet carries
+`[hidden]{display:none!important}`.
+
+**The Where options are said by the person filling the form in.** "At yours in
+B20" read as though the visitor lived there; it is "I'll come to you in B20" /
+"Please travel to us" / "Not sure yet".
+
+**Until the key is set, Send opens a mail app** with the whole enquiry already
+written — the example asked for. Addressed to `CONTACT.email` once she gives
+one; until then the To line is blank rather than carrying an invented address
+that would bounce silently. The anchor is clicked inside the submit gesture,
+because Safari blocks a mailto handover that happens a tick later, and it is an
+`<a>` click rather than `location.href`, which some in-app browsers ignore.
+It never says "sent".
+
 An email field was added with it: the enquiry now lands in an inbox, so she
 needs somewhere to reply to, and `replyto` is set to the visitor rather than to
 the form service. It is required on the email route only — on the DM route she

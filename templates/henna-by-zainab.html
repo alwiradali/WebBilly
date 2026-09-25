@@ -245,53 +245,70 @@
     </div>
 
     <form class="enq-form" id="enqForm" novalidate data-fx="reveal" data-fx-delay="120">
+      <p class="fld-legend"><span>01</span> About you</p>
       <div class="fld-row">
         <div class="fld">
-          <label for="enqName">Your name <span class="req" aria-hidden="true">*</span></label>
+          <label for="enqName">Your name</label>
           <input type="text" id="enqName" name="name" autocomplete="name" required>
         </div>
         <div class="fld">
-          <label for="enqEmail">Your email <span class="req" aria-hidden="true">*</span></label>
+          <label for="enqEmail">Your email</label>
           <input type="email" id="enqEmail" name="email" autocomplete="email" inputmode="email" required>
           <p class="fld-note">So I can reply. Sending it as a DM instead? This one can stay empty.</p>
         </div>
         <div class="fld">
-          <label for="enqOcc">Occasion</label>
+          <label for="enqOcc">Occasion <span class="opt">optional</span></label>
           <div class="chips" id="occChips" role="group" aria-label="Occasion"></div>
           <input type="hidden" id="enqOccasion" name="occasion" value="Party">
         </div>
       </div>
 
+      <p class="fld-legend"><span>02</span> The booking</p>
       <div class="fld-row">
         <div class="fld">
-          <label for="enqDate">Date of booking <span class="req" aria-hidden="true">*</span></label>
+          <label for="enqDate">Date of booking</label>
           <input type="date" id="enqDate" name="date" required>
           <p class="fld-note">Two to three days before the event, so the stain is at its darkest on the day.</p>
         </div>
         <div class="fld">
-          <label for="enqTime">Time of booking <span class="req" aria-hidden="true">*</span></label>
+          <label for="enqTime">Time of booking</label>
           <input type="time" id="enqTime" name="time" required>
         </div>
       </div>
 
       <div class="fld-row">
         <div class="fld">
-          <label for="enqHands">How many hands / people <span class="req" aria-hidden="true">*</span></label>
+          <label for="enqHands">How many hands / people</label>
           <input type="text" id="enqHands" name="hands" placeholder="e.g. 2 hands, 1 person" required>
           <p class="fld-note">Hands, not just heads &mdash; one hand and two are different jobs. I travel for bridal and for groups over three; everything else is at mine, in B20.</p>
         </div>
         <div class="fld">
-          <label for="enqWhere">Where</label>
+          <label for="enqWhere">Where <span class="opt">optional</span></label>
+          <!-- Said by the person filling this in, not about them: "At yours in
+               B20" read as though the visitor lived there. -->
           <select id="enqWhere" name="where">
-            <option>At yours in B20</option>
-            <option>I'd like you to travel to us</option>
-            <option>Not sure yet</option>
+            <option value="I'll come to you in B20">I'll come to you in B20</option>
+            <option value="Please travel to us">Please travel to us</option>
+            <option value="Not sure yet">Not sure yet</option>
           </select>
+          <p class="fld-note" id="whereNote">I'm home based in B20. I travel for bridal and for groups of more than three.</p>
         </div>
       </div>
 
+      <!-- Only shown, and only required, once someone asks me to travel:
+           a postcode field standing empty on every other enquiry is one more
+           thing to skip past. -->
+      <div class="fld" id="enqPostWrap" hidden>
+        <label for="enqPost">Your postcode</label>
+        <input type="text" id="enqPost" name="postcode" autocomplete="postal-code"
+               inputmode="text" placeholder="e.g. B13 9XY" spellcheck="false">
+        <p class="fld-note">So I can work out the travel before I quote you.</p>
+      </div>
+
+      <p class="fld-legend"><span>03</span> Anything I should know</p>
+
       <div class="fld">
-        <label for="enqMsg">Anything else</label>
+        <label for="enqMsg">Anything else <span class="opt">optional</span></label>
         <textarea id="enqMsg" name="message" rows="4" placeholder="The design you have in mind, allergies, anything I should know…"></textarea>
       </div>
 
@@ -363,10 +380,6 @@
     <div class="section-head">
       <p class="tag" data-fx="reveal">Aftercare</p>
       <h2 data-fx="reveal" data-fx-delay="80">How to get the darkest stain</h2>
-      <p class="sub" data-fx="reveal" data-fx-delay="140">
-        Word for word from my aftercare highlight. The colour you end up with
-        is mostly decided here.
-      </p>
     </div>
     <div class="care-grid">
       <article class="care" data-fx="reveal">

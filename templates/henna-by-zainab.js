@@ -52,6 +52,12 @@
     handle:    "hennaabyzainab_",
     instagram: "https://www.instagram.com/hennaabyzainab_",
     tiktok:    "https://www.tiktok.com/@hennaabyzainab_",
+    /* Her inbox, once she gives me one. It is only used for the example send
+       below: with it, the button opens a mail app addressed to her; without
+       it, the mail app opens with everything written and the To line blank,
+       which demonstrates the flow without inventing an address that would
+       bounce silently. The real send is Web3Forms, above. */
+    email:     "",
     area:      "Birmingham",
     postcode:  "B20",
     /* Paste these once the Google Business profile exists and the review box
@@ -732,8 +738,9 @@
         "Time of booking: " + val("enqTime"),
         "How many hands / people: " + val("enqHands"),
         "Occasion: " + (val("enqOccasion") || "Party"),
-        "Where: " + (val("enqWhere") || "At yours in B20")
-      ].concat(val("enqMsg") ? ["", val("enqMsg")] : [])
+        "Where: " + (val("enqWhere") || "I'll come to you in B20")
+      ].concat(travelling() && val("enqPost") ? ["Postcode: " + val("enqPost")] : [])
+       .concat(val("enqMsg") ? ["", val("enqMsg")] : [])
        .concat(["", "Inspo pictures to follow."]).join("\n");
     }
 
@@ -751,7 +758,9 @@
                      "That email does not look right. Could you check it?"],
         ["enqDate",  !val("enqDate"),  "Please add the date you'd like \u2014 two to three days before the event."],
         ["enqTime",  !val("enqTime"),  "Please add roughly what time suits you."],
-        ["enqHands", !val("enqHands"), "Please say how many hands or people I'm doing."]
+        ["enqHands", !val("enqHands"), "Please say how many hands or people I'm doing."],
+        ["enqPost",  travelling() && !val("enqPost"),
+                     "Please add your postcode so I can work out the travel."]
       ];
       for (var i = 0; i < need.length; i++) {
         if (need[i][1]) { say(need[i][2]); $("#" + need[i][0]).focus(); return true; }
@@ -789,6 +798,24 @@
     var dmBtn = $("#enqDm");
     if (dmBtn) dmBtn.addEventListener("click", toDM);
 
+    /* The postcode only matters if she is travelling, so it only appears then.
+       [hidden] is a type-less UA selector, which any class rule setting display
+       beats -- the stylesheet carries [hidden]{display:none!important} for
+       exactly this. */
+    var whereSel = $("#enqWhere"), postWrap = $("#enqPostWrap"), postFld = $("#enqPost");
+    function travelling() { return /travel/i.test(val("enqWhere")); }
+    function syncPost() {
+      if (!postWrap) return;
+      var on = travelling();
+      postWrap.hidden = !on;
+      if (postFld) {
+        postFld.required = on;
+        if (!on) postFld.value = "";       // never send a postcode nobody asked for
+      }
+    }
+    if (whereSel) whereSel.addEventListener("change", syncPost);
+    syncPost();
+
     /* ---- route one: straight to her inbox ---- */
     f.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -797,11 +824,26 @@
 
       var btn = $("#enqBtn"), label = btn.textContent;
 
-      /* No key means no inbox to send to. Say so in the console and hand the
-         whole thing to the DM route rather than pretending it went. */
+      /* No key yet, so the button shows what sending looks like: the mail app
+         opens with the whole enquiry already written. Addressed to her once
+         CONTACT.email is set; until then the To line is blank rather than
+         carrying an invented address that would bounce silently.
+
+         The anchor is clicked inside the submit gesture -- Safari blocks a
+         mailto handover that happens a tick later -- and it is an <a> click
+         rather than location.href, which some in-app browsers ignore. */
       if (!W3F_KEY) {
-        console.warn("[enquiry] no Web3Forms access key set - see W3F_KEY in henna-by-zainab.js");
-        toDM();
+        console.warn("[enquiry] no Web3Forms access key set - see W3F_KEY in henna-by-zainab.js. " +
+                     "Falling back to a mailto handover.");
+        var subject = "Henna enquiry \u2014 " + val("enqName") + ", " + pretty(val("enqDate"));
+        var href = "mailto:" + encodeURIComponent(CONTACT.email || "") +
+                   "?subject=" + encodeURIComponent(subject) +
+                   "&body=" + encodeURIComponent(compose());
+        var a = el("a"); a.href = href;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        say("Your email app should be opening with all of this written out" +
+            (CONTACT.email ? " and addressed to me" : "") + " \u2014 just press send. " +
+            "Nothing happening? Use \u201cSend it as a DM instead\u201d, which always works.", true);
         return;
       }
 
@@ -821,7 +863,8 @@
           "Time of booking": val("enqTime"),
           "How many hands / people": val("enqHands"),
           "Occasion": val("enqOccasion") || "Party",
-          "Where": val("enqWhere") || "At yours in B20",
+          "Where": val("enqWhere") || "I'll come to you in B20",
+          "Postcode": travelling() ? val("enqPost") : "",
           "Anything else": val("enqMsg"),
           message: compose()
         })

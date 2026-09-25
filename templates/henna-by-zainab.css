@@ -643,6 +643,21 @@ main,.nav,.foot{position:relative;z-index:2}
    blows out of the track and drags the field's border past the form edge */
 .fld-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
 .fld{display:grid;gap:.55em;align-content:start}
+/* three short asks rather than one wall of fields */
+.fld-legend{
+  display:flex;align-items:center;gap:.7em;margin:clamp(14px,2vw,22px) 0 -2px;
+  padding-top:clamp(14px,2vw,22px);border-top:1px solid var(--line);
+  font-family:var(--display);font-size:.78rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink);
+}
+.enq-form > .fld-legend:first-child{margin-top:0;padding-top:0;border-top:0}
+.fld-legend span{font-family:var(--script);font-size:1.5rem;letter-spacing:0;
+  text-transform:none;color:var(--gold-ink);line-height:1}
+/* said outright rather than left to be worked out from the absence of a star */
+.opt{
+  font-family:var(--body);font-size:.78rem;font-style:italic;letter-spacing:0;
+  text-transform:none;color:var(--ink-dim);
+}
 .fld label{font-family:var(--display);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--henna)}
 .req{color:var(--gold)}
 .fld input,.fld textarea,.fld select{
