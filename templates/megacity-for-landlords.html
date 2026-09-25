@@ -558,10 +558,20 @@
     <form class="lreg" id="landlordForm" data-landlord>
       <fieldset class="lreg-set">
         <legend>About you</legend>
+        <div class="lreg-row lreg-row--title">
+          <p class="lreg-f"><label for="lrTitle">Title</label>
+            <select id="lrTitle" name="title">
+              <option value="">Select</option>
+              <option>Mr</option><option>Mrs</option><option>Miss</option><option>Ms</option>
+              <option>Dr</option><option>Prof</option><option>Sir</option>
+            </select></p>
+          <p class="lreg-f"><label for="lrFirst">First name</label>
+            <input id="lrFirst" name="firstName" required maxlength="80" autocomplete="given-name"></p>
+        </div>
         <div class="lreg-row">
-          <p class="lreg-f"><label for="lrName">Your name</label>
-            <input id="lrName" name="name" required maxlength="120" autocomplete="name"></p>
-          <p class="lreg-f"><label for="lrPhone">Phone number</label>
+          <p class="lreg-f"><label for="lrSurname">Surname</label>
+            <input id="lrSurname" name="surname" required maxlength="80" autocomplete="family-name"></p>
+          <p class="lreg-f"><label for="lrPhone">Mobile number</label>
             <input id="lrPhone" name="phone" type="tel" required maxlength="60" autocomplete="tel"></p>
         </div>
         <p class="lreg-f"><label for="lrEmail">Email</label>
@@ -658,10 +668,13 @@
         <div class="lreg-row">
           <p class="lreg-f"><label for="lrService">Service</label>
             <select id="lrService" name="service">
-              <option value="">Not sure yet, advise me</option>
-              <option value="Let Only (&pound;295)">Let Only &mdash; &pound;295</option>
+              <option value="Not sure">Not sure yet, advise me</option>
+              <option value="Tenant Find (Let Only, &pound;295)">Tenant Find (Let Only) &mdash; &pound;295</option>
               <option value="Rent Collection (5%)">Rent Collection &mdash; 5%</option>
               <option value="Full Management (10%)">Full Management &mdash; 10%</option>
+              <option value="HMO Management">HMO Management</option>
+              <option value="Switching Agent">Switching agent</option>
+              <option value="Rental Valuation">Rental valuation</option>
             </select></p>
           <p class="lreg-f"><label for="lrPortfolio">Properties you let</label>
             <select id="lrPortfolio" name="portfolio">

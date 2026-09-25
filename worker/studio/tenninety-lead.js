@@ -62,8 +62,14 @@ export function splitName(full) {
 export function leadBody(e) {
   const role = ROLE_FOR[e.kind];
   if (!role) return null;
-  /* Their rule: one of Firstname, Surname or CompanyName is required. */
-  const name = splitName(e.name);
+  /* Their rule: one of Firstname, Surname or CompanyName is required.
+     Both registration forms now ask for first name and surname separately, as
+     his 10ninety forms did, so those are used as given. Splitting a joined
+     name back apart gets "Mary Anne Smith" wrong, and there is no reason to
+     guess at something the visitor has already said. */
+  const given = { ...(clip(e.firstName, 100) ? { Firstname: clip(e.firstName, 100) } : {}),
+                  ...(clip(e.surname, 100) ? { Surname: clip(e.surname, 100) } : {}) };
+  const name = Object.keys(given).length ? given : splitName(e.name);
   if (!name.Firstname && !name.Surname && !e.company) return null;
   /* And a lead nobody can reply to is not a lead. */
   const email = clip(e.email, 255);

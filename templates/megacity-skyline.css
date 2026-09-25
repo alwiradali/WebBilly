@@ -972,6 +972,41 @@ form.enq{display:grid;gap:18px;align-content:start}
    other or both reads as one page rather than three different shapes */
 .pd-video{display:block;width:100%;height:auto;aspect-ratio:16/9;margin:0 0 14px;border-radius:16px;background:#060b1a;object-fit:cover}
 /* 360° video: the same box as the tour and the walkthrough */
+/* ── tenant registration: the same details his 10ninety form asked for ── */
+.treg{max-width:100%}
+.treg-cols{display:grid;gap:26px;grid-template-columns:1fr}
+@media (min-width:860px){.treg-cols{grid-template-columns:1fr 1fr;gap:34px}}
+.treg-set{border:0;margin:0;padding:0;min-width:0}
+.treg-set legend{padding:0 0 12px;font:600 17px/1.3 var(--ff-u,Georgia,serif);color:#fff}
+.treg-row{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:520px){.treg-row{grid-template-columns:1fr 1fr}.treg-row--title{grid-template-columns:110px 1fr}}
+.treg-f{margin:0 0 12px}
+.treg-f--short{max-width:180px}
+.treg-f label{display:block;margin:0 0 5px;font:500 13px/1.3 var(--ff-b,system-ui,sans-serif);color:rgba(255,255,255,.82)}
+.treg-f .req{color:#7fc4ff}
+.treg-f input,.treg-f select,.treg-f textarea{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid rgba(255,255,255,.28);border-radius:10px;background:rgba(255,255,255,.06);color:#fff;font:400 15px/1.4 var(--ff-b,system-ui,sans-serif)}
+.treg-f textarea{min-height:84px;resize:vertical}
+.treg-f select option{color:#12142b}
+.treg-f input:focus-visible,.treg-f select:focus-visible,.treg-f textarea:focus-visible{outline:3px solid #7fc4ff;outline-offset:2px}
+.treg-lab{margin:14px 0 8px;font:500 13px/1.3 var(--ff-b,system-ui,sans-serif);color:rgba(255,255,255,.82)}
+.treg-note{margin:0 0 12px;font:400 12.5px/1.5 var(--ff-b,system-ui,sans-serif);color:rgba(255,255,255,.6)}
+.treg-boxes{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 6px}
+@media (min-width:440px){.treg-boxes{grid-template-columns:1fr 1fr}}
+.treg-boxes--beds{grid-template-columns:repeat(5,1fr)}
+.treg-boxes--beds .treg-box{padding:12px 6px 12px 34px;text-align:left}
+.pd-vform .treg-boxes--beds .treg-box input[type="checkbox"]{left:10px}
+/* a tap target that is the whole chip, not the 17px box inside it */
+/* max-width and a wrapping label: "Unfurnished + white appliances" and
+   "Manchester City Centre" are wider than a phone, and a pill that cannot
+   shrink pushes the whole page sideways */
+.treg-box{display:block;position:relative;min-height:44px;padding:12px 14px 12px 42px;border:1px solid rgba(255,255,255,.28);border-radius:14px;background:rgba(255,255,255,.06);color:#fff;font:400 14px/1.35 var(--ff-b,system-ui,sans-serif);cursor:pointer}
+.pd-vform .treg-box input[type="checkbox"]{position:absolute;left:14px;top:13px;width:17px;height:17px;min-height:0;margin:0;padding:0;border-radius:3px}
+.treg-box:has(input:checked){background:#fff;border-color:#fff;color:#12142b}
+.treg-box input{width:17px;height:17px;accent-color:#2e3480;cursor:pointer}
+.treg-box:focus-within{outline:3px solid #7fc4ff;outline-offset:2px}
+.treg-box--sub{margin-top:14px}
+.treg-foot{margin-top:22px}
+
 .pd-v360{position:relative;width:100%;aspect-ratio:16/9;min-height:280px;margin:0 0 14px;border-radius:16px;overflow:hidden;background:#060b1a;touch-action:none}
 @media (max-width:700px){.pd-v360{min-height:60vh}}
 .pd-v360 .v360-canvas{display:block;width:100%;height:100%;cursor:grab}
@@ -2097,6 +2132,8 @@ body.sl-open{overflow:hidden}
   color:rgba(255,255,255,.62);text-transform:uppercase;letter-spacing:.11em}
 .lreg-row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 .lreg-row--addr{grid-template-columns:2fr 1fr}
+/* a title box is five letters wide; it does not need half the row */
+.lreg-row--title{grid-template-columns:120px 1fr}
 .lreg-f{display:grid;gap:7px;margin:0;min-width:0}
 .lreg-f label{font:600 14px/1.4 var(--ff-u);color:rgba(255,255,255,.9)}
 .lreg-f input,.lreg-f select,.lreg-f textarea{width:100%;border:0;border-radius:10px;
@@ -2108,6 +2145,7 @@ body.sl-open{overflow:hidden}
 .lreg .btn{margin-bottom:0;justify-self:start}
 @media (max-width:720px){
   .lreg-row,.lreg-row--addr{grid-template-columns:1fr}
+  .lreg-row--title{grid-template-columns:104px 1fr}
 }
 
 /* ── floating valuation pill ─────────────────────────────────────────── */

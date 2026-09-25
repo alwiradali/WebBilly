@@ -992,7 +992,15 @@ async function handleMegacityContact(request, env, ctx) {
     const detail = await res.text();
     return json({ error: "Email provider rejected the request", detail }, 502);
   }
-  if (ctx) ctx.waitUntil(recordEnquiry(env, { topic, name, email, phone, property: topic, message, attr: body.attr }));
+  /* The tenant registration form sends its answers as fields as well as in
+     the message, so the 10ninety lead carries the ones their record has a
+     place for — the address and the areas — instead of only prose. */
+  if (ctx) ctx.waitUntil(recordEnquiry(env, {
+    topic, name, email, phone, property: topic, message, attr: body.attr,
+    firstName: body.firstName, surname: body.surname,
+    address1: body.address1, address2: body.address2, town: body.town, postcode: body.postcode,
+    areaNames: Array.isArray(body.areaNames) ? body.areaNames.slice(0, 10).map((a) => String(a).slice(0, 80)) : undefined,
+  }));
   return json({ ok: true });
 }
 
@@ -1013,7 +1021,11 @@ async function handleMegacityLandlord(request, env, ctx) {
   if (!body || typeof body !== "object") return json({ error: "Invalid JSON body" }, 400);
   if (body.botcheck) return json({ ok: true });
   const s = (k, n) => String(body[k] || "").trim().slice(0, n);
-  const name = s("name", 120), email = s("email", 160), phone = s("phone", 60);
+  const title = s("title", 12);
+  /* first and surname arrive separately now, as his 10ninety form asked for
+     them; an older page still posting "name" keeps working */
+  const name = ([s("firstName", 80), s("surname", 80)].filter(Boolean).join(" ") || s("name", 120)).slice(0, 120);
+  const email = s("email", 160), phone = s("phone", 60);
   const address = s("address", 200), postcode = s("postcode", 12).toUpperCase();
   const area = s("area", 40), ptype = s("propertyType", 40), bedrooms = s("bedrooms", 4);
   const furnishing = s("furnishing", 40), epc = s("epc", 20), parking = s("parking", 4);
@@ -1031,7 +1043,7 @@ async function handleMegacityLandlord(request, env, ctx) {
   const parkL = optionLabel("parkingSpaces", parking);
   const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const pairs = [
-    ["Name", name], ["Phone", phone], ["Email", email],
+    ["Name", [title, name].filter(Boolean).join(" ")], ["Phone", phone], ["Email", email],
     ["Address", address], ["Postcode", postcode || "—"], ["Area", areaL || "—"],
     ["Property type", typeL || "—"], ["Bedrooms", bedrooms || "—"], ["Furnishing", furnL || "—"],
     ["EPC", epcL || "—"], ["Parking", parkL || "—"], ["Situation", situation || "—"],
@@ -1062,6 +1074,8 @@ async function handleMegacityLandlord(request, env, ctx) {
   }
   if (ctx) ctx.waitUntil(recordEnquiry(env, {
     source: "landlord", name, email, phone, property: where || null,
+    firstName: s("firstName", 80), surname: s("surname", 80),
+    address1: address, postcode, areaNames: areaL ? [areaL] : undefined,
     message: pairs.slice(3).map(([k, v]) => k + ": " + v).join("\n"),
     attr: body.attr,
   }));

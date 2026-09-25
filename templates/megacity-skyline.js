@@ -820,13 +820,48 @@ window.mcBeacon = (name, extra) => {
     const btn = f.querySelector("button[type=submit]");
     btn.disabled = true; btn.style.opacity = ".6"; note.textContent = "";
     try {
+      const val = (n) => (f.elements[n] ? String(f.elements[n].value || "").trim() : "");
+      /* every ticked box under one name, in the order they appear */
+      const ticked = (n) => Array.from(f.querySelectorAll('input[name="' + n + '"]:checked')).map((b) => b.value);
+      const money = (n) => { const v = val(n); return v ? "\u00a3" + Number(v).toLocaleString("en-GB") : ""; };
+
+      const areas = ticked("areas");
+      const beds = ticked("bedrooms");
+      const types = ticked("propertyTypes");
+      const furn = ticked("furnishing");
+      const addr = [val("address1"), val("address2"), val("town"), val("county"), val("postcode")].filter(Boolean).join(", ");
+      const price = [money("minPrice"), money("maxPrice")].filter(Boolean).join(" to ") ||
+        (val("minPrice") || val("maxPrice") ? "" : "any");
+
+      /* One labelled block, so the office email and the Studio inbox both read
+         as the form did rather than as a paragraph somebody has to decode. */
+      const lines = [
+        ["Name", [val("title"), val("firstName"), val("surname")].filter(Boolean).join(" ")],
+        ["Current address", addr],
+        ["Bedrooms", beds.join(", ")],
+        ["Price", price],
+        ["Areas", areas.join(", ")],
+        ["Property type", types.join(", ")],
+        ["Furnishing", furn.join(", ")],
+        ["Notes", val("message")],
+        ["Property alerts", f.elements.alerts && f.elements.alerts.checked ? "yes" : "no"]
+      ].filter((l) => l[1]).map((l) => l[0] + ": " + l[1]);
+
       const r = await fetch("/api/megacity-contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(),
+          name: [val("firstName"), val("surname")].filter(Boolean).join(" "),
+          phone: val("phone"), email: val("email"),
           topic: "Tenant registration",
-          message: "Registered on the website.\nLooking for: " + (f.wants.value.trim() || "not stated"),
+          message: "Registered on the website.\n" + lines.join("\n"),
+          /* the parts 10ninety's own lead record has a place for */
+          title: val("title"), firstName: val("firstName"), surname: val("surname"),
+          address1: val("address1"), address2: val("address2"), town: val("town"),
+          county: val("county"), postcode: val("postcode"),
+          areaNames: areas, bedrooms: beds, propertyTypes: types, furnishing: furn,
+          minPrice: val("minPrice"), maxPrice: val("maxPrice"),
+          alerts: !!(f.elements.alerts && f.elements.alerts.checked),
           attr: window.mcAttr || {}, botcheck: f.botcheck.value
         })
       });
@@ -862,7 +897,9 @@ window.mcBeacon = (name, extra) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: v("name"), phone: v("phone"), email: v("email"),
+          name: [v("firstName"), v("surname")].filter(Boolean).join(" "),
+          title: v("title"), firstName: v("firstName"), surname: v("surname"),
+          phone: v("phone"), email: v("email"),
           address: v("address"), postcode: v("postcode"), area: v("area"),
           propertyType: v("propertyType"), bedrooms: v("bedrooms"), furnishing: v("furnishing"),
           epc: v("epc"), parking: v("parking"), situation: v("situation"), rent: v("rent"),

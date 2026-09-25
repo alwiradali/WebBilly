@@ -92,6 +92,26 @@ function sourceFrom(topic, fallback) {
 
 /* Best-effort: never throws, never blocks the email. */
 export async function recordEnquiry(env, e) {
+  /* Into 10ninety as well as into the inbox.
+   *
+   * worker/studio/tenninety-lead.js was written for this and then never
+   * called, so every enquiry since has reached Walid's email and his Studio
+   * and never his own system — where he actually works. This is the one place
+   * every form already passes through, so it is the right place for it.
+   *
+   * Before the database guard on purpose: a lead belongs in 10ninety whether
+   * or not D1 is bound here. sendLead never throws and never blocks — the
+   * visitor has already been thanked by the time this runs. */
+  try {
+    const { sendLead, ROLE_FOR } = await import("./tenninety-lead.js");
+    const source = valid("enquirySource", e.source) && e.source ? e.source : sourceFrom(e.topic, "contact");
+    const kind = e.leadKind || source;
+    if (ROLE_FOR[kind]) {
+      const r = await sendLead(env, { ...e, kind, formLabel: label("enquirySource", source) });
+      if (!r.ok && !r.skipped) console.error("10ninety lead not created:", r.why);
+    }
+  } catch (err) { console.error("10ninety lead", err && err.message); }
+
   const db = officeDb(env);
   if (!db) return null;
   try {

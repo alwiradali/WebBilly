@@ -262,14 +262,166 @@
     <p class="no">Register</p>
     <h2>Tell us what you<br>are <em>looking for.</em></h2>
     <p class="lede">Homes go quickly, and a lot of ours are let before they ever reach a portal. Leave your details and we will call you when something fits.</p>
-    <form class="pd-vform" id="regForm" data-register style="max-width:560px">
-      <input name="name" placeholder="Your name" required maxlength="120" autocomplete="name">
-      <input name="phone" type="tel" placeholder="Phone number" required maxlength="60" autocomplete="tel">
-      <input name="email" type="email" placeholder="Email" required maxlength="160" autocomplete="email">
-      <input name="wants" placeholder="What are you looking for? e.g. 2 bed in Salford, up to &pound;1,100" maxlength="200">
+    <form class="pd-vform treg" id="regForm" data-register>
+      <div class="treg-cols">
+        <fieldset class="treg-set">
+          <legend>Your details</legend>
+          <div class="treg-row treg-row--title">
+            <p class="treg-f"><label for="tgTitle">Title</label>
+              <select id="tgTitle" name="title">
+                <option value="">Select</option>
+                <option>Mr</option>
+                <option>Mrs</option>
+                <option>Miss</option>
+                <option>Ms</option>
+                <option>Dr</option>
+                <option>Prof</option>
+                <option>Sir</option>
+              </select></p>
+            <p class="treg-f"><label for="tgFirst">First name <span class="req">*</span></label>
+              <input id="tgFirst" name="firstName" required maxlength="80" autocomplete="given-name"></p>
+          </div>
+          <div class="treg-row">
+            <p class="treg-f"><label for="tgSurname">Surname <span class="req">*</span></label>
+              <input id="tgSurname" name="surname" required maxlength="80" autocomplete="family-name"></p>
+            <p class="treg-f"><label for="tgEmail">Email <span class="req">*</span></label>
+              <input id="tgEmail" name="email" type="email" required maxlength="160" autocomplete="email"></p>
+          </div>
+          <p class="treg-f"><label for="tgPhone">Mobile number <span class="req">*</span></label>
+            <input id="tgPhone" name="phone" type="tel" required maxlength="60" autocomplete="tel"></p>
+
+          <p class="treg-note">Your current address, so we know where you are moving from. Optional.</p>
+          <p class="treg-f"><label for="tgAddr1">Address</label>
+            <input id="tgAddr1" name="address1" maxlength="200" autocomplete="address-line1" placeholder="First line and street"></p>
+          <p class="treg-f"><label class="vis-hidden" for="tgAddr2">Address line 2</label>
+            <input id="tgAddr2" name="address2" maxlength="200" autocomplete="address-line2" placeholder="Address line 2"></p>
+          <div class="treg-row">
+            <p class="treg-f"><label for="tgTown">Town</label>
+              <input id="tgTown" name="town" maxlength="80" autocomplete="address-level2"></p>
+            <p class="treg-f"><label for="tgCounty">County</label>
+              <input id="tgCounty" name="county" maxlength="80" autocomplete="address-level1"></p>
+          </div>
+          <p class="treg-f treg-f--short"><label for="tgPostcode">Postcode</label>
+            <input id="tgPostcode" name="postcode" maxlength="12" autocomplete="postal-code"></p>
+        </fieldset>
+
+        <fieldset class="treg-set">
+          <legend>What you are looking for</legend>
+
+          <p class="treg-lab" id="tgBedsLab">Bedrooms</p>
+          <div class="treg-boxes treg-boxes--beds" role="group" aria-labelledby="tgBedsLab">
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed0" value="1"><span>1</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed1" value="2"><span>2</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed2" value="3"><span>3</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed3" value="4"><span>4</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed4" value="5"><span>5</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed5" value="6"><span>6</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed6" value="7"><span>7</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed7" value="8"><span>8</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed8" value="9"><span>9</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed9" value="10+"><span>10+</span></label>
+          </div>
+
+          <div class="treg-row">
+            <p class="treg-f"><label for="tgMin">Price from</label>
+              <select id="tgMin" name="minPrice">
+              <option value="">No minimum</option>
+              <option value="100">&pound;100</option>
+              <option value="150">&pound;150</option>
+              <option value="200">&pound;200</option>
+              <option value="250">&pound;250</option>
+              <option value="300">&pound;300</option>
+              <option value="350">&pound;350</option>
+              <option value="400">&pound;400</option>
+              <option value="450">&pound;450</option>
+              <option value="500">&pound;500</option>
+              <option value="600">&pound;600</option>
+              <option value="700">&pound;700</option>
+              <option value="800">&pound;800</option>
+              <option value="900">&pound;900</option>
+              <option value="1000">&pound;1,000</option>
+              <option value="1250">&pound;1,250</option>
+              <option value="1500">&pound;1,500</option>
+              <option value="1750">&pound;1,750</option>
+              <option value="2000">&pound;2,000</option>
+              <option value="3000">&pound;3,000</option>
+              <option value="4000">&pound;4,000</option>
+              <option value="5000">&pound;5,000</option>
+              </select></p>
+            <p class="treg-f"><label for="tgMax">Price to</label>
+              <select id="tgMax" name="maxPrice">
+              <option value="">No maximum</option>
+              <option value="100">&pound;100</option>
+              <option value="150">&pound;150</option>
+              <option value="200">&pound;200</option>
+              <option value="250">&pound;250</option>
+              <option value="300">&pound;300</option>
+              <option value="350">&pound;350</option>
+              <option value="400">&pound;400</option>
+              <option value="450">&pound;450</option>
+              <option value="500">&pound;500</option>
+              <option value="600">&pound;600</option>
+              <option value="700">&pound;700</option>
+              <option value="800">&pound;800</option>
+              <option value="900">&pound;900</option>
+              <option value="1000">&pound;1,000</option>
+              <option value="1250">&pound;1,250</option>
+              <option value="1500">&pound;1,500</option>
+              <option value="1750">&pound;1,750</option>
+              <option value="2000">&pound;2,000</option>
+              <option value="3000">&pound;3,000</option>
+              <option value="4000">&pound;4,000</option>
+              <option value="5000">&pound;5,000</option>
+              </select></p>
+          </div>
+          <p class="treg-note">Per calendar month.</p>
+
+          <p class="treg-lab" id="tgAreaLab">Areas</p>
+          <div class="treg-boxes" role="group" aria-labelledby="tgAreaLab">
+          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea0" value="Bury"><span>Bury</span></label>
+          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea1" value="Manchester City Centre"><span>Manchester City Centre</span></label>
+          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea2" value="Salford"><span>Salford</span></label>
+          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea3" value="Stockport"><span>Stockport</span></label>
+          </div>
+
+          <p class="treg-lab" id="tgTypeLab">Property type</p>
+          <div class="treg-boxes" role="group" aria-labelledby="tgTypeLab">
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType0" value="Apartment"><span>Apartment</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType1" value="Bungalow"><span>Bungalow</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType2" value="Cottage"><span>Cottage</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType3" value="Detached House"><span>Detached House</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType4" value="Double Room"><span>Double Room</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType5" value="Flat"><span>Flat</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType6" value="Maisonette"><span>Maisonette</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType7" value="Semi-Detached House"><span>Semi-Detached House</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType8" value="Single Room"><span>Single Room</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType9" value="Studio"><span>Studio</span></label>
+          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType10" value="Terraced House"><span>Terraced House</span></label>
+          </div>
+
+          <p class="treg-lab" id="tgFurnLab">Furnishing</p>
+          <div class="treg-boxes" role="group" aria-labelledby="tgFurnLab">
+          <label class="treg-box"><input type="checkbox" name="furnishing" id="tgFurn0" value="Fully"><span>Fully</span></label>
+          <label class="treg-box"><input type="checkbox" name="furnishing" id="tgFurn1" value="Furnished/unfurnished"><span>Furnished/unfurnished</span></label>
+          <label class="treg-box"><input type="checkbox" name="furnishing" id="tgFurn2" value="Part"><span>Part</span></label>
+          <label class="treg-box"><input type="checkbox" name="furnishing" id="tgFurn3" value="Unfurnished"><span>Unfurnished</span></label>
+          <label class="treg-box"><input type="checkbox" name="furnishing" id="tgFurn4" value="Unfurnished + white appliances"><span>Unfurnished + white appliances</span></label>
+          </div>
+
+          <p class="treg-f"><label for="tgMessage">Anything else we should know</label>
+            <textarea id="tgMessage" name="message" rows="3" maxlength="2000"
+              placeholder="Move-in date, pets, parking, anything that matters to you"></textarea></p>
+
+          <label class="treg-box treg-box--sub"><input type="checkbox" name="alerts" id="tgAlerts" value="yes" checked>
+            <span>Email me when something that fits is listed</span></label>
+        </fieldset>
+      </div>
+
       <input type="text" name="botcheck" class="vis-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" class="btn btn--fill">Register my details</button>
-      <p class="pd-vnote" aria-live="polite"></p>
+      <div class="treg-foot">
+        <button type="submit" class="btn btn--fill">Register my details</button>
+        <p class="pd-vnote" aria-live="polite"></p>
+      </div>
     </form>
     <p class="pd-vdone" hidden>Thank you, you are on the list. We will call or email you when something that fits is listed.</p>
     <div class="phead-ctas">
