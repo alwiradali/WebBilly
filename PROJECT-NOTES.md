@@ -1331,10 +1331,13 @@ renumber themselves. The composed message is built once by `compose()` and sent
 down either route — `wa.me` or `mailto:` — so WhatsApp and email can never
 drift apart.
 
-**Two cuts of her logo, and they are not interchangeable.** `logo.png` is the
-disc, cut from her profile picture; it works on any ground and is what the nav
-and the footer use. `mark.png` is the same artwork with the purple disc knocked
-out — the ink is her cream and nothing else, so it sits on the dark ground with
+**Three cuts of her logo, and they are not interchangeable.** `logo.png` is the
+disc, cut from her profile picture; it works on any ground and is what the
+footer uses. `mark.png` and `mark-ink.png` are the same artwork with the purple
+disc knocked out — cream ink and purple ink respectively, sharing one alpha
+mask. The nav carries both and cross-fades between them with the bar's state,
+so the mark is circle-free in both. `mark.png` is the hero and the loader.
+`mark.png` is the same artwork with the purple disc knocked out — the ink is her cream and nothing else, so it sits on the dark ground with
 no circle around it. That is the hero and the loader. **Never put `mark.png` on
 a light background:** cream ink on cream is invisible. A viewport check asserts
 it, so the mistake cannot ship.
@@ -1364,6 +1367,14 @@ than linked.
 **The reviews are examples and the page says so.** `reviewsAreExamples` in the
 data file puts a marker next to the score. Replace `reviews` with her real
 Google reviews and set it to `false`.
+
+**The hero's sprinkles are seeded off the mark, not scattered.** `dust()` in
+the JS places them in polar coordinates around the mark's own ring with the
+radius biased toward it (`Math.pow(random, 1.9)`), so they read as the logo
+shedding rather than as dust on the screen — an even-by-area distribution was
+tried first and reads as neither. Each dot is transformed on its own, 82 on a
+desktop and 38 on a phone, 61fps on both, and none are drawn under reduced
+motion.
 
 **Two things that were measured, not eyeballed.** The tile scrim stops at
 rgba(36,29,56,.82) at 34% because at .46 the body copy read 3.1:1 over the

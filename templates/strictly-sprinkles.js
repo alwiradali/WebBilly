@@ -845,6 +845,56 @@
   else addEventListener("load", function () { setTimeout(done, 500); });
   setTimeout(done, 3600);   /* never let a slow image hold the page hostage */
 
+  /* ---------- the hero's sprinkles ----------
+     Dots seeded around the mark and thinning outward, so the logo looks like
+     it is shedding onto the page. Positions are recomputed on resize because
+     the mark moves with the layout. */
+  (function dust() {
+    var layer = $("#heroDust"), mark = $(".hero-mark"), hero = $("#hero");
+    if (!layer || !mark || !hero || reduced) return;
+
+    function build() {
+      layer.textContent = "";
+      var hb = hero.getBoundingClientRect(), mb = mark.getBoundingClientRect();
+      if (!hb.width || !mb.width) return;
+      var cx = mb.left - hb.left + mb.width / 2;
+      var cy = mb.top - hb.top + mb.height / 2;
+      var r0 = mb.width * 0.46;                    /* the ring's own radius */
+      var reach = Math.max(hb.width, hb.height) * 0.62;
+      var n = innerWidth < 700 ? 38 : 82;
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < n; i++) {
+        /* Biased toward the mark, not spread evenly by area: they have to
+           read as shedding off the ring, and an even scatter just reads as
+           dust on the screen. */
+        var t = Math.pow(Math.random(), 1.9);
+        var dist = r0 + t * reach;
+        var ang = Math.random() * Math.PI * 2;
+        var x = cx + Math.cos(ang) * dist;
+        var y = cy + Math.sin(ang) * dist * 0.82;   /* the hero is wider than tall */
+        if (x < -20 || x > hb.width + 20 || y < -20 || y > hb.height + 20) continue;
+        var fade = 1 - t;                            /* thinner the further out */
+        var size = (1.4 + Math.random() * 1.9 * (0.5 + fade * 0.5)).toFixed(2);
+        var dur = 16 + Math.random() * 20;
+        var b = el("i");
+        b.style.cssText =
+          "left:" + x.toFixed(1) + "px;top:" + y.toFixed(1) + "px;" +
+          "width:" + size + "px;height:" + size + "px;" +
+          "opacity:" + (0.07 + fade * 0.46).toFixed(3) + ";" +
+          "--dx:" + (Math.cos(ang) * (14 + Math.random() * 40)).toFixed(0) + "px;" +
+          "--dy:" + (Math.sin(ang) * (10 + Math.random() * 30) - 8).toFixed(0) + "px;" +
+          "animation:dust " + dur.toFixed(1) + "s ease-in-out " +
+          (-Math.random() * dur).toFixed(1) + "s infinite alternate;";
+        frag.appendChild(b);
+      }
+      layer.appendChild(frag);
+    }
+
+    build();
+    var t; addEventListener("resize", function () { clearTimeout(t); t = setTimeout(build, 200); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+  })();
+
   /* sprinkles last — they are decoration and cost frames */
   $$("[data-sprinkles]").forEach(sprinkle);
 
