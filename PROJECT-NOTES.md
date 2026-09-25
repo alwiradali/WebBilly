@@ -1288,3 +1288,58 @@ honest maximum.
 all. Everything here came off Instagram stories at 653–1100px and the page is
 built around what those pixels honestly carry. Also a Google Business profile
 if she wants real reviews rather than the labelled placeholder layout.
+
+## Strictly Sprinkles (home bakery, Stockton-on-Tees) — `templates/strictly-sprinkles`
+
+Four files: `templates/strictly-sprinkles.{html,css,js}` plus
+`templates/strictly-sprinkles-data.js`, and her assets in `assets/strictly/`.
+Noindex, like every client demo.
+
+**The data file is the site.** Every price, size, flavour, product and category
+lives in `strictly-sprinkles-data.js`. Nothing in the HTML or the CSS names a
+cake. Add an item to a list and it appears in the price list, in the category
+tile's count, in the "from" figure and in the order builder's item chooser, and
+it starts counting towards the running total — no other edit. Set `price: null`
+and the site writes "On enquiry" everywhere instead of a figure, and the builder
+stops totalling it. This is what "super customisable" was asked for: she can
+reprice the whole shop without touching layout.
+
+**The order builder is the point of the page.** `categories[].opts` decides which
+questions each category asks: a cake asks for sponge, filling and frosting; a
+box of macarons asks which flavours; a treatbox asks neither. Remove `"sponge"`
+from a category and that step stops being rendered *and* the step numbers
+renumber themselves. The composed message is built once by `compose()` and sent
+down either route — `wa.me` or `mailto:` — so WhatsApp and email can never
+drift apart.
+
+**Her logo is used untouched.** `assets/strictly/logo.png` is the disc cut out of
+her Instagram profile picture at r=423.5 (425 is the first background pixel) with
+a 4× supersampled circular alpha, so it sits on cream and on purple with no
+fringe. The purple `#4e4175` and the cream `#fdeae8` are *measured* from it and
+from her Flavour Options artwork — the two agree to one point.
+
+**The photographs are a mix, and the mix matters.** `assets/strictly/work/` is
+six of her own photographs, cut out of an Instagram grid screenshot at 430px
+because every public endpoint for her socials is closed to automated fetching
+(Instagram 429/401, TikTok's post list needs signed requests, Facebook 400).
+They are real but small — 430px is about half what a retina phone wants. Ask
+her for the originals and drop them in at the same names. Everything in
+`assets/strictly/photos/` is Pexels stock, copied in from the Amabilis and
+Brownielicious libraries; both of those folders are in `.assetsignore`, so a
+reference into them would 404 on the web — that is why they are copied rather
+than linked.
+
+**The reviews are examples and the page says so.** `reviewsAreExamples` in the
+data file puts a marker next to the score. Replace `reviews` with her real
+Google reviews and set it to `false`.
+
+**Two things that were measured, not eyeballed.** The tile scrim stops at
+rgba(36,29,56,.82) at 34% because at .46 the body copy read 3.1:1 over the
+lighter photographs. The marquee transforms each *word* rather than the row:
+the row is ~2930px, which at dpr 3 is 8800 device pixels, and iOS silently
+declines to paint a moving composited layer that wide. The same reasoning is
+why `.band[data-rv]` and `.sec[data-rv]` fade instead of translating.
+
+**Self-hosted fonts.** Fraunces, Jost, Oswald (all variable, one file each) and
+Caveat Brush, latin subsets, in `assets/strictly/fonts/`. Google Fonts is not
+called at all.

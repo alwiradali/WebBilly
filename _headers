@@ -109,3 +109,13 @@
 
 /assets/zainab/*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+# Strictly Sprinkles — unlisted preview. Not linked from anywhere and not for
+# Google until she has seen it and said yes. The photographs matter here too:
+# her own work is in assets/strictly/work, and it should not be indexed off
+# somebody else's domain.
+/templates/strictly-sprinkles
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+/assets/strictly/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

@@ -1,0 +1,787 @@
+/* ============================================================
+   Strictly Sprinkles — page engine.
+   Vanilla, no build step. Everything the shop sells lives in
+   strictly-sprinkles-data.js; this file only renders it and
+   makes it move.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  var D = window.SS;
+  if (!D) return;
+  var B = D.business;
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var A = "/assets/strictly/";
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return [].slice.call((r || document).querySelectorAll(s)); }
+  function el(t, a, txt) {
+    var n = document.createElement(t);
+    if (a) for (var k in a) if (a[k] != null) n.setAttribute(k, a[k]);
+    if (txt != null) n.textContent = txt;
+    return n;
+  }
+  function money(n) { return "£" + (n % 1 ? n.toFixed(2) : n); }
+
+  /* ============================================================
+     1. SPRINKLES
+     Each sprinkle is transformed on its own. iOS will not paint a
+     moving composited layer wider than about 4096 device pixels,
+     so the layer itself never moves — only its children do.
+     ============================================================ */
+  var SPRINKLE_DARK = ["#4e4175", "#6a5a95", "#b98b46", "#c98fa8", "#8a76b8"];
+  var SPRINKLE_LIGHT = ["#fdeae8", "#f3c14b", "#e8b5c4", "#cdbde6", "#ffffff"];
+
+  function sprinkle(layer) {
+    if (reduced) return;
+    var n = parseInt(layer.getAttribute("data-sprinkles"), 10) || 14;
+    if (innerWidth < 700) n = Math.round(n * 0.55);   /* phones pay for every layer */
+    var pal = layer.hasAttribute("data-sprinkles-light") ? SPRINKLE_LIGHT : SPRINKLE_DARK;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+      var b = el("i");
+      var dur = 14 + Math.random() * 16;
+      b.style.cssText =
+        "left:" + (Math.random() * 100).toFixed(2) + "%;" +
+        "top:" + (Math.random() * 100).toFixed(2) + "%;" +
+        "background:" + pal[i % pal.length] + ";" +
+        "opacity:" + (0.28 + Math.random() * 0.34).toFixed(2) + ";" +
+        "--rot:" + Math.round(Math.random() * 360) + "deg;" +
+        "--dx:" + (Math.random() * 120 - 60).toFixed(0) + "px;" +
+        "--dy:" + (Math.random() * 150 - 75).toFixed(0) + "px;" +
+        "animation:drift " + dur.toFixed(1) + "s ease-in-out " +
+        (-Math.random() * dur).toFixed(1) + "s infinite alternate;";
+      frag.appendChild(b);
+    }
+    layer.appendChild(frag);
+  }
+
+  /* ============================================================
+     2. RENDER — everything below reads from the data file
+     ============================================================ */
+
+  /* -- the marquee -- */
+  (function marquee() {
+    var mq = $("#mq"); if (!mq) return;
+    var words = ["Celebration cakes", "Bespoke cookies", "Party platters", "Treatboxes",
+                 "Cakesicles", "Macarons", "Baby boxes", "100% Halal", "Made in Teesside"];
+    var row = el("div", { class: "mq-row" });
+    /* two identical runs, so when the first has scrolled past there is an
+       identical one behind it and the jump back is invisible */
+    for (var r = 0; r < 2; r++) {
+      words.forEach(function (w) { row.appendChild(el("span", null, w)); });
+    }
+    mq.appendChild(row);
+    if (reduced) return;
+    /* Each word is transformed on its own, never the row. The row is ~2930px
+       wide, which at dpr 3 is 8800 device pixels — iOS refuses to paint a
+       moving composited layer that wide and simply shows nothing, with no
+       error. Nineteen small layers all carrying the same offset look
+       identical and paint everywhere.
+
+       The travel is measured from the children's own widths, not the row's
+       scrollWidth: once a child is translated it changes the parent's
+       scrollable overflow, so reading it back feeds a shrinking number in. */
+    var kids = $$("span", row);
+    var half = 0;
+    for (var i = 0; i < kids.length / 2; i++) half += kids[i].offsetWidth;
+    var x = 0, last = performance.now();
+    (function tick(now) {
+      var dt = Math.min(now - last, 50); last = now;
+      x -= dt * 0.032;
+      if (half && x <= -half) x += half;     /* the second run is already there */
+      var t = "translate3d(" + x.toFixed(2) + "px,0,0)";
+      for (var k = 0; k < kids.length; k++) kids[k].style.transform = t;
+      requestAnimationFrame(tick);
+    })(last);
+  })();
+
+  /* -- category tiles -- */
+  (function tiles() {
+    var host = $("#tiles"); if (!host) return;
+    D.categories.forEach(function (c, i) {
+      var count = c.groups
+        ? c.groups.reduce(function (a, g) { return a + g.items.length; }, 0)
+        : c.items.length;
+      var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""), href: "#order",
+                        "data-cat": c.id, "data-rv": "", "data-rv-d": String((i % 3) + 1) });
+      a.appendChild(el("img", { src: A + c.img, alt: "", loading: "lazy" }));
+      a.appendChild(el("span", { class: "tile-count" }, count + (count === 1 ? " option" : " options")));
+      var body = el("div", { class: "tile-body" });
+      body.appendChild(el("h3", null, c.label));
+      body.appendChild(el("p", null, c.note));
+      body.appendChild(el("span", { class: "tile-from" }, priceFrom(c)));
+      a.appendChild(body);
+      host.appendChild(a);
+    });
+    /* clicking a tile pre-selects that category in the builder */
+    host.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cat]"); if (!t) return;
+      setCat(t.getAttribute("data-cat"));
+    });
+  })();
+
+  function allItems(c) {
+    return c.groups ? c.groups.reduce(function (a, g) { return a.concat(g.items); }, []) : c.items;
+  }
+  function priceFrom(c) {
+    var p = allItems(c).map(function (i) { return i.price; }).filter(function (n) { return typeof n === "number"; });
+    return p.length ? "From " + money(Math.min.apply(null, p)) : "Price on enquiry";
+  }
+
+  /* -- price lists -- */
+  (function priceLists() {
+    var host = $("#priceLists"); if (!host) return;
+
+    /* Platters run full width; the written lists sit in two columns on a wide
+       screen, because six stacked lists is four thousand pixels of scrolling
+       for something people want to scan. */
+    var colA = el("div"), colB = el("div");
+    var cols = el("div", { class: "menu-cols" });
+    cols.appendChild(colA); cols.appendChild(colB);
+
+    function block(title, sub, build, where) {
+      var d = el("div", { class: "menu-block", "data-rv": "" });
+      var h = el("h3", null, title);
+      if (sub) h.appendChild(el("small", null, sub));
+      d.appendChild(h);
+      build(d);
+      (where || host).appendChild(d);
+    }
+    function list(items, unit) {
+      var ul = el("ul", { class: "plist" });
+      items.forEach(function (it) {
+        var li = el("li");
+        var nm = el("span", { class: "nm" });
+        nm.appendChild(document.createTextNode(it.name));
+        if (it.blurb) nm.appendChild(el("span", { class: "sub" }, it.blurb));
+        li.appendChild(nm);
+        li.appendChild(el("span", { class: "dots" }));
+        li.appendChild(typeof it.price === "number"
+          ? el("span", { class: "pr" }, money(it.price) + (it.unit ? " " + it.unit : (unit ? " " + unit : "")))
+          : el("span", { class: "pr soft" }, "On enquiry"));
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+
+    block("Party platters", "the full spread", function (d) {
+      var g = el("div", { class: "platters" });
+      g.style.marginTop = "22px";
+      D.platters.forEach(function (p, i) {
+        var c = el("article", { class: "platter", "data-rv": "", "data-rv-d": String(i + 1) });
+        var art = el("div", { class: "platter-art" });
+        art.appendChild(el("img", { src: A + p.img, alt: "", loading: "lazy" }));
+        c.appendChild(art);
+        var inn = el("div", { class: "platter-in" });
+        inn.appendChild(el("h3", null, p.name));
+        inn.appendChild(el("p", { class: "cnt" }, p.count + " desserts"));
+        var ul = el("ul");
+        p.includes.forEach(function (x) { ul.appendChild(el("li", null, x)); });
+        inn.appendChild(ul);
+        var pr = el("div", { class: "price" });
+        pr.appendChild(el("b", null, money(p.price)));
+        pr.appendChild(el("span", { class: "cnt" }, "Serves " + p.count));
+        inn.appendChild(pr);
+        c.appendChild(inn);
+        g.appendChild(c);
+      });
+      d.appendChild(g);
+    });
+
+    host.appendChild(cols);
+    block("Cakes", "each", function (d) { d.appendChild(list(D.cakes)); }, colA);
+    block("Cookies", "per dozen", function (d) { d.appendChild(list(D.cookies)); }, colA);
+    block("Treatboxes", "quoted per order", function (d) { d.appendChild(list(D.treatboxes)); }, colA);
+
+    block("Individual treats", "per dozen only", function (d) {
+      D.individual.forEach(function (g) {
+        d.appendChild(el("h4", { class: "grp" }, g.group));
+        d.appendChild(list(g.items, "per dozen"));
+      });
+    }, colB);
+    block("Baby boxes", "quoted per order", function (d) { d.appendChild(list(D.babyboxes)); }, colB);
+  })();
+
+  /* -- flavours -- */
+  (function flavours() {
+    var host = $("#flavours-grid"); if (!host) return;
+    var f = D.flavours;
+    [["Cake flavours", f.sponge], ["Filling options", f.filling], ["Frosting options", f.frosting]]
+      .forEach(function (pair, i) {
+        var col = el("div", { class: "flav-col", "data-rv": "", "data-rv-d": String(i + 1) });
+        col.appendChild(el("h3", null, pair[0]));
+        var ul = el("ul", { class: "chips" });
+        pair[1].forEach(function (x) { ul.appendChild(el("li", null, x)); });
+        col.appendChild(ul);
+        host.appendChild(col);
+      });
+    $("#allergyNote").textContent = D.allergyNote;
+  })();
+
+  /* -- gallery -- */
+  (function gallery() {
+    var host = $("#gallery"); if (!host) return;
+    var shots = [
+      ["work/baby-girl-box.jpg", "Baby shower treatbox"],
+      ["photos/hero-cake.webp", "Floral celebration cake"],
+      ["work/nikkah-cookies.jpg", "Nikkah cookies"],
+      ["photos/cakesicles.webp", "Cakesicles"],
+      ["work/lamborghini-cake.jpg", "Sculpted birthday cake"],
+      ["photos/platter.webp", "Party platter"],
+      ["work/anniversary-cake.jpg", "Anniversary cake"],
+      ["photos/cookies-stack.webp", "Cookies"],
+      ["work/baby-boy-box.jpg", "Baby box"],
+      ["photos/piping.webp", "Hand-piped finish"],
+      ["photos/gift-box.webp", "Dessert cups"],
+      ["photos/tiered.webp", "Tiered cake"]
+    ];
+    shots.forEach(function (s, i) {
+      var fig = el("figure", { "data-rv": "", "data-rv-d": String((i % 4) + 1) });
+      fig.appendChild(el("img", { src: A + s[0], alt: s[1], loading: "lazy" }));
+      fig.appendChild(el("figcaption", null, s[1]));
+      host.appendChild(fig);
+    });
+  })();
+
+  /* -- terms, care, faq -- */
+  (function policies() {
+    var t = $("#termsCol");
+    D.terms.forEach(function (sec, i) {
+      var d = el("div", { class: "pol", "data-rv": "", "data-rv-d": String(i + 1) });
+      if (i) d.style.marginTop = "34px";
+      d.appendChild(el("h3", null, sec.h));
+      var ul = el("ul");
+      sec.l.forEach(function (x) { ul.appendChild(el("li", null, x)); });
+      d.appendChild(ul);
+      t.appendChild(d);
+    });
+    var c = $("#careCol");
+    var head = el("div", { class: "pol", "data-rv": "" });
+    head.appendChild(el("h3", null, "Looking after it"));
+    c.appendChild(head);
+    D.cakeCare.forEach(function (sec, i) {
+      var d = el("div", { class: "pol", "data-rv": "", "data-rv-d": String(i + 1) });
+      d.style.marginTop = "22px";
+      d.appendChild(el("h3", { style: "font-size:clamp(1.15rem,2.2vw,1.45rem)" }, sec.h));
+      d.appendChild(el("p", null, sec.p));
+      c.appendChild(d);
+    });
+
+    var faq = $("#faq");
+    D.faq.forEach(function (q) {
+      var det = el("details");
+      det.appendChild(el("summary", null, q.q));
+      det.appendChild(el("div", { class: "a" }, q.a));
+      faq.appendChild(det);
+    });
+  })();
+
+  /* -- reviews -- */
+  (function reviews() {
+    function stars(n) {
+      var w = el("span", { class: "stars", "aria-label": n + " out of 5" });
+      for (var i = 0; i < n; i++) {
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true");
+        var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z");
+        svg.appendChild(p); w.appendChild(svg);
+      }
+      return w;
+    }
+    var head = $("#rvHead");
+    var sc = el("div", { class: "rv-score" });
+    sc.appendChild(el("b", null, "5.0"));
+    sc.appendChild(stars(5));
+    head.appendChild(sc);
+    if (D.reviewsAreExamples) {
+      head.appendChild(el("span", { class: "rv-note" }, "Example layout — her real reviews replace these"));
+    }
+    var host = $("#rvs");
+    D.reviews.forEach(function (r, i) {
+      var c = el("article", { class: "rv", "data-rv": "", "data-rv-d": String(i + 1) });
+      c.appendChild(stars(r.stars));
+      c.appendChild(el("p", null, "“" + r.text + "”"));
+      var f = el("footer");
+      f.appendChild(el("b", null, r.name));
+      if (r.when && r.when !== "—") f.appendChild(el("span", null, r.when));
+      c.appendChild(f);
+      host.appendChild(c);
+    });
+  })();
+
+  /* -- socials, footer, links -- */
+  var IG = "https://instagram.com/" + B.instagram;
+  var TT = "https://www.tiktok.com/@" + B.tiktok;
+  var FB = B.facebook;
+
+  function waLink(text) {
+    return "https://wa.me/" + B.whatsapp + (text ? "?text=" + encodeURIComponent(text) : "");
+  }
+  function mailLink(subject, body) {
+    return "mailto:" + B.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  }
+
+  (function socials() {
+    var host = $("#socials"); if (!host) return;
+    var ICONS = {
+      ig: "M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11a4.3 4.3 0 1 1 4.3-4.3 4.3 4.3 0 0 1-4.3 4.3zm6.9-11.2a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z",
+      tt: "M16.6 5.8a4.8 4.8 0 0 1-1.2-3.2h-3v13a2.8 2.8 0 1 1-2-2.7v-3a5.8 5.8 0 1 0 5 5.7V9a7.8 7.8 0 0 0 4.5 1.4v-3a4.8 4.8 0 0 1-3.3-1.6z",
+      fb: "M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z",
+      wa: "M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2s-.7.9-.9 1.1c-.2.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.5.3-.5v-.5c0-.2-.6-1.6-.9-2.2-.2-.5-.4-.5-.6-.5h-.6a1 1 0 0 0-.8.4 3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3A12.7 12.7 0 0 0 12.6 16c.7.3 1.2.5 1.6.6a3.9 3.9 0 0 0 1.8.1 3 3 0 0 0 2-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.4zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7 3.8z",
+      mail: "M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5zm2.2.5 7.8 5.6L19.8 6zM20 7.9l-7.4 5.3a1 1 0 0 1-1.2 0L4 7.9V18h16z"
+    };
+    function card(icon, title, sub, href) {
+      var a = el("a", { class: "soc", href: href, target: "_blank", rel: "noopener", "data-rv": "" });
+      var ic = el("div", { class: "soc-ic" });
+      var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true");
+      var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("d", ICONS[icon]); svg.appendChild(p); ic.appendChild(svg);
+      a.appendChild(ic);
+      var t = el("div", { class: "t" });
+      t.appendChild(el("b", null, title));
+      t.appendChild(el("span", null, sub));
+      a.appendChild(t);
+      return a;
+    }
+    var intro = "Hi! I found you through your website — I'd like to ask about an order.";
+    host.appendChild(card("wa", "WhatsApp", B.phone, waLink(intro)));
+    host.appendChild(card("ig", "Instagram", "@" + B.instagram, IG));
+    host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
+    host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
+    host.appendChild(card("fb", "Facebook", B.name, FB));
+    host.appendChild(card("ig", "The studio", "@" + B.instagramStudio, "https://instagram.com/" + B.instagramStudio));
+
+    $("#igBtn").href = IG;
+    $("#dockWa").href = waLink(intro);
+
+    var fc = $("#footContact");
+    [["WhatsApp " + B.phone, waLink(intro)],
+     ["@" + B.instagram, IG],
+     [B.email, mailLink("Enquiry from your website", intro)],
+     ["TikTok", TT], ["Facebook", FB]].forEach(function (p) {
+      var li = el("li");
+      li.appendChild(el("a", { href: p[1], target: "_blank", rel: "noopener" }, p[0]));
+      fc.appendChild(li);
+    });
+    $("#footCopy").textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
+
+    var cta = $("#notListedCta");
+    cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Ask on WhatsApp"));
+    cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Ask by email"));
+  })();
+
+  /* ============================================================
+     3. THE ORDER BUILDER
+     ============================================================ */
+  var state = { cat: null, item: null, sponge: "", filling: "", frosting: "", treat: "" };
+
+  var catOpts = $("#catOpts"), itemOpts = $("#itemOpts"),
+      itemHeading = $("#itemHeading"), itemNote = $("#itemNote"),
+      stepFlavour = $("#stepFlavour"), flavourFields = $("#flavourFields");
+
+  D.categories.forEach(function (c) {
+    var b = el("button", { type: "button", class: "opt-btn", "aria-pressed": "false", "data-id": c.id }, c.label);
+    catOpts.appendChild(b);
+  });
+  catOpts.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-id]"); if (b) setCat(b.getAttribute("data-id"));
+  });
+
+  function cat() { return D.categories.filter(function (c) { return c.id === state.cat; })[0]; }
+
+  function setCat(id, silent) {
+    state.cat = id; state.item = null; state.treat = "";
+    $$("button", catOpts).forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-id") === id));
+    });
+    var c = cat();
+    itemHeading.textContent = c.groups ? "Pick your treats" : "Pick a size";
+    itemNote.textContent = c.note || "";
+    renderItems(c);
+    renderFlavourStep(c);
+    summarise();
+    if (!silent) {
+      var sec = $("#order");
+      if (sec) sec.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    }
+  }
+
+  function itemButton(it, unit) {
+    var b = el("button", { type: "button", class: "item", "aria-pressed": "false", "data-item": it.id });
+    b.appendChild(el("img", { src: A + it.img, alt: "", loading: "lazy" }));
+    var t = el("div", { class: "t" });
+    t.appendChild(el("b", null, it.name));
+    t.appendChild(el("span", null, typeof it.price === "number"
+      ? money(it.price) + (it.unit ? " " + it.unit : (unit === "dozen" ? " per dozen" : ""))
+      : "On enquiry"));
+    b.appendChild(t);
+    return b;
+  }
+
+  function renderItems(c) {
+    itemOpts.textContent = "";
+    if (c.groups) {
+      c.groups.forEach(function (g) {
+        var wrap = el("div", { class: "item-group" });
+        wrap.appendChild(el("h4", null, g.group));
+        var grid = el("div", { class: "items" });
+        g.items.forEach(function (it) { grid.appendChild(itemButton(it, c.unit)); });
+        wrap.appendChild(grid);
+        itemOpts.appendChild(wrap);
+      });
+    } else {
+      var grid = el("div", { class: "items" });
+      c.items.forEach(function (it) { grid.appendChild(itemButton(it, c.unit)); });
+      itemOpts.appendChild(grid);
+    }
+  }
+
+  itemOpts.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-item]"); if (!b) return;
+    var id = b.getAttribute("data-item");
+    state.item = state.item === id ? null : id;
+    $$("button[data-item]", itemOpts).forEach(function (x) {
+      x.setAttribute("aria-pressed", String(x.getAttribute("data-item") === state.item));
+    });
+    summarise();
+  });
+
+  /* which flavour questions this category asks */
+  function renderFlavourStep(c) {
+    flavourFields.textContent = "";
+    var opts = c.opts || [];
+    var asks = false;
+
+    function selectField(id, label, list, key) {
+      var f = el("div", { class: "field" });
+      f.appendChild(el("label", { for: id }, label));
+      var s = el("select", { id: id });
+      s.appendChild(el("option", { value: "" }, "No preference — I'll advise"));
+      list.forEach(function (x) { s.appendChild(el("option", { value: x }, x)); });
+      s.value = state[key] || "";
+      s.addEventListener("change", function () { state[key] = s.value; summarise(); });
+      f.appendChild(s);
+      flavourFields.appendChild(f);
+      asks = true;
+    }
+
+    if (opts.indexOf("sponge") > -1) {
+      var two = el("div", { class: "fields two" });
+      flavourFields.appendChild(two);
+      selectField("fSponge", "Sponge", D.flavours.sponge, "sponge");
+      selectField("fFilling", "Filling", D.flavours.filling, "filling");
+      selectField("fFrosting", "Frosting", D.flavours.frosting, "frosting");
+      /* move the three into the two-column grid */
+      $$(".field", flavourFields).forEach(function (f) { two.appendChild(f); });
+    }
+    if (opts.indexOf("treatFlavour") > -1 || opts.indexOf("platterFlavours") > -1) {
+      var f = el("div", { class: "field" });
+      f.appendChild(el("label", { for: "fTreat" }, "Flavours you'd like"));
+      var i = el("input", { id: "fTreat", type: "text",
+        placeholder: "e.g. Biscoff cakesicles, pistachio macarons, raspberry cheesecake" });
+      i.value = state.treat || "";
+      i.addEventListener("input", function () { state.treat = i.value; summarise(); });
+      f.appendChild(i);
+      var menus = [];
+      if (D.flavours.cheesecake) menus.push("Cheesecake: " + D.flavours.cheesecake.join(", "));
+      if (D.flavours.macaron) menus.push("Macaron: " + D.flavours.macaron.join(", "));
+      if (D.flavours.cakepot) menus.push("Cake pots and mini cakes: " + D.flavours.cakepot.join(", "));
+      if (D.flavours.cupcake) menus.push("Cupcakes: " + D.flavours.cupcake.join(", "));
+      if (D.flavours.brownie) menus.push("Brownies: " + D.flavours.brownie.join(", "));
+      f.appendChild(el("p", { class: "hint" }, menus.join(" · ")));
+      flavourFields.appendChild(f);
+      asks = true;
+    }
+    stepFlavour.hidden = !asks;
+    $("#nDetails").textContent = asks ? "4" : "3";
+    $("#nYou").textContent = asks ? "5" : "4";
+  }
+
+  /* quantity stepper */
+  var qty = $("#fQty");
+  $("#qtyMinus").addEventListener("click", function () { qty.value = Math.max(1, (+qty.value || 1) - 1); summarise(); });
+  $("#qtyPlus").addEventListener("click", function () { qty.value = Math.min(99, (+qty.value || 1) + 1); summarise(); });
+  qty.addEventListener("input", summarise);
+
+  /* occasions */
+  (function occ() {
+    var s = $("#fOccasion");
+    s.appendChild(el("option", { value: "" }, "Choose one (optional)"));
+    D.occasions.forEach(function (o) { s.appendChild(el("option", { value: o }, o)); });
+    s.addEventListener("change", summarise);
+  })();
+
+  /* the date cannot be in the past */
+  (function dateMin() {
+    var d = $("#fDate");
+    var t = new Date(); t.setHours(0, 0, 0, 0);
+    d.min = t.toISOString().slice(0, 10);
+    d.addEventListener("change", summarise);
+  })();
+
+  ["fColours", "fInspo", "fNotes", "fName", "fContact"].forEach(function (id) {
+    var n = $("#" + id); if (n) n.addEventListener("input", summarise);
+  });
+
+  function chosenItem() {
+    var c = cat(); if (!c || !state.item) return null;
+    return allItems(c).filter(function (i) { return i.id === state.item; })[0] || null;
+  }
+
+  function val(id) { var n = $("#" + id); return n && typeof n.value === "string" ? n.value.trim() : ""; }
+
+  function prettyDate(iso) {
+    if (!iso) return "";
+    var p = iso.split("-"); if (p.length !== 3) return iso;
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+
+  /* the summary panel and the running total */
+  function summarise() {
+    var c = cat(), it = chosenItem(), n = Math.max(1, +qty.value || 1);
+    var rows = [];
+    rows.push(["What", c ? c.label : ""]);
+    rows.push(["Item", it ? it.name : ""]);
+    if (c && (c.opts || []).indexOf("sponge") > -1) {
+      rows.push(["Sponge", state.sponge]);
+      rows.push(["Filling", state.filling]);
+      rows.push(["Frosting", state.frosting]);
+    }
+    if (state.treat) rows.push(["Flavours", state.treat]);
+    rows.push(["How many", it ? n + " × " + (it.unit ? "dozen" : (c && c.unit) || "item") : ""]);
+    rows.push(["Date", prettyDate(val("fDate"))]);
+    rows.push(["Occasion", val("fOccasion")]);
+    rows.push(["Colours", val("fColours")]);
+    rows.push(["Inspo", val("fInspo")]);
+    rows.push(["Notes", val("fNotes")]);
+
+    var host = $("#sumList"); host.textContent = "";
+    rows.forEach(function (r) {
+      if (!r[1] && r[0] !== "What" && r[0] !== "Item") return;
+      var li = el("li");
+      li.appendChild(el("span", { class: "k" }, r[0]));
+      li.appendChild(el("span", { class: "v" + (r[1] ? "" : " empty") }, r[1] || "Not chosen yet"));
+      host.appendChild(li);
+    });
+
+    var total = $("#sumTotal"), note = $("#sumNote");
+    if (it && typeof it.price === "number") {
+      total.textContent = money(it.price * n);
+      note.textContent = n > 1
+        ? money(it.price) + " each, before any extra detail."
+        : "Before any extra detail — toppers, edible images and sculpted work are quoted on top.";
+    } else if (it) {
+      total.textContent = "On enquiry";
+      note.textContent = "This one is quoted per order. Send the details and I'll price it.";
+    } else {
+      total.textContent = "—";
+      note.textContent = "Pick an item and the price appears here.";
+    }
+  }
+
+  /* what's missing, in the order the form asks for it */
+  function missing() {
+    if (!state.cat) return "Pick what you're after first.";
+    if (!state.item) return "Choose a size or a treat.";
+    if (!val("fName")) return "Add your name so I know who I'm talking to.";
+    if (!val("fContact")) return "Add a phone number or an email so I can reply.";
+    return null;
+  }
+  function flagFirst() {
+    var order = [["fName", !val("fName")], ["fContact", !val("fContact")]];
+    order.forEach(function (p) {
+      var n = $("#" + p[0]); if (!n) return;
+      if (p[1]) n.setAttribute("aria-invalid", "true"); else n.removeAttribute("aria-invalid");
+    });
+    if (!state.cat) { catOpts.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }); return; }
+    if (!state.item) { itemOpts.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }); return; }
+    var bad = $("[aria-invalid='true']");
+    if (bad) { bad.focus(); bad.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }); }
+  }
+
+  /* the message — built once, sent down either route */
+  function compose() {
+    var c = cat(), it = chosenItem(), n = Math.max(1, +qty.value || 1);
+    var L = [];
+    L.push("Order enquiry from your website");
+    L.push("");
+    L.push("Name: " + val("fName"));
+    L.push("Contact: " + val("fContact"));
+    L.push("");
+    L.push("What: " + (c ? c.label : ""));
+    L.push("Item: " + (it ? it.name : ""));
+    L.push("How many: " + n + (it && it.unit ? " dozen" : ""));
+    if (it && typeof it.price === "number") L.push("Listed price: " + money(it.price * n));
+    if (state.sponge) L.push("Sponge: " + state.sponge);
+    if (state.filling) L.push("Filling: " + state.filling);
+    if (state.frosting) L.push("Frosting: " + state.frosting);
+    if (state.treat) L.push("Flavours: " + state.treat);
+    if (val("fDate")) L.push("Date needed: " + prettyDate(val("fDate")));
+    if (val("fOccasion")) L.push("Occasion: " + val("fOccasion"));
+    if (val("fColours")) L.push("Colours / theme: " + val("fColours"));
+    if (val("fInspo")) L.push("Inspiration: " + val("fInspo"));
+    if (val("fNotes")) { L.push(""); L.push("Notes: " + val("fNotes")); }
+    return L.join("\n");
+  }
+
+  function say(kind, text) {
+    var box = $("#sumMsg");
+    box.textContent = "";
+    box.appendChild(el("div", { class: kind === "ok" ? "sum-ok" : "sum-err" }, text));
+  }
+
+  /* Safari blocks a navigation that happens after an await, so the handover
+     runs inside the click itself, and clicks a real anchor rather than
+     assigning location.href — which some in-app browsers ignore. */
+  function handover(href) {
+    var a = el("a", { href: href, target: "_blank", rel: "noopener" });
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { a.remove(); }, 0);
+  }
+
+  $("#sendWa").addEventListener("click", function () {
+    var m = missing();
+    if (m) { say("err", m); flagFirst(); return; }
+    handover(waLink(compose()));
+    say("ok", "WhatsApp is opening with your order written out. Press send — and add your inspiration pictures straight into the chat.");
+  });
+
+  $("#sendMail").addEventListener("click", function () {
+    var m = missing();
+    if (m) { say("err", m); flagFirst(); return; }
+    var it = chosenItem();
+    handover(mailLink("Order enquiry — " + (it ? it.name : "Strictly Sprinkles"), compose()));
+    say("ok", "Your email app is opening with the order written out. Attach your inspiration pictures and send.");
+  });
+
+  $("#builder").addEventListener("submit", function (e) { e.preventDefault(); });
+
+  /* start on cakes */
+  setCat(D.categories[0].id, true);
+
+  /* ============================================================
+     4. MOTION
+     ============================================================ */
+
+  /* smooth scroll */
+  var lenis = null;
+  if (!reduced && window.Lenis) {
+    lenis = new window.Lenis({ duration: 1.1, smoothWheel: true, touchMultiplier: 1.6 });
+    (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
+  }
+  function goTo(target) {
+    if (lenis) lenis.scrollTo(target, { offset: -74, duration: 1.2 });
+    else target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    var id = a.getAttribute("href");
+    if (id === "#" || id.length < 2) return;
+    var t = document.querySelector(id); if (!t) return;
+    e.preventDefault();
+    closeMenu();
+    goTo(t);
+    history.replaceState(null, "", id);
+  });
+
+  /* reveals */
+  (function reveals() {
+    var items = $$("[data-rv]");
+    if (reduced || !("IntersectionObserver" in window)) {
+      items.forEach(function (n) { n.classList.add("in"); });
+      $$(".rise").forEach(function (n) { n.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
+    items.forEach(function (n) { io.observe(n); });
+    /* the hero headline plays on load, not on scroll */
+    setTimeout(function () { $$(".rise").forEach(function (n) { n.classList.add("in"); }); }, 340);
+  })();
+
+  /* observe anything added to the DOM after the first pass */
+  function reobserve() {
+    if (reduced) { $$("[data-rv]").forEach(function (n) { n.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
+    $$("[data-rv]:not(.in)").forEach(function (n) { io.observe(n); });
+  }
+  reobserve();
+
+  /* the hero collage drifts as you scroll */
+  (function floaty() {
+    if (reduced) return;
+    var cards = $$("[data-float-rate]");
+    if (!cards.length) return;
+    var ticking = false;
+    function frame() {
+      var y = scrollY;
+      if (y < innerHeight * 1.3) {
+        cards.forEach(function (c) {
+          c.style.transform = "translate3d(0," + (y * parseFloat(c.getAttribute("data-float-rate"))).toFixed(1) + "px,0)";
+        });
+      }
+      ticking = false;
+    }
+    addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(frame); }
+    }, { passive: true });
+    frame();
+  })();
+
+  /* nav state + the phone dock */
+  (function chrome() {
+    var nav = $("#nav"), dock = $("#dock"), hero = $("#hero");
+    function frame() {
+      nav.classList.toggle("solid", scrollY > 40);
+      if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
+    }
+    addEventListener("scroll", frame, { passive: true });
+    frame();
+  })();
+
+  /* drawer */
+  var menu = $("#menu"), menuOpen = $("#menuOpen"), menuClose = $("#menuClose");
+  function openMenu() {
+    menu.classList.add("open"); menu.setAttribute("aria-hidden", "false");
+    menuOpen.setAttribute("aria-expanded", "true");
+    document.body.classList.add("menu-on");
+    if (lenis) lenis.stop();
+    menuClose.focus();
+  }
+  function closeMenu() {
+    if (!menu.classList.contains("open")) return;
+    menu.classList.remove("open"); menu.setAttribute("aria-hidden", "true");
+    menuOpen.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("menu-on");
+    if (lenis) lenis.start();
+  }
+  menuOpen.addEventListener("click", openMenu);
+  menuClose.addEventListener("click", closeMenu);
+  addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+
+  /* loader */
+  function done() {
+    var l = $("#loader"); if (!l) return;
+    l.classList.add("gone");
+    setTimeout(function () { l.remove(); }, 900);
+  }
+  if (document.readyState === "complete") setTimeout(done, 500);
+  else addEventListener("load", function () { setTimeout(done, 500); });
+  setTimeout(done, 3600);   /* never let a slow image hold the page hostage */
+
+  /* sprinkles last — they are decoration and cost frames */
+  $$("[data-sprinkles]").forEach(sprinkle);
+
+})();
