@@ -851,3 +851,24 @@ solid-colour quad goes straight to the compositor. Flat fills only.
 
 The overflow audit for this page picked up the same aria-hidden/clipped
 exemption the Krem&Choc one already had.
+
+### The production rollbacks — the actual mechanism
+
+Seven times between 9 and 25 September, billydigitals.com went back to an older
+tree and every page built since answered 404. Each time the trigger was a push
+to a SIBLING branch based on an older main, and each time the fix was to
+restamp and push main again.
+
+The cause is Workers Builds, not the code. Two settings decide it, and the
+first one alone is not enough:
+
+  Production branch                 main        <- stops main being ambiguous
+  Builds for non-production branches            <- while this is ticked, every
+                                                   other branch still BUILDS
+
+A Workers build runs a deploy command. If the non-production deploy command is
+`npx wrangler deploy` — the same as production's — then a branch build deploys
+over the live Worker regardless of which branch is marked production. The
+command that makes a branch build harmless is `npx wrangler versions upload`,
+which uploads a version without giving it traffic; unticking non-production
+builds altogether does the same thing more bluntly.
