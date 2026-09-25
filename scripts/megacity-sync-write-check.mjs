@@ -126,7 +126,7 @@ function stubDb(opts = {}) {
   const mega = toml.slice(toml.indexOf("[env.megacity]"));
   ok(/\[env\.megacity\.triggers\][\s\S]{0,400}?crons\s*=\s*\[/.test(mega), "megacity-properties has a cron trigger");
   const cron = (/crons\s*=\s*\[\s*"([^"]+)"/.exec(mega) || [])[1];
-  ok(cron === "*/15 * * * *", `it runs every quarter of an hour (${cron})`);
+  ok(cron === "* * * * *", `it runs every minute, the fastest a Cron Trigger can (${cron})`);
 
   ok(/async scheduled\(event, env, ctx\)/.test(worker), "the Worker has a scheduled handler for it to fire");
   /* worker.js is shared by several clients; only one of them has a feed */

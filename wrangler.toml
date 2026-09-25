@@ -267,16 +267,20 @@ routes = []
 # ]
 
 # The website follows 10ninety on its own, rather than waiting for somebody to
-# press Refresh. Every quarter of an hour it reads the feed and writes only
-# what actually changed — a run where nothing moved is one HTTPS request and
-# one SELECT, because planSync compares before it writes.
+# press Refresh. Every minute it reads the feed and writes only what actually
+# changed — a run where nothing moved is two HTTPS requests and one SELECT,
+# because planSync compares before it writes.
 #
-# Quarter-hourly and not faster because the feed is not live: 10ninety rebuilds
-# it when the agent runs Portal Export and again overnight, so polling more
-# often would re-read data that has not moved. The Refresh button stays for
+# Every minute because that is the fastest a Cron Trigger can run (he asked for
+# every second, 2026-09-25; Cloudflare's scheduler has one-minute resolution).
+# The feed itself is not live: 10ninety rebuilds it when the agent runs Portal
+# Export and again overnight, so a property appears within a minute of the
+# EXPORT, not of the edit. Overlapping runs are harmless — a second insert of
+# the same listing fails on its primary key and is logged, and each listing's
+# photographs are replaced in one transaction. The Refresh button stays for
 # "I have just exported and I want to see it now".
 [env.megacity.triggers]
-crons = ["*/15 * * * *"]
+crons = ["* * * * *"]
 
 [env.megacity.vars]
 # Root mode: the same pages served at root addresses on his domain, every old

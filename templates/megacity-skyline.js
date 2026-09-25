@@ -100,7 +100,10 @@ if (finePointer && !reduce && window.gsap) $$(".magnet").forEach(el => {
     const r = el.getBoundingClientRect();
     gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * .22, y: (e.clientY - r.top - r.height / 2) * .3, duration: .4 });
   });
-  el.addEventListener("pointerleave", () => gsap.to(el, { x: 0, y: 0, duration: .55, ease: "elastic.out(1,.55)" }));
+  /* clearProps: a transform left on the element, even translate(0,0), keeps
+     it on its own layer, and Windows draws text on a layer without its usual
+     sharpening — the button's words stay soft for the rest of the visit. */
+  el.addEventListener("pointerleave", () => gsap.to(el, { x: 0, y: 0, duration: .55, ease: "elastic.out(1,.55)", clearProps: "transform" }));
 });
 
 /* ── service card tilt ─────────────────────────────────────────────── */
@@ -113,7 +116,10 @@ if (finePointer && !reduce && window.gsap) $$("[data-tilt]").forEach(card => {
       transformPerspective: 900, duration: .45,
     });
   });
-  card.addEventListener("pointerleave", () => gsap.to(card, { rotateX: 0, rotateY: 0, duration: .7, ease: "power3.out" }));
+  /* back to flat AND no transform at all: a near-zero 3D rotation left behind
+     after the mouse moved on kept every card anyone had hovered slightly
+     blurred until the page was reloaded */
+  card.addEventListener("pointerleave", () => gsap.to(card, { rotateX: 0, rotateY: 0, duration: .7, ease: "power3.out", clearProps: "transform" }));
 });
 
 /* ── videos: only play in view ─────────────────────────────────────── */
@@ -193,9 +199,13 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   gsap.fromTo(".cred", { autoAlpha: 0, y: 34 },
     { autoAlpha: 1, y: 0, duration: .8, stagger: .09, ease: "power3.out",
       scrollTrigger: { trigger: ".creds", start: "top 80%" } });
-  gsap.fromTo(".footer-word", { yPercent: 42 }, {
-    yPercent: 0, ease: "none",
-    scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true },
+  /* whole pixels only: a scrubbed transform stops wherever the scroll does,
+     and at 77.85px the big word sat between pixels and looked out of focus */
+  const fw = $(".footer-word");
+  if (fw) gsap.fromTo(fw, { y: () => Math.round(fw.offsetHeight * .42) }, {
+    y: 0, ease: "none",
+    modifiers: { y: (v) => Math.round(parseFloat(v)) + "px" },
+    scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true, invalidateOnRefresh: true },
   });
 }
 

@@ -274,7 +274,7 @@ body.is-ready .veil{display:none}
 .hero-ctas{display:flex;gap:16px;margin-top:42px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:12px;border-radius:999px;padding:18px 32px;
   font:600 15.39px/1 var(--ff-u);letter-spacing:.05em;border:1.5px solid var(--navy-ink);
-  background:transparent;color:var(--navy-ink);transition:background .3s,color .3s,border-color .3s;will-change:transform}
+  background:transparent;color:var(--navy-ink);transition:background .3s,color .3s,border-color .3s}
 .btn--fill{background:var(--grad);border-color:transparent;color:#fff}
 .btn--fill:hover{background:var(--sky-deep);border-color:var(--sky-deep)}
 .btn--ghost:hover{background:var(--navy-ink);color:#fff}
@@ -764,19 +764,18 @@ form.enq{display:grid;gap:18px;align-content:start}
 .sec--dark .lede{color:rgba(255,255,255,.76)}
 
 /* ── Cards ─────────────────────────────────────────────────────────────── */
-.cards{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr));
-  perspective:1400px}
+/* Cards used to float in 3D forever (an 11s tilt-and-bob loop) and tilt and
+   scale further on hover. Text inside a transform that never stops is redrawn
+   every frame on its own layer, and on most screens that reads as slightly out
+   of focus — the "some words look blurry" on almost every page. They now sit
+   still and lift flat, by whole pixels, on hover; the border sparkle stays. */
+.cards{display:grid;gap:20px;margin-top:44px;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr))}
 .card{border-radius:18px;padding:32px 28px;box-shadow:0 10px 30px rgba(14,11,43,.07);
-  transform-style:preserve-3d;animation:cardfloat 11s ease-in-out infinite;
-  transition:transform .5s cubic-bezier(.2,.7,.3,1),box-shadow .5s ease}
-.card:hover{transform:translateY(-10px) rotateX(2.2deg) rotateY(-1.6deg) scale(1.012);
-  box-shadow:0 26px 60px rgba(14,11,43,.16);animation-play-state:paused}
+  transition:transform .4s cubic-bezier(.2,.7,.3,1),box-shadow .4s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(14,11,43,.16)}
 .card:nth-child(2n){animation-delay:-2.4s}
 .card:nth-child(3n){animation-delay:-4.7s}
 .card:nth-child(5n){animation-delay:-6.1s}
-@keyframes cardfloat{
-  0%,100%{transform:translateY(0) rotateX(0) rotateY(0)}
-  50%{transform:translateY(-6px) rotateX(.7deg) rotateY(-.5deg)}}
 @media (prefers-reduced-motion:reduce){
   .card{animation:none}
   .card:hover{transform:none}
@@ -1096,8 +1095,6 @@ form.enq{display:grid;gap:18px;align-content:start}
   background-image:var(--ph-img);background-size:cover;background-position:var(--ph-pos,center 62%)}
 .phead--photo::after{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(100deg,rgba(20,17,58,.86) 0%,rgba(20,17,58,.80) 34%,rgba(20,17,58,.66) 50%,rgba(20,17,58,.30) 68%,rgba(20,17,58,.06) 100%)}
-/* a soft shadow under the words, for the odd bright patch the tint misses */
-.phead--photo .no,.phead--photo h1,.phead--photo .lede{text-shadow:0 1px 2px rgba(12,10,40,.35),0 0 24px rgba(12,10,40,.35)}
 .phead--photo .lede{color:#fff}
 /* a tablet's text runs further across the photo, so the dark band does too */
 @media (min-width:761px) and (max-width:1180px){
@@ -1182,9 +1179,6 @@ form.enq{display:grid;gap:18px;align-content:start}
 @keyframes tilespark{to{--tile-ang:360deg}}
 .card:hover,.svc:hover,.svcnav-card:hover,.ct-card:hover,.mm-d:hover,.post:hover,.jr-toc a:hover{
   animation-duration:2.6s}
-/* the float on .card runs on its own timeline, so give it both animations */
-.card{animation:cardfloat 11s ease-in-out infinite,tilespark 6s linear infinite}
-.card:hover{animation-play-state:paused,running;animation-duration:11s,2.6s}
 
 /* per-tile fills */
 .svc{--tile-bg:linear-gradient(163deg,#F7FAFE 0%,#E9F1FB 55%,#DDE9F7 100%)}
