@@ -648,6 +648,10 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .gal{columns:2;column-gap:clamp(10px,1.5vw,18px)}
 @media (min-width:760px){.gal{columns:3}}
 @media (min-width:1140px){.gal{columns:4}}
+/* the six on the home page divide evenly into two or three columns, so
+   they stop at three — a fourth column would leave a ragged half-row */
+@media (min-width:1140px){.gal-teaser{columns:3}}
+.work-more{margin-top:clamp(28px,4vw,42px);display:flex;flex-wrap:wrap;gap:12px}
 .gal figure{
   break-inside:avoid;margin:0 0 clamp(10px,1.5vw,18px);border-radius:var(--r);overflow:hidden;
   background:var(--paper-2);position:relative;

@@ -352,34 +352,19 @@
   /* -- gallery -- */
   (function gallery() {
     var host = $("#gallery"); if (!host) return;
-    /* All hers. Order is deliberate: the two showpieces open, then a rhythm
-       of box / cake / box so the masonry never stacks two cakes together. */
-    var shots = [
-      ["work/nikkah-cake.webp",        "Nikkah cake — pearls and gold monogram"],
-      ["work/nikkah-box.webp",         "Nikkah treatbox"],
-      ["work/tiered-blue-gold.webp",   "Three-tier birthday cake"],
-      ["work/macaron-boxes.webp",      "Macarons, boxed"],
-      ["work/vintage-heart-cake.webp", "Vintage heart cake"],
-      ["work/baby-girl-box.webp",      "Baby announcement boxes"],
-      ["work/umrah-cupcakes.webp",     "Umrah Mubarak cupcakes"],
-      ["work/nikkah-cookies.webp",     "Personalised nikkah cookies"],
-      ["work/vintage-pink-cake.webp",  "Bridal shower cake"],
-      ["work/date-boxes.webp",         "Ramadan date boxes"],
-      ["work/duck-cake.webp",          "First birthday cake"],
-      ["work/mehndi-box.webp",         "Mehndi treatbox"],
-      ["work/dessert-table.webp",      "Mehndi dessert table"],
-      ["work/grad-cupcakes.webp",      "Black Forest graduation cupcakes"],
-      ["work/pawpatrol-cake.webp",     "Character birthday cake"],
-      ["work/baby-boy-box.webp",       "Baby announcement boxes"],
-      ["work/lamborghini-cake.webp",   "Sculpted birthday cake"],
-      ["work/chaat-table.webp",        "Chaat table"]
-    ];
+    /* One ordered list in the data file, strongest first. The home page asks
+       for a few of them with data-limit; the work page leaves it off and
+       gets all of them. */
+    var lim = parseInt(host.getAttribute("data-limit"), 10);
+    var shots = (lim > 0) ? D.work.slice(0, lim) : D.work;
     shots.forEach(function (s, i) {
       var fig = el("figure", { "data-rv": "", "data-rv-d": String((i % 4) + 1) });
-      fig.appendChild(el("img", { src: A + s[0], alt: s[1], loading: "lazy" }));
-      fig.appendChild(el("figcaption", null, s[1]));
+      fig.appendChild(el("img", { src: A + s.src, alt: s.alt, loading: i < 4 ? "eager" : "lazy" }));
+      fig.appendChild(el("figcaption", null, s.alt));
       host.appendChild(fig);
     });
+    var count = $("#workCount");
+    if (count) count.textContent = String(D.work.length);
   })();
 
   /* -- terms, care, faq -- */

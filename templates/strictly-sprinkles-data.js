@@ -241,6 +241,37 @@ window.SS = (function () {
       text: "Second cake I've ordered. Quick to reply, talked me through the flavours and the drip was perfect." }
   ];
 
+  /* Her photographs, strongest first. The home page shows the first six and
+     the rest live on /templates/strictly-sprinkles-work, so this order is
+     what a first-time visitor is judged by — keep the best at the top.
+     The last few are cropped screenshots off her feed rather than full
+     frames; they earn their place at the end, not the front. */
+  var work = [
+    { src: "work/nikkah-cake.webp",        alt: "Nikkah cake with sugar pearls and a gold monogram" },
+    { src: "work/duck-cake.webp",          alt: "First birthday cake with rubber ducks and balloons" },
+    { src: "work/vintage-pink-cake.webp",  alt: "Vintage piped cake in dusky pink" },
+    { src: "work/tiered-blue-gold.webp",   alt: "Three-tier birthday cake with a gold drip" },
+    { src: "work/nikkah-box.webp",         alt: "Nikkah treatbox of hand-iced cookies" },
+    { src: "work/dessert-table.webp",      alt: "Mehndi dessert table" },
+    { src: "work/baby-boy-cupcakes.webp",  alt: "Welcome-baby cupcakes, boxed" },
+    { src: "work/vintage-heart-cake.webp", alt: "Vintage heart cake in cream and black" },
+    { src: "work/eid-box.webp",            alt: "Eid Mubarak treatbox in mint and gold" },
+    { src: "work/mothers-day.webp",        alt: "Mother's Day buttercream flower bouquet" },
+    { src: "work/pawpatrol-cake.webp",     alt: "Character birthday cake" },
+    { src: "work/mehndi-box.webp",         alt: "Mehndi treatbox of coloured cookies" },
+    { src: "work/lamborghini-cake.webp",   alt: "Sculpted birthday cake with a hand-painted crest" },
+    { src: "work/chaat-table.webp",        alt: "Chaat table" },
+    { src: "work/nikkah-cookies.webp",     alt: "Personalised nikkah cookies" },
+    { src: "work/umrah-cupcakes.webp",     alt: "Umrah Mubarak cupcakes" },
+    { src: "work/unicorn-cake.webp",       alt: "Two-tier unicorn birthday cake" },
+    { src: "work/paint-cookies.webp",      alt: "Paint-your-own Ramadan cookie set" },
+    { src: "work/baby-boy-box.webp",       alt: "Baby announcement treatbox" },
+    { src: "work/macaron-boxes.webp",      alt: "Macarons, boxed" },
+    { src: "work/date-boxes.webp",         alt: "Ramadan date boxes" },
+    { src: "work/grad-cupcakes.webp",      alt: "Graduation cupcakes" },
+    { src: "work/baby-girl-box.webp",      alt: "Baby announcement treatbox" }
+  ];
+
   var faq = [
     { q: "How do I place an order?", a: "Use the enquiry form on this page. It takes you through the size, the flavours and the date, and arrives with me as one message — so I can quote it properly." },
     { q: "How far ahead should I book?", a: "For a weekend, as far ahead as you can — Saturdays go first, and Ramadan and Eid fill weeks in advance." },
@@ -257,6 +288,6 @@ window.SS = (function () {
     platters: platters, individual: individual, treatboxes: treatboxes,
     babyboxes: babyboxes, seasonal: seasonal, flavours: flavours, allergyNote: allergyNote,
     occasions: occasions, terms: terms, cakeCare: cakeCare,
-    reviews: reviews, reviewsAreExamples: reviewsAreExamples, faq: faq
+    reviews: reviews, reviewsAreExamples: reviewsAreExamples, work: work, faq: faq
   };
 })();
