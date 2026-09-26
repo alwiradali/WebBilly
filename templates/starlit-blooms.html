@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starlit Blooms — Eternal Satin Roses, Manchester</title>
+<meta name="description" content="Handmade eternal roses that never wilt. Wrapped bouquets, gift boxes and hampers, made to order in Manchester and delivered by hand. Bouquets from £25.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#120d10">
+<link rel="canonical" href="https://billydigitals.com/templates/starlit-blooms">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Starlit Blooms — Eternal Satin Roses, Manchester">
+<meta property="og:description" content="Roses never fade, moments never end. Handmade satin roses, wrapped bouquets, gift boxes and hampers — made to order in Manchester.">
+<meta property="og:image" content="https://billydigitals.com/assets/starlit/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/starlit/icon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../assets/starlit/icon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/starlit/icon-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../assets/starlit/mark-full.png">
+<link rel="stylesheet" href="../assets/css/scroll-fx.css">
+<link rel="stylesheet" href="starlit-blooms.css">
+
+<!--
+  Photographs are free CC0 / public-domain stock (Openverse: rawpixel, flickr,
+  stocksnap) standing in for Starlit Blooms' own work so the layout can be
+  judged with real photography in it. Every one is labelled as an example on
+  the page. When her photographs arrive, drop them into
+  assets/starlit/photos/ over the same filenames and nothing else changes:
+    hero-1..3   4:5   860x1075      gal-1..8   4:5   900x1125
+    col-*     18:23   900x1150      story      4:5   900x1125
+    quote      16:9  1600x900
+
+  Every frame is colour-graded into one family (greens and yellows pulled to
+  neutral, shadows lifted toward the page's plum) so a set of unrelated stock
+  photographs reads as one brand. Sources, all CC0 / public domain:
+
+    col-boxes    rawpixel  cc0  Free pink roses image
+    col-hampers  rawpixel  cc0  Red rose
+    col-wrapped  rawpixel  cc0  Free red roses image
+    gal-1        rawpixel  cc0  Free red rose image
+    gal-2        rawpixel  cc0  Ingrid Bergman rose
+    gal-3        rawpixel  cc0  Red rose
+    gal-4        rawpixel  cc0  Free red rose image
+    gal-5        rawpixel  cc0  
+    gal-6        rawpixel  cc0  Close-up red rose its petals
+    gal-7        rawpixel  cc0  Free pink rose image
+    gal-8        rawpixel  cc0  Free red rose image
+    hero-1       rawpixel  cc0  
+    hero-2       rawpixel  cc0  Free red rose image
+    hero-3       rawpixel  cc0  
+    quote        rawpixel  cc0  
+    story        rawpixel  cc0  Free red roses image
+  Her logo is her own, lifted from her Instagram profile picture and keyed
+  out so the artwork sits on any background (logo / mark-full / monogram /
+  wordmark).
+-->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Florist",
+  "name": "Starlit Blooms",
+  "description": "Handmade eternal satin roses, wrapped bouquets, gift boxes and hampers, made to order in Manchester.",
+  "image": "https://billydigitals.com/assets/starlit/og.jpg",
+  "url": "https://billydigitals.com/templates/starlit-blooms",
+  "areaServed": { "@type": "City", "name": "Manchester" },
+  "address": { "@type": "PostalAddress", "addressLocality": "Manchester", "addressCountry": "GB" },
+  "sameAs": ["https://www.instagram.com/starlitblooms_"],
+  "priceRange": "££"
+}
+</script>
+</head>
+
+<body id="top">
+
+<div class="loader" id="loader" aria-hidden="true">
+  <img src="../assets/starlit/mark-full.png" alt="" width="900" height="900">
+  <span class="loader-bar"><i></i></span>
+</div>
+
+<canvas class="stars" id="stars" aria-hidden="true"></canvas>
+<div class="petals" id="petals" aria-hidden="true"></div>
+<div class="progress" data-fx="progressbar"></div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <a class="nav-logo" href="#top" aria-label="Starlit Blooms — home">
+    <img class="word" src="../assets/starlit/wordmark.png" alt="Starlit Blooms" width="1760" height="300">
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#eternal">Eternal roses</a>
+    <a href="#collections">Collections</a>
+    <a href="#prices">Prices</a>
+    <a href="#build">Build yours</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#enquire">Enquire</a>
+  </nav>
+  <a class="nav-cta" id="navCta" href="#enquire">Order</a>
+  <button class="nav-burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <nav aria-label="Mobile">
+    <a href="#eternal">Eternal roses</a>
+    <a href="#collections">Collections</a>
+    <a href="#prices">Prices</a>
+    <a href="#build">Build yours</a>
+    <a href="#occasions">Occasions</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#delivery">Delivery</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#faq">Questions</a>
+    <a href="#enquire">Enquire</a>
+  </nav>
+  <div class="drawer-foot">
+    <a class="btn btn-solid" id="drawerIg" href="#" target="_blank" rel="noopener">Message on Instagram</a>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <img class="hero-mark" src="../assets/starlit/mark-full.png" alt="Starlit Blooms" width="900" height="900">
+      <h1 data-fx="text" data-fx-step="70">Roses never fade,<br><em>moments never end</em></h1>
+      <p class="hero-sub" data-fx="reveal" data-fx-delay="520">
+        Eternal roses, handmade from satin ribbon in Manchester. They never wilt,
+        never drop a petal, and stay exactly as they arrived.
+      </p>
+      <div class="hero-cta" data-fx="reveal" data-fx-delay="680">
+        <a class="btn btn-solid" href="#build">Build your bouquet</a>
+        <a class="btn btn-ghost" href="#enquire">Send an enquiry</a>
+      </div>
+      <ul class="hero-facts" data-fx="stagger" data-fx-delay="820" data-fx-step="90">
+        <li>Manchester &amp; delivered by hand</li>
+        <li>Bouquets from £25</li>
+        <li>Two weeks' notice</li>
+      </ul>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <figure class="hero-tile t1" data-fx="parallax" data-fx-speed="0.16"><img src="../assets/starlit/photos/hero-1.jpg" alt="" width="860" height="1075" loading="eager" fetchpriority="high"></figure>
+      <figure class="hero-tile t2" data-fx="parallax" data-fx-speed="0.28"><img src="../assets/starlit/photos/hero-2.jpg" alt="" width="860" height="1075" loading="eager"></figure>
+      <figure class="hero-tile t3" data-fx="parallax" data-fx-speed="0.10"><img src="../assets/starlit/photos/hero-3.jpg" alt="" width="860" height="1075" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MARQUEE ================= -->
+<div class="band" aria-hidden="true"><div class="band-track" id="marquee"></div></div>
+
+<!-- ================= ETERNAL ================= -->
+<section class="sec" id="eternal">
+  <div class="wrap eternal-grid">
+    <figure class="eternal-art" data-fx="reveal" data-fx-variant="scale">
+      <img src="../assets/starlit/photos/story.jpg" alt="Deep red roses in low light" width="900" height="1125" loading="lazy">
+      <figcaption>Example photography</figcaption>
+    </figure>
+    <div class="eternal-copy">
+      <p class="tag" data-fx="reveal">What makes them eternal</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Every rose is folded<br>by hand, petal by petal</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="160">
+        These are not fresh flowers. Every rose is made from satin ribbon, one petal
+        at a time, then built into the bouquet you asked for. Nothing wilts, nothing
+        drops, and nothing gets thrown out at the end of the week.
+      </p>
+      <ul class="pillars" data-fx="stagger" data-fx-step="110">
+        <li>
+          <span class="pill-ico" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 27s-9-5.6-9-12.4A5.6 5.6 0 0 1 16 10a5.6 5.6 0 0 1 9 4.6C25 21.4 16 27 16 27Z"/><path d="M16 10V5"/></svg>
+          </span>
+          <h3>They last for years</h3>
+          <p>No water, no trimming, nothing to look after. They stay exactly as they arrived.</p>
+        </li>
+        <li>
+          <span class="pill-ico" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 4c3 4 3 7 0 10-3-3-3-6 0-10Z"/><path d="M16 14v14"/><path d="M16 19c-4-2-7-1-9 2 3 2 6 2 9-2Z"/><path d="M16 23c4-2 7-1 9 2-3 2-6 2-9-2Z"/></svg>
+          </span>
+          <h3>Made to order, never off a shelf</h3>
+          <p>Your colours, your size, your ribbon. Every bouquet is built for the person it is going to.</p>
+        </li>
+        <li>
+          <span class="pill-ico" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="12" width="22" height="15" rx="2"/><path d="M5 17h22M16 12v15"/><path d="M16 12c-3-4-8-4-8-1s5 1 8 1Zm0 0c3-4 8-4 8-1s-5 1-8 1Z"/></svg>
+          </span>
+          <h3>Wrapped, boxed or in a hamper</h3>
+          <p>You choose how it arrives — a wrapped bouquet, a lidded gift box, or a hamper with treats alongside.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COLLECTIONS ================= -->
+<section class="sec sec-plum" id="collections">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">The collections</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Three ways to give them</h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">Every one is made to order in your colours. Sizes and prices are the same across all three — the difference is how it arrives.</p>
+    </div>
+    <div class="cols" data-fx="stagger" data-fx-step="140">
+      <article class="col-card">
+        <figure><img src="../assets/starlit/photos/col-wrapped.jpg" alt="A wrapped bouquet of deep red roses" width="900" height="1200" loading="lazy"><span class="ex">Example</span></figure>
+        <div class="col-body">
+          <h3>Wrapped bouquets</h3>
+          <p>The classic. Satin roses gathered and wrapped in matte paper, finished with a ribbon and a <em>Just for you</em> sash.</p>
+          <p class="from">From £25</p>
+          <a class="lnk" href="#build">Build one<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <article class="col-card">
+        <figure><img src="../assets/starlit/photos/col-boxes.jpg" alt="A gift box tied with ribbon beside roses" width="900" height="1200" loading="lazy"><span class="ex">Example</span></figure>
+        <div class="col-body">
+          <h3>Gift boxes</h3>
+          <p>Roses set into a lidded box so the whole arrangement lifts out in one piece. The one people photograph before they open it.</p>
+          <p class="from">Quoted on enquiry</p>
+          <a class="lnk" href="#enquire">Ask about boxes<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <article class="col-card">
+        <figure><img src="../assets/starlit/photos/col-hampers.jpg" alt="A mixed arrangement laid out as a hamper" width="900" height="1200" loading="lazy"><span class="ex">Example</span></figure>
+        <div class="col-body">
+          <h3>Hampers</h3>
+          <p>Roses plus the extras — chocolates, minis, a candle, whatever suits them. Put together around a budget you set.</p>
+          <p class="from">Quoted on enquiry</p>
+          <a class="lnk" href="#enquire">Plan a hamper<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICES ================= -->
+<section class="sec" id="prices">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Price list</p>
+      <h2 data-fx="reveal" data-fx-delay="80">What everything costs</h2>
+    </div>
+
+    <div class="price-grid" data-fx="stagger" data-fx-step="120">
+      <div class="price-card">
+        <h3>Bouquets</h3>
+        <ul class="price-list" id="pcBouquets"></ul>
+      </div>
+      <div class="price-card">
+        <h3>Add ons</h3>
+        <ul class="price-list" id="pcAddons"></ul>
+      </div>
+      <div class="price-card">
+        <h3>Specials</h3>
+        <ul class="price-list" id="pcSpecials"></ul>
+        <p class="price-note">Birthday and wedding bouquets are larger builds with the extras already included.</p>
+      </div>
+    </div>
+
+    <p class="notice" data-fx="reveal">
+      <strong>Two weeks' notice.</strong> Every bouquet is made by hand, so orders
+      need at least a fortnight ahead. Gift boxes, hampers and anything personalised
+      are priced on enquiry.
+    </p>
+  </div>
+</section>
+
+<!-- ================= BUILDER ================= -->
+<section class="sec sec-plum" id="build">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Build yours</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Put your bouquet together</h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">Pick the size, the colours and the finishing touches. The total updates as you go — then send it over in one tap.</p>
+    </div>
+
+    <div class="builder" data-fx="reveal">
+      <div class="bd-main">
+        <div class="bd-step">
+          <p class="bd-label"><span class="bd-n">1</span> Size</p>
+          <div class="chips" id="bdSizes" role="group" aria-label="Bouquet size"></div>
+        </div>
+        <div class="bd-step">
+          <p class="bd-label"><span class="bd-n">2</span> Colours <span class="bd-hint">pick as many as you like</span></p>
+          <div class="chips" id="bdColours" role="group" aria-label="Rose colours"></div>
+        </div>
+        <div class="bd-step">
+          <p class="bd-label"><span class="bd-n">3</span> How it arrives</p>
+          <div class="chips" id="bdStyle" role="group" aria-label="Presentation"></div>
+        </div>
+        <div class="bd-step">
+          <p class="bd-label"><span class="bd-n">4</span> Finishing touches</p>
+          <div class="chips" id="bdExtras" role="group" aria-label="Add ons"></div>
+        </div>
+        <div class="bd-step">
+          <label class="bd-label" for="bdNote"><span class="bd-n">5</span> Anything written on it?</label>
+          <input type="text" id="bdNote" maxlength="60" placeholder="A name for the banner, a message for the card…">
+        </div>
+      </div>
+
+      <aside class="bd-side">
+        <p class="bd-side-t">Your bouquet</p>
+        <ul class="bd-spec" id="bdSpec"></ul>
+        <div class="bd-total">
+          <span>Total</span>
+          <strong id="bdPrice">£25.00</strong>
+        </div>
+        <p class="bd-small" id="bdSmall"></p>
+
+        <p class="bd-msg-t">Your message</p>
+        <p class="bd-msg" id="bdMsg"></p>
+
+        <div class="bd-go">
+          <button class="btn btn-solid" id="bdSend" type="button">Copy &amp; send enquiry</button>
+        </div>
+        <p class="bd-copy" id="bdCopy" role="status"></p>
+        <p class="bd-alt"><button class="linkish" id="bdForm" type="button">Or fill in the enquiry form</button></p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENQUIRE ================= -->
+<section class="sec" id="enquire">
+  <div class="wrap enq-grid">
+    <div class="enq-copy">
+      <p class="tag" data-fx="reveal">Enquiries</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Something else in mind?</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">
+        A colour that isn't on the list, a hamper, a wedding, a date that's tight —
+        send the details and you'll get a reply.
+      </p>
+    </div>
+
+    <form class="enq-form" id="enqForm" novalidate data-fx="reveal" data-fx-delay="120">
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqName">Your name</label>
+          <input type="text" id="enqName" name="name" autocomplete="name" required>
+        </div>
+        <div class="fld">
+          <label for="enqReach">Instagram, email or phone</label>
+          <input type="text" id="enqReach" name="reach" autocomplete="email" required>
+        </div>
+      </div>
+      <div class="fld">
+        <label for="enqOccasion">What's the occasion?</label>
+        <div class="chips" id="occChips" role="group" aria-label="Occasion"></div>
+        <input type="hidden" id="enqOccasion" name="occasion" value="Just because">
+      </div>
+      <div class="fld-row">
+        <div class="fld">
+          <label for="enqDate">When do you need it?</label>
+          <input type="date" id="enqDate" name="date">
+        </div>
+        <div class="fld">
+          <label for="enqBudget">Budget <span class="opt">optional</span></label>
+          <input type="text" id="enqBudget" name="budget" placeholder="e.g. around £60">
+        </div>
+      </div>
+      <div class="fld">
+        <label for="enqMsg">What would you like?</label>
+        <textarea id="enqMsg" name="message" rows="5" placeholder="Colours, size, whether it's wrapped, boxed or a hamper, anything written on it…" required></textarea>
+      </div>
+      <input type="text" class="hp" id="enqHp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-solid btn-wide" id="enqBtn" type="submit">Send enquiry</button>
+      <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+      <p class="form-fine">Replies usually come the same day. Nothing is charged until the order is confirmed.</p>
+    </form>
+
+    <div class="enq-extra" data-fx="reveal" data-fx-delay="180">
+      <ul class="enq-points">
+        <li><span aria-hidden="true">✦</span> Two weeks' notice on every order</li>
+        <li><span aria-hidden="true">✦</span> Hand delivered around Manchester</li>
+        <li><span aria-hidden="true">✦</span> Payment arranged once it's confirmed</li>
+      </ul>
+      <a class="enq-ig" id="enqIg" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+        <span><strong>@starlitblooms_</strong><br>Message on Instagram</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUOTE BAND ================= -->
+<section class="quote" aria-label="The promise">
+  <div class="quote-bg" data-fx="parallax" data-fx-speed="0.18">
+    <img src="../assets/starlit/photos/quote.jpg" alt="" width="1600" height="900" loading="lazy">
+  </div>
+  <blockquote data-fx="reveal">
+    <p>Every bouquet is designed with care and intention, <em>just for you.</em></p>
+    <cite>Starlit Blooms</cite>
+  </blockquote>
+</section>
+
+<!-- ================= OCCASIONS ================= -->
+<section class="sec" id="occasions">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Occasions</p>
+      <h2 data-fx="reveal" data-fx-delay="80">For every moment that matters</h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">Every bouquet is built around the occasion — colours, size, and what goes on the banner.</p>
+    </div>
+    <ul class="occ" id="occGrid" data-fx="stagger" data-fx-step="60"></ul>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section class="sec sec-plum" id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Gallery</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Recent work</h2>
+      <p class="sub" data-fx="reveal" data-fx-delay="140">A look at the shapes, colours and finishes. <span class="dim">(Example photography for now.)</span></p>
+    </div>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail" id="gal" data-rail data-lenis-prevent role="list"></div>
+    <div class="rail-arrows">
+      <button type="button" data-rail-prev="gal" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" data-rail-next="gal" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DELIVERY ================= -->
+<section class="sec" id="delivery">
+  <div class="wrap del-grid">
+    <div class="del-copy">
+      <p class="tag" data-fx="reveal">Delivery</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Hand delivered,<br>never posted in a box</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">
+        Every order is delivered in person around Manchester — nothing crushed,
+        nothing bent, no courier. Further out, just ask.
+      </p>
+    </div>
+    <ol class="steps" data-fx="stagger" data-fx-step="110">
+      <li><span class="step-n">01</span><h3>Send the details</h3><p>Colours, size, date.</p></li>
+      <li><span class="step-n">02</span><h3>Get it confirmed</h3><p>A price and a date come back.</p></li>
+      <li><span class="step-n">03</span><h3>It gets made</h3><p>By hand, in the two weeks before.</p></li>
+      <li><span class="step-n">04</span><h3>It arrives</h3><p>Delivered to the door on the day.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="sec sec-plum" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="tag" data-fx="reveal">Reviews</p>
+      <h2 data-fx="reveal" data-fx-delay="80">What people say</h2>
+    </div>
+    <div class="gbox" data-fx="reveal">
+      <div class="gbox-head">
+        <span class="g" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.6Z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.6 14.7a7.2 7.2 0 0 1 0-4.6v-3H1.8a12 12 0 0 0 0 10.7l3.8-3Z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.6 11.6 0 0 0 12 0 12 12 0 0 0 1.8 6.1l3.8 3C6.5 6.7 9 4.8 12 4.8Z"/></svg>
+        </span>
+        <div>
+          <p class="gbox-t">Google reviews</p>
+          <p class="gbox-s"><span class="stars5" aria-hidden="true">★★★★★</span> <strong id="gRating">5.0</strong> <span id="gCount">from 24 reviews</span></p>
+        </div>
+        <a class="btn btn-ghost btn-sm" id="gWrite" href="#" target="_blank" rel="noopener">Leave a review</a>
+      </div>
+      <p class="gbox-note">An example of how Google reviews will appear once the business profile is live. The reviews below are placeholders.</p>
+    </div>
+  </div>
+  <div class="rail-wrap">
+    <div class="rail rail-rv" id="rvRail" data-rail data-lenis-prevent role="list"></div>
+    <div class="rail-arrows">
+      <button type="button" data-rail-prev="rvRail" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" data-rail-next="rvRail" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec" id="faq">
+  <div class="wrap faq-grid">
+    <div class="faq-side">
+      <p class="tag" data-fx="reveal">Questions</p>
+      <h2 data-fx="reveal" data-fx-delay="80">Good to know</h2>
+      <p class="lede" data-fx="reveal" data-fx-delay="140">Anything not answered here, just ask.</p>
+      <a class="btn btn-ghost" href="#enquire">Ask a question</a>
+    </div>
+    <div class="faq-list" id="faqList" data-fx="reveal" data-fx-delay="120"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <img class="foot-logo" src="../assets/starlit/mark-full.png" alt="Starlit Blooms" width="900" height="900" loading="lazy">
+    <p class="foot-line">Roses never fade, moments never end.</p>
+    <div class="socials" id="socials"></div>
+    <p class="foot-meta"><span>Handmade in Manchester</span><span>Delivered by hand</span><span>Two weeks' notice</span></p>
+    <p class="foot-fine">
+      Website template by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a>.
+      Photography shown is example stock, pending her own images.
+    </p>
+  </div>
+</footer>
+
+<a class="dm-bubble" id="dmBubble" href="#" target="_blank" rel="noopener" aria-label="Message Starlit Blooms on Instagram">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+  <span>Order on Instagram</span>
+</a>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="lb" id="lb" hidden>
+  <div class="lb-in">
+    <img id="lbImg" alt="">
+    <p class="lb-cap" id="lbCap"></p>
+  </div>
+  <button id="lbX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button id="lbPrev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button id="lbNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+
+<script src="vendor/lenis.min.js" defer></script>
+<script src="../assets/js/scroll-fx.js" defer></script>
+<script src="starlit-blooms.js" defer></script>
+</body>
+</html>

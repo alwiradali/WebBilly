@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /* Which inbox does each Megacity form reach?
 
-   Landlord business goes to the office, tenant business to lettings, and the
-   general contact form to both. Nothing else checks this: the Studio inbox only
+   Walid's rule, given 2026-09-19: anything a tenant sends goes to lettings@,
+   everything else goes to info@, which he reads himself; repairs go to
+   management@. The general contact form used to go to BOTH info@ and lettings@
+   — that is what changed, and this check is what caught it when it did.
+   Nothing else checks this: the Studio inbox only
    exists once D1 is bound, so in production the email IS the record — a form
    pointed at the wrong address, or at the old demo inbox, loses the enquiry with
    nobody to notice. This asserts the table directly.
@@ -13,7 +16,8 @@ import { notifyTo, kindFromTopic, OFFICE_TO, LETTINGS_TO, MANAGEMENT_TO } from "
 const OFFICE = [OFFICE_TO];
 const LETTINGS = [LETTINGS_TO];
 const MANAGEMENT = [MANAGEMENT_TO];
-const BOTH = [OFFICE_TO, LETTINGS_TO];
+/* Deliberately no BOTH any more: no form reaches two inboxes. Walid reads
+   info@ himself and asked not to get tenant mail there. */
 
 /* env with no MEGACITY_DB — exactly the state production is in today. */
 const LIVE = {};
@@ -21,7 +25,8 @@ const LIVE = {};
 const cases = [
   ["landlord", OFFICE, "landlord registration"],
   ["valuation", OFFICE, "landlord valuation request"],
-  ["contact", BOTH, "general contact form"],
+  ["contact", OFFICE, "general contact form"],
+  ["contact-tenant", LETTINGS, "contact form from a tenant"],
   ["register", LETTINGS, "tenant registration"],
   ["viewing", LETTINGS, "viewing request"],
   ["application", LETTINGS, "tenancy application"],
@@ -33,8 +38,15 @@ const cases = [
 const topics = [
   ["Free landlord valuation", "valuation", OFFICE],
   ["Tenant registration", "register", LETTINGS],
-  ["General", "contact", BOTH],
-  ["", "contact", BOTH],
+  ["General", "contact", OFFICE],
+  ["", "contact", OFFICE],
+  ["Renting a home", "contact-tenant", LETTINGS],
+  ["Letting my property", "contact", OFFICE],
+  ["Property management", "contact", OFFICE],
+  ["Maintenance", "maintenance", MANAGEMENT],
+  /* "current" contains "rent"; a regex without word boundaries sends this
+     landlord to the tenant inbox. */
+  ["My current agent is letting me down", "contact", OFFICE],
 ];
 
 let fails = 0;
@@ -108,7 +120,8 @@ const posts = [
   ["/api/megacity-landlord", { ...person, address: "12 Example Street" }, OFFICE, "landlord registration"],
   ["/api/megacity-contact", { ...person, topic: "Free landlord valuation", message: "x" }, OFFICE, "valuation via the contact endpoint"],
   ["/api/megacity-contact", { ...person, topic: "Tenant registration", message: "x" }, LETTINGS, "tenant registration via the contact endpoint"],
-  ["/api/megacity-contact", { ...person, topic: "General", message: "x" }, BOTH, "general contact"],
+  ["/api/megacity-contact", { ...person, topic: "General", message: "x" }, OFFICE, "general contact"],
+  ["/api/megacity-contact", { ...person, topic: "Renting a home", message: "x" }, LETTINGS, "a tenant using the contact form"],
   ["/api/megacity-viewing", { ...person, property: "12 Example Street" }, LETTINGS, "viewing request"],
   ["/api/megacity-apply", { ...person, property: "12 Example Street" }, LETTINGS, "tenancy application"],
   ["/api/megacity-maintenance", { name: person.name, contact: person.email, address: "12 Example Street", issue: "Leak" }, MANAGEMENT, "maintenance report"],

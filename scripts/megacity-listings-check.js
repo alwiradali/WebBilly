@@ -78,24 +78,33 @@ const INVENTED = [
 
   /* Things Walid found on his phone, so they cannot come back:
      a link out to the old website, a print button labelled as a brochure,
-     and the office number that his live site says is 21, not 18. */
+     the office number that his live site says is 21 not 18, and a 360 tour
+     promised on a property that has none. */
   {
     const pages = SLUGS.concat(["denmark-road", "ladywell-point", "room-3", "room-5", "room-7"]);
-    let oldSite = 0, mislabelled = 0, wrongOffice = 0;
+    let oldSite = 0, mislabelled = 0, wrongOffice = 0, promisedTour = 0;
     for (const slug of pages) {
       await page.goto(LET(slug), { waitUntil: "domcontentloaded" });
       const f = await page.evaluate(() => ({
         old: [...document.querySelectorAll("a[href]")].filter((a) => /megacityproperties\.co\.uk\/property\//.test(a.href)).length,
         brochure: /View brochure/i.test(document.body.innerText),
         office: (document.body.innerText.match(/Office\s+(\d+),\s*The Tube/) || [])[1] || "",
+        /* A page may talk about a 360 tour only if it actually carries one.
+           These hand-built pages carry none, so the words should not appear at
+           all — not as a heading, not as a jump link, and not as a button
+           offering to send a tour "when it is ready". */
+        mentions360: /360|virtual tour|walkthrough/i.test(document.body.innerText),
+        hasTour: !!document.querySelector("[data-billy360], iframe[src*='billy360']"),
       }));
       if (f.old) oldSite++;
       if (f.brochure) mislabelled++;
       if (f.office && f.office !== "21") wrongOffice++;
+      if (f.mentions360 && !f.hasTour) promisedTour++;
     }
     ok(oldSite === 0, `no listing links out to the old website (${oldSite} of ${pages.length} do)`);
     ok(mislabelled === 0, `no button promises a brochure and prints instead (${mislabelled})`);
     ok(wrongOffice === 0, `every page gives the office as 21, as his live site does (${wrongOffice} wrong)`);
+    ok(promisedTour === 0, `no page mentions a 360 tour it does not have (${promisedTour} of ${pages.length} do)`);
   }
 
   /* reachable from the grid */

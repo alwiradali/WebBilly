@@ -62,3 +62,63 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/amabilis/*
   X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Brownielicious -----------------------------
+# Same arrangement as Amabilis above. robots.txt already keeps compliant
+# crawlers out of /templates/, but NOT out of /assets/ — so her logo and the
+# photographs could be reached and surfaced by image search on their own even
+# though the page itself is noindex. These headers close that, and cover
+# anything that fetches the page regardless of robots.txt.
+/templates/brownielicious
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/brownielicious.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/brownielicious/*
+  X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Starlit Blooms -----------------------------
+/templates/starlit-blooms
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/starlit-blooms.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/starlit/*
+  X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Makeup by Sadia ----------------------------
+/templates/makeup-by-sadia
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/makeup-by-sadia.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/sadia/*
+  X-Robots-Tag: noindex, noimageindex
+
+# --- Unlisted client preview: Krem&Choc ---------------------------------
+# Doubly important here: this page carries her own copy and photographs from
+# kremchoc.co.uk, so an indexed copy would compete with her live site.
+/templates/kremchoc
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/kremchoc.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/kremchoc/*
+  X-Robots-Tag: noindex, noimageindex
+
+# Henna by Zainab — unlisted preview. Not linked from anywhere and not for
+# Google until she has seen it and said yes.
+/templates/henna-by-zainab
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+/assets/zainab/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+# Strictly Sprinkles — unlisted preview. Not linked from anywhere and not for
+# Google until she has seen it and said yes. The photographs matter here too:
+# her own work is in assets/strictly/work, and it should not be indexed off
+# somebody else's domain.
+/templates/strictly-sprinkles
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+/assets/strictly/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+/templates/strictly-sprinkles-menu
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

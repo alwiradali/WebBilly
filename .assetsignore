@@ -124,3 +124,35 @@ assets/fonts/fonts-smartin.css
 # to the client's own Cloudflare account, never from here. Kept out in case a
 # deploy is ever run by hand from a working copy that has been built in.
 dist
+
+# Brownielicious — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/brownielicious and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/brownielicious.html
+templates/brownielicious.css
+templates/brownielicious.js
+assets/brownielicious
+
+# Bash n Boujee — parked. Same as above: the files stay in the repository but
+# are not uploaded, so /templates/bashnboujee and its pictures answer 404.
+# Delete these four lines to put it back.
+templates/bashnboujee.html
+templates/bashnboujee.css
+templates/bashnboujee.js
+assets/bashnboujee
+
+# Starlit Blooms — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/starlit-blooms and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/starlit-blooms.html
+templates/starlit-blooms.css
+templates/starlit-blooms.js
+assets/starlit
+
+# Makeup by Sadia — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/makeup-by-sadia and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/makeup-by-sadia.html
+templates/makeup-by-sadia.css
+templates/makeup-by-sadia.js
+assets/sadia

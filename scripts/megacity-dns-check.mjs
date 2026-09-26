@@ -19,14 +19,25 @@
         sees it:
           node scripts/megacity-dns-check.mjs
 
-   Querying a named nameserver needs `dig` (macOS and Linux have it). Without
-   --ns it uses DNS-over-HTTPS and needs nothing.
+   Needs nothing installed either way: --ns builds its own DNS queries and
+   sends them to the nameserver named; without --ns it uses DNS-over-HTTPS.
+
+   --ns PROVES IT REACHED THAT SERVER before reporting anything. It asks for the
+   zone's SOA and requires the authoritative bit, then asks the same server
+   about bbc.co.uk and requires it NOT to answer. Both halves matter, and they
+   are here because of a real failure: run inside one sandbox, node:dns's
+   setServers() was quietly ignored and every query was answered locally by a
+   recursive resolver. Each run "passed" while reading public DNS — still
+   GoDaddy's zone — and calling it Cloudflare's. Step 2 below is the one check
+   standing between Walid's mailboxes and a bad switch, so it now refuses to
+   report a result it cannot stand behind.
 
    Exit code is 1 if any record marked CRITICAL is wrong. Those are the ones
    carrying Walid's email: lose one and info@, lettings@ and management@ stop. */
 
 import { readFileSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { promises as dnsp } from "node:dns";
+import { queryRaw, isAuthoritative } from "./lib/dns-raw.mjs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,8 +46,18 @@ const DOM = "megacityproperties.co.uk";
 const EXPORT = join(ROOT, "docs/megacity-old-site/dns-export.txt");
 
 /* Records that carry email. Everything else is a nuisance if lost; these
-   stop the agency receiving enquiries. */
-const CRITICAL = new Set(["@ MX", "@ TXT", "autodiscover CNAME", "_dmarc TXT"]);
+   stop the agency receiving enquiries, or stop the email it sends being
+   believed.
+
+   Every DKIM selector counts, and they are matched by shape rather than
+   listed: the nine on this domain include seven Amazon SES selectors whose
+   names are random 32-character strings, so a hand-written list would go stale
+   the moment SES issues another one. See dns-export.txt. */
+const CRITICAL = new Set(["@ MX", "@ TXT", "autodiscover CNAME", "_dmarc TXT", "_amazonses TXT"]);
+const doubled = (name) => name.toLowerCase().endsWith("." + DOM);   /* see dns-export.txt */
+const isCritical = (name, type) =>
+  CRITICAL.has(`${name} ${type}`) ||
+  (type === "CNAME" && /(^|\.)_domainkey(\.|$)/.test(name) && !doubled(name));
 
 const ns = (process.argv.find((a) => a.startsWith("--ns=")) || "").slice(5);
 const quiet = process.argv.includes("--quiet");
@@ -58,20 +79,42 @@ function expected() {
 
 const fqdn = (name) => (name === "@" ? DOM : `${name}.${DOM}`);
 
-function viaDig(name, type) {
-  const args = ["+short", "+time=5", "+tries=2", type, fqdn(name)];
-  if (ns) args.unshift("@" + ns);
+/* Asking one named nameserver, and proving we got there. */
+let serverIp = null;
+async function nameserver() {
+  if (serverIp) return serverIp;
+  let addrs;
   try {
-    return execFileSync("dig", args, { encoding: "utf8" })
-      .split("\n").map((s) => s.trim()).filter(Boolean);
-  } catch (e) {
-    if (e.code === "ENOENT") {
-      console.error("dig is not installed, so --ns cannot be used. Run without --ns to use DNS-over-HTTPS,\n" +
-        "or run this on a machine with dig (macOS and most Linux have it).");
-      process.exit(2);
-    }
-    return [];
+    addrs = await dnsp.resolve4(ns);
+  } catch {
+    console.error(`Cannot find the address of nameserver "${ns}". Check the spelling.`);
+    process.exit(2);
   }
+  for (const ip of addrs) {
+    const verdict = await isAuthoritative(DOM, ip);
+    if (verdict.ok) { serverIp = ip; return ip; }
+    console.error(`  ${ip}: ${verdict.why}`);
+  }
+  console.error(`
+STOP: cannot verify anything against ${ns} from here.
+
+None of its addresses would answer as an authoritative server, so any result
+this produced would be whatever a resolver in the way decided to say — which is
+public DNS, which is the OLD zone. That would look like a pass and mean nothing.
+
+Run this step from a machine with ordinary outbound DNS. On Windows:
+
+  nslookup -type=MX megacityproperties.co.uk ${ns}
+  nslookup -type=TXT megacityproperties.co.uk ${ns}
+
+or run this same script there. Until it passes, do not change the nameservers.`);
+  process.exit(2);
+}
+
+async function viaNs(name, type) {
+  const ip = await nameserver();
+  const res = await queryRaw(fqdn(name), type, ip);
+  return res.ok ? res.values : [];
 }
 
 const NUM = { A: 1, NS: 2, CNAME: 5, MX: 15, TXT: 16, AAAA: 28, SRV: 33, CAA: 257 };
@@ -88,7 +131,7 @@ async function viaDoh(name, type) {
     .map((a) => a.data);
 }
 
-const lookup = (name, type) => (ns ? Promise.resolve(viaDig(name, type)) : viaDoh(name, type));
+const lookup = (name, type) => (ns ? viaNs(name, type) : viaDoh(name, type));
 
 /* Compare loosely enough to survive formatting differences between dig, DoH
    and Cloudflare's editor: trailing dots, quoting, whitespace, case. */
@@ -108,7 +151,7 @@ for (const r of expected()) {
   const got = await lookup(r.name, r.type);
   const hit = got.some((g) => norm(g) === norm(r.value));
   const key = `${r.name} ${r.type}`;
-  const crit = CRITICAL.has(key);
+  const crit = isCritical(r.name, r.type);
   if (hit) {
     say("ok  ", `${key.padEnd(24)} ${r.value}`);
   } else {
