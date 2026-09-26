@@ -278,8 +278,7 @@ window.SS = (function () {
     { q: "Can you recreate a cake I have seen?", a: "Usually, yes — send the picture with your enquiry. I will tell you honestly what I can match, what I would do differently and what it changes about the price. I would rather set the expectation now than hand you something that is not what you pictured." },
     { q: "Is everything halal?", a: "Yes, without exception. Every ingredient in this kitchen is halal." },
     { q: "Do you make tiered and wedding cakes?", a: "Yes. Tiered cakes, nikkah cakes and full dessert tables are quoted individually — tell me the guest count, the venue and the date and I will price it." },
-    { q: "Collection or delivery?", a: "Most orders are collected from Stockton-on-Tees. Delivery can sometimes be arranged for larger orders and dessert tables — ask when you enquire and I will tell you what is possible for your date." },
-    { q: "Can you work around allergies?", a: "Tell me at the enquiry stage and I will be straight with you about what I can and cannot guarantee. This is a home kitchen, so nuts, gluten, dairy and egg are all present and I cannot promise no cross-contact." }
+    { q: "Collection or delivery?", a: "Most orders are collected from Stockton-on-Tees. Delivery can sometimes be arranged for larger orders and dessert tables — ask when you enquire and I will tell you what is possible for your date." }
   ];
 
   return {
