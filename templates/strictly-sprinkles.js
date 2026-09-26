@@ -970,51 +970,91 @@
   setTimeout(done, 3600);   /* never let a slow image hold the page hostage */
 
   /* ---------- the hero's sprinkles ----------
-     Dots seeded around the mark and thinning outward, so the logo looks like
-     it is shedding onto the page. Positions are recomputed on resize because
-     the mark moves with the layout. */
+     A canvas, not DOM nodes. Eighty elements each running its own CSS
+     animation shuttle back and forth along a line — `alternate` makes every
+     dot stop dead and reverse, which reads as jitter rather than drift. Here
+     each particle travels outward from the mark continuously and is reseeded
+     at the ring when it reaches the edge, so the stream never stops and never
+     doubles back. One canvas also costs one layer instead of eighty, which is
+     what pays for four times as many dots. */
   (function dust() {
     var layer = $("#heroDust"), mark = $(".hero-mark"), hero = $("#hero");
     if (!layer || !mark || !hero || reduced) return;
+    var cv = el("canvas"); cv.setAttribute("aria-hidden", "true");
+    layer.appendChild(cv);
+    var ctx = cv.getContext("2d"); if (!ctx) return;
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);   /* 3 buys nothing for soft dots */
+    var W = 0, H = 0, cx = 0, cy = 0, r0 = 0, maxR = 0;
+    var parts = [], live = true, last = 0;
+
+    function measure() {
+      var hb = hero.getBoundingClientRect(), mb = mark.getBoundingClientRect();
+      W = Math.round(hb.width); H = Math.round(hb.height);
+      if (!W || !H) return false;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.width = W + "px"; cv.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#fdeae8";                 /* setTransform resets nothing else, but a
+                                                    resized canvas loses its fill style */
+      cx = mb.left - hb.left + mb.width / 2;
+      cy = mb.top - hb.top + mb.height / 2;
+      r0 = mb.width * 0.42;                      /* just inside her speckled ring */
+      maxR = Math.max(W, H) * 0.92;
+      return true;
+    }
+
+    /* `spread` seeds a particle anywhere along its journey, so the field is
+       already full on the first frame instead of puffing out all at once */
+    function seed(p, spread) {
+      p.a = Math.random() * Math.PI * 2;
+      p.r = spread ? r0 + Math.random() * (maxR - r0) : r0 * (0.9 + Math.random() * 0.2);
+      p.sp = 4 + Math.random() * 13;             /* px per second, outward */
+      p.spin = (Math.random() - 0.5) * 0.05;     /* radians per second, a slow swirl */
+      p.size = 0.45 + Math.random() * 1.5;
+      p.al = 0.16 + Math.random() * 0.46;
+      return p;
+    }
 
     function build() {
-      layer.textContent = "";
-      var hb = hero.getBoundingClientRect(), mb = mark.getBoundingClientRect();
-      if (!hb.width || !mb.width) return;
-      var cx = mb.left - hb.left + mb.width / 2;
-      var cy = mb.top - hb.top + mb.height / 2;
-      var r0 = mb.width * 0.46;                    /* the ring's own radius */
-      var reach = Math.max(hb.width, hb.height) * 0.62;
-      var n = innerWidth < 700 ? 38 : 82;
-      var frag = document.createDocumentFragment();
-      for (var i = 0; i < n; i++) {
-        /* Biased toward the mark, not spread evenly by area: they have to
-           read as shedding off the ring, and an even scatter just reads as
-           dust on the screen. */
-        var t = Math.pow(Math.random(), 1.9);
-        var dist = r0 + t * reach;
-        var ang = Math.random() * Math.PI * 2;
-        var x = cx + Math.cos(ang) * dist;
-        var y = cy + Math.sin(ang) * dist * 0.82;   /* the hero is wider than tall */
-        if (x < -20 || x > hb.width + 20 || y < -20 || y > hb.height + 20) continue;
-        var fade = 1 - t;                            /* thinner the further out */
-        var size = (1.4 + Math.random() * 1.9 * (0.5 + fade * 0.5)).toFixed(2);
-        var dur = 16 + Math.random() * 20;
-        var b = el("i");
-        b.style.cssText =
-          "left:" + x.toFixed(1) + "px;top:" + y.toFixed(1) + "px;" +
-          "width:" + size + "px;height:" + size + "px;" +
-          "opacity:" + (0.07 + fade * 0.46).toFixed(3) + ";" +
-          "--dx:" + (Math.cos(ang) * (14 + Math.random() * 40)).toFixed(0) + "px;" +
-          "--dy:" + (Math.sin(ang) * (10 + Math.random() * 30) - 8).toFixed(0) + "px;" +
-          "animation:dust " + dur.toFixed(1) + "s ease-in-out " +
-          (-Math.random() * dur).toFixed(1) + "s infinite alternate;";
-        frag.appendChild(b);
+      if (!measure()) return;
+      var n = innerWidth < 700 ? 150 : 300;
+      parts = [];
+      for (var i = 0; i < n; i++) parts.push(seed({}, true));
+    }
+
+    function frame(now) {
+      requestAnimationFrame(frame);
+      if (!live || !W) { last = now; return; }
+      var dt = Math.min((now - last) / 1000, 0.05); last = now;   /* cap after a tab switch */
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        p.r += p.sp * dt;
+        p.a += p.spin * dt;
+        if (p.r > maxR) seed(p, false);
+        var t = (p.r - r0) / (maxR - r0);                  /* 0 at the ring, 1 at the edge */
+        var fade = Math.min(t / 0.10, 1) * (1 - Math.max(0, (t - 0.45) / 0.55));
+        if (fade <= 0) continue;
+        var x = cx + Math.cos(p.a) * p.r;
+        var y = cy + Math.sin(p.a) * p.r * 0.86;           /* the hero is wider than tall */
+        if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+        ctx.globalAlpha = p.al * fade;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, 6.2832);
+        ctx.fill();
       }
-      layer.appendChild(frag);
+      ctx.globalAlpha = 1;
     }
 
     build();
+    last = performance.now();
+    requestAnimationFrame(frame);
+
+    /* nothing is drawn while the hero is off screen */
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { live = es[0].isIntersecting; }).observe(hero);
+    }
     var t; addEventListener("resize", function () { clearTimeout(t); t = setTimeout(build, 200); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
   })();

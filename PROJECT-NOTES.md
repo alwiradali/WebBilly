@@ -1383,13 +1383,16 @@ than linked.
 data file puts a marker next to the score. Replace `reviews` with her real
 Google reviews and set it to `false`.
 
-**The hero's sprinkles are seeded off the mark, not scattered.** `dust()` in
-the JS places them in polar coordinates around the mark's own ring with the
-radius biased toward it (`Math.pow(random, 1.9)`), so they read as the logo
-shedding rather than as dust on the screen — an even-by-area distribution was
-tried first and reads as neither. Each dot is transformed on its own, 82 on a
-desktop and 38 on a phone, 61fps on both, and none are drawn under reduced
-motion.
+**The hero's sprinkles are a canvas, and that is the point.** They were
+eighty DOM nodes each running `animation: … infinite alternate`, which makes
+every dot stop dead and reverse along a line — it reads as jitter, not drift.
+`dust()` now runs a particle field on one canvas: each particle travels
+outward from the mark at its own speed with a slow swirl, and is reseeded at
+the ring when it reaches the edge, so the stream is continuous and never
+doubles back. 300 particles on a desktop, 150 on a phone, 60fps with no frame
+over 25ms at dpr 3, nothing drawn while the hero is off screen, and no canvas
+created at all under reduced motion. The backing store is capped at dpr 2 —
+3 buys nothing for soft dots.
 
 **Two things that were measured, not eyeballed.** The tile scrim stops at
 rgba(36,29,56,.82) at 34% because at .46 the body copy read 3.1:1 over the
