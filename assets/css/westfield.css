@@ -280,14 +280,18 @@ p{text-wrap:pretty}
   padding:clamp(112px,16vw,150px) 0 clamp(72px,9vw,104px);
 }
 .hero-bg{position:absolute;inset:-8% 0;z-index:-4;will-change:transform}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:60% 50%}
-/* The photograph is the mood; the scrim is what makes the type readable. Two
-   layers: a hard left-to-right wash for the copy, and a floor-to-ceiling one
-   so the nav and the bottom strip both have something to sit on. */
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:62% 48%}
+/* The photograph is his workshop, and he wants to see it. The scrim is only
+   what makes the type readable: a left-to-right wash that is dark under the
+   copy and nearly clear by the middle, and a floor-to-ceiling one so the nav
+   and the bottom strip have something to sit on. The form card is translucent
+   so the picture carries on behind it instead of stopping at its edge. */
+/* with the photograph brighter, the type carries its own shadow on every size */
+.hero h1,.hero .lede{text-shadow:0 2px 16px rgba(0,0,0,.65),0 1px 3px rgba(0,0,0,.5)}
 .hero-scrim{
   position:absolute;inset:0;z-index:-3;pointer-events:none;background:
-    linear-gradient(96deg,rgba(10,10,11,.94) 0%,rgba(10,10,11,.86) 28%,rgba(10,10,11,.5) 50%,rgba(10,10,11,.14) 72%,rgba(10,10,11,.3) 100%),
-    linear-gradient(180deg,rgba(10,10,11,.86),transparent 24%,transparent 62%,rgba(10,10,11,.94));
+    linear-gradient(96deg,rgba(10,10,11,.9) 0%,rgba(10,10,11,.78) 26%,rgba(10,10,11,.38) 46%,rgba(10,10,11,.08) 66%,rgba(10,10,11,.16) 100%),
+    linear-gradient(180deg,rgba(10,10,11,.72),transparent 20%,transparent 66%,rgba(10,10,11,.94));
 }
 @media(max-width:1023px){
   /* A phone hero is ~1600px tall against a 390px width. Covering all of that
@@ -317,7 +321,7 @@ p{text-wrap:pretty}
 }
 /* the one moving thing behind the words: a slow sweep of workshop light */
 .hero-sweep{
-  position:absolute;inset:0;z-index:-2;pointer-events:none;opacity:.5;mix-blend-mode:screen;
+  position:absolute;inset:0;z-index:-2;pointer-events:none;opacity:.32;mix-blend-mode:screen;
   background:radial-gradient(760px 520px at 68% 30%,rgba(237,27,36,.24),transparent 68%),
              radial-gradient(560px 420px at 22% 78%,rgba(254,242,0,.09),transparent 70%);
   animation:sweep 22s ease-in-out infinite alternate;will-change:transform;
@@ -372,7 +376,8 @@ p{text-wrap:pretty}
 
 /* ------------------------------------------------------ the quote card -- */
 .qcard{
-  background:linear-gradient(170deg,var(--steel),var(--ink2));
+  background:linear-gradient(170deg,rgba(30,30,33,.84),rgba(20,20,22,.9));
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1);
   border:1px solid var(--line);border-radius:var(--rl);overflow:hidden;
   box-shadow:var(--shadow-lg);
 }
