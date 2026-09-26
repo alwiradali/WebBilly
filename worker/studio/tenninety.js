@@ -43,15 +43,7 @@ const AUTH_HEADER = "10ninety-webapi-key";
    6 and 7 are kept anyway. They cost nothing, they are right if 10ninety ever
    sends them, and the alternative is a bare number falling through to "a
    status nobody explained" and dropping a real property. */
-const STATUS = { 0: "live", 6: "live", 7: "live" };
-/* …and on 2026-09-26 that changed again: "let and available both should
-   appear on the website regardless". So a Let (7) or Sold (6) property that
-   10ninety sends is shown — marked "Let agreed" (availabilityOf below), which
-   the card, the listing page and its schema.org offer all already read, so no
-   tenant enquires about a home they cannot have. Whether 10ninety SENDS them
-   is 10ninety's setting (see above); off the market still means off the feed
-   and so off the site. */
-const LET_STATUSES = new Set([6, 7]);
+const STATUS = { 0: "live", 6: "let", 7: "let" };
 
 /* trans_type_id: 1 = Sales, 2 = Lettings. The feed carries both; this site
    lets. A sales record reaching the listings table would be a property the
@@ -266,9 +258,7 @@ export function toListing(p, opts = {}) {
   const status = STATUS[p.status_id] || null;
   if (!status) return null;              /* an id we have not been told about */
 
-  const { availability, availableFrom } = LET_STATUSES.has(p.status_id)
-    ? { availability: "let_agreed", availableFrom: null }
-    : availabilityOf(p, today);
+  const { availability, availableFrom } = availabilityOf(p, today);
   const rent = p.let_rent_frequency === MONTHLY ? num(p.price) : null;
   /* 9 Carlton Road arrives with let_bond 0.0. A zero deposit is not a figure
      Walid has given, it is a field he has not filled in, and "Deposit £0" on a
