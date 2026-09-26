@@ -1,3 +1,13 @@
+/* The two typefaces, served from this site rather than Google Fonts: the
+   same files Google serves (Latin and Latin Extended, variable weight), but
+   no render-blocking stylesheet from a third server and no second and third
+   connection before a phone can show a word. Licence: assets/mcr/fonts/OFL.txt */
+@font-face{font-family:'Inter';font-style:normal;font-weight:300 800;font-display:swap;src:url(assets/mcr/fonts/inter-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:300 800;font-display:swap;src:url(assets/mcr/fonts/inter-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400 900;font-display:swap;src:url(assets/mcr/fonts/playfair-display-italic-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400 900;font-display:swap;src:url(assets/mcr/fonts/playfair-display-italic-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 900;font-display:swap;src:url(assets/mcr/fonts/playfair-display-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 900;font-display:swap;src:url(assets/mcr/fonts/playfair-display-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
 /* ════════════════════════════════════════════════════════════════════
    SKYLINE INDIGO · Megacity Properties Ltd
    White ground · logo navy + sky · crossing-ribbon motif throughout.
@@ -307,7 +317,10 @@ body.is-ready .veil{display:none}
      contrast cut stops the lift crushing the sky, and a touch of saturation
      puts back what brightening takes out. */
   filter:brightness(1.32) contrast(.94) saturate(1.08)}
-@media (max-width:760px){.hero-media img.hero-still{object-position:center 46%}}
+/* Phones keep the photograph still. A 30-second zoom across the whole screen
+   is barely noticed at this size, costs a slow phone a repaint every frame,
+   and keeps the page "not finished" for PageSpeed's Speed Index. */
+@media (max-width:760px){.hero-media img.hero-still{object-position:center 46%;animation:none}}
 @keyframes herodrift{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media (prefers-reduced-motion:reduce){.hero-media img.hero-still{animation:none}}
 .hero-media::after{content:"";position:absolute;inset:0;pointer-events:none;

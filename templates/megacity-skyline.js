@@ -150,11 +150,21 @@ $$("video").forEach(v => {
 if (!reduce && window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
 
-  /* hero lines rise */
-  gsap.fromTo(".hero h1 .ln > span", { yPercent: 110 },
-    { yPercent: 0, duration: 1.1, ease: "power4.out", stagger: .12, delay: reduce ? 0 : 1.15 });
-  gsap.fromTo(".hero-kicker, .hero-sub, .hero-ctas", { autoAlpha: 0, y: 26 },
-    { autoAlpha: 1, y: 0, duration: .9, ease: "power3.out", stagger: .1, delay: 1.45 });
+  /* Hero lines rise, quickly and at once. The old 1.15s and 1.45s delays
+     were timed to a preloader curtain that no longer exists, and the
+     subtitle and buttons were faded to nothing first — so on a slow phone
+     the words people came for vanished when the scripts arrived and only
+     came back seconds later (PageSpeed: largest paint 7.1s, the subtitle).
+     Now nothing is ever hidden once it is on screen: if the scripts arrive
+     after the page has already been showing for a moment, there is no
+     entrance at all; otherwise the headline slides up in well under a
+     second and the rest only drifts into place, fully visible throughout. */
+  if (performance.now() < 1200) {
+    gsap.fromTo(".hero h1 .ln > span", { yPercent: 110 },
+      { yPercent: 0, duration: .7, ease: "power3.out", stagger: .08, delay: .05 });
+    gsap.fromTo(".hero-kicker, .hero-sub, .hero-ctas", { y: 14 },
+      { y: 0, duration: .6, ease: "power3.out", stagger: .06, delay: .15 });
+  }
 
   /* manifesto word fill */
   const manif = $("#manifText");
@@ -170,9 +180,10 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   }
 
   /* section heads + cards */
-  $$(".shead").forEach(el => gsap.fromTo(el, { autoAlpha: 0, y: 46 },
-    { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out",
-      scrollTrigger: { trigger: el, start: "top 84%" } }));
+  /* quick and short: text people scroll to should be readable at once */
+  $$(".shead").forEach(el => gsap.fromTo(el, { autoAlpha: 0, y: 22 },
+    { autoAlpha: 1, y: 0, duration: .55, ease: "power3.out",
+      scrollTrigger: { trigger: el, start: "top 90%" } }));
   /* homes: inner-image parallax. This one is real, but only on the tenants
      page — one script serves all 27, so ask before animating rather than
      letting GSAP warn on every other page. */
@@ -181,24 +192,24 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       yPercent: 0, ease: "none",
       scrollTrigger: { trigger: img.closest(".home"), start: "top bottom", end: "bottom top", scrub: true },
     }));
-    gsap.fromTo(".home", { autoAlpha: 0, y: 60 },
-      { autoAlpha: 1, y: 0, duration: 1, ease: "power3.out", stagger: .08,
-        scrollTrigger: { trigger: ".homes-grid", start: "top 84%" } });
+    gsap.fromTo(".home", { autoAlpha: 0, y: 28 },
+      { autoAlpha: 1, y: 0, duration: .55, ease: "power3.out", stagger: .05,
+        scrollTrigger: { trigger: ".homes-grid", start: "top 90%" } });
   }
 
   /* landlord service sections */
   $$(".lsec").forEach(sec => {
-    gsap.fromTo(sec.querySelectorAll(".lsec-copy > *"), { autoAlpha: 0, y: 34 },
-      { autoAlpha: 1, y: 0, duration: .85, stagger: .08, ease: "power3.out",
-        scrollTrigger: { trigger: sec, start: "top 74%" } });
+    gsap.fromTo(sec.querySelectorAll(".lsec-copy > *"), { autoAlpha: 0, y: 18 },
+      { autoAlpha: 1, y: 0, duration: .5, stagger: .04, ease: "power3.out",
+        scrollTrigger: { trigger: sec, start: "top 88%" } });
     const m = sec.querySelector(".lsec-media img");
     if (m) gsap.fromTo(m, { scale: 1.12 }, { scale: 1, ease: "none",
       scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: .6 } });
   });
 
-  gsap.fromTo(".cred", { autoAlpha: 0, y: 34 },
-    { autoAlpha: 1, y: 0, duration: .8, stagger: .09, ease: "power3.out",
-      scrollTrigger: { trigger: ".creds", start: "top 80%" } });
+  gsap.fromTo(".cred", { autoAlpha: 0, y: 18 },
+    { autoAlpha: 1, y: 0, duration: .5, stagger: .05, ease: "power3.out",
+      scrollTrigger: { trigger: ".creds", start: "top 88%" } });
   /* whole pixels only: a scrubbed transform stops wherever the scroll does,
      and at 77.85px the big word sat between pixels and looked out of focus */
   const fw = $(".footer-word");

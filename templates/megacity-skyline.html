@@ -43,9 +43,6 @@
  "url":"https://billydigitals.com/templates/megacity-skyline"}
 </script>
 <link rel="icon" href="assets/mcr/favicon.ico?v=1" sizes="any">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="megacity-skyline.css">
 </head>
 <body class="cine">
@@ -141,7 +138,11 @@
 <section class="hero hero--cine hero--ref" id="top" data-rail="Top">
   <div class="hero-media" aria-hidden="true">
     <picture>
+      <!-- WebP first: the same photograph at about half the weight
+           (411KB -> 220KB wide, 179KB -> 100KB on phones); JPEG for the rest -->
+      <source media="(max-width:760px)" type="image/webp" srcset="assets/mcr/hero-wide-m.webp">
       <source media="(max-width:760px)" srcset="assets/mcr/hero-wide-m.jpg">
+      <source type="image/webp" srcset="assets/mcr/hero-wide.webp">
       <img src="assets/mcr/hero-wide.jpg" alt="" class="hero-still" fetchpriority="high">
     </picture>
   </div>
