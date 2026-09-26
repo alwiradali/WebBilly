@@ -226,6 +226,36 @@ const LEGACY_REDIRECTS = [
   ["/megacity-sitemap.xml", "/sitemap.xml"],
   [/^\/megacity-([a-z0-9-]+)$/, (m) => rewriteHref("megacity-" + m[1], "root")],
 ];
+/* Old page names that still arrive, from the previous website (a 10ninety
+   template with PropertiesToLet, PropertiesForSale and NewsList pages) and
+   from guesses people and crawlers make (26 Sep: the Studio's 404 list).
+   Unlike the list above these are consulted only when the address would
+   otherwise be a 404 (host.js notFoundResponse), so a page made in the
+   Studio at /news or /search always wins over them. */
+const FALLBACK_REDIRECTS = [
+  [/^\/index\.(php|htm|asp|aspx)$/i, "/"],
+  [/^\/(properties-to-let|property-to-let|properties-to-rent|property-to-rent|propertiestolet|to-let|to-rent|rentals|property-search|search|search-results)(\/.*)?$/i, "/lettings"],
+  [/^\/(properties-for-sale|property-for-sale|propertiesforsale|for-sale|buy)(\/.*)?$/i, "/valuation"],
+  [/^\/(news|news-list|newslist|articles)(\/.*)?$/i, "/journal"],
+  [/^\/valuation\/.+$/, "/valuation"],
+  ["/favicon.png", "/apple-touch-icon.png"],
+  /* /lettings/manchester, /lettings/salford ... -> the area page when there
+     is one, otherwise the full list */
+  [/^\/lettings\/([a-z0-9-]+)(\/.*)?$/, (m) => {
+    const a = m[1] === "manchester-city-centre" || m[1] === "city-centre" ? "area-city-centre" : "area-" + m[1];
+    return Object.prototype.hasOwnProperty.call(ROOT_MAP, a) ? ROOT_MAP[a] : "/lettings";
+  }],
+];
+function firstMatch(list, path) {
+  for (const [from, to] of list) {
+    if (typeof from === "string") { if (from === path) return to; continue; }
+    const m = from.exec(path);
+    if (m) return typeof to === "function" ? to(m) : to;
+  }
+  return null;
+}
+function fallbackRedirect(path) { return firstMatch(FALLBACK_REDIRECTS, String(path || "")); }
+
 function legacyRedirect(path) {
   for (const [from, to] of LEGACY_REDIRECTS) {
     if (typeof from === "string") { if (from === path) return to; continue; }
@@ -233,6 +263,42 @@ function legacyRedirect(path) {
     if (m) return typeof to === "function" ? to(m) : to;
   }
   return null;
+}
+
+/* What kind of missing address this is, so the Studio's 404 list and its
+   dashboard count show what a person can act on.
+   - "probe": nobody reached it by following a link. Scanners try every
+     website for leaked secrets and admin logins (/.env, /.git/config,
+     /.aws/credentials, /wp-login.php, /config.json); crawlers ask for files
+     this site has never had (/llms.txt, /ads.txt); browser developer tools
+     ask for source maps; uptime checkers (and this repository's own smoke
+     tests) ask for /this-does-not-exist to see the 404 page. A 404 is the
+     right answer to all of them, and there is nothing to redirect. On 26 Sep
+     they were nearly all of the 693 "404s this week".
+   - "legacy": files from the previous website (its images, scripts, .asp
+     pages). Real, but not pages; the Studio shows them on request.
+   - null: a page address. These are the ones worth a redirect. */
+const PROBE = [
+  /(^|\/)\.[^/]/,
+  /(^|\/)env([._~-][^/]*)?$/i,
+  /~$|\.(env|ini|sql|bak|old|orig|save|swp|swo|tmp|log|ya?ml|toml|conf|cfg|pem|key|crt|p12|zip|tar|t?gz|rar|7z|map|ds_store)$/i,
+  /(^|\/)(config|configuration|credentials|secrets?|appsettings|parameters|settings|database|docker-compose|composer|package(-lock)?|phpinfo|info|debug)\.(json|js|php|xml|txt)$/i,
+  /^\/(xmlrpc|wp[-_/]|wordpress(\/|$)|admin(istrator)?(\/|$|\.)|login(\/|$|\.)|user\/login|cgi-bin\/|phpmyadmin|pma(\/|$)|myadmin|vendor\/phpunit|actuator|server-status|owa\/|autodiscover|ecp\/|boaform|hnap1|solr\/|telescope|_ignition|geoserver|manager\/html|cpanel|webmail)/i,
+  /does-?not-?exist|non-?existent|404-?test/i,
+  /^\/(llms(-full)?\.txt|ai\.txt|ads\.txt|app-ads\.txt|humans\.txt|security\.txt|sellers\.json|crossdomain\.xml|clientaccesspolicy\.xml|browserconfig\.xml|site\.webmanifest|manifest\.json)$/i,
+  /^\/(apple-touch-icon-\d|android-chrome|mstile)[^/]*\.png$/i,
+];
+const LEGACY_FILE = /^\/(images|css|js|content|scripts|styles|fonts)\/|\.(asp|aspx|php|cgi|jsp)$|\/wp-|^\/xmlrpc/i;
+function notFoundKind(path) {
+  const p = String(path || "");
+  if (PROBE.some((re) => re.test(p))) return "probe";
+  if (LEGACY_FILE.test(p)) return "legacy";
+  return null;
+}
+/* Rows logged before probes were recognised are still in the table, so the
+   Studio decides the kind again on the way out, from the address itself. */
+function notFoundKindOf(path, logged) {
+  return notFoundKind(path) || (logged && logged !== "page" ? logged : "page");
 }
 
 /* A link written for the client's own domain ("/valuation", "/let/x") -> the
@@ -256,5 +322,5 @@ function demoHref(v) {
 export {
   DEMO_HOSTS, FALLBACK_HOST, ROOT_MAP, PATH_TO_SLUG, PUBLIC_STATIC_SLUGS, STATIC_LET_SLUGS, LEGACY_LISTINGS, RESERVED_ROOT_SLUGS, LEGACY_REDIRECTS,
   pagePath, listingPath, studioPath, assetPath, rewriteHref, demoHref, rewriteSrcset, rewriteStyle, resolveRoot, slugOfPath,
-  megacityHosts, isMegacityHost, canonicalHost, mode, publicBase, absUrl, legacyRedirect,
+  megacityHosts, isMegacityHost, canonicalHost, mode, publicBase, absUrl, legacyRedirect, fallbackRedirect, FALLBACK_REDIRECTS, notFoundKind, notFoundKindOf, LEGACY_FILE,
 };

@@ -28,7 +28,7 @@ import { AREA_SLUGS, areaForListing } from "./areas.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
 const PASS_ASSET = /^\/(billy360\/|templates\/assets\/mcr\/|templates\/vendor\/|templates\/megacity-[a-z0-9-]+\.(css|js|json|map)$)/;
-const LEGACY_FILE = /^\/(images|css|js|content|scripts|styles|fonts)\/|\.(asp|aspx|php|cgi|jsp)$|\/wp-|^\/xmlrpc/;
+const LEGACY_FILE = urls.LEGACY_FILE;
 /* Google Search Console ownership files, served at the root exactly as Google
    issued them. Google re-checks them from time to time, so they stay for as
    long as the property is verified this way. Not secret: anyone may fetch one. */
@@ -370,8 +370,12 @@ function finish(res, { origin, path, isPublic, settings, how }) {
 }
 
 export async function notFoundResponse(request, env, ctx, url, path, kind) {
-  if (ctx && request.method === "GET") ctx.waitUntil(logNotFound(env, request, path, kind));
   const origin = "https://" + urls.canonicalHost(env);
+  /* old page names that have an obvious new home: only here, once nothing
+     else answered, so they can never hide a real page */
+  const fb = kind === "asset" ? null : urls.fallbackRedirect(path);
+  if (fb) return redirect(origin + fb + url.search, 301, ONE_HOUR);
+  if (ctx && request.method === "GET") ctx.waitUntil(logNotFound(env, request, path, kind));
   let res = null;
   try { res = await env.ASSETS.fetch(new Request(url.origin + "/templates/megacity-404", { headers: { accept: "text/html" } })); } catch (e) { res = null; }
   if (!res || !res.ok) return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
@@ -392,6 +396,9 @@ export async function logNotFound(env, request, path, kind) {
   const db = officeDb(env);
   if (!db) return;
   try {
+    /* scanners and crawlers asking for files no site like this has: a 404
+       is the right answer and there is nothing for anybody to do about it */
+    if (urls.notFoundKind(path) === "probe") return;
     const ua = request.headers.get("user-agent") || "";
     const day = new Date().toISOString().slice(0, 10);
     const session = (await sha256Hex(clientIp(request) + "|" + ua + "|" + day)).slice(0, 24);

@@ -61,6 +61,22 @@ const ALLOW = [
     test: (n) => n === "version.json" || n === "favicon.ico" },
 ];
 
+/* Files that travel with one change. The viewer's page loads the two demo
+   tours left out above with plain <script> tags, so on his domain every open
+   of a 360 tour asked for two files that are not there: two wasted round
+   trips, and two rows in the Studio's 404 list every time (26 Sep). Their
+   tags are taken out of his copy; billydigitals.com keeps its demos. Each
+   transform must change something, so a moved tag is noticed, not shipped. */
+const TRANSFORM = {
+  "billy360/index.html": (buf) => {
+    const s = buf.toString("utf8");
+    const out = s.replace(/^[ \t]*<script src="tour-(ashby|homes)\.js[^"]*"><\/script>\r?\n/gm, "");
+    if (s.length - out.length < 40 || /tour-(ashby|homes)\.js/.test(out)) throw new Error("billy360/index.html: the demo tour <script> tags were not found where expected");
+    return Buffer.from(out, "utf8");
+  },
+};
+const contentOf = (f) => TRANSFORM[f.dest] ? TRANSFORM[f.dest](readFileSync(f.src)) : readFileSync(f.src);
+
 /* .assetsignore already records which files must never be served — the earlier
    Megacity pages among them, with the reason written next to them: "on the
    client's own domain they would only be duplicate content". That decision is
@@ -189,7 +205,8 @@ if (check) {
     const at = join(OUT, f.dest);
     if (!existsSync(at)) { console.log("MISSING  " + f.dest); bad++; continue; }
     if (f.dest === "version.json") continue;           // rewritten by every build, below
-    if (statSync(at).size !== statSync(f.src).size) { console.log("DIFFERS  " + f.dest); bad++; }
+    const want = TRANSFORM[f.dest] ? contentOf(f).length : statSync(f.src).size;
+    if (statSync(at).size !== want) { console.log("DIFFERS  " + f.dest); bad++; }
   }
   const extra = walk(OUT, 99).filter((f) => !files.some((x) => x.dest === f.rel));
   for (const e of extra) { console.log("EXTRA    " + e.rel); bad++; }
@@ -204,7 +221,8 @@ let bytes = 0;
 for (const f of files) {
   const at = join(OUT, f.dest);
   mkdirSync(dirname(at), { recursive: true });
-  copyFileSync(f.src, at);
+  if (TRANSFORM[f.dest]) writeFileSync(at, contentOf(f));
+  else copyFileSync(f.src, at);
   bytes += statSync(at).size;
 }
 

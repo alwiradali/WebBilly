@@ -8,6 +8,7 @@
 import { officeDb, uid, nowIso, json, HttpError, readJsonBody, clampStr, isEmail, clientIp, bump, audit, parseJson, sha256Hex } from "./db.js";
 import { valid, label } from "./options.js";
 import { sendEmail, layout, esc } from "./email.js";
+import { notFoundKindOf as kindOf } from "./urls.js";
 
 export const OFFICE_TO = "info@megacityproperties.co.uk";
 export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
@@ -330,6 +331,15 @@ export async function stats(db) {
   const newCount = Number((await db.prepare(`SELECT COUNT(*) n FROM enquiries WHERE status='new'`).first()).n) || 0;
   const daily = (await db.prepare(`SELECT substr(created_at,1,10) d, COUNT(*) n FROM enquiries WHERE created_at >= ?1 GROUP BY d ORDER BY d`).bind(since30).all()).results || [];
   const ev = {};
-  for (const r of (await db.prepare(`SELECT name, COUNT(*) n FROM events WHERE at >= ?1 AND name IN ('listing_view','tour_open','enquiry','not_found') GROUP BY name`).bind(since7).all()).results || []) ev[r.name] = Number(r.n);
+  for (const r of (await db.prepare(`SELECT name, COUNT(*) n FROM events WHERE at >= ?1 AND name IN ('listing_view','tour_open','enquiry') GROUP BY name`).bind(since7).all()).results || []) ev[r.name] = Number(r.n);
+  /* 404s: the same addresses the Studio's list shows by default (pages and
+     missing site files), not scanners probing for /.env or the old site's
+     images — those are counted separately so the tile can say so */
+  ev.not_found = 0; ev.not_found_ignored = 0;
+  for (const r of (await db.prepare(`SELECT json_extract(meta_json,'$.path') p, MAX(json_extract(meta_json,'$.kind')) k, COUNT(*) n FROM events WHERE name='not_found' AND at >= ?1 GROUP BY p LIMIT 5000`).bind(since7).all()).results || []) {
+    const k = kindOf(r.p, r.k);
+    if (k === "probe" || k === "legacy") ev.not_found_ignored += Number(r.n) || 0;
+    else ev.not_found += Number(r.n) || 0;
+  }
   return { enquiries: { new: newCount, last7: Object.values(bySource).reduce((a, b) => a + b, 0), bySource, daily: daily.map((d) => [d.d, Number(d.n)]) }, events7: ev };
 }
