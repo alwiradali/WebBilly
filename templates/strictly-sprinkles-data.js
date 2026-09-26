@@ -242,8 +242,8 @@ window.SS = (function () {
   ];
 
   var faq = [
-    { q: "How do I place an order?", a: "Use the enquiry form on this page. It takes you through the size, the flavours and the date, and arrives with me as one message — so I can quote it properly the first time instead of going back and forth. Instagram DMs work too." },
-    { q: "How far ahead should I book?", a: "For a weekend, as far ahead as you can — Saturdays go first, and Ramadan and Eid fill weeks in advance. The practical minimum is five days, because that is the notice the deposit needs." },
+    { q: "How do I place an order?", a: "Use the enquiry form on this page. It takes you through the size, the flavours and the date, and arrives with me as one message — so I can quote it properly." },
+    { q: "How far ahead should I book?", a: "For a weekend, as far ahead as you can — Saturdays go first, and Ramadan and Eid fill weeks in advance." },
     { q: "What secures the date?", a: "A 50% non-refundable deposit by bank transfer on anything over £30. Until that is paid the date stays open to anyone else; once it is paid it is yours, and the balance is due 24 hours before collection." },
     { q: "Can you recreate a cake I have seen?", a: "Usually, yes — send the picture with your enquiry. I will tell you honestly what I can match, what I would do differently and what it changes about the price. I would rather set the expectation now than hand you something that is not what you pictured." },
     { q: "Is everything halal?", a: "Yes, without exception. Every ingredient in this kitchen is halal." },
