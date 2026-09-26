@@ -119,6 +119,12 @@ templates/smartin
 templates/smartin-book
 assets/smartin
 assets/fonts/fonts-smartin.css
+# Westfield Garage — live at westfieldgarageintlimited.co.uk from his own
+# Cloudflare account (see deploy-westfield.yml). /westfield and
+# /templates/westfield-garage redirect there (PARKED in worker.js).
+templates/westfield-garage.html
+templates/westfield-root
+assets/westfield
 
 # Built client sites. Generated into dist/ by scripts/build-*.py and deployed
 # to the client's own Cloudflare account, never from here. Kept out in case a

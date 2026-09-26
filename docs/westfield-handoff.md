@@ -4,12 +4,15 @@
 own Cloudflare account (Worker `noisy-forest-8b27`). How, and how to update it:
 `docs/westfield-golive.md`, top section.
 
-The demo lives at **`/templates/westfield-garage`**, and answers at the short
-address **billydigitals.com/westfield** too (any capitalisation; an alias in
-`worker.js`, still `noindex`) (source:
-`templates/westfield-garage.html`). It is `noindex, nofollow` and `/templates/`
-is disallowed in `robots.txt`, so it is shareable with the client but invisible
-to search engines until we decide otherwise.
+The demo is **parked** (26 Sep): nothing of it is served on billydigitals.com
+any more. `templates/westfield-garage.html`, `templates/westfield-root/` and
+`assets/westfield/` are in `.assetsignore`, and both old preview addresses —
+`billydigitals.com/westfield` and `/templates/westfield-garage` — redirect to
+his live site, **westfieldgarageintlimited.co.uk**, served from his own
+Cloudflare account. The source stays here because his build reads it. To look
+at a change before it goes to him: `python3 scripts/build-westfield.py
+westfieldgarageintlimited.co.uk`, then `python3 -m http.server --directory
+dist/westfield-garage` and open it locally.
 
 | Piece | File |
 |---|---|
