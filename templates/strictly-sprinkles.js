@@ -950,9 +950,17 @@
       nav.classList.toggle("solid", scrollY > edge);
       if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
     }
+    /* Hand the real bar height to the stylesheet so the footer can reserve it.
+       Measured rather than hard-coded: the buttons grow with the text size. */
+    function measure() {
+      if (!dock) return;
+      var h = Math.round(dock.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--dockh", h + "px");
+    }
     addEventListener("scroll", frame, { passive: true });
-    addEventListener("resize", frame);
-    frame();
+    addEventListener("resize", function () { frame(); measure(); });
+    addEventListener("load", measure);
+    frame(); measure();
   })();
 
   /* drawer */

@@ -788,6 +788,10 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .dock.up{transform:none}
 .dock .btn{flex:1;padding:.85em 1em;font-size:.76rem}
 @media (min-width:1000px){.dock{display:none}}
+/* The bar is fixed, so at the end of the page it hangs over the footer and
+   swallowed the last two lines. The footer holds the bar's own height in
+   reserve instead; the script measures it, so a larger text size still fits. */
+@media (max-width:999px){.foot{padding-bottom:calc(30px + var(--dockh,74px))}}
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
