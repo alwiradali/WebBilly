@@ -32,3 +32,18 @@ export function feedText(s) {
   t = decode(t);
   return t.replace(/[ \t ]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
+
+/* 10ninety's display addresses arrive as "Apartment , Adelphi Wharf ,
+   Adelphi Street, Salford": a space before each comma and, where a part is
+   empty, a comma with nothing before it. */
+export function tidyAddress(s) {
+  if (s == null) return s;
+  return String(s).replace(/\s+,/g, ",").replace(/,(\s*,)+/g, ",").replace(/^\s*,\s*|\s*,\s*$/g, "").replace(/\s{2,}/g, " ").trim();
+}
+/* "5" and "Carlton Road" -> "5 Carlton Road": a bare house number says
+   nothing on its own ("5, Salford") */
+export function firstLine(a1, a2) {
+  const one = tidyAddress(a1 || ""), two = tidyAddress(a2 || "");
+  if (/^\d+[a-z]?$/i.test(one) && two) return one + " " + two;
+  return one || two || null;
+}

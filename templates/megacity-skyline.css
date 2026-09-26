@@ -1939,6 +1939,8 @@ body.mm-open{overflow:hidden}
 .pl-area{display:block;font:700 11.5px/1.4 var(--ff-u);letter-spacing:.18em;
   text-transform:uppercase;color:var(--blue-deep);margin-bottom:7px}
 .pl-body b{display:block;font:500 clamp(20px,1.9vw,23px)/1.2 var(--ff-d);color:var(--navy-ink)}
+.pl-price{display:block;margin-top:8px;font:700 clamp(19px,1.7vw,21px)/1.2 var(--ff-u);color:var(--blue-deep);letter-spacing:-.005em}
+.pl-price small{font-size:.7em;font-weight:500;color:var(--mut)}
 .pl-facts{display:flex;gap:14px;flex-wrap:wrap;margin-top:11px}
 .pl-facts span{font:400 14.25px/1 var(--ff-u);color:var(--mut)}
 /* When it is free, on the card. Most of these are student lets dated a year
