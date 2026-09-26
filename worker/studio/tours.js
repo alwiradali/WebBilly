@@ -11,6 +11,7 @@ import { getFull } from "./listings.js";
 import { DEFAULTS as SETTINGS_DEFAULTS } from "./settings.js";
 import * as urls from "./urls.js";
 import { districtOf } from "./areas.js";
+import { displayAddress, advertText, feedText } from "./text.js";
 
 const MAX_TOUR_BYTES = 1_500_000;
 const MAX_DATA_URI = 4096;
@@ -157,7 +158,7 @@ function overlayListing(tour, l) {
   if (!tour || typeof tour !== "object" || !l) return tour;
   const p = tour.project = tour.project && typeof tour.project === "object" ? tour.project : {};
   const isRoomLet = l.let_type === "room" || l.type === "room_in_share";
-  if (l.title) p.name = l.title;
+  if (displayAddress(l.title)) p.name = displayAddress(l.title);
   if (l.rent_pcm) p.price = "£" + Number(l.rent_pcm).toLocaleString("en-GB") + " pcm";
   if (isRoomLet) p.beds = 1; else if (l.bedrooms != null) p.beds = l.bedrooms;
   if (l.epc_rating) p.epc = l.epc_rating;
@@ -294,8 +295,8 @@ export function buildSkeleton(listing, brand, agent) {
     id: listing.id, version: 1,
     brand: brand || {},
     project: {
-      name: listing.title || listing.id, slug: listing.id, location, area: label("area", a.area) || "",
-      floors: floors.length, duration: "2 min", captured: "", summary: listing.summary || "",
+      name: displayAddress(listing.title) || listing.id, slug: listing.id, location, area: label("area", a.area) || "",
+      floors: floors.length, duration: "2 min", captured: "", summary: advertText(feedText(listing.summary), listing.title, listing.town) || "",
       price, status: "To let", beds: isRoomLet ? 1 : (listing.bedrooms ?? null), baths: (home.bathrooms || []).length || null,
       propertyType: label("type", listing.type) || "", tenure: "", epc: listing.epcRating || "", ref: listing.ref || "",
       cover: rooms[0].id, hidden: true, agent: agent || {}, facts: [],

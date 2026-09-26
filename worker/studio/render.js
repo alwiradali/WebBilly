@@ -12,7 +12,7 @@ import { label } from "./options.js";
 import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
-import { feedText, clipWords } from "./text.js";
+import { feedText, clipWords, displayAddress, advertText } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
 import { areaPage, districtOf } from "./areas.js";
 
@@ -63,15 +63,15 @@ function view(env, url, { r, media }, settings) {
      10ninety (the title), which carries no house or flat number. The full
      address (address_1/2 — "5", "Apartment 208, Adelphi Wharf 2") never
      reaches a public page; the office still gets it in viewing emails. */
-  const addr = r.title || [r.town].filter(Boolean).join(", ");
+  const addr = displayAddress(r.title) || [r.town].filter(Boolean).join(", ");
   const addrShort = addr;
   const typeLabel = label("type", r.type) || "Property";
   const beds = isRoom ? 1 : r.bedrooms;
   const bathsCount = home.bathrooms.length;
   const bathsShared = home.bathrooms.some((b) => b.subtype === "shared");
   /* feedText: rows synced before it existed still hold 10ninety's HTML */
-  const description = feedText(r.description) || "";
-  const summary = feedText(r.summary) || description.split(/\n{2,}/)[0] || "";
+  const description = advertText(feedText(r.description), r.title, r.town) || "";
+  const summary = advertText(feedText(r.summary), r.title, r.town) || description.split(/\n{2,}/)[0] || "";
   const desc = description.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
   const features = parseJson(r.features_json, []);
   const availability = r.availability === "from_date" && r.available_from
@@ -83,7 +83,7 @@ function view(env, url, { r, media }, settings) {
   const phoneHref = "tel:+44" + phone.replace(/\D/g, "").replace(/^0/, "");
   const wa = (brand.whatsapp || "").replace(/\D/g, "");
   const waDigits = wa ? (wa.startsWith("44") ? wa : "44" + wa.replace(/^0/, "")) : null;
-  const title = r.title;
+  const title = addr;
   const pageTitle = title + " | Megacity Properties";
   const metaDesc = r.seo_description || clipWords(summary, 155);
   const canonical = urls.absUrl(env, url, "listing", r.id);
@@ -152,7 +152,7 @@ function mainHtml(v) {
    uploaded one; anything that is not a plain https address is ignored */
 /* the display address without its town: "Carlton Road, Salford" -> "Carlton Road" */
 function publicStreet(r) {
-  const t = String(r.title || "").replace(/\s+,/g, ",").replace(/\s{2,}/g, " ").trim();
+  const t = displayAddress(String(r.title || ""));
   if (!t) return null;
   const town = String(r.town || "").trim();
   const cut = town && t.toLowerCase().endsWith(", " + town.toLowerCase()) ? t.slice(0, -(town.length + 2)) : t;

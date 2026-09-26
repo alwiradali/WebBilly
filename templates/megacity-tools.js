@@ -59,7 +59,20 @@
     estimateSpread: 0.08,
 
     /* referencing rule of thumb: annual income ≥ 30 × monthly rent */
-    affordability: { incomeMultiple: 30, guarantorMultiple: 36 }
+    affordability: { incomeMultiple: 30, guarantorMultiple: 36 },
+
+    /* Where each calculator's figures come from, printed under "Where the
+       figures come from" on the page (Walid, 26 Sep: "add the source and date
+       for figures used in the landlord calculators"). Update these with the
+       figures above, in the same edit. */
+    sources: [
+      ["Rental estimate", "Typical asking rents by area and bedrooms: medians of live Rightmove and OnTheMarket listings checked on 11 August 2026, cross-checked against the ONS Price Index of Private Rents (June 2026). Houses are estimated 8% above flats of the same size."],
+      ["Mortgage", "The starting rate of 5% sits between the average five-year fixed rates at 75% loan-to-value on 11 August 2026: about 4.98% residential and 5.35% buy-to-let (Rightmove mortgage rate tracker)."],
+      ["Council tax", "Band D charges for 2026/27, including the Greater Manchester mayoral precepts, from the MHCLG council tax tables and each council's own website. Other bands use the fixed legal ratios to Band D."],
+      ["Stamp duty", "HMRC rates for residential property in England from 1 April 2025, with the 5% higher rate for additional dwellings (from 31 October 2024) and first-time buyer relief up to £300,000 on purchases up to £500,000."],
+      ["Affordability", "The income test most referencing firms use: yearly income of at least 30 times the monthly rent, or 36 times for a guarantor. A rule of thumb, not a law."],
+      ["Gross yield", "Arithmetic on the figures you enter. Nothing is assumed."]
+    ]
   };
 
   /* Studio overlay — rates edited in /templates/megacity-admin win over
@@ -279,6 +292,16 @@
     grossYield();
     var asOf = $("#ratesAsOf");
     if (asOf) asOf.textContent = RATES.asOf;
+    var src = $("#ratesSources");
+    if (src) {
+      src.innerHTML = "";
+      RATES.sources.forEach(function (x) {
+        var li = document.createElement("li"), b = document.createElement("b");
+        b.textContent = x[0] + ". ";
+        li.appendChild(b); li.appendChild(document.createTextNode(x[1]));
+        src.appendChild(li);
+      });
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

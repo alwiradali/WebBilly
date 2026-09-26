@@ -61,20 +61,25 @@ const LIVE = [
   { id: "anvil-place", area: "manchester", district: "M15" }, { id: "ladywell-point", area: "salford", district: "M50" },
   { id: "denmark-road", area: "manchester", district: "M15" },
   { id: "manchester-road-swinton", area: "salford", district: "M27" },     /* the old Swinton house, if it returns */
+  { id: "drayton-street", area: "manchester", district: "M15" },
+  { id: "example-northern-quarter", area: "manchester", district: "M4" },   /* not real: a centre flat, to prove the rule */
 ];
 const shown = (slug) => LIVE.filter(areaPage(slug).homes).map((c) => c.id).sort().join(",");
-ok(shown("area-manchester") === "anvil-place,denmark-road,grove-house", "Manchester shows the Manchester-borough homes");
+ok(shown("area-manchester") === "anvil-place,denmark-road,drayton-street,example-northern-quarter,grove-house", "Manchester shows the Manchester-borough homes");
 ok(shown("area-salford") === "adelphi-apartments,carlton-road-5,carlton-road-9,ladywell-point,manchester-road-swinton", "Salford shows every Salford home, Swinton included");
 ok(shown("area-swinton") === "manchester-road-swinton", "Swinton shows M27 only");
 ok(shown("area-old-trafford") === "grove-house", "Old Trafford shows M16 only");
-ok(shown("area-city-centre") === "adelphi-apartments", "the city centre shows M1 to M4 (Adelphi Wharf, M3)");
+ok(shown("area-city-centre") === "example-northern-quarter", "the city centre shows Manchester's M1 to M4");
+ok(!areaPage("area-city-centre").homes({ area: "salford", district: "M3" }), "a Salford home in M3 (Adelphi Wharf) is not called city centre: the page says that side is Salford's");
+ok(areaPage("area-city-centre").homes({ area: "manchester", district: "M3" }), "a Manchester home in M3 (Deansgate, Spinningfields) is");
 ok(!areaPage("area-city-centre").homes({ area: "manchester", district: "M15" }), "Hulme (M15) is not called city centre");
 
 /* a listing that is no longer live sends people to the most specific area page */
 const gone = (row) => (areaForListing(row) || { path: "/lettings" }).path;
 ok(gone({ area: "salford", postcode: "M27 5FX" }) === "/letting-agents-swinton", "the let Swinton house (M27) goes to Swinton, not Salford");
 ok(gone({ area: "manchester", postcode: "M16 0TR" }) === "/letting-agents-old-trafford", "a let flat in M16 goes to Old Trafford");
-ok(gone({ area: "salford", postcode: "M3 6FZ" }) === "/letting-agents-manchester-city-centre", "a let flat in M3 goes to the city centre");
+ok(gone({ area: "salford", postcode: "M3 6FZ" }) === "/letting-agents-salford", "a let Salford flat in M3 (Adelphi Wharf) goes to Salford");
+ok(gone({ area: "manchester", postcode: "M3 4LQ" }) === "/letting-agents-manchester-city-centre", "a let Manchester flat in M3 goes to the city centre");
 ok(gone({ area: "manchester", postcode: "M15 6AZ" }) === "/letting-agents-manchester", "a let flat in Hulme goes to Manchester");
 ok(gone({ area: "salford", postcode: "M6 7EW" }) === "/letting-agents-salford", "a let room in M6 goes to Salford");
 ok(gone({ area: "stockport", postcode: "SK4 1AA" }) === "/lettings", "somewhere no area page covers goes to every property");

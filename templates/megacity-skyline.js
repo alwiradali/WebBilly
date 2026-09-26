@@ -330,7 +330,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
   const GUIDES = [
     { t: "The Renters\u2019 Rights Act, in plain English", d: "What actually changed for landlords", u: "megacity-journal#renters-rights", k: "renters rights act law section 21 periodic tenancy" },
     { t: "Does my property need an HMO licence?", d: "Mandatory, additional and selective licensing", u: "megacity-journal#hmo-licence", k: "hmo licence licensing selective mandatory council" },
-    { t: "Awaab\u2019s Law, damp and mould", d: "The new deadlines and how to meet them", u: "megacity-journal#awaabs-law", k: "awaab damp mould hazard deadline repair" },
+    { t: "Awaab\u2019s Law, damp and mould", d: "Where private landlords stand, and what applies now", u: "megacity-journal#awaabs-law", k: "awaab damp mould hazard deadline repair" },
     { t: "What a void month really costs", d: "And how to keep a property occupied", u: "megacity-journal#voids", k: "void empty vacancy cost pricing" },
     { t: "Winning a deposit dispute", d: "Starts on move-in day, with the inventory", u: "megacity-journal#deposits", k: "deposit dispute inventory adjudication dps" },
     { t: "Landlord journal", d: "All guides in one place", u: "megacity-journal", k: "journal blog guides articles advice news" },

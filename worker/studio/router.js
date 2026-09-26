@@ -20,7 +20,7 @@ import * as pages from "./pages.js";
 import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
 import * as urls from "./urls.js";
-import { clipWords } from "./text.js";
+import { clipWords, displayAddress, advertText, feedText } from "./text.js";
 import * as redirects from "./redirects.js";
 import * as site from "./site.js";
 import { AREA_SLUGS } from "./areas.js";
@@ -333,9 +333,9 @@ async function liveTourHead(db, env, url, id) {
     const t = typeof cover.thumb === "string" && cover.thumb.startsWith("/media/") ? cover.thumb : typeof cover.pano === "string" && cover.pano.startsWith("/media/") ? cover.pano : null;
     if (t) image = t.replace(/\/(w480|pano4096|pano2048)\.jpg$/, "/w1600.jpg");
   }
-  const title = r.title || id;
+  const title = displayAddress(r.title) || id;
   const where = r.town || "";   // never address_1: that is the house or flat number
-  const summary = String(r.seo_description || r.summary || "").trim();
+  const summary = String(r.seo_description || advertText(feedText(r.summary), r.title, r.town) || "").trim();
   return {
     id, title,
     pageTitle: title + " · 360° tour · Megacity Properties",

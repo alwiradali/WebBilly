@@ -6,7 +6,7 @@ import { json, jsonCached, parseJson } from "./db.js";
 import { label, valid } from "./options.js";
 import { mediaUrl, listForListing, feedSized, FEED_LARGE, FEED_THUMB } from "./media.js";
 import * as urls from "./urls.js";
-import { feedText } from "./text.js";
+import { feedText, displayAddress, advertText } from "./text.js";
 import { districtOf } from "./areas.js";
 
 /* the listing page address for this host: /let/<id> on the client domain,
@@ -33,7 +33,7 @@ function card(r, env, url) {
   return {
     id: r.id,
     url: pageUrl(env, url, r.id),
-    title: r.title,
+    title: displayAddress(r.title) || r.town || "",
     headline: feedText(r.headline) || null,
     /* no address_1 here: it is the house or flat number ("5", "Apartment 208") */
     area: r.area, areaLabel: label("area", r.area), town: r.town,
@@ -44,7 +44,7 @@ function card(r, env, url) {
     type: r.type, typeLabel: label("type", r.type), typeShort: typeShort(r), letType: r.let_type,
     furnishing: r.furnishing, pets: r.pets, availability: r.availability, availableFrom: r.available_from || null,
     tag: r.headline ? null : (features[0] || null),
-    cover: r.cover_key ? { url: feedSized(r.cover_key, FEED_LARGE) || mediaUrl(r.cover_large || r.cover_key), thumb: feedSized(r.cover_key, FEED_THUMB) || mediaUrl(r.cover_thumb || r.cover_key), alt: r.cover_alt || r.title } : null,
+    cover: r.cover_key ? { url: feedSized(r.cover_key, FEED_LARGE) || mediaUrl(r.cover_large || r.cover_key), thumb: feedSized(r.cover_key, FEED_THUMB) || mediaUrl(r.cover_thumb || r.cover_key), alt: r.cover_alt || displayAddress(r.title) } : null,
     tour: !!r.tour_live,
     publishedAt: r.published_at, updatedAt: r.updated_at,
   };
@@ -80,10 +80,10 @@ export async function list(db, url, env) {
   if (p.get("view") === "search") {
     return jsonCached({
       items: rows.map((r) => ({
-        t: r.title,
+        t: displayAddress(r.title) || r.town || "",
         d: [r.bedrooms ? r.bedrooms + " bed" : null, r.bathrooms ? r.bathrooms + " bath" : null, rentLabel(r.rent_pcm)].filter(Boolean).join(" · "),
         u: pageUrl(env, url, r.id),
-        k: [r.area, r.town, districtOf(r.postcode), r.type, r.let_type, r.title, label("type", r.type)].filter(Boolean).join(" ").toLowerCase(),
+        k: [r.area, r.town, districtOf(r.postcode), r.type, r.let_type, displayAddress(r.title), label("type", r.type)].filter(Boolean).join(" ").toLowerCase(),
       })),
     }, 120);
   }
@@ -123,7 +123,7 @@ export async function one(db, url, env, id) {
       minTerm: label("minTerm", r.min_term), councilTaxBand: label("councilTaxBand", r.council_tax_band), pets: label("pets", r.pets),
       parking: r.parking_spaces == null ? null : label("parkingSpaces", String(r.parking_spaces)),
     },
-    summary: feedText(r.summary), description: r.description ? feedText(r.description).split(/\n{2,}/).map((s) => s.trim()).filter(Boolean) : [],
+    summary: advertText(feedText(r.summary), r.title, r.town), description: r.description ? advertText(feedText(r.description), r.title, r.town).split(/\n{2,}/).map((s) => s.trim()).filter(Boolean) : [],
     features: parseJson(r.features_json, []),
     services: extras.extras && extras.extras.services || null,
     depositNote: extras.extras && extras.extras.depositNote || null,

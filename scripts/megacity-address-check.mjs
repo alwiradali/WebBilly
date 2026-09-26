@@ -21,6 +21,8 @@ const ROW = {
   id: "adelphi-apartments", status: "live", hidden: 0, title: "Apartment , Adelphi Wharf , Adelphi Street, Salford",
   address_1: "Apartment 208, Adelphi Wharf 2", address_2: "9 Adelphi Street", town: "Salford", postcode: "M3 6FZ",
   area: "salford", lat: 53.48612345, lng: -2.25498765, rent_pcm: 950, bedrooms: 0, type: "studio", let_type: "whole",
+  summary: "Stylish studio in Apartment 208, Adelphi Wharf",
+  description: "Situated on the second floor at 9 Adelphi Street, a short walk from the University of Salford.\n\nCouncil Tax Band: A\nDeposit: £0\nParking options: Off Street",
   home_json: "{}", features_json: "[]", external_json: "{}", availability: "from_date", available_from: "2027-01-01",
   published_at: "2026-09-25T03:57:45Z", updated_at: "2026-09-26T00:49:08Z",
 };
@@ -44,6 +46,21 @@ if (one) {
   ok(leaks(JSON.stringify(one.address || {})).length === 0, "a single listing's public address has no number, full postcode or exact position");
   ok(one.address.postcode === "M3" && Math.abs(one.address.lat - 53.486) < 1e-9, "  district and a position to about 100 m");
 }
+
+/* 10ninety's display address keeps the words round the numbers it leaves
+   out ("Apartment , Adelphi Wharf ,  Adelphi Street"); the site does not */
+ok(list.items[0].title === "Adelphi Wharf, Adelphi Street, Salford", `the card title drops the empty "Apartment ," ("${list.items[0].title}")`);
+ok(search.items[0].t === "Adelphi Wharf, Adelphi Street, Salford", "  and so does site search");
+if (one) {
+  const text = JSON.stringify([one.summary, one.description]);
+  ok(leaks(text).length === 0 && !/Apartment 208/.test(text), "a number in the advert text in front of the property's own street or building stays off the site" + (leaks(text).length ? ": " + leaks(text).join(", ") : ""));
+  ok(/at Adelphi Street, a short walk/.test(text) && /Council Tax Band: A/.test(text) && /Off Street/.test(text), "  and the rest of Walid's text is untouched");
+  ok(!/Deposit: £0/.test(text), `"Deposit: £0" (a field not filled in) is not shown as a deposit of nothing`);
+}
+const T = await import("../worker/studio/text.js");
+ok(T.displayAddress("99 Denmark Road, Manchester") === "Denmark Road, Manchester", "a number typed into the display address later still stays off the site");
+ok(T.displayAddress("Carlton Road, Salford") === "Carlton Road, Salford" && T.displayAddress("3rd Avenue, Trafford Park") === "3rd Avenue, Trafford Park", "an address with no number is left exactly as it is");
+ok(T.advertText("Deposit: £500\n8 double rooms, 10 minutes to Salford", "Carlton Road, Salford", "Salford") === "Deposit: £500\n8 double rooms, 10 minutes to Salford", "real deposits, room counts and distances are left alone");
 
 const sk = buildSkeleton({ id: "adelphi-apartments", title: ROW.title, address: { line1: ROW.address_1, line2: ROW.address_2, town: "Salford", postcode: "M3 6FZ", area: "salford" }, home: {} }, {}, {});
 ok(sk.project.location === "Salford, M3", `a new 360 tour says where it is by town and district ("${sk.project.location}")`);

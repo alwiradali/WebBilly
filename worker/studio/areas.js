@@ -13,9 +13,12 @@
      /lettings can never disagree about which borough a home is in.
    - Swinton, Old Trafford and the city centre are places, not boroughs, so
      they go by postcode district: M27 is Swinton and Pendlebury, M16 is Old
-     Trafford and its neighbours, M1 to M4 is the centre. M3 includes the
-     Salford side of the Irwell (Chapel Street, Greengate, Adelphi), and the
-     city centre page says so rather than pretending otherwise. */
+     Trafford and its neighbours, M1 to M4 is the centre.
+   - The city centre is Manchester's: M3 also covers the Salford side of the
+     Irwell (Chapel Street, Greengate, the Adelphi), and the page itself says
+     those streets are Salford's, so a Salford home in M3 belongs on the
+     Salford page, not this one (Walid, 26 Sep: the centre page showed a
+     Salford flat, Adelphi Wharf, as its only listing). */
 
 import { ROOT_MAP } from "./urls.js";
 
@@ -24,7 +27,7 @@ export const AREA_PAGES = [
   { slug: "area-salford", name: "Salford", homes: (c) => c.area === "salford" },
   { slug: "area-swinton", name: "Swinton", homes: (c) => c.district === "M27" },
   { slug: "area-old-trafford", name: "Old Trafford", homes: (c) => c.district === "M16" },
-  { slug: "area-city-centre", name: "Manchester city centre", homes: (c) => ["M1", "M2", "M3", "M4"].includes(c.district) },
+  { slug: "area-city-centre", name: "Manchester city centre", homes: (c) => c.area === "manchester" && ["M1", "M2", "M3", "M4"].includes(c.district) },
 ].map((a) => ({ ...a, path: ROOT_MAP[a.slug] }));
 
 export const AREA_SLUGS = AREA_PAGES.map((a) => a.slug);

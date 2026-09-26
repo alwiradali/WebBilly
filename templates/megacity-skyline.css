@@ -1738,6 +1738,9 @@ form.enq{display:grid;gap:18px;align-content:start}
 .tsec--dark .tool-rows b{color:#fff}
 .tool-note,.tsec .small{margin-top:16px;font:400 13.68px/1.65 var(--ff-u);color:var(--mut)}
 .tsec--dark .tool-note,.tsec--dark .small{color:rgba(255,255,255,.7)}
+.tool-src{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px;max-width:74ch}
+.tool-src li{font:400 14.5px/1.6 var(--ff-u);color:var(--mut)}
+.tool-src b{color:var(--navy);font-weight:600}
 
 /* These sit low on a tile, where the logo watermark darkens the ground to
    about rgb(204,208,224). --blue-deep measured 3.8:1 there, so they take the

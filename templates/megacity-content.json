@@ -299,16 +299,16 @@
      "kind": "heading",
      "tag": "h3",
      "section": "The reasons that hold up.",
-     "html": "One number, one person",
-     "text": "One number, one person"
+     "html": "A small team, not a call centre",
+     "text": "A small team, not a call centre"
     },
     {
      "id": "home-38",
      "kind": "text",
      "tag": "p",
      "section": "The reasons that hold up.",
-     "html": "No call centre. The person who answers knows your property and your tenant, and you have their direct line on a managed let.",
-     "text": "No call centre. The person who answers knows your property and your tenant, and you have their direct line on a managed let."
+     "html": "No call centre and no switchboard. The people who answer the phone know your property and your tenant.",
+     "text": "No call centre and no switchboard. The people who answer the phone know your property and your tenant."
     },
     {
      "id": "home-39",
@@ -323,8 +323,8 @@
      "kind": "text",
      "tag": "p",
      "section": "The reasons that hold up.",
-     "html": "Gas Safety, EICR, EPC and alarms tracked, deposits protected with the DPS and the prescribed information served on time.",
-     "text": "Gas Safety, EICR, EPC and alarms tracked, deposits protected with the DPS and the prescribed information served on time."
+     "html": "Gas Safety, EICR, EPC and alarms tracked, deposits protected with DPS Insured and the prescribed information served on time.",
+     "text": "Gas Safety, EICR, EPC and alarms tracked, deposits protected with DPS Insured and the prescribed information served on time."
     },
     {
      "id": "home-41",
@@ -395,8 +395,8 @@
      "kind": "text",
      "tag": "p",
      "section": "People, not portals.",
-     "html": "The same faces from the first professional valuation to the final inspection, on the phone and at the property. Walid Mhana, who runs the agency, has twelve years in letting and management behind him across Manchester and Salford.",
-     "text": "The same faces from the first professional valuation to the final inspection, on the phone and at the property. Walid Mhana, who runs the agency, has twelve years in letting and management behind him across Manchester and Salford."
+     "html": "The same faces from the first professional valuation to the final inspection, on the phone and at the property. Walid Mhana, who runs the agency, has fifteen years in letting and management behind him across Manchester and Salford.",
+     "text": "The same faces from the first professional valuation to the final inspection, on the phone and at the property. Walid Mhana, who runs the agency, has fifteen years in letting and management behind him across Manchester and Salford."
     },
     {
      "id": "home-50",
@@ -419,8 +419,8 @@
      "kind": "text",
      "tag": "figcaption",
      "section": "People, not portals.",
-     "html": "Walid Mhana<span>Runs the agency &middot; twelve years in letting and management</span>",
-     "text": "Walid Mhana Runs the agency &middot; twelve years in letting and management"
+     "html": "Walid Mhana<span>Runs the agency &middot; fifteen years in letting and management</span>",
+     "text": "Walid Mhana Runs the agency &middot; fifteen years in letting and management"
     },
     {
      "id": "home-53",
@@ -626,8 +626,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Start with the three core services.",
-     "html": "The whole tenancy under one named person. Repairs, inspections, renewals and certificates, and a direct number rather than a switchboard.",
-     "text": "The whole tenancy under one named person. Repairs, inspections, renewals and certificates, and a direct number rather than a switchboard."
+     "html": "The whole tenancy, handled by a small team who know your property: repairs, inspections, rent reviews and certificates, with no call centre in between.",
+     "text": "The whole tenancy, handled by a small team who know your property: repairs, inspections, rent reviews and certificates, with no call centre in between."
     },
     {
      "id": "landlords-20",
@@ -698,16 +698,16 @@
      "kind": "heading",
      "tag": "h3",
      "section": "How your rent is protected.",
-     "html": "Deposits held in the DPS",
-     "text": "Deposits held in the DPS"
+     "html": "Deposits protected with DPS Insured",
+     "text": "Deposits protected with DPS Insured"
     },
     {
      "id": "landlords-29",
      "kind": "text",
      "tag": "p",
      "section": "How your rent is protected.",
-     "html": "Tenant deposits are registered with the Deposit Protection Service within the statutory 30 days and the prescribed information is served correctly. That protects your position at the end of the tenancy: a deposit that is protected late, or not at all, can cost you a court penalty of one to three times the deposit, and every renewal counts as a fresh breach, so the figure compounds.",
-     "text": "Tenant deposits are registered with the Deposit Protection Service within the statutory 30 days and the prescribed information is served correctly. That protects your position at the end of the tenancy: a deposit that is protected late, or not at all, can cost you a court penalty of one to three times the deposit, and every renewal counts as a fresh breach, so the figure compounds."
+     "html": "Tenant deposits are protected with DPS Insured, the Deposit Protection Service&rsquo;s insured scheme, within the statutory 30 days, and the prescribed information is served correctly. That protects your position at the end of the tenancy: a deposit that is protected late, or not at all, can cost you a court penalty of one to three times the deposit.",
+     "text": "Tenant deposits are protected with DPS Insured, the Deposit Protection Service's insured scheme, within the statutory 30 days, and the prescribed information is served correctly. That protects your position at the end of the tenancy: a deposit that is protected late, or not at all, can cost you a court penalty of one to three times the deposit."
     },
     {
      "id": "landlords-30",
@@ -778,8 +778,8 @@
      "kind": "text",
      "tag": "p",
      "section": "How your property is managed properly.",
-     "html": "Gas Safety, EICR, EPC, smoke and carbon monoxide alarms, and the Homes (Fitness for Human Habitation) standard, tracked with renewal dates so nothing lapses. Under the Renters&rsquo; Rights Act and Awaab&rsquo;s Law the timescales for damp, mould and hazards are tightening; we work to them.",
-     "text": "Gas Safety, EICR, EPC, smoke and carbon monoxide alarms, and the Homes (Fitness for Human Habitation) standard, tracked with renewal dates so nothing lapses. Under the Renters' Rights Act and Awaab's Law the timescales for damp, mould and hazards are tightening; we work to them."
+     "html": "Gas Safety, EICR, EPC, smoke and carbon monoxide alarms, and the Homes (Fitness for Human Habitation) standard, tracked with renewal dates so nothing lapses. Awaab&rsquo;s Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. We do not wait for it: damp, mould and hazards are dealt with promptly, and every report is recorded.",
+     "text": "Gas Safety, EICR, EPC, smoke and carbon monoxide alarms, and the Homes (Fitness for Human Habitation) standard, tracked with renewal dates so nothing lapses. Awaab's Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. We do not wait for it: damp, mould and hazards are dealt with promptly, and every report is recorded."
     },
     {
      "id": "landlords-39",
@@ -946,8 +946,8 @@
      "kind": "text",
      "tag": "p",
      "section": "How we find, and check, good tenants.",
-     "html": "Deposit registered with the DPS, prescribed information served, inventory signed, certificates issued, standing order set up. The tenancy starts on a clean, documented footing.",
-     "text": "Deposit registered with the DPS, prescribed information served, inventory signed, certificates issued, standing order set up. The tenancy starts on a clean, documented footing."
+     "html": "Deposit protected with DPS Insured, prescribed information served, inventory signed, certificates issued, standing order set up. The tenancy starts on a clean, documented footing.",
+     "text": "Deposit protected with DPS Insured, prescribed information served, inventory signed, certificates issued, standing order set up. The tenancy starts on a clean, documented footing."
     },
     {
      "id": "landlords-60",
@@ -1042,16 +1042,16 @@
      "kind": "text",
      "tag": "p",
      "section": "What each badge actually means.",
-     "html": "Every deposit taken on an assured tenancy must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information (the scheme, the dispute process, the landlord&rsquo;s details and how the money can be reclaimed) must be served on the tenant inside the same 30 days. We use the DPS, and we do both.",
-     "text": "Every deposit taken on an assured tenancy must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information (the scheme, the dispute process, the landlord's details and how the money can be reclaimed) must be served on the tenant inside the same 30 days. We use the DPS, and we do both."
+     "html": "Every deposit taken on an assured tenancy must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information (the scheme, the dispute process, the landlord&rsquo;s details and how the money can be reclaimed) must be served on the tenant inside the same 30 days. We use DPS Insured, and we do both.",
+     "text": "Every deposit taken on an assured tenancy must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information (the scheme, the dispute process, the landlord's details and how the money can be reclaimed) must be served on the tenant inside the same 30 days. We use DPS Insured, and we do both."
     },
     {
      "id": "landlords-72",
      "kind": "text",
      "tag": "p",
      "section": "What each badge actually means.",
-     "html": "This protects you at least as much as the tenant. Under section 214 of the Housing Act 2004 a tenant can ask the county court to order a penalty of between one and three times the deposit if either duty is missed, and each renewal is treated as a separate tenancy, so a deposit that was never protected can generate that penalty several times over. At the end of the tenancy, disputes go to free adjudication decided purely on the evidence submitted. That is precisely why we photograph a proper inventory on the day the tenant moves in.",
-     "text": "This protects you at least as much as the tenant. Under section 214 of the Housing Act 2004 a tenant can ask the county court to order a penalty of between one and three times the deposit if either duty is missed, and each renewal is treated as a separate tenancy, so a deposit that was never protected can generate that penalty several times over. At the end of the tenancy, disputes go to free adjudication decided purely on the evidence submitted. That is precisely why we photograph a proper inventory on the day the tenant moves in."
+     "html": "This protects you at least as much as the tenant. Under section 214 of the Housing Act 2004 a tenant can ask the county court to order a penalty of between one and three times the deposit if either duty is missed. At the end of the tenancy, disputes go to free adjudication decided purely on the evidence submitted. That is precisely why we photograph a proper inventory on the day the tenant moves in.",
+     "text": "This protects you at least as much as the tenant. Under section 214 of the Housing Act 2004 a tenant can ask the county court to order a penalty of between one and three times the deposit if either duty is missed. At the end of the tenancy, disputes go to free adjudication decided purely on the evidence submitted. That is precisely why we photograph a proper inventory on the day the tenant moves in."
     },
     {
      "id": "landlords-73",
@@ -1498,16 +1498,16 @@
      "kind": "heading",
      "tag": "h3",
      "section": "Guides worth reading.",
-     "html": "<a href=\"megacity-journal#awaabs-law\">Awaab&rsquo;s Law, damp and mould: what landlords must now do</a>",
-     "text": "Awaab's Law, damp and mould: what landlords must now do"
+     "html": "<a href=\"megacity-journal#awaabs-law\">Awaab&rsquo;s Law, damp and mould: where private landlords stand</a>",
+     "text": "Awaab's Law, damp and mould: where private landlords stand"
     },
     {
      "id": "landlords-129",
      "kind": "text",
      "tag": "p",
      "section": "Guides worth reading.",
-     "html": "New statutory timescales for investigating and fixing damp, mould and other hazards are arriving through the Renters&rsquo; Rights Act. What the deadlines mean in practice, and how to evidence that you acted.",
-     "text": "New statutory timescales for investigating and fixing damp, mould and other hazards are arriving through the Renters' Rights Act. What the deadlines mean in practice, and how to evidence that you acted."
+     "html": "Awaab&rsquo;s Law applies to social housing now and is due to reach private renting at a date still to be confirmed. What already applies, what is coming, and how to show you acted.",
+     "text": "Awaab's Law applies to social housing now and is due to reach private renting at a date still to be confirmed. What already applies, what is coming, and how to show you acted."
     },
     {
      "id": "landlords-130",
@@ -1530,8 +1530,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Guides worth reading.",
-     "html": "An empty month is not one month&rsquo;s rent. It is that plus council tax, utilities and a re-let cost. How presentation, pricing and renewal timing keep a property occupied.",
-     "text": "An empty month is not one month's rent. It is that plus council tax, utilities and a re-let cost. How presentation, pricing and renewal timing keep a property occupied."
+     "html": "An empty month is not one month&rsquo;s rent. It is that plus council tax, utilities and a re-let cost. How presentation, pricing and timing keep a property occupied.",
+     "text": "An empty month is not one month's rent. It is that plus council tax, utilities and a re-let cost. How presentation, pricing and timing keep a property occupied."
     },
     {
      "id": "landlords-133",
@@ -1666,8 +1666,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Answers, plainly.",
-     "html": "The deposit is registered with the Deposit Protection Service within 30 days of receipt and the prescribed information is served on the tenant. If there is a dispute at the end of the tenancy it goes to the scheme&rsquo;s free adjudication service, decided on the evidence from the inventory and check-out report.",
-     "text": "The deposit is registered with the Deposit Protection Service within 30 days of receipt and the prescribed information is served on the tenant. If there is a dispute at the end of the tenancy it goes to the scheme's free adjudication service, decided on the evidence from the inventory and check-out report."
+     "html": "We use DPS Insured, the Deposit Protection Service&rsquo;s insured scheme. Under an insured scheme the money is not sent to DPS: it is held by us, or by you if you hold it yourself, and DPS insures it. It is protected within 30 days of receipt and the prescribed information is served on the tenant. If there is a dispute at the end of the tenancy, the disputed amount goes to DPS and its free, independent adjudication decides, on the evidence from the inventory and check-out report.",
+     "text": "We use DPS Insured, the Deposit Protection Service's insured scheme. Under an insured scheme the money is not sent to DPS: it is held by us, or by you if you hold it yourself, and DPS insures it. It is protected within 30 days of receipt and the prescribed information is served on the tenant. If there is a dispute at the end of the tenancy, the disputed amount goes to DPS and its free, independent adjudication decides, on the evidence from the inventory and check-out report."
     },
     {
      "id": "landlords-150",
@@ -2065,8 +2065,8 @@
      "kind": "text",
      "tag": "p",
      "section": "From enquiry to keys.",
-     "html": "You get the tenancy agreement, the How to Rent guide, the EPC and the gas certificate. Your deposit is registered with the Deposit Protection Service within 30 days and you receive the prescribed information.",
-     "text": "You get the tenancy agreement, the How to Rent guide, the EPC and the gas certificate. Your deposit is registered with the Deposit Protection Service within 30 days and you receive the prescribed information."
+     "html": "You get the tenancy agreement, the How to Rent guide, the EPC and the gas certificate. Your deposit is protected with DPS Insured, the Deposit Protection Service&rsquo;s insured scheme, within 30 days, and you receive the prescribed information.",
+     "text": "You get the tenancy agreement, the How to Rent guide, the EPC and the gas certificate. Your deposit is protected with DPS Insured, the Deposit Protection Service's insured scheme, within 30 days, and you receive the prescribed information."
     },
     {
      "id": "tenants-35",
@@ -2169,8 +2169,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Your side of the tenancy.",
-     "html": "Under Awaab&rsquo;s Law there are fixed timescales for investigating and fixing serious hazards, and the clock starts when the problem is reported. Report it through the portal so the date is on the record. Keep rooms heated and ventilated where you can: most of what we are called to is condensation, and it is much easier to deal with early.",
-     "text": "Under Awaab's Law there are fixed timescales for investigating and fixing serious hazards, and the clock starts when the problem is reported. Report it through the portal so the date is on the record. Keep rooms heated and ventilated where you can: most of what we are called to is condensation, and it is much easier to deal with early."
+     "html": "Tell us about damp, mould or anything that looks unsafe as soon as you notice it, through the portal so the date is on the record, and we will deal with it promptly. Awaab&rsquo;s Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. Keep rooms heated and ventilated where you can: most of what we are called to is condensation, and it is much easier to deal with early.",
+     "text": "Tell us about damp, mould or anything that looks unsafe as soon as you notice it, through the portal so the date is on the record, and we will deal with it promptly. Awaab's Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. Keep rooms heated and ventilated where you can: most of what we are called to is condensation, and it is much easier to deal with early."
     },
     {
      "id": "tenants-48",
@@ -2393,8 +2393,24 @@
      "kind": "text",
      "tag": "p",
      "section": "Answers, plainly.",
-     "html": "Report the repair through the maintenance portal so it is dated and photographed. Problems such as no heating, no hot water or a leak are treated as urgent. Anything involving damp, mould or a serious hazard now carries statutory timescales and we work to them.",
-     "text": "Report the repair through the maintenance portal so it is dated and photographed. Problems such as no heating, no hot water or a leak are treated as urgent. Anything involving damp, mould or a serious hazard now carries statutory timescales and we work to them."
+     "html": "Report the repair through the maintenance portal so it is dated and photographed. Problems such as no heating, no hot water or a leak are treated as urgent, and damp, mould or anything that could be a hazard is dealt with promptly and followed through to a fix.",
+     "text": "Report the repair through the maintenance portal so it is dated and photographed. Problems such as no heating, no hot water or a leak are treated as urgent, and damp, mould or anything that could be a hazard is dealt with promptly and followed through to a fix."
+    },
+    {
+     "id": "tenants-80",
+     "kind": "text",
+     "tag": "summary",
+     "section": "Answers, plainly.",
+     "html": "Something has gone wrong outside office hours. What do I do?",
+     "text": "Something has gone wrong outside office hours. What do I do?"
+    },
+    {
+     "id": "tenants-81",
+     "kind": "text",
+     "tag": "p",
+     "section": "Answers, plainly.",
+     "html": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. Then report it through the maintenance portal, which takes reports at any time, so it is on the record.",
+     "text": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. Then report it through the maintenance portal, which takes reports at any time, so it is on the record."
     },
     {
      "id": "tenants-76",
@@ -2409,8 +2425,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Answers, plainly.",
-     "html": "At the end of the tenancy, once the check-out report is compared with the inventory taken on the day you moved in. Any proposed deduction comes with the evidence behind it, and the deposit sits with the independent DPS from first day to last.",
-     "text": "At the end of the tenancy, once the check-out report is compared with the inventory taken on the day you moved in. Any proposed deduction comes with the evidence behind it, and the deposit sits with the independent DPS from first day to last."
+     "html": "At the end of the tenancy, once the check-out report is compared with the inventory taken on the day you moved in. Any proposed deduction comes with the evidence behind it. Your deposit is protected with DPS Insured: the money is held by us, or by your landlord if they hold it themselves, and DPS insures it for the whole tenancy. If you disagree with a deduction, the disputed amount goes to DPS and its free, independent adjudication service decides.",
+     "text": "At the end of the tenancy, once the check-out report is compared with the inventory taken on the day you moved in. Any proposed deduction comes with the evidence behind it. Your deposit is protected with DPS Insured: the money is held by us, or by your landlord if they hold it themselves, and DPS insures it for the whole tenancy. If you disagree with a deduction, the disputed amount goes to DPS and its free, independent adjudication service decides."
     },
     {
      "id": "tenants-78",
@@ -2631,8 +2647,8 @@
      "kind": "text",
      "tag": "p",
      "section": "What Tenant Sourcing actually is.",
-     "html": "Once the tenant is in, the tenancy is yours. Rent comes to you, repairs come to you, and the renewal is your call. If you would rather that came to us, Rent Collection picks up the money and Full Management picks up everything.",
-     "text": "Once the tenant is in, the tenancy is yours. Rent comes to you, repairs come to you, and the renewal is your call. If you would rather that came to us, Rent Collection picks up the money and Full Management picks up everything."
+     "html": "Once the tenant is in, the tenancy is yours. Rent comes to you, repairs come to you, and rent reviews are yours to run. If you would rather that came to us, Rent Collection picks up the money and Full Management picks up everything.",
+     "text": "Once the tenant is in, the tenancy is yours. Rent comes to you, repairs come to you, and rent reviews are yours to run. If you would rather that came to us, Rent Collection picks up the money and Full Management picks up everything."
     },
     {
      "id": "tenant-find-15",
@@ -2767,8 +2783,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at &pound;295.",
-     "html": "Deposit registered with the DPS inside 30 days",
-     "text": "Deposit registered with the DPS inside 30 days"
+     "html": "Deposit protected with DPS Insured inside 30 days",
+     "text": "Deposit protected with DPS Insured inside 30 days"
     },
     {
      "id": "tenant-find-32",
@@ -2831,8 +2847,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at &pound;295.",
-     "html": "A named property manager with a direct number",
-     "text": "A named property manager with a direct number"
+     "html": "Day-to-day management of the tenancy",
+     "text": "Day-to-day management of the tenancy"
     },
     {
      "id": "tenant-find-40",
@@ -2893,7 +2909,7 @@
      "id": "rent-collection-1",
      "kind": "hero",
      "tag": "section",
-     "section": "You keep the keys. We chase the money.",
+     "section": "You manage the property. We collect and account for the rent.",
      "src": "assets/mcr/ph-kitchen.jpg",
      "alt": ""
     },
@@ -2901,7 +2917,7 @@
      "id": "rent-collection-2",
      "kind": "text",
      "tag": "p",
-     "section": "You keep the keys. We chase the money.",
+     "section": "You manage the property. We collect and account for the rent.",
      "html": "Rent Collection &middot; 5% of the monthly rent, inc. VAT",
      "text": "Rent Collection &middot; 5% of the monthly rent, inc. VAT"
     },
@@ -2909,15 +2925,15 @@
      "id": "rent-collection-3",
      "kind": "heading",
      "tag": "h1",
-     "section": "You keep the keys. We chase the money.",
-     "html": "You keep the keys.<br>We chase <em>the money.</em>",
-     "text": "You keep the keys. We chase the money."
+     "section": "You manage the property. We collect and account for the rent.",
+     "html": "You manage the property.<br>We collect and account for <em>the rent.</em>",
+     "text": "You manage the property. We collect and account for the rent."
     },
     {
      "id": "rent-collection-4",
      "kind": "text",
      "tag": "p",
-     "section": "You keep the keys. We chase the money.",
+     "section": "You manage the property. We collect and account for the rent.",
      "html": "Everything in Tenant Sourcing, and then the part most landlords actually dread. The rent arrives, gets reconciled, and lands in your account with a statement you can hand to an accountant. When it does not arrive, we are the ones making the call.",
      "text": "Everything in Tenant Sourcing, and then the part most landlords actually dread. The rent arrives, gets reconciled, and lands in your account with a statement you can hand to an accountant. When it does not arrive, we are the ones making the call."
     },
@@ -2925,7 +2941,7 @@
      "id": "rent-collection-5",
      "kind": "button",
      "tag": "a",
-     "section": "You keep the keys. We chase the money.",
+     "section": "You manage the property. We collect and account for the rent.",
      "html": "Book a free professional valuation",
      "text": "Book a free professional valuation"
     },
@@ -2933,7 +2949,7 @@
      "id": "rent-collection-6",
      "kind": "button",
      "tag": "a",
-     "section": "You keep the keys. We chase the money.",
+     "section": "You manage the property. We collect and account for the rent.",
      "html": "Compare all three",
      "text": "Compare all three"
     },
@@ -3046,8 +3062,8 @@
      "kind": "item",
      "tag": "li",
      "section": "This one is for you if&hellip;",
-     "html": "You want renewals handled so the tenancy never drifts onto a periodic by accident",
-     "text": "You want renewals handled so the tenancy never drifts onto a periodic by accident"
+     "html": "You want rent reviews done by the proper statutory route, once a year",
+     "text": "You want rent reviews done by the proper statutory route, once a year"
     },
     {
      "id": "rent-collection-21",
@@ -3134,8 +3150,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 5%.",
-     "html": "Deposit registered with the DPS inside 30 days",
-     "text": "Deposit registered with the DPS inside 30 days"
+     "html": "Deposit protected with DPS Insured inside 30 days",
+     "text": "Deposit protected with DPS Insured inside 30 days"
     },
     {
      "id": "rent-collection-32",
@@ -3190,8 +3206,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 5%.",
-     "html": "Tenancy renewals and rent reviews",
-     "text": "Tenancy renewals and rent reviews"
+     "html": "Rent reviews, by the statutory once-a-year notice",
+     "text": "Rent reviews, by the statutory once-a-year notice"
     },
     {
      "id": "rent-collection-39",
@@ -3214,8 +3230,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 5%.",
-     "html": "A named property manager with a direct number",
-     "text": "A named property manager with a direct number"
+     "html": "Day-to-day management of the tenancy",
+     "text": "Day-to-day management of the tenancy"
     },
     {
      "id": "rent-collection-42",
@@ -3317,8 +3333,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Hand us the keys and forget it.",
-     "html": "Full Management, our fully managed service for landlords in Manchester and Salford: the whole tenancy, from the professional valuation to the final inspection, owned by one named person whose direct number you have. Repairs, inspections, certificates, renewals and the phone call at nine on a Sunday night.",
-     "text": "Full Management, our fully managed service for landlords in Manchester and Salford: the whole tenancy, from the professional valuation to the final inspection, owned by one named person whose direct number you have. Repairs, inspections, certificates, renewals and the phone call at nine on a Sunday night."
+     "html": "Full Management, our fully managed service for landlords in Manchester and Salford: the whole tenancy, from the professional valuation to the final inspection, handled by a small team who know your property. Repairs, inspections, certificates and rent reviews, and the tenant&rsquo;s calls come to us rather than to you.",
+     "text": "Full Management, our fully managed service for landlords in Manchester and Salford: the whole tenancy, from the professional valuation to the final inspection, handled by a small team who know your property. Repairs, inspections, certificates and rent reviews, and the tenant's calls come to us rather than to you."
     },
     {
      "id": "fully-managed-5",
@@ -3365,16 +3381,16 @@
      "kind": "heading",
      "tag": "h3",
      "section": "What Full Management actually is.",
-     "html": "One person, not a department",
-     "text": "One person, not a department"
+     "html": "A small team, not a department",
+     "text": "A small team, not a department"
     },
     {
      "id": "fully-managed-11",
      "kind": "text",
      "tag": "p",
      "section": "What Full Management actually is.",
-     "html": "You get a named property manager and their direct number. They know your property, your tenant and the history, so you are not explaining the same boiler to a different person every time. One person owns every job from first report to resolution.",
-     "text": "You get a named property manager and their direct number. They know your property, your tenant and the history, so you are not explaining the same boiler to a different person every time. One person owns every job from first report to resolution."
+     "html": "Your property is looked after by a small team who know it, your tenant and the history, so you are not explaining the same boiler to a different person every time. Every job is followed from first report to resolution.",
+     "text": "Your property is looked after by a small team who know it, your tenant and the history, so you are not explaining the same boiler to a different person every time. Every job is followed from first report to resolution."
     },
     {
      "id": "fully-managed-12",
@@ -3389,8 +3405,8 @@
      "kind": "text",
      "tag": "p",
      "section": "What Full Management actually is.",
-     "html": "Reported, logged, dated and put to trades we use often enough to get a straight answer from. You see what was reported and what was done. Under the Renters&rsquo; Rights Act the clock on damp and mould is now a legal one, so a repair log is not just tidy: it is evidence.",
-     "text": "Reported, logged, dated and put to trades we use often enough to get a straight answer from. You see what was reported and what was done. Under the Renters' Rights Act the clock on damp and mould is now a legal one, so a repair log is not just tidy: it is evidence."
+     "html": "Reported, logged, dated and put to trades we use often enough to get a straight answer from. You see what was reported and what was done. Damp and mould are dealt with promptly, and a repair log is not just tidy: it is evidence. Awaab&rsquo;s Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed.",
+     "text": "Reported, logged, dated and put to trades we use often enough to get a straight answer from. You see what was reported and what was done. Damp and mould are dealt with promptly, and a repair log is not just tidy: it is evidence. Awaab's Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed."
     },
     {
      "id": "fully-managed-14",
@@ -3541,8 +3557,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 10%.",
-     "html": "Deposit registered with the DPS inside 30 days",
-     "text": "Deposit registered with the DPS inside 30 days"
+     "html": "Deposit protected with DPS Insured inside 30 days",
+     "text": "Deposit protected with DPS Insured inside 30 days"
     },
     {
      "id": "fully-managed-33",
@@ -3597,16 +3613,16 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 10%.",
-     "html": "Tenancy renewals and rent reviews",
-     "text": "Tenancy renewals and rent reviews"
+     "html": "Rent reviews, by the statutory once-a-year notice",
+     "text": "Rent reviews, by the statutory once-a-year notice"
     },
     {
      "id": "fully-managed-40",
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 10%.",
-     "html": "A named property manager with a direct number",
-     "text": "A named property manager with a direct number"
+     "html": "Day-to-day management by a team who know your property",
+     "text": "Day-to-day management by a team who know your property"
     },
     {
      "id": "fully-managed-41",
@@ -3645,8 +3661,8 @@
      "kind": "item",
      "tag": "li",
      "section": "Everything included at 10%.",
-     "html": "360&deg; virtual tour, walkable room by room",
-     "text": "360&deg; virtual tour, walkable room by room"
+     "html": "A 360&deg; virtual tour where we film one",
+     "text": "A 360&deg; virtual tour where we film one"
     },
     {
      "id": "fully-managed-46",
@@ -3900,8 +3916,8 @@
      "kind": "text",
      "tag": "p",
      "section": "They stack, and that is the catch.",
-     "html": "Operating without a licence you need is a criminal offence. A council can issue a civil penalty of up to &pound;30,000, and the tenants or the council can apply for a Rent Repayment Order of up to twelve months&rsquo; rent. <a class=\"jr-link\" href=\"megacity-journal#hmo-licence\">Read the full guide &rarr;</a>",
-     "text": "Operating without a licence you need is a criminal offence. A council can issue a civil penalty of up to &pound;30,000, and the tenants or the council can apply for a Rent Repayment Order of up to twelve months' rent. Read the full guide &rarr;"
+     "html": "Operating without a licence you need is a criminal offence. A council can issue a civil penalty of up to &pound;40,000 (raised from &pound;30,000 on 1 May 2026), and the tenants or the council can apply for a Rent Repayment Order of up to two years&rsquo; rent (twelve months where the offence was before 1 May 2026). <a class=\"jr-link\" href=\"megacity-journal#hmo-licence\">Read the full guide &rarr;</a>",
+     "text": "Operating without a licence you need is a criminal offence. A council can issue a civil penalty of up to &pound;40,000 (raised from &pound;30,000 on 1 May 2026), and the tenants or the council can apply for a Rent Repayment Order of up to two years' rent (twelve months where the offence was before 1 May 2026). Read the full guide &rarr;"
     }
    ]
   },
@@ -4449,8 +4465,8 @@
      "kind": "heading",
      "tag": "h3",
      "section": "The reasons that hold up.",
-     "html": "A direct line to the team",
-     "text": "A direct line to the team"
+     "html": "Straight through to the team",
+     "text": "Straight through to the team"
     },
     {
      "id": "valuation-15",
@@ -4489,8 +4505,8 @@
      "kind": "text",
      "tag": "p",
      "section": "The reasons that hold up.",
-     "html": "Protected with the DPS inside 30 days and the prescribed information served, which is what stops a penalty of one to three times the deposit.",
-     "text": "Protected with the DPS inside 30 days and the prescribed information served, which is what stops a penalty of one to three times the deposit."
+     "html": "Protected with DPS Insured inside 30 days and the prescribed information served, which is what stops a penalty of one to three times the deposit.",
+     "text": "Protected with DPS Insured inside 30 days and the prescribed information served, which is what stops a penalty of one to three times the deposit."
     },
     {
      "id": "valuation-20",
@@ -4505,8 +4521,8 @@
      "kind": "text",
      "tag": "p",
      "section": "The reasons that hold up.",
-     "html": "A 360&deg; tour and professional photography on every managed home, so applicants arrive already sure.",
-     "text": "A 360&deg; tour and professional photography on every managed home, so applicants arrive already sure."
+     "html": "Professional photography on every managed home, and a 360&deg; tour where we have filmed one, so applicants arrive already sure.",
+     "text": "Professional photography on every managed home, and a 360&deg; tour where we have filmed one, so applicants arrive already sure."
     },
     {
      "id": "valuation-22",
@@ -4708,6 +4724,14 @@
      "text": "Emergency? Call the office"
     },
     {
+     "id": "maintenance-31",
+     "kind": "text",
+     "tag": "p",
+     "section": "Something broken? Tell us properly.",
+     "html": "<b>Outside office hours.</b> If you smell gas, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. Then report it through the maintenance portal, which takes reports at any time.",
+     "text": "Outside office hours. If you smell gas, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. Then report it through the maintenance portal, which takes reports at any time."
+    },
+    {
      "id": "maintenance-23",
      "kind": "text",
      "tag": "p",
@@ -4768,8 +4792,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Logged, booked, closed.",
-     "html": "What was found, what was done, what it cost. Under Awaab&rsquo;s Law the timescales for damp, mould and hazards are tightening, and a dated record is what proves you acted.",
-     "text": "What was found, what was done, what it cost. Under Awaab's Law the timescales for damp, mould and hazards are tightening, and a dated record is what proves you acted."
+     "html": "What was found, what was done, what it cost. Damp, mould and hazards are dealt with promptly, and a dated record is what proves it. Awaab&rsquo;s Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed.",
+     "text": "What was found, what was done, what it cost. Damp, mould and hazards are dealt with promptly, and a dated record is what proves it. Awaab's Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed."
     }
    ]
   },
@@ -5254,8 +5278,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Operating an unlicensed property that requires a licence is a criminal offence. A council can issue a civil penalty of up to &pound;30,000 per offence as an alternative to prosecution, and prosecution carries an unlimited fine. Separately, the tenants or the council can apply for a Rent Repayment Order requiring you to repay up to twelve months&rsquo; rent. On a room-let HMO at &pound;450 a room that is a genuinely serious number.",
-     "text": "Operating an unlicensed property that requires a licence is a criminal offence. A council can issue a civil penalty of up to &pound;30,000 per offence as an alternative to prosecution, and prosecution carries an unlimited fine. Separately, the tenants or the council can apply for a Rent Repayment Order requiring you to repay up to twelve months' rent. On a room-let HMO at &pound;450 a room that is a genuinely serious number."
+     "html": "Operating an unlicensed property that requires a licence is a criminal offence. A council can issue a civil penalty of up to &pound;40,000 per offence (raised from &pound;30,000 on 1 May 2026) as an alternative to prosecution, and prosecution carries an unlimited fine. Separately, the tenants or the council can apply for a Rent Repayment Order requiring you to repay up to two years&rsquo; rent (twelve months where the offence was before 1 May 2026). On a room-let HMO at &pound;450 a room that is a genuinely serious number.",
+     "text": "Operating an unlicensed property that requires a licence is a criminal offence. A council can issue a civil penalty of up to &pound;40,000 per offence (raised from &pound;30,000 on 1 May 2026) as an alternative to prosecution, and prosecution carries an unlimited fine. Separately, the tenants or the council can apply for a Rent Repayment Order requiring you to repay up to two years' rent (twelve months where the offence was before 1 May 2026). On a room-let HMO at &pound;450 a room that is a genuinely serious number."
     },
     {
      "id": "journal-16",
@@ -5302,8 +5326,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Damp and mould used to be treated as a maintenance annoyance and, too often, blamed on the tenant&rsquo;s drying habits. That era is over. There are now fixed timescales attached to it, and the burden of proving you acted sits with the landlord.",
-     "text": "Damp and mould used to be treated as a maintenance annoyance and, too often, blamed on the tenant's drying habits. That era is over. There are now fixed timescales attached to it, and the burden of proving you acted sits with the landlord."
+     "html": "Damp and mould used to be treated as a maintenance annoyance and, too often, blamed on the tenant&rsquo;s drying habits. That era is over. Social landlords now have legal deadlines for it, private renting is next, and a landlord who can show they acted is in a far stronger position than one who cannot.",
+     "text": "Damp and mould used to be treated as a maintenance annoyance and, too often, blamed on the tenant's drying habits. That era is over. Social landlords now have legal deadlines for it, private renting is next, and a landlord who can show they acted is in a far stronger position than one who cannot."
     },
     {
      "id": "journal-22",
@@ -5318,24 +5342,24 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Awaab Ishak was a two-year-old boy in Rochdale who died in 2020 after prolonged exposure to mould in his family&rsquo;s home. The rules that carry his name were introduced for social housing and have been extended to the private rented sector through the Renters&rsquo; Rights Act. The principle is simple: once a serious hazard is reported, the clock starts.",
-     "text": "Awaab Ishak was a two-year-old boy in Rochdale who died in 2020 after prolonged exposure to mould in his family's home. The rules that carry his name were introduced for social housing and have been extended to the private rented sector through the Renters' Rights Act. The principle is simple: once a serious hazard is reported, the clock starts."
+     "html": "Awaab Ishak was a two-year-old boy in Rochdale who died in 2020 after prolonged exposure to mould in his family&rsquo;s home. The rules that carry his name came into force for social housing on 27 October 2025. The Renters&rsquo; Rights Act lets the government apply them to private renting too, and its implementation roadmap puts that in a later phase, with the date still to be confirmed after consultation. The principle is simple: once a serious hazard is reported, the clock starts.",
+     "text": "Awaab Ishak was a two-year-old boy in Rochdale who died in 2020 after prolonged exposure to mould in his family's home. The rules that carry his name came into force for social housing on 27 October 2025. The Renters' Rights Act lets the government apply them to private renting too, and its implementation roadmap puts that in a later phase, with the date still to be confirmed after consultation. The principle is simple: once a serious hazard is reported, the clock starts."
     },
     {
      "id": "journal-24",
      "kind": "heading",
      "tag": "h3",
      "section": "Page",
-     "html": "What it means in practice",
-     "text": "What it means in practice"
+     "html": "What it means now, and what is coming",
+     "text": "What it means now, and what is coming"
     },
     {
      "id": "journal-25",
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "You are required to investigate a reported damp or mould hazard within a set period, tell the tenant in writing what you found, and begin the remedial work within a further set period, with far shorter deadlines where the hazard poses a significant risk to health. The exact timescales are being phased in, and the sensible working assumption is days, not months.",
-     "text": "You are required to investigate a reported damp or mould hazard within a set period, tell the tenant in writing what you found, and begin the remedial work within a further set period, with far shorter deadlines where the hazard poses a significant risk to health. The exact timescales are being phased in, and the sensible working assumption is days, not months."
+     "html": "In social housing, a landlord must now investigate a significant damp or mould hazard within 10 working days, tell the tenant in writing what was found, and make it safe within a further 5 working days, and emergency hazards must be dealt with within 24 hours. The private-sector version has not been set yet, so those exact deadlines do not bind a private landlord today. The sensible working assumption is the same, though: days, not months.",
+     "text": "In social housing, a landlord must now investigate a significant damp or mould hazard within 10 working days, tell the tenant in writing what was found, and make it safe within a further 5 working days, and emergency hazards must be dealt with within 24 hours. The private-sector version has not been set yet, so those exact deadlines do not bind a private landlord today. The sensible working assumption is the same, though: days, not months."
     },
     {
      "id": "journal-26",
@@ -5478,8 +5502,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Now that all tenancies are periodic and a tenant can leave on two months&rsquo; notice, retention is worth more than it used to be. Answering the phone, fixing things quickly and being reasonable about rent reviews are not soft skills. They are the cheapest void insurance available. A tenant who stays three years instead of one saves you two re-lets and two voids.",
-     "text": "Now that all tenancies are periodic and a tenant can leave on two months' notice, retention is worth more than it used to be. Answering the phone, fixing things quickly and being reasonable about rent reviews are not soft skills. They are the cheapest void insurance available. A tenant who stays three years instead of one saves you two re-lets and two voids."
+     "html": "Now that tenancies are periodic and a tenant can leave on two months&rsquo; notice, retention is worth more than it used to be. Answering the phone, fixing things quickly and being reasonable about rent reviews are not soft skills. They are the cheapest void insurance available. A tenant who stays three years instead of one saves you two re-lets and two voids.",
+     "text": "Now that tenancies are periodic and a tenant can leave on two months' notice, retention is worth more than it used to be. Answering the phone, fixing things quickly and being reasonable about rent reviews are not soft skills. They are the cheapest void insurance available. A tenant who stays three years instead of one saves you two re-lets and two voids."
     },
     {
      "id": "journal-44",
@@ -5526,8 +5550,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "The deposit must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information must be served on the tenant within the same 30 days. Failure to do either means a tenant can ask the county court to order a penalty of between one and three times the deposit. Because each renewal is treated as a separate tenancy, a deposit that was never protected can attract that penalty more than once.",
-     "text": "The deposit must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information must be served on the tenant within the same 30 days. Failure to do either means a tenant can ask the county court to order a penalty of between one and three times the deposit. Because each renewal is treated as a separate tenancy, a deposit that was never protected can attract that penalty more than once."
+     "html": "The deposit must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information must be served on the tenant within the same 30 days. Failure to do either means a tenant can ask the county court to order a penalty of between one and three times the deposit.",
+     "text": "The deposit must be protected in a government-approved scheme within 30 days of receipt, and the prescribed information must be served on the tenant within the same 30 days. Failure to do either means a tenant can ask the county court to order a penalty of between one and three times the deposit."
     },
     {
      "id": "journal-50",
@@ -5630,8 +5654,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "<b>What we do about it.</b> Every managed tenancy starts with a dated photographic inventory and schedule of condition, and ends with a matching check-out report. Deposits go to the Deposit Protection Service (DPS) inside the statutory window with the prescribed information served. If there is a deduction to claim, the evidence for it was gathered months before anyone needed it.",
-     "text": "What we do about it. Every managed tenancy starts with a dated photographic inventory and schedule of condition, and ends with a matching check-out report. Deposits go to the Deposit Protection Service (DPS) inside the statutory window with the prescribed information served. If there is a deduction to claim, the evidence for it was gathered months before anyone needed it."
+     "html": "<b>What we do about it.</b> Every managed tenancy starts with a dated photographic inventory and schedule of condition, and ends with a matching check-out report. Deposits are protected with DPS Insured, the Deposit Protection Service&rsquo;s insured scheme, inside the statutory window with the prescribed information served. If there is a deduction to claim, the evidence for it was gathered months before anyone needed it.",
+     "text": "What we do about it. Every managed tenancy starts with a dated photographic inventory and schedule of condition, and ends with a matching check-out report. Deposits are protected with DPS Insured, the Deposit Protection Service's insured scheme, inside the statutory window with the prescribed information served. If there is a deduction to claim, the evidence for it was gathered months before anyone needed it."
     },
     {
      "id": "journal-63",
@@ -5670,8 +5694,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Assured shorthold tenancies have been replaced by assured periodic tenancies. Every tenancy now rolls month to month with no fixed end date, and a tenant can leave on two months&rsquo; notice. In practice that puts a premium on choosing the right tenant at the start, because the tenancy no longer locks anyone in for a year.",
-     "text": "Assured shorthold tenancies have been replaced by assured periodic tenancies. Every tenancy now rolls month to month with no fixed end date, and a tenant can leave on two months' notice. In practice that puts a premium on choosing the right tenant at the start, because the tenancy no longer locks anyone in for a year."
+     "html": "Since 1 May 2026 most private tenancies are assured periodic tenancies, including those that began as fixed-term assured shorthold tenancies. They roll on month to month with no fixed end date, and a tenant can leave on two months&rsquo; notice. In practice that puts a premium on choosing the right tenant at the start, because the tenancy no longer locks anyone in for a year.",
+     "text": "Since 1 May 2026 most private tenancies are assured periodic tenancies, including those that began as fixed-term assured shorthold tenancies. They roll on month to month with no fixed end date, and a tenant can leave on two months' notice. In practice that puts a premium on choosing the right tenant at the start, because the tenancy no longer locks anyone in for a year."
     },
     {
      "id": "journal-68",
@@ -5726,16 +5750,16 @@
      "kind": "heading",
      "tag": "h3",
      "section": "Page",
-     "html": "Damp, mould and hazards have deadlines",
-     "text": "Damp, mould and hazards have deadlines"
+     "html": "Damp, mould and hazards: deadlines are coming",
+     "text": "Damp, mould and hazards: deadlines are coming"
     },
     {
      "id": "journal-75",
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Under Awaab&rsquo;s Law, serious hazards such as damp and mould carry fixed timescales for investigation and repair once reported. A reported issue with a dated record, photographs and a contractor booked is a very different position from one discovered late, which is why inspection and logging matter more than they ever have.",
-     "text": "Under Awaab's Law, serious hazards such as damp and mould carry fixed timescales for investigation and repair once reported. A reported issue with a dated record, photographs and a contractor booked is a very different position from one discovered late, which is why inspection and logging matter more than they ever have."
+     "html": "Awaab&rsquo;s Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. The duty to keep a home fit to live in applies now. A reported issue with a dated record, photographs and a contractor booked is a very different position from one discovered late, which is why inspection and logging matter more than they ever have.",
+     "text": "Awaab's Law already sets legal deadlines for damp, mould and other hazards in social housing, and the government plans to extend it to private renting at a date still to be confirmed. The duty to keep a home fit to live in applies now. A reported issue with a dated record, photographs and a contractor booked is a very different position from one discovered late, which is why inspection and logging matter more than they ever have."
     },
     {
      "id": "journal-76",
@@ -5853,8 +5877,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Letting and managing, and not much else.",
-     "html": "Property management, HMOs and single lets. We deliberately do not spread into everything, because this job is won in the detail: the deposit protected on time, the certificate renewed before it lapses, the repair chased until it is done. Walid Mhana, who runs the agency, has spent twelve years in letting and management across Manchester and Salford &mdash; long enough to have seen how most of it goes wrong, which is the useful part.",
-     "text": "Property management, HMOs and single lets. We deliberately do not spread into everything, because this job is won in the detail: the deposit protected on time, the certificate renewed before it lapses, the repair chased until it is done. Walid Mhana, who runs the agency, has spent twelve years in letting and management across Manchester and Salford &mdash; long enough to have seen how most of it goes wrong, which is the useful part."
+     "html": "Property management, HMOs and single lets. We deliberately do not spread into everything, because this job is won in the detail: the deposit protected on time, the certificate renewed before it lapses, the repair chased until it is done. Walid Mhana, who runs the agency, has spent fifteen years in letting and management across Manchester and Salford &mdash; long enough to have seen how most of it goes wrong, which is the useful part.",
+     "text": "Property management, HMOs and single lets. We deliberately do not spread into everything, because this job is won in the detail: the deposit protected on time, the certificate renewed before it lapses, the repair chased until it is done. Walid Mhana, who runs the agency, has spent fifteen years in letting and management across Manchester and Salford &mdash; long enough to have seen how most of it goes wrong, which is the useful part."
     },
     {
      "id": "about-10",
@@ -5869,8 +5893,8 @@
      "kind": "text",
      "tag": "figcaption",
      "section": "Letting and managing, and not much else.",
-     "html": "Walid Mhana<span>Runs the agency &middot; twelve years in letting and management</span>",
-     "text": "Walid Mhana Runs the agency &middot; twelve years in letting and management"
+     "html": "Walid Mhana<span>Runs the agency &middot; fifteen years in letting and management</span>",
+     "text": "Walid Mhana Runs the agency &middot; fifteen years in letting and management"
     },
     {
      "id": "about-12",
@@ -5909,8 +5933,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Letting and managing, and not much else.",
-     "html": "Houses, apartments and rooms across Greater Manchester. Honest listings written by someone who stood in the room, a deposit protected with the DPS, and repairs that get logged and tracked rather than forgotten.",
-     "text": "Houses, apartments and rooms across Greater Manchester. Honest listings written by someone who stood in the room, a deposit protected with the DPS, and repairs that get logged and tracked rather than forgotten."
+     "html": "Houses, apartments and rooms across Greater Manchester. Honest listings written by someone who stood in the room, a deposit protected with DPS Insured, and repairs that get logged and tracked rather than forgotten.",
+     "text": "Houses, apartments and rooms across Greater Manchester. Honest listings written by someone who stood in the room, a deposit protected with DPS Insured, and repairs that get logged and tracked rather than forgotten."
     },
     {
      "id": "about-17",
@@ -6013,8 +6037,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Regulated, and accountable.",
-     "html": "Every deposit is registered inside the statutory 30 days and the prescribed information served. Failing to do so exposes a landlord to a penalty of one to three times the deposit.",
-     "text": "Every deposit is registered inside the statutory 30 days and the prescribed information served. Failing to do so exposes a landlord to a penalty of one to three times the deposit."
+     "html": "Every deposit is protected with DPS Insured, the Deposit Protection Service&rsquo;s insured scheme, inside the statutory 30 days, and the prescribed information served. Failing to do so exposes a landlord to a penalty of one to three times the deposit.",
+     "text": "Every deposit is protected with DPS Insured, the Deposit Protection Service's insured scheme, inside the statutory 30 days, and the prescribed information served. Failing to do so exposes a landlord to a penalty of one to three times the deposit."
     },
     {
      "id": "about-30",
@@ -7533,8 +7557,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "We share personal information only where it is necessary, for example with referencing providers, deposit schemes, contractors attending a maintenance job, our lettings management software provider, property portals when a property is advertised, and our professional advisers or regulators. We never sell your personal information.",
-     "text": "We share personal information only where it is necessary, for example with referencing providers, deposit schemes, contractors attending a maintenance job, our lettings management software provider, property portals when a property is advertised, and our professional advisers or regulators. We never sell your personal information."
+     "html": "We share personal information only where it is necessary, for example with referencing providers, deposit schemes, contractors attending a maintenance job, our lettings management software provider, the company that hosts this website, the service that delivers our emails, property portals when a property is advertised, and our professional advisers or regulators. We never sell your personal information.",
+     "text": "We share personal information only where it is necessary, for example with referencing providers, deposit schemes, contractors attending a maintenance job, our lettings management software provider, the company that hosts this website, the service that delivers our emails, property portals when a property is advertised, and our professional advisers or regulators. We never sell your personal information."
     },
     {
      "id": "privacy-17",
@@ -7581,48 +7605,56 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Cookies are small files stored on your device. We use them in three ways:",
-     "text": "Cookies are small files stored on your device. We use them in three ways:"
+     "html": "Cookies are small files stored on your device. This website does not need any to work, and analytics or advertising cookies are only ever used if you agree to them:",
+     "text": "Cookies are small files stored on your device. This website does not need any to work, and analytics or advertising cookies are only ever used if you agree to them:"
     },
     {
      "id": "privacy-23",
      "kind": "item",
      "tag": "li",
      "section": "Page",
-     "html": "<b>Essential cookies:</b> needed for the website to work, for example remembering your cookie choice. These are always on.",
-     "text": "Essential cookies: needed for the website to work, for example remembering your cookie choice. These are always on."
+     "html": "<b>Your choice:</b> if we ask about cookies, your answer is remembered in your browser&rsquo;s own storage on this device for six months, so we do not ask again on every page.",
+     "text": "Your choice: if we ask about cookies, your answer is remembered in your browser's own storage on this device for six months, so we do not ask again on every page."
     },
     {
      "id": "privacy-24",
      "kind": "item",
      "tag": "li",
      "section": "Page",
-     "html": "<b>Analytics cookies:</b> used only with your consent to understand which pages are visited and how the site performs.",
-     "text": "Analytics cookies: used only with your consent to understand which pages are visited and how the site performs."
+     "html": "<b>Analytics cookies:</b> if we turn these on, a banner asks you first, and nothing of this kind loads unless you accept. They tell us which pages are visited and how the site performs.",
+     "text": "Analytics cookies: if we turn these on, a banner asks you first, and nothing of this kind loads unless you accept. They tell us which pages are visited and how the site performs."
     },
     {
      "id": "privacy-25",
      "kind": "item",
      "tag": "li",
      "section": "Page",
-     "html": "<b>Advertising cookies:</b> used only with your consent, so that our adverts can be shown to people who have visited the site and so we can measure whether they work.",
-     "text": "Advertising cookies: used only with your consent, so that our adverts can be shown to people who have visited the site and so we can measure whether they work."
+     "html": "<b>Advertising cookies:</b> the same: only if we turn them on and only if you accept, so that our adverts can be shown to people who have visited the site and so we can measure whether they work.",
+     "text": "Advertising cookies: the same: only if we turn them on and only if you accept, so that our adverts can be shown to people who have visited the site and so we can measure whether they work."
     },
     {
      "id": "privacy-26",
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "You can accept or decline non-essential cookies when you first visit the site, and change your mind at any time by clearing this site&rsquo;s data in your browser settings.",
-     "text": "You can accept or decline non-essential cookies when you first visit the site, and change your mind at any time by clearing this site's data in your browser settings."
+     "html": "Where you are asked, you can accept or decline, and change your mind at any time by clearing this site&rsquo;s data in your browser settings.",
+     "text": "Where you are asked, you can accept or decline, and change your mind at any time by clearing this site's data in your browser settings."
     },
     {
      "id": "privacy-27",
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Our 360&deg; property tours count how often a tour is opened using our own website, without cookies and without sending anything to a third party.",
-     "text": "Our 360&deg; property tours count how often a tour is opened using our own website, without cookies and without sending anything to a third party."
+     "html": "We count how often our property listings and 360&deg; tours are viewed, and which missing addresses people reach, on our own systems, without cookies and without sending anything to a third party. To tell repeat visits on the same day apart we use a one-way code made from your connection details and the date. It changes every day, so it cannot be used to follow you from one day to the next.",
+     "text": "We count how often our property listings and 360&deg; tours are viewed, and which missing addresses people reach, on our own systems, without cookies and without sending anything to a third party. To tell repeat visits on the same day apart we use a one-way code made from your connection details and the date. It changes every day, so it cannot be used to follow you from one day to the next."
+    },
+    {
+     "id": "privacy-32",
+     "kind": "text",
+     "tag": "p",
+     "section": "Page",
+     "html": "The maps on our property pages and contact page are Google Maps. When a map loads, your browser connects to Google, which receives your IP address and may set its own cookies; Google&rsquo;s privacy policy covers that.",
+     "text": "The maps on our property pages and contact page are Google Maps. When a map loads, your browser connects to Google, which receives your IP address and may set its own cookies; Google's privacy policy covers that."
     },
     {
      "id": "privacy-28",
@@ -7645,8 +7677,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Megacity Properties Ltd, registered in England &amp; Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · <a href=\"tel:+441612201763\">0161 220 1763</a> · <a href=\"mailto:info@megacityproperties.co.uk\">info@megacityproperties.co.uk</a><br> This policy is kept under review and was last updated when this website was published.",
-     "text": "Megacity Properties Ltd, registered in England & Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · 0161 220 1763 · info@megacityproperties.co.uk This policy is kept under review and was last updated when this website was published."
+     "html": "Megacity Properties Ltd, registered in England &amp; Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · <a href=\"tel:+441612201763\">0161 220 1763</a> · <a href=\"mailto:info@megacityproperties.co.uk\">info@megacityproperties.co.uk</a><br> This policy is kept under review. Last updated <time datetime=\"2026-09-26\">26 September 2026</time>.",
+     "text": "Megacity Properties Ltd, registered in England & Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · 0161 220 1763 · info@megacityproperties.co.uk This policy is kept under review. Last updated 26 September 2026 ."
     },
     {
      "id": "privacy-31",
@@ -7812,8 +7844,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Megacity Properties Ltd is an ARLA Propertymark regulated agent with Client Money Protection, and a member of The Property Ombudsman (membership T06217), a government-approved independent redress scheme for letting agents. Deposits we hold are protected with the Deposit Protection Service.",
-     "text": "Megacity Properties Ltd is an ARLA Propertymark regulated agent with Client Money Protection, and a member of The Property Ombudsman (membership T06217), a government-approved independent redress scheme for letting agents. Deposits we hold are protected with the Deposit Protection Service."
+     "html": "Megacity Properties Ltd is an ARLA Propertymark regulated agent with Client Money Protection, and a member of The Property Ombudsman (membership T06217), a government-approved independent redress scheme for letting agents. Deposits we hold are protected with DPS Insured, the Deposit Protection Service&rsquo;s insured scheme.",
+     "text": "Megacity Properties Ltd is an ARLA Propertymark regulated agent with Client Money Protection, and a member of The Property Ombudsman (membership T06217), a government-approved independent redress scheme for letting agents. Deposits we hold are protected with DPS Insured, the Deposit Protection Service's insured scheme."
     },
     {
      "id": "terms-20",
@@ -7836,8 +7868,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Page",
-     "html": "Megacity Properties Ltd, registered in England &amp; Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · <a href=\"tel:+441612201763\">0161 220 1763</a> · <a href=\"mailto:info@megacityproperties.co.uk\">info@megacityproperties.co.uk</a><br> These terms are kept under review and were last updated when this website was published.",
-     "text": "Megacity Properties Ltd, registered in England & Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · 0161 220 1763 · info@megacityproperties.co.uk These terms are kept under review and were last updated when this website was published."
+     "html": "Megacity Properties Ltd, registered in England &amp; Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · <a href=\"tel:+441612201763\">0161 220 1763</a> · <a href=\"mailto:info@megacityproperties.co.uk\">info@megacityproperties.co.uk</a><br> These terms are kept under review. Last updated <time datetime=\"2026-09-26\">26 September 2026</time>.",
+     "text": "Megacity Properties Ltd, registered in England & Wales, company no. 12321291. Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA · 0161 220 1763 · info@megacityproperties.co.uk These terms are kept under review. Last updated 26 September 2026 ."
     },
     {
      "id": "terms-23",
