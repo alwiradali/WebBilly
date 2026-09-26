@@ -12,7 +12,7 @@ import { label } from "./options.js";
 import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
-import { feedText, tidyAddress, firstLine } from "./text.js";
+import { feedText } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -51,8 +51,8 @@ function view(env, url, { r, media }, settings) {
      nothing in the file says which it is. */
   const walkthrough = media.find((m) => m.kind === "video" && m.role !== "video360") || null;
   const video360 = media.find((m) => m.kind === "video" && m.role === "video360") || null;
-  const addr = tidyAddress([r.address_1, r.address_2, r.town].filter(Boolean).join(", "));
-  const addrShort = [firstLine(r.address_1, r.address_2), r.town].filter(Boolean).join(", ");
+  const addr = [r.address_1, r.address_2, r.town].filter(Boolean).join(", ");
+  const addrShort = [r.address_1, r.town].filter(Boolean).join(", ");
   const typeLabel = label("type", r.type) || "Property";
   const beds = isRoom ? 1 : r.bedrooms;
   const bathsCount = home.bathrooms.length;
@@ -71,7 +71,7 @@ function view(env, url, { r, media }, settings) {
   const phoneHref = "tel:+44" + phone.replace(/\D/g, "").replace(/^0/, "");
   const wa = (brand.whatsapp || "").replace(/\D/g, "");
   const waDigits = wa ? (wa.startsWith("44") ? wa : "44" + wa.replace(/^0/, "")) : null;
-  const title = tidyAddress(r.title);
+  const title = r.title;
   const pageTitle = title + " | Megacity Properties";
   const metaDesc = r.seo_description || summary.replace(/\s+/g, " ").trim().slice(0, 155);
   const canonical = urls.absUrl(env, url, "listing", r.id);
@@ -330,8 +330,7 @@ export async function renderPropertiesPage(request, env, url, cards) {
   if (!page.ok || !cards.items.length) return null;
   const opt = (list, blank) => `<option value="">${blank}</option>` + list.map((o) => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");
   const cardHtml = cards.items.map((c) => {
-    /* a studio is "Studio", not "0 bed" — the type is already on the card */
-    const facts = [c.typeShort === "room" ? "1 bedroom available" : (c.bedrooms ? c.bedrooms + " bed" : null),
+    const facts = [c.typeShort === "room" ? "1 bedroom available" : (c.bedrooms != null ? c.bedrooms + " bed" : null),
       c.typeShort === "room" ? "Shared bath" : (c.bathrooms ? c.bathrooms + " bath" : null),
       c.typeShort === "room" ? "Room" : c.typeLabel].filter(Boolean);
     /* When a property is available matters on the CARD, not only on the page

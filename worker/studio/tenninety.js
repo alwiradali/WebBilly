@@ -30,7 +30,7 @@
  */
 
 import { slugify } from "./db.js";
-import { feedText, tidyAddress } from "./text.js";
+import { feedText } from "./text.js";
 
 const BASE = "https://webapi.10ninety.co.uk";
 const AUTH_HEADER = "10ninety-webapi-key";
@@ -277,7 +277,7 @@ export function toListing(p, opts = {}) {
     externalId: str(p.property_ref, 40),
     ref: str(p.property_ref, 40),
     status,
-    title: str(tidyAddress(feedText(p.display_address)), 160) || str(tidyAddress(feedText([p.address_1, p.address_2].filter(Boolean).join(", "))), 160),
+    title: str(feedText(p.display_address), 160) || str(feedText([p.address_1, p.address_2].filter(Boolean).join(", ")), 160),
     headline: str(feedText(p.headline), 160),
     type: typeOf(p, types),
     letType: isRoom(p) ? "room" : "whole",

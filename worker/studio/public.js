@@ -6,7 +6,7 @@ import { json, jsonCached, parseJson } from "./db.js";
 import { label, valid } from "./options.js";
 import { mediaUrl, listForListing, feedSized, FEED_LARGE, FEED_THUMB } from "./media.js";
 import * as urls from "./urls.js";
-import { feedText, tidyAddress, firstLine } from "./text.js";
+import { feedText } from "./text.js";
 
 /* the listing page address for this host: /let/<id> on the client domain,
    /templates/megacity-let-<id> on the demo host */
@@ -32,9 +32,9 @@ function card(r, env, url) {
   return {
     id: r.id,
     url: pageUrl(env, url, r.id),
-    title: tidyAddress(r.title),
+    title: r.title,
     headline: feedText(r.headline) || null,
-    area: r.area, areaLabel: label("area", r.area), town: r.town, line1: firstLine(r.address_1, r.address_2),
+    area: r.area, areaLabel: label("area", r.area), town: r.town, line1: r.address_1,
     rentPcm: r.rent_pcm, rentLabel: rentLabel(r.rent_pcm),
     bedrooms: isRoom ? 1 : r.bedrooms,
     bathrooms: r.bathrooms,
