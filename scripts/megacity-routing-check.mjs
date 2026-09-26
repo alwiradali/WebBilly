@@ -207,9 +207,14 @@ ok(r3.status === 200 && r3.sent && same(r3.sent.to, MANAGEMENT) && !r3.sent.repl
 tenninety = "accept";
 
 /* ── a viewing with a phone and no email: the form says email is optional ── */
+/* name, phone and email on every form (2026-09-26): a phone OR an email
+   used to be enough for a viewing; now each alone is refused */
 const phoneOnly = await post("/api/megacity-viewing", { name: "Sam Patel", phone: "07700 900456", email: "", property: "2 bed, Ladywell Point", day: "Saturday" });
-ok(phoneOnly.status === 200 && phoneOnly.sent && same(phoneOnly.sent.to, LETTINGS) && !phoneOnly.sent.reply_to,
-   "a phone-only viewing request is accepted and reaches lettings@", { status: phoneOnly.status, err: phoneOnly.json && phoneOnly.json.error });
+ok(phoneOnly.status === 400 && !phoneOnly.sent && /email/i.test(phoneOnly.json && phoneOnly.json.error), "a viewing request without an email is refused, and says so", { status: phoneOnly.status, err: phoneOnly.json && phoneOnly.json.error });
+const emailOnly = await post("/api/megacity-viewing", { name: "Sam Patel", phone: "", email: "sam@example.com", property: "2 bed, Ladywell Point" });
+ok(emailOnly.status === 400 && !emailOnly.sent && /phone/i.test(emailOnly.json && emailOnly.json.error), "a viewing request without a phone number is refused, and says so", { status: emailOnly.status, err: emailOnly.json && emailOnly.json.error });
+const valNoPhone = await post("/api/megacity-contact", { name: "A Person", email: "person@example.com", phone: "", topic: "Free landlord valuation", message: "x" });
+ok(valNoPhone.status === 400 && !valNoPhone.sent && /phone/i.test(valNoPhone.json && valNoPhone.json.error), "a valuation request without a phone number is refused", { status: valNoPhone.status, err: valNoPhone.json && valNoPhone.json.error });
 const badEmail = await post("/api/megacity-viewing", { name: "Sam", phone: "07700 900456", email: "not-an-email", property: "x" });
 ok(badEmail.status === 400 && !badEmail.sent, "a mistyped email is still caught", badEmail.status);
 const nothing = await post("/api/megacity-viewing", { name: "Sam", property: "x" });

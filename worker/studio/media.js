@@ -46,7 +46,7 @@ export function mediaUrl(key) {
    without Image Transformations switched on still gets the original. */
 export const FEED_LARGE = 1600, FEED_THUMB = 640;
 export function feedSized(key, w) {
-  return key && /\/feed\.jpg$/.test(key) ? "/media/" + key + "?w=" + w : null;
+  return key && /\/feed\.jpg$/.test(key) ? "/media/" + key + "?w=" + w + "&r=2" : null;
 }
 
 export function mediaToJson(m) {
@@ -398,7 +398,11 @@ async function serveFeedImage(env, key, cacheKey, cache, request, width) {
      Transformations off for the zone, or a picture it will not read), the
      original exactly as before */
   let upstream = width
-    ? await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400, image: { width, fit: "scale-down", quality: 82, metadata: "none" } } }).catch(() => null)
+    ? await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400, image: width === FEED_THUMB
+      ? { width, fit: "scale-down", quality: 80, format: "jpeg", background: "#ffffff", metadata: "none" }
+      /* the longest side, not only the width: 9 Carlton Road's are tall PNGs
+         under 1600 wide, which "width 1600" passed through untouched at 2.6 MB */
+      : { width, height: width, fit: "scale-down", quality: 82, format: "jpeg", background: "#ffffff", metadata: "none" } } }).catch(() => null)
     : null;
   if (!upstream || !upstream.ok || /err/i.test(upstream.headers.get("cf-resized") || "")) {
     upstream = await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400 } }).catch(() => null);
@@ -454,7 +458,9 @@ async function serveInner(request, env, url) {
      except a feed photo's width, which is one of two values and is a
      different picture */
   const feedW = FEED_KEY_RE.test(key) ? (Number(url.searchParams.get("w")) === FEED_THUMB ? FEED_THUMB : FEED_LARGE) : 0;
-  const cacheKey = new Request(url.origin + url.pathname + (feedW ? "?w=" + feedW : ""), { method: "GET" });
+  /* r2: the resized copies. Anything cached under "?w=" before Image
+     Transformations was on is a full-size original, so it is not reused. */
+  const cacheKey = new Request(url.origin + url.pathname + (feedW ? "?w=" + feedW + "&r2" : ""), { method: "GET" });
   if (!request.headers.has("range") && !isPrivate) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;

@@ -942,13 +942,12 @@ async function handleMegacityViewing(request, env, ctx) {
   const property = String(body.property || "").trim().slice(0, 200);
 
   if (!name || !property) return json({ error: "Please include your name." }, 400);
-  /* The form asks for a phone number and marks email "(optional)", so a
-     request with a phone and no email is a complete one. It used to be turned
-     away here with "A valid email address is required" — the tenant was told
-     off for leaving blank a box the form said they could leave blank. */
+  /* Name, phone and email on every form (Billy, 2026-09-26) — the viewing
+     form used to take a phone OR an email; it now asks for both, and so does
+     this. */
   const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-  if (email && !emailOk) return json({ error: "Please check the email address." }, 400);
-  if (!emailOk && !phone) return json({ error: "Please include a phone number or an email address." }, 400);
+  if (!phone) return json({ error: "Please include a phone number." }, 400);
+  if (!emailOk) return json({ error: email ? "Please check the email address." : "Please include your email address." }, 400);
 
   const subject = "Viewing request — " + property;
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1008,6 +1007,8 @@ async function handleMegacityContact(request, env, ctx) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return json({ error: "A valid email address is required." }, 400);
   }
+  /* name, phone and email on every form — the valuation forms used to leave the phone optional */
+  if (!phone) return json({ error: "Please include a phone number." }, 400);
 
   const subject = "Website enquiry — " + topic + " · " + name;
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
