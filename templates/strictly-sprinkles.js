@@ -478,7 +478,6 @@
     }
 
     var ig = $("#igBtn"); if (ig) ig.href = IG;
-    var dw = $("#dockWa"); if (dw) dw.href = waLink(intro);
 
     var fc = $("#footContact");
     /* the channel, not the details — her number and address are written out
@@ -922,9 +921,9 @@
     frame();
   })();
 
-  /* nav state + the phone dock */
+  /* nav state */
   (function chrome() {
-    var nav = $("#nav"), dock = $("#dock"), hero = $("#hero");
+    var nav = $("#nav");
     /* The bar goes cream only once the dark block at the top of the page has
        actually scrolled away. Switching at 40px turned it white while the
        hero photograph was still behind it, which put a white bar between two
@@ -939,19 +938,10 @@
       var edge = 40;
       if (lastDark) edge = Math.max(40, lastDark.offsetTop + lastDark.offsetHeight - nav.offsetHeight);
       nav.classList.toggle("solid", scrollY > edge);
-      if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
-    }
-    /* Hand the real bar height to the stylesheet so the footer can reserve it.
-       Measured rather than hard-coded: the buttons grow with the text size. */
-    function measure() {
-      if (!dock) return;
-      var h = Math.round(dock.getBoundingClientRect().height);
-      document.documentElement.style.setProperty("--dockh", h + "px");
     }
     addEventListener("scroll", frame, { passive: true });
-    addEventListener("resize", function () { frame(); measure(); });
-    addEventListener("load", measure);
-    frame(); measure();
+    addEventListener("resize", frame);
+    frame();
   })();
 
   /* drawer */

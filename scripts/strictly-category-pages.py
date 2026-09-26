@@ -181,10 +181,6 @@ SHELL = '''<!doctype html>
   </div>
 </footer>
 
-<div class="dock" id="dock">
-  <a class="btn btn-fill" href="/templates/strictly-sprinkles#enquire">Enquire</a>
-  <a class="btn btn-line" id="dockWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
-</div>
 
 <script src="/templates/vendor/lenis.min.js"></script>
 <script src="/templates/strictly-sprinkles-data.js"></script>
