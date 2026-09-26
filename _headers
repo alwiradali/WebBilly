@@ -139,3 +139,14 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /templates/strictly-sprinkles-baby-boxes
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+# Fleuré & Co. — Nottingham florist, unlisted preview. Not linked from
+# anywhere and not for Google until she has seen it and said yes. Her own
+# photographs live in assets/fleure and should not be indexed off somebody
+# else's domain either.
+/templates/fleure
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-work
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/fleure/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
