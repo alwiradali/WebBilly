@@ -2437,6 +2437,8 @@ body.sl-open{overflow:hidden}
 .hero-cta-line{display:inline-flex;align-items:center;gap:9px;padding:6px 0 5px;min-height:24px;border-bottom:1px solid rgba(143,196,245,.55);
   font:500 15px/1 var(--ff-u);color:#F5F2EA;text-decoration:none;transition:border-color .25s ease}
 .hero-cta-line svg{width:16px;height:16px;transition:transform .3s ease}
+/* a thumb-sized target without changing how the link looks: 28px tall on a phone was too small to hit */
+.hero-cta-line{position:relative}.hero-cta-line::after{content:"";position:absolute;inset:-10px -6px}
 .hero-cta-line:hover{border-color:#8FC4F5}
 .hero-cta-line:hover svg{transform:translateX(4px)}
 @media (prefers-reduced-motion:reduce){.hero-cta::before,.hero-cta-line svg{transition:none}}

@@ -4,7 +4,7 @@
 
 import { json, jsonCached, parseJson } from "./db.js";
 import { label, valid } from "./options.js";
-import { mediaUrl, listForListing } from "./media.js";
+import { mediaUrl, listForListing, feedSized, FEED_LARGE, FEED_THUMB } from "./media.js";
 import * as urls from "./urls.js";
 import { feedText } from "./text.js";
 
@@ -41,7 +41,7 @@ function card(r, env, url) {
     type: r.type, typeLabel: label("type", r.type), typeShort: typeShort(r), letType: r.let_type,
     furnishing: r.furnishing, pets: r.pets, availability: r.availability, availableFrom: r.available_from || null,
     tag: r.headline ? null : (features[0] || null),
-    cover: r.cover_key ? { url: mediaUrl(r.cover_large || r.cover_key), thumb: mediaUrl(r.cover_thumb || r.cover_key), alt: r.cover_alt || r.title } : null,
+    cover: r.cover_key ? { url: feedSized(r.cover_key, FEED_LARGE) || mediaUrl(r.cover_large || r.cover_key), thumb: feedSized(r.cover_key, FEED_THUMB) || mediaUrl(r.cover_thumb || r.cover_key), alt: r.cover_alt || r.title } : null,
     tour: !!r.tour_live,
     publishedAt: r.published_at, updatedAt: r.updated_at,
   };

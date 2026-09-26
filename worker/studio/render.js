@@ -184,7 +184,7 @@ function videoHtml(v) {
   if (!m) return "";
   const src = mediaUrl(m.key_orig);
   if (!src) return "";
-  const poster = v.cover ? mediaUrl(v.cover.key_large || v.cover.key_orig) : null;
+  const poster = v.cover ? (v.cover.url || mediaUrl(v.cover.key_large || v.cover.key_orig)) : null;
   return `<h3>Video walkthrough</h3>
       <p>A walk through ${esc(v.addrShort || "the property")}, filmed by the office.</p>
       <video class="pd-video" controls preload="none" playsinline${poster ? ` poster="${esc(poster)}"` : ""}

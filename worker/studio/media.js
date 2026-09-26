@@ -39,6 +39,16 @@ export function mediaUrl(key) {
   return key ? "/media/" + key : null;
 }
 
+/* A 10ninety photograph comes at whatever size it was uploaded — 9 Carlton
+   Road's are camera originals, 2–2.7 MB each, and its page weighed 33 MB on a
+   phone. These are the only two sizes asked for: the gallery and the cards.
+   Cloudflare shrinks them on the way through (serveFeedImage), and a zone
+   without Image Transformations switched on still gets the original. */
+export const FEED_LARGE = 1600, FEED_THUMB = 640;
+export function feedSized(key, w) {
+  return key && /\/feed\.jpg$/.test(key) ? "/media/" + key + "?w=" + w : null;
+}
+
 export function mediaToJson(m) {
   return {
     id: m.id,
@@ -46,8 +56,8 @@ export function mediaToJson(m) {
     kind: m.kind,
     role: m.role,
     roomLabel: m.room_label,
-    url: mediaUrl(m.key_large || m.key_orig),
-    thumb: mediaUrl(m.key_thumb || m.key_large || m.key_orig),
+    url: feedSized(m.key_orig, FEED_LARGE) || mediaUrl(m.key_large || m.key_orig),
+    thumb: feedSized(m.key_orig, FEED_THUMB) || mediaUrl(m.key_thumb || m.key_large || m.key_orig),
     orig: mediaUrl(m.key_orig),
     pano: mediaUrl(m.key_pano),
     pano2048: mediaUrl(m.key_pano2048),
@@ -370,7 +380,7 @@ export async function listForListing(db, listingId) {
  * for a minute should not blank a property page for a year. */
 const FEED_HOSTS = /(^|\.)10ninety\.co\.uk$/i;
 
-async function serveFeedImage(env, key, cacheKey, cache, request) {
+async function serveFeedImage(env, key, cacheKey, cache, request, width) {
   const db = officeDb(env);
   if (!db) return new Response("Not found", { status: 404, headers: { "cache-control": "public, max-age=60" } });
   const row = await db.prepare(`SELECT source_url FROM media WHERE key_orig=?1`).bind(key).first().catch(() => null);
@@ -384,7 +394,15 @@ async function serveFeedImage(env, key, cacheKey, cache, request) {
     return new Response("Not found", { status: 404 });
   }
 
-  const upstream = await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400 } }).catch(() => null);
+  /* shrunk to the size it is shown at; if Cloudflare cannot (Image
+     Transformations off for the zone, or a picture it will not read), the
+     original exactly as before */
+  let upstream = width
+    ? await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400, image: { width, fit: "scale-down", quality: 82, metadata: "none" } } }).catch(() => null)
+    : null;
+  if (!upstream || !upstream.ok || /err/i.test(upstream.headers.get("cf-resized") || "")) {
+    upstream = await fetch(u.toString(), { cf: { cacheEverything: true, cacheTtl: 86400 } }).catch(() => null);
+  }
   if (!upstream || !upstream.ok) {
     return new Response("Image unavailable", { status: 502, headers: { "cache-control": "public, max-age=30" } });
   }
@@ -432,8 +450,11 @@ async function serveInner(request, env, url) {
   }
 
   const cache = caches.default;
-  /* the key is the path alone, so ?anything cannot bypass the edge copy */
-  const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
+  /* the key is the path alone, so ?anything cannot bypass the edge copy —
+     except a feed photo's width, which is one of two values and is a
+     different picture */
+  const feedW = FEED_KEY_RE.test(key) ? (Number(url.searchParams.get("w")) === FEED_THUMB ? FEED_THUMB : FEED_LARGE) : 0;
+  const cacheKey = new Request(url.origin + url.pathname + (feedW ? "?w=" + feedW : ""), { method: "GET" });
   if (!request.headers.has("range") && !isPrivate) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;
@@ -442,7 +463,7 @@ async function serveInner(request, env, url) {
      edge hold the answer, because their server sends no-store and would
      otherwise be asked for every photograph by every visitor. */
   if (FEED_KEY_RE.test(key)) {
-    const res = await serveFeedImage(env, key, cacheKey, cache, request);
+    const res = await serveFeedImage(env, key, cacheKey, cache, request, feedW);
     return res;
   }
 
