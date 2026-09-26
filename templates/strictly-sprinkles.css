@@ -822,6 +822,10 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .page-head{
   background:var(--grape-dd);color:var(--on-grape);
   padding:calc(var(--navh) + clamp(46px,8vh,92px)) 0 clamp(46px,8vh,88px);
+  /* .hero-cta centres its buttons, so a left-aligned title above centred
+     buttons read as a mistake rather than a choice. The head is a crumb, a
+     title and two buttons — all of it centres. */
+  text-align:center;
 }
 .crumb{
   font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.24em;
@@ -836,7 +840,7 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   font-size:clamp(2.3rem,5.4vw,3.9rem);letter-spacing:-.03em;color:var(--cream);font-weight:400;
 }
 .page-head h1 em{font-style:italic;font-weight:300;color:#e9d7bd}
-.page-head .lede{color:var(--on-grape-dim);max-width:58ch;margin-top:18px}
+.page-head .lede{color:var(--on-grape-dim);max-width:58ch;margin:18px auto 0}
 .page-head .hero-cta{margin-top:clamp(24px,3.4vh,34px)}
 
 .seasons{display:grid;gap:clamp(12px,1.8vw,20px)}

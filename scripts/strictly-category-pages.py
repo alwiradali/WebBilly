@@ -60,6 +60,7 @@ SHELL = '''<!doctype html>
     <a href="/templates/strictly-sprinkles-menu">The menu</a>
     <a href="#options" aria-current="page">Options</a>
     <a href="#flavours">Flavours</a>
+    <a href="/templates/strictly-sprinkles-work">The work</a>
     <a href="/templates/strictly-sprinkles#terms">Ordering</a>
   </nav>
   <a class="btn btn-fill btn-sm nav-cta" href="/templates/strictly-sprinkles#enquire">Enquire</a>
@@ -73,6 +74,7 @@ SHELL = '''<!doctype html>
   <a href="#options">Options</a>
   <a href="#flavours">Flavours</a>
   <a href="/templates/strictly-sprinkles#enquire">Enquire</a>
+  <a href="/templates/strictly-sprinkles-work">The work</a>
   <a href="/templates/strictly-sprinkles#terms">Ordering</a>
 </div>
 
