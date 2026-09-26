@@ -455,6 +455,9 @@
   var TT = "https://www.tiktok.com/@" + B.tiktok;
   var FB = B.facebook;
 
+  /* 07378684907 reads as a number, not a phone number */
+  var phoneText = B.phone.replace(/^(\d{5})(\d{6})$/, "$1 $2");
+
   function waLink(text) {
     return "https://wa.me/" + B.whatsapp + (text ? "?text=" + encodeURIComponent(text) : "");
   }
@@ -487,7 +490,7 @@
     }
     var intro = "Hi! I found you through your website — I'd like to ask about an order.";
     if (host) {
-      host.appendChild(card("wa", "WhatsApp", B.phone, waLink(intro)));
+      host.appendChild(card("wa", "WhatsApp", phoneText, waLink(intro)));
       host.appendChild(card("ig", "Instagram", "@" + B.instagram, IG));
       host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
       host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
@@ -499,7 +502,7 @@
     var dw = $("#dockWa"); if (dw) dw.href = waLink(intro);
 
     var fc = $("#footContact");
-    if (fc) [["WhatsApp " + B.phone, waLink(intro)],
+    if (fc) [["WhatsApp " + phoneText, waLink(intro)],
      ["@" + B.instagram, IG],
      [B.email, mailLink("Enquiry from your website", intro)],
      ["TikTok", TT], ["Facebook", FB]].forEach(function (p) {
@@ -509,9 +512,18 @@
     });
     var fcp = $("#footCopy"); if (fcp) fcp.textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
 
+    var hd = $("#homeDirect");
+    if (hd) {
+      hd.appendChild(document.createTextNode("Straight to me: "));
+      hd.appendChild(el("a", { href: waLink("Hi! I'd like to ask about a cake that isn't on the menu: ") },
+                        phoneText));
+      hd.appendChild(el("a", { href: mailLink("A cake that isn't on the menu",
+        "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, B.email));
+    }
+
     var cta = $("#notListedCta"); if (!cta) return;
-    cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Ask on WhatsApp"));
-    cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Ask by email"));
+    cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Message on WhatsApp"));
+    cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Email me"));
   })();
 
   /* ============================================================
