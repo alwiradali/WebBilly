@@ -1496,3 +1496,22 @@ body.is-embed #btnHome { display: none !important; }
    and the portfolio's live preview sits underneath it. The phone rule already
    switched it off for the same reason; it is off everywhere now. */
 .grain::after { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NO FROSTED GLASS ANYWHERE (2026-09-26)
+
+   The fix above took the blur off the public tour and left it in the office
+   editor — the screen the Megacity Studio's 360 tab opens — where full-height
+   panels at blur(28px) saturate(180%), a blurred sticky header and a blurred
+   badge on every photo sat over the same live 3D view. A second pair of
+   laptops froze there. Frosted glass is decoration; on a laptop's built-in
+   graphics over a live panorama it is the most expensive decoration there is.
+   So it goes everywhere, and the surfaces it tinted are made solid enough to
+   read on their own. The blurred dashboard backdrop and the blurred screen
+   change go with it for the same reason.
+   ═══════════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.panel { background: rgba(12,13,17,.94); }
+.studio-top { background: var(--bg-1); }
+.view--dash, .view--sites { filter: none; }
+.dash-bg::before { filter: none; opacity: .35; }

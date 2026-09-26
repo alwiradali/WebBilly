@@ -1123,7 +1123,38 @@
        the moment the first band has been measured. */
     var perPx = 0, gpuMeasured = false, LO_ROWS = 8;
 
+    /* NO STAND-INS (2026-09-26). The Megacity Studio's 360 tab froze two
+       laptops outright — Walid's and a client's — on a listing whose two
+       rooms had no photographs yet. Every one of those rooms is a ray-marched
+       stand-in, and however carefully the bake is rationed, one band of it is
+       one draw call the laptop's built-in graphics cannot interrupt; on the
+       chip that also draws Windows, that is the whole machine stopping.
+       A letting agent's rooms are photographs or nothing, so where the app
+       asks for it (opts.noBake) a room with no photograph is a flat tile drawn
+       on the CPU — the same tone as before, microseconds, no shader compiled —
+       and a real 360° photo replaces it exactly as it always has. */
+    function noBake() { return typeof opts.noBake === "function" ? !!opts.noBake() : !!opts.noBake; }
+    var FLAT_SRC = null;
+    function flatRoom(id) {
+      if (!store[id] || store[id].lo) return;
+      try {
+        if (!FLAT_SRC) {
+          var c = document.createElement("canvas");
+          c.width = 256; c.height = 128;
+          var ctx = c.getContext("2d");
+          var g = ctx.createLinearGradient(0, 0, 0, 128);
+          g.addColorStop(0, "#0d0d12"); g.addColorStop(0.55, "#14141c"); g.addColorStop(1, "#0a0a0e");
+          ctx.fillStyle = g; ctx.fillRect(0, 0, 256, 128);
+          FLAT_SRC = c;
+        }
+        var t = uploadPano(FLAT_SRC, 256, 128);
+        t.thumb = true;                      // counts as "something to show" at once, like a photo's thumb
+        store[id].lo = t;
+        if (!thumbSrc[id]) placeholderThumb(id);
+      } catch (e) { diag.push("flat room tile failed: " + (e && e.message)); }
+    }
     function enqueue(id, kind, priority) {
+      if (noBake()) { if (kind === "lo") flatRoom(id); return null; }
       for (var i = 0; i < queue.length; i++) if (queue[i].id === id && queue[i].kind === kind) return queue[i];
       var hiW = Math.min(HI_W, PLACEHOLDER_W);
       var job = {

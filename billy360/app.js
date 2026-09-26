@@ -6635,6 +6635,11 @@
       embed: EMBED,
       passiveWheel: EMBED,                 // the listing page keeps its scroll until the poster is tapped (F97)
       noReload: STORE.mode === "remote",   // the office editor degrades in place, never reloads over unsaved work (F176)
+      /* Megacity's tours, public and in the office editor: a room with no
+         photograph is a flat tile, never a ray-marched stand-in — that bake
+         froze two laptops in the Studio's 360 tab (engine.js, NO STAND-INS).
+         The portfolio demo keeps its renders; ?bake=0 turns them off anywhere. */
+      noBake: function () { return STORE.mode === "remote" || STORE.mode === "public" || /[?&]bake=0(&|$)/.test(location.search); },
       onProgress: function (p, label) {
         var pct = Math.round(p * 100) + "%";
         $("#loadFill").style.transform = "scaleX(" + p.toFixed(3) + ")";

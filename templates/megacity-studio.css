@@ -101,7 +101,7 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
 .st-mainwrap{min-width:0;display:flex;flex-direction:column}
 .st-top{position:sticky;top:0;z-index:30;min-height:var(--top);display:flex;align-items:center;gap:10px;padding:8px var(--pad);
-  background:rgba(243,247,250,.88);backdrop-filter:saturate(1.3) blur(10px);-webkit-backdrop-filter:saturate(1.3) blur(10px);border-bottom:1px solid var(--line)}
+  background:rgba(243,247,250,.98);border-bottom:1px solid var(--line)}
 .st-top-back{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;color:var(--navy);flex:none;margin-left:-8px}
 .st-top-back:hover{background:var(--sky-soft);text-decoration:none}
 .st-top-title{min-width:0;flex:1}
@@ -412,7 +412,7 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .st-mthumb .st-file{position:absolute;inset:0;display:grid;place-content:center;gap:6px;color:var(--blue-deep);text-align:center;font-size:12.5px;font-weight:600}
 .st-mthumb .st-file svg{width:30px;height:30px;margin:0 auto}
 .st-mbadges{position:absolute;left:8px;top:8px;display:flex;flex-wrap:wrap;gap:5px}
-.st-mbadge{font:600 11px/1 var(--ff-u);padding:5px 7px;border-radius:6px;background:rgba(12,14,34,.72);color:#fff;backdrop-filter:blur(4px)}
+.st-mbadge{font:600 11px/1 var(--ff-u);padding:5px 7px;border-radius:6px;background:rgba(12,14,34,.86);color:#fff}
 .st-mbadge--cover{background:var(--navy)}
 .st-mbadge--pano{background:var(--blue)}
 .st-mnotes{position:absolute;left:8px;bottom:8px;display:flex;flex-wrap:wrap;gap:4px}
@@ -430,7 +430,7 @@ code{font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .st-mtour button{color:var(--blue-deep);font-weight:600;text-decoration:underline dotted;cursor:help}
 
 /* ── drawer ───────────────────────────────────────────────────────── */
-.st-scrim{position:fixed;inset:0;background:rgba(12,14,34,.45);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.st-scrim{position:fixed;inset:0;background:rgba(12,14,34,.55)}
 .st-drawer-wrap,.st-modal-wrap,.st-cmdk-wrap{position:fixed;inset:0;z-index:200}
 .st-drawer{position:absolute;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--paper);box-shadow:var(--sh-lg);display:flex;flex-direction:column;animation:st-slide .22s ease-out}
 @keyframes st-slide{from{transform:translateX(24px);opacity:0}}
