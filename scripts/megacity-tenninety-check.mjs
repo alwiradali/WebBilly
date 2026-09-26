@@ -132,6 +132,17 @@ ok(weekly.rentPcm === null, "a rent frequency that is not monthly is left unpric
     "a different image is a different key");
 }
 
+/* A property the website cannot show says why, in words the office can act on
+   (the Studio lists these under Listings). */
+{
+  const one = feed.properties[0];
+  const r = toListings([{ ...one, status_id: 3 }, { ...one, property_ref: "RL9999", trans_type_id: 1 }], { today: TODAY });
+  ok(r.listings.length === 0 && r.skipped.length === 2, "an off-market and a sales property are both left off");
+  ok(/not "On the market" \(status 3\)/.test(r.skipped[0].why), `  the first says its status: "${r.skipped[0].why}"`);
+  ok(/sale, not a letting/.test(r.skipped[1].why), `  the second says it is a sale: "${r.skipped[1].why}"`);
+  ok(!!r.skipped[0].address, "  and each names the property, not just a reference");
+}
+
 console.log();
 console.log(bad ? `10NINETY MAPPER: ${bad} FAILED` : "10NINETY MAPPER: ALL PASS — nothing is published that Walid did not supply.");
 process.exit(bad ? 1 : 0);

@@ -363,6 +363,16 @@ export async function fetchPropertyTypes(env, opts = {}) {
   } catch { return null; }
 }
 
+/* Why a property from the feed is not on the website, in words the office
+   can act on: the Studio shows these next to the refresh button. */
+function skipReason(p) {
+  if (!p) return "an empty record";
+  if (p.trans_type_id !== LETTINGS) return "it is a sale, not a letting";
+  if (!slugFor(p)) return "it has no address";
+  if (!STATUS[p.status_id]) return `its status in 10ninety is not "On the market" (status ${p.status_id})`;
+  return "it could not be read";
+}
+
 /* Map a whole feed, dropping what cannot be represented and keeping the count
    of what was dropped — a sync that quietly maps eight of nine properties
    looks identical to one that mapped nine. */
@@ -371,7 +381,7 @@ export function toListings(properties, opts = {}) {
   const seen = new Map();
   for (const p of properties || []) {
     const row = toListing(p, opts);
-    if (!row) { skipped.push({ ref: p && p.property_ref, why: p && p.trans_type_id !== LETTINGS ? "not a letting" : "unmapped status or no address" }); continue; }
+    if (!row) { skipped.push({ ref: p && p.property_ref, address: p && str(p.display_address || p.address_1, 120), why: skipReason(p) }); continue; }
     /* Two properties resolving to one slug would mean one overwriting the
        other on every sync, alternately, for ever. */
     if (seen.has(row.id)) {

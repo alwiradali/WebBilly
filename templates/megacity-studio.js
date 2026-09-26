@@ -567,6 +567,7 @@
       '<div class="st-select"><label class="st-vh" for="lsSort">Sort</label><select id="lsSort">' + [["updated", "Recently updated"], ["rent", "Rent, high to low"], ["title", "Title, A to Z"]].map(function (s) { return '<option value="' + s[0] + '"' + (ls.sort === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") + "</select></div>" +
       '<span id="lsSync" class="st-sync"></span>' +
       '<a class="st-btn st-btn--fill" href="#/listings/new">' + I.plus + "New listing</a></div>" +
+      '<div id="lsSyncNote" class="st-syncnote" aria-live="polite"></div>' +
       '<div id="lsBody">' + loading() + "</div>";
     var qIn = $("#lsQ");
     qIn.addEventListener("input", debounce(function () { ls.q = qIn.value.trim(); loadListings(); }, 250));
@@ -591,7 +592,31 @@
     API.sync.status().then(function (r) { state.sync = r; renderSyncBtn(); })
       .catch(function () { state.sync = null; renderSyncBtn(); });
   }
+  /* What the last read of 10ninety found, automatic or not. The site reads
+     10ninety every minute; 10ninety only rebuilds what it sends on Portal
+     Export and overnight. So "I changed it and it is not on the website" is
+     answered here: when it last looked, the newest change 10ninety was
+     sending, and anything it sent that could not go on the website, and why. */
+  function renderSyncNote() {
+    var el = $("#lsSyncNote"); if (!el) return;
+    var s = state.sync, r = s && s.lastRun;
+    if (!s || !s.configured || !r) { el.innerHTML = ""; return; }
+    var h = '<p class="st-hint' + (r.feedOk === false || r.ok === false ? " st-hint--warn" : "") + '">10ninety last read ' + esc(rel(r.at)) + ": " + esc(r.summary || "") +
+      (r.newestUpdate ? " Newest change 10ninety is sending: " + esc(fmtWhen(r.newestUpdate)) + "." : "") + "</p>";
+    if (r.skipped && r.skipped.length) {
+      h += '<p class="st-hint st-hint--warn">Sent by 10ninety but not on the website:</p><ul class="st-synclist">' + r.skipped.map(function (k) {
+        return "<li>" + esc([k.ref, k.address].filter(Boolean).join(" \u00b7 ") || "A property") + " \u2014 " + esc(k.why || "") + "</li>";
+      }).join("") + "</ul>";
+    }
+    h += '<p class="st-hint">A change made in 10ninety reaches the website within a minute of <b>Portal Export</b> (10ninety also rebuilds overnight).</p>';
+    el.innerHTML = h;
+  }
+  function fmtWhen(v) {
+    var d = new Date(String(v).replace(" ", "T"));
+    return isNaN(d) ? String(v) : d.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  }
   function renderSyncBtn() {
+    renderSyncNote();
     var el = $("#lsSync"); if (!el) return;
     var s = state.sync;
     if (!s) { el.innerHTML = ""; return; }
@@ -612,6 +637,7 @@
          over eight properties of nine is how a missing one goes unnoticed. */
       toast(r.summary || "Refreshed from 10ninety.", r.ok ? {} : { kind: "warn", ttl: 14000 });
       loadListings();
+      loadSyncStatus();
     }).catch(function (err) {
       var b = (err && err.body) || {};
       if (err && err.status === 429) { toast(b.summary || "Just refreshed \u2014 give it a moment.", { kind: "warn" }); return; }

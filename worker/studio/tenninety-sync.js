@@ -32,7 +32,7 @@
  */
 
 import { toListings, fetchProperties, fetchPropertyTypes, feedMediaKey } from "./tenninety.js";
-import { uid, nowIso } from "./db.js";
+import { uid, nowIso, parseJson, getSetting, setSetting } from "./db.js";
 
 /* Above this fraction of existing listings disappearing at once, refuse to act
    and report instead. A third is chosen to be well clear of ordinary churn —
@@ -72,7 +72,26 @@ export function changedFields(existing, incoming) {
      moves on every export, and comparing them would make every sync a write. */
   const pa = val(existing && existing.photoSig), pb = val(incoming.photoSig);
   if (pb !== null && String(pa) !== String(pb)) out.push("photos");
+  /* The same blind spot, for everything else he can upload or type in
+     10ninety that is not one of the columns: the key features, the EPC, the
+     floor plans, the brochure and the virtual tour link. A property whose only
+     change was a new floor plan used to count as unchanged, so it never came
+     across however often the sync ran. */
+  const docA = val(existing && existing.docSig), docB = val(incoming.docSig);
+  if (docB !== null && String(docA) !== String(docB)) out.push("documents");
   return out;
+}
+
+/* Features and document links, as one comparable string. Query strings are
+   dropped for the same reason as with photographs: 10ninety adds a
+   cache-buster that moves on every export. */
+const noQuery = (u) => (typeof u === "string" ? u.split("?")[0] : "");
+export function docSigOf(r) {
+  return JSON.stringify([
+    Array.isArray(r && r.features) ? r.features : [],
+    noQuery(r && r.epcUrl), noQuery(r && r.brochureUrl), noQuery(r && r.tourUrl),
+    (Array.isArray(r && r.floorplans) ? r.floorplans : []).map(noQuery),
+  ]);
 }
 
 /**
@@ -170,7 +189,7 @@ const COLS = [
   ["lat", (r) => r.lat], ["lng", (r) => r.lng], ["summary", (r) => r.summary],
   ["description", (r) => r.description],
   ["features_json", (r) => JSON.stringify(r.features || [])],
-  ["external_json", (r) => JSON.stringify({ epcUrl: r.epcUrl, brochureUrl: r.brochureUrl, tourUrl: r.tourUrl, updatedAt: r.updatedAt })],
+  ["external_json", (r) => JSON.stringify({ epcUrl: r.epcUrl, brochureUrl: r.brochureUrl, tourUrl: r.tourUrl, floorplans: r.floorplans || [], updatedAt: r.updatedAt })],
 ];
 
 /* A photograph that stays on 10ninety: a media row with a synthetic key and
@@ -263,7 +282,7 @@ export async function applyPlan(db, plan, opts = {}) {
 /* What the site already has from the feed, in the shape planSync compares. */
 export async function existingSynced(db) {
   if (!db) return [];
-  const sql = `SELECT id, pinned, ${COLS.map(([n]) => n).filter((n) => n !== "features_json" && n !== "external_json").join(", ")}
+  const sql = `SELECT id, pinned, ${COLS.map(([n]) => n).join(", ")}
                  FROM listings WHERE source='tenninety' AND deleted_at IS NULL AND status != 'withdrawn'`;
   const rows = (await db.prepare(sql).all()).results || [];
   const out = rows.map((r) => ({
@@ -273,6 +292,7 @@ export async function existingSynced(db) {
     bedrooms: r.bedrooms, bathrooms: r.bathrooms, receptions: r.receptions, hmoLicensed: r.hmo_licensed,
     address1: r.address_1, address2: r.address_2, town: r.town, postcode: r.postcode, area: r.area,
     lat: r.lat, lng: r.lng, summary: r.summary, description: r.description,
+    docSig: docSigOf({ features: parseJson(r.features_json, []), ...(parseJson(r.external_json, {}) || {}) }),
   }));
 
   /* one query for every listing's feed photographs, in the order they sit in,
@@ -303,16 +323,42 @@ export async function runSync(env, db, opts = {}) {
   /* the same keys mediaStatements will write, in the same order, so a
      property whose only change is a new photograph is seen as changed */
   for (const row of listings) row.photoSig = (row.images || []).map((i) => feedMediaKey(row.id, i.url)).join(",");
+  for (const row of listings) row.docSig = docSigOf(row);
   const existing = await existingSynced(db).catch(() => []);
   const plan = planSync(existing, listings, { feedOk, ...opts });
   const result = feedOk ? await applyPlan(db, plan, opts) : { created: 0, updated: 0, removed: 0, failed: [] };
 
-  return {
+  const out = {
     ok: feedOk && !result.failed.length,
     feedOk, why: why || plan.reason,
     counted: { feed: listings.length, existing: existing.length, skipped: skipped.length },
     ...result,
     summary: feedOk ? describePlan(plan) : `Nothing changed — the feed could not be read (${why}).`,
     at: opts.now || nowIso(),
+    /* what 10ninety sent that is not on the website, and why */
+    skipped: skipped.slice(0, 20),
+    /* the newest "last updated" among the properties 10ninety is sending: when
+       it is older than a change Walid just made, 10ninety has not rebuilt its
+       feed yet (it does that on Portal Export, and overnight) */
+    newestUpdate: listings.map((l) => l.updatedAt).filter(Boolean).sort().pop() || null,
   };
+  if (opts.record !== false) await recordRun(db, out).catch((e) => console.error("sync record", e && e.message));
+  return out;
+}
+
+/* The last run, kept so the Studio can say when 10ninety was last read and
+   what came of it: the cron has nobody watching, and "it did not come
+   across" should never again need a developer to find out why. One small
+   row, overwritten every run; lastChangeAt survives quiet runs. */
+export const LAST_RUN_KEY = "sync_tenninety_last";
+async function recordRun(db, r) {
+  if (!db) return;
+  const prev = await getSetting(db, LAST_RUN_KEY, null).catch(() => null);
+  const changed = (r.created || 0) + (r.updated || 0) + (r.removed || 0) > 0;
+  await setSetting(db, LAST_RUN_KEY, {
+    at: r.at, ok: r.ok, feedOk: r.feedOk, summary: r.summary, counted: r.counted,
+    created: r.created || 0, updated: r.updated || 0, removed: r.removed || 0,
+    failed: (r.failed || []).slice(0, 10), skipped: r.skipped || [], newestUpdate: r.newestUpdate,
+    lastChangeAt: changed ? r.at : (prev && prev.lastChangeAt) || null,
+  }, null);
 }

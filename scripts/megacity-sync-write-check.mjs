@@ -111,7 +111,9 @@ function stubDb(opts = {}) {
   ok(r.ok === false && r.feedOk === false, "a feed that cannot be read reports failure");
   ok(r.created === 0 && r.removed === 0, "  and writes nothing at all");
   ok(/could not be read/.test(r.summary), "  and says so in words a person can read");
-  ok(!db.log.some((s) => /INSERT|UPDATE|DELETE/.test(s.sql)), "  not one write reached the database");
+  ok(!db.log.some((s) => /INSERT|UPDATE|DELETE/.test(s.sql) && !/INTO settings/.test(s.sql)), "  not one write reached a listing or a photograph");
+  ok(db.log.some((s) => /INTO settings/.test(s.sql) && s.args && s.args[0] === "sync_tenninety_last" && /could not be read/.test(String(s.args[1]))),
+     "  and the failed read is recorded, so the Studio can say so");
 }
 
 /* ── it runs on its own, not only when somebody presses a button ──────────── */

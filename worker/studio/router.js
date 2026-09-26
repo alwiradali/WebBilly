@@ -3,8 +3,8 @@
    Worker-rendered pages (Phase 3). Everything is same-origin: the Studio page,
    the API and the media live on one host, so there is no CORS. */
 
-import { officeDb, json, errorResponse, HttpError, parseJson, audit } from "./db.js";
-import { runSync } from "./tenninety-sync.js";
+import { officeDb, json, errorResponse, HttpError, parseJson, audit, getSetting } from "./db.js";
+import { runSync, LAST_RUN_KEY } from "./tenninety-sync.js";
 import { asJson as optionsJson } from "./options.js";
 import * as auth from "./auth.js";
 import * as listings from "./listings.js";
@@ -68,6 +68,8 @@ async function tenninetyStatus(c) {
     configured: !!c.env.TENNINETY_API_KEY,
     count: Number((row && row.n) || 0),
     lastSyncedAt: (row && row.at) || null,
+    /* the last automatic or manual read of 10ninety, and what came of it */
+    lastRun: await getSetting(c.db, LAST_RUN_KEY, null).catch(() => null),
   });
 }
 

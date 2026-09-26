@@ -9,7 +9,7 @@
  */
 import { readFileSync } from "node:fs";
 import { toListings, feedMediaKey } from "../worker/studio/tenninety.js";
-import { planSync, describePlan, changedFields, MAX_REMOVAL_FRACTION } from "../worker/studio/tenninety-sync.js";
+import { planSync, describePlan, changedFields, docSigOf, MAX_REMOVAL_FRACTION } from "../worker/studio/tenninety-sync.js";
 
 const feed = JSON.parse(readFileSync(new URL("./fixtures/tenninety-sample.json", import.meta.url), "utf8"));
 const { listings: NINE } = toListings(feed.properties, { today: "2026-09-22" });
@@ -122,6 +122,22 @@ ok(/Nothing changed/.test(describePlan(planSync(asRows(NINE), [], { feedOk: fals
      nine properties and every photograph on them */
   ok(!changedFields({ ...NINE[0] }, { ...NINE[0] }).includes("photos"),
     "a listing with no signature on either side is not treated as changed");
+}
+
+/* ── what he uploads besides text and photographs ──────────────────────────
+   A new floor plan, EPC, brochure, tour link or a changed feature list used to
+   leave a property "unchanged", so it never reached the website. */
+{
+  const base = { id: "x", features: ["Balcony"], epcUrl: "https://cdn.10ninety.co.uk/epc/1.png?at=1", brochureUrl: null, tourUrl: null, floorplans: [] };
+  const was = { id: "x", docSig: docSigOf(base) };
+  const same = (r) => changedFields(was, { ...r, docSig: docSigOf(r) });
+  ok(!same(base).includes("documents"), "unchanged documents are unchanged");
+  ok(same({ ...base, floorplans: ["https://cdn.10ninety.co.uk/fp/1.pdf"] }).includes("documents"), "a new floor plan counts as a change");
+  ok(same({ ...base, epcUrl: "https://cdn.10ninety.co.uk/epc/2.png" }).includes("documents"), "a replaced EPC counts as a change");
+  ok(same({ ...base, brochureUrl: "https://cdn.10ninety.co.uk/b/1.pdf" }).includes("documents"), "a new brochure counts as a change");
+  ok(same({ ...base, features: ["Balcony", "Parking"] }).includes("documents"), "an added key feature counts as a change");
+  ok(!same({ ...base, epcUrl: "https://cdn.10ninety.co.uk/epc/1.png?at=2" }).includes("documents"), "10ninety's moving cache-buster alone is not a change");
+  ok(changedFields({ id: "x" }, { id: "x" }).length === 0, "rows without the signature compare as before");
 }
 
 console.log();

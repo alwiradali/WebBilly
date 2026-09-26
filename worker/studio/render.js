@@ -38,14 +38,21 @@ export async function loadLive(db, id) {
 
 function view(env, url, { r, media }, settings) {
   const home = { bathrooms: [], receptions: [], kitchen: null, garden: null, driveway: null, ...parseJson(r.home_json, {}) };
-  const extras = (parseJson(r.external_json, {}) || {}).extras || {};
+  const ext = parseJson(r.external_json, {}) || {};
+  const extras = ext.extras || {};
   const isRoom = r.let_type === "room" || r.type === "room_in_share";
   /* 360° captures, the tour's logo and floor plans are not listing photos (F50) */
   const photos = media.filter(isPhoto);
   const cover = photos.find((m) => m.id === r.cover_media_id) || photos.find((m) => m.role === "cover") || photos[0] || null;
   const gallery = photos.filter((m) => m !== cover && m.role !== "epc" && m.role !== "og");
-  const epcImg = media.find((m) => m.role === "epc");
-  const floorplan = media.find((m) => m.role === "floorplan");
+  /* What the office uploads in the Studio comes first; otherwise what Walid
+     attached in 10ninety (the sync keeps its addresses in external_json). An
+     EPC or floor plan he uploads there used to reach the database and stop. */
+  const epcFile = media.find((m) => m.role === "epc") || feedDoc(ext.epcUrl);
+  const epcImg = epcFile && epcFile.kind !== "pdf" ? epcFile : null;
+  const epcPdf = epcFile && epcFile.kind === "pdf" ? epcFile : null;
+  const floorplan = media.find((m) => m.role === "floorplan") || feedDoc(Array.isArray(ext.floorplans) ? ext.floorplans[0] : null);
+  const brochure = feedDoc(ext.brochureUrl);
   /* A walkthrough is an ordinary video of somebody walking through the place.
      A 360° video is equirectangular and belongs on the sphere, not in a
      rectangle — the two are told apart by the role the office set, because
@@ -78,7 +85,7 @@ function view(env, url, { r, media }, settings) {
   const canonical = urls.absUrl(env, url, "listing", r.id);
   const applyHref = urls.pagePath(urls.mode(env, url.hostname), "tenant-application-form") + "?property=" + encodeURIComponent(title) + "&listing=" + encodeURIComponent(r.id);
   const ogImage = cover ? absolute(env, url, cover.url) : absolute(env, url, "assets/mcr/ph-manchester.jpg");
-  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, floorplan, walkthrough, video360, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage, applyHref };
+  return { r, home, extras, isRoom, photos, cover, gallery, epcImg, epcPdf, brochure, floorplan, walkthrough, video360, addr, addrShort, typeLabel, beds, bathsCount, bathsShared, summary, desc, features, availability, brand, links, phone, phoneHref, waDigits, title, pageTitle, metaDesc, canonical, ogImage, applyHref };
 }
 
 /* ── fragments ─────────────────────────────────────────────────────────── */
@@ -137,14 +144,24 @@ function mainHtml(v) {
   return h;
 }
 
+/* a document address from the feed -> the shape the page uses for an
+   uploaded one; anything that is not a plain https address is ignored */
+function feedDoc(u) {
+  if (typeof u !== "string" || !/^https:\/\/[^\s"'<>]+$/i.test(u.trim())) return null;
+  const url = u.trim();
+  return { url, kind: /\.pdf(?:[?#]|$)/i.test(url) ? "pdf" : "image", alt: null };
+}
+
 function epcHtml(v) {
   const r = v.r;
-  if (!r.epc_rating && !v.epcImg && !v.floorplan && !(v.extras.links && v.extras.links.tenninety)) return null;
+  if (!r.epc_rating && !v.epcImg && !v.epcPdf && !v.floorplan && !v.brochure && !(v.extras.links && v.extras.links.tenninety)) return null;
   let h = "<h3>Energy performance</h3>";
   if (r.epc_rating === "pending") h += "<p>The certificate for this property is being re-issued. Ask the office and we will send it over.</p>";
   else if (r.epc_rating) h += `<p>Energy rating <b>${esc(r.epc_rating)}</b>.</p>`;
   if (v.epcImg) h += `<figure class="pd-epc"><img loading="lazy" src="${esc(v.epcImg.url)}" alt="${esc(v.epcImg.alt || "Energy efficiency rating certificate for " + v.addr)}"></figure>`;
+  if (v.epcPdf) h += `<p><a class="jr-link" href="${esc(v.epcPdf.url)}" target="_blank" rel="noopener">Open the energy performance certificate (PDF) &rarr;</a></p>`;
   if (v.floorplan) h += `<p><a class="jr-link" href="${esc(v.floorplan.url)}" target="_blank" rel="noopener">${v.floorplan.kind === "pdf" ? "Open the floor plan (PDF)" : "View the floor plan"} &rarr;</a></p>`;
+  if (v.brochure) h += `<p><a class="jr-link" href="${esc(v.brochure.url)}" target="_blank" rel="noopener">${v.brochure.kind === "pdf" ? "Download the brochure (PDF)" : "View the brochure"} &rarr;</a></p>`;
   const t = v.extras.links && typeof v.extras.links.tenninety === "string" && /^https:\/\//.test(v.extras.links.tenninety) ? v.extras.links.tenninety : null;
   if (t) h += `<p>The floor plan and full brochure are held on our lettings portal. <a class="jr-link" href="${esc(t)}" target="_blank" rel="noopener">View floor plan and brochure &rarr;</a></p>`;
   return h;
