@@ -7,6 +7,7 @@ import { label, valid } from "./options.js";
 import { mediaUrl, listForListing, feedSized, FEED_LARGE, FEED_THUMB } from "./media.js";
 import * as urls from "./urls.js";
 import { feedText } from "./text.js";
+import { districtOf } from "./areas.js";
 
 /* the listing page address for this host: /let/<id> on the client domain,
    /templates/megacity-let-<id> on the demo host */
@@ -35,6 +36,7 @@ function card(r, env, url) {
     title: r.title,
     headline: feedText(r.headline) || null,
     area: r.area, areaLabel: label("area", r.area), town: r.town, line1: r.address_1,
+    district: districtOf(r.postcode),
     rentPcm: r.rent_pcm, rentLabel: rentLabel(r.rent_pcm),
     bedrooms: isRoom ? 1 : r.bedrooms,
     bathrooms: r.bathrooms,

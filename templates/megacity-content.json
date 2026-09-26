@@ -6202,6 +6202,1121 @@
    ]
   },
   {
+   "slug": "area-manchester",
+   "key": "area-manchester",
+   "title": "Area: Manchester",
+   "items": [
+    {
+     "id": "area-manchester-1",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Manchester.",
+     "html": "Letting agents &middot; Manchester",
+     "text": "Letting agents &middot; Manchester"
+    },
+    {
+     "id": "area-manchester-2",
+     "kind": "heading",
+     "tag": "h1",
+     "section": "Letting agents in Manchester.",
+     "html": "Letting agents<br>in <em>Manchester.</em>",
+     "text": "Letting agents in Manchester."
+    },
+    {
+     "id": "area-manchester-3",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Manchester.",
+     "html": "Our office is on North Street in Manchester M8, so this is home ground. We let and manage houses, apartments and rooms across the city for landlords who want one team they can ring, and a straight answer about what their property will let for.",
+     "text": "Our office is on North Street in Manchester M8, so this is home ground. We let and manage houses, apartments and rooms across the city for landlords who want one team they can ring, and a straight answer about what their property will let for."
+    },
+    {
+     "id": "area-manchester-4",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Manchester.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-manchester-5",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Manchester.",
+     "html": "Homes to rent in Manchester",
+     "text": "Homes to rent in Manchester"
+    },
+    {
+     "id": "area-manchester-6",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Manchester.",
+     "html": "To rent in Manchester",
+     "text": "To rent in Manchester"
+    },
+    {
+     "id": "area-manchester-7",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Homes to rent in Manchester.",
+     "html": "Homes to rent<br>in <em>Manchester.</em>",
+     "text": "Homes to rent in Manchester."
+    },
+    {
+     "id": "area-manchester-8",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Manchester.",
+     "html": "What is available changes every week. See <a class=\"lnk\" href=\"megacity-properties\">every property we have to rent</a>, or ring the office on <a class=\"lnk\" href=\"tel:+441612201763\">0161 220 1763</a>.",
+     "text": "What is available changes every week. See every property we have to rent , or ring the office on 0161 220 1763 ."
+    },
+    {
+     "id": "area-manchester-9",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Manchester.",
+     "html": "<a class=\"lnk\" href=\"megacity-properties\">Every property we have to rent &rarr;</a>",
+     "text": "Every property we have to rent &rarr;"
+    },
+    {
+     "id": "area-manchester-10",
+     "kind": "text",
+     "tag": "p",
+     "section": "What landlords here need to know.",
+     "html": "Letting in Manchester",
+     "text": "Letting in Manchester"
+    },
+    {
+     "id": "area-manchester-11",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "What landlords here need to know.",
+     "html": "What landlords here <em>need to know.</em>",
+     "text": "What landlords here need to know."
+    },
+    {
+     "id": "area-manchester-12",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "What landlords here need to know.",
+     "html": "Licensing is decided address by address",
+     "text": "Licensing is decided address by address"
+    },
+    {
+     "id": "area-manchester-13",
+     "kind": "text",
+     "tag": "p",
+     "section": "What landlords here need to know.",
+     "html": "Manchester City Council is the licensing authority for the whole city. An HMO with five or more people from two or more households needs a mandatory licence wherever it is, and the council can also designate neighbourhoods for additional or selective licensing. Designations are made area by area and renewed on their own timetable, so we check your exact address against the council&rsquo;s current schemes before you let, not after.",
+     "text": "Manchester City Council is the licensing authority for the whole city. An HMO with five or more people from two or more households needs a mandatory licence wherever it is, and the council can also designate neighbourhoods for additional or selective licensing. Designations are made area by area and renewed on their own timetable, so we check your exact address against the council's current schemes before you let, not after."
+    },
+    {
+     "id": "area-manchester-14",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "What landlords here need to know.",
+     "html": "The postcode does not always tell you the council",
+     "text": "The postcode does not always tell you the council"
+    },
+    {
+     "id": "area-manchester-15",
+     "kind": "text",
+     "tag": "p",
+     "section": "What landlords here need to know.",
+     "html": "M16 is split between Manchester and Trafford, and M3 between Manchester and Salford, so two flats a few streets apart can pay council tax to different councils and fall under different licensing rules. We go by the address. If yours is in Old Trafford or on the Salford side of the river, the <a class=\"lnk\" href=\"megacity-area-old-trafford\">Old Trafford</a> and <a class=\"lnk\" href=\"megacity-area-salford\">Salford</a> pages are the ones that apply.",
+     "text": "M16 is split between Manchester and Trafford, and M3 between Manchester and Salford, so two flats a few streets apart can pay council tax to different councils and fall under different licensing rules. We go by the address. If yours is in Old Trafford or on the Salford side of the river, the Old Trafford and Salford pages are the ones that apply."
+    },
+    {
+     "id": "area-manchester-16",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "What landlords here need to know.",
+     "html": "Student lets run on the academic year",
+     "text": "Student lets run on the academic year"
+    },
+    {
+     "id": "area-manchester-17",
+     "kind": "text",
+     "tag": "p",
+     "section": "What landlords here need to know.",
+     "html": "Hulme and the streets off Oxford Road sit next to the University of Manchester and Manchester Metropolitan University, and a lot of what lets there goes to students and young professionals. That demand follows the academic year: most moves happen around the summer, and a good student home is often agreed months before the tenancy starts.",
+     "text": "Hulme and the streets off Oxford Road sit next to the University of Manchester and Manchester Metropolitan University, and a lot of what lets there goes to students and young professionals. That demand follows the academic year: most moves happen around the summer, and a good student home is often agreed months before the tenancy starts."
+    },
+    {
+     "id": "area-manchester-18",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "What landlords here need to know.",
+     "html": "Council tax, and who pays it",
+     "text": "Council tax, and who pays it"
+    },
+    {
+     "id": "area-manchester-19",
+     "kind": "text",
+     "tag": "p",
+     "section": "What landlords here need to know.",
+     "html": "Council tax on a Manchester home is billed by Manchester City Council. The tenant normally pays it during the tenancy; when the property is empty between tenants it falls back to the landlord, which is one reason a void costs more than the lost rent. Our <a class=\"lnk\" href=\"megacity-tools#toolCouncil\">council tax calculator</a> has the current Manchester bands.",
+     "text": "Council tax on a Manchester home is billed by Manchester City Council. The tenant normally pays it during the tenancy; when the property is empty between tenants it falls back to the landlord, which is one reason a void costs more than the lost rent. Our council tax calculator has the current Manchester bands."
+    },
+    {
+     "id": "area-manchester-20",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three ways to let with us.",
+     "html": "For Manchester landlords",
+     "text": "For Manchester landlords"
+    },
+    {
+     "id": "area-manchester-21",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Three ways to let with us.",
+     "html": "Three ways to <em>let with us.</em>",
+     "text": "Three ways to let with us."
+    },
+    {
+     "id": "area-manchester-22",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three ways to let with us.",
+     "html": "All three run from the same office in M8, to the same standard. The difference is how much of the tenancy you hand over, and the free valuation is where we work out which one suits your property.",
+     "text": "All three run from the same office in M8, to the same standard. The difference is how much of the tenancy you hand over, and the free valuation is where we work out which one suits your property."
+    },
+    {
+     "id": "area-manchester-23",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three ways to let with us.",
+     "html": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%.",
+     "text": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%."
+    },
+    {
+     "id": "area-manchester-24",
+     "kind": "button",
+     "tag": "a",
+     "section": "Three ways to let with us.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-manchester-25",
+     "kind": "button",
+     "tag": "a",
+     "section": "Three ways to let with us.",
+     "html": "Call 0161 220 1763",
+     "text": "Call 0161 220 1763"
+    },
+    {
+     "id": "area-manchester-26",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting across Greater Manchester.",
+     "html": "Areas we cover",
+     "text": "Areas we cover"
+    },
+    {
+     "id": "area-manchester-27",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Letting across Greater Manchester.",
+     "html": "Letting across <em>Greater Manchester.</em>",
+     "text": "Letting across Greater Manchester."
+    }
+   ]
+  },
+  {
+   "slug": "area-salford",
+   "key": "area-salford",
+   "title": "Area: Salford",
+   "items": [
+    {
+     "id": "area-salford-1",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Salford.",
+     "html": "Letting agents &middot; Salford",
+     "text": "Letting agents &middot; Salford"
+    },
+    {
+     "id": "area-salford-2",
+     "kind": "heading",
+     "tag": "h1",
+     "section": "Letting agents in Salford.",
+     "html": "Letting agents<br>in <em>Salford.</em>",
+     "text": "Letting agents in Salford."
+    },
+    {
+     "id": "area-salford-3",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Salford.",
+     "html": "Salford is a city in its own right, with its own council and its own licensing, not a suburb of Manchester. We let and manage rooms in shared houses, apartments and family homes across it, from the terraces near the university to the blocks by the Quays.",
+     "text": "Salford is a city in its own right, with its own council and its own licensing, not a suburb of Manchester. We let and manage rooms in shared houses, apartments and family homes across it, from the terraces near the university to the blocks by the Quays."
+    },
+    {
+     "id": "area-salford-4",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Salford.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-salford-5",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Salford.",
+     "html": "Homes to rent in Salford",
+     "text": "Homes to rent in Salford"
+    },
+    {
+     "id": "area-salford-6",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Salford.",
+     "html": "To rent in Salford",
+     "text": "To rent in Salford"
+    },
+    {
+     "id": "area-salford-7",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Homes to rent in Salford.",
+     "html": "Homes to rent<br>in <em>Salford.</em>",
+     "text": "Homes to rent in Salford."
+    },
+    {
+     "id": "area-salford-8",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Salford.",
+     "html": "What is available changes every week. See <a class=\"lnk\" href=\"megacity-properties\">every property we have to rent</a>, or ring the office on <a class=\"lnk\" href=\"tel:+441612201763\">0161 220 1763</a>.",
+     "text": "What is available changes every week. See every property we have to rent , or ring the office on 0161 220 1763 ."
+    },
+    {
+     "id": "area-salford-9",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Salford.",
+     "html": "<a class=\"lnk\" href=\"megacity-properties\">Every property we have to rent &rarr;</a>",
+     "text": "Every property we have to rent &rarr;"
+    },
+    {
+     "id": "area-salford-10",
+     "kind": "text",
+     "tag": "p",
+     "section": "Salford does things its own way.",
+     "html": "Letting in Salford",
+     "text": "Letting in Salford"
+    },
+    {
+     "id": "area-salford-11",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Salford does things its own way.",
+     "html": "Salford does things <em>its own way.</em>",
+     "text": "Salford does things its own way."
+    },
+    {
+     "id": "area-salford-12",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Salford does things its own way.",
+     "html": "Salford sets its own rules",
+     "text": "Salford sets its own rules"
+    },
+    {
+     "id": "area-salford-13",
+     "kind": "text",
+     "tag": "p",
+     "section": "Salford does things its own way.",
+     "html": "Salford City Council is the licensing authority, and it has used selective licensing in designated neighbourhoods, where every privately rented home needs a licence, not only HMOs. Schemes are made and renewed area by area, so the first thing we do with a Salford property is check the council&rsquo;s current designations against its exact address. Council tax is billed by Salford City Council too, and our <a class=\"lnk\" href=\"megacity-tools#toolCouncil\">council tax calculator</a> has its bands.",
+     "text": "Salford City Council is the licensing authority, and it has used selective licensing in designated neighbourhoods, where every privately rented home needs a licence, not only HMOs. Schemes are made and renewed area by area, so the first thing we do with a Salford property is check the council's current designations against its exact address. Council tax is billed by Salford City Council too, and our council tax calculator has its bands."
+    },
+    {
+     "id": "area-salford-14",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Salford does things its own way.",
+     "html": "Around the university: rooms and the academic year",
+     "text": "Around the university: rooms and the academic year"
+    },
+    {
+     "id": "area-salford-15",
+     "kind": "text",
+     "tag": "p",
+     "section": "Salford does things its own way.",
+     "html": "The University of Salford&rsquo;s main campus is by Salford Crescent, with more of it on the Adelphi side of Chapel Street, and the terraces around it let widely as rooms in shared houses. Those lets follow the academic year and are often agreed well ahead, which is why a room can be advertised months before it is free. A shared house with five or more tenants from two or more households needs an HMO licence, and our <a class=\"lnk\" href=\"megacity-hmo\">HMO page</a> sets out what comes with one.",
+     "text": "The University of Salford's main campus is by Salford Crescent, with more of it on the Adelphi side of Chapel Street, and the terraces around it let widely as rooms in shared houses. Those lets follow the academic year and are often agreed well ahead, which is why a room can be advertised months before it is free. A shared house with five or more tenants from two or more households needs an HMO licence, and our HMO page sets out what comes with one."
+    },
+    {
+     "id": "area-salford-16",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Salford does things its own way.",
+     "html": "The Quays and the Eccles line",
+     "text": "The Quays and the Eccles line"
+    },
+    {
+     "id": "area-salford-17",
+     "kind": "text",
+     "tag": "p",
+     "section": "Salford does things its own way.",
+     "html": "Around Salford Quays and MediaCityUK, and out along the Metrolink&rsquo;s Eccles line past Ladywell and Salford Royal hospital, most of what rents is modern apartments. With those, the service charge, the building&rsquo;s rules and the parking are part of the let, and they belong in the conversation before a tenant signs.",
+     "text": "Around Salford Quays and MediaCityUK, and out along the Metrolink's Eccles line past Ladywell and Salford Royal hospital, most of what rents is modern apartments. With those, the service charge, the building's rules and the parking are part of the let, and they belong in the conversation before a tenant signs."
+    },
+    {
+     "id": "area-salford-18",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Salford does things its own way.",
+     "html": "Swinton, Eccles and Worsley are Salford too",
+     "text": "Swinton, Eccles and Worsley are Salford too"
+    },
+    {
+     "id": "area-salford-19",
+     "kind": "text",
+     "tag": "p",
+     "section": "Salford does things its own way.",
+     "html": "The City of Salford reaches well beyond the centre: Swinton, Pendlebury, Eccles, Walkden and Worsley are all part of it, and the same council handles licensing and council tax across them. Addresses there often just say Manchester, so we go by the postcode. <a class=\"lnk\" href=\"megacity-area-swinton\">Letting in Swinton</a> has its own page.",
+     "text": "The City of Salford reaches well beyond the centre: Swinton, Pendlebury, Eccles, Walkden and Worsley are all part of it, and the same council handles licensing and council tax across them. Addresses there often just say Manchester, so we go by the postcode. Letting in Swinton has its own page."
+    },
+    {
+     "id": "area-salford-20",
+     "kind": "text",
+     "tag": "p",
+     "section": "Pick how much you hand over.",
+     "html": "For Salford landlords",
+     "text": "For Salford landlords"
+    },
+    {
+     "id": "area-salford-21",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Pick how much you hand over.",
+     "html": "Pick how much <em>you hand over.</em>",
+     "text": "Pick how much you hand over."
+    },
+    {
+     "id": "area-salford-22",
+     "kind": "text",
+     "tag": "p",
+     "section": "Pick how much you hand over.",
+     "html": "Whether it is a room in a shared house or an apartment at the Quays, the service is the same three levels at published prices, and HMOs have a team of their own.",
+     "text": "Whether it is a room in a shared house or an apartment at the Quays, the service is the same three levels at published prices, and HMOs have a team of their own."
+    },
+    {
+     "id": "area-salford-23",
+     "kind": "text",
+     "tag": "p",
+     "section": "Pick how much you hand over.",
+     "html": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%.",
+     "text": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%."
+    },
+    {
+     "id": "area-salford-24",
+     "kind": "button",
+     "tag": "a",
+     "section": "Pick how much you hand over.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-salford-25",
+     "kind": "button",
+     "tag": "a",
+     "section": "Pick how much you hand over.",
+     "html": "Call 0161 220 1763",
+     "text": "Call 0161 220 1763"
+    },
+    {
+     "id": "area-salford-26",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting across Greater Manchester.",
+     "html": "Areas we cover",
+     "text": "Areas we cover"
+    },
+    {
+     "id": "area-salford-27",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Letting across Greater Manchester.",
+     "html": "Letting across <em>Greater Manchester.</em>",
+     "text": "Letting across Greater Manchester."
+    }
+   ]
+  },
+  {
+   "slug": "area-swinton",
+   "key": "area-swinton",
+   "title": "Area: Swinton",
+   "items": [
+    {
+     "id": "area-swinton-1",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Swinton.",
+     "html": "Letting agents &middot; Swinton, M27",
+     "text": "Letting agents &middot; Swinton, M27"
+    },
+    {
+     "id": "area-swinton-2",
+     "kind": "heading",
+     "tag": "h1",
+     "section": "Letting agents in Swinton.",
+     "html": "Letting agents<br>in <em>Swinton.</em>",
+     "text": "Letting agents in Swinton."
+    },
+    {
+     "id": "area-swinton-3",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Swinton.",
+     "html": "Swinton is a town in the City of Salford, north-west of Manchester, and it lets differently from the city centre. Much of it is terraced and semi-detached housing, so letting here is often letting a family home, and tenants often ask about gardens, parking and schools.",
+     "text": "Swinton is a town in the City of Salford, north-west of Manchester, and it lets differently from the city centre. Much of it is terraced and semi-detached housing, so letting here is often letting a family home, and tenants often ask about gardens, parking and schools."
+    },
+    {
+     "id": "area-swinton-4",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Swinton.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-swinton-5",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Swinton.",
+     "html": "Homes to rent in Swinton",
+     "text": "Homes to rent in Swinton"
+    },
+    {
+     "id": "area-swinton-6",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Swinton.",
+     "html": "To rent in Swinton",
+     "text": "To rent in Swinton"
+    },
+    {
+     "id": "area-swinton-7",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Homes to rent in Swinton.",
+     "html": "Homes to rent<br>in <em>Swinton.</em>",
+     "text": "Homes to rent in Swinton."
+    },
+    {
+     "id": "area-swinton-8",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Swinton.",
+     "html": "What is available changes every week. See <a class=\"lnk\" href=\"megacity-properties\">every property we have to rent</a>, or ring the office on <a class=\"lnk\" href=\"tel:+441612201763\">0161 220 1763</a>.",
+     "text": "What is available changes every week. See every property we have to rent , or ring the office on 0161 220 1763 ."
+    },
+    {
+     "id": "area-swinton-9",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Swinton.",
+     "html": "<a class=\"lnk\" href=\"megacity-properties\">Every property we have to rent &rarr;</a>",
+     "text": "Every property we have to rent &rarr;"
+    },
+    {
+     "id": "area-swinton-10",
+     "kind": "text",
+     "tag": "p",
+     "section": "A town, not a postcode.",
+     "html": "Letting in Swinton",
+     "text": "Letting in Swinton"
+    },
+    {
+     "id": "area-swinton-11",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "A town, not a postcode.",
+     "html": "A town, not <em>a postcode.</em>",
+     "text": "A town, not a postcode."
+    },
+    {
+     "id": "area-swinton-12",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "A town, not a postcode.",
+     "html": "Salford&rsquo;s council, in Swinton",
+     "text": "Salford's council, in Swinton"
+    },
+    {
+     "id": "area-swinton-13",
+     "kind": "text",
+     "tag": "p",
+     "section": "A town, not a postcode.",
+     "html": "Swinton is in Salford, so Salford City Council handles licensing and council tax here, and its civic centre is in Swinton itself, on Chorley Road. That matters when an address says Manchester: plenty of M27 addresses do, which is why we go by the postcode and not the town on the letter. The <a class=\"lnk\" href=\"megacity-area-salford\">Salford page</a> covers the council&rsquo;s licensing.",
+     "text": "Swinton is in Salford, so Salford City Council handles licensing and council tax here, and its civic centre is in Swinton itself, on Chorley Road. That matters when an address says Manchester: plenty of M27 addresses do, which is why we go by the postcode and not the town on the letter. The Salford page covers the council's licensing."
+    },
+    {
+     "id": "area-swinton-14",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "A town, not a postcode.",
+     "html": "Letting a house, not a flat",
+     "text": "Letting a house, not a flat"
+    },
+    {
+     "id": "area-swinton-15",
+     "kind": "text",
+     "tag": "p",
+     "section": "A town, not a postcode.",
+     "html": "A house brings its own list: a gas safety check every year, an EICR at least every five years, an EPC, a smoke alarm on every storey, a carbon monoxide alarm in any room with a fixed combustion appliance other than a gas cooker, and a tenancy agreement that says who looks after the garden. None of it is unusual, but all of it is easier set up before the tenant moves in than argued about afterwards.",
+     "text": "A house brings its own list: a gas safety check every year, an EICR at least every five years, an EPC, a smoke alarm on every storey, a carbon monoxide alarm in any room with a fixed combustion appliance other than a gas cooker, and a tenancy agreement that says who looks after the garden. None of it is unusual, but all of it is easier set up before the tenant moves in than argued about afterwards."
+    },
+    {
+     "id": "area-swinton-16",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "A town, not a postcode.",
+     "html": "When family lets move",
+     "text": "When family lets move"
+    },
+    {
+     "id": "area-swinton-17",
+     "kind": "text",
+     "tag": "p",
+     "section": "A town, not a postcode.",
+     "html": "Family tenancies tend to start in spring and early summer, around the school year, rather than in September like student lets, and a family that finds the right house usually wants to stay. Pricing a Swinton house for the month it comes to market matters more than squeezing the last few pounds out of the rent.",
+     "text": "Family tenancies tend to start in spring and early summer, around the school year, rather than in September like student lets, and a family that finds the right house usually wants to stay. Pricing a Swinton house for the month it comes to market matters more than squeezing the last few pounds out of the rent."
+    },
+    {
+     "id": "area-swinton-18",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "A town, not a postcode.",
+     "html": "Getting about",
+     "text": "Getting about"
+    },
+    {
+     "id": "area-swinton-19",
+     "kind": "text",
+     "tag": "p",
+     "section": "A town, not a postcode.",
+     "html": "Swinton station has trains into Manchester Victoria, and the A580 East Lancashire Road and the M60 are close by, which suits tenants who work across Greater Manchester rather than in the centre.",
+     "text": "Swinton station has trains into Manchester Victoria, and the A580 East Lancashire Road and the M60 are close by, which suits tenants who work across Greater Manchester rather than in the centre."
+    },
+    {
+     "id": "area-swinton-20",
+     "kind": "text",
+     "tag": "p",
+     "section": "Let it, or hand it over.",
+     "html": "For Swinton landlords",
+     "text": "For Swinton landlords"
+    },
+    {
+     "id": "area-swinton-21",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Let it, or hand it over.",
+     "html": "Let it, or <em>hand it over.</em>",
+     "text": "Let it, or hand it over."
+    },
+    {
+     "id": "area-swinton-22",
+     "kind": "text",
+     "tag": "p",
+     "section": "Let it, or hand it over.",
+     "html": "Some landlords own one house and only want the tenant found; others want the whole tenancy looked after. Every level is a published, fixed price.",
+     "text": "Some landlords own one house and only want the tenant found; others want the whole tenancy looked after. Every level is a published, fixed price."
+    },
+    {
+     "id": "area-swinton-23",
+     "kind": "text",
+     "tag": "p",
+     "section": "Let it, or hand it over.",
+     "html": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%.",
+     "text": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%."
+    },
+    {
+     "id": "area-swinton-24",
+     "kind": "button",
+     "tag": "a",
+     "section": "Let it, or hand it over.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-swinton-25",
+     "kind": "button",
+     "tag": "a",
+     "section": "Let it, or hand it over.",
+     "html": "Call 0161 220 1763",
+     "text": "Call 0161 220 1763"
+    },
+    {
+     "id": "area-swinton-26",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting across Greater Manchester.",
+     "html": "Areas we cover",
+     "text": "Areas we cover"
+    },
+    {
+     "id": "area-swinton-27",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Letting across Greater Manchester.",
+     "html": "Letting across <em>Greater Manchester.</em>",
+     "text": "Letting across Greater Manchester."
+    }
+   ]
+  },
+  {
+   "slug": "area-old-trafford",
+   "key": "area-old-trafford",
+   "title": "Area: Old Trafford",
+   "items": [
+    {
+     "id": "area-old-trafford-1",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Old Trafford.",
+     "html": "Letting agents &middot; Old Trafford, M16",
+     "text": "Letting agents &middot; Old Trafford, M16"
+    },
+    {
+     "id": "area-old-trafford-2",
+     "kind": "heading",
+     "tag": "h1",
+     "section": "Letting agents in Old Trafford.",
+     "html": "Letting agents<br>in <em>Old Trafford.</em>",
+     "text": "Letting agents in Old Trafford."
+    },
+    {
+     "id": "area-old-trafford-3",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Old Trafford.",
+     "html": "Old Trafford is known for its two grounds, but most of it is streets of terraces and apartment blocks between Trafford Park and Whalley Range, a short tram ride from the city centre. We let and manage homes here, and the first thing we check is which council the address belongs to.",
+     "text": "Old Trafford is known for its two grounds, but most of it is streets of terraces and apartment blocks between Trafford Park and Whalley Range, a short tram ride from the city centre. We let and manage homes here, and the first thing we check is which council the address belongs to."
+    },
+    {
+     "id": "area-old-trafford-4",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Old Trafford.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-old-trafford-5",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Old Trafford.",
+     "html": "Homes to rent in Old Trafford",
+     "text": "Homes to rent in Old Trafford"
+    },
+    {
+     "id": "area-old-trafford-6",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Old Trafford.",
+     "html": "To rent in Old Trafford",
+     "text": "To rent in Old Trafford"
+    },
+    {
+     "id": "area-old-trafford-7",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Homes to rent in Old Trafford.",
+     "html": "Homes to rent<br>in <em>Old Trafford.</em>",
+     "text": "Homes to rent in Old Trafford."
+    },
+    {
+     "id": "area-old-trafford-8",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Old Trafford.",
+     "html": "What is available changes every week. See <a class=\"lnk\" href=\"megacity-properties\">every property we have to rent</a>, or ring the office on <a class=\"lnk\" href=\"tel:+441612201763\">0161 220 1763</a>.",
+     "text": "What is available changes every week. See every property we have to rent , or ring the office on 0161 220 1763 ."
+    },
+    {
+     "id": "area-old-trafford-9",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in Old Trafford.",
+     "html": "<a class=\"lnk\" href=\"megacity-properties\">Every property we have to rent &rarr;</a>",
+     "text": "Every property we have to rent &rarr;"
+    },
+    {
+     "id": "area-old-trafford-10",
+     "kind": "text",
+     "tag": "p",
+     "section": "Trafford, not Manchester.",
+     "html": "Letting in Old Trafford",
+     "text": "Letting in Old Trafford"
+    },
+    {
+     "id": "area-old-trafford-11",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Trafford, not Manchester.",
+     "html": "Trafford, <em>not Manchester.</em>",
+     "text": "Trafford, not Manchester."
+    },
+    {
+     "id": "area-old-trafford-12",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Trafford, not Manchester.",
+     "html": "Which council?",
+     "text": "Which council?"
+    },
+    {
+     "id": "area-old-trafford-13",
+     "kind": "text",
+     "tag": "p",
+     "section": "Trafford, not Manchester.",
+     "html": "Old Trafford is in the borough of Trafford, so Trafford Council is the licensing authority and bills the council tax. The M16 postcode crosses the boundary, though: Whalley Range, next door, is in Manchester. Two flats a few streets apart can have different councils, different council tax rates and different licensing rules, so we go by the exact address.",
+     "text": "Old Trafford is in the borough of Trafford, so Trafford Council is the licensing authority and bills the council tax. The M16 postcode crosses the boundary, though: Whalley Range, next door, is in Manchester. Two flats a few streets apart can have different councils, different council tax rates and different licensing rules, so we go by the exact address."
+    },
+    {
+     "id": "area-old-trafford-14",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Trafford, not Manchester.",
+     "html": "Trafford&rsquo;s licensing",
+     "text": "Trafford's licensing"
+    },
+    {
+     "id": "area-old-trafford-15",
+     "kind": "text",
+     "tag": "p",
+     "section": "Trafford, not Manchester.",
+     "html": "Mandatory HMO licensing applies here as it does everywhere in England, once five or more people from two or more households share a home. Whether Trafford has an additional or selective scheme covering a particular street can change, so we check the council&rsquo;s current schemes for your address rather than assume.",
+     "text": "Mandatory HMO licensing applies here as it does everywhere in England, once five or more people from two or more households share a home. Whether Trafford has an additional or selective scheme covering a particular street can change, so we check the council's current schemes for your address rather than assume."
+    },
+    {
+     "id": "area-old-trafford-16",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Trafford, not Manchester.",
+     "html": "Match days",
+     "text": "Match days"
+    },
+    {
+     "id": "area-old-trafford-17",
+     "kind": "text",
+     "tag": "p",
+     "section": "Trafford, not Manchester.",
+     "html": "Old Trafford football ground and Emirates Old Trafford cricket ground bring big crowds on match and event days, and some streets nearby have event-day parking restrictions. It is worth a tenant knowing before they sign, especially one who drives.",
+     "text": "Old Trafford football ground and Emirates Old Trafford cricket ground bring big crowds on match and event days, and some streets nearby have event-day parking restrictions. It is worth a tenant knowing before they sign, especially one who drives."
+    },
+    {
+     "id": "area-old-trafford-18",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "Trafford, not Manchester.",
+     "html": "On the tram",
+     "text": "On the tram"
+    },
+    {
+     "id": "area-old-trafford-19",
+     "kind": "text",
+     "tag": "p",
+     "section": "Trafford, not Manchester.",
+     "html": "The Metrolink&rsquo;s Altrincham line stops at Trafford Bar and Old Trafford, and the Trafford Park line runs from Pomona out to the Trafford Centre, so much of Old Trafford is a short ride from the city centre and from work at Trafford Park.",
+     "text": "The Metrolink's Altrincham line stops at Trafford Bar and Old Trafford, and the Trafford Park line runs from Pomona out to the Trafford Centre, so much of Old Trafford is a short ride from the city centre and from work at Trafford Park."
+    },
+    {
+     "id": "area-old-trafford-20",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three levels, one standard.",
+     "html": "For Old Trafford landlords",
+     "text": "For Old Trafford landlords"
+    },
+    {
+     "id": "area-old-trafford-21",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Three levels, one standard.",
+     "html": "Three levels, <em>one standard.</em>",
+     "text": "Three levels, one standard."
+    },
+    {
+     "id": "area-old-trafford-22",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three levels, one standard.",
+     "html": "Apartment or terrace, the choice is the same: we find the tenant, we find the tenant and collect the rent, or we run the whole tenancy.",
+     "text": "Apartment or terrace, the choice is the same: we find the tenant, we find the tenant and collect the rent, or we run the whole tenancy."
+    },
+    {
+     "id": "area-old-trafford-23",
+     "kind": "text",
+     "tag": "p",
+     "section": "Three levels, one standard.",
+     "html": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%.",
+     "text": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%."
+    },
+    {
+     "id": "area-old-trafford-24",
+     "kind": "button",
+     "tag": "a",
+     "section": "Three levels, one standard.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-old-trafford-25",
+     "kind": "button",
+     "tag": "a",
+     "section": "Three levels, one standard.",
+     "html": "Call 0161 220 1763",
+     "text": "Call 0161 220 1763"
+    },
+    {
+     "id": "area-old-trafford-26",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting across Greater Manchester.",
+     "html": "Areas we cover",
+     "text": "Areas we cover"
+    },
+    {
+     "id": "area-old-trafford-27",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Letting across Greater Manchester.",
+     "html": "Letting across <em>Greater Manchester.</em>",
+     "text": "Letting across Greater Manchester."
+    }
+   ]
+  },
+  {
+   "slug": "area-city-centre",
+   "key": "area-city-centre",
+   "title": "Area: Manchester City Centre",
+   "items": [
+    {
+     "id": "area-city-centre-1",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Manchester city centre.",
+     "html": "Letting agents &middot; Manchester city centre",
+     "text": "Letting agents &middot; Manchester city centre"
+    },
+    {
+     "id": "area-city-centre-2",
+     "kind": "heading",
+     "tag": "h1",
+     "section": "Letting agents in Manchester city centre.",
+     "html": "Letting agents in<br>Manchester <em>city centre.</em>",
+     "text": "Letting agents in Manchester city centre."
+    },
+    {
+     "id": "area-city-centre-3",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting agents in Manchester city centre.",
+     "html": "Almost everything that rents in the centre is an apartment in a managed block, and that changes what letting one involves: the lease, the building&rsquo;s rules and its managing agent all sit alongside the tenancy, and letting one well means dealing with all three.",
+     "text": "Almost everything that rents in the centre is an apartment in a managed block, and that changes what letting one involves: the lease, the building's rules and its managing agent all sit alongside the tenancy, and letting one well means dealing with all three."
+    },
+    {
+     "id": "area-city-centre-4",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Manchester city centre.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-city-centre-5",
+     "kind": "button",
+     "tag": "a",
+     "section": "Letting agents in Manchester city centre.",
+     "html": "Homes to rent in the centre",
+     "text": "Homes to rent in the centre"
+    },
+    {
+     "id": "area-city-centre-6",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in and around the centre.",
+     "html": "To rent in the city centre",
+     "text": "To rent in the city centre"
+    },
+    {
+     "id": "area-city-centre-7",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Homes to rent in and around the centre.",
+     "html": "Homes to rent in and<br>around <em>the centre.</em>",
+     "text": "Homes to rent in and around the centre."
+    },
+    {
+     "id": "area-city-centre-8",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in and around the centre.",
+     "html": "What is available changes every week. See <a class=\"lnk\" href=\"megacity-properties\">every property we have to rent</a>, or ring the office on <a class=\"lnk\" href=\"tel:+441612201763\">0161 220 1763</a>.",
+     "text": "What is available changes every week. See every property we have to rent , or ring the office on 0161 220 1763 ."
+    },
+    {
+     "id": "area-city-centre-9",
+     "kind": "text",
+     "tag": "p",
+     "section": "Homes to rent in and around the centre.",
+     "html": "<a class=\"lnk\" href=\"megacity-properties\">Every property we have to rent &rarr;</a>",
+     "text": "Every property we have to rent &rarr;"
+    },
+    {
+     "id": "area-city-centre-10",
+     "kind": "text",
+     "tag": "p",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Letting in the city centre",
+     "text": "Letting in the city centre"
+    },
+    {
+     "id": "area-city-centre-11",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "An apartment is more than a tenancy.",
+     "html": "An apartment is <em>more than a tenancy.</em>",
+     "text": "An apartment is more than a tenancy."
+    },
+    {
+     "id": "area-city-centre-12",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Start with the lease",
+     "text": "Start with the lease"
+    },
+    {
+     "id": "area-city-centre-13",
+     "kind": "text",
+     "tag": "p",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Before an apartment is let, the lease has to allow it. Some need the freeholder&rsquo;s consent, some restrict pets or short lets, and a mortgage may need the lender&rsquo;s consent to let as well. It is a quick check, and much better done before the advert than after a tenant has paid a holding deposit.",
+     "text": "Before an apartment is let, the lease has to allow it. Some need the freeholder's consent, some restrict pets or short lets, and a mortgage may need the lender's consent to let as well. It is a quick check, and much better done before the advert than after a tenant has paid a holding deposit."
+    },
+    {
+     "id": "area-city-centre-14",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "An apartment is more than a tenancy.",
+     "html": "The building has its own rules",
+     "text": "The building has its own rules"
+    },
+    {
+     "id": "area-city-centre-15",
+     "kind": "text",
+     "tag": "p",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Fobs, parking spaces, bin stores and move-in slots are set by the building&rsquo;s managing agent, not by the tenancy. Service charge and ground rent stay with the landlord: under the Tenant Fees Act they cannot be passed on to a tenant as a separate charge. Sorting the building side before the tenancy starts saves a tenant a difficult first day.",
+     "text": "Fobs, parking spaces, bin stores and move-in slots are set by the building's managing agent, not by the tenancy. Service charge and ground rent stay with the landlord: under the Tenant Fees Act they cannot be passed on to a tenant as a separate charge. Sorting the building side before the tenancy starts saves a tenant a difficult first day."
+    },
+    {
+     "id": "area-city-centre-16",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Both sides of the river",
+     "text": "Both sides of the river"
+    },
+    {
+     "id": "area-city-centre-17",
+     "kind": "text",
+     "tag": "p",
+     "section": "An apartment is more than a tenancy.",
+     "html": "The centre runs from the Northern Quarter and Ancoats across to Spinningfields, Deansgate and Castlefield. Across the Irwell, Chapel Street, Greengate and the Adelphi are in Salford, even where the postcode is M3, so council tax and licensing there are Salford City Council&rsquo;s, not Manchester&rsquo;s. The <a class=\"lnk\" href=\"megacity-area-salford\">Salford page</a> covers that side.",
+     "text": "The centre runs from the Northern Quarter and Ancoats across to Spinningfields, Deansgate and Castlefield. Across the Irwell, Chapel Street, Greengate and the Adelphi are in Salford, even where the postcode is M3, so council tax and licensing there are Salford City Council's, not Manchester's. The Salford page covers that side."
+    },
+    {
+     "id": "area-city-centre-18",
+     "kind": "heading",
+     "tag": "h3",
+     "section": "An apartment is more than a tenancy.",
+     "html": "Council tax in the centre",
+     "text": "Council tax in the centre"
+    },
+    {
+     "id": "area-city-centre-19",
+     "kind": "text",
+     "tag": "p",
+     "section": "An apartment is more than a tenancy.",
+     "html": "On the Manchester side, council tax is billed by Manchester City Council. The band belongs to the flat, not the building, so two apartments on the same floor can pay different amounts; it is worth checking before you set the rent. Our <a class=\"lnk\" href=\"megacity-tools#toolCouncil\">council tax calculator</a> has the current figures.",
+     "text": "On the Manchester side, council tax is billed by Manchester City Council. The band belongs to the flat, not the building, so two apartments on the same floor can pay different amounts; it is worth checking before you set the rent. Our council tax calculator has the current figures."
+    },
+    {
+     "id": "area-city-centre-20",
+     "kind": "text",
+     "tag": "p",
+     "section": "However involved you want to be.",
+     "html": "For city centre landlords",
+     "text": "For city centre landlords"
+    },
+    {
+     "id": "area-city-centre-21",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "However involved you want to be.",
+     "html": "However involved <em>you want to be.</em>",
+     "text": "However involved you want to be."
+    },
+    {
+     "id": "area-city-centre-22",
+     "kind": "text",
+     "tag": "p",
+     "section": "However involved you want to be.",
+     "html": "If you live nearby, you may only want a tenant found; if you live further away, you may want the building, the tenant and the rent handled for you. Each level is a published price.",
+     "text": "If you live nearby, you may only want a tenant found; if you live further away, you may want the building, the tenant and the rent handled for you. Each level is a published price."
+    },
+    {
+     "id": "area-city-centre-23",
+     "kind": "text",
+     "tag": "p",
+     "section": "However involved you want to be.",
+     "html": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%.",
+     "text": "New landlords: Full Management from 8% inc. VAT for your first tenancy, then 10%."
+    },
+    {
+     "id": "area-city-centre-24",
+     "kind": "button",
+     "tag": "a",
+     "section": "However involved you want to be.",
+     "html": "Book a free rental valuation",
+     "text": "Book a free rental valuation"
+    },
+    {
+     "id": "area-city-centre-25",
+     "kind": "button",
+     "tag": "a",
+     "section": "However involved you want to be.",
+     "html": "Call 0161 220 1763",
+     "text": "Call 0161 220 1763"
+    },
+    {
+     "id": "area-city-centre-26",
+     "kind": "text",
+     "tag": "p",
+     "section": "Letting across Greater Manchester.",
+     "html": "Areas we cover",
+     "text": "Areas we cover"
+    },
+    {
+     "id": "area-city-centre-27",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Letting across Greater Manchester.",
+     "html": "Letting across <em>Greater Manchester.</em>",
+     "text": "Letting across Greater Manchester."
+    }
+   ]
+  },
+  {
    "slug": "tenant-application-form",
    "key": "apply",
    "title": "Tenancy Application",

@@ -14,6 +14,7 @@ import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
 import { feedText, clipWords } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
+import { areaPage } from "./areas.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = (n) => "£" + Number(n).toLocaleString("en-GB");
@@ -324,46 +325,80 @@ function shortDate(iso) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
+/* one property card, as the grid on /lettings and the area pages show it */
+function cardHtml(c) {
+  const facts = [c.typeShort === "room" ? "1 bedroom available" : (c.bedrooms != null ? c.bedrooms + " bed" : null),
+    c.typeShort === "room" ? "Shared bath" : (c.bathrooms ? c.bathrooms + " bath" : null),
+    c.typeShort === "room" ? "Room" : c.typeLabel].filter(Boolean);
+  /* When a property is available matters on the CARD, not only on the page
+     it opens. Most of Walid's are student lets advertised a year ahead — he
+     sets those dates deliberately — so a grid that shows nine properties
+     and says nothing about dates sends a tenant looking for somewhere in
+     October to enquire about a room for next September. That wastes their
+     time and fills the lettings inbox with enquiries nobody can answer. */
+  const when = c.availability === "available_now" ? "Available now"
+    : (c.availability === "from_date" && c.availableFrom
+       ? "Available " + shortDate(c.availableFrom)
+       : (c.availability === "let_agreed" ? "Let agreed" : null));
+  const img = c.cover ? `<img src="${esc(c.cover.thumb || c.cover.url)}" alt="${esc(c.cover.alt || c.title)}" loading="lazy" decoding="async" width="1400" height="1050">` : "";
+  return `<a class="pl-card" href="${esc(c.url)}" data-area="${esc(c.area || "")}" data-type="${esc(c.typeShort)}" data-beds="${esc(String(c.bedrooms ?? ""))}">
+      <span class="pl-img">${img}</span>
+      ${c.tag || c.headline ? `<span class="pl-tag">${esc(c.headline || c.tag)}</span>` : ""}
+      <span class="pl-body">
+        <span class="pl-area">${esc([c.line1, c.town].filter(Boolean).join(", ") || c.areaLabel)}</span>
+        <b>${esc(c.title)}</b>
+        ${c.rentPcm ? `<span class="pl-price">${esc("£" + Number(c.rentPcm).toLocaleString("en-GB"))}<small> pcm${c.typeShort === "room" ? " · per room" : ""}</small></span>` : ""}
+        <span class="pl-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join("")}</span>
+        ${when ? `<span class="pl-avail${c.availability === "available_now" ? " is-now" : ""}">${esc(when)}</span>` : ""}
+        <span class="pl-go">View Property
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></span>
+      </span>
+    </a>`;
+}
+
 /* the properties index: the static page with its grid and filters replaced */
 export async function renderPropertiesPage(request, env, url, cards) {
   const page = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-properties.html", url).toString()));
   if (!page.ok || !cards.items.length) return null;
   const opt = (list, blank) => `<option value="">${blank}</option>` + list.map((o) => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");
-  const cardHtml = cards.items.map((c) => {
-    const facts = [c.typeShort === "room" ? "1 bedroom available" : (c.bedrooms != null ? c.bedrooms + " bed" : null),
-      c.typeShort === "room" ? "Shared bath" : (c.bathrooms ? c.bathrooms + " bath" : null),
-      c.typeShort === "room" ? "Room" : c.typeLabel].filter(Boolean);
-    /* When a property is available matters on the CARD, not only on the page
-       it opens. Most of Walid's are student lets advertised a year ahead — he
-       sets those dates deliberately — so a grid that shows nine properties
-       and says nothing about dates sends a tenant looking for somewhere in
-       October to enquire about a room for next September. That wastes their
-       time and fills the lettings inbox with enquiries nobody can answer. */
-    const when = c.availability === "available_now" ? "Available now"
-      : (c.availability === "from_date" && c.availableFrom
-         ? "Available " + shortDate(c.availableFrom)
-         : (c.availability === "let_agreed" ? "Let agreed" : null));
-    const img = c.cover ? `<img src="${esc(c.cover.thumb || c.cover.url)}" alt="${esc(c.cover.alt || c.title)}" loading="lazy" decoding="async" width="1400" height="1050">` : "";
-    return `<a class="pl-card" href="${esc(c.url)}" data-area="${esc(c.area || "")}" data-type="${esc(c.typeShort)}" data-beds="${esc(String(c.bedrooms ?? ""))}">
-        <span class="pl-img">${img}</span>
-        ${c.tag || c.headline ? `<span class="pl-tag">${esc(c.headline || c.tag)}</span>` : ""}
-        <span class="pl-body">
-          <span class="pl-area">${esc([c.line1, c.town].filter(Boolean).join(", ") || c.areaLabel)}</span>
-          <b>${esc(c.title)}</b>
-          ${c.rentPcm ? `<span class="pl-price">${esc("£" + Number(c.rentPcm).toLocaleString("en-GB"))}<small> pcm${c.typeShort === "room" ? " · per room" : ""}</small></span>` : ""}
-          <span class="pl-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join("")}</span>
-          ${when ? `<span class="pl-avail${c.availability === "available_now" ? " is-now" : ""}">${esc(when)}</span>` : ""}
-          <span class="pl-go">View Property
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h13M12.5 6l6 6-6 6"/></svg></span>
-        </span>
-      </a>`;
-  }).join("\n      ");
+  const cardsHtml = cards.items.map(cardHtml).join("\n      ");
   const res = new HTMLRewriter()
-    .on("#plGrid", { element: (e) => e.setInnerContent(cardHtml, { html: true }) })
+    .on("#plGrid", { element: (e) => e.setInnerContent(cardsHtml, { html: true }) })
     .on("#fArea", { element: (e) => e.setInnerContent(opt(cards.filters.areas, "All areas"), { html: true }) })
     .on("#fType", { element: (e) => e.setInnerContent(opt(cards.filters.types, "Any type"), { html: true }) })
     .on("#fBeds", { element: (e) => e.setInnerContent(opt(cards.filters.beds, "Any"), { html: true }) })
     .transform(page);
+  const headers = new Headers(res.headers);
+  headers.set("content-type", "text/html; charset=utf-8");
+  headers.set("cache-control", "public, max-age=60, s-maxage=120");
+  headers.set("x-mc-render", "d1");
+  headers.delete("content-length"); headers.delete("etag"); headers.delete("last-modified");
+  return new Response(res.body, { status: 200, headers });
+}
+
+/* An area page (worker/studio/areas.js): the static page, with its grid
+   filled from the same live listings /lettings shows, narrowed to the area.
+   Nothing live in the area is a real answer, not an error: the grid goes and
+   the page's own "nothing here right now" block shows instead. Without the
+   database this is never called, and the page's neutral fallback stays. */
+export async function renderAreaPage(request, env, url, cards, slug) {
+  const area = areaPage(slug);
+  if (!area) return null;
+  const page = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-" + slug + ".html", url).toString()));
+  if (!page.ok) return null;
+  const homes = (cards.items || []).filter(area.homes);
+  const n = homes.length;
+  const rw = new HTMLRewriter();
+  if (n) {
+    rw.on("#areaGrid", { element: (e) => e.setInnerContent(homes.map(cardHtml).join("\n      "), { html: true }) })
+      .on("#areaCount", { element: (e) => { e.setInnerContent(n + (n === 1 ? " property" : " properties") + " to rent here right now"); e.removeAttribute("hidden"); } })
+      .on("#areaNone", { element: (e) => e.remove() });
+  } else {
+    rw.on("#areaGrid", { element: (e) => e.remove() })
+      .on("#areaCount", { element: (e) => e.remove() })
+      .on("#areaNone", { element: (e) => e.removeAttribute("hidden") });
+  }
+  const res = rw.transform(page);
   const headers = new Headers(res.headers);
   headers.set("content-type", "text/html; charset=utf-8");
   headers.set("cache-control", "public, max-age=60, s-maxage=120");

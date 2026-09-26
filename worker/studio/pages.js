@@ -9,7 +9,7 @@ import * as urls from "./urls.js";
 
 const KINDS = ["area", "landing", "guide"];
 const KIND_LABEL = { area: "Area guide", landing: "Megacity Properties", guide: "Guide" };
-const RESERVED = new Set(["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "studio", "sitemap", "consent", "intake", "seed", "let-template", "page-template", "data", "admin", "portal", "tours", "property", "hero-lab", "about", "contact", "landlords", "tenants"].concat(urls.RESERVED_ROOT_SLUGS));
+const RESERVED = new Set(["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "studio", "sitemap", "consent", "intake", "seed", "let-template", "page-template", "data", "admin", "portal", "tours", "property", "hero-lab", "about", "contact", "landlords", "tenants"].concat(urls.RESERVED_ROOT_SLUGS, urls.PUBLIC_STATIC_SLUGS));
 
 function badSlug(s) {
   return !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s) || s.length < 3 || s.length > 80 || RESERVED.has(s) || /^(let|studio)(-|$)/.test(s);

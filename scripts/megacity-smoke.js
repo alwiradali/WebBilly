@@ -12,7 +12,8 @@ const fs = require("fs");
 
 const BASE = (process.argv[2] || "http://localhost:8787").replace(/\/$/, "");
 const DEMO = process.argv.includes("--demo");
-const MAP = { skyline: "/", properties: "/lettings", "for-landlords": "/landlords", renting: "/tenants" };
+const MAP = { skyline: "/", properties: "/lettings", "for-landlords": "/landlords", renting: "/tenants",
+  "area-salford": "/letting-agents-salford", "area-swinton": "/letting-agents-swinton" };
 const P = (slug) => (DEMO ? "/templates/megacity-" + slug : MAP[slug] || "/" + slug);
 const LET = (id) => (DEMO ? "/templates/megacity-let-" + id : "/let/" + id);
 const STUDIO = DEMO ? "/templates/megacity-studio" : "/studio";
@@ -34,7 +35,7 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
   page.on("console", (m) => { if (m.type() === "error" && !/401 \(Unauthorized\)/.test(m.text())) errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(String(e)));
 
-  const pages = [P("skyline"), P("properties"), P("for-landlords"), P("renting"), LET("denmark-road"), P("tenant-application-form"), P("about-us")];
+  const pages = [P("skyline"), P("properties"), P("for-landlords"), P("renting"), LET("denmark-road"), P("tenant-application-form"), P("about-us"), P("area-salford"), P("area-swinton")];
   for (const path of pages) {
     bad.length = 0; errors.length = 0;
     const res = await page.goto(BASE + path, { waitUntil: "networkidle" });
@@ -105,6 +106,12 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
          (vague.length ? ": " + vague[0].slice(0, 90) : ""));
     }
     if (path === P("tenant-application-form")) ok(!!(await page.$("[data-apply]")), "application form is on the page");
+    if (path === P("area-salford") || path === P("area-swinton")) {
+      /* with the database there, an area page shows its homes or says it has none; the offline note is only for when it is not */
+      const st = await page.evaluate(() => ({ cards: document.querySelectorAll("#areaGrid .pl-card").length, none: !!document.querySelector("#areaNone:not([hidden])"), offline: !!document.querySelector("#areaGrid .pl-offline") }));
+      ok(st.cards > 0 || st.none, path + " shows its homes or says there are none (" + st.cards + " cards" + (st.none ? ", none-message" : "") + ")");
+      ok(!(st.cards && st.none), path + " never shows homes and the none-message together");
+    }
     if (!DEMO) {
       const styles = await page.$$eval("[style]", (els) => els.map((e) => e.getAttribute("style")).filter((s) => /url\(['"]?assets\//.test(s)));
       ok(!styles.length, path + " has no relative url() left in inline styles");

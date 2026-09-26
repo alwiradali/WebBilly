@@ -41,13 +41,21 @@ const ROOT_MAP = {
   "privacy": "/privacy-policy",
   "terms": "/terms",
   "tenant-application-form": "/tenant-application-form",
+  /* the area pages (worker/studio/areas.js): the address carries the words
+     people search for */
+  "area-manchester": "/letting-agents-manchester",
+  "area-salford": "/letting-agents-salford",
+  "area-swinton": "/letting-agents-swinton",
+  "area-old-trafford": "/letting-agents-old-trafford",
+  "area-city-centre": "/letting-agents-manchester-city-centre",
   "studio": "/studio",
 };
 const PATH_TO_SLUG = {};
 for (const k in ROOT_MAP) PATH_TO_SLUG[ROOT_MAP[k]] = k;
 
 /* the hand-built pages, in sitemap order */
-const PUBLIC_STATIC_SLUGS = ["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "tenant-application-form"];
+const PUBLIC_STATIC_SLUGS = ["skyline", "properties", "for-landlords", "tenant-find", "rent-collection", "fully-managed", "switch", "hmo", "maintenance", "compliance", "renting", "valuation", "tools", "journal", "about-us", "contact-us", "privacy", "terms", "tenant-application-form",
+  "area-manchester", "area-salford", "area-swinton", "area-old-trafford", "area-city-centre"];
 /* Empty, deliberately, and kept rather than deleted.
 
    There were fourteen hand-built listing pages here. They existed because the
@@ -86,7 +94,8 @@ const LEGACY_LISTINGS = {
   "95":  "carlton-road-5",           /* RL0060 — £625, the terraced house */
 };
 /* root paths a Studio page may never take */
-const RESERVED_ROOT_SLUGS = ["lettings", "landlords", "tenants", "privacy-policy", "tenant-application-form", "let", "property", "tour", "api", "media", "billy360", "templates", "sitemap", "sitemap.xml", "robots", "robots.txt", "images", "css", "js", "free-valuation", "testimonials", "register", "blog", "sales", "buyers", "vendors", "commercial", "index", "home", "404", "favicon.ico", "apple-touch-icon.png"];
+const RESERVED_ROOT_SLUGS = ["lettings", "landlords", "tenants", "privacy-policy", "tenant-application-form", "let", "property", "tour", "api", "media", "billy360", "templates", "sitemap", "sitemap.xml", "robots", "robots.txt", "images", "css", "js", "free-valuation", "testimonials", "register", "blog", "sales", "buyers", "vendors", "commercial", "index", "home", "404", "favicon.ico", "apple-touch-icon.png",
+  "letting-agents-manchester", "letting-agents-salford", "letting-agents-swinton", "letting-agents-old-trafford", "letting-agents-manchester-city-centre"];
 
 function withFrag(p, frag) { return frag ? p + (frag.charAt(0) === "#" ? frag : "#" + frag) : p; }
 function pagePath(mode, slug, frag) {

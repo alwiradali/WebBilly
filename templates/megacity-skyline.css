@@ -203,6 +203,20 @@ body.mm-open{overflow:hidden}
 .foot-social{gap:12px}
 .foot-pay-note{color:rgba(255,255,255,.62);font-size:14.82px;line-height:1.6;max-width:34ch;margin-top:4px}
 .foot-legal{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 8px;display:flex;gap:22px;flex-wrap:wrap}
+/* the area pages, linked from every footer: search engines follow links, and
+   so do people looking for "letting agents <their area>" */
+.foot-areas{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut) 14px;
+  display:flex;gap:6px 22px;flex-wrap:wrap;align-items:center}
+.foot-areas b{font:600 12.4px/1.4 var(--ff-u);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.foot-areas a{color:rgba(255,255,255,.7);font-size:14.82px}
+.foot-areas a:hover{color:#fff}
+/* the same five places on the home page's "Letting across the city" band */
+.band-areas{margin-top:26px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.band-areas a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;
+  border:1.5px solid rgba(255,255,255,.55);background:rgba(14,11,43,.38);color:#fff;
+  font:600 14.5px/1 var(--ff-u);letter-spacing:.02em;transition:background .2s,border-color .2s}
+.band-areas a:hover{background:rgba(14,11,43,.62);border-color:#fff}
+.area-all{margin-top:28px;font:600 15.4px/1.5 var(--ff-u)}
 .foot-legal a{color:rgba(255,255,255,.7);font-size:14.82px}
 .foot-legal a:hover{color:#fff}
 
@@ -667,7 +681,7 @@ form.enq{display:grid;gap:18px;align-content:start}
      centred: without this they inherit the left-aligned flex above and the
      brand marks slide off to one side of the circle */
   .footer .foot-grid .foot-social a{display:grid;place-items:center;padding:0}
-  .foot-legal a,.footer-in a{min-height:44px;min-width:44px;display:inline-flex;
+  .foot-legal a,.foot-areas a,.footer-in a{min-height:44px;min-width:44px;display:inline-flex;
     align-items:center;justify-content:center}
   /* the breadcrumb back to the property list was 26px tall */
   .pd-crumb a{min-height:44px;display:inline-flex;align-items:center}

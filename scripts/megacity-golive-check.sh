@@ -84,6 +84,13 @@ has "/let/ladywell-point" "rel=\"canonical\" href=\"$CANON/let/ladywell-point\""
 has "/tenants" 'data-register' "$BASE/tenants"
 has "/tenant-application-form" 'data-apply' "$BASE/tenant-application-form"
 echo "== studio, 404, robots, sitemap, api, assets"
+want "$(st "$BASE/googlece50f0143b6662ac.html")" "200 " "Google Search Console file"
+has "Google Search Console file" 'google-site-verification: googlece50f0143b6662ac.html' "$BASE/googlece50f0143b6662ac.html"
+for a in letting-agents-manchester letting-agents-salford letting-agents-swinton letting-agents-old-trafford letting-agents-manchester-city-centre; do
+  want "$(st "$BASE/$a")" "200 " "area page /$a"
+  has "/$a" "<link rel=\"canonical\" href=\"$CANON/$a\">" "$BASE/$a"
+  has "sitemap" "<loc>$CANON/$a</loc>" "$BASE/sitemap.xml"
+done
 hdr "/studio" 'x-robots-tag: noindex' "$BASE/studio"
 has "/studio" 'content="noindex,nofollow"' "$BASE/studio"
 want "$(st "$BASE/this-does-not-exist")" "404 " "unknown path"

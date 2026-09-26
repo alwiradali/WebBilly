@@ -24,10 +24,15 @@ import { readAll as readSettings, liveRedirects } from "./settings.js";
 import { pruneEvents } from "./enquiries.js";
 import { tourPage, isTourIndex } from "./router.js";
 import { siteEdits } from "./site.js";
+import { AREA_SLUGS } from "./areas.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
 const PASS_ASSET = /^\/(billy360\/|templates\/assets\/mcr\/|templates\/vendor\/|templates\/megacity-[a-z0-9-]+\.(css|js|json|map)$)/;
 const LEGACY_FILE = /^\/(images|css|js|content|scripts|styles|fonts)\/|\.(asp|aspx|php|cgi|jsp)$|\/wp-|^\/xmlrpc/;
+/* Google Search Console ownership files, served at the root exactly as Google
+   issued them. Google re-checks them from time to time, so they stay for as
+   long as the property is verified this way. Not secret: anyone may fetch one. */
+const GOOGLE_VERIFY = ["googlece50f0143b6662ac.html"];
 const BOT = /bot|crawl|spider|slurp|facebookexternalhit|preview|fetch|monitor|headless|python|curl|wget/i;
 const ONE_HOUR = 3600, FIVE_MIN = 300;
 
@@ -68,6 +73,9 @@ export async function serveMegacityHost(request, env, ctx, url) {
 
   if (p === "/favicon.ico" || p === "/apple-touch-icon.png" || p === "/apple-touch-icon-precomposed.png") return icon(env, url, p);
   if (p === "/robots.txt") return robotsTxt(env);
+  if (GOOGLE_VERIFY.includes(p.slice(1))) {
+    return new Response("google-site-verification: " + p.slice(1), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=3600" } });
+  }
   const db = officeDb(env);
   if (p === "/sitemap.xml") return render.sitemap(env, url, db);
   if (request.method !== "GET" && request.method !== "HEAD") {
@@ -144,6 +152,11 @@ export async function serveMegacityHost(request, env, ctx, url) {
         const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"), env);
         const cards = await feed.json();
         const page = cards.items && cards.items.length ? await render.renderPropertiesPage(request, env, url, cards) : null;
+        if (page) return fin(page, true, "d1");
+      }
+      if (AREA_SLUGS.includes(r.slug) && db) {
+        const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"), env);
+        const page = await render.renderAreaPage(request, env, url, await feed.json(), r.slug);
         if (page) return fin(page, true, "d1");
       }
       const res = await asset("megacity-" + r.slug);

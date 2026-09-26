@@ -23,6 +23,7 @@ import * as urls from "./urls.js";
 import { clipWords } from "./text.js";
 import * as redirects from "./redirects.js";
 import * as site from "./site.js";
+import { AREA_SLUGS } from "./areas.js";
 
 /* The viewer is framed by the listing pages on both hosts, so /billy360/*
    drops the site-wide SAMEORIGIN for this allow-list (_headers has the same
@@ -253,6 +254,11 @@ export async function handleMegacity(request, env, ctx, url) {
         return page ? finish(page, "d1") : passThrough();
       }
       const slug = p.slice("/templates/megacity-".length);
+      if (AREA_SLUGS.includes(slug)) {
+        const feed = await pub.list(db, new URL(url.origin + "/api/public/listings"), env);
+        const page = await render.renderAreaPage(request, env, url, await feed.json(), slug);
+        return page ? finish(page, "d1") : passThrough();
+      }
       const live = await pages.loadLive(db, slug);
       if (live) {
         const page = await pages.renderPage(request, env, url, db, live);
