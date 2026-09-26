@@ -193,7 +193,8 @@ HTTP status decides instead of `body.success`.
 ## His photographs are in (22 and 26 Sep)
 
 Eight photographs of the workshop now fill every workshop slot: the hero (the
-BMW up with both shutters open), the about split, all six gallery frames, the
+Clio up on the lift with him at the hub — his choice, keep it), the about split, all six gallery frames (the BMW with both
+shutters open is "The bays"), the
 Find-us card (the front of the building with the sign) and process steps 01,
 02 and 04. Each is cut to 3:2 to fit its slot; every customer's number plate is
 pixelated. Still stock and still to be replaced: the eleven service tiles,
