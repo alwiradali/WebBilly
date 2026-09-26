@@ -13,7 +13,6 @@ window.FLEURE = (function () {
     town: "Nottingham",
     instagram: "xfleureco",
     tiktok: "xfleureco",
-    threads: "xfleureco",
     /* ------------------------------------------------------------------
        THE SHOP EMAIL GOES HERE. Left empty on purpose rather than guessed: an
        enquiry sent to the wrong address is worse than one that never

@@ -26,7 +26,6 @@
 
   var IG = "https://instagram.com/" + B.instagram;
   var TT = "https://tiktok.com/@" + B.tiktok;
-  var TH = "https://threads.net/@" + B.threads;
   function mailLink(subject, body) {
     return "mailto:" + B.email + "?subject=" + encodeURIComponent(subject) +
            "&body=" + encodeURIComponent(body);
@@ -215,18 +214,27 @@
         WhatsApp appear only once the data file has an address or a number
         in it: a button that opens a blank mail window, or one addressed to
         nobody, is worse than no button. -- */
+  /* Each mark is drawn from primitives rather than one filled path. The
+     single-path Instagram glyph needed a winding rule to knock the frame's
+     interior out and never did it, so it painted as a solid blob. */
   var ICON = {
-    ig: "M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.3a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z",
-    tt: "M16.6 5.8a4.8 4.8 0 0 1-1-2.8h-3v12.3a2.7 2.7 0 1 1-2.7-2.7c.2 0 .4 0 .6.1V9.6a5.9 5.9 0 0 0-.6 0 5.8 5.8 0 1 0 5.8 5.8V9.3a7.8 7.8 0 0 0 4.5 1.4V7.6a4.7 4.7 0 0 1-3.6-1.8z",
-    th: "M17.1 11.2c-.1 0-.2-.1-.3-.1-.2-3.2-1.9-5-4.8-5h-.1c-1.7 0-3.2.7-4 2l1.6 1.1c.6-1 1.6-1.2 2.4-1.2 1 0 1.7.3 2.1.9.3.4.5 1 .6 1.7a12 12 0 0 0-2.6-.2c-2.7.2-4.4 1.7-4.3 3.9 0 1.1.6 2 1.6 2.6.8.5 1.8.8 2.9.7 1.4-.1 2.5-.6 3.3-1.6.6-.8.9-1.7 1.1-3 .7.4 1.2 1 1.5 1.7.4 1.1.5 2.9-1 4.4-1.3 1.3-2.9 1.9-5.3 1.9-2.7 0-4.7-.9-6-2.6C4.7 16.8 4.1 14.7 4 12c0-2.7.6-4.8 1.8-6.3C7.1 4 9.1 3.1 11.8 3.1c2.7 0 4.7.9 6 2.6.6.9 1.1 2 1.4 3.3l1.9-.5c-.3-1.6-.9-3-1.7-4.1C17.7 2.1 15.1 1 11.8 1h-.1C8.5 1 5.9 2.1 4.2 4.3 2.7 6.2 1.9 8.8 1.9 12c0 3.2.8 5.8 2.3 7.7C5.9 21.9 8.5 23 11.7 23h.1c2.9 0 5-.8 6.7-2.5 2.2-2.2 2.1-5 1.4-6.7-.5-1.2-1.4-2.1-2.8-2.6zm-4.5 4.4c-1.2.1-2.4-.5-2.5-1.6-.1-.9.6-1.8 2.5-1.9h.6c.7 0 1.3.1 1.9.2-.2 2.7-1.5 3.2-2.5 3.3z",
-    mail: "M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.1L4.6 7H19.4zM4 8.3V17h16V8.3l-8 5.5z",
-    wa: "M17.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1s-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.5.3-.5v-.5l-1-2.2c-.2-.6-.4-.5-.6-.5h-.6a1.1 1.1 0 0 0-.8.4 3.3 3.3 0 0 0-1 2.4 5.7 5.7 0 0 0 1.2 3 13 13 0 0 0 5 4.4c2.2.9 2.2.6 2.6.6a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"
+    ig: [["rect",{x:3,y:3,width:18,height:18,rx:5.4,fill:"none","stroke-width":1.9}],
+         ["circle",{cx:12,cy:12,r:4.1,fill:"none","stroke-width":1.9}],
+         ["circle",{cx:17.35,cy:6.65,r:1.25}]],
+    tt: [["path",{d:"M12.53 2h3.02c.18 1.25.85 2.36 1.83 3.06.7.5 1.53.79 2.4.83v3.03c-1.6-.05-3.14-.55-4.45-1.43v6.53c0 3.3-2.68 5.98-5.98 5.98S3.37 17.32 3.37 14.02s2.68-5.98 5.98-5.98c.31 0 .61.02.91.07v3.1a2.9 2.9 0 1 0 2.27 2.83V2z"}]],
+    mail:[["path",{d:"M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.1L4.6 7H19.4zM4 8.3V17h16V8.3l-8 5.5z"}]],
+    wa:  [["path",{d:"M17.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1s-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.5.3-.5v-.5l-1-2.2c-.2-.6-.4-.5-.6-.5h-.6a1.1 1.1 0 0 0-.8.4 3.3 3.3 0 0 0-1 2.4 5.7 5.7 0 0 0 1.2 3 13 13 0 0 0 5 4.4c2.2.9 2.2.6 2.6.6a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"}]]
   };
   function icon(kind) {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true");
-    var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    p.setAttribute("d", ICON[kind]); svg.appendChild(p);
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    ICON[kind].forEach(function (part) {
+      var n = document.createElementNS(NS, part[0]);
+      for (var k in part[1]) n.setAttribute(k, part[1][k]);
+      svg.appendChild(n);
+    });
     return svg;
   }
   /* every route out of the site, in one list so no page can drift */
@@ -240,7 +248,6 @@
     if (B.phone) out.push({ kind: "wa", label: "WhatsApp", value: B.phone,
       href: waLink("Hi! I found you through your website — I'd like to ask about an order."), ext: true });
     out.push({ kind: "tt", label: "TikTok", value: "@" + B.tiktok, href: TT, ext: true });
-    out.push({ kind: "th", label: "Threads", value: "@" + B.threads, href: TH, ext: true });
     return out;
   }
 
@@ -250,7 +257,7 @@
       var a = el("a", { class: "card", href: r.href, "data-rv": "", "data-rv-d": String((i % 4) + 1) });
       if (r.ext) { a.target = "_blank"; a.rel = "noopener"; }
       var ic = el("span", { class: "card-ic" }); ic.appendChild(icon(r.kind)); a.appendChild(ic);
-      var t = el("span");
+      var t = el("span", { class: "card-t" });
       t.appendChild(el("b", null, r.label));
       t.appendChild(el("span", null, r.value));
       a.appendChild(t);

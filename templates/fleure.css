@@ -352,9 +352,14 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
 .gal{columns:2;column-gap:clamp(10px,1.4vw,18px)}
 @media (min-width:780px){.gal{columns:3}}
 @media (min-width:1180px){.gal{columns:4}}
-/* the six on the home page divide evenly into two or three columns, so they
-   stop at three — a fourth would leave a ragged half-row */
-@media (min-width:1180px){.gal-teaser{columns:3}}
+/* The home page shows a short pick rather than the lot, and it is a plain
+   grid, not masonry: four in a row of equal crops reads as a chosen
+   selection, where four in columns leaves a ragged half-row at every width
+   that does not divide by four. */
+.gal-teaser{columns:auto;display:grid;gap:clamp(10px,1.4vw,18px);grid-template-columns:repeat(2,1fr)}
+@media (min-width:860px){.gal-teaser{grid-template-columns:repeat(4,1fr)}}
+.gal-teaser figure{margin:0;aspect-ratio:4/5}
+.gal-teaser img{width:100%;height:100%;object-fit:cover}
 .gal figure{
   break-inside:avoid;margin:0 0 clamp(10px,1.4vw,18px);border-radius:var(--r);overflow:hidden;
   background:var(--blush-2);position:relative;
@@ -502,9 +507,14 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
   width:44px;height:44px;flex:none;border-radius:50%;background:var(--wine);
   display:grid;place-items:center;
 }
-.card-ic svg{width:20px;height:20px;fill:var(--blush)}
-.card b{display:block;font-family:var(--display);font-size:1.2rem;font-weight:400}
-.card span{display:block;font-size:.9rem;color:var(--ink-soft)}
+.card-ic svg{width:20px;height:20px;fill:var(--blush);stroke:var(--blush);display:block}
+/* The text rules used to read `.card span`, which also matched the icon
+   circle — and at one class plus one type it outranked `.card-ic`, turning
+   the circle from a grid into a block. place-items stopped applying and the
+   glyph sat inline at the top left. Scoped to the text wrapper now. */
+.card-t{display:block;min-width:0}
+.card-t b{display:block;font-family:var(--display);font-size:1.2rem;font-weight:400}
+.card-t span{display:block;font-size:.9rem;color:var(--ink-soft)}
 
 /* ---------- story ---------- */
 .story{display:grid;gap:clamp(26px,4vw,56px);align-items:center}
