@@ -363,8 +363,6 @@
       fig.appendChild(el("figcaption", null, s.alt));
       host.appendChild(fig);
     });
-    var count = $("#workCount");
-    if (count) count.textContent = String(D.work.length);
   })();
 
   /* -- terms, care, faq -- */
