@@ -1295,6 +1295,19 @@ Four files: `templates/strictly-sprinkles.{html,css,js}` plus
 `templates/strictly-sprinkles-data.js`, and her assets in `assets/strictly/`.
 Noindex, like every client demo.
 
+**Eight pages, one engine.** The home page, the menu, and one page per
+category (`/templates/strictly-sprinkles-cakes` and so on). The six category
+pages are written by `scripts/strictly-category-pages.py` from a single shell,
+so they cannot drift apart — re-run it after changing the shell or adding a
+category. Each one carries nothing but `<body data-cat="cakes">`; the shared JS
+reads that, pulls the category out of the data file and renders the lot. A
+category's `slug` in the data file is both the filename and the URL.
+
+Every option card deep-links to the enquiry form as
+`/templates/strictly-sprinkles?item=<id>#enquire`. The form looks up which
+category owns that id, selects both, and the hash does the scrolling; an id
+that does not exist falls back to the first category with nothing chosen.
+
 **Two pages, one engine.** `strictly-sprinkles.html` is the home page and
 `strictly-sprinkles-menu.html` is the full menu: every price list, the flavour
 lists and the seasonal collections. Both load the same CSS, data and JS —
