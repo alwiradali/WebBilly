@@ -5,7 +5,7 @@
 
 import { uid, nowIso, HttpError, json, readJsonBody, clampStr, toInt, toNum, toBool, parseJson, slugify, audit, safeHref } from "./db.js";
 import { valid } from "./options.js";
-import { listForListing, deleteAllForListing, mediaUrl, isPhoto, PHOTO_SQL } from "./media.js";
+import { listForListing, deleteAllForListing, mediaUrl, isPhoto, PHOTO_SQL, feedSized, FEED_THUMB } from "./media.js";
 
 /* camelCase → column, with the coercion to apply. */
 const FIELDS = {
@@ -123,7 +123,12 @@ function summaryRow(r) {
   return {
     id: r.id, source: r.source, ref: r.ref, status: r.status, hidden: !!r.hidden, pinned: !!r.pinned, title: r.title,
     area: r.area, town: r.town, rentPcm: r.rent_pcm, bedrooms: r.bedrooms, bathrooms: r.bathrooms, type: r.type, letType: r.let_type,
-    cover: r.cover_thumb || r.first_thumb ? { thumb: mediaUrl(r.cover_thumb || r.first_thumb) } : null,
+    /* 10ninety photographs have no thumbnail of their own (they stay on
+       10ninety; see media.js) — without this every synced listing showed a
+       grey icon in the list. The sized feed address is the one the public
+       cards use. */
+    cover: r.cover_thumb || r.first_thumb ? { thumb: mediaUrl(r.cover_thumb || r.first_thumb) }
+      : (feedSized(r.cover_orig, FEED_THUMB) || feedSized(r.first_orig, FEED_THUMB)) ? { thumb: feedSized(r.cover_orig, FEED_THUMB) || feedSized(r.first_orig, FEED_THUMB) } : null,
     mediaCount: Number(r.media_count) || 0,
     tour: r.tour_status ? { status: r.tour_status, health: r.tour_health } : null,
     updatedAt: r.updated_at, publishedAt: r.published_at, deletedAt: r.deleted_at,
@@ -172,7 +177,9 @@ export async function list(c) {
     `SELECT l.*, t.status AS tour_status, t.health_score AS tour_health,
             (SELECT COUNT(*) FROM media m WHERE m.listing_id=l.id) AS media_count,
             (SELECT key_thumb FROM media m WHERE m.id=l.cover_media_id) AS cover_thumb,
-            (SELECT key_thumb FROM media m WHERE m.listing_id=l.id AND ${PHOTO_SQL} ORDER BY m.sort LIMIT 1) AS first_thumb
+            (SELECT key_thumb FROM media m WHERE m.listing_id=l.id AND ${PHOTO_SQL} ORDER BY m.sort LIMIT 1) AS first_thumb,
+            (SELECT key_orig FROM media m WHERE m.id=l.cover_media_id) AS cover_orig,
+            (SELECT key_orig FROM media m WHERE m.listing_id=l.id AND ${PHOTO_SQL} ORDER BY m.sort LIMIT 1) AS first_orig
        FROM listings l LEFT JOIN tours t ON t.listing_id=l.id
       WHERE ${where.join(" AND ")} ORDER BY ${sort} LIMIT 500`
   ).bind(...binds).all();
