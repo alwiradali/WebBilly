@@ -33,3 +33,13 @@ export function feedText(s) {
   return t.replace(/[ \t ]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
+/* A description cut to the length a search result shows, at the last whole
+   word: slice(0, 155) left Anvil Place's Google snippet ending "…to the
+   City Cen". */
+export function clipWords(s, n = 155) {
+  const t = String(s == null ? "" : s).replace(/\s+/g, " ").trim();
+  if (t.length <= n) return t;
+  const cut = t.slice(0, n - 1);
+  const i = cut.lastIndexOf(" ");
+  return (i > n * 0.6 ? cut.slice(0, i) : cut).replace(/[\s,;:.\-–—]+$/, "") + "…";
+}

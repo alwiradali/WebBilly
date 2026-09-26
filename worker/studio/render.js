@@ -12,7 +12,7 @@ import { label } from "./options.js";
 import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
-import { feedText } from "./text.js";
+import { feedText, clipWords } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -73,7 +73,7 @@ function view(env, url, { r, media }, settings) {
   const waDigits = wa ? (wa.startsWith("44") ? wa : "44" + wa.replace(/^0/, "")) : null;
   const title = r.title;
   const pageTitle = title + " | Megacity Properties";
-  const metaDesc = r.seo_description || summary.replace(/\s+/g, " ").trim().slice(0, 155);
+  const metaDesc = r.seo_description || clipWords(summary, 155);
   const canonical = urls.absUrl(env, url, "listing", r.id);
   const applyHref = urls.pagePath(urls.mode(env, url.hostname), "tenant-application-form") + "?property=" + encodeURIComponent(title) + "&listing=" + encodeURIComponent(r.id);
   const ogImage = cover ? absolute(env, url, cover.url) : absolute(env, url, "assets/mcr/ph-manchester.jpg");

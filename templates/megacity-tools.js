@@ -225,7 +225,7 @@
       var p = val(price);
       var tax = sdltFor(p, buyer());
       setFigure($("#sdTax"), tax, 0);
-      setText($("#sdRate"), p ? ((tax / p) * 100).toFixed(2) + "% effective rate" : "");
+      setText($("#sdRate"), p ? ((tax / p) * 100).toFixed(2) + "%" : "");
       setText($("#sdTotal"), fmt(p + tax));
     }
     price.addEventListener("input", run);
@@ -240,7 +240,7 @@
     function run() {
       var m = RATES.affordability;
       setFigure($("#afIncome"), val(rent) * m.incomeMultiple, 0);
-      setText($("#afGuarantor"), fmt(val(rent) * m.guarantorMultiple) + " with a guarantor");
+      setText($("#afGuarantor"), "a guarantor earning " + fmt(val(rent) * m.guarantorMultiple));
       setText($("#afShare"), "Sharers can combine incomes to reach it.");
     }
     rent.addEventListener("input", run);

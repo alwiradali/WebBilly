@@ -20,6 +20,7 @@ import * as pages from "./pages.js";
 import * as backlinks from "./backlinks.js";
 import { readAll as readSettings } from "./settings.js";
 import * as urls from "./urls.js";
+import { clipWords } from "./text.js";
 import * as redirects from "./redirects.js";
 import * as site from "./site.js";
 
@@ -330,7 +331,7 @@ async function liveTourHead(db, env, url, id) {
   return {
     id, title,
     pageTitle: title + " · 360° tour · Megacity Properties",
-    description: (summary ? summary.slice(0, 155) : "Walk through " + (where || title) + " room by room in a 360° virtual tour from Megacity Properties."),
+    description: (summary ? clipWords(summary, 155) : "Walk through " + (where || title) + " room by room in a 360° virtual tour from Megacity Properties."),
     canonical: urls.absUrl(env, url, "listing", id),
     image: urls.absUrl(env, url, "asset", image || "assets/mcr/ph-manchester.jpg"),
     room: cover && typeof cover.id === "string" ? cover.id : null,
