@@ -10,7 +10,7 @@
    running Worker. */
 import { readFileSync } from "node:fs";
 import * as u from "../worker/studio/urls.js";
-import { AREA_PAGES, AREA_SLUGS, areaPage, districtOf } from "../worker/studio/areas.js";
+import { AREA_PAGES, AREA_SLUGS, areaPage, districtOf, areaForListing } from "../worker/studio/areas.js";
 import { PAGES } from "./megacity-content-index.mjs";
 
 let fails = 0;
@@ -69,6 +69,16 @@ ok(shown("area-swinton") === "manchester-road-swinton", "Swinton shows M27 only"
 ok(shown("area-old-trafford") === "grove-house", "Old Trafford shows M16 only");
 ok(shown("area-city-centre") === "adelphi-apartments", "the city centre shows M1 to M4 (Adelphi Wharf, M3)");
 ok(!areaPage("area-city-centre").homes({ area: "manchester", district: "M15" }), "Hulme (M15) is not called city centre");
+
+/* a listing that is no longer live sends people to the most specific area page */
+const gone = (row) => (areaForListing(row) || { path: "/lettings" }).path;
+ok(gone({ area: "salford", postcode: "M27 5FX" }) === "/letting-agents-swinton", "the let Swinton house (M27) goes to Swinton, not Salford");
+ok(gone({ area: "manchester", postcode: "M16 0TR" }) === "/letting-agents-old-trafford", "a let flat in M16 goes to Old Trafford");
+ok(gone({ area: "salford", postcode: "M3 6FZ" }) === "/letting-agents-manchester-city-centre", "a let flat in M3 goes to the city centre");
+ok(gone({ area: "manchester", postcode: "M15 6AZ" }) === "/letting-agents-manchester", "a let flat in Hulme goes to Manchester");
+ok(gone({ area: "salford", postcode: "M6 7EW" }) === "/letting-agents-salford", "a let room in M6 goes to Salford");
+ok(gone({ area: "stockport", postcode: "SK4 1AA" }) === "/lettings", "somewhere no area page covers goes to every property");
+ok(gone({}) === "/lettings" && gone(null) === "/lettings", "no area, no postcode: every property");
 
 /* ── the pages themselves ────────────────────────────────────────────── */
 const pages = AREA_SLUGS.map((s) => ({ s, h: read(`megacity-${s}.html`) }));

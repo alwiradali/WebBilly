@@ -38,3 +38,18 @@ export function districtOf(postcode) {
   const m = /^\s*([A-Z]{1,2}\d[A-Z\d]?)\s*\d[A-Z]{2}\s*$/i.exec(String(postcode || ""));
   return m ? m[1].toUpperCase() : null;
 }
+
+/* The area page for one listing, most specific first: a let house in M27
+   belongs on the Swinton page before the Salford one. Used when a listing
+   that people (and Google) still ask for is no longer live — the page for its
+   area answers "what else is there near there" far better than the full list.
+   null when no area page covers it. */
+const MOST_SPECIFIC_FIRST = ["area-swinton", "area-old-trafford", "area-city-centre", "area-manchester", "area-salford"];
+export function areaForListing(row) {
+  const c = { area: row && row.area, district: districtOf(row && row.postcode) };
+  for (const slug of MOST_SPECIFIC_FIRST) {
+    const a = areaPage(slug);
+    if (a && a.homes(c)) return a;
+  }
+  return null;
+}

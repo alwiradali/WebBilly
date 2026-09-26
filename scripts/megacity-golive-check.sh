@@ -85,6 +85,8 @@ has "/tenants" 'data-register' "$BASE/tenants"
 has "/tenant-application-form" 'data-apply' "$BASE/tenant-application-form"
 echo "== studio, 404, robots, sitemap, api, assets"
 want "$(st "$BASE/googlece50f0143b6662ac.html")" "200 " "Google Search Console file"
+want "$(st "$BASE/sitemap_index.xml")" "301 $CANON/sitemap.xml" "the old sitemap address"
+want "$(st "$BASE/let/manchester-road-swinton")" "301 $CANON/letting-agents-swinton" "the let Swinton house goes to the Swinton page"
 has "Google Search Console file" 'google-site-verification: googlece50f0143b6662ac.html' "$BASE/googlece50f0143b6662ac.html"
 for a in letting-agents-manchester letting-agents-salford letting-agents-swinton letting-agents-old-trafford letting-agents-manchester-city-centre; do
   want "$(st "$BASE/$a")" "200 " "area page /$a"

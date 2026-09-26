@@ -24,7 +24,7 @@ import { readAll as readSettings, liveRedirects } from "./settings.js";
 import { pruneEvents } from "./enquiries.js";
 import { tourPage, isTourIndex } from "./router.js";
 import { siteEdits } from "./site.js";
-import { AREA_SLUGS } from "./areas.js";
+import { AREA_SLUGS, areaForListing } from "./areas.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
 const PASS_ASSET = /^\/(billy360\/|templates\/assets\/mcr\/|templates\/vendor\/|templates\/megacity-[a-z0-9-]+\.(css|js|json|map)$)/;
@@ -78,6 +78,8 @@ export async function serveMegacityHost(request, env, ctx, url) {
   }
   const db = officeDb(env);
   if (p === "/sitemap.xml") return render.sitemap(env, url, db);
+  /* the old site's sitemap address, still on file in Search Console */
+  if (p === "/sitemap_index.xml") return redirect(origin + "/sitemap.xml", 301, ONE_HOUR);
   if (request.method !== "GET" && request.method !== "HEAD") {
     return new Response("Method not allowed", { status: 405, headers: { allow: "GET, HEAD", "content-type": "text/plain; charset=utf-8" } });
   }
@@ -175,10 +177,15 @@ export async function serveMegacityHost(request, env, ctx, url) {
         if (res.ok) return fin(res, true, "static");
       }
       if (db) {
-        /* a listing that exists but is not live keeps passing people (and
-           search engines) to the list rather than a dead end */
-        const known = await db.prepare(`SELECT id FROM listings WHERE id=?1`).bind(r.slug).first().catch(() => null);
-        if (known) return redirect(origin + "/lettings", 301, FIVE_MIN);
+        /* A listing that exists but is not live (let, withdrawn) keeps passing
+           people, and search engines, somewhere useful rather than a dead end:
+           the page for its area when there is one, so a search for "manchester
+           road swinton" lands on Swinton, and the full list otherwise. */
+        const known = await db.prepare(`SELECT id, area, postcode FROM listings WHERE id=?1`).bind(r.slug).first().catch(() => null);
+        if (known) {
+          const area = areaForListing(known);
+          return redirect(origin + (area ? area.path : "/lettings"), 301, FIVE_MIN);
+        }
       }
       return notFoundResponse(request, env, ctx, url, p, "page");
     }
@@ -283,11 +290,11 @@ export function robotsTxt(env) {
 export function orgJsonLd(origin) {
   const o = {
     "@context": "https://schema.org", "@type": "RealEstateAgent", "@id": origin + "/#agent",
-    name: "Megacity Properties Ltd", legalName: "Megacity Properties Ltd", url: origin + "/",
+    name: "Megacity Properties Ltd", legalName: "Megacity Properties Ltd", alternateName: ["Megacity Properties", "Mega City Properties"], url: origin + "/",
     telephone: "+441612201763", email: "info@megacityproperties.co.uk",
     logo: origin + "/templates/assets/mcr/logo.png",
     address: { "@type": "PostalAddress", streetAddress: "Office 21, The Tube Business Centre, 86 North Street", addressLocality: "Manchester", postalCode: "M8 8RA", addressCountry: "GB" },
-    areaServed: [{ "@type": "City", name: "Manchester" }, { "@type": "City", name: "Salford" }, { "@type": "AdministrativeArea", name: "Greater Manchester" }],
+    areaServed: [{ "@type": "City", name: "Manchester" }, { "@type": "City", name: "Salford" }, { "@type": "Place", name: "Swinton" }, { "@type": "Place", name: "Old Trafford" }, { "@type": "AdministrativeArea", name: "Greater Manchester" }],
     sameAs: ["https://www.facebook.com/profile.php?id=61587577978118", "https://www.linkedin.com/in/megacity-properties-0a6ba6241", "https://www.zoopla.co.uk/find-agents/branch/megacity-properties-salford-115884/"],
     memberOf: [{ "@type": "Organization", name: "ARLA Propertymark", url: "https://www.propertymark.co.uk/" }, { "@type": "Organization", name: "The Property Ombudsman", url: "https://www.tpos.co.uk/" }],
     identifier: [{ "@type": "PropertyValue", name: "Company number", value: "12321291" }, { "@type": "PropertyValue", name: "TPO membership", value: "T06217" }],
