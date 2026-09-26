@@ -174,7 +174,7 @@ window.SS = (function () {
     brownie:    ["Brookies", "Regular", "Biscoff"]
   };
 
-  var allergyNote = "It is your responsibility to make us aware of any allergies we need to cater for.";
+  var allergyNote = "It is your responsibility to make me aware of any allergies I need to cater for.";
 
   /* ---------- the order builder ----------
      `opts` on a category decides which question groups the builder asks.
@@ -210,7 +210,7 @@ window.SS = (function () {
   var terms = [
     { h: "Placing an order", l: [
       "Allow up to 24 hours for a reply.",
-      "Let us know when you would like the cake, any inspiration pictures you have, and what flavours you would like, so we can give you a quote."
+      "Let me know when you would like the cake, any inspiration pictures you have, and what flavours you would like, so I can give you a quote."
     ]},
     { h: "Deposits and final payments", l: [
       "All orders over £30 require a 50% non-refundable deposit (with 5 days notice) via bank transfer.",
