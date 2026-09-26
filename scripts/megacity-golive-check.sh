@@ -57,6 +57,9 @@ while read -r p code to; do want "$(st "$BASE$p")" "$code $CANON$to" "$p"; done 
 /property/9999/ 301 /lettings
 /property/goulden-street-salford-manchester/ 301 /lettings
 /property/default.asp 301 /lettings
+/propertydet.asp?Id=95&propInd=L 301 /let/carlton-road-5
+/propertydet.asp?Id=225&propInd=L 301 /let/ladywell-point
+/propertydet.asp?Id=424242&propInd=L 301 /lettings
 /templates/megacity-skyline 301 /
 /templates/megacity-let-ladywell-point 301 /let/ladywell-point
 /templates/megacity-studio 301 /studio

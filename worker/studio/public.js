@@ -69,7 +69,8 @@ export async function list(db, url, env) {
   if (valid("furnishing", p.get("furnishing")) && p.get("furnishing")) add("l.furnishing=?", p.get("furnishing"));
   if (p.get("pets") === "1") where.push("l.pets IN ('yes','considered')");
   const sort = { rent_asc: "l.rent_pcm ASC", rent_desc: "l.rent_pcm DESC", newest: "l.published_at DESC" }[p.get("sort")] || "l.published_at DESC";
-  const rs = await db.prepare(`${BASE}${where.length ? " AND " + where.join(" AND ") : ""} ORDER BY ${sort} LIMIT 200`).bind(...binds).all();
+  /* homes a tenant can have first, "Let agreed" after them, whatever the sort */
+  const rs = await db.prepare(`${BASE}${where.length ? " AND " + where.join(" AND ") : ""} ORDER BY (l.availability = 'let_agreed') ASC, ${sort} LIMIT 200`).bind(...binds).all();
   const rows = rs.results || [];
 
   if (p.get("view") === "search") {

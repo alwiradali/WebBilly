@@ -107,6 +107,17 @@ export async function serveMegacityHost(request, env, ctx, url) {
   const rm = /^\/properties\/([A-Za-z0-9._-]{1,48})\/?$/.exec(p);
   if (rm) { const hit = await refListingPath(db, rm[1]); return redirect(origin + hit.to, hit.status, hit.status === 301 ? ONE_HOUR : FIVE_MIN); }
   if (/^\/property(\/.*)?$/.test(p)) return redirect(origin + "/lettings", 301, ONE_HOUR);
+  /* The old site's own property page, propertydet.asp?Id=95&propInd=L. 10ninety's
+     "Website" button on every property still builds this address (it was set up
+     for the old site), and Google has them indexed. Id is the same number as
+     /property/<id>/, so it goes the same way: to the listing, or to the lettings
+     list when the number is not one we know — a property added after the move,
+     say — never to a 404. The query is dropped: it only ever named the page. */
+  if (/^\/property[a-z]*\.asp$/.test(p)) {
+    let id = null;
+    for (const [k, v] of url.searchParams) if (k.toLowerCase() === "id" && /^\d{1,9}$/.test(v)) id = v;
+    return redirect(origin + (id ? await legacyListingPath(db, id) : "/lettings"), 301, ONE_HOUR);
+  }
   if (LEGACY_FILE.test(p)) return notFoundResponse(request, env, ctx, url, raw, "legacy");
 
   const r = urls.resolveRoot(p);

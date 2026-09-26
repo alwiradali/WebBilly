@@ -86,7 +86,12 @@ ok(none.availability === null, "no date at all stays blank rather than guessing"
 
 ok(listings.every((l) => l.status === "live"), "all nine are on the market today");
 const let7 = toListing({ ...feed.properties[0], status_id: 7 }, { today: TODAY });
-ok(let7.status === "let", "status_id 7 still reads as let, though the revert means it will not arrive");
+ok(let7.status === "live" && let7.availability === "let_agreed" && let7.availableFrom === null,
+   "a Let property (status_id 7) is shown, marked Let agreed — never as available", { status: let7.status, availability: let7.availability });
+const sold6 = toListing({ ...feed.properties[0], status_id: 6 }, { today: TODAY });
+ok(sold6.status === "live" && sold6.availability === "let_agreed", "status_id 6 the same");
+const open0 = toListing({ ...feed.properties[0], status_id: 0 }, { today: TODAY });
+ok(open0.status === "live" && open0.availability !== "let_agreed", "an available property is still shown with its own date");
 ok(toListing({ ...feed.properties[0], status_id: 99 }, { today: TODAY }) === null, "a status we have not been told about is dropped, not guessed");
 ok(toListing({ ...feed.properties[0], trans_type_id: 1 }, { today: TODAY }) === null, "a sales record never becomes a letting");
 
