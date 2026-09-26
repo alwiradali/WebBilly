@@ -94,6 +94,18 @@ function stubDb(opts = {}) {
   ok(/source='tenninety'/.test(w.sql), "  and only ever a listing the feed owns, never a hand-made one");
 }
 
+/* ── a property back on the market is written back, not inserted again ─────── */
+
+{
+  const db = stubDb({});
+  const rows = NINE.map((l) => ({ ...l, pinned: 0, status: l.ref === "RL0089" ? "withdrawn" : l.status }));
+  const r = await applyPlan(db, planSync(rows, NINE), {});
+  ok(r.updated === 1 && r.created === 0 && !r.failed.length, `the returning property is one update, no insert, no failure (${r.updated}/${r.created}/${r.failed.length})`);
+  ok(!db.log.some((s) => /INSERT INTO listings/.test(s.sql)), "  no INSERT INTO listings (its id already exists)");
+  const up = db.log.find((s) => /UPDATE listings SET/.test(s.sql) && Array.isArray(s.args) && s.args[0] === "drayton-street");
+  ok(!!up && up.args.includes("live"), "  and the update sets it live");
+}
+
 /* ── one bad property does not stop the rest ──────────────────────────────── */
 
 {

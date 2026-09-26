@@ -118,14 +118,25 @@ export function planSync(existing, incoming, opts = {}) {
     return plan;
   }
 
-  const have = new Map((existing || []).map((r) => [r.id, r]));
+  /* Every row the feed has ever given us, for matching; only the ones on the
+     website, for removal. A property that was Let, left the feed and was
+     withdrawn, and is now back On The Market is the same property, so it is
+     an update that puts it live again, not a new row. Treating it as new
+     tried to insert an id that already existed, failed every minute, and the
+     property never came back (73 Drayton Street, RL0089, 26 Sep). */
+  const all = new Map((existing || []).map((r) => [r.id, r]));
+  const have = new Map((existing || []).filter((r) => r.status !== "withdrawn" && !r.deletedAt).map((r) => [r.id, r]));
   const want = new Map((incoming || []).map((r) => [r.id, r]));
+  plan.binned = [];
 
   for (const [id, row] of want) {
-    const prev = have.get(id);
+    const prev = all.get(id);
     if (!prev) { plan.create.push(row); continue; }
+    /* In the Studio's Bin: somebody put it there on purpose, so the feed does
+       not overrule them. It is reported, and restoring it is one click. */
+    if (prev.deletedAt) { plan.binned.push(row); continue; }
     const fields = changedFields(prev, row);
-    if (fields.length) plan.update.push({ ...row, _changed: fields });
+    if (fields.length) plan.update.push({ ...row, _changed: fields, _returning: prev.status === "withdrawn" });
     else plan.unchanged.push(row);
   }
 
@@ -164,7 +175,10 @@ export function describePlan(plan) {
   if (plan.reason) return `Nothing changed — ${plan.reason}.`;
   const bits = [];
   if (plan.create.length) bits.push(`${plan.create.length} added`);
-  if (plan.update.length) bits.push(`${plan.update.length} updated`);
+  const back = plan.update.filter((r) => r._returning).length;
+  if (back) bits.push(`${back} back on the market`);
+  if (plan.update.length - back) bits.push(`${plan.update.length - back} updated`);
+  if (plan.binned && plan.binned.length) bits.push(`${plan.binned.length} left in the Studio's Bin`);
   if (plan.remove.length) bits.push(`${plan.remove.length} taken off`);
   if (plan.held.length) bits.push(`${plan.held.length} kept (pinned)`);
   if (!bits.length) return `Up to date — ${plan.unchanged.length} properties, nothing changed.`;
@@ -283,10 +297,10 @@ export async function applyPlan(db, plan, opts = {}) {
 export async function existingSynced(db) {
   if (!db) return [];
   const sql = `SELECT id, pinned, ${COLS.map(([n]) => n).join(", ")}
-                 FROM listings WHERE source='tenninety' AND deleted_at IS NULL AND status != 'withdrawn'`;
+                 , deleted_at FROM listings WHERE source='tenninety'`;
   const rows = (await db.prepare(sql).all()).results || [];
   const out = rows.map((r) => ({
-    id: r.id, pinned: r.pinned, ref: r.ref, status: r.status, title: r.title, headline: r.headline,
+    id: r.id, pinned: r.pinned, deletedAt: r.deleted_at || null, ref: r.ref, status: r.status, title: r.title, headline: r.headline,
     type: r.type, letType: r.let_type, rentPcm: r.rent_pcm, deposit: r.deposit, bills: r.bills,
     availability: r.availability, availableFrom: r.available_from, councilTaxBand: r.council_tax_band,
     bedrooms: r.bedrooms, bathrooms: r.bathrooms, receptions: r.receptions, hmoLicensed: r.hmo_licensed,
@@ -331,12 +345,12 @@ export async function runSync(env, db, opts = {}) {
   const out = {
     ok: feedOk && !result.failed.length,
     feedOk, why: why || plan.reason,
-    counted: { feed: listings.length, existing: existing.length, skipped: skipped.length },
+    counted: { feed: listings.length, existing: existing.filter((r) => r.status !== "withdrawn" && !r.deletedAt).length, skipped: skipped.length + ((plan.binned || []).length) },
     ...result,
     summary: feedOk ? describePlan(plan) : `Nothing changed — the feed could not be read (${why}).`,
     at: opts.now || nowIso(),
     /* what 10ninety sent that is not on the website, and why */
-    skipped: skipped.slice(0, 20),
+    skipped: skipped.concat((plan.binned || []).map((r) => ({ ref: r.ref, address: [r.address1, r.town].filter(Boolean).join(", "), why: "it is in the Studio's Bin (restore it there to show it)" }))).slice(0, 20),
     /* the newest "last updated" among the properties 10ninety is sending: when
        it is older than a change Walid just made, 10ninety has not rebuilt its
        feed yet (it does that on Portal Export, and overnight) */

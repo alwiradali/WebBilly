@@ -124,6 +124,27 @@ ok(/Nothing changed/.test(describePlan(planSync(asRows(NINE), [], { feedOk: fals
     "a listing with no signature on either side is not treated as changed");
 }
 
+/* ── a property that comes back on the market ──────────────────────────────
+   73 Drayton Street was Let, left the feed and was withdrawn; Walid put it
+   back On The Market and the site stayed on seven, because the planner only
+   compared against listings still live and tried to add it as new. */
+{
+  const drayton = NINE.find((l) => l.ref === "RL0089");
+  const rows = asRows(NINE).map((r) => (r.ref === "RL0089" ? { ...r, status: "withdrawn" } : r));
+  const q = planSync(rows, NINE);
+  ok(q.create.length === 0, "a returning property is not added as new (that insert failed on its existing id)");
+  const u = q.update.find((r) => r.id === drayton.id);
+  ok(!!u && u.status === "live" && u._returning === true, "  it is updated back to live");
+  ok(q.remove.length === 0 && !q.refusedRemoval, "  and nothing else is touched");
+  ok(/1 back on the market/.test(describePlan(q)), `  and the summary says so: "${describePlan(q)}"`);
+  const stillGone = planSync(rows, NINE.filter((l) => l.ref !== "RL0089"));
+  ok(stillGone.remove.length === 0 && stillGone.update.length === 0 && stillGone.create.length === 0, "a withdrawn property still absent from the feed is left alone, not withdrawn again");
+  const binned = planSync(asRows(NINE).map((r) => (r.ref === "RL0089" ? { ...r, deletedAt: "2026-09-20T10:00:00Z" } : r)), NINE);
+  ok(binned.create.length === 0 && binned.update.length === 0 && binned.binned.length === 1, "one the office put in the Bin stays there, reported rather than re-added");
+  const eightOfNine = planSync(rows, NINE.filter((l) => l.ref !== "RL0060"));
+  ok(!eightOfNine.refusedRemoval && eightOfNine.remove.length === 1, "a withdrawn row does not count towards the one-third removal guard");
+}
+
 /* ── what he uploads besides text and photographs ──────────────────────────
    A new floor plan, EPC, brochure, tour link or a changed feature list used to
    leave a property "unchanged", so it never reached the website. */
