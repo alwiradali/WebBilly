@@ -176,7 +176,14 @@ html.lenis-scrolling .wow-aurora::after{animation-play-state:paused!important}
    the black-velvet void + constellation show through everywhere. */
 .dala-bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
 body{background:#0a0a0a}
-.site-header,#main,.powerstrip,.site-footer,.chat,.toast{position:relative;z-index:1}
+/* The header is NOT in this list, and must not be put back into it. This
+   rule exists to lift page content above .dala-bg, which sits at z-index 0.
+   The header is already above it: style.css gives it position:fixed and
+   z-index:100. Forcing it to relative/1 took the fix away twice over -- it
+   stopped being fixed, and it dropped below .hero-inner at z-index 2, so on
+   a phone the open menu was painted over by the hero. The links were there,
+   readable only where they missed the headline. */
+#main,.powerstrip,.site-footer,.chat,.toast{position:relative;z-index:1}
 .hero,.section,.section-alt,.statement,.panels-sec,.pinzoom,.powerstrip{background:transparent!important}
 .pinzoom .pz-stage{background:transparent}
 /* let the hero bulb show through — only a faint bottom fade for legibility */
