@@ -246,6 +246,10 @@ body.menu-on .menu-open{opacity:0;pointer-events:none}
 
 /* ---------- section furniture ---------- */
 .sec{position:relative;padding:clamp(72px,11vh,140px) 0;z-index:1}
+/* Where two sections meet, both paddings stack — so the seam is twice the
+   gap you get inside one, and on a phone that read as a hole between the
+   reviews and the contacts. Tighter below the tablet breakpoint. */
+@media (max-width:700px){.sec{padding:clamp(48px,7vh,74px) 0}}
 .sec-grape{background:var(--grape);color:var(--on-grape)}
 .sec-grape h2,.sec-grape h3{color:var(--cream)}
 .sec-cream{background:var(--paper-2)}
@@ -724,10 +728,6 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .rv-score b{font-family:var(--display);font-size:2.3rem;color:var(--cream);line-height:1}
 .stars{display:inline-flex;gap:2.5px}
 .stars svg{width:17px;height:17px;fill:#f3c14b;flex:none}
-.rv-note{
-  font-family:var(--cond);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--grape);background:var(--cream);padding:6px 12px;border-radius:var(--r);
-}
 .rvs{display:grid;gap:clamp(12px,1.8vw,20px)}
 @media (min-width:820px){.rvs{grid-template-columns:repeat(3,1fr)}}
 .rv{

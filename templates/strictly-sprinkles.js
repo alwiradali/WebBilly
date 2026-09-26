@@ -417,9 +417,6 @@
     sc.appendChild(el("b", null, "5.0"));
     sc.appendChild(stars(5));
     head.appendChild(sc);
-    if (D.reviewsAreExamples) {
-      head.appendChild(el("span", { class: "rv-note" }, "Examples only — her real reviews go here"));
-    }
     var host = $("#rvs");
     D.reviews.forEach(function (r, i) {
       var c = el("article", { class: "rv", "data-rv": "", "data-rv-d": String(i + 1) });
@@ -478,16 +475,17 @@
       host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
       host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
       host.appendChild(card("fb", "Facebook", B.name, FB));
-      host.appendChild(card("ig", "The studio", "@" + B.instagramStudio, "https://instagram.com/" + B.instagramStudio));
     }
 
     var ig = $("#igBtn"); if (ig) ig.href = IG;
     var dw = $("#dockWa"); if (dw) dw.href = waLink(intro);
 
     var fc = $("#footContact");
-    if (fc) [["WhatsApp " + phoneText, waLink(intro)],
-     ["@" + B.instagram, IG],
-     [B.email, mailLink("Enquiry from your website", intro)],
+    /* the channel, not the details — her number and address are written out
+       in the contact section, which is where somebody goes looking for them */
+    if (fc) [["WhatsApp", waLink(intro)],
+     ["Email", mailLink("Enquiry from your website", intro)],
+     ["Instagram", IG],
      ["TikTok", TT], ["Facebook", FB]].forEach(function (p) {
       var li = el("li");
       li.appendChild(el("a", { href: p[1], target: "_blank", rel: "noopener" }, p[0]));
@@ -836,14 +834,33 @@
     if (lenis) lenis.scrollTo(target, { offset: -74, duration: 1.2 });
     else target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
+  /* A tap in the drawer used to run the same 1.2s scroll, which from the top
+     of the page to the contact section is the whole site going past in a
+     blur. The drawer takes half a second to fade, so the move happens behind
+     it instead: what you see is the drawer lifting on the section you asked
+     for.
+
+     html carries scroll-behavior:smooth as the no-Lenis fallback, and that
+     alone turns this jump back into a glide — it is why asking Lenis for an
+     immediate scroll appeared to do nothing. Off for the assignment, back on
+     the next frame. */
+  function jumpTo(target) {
+    var y = target.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - 74;
+    var root = document.documentElement, prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else scrollTo(0, y);
+    requestAnimationFrame(function () { root.style.scrollBehavior = prev; });
+  }
   document.addEventListener("click", function (e) {
     var a = e.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute("href");
     if (id === "#" || id.length < 2) return;
     var t = document.querySelector(id); if (!t) return;
+    var fromDrawer = !!a.closest("#menu");
     e.preventDefault();
     closeMenu();
-    goTo(t);
+    if (fromDrawer) jumpTo(t); else goTo(t);
     history.replaceState(null, "", id);
   });
 

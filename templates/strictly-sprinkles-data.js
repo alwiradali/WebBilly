@@ -27,7 +27,6 @@ window.SS = (function () {
     whatsapp: "447378684907",
     email: "Strictlysprinkles@outlook.com",
     instagram: "strictly_sprinkles",
-    instagramStudio: "studio_bystrictlysprinkles",
     tiktok: "strictlysprinkles",
     facebook: "https://www.facebook.com/share/1NUqhH57mA/",
     /* her TikTok bio says DMs there are not monitored — the site sends
@@ -228,10 +227,10 @@ window.SS = (function () {
 
   /* ---------- reviews ----------
      PLACEHOLDERS. Nothing here is a real customer: they are written as
-     examples so the section can be judged with words in it, and every one
-     is labelled as an example on the page. Replace `reviews` with her real
-     Google reviews and delete `reviewsAreExamples` to drop the label. */
-  var reviewsAreExamples = true;
+     examples so the section can be judged with words in it. Each one still
+     carries "Example review" where a customer's name goes, so nothing here
+     passes itself off as real — replace the whole list with her own Google
+     reviews, names and all, before the site is shown to anybody. */
   var reviews = [
     { name: "Example review", stars: 5, when: "—",
       text: "Ordered a treatbox for my sister's baby shower and it turned out exactly like the picture I sent. Everything tasted as good as it looked." },
@@ -288,6 +287,6 @@ window.SS = (function () {
     platters: platters, individual: individual, treatboxes: treatboxes,
     babyboxes: babyboxes, seasonal: seasonal, flavours: flavours, allergyNote: allergyNote,
     occasions: occasions, terms: terms, cakeCare: cakeCare,
-    reviews: reviews, reviewsAreExamples: reviewsAreExamples, work: work, faq: faq
+    reviews: reviews, work: work, faq: faq
   };
 })();
