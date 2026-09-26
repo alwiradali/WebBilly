@@ -122,3 +122,17 @@
 
 /templates/strictly-sprinkles-menu
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+# The six category pages, written by scripts/strictly-category-pages.py.
+/templates/strictly-sprinkles-cakes
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/strictly-sprinkles-cookies
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/strictly-sprinkles-party-platters
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/strictly-sprinkles-individual-treats
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/strictly-sprinkles-treatboxes
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/strictly-sprinkles-baby-boxes
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

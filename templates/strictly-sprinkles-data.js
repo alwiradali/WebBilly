@@ -181,23 +181,23 @@ window.SS = (function () {
      `opts` on a category decides which question groups the builder asks.
      Drop "filling" from a category and that step stops being asked. */
   var categories = [
-    { id: "cakes",      label: "Cakes",            items: cakes,      unit: "cake",
+    { id: "cakes", slug: "cakes", blurb: "Every cake is made from scratch for your date and finished to your design. Pick a size below — the shape, the colours and the detail are all yours, and anything not listed can be quoted.",      label: "Cakes",            items: cakes,      unit: "cake",
       opts: ["sponge", "filling", "frosting"], img: "work/tiered-blue-gold.webp",
       note: "Every cake is made to your design — send a picture and I'll price it." },
-    { id: "cookies",    label: "Cookies",          items: cookies,    unit: "dozen",
+    { id: "cookies", slug: "cookies", blurb: "Hand-iced and personalised: names, dates, monograms, florals, embossed detail and edible images. Sold by the dozen, boxed and ready to hand out.",    label: "Cookies",          items: cookies,    unit: "dozen",
       opts: [], img: "work/nikkah-cookies.webp",
       note: "Personalised with names, dates and your colours." },
-    { id: "platters",   label: "Party platters",   items: platters,   unit: "platter",
+    { id: "platters", slug: "party-platters", blurb: "A little of everything on one board, packed to match your theme. Three sizes, and the flavours inside are yours to choose.",   label: "Party platters",   items: platters,   unit: "platter",
       opts: ["platterFlavours"], img: "work/dessert-table.webp",
       note: "A little of everything, packed to match your theme." },
-    { id: "individual", name: "Individual treats", label: "Individual treats",
+    { id: "individual", slug: "individual-treats", blurb: "Party extras, gift boxes and dessert tables. Everything here is per dozen, so you can mix as many as you like.", name: "Individual treats", label: "Individual treats",
       items: null, groups: individual, unit: "dozen",
       opts: ["treatFlavour"], img: "work/macaron-boxes.webp",
       note: "Per dozen only. Perfect for party extras and gift boxes." },
-    { id: "treatboxes", label: "Treatboxes",       items: treatboxes, unit: "box",
+    { id: "treatboxes", slug: "treatboxes", blurb: "Five sizes, filled with whichever treats you like and finished in your colours. Quoted per order because no two are the same.", label: "Treatboxes",       items: treatboxes, unit: "box",
       opts: ["treatFlavour"], img: "work/nikkah-box.webp",
       note: "Five sizes, filled with whichever treats you like." },
-    { id: "babyboxes",  label: "Baby boxes",       items: babyboxes,  unit: "box",
+    { id: "babyboxes", slug: "baby-boxes", blurb: "For showers, gender reveals and new arrivals — iced cookies, macarons, cakesicles and a bento to match, boxed and ribboned.",  label: "Baby boxes",       items: babyboxes,  unit: "box",
       opts: ["treatFlavour"], img: "work/baby-girl-box.webp",
       note: "For showers, gender reveals and new arrivals." }
   ];

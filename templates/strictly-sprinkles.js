@@ -103,8 +103,8 @@
       var count = c.groups
         ? c.groups.reduce(function (a, g) { return a + g.items.length; }, 0)
         : c.items.length;
-      var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""), href: "#enquire",
-                        "data-cat": c.id, "data-rv": "", "data-rv-d": String((i % 3) + 1) });
+      var a = el("a", { class: "tile" + (i === 0 || i === D.categories.length - 1 ? " wide" : ""),
+                        href: catHref(c), "data-rv": "", "data-rv-d": String((i % 3) + 1) });
       var art = el("span", { class: "tile-art" });
       art.appendChild(el("img", { src: A + c.img, alt: "", loading: "lazy" }));
       a.appendChild(art);
@@ -115,11 +115,6 @@
       body.appendChild(el("span", { class: "tile-from" }, priceFrom(c)));
       a.appendChild(body);
       host.appendChild(a);
-    });
-    /* clicking a tile pre-selects that category in the builder */
-    host.addEventListener("click", function (e) {
-      var t = e.target.closest("[data-cat]"); if (!t) return;
-      setCat(t.getAttribute("data-cat"));
     });
   })();
 
@@ -142,10 +137,12 @@
     var cols = el("div", { class: "menu-cols" });
     cols.appendChild(colA); cols.appendChild(colB);
 
-    function block(title, sub, build, where) {
+    function block(title, sub, build, where, catId) {
       var d = el("div", { class: "menu-block", "data-rv": "" });
       var h = el("h3", null, title);
       if (sub) h.appendChild(el("small", null, sub));
+      var cc = catId && catBySlug(catId);
+      if (cc) h.appendChild(el("a", { class: "block-more", href: catHref(cc) }, "See the options"));
       d.appendChild(h);
       build(d);
       (where || host).appendChild(d);
@@ -189,20 +186,121 @@
         g.appendChild(c);
       });
       d.appendChild(g);
-    });
+    }, null, "platters");
 
     host.appendChild(cols);
-    block("Cakes", "each", function (d) { d.appendChild(list(D.cakes)); }, colA);
-    block("Cookies", "per dozen", function (d) { d.appendChild(list(D.cookies)); }, colA);
-    block("Treatboxes", "quoted per order", function (d) { d.appendChild(list(D.treatboxes)); }, colA);
+    block("Cakes", "each", function (d) { d.appendChild(list(D.cakes)); }, colA, "cakes");
+    block("Cookies", "per dozen", function (d) { d.appendChild(list(D.cookies)); }, colA, "cookies");
+    block("Treatboxes", "quoted per order", function (d) { d.appendChild(list(D.treatboxes)); }, colA, "treatboxes");
 
     block("Individual treats", "per dozen only", function (d) {
       D.individual.forEach(function (g) {
         d.appendChild(el("h4", { class: "grp" }, g.group));
         d.appendChild(list(g.items, "per dozen"));
       });
-    }, colB);
-    block("Baby boxes", "quoted per order", function (d) { d.appendChild(list(D.babyboxes)); }, colB);
+    }, colB, "individual");
+    block("Baby boxes", "quoted per order", function (d) { d.appendChild(list(D.babyboxes)); }, colB, "babyboxes");
+  })();
+
+  /* ---------- a category's own page ----------
+     One renderer, six pages: <body data-cat="cakes"> picks the category out of
+     the data file and everything on the page comes from there. */
+  var PAGE_CAT = document.body.getAttribute("data-cat");
+  function catBySlug(x) {
+    return D.categories.filter(function (c) { return c.id === x || c.slug === x; })[0];
+  }
+  function catHref(c) { return "/templates/strictly-sprinkles-" + c.slug; }
+  function enquireHref(itemId) {
+    return "/templates/strictly-sprinkles" + (itemId ? "?item=" + encodeURIComponent(itemId) : "") + "#enquire";
+  }
+
+  (function categoryPage() {
+    if (!PAGE_CAT) return;
+    var c = catBySlug(PAGE_CAT); if (!c) return;
+
+    var t = $("#catTitle");   if (t) t.textContent = c.label;
+    var bl = $("#catBlurb");  if (bl) bl.textContent = c.blurb || c.note || "";
+    var cr = $("#catCrumb");  if (cr) cr.textContent = c.label;
+    document.title = c.label + " — Strictly Sprinkles";
+    var hi = $("#catHeroImg");
+    if (hi) { hi.src = A + c.img; hi.alt = c.label + " by Strictly Sprinkles"; }
+    var ce = $("#catEnquire"); if (ce) ce.href = enquireHref(null);
+
+    /* the options */
+    var host = $("#catOptions"); if (!host) return;
+    function card(it) {
+      var a = el("article", { class: "opt-card", "data-rv": "" });
+      var art = el("div", { class: "opt-art" });
+      art.appendChild(el("img", { src: A + it.img, alt: "", loading: "lazy" }));
+      a.appendChild(art);
+      var inn = el("div", { class: "opt-in" });
+      inn.appendChild(el("h3", null, it.name));
+      if (it.blurb) inn.appendChild(el("p", { class: "opt-blurb" }, it.blurb));
+      if (it.includes) {
+        var ul = el("ul", { class: "opt-inc" });
+        it.includes.forEach(function (x) { ul.appendChild(el("li", null, x)); });
+        inn.appendChild(ul);
+      }
+      var foot = el("div", { class: "opt-foot" });
+      foot.appendChild(typeof it.price === "number"
+        ? el("b", null, money(it.price) + (it.unit ? " " + it.unit : (c.unit === "dozen" ? " per dozen" : "")))
+        : el("b", { class: "soft" }, "Price on enquiry"));
+      foot.appendChild(el("a", { class: "btn btn-line btn-sm", href: enquireHref(it.id) }, "Enquire"));
+      inn.appendChild(foot);
+      a.appendChild(inn);
+      return a;
+    }
+    if (c.groups) {
+      c.groups.forEach(function (g) {
+        host.appendChild(el("h2", { class: "opt-group", "data-rv": "" }, g.group));
+        var grid = el("div", { class: "opt-grid" });
+        g.items.forEach(function (it) { grid.appendChild(card(it)); });
+        host.appendChild(grid);
+      });
+    } else {
+      var grid = el("div", { class: "opt-grid" });
+      c.items.forEach(function (it) { grid.appendChild(card(it)); });
+      host.appendChild(grid);
+    }
+
+    /* the flavour lists this category actually uses */
+    var fh = $("#catFlavours");
+    if (fh) {
+      var sets = [];
+      if ((c.opts || []).indexOf("sponge") > -1) {
+        sets.push(["Sponge", D.flavours.sponge], ["Filling", D.flavours.filling], ["Frosting", D.flavours.frosting]);
+      } else if (c.id === "cookies") {
+        sets.push(["Finishes", ["Royal icing — flooded and hand-piped", "Fondant — smooth tops and embossed detail", "Edible images", "Personalised names and dates"]]);
+      } else {
+        sets.push(["Cheesecake", D.flavours.cheesecake], ["Macaron", D.flavours.macaron],
+                  ["Cake pots and mini cakes", D.flavours.cakepot], ["Cupcakes", D.flavours.cupcake],
+                  ["Brownies", D.flavours.brownie]);
+      }
+      sets.forEach(function (pair, i) {
+        var col = el("div", { class: "flav-col", "data-rv": "", "data-rv-d": String((i % 3) + 1) });
+        col.appendChild(el("h3", null, pair[0]));
+        var ul = el("ul", { class: "chips" });
+        pair[1].forEach(function (x) { ul.appendChild(el("li", null, x)); });
+        col.appendChild(ul);
+        fh.appendChild(col);
+      });
+    }
+
+    /* the other five, so nobody has to go back to find them */
+    var oh = $("#catOthers");
+    if (oh) {
+      D.categories.filter(function (x) { return x.id !== c.id; }).forEach(function (x, i) {
+        var a = el("a", { class: "tile", href: catHref(x), "data-rv": "", "data-rv-d": String((i % 3) + 1) });
+        var art = el("span", { class: "tile-art" });
+        art.appendChild(el("img", { src: A + x.img, alt: "", loading: "lazy" }));
+        a.appendChild(art);
+        var body = el("span", { class: "tile-body" });
+        body.appendChild(el("h3", null, x.label));
+        body.appendChild(el("span", { class: "tile-from" }, priceFrom(x)));
+        a.appendChild(body);
+        oh.appendChild(a);
+      });
+    }
   })();
 
   /* -- seasonal collections (menu page) -- */
@@ -237,6 +335,12 @@
         col.appendChild(ul);
         host.appendChild(col);
       });
+  })();
+
+  /* The allergy note stands on its own: it belongs to every page that lists
+     flavours, and it was being skipped on the category pages because it sat
+     inside a function that returns early without the home flavour grid. */
+  (function allergy() {
     var an = $("#allergyNote"); if (an) an.textContent = D.allergyNote;
   })();
 
@@ -704,7 +808,27 @@
 
   if (HAS_BUILDER) {
     $("#builder").addEventListener("submit", function (e) { e.preventDefault(); });
-    setCat(D.categories[0].id, true);   /* start on cakes */
+
+    /* A category page sends people here with ?item=<id>. Find which category
+       owns it, select both, and let the #enquire hash do the scrolling. */
+    var want = null;
+    try { want = new URLSearchParams(location.search).get("item"); } catch (e) {}
+    var owner = null;
+    if (want) {
+      for (var k = 0; k < D.categories.length; k++) {
+        if (allItems(D.categories[k]).some(function (i) { return i.id === want; })) { owner = D.categories[k]; break; }
+      }
+    }
+    if (owner) {
+      setCat(owner.id, true);
+      state.item = want;
+      $$("button[data-item]", itemOpts).forEach(function (x) {
+        x.setAttribute("aria-pressed", String(x.getAttribute("data-item") === want));
+      });
+      summarise();
+    } else {
+      setCat(D.categories[0].id, true);   /* start on cakes */
+    }
   }
 
   /* ============================================================
@@ -846,51 +970,91 @@
   setTimeout(done, 3600);   /* never let a slow image hold the page hostage */
 
   /* ---------- the hero's sprinkles ----------
-     Dots seeded around the mark and thinning outward, so the logo looks like
-     it is shedding onto the page. Positions are recomputed on resize because
-     the mark moves with the layout. */
+     A canvas, not DOM nodes. Eighty elements each running its own CSS
+     animation shuttle back and forth along a line — `alternate` makes every
+     dot stop dead and reverse, which reads as jitter rather than drift. Here
+     each particle travels outward from the mark continuously and is reseeded
+     at the ring when it reaches the edge, so the stream never stops and never
+     doubles back. One canvas also costs one layer instead of eighty, which is
+     what pays for four times as many dots. */
   (function dust() {
     var layer = $("#heroDust"), mark = $(".hero-mark"), hero = $("#hero");
     if (!layer || !mark || !hero || reduced) return;
+    var cv = el("canvas"); cv.setAttribute("aria-hidden", "true");
+    layer.appendChild(cv);
+    var ctx = cv.getContext("2d"); if (!ctx) return;
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);   /* 3 buys nothing for soft dots */
+    var W = 0, H = 0, cx = 0, cy = 0, r0 = 0, maxR = 0;
+    var parts = [], live = true, last = 0;
+
+    function measure() {
+      var hb = hero.getBoundingClientRect(), mb = mark.getBoundingClientRect();
+      W = Math.round(hb.width); H = Math.round(hb.height);
+      if (!W || !H) return false;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.width = W + "px"; cv.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#fdeae8";                 /* setTransform resets nothing else, but a
+                                                    resized canvas loses its fill style */
+      cx = mb.left - hb.left + mb.width / 2;
+      cy = mb.top - hb.top + mb.height / 2;
+      r0 = mb.width * 0.42;                      /* just inside her speckled ring */
+      maxR = Math.max(W, H) * 0.92;
+      return true;
+    }
+
+    /* `spread` seeds a particle anywhere along its journey, so the field is
+       already full on the first frame instead of puffing out all at once */
+    function seed(p, spread) {
+      p.a = Math.random() * Math.PI * 2;
+      p.r = spread ? r0 + Math.random() * (maxR - r0) : r0 * (0.9 + Math.random() * 0.2);
+      p.sp = 4 + Math.random() * 13;             /* px per second, outward */
+      p.spin = (Math.random() - 0.5) * 0.05;     /* radians per second, a slow swirl */
+      p.size = 0.45 + Math.random() * 1.5;
+      p.al = 0.16 + Math.random() * 0.46;
+      return p;
+    }
 
     function build() {
-      layer.textContent = "";
-      var hb = hero.getBoundingClientRect(), mb = mark.getBoundingClientRect();
-      if (!hb.width || !mb.width) return;
-      var cx = mb.left - hb.left + mb.width / 2;
-      var cy = mb.top - hb.top + mb.height / 2;
-      var r0 = mb.width * 0.46;                    /* the ring's own radius */
-      var reach = Math.max(hb.width, hb.height) * 0.62;
-      var n = innerWidth < 700 ? 38 : 82;
-      var frag = document.createDocumentFragment();
-      for (var i = 0; i < n; i++) {
-        /* Biased toward the mark, not spread evenly by area: they have to
-           read as shedding off the ring, and an even scatter just reads as
-           dust on the screen. */
-        var t = Math.pow(Math.random(), 1.9);
-        var dist = r0 + t * reach;
-        var ang = Math.random() * Math.PI * 2;
-        var x = cx + Math.cos(ang) * dist;
-        var y = cy + Math.sin(ang) * dist * 0.82;   /* the hero is wider than tall */
-        if (x < -20 || x > hb.width + 20 || y < -20 || y > hb.height + 20) continue;
-        var fade = 1 - t;                            /* thinner the further out */
-        var size = (1.4 + Math.random() * 1.9 * (0.5 + fade * 0.5)).toFixed(2);
-        var dur = 16 + Math.random() * 20;
-        var b = el("i");
-        b.style.cssText =
-          "left:" + x.toFixed(1) + "px;top:" + y.toFixed(1) + "px;" +
-          "width:" + size + "px;height:" + size + "px;" +
-          "opacity:" + (0.07 + fade * 0.46).toFixed(3) + ";" +
-          "--dx:" + (Math.cos(ang) * (14 + Math.random() * 40)).toFixed(0) + "px;" +
-          "--dy:" + (Math.sin(ang) * (10 + Math.random() * 30) - 8).toFixed(0) + "px;" +
-          "animation:dust " + dur.toFixed(1) + "s ease-in-out " +
-          (-Math.random() * dur).toFixed(1) + "s infinite alternate;";
-        frag.appendChild(b);
+      if (!measure()) return;
+      var n = innerWidth < 700 ? 150 : 300;
+      parts = [];
+      for (var i = 0; i < n; i++) parts.push(seed({}, true));
+    }
+
+    function frame(now) {
+      requestAnimationFrame(frame);
+      if (!live || !W) { last = now; return; }
+      var dt = Math.min((now - last) / 1000, 0.05); last = now;   /* cap after a tab switch */
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        p.r += p.sp * dt;
+        p.a += p.spin * dt;
+        if (p.r > maxR) seed(p, false);
+        var t = (p.r - r0) / (maxR - r0);                  /* 0 at the ring, 1 at the edge */
+        var fade = Math.min(t / 0.10, 1) * (1 - Math.max(0, (t - 0.45) / 0.55));
+        if (fade <= 0) continue;
+        var x = cx + Math.cos(p.a) * p.r;
+        var y = cy + Math.sin(p.a) * p.r * 0.86;           /* the hero is wider than tall */
+        if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+        ctx.globalAlpha = p.al * fade;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, 6.2832);
+        ctx.fill();
       }
-      layer.appendChild(frag);
+      ctx.globalAlpha = 1;
     }
 
     build();
+    last = performance.now();
+    requestAnimationFrame(frame);
+
+    /* nothing is drawn while the hero is off screen */
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { live = es[0].isIntersecting; }).observe(hero);
+    }
     var t; addEventListener("resize", function () { clearTimeout(t); t = setTimeout(build, 200); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
   })();
