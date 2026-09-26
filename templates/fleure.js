@@ -211,7 +211,7 @@
   })();
 
   /* -- contact cards, footer links, the routes out --
-        Her bio advertises DMs, so Instagram is always offered. Email and
+        The bio advertises DMs, so Instagram is always offered. Email and
         WhatsApp appear only once the data file has an address or a number
         in it: a button that opens a blank mail window, or one addressed to
         nobody, is worse than no button. -- */
@@ -272,8 +272,8 @@
 
   /* ============================================================
      3. THE ENQUIRY FORM
-     It asks exactly what her "How to order" highlight asks for, so the
-     message that arrives is one she can price without a conversation.
+     It asks exactly what the "How to order" highlight asks for, so the
+     message that arrives is one that can be priced without a conversation.
      ============================================================ */
   var HAS_FORM = !!$("#enquiry");
   var state = { type: "", palette: "", occasion: "" };
@@ -365,7 +365,7 @@
     var sendMail = $("#sendMail");
     /* No address in the data file yet: rather than open a mail window
        addressed to nobody, the button removes itself and Instagram — the
-       route her own bio advertises — carries the enquiry. */
+       route the bio itself advertises — carries the enquiry. */
     if (sendMail && !B.email) sendMail.remove();
     if (sendMail && B.email) sendMail.addEventListener("click", function () {
       var m = missing();

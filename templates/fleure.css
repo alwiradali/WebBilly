@@ -1,9 +1,9 @@
 /* ============================================================
    FLEURÉ & CO.
-   Built for her, not from a template. The palette is measured from her
-   own logo file rather than eyeballed: the wine is #84083a and the blush
+   Built for this shop, not from a template. The palette is measured from
+   the logo file rather than eyeballed: the wine is #84083a and the blush
    field is #fbe3ed, sampled off the disc. Because that wine is genuinely
-   dark, every pairing below clears WCAG AA with room to spare, so her
+   dark, every pairing below clears WCAG AA with room to spare, so the
    real brand colours are used everywhere and nothing is compromised for
    legibility.
 
@@ -13,7 +13,7 @@
    ============================================================ */
 
 :root{
-  /* hers, measured */
+  /* the brand's own, measured off the logo */
   --wine:#84083a;
   --wine-d:#6b062f;
   --wine-dd:#4e0421;
@@ -116,7 +116,7 @@ p{margin:0}
 }
 .nav.over-dark .nav-logo b{color:var(--blush)}
 @media (max-width:420px){.nav-logo b{display:none}}
-/* Her hero is pale blush, not a dark photograph, so the bar's resting state
+/* The hero is pale blush, not a dark photograph, so the bar's resting state
    is ink — cream links would simply vanish on it. The cream set is swapped
    in only while the bar sits over a dark block, which on this site means
    the page head of an inner page. */

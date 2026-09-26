@@ -1,9 +1,9 @@
 /* ============================================================
    FLEURÉ & CO. — the whole shop in one file.
-   Everything the site says about her comes from here: change a price, a
+   Everything the site says comes from here: change a price, a
    policy or a photograph in this file and every page follows. Nothing
-   below is invented — the policies are transcribed from her own T&Cs and
-   "How to order" story highlights, and the photographs are her own.
+   below is invented — the policies are transcribed from the shop's own T&Cs and
+   "How to order" story highlights, and the photographs are its own.
    ============================================================ */
 window.FLEURE = (function () {
 
@@ -15,26 +15,26 @@ window.FLEURE = (function () {
     tiktok: "xfleureco",
     threads: "xfleureco",
     /* ------------------------------------------------------------------
-       HER EMAIL GOES HERE. Left empty on purpose rather than guessed: an
-       enquiry sent to an address that is not hers is worse than one she
-       never receives. While this is empty the enquiry form sends through
-       Instagram instead — which is the route her own bio advertises — and
+       THE SHOP EMAIL GOES HERE. Left empty on purpose rather than guessed: an
+       enquiry sent to the wrong address is worse than one that never
+       arrives. While this is empty the enquiry form sends through
+       Instagram instead — which is the route the bio advertises — and
        the email button hides itself. Fill it in and the button appears.
        ------------------------------------------------------------------ */
     email: "",
-    /* Same again: she advertises DMs, not a number. Add one and a WhatsApp
+    /* Same again: the bio advertises DMs, not a number. Add one and a WhatsApp
        route appears beside the others, everywhere. */
     phone: ""
   };
 
-  /* What she makes. Four, because that is what her feed actually shows:
+  /* What the shop makes. Four, because that is what the feed actually shows:
      fresh, faux, baskets, and the bespoke work that is none of the three. */
   var collections = [
     {
       id: "fresh",
       name: "Fresh bouquets",
       blurb: "Roses, spray roses, gerberas, carnations and stocks, wrapped by hand the day they go out.",
-      note: "Wrapped in her own paper and pearl trim, finished with the Fleuré seal.",
+      note: "Wrapped in our own paper and pearl trim, finished with the Fleuré seal.",
       img: "work/pink-car.webp",
       alt: "Fresh bouquet of bright pink and red roses with gypsophila"
     },
@@ -58,31 +58,31 @@ window.FLEURE = (function () {
       id: "bespoke",
       name: "Something bespoke",
       blurb: "A colour you have in mind, a photograph you have saved, a bouquet for a date that matters.",
-      note: "Custom orders welcome — send the picture and she will tell you what it takes.",
+      note: "Custom orders welcome — send the picture and we will tell you what it takes.",
       img: "work/red-grass.webp",
       alt: "Ten premium red roses in a black wrap with pearl trim"
     }
   ];
 
-  /* Her "How to order" highlight, in her order. */
+  /* The "How to order" highlight, in its own order. */
   var howToOrder = [
     { h: "Fresh or forever", p: "Real stems for the day, or faux florals that keep." },
     { h: "Colours and style", p: "Soft and pale, deep and romantic, or one colour throughout." },
-    { h: "Your budget", p: "Say the figure and she will build the fullest bouquet it buys." },
+    { h: "Your budget", p: "Tell us the figure and we will build the fullest bouquet it buys." },
     { h: "The occasion", p: "Birthday, anniversary, new baby, thank you, or no reason at all." },
     { h: "The date", p: "When you need it in your hands, and whether you are collecting." }
   ];
   var inspirationNote = "You are welcome to send an inspiration photo too.";
-  var confirmNote = "She will confirm your design, price and availability before starting your bouquet.";
+  var confirmNote = "We will confirm your design, price and availability before starting your bouquet.";
 
-  /* Bloom baskets, from her own highlight. */
+  /* Bloom baskets, from the shop's own highlight. */
   var basketPoints = [
     "Customised to suit your preferred colours, flowers and budget.",
     "Each basket is arranged to be a beautiful and unique design in its own right.",
     "Beauty products, gifts or anything else you would like can be included on request."
   ];
 
-  /* Her policies, transcribed. She writes as "we" and that has been kept. */
+  /* The policies, transcribed. They are written as "we" and that is kept. */
   var policies = [
     { h: "Orders", l: [
       "Please place your order in advance to avoid disappointment.",
@@ -109,10 +109,10 @@ window.FLEURE = (function () {
 
   var palettes = [
     "Soft pinks and cream", "Deep reds and burgundy", "Blush and white",
-    "Bright and mixed", "All white", "Let her choose"
+    "Bright and mixed", "All white", "Let us choose"
   ];
 
-  /* Her photographs, strongest first. The home page shows the first six and
+  /* The photographs, strongest first. The home page shows the first six and
      the rest live on the work page, so this order is what a first-time
      visitor is judged by. */
   var work = [
@@ -129,25 +129,25 @@ window.FLEURE = (function () {
 
   /* PLACEHOLDERS. Every one is labelled "Example review" where a customer's
      name goes, so none of them can read as real. Replace the whole list with
-     her own Google reviews, names and all, before the site is shown around. */
+     the real Google reviews, names and all, before the site is shown around. */
   var reviews = [
     { name: "Example review", stars: 5,
-      text: "Ordered a bouquet for my mum's birthday and it was better than the picture I sent. Wrapped beautifully and ready exactly when she said." },
+      text: "Ordered a bouquet for my mum's birthday and it was better than the picture I sent. Wrapped beautifully and ready exactly when they said." },
     { name: "Example review", stars: 5,
-      text: "The bloom basket was such a lovely idea — she arranged the flowers around the perfume I sent over and it looked incredible." },
+      text: "The bloom basket was such a lovely idea — they arranged the flowers around the perfume I sent over and it looked incredible." },
     { name: "Example review", stars: 5,
-      text: "Asked for something last minute and she still managed it. Kept me updated the whole way and the roses lasted over a week." }
+      text: "Asked for something last minute and they still managed it. Kept me updated the whole way and the roses lasted over a week." }
   ];
 
   var faq = [
-    { q: "How do I order?", a: "Use the enquiry form on this page. It asks the same five things she would ask in a message — fresh or forever, colours, budget, occasion and date — so your enquiry arrives complete and she can price it straight away." },
+    { q: "How do I order?", a: "Use the enquiry form on this page. It asks the same five things we would ask in a message — fresh or forever, colours, budget, occasion and date — so your enquiry arrives complete and we can price it straight away." },
     { q: "How far ahead should I order?", a: "As far ahead as you can. Weekends and occasions like Mother's Day and Valentine's fill first, and ordering early is the only way to be sure of the flowers you want." },
     { q: "Can you do same-day?", a: "Often, yes — subject to availability. Same-day orders carry an additional fee for the urgent sourcing and preparation, so send your message as early in the day as you can." },
     { q: "What secures the date?", a: "A deposit. Your order is confirmed once all the details have been agreed and the deposit is paid." },
-    { q: "Can I send a picture of what I want?", a: "Please do. She will tell you honestly what she can match, what she would do differently and what it changes about the price." },
+    { q: "Can I send a picture of what I want?", a: "Please do. We will tell you honestly what we can match, what we would do differently and what it changes about the price." },
     { q: "Collection or delivery?", a: "Both. Delivery is available across Nottingham at an additional cost, confirmed when you order. Collection and delivery times are agreed when ordering." },
     { q: "What is a forever bouquet?", a: "The same arranging, in faux stems instead of fresh. It looks like the real thing and it does not need water — good for a gift that has to travel, or anywhere fresh flowers will not last." },
-    { q: "Can you put gifts in with the flowers?", a: "Yes — that is what a bloom basket is. Beauty products, perfume, a candle, jewellery: send them over or tell her what you would like included, and she will arrange the flowers around them." }
+    { q: "Can you put gifts in with the flowers?", a: "Yes — that is what a bloom basket is. Beauty products, perfume, a candle, jewellery: send them over or tell us what you would like included, and we will arrange the flowers around them." }
   ];
 
   return {
