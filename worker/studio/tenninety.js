@@ -30,6 +30,7 @@
  */
 
 import { slugify } from "./db.js";
+import { feedText } from "./text.js";
 
 const BASE = "https://webapi.10ninety.co.uk";
 const AUTH_HEADER = "10ninety-webapi-key";
@@ -276,8 +277,8 @@ export function toListing(p, opts = {}) {
     externalId: str(p.property_ref, 40),
     ref: str(p.property_ref, 40),
     status,
-    title: str(p.display_address, 160) || str([p.address_1, p.address_2].filter(Boolean).join(", "), 160),
-    headline: str(p.headline, 160),
+    title: str(feedText(p.display_address), 160) || str(feedText([p.address_1, p.address_2].filter(Boolean).join(", ")), 160),
+    headline: str(feedText(p.headline), 160),
     type: typeOf(p, types),
     letType: isRoom(p) ? "room" : "whole",
     /* furnishing is NOT mapped: let_furn_id's meaning is unconfirmed, and a
@@ -306,9 +307,9 @@ export function toListing(p, opts = {}) {
     area: areaOf(p),
     lat: num(parseFloat(p.latitude)),
     lng: num(parseFloat(p.longitude)),
-    summary: str(p.summary, 600),
-    description: str(p.description, 8000),
-    features: (p.features || []).map((f) => str(f, 120)).filter(Boolean),
+    summary: str(feedText(p.summary), 600),
+    description: str(feedText(p.description), 8000),
+    features: (p.features || []).map((f) => str(feedText(f), 120)).filter(Boolean),
     images,
     floorplans: (p.floorplans || []).map((f) => (f && f.url ? String(f.url).trim() : null)).filter(Boolean),
     updatedAt: str(p.update_date),

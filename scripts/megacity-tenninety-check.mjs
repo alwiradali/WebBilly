@@ -85,6 +85,12 @@ ok(none.availability === null, "no date at all stays blank rather than guessing"
 /* ── status ───────────────────────────────────────────────────────────────── */
 
 ok(listings.every((l) => l.status === "live"), "all nine are on the market today");
+/* 10ninety sends descriptions as HTML fragments; on 26 Sep a listing page
+   showed "<br />" and "&pound;500" as text, and so did its Google snippet */
+const html = toListing({ ...feed.properties[0], summary: "Modern flat<br />Close to Media City",
+  description: "Rooms in Salford.<br />All bills included. <br /><br />Council Tax Band: B<br />Deposit: &pound;500<br /><br />" }, { today: TODAY });
+ok(!/<br|&pound;|&amp;/.test(html.description + html.summary), "no HTML tags or entities reach the page from a 10ninety description", html.description);
+ok(/Deposit: £500/.test(html.description) && /\n\n/.test(html.description) && /Rooms in Salford\.\nAll bills/.test(html.description), "…its line breaks and £ are kept as the text they stand for");
 const let7 = toListing({ ...feed.properties[0], status_id: 7 }, { today: TODAY });
 ok(let7.status === "let", "status_id 7 still reads as let, though the revert means it will not arrive");
 ok(toListing({ ...feed.properties[0], status_id: 99 }, { today: TODAY }) === null, "a status we have not been told about is dropped, not guessed");

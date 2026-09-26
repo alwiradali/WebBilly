@@ -12,6 +12,7 @@ import { label } from "./options.js";
 import { listForListing, mediaUrl, isPhoto } from "./media.js";
 import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
+import { feedText } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -56,8 +57,10 @@ function view(env, url, { r, media }, settings) {
   const beds = isRoom ? 1 : r.bedrooms;
   const bathsCount = home.bathrooms.length;
   const bathsShared = home.bathrooms.some((b) => b.subtype === "shared");
-  const summary = r.summary || (r.description || "").split(/\n{2,}/)[0] || "";
-  const desc = (r.description || "").split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  /* feedText: rows synced before it existed still hold 10ninety's HTML */
+  const description = feedText(r.description) || "";
+  const summary = feedText(r.summary) || description.split(/\n{2,}/)[0] || "";
+  const desc = description.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
   const features = parseJson(r.features_json, []);
   const availability = r.availability === "from_date" && r.available_from
     ? "Available from " + new Date(r.available_from + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
@@ -70,7 +73,7 @@ function view(env, url, { r, media }, settings) {
   const waDigits = wa ? (wa.startsWith("44") ? wa : "44" + wa.replace(/^0/, "")) : null;
   const title = r.title;
   const pageTitle = title + " | Megacity Properties";
-  const metaDesc = r.seo_description || summary.slice(0, 155);
+  const metaDesc = r.seo_description || summary.replace(/\s+/g, " ").trim().slice(0, 155);
   const canonical = urls.absUrl(env, url, "listing", r.id);
   const applyHref = urls.pagePath(urls.mode(env, url.hostname), "tenant-application-form") + "?property=" + encodeURIComponent(title) + "&listing=" + encodeURIComponent(r.id);
   const ogImage = cover ? absolute(env, url, cover.url) : absolute(env, url, "assets/mcr/ph-manchester.jpg");
@@ -120,7 +123,9 @@ function homeItems(v) {
 function mainHtml(v) {
   let h = "";
   h += "<h2>About this property</h2>\n";
-  h += (v.desc.length ? v.desc : [v.summary]).filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join("");
+  /* a single line break inside a paragraph is his ("Council Tax Band: B" /
+     "Deposit: £500"), so it stays one */
+  h += (v.desc.length ? v.desc : [v.summary]).filter(Boolean).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
   if (v.features.length) h += `\n<h3>Key features</h3>\n<ul class="pd-ticks">${v.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>`;
   const items = homeItems(v);
   if (items.length) h += `\n<h3>The home</h3>\n<ul class="pd-ticks">${items.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>`;

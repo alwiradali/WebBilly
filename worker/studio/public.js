@@ -6,6 +6,7 @@ import { json, jsonCached, parseJson } from "./db.js";
 import { label, valid } from "./options.js";
 import { mediaUrl, listForListing } from "./media.js";
 import * as urls from "./urls.js";
+import { feedText } from "./text.js";
 
 /* the listing page address for this host: /let/<id> on the client domain,
    /templates/megacity-let-<id> on the demo host */
@@ -32,7 +33,7 @@ function card(r, env, url) {
     id: r.id,
     url: pageUrl(env, url, r.id),
     title: r.title,
-    headline: r.headline || null,
+    headline: feedText(r.headline) || null,
     area: r.area, areaLabel: label("area", r.area), town: r.town, line1: r.address_1,
     rentPcm: r.rent_pcm, rentLabel: rentLabel(r.rent_pcm),
     bedrooms: isRoom ? 1 : r.bedrooms,
@@ -116,7 +117,7 @@ export async function one(db, url, env, id) {
       minTerm: label("minTerm", r.min_term), councilTaxBand: label("councilTaxBand", r.council_tax_band), pets: label("pets", r.pets),
       parking: r.parking_spaces == null ? null : label("parkingSpaces", String(r.parking_spaces)),
     },
-    summary: r.summary, description: r.description ? r.description.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean) : [],
+    summary: feedText(r.summary), description: r.description ? feedText(r.description).split(/\n{2,}/).map((s) => s.trim()).filter(Boolean) : [],
     features: parseJson(r.features_json, []),
     services: extras.extras && extras.extras.services || null,
     depositNote: extras.extras && extras.extras.depositNote || null,
