@@ -5,12 +5,12 @@ Every photograph on the Westfield Garage demo is licensed stock, downloaded to
 is stored twice: `<name>.webp` at 1800px for the full-width slots and
 `<name>-sm.webp` at 900px for phones and gallery thumbnails.
 
-**The workshop photographs are now his** (22 Sep 2026): `hero`, `mechanic`,
-`bay-lift`, `bay-wide`, `tools`, `wheel` and `hero-alt` are cut from five photographs he
-sent of the Levenshulme workshop, at 3:2 to fit the slots, with the customer's
-number plate pixelated in every one. The rows below for those names are kept
-only as a record of what they replaced. The eleven `svc-*` tiles and `engine` are
-still stock and still placeholders.
+**Every workshop photograph is now his** (22 and 26 Sep 2026): `hero`,
+`mechanic`, `bay-lift`, `bay-wide`, `tools`, `wheel`, `hero-alt`, `engine` and
+`front` are cut from eight photographs he sent of the Levenshulme workshop, at
+3:2 to fit the slots, with every customer's number plate pixelated. The rows
+below for those names are kept only as a record of what they replaced. The
+eleven `svc-*` tiles are still stock and still placeholders.
 
 **Pexels licence** (pexels.com/license): free for commercial use, no attribution
 required, modification allowed; cannot be resold as stock. Attribution is not
@@ -24,7 +24,7 @@ provenance and re-source a file later.
 | `mechanic` | About split; process step 01 | **replaced by his photo, 22 Sep** (was Gustavo Fring, [6870332](https://www.pexels.com/photo/man-in-blue-coveralls-standing-beside-an-orange-car-using-an-automotive-diagnostic-tool-6870332/)) |
 | `bay-wide` | Gallery — "The bays"; Find us | **replaced by his photo, 22 Sep** (was Jae Park, [4756887](https://www.pexels.com/photo/cars-in-car-repair-shop-4756887/)) |
 | `bay-lift` | Gallery — "Up on the ramp"; process step 02 | **replaced by his photo, 22 Sep** (was Jae Park, [3894030](https://www.pexels.com/photo/vehicle-on-a-car-lift-3894030/)) |
-| `engine` | Gallery — "Under the bonnet" | Ayyeee Ayyeee | [16545849](https://www.pexels.com/photo/engine-under-car-hood-16545849/) |
+| `engine` | Gallery — "Under the bonnet" | **replaced by his photo, 26 Sep** (was Ayyeee Ayyeee, [16545849](https://www.pexels.com/photo/engine-under-car-hood-16545849/)) |
 | `tools` | Gallery — "The right tool" | **replaced by his photo, 22 Sep** (was cottonbro studio, [7019367](https://www.pexels.com/photo/close-up-photograph-of-a-set-of-wrench-7019367/)) |
 | `wheel` | Gallery — "Wheels off"; process step 04 | **replaced by his photo, 22 Sep** (was Andrea Piacquadio, [3806249](https://www.pexels.com/photo/man-changing-a-car-tire-3806249/)) |
 | `svc-servicing` | Services tile 01 | Daniel Andraski | [13065690](https://www.pexels.com/photo/pouring-oil-to-engine-13065690/) |

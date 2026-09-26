@@ -187,18 +187,17 @@ HTTP status decides instead of `body.success`.
 
 ---
 
-## His photographs are in (22 Sep)
+## His photographs are in (22 and 26 Sep)
 
-Five photographs of the workshop arrived on 22 Sep and now fill the hero, the
-about split, both gallery workshop shots, the bench, the wheel and process
-steps 01, 02 and 04. Each is cut to 3:2 to fit its slot; the customer's number
-plate is pixelated in every frame it appears in. Still stock and still to be
-replaced: the eleven service tiles (they illustrate the job, not the garage)
-and `engine`. A second batch — the front of the building with the
-signage, both bays with two cars up, an Audi with its bonnet up — was sent but
-did not arrive as files; when it does, the exterior with the sign becomes the
-hero and the current hero moves to the gallery. The 26-second handheld video he
-sent is 848×480 and too shaky to use on the page.
+Eight photographs of the workshop now fill every workshop slot: the hero (the
+BMW up with both shutters open), the about split, all six gallery frames, the
+Find-us card (the front of the building with the sign) and process steps 01,
+02 and 04. Each is cut to 3:2 to fit its slot; every customer's number plate is
+pixelated. Still stock and still to be replaced: the eleven service tiles,
+which illustrate the job rather than the garage. The 26-second handheld video
+he sent is 848×480 and too shaky to use on the page. To swap a photograph,
+overwrite `<name>.webp` and `<name>-sm.webp` under the same name and, if the
+size changes, the `width`/`height` and `srcset` widths on its `<img>`.
 
 ## The tiles link to "Each job, explained" (added 17 Sep)
 
