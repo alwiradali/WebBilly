@@ -952,17 +952,3 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 /* the route to the full menu, sitting under the tiles */
 .menu-foot{margin:clamp(24px,3.4vw,38px) 0 0;text-align:center}
 
-/* her number and address in plain sight, not only behind a button.
-   A flex row so each link is a 44px target at every width — scoping that to
-   phones left them at 25px on a tablet, which is still a touch screen. */
-.notlisted-direct{
-  margin-top:10px;font-size:.93rem;color:var(--ink-soft);
-  display:flex;flex-wrap:wrap;align-items:center;gap:0 14px;
-}
-.notlisted-direct a{
-  display:inline-flex;align-items:center;min-height:44px;
-  color:var(--grape);text-decoration:none;border-bottom:1px solid var(--line-2);
-  white-space:nowrap;
-}
-.notlisted-direct a:hover{border-bottom-color:var(--grape)}
-}

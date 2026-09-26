@@ -512,15 +512,6 @@
     });
     var fcp = $("#footCopy"); if (fcp) fcp.textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
 
-    var hd = $("#homeDirect");
-    if (hd) {
-      hd.appendChild(document.createTextNode("Straight to me: "));
-      hd.appendChild(el("a", { href: waLink("Hi! I'd like to ask about a cake that isn't on the menu: ") },
-                        phoneText));
-      hd.appendChild(el("a", { href: mailLink("A cake that isn't on the menu",
-        "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, B.email));
-    }
-
     var cta = $("#notListedCta"); if (!cta) return;
     cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Message on WhatsApp"));
     cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Email me"));
