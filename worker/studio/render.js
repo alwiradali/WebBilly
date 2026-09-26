@@ -14,7 +14,7 @@ import { pageUrl } from "./public.js";
 import * as urls from "./urls.js";
 import { feedText, clipWords } from "./text.js";
 import { LETTINGS_TO } from "./enquiries.js";
-import { areaPage } from "./areas.js";
+import { areaPage, districtOf } from "./areas.js";
 
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = (n) => "£" + Number(n).toLocaleString("en-GB");
@@ -59,8 +59,12 @@ function view(env, url, { r, media }, settings) {
      nothing in the file says which it is. */
   const walkthrough = media.find((m) => m.kind === "video" && m.role !== "video360") || null;
   const video360 = media.find((m) => m.kind === "video" && m.role === "video360") || null;
-  const addr = [r.address_1, r.address_2, r.town].filter(Boolean).join(", ");
-  const addrShort = [r.address_1, r.town].filter(Boolean).join(", ");
+  /* The public address is the one Walid publishes: the display address from
+     10ninety (the title), which carries no house or flat number. The full
+     address (address_1/2 — "5", "Apartment 208, Adelphi Wharf 2") never
+     reaches a public page; the office still gets it in viewing emails. */
+  const addr = r.title || [r.town].filter(Boolean).join(", ");
+  const addrShort = addr;
   const typeLabel = label("type", r.type) || "Property";
   const beds = isRoom ? 1 : r.bedrooms;
   const bathsCount = home.bathrooms.length;
@@ -146,6 +150,15 @@ function mainHtml(v) {
 
 /* a document address from the feed -> the shape the page uses for an
    uploaded one; anything that is not a plain https address is ignored */
+/* the display address without its town: "Carlton Road, Salford" -> "Carlton Road" */
+function publicStreet(r) {
+  const t = String(r.title || "").replace(/\s+,/g, ",").replace(/\s{2,}/g, " ").trim();
+  if (!t) return null;
+  const town = String(r.town || "").trim();
+  const cut = town && t.toLowerCase().endsWith(", " + town.toLowerCase()) ? t.slice(0, -(town.length + 2)) : t;
+  return cut.replace(/^[,\s]+|[,\s]+$/g, "") || null;
+}
+
 function feedDoc(u) {
   if (typeof u !== "string" || !/^https:\/\/[^\s"'<>]+$/i.test(u.trim())) return null;
   const url = u.trim();
@@ -259,8 +272,10 @@ function jsonLd(env, url, v) {
     ...(v.bathsCount && !v.bathsShared ? { numberOfBathroomsTotal: v.bathsCount } : {}),
     ...(r.floor_area_sqft ? { floorSize: { "@type": "QuantitativeValue", value: r.floor_area_sqft, unitCode: "FTK" } } : {}),
     ...(r.pets ? { petsAllowed: r.pets !== "no" } : {}),
-    address: { "@type": "PostalAddress", ...(r.address_1 ? { streetAddress: [r.address_1, r.address_2].filter(Boolean).join(", ") } : {}), ...(r.town ? { addressLocality: r.town } : {}), ...(r.postcode ? { postalCode: r.postcode } : {}), addressRegion: "Greater Manchester", addressCountry: "GB" },
-    ...(r.lat != null && r.lng != null ? { geo: { "@type": "GeoCoordinates", latitude: r.lat, longitude: r.lng } } : {}),
+    /* no house or flat number, and no exact spot: the published street, the
+       postcode district, and coordinates to about a hundred metres */
+    address: { "@type": "PostalAddress", ...(publicStreet(r) ? { streetAddress: publicStreet(r) } : {}), ...(r.town ? { addressLocality: r.town } : {}), ...(districtOf(r.postcode) ? { postalCode: districtOf(r.postcode) } : {}), addressRegion: "Greater Manchester", addressCountry: "GB" },
+    ...(r.lat != null && r.lng != null ? { geo: { "@type": "GeoCoordinates", latitude: Math.round(r.lat * 1000) / 1000, longitude: Math.round(r.lng * 1000) / 1000 } } : {}),
   };
   const listing = {
     "@type": "RealEstateListing", "@id": v.canonical + "#listing", name: v.title, url: v.canonical, description: v.metaDesc,
@@ -286,7 +301,8 @@ export async function renderListingPage(request, env, url, live, settings) {
   const v = view(env, url, live, settings);
   const tpl = await env.ASSETS.fetch(new Request(new URL("/templates/megacity-let-template.html", url).toString()));
   if (!tpl.ok) return null;
-  const mapQ = encodeURIComponent([v.addr, v.r.postcode].filter(Boolean).join(", "));
+  /* street-level, not door-level: the display address and the postcode district */
+  const mapQ = encodeURIComponent([v.addr, districtOf(v.r.postcode)].filter(Boolean).join(", "));
   /* every fragment is built before the rewriter streams: a bad record throws
      into the router's fallback instead of truncating a half-sent page */
   const epc = epcHtml(v);
@@ -362,7 +378,7 @@ function cardHtml(c) {
       <span class="pl-img">${img}</span>
       ${c.tag || c.headline ? `<span class="pl-tag">${esc(c.headline || c.tag)}</span>` : ""}
       <span class="pl-body">
-        <span class="pl-area">${esc([c.line1, c.town].filter(Boolean).join(", ") || c.areaLabel)}</span>
+        <span class="pl-area">${esc([c.town || c.areaLabel, c.district].filter(Boolean).join(" · "))}</span>
         <b>${esc(c.title)}</b>
         ${c.rentPcm ? `<span class="pl-price">${esc("£" + Number(c.rentPcm).toLocaleString("en-GB"))}<small> pcm${c.typeShort === "room" ? " · per room" : ""}</small></span>` : ""}
         <span class="pl-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join("")}</span>

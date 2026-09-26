@@ -10,6 +10,7 @@ import { label } from "./options.js";
 import { getFull } from "./listings.js";
 import { DEFAULTS as SETTINGS_DEFAULTS } from "./settings.js";
 import * as urls from "./urls.js";
+import { districtOf } from "./areas.js";
 
 const MAX_TOUR_BYTES = 1_500_000;
 const MAX_DATA_URI = 4096;
@@ -161,10 +162,13 @@ function overlayListing(tour, l) {
   if (isRoomLet) p.beds = 1; else if (l.bedrooms != null) p.beds = l.bedrooms;
   if (l.epc_rating) p.epc = l.epc_rating;
   if (l.ref) p.ref = l.ref;
+  /* tours built before 26 Sep stored "5, Carlton Road, Salford" here; what
+     is served is always the town and district, whatever was stored */
+  if (l.town || l.postcode) p.location = [l.town, districtOf(l.postcode)].filter(Boolean).join(", ");
   return tour;
 }
 
-const LISTING_COLS = "id, title, status, hidden, deleted_at, type, let_type, rent_pcm, bedrooms, epc_rating, ref";
+const LISTING_COLS = "id, title, status, hidden, deleted_at, type, let_type, rent_pcm, bedrooms, epc_rating, ref, town, postcode";
 async function listingRow(db, id) {
   return db.prepare(`SELECT ${LISTING_COLS} FROM listings WHERE id=?1`).bind(id).first();
 }
@@ -283,7 +287,8 @@ export function buildSkeleton(listing, brand, agent) {
   floors.forEach((f) => rooms.filter((r) => r.floor === f.id).forEach((r, idx) => { r.plan = [18 + (idx % 4) * 28, 18 + Math.floor(idx / 4) * 22]; }));
 
   const a = listing.address || {};
-  const location = [a.line1, a.line2, a.town].filter(Boolean).join(", ");
+  /* the town and postcode district, never line1/line2 (the house or flat number) */
+  const location = [a.town || label("area", a.area), districtOf(a.postcode)].filter(Boolean).join(", ");
   const price = listing.rentPcm ? "£" + Number(listing.rentPcm).toLocaleString("en-GB") + " pcm" : "";
   return {
     id: listing.id, version: 1,
@@ -517,7 +522,7 @@ export async function importTours(c) {
    which listing path the fail-closed card links back to. */
 export async function publicTour(db, id, env, url) {
   const t = await db.prepare(
-    `SELECT t.live_json, l.title, l.rent_pcm, l.bedrooms, l.epc_rating, l.ref, l.type, l.let_type FROM tours t JOIN listings l ON l.id=t.listing_id
+    `SELECT t.live_json, l.title, l.rent_pcm, l.bedrooms, l.epc_rating, l.ref, l.type, l.let_type, l.town, l.postcode FROM tours t JOIN listings l ON l.id=t.listing_id
       WHERE t.listing_id=?1 AND t.status='live' AND l.status='live' AND l.hidden=0 AND l.deleted_at IS NULL`
   ).bind(id).first();
   if (!t || !t.live_json) {

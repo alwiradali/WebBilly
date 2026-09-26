@@ -334,7 +334,7 @@ async function liveTourHead(db, env, url, id) {
     if (t) image = t.replace(/\/(w480|pano4096|pano2048)\.jpg$/, "/w1600.jpg");
   }
   const title = r.title || id;
-  const where = [r.address_1, r.town].filter(Boolean).join(", ");
+  const where = r.town || "";   // never address_1: that is the house or flat number
   const summary = String(r.seo_description || r.summary || "").trim();
   return {
     id, title,

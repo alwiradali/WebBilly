@@ -35,7 +35,8 @@ function card(r, env, url) {
     url: pageUrl(env, url, r.id),
     title: r.title,
     headline: feedText(r.headline) || null,
-    area: r.area, areaLabel: label("area", r.area), town: r.town, line1: r.address_1,
+    /* no address_1 here: it is the house or flat number ("5", "Apartment 208") */
+    area: r.area, areaLabel: label("area", r.area), town: r.town,
     district: districtOf(r.postcode),
     rentPcm: r.rent_pcm, rentLabel: rentLabel(r.rent_pcm),
     bedrooms: isRoom ? 1 : r.bedrooms,
@@ -82,7 +83,7 @@ export async function list(db, url, env) {
         t: r.title,
         d: [r.bedrooms ? r.bedrooms + " bed" : null, r.bathrooms ? r.bathrooms + " bath" : null, rentLabel(r.rent_pcm)].filter(Boolean).join(" · "),
         u: pageUrl(env, url, r.id),
-        k: [r.area, r.town, r.postcode, r.type, r.let_type, r.address_1, label("type", r.type)].filter(Boolean).join(" ").toLowerCase(),
+        k: [r.area, r.town, districtOf(r.postcode), r.type, r.let_type, r.title, label("type", r.type)].filter(Boolean).join(" ").toLowerCase(),
       })),
     }, 120);
   }
@@ -106,7 +107,10 @@ export async function one(db, url, env, id) {
     ref: r.ref, deposit: r.deposit, bills: r.bills, billsNote: r.bills_note, availableFrom: r.available_from, minTerm: r.min_term,
     councilTaxBand: r.council_tax_band, epcRating: r.epc_rating, parkingSpaces: r.parking_spaces, parkingNote: r.parking_note,
     hmoLicensed: r.hmo_licensed == null ? null : !!r.hmo_licensed, floorAreaSqft: r.floor_area_sqft,
-    address: { line1: r.address_1, line2: r.address_2, town: r.town, postcode: r.postcode, area: r.area, areaLabel: label("area", r.area), lat: r.lat, lng: r.lng },
+    /* public: the town, the postcode district and a position to ~100 m — no
+       house or flat number, no full postcode */
+    address: { town: r.town, postcode: districtOf(r.postcode), area: r.area, areaLabel: label("area", r.area),
+      lat: r.lat == null ? null : Math.round(r.lat * 1000) / 1000, lng: r.lng == null ? null : Math.round(r.lng * 1000) / 1000 },
     home: {
       bathrooms: home.bathrooms.map((b) => ({ ...b, label: label("bathroom", b.subtype) || "Bathroom" })),
       receptions: home.receptions.map((b) => ({ ...b, label: label("reception", b.subtype) || "Living room" })),
