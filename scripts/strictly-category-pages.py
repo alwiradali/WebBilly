@@ -35,8 +35,8 @@ SHELL = '''<!doctype html>
 <link rel="icon" href="/assets/strictly/icon-32.png" sizes="32x32">
 <link rel="icon" href="/assets/strictly/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/assets/strictly/icon-180.png">
-<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/fraunces.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/jost.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/bodoni.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/hanken.woff2" crossorigin>
 <link rel="stylesheet" href="/assets/strictly/fonts/fonts.css">
 <link rel="stylesheet" href="/templates/strictly-sprinkles.css">
 </head>
@@ -103,19 +103,15 @@ SHELL = '''<!doctype html>
     <div class="sec-head">
       <p class="kicker" data-rv>The options</p>
       <h2 class="big" data-rv data-rv-d="1">Pick a <em>starting point</em></h2>
-      <p class="lede" data-rv data-rv-d="2">
-        Prices start from the figures shown. Detail &mdash; edible images, toppers, sculpted
-        work, a lot of hand-piping &mdash; is quoted on top, and I&rsquo;ll always tell you the
-        number before you commit.
-      </p>
+      <p class="lede" data-rv data-rv-d="2" id="catOptsNote"></p>
     </div>
     <div id="catOptions"></div>
 
     <div class="notlisted" data-rv>
       <div>
-        <h3>Something else in mind?</h3>
-        <p>Bigger, tiered, a different shape, a flavour you can&rsquo;t see &mdash; just ask.
-           Most of what I make started as somebody&rsquo;s photograph and a question.</p>
+        <h3>Something you cannot see here?</h3>
+        <p>Send a reference and a date. If it can be made in this kitchen I will tell you
+           how, and if it cannot I will say so.</p>
       </div>
       <div class="notlisted-cta" id="notListedCta"></div>
     </div>
@@ -137,8 +133,8 @@ SHELL = '''<!doctype html>
 <section class="sec" id="more">
   <div class="wrap">
     <div class="sec-head">
-      <p class="kicker" data-rv>Also on the menu</p>
-      <h2 class="big" data-rv data-rv-d="1">The <em>rest of it</em></h2>
+      <p class="kicker" data-rv>Also made here</p>
+      <h2 class="big" data-rv data-rv-d="1">The <em>rest of the range</em></h2>
     </div>
     <div class="tiles" id="catOthers"></div>
   </div>
@@ -146,12 +142,8 @@ SHELL = '''<!doctype html>
 
 <section class="sec sec-grape on-grape" id="cta">
   <div class="wrap endcap">
-    <h2 class="big" data-rv>Ready when <em>you are</em></h2>
-    <p class="lede" data-rv data-rv-d="1">
-      The enquiry form walks through the size, the flavours and the date, then sends the whole
-      thing to my WhatsApp or my inbox as one tidy message.
-    </p>
-    <div class="hero-cta" data-rv data-rv-d="2">
+    <h2 class="big" data-rv>Start your <em>enquiry</em></h2>
+    <div class="hero-cta" data-rv data-rv-d="1">
       <a class="btn btn-cream" href="/templates/strictly-sprinkles#enquire">Make an enquiry</a>
       <a class="btn btn-ghost-cream" href="/templates/strictly-sprinkles#contact">Other ways to reach me</a>
     </div>

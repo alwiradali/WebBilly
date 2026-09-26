@@ -36,7 +36,11 @@
     if (reduced) return;
     var n = parseInt(layer.getAttribute("data-sprinkles"), 10) || 14;
     if (innerWidth < 700) n = Math.round(n * 0.55);   /* phones pay for every layer */
-    var pal = layer.hasAttribute("data-sprinkles-light") ? SPRINKLE_LIGHT : SPRINKLE_DARK;
+    var onDark = layer.hasAttribute("data-sprinkles-light");
+    var pal = onDark ? SPRINKLE_LIGHT : SPRINKLE_DARK;
+    /* dark ink on a cream ground reads as specks of dirt at full strength —
+       it needs to be roughly half what the cream ink can carry on purple */
+    var lo = onDark ? 0.28 : 0.10, hi = onDark ? 0.34 : 0.14;
     var frag = document.createDocumentFragment();
     for (var i = 0; i < n; i++) {
       var b = el("i");
@@ -45,7 +49,7 @@
         "left:" + (Math.random() * 100).toFixed(2) + "%;" +
         "top:" + (Math.random() * 100).toFixed(2) + "%;" +
         "background:" + pal[i % pal.length] + ";" +
-        "opacity:" + (0.28 + Math.random() * 0.34).toFixed(2) + ";" +
+        "opacity:" + (lo + Math.random() * hi).toFixed(2) + ";" +
         "--rot:" + Math.round(Math.random() * 360) + "deg;" +
         "--dx:" + (Math.random() * 120 - 60).toFixed(0) + "px;" +
         "--dy:" + (Math.random() * 150 - 75).toFixed(0) + "px;" +
@@ -218,6 +222,7 @@
     if (!PAGE_CAT) return;
     var c = catBySlug(PAGE_CAT); if (!c) return;
 
+    var on = $("#catOptsNote"); if (on) on.textContent = c.optsNote || "";
     var t = $("#catTitle");   if (t) t.textContent = c.label;
     var bl = $("#catBlurb");  if (bl) bl.textContent = c.blurb || c.note || "";
     var cr = $("#catCrumb");  if (cr) cr.textContent = c.label;

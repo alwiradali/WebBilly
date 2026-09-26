@@ -27,11 +27,13 @@
   --line-2:rgba(78,65,117,.28);
   --sheet:#ffffff;
 
-  --display:"Fraunces",Georgia,serif;
+  --display:"Bodoni Moda",Didot,Georgia,serif;
   /* the accent face is the SAME family in italic, not a second font */
   --navh:86px;
-  --body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --cond:"Oswald","Arial Narrow",sans-serif;   /* the face her logo is set in */
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  /* the label face is the body sans, tracked and uppercased — a condensed
+     poster grotesk read like a gym, not a patisserie */
+  --cond:"Hanken Grotesk",system-ui,sans-serif;
 
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.65,0,.35,1);
@@ -57,7 +59,7 @@ body{
   background:var(--paper);
   color:var(--ink);
   font-family:var(--body);
-  font-size:clamp(16.5px,.45vw + 15px,18.5px);
+  font-size:clamp(16.5px,.45vw + 15px,18px);
   line-height:1.62;
   font-weight:400;
   overflow-x:hidden;
@@ -67,7 +69,7 @@ img{max-width:100%;display:block}
 a{color:inherit}
 button{font:inherit;color:inherit}
 
-h1,h2,h3,h4{font-family:var(--display);font-weight:400;line-height:1.08;margin:0;letter-spacing:-.022em}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;line-height:1.1;margin:0;letter-spacing:-.012em}
 p{margin:0}
 
 ::selection{background:var(--grape);color:var(--cream)}
@@ -319,7 +321,7 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   margin-bottom:clamp(14px,2.2vh,24px);
 }
 .hero-eyebrow{
-  position:relative;padding-top:14px;margin-bottom:clamp(12px,1.8vh,20px);
+  position:relative;padding-top:14px;text-wrap:balance;margin-bottom:clamp(12px,1.8vh,20px);
   font-family:var(--cond);font-weight:300;font-size:.71rem;letter-spacing:.3em;
   text-transform:uppercase;color:var(--gold-lit);
 }
@@ -343,8 +345,8 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   border-top:1px solid rgba(253,234,232,.18);width:min(100%,32rem);
 }
 .hero-facts li{
-  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--on-grape-dim);
+  font-family:var(--cond);font-weight:400;font-size:.7rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--on-grape-dim);white-space:nowrap;
 }
 
 .hero-scroll{

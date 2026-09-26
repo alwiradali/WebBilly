@@ -1401,6 +1401,19 @@ the row is ~2930px, which at dpr 3 is 8800 device pixels, and iOS silently
 declines to paint a moving composited layer that wide. The same reasoning is
 why `.band[data-rv]` and `.sec[data-rv]` fade instead of translating.
 
-**Self-hosted fonts.** Fraunces, Jost, Oswald (all variable, one file each) and
-Caveat Brush, latin subsets, in `assets/strictly/fonts/`. Google Fonts is not
-called at all.
+**Self-hosted fonts: two families, not three.** Bodoni Moda (roman + italic)
+and Hanken Grotesk (roman + italic), latin subsets, in
+`assets/strictly/fonts/`. Google Fonts is not called at all. Bodoni because her
+own printed menus are set in a Didone, so it is the most expensive-reading
+serif that still matches her brand; headings run at weight 500 because 400
+hairlines go fragile on the dark ground. Hanken Grotesk is both the body face
+and the label face — `--cond` points at it, tracked and uppercased. The
+condensed poster grotesk that used to fill that slot read like a gym.
+
+**Copy rule: nothing substantive appears on two pages.** The six category
+pages once rendered the menu page's pricing paragraph verbatim, and the
+"something not listed" block and the closing call to action ran on all seven.
+Each category now carries its own `optsNote` and `blurb` in the data file, and
+the closing block is a heading and two buttons with no prose. A short audit
+script that splits every page into sentences and counts duplicates is the way
+to check this after any copy change.
