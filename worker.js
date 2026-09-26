@@ -189,26 +189,17 @@ export default {
       return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
     }
 
-    /* Parked client previews at short root addresses: billydigitals.com/westfield
-       is easier to say down the phone than /templates/westfield-garage. The
-       page served is the one in /templates/, unchanged, so its relative
-       ../assets/ paths resolve from the root exactly as they do from
-       /templates/; the one relative path that is not under /assets/ is
-       vendor/lenis.min.js, hence the /vendor/ line. Own hosts only — a
-       client's domain owns every path on it. Case-insensitive, because the
-       address gets typed from a text message. Kept out of the index with the
-       header the /templates/ previews carry, and listed in robots.txt. */
+    /* Parked client previews. A client whose site is live on their own domain
+       has nothing served here any more — a second public copy competes with
+       their domain in search and carries their form key on a hostname it was
+       never meant for — so the old preview addresses, short and long, send
+       the visitor to the real site instead. Own hosts only; a client's domain
+       owns every path on it. Case-insensitive, because the short address got
+       typed from a text message. The files stay in the repository (the
+       client's build reads them) and are kept off this host by .assetsignore. */
     if (!isOwnClientHost(url.hostname, env)) {
-      const alias = PREVIEW_ALIASES[url.pathname.toLowerCase().replace(/\/+$/, "")];
-      if (alias) {
-        const res = await fetchAsset(env, url, request, alias);
-        const headers = new Headers(res.headers);
-        headers.set("x-robots-tag", "noindex, nofollow, noarchive, nosnippet");
-        return new Response(res.body, { status: res.status, headers });
-      }
-      if (url.pathname.startsWith("/vendor/")) {
-        return env.ASSETS.fetch(new Request(new URL("/templates" + url.pathname, url.origin), request));
-      }
+      const parked = PARKED[url.pathname.toLowerCase().replace(/\.html$/, "").replace(/\/+$/, "")];
+      if (parked) return Response.redirect(parked, 301);
     }
 
     // Everything else is a static asset (ASSETS honours 404-page handling).
@@ -216,11 +207,14 @@ export default {
   },
 };
 
-/* Short root addresses for unlisted client previews, lower-case, without a
-   trailing slash, each pointing at the template file it serves. Add a line
-   here and the same path to every group in robots.txt. */
-const PREVIEW_ALIASES = {
-  "/westfield": "/templates/westfield-garage.html",
+/* Previews that are parked: the address, lower-case, without a trailing slash
+   or .html, and the live site it now sends people to. Add a line here, keep
+   the path disallowed in every group of robots.txt, list it in
+   run_worker_first in wrangler.toml, and add the template and its assets to
+   .assetsignore. */
+const PARKED = {
+  "/westfield": "https://westfieldgarageintlimited.co.uk/",
+  "/templates/westfield-garage": "https://westfieldgarageintlimited.co.uk/",
 };
 
 /* Mumbai2London is parked.

@@ -4,8 +4,10 @@ Static marketing + portfolio site. **Vanilla HTML + CSS + JS**, no framework,
 no build step. Served as static assets on **Cloudflare Workers** (`worker.js`
 adds only `/api/quote` and `/api/send-review`). Clean URLs: a root file
 `foo.html` is served at `/foo`; templates at `/templates/<name>`.
-Short preview aliases (`billydigitals.com/westfield`) live in `PREVIEW_ALIASES` in
-`worker.js`; each one is also disallowed in every group of `robots.txt`.
+Parked previews — a client site that is live on its own domain — are listed in
+`PARKED` in `worker.js`: the old preview addresses redirect to the live site, the
+template and its assets are in `.assetsignore`, the paths are in
+`run_worker_first` in `wrangler.toml` and disallowed in every group of `robots.txt`.
 
 Brand palette: `--bg:#060b1a`, `--text:#eaf2ff`, accents `--c1:#2b7fff` /
 `--c2:#38bdf8` / `--c3:#22d3ee`. Fonts: Space Grotesk (display), Inter (body),
