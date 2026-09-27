@@ -387,6 +387,24 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
 .gal{columns:2;column-gap:clamp(10px,1.4vw,18px)}
 @media (min-width:780px){.gal{columns:3}}
 @media (min-width:1180px){.gal{columns:4}}
+.gal figure{
+  break-inside:avoid;margin:0 0 clamp(10px,1.4vw,18px);border-radius:var(--r);overflow:hidden;
+  background:var(--blush-2);position:relative;
+}
+.gal img{width:100%;height:auto;transition:transform 1.3s var(--ease)}
+.gal figure:hover img{transform:scale(1.045)}
+.gal figcaption{
+  position:absolute;left:0;right:0;bottom:0;padding:30px 14px 12px;
+  background:linear-gradient(transparent,rgba(78,4,33,.85));color:var(--blush);
+  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  opacity:0;transform:translateY(8px);transition:opacity .45s var(--ease),transform .45s var(--ease);
+}
+.gal figure:hover figcaption{opacity:1;transform:none}
+
+/* These two come after the base rules on purpose. `.gal img` sets
+   height:auto for the masonry, and at equal specificity the later rule
+   wins — so when they sat above it a landscape photograph in a 4/5 box
+   kept its own height and left the blush figure showing underneath. */
 /* The home page shows a short pick rather than the lot, and it is a plain
    grid, not masonry: four in a row of equal crops reads as a chosen
    selection, where four in columns leaves a ragged half-row at every width
@@ -409,19 +427,6 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
 /* one photograph should not stretch the width of a desktop screen */
 .gal-fixed[style*="--cols:1"]{grid-template-columns:1fr;max-width:420px}
 .gal-fixed[style*="--cols:2"]{max-width:760px}
-.gal figure{
-  break-inside:avoid;margin:0 0 clamp(10px,1.4vw,18px);border-radius:var(--r);overflow:hidden;
-  background:var(--blush-2);position:relative;
-}
-.gal img{width:100%;height:auto;transition:transform 1.3s var(--ease)}
-.gal figure:hover img{transform:scale(1.045)}
-.gal figcaption{
-  position:absolute;left:0;right:0;bottom:0;padding:30px 14px 12px;
-  background:linear-gradient(transparent,rgba(78,4,33,.85));color:var(--blush);
-  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
-  opacity:0;transform:translateY(8px);transition:opacity .45s var(--ease),transform .45s var(--ease);
-}
-.gal figure:hover figcaption{opacity:1;transform:none}
 .work-more{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
 
 /* ---------- band ---------- */
