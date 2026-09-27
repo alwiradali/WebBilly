@@ -94,6 +94,19 @@ p{margin:0}
    stops each petal dead and reverses it, which reads as a fault. */
 .petals{position:fixed;inset:0;z-index:0;pointer-events:none}
 
+/* ---------- the veil ----------
+   An in-page link used to run a 1.2s scroll, which from the hero to the
+   enquiry form is most of the site going past in a blur. The drawer could
+   hide its move behind its own fade; a button in the middle of the page has
+   nothing covering the screen, so it brings one. Blush, because that is what
+   most of the site is — it reads as a wash rather than a curtain. */
+.veil{
+  position:fixed;inset:0;z-index:140;pointer-events:none;
+  background:var(--blush);opacity:0;
+  transition:opacity .2s var(--ease);
+}
+.veil.on{opacity:1}
+
 /* ---------- nav ---------- */
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:100;height:var(--navh);

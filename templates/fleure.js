@@ -494,6 +494,28 @@
   menuClose.addEventListener("click", closeMenu);
   addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
 
+  /* Fade down, move, fade back. Half a second and you are there, instead of
+     1.2 seconds of the page streaming past. The drawer does not need this —
+     its own fade already covers the move. */
+  var veil = null;
+  function travel(target) {
+    if (reduced) { jumpTo(target); return; }
+    if (!veil) { veil = el("div", { class: "veil", "aria-hidden": "true" }); document.body.appendChild(veil); }
+    var v = veil, done = false;
+    function move() {
+      if (done) return; done = true;
+      jumpTo(target);
+      /* two frames: one for the scroll to land, one for the paint, or the
+         veil lifts on the old position and the move is visible after all */
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { v.classList.remove("on"); });
+      });
+    }
+    v.addEventListener("transitionend", move, { once: true });
+    setTimeout(move, 420);          /* a dropped transition must not leave it up */
+    requestAnimationFrame(function () { v.classList.add("on"); });
+  }
+
   document.addEventListener("click", function (e) {
     var a = e.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute("href");
@@ -502,7 +524,7 @@
     var fromDrawer = !!a.closest("#menu");
     e.preventDefault();
     closeMenu();
-    if (fromDrawer) jumpTo(t); else goTo(t);
+    if (fromDrawer) jumpTo(t); else travel(t);
     history.replaceState(null, "", id);
   });
 
