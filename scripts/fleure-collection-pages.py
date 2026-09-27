@@ -198,7 +198,7 @@ SHELL = """<!doctype html>
 
 TAGLINE = {
     "fresh":   "Cut this week, <em>wrapped by hand</em>",
-    "forever": "The same flowers, <em>yours to keep</em>",
+    "forever": "Flowers <em>that last</em>",
     "baskets": "The flowers, and <em>everything else</em>",
     "bespoke": "Whatever you <em>have in mind</em>",
 }
