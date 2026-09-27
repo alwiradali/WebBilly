@@ -70,7 +70,6 @@ SHELL = """<!doctype html>
   <nav class="nav-links" aria-label="Sections">
     <a href="/templates/fleure">Home</a>
     <a href="#collections" aria-current="page">Collections</a>
-    <a href="/templates/fleure#order">How to order</a>
     <a href="/templates/fleure-work">The flowers</a>
     <a href="/templates/fleure#ordering">Ordering</a>
     <a href="/templates/fleure#contact">Contact</a>
@@ -83,7 +82,6 @@ SHELL = """<!doctype html>
   <button class="menu-close" id="menuClose" aria-label="Close the menu">&times;</button>
   <a href="/templates/fleure">Home</a>
   <a href="#collections">Collections</a>
-  <a href="/templates/fleure#order">How to order</a>
   <a href="/templates/fleure-work">The flowers</a>
   <a href="/templates/fleure?type={cid}#enquire">Enquire</a>
   <a href="/templates/fleure#ordering">Ordering</a>

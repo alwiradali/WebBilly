@@ -367,22 +367,6 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
 .tile-more::after{content:"→";transition:transform .35s var(--ease)}
 .tile:hover .tile-more::after{transform:translateX(4px)}
 
-/* ---------- steps (how to order) ---------- */
-.steps{counter-reset:s;display:grid;gap:clamp(14px,2vw,22px)}
-@media (min-width:760px){.steps{grid-template-columns:repeat(5,1fr)}}
-.step{position:relative;padding-top:24px;border-top:1px solid rgba(251,227,237,.28)}
-.step::before{
-  counter-increment:s;content:"0" counter(s);
-  position:absolute;top:-11px;left:0;background:var(--wine);padding-right:10px;
-  font-size:.66rem;letter-spacing:.2em;color:var(--on-wine-dim);
-}
-.step h3{font-size:1.32rem;font-weight:400;margin-bottom:6px;color:var(--blush)}
-.step p{color:var(--on-wine-dim);font-size:.92rem}
-.steps-foot{
-  margin-top:clamp(28px,4vw,44px);display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;
-  color:var(--on-wine-dim);font-size:.95rem;
-}
-
 /* ---------- gallery ---------- */
 .gal{columns:2;column-gap:clamp(10px,1.4vw,18px)}
 @media (min-width:780px){.gal{columns:3}}
@@ -514,6 +498,10 @@ h2.big em{font-style:italic;font-weight:300;color:var(--wine)}
 .enq-aside p{color:var(--ink-soft);font-size:.94rem}
 .enq-send{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .enq-send .btn{flex:1 1 auto}
+.enq-note{
+  margin-top:clamp(26px,3.2vw,40px);text-align:center;
+  color:var(--ink-soft);font-size:.95rem;
+}
 .sum-ok,.sum-err{
   margin-top:14px;padding:13px 15px;border-radius:var(--r);font-size:.92rem;line-height:1.5;
 }

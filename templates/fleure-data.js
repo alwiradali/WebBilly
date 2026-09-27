@@ -96,15 +96,7 @@ window.FLEURE = (function () {
     }
   ];
 
-  /* The "How to order" highlight, in its own order. */
-  var howToOrder = [
-    { h: "Fresh or forever", p: "Real stems for the day, or faux florals that keep." },
-    { h: "Colours and style", p: "Soft and pale, deep and romantic, or one colour throughout." },
-    { h: "Your budget", p: "Tell us the figure and we will build the fullest bouquet it buys." },
-    { h: "The occasion", p: "Birthday, anniversary, new baby, thank you, or no reason at all." },
-    { h: "The date", p: "When you need it in your hands, and whether you are collecting." }
-  ];
-  var inspirationNote = "You are welcome to send an inspiration photo too.";
+  /* Said under the enquiry form: the one thing the form does not say itself. */
   var confirmNote = "We will confirm your design, price and availability before starting your bouquet.";
 
   /* Bloom baskets, from the shop's own highlight. */
@@ -183,8 +175,7 @@ window.FLEURE = (function () {
   ];
 
   return {
-    business: business, collections: collections, howToOrder: howToOrder,
-    inspirationNote: inspirationNote, confirmNote: confirmNote,
+    business: business, collections: collections, confirmNote: confirmNote,
     basketPoints: basketPoints, policies: policies, occasions: occasions,
     palettes: palettes, work: work, reviews: reviews, faq: faq
   };

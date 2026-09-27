@@ -117,20 +117,10 @@
     });
   })();
 
-  /* -- how to order -- */
-  (function steps() {
-    var host = $("#steps"); if (!host) return;
-    D.howToOrder.forEach(function (s, i) {
-      var d = el("div", { class: "step", "data-rv": "", "data-rv-d": String((i % 4) + 1) });
-      d.appendChild(el("h3", null, s.h));
-      d.appendChild(el("p", null, s.p));
-      host.appendChild(d);
-    });
-    var foot = $("#stepsFoot");
-    if (foot) {
-      foot.appendChild(el("span", null, D.inspirationNote));
-      foot.appendChild(el("span", null, D.confirmNote));
-    }
+  /* -- the line under the enquiry form -- */
+  (function enqNote() {
+    var host = $("#enqNote"); if (!host) return;
+    host.textContent = D.confirmNote;
   })();
 
   /* -- bloom baskets -- */
