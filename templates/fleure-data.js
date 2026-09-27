@@ -35,9 +35,10 @@ window.FLEURE = (function () {
       note: "Wrapped in our own paper and pearl trim, finished with the Fleuré seal.",
       img: "work/pink-car.webp",
       alt: "Fresh bouquet of bright pink and red roses with gypsophila",
-      intro: "Cut stems, bought in for your date and wrapped the day they go out. Tell us the " +
-             "colours and the budget and we will build the fullest bouquet that money buys — " +
-             "there is no fixed size, because no two orders want the same thing.",
+      intro: "Cut flowers chosen for your date and wrapped by hand the morning they go out — " +
+             "at their best when they reach you, not at the end of a week on a shelf. Tell us " +
+             "the colours you like and roughly what you would like to spend, and the rest is " +
+             "ours to work out.",
       points: [
         "Roses, spray roses, gerberas, carnations, chrysanthemums and stocks, depending on the week.",
         "Wrapped by hand in our own paper, with the pearl trim and the Fleuré seal.",
