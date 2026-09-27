@@ -53,12 +53,12 @@ window.FLEURE = (function () {
       note: "Good for a first home, a desk, or anywhere fresh flowers will not last.",
       img: "work/faux-basket.webp",
       alt: "Faux flower basket in pinks and cream",
-      intro: "The same arranging, in faux stems instead of cut ones. It needs no water and it " +
-             "does not drop — which makes it the right choice for a gift that has to travel, " +
-             "an office, or a room that never gets enough light.",
+      intro: "The same arranging, in faux stems instead of cut ones. It keeps indefinitely and " +
+             "needs nothing doing to it — which makes it the right choice for a gift that has " +
+             "to travel, an office, or a room that never gets enough light.",
       points: [
         "Arranged by hand exactly as a fresh bouquet is, so it does not read as artificial.",
-        "No water, no wilting — it keeps looking the way it did on the day.",
+        "No water, no upkeep — it looks the same in a year as it did on the day.",
         "Baskets, bouquets or a standing arrangement, whichever suits where it is going."
       ],
       photos: ["work/faux-basket.webp"]
