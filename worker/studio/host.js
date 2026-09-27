@@ -24,6 +24,7 @@ import { readAll as readSettings, liveRedirects } from "./settings.js";
 import { pruneEvents } from "./enquiries.js";
 import { tourPage, isTourIndex } from "./router.js";
 import { siteEdits } from "./site.js";
+import * as brandSwap from "./brand.js";
 import { AREA_SLUGS, areaForListing } from "./areas.js";
 
 const ALLOW_API = /^\/api\/(studio\/|public\/|billy360-verify$|megacity-[a-z-]+$)/;
@@ -358,7 +359,7 @@ export function rootRewriter(response, { origin, path, isPublic, settings }) {
     .transform(response);
 }
 
-function finish(res, { origin, path, isPublic, settings, how }) {
+async function finish(res, { origin, path, isPublic, settings, how }) {
   let out = rootRewriter(res, { origin, path, isPublic, settings });
   if (isPublic) out = tracking.inject(out, settings, { mode: "root" });
   const h = new Headers(out.headers);
@@ -366,7 +367,15 @@ function finish(res, { origin, path, isPublic, settings, how }) {
   if (how && !h.has("x-mc-render")) h.set("x-mc-render", how);
   if (!isPublic) h.set("x-robots-tag", "noindex, nofollow, noarchive, nosnippet");
   h.delete("content-length"); h.delete("etag"); h.delete("last-modified");
-  return new Response(out.body, { status: out.status, headers: h });
+  return new Response(await withBrand(out, isPublic, settings), { status: out.status, headers: h });
+}
+
+/* Studio → Settings → Branding on the page (worker/studio/brand.js). Nothing
+   is buffered unless a saved detail differs from what the pages print. */
+async function withBrand(out, isPublic, settings) {
+  const pairs = isPublic ? brandSwap.brandPairs(settings && settings.brand) : [];
+  if (!pairs.length || !/text\/html/i.test(out.headers.get("content-type") || "")) return out.body;
+  return brandSwap.applyBrand(await out.text(), pairs);
 }
 
 export async function notFoundResponse(request, env, ctx, url, path, kind) {
@@ -386,7 +395,11 @@ export async function notFoundResponse(request, env, ctx, url, path, kind) {
   h.set("x-robots-tag", "noindex, nofollow");
   h.set("x-mc-mode", "root");
   h.delete("content-length"); h.delete("etag"); h.delete("last-modified");
-  return new Response(out.body, { status: 404, headers: h });
+  /* the 404 page has the same footer, so it gets the same office details */
+  let settings = null;
+  const db = officeDb(env);
+  if (db) { try { settings = await readSettings(db); } catch (e) { settings = null; } }
+  return new Response(await withBrand(new Response(out.body, { headers: h }), true, settings), { status: 404, headers: h });
 }
 
 /* One row per visitor per missing path per day, so the Studio can show
