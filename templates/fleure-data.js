@@ -84,12 +84,12 @@ window.FLEURE = (function () {
       note: "Custom orders welcome — send the picture and we will tell you what it takes.",
       img: "work/red-grass.webp",
       alt: "Ten premium red roses in a black wrap with pearl trim",
-      intro: "Anything that is not one of the three above. A set count of premium roses, a " +
-             "colour you have been picturing, a photograph you saved months ago. Send it over " +
-             "and we will tell you honestly what we can match and what it would cost.",
+      intro: "Anything that is not one of the other three. A set number of roses, a colour " +
+             "you have in mind, or a photo you have saved. Send it over and we will tell you " +
+             "what we can do and what it costs.",
       points: [
-        "Send an inspiration photo and we will say what is possible before anything is agreed.",
-        "Set counts — ten premium red roses, say — as well as open-ended designs.",
+        "Send a photo and we will tell you what is possible before you commit.",
+        "Ask for an exact number of roses, or leave the size to us.",
         "Last-minute and same-day are often possible, subject to availability."
       ],
       photos: ["work/red-grass.webp","work/pink-pearls.webp","work/peach-car.webp"]
