@@ -214,6 +214,10 @@ body.menu-on .menu-open{opacity:0;pointer-events:none}
 
 /* ---------- section furniture ---------- */
 .sec{position:relative;padding:clamp(70px,10vh,132px) 0;z-index:1}
+/* Two plain sections in a row pay for that padding twice and the seam between
+   them reads as a hole. A change of ground earns the space; a continuous one
+   does not, so the second of a pair drops its own top padding. */
+.sec:not(.sec-blush):not(.sec-wine) + .sec:not(.sec-blush):not(.sec-wine){padding-top:0}
 @media (max-width:700px){.sec{padding:clamp(48px,7vh,74px) 0}}
 .sec-blush{background:var(--blush)}
 .sec-wine{background:var(--wine);color:var(--on-wine)}
