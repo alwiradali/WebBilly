@@ -128,6 +128,51 @@ function stubDb(opts = {}) {
      "  and the failed read is recorded, so the Studio can say so");
 }
 
+/* ── an unchanged feed costs next to nothing (27 Sep: 79% of D1's daily reads) ── */
+
+{
+  const settings = new Map(), log = [];
+  const db = {
+    prepare: (sql) => {
+      const exec = (args) => ({
+        run: async () => { log.push(sql); if (/INTO settings/.test(sql)) settings.set(args[0], args[1]); return { success: true }; },
+        all: async () => { log.push(sql); return { results: [] }; },
+        first: async () => { log.push(sql); if (/FROM settings WHERE key/.test(sql)) { const v = settings.get(args[0]); return v ? { value: v } : null; } return null; },
+      });
+      return { ...exec([]), bind: (...args) => exec(args) };
+    },
+    batch: async (stmts) => { log.push("batch"); return stmts.map(() => ({ success: true })); },
+  };
+  const feedOf = (props) => async (url) => /property-types/.test(url) ? { ok: false, text: async () => "" } : { ok: true, json: async () => ({ properties: props, paging: {} }) };
+  const same = feedOf(feed.properties);
+  const changed = feedOf(feed.properties.map((p, i) => (i === 0 ? { ...p, price: Number(p.price || 0) + 25 } : p)));
+  const env = { TENNINETY_API_KEY: "k" };
+  const heavy = () => log.filter((s) => /FROM listings|FROM media|^batch$/.test(s)).length;
+  const run = async (fetch, now, extra = {}) => { log.length = 0; const r = await runSync(env, db, { fetch, now, today: now.slice(0, 10), ...extra }); return { r, heavy: heavy() }; };
+
+  const a = await run(same, "2026-09-27T10:00:00Z");
+  ok(!a.r.quiet && a.heavy > 0, "the first read compares everything");
+  const b = await run(same, "2026-09-27T10:01:00Z");
+  ok(b.r.quiet && b.heavy === 0, `a minute later, the same feed reads no listing or photograph (${b.heavy} heavy statements)`);
+  ok(/^Up to date/.test(b.r.summary) && b.r.ok, "  and the Studio still sees a successful read");
+  ok(JSON.parse(settings.get("sync_tenninety_last")).at === "2026-09-27T10:01:00Z", "  with the time of that read recorded");
+  const c = await run(changed, "2026-09-27T10:02:00Z");
+  ok(!c.r.quiet && c.heavy > 0, "a change in the feed (a rent) is compared in full straight away");
+  const d = await run(changed, "2026-09-27T10:50:00Z");
+  ok(d.r.quiet, "the changed feed, unchanged since, is quiet again");
+  const e = await run(changed, "2026-09-27T11:03:00Z");
+  ok(!e.r.quiet, "at least once an hour it compares in full anyway");
+  const f = await run(changed, "2026-09-27T23:40:00Z");
+  const g = await run(changed, "2026-09-28T00:01:00Z");
+  ok(!g.r.quiet, "after midnight it compares in full, because 'available from' dates may have arrived");
+  void f;
+  const h = await run(changed, "2026-09-28T00:02:00Z", { force: true });
+  ok(!h.r.quiet, "a refresh someone asked for always compares in full");
+  const down = await run(async () => { throw new Error("upstream down"); }, "2026-09-28T00:03:00Z");
+  const back = await run(changed, "2026-09-28T00:04:00Z");
+  ok(!down.r.ok && !back.r.quiet, "after a failed read the next one compares in full");
+}
+
 /* ── it runs on its own, not only when somebody presses a button ──────────── */
 
 /* Walid's point, and a fair one: he should not have to open the Studio and

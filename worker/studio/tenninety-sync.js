@@ -32,7 +32,7 @@
  */
 
 import { toListings, fetchProperties, fetchPropertyTypes, feedMediaKey } from "./tenninety.js";
-import { uid, nowIso, parseJson, getSetting, setSetting } from "./db.js";
+import { uid, nowIso, parseJson, getSetting, setSetting, sha256Hex } from "./db.js";
 
 /* Above this fraction of existing listings disappearing at once, refuse to act
    and report instead. A third is chosen to be well clear of ordinary churn —
@@ -310,10 +310,13 @@ export async function existingSynced(db) {
   }));
 
   /* one query for every listing's feed photographs, in the order they sit in,
-     rather than one per listing */
+     rather than one per listing. Reached through the feed's listings, so the
+     index on media(listing_id) does the work: "LIKE '%/feed.jpg'" on its own
+     read every row of the media table, and this ran every minute. */
   const media = (await db.prepare(
-    `SELECT listing_id, key_orig FROM media
-      WHERE key_orig LIKE '%/feed.jpg' ORDER BY listing_id, sort, rowid`).all().catch(() => ({ results: [] }))).results || [];
+    `SELECT m.listing_id, m.key_orig FROM listings l JOIN media m ON m.listing_id = l.id
+      WHERE l.source='tenninety' AND m.key_orig LIKE '%/feed.jpg'
+      ORDER BY m.listing_id, m.sort, m.rowid`).all().catch(() => ({ results: [] }))).results || [];
   const sig = {};
   for (const m of media) sig[m.listing_id] = (sig[m.listing_id] ? sig[m.listing_id] + "," : "") + m.key_orig;
   for (const row of out) row.photoSig = sig[row.id] || "";
@@ -334,6 +337,32 @@ export async function runSync(env, db, opts = {}) {
 
   const types = feedOk ? await fetchPropertyTypes(env, opts).catch(() => null) : null;
   const { listings, skipped } = feedOk ? toListings(properties, { propertyTypes: types, today: opts.today }) : { listings: [], skipped: [] };
+  const at = opts.now || nowIso();
+
+  /* The cron runs every minute and 10ninety's feed changes a few times a
+     day. Comparing it with every listing and photograph each minute was the
+     largest reader of the database (27 Sep: Cloudflare warned at 79% of the
+     free plan's 5 million daily reads). So the feed is fingerprinted, with
+     the date in it because "available from" becomes "available now" at
+     midnight without the feed changing, and when it is the same as last
+     time only the time of the read is recorded. A full comparison still
+     runs at least hourly, after any failure, and whenever someone asks for
+     one, so nothing can drift for long. */
+  const prev = await getSetting(db, LAST_RUN_KEY, null).catch(() => null);
+  const sig = feedOk ? await sha256Hex(JSON.stringify({ p: properties, t: types, d: opts.today || at.slice(0, 10) })).catch(() => null) : null;
+  if (sig && !opts.force && prev && prev.ok && prev.sig === sig && prev.fullAt && Date.parse(at) - Date.parse(prev.fullAt) < FULL_EVERY_MS) {
+    const quiet = {
+      ok: true, feedOk: true, why: null, quiet: true,
+      counted: prev.counted || { feed: listings.length, existing: listings.length, skipped: skipped.length },
+      created: 0, updated: 0, removed: 0, failed: [],
+      summary: `Up to date — ${listings.length} properties, nothing changed.`,
+      at, skipped: prev.skipped || [],
+      newestUpdate: listings.map((l) => l.updatedAt).filter(Boolean).sort().pop() || null,
+    };
+    if (opts.record !== false) await recordRun(db, quiet, prev, { sig, fullAt: prev.fullAt }).catch((e) => console.error("sync record", e && e.message));
+    return quiet;
+  }
+
   /* the same keys mediaStatements will write, in the same order, so a
      property whose only change is a new photograph is seen as changed */
   for (const row of listings) row.photoSig = (row.images || []).map((i) => feedMediaKey(row.id, i.url)).join(",");
@@ -348,7 +377,7 @@ export async function runSync(env, db, opts = {}) {
     counted: { feed: listings.length, existing: existing.filter((r) => r.status !== "withdrawn" && !r.deletedAt).length, skipped: skipped.length + ((plan.binned || []).length) },
     ...result,
     summary: feedOk ? describePlan(plan) : `Nothing changed — the feed could not be read (${why}).`,
-    at: opts.now || nowIso(),
+    at,
     /* what 10ninety sent that is not on the website, and why */
     skipped: skipped.concat((plan.binned || []).map((r) => ({ ref: r.ref, address: [r.address1, r.town].filter(Boolean).join(", "), why: "it is in the Studio's Bin (restore it there to show it)" }))).slice(0, 20),
     /* the newest "last updated" among the properties 10ninety is sending: when
@@ -356,23 +385,25 @@ export async function runSync(env, db, opts = {}) {
        feed yet (it does that on Portal Export, and overnight) */
     newestUpdate: listings.map((l) => l.updatedAt).filter(Boolean).sort().pop() || null,
   };
-  if (opts.record !== false) await recordRun(db, out).catch((e) => console.error("sync record", e && e.message));
+  if (opts.record !== false) await recordRun(db, out, prev, { sig: feedOk ? sig : null, fullAt: at }).catch((e) => console.error("sync record", e && e.message));
   return out;
 }
+const FULL_EVERY_MS = 60 * 60e3;
 
 /* The last run, kept so the Studio can say when 10ninety was last read and
    what came of it: the cron has nobody watching, and "it did not come
    across" should never again need a developer to find out why. One small
    row, overwritten every run; lastChangeAt survives quiet runs. */
 export const LAST_RUN_KEY = "sync_tenninety_last";
-async function recordRun(db, r) {
+async function recordRun(db, r, prev, fp) {
   if (!db) return;
-  const prev = await getSetting(db, LAST_RUN_KEY, null).catch(() => null);
   const changed = (r.created || 0) + (r.updated || 0) + (r.removed || 0) > 0;
   await setSetting(db, LAST_RUN_KEY, {
     at: r.at, ok: r.ok, feedOk: r.feedOk, summary: r.summary, counted: r.counted,
     created: r.created || 0, updated: r.updated || 0, removed: r.removed || 0,
     failed: (r.failed || []).slice(0, 10), skipped: r.skipped || [], newestUpdate: r.newestUpdate,
     lastChangeAt: changed ? r.at : (prev && prev.lastChangeAt) || null,
+    /* the feed's fingerprint and when it was last compared in full */
+    sig: (fp && fp.sig) || null, fullAt: (fp && fp.fullAt) || null,
   }, null);
 }

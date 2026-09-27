@@ -21,7 +21,6 @@ import * as pages from "./pages.js";
 import * as pub from "./public.js";
 import * as tracking from "./tracking.js";
 import { readAll as readSettings, liveRedirects } from "./settings.js";
-import { pruneEvents } from "./enquiries.js";
 import { tourPage, isTourIndex } from "./router.js";
 import { siteEdits } from "./site.js";
 import * as brandSwap from "./brand.js";
@@ -424,6 +423,5 @@ export async function logNotFound(env, request, path, kind) {
     const meta = { path: p, ref: (request.headers.get("referer") || "").slice(0, 300) || null, ua: BOT.test(ua) ? "bot" : "browser", kind: kind || "page" };
     await db.prepare(`INSERT INTO events (id, at, name, listing_id, session_hash, meta_json) VALUES (?1, ?2, 'not_found', NULL, ?3, ?4)`)
       .bind(uid("e"), nowIso(), session, JSON.stringify(meta)).run();
-    if (Math.random() < 0.05) await pruneEvents(db);
   } catch (e) { console.error("not_found log", e); }
 }

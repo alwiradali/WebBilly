@@ -250,10 +250,20 @@ const EVENT_NAMES = new Set(["listing_view", "tour_open", "tour_room", "tour_hot
 const BILLY_MAP = { open: "tour_open", room: "tour_room", hotspot: "tour_hotspot", cta: "tour_cta", gallery: "gallery" };
 
 /* ninety days of events, never more than 300k rows */
+/* Events older than 90 days go, once a day from the cron (worker.js).
+   It used to run on one event in twenty, and both of its statements read
+   the whole table: "at" leads no index, and COUNT(*) reads every row. With
+   a few hundred events a day that was millions of reads (27 Sep, Cloudflare
+   at 79% of the free plan's daily 5 million). idx_events_at (migration 0007)
+   lets the delete find old rows directly, and the size check reads two rows:
+   the first and last rowid, which is a close enough count for a safety cap. */
 export async function pruneEvents(db) {
   await db.prepare(`DELETE FROM events WHERE at < ?1`).bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
-  const n = await db.prepare(`SELECT COUNT(*) n FROM events`).first();
-  if (Number(n && n.n) > 300000) await db.prepare(`DELETE FROM events WHERE id IN (SELECT id FROM events ORDER BY at ASC LIMIT 50000)`).run();
+  /* two statements: SQLite answers MAX(rowid) or MIN(rowid) with one seek
+     each, but scans the table for an expression that uses both */
+  const hi = await db.prepare(`SELECT MAX(rowid) AS n FROM events`).first();
+  const lo = await db.prepare(`SELECT MIN(rowid) AS n FROM events`).first();
+  if (Number(hi && hi.n) - Number(lo && lo.n) + 1 > 300000) await db.prepare(`DELETE FROM events WHERE id IN (SELECT id FROM events ORDER BY at ASC LIMIT 50000)`).run();
 }
 
 export async function publicEvent(request, env) {
@@ -285,7 +295,6 @@ export async function publicEvent(request, env) {
     }
     await db.prepare(`INSERT INTO events (id, at, name, listing_id, session_hash, meta_json) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`)
       .bind(uid("e"), nowIso(), name, listingId, session, JSON.stringify(meta)).run();
-    if (Math.random() < 0.05) await pruneEvents(db);
   } catch (e) { console.error("event", e); }
   return json({ ok: true });
 }

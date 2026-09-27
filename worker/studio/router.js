@@ -53,7 +53,7 @@ async function tenninetySync(c) {
     return json({ ok: false, throttled: true, summary: `Just refreshed \u2014 try again in ${wait}s.` }, 429);
   }
   lastSyncAt = now;
-  const result = await runSync(c.env, c.db);
+  const result = await runSync(c.env, c.db, { force: true });
   await audit(c.db, { userId: c.user.id, action: "listings.synced", entity: "listing", entityId: null,
     detail: { created: result.created, updated: result.updated, removed: result.removed, ok: result.ok } });
   /* 207 when the feed was read but something in it would not write: the

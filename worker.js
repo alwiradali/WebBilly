@@ -51,6 +51,13 @@ export default {
       (e) => console.error("10ninety cron threw", e && e.message)
     );
     ctx.waitUntil(work);
+    /* once a day, at a quiet minute: clear events older than 90 days
+       (worker/studio/enquiries.js pruneEvents) */
+    const t = new Date(event && event.scheduledTime ? event.scheduledTime : Date.now());
+    if (t.getUTCHours() === 3 && t.getUTCMinutes() === 17) {
+      const { pruneEvents } = await import("./worker/studio/enquiries.js");
+      ctx.waitUntil(pruneEvents(db).catch((e) => console.error("events prune", e && e.message)));
+    }
   },
 
   async fetch(request, env, ctx) {
