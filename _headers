@@ -148,5 +148,13 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /templates/fleure-work
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-fresh
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-forever
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-bloom-baskets
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-bespoke
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/fleure/*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

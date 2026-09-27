@@ -103,7 +103,7 @@
   (function tiles() {
     var host = $("#tiles"); if (!host) return;
     D.collections.forEach(function (c, i) {
-      var a = el("a", { class: "tile", href: "#enquire", "data-collection": c.id,
+      var a = el("a", { class: "tile", href: "/templates/" + c.slug, "data-collection": c.id,
                         "data-rv": "", "data-rv-d": String((i % 4) + 1) });
       var art = el("div", { class: "tile-art" });
       art.appendChild(el("img", { src: A + c.img, alt: c.alt, loading: i < 2 ? "eager" : "lazy" }));
@@ -111,7 +111,7 @@
       var body = el("div", { class: "tile-body" });
       body.appendChild(el("h3", null, c.name));
       body.appendChild(el("p", null, c.blurb));
-      body.appendChild(el("span", { class: "tile-more" }, "Enquire"));
+      body.appendChild(el("span", { class: "tile-more" }, "Have a look"));
       a.appendChild(body);
       host.appendChild(a);
     });
@@ -407,17 +407,16 @@
       }
     });
 
-    /* a tile says which collection it was, so the form opens on it */
-    $$("[data-collection]").forEach(function (t) {
-      t.addEventListener("click", function () {
-        var map = { fresh: "Fresh bouquet", forever: "Forever (faux)", baskets: "Bloom basket", bespoke: "Not sure yet" };
-        var want = map[t.getAttribute("data-collection")];
-        var host = $("#typeChips"); if (!host || !want) return;
-        state.type = want;
-        $$("button", host).forEach(function (o) { o.setAttribute("aria-pressed", String(o.textContent === want)); });
-        preview();
-      });
-    });
+    /* A collection page sends you back with ?type=, so the form opens on the
+       thing you were just reading about instead of asking again. */
+    (function preselect() {
+      var map = { fresh: "Fresh bouquet", forever: "Forever (faux)", baskets: "Bloom basket", bespoke: "Not sure yet" };
+      var want = map[(location.search.match(/[?&]type=([a-z]+)/) || [])[1]];
+      var host = $("#typeChips"); if (!host || !want) return;
+      state.type = want;
+      $$("button", host).forEach(function (o) { o.setAttribute("aria-pressed", String(o.textContent === want)); });
+      preview();
+    })();
   }
 
   /* ============================================================

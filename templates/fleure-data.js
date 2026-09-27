@@ -30,36 +30,69 @@ window.FLEURE = (function () {
      fresh, faux, baskets, and the bespoke work that is none of the three. */
   var collections = [
     {
-      id: "fresh",
-      name: "Fresh bouquets",
+      id: "fresh", slug: "fleure-fresh", name: "Fresh bouquets",
       blurb: "Roses, spray roses, gerberas, carnations and stocks, wrapped by hand the day they go out.",
       note: "Wrapped in our own paper and pearl trim, finished with the Fleuré seal.",
       img: "work/pink-car.webp",
-      alt: "Fresh bouquet of bright pink and red roses with gypsophila"
+      alt: "Fresh bouquet of bright pink and red roses with gypsophila",
+      intro: "Cut stems, bought in for your date and wrapped the day they go out. Tell us the " +
+             "colours and the budget and we will build the fullest bouquet that money buys — " +
+             "there is no fixed size, because no two orders want the same thing.",
+      points: [
+        "Roses, spray roses, gerberas, carnations, chrysanthemums and stocks, depending on the week.",
+        "Wrapped by hand in our own paper, with the pearl trim and the Fleuré seal.",
+        "Built to your budget rather than to a set list of sizes."
+      ],
+      photos: ["work/pink-pearls.webp","work/spray-roses.webp","work/peach-car.webp",
+               "work/pink-car.webp","work/pink-perfection.webp","work/gerbera.webp"]
     },
     {
-      id: "forever",
-      name: "Forever florals",
+      id: "forever", slug: "fleure-forever", name: "Forever florals",
       blurb: "Faux stems arranged the same way as the fresh ones, for a gift that stays.",
       note: "Good for a first home, a desk, or anywhere fresh flowers will not last.",
       img: "work/faux-basket.webp",
-      alt: "Faux flower basket in pinks and cream"
+      alt: "Faux flower basket in pinks and cream",
+      intro: "The same arranging, in faux stems instead of cut ones. It needs no water and it " +
+             "does not drop — which makes it the right choice for a gift that has to travel, " +
+             "an office, or a room that never gets enough light.",
+      points: [
+        "Arranged by hand exactly as a fresh bouquet is, so it does not read as artificial.",
+        "No water, no wilting — it keeps looking the way it did on the day.",
+        "Baskets, bouquets or a standing arrangement, whichever suits where it is going."
+      ],
+      photos: ["work/faux-basket.webp"]
     },
     {
-      id: "baskets",
-      name: "Bloom baskets",
+      id: "baskets", slug: "fleure-bloom-baskets", name: "Bloom baskets",
       blurb: "Flowers arranged around whatever you want to give with them — perfume, candles, jewellery.",
       note: "Built to your colours, your flowers and your budget.",
       img: "work/bloom-basket.webp",
-      alt: "Bloom basket of roses arranged around perfume, a candle and a ring box"
+      alt: "Bloom basket of roses arranged around perfume, a candle and a ring box",
+      intro: "A basket where the gift sits inside the flowers rather than next to them. Send " +
+             "the perfume, the candle or the box over, or tell us what to include and we will " +
+             "source it, and the whole thing is arranged around it.",
+      points: [
+        "Customised to suit your preferred colours, flowers and budget.",
+        "Each basket is arranged to be a beautiful and unique design in its own right.",
+        "Beauty products, gifts or anything else you would like can be included on request."
+      ],
+      photos: ["work/bloom-basket.webp","work/faux-basket.webp"]
     },
     {
-      id: "bespoke",
-      name: "Something bespoke",
+      id: "bespoke", slug: "fleure-bespoke", name: "Something bespoke",
       blurb: "A colour you have in mind, a photograph you have saved, a bouquet for a date that matters.",
       note: "Custom orders welcome — send the picture and we will tell you what it takes.",
       img: "work/red-grass.webp",
-      alt: "Ten premium red roses in a black wrap with pearl trim"
+      alt: "Ten premium red roses in a black wrap with pearl trim",
+      intro: "Anything that is not one of the three above. A set count of premium roses, a " +
+             "colour you have been picturing, a photograph you saved months ago. Send it over " +
+             "and we will tell you honestly what we can match and what it would cost.",
+      points: [
+        "Send an inspiration photo and we will say what is possible before anything is agreed.",
+        "Set counts — ten premium red roses, say — as well as open-ended designs.",
+        "Last-minute and same-day are often possible, subject to availability."
+      ],
+      photos: ["work/red-grass.webp","work/pink-pearls.webp","work/peach-car.webp"]
     }
   ];
 
