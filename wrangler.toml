@@ -18,6 +18,16 @@ routes = [
   # hostnames to M2L_HOST below.
   # ,{ pattern = "mumbai2london.co.uk", custom_domain = true }
   # ,{ pattern = "www.mumbai2london.co.uk", custom_domain = true }
+  #
+  # Megacity Properties. DO NOT UNCOMMENT THESE UNTIL megacityproperties.co.uk
+  # is an Active zone in THIS Cloudflare account. A custom_domain route for a
+  # zone the account does not hold makes `wrangler deploy` fail, and a failed
+  # deploy freezes billydigitals.com and every other client site on this
+  # Worker — the same way the placeholder D1 id did. Uncomment these two lines
+  # and MEGACITY_HOST below in the SAME commit; check-wrangler.mjs fails the
+  # build if one is set without the other.
+  # ,{ pattern = "megacityproperties.co.uk", custom_domain = true }
+  # ,{ pattern = "www.megacityproperties.co.uk", custom_domain = true }
 ]
 
 [vars]
@@ -25,6 +35,16 @@ routes = [
 # at clean root URLs (/, /admin, /invoice, /sign) and indexable by Google.
 # Leave empty and everything stays as it is on billydigitals.com.
 M2L_HOST = ""
+
+# Hostnames that serve ONLY the Megacity Properties site, at root addresses
+# ("/lettings", "/let/<id>"), with the old site's addresses redirected and the
+# domain's own robots.txt and sitemap. The FIRST hostname is canonical: every
+# other one 301s to it. Empty means Megacity stays on the demo host only.
+#
+# Turn on together with the two Megacity routes above, not before — see the
+# note there, and docs/megacity-golive.md.
+# MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
+MEGACITY_HOST = ""
 
 # D1 database for Mumbai2London enquiries + booking diary.
 # Create it once with:  npx wrangler d1 create m2l
@@ -59,7 +79,14 @@ binding = "ASSETS"
 #
 # The rest let a client domain serve its site at "/" instead of the Billy
 # Digitals homepage. If wrangler is too old for the array form, use `true`.
-run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign"]
+# Parked previews (PARKED in worker.js) are not assets, and with
+# not_found_handling = "404-page" the asset router answers an unmatched path
+# with the 404 page itself, never reaching the Worker, unless the path is
+# listed here. Both capitalisations of the short one, because it gets typed
+# from a text message.
+run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign",
+                    "/westfield", "/westfield/", "/Westfield", "/Westfield/",
+                    "/templates/westfield-garage", "/templates/westfield-garage.html"]
 
 # ---------------------------------------------------------------------------
 # Molecular Miracles on Lynsey's own Cloudflare account.
@@ -117,6 +144,12 @@ run_worker_first = false
 # untouched somewhere else looking like a deploy that did nothing.
 [env.smartin]
 name = "smartin-science"
+# His own entry script. Without this, wrangler inherits the top-level
+# main = "worker.js" and deploys BILLYDIGITALS' worker to his account:
+# every path that is not a page throws Cloudflare error 1101 instead of
+# returning a 404, and that worker's API routes answer on his hostname.
+# It happened. [env.mm] sets its own main and was never affected.
+main = "dist/smartin-science/_worker.js"
 routes = [
   { pattern = "smartinscience.co.uk", custom_domain = true },
   { pattern = "www.smartinscience.co.uk", custom_domain = true }
@@ -127,6 +160,129 @@ directory = "dist/smartin-science"
 # The build writes about.html and links to /about, so the server has to resolve
 # the extensionless URL. This is wrangler's default, stated so it cannot drift.
 html_handling = "auto-trailing-slash"
+
+# binding is what creates env.ASSETS. Without it his Worker had no way to
+# reach the files, so every path that was not already an asset threw and
+# Cloudflare answered 1101 instead of 404. [env.mm.assets] has always had
+# these three lines; this block never did.
+binding = "ASSETS"
+not_found_handling = "404-page"
+run_worker_first = false
+
+# ---------------------------------------------------------------------------
+# Westfield Garage Int Limited — Levenshulme, on HIS OWN Cloudflare account.
+#
+# Same arrangement as Rod's and Lynsey's: his account is not connected to this
+# repository and does not need to be. A scoped API token travels one way, from
+# his Cloudflare into GitHub Secrets, and is never written down here.
+# account_id therefore comes from CLOUDFLARE_ACCOUNT_ID at deploy time rather
+# than sitting in a public repo.
+#
+# His domain is deliberately NOT on the billydigitals Worker above. A push to
+# any branch of this repository deploys that Worker to production (see
+# PROJECT-NOTES.md), so a stray branch push would put the wrong tree on a
+# client's live site. His own Worker in his own account cannot be reached that
+# way at all.
+#
+# Static only — no `main`. The enquiry forms post straight to Web3Forms from
+# the browser, so there is no Worker code to run and nothing server-side to
+# get wrong.
+#
+# As with [env.mm] and [env.smartin], do not let this block go missing:
+# `wrangler deploy --env westfield` would then silently fall back to the
+# top-level config and upload the ENTIRE repository — every other client's
+# files — into his Cloudflare account under the wrong worker name, while his
+# real site sat untouched somewhere else looking like a deploy that did
+# nothing. deploy-westfield.yml checks for it before every deploy.
+[env.westfield]
+# The Worker he created in his own dashboard on 14 Sep and attached both
+# domains to. Workers cannot be renamed, so the config carries its name: a
+# deploy with this env updates that Worker in place rather than creating a
+# second one that could never bind the domains.
+name = "noisy-forest-8b27"
+routes = [
+  { pattern = "westfieldgarageintlimited.co.uk", custom_domain = true },
+  { pattern = "www.westfieldgarageintlimited.co.uk", custom_domain = true }
+]
+
+[env.westfield.assets]
+directory = "dist/westfield-garage"
+not_found_handling = "404-page"
+
+# ---------------------------------------------------------------------------
+# Megacity Properties — on WALID'S OWN Cloudflare account.
+#
+# The zone megacityproperties.co.uk lives in his account, which is the right
+# way round: he owns the domain, the site, the database and the photographs,
+# and can take them elsewhere one day without asking anybody. A Worker custom
+# domain can only be created for a zone in the same account as the Worker, so
+# the Worker is deployed there too — this block is how.
+#
+# As with [env.mm] and [env.smartin], do not let this block go missing.
+# `wrangler deploy --env megacity` without it does NOT fail: it falls back to
+# the top-level config and uploads the ENTIRE repository — every other client's
+# pages, photographs and documents — into his account as static assets, and
+# reports success. `directory` below points at dist/megacity precisely so there
+# is nothing else there to send; scripts/build-megacity.mjs builds it from an
+# allow-list and refuses to run if another client's name appears in a path.
+#
+# account_id is deliberately absent: it arrives as CLOUDFLARE_ACCOUNT_ID at
+# deploy time from GitHub Secrets, so a client's account number is not written
+# down in a public repository.
+#
+# TWO REPOSITORY SECRETS (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN_MEGACITY   from HIS Cloudflare, scoped to:
+#                                     Account → Workers Scripts    → Edit
+#                                     Account → D1                 → Edit
+#                                     Account → Workers R2 Storage → Edit
+#                                     Zone    → Workers Routes     → Edit
+#                                   on megacityproperties.co.uk only.
+#   CLOUDFLARE_ACCOUNT_ID_MEGACITY  his account ID, on the right of any page
+#                                   in his Cloudflare dashboard.
+[env.megacity]
+name = "megacity-properties"
+main = "worker.js"
+# The routes stay commented until the nameservers have moved and the zone reads
+# Active in HIS account. A custom_domain route for a zone the account does not
+# hold fails the deploy — and unlike the top-level block, a failure here only
+# affects his site, not every other client's.
+# routes = [
+#   { pattern = "megacityproperties.co.uk", custom_domain = true },
+#   { pattern = "www.megacityproperties.co.uk", custom_domain = true }
+# ]
+
+[env.megacity.vars]
+# Root mode: the same pages served at root addresses on his domain, every old
+# address redirected once, his own robots.txt and sitemap, branded 404. The
+# first hostname is the one everything redirects to.
+MEGACITY_HOST = "www.megacityproperties.co.uk,megacityproperties.co.uk"
+
+[env.megacity.assets]
+directory = "dist/megacity"
+binding = "ASSETS"
+not_found_handling = "404-page"
+# Every request must reach the Worker first: on his domain the Worker owns the
+# lot — pages at root, the old site's addresses redirected, the branded 404 and
+# the Studio. Without this the asset router answers first and none of it works.
+run_worker_first = true
+
+# The database and the bucket are created in HIS account, once. Uncomment both
+# blocks and paste the real database_id when they exist — scripts/check-wrangler.mjs
+# fails the build while the placeholder is still there, so a deploy cannot go
+# out half-wired.
+#
+#   npx wrangler d1 create megacity            (in his account)
+#   npx wrangler r2 bucket create megacity-media
+#   npx wrangler d1 migrations apply megacity --remote --env megacity
+#
+# [[env.megacity.d1_databases]]
+# binding = "MEGACITY_DB"
+# database_name = "megacity"
+# database_id = "PASTE_REAL_ID_HERE"
+#
+# [[env.megacity.r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "megacity-media"
 
 # ---------------------------------------------------------------------------
 # HeatFix Mcr Limited — on HIS OWN Cloudflare account (heatfixmcr@hotmail.com).

@@ -457,7 +457,16 @@
       feat.innerHTML = list.map(cardHTML).join("");
     }
     var tg = document.getElementById("mcToursGrid");
-    if (tg) tg.innerHTML = pub(D.withTours()).map(tourCardHTML).join("");
+    if (tg) {
+      var tours = pub(D.withTours());
+      tg.innerHTML = tours.map(tourCardHTML).join("");
+      /* No tours, no section. An empty grid under "Open the door from here"
+         reads as broken, and the page must not suggest there are tours to open
+         when there are none — same rule as the listing pages: the site talks
+         about a 360 tour only where one exists. */
+      var tsec = tg.closest("section");
+      if (tsec) tsec.hidden = !tours.length;
+    }
 
     /* "similar homes" — same area, or within 20% of the price */
     $$b("[data-similar]").forEach(function (grid) {

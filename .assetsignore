@@ -106,3 +106,59 @@ templates/megacity-data.js
 templates/megacity-admin.html
 templates/megacity-admin.js
 templates/megacity-hero-lab.html
+
+# Client sites that now live on their own domains. The files stay in the
+# repository because they are the SOURCE their own build reads, but nothing
+# under here is served on billydigitals.com any more — a second public copy
+# of a client's site competes with their own domain in search, and carries
+# their form key and API key on a hostname their key restrictions do not
+# cover.
+#
+# SMARTin SCIENCE — live at smartinscience.co.uk (see deploy-smartin.yml).
+templates/smartin
+templates/smartin-book
+assets/smartin
+assets/fonts/fonts-smartin.css
+# Westfield Garage — live at westfieldgarageintlimited.co.uk from his own
+# Cloudflare account (see deploy-westfield.yml). /westfield and
+# /templates/westfield-garage redirect there (PARKED in worker.js).
+templates/westfield-garage.html
+templates/westfield-root
+assets/westfield
+
+# Built client sites. Generated into dist/ by scripts/build-*.py and deployed
+# to the client's own Cloudflare account, never from here. Kept out in case a
+# deploy is ever run by hand from a working copy that has been built in.
+dist
+
+# Brownielicious — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/brownielicious and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/brownielicious.html
+templates/brownielicious.css
+templates/brownielicious.js
+assets/brownielicious
+
+# Bash n Boujee — parked. Same as above: the files stay in the repository but
+# are not uploaded, so /templates/bashnboujee and its pictures answer 404.
+# Delete these four lines to put it back.
+templates/bashnboujee.html
+templates/bashnboujee.css
+templates/bashnboujee.js
+assets/bashnboujee
+
+# Starlit Blooms — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/starlit-blooms and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/starlit-blooms.html
+templates/starlit-blooms.css
+templates/starlit-blooms.js
+assets/starlit
+
+# Makeup by Sadia — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/makeup-by-sadia and every one of its
+# pictures answer 404, link or no link. Delete these four lines to put it back.
+templates/makeup-by-sadia.html
+templates/makeup-by-sadia.css
+templates/makeup-by-sadia.js
+assets/sadia

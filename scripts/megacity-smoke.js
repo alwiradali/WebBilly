@@ -133,6 +133,120 @@ const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) f
       ok(!errs.length, path + " no errors opening the phone menu" + (errs.length ? ": " + errs.slice(0, 2).join(" | ") : ""));
       await pp.close();
     }
+
+    /* Phone search. The overlay used to be `inset:0`, which is the layout
+       viewport — and a phone keyboard covers that rather than shrinking it, so
+       the end of the results list sat under the keyboard with nowhere to
+       scroll. It is now sized from visualViewport, and a drag puts the keyboard
+       away. Chromium here has no keyboard, so what is checked is that the
+       overlay tracks the visual viewport, that every result can be scrolled to,
+       and that the drag-to-dismiss and tap-to-restore handlers are wired. */
+    {
+      const pp = await phone.newPage();
+      const errs = [];
+      /* Opening search fetches the live listings feed. Against a plain static
+         server there is no Worker to answer it, the script falls back to its
+         built-in list by design, and the 404 it logs is not a fault. */
+      const benign = /401 \(Unauthorized\)|\/api\/public\/listings/;
+      /* a failed-resource message names the URL in location(), not in the text */
+      pp.on("console", (m) => {
+        const where = (m.location() || {}).url || "";
+        if (m.type() === "error" && !benign.test(m.text()) && !benign.test(where)) errs.push(m.text() + " " + where);
+      });
+      pp.on("pageerror", (e) => errs.push(String(e)));
+      await pp.goto(BASE + P("skyline"), { waitUntil: "load" });
+      await pp.tap("#navSearch");
+      await pp.waitForTimeout(400);
+      ok(await pp.evaluate(() => document.activeElement && document.activeElement.id === "slInput"),
+        "search opens with the keyboard in the box");
+
+      /* a query broad enough to overflow the screen */
+      await pp.fill("#slInput", "a");
+      await pp.waitForTimeout(150);
+
+      const box = await pp.evaluate(() => {
+        const l = document.getElementById("searchlay");
+        return { h: l.clientHeight, vv: Math.round(visualViewport.height), scroll: l.scrollHeight };
+      });
+      ok(Math.abs(box.h - box.vv) <= 1, `overlay is the height of the visual viewport (${box.h} vs ${box.vv})`);
+      ok(box.scroll > box.h, `there is more list than screen, so scrolling matters (${box.scroll} > ${box.h})`);
+
+      /* the last result must actually be reachable */
+      const reach = await pp.evaluate(async () => {
+        const l = document.getElementById("searchlay");
+        l.scrollTop = l.scrollHeight;
+        await new Promise((r) => setTimeout(r, 120));
+        const links = l.querySelectorAll(".sl-a");
+        const last = links[links.length - 1].getBoundingClientRect();
+        return { bottom: Math.round(last.bottom), top: Math.round(last.top), view: Math.round(visualViewport.height), n: links.length };
+      });
+      ok(reach.top >= 0 && reach.bottom <= reach.view + 1,
+        `the last of ${reach.n} results scrolls fully into view (top ${reach.top}, bottom ${reach.bottom}, screen ${reach.view})`);
+
+      /* The bug itself. Chromium here has no keyboard, so the visible area is
+         made to shrink the way one would shrink it — a keyboard leaves roughly
+         480 of an 844pt screen — and the overlay has to follow. Before this was
+         fixed nothing listened to visualViewport at all: the overlay stayed
+         844 tall, so the end of the list sat at 844, behind the keyboard, and
+         no amount of scrolling could bring it above 508. */
+      const withKeyboard = await pp.evaluate(async () => {
+        const l = document.getElementById("searchlay");
+        Object.defineProperty(visualViewport, "height", { configurable: true, get: () => 480 });
+        visualViewport.dispatchEvent(new Event("resize"));
+        await new Promise((r) => setTimeout(r, 80));
+        const followed = l.clientHeight;
+        l.scrollTop = l.scrollHeight;
+        await new Promise((r) => setTimeout(r, 120));
+        const links = l.querySelectorAll(".sl-a");
+        const last = links[links.length - 1].getBoundingClientRect();
+        const seen = { top: Math.round(last.top), bottom: Math.round(last.bottom) };
+        delete visualViewport.height;                       // back to the real getter
+        visualViewport.dispatchEvent(new Event("resize"));
+        return { followed, ...seen };
+      });
+      ok(withKeyboard.followed === 480,
+        `the overlay shrinks to the space a keyboard leaves (${withKeyboard.followed}, wanted 480)`);
+      ok(withKeyboard.top >= 0 && withKeyboard.bottom <= 481,
+        `with a keyboard up, the last result still scrolls into view (top ${withKeyboard.top}, bottom ${withKeyboard.bottom}, screen 480)`);
+
+      /* dragging the list drops the keyboard */
+      await pp.evaluate(() => document.getElementById("slInput").focus());
+      const blurred = await pp.evaluate(async () => {
+        const el = document.getElementById("searchlay");
+        const t = (y) => new Touch({ identifier: 1, target: el, clientX: 180, clientY: y });
+        /* targetTouches matters: the scroll library reads it, and a synthetic
+           event without it throws where a real finger never would */
+        const ev = (type, y) => new TouchEvent(type, { bubbles: true, cancelable: true, touches: [t(y)], targetTouches: [t(y)], changedTouches: [t(y)] });
+        el.dispatchEvent(ev("touchstart", 600));
+        el.dispatchEvent(ev("touchmove", 520));
+        await new Promise((r) => setTimeout(r, 60));
+        return document.activeElement !== document.getElementById("slInput");
+      });
+      ok(blurred, "dragging the results closes the keyboard");
+
+      /* a small wobble must not */
+      await pp.evaluate(() => document.getElementById("slInput").focus());
+      const kept = await pp.evaluate(async () => {
+        const el = document.getElementById("searchlay");
+        const t = (y) => new Touch({ identifier: 1, target: el, clientX: 180, clientY: y });
+        const ev = (type, y) => new TouchEvent(type, { bubbles: true, cancelable: true, touches: [t(y)], targetTouches: [t(y)], changedTouches: [t(y)] });
+        el.dispatchEvent(ev("touchstart", 600));
+        el.dispatchEvent(ev("touchmove", 597));
+        await new Promise((r) => setTimeout(r, 60));
+        return document.activeElement === document.getElementById("slInput");
+      });
+      ok(kept, "a 3px wobble does not close the keyboard");
+
+      /* tapping the bar brings it back */
+      await pp.evaluate(() => document.getElementById("slInput").blur());
+      await pp.tap(".sl-bar > svg");
+      await pp.waitForTimeout(120);
+      ok(await pp.evaluate(() => document.activeElement && document.activeElement.id === "slInput"),
+        "tapping the search bar brings the keyboard back");
+
+      ok(!errs.length, "no errors using search on a phone" + (errs.length ? ": " + errs.slice(0, 2).join(" | ") : ""));
+      await pp.close();
+    }
     await phone.close();
   }
 

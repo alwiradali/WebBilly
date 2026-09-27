@@ -153,6 +153,16 @@ export default {
     if (url.pathname === "/api/mm-shop") {
       return handleMMShop(request);
     }
+    /* The mailing-list signup exists on the demo copy of Lynsey's site under
+       /templates/mm, and the real one lives on her own Worker. Answering it
+       here keeps the form on the demo from failing in front of whoever is
+       being shown it — but it stores nothing and mails nobody, because a
+       signup typed into a demo is not a parent asking to hear from her, and
+       her inbox and her list should never see it. */
+    if (url.pathname === "/api/mm-subscribe") {
+      if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+      return json({ ok: true, stored: "nowhere — this is the demo copy" });
+    }
     // The client's own domain (M2L_HOST) serves only the Mumbai2London site,
     // at clean root URLs, and is indexable.
     if (!M2L_PARKED && isM2LHost(url.hostname, env)) return serveM2L(request, url, env);
@@ -179,9 +189,32 @@ export default {
       return serveClient(request, url, env, HEATFIX_PAGES, HEATFIX_PUBLIC);
     }
 
+    /* Parked client previews. A client whose site is live on their own domain
+       has nothing served here any more — a second public copy competes with
+       their domain in search and carries their form key on a hostname it was
+       never meant for — so the old preview addresses, short and long, send
+       the visitor to the real site instead. Own hosts only; a client's domain
+       owns every path on it. Case-insensitive, because the short address got
+       typed from a text message. The files stay in the repository (the
+       client's build reads them) and are kept off this host by .assetsignore. */
+    if (!isOwnClientHost(url.hostname, env)) {
+      const parked = PARKED[url.pathname.toLowerCase().replace(/\.html$/, "").replace(/\/+$/, "")];
+      if (parked) return Response.redirect(parked, 301);
+    }
+
     // Everything else is a static asset (ASSETS honours 404-page handling).
     return env.ASSETS.fetch(request);
   },
+};
+
+/* Previews that are parked: the address, lower-case, without a trailing slash
+   or .html, and the live site it now sends people to. Add a line here, keep
+   the path disallowed in every group of robots.txt, list it in
+   run_worker_first in wrangler.toml, and add the template and its assets to
+   .assetsignore. */
+const PARKED = {
+  "/westfield": "https://westfieldgarageintlimited.co.uk/",
+  "/templates/westfield-garage": "https://westfieldgarageintlimited.co.uk/",
 };
 
 /* Mumbai2London is parked.

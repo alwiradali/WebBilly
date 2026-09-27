@@ -125,9 +125,95 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/mm-shop") return handleMMShop(request, env);
+    if (url.pathname === "/api/mm-subscribe") return handleSubscribe(request, env);
     return env.ASSETS.fetch(request);
   },
 };
+
+/* ------------------------------------------------------------------
+   Her mailing list.
+
+   She asked to start collecting parents' addresses. They are stored in her
+   own Cloudflare account, on her own domain, and are not sent to any list
+   service — that was the point of doing it this way.
+
+   D1 is the store. The binding does not exist until the database is created
+   in her dashboard (see docs/molecular-miracles-list.md), and a signup
+   arriving before then would otherwise be lost, so the fallback hands it to
+   the same Web3Forms inbox her enquiry form already uses. The box therefore
+   works the day it ships and upgrades itself the moment the binding appears,
+   with nothing dropped in between.
+
+   The consent check is not optional and is deliberately duplicated in the
+   page. An address given while enquiring about tuition was given for that
+   enquiry; adding it to a mailing list needs its own yes.
+   ------------------------------------------------------------------ */
+const MM_W3F_KEY = "a3984088-da60-451e-9ccf-0512998a15d4";
+
+async function handleSubscribe(request, env) {
+  if (request.method !== "POST") return json({ error: "POST only" }, 405);
+
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad request" }, 400); }
+  if (!body || typeof body !== "object") return json({ error: "bad request" }, 400);
+
+  /* A field no person ever sees and a bot fills in. Answer as if it worked:
+     telling a bot it was caught only teaches whoever wrote it. */
+  if (body.company) return json({ ok: true });
+
+  const email = String(body.email || "").trim().toLowerCase();
+  /* Loose on purpose. The only thing worth rejecting is something that cannot
+     be an address at all; anything stricter turns real addresses away, and
+     the address proves itself the first time she mails it. */
+  if (email.length > 254 || !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email)) {
+    return json({ error: "that does not look like an email address" }, 400);
+  }
+  if (body.consent !== true) return json({ error: "consent is required" }, 400);
+
+  const source = String(body.source || "").slice(0, 60);
+  const now = new Date().toISOString();
+
+  if (env.SUBSCRIBERS) {
+    try {
+      /* Signing up twice is not an error and must not look like one. A second
+         yes also clears an earlier unsubscribe — it is the newer instruction. */
+      await env.SUBSCRIBERS.prepare(
+        "INSERT INTO subscribers (email, source, consented_at) VALUES (?1, ?2, ?3) " +
+        "ON CONFLICT(email) DO UPDATE SET source = excluded.source, " +
+        "consented_at = excluded.consented_at, unsubscribed_at = NULL"
+      ).bind(email, source, now).run();
+      return json({ ok: true, stored: "database" });
+    } catch (e) {
+      /* fall through to the inbox rather than lose the signup */
+    }
+  }
+
+  try {
+    const r = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: MM_W3F_KEY,
+        subject: "Mailing list signup — " + email,
+        from_name: "Molecular Miracles website",
+        replyto: email,
+        email: email,
+        "Signed up from": source || "the website",
+        "Consent": "ticked the box on " + now.slice(0, 10),
+      }),
+    });
+    if (r.ok) return json({ ok: true, stored: "email" });
+  } catch (e) { /* answered below */ }
+
+  return json({ error: "could not sign you up just now" }, 502);
+}
+
+function json(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status: status || 200,
+    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+  });
+}
 
 /* Payhip's official product API. Preferred over reading the storefront HTML,
    which depends on their markup staying put. Only used when a key is present
@@ -218,7 +304,7 @@ function normaliseApi(body) {
       img: String(pick(p, ["image", "image_url", "thumbnail", "cover", "cover_image"])),
     });
   }
-  return out.filter((p) => p.name).slice(0, 40);
+  return out.filter((p) => p.name).slice(0, 200);
 }
 
 async function handleMMShop(request, env) {
@@ -229,39 +315,59 @@ async function handleMMShop(request, env) {
   const hit = diag ? null : await cache.match(cacheKey);
   if (hit) return hit;
 
-  let products = [];
-  let source = "storefront";
+  /* The snapshot is read FIRST and used as the floor, not as a last resort.
+
+     It used to be the other way round: whatever a live lookup returned was
+     served, and the snapshot only appeared if the live paths gave nothing at
+     all. That is wrong for this shop. Payhip is behind Cloudflare and
+     normally answers a Worker with a 403 bot page, so the live paths fail and
+     the snapshot serves — but on the occasions one of them DID get through
+     and came back with a short list (a class sold out, unpublished for an
+     evening, or a storefront theme this parser reads badly), those classes
+     vanished from her site and the short answer was cached for five minutes.
+     That is exactly the complaint: masterclasses disappearing and coming back
+     on their own, a different level each time.
+
+     The snapshot is verified at build time and complete. A live result is now
+     only preferred when it is at least as complete, so a live lookup can add
+     to what she sells but can never silently take classes away. */
+  let snapshot = [];
+  try {
+    const snap = await env.ASSETS.fetch(new URL("/shop.json", request.url));
+    if (snap.ok) {
+      const d = await snap.json();
+      if (d && Array.isArray(d.products)) snapshot = d.products;
+    }
+  } catch (e) { /* no snapshot shipped; the live paths are all there is */ }
+
+  let live = [];
+  let liveSource = "";
 
   const viaApi = await fetchViaApi(env);
   if (viaApi && viaApi.length) {
-    products = viaApi;
-    source = "api";
+    live = viaApi;
+    liveSource = "api";
   } else {
     try {
-      const r = await fetch(MM_SHOP_URL, {
-        headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
-      });
-      if (r.ok) products = parsePayhipStore(await r.text());
-    } catch (e) { /* snapshot below */ }
+      const fromStore = await fetchStorefront();
+      if (fromStore.length) { live = fromStore; liveSource = "storefront"; }
+    } catch (e) { /* the snapshot below covers it */ }
   }
 
-  /* Payhip is behind Cloudflare, and Cloudflare challenges requests coming
-     from a Worker — every live attempt above returns a 403 bot page. So the
-     product list is read at build time, where the request is ordinary and
-     works, and shipped with the site. This serves that snapshot. The live
-     attempts stay because they cost nothing and would be preferred the day
-     that block goes away. */
-  if (!products.length) {
-    try {
-      const snap = await env.ASSETS.fetch(new URL("/shop.json", request.url));
-      if (snap.ok) {
-        const d = await snap.json();
-        if (d && d.products && d.products.length) {
-          products = d.products;
-          source = "snapshot";
-        }
-      }
-    } catch (e) { /* nothing left to try */ }
+  /* "source" has to name what is actually being served, not which lookup was
+     last attempted. It previously said "storefront" even when the storefront
+     answered and parsed to nothing and the snapshot was what went out, which
+     made this fault hard to see from the outside. */
+  let products = snapshot;
+  let source = "snapshot";
+  if (live.length && live.length >= snapshot.length) {
+    products = live;
+    source = liveSource;
+  } else if (live.length) {
+    /* A live answer shorter than the snapshot is the failure mode described
+       above. Keep the snapshot and say so, rather than dropping her classes. */
+    MM_DIAG.push({ via: "guard", kept: "snapshot", live: live.length, snapshot: snapshot.length });
+    source = "snapshot (" + liveSource + " returned " + live.length + " of " + snapshot.length + ")";
   }
 
   /* "source" says which path answered — useful for checking the key landed,
@@ -269,13 +375,13 @@ async function handleMMShop(request, env) {
   const payload = { store: MM_SHOP_URL, source, products };
   if (diag) { payload.keyPresent = !!(env && env.PAYHIP_API_KEY); payload.attempts = MM_DIAG; }
 
-  /* Never cache an empty shop. A five-minute cache is right for a good answer
+  /* Never cache a short shop. A five-minute cache is right for a good answer
      and badly wrong for a bad one: one failed lookup pinned an empty product
      list in front of every visitor for five minutes, and the pages showed
      their "not loading" fallback the whole time even after the underlying
-     problem was fixed. An empty result is treated as a miss and retried on
-     the next request instead. */
-  const good = products.length > 0;
+     problem was fixed. Anything below the snapshot count gets the same
+     treatment — served once if it is all we have, never pinned. */
+  const good = products.length > 0 && products.length >= snapshot.length;
   const res = new Response(JSON.stringify(payload), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -284,6 +390,67 @@ async function handleMMShop(request, env) {
   });
   if (!diag && good) await cache.put(cacheKey, res.clone());
   return res;
+}
+
+/* Her storefront paginates at 16 products a page, and this read only the
+   first one. That is the whole of the disappearing-classes bug: every
+   Advanced Higher masterclass and both series passes sit on page TWO, so a
+   live lookup that got through returned 16 of her 27 products and the site
+   dropped a third of her shop, Advanced Higher first. It matched her
+   screenshot exactly — 16 items, no Advanced Higher column at all.
+
+   The build-time fetch was taught to page through on 7 September. This one,
+   which runs in the Worker on every visitor request, was not, so the two
+   disagreed and whichever answered decided what she was selling that minute.
+
+   Page one is the storefront root; the rest come from the collection view,
+   whose ?page= parameter is an offset rather than a page number. */
+const MM_PER_PAGE = 16;
+
+async function fetchStorefront() {
+  const get = async (u) => {
+    const r = await fetch(u, {
+      headers: { "User-Agent": "Mozilla/5.0 (site integration for the store owner)" },
+    });
+    return r.ok ? await r.text() : null;
+  };
+
+  const first = await get(MM_SHOP_URL);
+  if (!first) return [];
+  const pages = [first];
+
+  /* Stop as soon as a page brings nothing new. Some storefronts answer an
+     out-of-range offset with page one again rather than an empty page, and
+     without this that reads as "there is always more" and walks the whole
+     range on every request — twelve sequential calls to Payhip while a
+     visitor waits. Counting distinct product keys ends it after the last
+     real page instead. */
+  const keys = new Set();
+  const keysIn = (html) => {
+    const out = new Set();
+    const re = /href="https:\/\/payhip\.com\/b\/([A-Za-z0-9_-]+)"/g;
+    let m;
+    while ((m = re.exec(html)) !== null) out.add(m[1]);
+    return out;
+  };
+  keysIn(first).forEach((k) => keys.add(k));
+
+  for (let offset = MM_PER_PAGE; offset < MM_PER_PAGE * 12; offset += MM_PER_PAGE) {
+    let nxt = null;
+    try {
+      nxt = await get(MM_SHOP_URL + "/collection/all?&page=" + offset);
+    } catch (e) {
+      break;                  /* a failed later page costs that page, not the lookup */
+    }
+    if (!nxt || nxt.indexOf("card__heading") === -1) break;
+    let fresh = 0;
+    keysIn(nxt).forEach((k) => { if (!keys.has(k)) { keys.add(k); fresh++; } });
+    if (!fresh) break;
+    pages.push(nxt);
+  }
+
+  MM_DIAG.push({ via: "storefront", pages: pages.length, products: keys.size });
+  return parsePayhipStore(pages.join("\n"));
 }
 
 function parsePayhipStore(html) {
@@ -295,7 +462,7 @@ function parsePayhipStore(html) {
      and a store that matches neither yields an empty list, never an error. */
   var out = cardTheme(html);
   if (!out.length) out = gridTheme(html);
-  return out.slice(0, 40);
+  return out.slice(0, 200);
 
   function cardTheme(html) {
     var out = [], seen = {};

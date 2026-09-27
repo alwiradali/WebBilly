@@ -1,0 +1,157 @@
+# Megacity Properties → Walid's own Cloudflare Worker
+#
+# His Cloudflare account is NOT connected to this repository and must not be.
+# A scoped API token travels one way, from his account into a secret here, and
+# the deploy sends him a built directory — never the repository.
+#
+# Two repository secrets (Settings → Secrets and variables → Actions):
+#
+#   CLOUDFLARE_API_TOKEN_MEGACITY   from HIS Cloudflare, scoped to:
+#                                     Account → Workers Scripts    → Edit
+#                                     Account → D1                 → Edit
+#                                     Account → Workers R2 Storage → Edit
+#                                     Zone    → Workers Routes     → Edit
+#                                   on megacityproperties.co.uk only. The zone
+#                                   permission is what lets wrangler bind his
+#                                   domain once the routes are uncommented;
+#                                   without it the upload succeeds and the
+#                                   domain keeps serving the old site, which
+#                                   reads as a deploy that did nothing.
+#   CLOUDFLARE_ACCOUNT_ID_MEGACITY  his account ID, on the right of any page in
+#                                   his Cloudflare dashboard.
+#
+# Without them the job builds and checks but does not deploy, so this does not
+# show a red tick for something it was never able to do.
+
+name: Deploy Megacity Properties
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker.js'
+      - 'worker/studio/**'
+      - 'templates/megacity-**'
+      - 'templates/assets/mcr/**'
+      - 'templates/vendor/**'
+      - 'billy360/**'
+      - 'migrations/megacity/**'
+      - 'scripts/build-megacity.mjs'
+      - '.assetsignore'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-megacity.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-megacity
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Wrangler requires Node >= 22 and refuses to start below it.
+          node-version: '22'
+
+      - name: Build only his files
+        run: node scripts/build-megacity.mjs
+
+      - name: Check nothing else came with it
+        # The failure this guards against is one-way. Once another client's
+        # photographs are in someone else's Cloudflare account, removing them
+        # from this repository does not remove them from there.
+        run: |
+          set -e
+          test -f dist/megacity/templates/megacity-let-template.html
+          test -f dist/megacity/templates/megacity-properties.html
+          test -f dist/megacity/billy360/embed.js
+          test -f dist/megacity/version.json
+          test -d dist/megacity/templates/assets/mcr
+
+          strays=$(find dist/megacity -type f | grep -inE 'mumbai2london|molecular|smartin|rachel|roses|amabilis|hobberry|diamond|jet-?wash|clean-?my-?car|heatfix|lancashire' || true)
+          if [ -n "$strays" ]; then
+            echo "::error::Another client's files are in the Megacity build:"; echo "$strays"; exit 1
+          fi
+
+          # Files .assetsignore says must never be served must not be here
+          # either — the client's account is not an exception to that rule.
+          for f in megacity-about.html megacity-tours.html megacity-hero-lab.html megacity-admin.html; do
+            if [ -f "dist/megacity/templates/$f" ]; then
+              echo "::error::$f is in the build but .assetsignore says it is never served"; exit 1
+            fi
+          done
+
+          echo "built $(find dist/megacity -type f | wc -l) files, $(du -sh dist/megacity | cut -f1), his and only his"
+
+      - name: Check wrangler will deploy to HIS worker
+        # Learned on two other client sites. Without [env.megacity],
+        # `wrangler deploy --env megacity` does not fail — it falls back to the
+        # top-level config, deploys a worker named billydigitals-megacity,
+        # uploads the ENTIRE repository to his account as static assets, and
+        # leaves his real site untouched. It looks like a successful deploy.
+        run: |
+          set -e
+          grep -q '^\[env\.megacity\]' wrangler.toml
+          grep -q '^name = "megacity-properties"' wrangler.toml
+          grep -q '^directory = "dist/megacity"' wrangler.toml
+          node scripts/check-wrangler.mjs
+          echo "wrangler.toml targets megacity-properties from dist/megacity"
+
+      - name: Are the credentials present?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN_MEGACITY }}" ] \
+          && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID_MEGACITY }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::His Cloudflare credentials are not set — built and checked, but not deployed."
+          fi
+
+      - name: Deploy to his Cloudflare Worker
+        if: steps.creds.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_MEGACITY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_MEGACITY }}
+        # Judged on whether the Worker was actually uploaded, not on wrangler's
+        # exit code: it can exit non-zero having uploaded successfully when the
+        # token cannot re-assert the custom-domain routes.
+        run: |
+          set -o pipefail
+          npx --yes wrangler@4 deploy --env megacity 2>&1 | tee deploy.log || true
+          if grep -q 'Uploaded megacity-properties' deploy.log; then
+            echo "::notice::Worker uploaded to megacity-properties in his account."
+            if grep -qi 'workers/routes\|Authentication error' deploy.log; then
+              echo "::warning::Uploaded, but the custom domain could not be bound. The token needs Zone -> Workers Routes on megacityproperties.co.uk."
+            fi
+          else
+            echo "::error::Wrangler did not upload the Worker."
+            exit 1
+          fi
+
+      - name: Confirm the live site is this build
+        # Only meaningful once the routes are uncommented and his nameservers
+        # have moved. Until then the Worker is uploaded but nothing is pointed
+        # at it, and a failure here would be reporting the plan, not a fault.
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          if ! grep -qE '^\s*\{ pattern = "megacityproperties\.co\.uk", custom_domain = true \}' wrangler.toml; then
+            echo "::notice::Routes are still commented out — the Worker is uploaded, his domain is not pointed at it yet. Nothing to verify."
+            exit 0
+          fi
+          want=$(node -e 'console.log(require("./dist/megacity/version.json").stamp)')
+          for i in 1 2 3 4 5 6 7 8; do
+            got=$(curl -s --max-time 20 https://www.megacityproperties.co.uk/version.json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).stamp)}catch{console.log("")}})' || true)
+            echo "attempt $i: built $want live $got"
+            if [ "$want" = "$got" ] && [ -n "$got" ]; then
+              echo "::notice::His domain is serving this build."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::His domain never came to match this build."
+          exit 1

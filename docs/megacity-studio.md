@@ -332,18 +332,40 @@ it is the reason the column exists before the adapter does.
 `worker/studio/enquiries.js`. The office runs three Microsoft 365 mailboxes and
 each form goes to the team that acts on it:
 
+The rule Walid gave on 2026-09-19: **anything a tenant sends goes to
+lettings@, everything else goes to info@, which he reads himself.** Repairs are
+the one exception — management@ exists for them.
+
 | Form | Inbox |
 |---|---|
 | Landlord registration (`/landlords#register`), valuation request | info@ |
 | Viewing, tenant registration, tenancy application, 360° tour lead | lettings@ |
 | Maintenance and repair reports | management@ |
-| General contact form | info@ **and** lettings@, since the sender cannot be told apart |
+| Contact form — "Renting a home" | lettings@ |
+| Contact form — "Maintenance" | management@ |
+| Contact form — everything else | info@ |
+
+The contact form used to go to info@ **and** lettings@ on the reasoning that
+the sender could be either and should not have to guess. That is the thing
+Walid asked to change: it put every "Renting a home" message in his own inbox
+and every "Letting my property" message in the tenant one. The sender does say
+which — the form's "About" list is the answer — so `kindFromTopic` reads it.
+
+That makes routing ask a **different question from filing**, on purpose. The
+Studio still records a tenant's contact message as a contact-form enquiry,
+because that is what they filled in; it simply arrives in lettings@. `sourceFrom`
+decides the first, `kindFromTopic` the second, and the comments in
+`enquiries.js` say why they are allowed to differ.
 
 Settings → Notifications overrides all of it: set any address there and every
-form goes to that list instead, from one screen. The contact endpoint carries
-three different forms and tells them apart by `topic`, using the same regexes
-that decide the enquiry's `source`, so the inbox and the filing can never
-disagree. `node scripts/megacity-routing-check.mjs` asserts the whole table
+form goes to that list instead, from one screen. **Worth knowing before anyone
+uses it** — it is all-or-nothing, so filling it in would undo this routing and
+send every form, tenant and landlord alike, to the same place.
+
+`node scripts/megacity-enquiry-routing-check.mjs` asserts every row of the table
+above, including the six contact topics verbatim and the near-misses that a
+sloppier regex gets wrong — "my **current** agent" contains "rent", and must
+still reach info@. `node scripts/megacity-routing-check.mjs` asserts the same
 against the real Worker, including the address handed to Resend.
 
 Note the stakes while the database is unbound: `recordEnquiry` writes nothing,

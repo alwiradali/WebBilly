@@ -63,6 +63,12 @@ jobs:
           node-version: '22'
 
       - name: Build the site
+        # The calendar the timetable page reads, if one has been set up. Both
+        # are optional: without them the build still succeeds and the page
+        # keeps the wording it has always had. See docs/smartin-calendar.md.
+        env:
+          SMARTIN_GCAL_ID: ${{ secrets.SMARTIN_GCAL_ID }}
+          SMARTIN_GCAL_KEY: ${{ secrets.SMARTIN_GCAL_KEY }}
         run: python3 scripts/build-smartin.py smartinscience.co.uk
 
       - name: Check the build looks right
@@ -129,6 +135,11 @@ jobs:
           grep -q '^\[env\.smartin\]' wrangler.toml
           grep -q '^name = "smartin-science"' wrangler.toml
           grep -q '^directory = "dist/smartin-science"' wrangler.toml
+          # And that it is HIS entry script, not the top-level one. Without
+          # this line wrangler inherits main = "worker.js" and uploads the
+          # billydigitals worker to his account, which is how his live site
+          # spent an afternoon answering 1101 instead of 404.
+          grep -q '^main = "dist/smartin-science/_worker.js"' wrangler.toml
           echo "wrangler.toml targets smartin-science from dist/smartin-science"
 
       - name: Are the credentials present?

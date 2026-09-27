@@ -8,7 +8,7 @@ export const DEFAULTS = {
     phone: "0161 220 1763",
     whatsapp: "",
     email: "info@megacityproperties.co.uk",
-    address: "Office 18, The Tube Business Centre, 86 North Street, Manchester M8 8RA",
+    address: "Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA",
   },
   notifyEmails: [],
   links10ninety: {

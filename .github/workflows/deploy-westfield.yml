@@ -1,0 +1,198 @@
+# Westfield Garage → his own Cloudflare Worker
+#
+# LIVE since 14 Sep 2026 on westfieldgarageintlimited.co.uk, served by the
+# Worker `noisy-forest-8b27` in his account, which he created in the dashboard
+# and uploaded the built zip to. This workflow updates THAT Worker in place
+# once the two secrets below exist. Until then, updates are: build, zip, upload
+# in his dashboard — see docs/westfield-golive.md.
+#
+# A push to main that touches his site rebuilds and redeploys it.
+#
+# Deploys through the Cloudflare API with a token in GitHub Secrets. His
+# Cloudflare account is NOT connected to this repository and does not need to
+# be — the token travels one way, from his account into a secret here.
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#
+#   CLOUDFLARE_API_TOKEN_WESTFIELD  — from HIS Cloudflare account, with BOTH
+#                                       Account → Workers Scripts → Edit
+#                                       Zone    → Workers Routes  → Edit
+#                                     on westfieldgarageintlimited.co.uk. The
+#                                     zone permission is what lets wrangler
+#                                     bind his domain to the Worker; without it
+#                                     the first deploy uploads fine and the
+#                                     domain keeps showing nothing at all,
+#                                     which reads as a deploy that did nothing.
+#   CLOUDFLARE_ACCOUNT_ID_WESTFIELD — his account ID, on the right of any page
+#                                     in his Cloudflare dashboard.
+#
+# Optional:
+#   CLOUDFLARE_WEB_ANALYTICS_WESTFIELD — the Web Analytics token. Set it and
+#                                     the cookieless beacon goes into the
+#                                     build; leave it unset and it does not.
+#
+# Without the two required ones the job builds and checks but does not deploy,
+# so a fork or a credential-less checkout does not show a red tick for
+# something it was never meant to do.
+
+name: Deploy Westfield Garage
+
+on:
+  push:
+    branches: [main]
+    # Only what actually changes his site.
+    paths:
+      - 'templates/westfield-garage.html'
+      - 'templates/vendor/lenis.min.js'
+      - 'assets/westfield/**'
+      - 'assets/css/westfield.css'
+      - 'assets/css/scroll-fx.css'
+      - 'assets/js/westfield.js'
+      - 'assets/js/scroll-fx.js'
+      - 'scripts/build-westfield.py'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-westfield.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-westfield
+  cancel-in-progress: true
+
+env:
+  DOMAIN: westfieldgarageintlimited.co.uk
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          # Wrangler requires Node >= 22 and refuses to start below it.
+          node-version: '22'
+
+      - name: Build the site
+        # build-westfield.py refuses outright while the page still carries the
+        # invented reviews or a social link that goes nowhere, so a demo cannot
+        # become his live website by accident.
+        run: |
+          python3 scripts/build-westfield.py "$DOMAIN" \
+            ${{ secrets.CLOUDFLARE_WEB_ANALYTICS_WESTFIELD && format('--analytics {0}', secrets.CLOUDFLARE_WEB_ANALYTICS_WESTFIELD) || '' }}
+
+      - name: Check the build looks right
+        # A deploy that succeeds having published an empty or half-built
+        # directory is worse than one that fails, because nobody looks.
+        run: |
+          set -e
+          test -f dist/westfield-garage/index.html
+          test -f dist/westfield-garage/robots.txt
+          test -f dist/westfield-garage/sitemap.xml
+          test -f dist/westfield-garage/vendor/lenis.min.js
+          test -d dist/westfield-garage/assets/westfield
+
+          # It has to be indexable, point at itself, and carry the whole page.
+          grep -q "canonical\" href=\"https://$DOMAIN/\"" dist/westfield-garage/index.html
+          ! grep -q 'noindex' dist/westfield-garage/index.html
+          grep -q 'M19 2TW' dist/westfield-garage/index.html
+          tiles=$(grep -o 'class="tile"' dist/westfield-garage/index.html | wc -l)
+          echo "service tiles: $tiles"
+          test "$tiles" -ge 11
+
+          # Nothing addressed to us may reach his customers.
+          ! grep -qi 'handoff note' dist/westfield-garage/index.html
+          ! grep -q 'data-demo' dist/westfield-garage/index.html
+
+          # Every image, stylesheet and script the page asks for must exist.
+          python3 - <<'PY'
+          import os, re, sys
+          root = 'dist/westfield-garage'
+          html = open(os.path.join(root, 'index.html'), encoding='utf-8').read()
+          refs = set(re.findall(r'(?:src|href)="(/[^"]+)"', html))
+          for s in re.findall(r'srcset="([^"]+)"', html):
+              refs.update(p.strip().split(' ')[0] for p in s.split(','))
+          bad = [r for r in sorted(refs)
+                 if r.startswith('/') and not os.path.exists(os.path.join(root, r.lstrip('/')))]
+          if bad:
+              sys.exit('missing from the build: ' + ', '.join(bad))
+          print(f'{len(refs)} referenced files, all present')
+          PY
+
+      - name: Check wrangler will deploy to HIS worker
+        # Guard rail, learned on another client's site. If [env.westfield] is
+        # missing from wrangler.toml, `wrangler deploy --env westfield` does
+        # not fail — it falls back to the top-level config, deploys a worker
+        # named billydigitals-westfield, uploads the ENTIRE repository (every
+        # other client's files) to his Cloudflare account as static assets, and
+        # leaves his real site untouched. It looks like a successful deploy.
+        run: |
+          set -e
+          grep -q '^\[env\.westfield\]' wrangler.toml
+          grep -q '^name = "noisy-forest-8b27"' wrangler.toml
+          grep -q '^directory = "dist/westfield-garage"' wrangler.toml
+          node scripts/check-wrangler.mjs
+          echo "wrangler.toml targets his Worker noisy-forest-8b27 from dist/westfield-garage"
+
+      - name: Are the credentials present?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN_WESTFIELD }}" ] \
+          && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID_WESTFIELD }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials not set — built and checked, but not deployed."
+          fi
+
+      - name: Deploy to his Cloudflare Worker
+        if: steps.creds.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_WESTFIELD }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_WESTFIELD }}
+        # Judge the deploy on whether the Worker was actually uploaded, not on
+        # wrangler's exit code: it can exit 1 having uploaded successfully when
+        # the token cannot re-assert the custom-domain routes.
+        run: |
+          set -o pipefail
+          npx --yes wrangler@latest deploy --env westfield 2>&1 | tee deploy.log || true
+          if grep -q 'Uploaded noisy-forest-8b27' deploy.log; then
+            echo "::notice::Worker uploaded to noisy-forest-8b27 (his)."
+            if grep -qi 'workers/routes\|Authentication error' deploy.log; then
+              echo "::warning::Uploaded, but the custom domain could not be bound. The token needs Zone -> Workers Routes on $DOMAIN, or the domain serves nothing."
+            fi
+          else
+            echo "::error::Wrangler did not upload the Worker."
+            exit 1
+          fi
+
+      - name: Confirm the live site is actually THIS build
+        if: steps.creds.outputs.ready == 'true'
+        # A 200 only proves something is there — another client's domain
+        # answered 200 for weeks while serving the registrar's holding page.
+        # This compares the live site against the one just built, by the byte
+        # length of westfield.css, and retries rather than failing on the first
+        # look: the upload takes a few seconds to reach the edge, and a check
+        # that fails during those seconds paints a good deploy red.
+        run: |
+          SITE="https://$DOMAIN"
+          want=$(wc -c < dist/westfield-garage/assets/css/westfield.css)
+          for i in 1 2 3 4 5 6 7 8; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/" || true)
+            got=$(curl -s "$SITE/assets/css/westfield.css" | wc -c || echo 0)
+            echo "attempt $i: homepage $code · westfield.css built $want live $got"
+            if [ "$code" = "200" ] && [ "$want" = "$got" ]; then
+              if ! curl -s "$SITE/" | grep -q 'M19 2TW'; then
+                echo "::error::The domain answered, but it is not serving his site."
+                exit 1
+              fi
+              echo "::notice::Live site is serving this build."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::The live site never came to match this build. If the upload succeeded, the domain is probably not bound to the Worker — the token needs Zone -> Workers Routes."
+          exit 1
