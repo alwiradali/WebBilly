@@ -127,7 +127,6 @@ SHELL = """<!doctype html>
     <div class="sec-head centre">
       <p class="kicker" data-rv>Recent ones</p>
       <h2 class="big" data-rv data-rv-d="1"><span class="rise">{galHead}</span></h2>
-      <p class="lede" data-rv data-rv-d="2">{galNote}</p>
     </div>
     <div class="gal gal-fixed" style="--cols:{cols}">
 {figures}
@@ -235,17 +234,13 @@ for c in COLS:
         '        <li><a href="/templates/{}">{}</a></li>'.format(o["slug"], E(o["name"]))
         for o in COLS)
 
-    gal_note = ("Every one was made to order, so treat them as a starting point rather than a menu."
-                if len(photos) > 1 else
-                "There is only one of these photographed so far — there are more on Instagram.")
-
     page = SHELL.format(
         cid=c["id"], name=E(c["name"]), meta=E(c["blurb"]),
         h1=TAGLINE[c["id"]], tagline=TAGLINE[c["id"]],
         img=c["img"], alt=E(c["alt"]), intro=E(c["intro"]),
         points=points, figures=figures, others=others, footCols=foot_cols,
         cols=min(len(photos), 3),
-        galHead=GAL_HEAD[c["id"]], galNote=E(gal_note))
+        galHead=GAL_HEAD[c["id"]])
 
     out = ROOT / "templates" / (c["slug"] + ".html")
     out.write_text(page, encoding="utf-8")
