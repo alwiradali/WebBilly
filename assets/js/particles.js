@@ -9,7 +9,7 @@
   "use strict";
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
-  var COLORS = ["#6b3df2", "#8a55ff", "#b39dff", "#ffb829"];   // violet family + one amber, soft on white
+  var COLORS = ["#6b3df2", "#8a55ff", "#b39dff", "#7c4dff"];   // violet family only (amber read as dust specks on white)
 
   // Skip the decorative particle canvases on mobile / reduced-motion to keep
   // memory low and avoid iOS tab reloads.

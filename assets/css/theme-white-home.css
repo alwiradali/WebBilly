@@ -89,8 +89,9 @@ h1, h2, h3, h4 { color: var(--w-ink); }
 }
 .nav-links a.active::after, .nav-links a:hover::after { background: var(--w-accent); }
 @media (max-width: 900px) {
-  /* open phone menu: solid white bar (beats the dark .scrolled !important) */
-  .site-header:has(.nav-links.open) { background: #ffffff !important; }
+  /* open phone menu: solid white bar (beats the dark .scrolled !important),
+     lifted above the fixed chat panel (200) but below the toast (300) */
+  .site-header:has(.nav-links.open) { background: #ffffff !important; z-index: 250; }
 }
 
 /* ---------- 5. Buttons ---------- */
@@ -200,6 +201,12 @@ h1, h2, h3, h4 { color: var(--w-ink); }
 }
 
 /* ---------- 12. Our work: client cards, filters, 3D carousel ---------- */
+/* the drifting haze canvas fades out at the section edges, so a blob
+   drifting past the bottom never ends in a hard line above 3D & SEO */
+.tx-bg {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 160px, #000 calc(100% - 200px), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 160px, #000 calc(100% - 200px), transparent 100%);
+}
 .cw-pills span {
   background: rgba(255, 255, 255, 0.94); color: var(--w-ink);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -271,3 +278,6 @@ input:focus, select:focus, textarea:focus { border-color: var(--w-accent) !impor
    both above the canvas (fixed, z-index 200 / 300). */
 .chat { position: fixed; z-index: 200; }
 .toast { position: fixed; z-index: 300; }
+/* white ring keeps the violet bubble's outline visible when it floats
+   over the violet tile or the violet offer panel (invisible on white) */
+.chat-toggle { box-shadow: 0 0 0 3px #ffffff, 0 12px 30px rgba(107, 61, 242, 0.35); }
