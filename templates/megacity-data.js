@@ -23,7 +23,7 @@
     phone: "0161 220 1763",
     phoneHref: "tel:+441612201763",
     email: "info@megacityproperties.co.uk",
-    office: "Office 21, The Tube Business Centre, 86 North Street, Manchester M8 8RA",
+    office: "Office 18, The Tube Business Centre, 86 North Street, Manchester M8 8RA",
     mapsHref: "https://maps.google.com/?q=The+Tube+Business+Centre,+86+North+Street,+Manchester+M8+8RA",
     companyNo: "12321291",
     facebook: "https://www.facebook.com/megacityproperties",
