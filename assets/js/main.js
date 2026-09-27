@@ -647,6 +647,8 @@ function initChat() {
   (function scheduleAutoOpen() {
     if (document.getElementById("intro")) { setTimeout(scheduleAutoOpen, 600); return; }
     setTimeout(() => {
+      // On a phone the open panel covers most of the screen, so it waits to be tapped.
+      if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) return;
       if (!autoOpened && !engaged && !chat.classList.contains("open")) {
         autoOpened = true;
         setOpen(true);

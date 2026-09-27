@@ -34,7 +34,9 @@
   if (items.length < 2) return;
 
   /* ==========================================================
-     Live animated background (unchanged)
+     Live animated background: soft violet / amber haze and faint
+     violet specks on the light section (normal blending; additive
+     blending washed out on white)
      ========================================================== */
   var bg = document.createElement("canvas");
   bg.className = "tx-bg"; bg.setAttribute("aria-hidden", "true");
@@ -42,7 +44,7 @@
   (function background() {
     var ctx = bg.getContext("2d");
     var blobs = [], stars = [], W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    var cols = ["#2b7fff", "#22d3ee", "#7c3aed", "#0ea5e9"];
+    var cols = ["#6b3df2", "#b39dff", "#8a55ff", "#ffb829"];
     function size() {
       W = section.clientWidth; H = section.clientHeight;
       bg.width = W * dpr; bg.height = H * dpr; bg.style.width = W + "px"; bg.style.height = H + "px";
@@ -60,27 +62,25 @@
     var running = false, raf = null, onScreen = true, t = 0;
     function frame() {
       raf = requestAnimationFrame(frame); t += 0.016;
-      ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter";
+      ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < blobs.length; i++) {
         var b = blobs[i];
         b.x += b.vx + Math.sin(t * 0.3 + b.ph) * 0.12; b.y += b.vy + Math.cos(t * 0.24 + b.ph) * 0.10;
         if (b.x < -b.r) b.x = W + b.r; if (b.x > W + b.r) b.x = -b.r; if (b.y < -b.r) b.y = H + b.r; if (b.y > H + b.r) b.y = -b.r;
         var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-        g.addColorStop(0, hexA(b.c, 0.20)); g.addColorStop(1, hexA(b.c, 0));
+        g.addColorStop(0, hexA(b.c, 0.07)); g.addColorStop(1, hexA(b.c, 0));
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill();
       }
       for (var s = 0; s < stars.length; s++) {
-        var st = stars[s]; var a = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.4 + st.tw)) * st.z;
-        ctx.fillStyle = "rgba(200,220,255," + a.toFixed(3) + ")"; ctx.fillRect(st.x, st.y, st.z * 1.6, st.z * 1.6);
+        var st = stars[s]; var a = (0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.4 + st.tw)) * st.z) * 0.4;
+        ctx.fillStyle = "rgba(107,61,242," + a.toFixed(3) + ")"; ctx.fillRect(st.x, st.y, st.z * 1.6, st.z * 1.6);
       }
-      ctx.globalCompositeOperation = "source-over";
     }
     function play() { if (running) return; running = true; frame(); }
     function pause() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
     function paintStatic() {
-      ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter";
-      for (var i = 0; i < blobs.length; i++) { var b = blobs[i]; var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, hexA(b.c, 0.16)); g.addColorStop(1, hexA(b.c, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill(); }
-      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < blobs.length; i++) { var b = blobs[i]; var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, hexA(b.c, 0.06)); g.addColorStop(1, hexA(b.c, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill(); }
     }
     function sync() { (onScreen && document.visibilityState !== "hidden" && !reduce) ? play() : (pause(), reduce && paintStatic()); }
     new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; sync(); }, { threshold: 0.01 }).observe(section);

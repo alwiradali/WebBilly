@@ -1,6 +1,6 @@
 /* ============================================================
    Billy Digitals — Section particle ambience
-   Drops a lightweight drifting glow-particle canvas behind any
+   Drops a lightweight drifting soft violet-dot canvas behind any
    section tagged .fx-alive, so the whole page feels alive as you
    scroll. Pure 2D canvas (cheap). Only visible sections animate.
    Respects reduced-motion (paints one static frame).
@@ -9,7 +9,7 @@
   "use strict";
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mobile = window.matchMedia && matchMedia("(max-width: 720px)").matches;
-  var COLORS = ["#2b7fff", "#22d3ee", "#7c3aed", "#38bdf8"];
+  var COLORS = ["#6b3df2", "#8a55ff", "#b39dff", "#ffb829"];   // violet family + one amber, soft on white
 
   // Skip the decorative particle canvases on mobile / reduced-motion to keep
   // memory low and avoid iOS tab reloads.
@@ -39,13 +39,12 @@
           x: Math.random() * W, y: Math.random() * H, z: z,
           r: (mobile ? 1.1 : 1.6) * z + Math.random() * 1.4,
           vx: (Math.random() - 0.5) * 0.18 * z, vy: (-0.12 - Math.random() * 0.22) * z,
-          c: COLORS[i % COLORS.length], a: 0.16 + Math.random() * 0.34, tw: Math.random() * 6.28
+          c: COLORS[i % COLORS.length], a: 0.08 + Math.random() * 0.16, tw: Math.random() * 6.28
         });
       }
     }
     function draw(t) {
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = "lighter";
+      ctx.clearRect(0, 0, W, H);   // normal blending: additive "lighter" washed out to white on the white page
       for (var i = 0; i < parts.length; i++) {
         var p = parts[i];
         p.x += p.vx; p.y += p.vy;
@@ -58,7 +57,6 @@
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 6, 0, 6.2832); ctx.fill();
       }
-      ctx.globalCompositeOperation = "source-over";
     }
     function frame(now) { if (!running) return; raf = requestAnimationFrame(frame); draw(now); }
     function play() { if (running || reduce) { if (reduce) draw(0); return; } running = true; raf = requestAnimationFrame(frame); }

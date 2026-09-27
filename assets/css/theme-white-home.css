@@ -1,0 +1,273 @@
+/* ============================================================
+   Billy Digitals — WHITE THEME, homepage layer
+   ------------------------------------------------------------
+   index.html only. Loaded LAST, after theme-white.css (the shared
+   white layer). The homepage stacks dark skins on top of style.css
+   (template-experience, wow, theme-agency, theme-award) and several
+   of them use !important; this file beats exactly those rules and
+   nothing more. Recolour only: fonts, spacing, grid and every word
+   stay as they are.
+
+   !important is used ONLY where the dark rule being replaced is
+   itself !important (mostly theme-agency.css / theme-award.css /
+   wow.css), or to beat an inline style. Everything else wins on
+   load order. Rules theme-white.css already gets right are not
+   repeated here.
+
+   Palette (same values as theme-white.css)
+     ground #ffffff · alt #f7f6fb · hairline #e8e5f0
+     ink #15131f · body #2e2b3a · muted #5f5b70
+     accent #6b3df2 (hover #5a2fe0) · tint #f1ecff
+     amber #ffb829 (decorative fills only, never text)
+   ============================================================ */
+
+/* ---------- 1. Tokens + headings ---------- */
+:root {
+  --silver: #5f5b70;          /* theme-agency/award paragraph grey -> muted */
+  --w-grad-text: linear-gradient(100deg, #5a2fe0, #6b3df2 45%, #7c4dff 70%, #5a2fe0);
+}
+/* theme-agency / theme-award paint every heading off-white (h1-h4 + class pairs) */
+h1, h2, h3, h4 { color: var(--w-ink); }
+.hero h1, .section-head h2,
+.card h3, .offer h3, .plan h3, .tinfo h3 { color: var(--w-ink); }
+
+/* ---------- 2. Section grounds ----------
+   theme-award / wow force every section transparent so the fixed
+   constellation canvas shows through the whole page. On white the
+   canvas stays the stage for the top of the page only (hero, the
+   statement band, the three service tiles and the zoom statement);
+   from Services down, sections get real white / alt grounds again,
+   so text never sits on moving dots. */
+.section { background: #ffffff !important; }
+.section-alt { background: var(--w-alt) !important; }
+.hero, .statement, .panels-sec, .pinzoom { background: transparent !important; }
+/* the violet tints fade in below the top edge, so "Our work" (same alt
+   ground) runs into the 3D section with no seam */
+.threed {
+  background:
+    linear-gradient(180deg, var(--w-alt) 0, rgba(247, 246, 251, 0) 180px),
+    radial-gradient(120% 82% at 82% -12%, rgba(107, 61, 242, 0.07), transparent 55%),
+    radial-gradient(120% 82% at -6% 112%, rgba(255, 184, 41, 0.06), transparent 55%),
+    var(--w-alt) !important;
+}
+.threed-glow { background: radial-gradient(46% 38% at 50% 28%, rgba(107, 61, 242, 0.06), transparent 70%); }
+.powerstrip {
+  background: linear-gradient(180deg, #ffffff 0%, var(--w-alt) 100%) !important;
+  border-top: 1px solid var(--w-line);
+}
+
+/* ---------- 3. Type accents ---------- */
+/* italic accent words: violet gradient dark enough to read on white */
+.grad, .hero h1 .accent {
+  background: var(--w-grad-text) !important;
+  background-size: 220% auto !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
+/* eyebrows: amber / lime text becomes violet */
+.eyebrow, .cw-label, .ps-label, .pz-eyebrow {
+  color: var(--w-accent) !important;
+  background: transparent !important;
+  border-color: rgba(107, 61, 242, 0.3) !important;
+}
+.tag {
+  color: var(--w-accent) !important;
+  background: var(--w-tint) !important;
+  border-color: rgba(107, 61, 242, 0.22) !important;
+}
+.hero-badge {
+  color: var(--w-ink) !important;
+  background: #fff4dc !important;
+  border-color: rgba(255, 184, 41, 0.6) !important;
+}
+.pnum { color: var(--w-accent); }
+
+/* ---------- 4. Header ---------- */
+.site-header.scrolled {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-bottom: 1px solid var(--w-line) !important;
+}
+.nav-links a.active::after, .nav-links a:hover::after { background: var(--w-accent); }
+@media (max-width: 900px) {
+  /* open phone menu: solid white bar (beats the dark .scrolled !important) */
+  .site-header:has(.nav-links.open) { background: #ffffff !important; }
+}
+
+/* ---------- 5. Buttons ---------- */
+.btn-primary, .nav-cta {
+  background: var(--w-accent) !important; color: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(20, 16, 40, 0.08), 0 10px 24px -8px rgba(107, 61, 242, 0.45) !important;
+}
+.btn-primary:hover, .nav-cta:hover {
+  background: var(--w-accent-hover) !important; color: #ffffff !important;
+  border-color: transparent !important; filter: none;
+  box-shadow: 0 2px 4px rgba(20, 16, 40, 0.08), 0 14px 30px -8px rgba(107, 61, 242, 0.5) !important;
+}
+/* keep the dark skin's 2px ghost border so both hero buttons stay the same size */
+.btn-ghost { background: #ffffff; border: 2px solid var(--w-line-strong); color: var(--w-ink); }
+.btn-ghost:hover { background: #ffffff; border-color: rgba(107, 61, 242, 0.55); color: var(--w-ink); }
+
+/* ---------- 6. Hero ---------- */
+.hero .hero-scrim {
+  background:
+    radial-gradient(58% 52% at 50% 44%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.25) 60%, transparent 76%),
+    linear-gradient(180deg, transparent 70%, #ffffff 100%) !important;
+}
+.orb-1 { background: rgba(107, 61, 242, 0.16) !important; }
+.orb-2 { background: rgba(139, 92, 246, 0.12) !important; }
+.orb-3 { background: rgba(255, 184, 41, 0.14) !important; }
+.hero-stats > div { border-top: 1px solid var(--w-line); }
+.hero-stats dt span { color: var(--w-accent); -webkit-text-fill-color: var(--w-accent); }
+/* typewriter welcome */
+.hero-welcome .hw-top { color: var(--w-ink); }   /* reduced motion: plain text, no .ch letters */
+.hero-welcome .hw-top .ch { color: var(--w-ink) !important; }
+.hw-bot { -webkit-text-fill-color: var(--w-accent) !important; color: var(--w-accent) !important; }
+/* cursor spotlight: soft violet wash (screen blending vanishes on white) */
+.wow-spot {
+  mix-blend-mode: normal;
+  background: radial-gradient(340px circle at var(--sx, 50%) var(--sy, 50%), rgba(107, 61, 242, 0.07), transparent 70%);
+}
+.wow-progress { background: linear-gradient(90deg, #5a2fe0, #8a55ff); }
+
+/* ---------- 7. Marquee + trust strip ---------- */
+.marquee li,
+.marquee li:nth-child(3n+1), .marquee li:nth-child(3n+2), .marquee li:nth-child(3n+3) { color: var(--w-muted) !important; }
+.trust-name { color: var(--w-ink); }
+
+/* ---------- 8. Statement band ("a little magic") ---------- */
+.statement h2 { color: var(--w-ink); }
+.hl-pill { background: var(--w-amber); color: var(--w-ink); box-shadow: 0 8px 22px rgba(255, 184, 41, 0.35); }
+
+/* ---------- 9. Three service tiles ---------- */
+/* the tall violet tile stays violet (white text), deepened so it reads */
+.panel.p-blue {
+  background: linear-gradient(150deg, #5a2fe0, #6b3df2 48%, #8a55ff) #6b3df2 !important;
+  box-shadow: 0 2px 6px rgba(20, 16, 40, 0.06), 0 26px 56px -20px rgba(107, 61, 242, 0.45);
+}
+.panel.p-blue h3, .panel.p-blue p { color: #ffffff !important; }
+.panel.p-blue .ptags span { border-color: rgba(255, 255, 255, 0.6) !important; color: #ffffff !important; }
+.panel.p-blue .wire-globe { color: #ffffff; }
+/* the two dark tiles become white cards */
+.panel.p-purple, .panel.p-cream {
+  background: #ffffff !important; color: var(--w-ink) !important;
+  border: 1px solid var(--w-line) !important;
+  box-shadow: var(--w-shadow-card);
+}
+.panel.p-purple h3, .panel.p-cream h3 { color: var(--w-ink) !important; }
+.panel.p-purple p, .panel.p-cream p { color: var(--w-muted) !important; }
+.panel.p-purple .ptags span, .panel.p-cream .ptags span {
+  border-color: rgba(107, 61, 242, 0.35) !important; color: var(--w-accent) !important;
+}
+.panel.p-purple .wire-globe, .panel.p-cream .wire-globe, .wire-globe { color: var(--w-accent); }
+
+/* ---------- 10. Zoom statement ---------- */
+.pz-word { color: var(--w-ink); }
+.pz-word .lime { color: var(--w-accent); }
+.pz-tag { color: var(--w-muted); }
+
+/* ---------- 11. Every card surface (theme-agency/award flatten them) ---------- */
+.card, .tcard, .offer, .plan, .host-card, .ccard, .contact-form, .faq-item {
+  background: #ffffff !important;
+  border: 1px solid var(--w-line) !important;
+  box-shadow: var(--w-shadow-card) !important;
+}
+.why-strip > div {
+  background: #ffffff !important;
+  border: 1px solid var(--w-line) !important;
+  box-shadow: none !important;
+}
+.why-strip > div strong { color: var(--w-ink); }
+.card:hover, .tcard:hover, .offer:hover,
+.services-grid .card:hover, .offer-grid .offer:hover {
+  background: #ffffff !important;
+  border-color: rgba(107, 61, 242, 0.35) !important;
+  box-shadow: var(--w-shadow-lift) !important;
+}
+.faq-item.open { border-color: rgba(107, 61, 242, 0.4) !important; }
+.card-icon,
+.services-grid .card .card-icon, .offer-grid .offer .card-icon {
+  background: var(--w-tint) !important; color: var(--w-accent) !important;
+  border: 1px solid rgba(107, 61, 242, 0.18) !important; box-shadow: none !important;
+}
+.tilt-sheen { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(107, 61, 242, 0.06), transparent 45%); }
+/* Huly border comet: same violet comet, no white head (invisible on white) */
+.hbeam {
+  background: conic-gradient(from var(--hb),
+    transparent 0 68%, rgba(107, 61, 242, 0) 68%,
+    #6b3df2 82%, #a78bfa 88%, #ffb829 90.5%, #a78bfa 93%, #6b3df2 96%,
+    transparent 100%);
+  filter: drop-shadow(0 0 3px rgba(107, 61, 242, 0.35));
+}
+
+/* ---------- 12. Our work: client cards, filters, 3D carousel ---------- */
+.cw-pills span {
+  background: rgba(255, 255, 255, 0.94); color: var(--w-ink);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+.tcard:hover .tthumb { box-shadow: 0 20px 52px -18px rgba(107, 61, 242, 0.35) !important; }
+.tcf-card { box-shadow: 0 30px 60px -24px rgba(20, 16, 40, 0.45); }
+.tcf-card.front { box-shadow: 0 42px 84px -28px rgba(20, 16, 40, 0.55); }
+.tcf-open {
+  color: #ffffff; background: var(--w-accent);
+  box-shadow: 0 10px 26px -8px rgba(107, 61, 242, 0.6);
+}
+.tcf-sparks i { background: #ffffff; box-shadow: 0 0 6px 1px rgba(107, 61, 242, 0.7); }
+.tcf-arrow {
+  background: #ffffff; border: 1px solid var(--w-line-strong); color: var(--w-ink);
+  box-shadow: var(--w-shadow-card);
+}
+.tcf-arrow:hover { background: var(--w-accent); border-color: transparent; color: #ffffff; }
+.tcf-cat { color: rgba(255, 255, 255, 0.82); }   /* sits on the photo's dark foot scrim */
+.tcf-hint { color: var(--w-muted); }
+.tcf-hint b { color: var(--w-ink); }
+/* in-site template viewer chrome */
+.tx-overlay, .tx-frame-wrap { background: var(--w-alt); }
+.tx-bar { background: #ffffff; border-bottom: 1px solid var(--w-line); color: var(--w-ink); }
+.tx-back { background: #ffffff; border: 1px solid var(--w-line-strong); color: var(--w-ink); }
+.tx-back:hover { background: var(--w-tint); border-color: rgba(107, 61, 242, 0.45); }
+.tx-bar .tx-title .tx-cat { color: var(--w-muted); }
+.tx-bar .tx-cta { color: #ffffff; background: var(--w-accent); }
+.tx-bar .tx-newtab { color: var(--w-muted); }
+.tx-bar .tx-newtab:hover { color: var(--w-accent); }
+.tx-loader { background: var(--w-alt); color: var(--w-muted); }
+
+/* ---------- 13. Plans, offer panel ---------- */
+.offer-ribbon {
+  border: 1px solid var(--w-line) !important;
+  box-shadow: var(--w-shadow-lift) !important;
+}
+.offer-main { background: linear-gradient(140deg, #5a2fe0, #6b3df2 55%, #8a55ff) #6b3df2 !important; }
+.offer-flag { background: rgba(20, 16, 40, 0.24) !important; color: #ffffff !important; }
+.offer-split { background: #ffffff !important; }
+.offer-3 { background: var(--w-tint) !important; color: var(--w-accent) !important; }
+.offer-split p { color: var(--w-muted) !important; }
+.offer-split p strong { color: var(--w-ink) !important; }
+.plan-featured, .plan-featured:hover {
+  background: linear-gradient(170deg, #f6f2ff, #ffffff 60%) !important;
+  border-color: rgba(107, 61, 242, 0.45) !important;
+  box-shadow: 0 0 0 1px rgba(107, 61, 242, 0.3), 0 4px 12px rgba(20, 16, 40, 0.06), 0 24px 56px rgba(107, 61, 242, 0.16) !important;
+}
+.plan-badge { background: var(--w-accent) !important; color: #ffffff !important; }
+.plan li::before { color: var(--w-accent) !important; }
+.pay-off { background: var(--w-accent) !important; color: #ffffff !important; }
+
+/* ---------- 14. Hosting & care ---------- */
+/* the "found" accent word carries an inline amber colour; !important beats the inline style */
+#hosting .card h3 em { color: var(--w-accent) !important; }
+
+/* ---------- 15. Contact + forms ---------- */
+.spin-badge { color: var(--w-ink); }
+.spin-badge .core { background: var(--w-accent); color: #ffffff; box-shadow: 0 12px 26px rgba(107, 61, 242, 0.32); }
+/* aurora blobs: at the low alpha white needs they band into visible rings, so they are left out */
+.wow-aurora::before, .wow-aurora::after { display: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--w-accent) !important; }
+
+/* ---------- 16. Chat widget + toast back in their fixed corners ----------
+   wow.css puts .chat and .toast in its "position:relative; z-index:1"
+   lift list (meant for page content above the constellation canvas).
+   That dropped the chat bubble out of its fixed corner into the page
+   flow under the footer, half off-screen at the bottom-left, so it was
+   only reachable at the very end of the page. style.css already keeps
+   both above the canvas (fixed, z-index 200 / 300). */
+.chat { position: fixed; z-index: 200; }
+.toast { position: fixed; z-index: 300; }

@@ -2,8 +2,9 @@
    Billy Digitals — DALA constellation backdrop (canvas 2D)
    ONE cloud of tiny triangle glyphs, fixed behind the whole page,
    that MORPHS shape as you scroll: lightbulb (hero) → globe
-   (services / mid) → swirl vortex (contact / end). Violet + amber
-   + white on black velvet, pointer-reactive, twinkling. Light:
+   (services / mid) → swirl vortex (contact / end). Violet, ink and
+   a few amber sparks at low alpha on the white page, pointer-reactive,
+   twinkling. Light:
    no WebGL, no deps, capped on mobile, paused when hidden, static
    under reduced-motion.
    ============================================================ */
@@ -18,7 +19,8 @@
 
   var DPR = Math.min(window.devicePixelRatio || 1, mobile ? 1.6 : 2);
   var VW = 0, VH = 0;                         // viewport CSS px
-  var COLORS = ["#8052ff", "#a78bfa", "#ffb829", "#e9ddff", "#ffffff", "#8052ff"];
+  var COLORS = ["#6b3df2", "#8a55ff", "#ffb829", "#b39dff", "#15131f", "#6b3df2"];
+  var ALPHA = 0.7;                            // overall strength on the white page
   var COUNT = mobile ? 640 : 1500;
 
   /* ---------- shape generators: return arrays of [x,y] centred on
@@ -126,7 +128,7 @@
     raf = requestAnimationFrame(frame);
     t += 0.016;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save(); ctx.scale(DPR, DPR); ctx.globalCompositeOperation = "lighter";
+    ctx.save(); ctx.scale(DPR, DPR); ctx.globalCompositeOperation = "source-over";
     var bl = blend(), A = bl.A, B = bl.B, f = bl.f, n = parts.length;
     for (var i = 0; i < n; i++) {
       var p = parts[i], gx, gy;
@@ -143,16 +145,16 @@
       var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
       if (d2 < 11000) { var fo = (11000 - d2) / 11000 * 0.9, dd = Math.sqrt(d2 + 0.1); p.x += dx / dd * fo * 6; p.y += dy / dd * fo * 6; }
       p.x += (gx - p.x) * 0.06; p.y += (gy - p.y) * 0.06; p.rot += p.vr;
-      ctx.globalAlpha = (p.roam ? 0.4 : 0.62) * (0.55 + 0.45 * Math.sin(t * p.sp + p.ph)) + 0.18;
+      ctx.globalAlpha = ((p.roam ? 0.4 : 0.62) * (0.55 + 0.45 * Math.sin(t * p.sp + p.ph)) + 0.18) * ALPHA;
       ctx.fillStyle = p.c; tri(p.x, p.y, p.r, p.rot);
     }
     ctx.restore();
   }
   function staticDraw() {
     resize();
-    ctx.save(); ctx.scale(DPR, DPR); ctx.globalCompositeOperation = "lighter";
+    ctx.save(); ctx.scale(DPR, DPR); ctx.globalCompositeOperation = "source-over";
     var A = SHAPES[0];
-    for (var i = 0; i < parts.length; i++) { var p = parts[i], a = A && A[i]; ctx.globalAlpha = 0.8; ctx.fillStyle = p.c; tri(a ? a[0] : p.rx, a ? a[1] : p.ry, p.r, p.rot); }
+    for (var i = 0; i < parts.length; i++) { var p = parts[i], a = A && A[i]; ctx.globalAlpha = 0.8 * ALPHA; ctx.fillStyle = p.c; tri(a ? a[0] : p.rx, a ? a[1] : p.ry, p.r, p.rot); }
     ctx.restore();
   }
   function start() { if (raf == null && !hidden) raf = requestAnimationFrame(frame); }
