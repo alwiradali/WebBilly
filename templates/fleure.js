@@ -123,12 +123,6 @@
     host.textContent = D.confirmNote;
   })();
 
-  /* -- bloom baskets -- */
-  (function baskets() {
-    var host = $("#basketPoints"); if (!host) return;
-    D.basketPoints.forEach(function (t) { host.appendChild(el("li", null, t)); });
-  })();
-
   /* -- gallery. One ordered list in the data file; the home page asks for
         a few with data-limit, the work page leaves it off and gets all. -- */
   (function gallery() {

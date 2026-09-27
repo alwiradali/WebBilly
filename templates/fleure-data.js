@@ -99,13 +99,6 @@ window.FLEURE = (function () {
   /* Said under the enquiry form: the one thing the form does not say itself. */
   var confirmNote = "We will confirm your design, price and availability before starting your bouquet.";
 
-  /* Bloom baskets, from the shop's own highlight. */
-  var basketPoints = [
-    "Customised to suit your preferred colours, flowers and budget.",
-    "Each basket is arranged to be a beautiful and unique design in its own right.",
-    "Beauty products, gifts or anything else you would like can be included on request."
-  ];
-
   /* The policies, transcribed. They are written as "we" and that is kept. */
   var policies = [
     { h: "Orders", l: [
@@ -176,7 +169,7 @@ window.FLEURE = (function () {
 
   return {
     business: business, collections: collections, confirmNote: confirmNote,
-    basketPoints: basketPoints, policies: policies, occasions: occasions,
+    policies: policies, occasions: occasions,
     palettes: palettes, work: work, reviews: reviews, faq: faq
   };
 })();
