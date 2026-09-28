@@ -261,12 +261,13 @@
           <p class="h-eyebrow">How it works</p>
           <h2>Four clear steps.</h2>
         </div>
-        <ol class="h-steps">
+        <ol class="h-steps" aria-label="Our process, swipe to see each step">
           <li class="fx"><span class="h-step-n">01</span><h3>Discover</h3><p>We understand your business and what the website needs to achieve.</p></li>
           <li class="fx"><span class="h-step-n">02</span><h3>Design</h3><p>We create the look, structure and experience.</p></li>
           <li class="fx"><span class="h-step-n">03</span><h3>Build</h3><p>We develop, test and optimise everything.</p></li>
           <li class="fx"><span class="h-step-n">04</span><h3>Launch</h3><p>Your website goes live and we stay around to support you.</p></li>
         </ol>
+        <div class="h-steps-dots" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -511,6 +512,19 @@
       track.addEventListener('scroll', function () {
         var i = Math.round(track.scrollLeft / step());
         dots.querySelectorAll('span').forEach(function (d, k) { d.className = k === i ? 'on' : ''; });
+      }, { passive: true });
+    })();
+  </script>
+  <script>
+    /* Process steps: a swipe rail on phones only (desktop shows all four in a row). */
+    (function () {
+      var rail = document.querySelector('.h-steps'), dots = document.querySelector('.h-steps-dots');
+      if (!rail || !dots) return;
+      var items = rail.children;
+      for (var i = 0; i < items.length; i++) { var d = document.createElement('span'); if (!i) d.className = 'on'; dots.appendChild(d); }
+      rail.addEventListener('scroll', function () {
+        var w = items[0].getBoundingClientRect().width + 16, k = Math.round(rail.scrollLeft / w);
+        [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
       }, { passive: true });
     })();
   </script>
