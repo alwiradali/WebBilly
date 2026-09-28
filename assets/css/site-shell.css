@@ -37,7 +37,8 @@
 .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--s-body); letter-spacing: 0; text-transform: none; }
 .nav-links a::after { background: var(--s-accent); height: 1.5px; bottom: -5px; }
 .nav-links a:hover, .nav-links a.active { color: var(--s-ink); }
-.nav-links .nav-menu-cta { display: none; }
+.nav-links .nav-menu-cta,
+.nav-links .nav-enq { display: none; }
 
 .nav-cta {
   margin-left: 30px; padding: 11px 24px; border-radius: 999px;
@@ -58,6 +59,7 @@
   .nav-links li { text-align: left; }
   .nav-links a { padding: 15px 24px; font-size: 1.1rem; color: var(--s-ink); }
   .nav-links a::after { display: none; }
+  .nav-links .nav-enq { display: block; }
   .nav-links .nav-menu-cta { display: block; padding: 10px 24px 0; }
   .nav-links .nav-menu-cta a {
     display: block; text-align: center; background: var(--s-accent); color: #fff;
