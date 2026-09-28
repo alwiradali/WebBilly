@@ -199,18 +199,20 @@
       var ry = -sgn * capA * 46;
       var sc = Math.max(1 - a * 0.12, 0.7) * (a < 0.5 ? 1.06 : 1);
       var z = -Math.min(a, 4) * 130;
-      // On the white ground a see-through card turns milky and its white
-      // label vanishes, so side cards stay mostly opaque (1 -> 0.7) and
-      // recede by darkening instead; the outermost card fades out over its
-      // last quarter step so it never pops in or out.
-      var op = (1 - Math.min(a, 3) * 0.1) * Math.min(1, Math.max(0, (3.25 - a) / 0.25));
-      var br = (1 - Math.min(a, 1) * 0.1 - Math.max(Math.min(a, 3) - 1, 0) * 0.04).toFixed(3);
+      // On the white ground a see-through card turns milky, its white label
+      // vanishes and the card behind ghosts through it, so side cards stay
+      // opaque and recede by darkening instead (1 -> 0.9 -> 0.85 -> 0.8);
+      // the outermost card fades out over its last quarter step so it
+      // never pops in or out.
+      var op = Math.min(1, Math.max(0, (3.25 - a) / 0.25));
+      var br = (1 - Math.min(a, 1) * 0.1 - Math.max(Math.min(a, 3) - 1, 0) * 0.05).toFixed(3);
       if (c._br !== br) { c._br = br; c.firstChild.style.filter = br === "1.000" ? "" : "brightness(" + br + ")"; }
       c.style.transform = "translate(-50%,-50%) translateX(" + x.toFixed(1) + "px) translateZ(" + z.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";
       c.style.opacity = op.toFixed(3);
       c.style.zIndex = String(200 - Math.round(a * 10));
       c.style.pointerEvents = "auto";
       c.classList.toggle("front", a < 0.5);
+      c.classList.toggle("tcf-r", rel > 0.5);   // right-hand cards: label on the edge that shows
     }
     prevBtn.classList.toggle("on", true); nextBtn.classList.toggle("on", true);
   }

@@ -646,9 +646,11 @@ function initChat() {
   let autoOpened = false;
   (function scheduleAutoOpen() {
     if (document.getElementById("intro")) { setTimeout(scheduleAutoOpen, 600); return; }
-    setTimeout(() => {
+    setTimeout(function tryOpen() {
       // On a phone the open panel covers most of the screen, so it waits to be tapped.
       if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) return;
+      // Wait until the visitor has scrolled past the first screen, so it never covers the headline.
+      if (window.scrollY < window.innerHeight * 0.9) { setTimeout(tryOpen, 1500); return; }
       if (!autoOpened && !engaged && !chat.classList.contains("open")) {
         autoOpened = true;
         setOpen(true);

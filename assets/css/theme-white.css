@@ -323,6 +323,8 @@ a.ccard:hover { border-color: rgba(107, 61, 242, 0.4); }
 .footer-bottom { border-top-color: var(--w-line); color: var(--w-muted); }
 .footer-bottom a { color: var(--w-muted); transition: color 0.2s ease; }
 .footer-bottom a:hover { color: var(--w-accent); }
+/* on phones the floating WhatsApp and chat buttons sit over the last line; give it room to scroll clear */
+@media (max-width: 720px) { .footer-bottom { padding-bottom: 84px; } }
 
 /* ---------- 18. Chat widget + toast ---------- */
 .chat-toggle { background: var(--w-accent); color: #fff; box-shadow: 0 12px 30px rgba(107, 61, 242, 0.35); }
@@ -338,17 +340,20 @@ a.ccard:hover { border-color: rgba(107, 61, 242, 0.4); }
 .msg.user { background: var(--w-accent); color: #fff; }
 .msg a { color: var(--w-accent); }
 .msg.user a { color: #fff; }
-.chat-chips button { color: var(--w-ink); background: #fff; border-color: var(--w-line-strong); }
-.chat-chips button:hover { color: var(--w-accent); background: var(--w-tint); border-color: rgba(107, 61, 242, 0.45); }
+.chat-chips button { color: var(--w-accent); background: var(--w-tint); border-color: var(--w-line); }
+.chat-chips button:hover { color: var(--w-accent-hover); background: #e7deff; border-color: rgba(107, 61, 242, 0.45); }
 .chat-input { background: #fff; border-top-color: var(--w-line); }
 .chat-input input { background: #fff; border-color: var(--w-line-strong); color: var(--w-ink); }
 .chat-input input::placeholder { color: var(--w-placeholder); }
 .chat-input input:focus { border-color: var(--w-accent); box-shadow: var(--w-ring); }
 .chat-input button { background: var(--w-accent); color: #fff; }
 .toast {
-  background: #fff; border-color: rgba(107, 61, 242, 0.35); color: var(--w-ink);
-  box-shadow: var(--w-shadow-lift);
+  background: #fff; border-color: rgba(107, 61, 242, 0.55); color: var(--w-ink);
+  box-shadow: 0 2px 6px rgba(20, 16, 40, 0.08), 0 18px 44px rgba(20, 16, 40, 0.2);
+  width: max-content; max-width: min(92vw, 440px);
 }
+/* these lists have no class, so style.css's ul[class] reset misses them and they grew bullet dots */
+.plan ul, .footer-grid ul { list-style: none; }
 
 /* ---------- 19. Thank-you page ---------- */
 .ty-check { background: var(--w-accent); color: #fff; box-shadow: 0 14px 34px rgba(107, 61, 242, 0.28); }

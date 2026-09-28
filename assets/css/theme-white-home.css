@@ -225,6 +225,8 @@ h1, h2, h3, h4 { color: var(--w-ink); }
 }
 .tcf-arrow:hover { background: var(--w-accent); border-color: transparent; color: #ffffff; }
 .tcf-cat { color: rgba(255, 255, 255, 0.82); }   /* sits on the photo's dark foot scrim */
+/* cards right of centre are overlapped on their left edge by the nearer card, so their label sits right */
+.tcf-card.tcf-r .tcf-info { text-align: right; }
 .tcf-hint { color: var(--w-muted); }
 .tcf-hint b { color: var(--w-ink); }
 /* in-site template viewer chrome */
