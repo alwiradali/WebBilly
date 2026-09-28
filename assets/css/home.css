@@ -6,20 +6,20 @@
    ============================================================ */
 
 :root {
-  --h-ink: #f5f5f0;
-  --h-body: #d6d4cc;
-  --h-muted: #a3a198;
-  --h-accent: #a88bff;
-  --h-accent-hover: #c0abff;
-  --h-line: rgba(245, 245, 240, 0.12);
-  --h-field: rgba(245, 245, 240, 0.22);
-  --h-alt: #101011;
+  --h-ink: #15131f;
+  --h-body: #2e2b3a;
+  --h-muted: #5f5b70;
+  --h-accent: #6b3df2;
+  --h-accent-hover: #5a2fe0;
+  --h-line: #e8e5f0;
+  --h-field: #d9d4e8;
+  --h-alt: #f7f6fb;
   --h-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --h-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --h-space: clamp(88px, 11vw, 148px);
 }
 
-body { background: #0a0a0a; color: var(--h-body); font-family: var(--h-sans); }
+body { background: #fff; color: var(--h-body); font-family: var(--h-sans); }
 
 /* ---------- Type ---------- */
 .h-hero h1,
@@ -65,16 +65,16 @@ body { background: #0a0a0a; color: var(--h-body); font-family: var(--h-sans); }
 .h-hero h1 { font-size: clamp(2.7rem, 5.6vw, 4.7rem); line-height: 1.03; max-width: 13ch; }
 .h-lead { color: var(--h-muted); font-size: clamp(1.08rem, 1.4vw, 1.2rem); line-height: 1.7; max-width: 44ch; margin-top: 28px; }
 .h-hero-visual { position: relative; aspect-ratio: 1264 / 1000; }
-.h-shot { position: absolute; width: 86%; height: auto; border-radius: 14px; border: 1px solid var(--h-line); background: #141415; }
-.h-shot-back { top: 0; right: 0; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.40); }
-.h-shot-front { bottom: 0; left: 0; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.60); }
+.h-shot { position: absolute; width: 86%; height: auto; border-radius: 14px; border: 1px solid var(--h-line); background: #fff; }
+.h-shot-back { top: 0; right: 0; box-shadow: 0 20px 50px rgba(20, 16, 40, 0.10); }
+.h-shot-front { bottom: 0; left: 0; box-shadow: 0 30px 70px rgba(20, 16, 40, 0.18); }
 
 /* ---------- Trust ---------- */
 .h-trust { padding: 0 0 clamp(56px, 7vw, 84px); }
 .h-trust .container { border-top: 1px solid var(--h-line); padding-top: 40px; text-align: center; }
 .h-trust-label { color: var(--h-muted); font-size: 0.88rem; margin-bottom: 20px; }
 .h-trust-names { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 44px; }
-.h-trust-names li { font-family: var(--h-serif); font-size: 1.15rem; color: #8f8d85; }
+.h-trust-names li { font-family: var(--h-serif); font-size: 1.15rem; color: #6e6a80; }
 
 /* ---------- Selected work ---------- */
 .h-work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(56px, 6vw, 80px) clamp(28px, 4vw, 56px); margin-top: clamp(48px, 6vw, 72px); }
@@ -139,21 +139,21 @@ body { background: #0a0a0a; color: var(--h-body); font-family: var(--h-sans); }
 .h-direct a { color: var(--h-ink); font-weight: 500; border-bottom: 1px solid var(--h-field); }
 .h-direct a:hover { color: var(--h-accent); border-color: var(--h-accent); }
 
-.h-form { background: #141415; border: 1px solid var(--h-line); border-radius: 20px; padding: clamp(26px, 4vw, 44px); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 24px 60px rgba(0, 0, 0, 0.28); display: grid; gap: 20px; }
+.h-form { background: #fff; border: 1px solid var(--h-line); border-radius: 20px; padding: clamp(26px, 4vw, 44px); box-shadow: 0 1px 2px rgba(20, 16, 40, 0.04), 0 24px 60px rgba(20, 16, 40, 0.07); display: grid; gap: 20px; }
 .h-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .h-field { display: grid; gap: 8px; }
 .h-field label { font-size: 0.88rem; font-weight: 500; color: var(--h-ink); }
-.h-opt { color: #8f8d85; font-weight: 400; margin-left: 4px; }
+.h-opt { color: #6e6a80; font-weight: 400; margin-left: 4px; }
 .h-form input,
 .h-form select,
 .h-form textarea {
-  width: 100%; font: inherit; font-size: 1rem; color: var(--h-ink); background: #0e0e0f;
+  width: 100%; font: inherit; font-size: 1rem; color: var(--h-ink); background: #fff;
   border: 1px solid var(--h-field); border-radius: 12px; padding: 13px 15px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .h-form textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
 .h-form input::placeholder,
-.h-form textarea::placeholder { color: #8f8d85; }
+.h-form textarea::placeholder { color: #6e6a80; }
 .h-form input:focus,
 .h-form select:focus,
 .h-form textarea:focus { outline: none; border-color: var(--h-accent); box-shadow: 0 0 0 3px rgba(107, 61, 242, 0.15); }

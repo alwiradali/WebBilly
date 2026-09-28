@@ -6,13 +6,13 @@
    ============================================================ */
 
 :root {
-  --s-ink: #f5f5f0;
-  --s-body: #d6d4cc;
-  --s-muted: #a3a198;
-  --s-accent: #a88bff;
-  --s-accent-hover: #c0abff;
-  --s-line: rgba(245, 245, 240, 0.12);
-  --s-alt: #101011;
+  --s-ink: #15131f;
+  --s-body: #2e2b3a;
+  --s-muted: #5f5b70;
+  --s-accent: #6b3df2;
+  --s-accent-hover: #5a2fe0;
+  --s-line: #e8e5f0;
+  --s-alt: #f7f6fb;
 }
 
 /* ---------- Header ---------- */
@@ -26,7 +26,7 @@
 
 .nav-links { gap: 34px; }
 .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--s-body); letter-spacing: 0; text-transform: none; }
-.nav-links a::after { background: #7045f5; height: 1.5px; bottom: -5px; }
+.nav-links a::after { background: var(--s-accent); height: 1.5px; bottom: -5px; }
 .nav-links a:hover, .nav-links a.active { color: var(--s-ink); }
 .nav-links .nav-menu-cta { display: none; }
 
@@ -51,7 +51,7 @@
   .nav-links a::after { display: none; }
   .nav-links .nav-menu-cta { display: block; padding: 10px 24px 0; }
   .nav-links .nav-menu-cta a {
-    display: block; text-align: center; background: #7045f5; color: #fff;
+    display: block; text-align: center; background: var(--s-accent); color: #fff;
     border-radius: 999px; padding: 14px 20px; font-weight: 600;
   }
 }
@@ -71,7 +71,7 @@
 .shell-footer .sf-enquire { display: inline-block; margin-top: 22px; color: var(--s-accent); font-weight: 600; }
 .shell-footer .sf-enquire:hover { color: var(--s-accent-hover); }
 .shell-footer .socials { display: flex; gap: 10px; margin-top: 22px; }
-.shell-footer .socials a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #141415; border: 1px solid var(--s-line); color: var(--s-body); }
+.shell-footer .socials a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 1px solid var(--s-line); color: var(--s-body); }
 .shell-footer .socials a:hover { color: var(--s-accent); border-color: rgba(107, 61, 242, 0.4); }
 .shell-footer .socials svg { width: 16px; height: 16px; }
 

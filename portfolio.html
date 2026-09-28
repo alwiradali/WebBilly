@@ -31,17 +31,22 @@
     {"@type":"ListItem","position":2,"name":"Portfolio","item":"https://www.billydigitals.com/portfolio"}]}
   </script>
   <style>
+    /* white theme tokens (shared palette from the white brief) */
     :root{
-      --ink:#08304c; --teal:#084e72; --body:#2c2c2c; --helper:#797979;
-      --mist:#eeeeee; --canvas:#ffffff;
-      --mint:#d7ffe2; --sky:#e8f1ff; --peach:#ffebd6;
-      --mint-ink:#0a7a3a; --sky-ink:#2563a8; --peach-ink:#b5651d;
-      --rainbow:linear-gradient(90deg,#26c0ff,#e600c2 20%,#ff4940 40%,#ffa130 60%,#ffc837 80%,#00cc3d);
+      --ink:#15131f; --teal:#6b3df2; --body:#2e2b3a; --helper:#5f5b70;
+      --mist:#e8e5f0; --canvas:#ffffff; --alt:#f7f6fb;
+      --accent:#6b3df2; --accent-hover:#5a2fe0; --tint:#f1ecff;
+      /* chips / eyebrows / soft panels all use the violet accent tint */
+      --mint:#f1ecff; --sky:#f1ecff; --peach:#f1ecff;
+      --mint-ink:#6b3df2; --sky-ink:#6b3df2; --peach-ink:#6b3df2;
+      /* italic heading emphasis: violet gradient (every stop passes AA on white) */
+      --rainbow:linear-gradient(90deg,#5a2fe0,#6b3df2 50%,#8052ff);
       --ui:'Inter',ui-sans-serif,system-ui,sans-serif;
       --display:'Plus Jakarta Sans','Inter',sans-serif;
-      --sh-card:0 0 0 1px rgba(8,48,76,.06),0 16px 16px -8px rgba(0,0,0,.03),0 5px 5px -2.5px rgba(0,0,0,.03),0 2px 2px -1px rgba(0,0,0,.03);
-      --sh-hover:0 0 0 1px rgba(8,48,76,.12),0 26px 32px -14px rgba(8,48,76,.16);
-      --sh-nav:0 16px 16px -8px rgba(0,0,0,.03),0 10px 10px -5px rgba(0,0,0,.03),0 5px 5px -2.5px rgba(0,0,0,.03),0 2px 2px -1px rgba(0,0,0,.03);
+      /* card = 1px #e8e5f0 ring (drawn as a shadow so sizes stay identical) + soft lift */
+      --sh-card:0 0 0 1px #e8e5f0,0 1px 2px rgba(20,16,40,.04),0 12px 32px rgba(20,16,40,.07);
+      --sh-hover:0 0 0 1px #d9d4e8,0 1px 2px rgba(20,16,40,.05),0 20px 44px rgba(20,16,40,.11);
+      --sh-nav:0 0 0 1px #e8e5f0,0 1px 2px rgba(20,16,40,.04),0 10px 28px rgba(20,16,40,.06);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -52,26 +57,36 @@
 
     /* floating pill nav */
     .pnav{position:sticky;top:16px;z-index:60;padding:0 16px;margin-top:16px}
-    .pnav-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:14px;background:#fff;border-radius:28px;box-shadow:var(--sh-nav);padding:9px 14px 9px 18px}
+    .pnav-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:28px;box-shadow:var(--sh-nav);padding:9px 14px 9px 18px}
     .brand{display:flex;align-items:center}
     .brand img{height:30px;width:auto}
     .pnav .sp{flex:1}
     .announce{display:none;align-items:center;gap:8px;background:var(--sky);border-radius:9999px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--ink)}
     .announce b{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-ink)}
-    .nav-links{display:none;gap:20px;font-size:15px;font-weight:500;color:var(--ink)}
+    .nav-links{display:none;gap:20px;font-size:15px;font-weight:500;color:var(--body)}
     .nav-links a:hover{color:var(--teal)}
-    .ghost{font-weight:500;font-size:15px;color:var(--ink);padding:8px 6px}
-    .rbtn{position:relative;border-radius:28px;padding:10px 18px;font-weight:600;font-size:15px;color:var(--ink);background:#fff;display:inline-flex;align-items:center;gap:8px;transition:transform .2s}
-    .rbtn::before{content:"";position:absolute;inset:0;border-radius:28px;padding:1.6px;background:var(--rainbow);
-      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-    .rbtn:hover{transform:translateY(-1px)}
+    .ghost{font-weight:500;font-size:15px;color:var(--body);padding:8px 6px;transition:color .2s}
+    .ghost:hover{color:var(--accent)}
+    .rbtn{position:relative;border-radius:28px;padding:10px 18px;font-weight:600;font-size:15px;color:#fff;background:var(--accent);display:inline-flex;align-items:center;gap:8px;transition:transform .2s,background .2s;box-shadow:0 6px 18px rgba(107,61,242,.22)}
+    .rbtn:hover{transform:translateY(-1px);background:var(--accent-hover)}
+    .rbtn:focus-visible,.ghost:focus-visible,.visit:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     @media(min-width:1080px){.announce{display:inline-flex}}
     @media(min-width:760px){.nav-links{display:flex}}
+    /* phone: "Start a project" stays on one line; the logo scales down in proportion to make room
+       (it used to be squashed sideways). Below 350px the button may wrap again. */
+    @media(max-width:480px){
+      .pnav-in{gap:8px;padding:9px 10px 9px 14px}
+      .brand{flex:0 1 124px;min-width:76px}
+      .brand img{width:100%;height:auto}
+      .pnav .ghost{font-size:14px;padding:8px 3px}
+      .pnav .rbtn{white-space:nowrap;padding:8px 13px;font-size:13.5px}
+    }
+    @media(max-width:349px){.pnav .rbtn{white-space:normal}}
 
     /* hero */
     .hero{position:relative;text-align:center;padding:78px 0 54px;overflow:hidden}
     .hero .glow{position:absolute;left:50%;top:30px;width:640px;height:440px;max-width:120vw;transform:translateX(-50%);
-      background:radial-gradient(closest-side,rgba(142,81,255,.16),rgba(142,81,255,.06) 46%,transparent 78%);pointer-events:none;z-index:0}
+      background:radial-gradient(closest-side,rgba(107,61,242,.14),rgba(107,61,242,.05) 46%,transparent 78%);pointer-events:none;z-index:0}
     .hero .wrap{position:relative;z-index:2}
     .eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--sky);border-radius:9999px;padding:5px 13px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-ink);margin-bottom:22px}
     .display{font-family:var(--display);font-weight:700;color:var(--ink);font-size:clamp(2.7rem,7.4vw,4.9rem);line-height:1.0;letter-spacing:-.045em;max-width:15ch;margin:0 auto}
@@ -83,7 +98,7 @@
     .hstats .l{color:var(--helper);font-size:12.5px;margin-top:2px}
     /* tilted photo polaroids */
     .poly{position:absolute;width:172px;background:#fff;border-radius:20px;box-shadow:var(--sh-card);padding:8px;z-index:1;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
-    .poly .pic{aspect-ratio:4/5;border-radius:13px;overflow:hidden;background:var(--sky)}
+    .poly .pic{aspect-ratio:4/5;border-radius:13px;overflow:hidden;background:var(--alt)}
     .poly .pic img{width:100%;height:100%;object-fit:cover;object-position:top}
     .poly .cap{font-size:11px;color:var(--helper);font-weight:500;padding:8px 4px 2px;text-align:center}
     .poly.p1{left:-6px;top:120px;transform:rotate(-6deg)}
@@ -110,21 +125,21 @@
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
     .card{background:#fff;border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s}
     .card:hover{transform:translateY(-5px);box-shadow:var(--sh-hover)}
-    .thumb{position:relative;aspect-ratio:16/10;overflow:hidden;display:grid;place-items:center;background:var(--sky)}
+    .thumb{position:relative;aspect-ratio:16/10;overflow:hidden;display:grid;place-items:center;background:var(--alt)}
     .thumb img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
     .card .thumb img{object-position:center}
     .card:hover .thumb img{transform:scale(1.05)}
-    .thumb.mint{background:var(--mint)}.thumb.sky{background:var(--sky)}.thumb.peach{background:var(--peach)}
+    .thumb.mint,.thumb.sky,.thumb.peach{background:var(--alt)}
     .mono{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,2.4vw,2.6rem);letter-spacing:-.02em;
       color:var(--ink);opacity:.82;max-width:88%;text-align:center;line-height:1.08;text-wrap:balance}
-    .badge{position:absolute;top:13px;left:13px;background:rgba(255,255,255,.94);color:var(--ink);border-radius:9999px;padding:4px 11px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 0 1px rgba(8,48,76,.05);z-index:2}
+    .badge{position:absolute;top:13px;left:13px;background:rgba(255,255,255,.94);color:var(--ink);border-radius:9999px;padding:4px 11px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 0 1px var(--mist),0 2px 6px rgba(20,16,40,.08);z-index:2}
     .cbody{padding:17px 19px 19px;display:flex;flex-direction:column;flex:1}
     .cbody h3{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-.01em}
     .cbody .role{color:var(--sky-ink);font-size:12px;font-weight:600;margin-top:4px}
     .cbody p{color:var(--body);font-size:14px;line-height:1.55;margin-top:11px;flex:1}
     .cbody .stack{color:var(--helper);font-size:11.5px;margin-top:13px;padding-top:12px;border-top:1px solid var(--mist)}
-    .visit{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--ink);margin-top:13px;transition:gap .2s,color .2s}
-    .visit:hover{color:var(--teal);gap:11px}
+    .visit{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px;color:var(--accent);margin-top:13px;transition:gap .2s,color .2s}
+    .visit:hover{color:var(--accent-hover);gap:11px}
 
     .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
     .tcardp{background:#fff;border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;transition:transform .3s,box-shadow .3s}
@@ -134,15 +149,16 @@
     .tcardp h4{font-family:var(--display);font-weight:600;font-size:16px}
     .tcardp span{color:var(--helper);font-size:12px;display:block;margin-top:2px}
 
-    .note{margin-top:22px;padding:15px 18px;background:var(--sky);border-radius:16px;color:var(--sky-ink);font-size:13.5px;line-height:1.5;max-width:84ch}
+    .note{margin-top:22px;padding:15px 18px;background:var(--alt);box-shadow:0 0 0 1px var(--mist);border-radius:16px;color:var(--helper);font-size:13.5px;line-height:1.5;max-width:84ch}
 
     .promo{max-width:820px;margin:24px auto 0;text-align:center;background:var(--sky);border-radius:28px;padding:56px 28px;box-shadow:var(--sh-card)}
     .promo h2{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.03em}
     .promo h2 .rw{font-style:italic;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
     .promo p{color:var(--body);max-width:46ch;margin:14px auto 26px;font-size:16px}
 
-    footer.pf{padding:56px 0 46px;text-align:center;color:var(--helper);font-size:14px}
-    footer.pf a{color:var(--ink);font-weight:500}
+    footer.pf{padding:56px 0 46px;text-align:center;color:var(--helper);font-size:14px;background:var(--alt);box-shadow:inset 0 1px 0 var(--mist)}
+    footer.pf a{color:var(--helper);font-weight:500;transition:color .2s}
+    footer.pf a:hover{color:var(--accent)}
     footer.pf .fl{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
 
     .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
