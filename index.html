@@ -152,9 +152,9 @@
         <li><a href="#work">Work</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li class="nav-menu-cta"><a href="#contact">Start an enquiry <span aria-hidden="true">→</span></a></li>
+        <li class="nav-menu-cta"><a href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a></li>
       </ul>
-      <a class="btn btn-primary nav-cta" href="#contact">Enquire</a>
+      <a class="btn btn-primary nav-cta" href="/enquire">Enquire</a>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
@@ -170,7 +170,7 @@
           <h1>Websites built to make your business <em>stand out.</em></h1>
           <p class="h-lead">We design and build fast, modern websites for businesses that want to look better, perform better and generate more enquiries.</p>
           <div class="h-actions">
-            <a class="btn btn-primary" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
             <a class="btn h-btn-ghost" href="#work">View our work</a>
           </div>
         </div>
@@ -199,7 +199,7 @@
         <p class="h-sub">Travel agents, garages, heating engineers, tutors and more. See every live website we've designed and built.</p>
         <div class="h-actions h-actions-center">
           <a class="btn btn-primary" href="/portfolio">Take a look at our portfolio <span aria-hidden="true">→</span></a>
-          <a class="h-link" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+          <a class="h-link" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
@@ -287,7 +287,7 @@
         <h2 id="priceTitle">Every project is different.</h2>
         <p class="h-sub">Tell us what you're looking to build and we'll give you a clear, tailored quote.</p>
         <div class="h-actions h-actions-center">
-          <a class="btn btn-primary" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+          <a class="btn btn-primary" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
           <a class="h-link" href="/pricing">See plans and pricing <span aria-hidden="true">→</span></a>
         </div>
       </div>
@@ -315,54 +315,15 @@
       </div>
     </section>
 
-    <!-- ======== ENQUIRY ======== -->
+    <!-- ======== FINAL CALL TO ACTION (the form has its own page: /enquire) ======== -->
     <section class="h-section h-contact" id="contact">
-      <div class="container h-split">
-        <div class="h-head fx">
-          <p class="h-eyebrow">Enquire</p>
-          <h2>Have a project in mind?</h2>
-          <p class="h-sub">Tell us what you're looking to build. A few lines is plenty, and we'll take it from there.</p>
-          <ul class="h-direct">
-            <li><span>Email</span><a data-email-link data-email-text href="mailto:hello@billydigitals.com">hello@billydigitals.com</a></li>
-            <li><span>WhatsApp</span><a data-wa-link href="https://wa.me/447519022117" target="_blank" rel="noopener">Message us</a></li>
-          </ul>
+      <div class="container h-center fx">
+        <p class="h-eyebrow">Enquire</p>
+        <h2>Have a project in mind?</h2>
+        <p class="h-sub">Tell us what you're looking to build. A few lines is plenty, and we usually reply within 24 hours.</p>
+        <div class="h-actions h-actions-center">
+          <a class="btn btn-primary" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>
-        <form class="h-form" id="contactForm" novalidate>
-          <div class="h-row">
-            <div class="h-field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
-            <div class="h-field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-          </div>
-          <div class="h-row">
-            <div class="h-field"><label for="f-business">Business name</label><input id="f-business" name="business" type="text" autocomplete="organization"></div>
-            <div class="h-field"><label for="f-category">What do you need?</label>
-              <select id="f-category" name="category">
-                <option>A new website</option>
-                <option>A redesign of my website</option>
-                <option>A web app or custom system</option>
-                <option>SEO and getting found</option>
-                <option>Branding</option>
-                <option>Not sure yet</option>
-              </select>
-            </div>
-          </div>
-          <div class="h-field"><label for="f-message">Message</label><textarea id="f-message" name="message" rows="5" placeholder="What does your business do, and what should the website achieve?" required></textarea></div>
-          <div class="h-row">
-            <div class="h-field"><label for="f-budget">Approximate budget <span class="h-opt">optional</span></label>
-              <select id="f-budget" name="budget">
-                <option value="">Not sure yet</option>
-                <option>Under £500</option>
-                <option>£500 to £1,500</option>
-                <option>£1,500 to £3,000</option>
-                <option>£3,000+</option>
-              </select>
-            </div>
-            <div class="h-field"><label for="f-site">Current website <span class="h-opt">optional</span></label><input id="f-site" name="website" type="text" inputmode="url" placeholder="yourbusiness.co.uk"></div>
-          </div>
-          <div class="h-field"><label for="f-phone">Phone <span class="h-opt">optional</span></label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
-          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
-          <button class="btn btn-primary h-submit" type="submit">Send enquiry <span aria-hidden="true">→</span></button>
-          <p class="h-note">Usually replied to within 24 hours.</p>
-        </form>
       </div>
     </section>
 
@@ -374,7 +335,7 @@
         <div class="sf-brand">
           <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
           <p>A UK web design and development studio building fast, modern websites for businesses that want more enquiries.</p>
-          <a class="sf-enquire" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+          <a class="sf-enquire" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>
         <nav aria-label="Footer — services">
           <h4>Services</h4>
@@ -400,7 +361,7 @@
           <ul>
             <li><a data-email-link data-email-text href="mailto:hello@billydigitals.com">hello@billydigitals.com</a></li>
             <li><a data-wa-link href="https://wa.me/447519022117" target="_blank" rel="noopener">WhatsApp</a></li>
-            <li><a href="#contact">Enquire</a></li>
+            <li><a href="/enquire">Enquire</a></li>
           </ul>
           <div class="socials" aria-label="Follow Billy Digitals">
           <a href="https://www.instagram.com/billydigitals" target="_blank" rel="noopener" aria-label="Instagram">

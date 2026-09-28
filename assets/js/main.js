@@ -491,7 +491,7 @@ function initChat() {
     {
       re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
       reply: () =>
-        "Everything we do — websites, hosting and care plans — is priced per project, with no hourly surprises and no hidden fees. Tell us your vision via the <a href=\"/#contact\">enquiry form</a> and you'll get a free, tailored quote within 24 hours. " + contactLine,
+        "Everything we do — websites, hosting and care plans — is priced per project, with no hourly surprises and no hidden fees. Tell us your vision via the <a href=\"/enquire\">enquiry form</a> and you'll get a free, tailored quote within 24 hours. " + contactLine,
       chips: ["Show me the plans", "Hosting plans", "Talk to a human"],
     },
     {
@@ -557,7 +557,7 @@ function initChat() {
     {
       re: /\brequest a demo\b|book a demo/i,
       reply: () =>
-        "Brilliant — tell us a little about your organisation in the <a href=\"/#contact\">enquiry form</a> and we'll set up a tailored RackPilot demo. " + contactLine,
+        "Brilliant — tell us a little about your organisation in the <a href=\"/enquire\">enquiry form</a> and we'll set up a tailored RackPilot demo. " + contactLine,
       chips: ["Talk to a human", "What can you build?"],
     },
     {
@@ -575,7 +575,7 @@ function initChat() {
     {
       re: /\b(redesign|rebuild|existing|old site|revamp|refresh)\b/i,
       reply: () =>
-        "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"/#contact\">enquiry form</a>.",
+        "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"/enquire\">enquiry form</a>.",
       chips: ["Get a quote", "How long does it take?"],
     },
     {
@@ -587,7 +587,7 @@ function initChat() {
     {
       re: /\b(process|steps|start|begin|get started|getting started)\b|how (do you|does it|does this) work/i,
       reply: () =>
-        "Simple: 1) Discovery — we learn your goals. 2) Design — polished, on-brand screens. 3) Development — fast, clean code. 4) Launch — we handle everything. 5) Growth — ongoing support. Ready? <a href=\"/#contact\">Send us your idea</a>!",
+        "Simple: 1) Discovery — we learn your goals. 2) Design — polished, on-brand screens. 3) Development — fast, clean code. 4) Launch — we handle everything. 5) Growth — ongoing support. Ready? <a href=\"/enquire\">Send us your idea</a>!",
       chips: ["Get a quote", "How long does it take?"],
     },
     {
@@ -603,7 +603,7 @@ function initChat() {
     {
       re: /\b(website|web site|site|web app|application|landing page)\b/i,
       reply: () =>
-        "Whatever you're building, we've got you. 🚀 Explore our <a href=\"/#services\">services</a> and <a href=\"/portfolio\">sample styles</a>, or <a href=\"/#contact\">tell us about your project</a> and we'll come back with a plan within 24 hours.",
+        "Whatever you're building, we've got you. 🚀 Explore our <a href=\"/#services\">services</a> and <a href=\"/portfolio\">sample styles</a>, or <a href=\"/enquire\">tell us about your project</a> and we'll come back with a plan within 24 hours.",
       chips: ["Show me the plans", "Get a quote", "Talk to a human"],
     },
   ];

@@ -160,6 +160,11 @@ body { background: #fff; color: var(--h-body); font-family: var(--h-sans); }
 .h-submit { width: 100%; justify-content: center; padding: 16px 28px !important; font-size: 1.02rem !important; margin-top: 4px; }
 .h-note { text-align: center; color: var(--h-muted); font-size: 0.88rem; margin-top: -6px; }
 
+/* ---------- Enquiry page ---------- */
+.h-enquire { padding-top: clamp(140px, 14vw, 180px); min-height: 100vh; }
+.h-enquire h1 { font-family: var(--h-serif); font-weight: 500; color: var(--h-ink); letter-spacing: -0.02em; font-size: clamp(2.3rem, 4.6vw, 3.6rem); line-height: 1.06; text-wrap: balance; }
+@media (max-width: 720px) { .h-enquire { padding-top: 116px; } }
+
 /* ---------- Motion: a gentle fade as sections arrive ---------- */
 .fx-on .fx { opacity: 0; transform: translateY(18px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2, .7, .2, 1); }
 .fx-on .fx.in { opacity: 1; transform: none; }
