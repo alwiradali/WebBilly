@@ -139,7 +139,16 @@ function initHeader() {
   const links = document.getElementById("navLinks");
 
   if (!header) return;
-  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
+  // Hides while scrolling down, comes back the moment you scroll up (never while the menu is open)
+  let lastY = window.scrollY;
+  const onScroll = () => {
+    const y = window.scrollY;
+    header.classList.toggle("scrolled", y > 10);
+    const menuOpen = links && links.classList.contains("open");
+    if (y > 140 && y > lastY + 4 && !menuOpen) header.classList.add("hide-nav");
+    else if (y < lastY - 4 || y <= 140) header.classList.remove("hide-nav");
+    lastY = y;
+  };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
