@@ -114,6 +114,28 @@ body { background: #fff; color: var(--h-body); font-family: var(--h-sans); }
 .h-quote figcaption { margin-top: 28px; color: var(--h-muted); font-size: 0.95rem; }
 .h-quote figcaption strong { color: var(--h-ink); }
 
+/* ---------- Reviews (swipe) ---------- */
+.h-reviews-head { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.h-reviews-nav { display: flex; gap: 10px; }
+.h-reviews-nav[hidden] { display: none; }
+.h-rnav { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--h-field); background: #fff; color: var(--h-ink); font-size: 1.1rem; cursor: pointer; transition: border-color .2s, color .2s; }
+.h-rnav:hover { border-color: var(--h-accent); color: var(--h-accent); }
+.h-rnav:focus-visible { outline: 2px solid var(--h-accent); outline-offset: 3px; }
+.h-reviews-track { display: grid; grid-auto-flow: column; grid-auto-columns: min(820px, 100%); gap: 24px; margin-top: clamp(40px, 5vw, 56px); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.h-reviews-track::-webkit-scrollbar { display: none; }
+.h-reviews-track.is-multi { grid-auto-columns: min(620px, 88%); }
+.h-reviews-track:focus-visible { outline: 2px solid var(--h-accent); outline-offset: 6px; border-radius: 20px; }
+.h-review { scroll-snap-align: start; background: #fff; border: 1px solid var(--h-line); border-radius: 20px; padding: clamp(26px, 4vw, 44px); margin: 0; display: flex; flex-direction: column; }
+.h-review blockquote { font-family: var(--h-serif); font-size: clamp(1.08rem, 1.6vw, 1.3rem); line-height: 1.65; color: var(--h-ink); margin: 0; flex: 1; }
+.h-review figcaption { margin-top: 26px; display: grid; gap: 2px; font-size: 0.95rem; }
+.h-review figcaption strong { color: var(--h-ink); }
+.h-review figcaption span { color: var(--h-muted); }
+.h-review .h-stars { margin-bottom: 18px; }
+.h-reviews-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; }
+.h-reviews-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--h-field); transition: background .2s, width .2s; }
+.h-reviews-dots span.on { background: var(--h-accent); width: 20px; border-radius: 4px; }
+.h-reviews-foot { margin-top: 26px; font-size: 0.95rem; color: var(--h-muted); }
+
 /* ---------- Pricing band ---------- */
 .h-price { padding-top: 0; }
 .h-price .container { border-top: 1px solid var(--h-line); padding-top: var(--h-space); }

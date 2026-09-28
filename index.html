@@ -270,14 +270,29 @@
       </div>
     </section>
 
-    <!-- ======== TESTIMONIAL ======== -->
-    <section class="h-section" id="testimonials">
+    <!-- ======== REVIEWS (swipe) ======== -->
+    <!-- To add a review: copy one figure.h-review block inside the reviews track. Real reviews only. -->
+    <section class="h-section" id="testimonials" aria-labelledby="reviewsTitle">
       <div class="container">
-        <figure class="h-quote fx">
-          <p class="h-stars" aria-label="5 out of 5 stars">★★★★★</p>
-          <blockquote>"They designed a proper premium website that actually looks the part — a custom logo, my own photos, and it works perfectly on the phone. But it wasn't just about looks: local pages for all the areas I cover, a booking system, WhatsApp and an online quote form that comes straight to me, and even a little AI assistant that books customers in. They sorted all the Google side too. If you want a website that actually gets you customers rather than just sitting there, these are the people to go to. Made my life so much easier — thank you!"</blockquote>
-          <figcaption><strong>Ali</strong> · HEAT ON 24/7 Heating &amp; Plumbing, Manchester · <a class="h-inline" href="https://g.page/r/CaibQuMCDDWPEAE/review" target="_blank" rel="noopener">Google review</a></figcaption>
-        </figure>
+        <div class="h-head h-reviews-head fx">
+          <div>
+            <p class="h-eyebrow">Reviews</p>
+            <h2 id="reviewsTitle">What our clients say.</h2>
+          </div>
+          <div class="h-reviews-nav" hidden>
+            <button type="button" class="h-rnav" data-dir="-1" aria-label="Previous review">←</button>
+            <button type="button" class="h-rnav" data-dir="1" aria-label="Next review">→</button>
+          </div>
+        </div>
+        <div class="h-reviews-track" tabindex="0" aria-label="Client reviews, swipe to see more">
+          <figure class="h-review">
+            <p class="h-stars" aria-label="5 out of 5 stars">★★★★★</p>
+            <blockquote>"They designed a proper premium website that actually looks the part — a custom logo, my own photos, and it works perfectly on the phone. But it wasn't just about looks: local pages for all the areas I cover, a booking system, WhatsApp and an online quote form that comes straight to me, and even a little AI assistant that books customers in. They sorted all the Google side too. If you want a website that actually gets you customers rather than just sitting there, these are the people to go to. Made my life so much easier — thank you!"</blockquote>
+            <figcaption><strong>Ali</strong><span>HEAT ON 24/7 Heating &amp; Plumbing, Manchester</span></figcaption>
+          </figure>
+        </div>
+        <div class="h-reviews-dots" aria-hidden="true"></div>
+        <p class="h-reviews-foot"><a class="h-inline" href="https://g.page/r/CaibQuMCDDWPEAE/review" target="_blank" rel="noopener">Leave us a Google review</a></p>
       </div>
     </section>
 
@@ -456,6 +471,22 @@
         es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
       }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
       document.querySelectorAll('.fx').forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+  <script>
+    /* Reviews: native swipe (scroll-snap); arrows and dots appear once there is more than one review. */
+    (function () {
+      var track = document.querySelector('.h-reviews-track'); if (!track) return;
+      var cards = track.querySelectorAll('.h-review'); if (cards.length < 2) return;
+      var nav = document.querySelector('.h-reviews-nav'), dots = document.querySelector('.h-reviews-dots');
+      nav.hidden = false; track.classList.add('is-multi');
+      cards.forEach(function (_, i) { var d = document.createElement('span'); if (!i) d.className = 'on'; dots.appendChild(d); });
+      function step() { return cards[0].getBoundingClientRect().width + 24; }
+      nav.addEventListener('click', function (e) { var b = e.target.closest('.h-rnav'); if (b) track.scrollBy({ left: step() * +b.dataset.dir, behavior: 'smooth' }); });
+      track.addEventListener('scroll', function () {
+        var i = Math.round(track.scrollLeft / step());
+        dots.querySelectorAll('span').forEach(function (d, k) { d.className = k === i ? 'on' : ''; });
+      }, { passive: true });
     })();
   </script>
   <script src="assets/js/main.js" defer></script>
