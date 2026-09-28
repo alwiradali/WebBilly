@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals</title>
   <meta name="description" content="Turnkey 360° virtual tours for offices, event spaces and workspaces: on-site capture, flawless stitching, hotspot navigation, hosting — and the software handed over to you. Flat commercial rate for the full footprint.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#060b1a">
   <meta property="og:title" content="360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals">
   <meta property="og:description" content="Capture, stitch, hotspot, host — and hand over. Turnkey interactive 360° tours for offices, event spaces and multi-floor buildings.">
   <meta property="og:type" content="website">
@@ -29,13 +29,13 @@
     /* ── hero ─────────────────────────────────────────────────────────── */
     .vt-hero{position:relative;padding:132px 0 70px;overflow:hidden}
     .vt-orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:.55;pointer-events:none}
-    .vt-orb.a{width:520px;height:520px;background:rgba(107,61,242,.16);top:-60px;left:-140px}
-    .vt-orb.b{width:420px;height:420px;background:rgba(107,61,242,.08);bottom:-40px;right:-120px}
+    .vt-orb.a{width:520px;height:520px;background:rgba(43, 127, 255,.16);top:-60px;left:-140px}
+    .vt-orb.b{width:420px;height:420px;background:rgba(43, 127, 255,.08);bottom:-40px;right:-120px}
     /* white feather over the orb haze: none under the fixed header, no hard edge where the hero clips it */
-    .vt-hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#fff 0,#fff 113px,rgba(255,255,255,0) 250px,rgba(255,255,255,0) calc(100% - 150px),#fff 100%)}
+    .vt-hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#0d1733 0,#0d1733 113px,rgba(255,255,255,0) 250px,rgba(255,255,255,0) calc(100% - 150px),#0d1733 100%)}
     .vt-grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
-      background:linear-gradient(rgba(107,61,242,.05) 1px,transparent 1px) 0 0/100% 54px,
-                 linear-gradient(90deg,rgba(107,61,242,.05) 1px,transparent 1px) 0 0/54px 100%;
+      background:linear-gradient(rgba(43, 127, 255,.05) 1px,transparent 1px) 0 0/100% 54px,
+                 linear-gradient(90deg,rgba(43, 127, 255,.05) 1px,transparent 1px) 0 0/54px 100%;
       -webkit-mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent 76%);
       mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent 76%)}
     .vt-hero .inner{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
@@ -49,31 +49,31 @@
 
     /* ── the console mock ─────────────────────────────────────────────── */
     .vt-console{position:relative;border:1px solid var(--border);border-radius:20px;overflow:hidden;
-      background:linear-gradient(160deg,#ffffff,#f7f6fb);box-shadow:var(--shadow)}
+      background:linear-gradient(160deg,#0d1733,#0a1226);box-shadow:var(--shadow)}
     .vt-console::after{content:"";position:absolute;inset:0;pointer-events:none;
-      background:repeating-linear-gradient(180deg,rgba(20,16,40,.015) 0 1px,transparent 1px 3px)}
+      background:repeating-linear-gradient(180deg,rgba(0, 0, 0, 0.06) 0 1px,transparent 1px 3px)}
     .vt-cbar{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);
-      font-family:ui-monospace,Menlo,monospace;font-size:.6rem;letter-spacing:.18em;color:#5f5b70}
-    .vt-cbar i{width:7px;height:7px;border-radius:50%;background:#6b3df2;box-shadow:0 0 8px rgba(107,61,242,.5)}
-    .vt-cbar span{margin-left:auto;color:#6b3df2}
+      font-family:ui-monospace,Menlo,monospace;font-size:.6rem;letter-spacing:.18em;color:#93a4c4}
+    .vt-cbar i{width:7px;height:7px;border-radius:50%;background:#1d6ff5;box-shadow:0 0 8px rgba(43, 127, 255,.5)}
+    .vt-cbar span{margin-left:auto;color:#38bdf8}
     .vt-cstage{position:relative;aspect-ratio:16/11;background:
-      radial-gradient(120% 90% at 50% 22%,rgba(107,61,242,.08),transparent 62%),
+      radial-gradient(120% 90% at 50% 22%,rgba(43, 127, 255,.08),transparent 62%),
       linear-gradient(180deg,#f4f2fb 0%,#ece9f6 52%,#e4e0f1 100%)}
     .vt-cstage svg{position:absolute;inset:0;width:100%;height:100%}
     .vt-ring{position:absolute;left:34%;top:56%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;
-      border:1px solid rgba(107,61,242,.55);background:rgba(107,61,242,.12);display:grid;place-items:center}
-    .vt-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(107,61,242,.4);
+      border:1px solid rgba(43, 127, 255,.55);background:rgba(43, 127, 255,.12);display:grid;place-items:center}
+    .vt-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(43, 127, 255,.4);
       animation:vtpulse 2.6s ease-out infinite}
-    .vt-ring i{width:11px;height:11px;border-right:2px solid #6b3df2;border-top:2px solid #6b3df2;transform:rotate(-45deg) translate(-2px,2px)}
+    .vt-ring i{width:11px;height:11px;border-right:2px solid #1d6ff5;border-top:2px solid #1d6ff5;transform:rotate(-45deg) translate(-2px,2px)}
     @keyframes vtpulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.3);opacity:0}}
     .vt-dot{position:absolute;right:26%;top:34%;width:20px;height:20px;border-radius:50%;
-      background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 14px rgba(107,61,242,.4)}
-    .vt-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(107,61,242,.4);
+      background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 14px rgba(43, 127, 255,.4)}
+    .vt-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(43, 127, 255,.4);
       animation:vtpulse 2.9s ease-out infinite}
     .vt-tele{position:absolute;left:14px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:.58rem;
       letter-spacing:.14em;color:#4a4659}
     .vt-mini{position:absolute;right:14px;bottom:12px;width:110px;padding:8px;border-radius:10px;
-      border:1px solid var(--border);background:rgba(255,255,255,.85)}
+      border:1px solid var(--border);background:rgba(6, 11, 26, .85)}
     .vt-mini svg{position:static;width:100%;height:auto;display:block}
     .vt-cone{transform-origin:50px 44px;animation:vtsweep 9s ease-in-out infinite}
     @keyframes vtsweep{0%,100%{transform:rotate(-32deg)}50%{transform:rotate(34deg)}}
@@ -81,10 +81,10 @@
     /* ── shared blocks ────────────────────────────────────────────────── */
     .vt-lede{color:var(--muted);font-size:1.06rem;line-height:1.75;max-width:66ch}
     .vt-deliver{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
-    .vt-deliver li{display:flex;gap:12px;align-items:flex-start;color:#2e2b3a;font-size:1rem;line-height:1.5}
+    .vt-deliver li{display:flex;gap:12px;align-items:flex-start;color:#c9d6ee;font-size:1rem;line-height:1.5}
     .vt-deliver svg{flex:0 0 auto;width:19px;height:19px;margin-top:2px;stroke:var(--c3);fill:none;stroke-width:2}
     .vt-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:vt}
-    .vt-step{position:relative;padding:24px 20px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(20,16,40,.04),0 12px 32px rgba(20,16,40,.07)}
+    .vt-step{position:relative;padding:24px 20px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(0, 0, 0, 0.16),0 12px 32px rgba(0, 0, 0, 0.28)}
     .vt-step::before{counter-increment:vt;content:"0" counter(vt);display:block;font-family:ui-monospace,Menlo,monospace;
       font-size:.66rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
     .vt-step h3{font-size:1rem;margin-bottom:8px}
@@ -92,15 +92,15 @@
     .vt-feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .vt-spec{width:100%;border-collapse:collapse;margin-top:8px;font-size:.94rem}
     .vt-spec th,.vt-spec td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:top}
-    .vt-spec th{width:33%;color:#15131f;font-weight:600}
+    .vt-spec th{width:33%;color:#eaf2ff;font-weight:600}
     .vt-spec td{color:var(--muted)}
     .vt-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
-    .vt-plan{display:flex;flex-direction:column;padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(20,16,40,.04),0 12px 32px rgba(20,16,40,.07)}
-    .vt-plan.is-featured{border-color:rgba(107,61,242,.45);background:linear-gradient(170deg,#f6f2ff,#ffffff 60%);
-      box-shadow:0 0 0 1px rgba(107,61,242,.3),0 4px 12px rgba(20,16,40,.06),0 24px 56px rgba(107,61,242,.16)}
+    .vt-plan{display:flex;flex-direction:column;padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(0, 0, 0, 0.16),0 12px 32px rgba(0, 0, 0, 0.28)}
+    .vt-plan.is-featured{border-color:rgba(43, 127, 255,.45);background:linear-gradient(170deg,#0c1530,#0d1733 60%);
+      box-shadow:0 0 0 1px rgba(43, 127, 255,.3),0 4px 12px rgba(0, 0, 0, 0.24),0 24px 56px rgba(43, 127, 255,.16)}
     .vt-plan .pf{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
     .vt-plan h3{font-size:1.22rem;margin-bottom:6px}
-    .vt-plan .pp{font-family:var(--font-display);font-size:2rem;letter-spacing:-.03em;margin:14px 0 4px;color:#15131f}
+    .vt-plan .pp{font-family:var(--font-display);font-size:2rem;letter-spacing:-.03em;margin:14px 0 4px;color:#eaf2ff}
     .vt-plan .pp small{font-size:.8rem;color:var(--muted);font-family:'Inter',sans-serif;letter-spacing:0}
     .vt-plan ul{list-style:none;padding:0;margin:18px 0 22px;display:grid;gap:10px}
     .vt-plan li{display:flex;gap:10px;color:var(--muted);font-size:.9rem;line-height:1.5}
@@ -115,7 +115,7 @@
     .vt-faq details[open] summary::after{content:"–"}
     .vt-faq p{color:var(--muted);font-size:.94rem;line-height:1.7;margin-top:12px}
     .vt-final{text-align:center;padding:64px 28px;border:1px solid var(--border);border-radius:22px;
-      background:radial-gradient(90% 120% at 50% 0%,rgba(107,61,242,.08),transparent 68%),var(--card)}
+      background:radial-gradient(90% 120% at 50% 0%,rgba(43, 127, 255,.08),transparent 68%),var(--card)}
     .vt-final h2{font-size:clamp(1.7rem,4vw,2.5rem);letter-spacing:-.03em;margin-bottom:14px}
     .vt-final p{color:var(--muted);max-width:56ch;margin:0 auto 28px;line-height:1.7}
 
@@ -132,13 +132,13 @@
       .vt-hero{padding-top:112px}
     }
   </style>
-  <link rel="stylesheet" href="assets/css/theme-white.css">
+  <link rel="stylesheet" href="assets/css/theme-navy.css">
   <link rel="stylesheet" href="assets/css/site-shell.css">
 </head>
 <body>
   <header class="site-header subpage" id="siteHeader">
     <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development" width="953" height="231"></a>
+      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design &amp; App Development" width="953" height="231"></a>
       <ul class="nav-links" id="navLinks">
         <li><a href="/#services">Services</a></li>
         <li><a href="/portfolio">Work</a></li>
@@ -188,19 +188,19 @@
                   <stop offset="0" stop-color="#dcd6ee"/><stop offset="1" stop-color="#cfc8e6"/>
                 </linearGradient>
                 <linearGradient id="vtw" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#6b3df2" stop-opacity=".18"/><stop offset="1" stop-color="#ffb829" stop-opacity=".10"/>
+                  <stop offset="0" stop-color="#38bdf8" stop-opacity=".18"/><stop offset="1" stop-color="#ffb829" stop-opacity=".10"/>
                 </linearGradient>
               </defs>
               <path d="M0 150 L400 150 L400 275 L0 275 Z" fill="url(#vtf)"/>
-              <path d="M40 150 L118 275 M140 150 L168 275 M260 150 L232 275 M360 150 L282 275" stroke="rgba(107,61,242,.16)" stroke-width="1"/>
-              <path d="M0 186 L400 186 M0 214 L400 214 M0 246 L400 246" stroke="rgba(107,61,242,.10)" stroke-width="1"/>
-              <rect x="286" y="52" width="104" height="98" fill="url(#vtw)" stroke="rgba(107,61,242,.35)"/>
-              <path d="M286 84 L390 84 M286 118 L390 118 M338 52 L338 150" stroke="rgba(107,61,242,.3)" stroke-width="1"/>
-              <rect x="16" y="60" width="120" height="90" fill="rgba(255,255,255,.6)" stroke="rgba(107,61,242,.16)"/>
-              <rect x="34" y="96" width="84" height="34" rx="3" fill="rgba(107,61,242,.28)"/>
-              <rect x="150" y="112" width="118" height="38" rx="4" fill="rgba(255,255,255,.7)" stroke="rgba(107,61,242,.2)"/>
+              <path d="M40 150 L118 275 M140 150 L168 275 M260 150 L232 275 M360 150 L282 275" stroke="rgba(43, 127, 255,.16)" stroke-width="1"/>
+              <path d="M0 186 L400 186 M0 214 L400 214 M0 246 L400 246" stroke="rgba(43, 127, 255,.10)" stroke-width="1"/>
+              <rect x="286" y="52" width="104" height="98" fill="url(#vtw)" stroke="rgba(43, 127, 255,.35)"/>
+              <path d="M286 84 L390 84 M286 118 L390 118 M338 52 L338 150" stroke="rgba(43, 127, 255,.3)" stroke-width="1"/>
+              <rect x="16" y="60" width="120" height="90" fill="rgba(255,255,255,.6)" stroke="rgba(43, 127, 255,.16)"/>
+              <rect x="34" y="96" width="84" height="34" rx="3" fill="rgba(43, 127, 255,.28)"/>
+              <rect x="150" y="112" width="118" height="38" rx="4" fill="rgba(255,255,255,.7)" stroke="rgba(43, 127, 255,.2)"/>
               <rect x="150" y="104" width="118" height="9" rx="3" fill="rgba(255,184,41,.45)"/>
-              <path d="M0 44 L400 44" stroke="rgba(107,61,242,.08)" stroke-width="26"/>
+              <path d="M0 44 L400 44" stroke="rgba(43, 127, 255,.08)" stroke-width="26"/>
               <path d="M60 44 L180 44 M240 44 L340 44" stroke="rgba(255,184,41,.75)" stroke-width="4" stroke-linecap="round"/>
             </svg>
             <span class="vt-ring"><i></i></span>
@@ -208,12 +208,12 @@
             <span class="vt-tele">AZ 042°&nbsp; EL −06°&nbsp; FOV 78°</span>
             <div class="vt-mini">
               <svg viewBox="0 0 100 60">
-                <rect x="6" y="6" width="88" height="48" fill="none" stroke="rgba(107,61,242,.45)" stroke-width="1.2"/>
-                <rect x="6" y="6" width="40" height="26" fill="rgba(107,61,242,.06)" stroke="rgba(107,61,242,.25)" stroke-width=".8"/>
-                <rect x="46" y="6" width="48" height="26" fill="rgba(107,61,242,.06)" stroke="rgba(107,61,242,.25)" stroke-width=".8"/>
-                <rect x="6" y="32" width="88" height="22" fill="rgba(107,61,242,.06)" stroke="rgba(107,61,242,.25)" stroke-width=".8"/>
-                <g class="vt-cone"><path d="M50 44 L38 26 A20 20 0 0 0 62 26 Z" fill="rgba(107,61,242,.25)"/></g>
-                <circle cx="50" cy="44" r="2.6" fill="#6b3df2"/>
+                <rect x="6" y="6" width="88" height="48" fill="none" stroke="rgba(43, 127, 255,.45)" stroke-width="1.2"/>
+                <rect x="6" y="6" width="40" height="26" fill="rgba(43, 127, 255,.06)" stroke="rgba(43, 127, 255,.25)" stroke-width=".8"/>
+                <rect x="46" y="6" width="48" height="26" fill="rgba(43, 127, 255,.06)" stroke="rgba(43, 127, 255,.25)" stroke-width=".8"/>
+                <rect x="6" y="32" width="88" height="22" fill="rgba(43, 127, 255,.06)" stroke="rgba(43, 127, 255,.25)" stroke-width=".8"/>
+                <g class="vt-cone"><path d="M50 44 L38 26 A20 20 0 0 0 62 26 Z" fill="rgba(43, 127, 255,.25)"/></g>
+                <circle cx="50" cy="44" r="2.6" fill="#38bdf8"/>
               </svg>
             </div>
           </div>
@@ -443,7 +443,7 @@
     <div class="container">
       <div class="sf-grid">
         <div class="sf-brand">
-          <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
+          <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-lockup.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
           <p>A UK web design and development studio building fast, modern websites for businesses that want more enquiries.</p>
           <a class="sf-enquire" href="/enquire">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>

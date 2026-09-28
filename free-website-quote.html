@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Website Quote in 24 Hours — Billy Digitals | Web Design UK</title>
   <meta name="description" content="Get a premium, custom-built website that wins you customers. Free, no-obligation quote within 24 hours — and you approve the design before we build. UK-wide & worldwide.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#060b1a">
   <meta property="og:title" content="Get a Website That Wins You Customers — Free Quote in 24 Hours">
   <meta property="og:description" content="Premium custom websites & web apps for UK businesses. Free, no-obligation quote in 24 hours. You approve the design before we build.">
   <meta property="og:type" content="website">
@@ -47,150 +47,106 @@
   </script>
 
   <style>
-    /* ---------- White theme: this page's own copy of the palette ----------
-       style.css is shared and was built dark, so the tokens and the few
-       style.css components this page uses are re-pointed here. The page then
-       reads the same whether style.css itself is dark or white. */
-    :root {
-      --bg: #ffffff; --bg-2: #f7f6fb; --card: #ffffff; --card-hover: #ffffff;
-      --border: #e8e5f0; --text: #15131f; --body: #2e2b3a; --muted: #5f5b70;
-      --c1: #6b3df2; --c2: #6b3df2; --c3: #6b3df2; --tint: #f1ecff;
-      --grad: linear-gradient(100deg, #5a2fe0, #6b3df2 50%, #8052ff);
-      --grad-btn: #6b3df2;
-      --shadow: 0 1px 2px rgba(20,16,40,.04), 0 12px 32px rgba(20,16,40,.07);
-    }
-    html { background: #ffffff; }
-    body { background: #ffffff; color: var(--body); }
-    body::after { display: none; } /* grain overlay: invisible on white, removed */
-    ::selection { background: #6b3df2; color: #ffffff; }
-    ::-webkit-scrollbar-track { background: #f7f6fb; }
-    ::-webkit-scrollbar-thumb { background: #d9d4e8; }
-    ::-webkit-scrollbar-thumb:hover { background: #c4bddb; }
-    /* buttons: violet fill, white text */
-    .btn-primary { background: #6b3df2; color: #ffffff; box-shadow: 0 6px 18px rgba(107,61,242,.22); }
-    .btn-primary:hover { background: #5a2fe0; box-shadow: 0 10px 26px rgba(107,61,242,.30); }
-    /* tech marquee strip */
-    .marquee { background: #f7f6fb; border-block-color: #e8e5f0; }
-    .marquee li:nth-child(3n+1) { color: #6b3df2; }
-    .marquee li:nth-child(3n+2) { color: #2e2b3a; }
-    .marquee li:nth-child(3n+3) { color: #5f5b70; }
-
     /* ---------- Landing-page scoped styles (lq-) ---------- */
-    .lq-top { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.88); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .lq-top { position: sticky; top: 0; z-index: 50; background: rgba(6,11,26,.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
     .lq-top .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; padding-bottom: 12px; }
     .lq-top img { height: 46px; width: auto; display: block; }
     .lq-top-cta { display: flex; align-items: center; gap: 10px; }
     .lq-call { font-family: var(--font-display); font-weight: 700; color: var(--text); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
     .lq-call svg { width: 18px; height: 18px; color: var(--c2); }
-    /* phone: the CTA stays on one line; the logo scales down in proportion to make room
-       (it used to be squashed sideways) and the phone icon keeps its size */
-    @media (max-width: 620px){
-      .lq-call .lbl { display:none; }
-      .lq-top .container > a:first-child { flex: 0 1 157px; min-width: 96px; }
-      .lq-top img { width: 100%; height: auto; }
-      .lq-call svg { flex: none; }
-      .lq-top .btn { white-space: nowrap; padding: 10px 14px; font-size: .86rem; }
-    }
-    @media (max-width: 359px){ .lq-top .btn { white-space: normal; } }
+    @media (max-width: 620px){ .lq-call .lbl { display:none; } .lq-top img{ height:38px; } }
 
     .lq-hero { position: relative; overflow: hidden; padding: 46px 0 40px; }
     .lq-hero::before { content:""; position:absolute; inset:0; background:
-        radial-gradient(60% 55% at 15% 0%, rgba(107,61,242,.10), transparent 60%),
-        radial-gradient(50% 50% at 100% 20%, rgba(255,184,41,.10), transparent 60%); z-index:-1; }
+        radial-gradient(60% 55% at 15% 0%, rgba(43,127,255,.22), transparent 60%),
+        radial-gradient(50% 50% at 100% 20%, rgba(34,211,238,.14), transparent 60%); z-index:-1; }
     .lq-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: start; }
     @media (max-width: 940px){ .lq-grid { grid-template-columns: 1fr; gap: 28px; } }
 
-    .lq-badge { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:600; font-size:.85rem; letter-spacing:.02em; color:#6b3df2; background:var(--tint); border:1px solid var(--border); padding:7px 14px; border-radius:999px; }
-    .lq-hero h1 { color: var(--text); font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4.6vw, 3.15rem); line-height: 1.06; letter-spacing:-.02em; margin: 16px 0 14px; }
+    .lq-badge { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:600; font-size:.85rem; letter-spacing:.02em; color:#d7e6ff; background:rgba(43,127,255,.14); border:1px solid var(--border); padding:7px 14px; border-radius:999px; }
+    .lq-hero h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4.6vw, 3.15rem); line-height: 1.06; letter-spacing:-.02em; margin: 16px 0 14px; }
     .lq-hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .lq-lead { color: var(--muted); font-size: 1.12rem; line-height: 1.6; max-width: 34em; }
     .lq-ticks { list-style:none; padding:0; margin: 20px 0 22px; display:grid; gap:11px; }
-    /* block + absolutely placed tick, so the bold phrase and the rest of the line flow as one sentence */
-    .lq-ticks li { display:block; position:relative; padding-left:33px; font-weight:500; color: var(--body); }
-    .lq-ticks strong, .lq-lead strong { color: var(--text); }
-    .lq-ticks svg { position:absolute; left:0; top:1px; width:22px; height:22px; color:#6b3df2; }
+    .lq-ticks li { display:flex; align-items:flex-start; gap:11px; font-weight:500; }
+    .lq-ticks svg { flex:none; width:22px; height:22px; color:#22d3ee; margin-top:1px; }
     .lq-rating { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top: 6px; color: var(--muted); font-size:.95rem; }
-    .lq-stars { color:#6b3df2; letter-spacing:2px; font-size:1.05rem; }
-    .lq-scarcity { margin-top:18px; display:inline-flex; align-items:center; gap:9px; font-weight:600; color:var(--text); background:rgba(255,184,41,.14); border:1px solid rgba(255,184,41,.45); padding:9px 14px; border-radius:12px; font-size:.95rem; }
-    .lq-scarcity .dot { width:8px;height:8px;border-radius:50%;background:#ffb829;box-shadow:0 0 10px rgba(255,184,41,.8); animation: lqpulse 1.8s ease-in-out infinite; }
+    .lq-stars { color:#ffc93c; letter-spacing:2px; font-size:1.05rem; }
+    .lq-scarcity { margin-top:18px; display:inline-flex; align-items:center; gap:9px; font-weight:600; color:#ffd27a; background:rgba(255,180,60,.10); border:1px solid rgba(255,180,60,.28); padding:9px 14px; border-radius:12px; font-size:.95rem; }
+    .lq-scarcity .dot { width:8px;height:8px;border-radius:50%;background:#ffb43c;box-shadow:0 0 10px #ffb43c; animation: lqpulse 1.8s ease-in-out infinite; }
     @keyframes lqpulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
     /* form card */
-    .lq-form { background: #ffffff; border:1px solid var(--border); border-radius: 20px; padding: 26px 24px; box-shadow: var(--shadow); position: sticky; top: 84px; }
+    .lq-form { background: linear-gradient(180deg, rgba(18,28,54,.92), rgba(10,17,38,.92)); border:1px solid var(--border); border-radius: 20px; padding: 26px 24px; box-shadow: var(--shadow); position: sticky; top: 84px; }
     @media (max-width: 940px){ .lq-form { position: static; } }
-    .lq-form h2 { color: var(--text); font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin:0 0 4px; }
+    .lq-form h2 { font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin:0 0 4px; }
     .lq-form .sub { color: var(--muted); font-size:.95rem; margin:0 0 18px; }
     .lq-field { margin-bottom: 13px; }
-    .lq-field label { display:block; font-size:.82rem; font-weight:600; color:var(--text); margin-bottom:6px; }
+    .lq-field label { display:block; font-size:.82rem; font-weight:600; color:#c4d3ee; margin-bottom:6px; }
     .lq-field input, .lq-field select, .lq-field textarea {
-      width:100%; background: #ffffff; border:1px solid #d9d4e8; border-radius: 11px;
+      width:100%; background: rgba(6,11,26,.6); border:1px solid var(--border); border-radius: 11px;
       color: var(--text); font: inherit; font-size:.98rem; padding: 12px 13px; transition: border-color .2s, box-shadow .2s; }
-    .lq-field ::placeholder { color: #8a869a; opacity: 1; }
-    .lq-field input:focus, .lq-field select:focus, .lq-field textarea:focus { outline:none; border-color: #6b3df2; box-shadow: 0 0 0 3px rgba(107,61,242,.18); }
+    .lq-field input:focus, .lq-field select:focus, .lq-field textarea:focus { outline:none; border-color: var(--c2); box-shadow: 0 0 0 3px rgba(56,189,248,.16); }
     .lq-field textarea { resize: vertical; min-height: 64px; }
     .lq-hp { position:absolute; left:-9999px; opacity:0; height:0; width:0; }
     .lq-form .btn { width:100%; margin-top:6px; font-size:1.05rem; padding: 15px; }
     .lq-form .assure { text-align:center; color: var(--muted); font-size:.82rem; margin: 12px 0 0; display:flex; align-items:center; justify-content:center; gap:7px; }
-    .lq-form .assure svg { width:15px;height:15px;color:#6b3df2; }
+    .lq-form .assure svg { width:15px;height:15px;color:#22d3ee; }
 
     .lq-sec { padding: 52px 0; }
     .lq-sec.alt { background: var(--bg-2); }
-    .lq-h2 { color: var(--text); font-family:var(--font-display); font-weight:700; font-size: clamp(1.6rem,3.4vw,2.3rem); letter-spacing:-.02em; text-align:center; margin:0 0 8px; }
+    .lq-h2 { font-family:var(--font-display); font-weight:700; font-size: clamp(1.6rem,3.4vw,2.3rem); letter-spacing:-.02em; text-align:center; margin:0 0 8px; }
     .lq-h2 .grad { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
     .lq-sub { text-align:center; color:var(--muted); max-width:38em; margin: 0 auto 34px; font-size:1.05rem; }
 
     .lq-cards { display:grid; grid-template-columns: repeat(4,1fr); gap:16px; }
     @media (max-width: 940px){ .lq-cards { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 520px){ .lq-cards { grid-template-columns: 1fr; } }
-    .lq-card { background: var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow: var(--shadow); }
-    .lq-card .ic { width:44px;height:44px;border-radius:12px; display:grid;place-items:center; background:var(--tint); color:#6b3df2; margin-bottom:14px; }
+    .lq-card { background: var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; }
+    .lq-card .ic { width:44px;height:44px;border-radius:12px; display:grid;place-items:center; background:rgba(43,127,255,.14); color:#38bdf8; margin-bottom:14px; }
     .lq-card .ic svg { width:24px;height:24px; }
-    .lq-card h3 { color: var(--text); font-family:var(--font-display); font-size:1.08rem; margin:0 0 7px; }
+    .lq-card h3 { font-family:var(--font-display); font-size:1.08rem; margin:0 0 7px; }
     .lq-card p { color:var(--muted); font-size:.95rem; line-height:1.55; margin:0; }
 
     .lq-steps { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; counter-reset: s; }
     @media (max-width: 780px){ .lq-steps { grid-template-columns:1fr; } }
-    .lq-step { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; position:relative; box-shadow: var(--shadow); }
+    .lq-step { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; position:relative; }
     .lq-step::before { counter-increment:s; content: counter(s); font-family:var(--font-display); font-weight:700; font-size:1.1rem; width:38px;height:38px;border-radius:50%; display:grid;place-items:center; background:var(--grad-btn); color:#fff; margin-bottom:14px; }
-    .lq-step h3 { color: var(--text); font-family:var(--font-display); font-size:1.12rem; margin:0 0 7px; }
+    .lq-step h3 { font-family:var(--font-display); font-size:1.12rem; margin:0 0 7px; }
     .lq-step p { color:var(--muted); margin:0; font-size:.96rem; line-height:1.55; }
 
-    /* the quote card keeps its own height and rides alongside the screenshots on desktop,
-       instead of stretching into a tall empty box */
-    .lq-proof { display:grid; grid-template-columns: 1.1fr .9fr; gap:22px; align-items:start; }
-    @media (min-width: 861px){ .lq-quote { position: sticky; top: 84px; } }
+    .lq-proof { display:grid; grid-template-columns: 1.1fr .9fr; gap:22px; align-items:stretch; }
     @media (max-width: 860px){ .lq-proof { grid-template-columns:1fr; } }
-    .lq-quote { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:28px; box-shadow: var(--shadow); }
+    .lq-quote { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:28px; }
     .lq-quote .lq-stars { font-size:1.2rem; }
-    .lq-quote blockquote { margin:14px 0 16px; font-size:1.08rem; line-height:1.6; color: var(--body); }
+    .lq-quote blockquote { margin:14px 0 16px; font-size:1.08rem; line-height:1.6; }
     .lq-quote cite { color:var(--muted); font-style:normal; font-weight:600; }
     .lq-clients { display:grid; grid-template-rows: 1fr 1fr; gap:16px; }
     .lq-client { display:block; border-radius:16px; overflow:hidden; border:1px solid var(--border); position:relative; }
     .lq-client img { width:100%; height:100%; object-fit:cover; display:block; }
-    .lq-client span { position:absolute; left:0; bottom:0; right:0; padding:10px 14px; font-weight:600; font-size:.9rem; color:var(--text); padding-top:22px; background:linear-gradient(0deg,rgba(255,255,255,.96) 60%,rgba(255,255,255,0)); }
+    .lq-client span { position:absolute; left:0; bottom:0; right:0; padding:10px 14px; font-weight:600; font-size:.9rem; color:#fff; background:linear-gradient(0deg, rgba(0,0,0,.6), transparent); }
 
-    .lq-offer { text-align:center; background: linear-gradient(120deg, #f1ecff, #fff8e9); border:1px solid var(--border); border-radius: 22px; padding: 40px 26px; }
-    .lq-offer h2 { color: var(--text); font-family:var(--font-display); font-weight:700; font-size:clamp(1.5rem,3.2vw,2.1rem); margin:0 0 12px; }
-    .lq-offer p { color:var(--body); max-width:34em; margin:0 auto 22px; font-size:1.05rem; }
+    .lq-offer { text-align:center; background: linear-gradient(120deg, rgba(29,111,245,.16), rgba(8,145,178,.16)); border:1px solid var(--border); border-radius: 22px; padding: 40px 26px; }
+    .lq-offer h2 { font-family:var(--font-display); font-weight:700; font-size:clamp(1.5rem,3.2vw,2.1rem); margin:0 0 12px; }
+    .lq-offer p { color:#d7e6ff; max-width:34em; margin:0 auto 22px; font-size:1.05rem; }
 
     .lq-faq { max-width: 780px; margin: 0 auto; }
-    .lq-faq details { background:var(--card); border:1px solid var(--border); border-radius:14px; padding: 4px 18px; margin-bottom:12px; box-shadow: 0 1px 2px rgba(20,16,40,.04); }
-    .lq-faq summary { color: var(--text); cursor:pointer; font-family:var(--font-display); font-weight:600; font-size:1.05rem; padding:16px 0; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .lq-faq details { background:var(--card); border:1px solid var(--border); border-radius:14px; padding: 4px 18px; margin-bottom:12px; }
+    .lq-faq summary { cursor:pointer; font-family:var(--font-display); font-weight:600; font-size:1.05rem; padding:16px 0; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .lq-faq summary::-webkit-details-marker { display:none; }
     .lq-faq summary::after { content:"+"; color:var(--c2); font-size:1.4rem; font-weight:400; }
     .lq-faq details[open] summary::after { content:"–"; }
     .lq-faq p { color:var(--muted); margin:0 0 16px; line-height:1.6; }
 
-    .lq-foot { background: var(--bg-2); border-top:1px solid var(--border); padding: 26px 0; text-align:center; color:var(--muted); font-size:.9rem; }
-    .lq-foot a { color:var(--muted); transition: color .2s; }
-    .lq-foot a:hover { color:#6b3df2; }
+    .lq-foot { border-top:1px solid var(--border); padding: 26px 0; text-align:center; color:var(--muted); font-size:.9rem; }
+    .lq-foot a { color:var(--muted); }
   </style>
 </head>
 <body>
   <!-- Sticky top bar: logo + call only, NO nav (single-goal page) -->
   <header class="lq-top">
     <div class="container">
-      <a href="/" aria-label="Billy Digitals home"><img src="assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development"></a>
+      <a href="/" aria-label="Billy Digitals home"><img src="assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design &amp; App Development"></a>
       <div class="lq-top-cta">
         <a class="lq-call" href="tel:+447519022117"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="lbl">07519 022117</span></a>
         <a class="btn btn-primary" href="#quote">Get my free quote</a>

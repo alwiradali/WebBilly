@@ -6,13 +6,13 @@
    ============================================================ */
 
 :root {
-  --s-ink: #15131f;
-  --s-body: #2e2b3a;
-  --s-muted: #5f5b70;
-  --s-accent: #6b3df2;
-  --s-accent-hover: #5a2fe0;
-  --s-line: #e8e5f0;
-  --s-alt: #f7f6fb;
+  --s-ink: #eaf2ff;
+  --s-body: #c9d6ee;
+  --s-muted: #93a4c4;
+  --s-accent: #38bdf8;
+  --s-accent-hover: #7dd3fc;
+  --s-line: rgba(120, 180, 255, 0.14);
+  --s-alt: #0a1226;
 }
 
 /* ---------- Header ---------- */
@@ -20,11 +20,11 @@
    This strip, in the header's own colour, covers that gap so text never shows through. */
 .site-header::before {
   content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 120px;
-  background: #fff; pointer-events: none;
+  background: #060b1a; pointer-events: none;
 }
 /* nearly solid once scrolling, so page text never ghosts through the header */
 .site-header.scrolled,
-.site-header.subpage.scrolled { background: rgba(255, 255, 255, 0.97); }
+.site-header.subpage.scrolled { background: rgba(6, 11, 26, 0.97); }
 .site-header .nav { min-height: 76px; }
 .logo-full,
 .logo:hover .logo-full { animation: none; transform: none; filter: none; }
@@ -35,7 +35,7 @@
 
 .nav-links { gap: 34px; }
 .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--s-body); letter-spacing: 0; text-transform: none; }
-.nav-links a::after { background: var(--s-accent); height: 1.5px; bottom: -5px; }
+.nav-links a::after { background: #1d6ff5; height: 1.5px; bottom: -5px; }
 .nav-links a:hover, .nav-links a.active { color: var(--s-ink); }
 .nav-links .nav-menu-cta { display: none; }
 
@@ -60,7 +60,7 @@
   .nav-links a::after { display: none; }
   .nav-links .nav-menu-cta { display: block; padding: 10px 24px 0; }
   .nav-links .nav-menu-cta a {
-    display: block; text-align: center; background: var(--s-accent); color: #fff;
+    display: block; text-align: center; background: #1d6ff5; color: #fff;
     border-radius: 999px; padding: 14px 20px; font-weight: 600;
   }
 }
@@ -80,8 +80,8 @@
 .shell-footer .sf-enquire { display: inline-block; margin-top: 22px; color: var(--s-accent); font-weight: 600; }
 .shell-footer .sf-enquire:hover { color: var(--s-accent-hover); }
 .shell-footer .socials { display: flex; gap: 10px; margin-top: 22px; }
-.shell-footer .socials a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 1px solid var(--s-line); color: var(--s-body); }
-.shell-footer .socials a:hover { color: var(--s-accent); border-color: rgba(107, 61, 242, 0.4); }
+.shell-footer .socials a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #0d1733; border: 1px solid var(--s-line); color: var(--s-body); }
+.shell-footer .socials a:hover { color: var(--s-accent); border-color: rgba(43, 127, 255, 0.4); }
 .shell-footer .socials svg { width: 16px; height: 16px; }
 
 /* Areas and industries stay linked for search, folded away so they never crowd the footer */
