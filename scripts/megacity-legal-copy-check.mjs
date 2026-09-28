@@ -69,6 +69,8 @@ none(/360° (tour|walkthrough) (and professional photography )?on every|Every ho
 for (const f of ["megacity-renting.html", "megacity-maintenance.html"]) {
   const t = text(read(f));
   ok(/0800 111 999/.test(t) && /\b105\b/.test(t) && /\b999\b/.test(t) && /outside office hours/i.test(t), `${f.replace(/^megacity-|\.html$/g, "")}: out-of-hours emergency numbers (gas 0800 111 999, power cut 105, 999)`);
+  /* Megacity's own emergency line, from its WhatsApp Business profile (28 Sep) */
+  ok(/07487 695077/.test(t) && read(f).includes('href="https://wa.me/447487695077"'), `${f.replace(/^megacity-|\.html$/g, "")}: the emergency WhatsApp line 07487 695077, linked`);
 }
 for (const f of ["megacity-privacy.html", "megacity-terms.html"]) {
   ok(/Last updated <time datetime="\d{4}-\d{2}-\d{2}">/.test(read(f)) && !/last updated when this website was published/.test(read(f)), `${f.replace(/^megacity-|\.html$/g, "")} carries a real "last updated" date`);
