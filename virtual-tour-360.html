@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals</title>
   <meta name="description" content="Turnkey 360° virtual tours for offices, event spaces and workspaces: on-site capture, flawless stitching, hotspot navigation, hosting — and the software handed over to you. Flat commercial rate for the full footprint.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#0a0a0a">
   <meta property="og:title" content="360° Virtual Tours &amp; Interactive 3D Walkthroughs | Billy Digitals">
   <meta property="og:description" content="Capture, stitch, hotspot, host — and hand over. Turnkey interactive 360° tours for offices, event spaces and multi-floor buildings.">
   <meta property="og:type" content="website">
@@ -32,7 +32,7 @@
     .vt-orb.a{width:520px;height:520px;background:rgba(107,61,242,.16);top:-60px;left:-140px}
     .vt-orb.b{width:420px;height:420px;background:rgba(107,61,242,.08);bottom:-40px;right:-120px}
     /* white feather over the orb haze: none under the fixed header, no hard edge where the hero clips it */
-    .vt-hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#fff 0,#fff 113px,rgba(255,255,255,0) 250px,rgba(255,255,255,0) calc(100% - 150px),#fff 100%)}
+    .vt-hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#141415 0,#141415 113px,rgba(255,255,255,0) 250px,rgba(255,255,255,0) calc(100% - 150px),#141415 100%)}
     .vt-grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
       background:linear-gradient(rgba(107,61,242,.05) 1px,transparent 1px) 0 0/100% 54px,
                  linear-gradient(90deg,rgba(107,61,242,.05) 1px,transparent 1px) 0 0/54px 100%;
@@ -49,13 +49,13 @@
 
     /* ── the console mock ─────────────────────────────────────────────── */
     .vt-console{position:relative;border:1px solid var(--border);border-radius:20px;overflow:hidden;
-      background:linear-gradient(160deg,#ffffff,#f7f6fb);box-shadow:var(--shadow)}
+      background:linear-gradient(160deg,#141415,#101011);box-shadow:var(--shadow)}
     .vt-console::after{content:"";position:absolute;inset:0;pointer-events:none;
-      background:repeating-linear-gradient(180deg,rgba(20,16,40,.015) 0 1px,transparent 1px 3px)}
+      background:repeating-linear-gradient(180deg,rgba(0, 0, 0, 0.06) 0 1px,transparent 1px 3px)}
     .vt-cbar{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);
-      font-family:ui-monospace,Menlo,monospace;font-size:.6rem;letter-spacing:.18em;color:#5f5b70}
-    .vt-cbar i{width:7px;height:7px;border-radius:50%;background:#6b3df2;box-shadow:0 0 8px rgba(107,61,242,.5)}
-    .vt-cbar span{margin-left:auto;color:#6b3df2}
+      font-family:ui-monospace,Menlo,monospace;font-size:.6rem;letter-spacing:.18em;color:#a3a198}
+    .vt-cbar i{width:7px;height:7px;border-radius:50%;background:#8052ff;box-shadow:0 0 8px rgba(107,61,242,.5)}
+    .vt-cbar span{margin-left:auto;color:#a88bff}
     .vt-cstage{position:relative;aspect-ratio:16/11;background:
       radial-gradient(120% 90% at 50% 22%,rgba(107,61,242,.08),transparent 62%),
       linear-gradient(180deg,#f4f2fb 0%,#ece9f6 52%,#e4e0f1 100%)}
@@ -64,7 +64,7 @@
       border:1px solid rgba(107,61,242,.55);background:rgba(107,61,242,.12);display:grid;place-items:center}
     .vt-ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(107,61,242,.4);
       animation:vtpulse 2.6s ease-out infinite}
-    .vt-ring i{width:11px;height:11px;border-right:2px solid #6b3df2;border-top:2px solid #6b3df2;transform:rotate(-45deg) translate(-2px,2px)}
+    .vt-ring i{width:11px;height:11px;border-right:2px solid #8052ff;border-top:2px solid #8052ff;transform:rotate(-45deg) translate(-2px,2px)}
     @keyframes vtpulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.3);opacity:0}}
     .vt-dot{position:absolute;right:26%;top:34%;width:20px;height:20px;border-radius:50%;
       background:linear-gradient(135deg,var(--c2),var(--c3));box-shadow:0 4px 14px rgba(107,61,242,.4)}
@@ -73,7 +73,7 @@
     .vt-tele{position:absolute;left:14px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:.58rem;
       letter-spacing:.14em;color:#4a4659}
     .vt-mini{position:absolute;right:14px;bottom:12px;width:110px;padding:8px;border-radius:10px;
-      border:1px solid var(--border);background:rgba(255,255,255,.85)}
+      border:1px solid var(--border);background:rgba(10, 10, 10, .85)}
     .vt-mini svg{position:static;width:100%;height:auto;display:block}
     .vt-cone{transform-origin:50px 44px;animation:vtsweep 9s ease-in-out infinite}
     @keyframes vtsweep{0%,100%{transform:rotate(-32deg)}50%{transform:rotate(34deg)}}
@@ -81,10 +81,10 @@
     /* ── shared blocks ────────────────────────────────────────────────── */
     .vt-lede{color:var(--muted);font-size:1.06rem;line-height:1.75;max-width:66ch}
     .vt-deliver{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
-    .vt-deliver li{display:flex;gap:12px;align-items:flex-start;color:#2e2b3a;font-size:1rem;line-height:1.5}
+    .vt-deliver li{display:flex;gap:12px;align-items:flex-start;color:#d6d4cc;font-size:1rem;line-height:1.5}
     .vt-deliver svg{flex:0 0 auto;width:19px;height:19px;margin-top:2px;stroke:var(--c3);fill:none;stroke-width:2}
     .vt-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:vt}
-    .vt-step{position:relative;padding:24px 20px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(20,16,40,.04),0 12px 32px rgba(20,16,40,.07)}
+    .vt-step{position:relative;padding:24px 20px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(0, 0, 0, 0.16),0 12px 32px rgba(0, 0, 0, 0.28)}
     .vt-step::before{counter-increment:vt;content:"0" counter(vt);display:block;font-family:ui-monospace,Menlo,monospace;
       font-size:.66rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
     .vt-step h3{font-size:1rem;margin-bottom:8px}
@@ -92,15 +92,15 @@
     .vt-feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .vt-spec{width:100%;border-collapse:collapse;margin-top:8px;font-size:.94rem}
     .vt-spec th,.vt-spec td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:top}
-    .vt-spec th{width:33%;color:#15131f;font-weight:600}
+    .vt-spec th{width:33%;color:#f5f5f0;font-weight:600}
     .vt-spec td{color:var(--muted)}
     .vt-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
-    .vt-plan{display:flex;flex-direction:column;padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(20,16,40,.04),0 12px 32px rgba(20,16,40,.07)}
-    .vt-plan.is-featured{border-color:rgba(107,61,242,.45);background:linear-gradient(170deg,#f6f2ff,#ffffff 60%);
-      box-shadow:0 0 0 1px rgba(107,61,242,.3),0 4px 12px rgba(20,16,40,.06),0 24px 56px rgba(107,61,242,.16)}
+    .vt-plan{display:flex;flex-direction:column;padding:28px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(0, 0, 0, 0.16),0 12px 32px rgba(0, 0, 0, 0.28)}
+    .vt-plan.is-featured{border-color:rgba(107,61,242,.45);background:linear-gradient(170deg,#15121c,#141415 60%);
+      box-shadow:0 0 0 1px rgba(107,61,242,.3),0 4px 12px rgba(0, 0, 0, 0.24),0 24px 56px rgba(107,61,242,.16)}
     .vt-plan .pf{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;letter-spacing:.2em;color:var(--c3);margin-bottom:12px}
     .vt-plan h3{font-size:1.22rem;margin-bottom:6px}
-    .vt-plan .pp{font-family:var(--font-display);font-size:2rem;letter-spacing:-.03em;margin:14px 0 4px;color:#15131f}
+    .vt-plan .pp{font-family:var(--font-display);font-size:2rem;letter-spacing:-.03em;margin:14px 0 4px;color:#f5f5f0}
     .vt-plan .pp small{font-size:.8rem;color:var(--muted);font-family:'Inter',sans-serif;letter-spacing:0}
     .vt-plan ul{list-style:none;padding:0;margin:18px 0 22px;display:grid;gap:10px}
     .vt-plan li{display:flex;gap:10px;color:var(--muted);font-size:.9rem;line-height:1.5}
@@ -132,13 +132,13 @@
       .vt-hero{padding-top:112px}
     }
   </style>
-  <link rel="stylesheet" href="assets/css/theme-white.css">
+  <link rel="stylesheet" href="assets/css/theme-dark.css">
   <link rel="stylesheet" href="assets/css/site-shell.css">
 </head>
 <body>
   <header class="site-header subpage" id="siteHeader">
     <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development" width="953" height="231"></a>
+      <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-lockup.png" alt="Billy Digitals — Web Design &amp; App Development" width="953" height="231"></a>
       <ul class="nav-links" id="navLinks">
         <li><a href="/#services">Services</a></li>
         <li><a href="/#work">Work</a></li>
@@ -302,7 +302,7 @@
         </div>
         <p style="text-align:center;margin-top:30px;color:var(--muted);font-size:.92rem">
           The live platform is running white-labelled right now —
-          <a href="/billy360/" target="_blank" rel="noopener" style="color:var(--c2)">open it</a>
+          <a href="/billy360/" target="_blank" rel="noopener" style="color:var(--w-accent)">open it</a>
           and look at Studio → Branding to see how little it takes.
         </p>
       </div>
@@ -443,7 +443,7 @@
     <div class="container">
       <div class="sf-grid">
         <div class="sf-brand">
-          <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
+          <a class="logo" href="/" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-lockup.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
           <p>A UK web design and development studio building fast, modern websites for businesses that want more enquiries.</p>
           <a class="sf-enquire" href="/#contact">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>
