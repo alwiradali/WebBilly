@@ -96,6 +96,7 @@ function initSmoothScroll() {
   function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    if (a.closest("#navLinks")) return; // menu links jump straight there (initHeader)
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
       if (!id || id.length < 2) return;
@@ -151,10 +152,22 @@ function initHeader() {
     burger.setAttribute("aria-expanded", String(open));
   });
   links.querySelectorAll("a").forEach((a) =>
-    a.addEventListener("click", () => {
+    a.addEventListener("click", (e) => {
       links.classList.remove("open");
       burger.classList.remove("open");
       burger.setAttribute("aria-expanded", "false");
+      // Menu taps land on the section at once, without scrolling through the page
+      const href = a.getAttribute("href") || "";
+      const target = href.charAt(0) === "#" && href.length > 1 ? document.querySelector(href) : null;
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight;
+      if (window.__lenis) window.__lenis.scrollTo(top, { immediate: true });
+      const root = document.documentElement, prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, top);
+      root.style.scrollBehavior = prev;
+      history.replaceState(null, "", href);
     })
   );
 
