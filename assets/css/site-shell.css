@@ -1,0 +1,102 @@
+/* ============================================================
+   Billy Digitals — site shell
+   The simplified header (Services · Work · About · FAQ + Enquire)
+   and the simple footer, shared by the homepage and every sub-page.
+   Loaded after style.css and theme-white.css.
+   ============================================================ */
+
+:root {
+  --s-ink: #15131f;
+  --s-body: #2e2b3a;
+  --s-muted: #5f5b70;
+  --s-accent: #6b3df2;
+  --s-accent-hover: #5a2fe0;
+  --s-line: #e8e5f0;
+  --s-alt: #f7f6fb;
+}
+
+/* ---------- Header ---------- */
+.site-header .nav { min-height: 76px; }
+.logo-full,
+.logo:hover .logo-full { animation: none; transform: none; filter: none; }
+.site-header .logo-full,
+.site-header.subpage .logo-full { height: 52px; }
+.site-header.scrolled .logo-full,
+.site-header.subpage.scrolled .logo-full { height: 46px; }
+
+.nav-links { gap: 34px; }
+.nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--s-body); letter-spacing: 0; text-transform: none; }
+.nav-links a::after { background: var(--s-accent); height: 1.5px; bottom: -5px; }
+.nav-links a:hover, .nav-links a.active { color: var(--s-ink); }
+.nav-links .nav-menu-cta { display: none; }
+
+.nav-cta {
+  margin-left: 30px; padding: 11px 24px; border-radius: 999px;
+  font-size: 0.92rem; font-weight: 600; letter-spacing: 0; text-transform: none;
+}
+.nav-links li, .nav-cta { animation: none; }
+
+@media (max-width: 900px) {
+  .site-header .nav { min-height: 66px; }
+  .site-header .logo-full,
+  .site-header.subpage .logo-full { height: 42px; }
+  .site-header.scrolled .logo-full,
+  .site-header.subpage.scrolled .logo-full { height: 40px; }
+  /* Enquire stays one tap away on phones, next to the menu button */
+  .nav-cta { display: inline-flex; margin-left: auto; margin-right: 14px; padding: 9px 18px; font-size: 0.88rem; }
+  .hamburger { margin-left: 0; }
+  .nav-links { padding: 8px 0 18px; }
+  .nav-links li { text-align: left; }
+  .nav-links a { padding: 15px 24px; font-size: 1.1rem; color: var(--s-ink); }
+  .nav-links a::after { display: none; }
+  .nav-links .nav-menu-cta { display: block; padding: 10px 24px 0; }
+  .nav-links .nav-menu-cta a {
+    display: block; text-align: center; background: var(--s-accent); color: #fff;
+    border-radius: 999px; padding: 14px 20px; font-weight: 600;
+  }
+}
+@media (max-width: 360px) {
+  .nav-cta { padding: 8px 14px; margin-right: 10px; }
+}
+
+/* ---------- Footer ---------- */
+.shell-footer { background: var(--s-alt); border-top: 1px solid var(--s-line); padding: 72px 0 0; }
+.shell-footer .sf-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
+.shell-footer .sf-brand p { color: var(--s-muted); font-size: 0.95rem; line-height: 1.65; max-width: 34ch; margin-top: 16px; }
+.shell-footer .logo-full { height: 44px; }
+.shell-footer h4 { font-family: 'Inter', system-ui, sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--s-ink); margin-bottom: 16px; }
+.shell-footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.shell-footer ul a { color: var(--s-muted); font-size: 0.95rem; transition: color 0.2s ease; }
+.shell-footer ul a:hover { color: var(--s-accent); }
+.shell-footer .sf-enquire { display: inline-block; margin-top: 22px; color: var(--s-accent); font-weight: 600; }
+.shell-footer .sf-enquire:hover { color: var(--s-accent-hover); }
+.shell-footer .socials { display: flex; gap: 10px; margin-top: 22px; }
+.shell-footer .socials a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 1px solid var(--s-line); color: var(--s-body); }
+.shell-footer .socials a:hover { color: var(--s-accent); border-color: rgba(107, 61, 242, 0.4); }
+.shell-footer .socials svg { width: 16px; height: 16px; }
+
+/* Areas and industries stay linked for search, folded away so they never crowd the footer */
+.shell-footer .sf-more { margin-top: 48px; border-top: 1px solid var(--s-line); padding-top: 18px; }
+.shell-footer .sf-more summary { cursor: pointer; list-style: none; color: var(--s-muted); font-size: 0.88rem; display: inline-flex; gap: 8px; align-items: center; }
+.shell-footer .sf-more summary::-webkit-details-marker { display: none; }
+.shell-footer .sf-more summary::after { content: "+"; color: var(--s-accent); font-weight: 600; }
+.shell-footer .sf-more[open] summary::after { content: "\2212"; }
+.shell-footer .sf-more summary:focus-visible { outline: 2px solid var(--s-accent); outline-offset: 4px; border-radius: 6px; }
+.shell-footer .sf-more ul { grid-template-columns: repeat(4, 1fr); gap: 8px 24px; margin-top: 18px; }
+.shell-footer .sf-more ul a { font-size: 0.88rem; }
+
+.shell-footer .footer-bottom { margin-top: 18px; border-top: 1px solid var(--s-line); padding: 22px 0 26px; color: var(--s-muted); font-size: 0.85rem; }
+
+@media (max-width: 900px) {
+  .shell-footer .sf-grid { grid-template-columns: 1fr 1fr; }
+  .shell-footer .sf-brand { grid-column: 1 / -1; }
+  .shell-footer .sf-more ul { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  /* room for the floating WhatsApp and chat buttons */
+  .shell-footer .footer-bottom { padding-bottom: 92px; text-align: center; justify-content: center; }
+}
+@media (max-width: 520px) {
+  .shell-footer { padding-top: 56px; }
+  .shell-footer .sf-grid { gap: 32px 20px; }
+}

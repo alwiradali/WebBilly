@@ -40,17 +40,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/template-experience.css">
-  <link rel="stylesheet" href="assets/css/mobile-polish.css">
-  <link rel="stylesheet" href="assets/css/premium.css">
-  <link rel="stylesheet" href="assets/css/scroll-fx.css">
-  <link rel="stylesheet" href="assets/css/wow.css">
-  <link rel="stylesheet" href="assets/css/theme-agency.css">
-  <link rel="stylesheet" href="assets/css/theme-award.css">
   <link rel="stylesheet" href="assets/css/theme-white.css">
-  <link rel="stylesheet" href="assets/css/theme-white-home.css">
+  <link rel="stylesheet" href="assets/css/site-shell.css">
+  <link rel="stylesheet" href="assets/css/home.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -148,34 +142,19 @@
   </script>
 </head>
 <body>
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
-    <filter id="electricEdge" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="4" result="n">
-        <animate attributeName="baseFrequency" dur="7s" values="0.012 0.02;0.02 0.035;0.012 0.02" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs></svg>
   <a class="skip-link" href="#main">Skip to content</a>
-  <canvas id="dalaHero" class="dala-bg" aria-hidden="true"></canvas>
-  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-  <!-- ======== HEADER ======== -->
   <header class="site-header" id="siteHeader">
     <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development" height="68"></a>
+      <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development" width="953" height="231"></a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="#home">Home</a></li>
         <li><a href="#services">Services</a></li>
-        <li><a href="#templates">Our Work</a></li>
-        <li><a href="#threed">3D &amp; SEO</a></li>
-        <li><a href="#plans">Plans</a></li>
-        <li><a href="#hosting">Hosting</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li class="nav-more"><a href="/blog">Blog</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li class="nav-menu-cta"><a href="#contact">Start an enquiry <span aria-hidden="true">→</span></a></li>
       </ul>
-      <a class="btn btn-primary nav-cta" href="#contact">Start Project</a>
+      <a class="btn btn-primary nav-cta" href="#contact">Enquire</a>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
@@ -183,1275 +162,316 @@
   </header>
 
   <main id="main">
+
     <!-- ======== HERO ======== -->
-    <section class="hero" id="home">
-      <div class="orb orb-1" aria-hidden="true"></div>
-      <div class="orb orb-2" aria-hidden="true"></div>
-      <div class="orb orb-3" aria-hidden="true"></div>
-      <div class="hero-scrim" aria-hidden="true"></div>
-      <div class="container hero-inner">
-        <p class="hero-welcome" aria-label="Welcome to Billy Digitals — where you grow">
-          <span class="hw-top" id="hwTop"></span>
-          <span class="hw-bot" id="hwBot"></span>
-        </p>
-        <p class="hero-badge">✦ Bespoke websites for ambitious brands — UK-wide &amp; worldwide</p>
-        <h1>Your business deserves a website that <span class="grad accent">outclasses</span> everyone.</h1>
-        <p class="hero-sub">We design and build high-performance, conversion-focused websites and web apps for ambitious brands — anywhere in the world. You dream it. We ship it.</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#contact">Start Your Project</a>
-          <a class="btn btn-ghost" href="#templates">See Our Work</a>
-        </div>
-        <dl class="hero-stats">
-          <div><dt><span>Bespoke</span></dt><dd>Designed around your brand</dd></div>
-          <div><dt><span>Responsive</span></dt><dd>Flawless on every screen</dd></div>
-          <div><dt><span>SEO-first</span></dt><dd>Built to be found on Google</dd></div>
-          <div><dt><span>Supported</span></dt><dd>Care beyond launch day</dd></div>
-        </dl>
-      </div>
-    </section>
-
-    <!-- ======== TECH MARQUEE ======== -->
-    <div class="marquee">
-      <div class="marquee-track">
-        <ul>
-          <li>React</li><li>Next.js</li><li>Node.js</li><li>WordPress</li><li>Tailwind CSS</li><li>Figma</li><li>TypeScript</li><li>Laravel</li><li>Stripe</li><li>Webflow</li><li>AWS</li>
-        </ul>
-        <ul aria-hidden="true">
-          <li>React</li><li>Next.js</li><li>Node.js</li><li>WordPress</li><li>Tailwind CSS</li><li>Figma</li><li>TypeScript</li><li>Laravel</li><li>Stripe</li><li>Webflow</li><li>AWS</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- ======== TRUSTED BY / MY PROJECTS ======== -->
-    <div class="trust-strip container">
-      <span class="trust-group" aria-label="Trusted by">
-        <span class="trust-label">Trusted by</span>
-        <span class="trust-name">ATB <em>Premier Travel</em></span>
-        <span class="trust-dot" aria-hidden="true">◆</span>
-        <span class="trust-name">Heaton<em>247</em>.com</span>
-      </span>
-      <span class="trust-sep" aria-hidden="true"></span>
-      <span class="trust-group" aria-label="My projects">
-        <span class="trust-label">My Projects</span>
-        <span class="trust-name">Billy<em>RackPilot</em></span>
-      </span>
-      <span class="trust-sep" aria-hidden="true"></span>
-      <a class="trust-cta" href="#contact">Your brand next →</a>
-    </div>
-
-    <!-- ======== STATEMENT BAND ======== -->
-    <section class="section statement reveal" aria-label="What we bring">
-      <div class="container">
-        <h2>Design, code, and a little <span class="hl-pill"><span class="hl-track"><span>magic&nbsp;✦</span><span>magic&nbsp;✦</span></span></span></h2>
-      </div>
-    </section>
-
-    <!-- ======== SIGNATURE SERVICE PANELS ======== -->
-    <section class="section panels-sec">
-      <div class="container">
-        <div class="section-head reveal" style="margin-bottom:36px">
-          <p class="tag">What we do ✦</p>
-          <h2>Three ways we make you <span class="grad">unmissable</span></h2>
-        </div>
-        <div class="panels">
-          <a class="panel p-blue reveal" href="#contact" data-prefill="Web Design">
-            <div>
-              <h3>Web Design &amp; UX</h3>
-              <div class="ptags"><span>Strategy</span><span>Branding</span><span>Growth</span></div>
-              <p>Bespoke, conversion-focused websites designed around your brand — built to turn visitors into customers.</p>
-            </div>
-            <div class="pglobe" aria-hidden="true">
-              <svg class="wire-globe" viewBox="0 0 200 200">
-                <g class="wg-static"><ellipse cx="100" cy="100" rx="88" ry="88" class="mer"/><ellipse cx="100" cy="100" rx="88" ry="70"/><ellipse cx="100" cy="100" rx="88" ry="46"/><ellipse cx="100" cy="100" rx="88" ry="22"/><line x1="12" y1="100" x2="188" y2="100"/></g>
-                <g class="wg-spin"><ellipse cx="100" cy="100" rx="26" ry="88"/><ellipse cx="100" cy="100" rx="54" ry="88"/><ellipse cx="100" cy="100" rx="78" ry="88"/><circle class="node" cx="100" cy="12" r="4"/><circle class="node" cx="178" cy="100" r="3.4"/><circle class="node" cx="100" cy="188" r="4"/></g>
-              </svg>
-            </div>
-          </a>
-          <a class="panel p-purple reveal" href="#contact" data-prefill="Web Development">
-            <div>
-              <h3>Web Development</h3>
-              <div class="ptags"><span>Responsive</span><span>UI/UX</span><span>Modern</span></div>
-              <p>High-converting builds engineered for speed, scale and flawless performance on every device.</p>
-            </div>
-            <div class="pglobe" aria-hidden="true">
-              <svg class="wire-globe" viewBox="0 0 200 200">
-                <g class="wg-static"><ellipse cx="100" cy="100" rx="88" ry="88" class="mer"/><ellipse cx="100" cy="100" rx="88" ry="70"/><ellipse cx="100" cy="100" rx="88" ry="46"/><ellipse cx="100" cy="100" rx="88" ry="22"/><line x1="12" y1="100" x2="188" y2="100"/></g>
-                <g class="wg-spin"><ellipse cx="100" cy="100" rx="26" ry="88"/><ellipse cx="100" cy="100" rx="54" ry="88"/><ellipse cx="100" cy="100" rx="78" ry="88"/><circle class="node" cx="100" cy="12" r="4"/><circle class="node" cx="178" cy="100" r="3.4"/><circle class="node" cx="100" cy="188" r="4"/></g>
-              </svg>
-            </div>
-          </a>
-          <a class="panel p-cream reveal" href="#contact" data-prefill="SEO &amp; Growth">
-            <div>
-              <h3>SEO &amp; Growth</h3>
-              <div class="ptags"><span>SEO</span><span>Ads</span><span>Content</span></div>
-              <p>Get found on Google and keep growing — search-first architecture and campaigns that compound long after launch.</p>
-            </div>
-            <div class="pglobe" aria-hidden="true">
-              <svg class="wire-globe" viewBox="0 0 200 200">
-                <g class="wg-static"><ellipse cx="100" cy="100" rx="88" ry="88" class="mer"/><ellipse cx="100" cy="100" rx="88" ry="70"/><ellipse cx="100" cy="100" rx="88" ry="46"/><ellipse cx="100" cy="100" rx="88" ry="22"/><line x1="12" y1="100" x2="188" y2="100"/></g>
-                <g class="wg-spin"><ellipse cx="100" cy="100" rx="26" ry="88"/><ellipse cx="100" cy="100" rx="54" ry="88"/><ellipse cx="100" cy="100" rx="78" ry="88"/><circle class="node" cx="100" cy="12" r="4"/><circle class="node" cx="178" cy="100" r="3.4"/><circle class="node" cx="100" cy="188" r="4"/></g>
-              </svg>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======== PINNED ZOOM STATEMENT ======== -->
-    <section class="pinzoom" aria-label="Statement">
-      <div class="pz-stage">
-        <p class="pz-eyebrow eyebrow">Billy Digitals</p>
-        <h2 class="pz-word">Make it <span class="lime">unmissable.</span></h2>
-        <p class="pz-tag">Websites people can't scroll past.</p>
-      </div>
-    </section>
-
-    <!-- ======== SERVICES ======== -->
-    <section class="section fx-alive" id="services">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">What we do</p>
-          <h2>Everything your brand needs to <span class="grad">win online</span></h2>
-          <p class="sub">One team, end to end. Strategy, design, development, launch and growth — handled by specialists obsessed with quality.</p>
-        </div>
-        <div class="grid services-grid">
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-            <h3>Custom Website Design</h3>
-            <p>Bespoke, pixel-perfect designs crafted around your brand — never templates off a shelf. Every page engineered to impress and convert.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 12 10 5 10-5"/><path d="m2 17 10 5 10-5"/></svg></div>
-            <h3>Web Applications</h3>
-            <p>Dashboards, booking systems, client portals and SaaS products — robust, scalable applications built on modern frameworks.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg></div>
-            <h3>UI/UX &amp; Branding</h3>
-            <p>Logos, colour systems, typography and interfaces that feel expensive. We build brands people remember and trust.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
-            <h3>SEO &amp; Performance</h3>
-            <p>Lightning-fast load times and search-first architecture, so customers find you before they ever find your competitors.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3.2 9.2h17.6M3.2 14.8h17.6"/></svg></div>
-            <h3>360° Virtual Tours</h3>
-            <p>Interactive walkthroughs of offices, venues and showrooms — captured on site, hotspotted, hosted, and handed over as software you own. <a href="/virtual-tour-360">See how it works</a>.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M8 4h8"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/><path d="M9 17h6"/></svg></div>
-            <h3>AI &amp; Automation</h3>
-            <p>AI chatbots, smart lead capture and workflow automation baked into your site — it works for you around the clock.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-            <h3>Hosting, Security &amp; Care</h3>
-            <p>Managed hosting, SSL, backups, updates and monitoring. Your site stays fast, safe and online — always.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></div>
-            <h3>Content &amp; Copywriting</h3>
-            <p>Words that sell. Persuasive copy, product descriptions and brand storytelling written to turn visitors into buyers.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></div>
-            <h3>Advertising &amp; PPC</h3>
-            <p>Google &amp; Meta ad campaigns that pay for themselves — targeted, tracked and optimised to bring you leads from day one.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
-            <h3>Social Media Marketing</h3>
-            <p>Content, reach and growth across Instagram, Facebook and TikTok — we keep your brand visible and your audience growing.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======== TEMPLATES ======== -->
-    <section class="section section-alt" id="templates">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Our work &amp; portfolio</p>
-          <h2>Real sites we've <span class="grad">designed &amp; built</span></h2>
-          <p class="sub">A portfolio of live demos and builds across the industries we work in — click any one to open the full, interactive site. Every project is designed from scratch; these show the calibre you can expect.</p>
-        </div>
-        <div class="client-work reveal">
-          <p class="cw-label">Live client sites we've launched</p>
-          <div class="grid client-grid">
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#2f6fb0;--t2:#081832" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener" aria-label="Visit the live ATB Premier Travel website (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-atb.webp" alt="ATB Premier Travel — travel agency website designed and built by Billy Digitals" loading="lazy" decoding="async" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>Booking</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>ATB Premier Travel</h3><span class="tcat">Travel Agency · Live client site</span></div>
-                <a class="tlink" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#ff7a18;--t2:#0b1e3a" href="https://heaton247.com" target="_blank" rel="noopener" aria-label="Visit the live HEAT ON 24/7 heating and plumbing website (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-heaton247.webp" alt="HEAT ON 24/7 — heating and plumbing website designed and built by Billy Digitals" loading="lazy" decoding="async" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>Development</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>HEAT ON 24/7</h3><span class="tcat">Heating &amp; Plumbing · Manchester</span></div>
-                <a class="tlink" href="https://heaton247.com" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#ef5b18;--t2:#021b3f" href="https://heatfixmcrlimited.co.uk" target="_blank" rel="noopener" aria-label="Visit the live HeatFix Mcr Limited site (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-heatfix.webp" alt="HeatFix Mcr Limited — Gas Safe heating engineer website designed and built by Billy Digitals" loading="lazy" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>Invoicing</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>HeatFix Mcr Limited</h3><span class="tcat">Gas &amp; Heating · Manchester</span></div>
-                <a class="tlink" href="https://heatfixmcrlimited.co.uk" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#1f8a70;--t2:#0e2a3f" href="https://smartinscience.co.uk" target="_blank" rel="noopener" aria-label="Visit the live SMARTin SCIENCE site (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-smartin.webp" alt="SMARTin SCIENCE — GCSE science tuition website designed and built by Billy Digitals" loading="lazy" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>SEO</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>SMARTin SCIENCE</h3><span class="tcat">GCSE Science Tuition · Leeds</span></div>
-                <a class="tlink" href="https://smartinscience.co.uk" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#e11d2a;--t2:#0d0d0f" href="https://westfieldgarageintlimited.co.uk" target="_blank" rel="noopener" aria-label="Visit the live Westfield Garage Int Limited site (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-westfield.webp" alt="Westfield Garage Int Limited — car servicing and diagnostics website designed and built by Billy Digitals" loading="lazy" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>Booking</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>Westfield Garage Int Limited</h3><span class="tcat">Car Servicing &amp; Diagnostics · Levenshulme</span></div>
-                <a class="tlink" href="https://westfieldgarageintlimited.co.uk" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-            <article class="tcard">
-              <a class="tthumb has-photo" style="--t1:#2f8f86;--t2:#12283a" href="https://molecularmiracleschemistrytuition.co.uk" target="_blank" rel="noopener" aria-label="Visit the live Molecular Miracles site (opens in a new tab)">
-                <img class="tthumb-photo" src="assets/work-mm.webp" alt="Molecular Miracles — SQA chemistry tuition website designed and built by Billy Digitals" loading="lazy" width="1264" height="848">
-                <span class="cw-pills" aria-hidden="true"><span>Web design</span><span>Booking</span></span>
-                <span class="tthumb-view">Visit the live site <span aria-hidden="true">↗</span></span>
-              </a>
-              <div class="tinfo">
-                <div><h3>Molecular Miracles</h3><span class="tcat">SQA Chemistry Tuition · Glasgow</span></div>
-                <a class="tlink" href="https://molecularmiracleschemistrytuition.co.uk" target="_blank" rel="noopener">Visit site <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
+    <section class="h-hero" id="home">
+      <div class="container h-hero-grid">
+        <div class="h-hero-copy">
+          <h1>Websites built to make your business <em>stand out.</em></h1>
+          <p class="h-lead">We design and build fast, modern websites for businesses that want to look better, perform better and generate more enquiries.</p>
+          <div class="h-actions">
+            <a class="btn btn-primary" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+            <a class="btn h-btn-ghost" href="#work">View our work</a>
           </div>
         </div>
-        <p class="cw-label" style="margin-bottom:6px">Sample styles across industries</p>
-        <div class="filters reveal" role="group" aria-label="Filter templates by category">
-          <button class="fbtn active" data-filter="all">All</button>
-          <button class="fbtn" data-filter="webgl">3D · WebGL ✦</button>
-          <button class="fbtn" data-filter="luxury">Luxury ✦</button>
-          <button class="fbtn" data-filter="beauty">Hair &amp; Beauty ✦</button>
-          <button class="fbtn" data-filter="product">Product ✦</button>
-          <button class="fbtn" data-filter="motion">Motion ✦</button>
-          <button class="fbtn" data-filter="restaurant">Restaurant</button>
-          <button class="fbtn" data-filter="corporate">Corporate</button>
-          <button class="fbtn" data-filter="portfolio">Portfolio</button>
-          <button class="fbtn" data-filter="realestate">Real Estate</button>
-          <button class="fbtn" data-filter="medical">Medical</button>
-          <button class="fbtn" data-filter="education">Education</button>
-          <button class="fbtn" data-filter="saas">SaaS</button>
-          <button class="fbtn" data-filter="fitness">Fitness</button>
-          <button class="fbtn" data-filter="travel">Travel</button>
-          <button class="fbtn" data-filter="law">Law</button>
-          <button class="fbtn" data-filter="automotive">Automotive</button>
-          <button class="fbtn" data-filter="cafe">Café</button>
-          <button class="fbtn" data-filter="photography">Photography</button>
-          <button class="fbtn" data-filter="music">Music</button>
-          <button class="fbtn" data-filter="wellness">Wellness</button>
-        </div>
-        <div class="grid templates-grid" id="templatesGrid">
-          <article class="tcard reveal" data-cat="beauty">
-            <a class="tthumb has-photo" style="--t1:#b87a56;--t2:#1a1211" href="templates/salon-amberley.html" aria-label="View the Amberley luxury hair salon sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-amberley.webp" alt="Amberley — luxury hair salon and bridal website" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Hair Salon &amp; Bridal</h3><span class="tcat">Salon · Scroll-story seal</span></div>
-              <a class="tlink" href="#contact" data-prefill="Hair Salon website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="medical">
-            <a class="tthumb has-photo" style="--t1:#b0894b;--t2:#17120d" href="templates/averley-dental.html" aria-label="View the Averley Dental clinic sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-averley.webp" alt="Averley Dental — luxury dental clinic website" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Dental &amp; Clinic</h3><span class="tcat">Private Dentistry · Warm luxury</span></div>
-              <a class="tlink" href="#contact" data-prefill="Dental clinic website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="product">
-            <a class="tthumb has-photo" style="--t1:#ef8c3c;--t2:#140f0b" href="templates/ember.html" aria-label="View the EMBER product brand sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-ember.webp" alt="EMBER — product brand website with scroll-pinned 3D product" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Product &amp; Brand</h3><span class="tcat">Scroll-pinned 3D product ✦</span></div>
-              <a class="tlink" href="#contact" data-prefill="Product brand website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="motion">
-            <a class="tthumb has-photo" style="--t1:#d8a24e;--t2:#0d0c10" href="templates/motion-lab.html" aria-label="View the Motion Lab interactive effects showcase">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-motionlab.webp" alt="Motion Lab — library of scroll and interaction effects" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Motion Lab</h3><span class="tcat">6 signature scroll effects ✦</span></div>
-              <a class="tlink" href="#contact" data-prefill="Interactive motion effects">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="motion">
-            <a class="tthumb has-photo" style="--t1:#e7c579;--t2:#070708" href="templates/apex.html" aria-label="View the Apex extreme scroll experience showcase">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-apex.webp" alt="Apex — extreme scroll experience with momentum scrolling, pinned sequences and kinetic type" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Apex</h3><span class="tcat">Extreme scroll experience ✦</span></div>
-              <a class="tlink" href="#contact" data-prefill="Apex scroll experience">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="motion">
-            <a class="tthumb has-photo" style="--t1:#e6c478;--t2:#08080b" href="templates/ultra.html" aria-label="View the Ultra real-time WebGL effects showcase">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/thumb-ultra.webp" alt="Ultra — real-time WebGL molten gold, aurora and liquid glass effects" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Ultra</h3><span class="tcat">Real-time WebGL shaders ✦</span></div>
-              <a class="tlink" href="#contact" data-prefill="Ultra WebGL effects">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb has-photo" style="--t1:#d9b26a;--t2:#08080b" href="templates/noir.html" aria-label="View the Noir District luxury residences sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215021_20e0ea05-8a6c-4245-86d0-e48ce36d176c_min.webp" alt="Obsidian glass luxury residential tower at dusk" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Real Estate</h3><span class="tcat">Luxury Residences · WebGL + GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Luxury Residences">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb has-photo" style="--t1:#d9a441;--t2:#efe6d5" href="templates/eclat.html" aria-label="View the Éclat haute couture sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_215923_93d3836b-b585-4acc-ac77-40406aff48d8_min.webp" alt="Model in a champagne-gold haute couture gown" loading="lazy" decoding="async" width="896" height="1200">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Fashion</h3><span class="tcat">Haute Couture · WebGL + GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Haute Couture">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb" style="--t1:#c6a06a;--t2:#12100e" href="templates/atelier.html" aria-label="View the Maison Noir luxury interior sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🛋️</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Interior</h3><span class="tcat">Luxury Interior · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Luxury &amp; Editorial">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb" style="--t1:#d4af37;--t2:#08070a" href="templates/aurum.html" aria-label="View the Aurum high-jewellery sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">💎</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Jewellery</h3><span class="tcat">High Jewellery · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Luxury &amp; Editorial">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb" style="--t1:#e0894a;--t2:#4bb3a6" href="templates/lumiere.html" aria-label="View the Lumière luxury resort sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🌅</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Resort</h3><span class="tcat">Luxury Resort · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Luxury &amp; Editorial">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb has-photo" style="--t1:#cfd8e3;--t2:#080b12" href="templates/altair.html" aria-label="View the Altair private jet charter sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/lux/jet-c.webp" alt="Private jet cabin interior in cream leather and burr walnut" loading="lazy" decoding="async" width="1280" height="853">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Private Aviation</h3><span class="tcat">Private Jet Charter · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Private Jet / Aviation">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb has-photo" style="--t1:#5ec7c7;--t2:#06121b" href="templates/azura.html" aria-label="View the Azura private yacht charter sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/lux/yacht-hero.webp" alt="White superyacht on turquoise water" loading="lazy" decoding="async" width="1600" height="1100">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Yacht Charter</h3><span class="tcat">Private Yacht Charter · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Yacht Charter">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="luxury">
-            <a class="tthumb has-photo" style="--t1:#e0894a;--t2:#14100b" href="templates/elysee.html" aria-label="View the Élysée luxury travel and concierge sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/lux/travel-hero.webp" alt="Aerial view of a private island resort on a turquoise atoll" loading="lazy" decoding="async" width="1600" height="912">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Luxury Travel</h3><span class="tcat">Private Travel &amp; Concierge · GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="Luxury Travel / Concierge">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="webgl">
-            <a class="tthumb has-photo" style="--t1:#2b6bff;--t2:#b74bf5" href="templates/orbit.html" aria-label="View the Orbit live-aurora SaaS flagship">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/work-orbit.webp" alt="Orbit — an all-in-one team workspace flagship with a live WebGL aurora" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Web App</h3><span class="tcat">Software Platform · Live Aurora WebGL + GSAP</span></div>
-              <a class="tlink" href="#contact" data-prefill="3D Animated Website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="webgl">
-            <a class="tthumb has-photo" style="--t1:#ff7a2f;--t2:#05070c" href="templates/meridian.html" aria-label="View the Meridian SaaS workspace flagship">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="assets/work-meridian.webp" alt="Meridian — a keyboard-first team workspace flagship with a live caustic WebGL backdrop, scroll-scrubbed product tour and command palette" loading="lazy" decoding="async" width="1264" height="848">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium SaaS Workspace</h3><span class="tcat">Software Platform · Caustic WebGL + Command Palette</span></div>
-              <a class="tlink" href="#contact" data-prefill="3D Animated Website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="webgl">
-            <a class="tthumb" style="--t1:#3b7bff;--t2:#d946ef" href="templates/nova.html" aria-label="View the Nova WebGL particle experience">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🌌</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium AI Studio</h3><span class="tcat">24k-Particle WebGL · AI Studio</span></div>
-              <a class="tlink" href="#contact" data-prefill="3D Animated Website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="webgl">
-            <a class="tthumb" style="--t1:#8b5cf6;--t2:#0a0a13" href="templates/creative.html" aria-label="View the Aether 3D crystal experience">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">💠</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium 3D Creative</h3><span class="tcat">3D Crystal · Three.js</span></div>
-              <a class="tlink" href="#contact" data-prefill="3D Animated Website">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="restaurant">
-            <a class="tthumb" style="--t1:#e11d48;--t2:#f59e0b" href="templates/restaurant.html" aria-label="View the Saffron House restaurant sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🍛</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Restaurant</h3><span class="tcat">Restaurant &amp; Food</span></div>
-              <a class="tlink" href="#contact" data-prefill="Restaurant &amp; Food">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="barber">
-            <a class="tthumb has-photo" style="--t1:#d8a24b;--t2:#141317" href="templates/barber.html" aria-label="View the Fade & Co barbershop sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_213912_4b9ad79b-4956-46ac-87d1-e7682f213f29_min.webp" alt="A barber giving a sharp fade in an upmarket barbershop" loading="lazy" decoding="async" width="1376" height="768">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Barber</h3><span class="tcat">Barber &amp; Grooming</span></div>
-              <a class="tlink" href="#contact" data-prefill="Barber &amp; Grooming">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="takeaway">
-            <a class="tthumb has-photo" style="--t1:#ee2b1c;--t2:#0a1740" href="templates/chesters.html" aria-label="View the Takeaway sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <img class="tthumb-photo" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FGGVT7BdUNi97QY6Gukppcri19/hf_20260712_213920_4a64eb96-184d-4d77-9911-dd8162408a2d_min.webp" alt="A takeaway feast of fried chicken, pizza, burger and fries" loading="lazy" decoding="async" width="1376" height="768">
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Premium Takeaway</h3><span class="tcat">Takeaway &amp; Fast Food</span></div>
-              <a class="tlink" href="#contact" data-prefill="Takeaway &amp; Fast Food">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="corporate">
-            <a class="tthumb" style="--t1:#2563eb;--t2:#0ea5e9" href="templates/corporate.html" aria-label="View the Northbridge Consulting corporate sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">📈</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Corporate</h3><span class="tcat">Corporate &amp; Business</span></div>
-              <a class="tlink" href="#contact" data-prefill="Corporate &amp; Business">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="portfolio">
-            <a class="tthumb" style="--t1:#eab308;--t2:#f97316" href="templates/portfolio.html" aria-label="View the Studio Nova portfolio sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🎨</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Portfolio</h3><span class="tcat">Portfolio &amp; Creative</span></div>
-              <a class="tlink" href="#contact" data-prefill="Portfolio &amp; Creative">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="realestate">
-            <a class="tthumb" style="--t1:#0f766e;--t2:#b45309" href="templates/realestate.html" aria-label="View the Skyline Estates real estate sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🏙️</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Real Estate</h3><span class="tcat">Real Estate</span></div>
-              <a class="tlink" href="#contact" data-prefill="Real Estate">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="medical">
-            <a class="tthumb" style="--t1:#0ea5e9;--t2:#14b8a6" href="templates/medical.html" aria-label="View the CarePoint Clinic medical sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🩺</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Medical</h3><span class="tcat">Medical &amp; Health</span></div>
-              <a class="tlink" href="#contact" data-prefill="Medical &amp; Health">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="education">
-            <a class="tthumb" style="--t1:#7c3aed;--t2:#f59e0b" href="templates/education.html" aria-label="View the BrightPath Academy education sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🎓</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Education</h3><span class="tcat">Education</span></div>
-              <a class="tlink" href="#contact" data-prefill="Education">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="saas">
-            <a class="tthumb" style="--t1:#6366f1;--t2:#22d3ee" href="templates/saas.html" aria-label="View the Pulse Analytics SaaS sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">📊</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>SaaS</h3><span class="tcat">SaaS &amp; Tech</span></div>
-              <a class="tlink" href="#contact" data-prefill="SaaS &amp; Tech">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="fitness">
-            <a class="tthumb" style="--t1:#a3e635;--t2:#f97316" href="templates/fitness.html" aria-label="View the Iron Republic fitness sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🏋️</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Fitness &amp; Gym</h3><span class="tcat">Fitness &amp; Gym</span></div>
-              <a class="tlink" href="#contact" data-prefill="Fitness &amp; Gym">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="travel">
-            <a class="tthumb" style="--t1:#0284c7;--t2:#f59e0b" href="templates/travel.html" aria-label="View the Wanderlight Tours travel sample in a new tab">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🌍</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Travel</h3><span class="tcat">Travel &amp; Tourism</span></div>
-              <a class="tlink" href="#contact" data-prefill="Travel &amp; Tourism">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="law">
-            <a class="tthumb" style="--t1:#b08d57;--t2:#7c1d2b" href="templates/law.html" aria-label="View the Hale &amp; Marsh law firm sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">⚖️</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Law</h3><span class="tcat">Law &amp; Legal</span></div>
-              <a class="tlink" href="#contact" data-prefill="Law &amp; Legal">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="automotive">
-            <a class="tthumb" style="--t1:#38bdf8;--t2:#fb923c" href="templates/automotive.html" aria-label="View the Apex Motors automotive sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🏎️</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Automotive</h3><span class="tcat">Automotive</span></div>
-              <a class="tlink" href="#contact" data-prefill="Automotive">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="cafe">
-            <a class="tthumb" style="--t1:#7a4a2b;--t2:#d98a3d" href="templates/cafe.html" aria-label="View the Ember &amp; Oak cafe sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">☕</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Café</h3><span class="tcat">Café &amp; Coffee</span></div>
-              <a class="tlink" href="#contact" data-prefill="Café &amp; Coffee">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="photography">
-            <a class="tthumb" style="--t1:#c8b18a;--t2:#8f8d88" href="templates/photography.html" aria-label="View the Aperture photography sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">📷</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Photography</h3><span class="tcat">Photography</span></div>
-              <a class="tlink" href="#contact" data-prefill="Photography">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="music">
-            <a class="tthumb" style="--t1:#a855f7;--t2:#22d3ee" href="templates/music.html" aria-label="View the Midnight Echo music sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🎧</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Music</h3><span class="tcat">Music &amp; Artist</span></div>
-              <a class="tlink" href="#contact" data-prefill="Music &amp; Artist">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="tcard reveal" data-cat="wellness">
-            <a class="tthumb" style="--t1:#6b9080;--t2:#a4c3b2" href="templates/wellness.html" aria-label="View the Stillwater wellness sample">
-              <span class="tthumb-chrome" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="tthumb-emoji" aria-hidden="true">🧘</span>
-              <span class="tthumb-view">View live sample <span aria-hidden="true">↗</span></span>
-            </a>
-            <div class="tinfo">
-              <div><h3>Wellness</h3><span class="tcat">Wellness &amp; Spa</span></div>
-              <a class="tlink" href="#contact" data-prefill="Wellness &amp; Spa">Request this style <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
+        <div class="h-hero-visual" aria-hidden="true">
+          <img class="h-shot h-shot-back" src="assets/work-smartin.webp" alt="" width="1264" height="848" fetchpriority="low">
+          <img class="h-shot h-shot-front" src="assets/work-heatfix.webp" alt="" width="1264" height="848" fetchpriority="high">
         </div>
       </div>
     </section>
 
-    <!-- ======== 3D ANIMATED WEBSITES + SEO OFFERINGS ======== -->
-    <section class="section threed" id="threed">
-      <div class="threed-glow" aria-hidden="true"></div>
+    <!-- ======== TRUST ======== -->
+    <section class="h-trust" aria-label="Clients">
       <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Signature offerings</p>
-          <h2>Next-level websites that <span class="grad">move people</span></h2>
-          <p class="sub">Beyond flat pages — immersive 3D experiences and SEO that keeps working long after launch. This is the calibre we bring to your brand.</p>
-        </div>
+        <p class="h-trust-label">Trusted by businesses across the UK</p>
+        <ul class="h-trust-names">
+          <li>ATB Premier Travel</li><li>HeatFix</li><li>Westfield Garage</li><li>SMARTin SCIENCE</li><li>HEAT ON 24/7</li><li>Molecular Miracles</li>
+        </ul>
+      </div>
+    </section>
 
-        <!-- Three offerings -->
-        <div class="grid offer-grid">
-          <article class="card offer reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg></div>
-            <h3>3D Animated Websites</h3>
-            <p>Real 3D motion — interactive scenes, depth and light rendered live in the browser. Unforgettable first impressions that leave every flat competitor behind, engineered to stay smooth on any device.</p>
-            <a class="tlink offer-cta" href="#contact" data-prefill="3D Animated Website">Enquire about 3D <span aria-hidden="true">→</span></a>
+    <!-- ======== SELECTED WORK ======== -->
+    <section class="h-section" id="work">
+      <div class="container">
+        <div class="h-head fx">
+          <p class="h-eyebrow">Selected work</p>
+          <h2>Real websites for real businesses.</h2>
+        </div>
+        <div class="h-work-grid">
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener" aria-label="View the ATB Premier Travel website (opens in a new tab)">
+              <img src="assets/work-atb.webp" alt="ATB Premier Travel website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">Travel agency</p>
+              <h3>ATB Premier Travel</h3>
+              <p>A fast, hand-coded 17-page site for a premier UK travel agency, rebuilt from an ageing WordPress site.</p>
+              <a class="h-link" href="https://atbpremiertravel.co.uk" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
           </article>
-          <article class="card offer reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
-            <h3>Basic SEO</h3>
-            <p>The essential foundation to get found on Google: keyword-optimised pages, clean fast-loading structure, meta tags, sitemap, Google Business Profile and Search Console — everything a new site needs to start ranking.</p>
-            <a class="tlink offer-cta" href="#contact" data-prefill="Basic SEO">Start ranking <span aria-hidden="true">→</span></a>
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://heatfixmcrlimited.co.uk" target="_blank" rel="noopener" aria-label="View the HeatFix Mcr Limited website (opens in a new tab)">
+              <img src="assets/work-heatfix.webp" alt="HeatFix Mcr Limited website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">Gas &amp; heating engineer</p>
+              <h3>HeatFix Mcr Limited</h3>
+              <p>A Gas Safe engineer's site with its own back office for quotes, invoices and job photos.</p>
+              <a class="h-link" href="https://heatfixmcrlimited.co.uk" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
           </article>
-          <article class="card offer reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div>
-            <h3>Auto SEO</h3>
-            <p>Hands-off, always-on growth. We continuously optimise, publish fresh content, track your keywords and tune your rankings every month — so your search traffic compounds while you run your business.</p>
-            <a class="tlink offer-cta" href="#contact" data-prefill="Auto SEO">Grow on autopilot <span aria-hidden="true">→</span></a>
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://westfieldgarageintlimited.co.uk" target="_blank" rel="noopener" aria-label="View the Westfield Garage website (opens in a new tab)">
+              <img src="assets/work-westfield.webp" alt="Westfield Garage website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">Car servicing, Levenshulme</p>
+              <h3>Westfield Garage</h3>
+              <p>Eleven services explained in the owner's own words, with a booking form that knows which job you picked.</p>
+              <a class="h-link" href="https://westfieldgarageintlimited.co.uk" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
           </article>
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://smartinscience.co.uk" target="_blank" rel="noopener" aria-label="View the SMARTin SCIENCE website (opens in a new tab)">
+              <img src="assets/work-smartin.webp" alt="SMARTin SCIENCE website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">GCSE science tuition</p>
+              <h3>SMARTin SCIENCE</h3>
+              <p>Course pages, a live timetable and area pages built to be found by parents searching their own town.</p>
+              <a class="h-link" href="https://smartinscience.co.uk" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://heaton247.com" target="_blank" rel="noopener" aria-label="View the HEAT ON 24/7 website (opens in a new tab)">
+              <img src="assets/work-heaton247.webp" alt="HEAT ON 24/7 website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">Heating &amp; plumbing, Manchester</p>
+              <h3>HEAT ON 24/7</h3>
+              <p>A local service site engineered to rank across Manchester and turn visitors into booked jobs.</p>
+              <a class="h-link" href="https://heaton247.com" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="h-project fx">
+            <a class="h-project-img" href="https://molecularmiracleschemistrytuition.co.uk" target="_blank" rel="noopener" aria-label="View the Molecular Miracles website (opens in a new tab)">
+              <img src="assets/work-mm.webp" alt="Molecular Miracles website designed and built by Billy Digitals" width="1264" height="848" loading="lazy" decoding="async">
+            </a>
+            <div class="h-project-meta">
+              <p class="h-project-ind">Chemistry tuition, Scotland</p>
+              <h3>Molecular Miracles</h3>
+              <p>SQA Chemistry tuition with a class timetable, an enquiry flow and 33 local area pages.</p>
+              <a class="h-link" href="https://molecularmiracleschemistrytuition.co.uk" target="_blank" rel="noopener">View project <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        </div>
+        <div class="h-after fx">
+          <a class="h-link h-link-lg" href="/portfolio">View all work <span aria-hidden="true">→</span></a>
+          <a class="btn btn-primary" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== WHAT WE DO ======== -->
+    <section class="h-section h-alt" id="services">
+      <div class="container h-split">
+        <div class="h-head fx">
+          <p class="h-eyebrow">What we do</p>
+          <h2>Everything your website needs, in one place.</h2>
+          <p class="h-sub">One team from first call to launch and beyond. Hosting, care plans and add-ons are all on the <a class="h-inline" href="/pricing">pricing page</a>.</p>
+        </div>
+        <ul class="h-services">
+          <li class="fx">
+            <h3>Web Design</h3>
+            <p>Beautiful, conversion-focused websites designed around your business. <a class="h-link" href="/small-business-web-design">Learn more <span aria-hidden="true">→</span></a></p>
+          </li>
+          <li class="fx">
+            <h3>Web Development</h3>
+            <p>Fast, responsive websites, web apps and custom functionality. <a class="h-link" href="/web-app-development">Learn more <span aria-hidden="true">→</span></a></p>
+          </li>
+          <li class="fx">
+            <h3>SEO &amp; Growth</h3>
+            <p>Helping your website get found and generate more enquiries. <a class="h-link" href="/seo-services">Learn more <span aria-hidden="true">→</span></a></p>
+          </li>
+          <li class="fx">
+            <h3>Brand &amp; UX</h3>
+            <p>Branding, user experience and visual systems that make your business look professional.</p>
+          </li>
+          <li class="fx">
+            <h3>Digital Solutions</h3>
+            <p>Booking systems, AI, automation, portals and custom tools. <a class="h-link" href="/web-app-development">Learn more <span aria-hidden="true">→</span></a></p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======== WHY BILLY DIGITALS ======== -->
+    <section class="h-section" id="about">
+      <div class="container h-split">
+        <div class="h-head fx">
+          <p class="h-eyebrow">Why Billy Digitals</p>
+          <h2>Built properly, from the first call to long after launch.</h2>
+          <p class="h-sub">Every site is designed from scratch around your business, never bought off a shelf. You deal directly with the person building it, and you always know what's happening next.</p>
+        </div>
+        <div class="h-why">
+          <div class="fx"><h3>Fixed-price quotes</h3><p>You approve a clear, itemised quote before we start. No hourly meters, no surprise invoices.</p></div>
+          <div class="fx"><h3>You own everything</h3><p>Your code, your domain, your content, your accounts. No lock-in.</p></div>
+          <div class="fx"><h3>Refined until it's right</h3><p>We don't launch until you're genuinely happy with every page.</p></div>
+          <div class="fx"><h3>Here after launch</h3><p>Every build includes support after launch to keep your site fast, safe and current.</p></div>
         </div>
       </div>
     </section>
 
     <!-- ======== PROCESS ======== -->
-    <section class="section" id="process">
+    <section class="h-section h-alt" id="process">
       <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">How we work</p>
-          <h2>From idea to launch, <span class="grad">without the headache</span></h2>
-          <p class="sub">A clear, proven process. You always know what's happening, what's next and when you'll launch.</p>
+        <div class="h-head fx">
+          <p class="h-eyebrow">How it works</p>
+          <h2>Four clear steps.</h2>
         </div>
-        <ol class="process-list">
-          <li class="reveal"><span class="pnum">01</span><h3>Discovery</h3><p>We learn your business, audience and goals in a focused strategy call — then map exactly what your website needs to achieve.</p></li>
-          <li class="reveal"><span class="pnum">02</span><h3>Design</h3><p>Wireframes become polished, on-brand designs. You review, we refine, until every screen feels exactly right.</p></li>
-          <li class="reveal"><span class="pnum">03</span><h3>Development</h3><p>Clean, fast, secure code. Fully responsive, SEO-ready and tested across every device and browser.</p></li>
-          <li class="reveal"><span class="pnum">04</span><h3>Launch</h3><p>Domain, hosting, analytics and go-live handled for you. We launch together and verify everything is flawless.</p></li>
-          <li class="reveal"><span class="pnum">05</span><h3>Growth &amp; Support</h3><p>Post-launch care, updates and improvements. As your business grows, your website grows with it.</p></li>
+        <ol class="h-steps">
+          <li class="fx"><span class="h-step-n">01</span><h3>Discover</h3><p>We understand your business and what the website needs to achieve.</p></li>
+          <li class="fx"><span class="h-step-n">02</span><h3>Design</h3><p>We create the look, structure and experience.</p></li>
+          <li class="fx"><span class="h-step-n">03</span><h3>Build</h3><p>We develop, test and optimise everything.</p></li>
+          <li class="fx"><span class="h-step-n">04</span><h3>Launch</h3><p>Your website goes live and we stay around to support you.</p></li>
         </ol>
-        <div class="why-strip reveal">
-          <div><strong>Pixel-perfect design</strong><span>Details others miss</span></div>
-          <div><strong>Fast turnaround</strong><span>Launch in days, not weeks</span></div>
-          <div><strong>Transparent updates</strong><span>You're never left guessing</span></div>
-          <div><strong>Built to convert</strong><span>Looks great, sells harder</span></div>
-        </div>
       </div>
     </section>
 
-    <!-- ======== TESTIMONIALS ======== -->
-    <section class="section" id="testimonials">
+    <!-- ======== TESTIMONIAL ======== -->
+    <section class="h-section" id="testimonials">
       <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Client love</p>
-          <h2>Real results, in our <span class="grad">clients' words</span></h2>
-          <p class="sub">Don't just take our word for it — here's what businesses say after we've built for them.</p>
-        </div>
-        <figure class="tmonial reveal">
-          <div class="tstars" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+        <figure class="h-quote fx">
+          <p class="h-stars" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote>"They designed a proper premium website that actually looks the part — a custom logo, my own photos, and it works perfectly on the phone. But it wasn't just about looks: local pages for all the areas I cover, a booking system, WhatsApp and an online quote form that comes straight to me, and even a little AI assistant that books customers in. They sorted all the Google side too. If you want a website that actually gets you customers rather than just sitting there, these are the people to go to. Made my life so much easier — thank you!"</blockquote>
-          <figcaption>
-            <strong>Ali</strong> · HEAT ON 24/7 Heating &amp; Plumbing, Manchester
-            <a class="tsource" href="https://g.page/r/CaibQuMCDDWPEAE/review" target="_blank" rel="noopener">★ Verified Google review</a>
-          </figcaption>
+          <figcaption><strong>Ali</strong> · HEAT ON 24/7 Heating &amp; Plumbing, Manchester · <a class="h-inline" href="https://g.page/r/CaibQuMCDDWPEAE/review" target="_blank" rel="noopener">Google review</a></figcaption>
         </figure>
-        <div class="treviews-cta reveal">
-          <a class="btn btn-ghost" href="https://g.page/r/CaibQuMCDDWPEAE/review" target="_blank" rel="noopener">Leave us a Google review →</a>
-        </div>
       </div>
     </section>
 
-    <!-- ======== PLANS ======== -->
-    <section class="section section-alt fx-alive" id="plans">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Service plans</p>
-          <h2>Pick the level of <span class="grad">firepower</span> you need</h2>
-          <p class="sub">Every website is built custom to you — tell us your vision and we'll send a free, tailored quote. No hidden fees, ever.</p>
-        </div>
-
-        <!-- Limited-time offer + flexible payment -->
-        <div class="offer-ribbon reveal" role="note">
-          <div class="offer-main">
-            <span class="offer-flag">Limited offer</span>
-            <p class="offer-head"><strong>£100 OFF</strong> every new website</p>
-            <p class="offer-sub">Massive summer saving — <b>ends 31 August</b>. Claim it on any plan below.</p>
-          </div>
-          <div class="offer-split">
-            <span class="offer-3">Pay in 3</span>
-            <p>Split your project into <strong>3 monthly installments</strong> — interest-free, nothing extra to pay.</p>
-            <a class="btn btn-primary btn-sm" href="#contact" data-plan="£100 off + Pay in 3">Claim the offer →</a>
-          </div>
-        </div>
-
-        <div class="grid plans-grid">
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Standard</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-pay">or <strong>pay in 3</strong> · interest-free · <span class="pay-off">£100 off · ends 31 August</span></p>
-            <p class="plan-for">Perfect for personal brands &amp; small businesses ready to look professional.</p>
-            <ul>
-              <li>Up to 5 custom-designed pages</li>
-              <li>Fully responsive on all devices</li>
-              <li>Contact form &amp; WhatsApp integration</li>
-              <li>Essential on-page SEO</li>
-              <li>Fast, secure setup</li>
-              <li>2 revision rounds</li>
-              <li>1 month post-launch support</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Standard">Request a Quote</a>
-          </article>
-          <article class="plan plan-featured reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <p class="plan-badge">Most Popular</p>
-            <h3>Premium</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-pay">or <strong>pay in 3</strong> · interest-free · <span class="pay-off">£100 off · ends 31 August</span></p>
-            <p class="plan-for">For growing businesses that want a serious competitive edge.</p>
-            <ul>
-              <li>Up to 12 custom-designed pages</li>
-              <li>Bespoke UI with premium animations</li>
-              <li>CMS — update content yourself</li>
-              <li>Advanced SEO &amp; speed optimisation</li>
-              <li>AI chatbot integration</li>
-              <li>Blog / portfolio / booking modules</li>
-              <li>Managed hosting included</li>
-              <li>4 revision rounds</li>
-              <li>3 months post-launch support</li>
-            </ul>
-            <a class="btn btn-primary btn-block" href="#contact" data-plan="Premium">Request a Quote</a>
-          </article>
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Ultra Premium</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-pay">or <strong>pay in 3</strong> · interest-free · <span class="pay-off">£100 off · ends 31 August</span></p>
-            <p class="plan-for">The full-service flagship. We become your complete digital department.</p>
-            <ul>
-              <li>Unlimited pages &amp; custom features</li>
-              <li>Full web application or custom platform</li>
-              <li>Complete branding &amp; design system</li>
-              <li>AI automation &amp; smart lead capture</li>
-              <li>Professional copywriting included</li>
-              <li>12 months hosting, security &amp; care</li>
-              <li>Dedicated project manager</li>
-              <li>Priority 24/7 support</li>
-              <li>Unlimited revisions until perfect</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Ultra Premium">Request a Quote</a>
-          </article>
-        </div>
-        <p class="hosting-note reveal">🎯 <strong>Need something smaller or bigger?</strong> Not every project fits neatly into three boxes — a one-page site, a large custom platform, or anything in between. <a href="#contact" data-plan="Custom project">Request a customised quote →</a></p>
-      </div>
-    </section>
-
-    <!-- ======== HOSTING ======== -->
-    <section class="section fx-alive" id="hosting">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Hosting &amp; care</p>
-          <h2>Two different jobs. <span class="grad">Both essential.</span></h2>
-          <p class="sub">Hosting and Care Plans solve completely different problems. Here's exactly what each one does.</p>
-        </div>
-        <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:22px;margin-bottom:70px">
-          <article class="card reveal" style="border-color:rgba(56,189,248,.3)">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-            <h3>🖥️ Hosting — keeps your site <em style="color:var(--c3);font-style:normal">alive</em></h3>
-            <p>The technical foundation. Servers, SSL, backups and security that keep your site online, fast and safe every second of every day. If this fails, your site goes dark.</p>
-            <p style="margin-top:14px;color:var(--muted);font-size:.9rem"><strong style="color:var(--text)">Includes:</strong> servers, SSL, backups, uptime monitoring, malware scanning, technical support</p>
-          </article>
-          <article class="card reveal" style="border-color:rgba(251,211,141,.35)">
-            <div class="card-icon" style="background:rgba(251,211,141,.12);color:#fbd38d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
-            <h3>📈 Care Plans — keeps your site <em style="color:#fbd38d;font-style:normal">found</em></h3>
-            <p>The growth engine. SEO, Google Business management, content updates and rankings that bring customers to your door. If this stops, people stop finding you.</p>
-            <p style="margin-top:14px;color:var(--muted);font-size:.9rem"><strong style="color:var(--text)">Includes:</strong> SEO optimisation, Google Business, keyword tracking, content updates, review management</p>
-          </article>
-        </div>
-
-        <div class="section-head reveal">
-          <p class="tag">Hosting plans</p>
-          <h2>Fast, secure hosting that <span class="grad">never sleeps</span></h2>
-          <p class="sub">UK-based servers, free SSL, daily backups and 24/7 monitoring — fully managed by us, so your site stays fast, safe and online while you run your business.</p>
-        </div>
-        <div class="grid plans-grid">
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Starter</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">Perfect for personal sites and landing pages — the essentials, done properly.</p>
-            <ul>
-              <li>Fast UK-based hosting</li>
-              <li>Free SSL certificate</li>
-              <li>Daily backups</li>
-              <li>Malware scanning</li>
-              <li>Email support</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Hosting — Starter">Request a Quote</a>
-          </article>
-          <article class="plan plan-featured reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <p class="plan-badge">Most Popular</p>
-            <h3>Business</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">For growing businesses that can't afford downtime.</p>
-            <ul>
-              <li>Everything in Starter</li>
-              <li>Extra speed &amp; storage</li>
-              <li>24/7 uptime monitoring</li>
-              <li>Priority fixes</li>
-              <li>Business email accounts</li>
-              <li>Monthly health report</li>
-            </ul>
-            <a class="btn btn-primary btn-block" href="#contact" data-plan="Hosting — Business">Request a Quote</a>
-          </article>
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Premium</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">Maximum firepower — your site treated like our own.</p>
-            <ul>
-              <li>Fastest UK server resources</li>
-              <li>Free SSL certificate</li>
-              <li>Daily backups</li>
-              <li>Advanced security hardening &amp; malware scanning</li>
-              <li>24/7 uptime monitoring</li>
-              <li>Same-day support</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Hosting — Premium">Request a Quote</a>
-          </article>
-        </div>
-        <p class="hosting-note reveal">✨ <strong>Building your website with us?</strong> Hosting comes <strong>included</strong> with every Premium and Ultra Premium build — and it's an easy optional add-on with Standard. One team, zero hassle.</p>
-
-        <div class="section-head reveal" style="margin-top:80px">
-          <p class="tag">Power-ups</p>
-          <h2>Add-ons that make your site <span class="grad">work harder</span></h2>
-          <p class="sub">Bolt these onto any plan — each one built in, styled to your brand, and managed by us.</p>
-        </div>
-        <div class="addon-cloud reveal">
-          <span>🤖 AI Chatbot</span>
-          <span>📅 Booking Calendar</span>
-          <span>🗓️ Appointment Scheduling</span>
-          <span>📍 Address &amp; Postcode Finder</span>
-          <span>🔐 Customer Login &amp; Register</span>
-          <span>💳 Online Payments</span>
-          <span>⭐ Google Reviews Widget</span>
-          <span>💬 WhatsApp Live Chat</span>
-          <span>🖼️ Photo Galleries</span>
-          <span>📰 Blog &amp; News</span>
-          <span>📧 Newsletter Signup</span>
-          <span>🌐 Multi-language</span>
-          <span>📊 Analytics Dashboard</span>
-          <span>🧾 Quote &amp; Enquiry Forms</span>
-          <span>✨ …and anything you can imagine</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======== CARE PLANS ======== -->
-    <section class="section section-alt fx-alive" id="care">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Care plans</p>
-          <h2>Care plans that keep you <span class="grad">found on Google</span></h2>
-          <p class="sub">SEO, Google Business, content updates and ongoing optimisation — handled for you every month, so customers keep finding you.</p>
-        </div>
-        <div class="grid plans-grid">
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Starter Care</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">Keep growing while we keep watch.</p>
-            <ul>
-              <li>Monthly SEO health check</li>
-              <li>Google Business Profile monitoring</li>
-              <li>Up to 2 content updates/month</li>
-              <li>Broken link &amp; speed checks</li>
-              <li>Monthly performance report</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Care — Starter">Request a Quote</a>
-          </article>
-          <article class="plan plan-featured reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <p class="plan-badge">Most Popular</p>
-            <h3>Growth Care</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">For businesses ready to actively climb the rankings.</p>
-            <ul>
-              <li>Everything in Starter Care</li>
-              <li>Google Business Profile management &amp; posts</li>
-              <li>Keyword &amp; ranking tracking</li>
-              <li>Up to 5 content updates/month</li>
-              <li>Google reviews monitoring</li>
-              <li>Priority email support</li>
-            </ul>
-            <a class="btn btn-primary btn-block" href="#contact" data-plan="Care — Growth">Request a Quote</a>
-          </article>
-          <article class="plan reveal">
-            <span class="blaze" aria-hidden="true"><i></i><i></i><i></i></span>
-            <h3>Complete Care</h3>
-            <p class="plan-price"><strong>Free</strong><span>quote</span></p>
-            <p class="plan-for">Your full-service GBP, SEO &amp; growth department.</p>
-            <ul>
-              <li>Everything in Growth Care</li>
-              <li>Full on-page SEO optimisation</li>
-              <li>Competitor tracking</li>
-              <li>Unlimited minor content updates</li>
-              <li>Monthly strategy call</li>
-              <li>Google reviews &amp; reputation management</li>
-              <li>Same-day priority support</li>
-            </ul>
-            <a class="btn btn-ghost btn-block" href="#contact" data-plan="Care — Complete">Request a Quote</a>
-          </article>
-        </div>
-        <p class="hosting-note reveal">🔍 <strong>Care plans are separate from hosting</strong> — hosting keeps your site online and secure; Care keeps it visible on Google and growing. Combine both for a fully hands-off website.</p>
-      </div>
-    </section>
-
-    <!-- ======== OUR APPS ======== -->
-    <section class="section fx-alive" id="apps">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Our apps</p>
-          <h2>Software we build, <span class="grad">battle-tested daily</span></h2>
-          <p class="sub">We don't just build for clients — we build and run our own products. The same engineering that powers them goes into every project we ship.</p>
-        </div>
-        <article class="project-card card reveal">
-          <div class="project-head">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v6H3zM3 15h18v6H3z"/><path d="M7 6h.01M7 18h.01M12 6h6M12 18h6"/></svg></div>
-            <div>
-              <h3>BillyRackPilot</h3>
-              <p class="project-tag">Warehouse &amp; factory operations, on autopilot.</p>
-            </div>
-          </div>
-          <p class="project-desc">Our flagship platform for organisations that run warehouses and factories. RackPilot puts your entire floor at your fingertips — plan racking layouts, track stock locations in real time and keep every shift moving, from one clean dashboard.</p>
-          <ul class="project-feats">
-            <li>Racking &amp; layout management</li>
-            <li>Live stock location tracking</li>
-            <li>Team roles &amp; shift access</li>
-            <li>Works on any device — office or floor</li>
-          </ul>
-          <div class="project-cta">
-            <a class="btn btn-primary" href="#contact" data-prefill="Other / Not sure yet">Request a Demo</a>
-            <span class="project-note">Tailored setup for your organisation</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ======== GUARANTEES ======== -->
-    <section class="section" id="promise">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Our promise</p>
-          <h2>Why brands choose <span class="grad">Billy Digitals</span></h2>
-          <p class="sub">No inflated claims — just clear commitments we stand behind on every single project.</p>
-        </div>
-        <div class="grid services-grid">
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
-            <h3>Fixed-price proposals</h3>
-            <p>You approve a clear, itemised quote before we start. No hourly meters, no surprise invoices — ever.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M7.5 4.2 12 6.8l4.5-2.6"/><path d="M12 22V12"/></svg></div>
-            <h3>You own everything</h3>
-            <p>Your code, your domain, your content, your accounts. No lock-in, no hostage situations. It's all yours.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
-            <h3>Refined until it's right</h3>
-            <p>We don't ship until you're genuinely happy. Every plan includes revision rounds; Ultra Premium is unlimited.</p>
-          </article>
-          <article class="card reveal">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-            <h3>We're here after launch</h3>
-            <p>Launch day isn't goodbye. Every build includes post-launch support to keep your site fast, safe and current.</p>
-          </article>
+    <!-- ======== PRICING (short) ======== -->
+    <section class="h-section h-price" aria-labelledby="priceTitle">
+      <div class="container h-center fx">
+        <h2 id="priceTitle">Every project is different.</h2>
+        <p class="h-sub">Tell us what you're looking to build and we'll give you a clear, tailored quote.</p>
+        <div class="h-actions h-actions-center">
+          <a class="btn btn-primary" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
+          <a class="h-link" href="/pricing">See plans and pricing <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
 
     <!-- ======== FAQ ======== -->
-    <section class="section section-alt" id="faq">
-      <div class="container container-narrow">
-        <div class="section-head reveal">
-          <p class="tag">Good to know</p>
-          <h2>Questions, <span class="grad">answered</span></h2>
+    <section class="h-section h-alt" id="faq">
+      <div class="container h-split">
+        <div class="h-head fx">
+          <p class="h-eyebrow">FAQ</p>
+          <h2>Questions, answered.</h2>
+          <p class="h-sub">Can't see yours? Ask it in your enquiry and we'll reply within 24 hours.</p>
         </div>
-        <div class="faq-list">
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">How long does a project take?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Standard sites typically launch in 3 days to a week, Premium in 1–2 weeks, and Ultra Premium in 2–4 weeks — it's a bigger build, so it needs the extra time. We'll give you a clear schedule before we start, and we stick to it.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">What do you need from me to start?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Just your goals and any existing branding or content. Don't have content? No problem — copywriting, imagery direction and structure are all things we handle for you.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">Can you redesign my existing website?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Absolutely. We audit what's working, keep your SEO equity, and rebuild the experience so it looks and performs like new — without losing what you've already earned.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">How does pricing work?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Every project is different, so we quote per project based on scope — you get a clear, fixed proposal before any work begins. No hourly surprises, no hidden fees. Message us and we'll respond with a tailored quote.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">Do you provide support after launch?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Yes — every plan includes post-launch support, and Ultra Premium includes a full year of hosting, security and care. Extended care plans are available for every tier.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">Will my website work perfectly on mobile?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Guaranteed. Every site is designed mobile-first and tested across phones, tablets and desktops before launch. Most of your visitors are on mobile — we make sure that's where you shine.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">How much does a website cost in the UK?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>At Billy Digitals, a professional small-business website typically starts in the low hundreds, with Premium and Ultra Premium builds priced by scope. You always get a clear, fixed quote before any work begins — no hourly surprises or hidden fees — and we take a 50% deposit to start, with the balance on approval.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">Who is the best web designer for a small business in the UK?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Billy Digitals is a UK-based web design and app development agency that builds premium, fast, conversion-focused websites for small and growing businesses — nationwide and worldwide, fully online. We combine bespoke design, SEO and aftercare, so your site both looks the part and brings in enquiries.</p></div></div>
-          </div>
-          <div class="faq-item reveal">
-            <button class="faq-q" aria-expanded="false">Can you build a website that shows up in AI assistants like ChatGPT?<span class="faq-x" aria-hidden="true">+</span></button>
-            <div class="faq-a"><div><p>Yes. Every Billy Digitals site is built for Answer Engine Optimisation (AEO) as well as Google — clean structure, FAQ and schema markup, fast load times and AI-crawler access — so tools like ChatGPT, Google AI Overviews, Gemini and Perplexity can read, understand and cite your business when people ask for services like yours.</p></div></div>
-          </div>
+        <div class="h-faq">
+          <details class="h-faq-item"><summary>How long does a project take?</summary><p>Standard sites typically launch in 3 days to a week, Premium in 1–2 weeks, and Ultra Premium in 2–4 weeks — it's a bigger build, so it needs the extra time. We'll give you a clear schedule before we start, and we stick to it.</p></details>
+          <details class="h-faq-item"><summary>What do you need from me to start?</summary><p>Just your goals and any existing branding or content. Don't have content? No problem — copywriting, imagery direction and structure are all things we handle for you.</p></details>
+          <details class="h-faq-item"><summary>Can you redesign my existing website?</summary><p>Absolutely. We audit what's working, keep your SEO equity, and rebuild the experience so it looks and performs like new — without losing what you've already earned.</p></details>
+          <details class="h-faq-item"><summary>How does pricing work?</summary><p>Every project is different, so we quote per project based on scope — you get a clear, fixed proposal before any work begins. No hourly surprises, no hidden fees. Message us and we'll respond with a tailored quote.</p></details>
+          <details class="h-faq-item"><summary>Do you provide support after launch?</summary><p>Yes — every plan includes post-launch support, and Ultra Premium includes a full year of hosting, security and care. Extended care plans are available for every tier.</p></details>
+          <details class="h-faq-item"><summary>Will my website work perfectly on mobile?</summary><p>Guaranteed. Every site is designed mobile-first and tested across phones, tablets and desktops before launch. Most of your visitors are on mobile — we make sure that's where you shine.</p></details>
+          <details class="h-faq-item"><summary>How much does a website cost in the UK?</summary><p>At Billy Digitals, a professional small-business website typically starts in the low hundreds, with Premium and Ultra Premium builds priced by scope. You always get a clear, fixed quote before any work begins — no hourly surprises or hidden fees — and we take a 50% deposit to start, with the balance on approval.</p></details>
+          <details class="h-faq-item"><summary>Who is the best web designer for a small business in the UK?</summary><p>Billy Digitals is a UK-based web design and app development agency that builds premium, fast, conversion-focused websites for small and growing businesses — nationwide and worldwide, fully online. We combine bespoke design, SEO and aftercare, so your site both looks the part and brings in enquiries.</p></details>
+          <details class="h-faq-item"><summary>Can you build a website that shows up in AI assistants like ChatGPT?</summary><p>Yes. Every Billy Digitals site is built for Answer Engine Optimisation (AEO) as well as Google — clean structure, FAQ and schema markup, fast load times and AI-crawler access — so tools like ChatGPT, Google AI Overviews, Gemini and Perplexity can read, understand and cite your business when people ask for services like yours.</p></details>
         </div>
       </div>
     </section>
 
-    <!-- ======== CONTACT ======== -->
-    <section class="section fx-alive" id="contact">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="tag">Let's talk</p>
-          <h2>Ready to <span class="grad">outclass</span> your competition?</h2>
-          <p class="sub">Tell us about your project. We reply within 24 hours with next steps and a tailored quote.</p>
+    <!-- ======== ENQUIRY ======== -->
+    <section class="h-section h-contact" id="contact">
+      <div class="container h-split">
+        <div class="h-head fx">
+          <p class="h-eyebrow">Enquire</p>
+          <h2>Have a project in mind?</h2>
+          <p class="h-sub">Tell us what you're looking to build. A few lines is plenty, and we'll take it from there.</p>
+          <ul class="h-direct">
+            <li><span>Email</span><a data-email-link data-email-text href="mailto:hello@billydigitals.com">hello@billydigitals.com</a></li>
+            <li><span>WhatsApp</span><a data-wa-link href="https://wa.me/447519022117" target="_blank" rel="noopener">Message us</a></li>
+          </ul>
         </div>
-        <a class="spin-badge reveal" href="/free-website-quote" aria-label="Get a free quote">
-          <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
-            <defs><path id="badgeCircle" d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0"/></defs>
-            <text><textPath href="#badgeCircle" startOffset="0">Let's build something great • Free quote • Let's build something great • Free quote • </textPath></text>
-          </svg>
-          <span class="core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-        </a>
-        <div class="contact-wrap">
-          <div class="contact-cards">
-            <a class="ccard reveal" data-email-link href="#">
-              <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></div>
-              <div><h3>Email us</h3><p data-email-text>—</p><span>Best for detailed briefs</span></div>
-            </a>
-            <a class="ccard reveal" data-wa-link href="#" target="_blank" rel="noopener">
-              <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-              <div><h3>WhatsApp</h3><p>Chat with us directly</p><span>Fastest response</span></div>
-            </a>
-            <div class="ccard reveal">
-              <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-              <div><h3>Fast replies</h3><p>Within 24 hours</p><span>Usually much sooner</span></div>
+        <form class="h-form" id="contactForm" novalidate>
+          <div class="h-row">
+            <div class="h-field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
+            <div class="h-field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+          </div>
+          <div class="h-row">
+            <div class="h-field"><label for="f-business">Business name</label><input id="f-business" name="business" type="text" autocomplete="organization"></div>
+            <div class="h-field"><label for="f-category">What do you need?</label>
+              <select id="f-category" name="category">
+                <option>A new website</option>
+                <option>A redesign of my website</option>
+                <option>A web app or custom system</option>
+                <option>SEO and getting found</option>
+                <option>Branding</option>
+                <option>Not sure yet</option>
+              </select>
             </div>
           </div>
-          <form class="contact-form reveal" id="contactForm" novalidate>
-            <div class="form-row">
-              <div class="field">
-                <label for="f-name">Your name</label>
-                <input id="f-name" name="name" type="text" placeholder="Jane Smith" required>
-              </div>
-              <div class="field">
-                <label for="f-email">Your email</label>
-                <input id="f-email" name="email" type="email" placeholder="jane@company.com" required>
-              </div>
+          <div class="h-field"><label for="f-message">Message</label><textarea id="f-message" name="message" rows="5" placeholder="What does your business do, and what should the website achieve?" required></textarea></div>
+          <div class="h-row">
+            <div class="h-field"><label for="f-budget">Approximate budget <span class="h-opt">optional</span></label>
+              <select id="f-budget" name="budget">
+                <option value="">Not sure yet</option>
+                <option>Under £500</option>
+                <option>£500 to £1,500</option>
+                <option>£1,500 to £3,000</option>
+                <option>£3,000+</option>
+              </select>
             </div>
-            <div class="form-row">
-              <div class="field">
-                <label for="f-phone">Phone number</label>
-                <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07123 456789" required>
-              </div>
-              <div class="field">
-                <label for="f-business">Business name <span class="opt">(optional)</span></label>
-                <input id="f-business" name="business" type="text" autocomplete="organization" placeholder="Your business or brand">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label for="f-category">Website type</label>
-                <select id="f-category" name="category">
-                  <option>Restaurant &amp; Food</option>
-                  <option>Corporate &amp; Business</option>
-                  <option>Portfolio &amp; Creative</option>
-                  <option>Real Estate</option>
-                  <option>Medical &amp; Health</option>
-                  <option>Education</option>
-                  <option>SaaS &amp; Tech</option>
-                  <option>Fitness &amp; Gym</option>
-                  <option>Travel &amp; Tourism</option>
-                  <option>Redesign of my existing website</option>
-                  <option>Other / Not sure yet</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="f-plan">Plan you're interested in</label>
-                <select id="f-plan" name="plan">
-                  <option>Not sure yet</option>
-                  <option>Standard</option>
-                  <option>Premium</option>
-                  <option>Ultra Premium</option>
-                  <option>Hosting — Starter</option>
-                  <option>Hosting — Business</option>
-                  <option>Hosting — Premium</option>
-                  <option>Care — Starter</option>
-                  <option>Care — Growth</option>
-                  <option>Care — Complete</option>
-                  <option>Custom project</option>
-                </select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="f-message">Tell us about your project</label>
-              <textarea id="f-message" name="message" rows="5" placeholder="What are you building? Any websites you love? Deadlines?" required></textarea>
-            </div>
-            <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
-            <button class="btn btn-primary btn-block" type="submit">Send Enquiry</button>
-            <p class="form-note">Your enquiry goes straight to our inbox — we reply within 24 hours. Prefer to chat? Ping us on WhatsApp.</p>
-            <div class="pay-trust">
-              <span class="pay-trust-lead">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Secure payments
-              </span>
-              <span class="pay-row" aria-label="Accepted payment methods">
-                <span class="pay v">VISA</span>
-                <span class="pay mc"><i></i><i></i></span>
-                <span class="pay ax">AMEX</span>
-                <span class="pay pp">Pay<b>Pal</b></span>
-                <span class="pay ap"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 1.9-1.1 2.6-2.1.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM14.2 5.6c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>Pay</span>
-                <span class="pay gp"><b>G</b>Pay</span>
-                <span class="pay kl">Klarna</span>
-              </span>
-            </div>
-          </form>
-        </div>
+            <div class="h-field"><label for="f-site">Current website <span class="h-opt">optional</span></label><input id="f-site" name="website" type="text" inputmode="url" placeholder="yourbusiness.co.uk"></div>
+          </div>
+          <div class="h-field"><label for="f-phone">Phone <span class="h-opt">optional</span></label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+          <button class="btn btn-primary h-submit" type="submit">Send enquiry <span aria-hidden="true">→</span></button>
+          <p class="h-note">Usually replied to within 24 hours.</p>
+        </form>
       </div>
     </section>
+
   </main>
 
-  <!-- ======== FOOTER ======== -->
-  <!-- ======== TRUSTED BY / POWERED BY ======== -->
-  <section class="powerstrip" aria-label="Trusted by and powered by">
+  <footer class="site-footer shell-footer">
     <div class="container">
-      <div class="ps-row">
-        <span class="ps-label">Trusted by growing businesses</span>
-        <div class="ps-items">
-          <span class="ps-chip"><b>ATB</b> Premier Travel</span>
-          <span class="ps-chip"><b>HEAT ON</b> 24/7</span>
-          <span class="ps-chip"><b>Billy</b>RackPilot</span>
-          <span class="ps-chip ps-chip--soft">+ businesses across the UK &amp; worldwide</span>
+      <div class="sf-grid">
+        <div class="sf-brand">
+          <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="/assets/logo-billy-dark.png" alt="Billy Digitals" width="953" height="231" loading="lazy"></a>
+          <p>A UK web design and development studio building fast, modern websites for businesses that want more enquiries.</p>
+          <a class="sf-enquire" href="#contact">Start an enquiry <span aria-hidden="true">→</span></a>
         </div>
-      </div>
-      <div class="ps-div" aria-hidden="true"></div>
-      <div class="ps-row">
-        <span class="ps-label">Powered by industry-leading tech</span>
-        <div class="ps-items">
-          <span class="ps-tech" title="Global CDN, security & instant delivery">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 15.5a3.5 3.5 0 0 0-.4-6.98A5 5 0 0 0 6.6 9.6 4 4 0 0 0 7 17.5h9.5Z"/></svg>Cloudflare</span>
-          <span class="ps-tech" title="Real-time 3D on the web">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7Zm0 2.3 6.5 3.6L12 11.5 5.5 7.9Z"/></svg>WebGL · Three.js</span>
-          <span class="ps-tech" title="Cinematic scroll & motion">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg>GSAP Motion</span>
-          <span class="ps-tech" title="Google Business Profile & Ads">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Google</span>
-          <span class="ps-tech" title="Fast, reliable email delivery">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3Z"/><path d="m3 7 9 6 9-6"/></svg>Resend Mail</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <a class="logo" href="#home" aria-label="Billy Digitals home"><img class="logo-full" src="assets/logo-billy-dark.png" alt="Billy Digitals — Web Design &amp; App Development" height="68"></a>
-        <p>The web development agency for brands that refuse to blend in. Designed with obsession, built to perform.</p>
-        <div class="socials" aria-label="Follow Billy Digitals">
+        <nav aria-label="Footer — services">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#services">What we do</a></li>
+            <li><a href="/seo-services">SEO &amp; growth</a></li>
+            <li><a href="/web-app-development">Web apps</a></li>
+            <li><a href="/website-hosting">Hosting</a></li>
+            <li><a href="/pricing">Pricing &amp; plans</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Footer — studio">
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="#work">Work</a></li>
+            <li><a href="/portfolio">All projects</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a data-email-link data-email-text href="mailto:hello@billydigitals.com">hello@billydigitals.com</a></li>
+            <li><a data-wa-link href="https://wa.me/447519022117" target="_blank" rel="noopener">WhatsApp</a></li>
+            <li><a href="#contact">Enquire</a></li>
+          </ul>
+          <div class="socials" aria-label="Follow Billy Digitals">
           <a href="https://www.instagram.com/billydigitals" target="_blank" rel="noopener" aria-label="Instagram">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.846-10.405a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
           </a>
@@ -1462,71 +482,39 @@
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
         </div>
+        </div>
       </div>
-      <nav aria-label="Footer — explore">
-        <h4>Explore</h4>
+      <details class="sf-more">
+        <summary>Areas and industries we cover</summary>
         <ul>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#templates">Our Work</a></li>
-          <li><a href="#process">Process</a></li>
-          <li><a href="#plans">Plans</a></li>
-          <li><a href="#hosting">Hosting</a></li>
-          <li><a href="#care">Care Plans</a></li>
-          <li><a href="#apps">Our Apps</a></li>
+          <li><a href="/web-design-manchester">Web design Manchester</a></li>
+          <li><a href="/web-design-manchester-city-centre">Web design Manchester City Centre</a></li>
+          <li><a href="/web-design-stockport">Web design Stockport</a></li>
+          <li><a href="/web-design-cheadle">Web design Cheadle</a></li>
+          <li><a href="/web-design-heald-green">Web design Heald Green</a></li>
+          <li><a href="/web-design-gatley">Web design Gatley</a></li>
+          <li><a href="/web-design-altrincham">Web design Altrincham</a></li>
+          <li><a href="/web-design-wythenshawe">Web design Wythenshawe</a></li>
+          <li><a href="/web-design-hulme">Web design Hulme</a></li>
+          <li><a href="/web-design-rusholme">Web design Rusholme</a></li>
+          <li><a href="/web-design-levenshulme">Web design Levenshulme</a></li>
+          <li><a href="/web-design-longsight">Web design Longsight</a></li>
+          <li><a href="/web-design-liverpool">Web design Liverpool</a></li>
+          <li><a href="/small-business-web-design">Small business websites</a></li>
+          <li><a href="/ecommerce-website-design">E-commerce websites</a></li>
+          <li><a href="/website-redesign">Website redesign</a></li>
+          <li><a href="/restaurant-website-design">Restaurant websites</a></li>
+          <li><a href="/dentist-website-design">Dentist websites</a></li>
+          <li><a href="/plumber-website-design">Plumber websites</a></li>
+          <li><a href="/gym-website-design">Gym websites</a></li>
+          <li><a href="/virtual-tour-360">360° virtual tours</a></li>
           <li><a href="/blog">Blog</a></li>
         </ul>
-      </nav>
-      <nav aria-label="Footer — services">
-        <h4>Services</h4>
-        <ul>
-          <li><a href="/small-business-web-design">Small Business Web Design</a></li>
-          <li><a href="/ecommerce-website-design">E-commerce Websites</a></li>
-          <li><a href="/web-app-development">Web App Development</a></li>
-          <li><a href="/virtual-tour-360">360° Virtual Tours</a></li>
-          <li><a href="/seo-services">SEO Services</a></li>
-          <li><a href="/website-hosting">Website Hosting</a></li>
-          <li><a href="/website-redesign">Website Redesign</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Footer — where we work">
-        <h4>Where We Work</h4>
-        <ul>
-          <li><a href="#contact"><strong>UK-wide &amp; worldwide</strong> — fully online</a></li>
-          <li><a href="/web-design-manchester">Web Design Manchester</a></li>
-          <li><a href="/web-design-manchester-city-centre">Web Design Manchester City Centre</a></li>
-          <li><a href="/web-design-stockport">Web Design Stockport</a></li>
-          <li><a href="/web-design-cheadle">Web Design Cheadle</a></li>
-          <li><a href="/web-design-heald-green">Web Design Heald Green</a></li>
-          <li><a href="/web-design-gatley">Web Design Gatley</a></li>
-          <li><a href="/web-design-altrincham">Web Design Altrincham</a></li>
-          <li><a href="/web-design-wythenshawe">Web Design Wythenshawe</a></li>
-          <li><a href="/web-design-hulme">Web Design Hulme</a></li>
-          <li><a href="/web-design-rusholme">Web Design Rusholme</a></li>
-          <li><a href="/web-design-levenshulme">Web Design Levenshulme</a></li>
-          <li><a href="/web-design-longsight">Web Design Longsight</a></li>
-          <li><a href="/web-design-liverpool">Web Design Liverpool</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Footer — industries">
-        <h4>Industries</h4>
-        <ul>
-          <li><a href="/restaurant-website-design">Restaurant Websites</a></li>
-          <li><a href="/dentist-website-design">Dentist Websites</a></li>
-          <li><a href="/plumber-website-design">Plumber Websites</a></li>
-          <li><a href="/gym-website-design">Gym Websites</a></li>
-        </ul>
-      </nav>
-      <div>
-        <h4>Contact</h4>
-        <ul>
-          <li><a data-email-link data-email-text href="#">—</a></li>
-          <li><a data-wa-link href="#" target="_blank" rel="noopener">WhatsApp us</a></li>
-        </ul>
+      </details>
+      <div class="footer-bottom">
+        <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
+        <p>Founded by <strong>Bilawal Ali</strong>.</p>
       </div>
-    </div>
-    <div class="container footer-bottom">
-      <p>© <span id="year"></span> Billy Digitals. All rights reserved.</p>
-      <p>Founded &amp; crafted with obsession by <strong>Bilawal Ali</strong>.</p>
     </div>
   </footer>
 
@@ -1567,15 +555,17 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="templates/vendor/lenis.min.js" defer></script>
+  <script>
+    /* Gentle fade-in as sections arrive. Content is visible without JS, and anything already on screen shows at once. */
+    (function () {
+      if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.classList.add('fx-on');
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
+      document.querySelectorAll('.fx').forEach(function (el) { io.observe(el); });
+    })();
+  </script>
   <script src="assets/js/main.js" defer></script>
-  <script src="assets/js/three-d.js" defer></script>
-  <script src="assets/js/carousel3d.js" defer></script>
-  <script src="assets/js/template-experience.js" defer></script>
-  <script src="assets/js/particles.js" defer></script>
-  <script src="assets/js/dala-hero.js" defer></script>
-  <script src="assets/js/welcome-type.js" defer></script>
-  <script src="assets/js/scroll-fx.js" defer></script>
-  <script src="assets/js/wow.js" defer></script>
 </body>
 </html>
