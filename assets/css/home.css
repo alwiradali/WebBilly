@@ -285,3 +285,10 @@ body { background: #060b1a; color: var(--h-body); font-family: var(--h-sans); }
   .h-svc, .h-svc:hover { transform: none; box-shadow: none; }
   .h-svcs, .h-steps { padding-bottom: 12px; align-items: stretch; }
 }
+
+/* A hairline between sections (the pricing band draws its own), and tighter spacing on phones */
+.h-section + .h-section:not(.h-price) { border-top: 1px solid var(--h-line); }
+@media (max-width: 720px) {
+  :root { --h-space: 60px; }
+  .h-svcs-dots, .h-steps-dots, .h-reviews-dots { margin-top: 16px; }
+}
