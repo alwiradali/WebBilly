@@ -206,34 +206,50 @@
 
     <!-- ======== WHAT WE DO ======== -->
     <section class="h-section h-alt" id="services">
-      <div class="container h-split">
+      <div class="container">
         <div class="h-head fx">
           <p class="h-eyebrow">What we do</p>
           <h2>Everything your website needs, in one place.</h2>
           <p class="h-sub">One team from first call to launch and beyond. Hosting, care plans and add-ons are all on the <a class="h-inline" href="/pricing">pricing page</a>.</p>
         </div>
-        <ul class="h-services">
-          <li class="fx">
+        <div class="h-svcs" aria-label="Our services, swipe to see more">
+          <a class="h-svc fx" href="/small-business-web-design">
+            <span class="h-svc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 21h8M12 17v4M7 8h6M7 11h10"/></svg></span>
+            <span class="h-svc-n" aria-hidden="true">01</span>
             <h3>Web Design</h3>
-            <p>Beautiful, conversion-focused websites designed around your business. <a class="h-link" href="/small-business-web-design">Learn more <span aria-hidden="true">→</span></a></p>
-          </li>
-          <li class="fx">
+            <p>Beautiful, conversion-focused websites designed around your business.</p>
+            <span class="h-svc-more">Learn more <span aria-hidden="true">→</span></span>
+          </a>
+          <a class="h-svc fx" href="/web-app-development">
+            <span class="h-svc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></svg></span>
+            <span class="h-svc-n" aria-hidden="true">02</span>
             <h3>Web Development</h3>
-            <p>Fast, responsive websites, web apps and custom functionality. <a class="h-link" href="/web-app-development">Learn more <span aria-hidden="true">→</span></a></p>
-          </li>
-          <li class="fx">
+            <p>Fast, responsive websites, web apps and custom functionality.</p>
+            <span class="h-svc-more">Learn more <span aria-hidden="true">→</span></span>
+          </a>
+          <a class="h-svc fx" href="/seo-services">
+            <span class="h-svc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 13l2-2 2 1.5 3-3.5"/></svg></span>
+            <span class="h-svc-n" aria-hidden="true">03</span>
             <h3>SEO &amp; Growth</h3>
-            <p>Helping your website get found and generate more enquiries. <a class="h-link" href="/seo-services">Learn more <span aria-hidden="true">→</span></a></p>
-          </li>
-          <li class="fx">
+            <p>Helping your website get found and generate more enquiries.</p>
+            <span class="h-svc-more">Learn more <span aria-hidden="true">→</span></span>
+          </a>
+          <a class="h-svc fx" href="/enquire">
+            <span class="h-svc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 22 9.7C22 5.9 17.5 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg></span>
+            <span class="h-svc-n" aria-hidden="true">04</span>
             <h3>Brand &amp; UX</h3>
             <p>Branding, user experience and visual systems that make your business look professional.</p>
-          </li>
-          <li class="fx">
+            <span class="h-svc-more">Ask us about it <span aria-hidden="true">→</span></span>
+          </a>
+          <a class="h-svc fx" href="/web-app-development">
+            <span class="h-svc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg></span>
+            <span class="h-svc-n" aria-hidden="true">05</span>
             <h3>Digital Solutions</h3>
-            <p>Booking systems, AI, automation, portals and custom tools. <a class="h-link" href="/web-app-development">Learn more <span aria-hidden="true">→</span></a></p>
-          </li>
-        </ul>
+            <p>Booking systems, AI, automation, portals and custom tools.</p>
+            <span class="h-svc-more">Learn more <span aria-hidden="true">→</span></span>
+          </a>
+        </div>
+        <div class="h-svcs-dots" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -520,6 +536,18 @@
     (function () {
       var rail = document.querySelector('.h-steps'), dots = document.querySelector('.h-steps-dots');
       if (!rail || !dots) return;
+      var items = rail.children;
+      for (var i = 0; i < items.length; i++) { var d = document.createElement('span'); if (!i) d.className = 'on'; dots.appendChild(d); }
+      rail.addEventListener('scroll', function () {
+        var w = items[0].getBoundingClientRect().width + 16, k = Math.round(rail.scrollLeft / w);
+        [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
+      }, { passive: true });
+    })();
+  </script>
+  <script>
+    /* Services: dots for the phone swipe rail */
+    (function () {
+      var rail = document.querySelector('.h-svcs'), dots = document.querySelector('.h-svcs-dots'); if (!rail || !dots) return;
       var items = rail.children;
       for (var i = 0; i < items.length; i++) { var d = document.createElement('span'); if (!i) d.className = 'on'; dots.appendChild(d); }
       rail.addEventListener('scroll', function () {
