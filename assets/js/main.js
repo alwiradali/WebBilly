@@ -139,20 +139,7 @@ function initHeader() {
   const links = document.getElementById("navLinks");
 
   if (!header) return;
-  // Hides while scrolling down, comes back the moment you scroll up (never while the menu is open)
-  // Phones scroll in tiny steps, so this measures from where the current direction began.
-  let lastY = window.scrollY, turnY = lastY, dir = 0;
-  const onScroll = () => {
-    const y = window.scrollY;
-    header.classList.toggle("scrolled", y > 10);
-    const d = y > lastY ? 1 : y < lastY ? -1 : 0;
-    if (d && d !== dir) { dir = d; turnY = lastY; }
-    lastY = y;
-    const menuOpen = links && links.classList.contains("open");
-    if (y <= 140 || menuOpen) { header.classList.remove("hide-nav"); return; }
-    if (dir === 1 && y - turnY > 24) header.classList.add("hide-nav");
-    else if (dir === -1 && turnY - y > 6) header.classList.remove("hide-nav");
-  };
+  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
