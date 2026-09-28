@@ -109,7 +109,7 @@ body { background: #060b1a; color: var(--h-body); font-family: var(--h-sans); }
 .h-svc-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: #fff;
   background: linear-gradient(135deg, #1d6ff5, #0ea5e9 55%, #22d3ee); box-shadow: 0 10px 26px rgba(14, 165, 233, 0.35); margin-bottom: 8px; }
 .h-svc-ic svg { width: 26px; height: 26px; }
-.h-svc-n { position: absolute; top: 26px; right: 28px; font-family: var(--h-serif); font-style: italic; font-size: 1.1rem; color: rgba(147, 164, 196, 0.6); }
+.h-svc-n { position: absolute; top: 26px; right: 28px; font-family: var(--h-serif); font-style: italic; font-size: 1.1rem; color: rgba(147, 164, 196, 0.85); }
 .h-svc h3 { font-family: var(--h-sans); font-size: 1.25rem; font-weight: 600; color: var(--h-ink); letter-spacing: -0.01em; }
 .h-svc p { color: var(--h-muted); line-height: 1.65; font-size: 0.98rem; flex: 1; }
 .h-svc-more { margin-top: 8px; color: #38bdf8; font-weight: 600; font-size: 0.92rem; }
