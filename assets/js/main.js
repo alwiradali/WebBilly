@@ -668,8 +668,8 @@ function initChat() {
     setTimeout(function tryOpen() {
       // On a phone the open panel covers most of the screen, so it waits to be tapped.
       if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) return;
-      // The homepage leads with its enquiry form; an open chat panel would sit on top of it.
-      if (document.querySelector(".h-form")) return;
+      // The homepage and the enquiry page lead with their own call to action; an open chat panel would sit on top of it.
+      if (document.querySelector(".h-form, .h-hero")) return;
       // Wait until the visitor has scrolled past the first screen, so it never covers the headline.
       if (window.scrollY < window.innerHeight * 0.9) { setTimeout(tryOpen, 1500); return; }
       if (!autoOpened && !engaged && !chat.classList.contains("open")) {
