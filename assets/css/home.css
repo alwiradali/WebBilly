@@ -103,7 +103,8 @@ body { background: #060b1a; color: var(--h-body); font-family: var(--h-sans); }
 .h-svc:nth-child(4), .h-svc:nth-child(5) { grid-column: span 3; }
 .h-svc::after { content: ""; position: absolute; width: 220px; height: 220px; right: -90px; top: -90px; border-radius: 50%;
   background: radial-gradient(circle, rgba(56, 189, 248, 0.16), transparent 70%); pointer-events: none; transition: opacity .35s; opacity: .6; }
-.h-svc:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.45); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35); }
+@media (hover: hover) and (min-width: 721px) { .h-svc:hover { transform: translateY(-4px); } }
+.h-svc:hover { border-color: rgba(56, 189, 248, 0.45); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35); }
 .h-svc:hover::after { opacity: 1; }
 .h-svc:focus-visible { outline: 2px solid #38bdf8; outline-offset: 4px; }
 .h-svc-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: #fff;
@@ -277,3 +278,10 @@ body { background: #060b1a; color: var(--h-body); font-family: var(--h-sans); }
 /* original blue gradient on buttons and headline emphasis */
 .h-section .btn-primary, .h-hero .btn-primary, .h-submit { background: linear-gradient(100deg, #1d6ff5, #0ea5e9 50%, #0891b2) !important; color: #fff !important; }
 .h-hero h1 em, .h-section h2 em { background: linear-gradient(100deg, #2b7fff, #38bdf8 50%, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Swipe rails stay still: no rise-in or hover lift inside them on phones (a lifted card was clipped and jumped) */
+@media (max-width: 720px) {
+  .fx-on .h-svcs .fx, .fx-on .h-steps .fx { opacity: 1; transform: none; transition: none; }
+  .h-svc, .h-svc:hover { transform: none; box-shadow: none; }
+  .h-svcs, .h-steps { padding-bottom: 12px; align-items: stretch; }
+}
