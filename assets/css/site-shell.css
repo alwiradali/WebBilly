@@ -152,3 +152,12 @@ html body .site-header { transition: top .35s cubic-bezier(.2,.7,.2,1), backgrou
 html body .site-header.hide-nav,
 html body .site-header.subpage.hide-nav { top: -140px; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { html body .site-header { transition: none; } }
+
+/* Phones: the header belongs to the top of the page and scrolls away with it (no script involved) */
+@media (max-width: 900px) {
+  html body .site-header,
+  html body .site-header.subpage,
+  html body .site-header.scrolled,
+  html body .site-header.subpage.scrolled,
+  html body .site-header.hide-nav { position: absolute; top: 12px; }
+}

@@ -58,6 +58,7 @@
     /* floating pill nav */
     .pnav{position:sticky;top:16px;z-index:60;padding:0 16px;margin-top:16px;transition:top .35s cubic-bezier(.2,.7,.2,1)}
     .pnav.hide-nav{top:-140px}
+    @media(max-width:900px){.pnav,.pnav.hide-nav{position:relative;top:0}}
     .pnav-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:28px;box-shadow:var(--sh-nav);padding:9px 14px 9px 18px}
     .brand{display:flex;align-items:center}
     .brand img{height:30px;width:auto}
