@@ -146,7 +146,9 @@ html body .site-header::before { height: 14px; bottom: auto; top: -15px; left: -
   html body .site-header:has(.nav-links.open) { background: rgba(13, 23, 51, 0.96); }
 }
 
-/* slides away while scrolling down, back on scroll up (class set in main.js) */
-.site-header { transition: translate .35s cubic-bezier(.2,.7,.2,1), background .35s ease, box-shadow .35s ease; }
-html body .site-header.hide-nav { translate: 0 calc(-100% - 24px); }
-@media (prefers-reduced-motion: reduce) { .site-header { transition: none; } }
+/* slides away while scrolling down, back on scroll up (class set in main.js).
+   Moves by "top" rather than transform/translate: plainest property, works on every phone browser. */
+html body .site-header { transition: top .35s cubic-bezier(.2,.7,.2,1), background .35s ease, box-shadow .35s ease; }
+html body .site-header.hide-nav,
+html body .site-header.subpage.hide-nav { top: -140px; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { html body .site-header { transition: none; } }
