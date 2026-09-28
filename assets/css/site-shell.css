@@ -16,6 +16,15 @@
 }
 
 /* ---------- Header ---------- */
+/* iPhone Safari draws the page behind the status bar, above the fixed header.
+   This strip, in the header's own colour, covers that gap so text never shows through. */
+.site-header::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 120px;
+  background: #fff; pointer-events: none;
+}
+/* nearly solid once scrolling, so page text never ghosts through the header */
+.site-header.scrolled,
+.site-header.subpage.scrolled { background: rgba(255, 255, 255, 0.97); }
 .site-header .nav { min-height: 76px; }
 .logo-full,
 .logo:hover .logo-full { animation: none; transform: none; filter: none; }

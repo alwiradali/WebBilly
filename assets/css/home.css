@@ -184,6 +184,9 @@ body { background: #fff; color: var(--h-body); font-family: var(--h-sans); }
   .h-actions { margin-top: 30px; gap: 12px; }
   .h-hero .h-actions .btn { width: 100%; justify-content: center; }
   .h-hero-visual { display: none; }
+  .h-hero-copy { text-align: center; }
+  .h-hero h1 { margin-inline: auto; }
+  .h-lead { margin-inline: auto; }
   .h-trust .container { padding-top: 32px; }
   .h-trust-names { gap: 10px 26px; }
   .h-trust-names li { font-size: 1rem; }
