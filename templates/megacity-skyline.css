@@ -2515,3 +2515,26 @@ html.has-annc .megamenu,html.has-annc .veil,html.has-annc .searchlay{top:var(--a
 
 /* one uploaded logo, used on the dark footer too, drawn white there */
 .logo-on-dark{filter:brightness(0) invert(1)}
+
+/* Tenants: the out-of-hours emergency line, straight under the hero. Amber,
+   not the site's blues, so it reads as "urgent" at a glance; dark text on a
+   pale ground for contrast. */
+.emerg{padding:clamp(22px,4vh,40px) var(--gut) 0;background:var(--surface)}
+.emerg-in{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:16px 26px;
+  background:#FFF6E6;border:1px solid #F0C878;border-left:6px solid #C77C00;border-radius:var(--r);
+  padding:20px clamp(18px,2.4vw,30px)}
+.emerg-ic{flex:none;width:52px;height:52px;border-radius:50%;background:#C77C00;display:grid;place-items:center}
+.emerg-ic svg{width:25px;height:25px;fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round}
+.emerg-copy{flex:1 1 380px;min-width:0}
+.emerg-copy h2{margin:0 0 4px;font:700 clamp(19.5px,2vw,24px)/1.25 var(--ff-d);color:var(--navy);letter-spacing:0}
+.emerg-copy p{margin:0;font:400 16.5px/1.55 var(--ff-u);color:#2F2408}
+.emerg-copy a{color:var(--navy);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.emerg-copy .emerg-small{margin-top:6px;font-size:14.4px;color:#4E3C12}
+.emerg-ctas{display:flex;flex-wrap:wrap;gap:10px;flex:none}
+.emerg-ctas .btn{padding:14px 24px}
+.emerg-ctas .btn:not(.btn--fill){border-color:var(--navy);color:var(--navy)}
+.emerg-ctas .btn{white-space:nowrap}
+@media (max-width:640px){
+  .emerg-ctas{width:100%;flex-direction:column}
+  .emerg-ctas .btn{width:100%;justify-content:center;padding:15px 16px}
+}

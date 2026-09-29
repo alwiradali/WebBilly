@@ -1845,6 +1845,46 @@
      "text": "Register Your Details"
     },
     {
+     "id": "tenants-82",
+     "kind": "heading",
+     "tag": "h2",
+     "section": "Emergency repair outside office hours?",
+     "html": "Emergency repair outside office hours?",
+     "text": "Emergency repair outside office hours?"
+    },
+    {
+     "id": "tenants-83",
+     "kind": "text",
+     "tag": "p",
+     "section": "Emergency repair outside office hours?",
+     "html": "Call or WhatsApp our emergency line on <a href=\"tel:+447487695077\"><b>07487&nbsp;695077</b></a>.",
+     "text": "Call or WhatsApp our emergency line on 07487 695077 ."
+    },
+    {
+     "id": "tenants-84",
+     "kind": "text",
+     "tag": "p",
+     "section": "Emergency repair outside office hours?",
+     "html": "Smell gas? Leave the property and call <a href=\"tel:0800111999\">0800&nbsp;111&nbsp;999</a>. Power cut: <a href=\"tel:105\">105</a>. Fire, or anyone in danger: <a href=\"tel:999\">999</a>.",
+     "text": "Smell gas? Leave the property and call 0800 111 999 . Power cut: 105 . Fire, or anyone in danger: 999 ."
+    },
+    {
+     "id": "tenants-85",
+     "kind": "button",
+     "tag": "a",
+     "section": "Emergency repair outside office hours?",
+     "html": "Call 07487 695077",
+     "text": "Call 07487 695077"
+    },
+    {
+     "id": "tenants-86",
+     "kind": "button",
+     "tag": "a",
+     "section": "Emergency repair outside office hours?",
+     "html": "WhatsApp",
+     "text": "WhatsApp"
+    },
+    {
      "id": "tenants-7",
      "kind": "heading",
      "tag": "h3",
@@ -2409,8 +2449,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Answers, plainly.",
-     "html": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, WhatsApp our emergency line on <a class=\"lnk\" href=\"https://wa.me/447487695077\" target=\"_blank\" rel=\"noopener\">07487&nbsp;695077</a>. Anything that can wait, report through the maintenance portal, which takes reports at any time, so it is on the record.",
-     "text": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, WhatsApp our emergency line on 07487 695077 . Anything that can wait, report through the maintenance portal, which takes reports at any time, so it is on the record."
+     "html": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, call our emergency line on <a class=\"lnk\" href=\"tel:+447487695077\">07487&nbsp;695077</a> or <a class=\"lnk\" href=\"https://wa.me/447487695077\" target=\"_blank\" rel=\"noopener\">message it on WhatsApp</a>. Anything that can wait, report through the maintenance portal, which takes reports at any time, so it is on the record.",
+     "text": "If you smell gas, do not use switches or flames, open the windows, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, call our emergency line on 07487 695077 or message it on WhatsApp . Anything that can wait, report through the maintenance portal, which takes reports at any time, so it is on the record."
     },
     {
      "id": "tenants-76",
@@ -4728,8 +4768,8 @@
      "kind": "text",
      "tag": "p",
      "section": "Something broken? Tell us properly.",
-     "html": "<b>Outside office hours.</b> If you smell gas, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, WhatsApp our emergency line on <a class=\"lnk\" href=\"https://wa.me/447487695077\" target=\"_blank\" rel=\"noopener\">07487&nbsp;695077</a>. Anything that can wait, report through the maintenance portal, which takes reports at any time.",
-     "text": "Outside office hours. If you smell gas, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, WhatsApp our emergency line on 07487 695077 . Anything that can wait, report through the maintenance portal, which takes reports at any time."
+     "html": "<b>Outside office hours.</b> If you smell gas, leave the property and call the National Gas Emergency Service free on 0800&nbsp;111&nbsp;999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, call our emergency line on <a class=\"lnk\" href=\"tel:+447487695077\">07487&nbsp;695077</a> or <a class=\"lnk\" href=\"https://wa.me/447487695077\" target=\"_blank\" rel=\"noopener\">message it on WhatsApp</a>. Anything that can wait, report through the maintenance portal, which takes reports at any time.",
+     "text": "Outside office hours. If you smell gas, leave the property and call the National Gas Emergency Service free on 0800 111 999, day or night. For a power cut, call 105. If there is a fire, or anyone is in danger, call 999. For a leak, turn the water off at the stopcock. For any other urgent repair outside office hours, call our emergency line on 07487 695077 or message it on WhatsApp . Anything that can wait, report through the maintenance portal, which takes reports at any time."
     },
     {
      "id": "maintenance-23",

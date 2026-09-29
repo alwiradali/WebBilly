@@ -70,10 +70,18 @@ for (const f of ["megacity-renting.html", "megacity-maintenance.html"]) {
   const t = text(read(f));
   ok(/0800 111 999/.test(t) && /\b105\b/.test(t) && /\b999\b/.test(t) && /outside office hours/i.test(t), `${f.replace(/^megacity-|\.html$/g, "")}: out-of-hours emergency numbers (gas 0800 111 999, power cut 105, 999)`);
   /* Megacity's own emergency line, from its WhatsApp Business profile (28 Sep) */
-  ok(/07487 695077/.test(t) && read(f).includes('href="https://wa.me/447487695077"'), `${f.replace(/^megacity-|\.html$/g, "")}: the emergency WhatsApp line 07487 695077, linked`);
+  ok(/07487 695077/.test(t) && read(f).includes('href="https://wa.me/447487695077"') && read(f).includes('href="tel:+447487695077"'), `${f.replace(/^megacity-|\.html$/g, "")}: the emergency line 07487 695077, to call or WhatsApp`);
 }
 for (const f of ["megacity-privacy.html", "megacity-terms.html"]) {
   ok(/Last updated <time datetime="\d{4}-\d{2}-\d{2}">/.test(read(f)) && !/last updated when this website was published/.test(read(f)), `${f.replace(/^megacity-|\.html$/g, "")} carries a real "last updated" date`);
+}
+/* the Tenants page leads with the emergency line, straight under the hero */
+{
+  const h = read("megacity-renting.html");
+  const banner = h.slice(h.indexOf('<section class="emerg"'), h.indexOf("</section>", h.indexOf('<section class="emerg"')));
+  ok(h.indexOf('<section class="emerg"') > 0 && h.indexOf('<section class="emerg"') < h.indexOf('id="actions"'), "Tenants: an emergency banner sits under the hero, above everything else");
+  ok(/href="tel:\+447487695077"/.test(banner) && /href="https:\/\/wa\.me\/447487695077"/.test(banner), "  with Call and WhatsApp for 07487 695077");
+  ok(/href="tel:0800111999"/.test(banner) && /href="tel:105"/.test(banner) && /href="tel:999"/.test(banner), "  and gas, power cut and 999 as tappable numbers");
 }
 const pv = text(read("megacity-privacy.html"));
 ok(/Google Maps/.test(pv) && /one-way code/.test(pv) && /only ever used if you agree/.test(pv), "the privacy page covers Google Maps, the site's own counting, and consent-only cookies");
