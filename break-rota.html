@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Break Rota — 12 people, 4 positions</title>
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <style>
+    :root{
+      --bg:#060b1a; --card:rgba(255,255,255,.045); --border:rgba(120,180,255,.16);
+      --text:#eaf2ff; --muted:#93a4c4; --accent:#38bdf8;
+      --a:#60a5fa; --b:#f472b6; --c:#34d399;
+      --grad-btn:linear-gradient(100deg,#1d6ff5,#0ea5e9 50%,#0891b2);
+      --sans:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:
+      radial-gradient(900px 500px at 50% -10%, rgba(43,127,255,.22), transparent 60%),
+      linear-gradient(160deg,#060b1a,#0a1226);
+      color:var(--text);font-family:var(--sans);padding:24px 16px 60px}
+    .wrap{max-width:1100px;margin:0 auto}
+    h1{font-size:1.5rem;margin:0 0 4px}
+    h2{font-size:1.05rem;margin:0 0 12px}
+    p.sub{color:var(--muted);font-size:.92rem;margin:0 0 22px;line-height:1.5}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:18px}
+    .grid{display:grid;gap:14px}
+    .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (max-width:760px){.g3,.g4{grid-template-columns:1fr 1fr}}
+    @media (max-width:480px){.g3{grid-template-columns:1fr}}
+    label{display:block;font-size:.78rem;color:var(--muted);margin:0 0 5px;letter-spacing:.02em}
+    input,select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(--border);
+      background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:.9rem}
+    .group h3{margin:0 0 10px;font-size:.95rem;display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+    .group input{margin-bottom:7px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;
+      background:var(--grad-btn);color:#fff}
+    button.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:640px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    th{color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+    td.time{white-space:nowrap;font-weight:600}
+    .chip{display:inline-block;padding:3px 9px;border-radius:999px;margin:2px 3px 2px 0;font-size:.82rem;
+      border:1px solid currentColor;white-space:nowrap}
+    .ga{color:var(--a)} .gb{color:var(--b)} .gc{color:var(--c)}
+    .brk{background:rgba(255,255,255,.06)}
+    .note{font-size:.82rem;color:var(--muted);margin-top:10px;line-height:1.5}
+    .ok{color:#34d399} .bad{color:#f87171}
+    @media print{
+      body{background:#fff;color:#000;padding:0}
+      .no-print{display:none!important}
+      .card{border:1px solid #bbb;background:#fff}
+      th,td{border-color:#ccc}
+      th,.note,p.sub{color:#333}
+      .chip{border-color:#666}
+      .ga,.gb,.gc{color:#000}
+      .brk{background:#eee}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Break Rota</h1>
+  <p class="sub">12 people in 3 groups of 4. Four positions, each needing 2 people (8 working at a time).
+    One group of 4 is on break each slot, and everyone swaps to a new position every time they come back.
+    Each position always has one person from each of the two working groups.</p>
+
+  <div class="card no-print">
+    <h2>People</h2>
+    <div class="grid g3" id="groups"></div>
+  </div>
+
+  <div class="card no-print">
+    <h2>Positions &amp; timing</h2>
+    <div class="grid g4" id="positions"></div>
+    <div class="grid g4" style="margin-top:14px">
+      <div><label for="start">Start time</label><input type="time" id="start" value="09:00"></div>
+      <div><label for="slot">Slot length (minutes)</label><input type="number" id="slot" min="5" step="5" value="30"></div>
+      <div><label for="rounds">Number of slots</label>
+        <select id="rounds">
+          <option value="3">3 (everyone gets 1 break)</option>
+          <option value="6" selected>6 (everyone gets 2 breaks)</option>
+          <option value="9">9 (everyone gets 3 breaks)</option>
+          <option value="12">12 (everyone gets 4 breaks)</option>
+        </select></div>
+      <div><label for="order">Break order</label>
+        <select id="order">
+          <option value="ABC">A → B → C</option>
+          <option value="BCA">B → C → A</option>
+          <option value="CAB">C → A → B</option>
+        </select></div>
+    </div>
+    <div class="btns">
+      <button id="build">Build rota</button>
+      <button class="ghost" id="print">Print</button>
+      <button class="ghost" id="reset">Reset names</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Rota by time slot</h2>
+    <div class="scroll"><table id="rota"></table></div>
+    <div class="note" id="check"></div>
+  </div>
+
+  <div class="card">
+    <h2>Each person's day</h2>
+    <div class="scroll"><table id="people"></table></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const GROUPS = ['A','B','C'];
+  const CLS = {A:'ga',B:'gb',C:'gc'};
+  const COLOR = {A:'var(--a)',B:'var(--b)',C:'var(--c)'};
+  const DEFAULT_POS = ['Position 1','Position 2','Position 3','Position 4'];
+  const KEY = 'break-rota-v1';
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function defaults(){
+    const names = {};
+    GROUPS.forEach(g => { names[g] = [1,2,3,4].map(n => g + n); });
+    return {names, positions: DEFAULT_POS.slice(), start:'09:00', slot:30, rounds:6, order:'ABC'};
+  }
+  function load(){
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.names) return s; } catch(e){}
+    return defaults();
+  }
+  function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){} }
+
+  function renderInputs(s){
+    $('groups').innerHTML = GROUPS.map(g =>
+      '<div class="group"><h3><span class="dot" style="background:'+COLOR[g]+'"></span>Group '+g+'</h3>' +
+      s.names[g].map((n,i) => '<input data-g="'+g+'" data-i="'+i+'" value="'+esc(n)+'" aria-label="Group '+g+' person '+(i+1)+'">').join('') +
+      '</div>').join('');
+    $('positions').innerHTML = s.positions.map((p,i) =>
+      '<div><label for="pos'+i+'">Position '+(i+1)+' (2 people)</label><input id="pos'+i+'" data-p="'+i+'" value="'+esc(p)+'"></div>').join('');
+    $('start').value = s.start; $('slot').value = s.slot; $('rounds').value = s.rounds; $('order').value = s.order;
+  }
+
+  function readInputs(){
+    const s = defaults();
+    document.querySelectorAll('#groups input').forEach(el => {
+      s.names[el.dataset.g][+el.dataset.i] = el.value.trim() || (el.dataset.g + (+el.dataset.i + 1));
+    });
+    document.querySelectorAll('#positions input').forEach(el => {
+      s.positions[+el.dataset.p] = el.value.trim() || DEFAULT_POS[+el.dataset.p];
+    });
+    s.start = $('start').value || '09:00';
+    s.slot = Math.max(5, parseInt($('slot').value, 10) || 30);
+    s.rounds = parseInt($('rounds').value, 10);
+    s.order = $('order').value;
+    return s;
+  }
+
+  // Slot r: group order[r % 3] is on break, the other two work.
+  // Person k of a working group takes position (k + r + offset) % 4, so each
+  // position gets exactly one person from each working group, and a person's
+  // position moves on by one every slot, so nobody holds the same spot twice
+  // in a row.
+  function build(s){
+    const offset = {A:0, B:2, C:1};
+    const slots = [];
+    for (let r = 0; r < s.rounds; r++){
+      const off = s.order[r % 3];
+      const pos = [[],[],[],[]];
+      GROUPS.filter(g => g !== off).forEach(g => {
+        for (let k = 0; k < 4; k++) pos[(k + r + offset[g]) % 4].push({g, k});
+      });
+      slots.push({off, pos});
+    }
+    return slots;
+  }
+
+  function fmt(mins){
+    mins = ((mins % 1440) + 1440) % 1440;
+    return String(Math.floor(mins/60)).padStart(2,'0') + ':' + String(mins%60).padStart(2,'0');
+  }
+  function slotTime(s, r){
+    const [h,m] = s.start.split(':').map(Number);
+    const t = h*60 + m + r*s.slot;
+    return fmt(t) + '–' + fmt(t + s.slot);
+  }
+  const chip = (s, p) => '<span class="chip '+CLS[p.g]+'">'+esc(s.names[p.g][p.k])+'</span>';
+
+  function render(s){
+    const slots = build(s);
+
+    let h = '<thead><tr><th>Time</th>' + s.positions.map(p => '<th>'+esc(p)+'</th>').join('') + '<th>On break</th></tr></thead><tbody>';
+    slots.forEach((sl, r) => {
+      h += '<tr><td class="time">'+slotTime(s, r)+'</td>' +
+        sl.pos.map(pp => '<td>' + pp.map(p => chip(s, p)).join('') + '</td>').join('') +
+        '<td class="brk">' + [0,1,2,3].map(k => chip(s, {g: sl.off, k})).join('') + '</td></tr>';
+    });
+    $('rota').innerHTML = h + '</tbody>';
+
+    // Per-person view, plus a check that nobody repeats a position back to back.
+    let repeats = 0;
+    let ph = '<thead><tr><th>Person</th>' + slots.map((_, r) => '<th>'+slotTime(s, r)+'</th>').join('') + '</tr></thead><tbody>';
+    GROUPS.forEach(g => {
+      for (let k = 0; k < 4; k++){
+        let last = null;
+        ph += '<tr><td>'+chip(s, {g, k})+'</td>';
+        slots.forEach(sl => {
+          if (sl.off === g){ ph += '<td class="brk">Break</td>'; last = null; return; }
+          const pi = sl.pos.findIndex(pp => pp.some(p => p.g === g && p.k === k));
+          if (pi === last) repeats++;
+          last = pi;
+          ph += '<td>'+esc(s.positions[pi])+'</td>';
+        });
+        ph += '</tr>';
+      }
+    });
+    $('people').innerHTML = ph + '</tbody>';
+
+    const full = slots.every(sl => sl.pos.every(pp => pp.length === 2));
+    $('check').innerHTML =
+      (full ? '<span class="ok">✓ Every position has 2 people in every slot.</span>'
+            : '<span class="bad">✗ A position is short.</span>') + ' ' +
+      (repeats === 0 ? '<span class="ok">✓ Nobody stays on the same position two slots in a row.</span>'
+                     : '<span class="bad">✗ '+repeats+' back-to-back repeat(s).</span>') +
+      ' 8 working, 4 on break each slot.';
+  }
+
+  let state = load();
+  renderInputs(state);
+  render(state);
+
+  $('build').addEventListener('click', () => { state = readInputs(); save(state); render(state); });
+  $('print').addEventListener('click', () => window.print());
+  $('reset').addEventListener('click', () => { state = defaults(); save(state); renderInputs(state); render(state); });
+})();
+</script>
+</body>
+</html>
