@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Break Rota — 12 people, 4 positions</title>
+  <title>Break Rota — rolling loop</title>
   <link rel="icon" href="/favicon.ico?v=4" sizes="any">
   <style>
     :root{
@@ -46,7 +46,16 @@
     td.time{white-space:nowrap;font-weight:600}
     .chip{display:inline-block;padding:3px 9px;border-radius:999px;margin:2px 3px 2px 0;font-size:.82rem;
       border:1px solid currentColor;white-space:nowrap}
-    .ga{color:var(--a)} .gb{color:var(--b)} .gc{color:var(--c)}
+    .chip{color:var(--accent)}
+    .loop{font-size:.95rem;font-weight:600;margin:0 0 18px;line-height:1.7}
+    .loop span{white-space:nowrap}
+    textarea{width:100%;min-height:290px;padding:9px 11px;border-radius:9px;border:1px solid var(--border);
+      background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:.9rem;line-height:1.55;resize:vertical}
+    .st{display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:8px}
+    .moves{font-size:.8rem;color:var(--muted);line-height:1.5;white-space:nowrap}
+    .moves b{color:var(--text);font-weight:600}
+    .two{display:grid;grid-template-columns:1fr 2fr;gap:18px}
+    @media (max-width:760px){.two{grid-template-columns:1fr}}
     .brk{background:rgba(255,255,255,.06)}
     .note{font-size:.82rem;color:var(--muted);margin-top:10px;line-height:1.5}
     .ok{color:#34d399} .bad{color:#f87171}
@@ -57,7 +66,8 @@
       th,td{border-color:#ccc}
       th,.note,p.sub{color:#333}
       .chip{border-color:#666}
-      .ga,.gb,.gc{color:#000}
+      .chip{color:#000}
+      .moves{color:#333}
       .brk{background:#eee}
     }
   </style>
@@ -65,43 +75,42 @@
 <body>
 <div class="wrap">
   <h1>Break Rota</h1>
-  <p class="sub">12 people in 3 groups of 4. Four positions, each needing 2 people (8 at a time).
-    Breaks go in waves: with 3 off at a time, one person from each group goes together, so each group always
-    keeps 3 people working. Partners come from the same group: each group gives one pair, the three
-    left over make one mixed pair and the spare. Everyone moves to a new spot every slot.</p>
+  <p class="sub">A rolling loop. Every changeover, the person (or two) who has been longest at each station moves on
+    to the next one, so everyone works through every station in order and nobody skips one.</p>
+  <p class="loop" id="loop"></p>
 
   <div class="card no-print">
-    <h2>People</h2>
-    <div class="grid g3" id="groups"></div>
-  </div>
-
-  <div class="card no-print">
-    <h2>Positions &amp; timing</h2>
-    <div class="grid g4" id="positions"></div>
-    <div class="grid g4" style="margin-top:14px">
-      <div><label for="start">Start time</label><input type="time" id="start" value="09:00"></div>
-      <div><label for="slot">Break length (minutes)</label><input type="number" id="slot" min="5" step="5" value="40"></div>
-      <div><label for="size">On break at a time</label>
-        <select id="size">
-          <option value="3" selected>3 people (9 working, 1 spare)</option>
-          <option value="4">4 people, a whole group (8 working)</option>
-        </select></div>
-      <div><label for="cycles">Breaks each</label>
-        <select id="cycles">
-          <option value="1" selected>1 break each</option>
-          <option value="2">2 breaks each</option>
-          <option value="3">3 breaks each</option>
-        </select></div>
+    <div class="two">
+      <div>
+        <h2>People</h2>
+        <label for="names">One name per line, in starting order round the loop</label>
+        <textarea id="names" spellcheck="false"></textarea>
+      </div>
+      <div>
+        <h2>Stations (in loop order, break last)</h2>
+        <div id="stations"></div>
+        <div class="grid g3" style="margin-top:14px">
+          <div><label for="start">Start time</label><input type="time" id="start" value="09:00"></div>
+          <div><label for="slot">Change every (minutes)</label><input type="number" id="slot" min="5" step="5" value="20"></div>
+          <div><label for="brk">Break length (minutes)</label><input type="number" id="brk" min="5" step="5" value="40"></div>
+          <div><label for="loops">Rounds of the loop</label>
+            <select id="loops">
+              <option value="1" selected>1 round (1 break each)</option>
+              <option value="2">2 rounds (2 breaks each)</option>
+              <option value="3">3 rounds (3 breaks each)</option>
+            </select></div>
+        </div>
+      </div>
     </div>
     <div class="btns">
       <button id="build">Build rota</button>
       <button class="ghost" id="print">Print</button>
-      <button class="ghost" id="reset">Reset names</button>
+      <button class="ghost" id="reset">Reset</button>
     </div>
   </div>
 
   <div class="card">
-    <h2>Rota by time slot</h2>
+    <h2>Rota by time</h2>
     <div class="scroll"><table id="rota"></table></div>
     <div class="note" id="check"></div>
   </div>
@@ -114,115 +123,90 @@
 
 <script>
 (function(){
-  const GROUPS = ['A','B','C'];
-  const CLS = {A:'ga',B:'gb',C:'gc'};
-  const COLOR = {A:'var(--a)',B:'var(--b)',C:'var(--c)'};
-  const DEFAULT_POS = ['Position 1','Position 2','Position 3','Position 4'];
-  const SPARE = 4; // seat index for the spare, after the four positions
-  const KEY = 'break-rota-v3';
-  const DEFAULT_NAMES = {
-    A: ['Jake Snailham','Anju Kaliyadan','Stephen Curran','Georgel Oancea'],
-    B: ['Zane Mcgrann','Michal Piskorz','AJ Kennedy','Jelty Jacob'],
-    C: ['Anthony Fitzimons','Shibu Koshy','Robert Horton','Sreedith Chandrasekharan']
-  };
+  const KEY = 'break-rota-v4';
+  const DEFAULT_NAMES = ['Jake Snailham','Anju Kaliyadan','Stephen Curran','Georgel Oancea',
+    'Zane Mcgrann','Michal Piskorz','AJ Kennedy','Jelty Jacob',
+    'Anthony Fitzimons','Shibu Koshy','Robert Horton','Sreedith Chandrasekharan'];
+  const DEFAULT_STATIONS = [
+    {name:'Position 1', n:2}, {name:'Position 2', n:2}, {name:'Position 3', n:3},
+    {name:'Stillage', n:2}, {name:'Break', n:3}
+  ];
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   function defaults(){
-    const names = {};
-    GROUPS.forEach(g => { names[g] = DEFAULT_NAMES[g].slice(); });
-    return {names, positions: DEFAULT_POS.slice(), start:'09:00', slot:40, size:3, cycles:1};
+    return {names: DEFAULT_NAMES.slice(), stations: DEFAULT_STATIONS.map(x => ({...x})),
+      start:'09:00', slot:20, brk:40, loops:1};
   }
   function load(){
-    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.names) return s; } catch(e){}
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.names && s.stations) return s; } catch(e){}
     return defaults();
   }
   function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){} }
 
   function renderInputs(s){
-    $('groups').innerHTML = GROUPS.map(g =>
-      '<div class="group"><h3><span class="dot" style="background:'+COLOR[g]+'"></span>Group '+g+'</h3>' +
-      s.names[g].map((n,i) => '<input data-g="'+g+'" data-i="'+i+'" value="'+esc(n)+'" aria-label="Group '+g+' person '+(i+1)+'">').join('') +
-      '</div>').join('');
-    $('positions').innerHTML = s.positions.map((p,i) =>
-      '<div><label for="pos'+i+'">Position '+(i+1)+' (2 people)</label><input id="pos'+i+'" data-p="'+i+'" value="'+esc(p)+'"></div>').join('');
-    $('start').value = s.start; $('slot').value = s.slot; $('size').value = s.size; $('cycles').value = s.cycles;
+    $('names').value = s.names.join('\n');
+    $('stations').innerHTML = s.stations.map((st, i) =>
+      '<div class="st"><input data-s="'+i+'" value="'+esc(st.name)+'" aria-label="Station '+(i+1)+' name">' +
+      '<input type="number" min="1" data-n="'+i+'" value="'+st.n+'" aria-label="People at station '+(i+1)+'"></div>').join('');
+    $('start').value = s.start; $('slot').value = s.slot; $('brk').value = s.brk; $('loops').value = s.loops;
   }
 
   function readInputs(){
     const s = defaults();
-    document.querySelectorAll('#groups input').forEach(el => {
-      s.names[el.dataset.g][+el.dataset.i] = el.value.trim() || (el.dataset.g + (+el.dataset.i + 1));
+    s.names = $('names').value.split('\n').map(x => x.trim()).filter(Boolean);
+    document.querySelectorAll('#stations [data-s]').forEach(el => {
+      const i = +el.dataset.s;
+      s.stations[i].name = el.value.trim() || DEFAULT_STATIONS[i].name;
     });
-    document.querySelectorAll('#positions input').forEach(el => {
-      s.positions[+el.dataset.p] = el.value.trim() || DEFAULT_POS[+el.dataset.p];
+    document.querySelectorAll('#stations [data-n]').forEach(el => {
+      s.stations[+el.dataset.n].n = Math.max(1, parseInt(el.value, 10) || 1);
     });
     s.start = $('start').value || '09:00';
-    s.slot = Math.max(5, parseInt($('slot').value, 10) || 40);
-    s.size = parseInt($('size').value, 10);
-    s.cycles = parseInt($('cycles').value, 10);
+    s.slot = Math.max(5, parseInt($('slot').value, 10) || 20);
+    s.brk = Math.max(s.slot, parseInt($('brk').value, 10) || 40);
+    s.loops = parseInt($('loops').value, 10);
     return s;
   }
 
-  // Break waves. 3 at a time: person k of every group goes together (4 waves).
-  // 4 at a time: a whole group goes together (3 waves).
-  function waves(size){
-    if (size === 4) return GROUPS.map(g => [0,1,2,3].map(k => ({g, k})));
-    return [0,1,2,3].map(k => GROUPS.map(g => ({g, k})));
-  }
-
-  // Seat everyone who is working. Hard rule: nobody takes the same spot
-  // (position or spare) they had in the slot before. Soft rules, strongest
-  // first: partners come from the same group, a person gets the spot they
-  // have done least, the spare role is shared out, and partners vary within
-  // the group. Searches every seating (9 people is a few thousand) and keeps
-  // the cheapest.
+  // Everyone sits on one ring of seats laid out in loop order. Each
+  // changeover the whole ring turns by k seats, which is the same as the k
+  // longest-serving people at every station moving on to the next one. k is
+  // chosen so the break station empties exactly once per break length: 3 on
+  // break for 40 minutes with 20-minute changes gives k = 2, 1, 2, 1, ...
+  // As long as k never exceeds the smallest station, nobody skips a station.
   function build(s){
-    const all = [];
-    GROUPS.forEach(g => { for (let k = 0; k < 4; k++) all.push({g, k, id: g + k}); });
-    const ws = waves(s.size);
-    const spares = 12 - s.size - 8;
-    const cap = [2,2,2,2, spares];
-    const count = {}, last = {}, paired = {};
-    all.forEach(p => { count[p.id] = [0,0,0,0,0]; last[p.id] = -1; paired[p.id] = {}; });
-    const slots = [];
+    const total = s.stations.reduce((n, st) => n + st.n, 0);
+    if (s.names.length !== total)
+      return {error: 'The stations hold ' + total + ' people but there are ' + s.names.length + ' names.'};
+    if (s.brk % s.slot)
+      return {error: 'Break length must be a whole number of changeovers (' + s.slot + ' min each).'};
+    const perBreak = s.brk / s.slot;
+    const brkN = s.stations[s.stations.length - 1].n;
+    const shift = t => Math.floor((t + 1) * brkN / perBreak) - Math.floor(t * brkN / perBreak);
+    const smallest = Math.min(...s.stations.map(st => st.n));
+    if (Math.ceil(brkN / perBreak) > smallest)
+      return {error: 'Too many people move at once for the smallest station. Use a longer break or shorter changes.'};
 
-    for (let r = 0; r < ws.length * s.cycles; r++){
-      const off = ws[r % ws.length];
-      const offIds = new Set(off.map(p => p.g + p.k));
-      const working = all.filter(p => !offIds.has(p.id));
-      const seats = [[],[],[],[],[]];
-      const cost = (p, i) => {
-        let c = count[p.id][i] * (i === SPARE ? 30 : 10);
-        if (i < SPARE) seats[i].forEach(q => { c += (q.g === p.g ? 0 : 100) + (paired[p.id][q.id] || 0) * 4; });
-        return c + ((i + r + p.k) % 5) * 0.01; // stable tie-break that rotates
-      };
-      let best = null, bestCost = Infinity;
-      const search = (n, total) => {
-        if (total >= bestCost) return;
-        if (n === working.length){ bestCost = total; best = seats.map(ps => ps.slice()); return; }
-        const p = working[n];
-        for (let i = 0; i < 5; i++){
-          if (seats[i].length >= cap[i] || i === last[p.id]) continue;
-          const c = cost(p, i);
-          seats[i].push(p);
-          search(n + 1, total + c);
-          seats[i].pop();
-        }
-      };
-      search(0, 0);
-      if (!best) return null;
-      best.forEach((ps, i) => { seats[i] = ps; });
-      all.forEach(p => { last[p.id] = -1; });
-      seats.forEach((ps, i) => ps.forEach(p => { count[p.id][i]++; last[p.id] = i; }));
-      seats.slice(0, SPARE).forEach(([x, y]) => {
-        paired[x.id][y.id] = (paired[x.id][y.id] || 0) + 1;
-        paired[y.id][x.id] = (paired[y.id][x.id] || 0) + 1;
-      });
-      slots.push({off, seats});
+    const seatStation = [];
+    s.stations.forEach((st, i) => { for (let j = 0; j < st.n; j++) seatStation.push(i); });
+    const slotsPerLoop = total / brkN * perBreak;
+    const n = slotsPerLoop * s.loops;
+
+    // seatOf[p] = seat index of person p; person p starts in seat p.
+    let seatOf = s.names.map((_, p) => p);
+    const slots = [];
+    for (let t = 0; t < n; t++){
+      if (t > 0){ const k = shift(t - 1); seatOf = seatOf.map(x => (x + k) % total); }
+      const at = s.stations.map(() => []);
+      // Longest-serving first: the higher the seat within a station, the
+      // sooner that person moves on.
+      seatOf.map((seat, p) => ({seat, p})).sort((a, b) => b.seat - a.seat)
+        .forEach(({seat, p}) => at[seatStation[seat]].push(p));
+      slots.push({at, station: seatOf.map(x => seatStation[x])});
     }
-    return slots;
+    return {slots, slotsPerLoop};
   }
 
   function fmt(mins){
@@ -234,51 +218,66 @@
     const t = h*60 + m + r*s.slot;
     return fmt(t) + '–' + fmt(t + s.slot);
   }
-  const chip = (s, p) => '<span class="chip '+CLS[p.g]+'">'+esc(s.names[p.g][p.k])+'</span>';
+  const chip = (s, p) => '<span class="chip">'+esc(s.names[p])+'</span>';
+  // First name only where space is tight, full name on hover.
+  const short = (s, p) => '<span class="chip" title="'+esc(s.names[p])+'">'+esc(s.names[p].split(' ')[0])+'</span>';
 
   function render(s){
-    const slots = build(s);
-    if (!slots){ $('rota').innerHTML = ''; $('people').innerHTML = ''; $('check').textContent = 'Could not build a rota with these settings.'; return; }
-    const hasSpare = slots[0].seats[SPARE].length > 0;
-    const seatName = i => i === SPARE ? 'Spare' : s.positions[i];
+    $('loop').innerHTML = s.stations.map(st => '<span>'+esc(st.name)+' ('+st.n+')</span>').join(' → ') +
+      ' → <span>'+esc(s.stations[0].name)+'</span>';
+    const res = build(s);
+    if (res.error){ $('rota').innerHTML = ''; $('people').innerHTML = ''; $('check').innerHTML = '<span class="bad">'+esc(res.error)+'</span>'; return; }
+    const {slots, slotsPerLoop} = res;
+    const B = s.stations.length - 1;
 
-    let h = '<thead><tr><th>Time</th>' + s.positions.map(p => '<th>'+esc(p)+'</th>').join('') +
-      (hasSpare ? '<th>Spare</th>' : '') + '<th>On break</th></tr></thead><tbody>';
+    let h = '<thead><tr><th>Time</th>' + s.stations.map(st => '<th>'+esc(st.name)+'</th>').join('') +
+      '<th>Moving in</th></tr></thead><tbody>';
     slots.forEach((sl, r) => {
+      let moves = '';
+      if (r > 0){
+        const prev = slots[r - 1].station;
+        moves = s.stations.map((stn, i) => {
+          const who = sl.at[i].filter(p => prev[p] !== i).map(p => esc(s.names[p].split(' ')[0]));
+          return who.length ? '<b>' + esc(stn.name) + ':</b> ' + who.join(', ') : '';
+        }).filter(Boolean).join('<br>');
+      }
       h += '<tr><td class="time">'+slotTime(s, r)+'</td>' +
-        sl.seats.slice(0, hasSpare ? 5 : 4).map(ps => '<td>' + ps.map(p => chip(s, p)).join('') + '</td>').join('') +
-        '<td class="brk">' + sl.off.map(p => chip(s, p)).join('') + '</td></tr>';
+        sl.at.map((ps, i) => '<td'+(i === B ? ' class="brk"' : '')+'>' + ps.map(p => short(s, p)).join('') + '</td>').join('') +
+        '<td class="moves">'+(moves || 'Start')+'</td></tr>';
     });
     $('rota').innerHTML = h + '</tbody>';
 
-    let repeats = 0;
+    // Per person: their station each slot, and checks that the order is kept
+    // and that every break is the full length.
+    let inOrder = true, fullBreaks = true;
+    const brkSlots = s.brk / s.slot;
     let ph = '<thead><tr><th>Person</th>' + slots.map((_, r) => '<th>'+slotTime(s, r)+'</th>').join('') + '</tr></thead><tbody>';
-    GROUPS.forEach(g => {
-      for (let k = 0; k < 4; k++){
-        let last = null;
-        ph += '<tr><td>'+chip(s, {g, k})+'</td>';
-        slots.forEach(sl => {
-          const i = sl.seats.findIndex(ps => ps.some(p => p.g === g && p.k === k));
-          if (i < 0){ ph += '<td class="brk">Break</td>'; last = null; return; }
-          if (i === last) repeats++;
-          last = i;
-          ph += '<td>'+esc(seatName(i))+'</td>';
-        });
-        ph += '</tr>';
-      }
+    s.names.forEach((_, p) => {
+      ph += '<tr><td>'+chip(s, p)+'</td>';
+      let run = 0;
+      slots.forEach((sl, r) => {
+        const st = sl.station[p];
+        if (r > 0){
+          const was = slots[r - 1].station[p];
+          if (st !== was && st !== (was + 1) % s.stations.length) inOrder = false;
+        }
+        if (st === B) run++;
+        else { if (run && run !== brkSlots && r - run > 0) fullBreaks = false; run = 0; }
+        ph += '<td'+(st === B ? ' class="brk"' : '')+'>'+esc(s.stations[st].name)+'</td>';
+      });
+      ph += '</tr>';
     });
     $('people').innerHTML = ph + '</tbody>';
 
-    const full = slots.every(sl => sl.seats.slice(0, 4).every(ps => ps.length === 2));
-    const pairs = slots.length * 4;
-    const same = slots.reduce((n, sl) => n + sl.seats.slice(0, 4).filter(ps => ps[0].g === ps[1].g).length, 0);
+    const mins = slotsPerLoop * s.slot;
     $('check').innerHTML =
-      (full ? '<span class="ok">✓ Every position has 2 people in every slot.</span>'
-            : '<span class="bad">✗ A position is short.</span>') + ' ' +
-      (repeats === 0 ? '<span class="ok">✓ Nobody stays in the same spot two slots in a row.</span>'
-                     : '<span class="bad">✗ '+repeats+' back-to-back repeat(s).</span>') +
-      ' ' + same + ' of ' + pairs + ' pairs are from the same group.' +
-      ' ' + (12 - s.size) + ' working, ' + s.size + ' on break each slot.';
+      (inOrder ? '<span class="ok">✓ Everyone goes round in order and never skips a station.</span>'
+               : '<span class="bad">✗ Someone skips a station.</span>') + ' ' +
+      (fullBreaks ? '<span class="ok">✓ Every break is '+s.brk+' minutes.</span>'
+                  : '<span class="bad">✗ Some breaks are cut short.</span>') +
+      ' One round of the loop takes ' + Math.floor(mins/60) + 'h' + String(mins%60).padStart(2,'0') + '.' +
+      ' Because the loop is already turning at the start, anyone on break at the very start or end gets' +
+      ' the rest of that break at the other end of the rota.';
   }
 
   let state = load();
