@@ -65,9 +65,9 @@
 <body>
 <div class="wrap">
   <h1>Break Rota</h1>
-  <p class="sub">12 people in 3 groups of 4. Four positions, each needing 2 people (8 working at a time).
-    One group of 4 is on break each slot, and everyone swaps to a new position every time they come back.
-    Each position always has one person from each of the two working groups.</p>
+  <p class="sub">12 people in 3 groups of 4. Four positions, each needing 2 people (8 at a time).
+    Breaks go in waves: with 3 off at a time, one person from each group goes together, so each group always
+    keeps 3 people working and the 9th working person is a spare. Everyone moves to a new spot every slot.</p>
 
   <div class="card no-print">
     <h2>People</h2>
@@ -79,19 +79,17 @@
     <div class="grid g4" id="positions"></div>
     <div class="grid g4" style="margin-top:14px">
       <div><label for="start">Start time</label><input type="time" id="start" value="09:00"></div>
-      <div><label for="slot">Slot length (minutes)</label><input type="number" id="slot" min="5" step="5" value="30"></div>
-      <div><label for="rounds">Number of slots</label>
-        <select id="rounds">
-          <option value="3">3 (everyone gets 1 break)</option>
-          <option value="6" selected>6 (everyone gets 2 breaks)</option>
-          <option value="9">9 (everyone gets 3 breaks)</option>
-          <option value="12">12 (everyone gets 4 breaks)</option>
+      <div><label for="slot">Break length (minutes)</label><input type="number" id="slot" min="5" step="5" value="40"></div>
+      <div><label for="size">On break at a time</label>
+        <select id="size">
+          <option value="3" selected>3 people (9 working, 1 spare)</option>
+          <option value="4">4 people, a whole group (8 working)</option>
         </select></div>
-      <div><label for="order">Break order</label>
-        <select id="order">
-          <option value="ABC">A → B → C</option>
-          <option value="BCA">B → C → A</option>
-          <option value="CAB">C → A → B</option>
+      <div><label for="cycles">Breaks each</label>
+        <select id="cycles">
+          <option value="1" selected>1 break each</option>
+          <option value="2">2 breaks each</option>
+          <option value="3">3 breaks each</option>
         </select></div>
     </div>
     <div class="btns">
@@ -119,21 +117,21 @@
   const CLS = {A:'ga',B:'gb',C:'gc'};
   const COLOR = {A:'var(--a)',B:'var(--b)',C:'var(--c)'};
   const DEFAULT_POS = ['Position 1','Position 2','Position 3','Position 4'];
-  const KEY = 'break-rota-v2';
-
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
+  const SPARE = 4; // seat index for the spare, after the four positions
+  const KEY = 'break-rota-v3';
   const DEFAULT_NAMES = {
     A: ['Jake Snailham','Anju Kaliyadan','Stephen Curran','Georgel Oancea'],
     B: ['Zane Mcgrann','Michal Piskorz','AJ Kennedy','Jelty Jacob'],
     C: ['Anthony Fitzimons','Shibu Koshy','Robert Horton','Sreedith Chandrasekharan']
   };
 
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
   function defaults(){
     const names = {};
     GROUPS.forEach(g => { names[g] = DEFAULT_NAMES[g].slice(); });
-    return {names, positions: DEFAULT_POS.slice(), start:'09:00', slot:30, rounds:6, order:'ABC'};
+    return {names, positions: DEFAULT_POS.slice(), start:'09:00', slot:40, size:3, cycles:1};
   }
   function load(){
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.names) return s; } catch(e){}
@@ -148,7 +146,7 @@
       '</div>').join('');
     $('positions').innerHTML = s.positions.map((p,i) =>
       '<div><label for="pos'+i+'">Position '+(i+1)+' (2 people)</label><input id="pos'+i+'" data-p="'+i+'" value="'+esc(p)+'"></div>').join('');
-    $('start').value = s.start; $('slot').value = s.slot; $('rounds').value = s.rounds; $('order').value = s.order;
+    $('start').value = s.start; $('slot').value = s.slot; $('size').value = s.size; $('cycles').value = s.cycles;
   }
 
   function readInputs(){
@@ -160,27 +158,64 @@
       s.positions[+el.dataset.p] = el.value.trim() || DEFAULT_POS[+el.dataset.p];
     });
     s.start = $('start').value || '09:00';
-    s.slot = Math.max(5, parseInt($('slot').value, 10) || 30);
-    s.rounds = parseInt($('rounds').value, 10);
-    s.order = $('order').value;
+    s.slot = Math.max(5, parseInt($('slot').value, 10) || 40);
+    s.size = parseInt($('size').value, 10);
+    s.cycles = parseInt($('cycles').value, 10);
     return s;
   }
 
-  // Slot r: group order[r % 3] is on break, the other two work.
-  // Person k of a working group takes position (k + r + offset) % 4, so each
-  // position gets exactly one person from each working group, and a person's
-  // position moves on by one every slot, so nobody holds the same spot twice
-  // in a row.
+  // Break waves. 3 at a time: person k of every group goes together (4 waves).
+  // 4 at a time: a whole group goes together (3 waves).
+  function waves(size){
+    if (size === 4) return GROUPS.map(g => [0,1,2,3].map(k => ({g, k})));
+    return [0,1,2,3].map(k => GROUPS.map(g => ({g, k})));
+  }
+
+  // Seat everyone who is working. Hard rule: nobody takes the same spot
+  // (position or spare) they had in the slot before. Soft rules: prefer the
+  // spot a person has done least, don't pair two people from the same group,
+  // mix up partners, and share the spare role out evenly. Small backtracking
+  // search.
   function build(s){
-    const offset = {A:0, B:2, C:1};
+    const all = [];
+    GROUPS.forEach(g => { for (let k = 0; k < 4; k++) all.push({g, k, id: g + k}); });
+    const ws = waves(s.size);
+    const spares = 12 - s.size - 8;
+    const cap = [2,2,2,2, spares];
+    const count = {}, last = {}, paired = {};
+    all.forEach(p => { count[p.id] = [0,0,0,0,0]; last[p.id] = -1; paired[p.id] = {}; });
     const slots = [];
-    for (let r = 0; r < s.rounds; r++){
-      const off = s.order[r % 3];
-      const pos = [[],[],[],[]];
-      GROUPS.filter(g => g !== off).forEach(g => {
-        for (let k = 0; k < 4; k++) pos[(k + r + offset[g]) % 4].push({g, k});
+
+    for (let r = 0; r < ws.length * s.cycles; r++){
+      const off = ws[r % ws.length];
+      const offIds = new Set(off.map(p => p.g + p.k));
+      const working = all.filter(p => !offIds.has(p.id));
+      const seats = [[],[],[],[],[]];
+      const cost = (p, i) => {
+        let c = count[p.id][i] * (i === SPARE ? 30 : 10);
+        if (i < SPARE) seats[i].forEach(q => { c += (q.g === p.g ? 3 : 0) + (paired[p.id][q.id] || 0) * 4; });
+        return c + ((i + r + p.k) % 5) * 0.01; // stable tie-break that rotates
+      };
+      const place = n => {
+        if (n === working.length) return true;
+        const p = working[n];
+        const opts = [0,1,2,3,4].filter(i => seats[i].length < cap[i] && i !== last[p.id])
+          .sort((x, y) => cost(p, x) - cost(p, y));
+        for (const i of opts){
+          seats[i].push(p);
+          if (place(n + 1)) return true;
+          seats[i].pop();
+        }
+        return false;
+      };
+      if (!place(0)) return null;
+      all.forEach(p => { last[p.id] = -1; });
+      seats.forEach((ps, i) => ps.forEach(p => { count[p.id][i]++; last[p.id] = i; }));
+      seats.slice(0, SPARE).forEach(([x, y]) => {
+        paired[x.id][y.id] = (paired[x.id][y.id] || 0) + 1;
+        paired[y.id][x.id] = (paired[y.id][x.id] || 0) + 1;
       });
-      slots.push({off, pos});
+      slots.push({off, seats});
     }
     return slots;
   }
@@ -198,16 +233,19 @@
 
   function render(s){
     const slots = build(s);
+    if (!slots){ $('rota').innerHTML = ''; $('people').innerHTML = ''; $('check').textContent = 'Could not build a rota with these settings.'; return; }
+    const hasSpare = slots[0].seats[SPARE].length > 0;
+    const seatName = i => i === SPARE ? 'Spare' : s.positions[i];
 
-    let h = '<thead><tr><th>Time</th>' + s.positions.map(p => '<th>'+esc(p)+'</th>').join('') + '<th>On break</th></tr></thead><tbody>';
+    let h = '<thead><tr><th>Time</th>' + s.positions.map(p => '<th>'+esc(p)+'</th>').join('') +
+      (hasSpare ? '<th>Spare</th>' : '') + '<th>On break</th></tr></thead><tbody>';
     slots.forEach((sl, r) => {
       h += '<tr><td class="time">'+slotTime(s, r)+'</td>' +
-        sl.pos.map(pp => '<td>' + pp.map(p => chip(s, p)).join('') + '</td>').join('') +
-        '<td class="brk">' + [0,1,2,3].map(k => chip(s, {g: sl.off, k})).join('') + '</td></tr>';
+        sl.seats.slice(0, hasSpare ? 5 : 4).map(ps => '<td>' + ps.map(p => chip(s, p)).join('') + '</td>').join('') +
+        '<td class="brk">' + sl.off.map(p => chip(s, p)).join('') + '</td></tr>';
     });
     $('rota').innerHTML = h + '</tbody>';
 
-    // Per-person view, plus a check that nobody repeats a position back to back.
     let repeats = 0;
     let ph = '<thead><tr><th>Person</th>' + slots.map((_, r) => '<th>'+slotTime(s, r)+'</th>').join('') + '</tr></thead><tbody>';
     GROUPS.forEach(g => {
@@ -215,24 +253,24 @@
         let last = null;
         ph += '<tr><td>'+chip(s, {g, k})+'</td>';
         slots.forEach(sl => {
-          if (sl.off === g){ ph += '<td class="brk">Break</td>'; last = null; return; }
-          const pi = sl.pos.findIndex(pp => pp.some(p => p.g === g && p.k === k));
-          if (pi === last) repeats++;
-          last = pi;
-          ph += '<td>'+esc(s.positions[pi])+'</td>';
+          const i = sl.seats.findIndex(ps => ps.some(p => p.g === g && p.k === k));
+          if (i < 0){ ph += '<td class="brk">Break</td>'; last = null; return; }
+          if (i === last) repeats++;
+          last = i;
+          ph += '<td>'+esc(seatName(i))+'</td>';
         });
         ph += '</tr>';
       }
     });
     $('people').innerHTML = ph + '</tbody>';
 
-    const full = slots.every(sl => sl.pos.every(pp => pp.length === 2));
+    const full = slots.every(sl => sl.seats.slice(0, 4).every(ps => ps.length === 2));
     $('check').innerHTML =
       (full ? '<span class="ok">✓ Every position has 2 people in every slot.</span>'
             : '<span class="bad">✗ A position is short.</span>') + ' ' +
-      (repeats === 0 ? '<span class="ok">✓ Nobody stays on the same position two slots in a row.</span>'
+      (repeats === 0 ? '<span class="ok">✓ Nobody stays in the same spot two slots in a row.</span>'
                      : '<span class="bad">✗ '+repeats+' back-to-back repeat(s).</span>') +
-      ' 8 working, 4 on break each slot.';
+      ' ' + (12 - s.size) + ' working, ' + s.size + ' on break each slot.';
   }
 
   let state = load();
