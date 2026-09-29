@@ -31,7 +31,7 @@
  * None of that protects a property Walid genuinely let. It is meant not to.
  */
 
-import { toListings, fetchProperties, fetchPropertyTypes, feedMediaKey } from "./tenninety.js";
+import { toListings, fetchProperties, fetchPropertyTypes, feedMediaKey, imageShape } from "./tenninety.js";
 import { uid, nowIso, parseJson, getSetting, setSetting, sha256Hex } from "./db.js";
 
 /* Above this fraction of existing listings disappearing at once, refuse to act
@@ -210,6 +210,9 @@ const COLS = [
    the real address in source_url. See migrations/megacity/0006. */
 function mediaStatements(db, row, now) {
   const out = [];
+  /* the feed sent no photographs for a property that has some: keep them
+     (runSync decides this; see keepPhotosWhenFeedHasNone) */
+  if (row._keepPhotos) return { statements: out, coverId: null, keep: true };
   /* Replace rather than merge: the feed is the whole truth about which
      photographs a property has, and in what order. A photo Walid deleted in
      10ninety must not survive here because it was here first. */
@@ -229,7 +232,7 @@ function mediaStatements(db, row, now) {
 }
 
 function upsertStatements(db, row, now, isNew) {
-  const { statements: media, coverId } = mediaStatements(db, row, now);
+  const { statements: media, coverId, keep } = mediaStatements(db, row, now);
   const names = COLS.map(([n]) => n);
   const values = COLS.map(([, get]) => {
     const v = get(row);
@@ -243,7 +246,14 @@ function upsertStatements(db, row, now, isNew) {
         .bind(row.id, ...values, coverId, now, now, now, row.status === "live" ? now : null)
     /* An update leaves created_at, published_at and everything the website
        owns alone — including a cover a person chose, unless there was none. */
-    : db.prepare(
+    : keep
+      /* photographs kept: the cover stays exactly as it is */
+      ? db.prepare(
+        `UPDATE listings SET ${names.map((n, i) => n + "=?" + (i + 2)).join(", ")},
+           synced_at=?${names.length + 2}, updated_at=?${names.length + 3}
+         WHERE id=?1`)
+        .bind(row.id, ...values, now, now)
+      : db.prepare(
         `UPDATE listings SET ${names.map((n, i) => n + "=?" + (i + 2)).join(", ")},
            cover_media_id = COALESCE((SELECT id FROM media WHERE id=listings.cover_media_id AND key_orig NOT LIKE '%/feed.jpg'), ?${names.length + 2}),
            synced_at=?${names.length + 3}, updated_at=?${names.length + 4}
@@ -349,10 +359,11 @@ export async function runSync(env, db, opts = {}) {
      runs at least hourly, after any failure, and whenever someone asks for
      one, so nothing can drift for long. */
   const prev = await getSetting(db, LAST_RUN_KEY, null).catch(() => null);
-  const sig = feedOk ? await sha256Hex(JSON.stringify({ p: properties, t: types, d: opts.today || at.slice(0, 10) })).catch(() => null) : null;
+  const sig = feedOk ? await sha256Hex(JSON.stringify({ v: SYNC_FORMAT, p: properties, t: types, d: opts.today || at.slice(0, 10) })).catch(() => null) : null;
+  const feedShape = feedOk ? imageShape(properties) : null;
   if (sig && !opts.force && prev && prev.ok && prev.sig === sig && prev.fullAt && Date.parse(at) - Date.parse(prev.fullAt) < FULL_EVERY_MS) {
     const quiet = {
-      ok: true, feedOk: true, why: null, quiet: true,
+      ok: true, feedOk: true, why: null, quiet: true, feedShape, photosKept: prev.photosKept || 0,
       counted: prev.counted || { feed: listings.length, existing: listings.length, skipped: skipped.length },
       created: 0, updated: 0, removed: 0, failed: [],
       summary: `Up to date — ${listings.length} properties, nothing changed.`,
@@ -368,6 +379,7 @@ export async function runSync(env, db, opts = {}) {
   for (const row of listings) row.photoSig = (row.images || []).map((i) => feedMediaKey(row.id, i.url)).join(",");
   for (const row of listings) row.docSig = docSigOf(row);
   const existing = await existingSynced(db).catch(() => []);
+  const photosKept = feedOk ? keepPhotosWhenFeedHasNone(existing, listings) : 0;
   const plan = planSync(existing, listings, { feedOk, ...opts });
   const result = feedOk ? await applyPlan(db, plan, opts) : { created: 0, updated: 0, removed: 0, failed: [] };
 
@@ -376,8 +388,9 @@ export async function runSync(env, db, opts = {}) {
     feedOk, why: why || plan.reason,
     counted: { feed: listings.length, existing: existing.filter((r) => r.status !== "withdrawn" && !r.deletedAt).length, skipped: skipped.length + ((plan.binned || []).length) },
     ...result,
-    summary: feedOk ? describePlan(plan) : `Nothing changed — the feed could not be read (${why}).`,
-    at,
+    summary: feedOk ? describePlan(plan) + (photosKept ? ` Photos kept for ${photosKept} (10ninety sent none for ${photosKept === 1 ? "it" : "them"}).` : "")
+                    : `Nothing changed — the feed could not be read (${why}).`,
+    at, feedShape, photosKept,
     /* what 10ninety sent that is not on the website, and why */
     skipped: skipped.concat((plan.binned || []).map((r) => ({ ref: r.ref, address: [r.address1, r.town].filter(Boolean).join(", "), why: "it is in the Studio's Bin (restore it there to show it)" }))).slice(0, 20),
     /* the newest "last updated" among the properties 10ninety is sending: when
@@ -389,6 +402,26 @@ export async function runSync(env, db, opts = {}) {
   return out;
 }
 const FULL_EVERY_MS = 60 * 60e3;
+/* part of the feed's fingerprint: a deploy that changes how the feed is read
+   bumps it, so the first run after it compares everything */
+const SYNC_FORMAT = 2;
+
+/* 29 Sep, 03:04: one run found no photographs for any property and, because
+   a sync replaces a listing's photographs with the feed's, the website lost
+   every one. The photographs were still on 10ninety. A property the feed
+   sends with none, that has photographs here, now keeps them (and its
+   cover); they are only ever replaced by other photographs. Its photo
+   signature is carried over so "no photos" is not itself a change. */
+export function keepPhotosWhenFeedHasNone(existing, listings) {
+  const had = new Map((existing || []).map((r) => [r.id, r.photoSig || ""]));
+  let kept = 0;
+  for (const row of listings) {
+    if ((row.images || []).length) continue;
+    const sig = had.get(row.id);
+    if (sig) { row._keepPhotos = true; row.photoSig = sig; kept += 1; }
+  }
+  return kept;
+}
 
 /* The last run, kept so the Studio can say when 10ninety was last read and
    what came of it: the cron has nobody watching, and "it did not come
@@ -405,5 +438,6 @@ async function recordRun(db, r, prev, fp) {
     lastChangeAt: changed ? r.at : (prev && prev.lastChangeAt) || null,
     /* the feed's fingerprint and when it was last compared in full */
     sig: (fp && fp.sig) || null, fullAt: (fp && fp.fullAt) || null,
+    feedShape: r.feedShape || null, photosKept: r.photosKept || 0,
   }, null);
 }

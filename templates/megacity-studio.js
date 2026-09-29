@@ -608,6 +608,14 @@
         return "<li>" + esc([k.ref, k.address].filter(Boolean).join(" \u00b7 ") || "A property") + " \u2014 " + esc(k.why || "") + "</li>";
       }).join("") + "</ul>";
     }
+    /* photographs missing from the feed (29 Sep: a run with none wiped them) */
+    var f = r.feedShape;
+    if (f && f.properties && f.withImages < f.properties) {
+      h += '<p class="st-hint st-hint--warn">Photos: 10ninety sent photos for ' + esc(f.withImages) + " of " + esc(f.properties) + " properties." +
+        (r.photosKept ? " The website kept the photos it already had for " + esc(r.photosKept) + "." : "") +
+        " Check the photos are on each property in 10ninety and press <b>Portal Export</b>." +
+        ' <span class="st-tag" title="What the feed\'s photo field looked like">' + esc([f.field || "no photo field", f.fieldType, f.itemType, f.itemKeys ? f.itemKeys.join("/") : "", f.host || ""].filter(Boolean).join(" · ")) + "</span></p>";
+    }
     h += '<p class="st-hint">A change made in 10ninety reaches the website within a minute of <b>Portal Export</b> (10ninety also rebuilds overnight).</p>';
     el.innerHTML = h;
   }

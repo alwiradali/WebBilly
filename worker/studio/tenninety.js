@@ -245,6 +245,58 @@ export function feedMediaKey(listingId, url) {
   return `l/${listingId}/m_${hash10(path)}/feed.jpg`;
 }
 
+/* ── photographs in the feed ─────────────────────────────────────────────── */
+
+/* The feed has always sent images as [{ url, text }]. On 29 Sep at 03:04 a
+   run found none on any property and the website lost every photograph, so
+   this now accepts the shapes a feed like this plausibly changes to (plain
+   address strings, url/src/href/image_url-style keys, a "photos" list) and
+   10ninety's own addresses over http, which are upgraded to https. Anything
+   else is still refused: the /media/ route only fetches https addresses on
+   10ninety, and nothing here widens that. */
+const IMAGE_KEYS = ["url", "URL", "Url", "src", "href", "image_url", "imageUrl", "ImageUrl", "image", "path", "link"];
+function imageUrlOf(m) {
+  if (typeof m === "string") return m;
+  if (!m || typeof m !== "object") return null;
+  for (const k of IMAGE_KEYS) if (typeof m[k] === "string" && m[k].trim()) return m[k];
+  return null;
+}
+export function imagesOf(p) {
+  const raw = Array.isArray(p && p.images) ? p.images : Array.isArray(p && p.photos) ? p.photos : [];
+  return raw.map((m) => {
+    let url = imageUrlOf(m);
+    if (!url) return null;
+    url = url.trim();
+    if (url.startsWith("//")) url = "https:" + url;
+    if (/^http:\/\/([a-z0-9-]+\.)*10ninety\.co\.uk\//i.test(url)) url = "https://" + url.slice(7);
+    if (!/^https:\/\//i.test(url)) return null;
+    const text = m && typeof m === "object" ? (m.text || m.caption || m.title || m.description) : null;
+    return { url, text: str(typeof text === "string" ? text : null, 200) };
+  }).filter(Boolean);
+}
+/* What the photo field looked like, for the Studio when photos are missing:
+   the field's shape and the first entry's keys and host, never a whole
+   address or anything else from the record. */
+export function imageShape(properties) {
+  const list = Array.isArray(properties) ? properties : [];
+  const withImages = list.filter((p) => imagesOf(p).length > 0).length;
+  const first = list.find((p) => p && (p.images != null || p.photos != null)) || list[0] || null;
+  const field = first ? (first.images != null ? "images" : first.photos != null ? "photos" : null) : null;
+  const v = field ? first[field] : undefined;
+  const item = Array.isArray(v) ? v[0] : undefined;
+  const u = imageUrlOf(item);
+  let host = null;
+  try { host = u ? new URL(u.trim().startsWith("//") ? "https:" + u.trim() : u.trim()).protocol + "//" + new URL(u.trim().startsWith("//") ? "https:" + u.trim() : u.trim()).host : null; } catch { host = u ? "not a web address" : null; }
+  return {
+    properties: list.length, withImages,
+    field, fieldType: v === undefined ? "missing" : Array.isArray(v) ? "list of " + v.length : typeof v,
+    itemType: item === undefined ? null : Array.isArray(item) ? "list" : typeof item,
+    itemKeys: item && typeof item === "object" && !Array.isArray(item) ? Object.keys(item).slice(0, 12) : null,
+    host,
+    otherKeys: first ? Object.keys(first).filter((k) => /image|photo|picture|media|gallery/i.test(k) && k !== field).slice(0, 8) : [],
+  };
+}
+
 /* ── one property ────────────────────────────────────────────────────────── */
 
 export function toListing(p, opts = {}) {
@@ -267,9 +319,7 @@ export function toListing(p, opts = {}) {
   const bond = num(p.let_bond);
   const deposit = bond && bond > 0 ? bond : null;
 
-  const images = (p.images || [])
-    .map((m) => (m && typeof m.url === "string" ? { url: m.url.trim(), text: str(m.text, 200) } : null))
-    .filter((m) => m && /^https:\/\//i.test(m.url));
+  const images = imagesOf(p);
 
   return {
     id,
@@ -393,4 +443,4 @@ export function toListings(properties, opts = {}) {
   return { listings: kept, skipped };
 }
 
-export const _internals = { BASE, AUTH_HEADER, STATUS, SLUG_ALIASES, hash10, slugFor, areaOf, bathroomsOf, availabilityOf, billsOf, isRoom };
+export const _internals = { BASE, AUTH_HEADER, STATUS, SLUG_ALIASES, hash10, slugFor, areaOf, bathroomsOf, availabilityOf, billsOf, isRoom, imagesOf, imageShape };

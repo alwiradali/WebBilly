@@ -173,6 +173,45 @@ function stubDb(opts = {}) {
   ok(!down.r.ok && !back.r.quiet, "after a failed read the next one compares in full");
 }
 
+/* ── a feed without photographs never takes them off the website (29 Sep) ── */
+
+{
+  const { keepPhotosWhenFeedHasNone } = await import("../worker/studio/tenninety-sync.js");
+  const { feedMediaKey, imagesOf, imageShape } = await import("../worker/studio/tenninety.js");
+  const sigOf = (r) => (r.images || []).map((i) => feedMediaKey(r.id, i.url)).join(",");
+  const existing = NINE.map((r) => ({ ...r, photoSig: sigOf(r), docSig: undefined }));
+  const bare = () => NINE.map((r) => ({ ...r, images: [], photoSig: "" }));
+
+  const same = bare();
+  const kept = keepPhotosWhenFeedHasNone(existing, same);
+  ok(kept === 9 && same.every((r) => r._keepPhotos), `a feed with no photos: all nine keep theirs (${kept})`);
+  const plan = planSync(existing.map((r) => ({ ...r, docSig: undefined })), same.map((r) => ({ ...r, docSig: undefined })));
+  ok(plan.update.length === 0, `  and "no photos" alone is not a change, so nothing is rewritten (${plan.update.length} updates)`);
+
+  const rentUp = bare().map((r, i) => (i === 0 ? { ...r, rentPcm: (r.rentPcm || 0) + 25 } : r));
+  keepPhotosWhenFeedHasNone(existing, rentUp);
+  const p2 = planSync(existing.map((r) => ({ ...r, docSig: undefined })), rentUp.map((r) => ({ ...r, docSig: undefined })));
+  ok(p2.update.length === 1, "a real change (a rent) without photos is still applied");
+  const db = stubDb();
+  await applyPlan(db, p2, { now: "2026-09-29T03:04:00Z" });
+  ok(!db.log.some((x) => /DELETE FROM media|INSERT INTO media/.test(x.sql)), "  without deleting or replacing a single photograph");
+  const upd = db.log.find((x) => /UPDATE listings SET/.test(x.sql));
+  ok(upd && !/cover_media_id/.test(upd.sql), "  and without touching the cover");
+
+  const fresh = keepPhotosWhenFeedHasNone([{ id: "new-one", photoSig: "" }], [{ id: "new-one", images: [], photoSig: "" }]);
+  ok(fresh === 0, "a property that never had photos is not 'kept' (nothing to keep)");
+
+  const back = NINE.map((r) => ({ ...r, photoSig: sigOf(r) }));
+  const p3 = planSync(NINE.map((r) => ({ ...r, photoSig: "", docSig: undefined })), back.map((r) => ({ ...r, docSig: undefined })));
+  ok(p3.update.length === 9, "when photos come back in the feed, every listing that lost them gets them again");
+
+  ok(imagesOf({ images: ["https://megacityproperties.10ninety.co.uk/PortalExports/DisplayImage/1"] }).length === 1, "photos sent as plain addresses are read");
+  ok(imagesOf({ images: [{ URL: "http://megacityproperties.10ninety.co.uk/PortalExports/DisplayImage/1" }] })[0].url.startsWith("https://"), "10ninety's own http addresses are read as https");
+  ok(imagesOf({ images: [{ url: "http://elsewhere.example/a.jpg" }] }).length === 0, "anything else over http is still refused");
+  const shape = imageShape([{ images: [] }, { images: [] }]);
+  ok(shape.properties === 2 && shape.withImages === 0 && shape.fieldType === "list of 0", "the Studio is told what the photo field looked like");
+}
+
 /* ── it runs on its own, not only when somebody presses a button ──────────── */
 
 /* Walid's point, and a fair one: he should not have to open the Studio and
