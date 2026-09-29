@@ -119,14 +119,20 @@
   const CLS = {A:'ga',B:'gb',C:'gc'};
   const COLOR = {A:'var(--a)',B:'var(--b)',C:'var(--c)'};
   const DEFAULT_POS = ['Position 1','Position 2','Position 3','Position 4'];
-  const KEY = 'break-rota-v1';
+  const KEY = 'break-rota-v2';
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+  const DEFAULT_NAMES = {
+    A: ['Jake Snailham','Anju Kaliyadan','Stephen Curran','Georgel Oancea'],
+    B: ['Zane Mcgrann','Michal Piskorz','AJ Kennedy','Jelty Jacob'],
+    C: ['Anthony Fitzimons','Shibu Koshy','Robert Horton','Sreedith Chandrasekharan']
+  };
+
   function defaults(){
     const names = {};
-    GROUPS.forEach(g => { names[g] = [1,2,3,4].map(n => g + n); });
+    GROUPS.forEach(g => { names[g] = DEFAULT_NAMES[g].slice(); });
     return {names, positions: DEFAULT_POS.slice(), start:'09:00', slot:30, rounds:6, order:'ABC'};
   }
   function load(){
