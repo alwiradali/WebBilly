@@ -24,6 +24,7 @@ ok(/gclid/.test(js) && /fbclid/.test(js) && /\["google", "cpc"\]/.test(js), "Goo
 /* Google Ads and Meta are told when a landlord asks (after consent) */
 ok(/mcTrack\("generate_lead", \{ form: "valuation" \}\)/.test(block('getElementById("valForm")')), "a valuation request is reported as a lead");
 ok(/mcTrack\("generate_lead", \{ form: "landlord" \}\)/.test(js), "  and so is a landlord registration");
+ok(/mcTrack\("landlord_lead", \{ form: "valuation" \}\)/.test(js) && /mcTrack\("landlord_lead", \{ form: "landlord" \}\)/.test(js) && (js.match(/mcTrack\("landlord_lead"/g) || []).length === 2, "landlord_lead fires for the two landlord forms and nothing else");
 ok(/a\[href\^="tel:"\], a\[href\*="wa\.me\/"\]/.test(js) && /mcTrack\("contact"/.test(js), "taps on the phone number and WhatsApp are reported as contacts");
 const consent = read("megacity-consent.js");
 ok(/if \(!granted\) \{ queue\.push/.test(consent), "  and nothing is sent to Google or Meta before the visitor agrees");

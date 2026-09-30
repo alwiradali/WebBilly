@@ -249,7 +249,7 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       f.querySelector(".val-done").hidden = false;
       /* the campaign's main conversion: Google Ads and Meta can only
          optimise for landlords if they are told when one asks */
-      if (window.mcTrack) window.mcTrack("generate_lead", { form: "valuation" });
+      if (window.mcTrack) { window.mcTrack("generate_lead", { form: "valuation" }); window.mcTrack("landlord_lead", { form: "valuation" }); }
     } catch (err) {
       btn.disabled = false; btn.style.opacity = "";
       const n = f.querySelector(".val-note");
@@ -950,7 +950,9 @@ window.mcBeacon = (name, extra) => {
       f.hidden = true;
       const done = f.parentElement.querySelector(".pd-vdone");
       if (done) done.hidden = false;
-      if (window.mcTrack) window.mcTrack("generate_lead", { form: "landlord" });
+      /* landlord_lead: only landlords, so Google Ads can optimise for them
+         and not for tenants registering or applying */
+      if (window.mcTrack) { window.mcTrack("generate_lead", { form: "landlord" }); window.mcTrack("landlord_lead", { form: "landlord" }); }
     } catch (err) {
       btn.disabled = false; btn.style.opacity = "";
       note.textContent = "That did not go through (" + err.message + "). Please call 0161 220 1763 and we will take your details over the phone.";
