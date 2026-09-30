@@ -78,7 +78,7 @@
     try { if (GTM && !GA) window.dataLayer.push(Object.assign({ event: name }, params || {})); } catch (e) { }
     try {
       if (PIXEL && window.fbq) {
-        var std = { generate_lead: "Lead", viewing_request: "Schedule", listing_view: "ViewContent", tour_open: "ViewContent" }[name];
+        var std = { generate_lead: "Lead", viewing_request: "Schedule", listing_view: "ViewContent", tour_open: "ViewContent", contact: "Contact" }[name];
         if (std) window.fbq("track", std, params || {}); else window.fbq("trackCustom", name, params || {});
       }
     } catch (e) { }

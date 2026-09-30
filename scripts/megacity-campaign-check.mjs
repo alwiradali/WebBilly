@@ -21,6 +21,13 @@ ok(/id="valForm"/.test(read("megacity-valuation.html")) && /id="valForm"/.test(r
 ok(/data-landlord/.test(read("megacity-for-landlords.html")), "  and the Landlords page uses the registration form");
 ok(/gclid/.test(js) && /fbclid/.test(js) && /\["google", "cpc"\]/.test(js), "Google and Facebook ads are labelled from their click ids when a link has no tag");
 
+/* Google Ads and Meta are told when a landlord asks (after consent) */
+ok(/mcTrack\("generate_lead", \{ form: "valuation" \}\)/.test(block('getElementById("valForm")')), "a valuation request is reported as a lead");
+ok(/mcTrack\("generate_lead", \{ form: "landlord" \}\)/.test(js), "  and so is a landlord registration");
+ok(/a\[href\^="tel:"\], a\[href\*="wa\.me\/"\]/.test(js) && /mcTrack\("contact"/.test(js), "taps on the phone number and WhatsApp are reported as contacts");
+const consent = read("megacity-consent.js");
+ok(/if \(!granted\) \{ queue\.push/.test(consent), "  and nothing is sent to Google or Meta before the visitor agrees");
+
 /* channels */
 const C = (r) => channelOf(r).channel;
 ok(C({ utm_source: "Letter", utm_medium: "post" }) === "letter / post", "a tagged link names its channel");

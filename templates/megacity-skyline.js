@@ -247,6 +247,9 @@ if (!reduce && window.gsap && window.ScrollTrigger) {
       if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "the message did not go through");
       f.querySelectorAll("input,button").forEach(el => el.style.display = "none");
       f.querySelector(".val-done").hidden = false;
+      /* the campaign's main conversion: Google Ads and Meta can only
+         optimise for landlords if they are told when one asks */
+      if (window.mcTrack) window.mcTrack("generate_lead", { form: "valuation" });
     } catch (err) {
       btn.disabled = false; btn.style.opacity = "";
       const n = f.querySelector(".val-note");
@@ -770,6 +773,13 @@ window.mcAttr = (() => {
     return a;
   } catch { return {}; }
 })();
+/* A tap on the phone number or WhatsApp is how many landlords get in touch:
+   reported like a form, so an advert that brings calls gets the credit.
+   mcTrack (megacity-consent.js) only sends anything after consent. */
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest('a[href^="tel:"], a[href*="wa.me/"]');
+  if (a && window.mcTrack) window.mcTrack("contact", { method: /^tel:/.test(a.getAttribute("href")) ? "phone" : "whatsapp", page: location.pathname });
+});
 window.mcBeacon = (name, extra) => {
   try {
     const body = JSON.stringify({ name, ...(extra || {}) });
