@@ -760,8 +760,11 @@ window.mcAttr = (() => {
     let a = JSON.parse(sessionStorage.getItem(key) || "null");
     if (!a) {
       const q = new URLSearchParams(location.search);
-      a = { utm_source: q.get("utm_source"), utm_medium: q.get("utm_medium"), utm_campaign: q.get("utm_campaign"),
-            referrer: document.referrer || null, landing: location.pathname + location.search };
+      /* Google and Facebook ads add their own click ids (gclid, fbclid)
+         when a link carries no campaign tag: label those as the ad they were */
+      const ad = q.get("gclid") || q.get("gbraid") || q.get("wbraid") ? ["google", "cpc"] : q.get("fbclid") ? ["facebook", "paid-or-shared"] : null;
+      a = { utm_source: q.get("utm_source") || (ad && ad[0]), utm_medium: q.get("utm_medium") || (ad && ad[1]), utm_campaign: q.get("utm_campaign"),
+            referrer: document.referrer || null, landing: (location.pathname + location.search).slice(0, 300) };
       sessionStorage.setItem(key, JSON.stringify(a));
     }
     return a;

@@ -532,6 +532,12 @@
     var inner = '<span class="st-tile-l">' + esc(label) + '</span><span class="st-tile-n">' + (n == null ? "—" : esc(n)) + "</span>" + (sub ? '<span class="st-tile-s">' + esc(sub) + "</span>" : "");
     return href ? '<a class="st-tile' + (mod ? " st-tile--" + mod : "") + '" href="' + href + '">' + inner + "</a>" : '<div class="st-tile' + (mod ? " st-tile--" + mod : "") + '">' + inner + "</div>";
   }
+  function channelsHtml(rows) {
+    if (!rows) return '<p class="st-hint">Numbers appear once the activity store is connected.</p>';
+    if (!rows.length) return '<p class="st-hint">No enquiries in the last 90 days yet.</p>';
+    return '<table class="st-usage"><caption class="st-vh">Enquiries by channel</caption><thead><tr><th scope="col">Channel</th><th scope="col">Campaign</th><th scope="col" style="text-align:right">Landlord</th><th scope="col" style="text-align:right">All</th></tr></thead><tbody>' +
+      rows.map(function (r) { return "<tr><td>" + esc(r.channel) + "</td><td>" + (r.campaign ? esc(r.campaign) : '<span class="st-hint">\u2014</span>') + '</td><td class="num"><b>' + esc(r.landlord) + '</b></td><td class="num">' + esc(r.total) + "</td></tr>"; }).join("") + "</tbody></table>";
+  }
   function quickAction(href, icon, title, sub) { return '<a class="st-person" href="' + href + '" style="text-decoration:none"><span class="st-dot st-avatar" style="background:var(--sky-soft);color:var(--blue-deep)">' + icon + "</span><div><b>" + esc(title) + "</b><small>" + esc(sub) + "</small></div><span>" + I.more + "</span></a>"; }
   SCREENS.dashboard = function () {
     setTop({ title: "Home" });
@@ -549,6 +555,7 @@
         '<div class="st-grid2" style="margin-top:14px">' +
         '<section class="st-card"><div class="st-card-head"><div><h2>Enquiries, last 30 days</h2><p>' + (E ? "By day, and this week by source." : "Numbers appear once the activity store is connected.") + "</p></div></div>" + sparkHtml(E ? E.daily : null) + bySourceHtml(E ? E.bySource : null) + "</section>" +
         '<section class="st-card"><div class="st-card-head"><h2>Recent activity</h2></div>' + feedHtml(d.recent || []) + "</section>" +
+        '<section class="st-card"><div class="st-card-head"><div><h2>Where enquiries came from</h2><p>Last 90 days, spam left out. Adverts, letters and leaflets show here by name when their links carry a campaign tag.</p></div></div>' + channelsHtml(E ? E.channels : null) + "</section>" +
         '<section class="st-card"><div class="st-card-head"><h2>Quick actions</h2></div><div class="st-team">' +
         quickAction("#/listings/new", I.plus, "New listing", "Start a draft, add photos, advertise when ready") + quickAction("#/enquiries", I.inbox, "Enquiries", "Reply, ring back, mark handled") +
         quickAction("#/listings", I.list, "All listings", "Search, filter, publish and unpublish") + quickAction("#/settings", I.cog, "Settings", "Branding, notifications and 10ninety links") + quickAction("#/team", I.users, "Team", "Invite staff and manage access") + "</div></section></div>";

@@ -7689,6 +7689,14 @@
      "text": "We count how often our property listings and 360&deg; tours are viewed, and which missing addresses people reach, on our own systems, without cookies and without sending anything to a third party. To tell repeat visits on the same day apart we use a one-way code made from your connection details and the date. It changes every day, so it cannot be used to follow you from one day to the next."
     },
     {
+     "id": "privacy-33",
+     "kind": "text",
+     "tag": "p",
+     "section": "Page",
+     "html": "If you reach us through one of our adverts, letters or leaflets, the label on that link (for example &ldquo;leaflet, Salford&rdquo;) and the website you came from are kept in your browser for that visit only, and sent with any enquiry you make, so we can tell which of our adverts work. It goes nowhere else.",
+     "text": "If you reach us through one of our adverts, letters or leaflets, the label on that link (for example \"leaflet, Salford\") and the website you came from are kept in your browser for that visit only, and sent with any enquiry you make, so we can tell which of our adverts work. It goes nowhere else."
+    },
+    {
      "id": "privacy-32",
      "kind": "text",
      "tag": "p",

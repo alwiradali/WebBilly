@@ -350,5 +350,41 @@ export async function stats(db) {
     if (k === "probe" || k === "legacy") ev.not_found_ignored += Number(r.n) || 0;
     else ev.not_found += Number(r.n) || 0;
   }
-  return { enquiries: { new: newCount, last7: Object.values(bySource).reduce((a, b) => a + b, 0), bySource, daily: daily.map((d) => [d.d, Number(d.n)]) }, events7: ev };
+  /* where enquiries came from over the last 90 days, for the marketing
+     review: landlord enquiries (valuations and landlord registrations)
+     against all of them, per channel */
+  const since90 = new Date(Date.now() - 90 * 864e5).toISOString();
+  const chRows = (await db.prepare(`SELECT source, utm_source, utm_medium, utm_campaign, referrer FROM enquiries WHERE created_at >= ?1 AND status != 'spam'`).bind(since90).all()).results || [];
+  return { enquiries: { new: newCount, last7: Object.values(bySource).reduce((a, b) => a + b, 0), bySource, daily: daily.map((d) => [d.d, Number(d.n)]), channels: channelTable(chRows) }, events7: ev };
+}
+
+/* An enquiry's channel: the campaign tag its link carried (an advert, a
+   letter, a leaflet QR code), otherwise the site that sent the visitor,
+   otherwise "direct". Google and Facebook ads without a tag are labelled by
+   the site's own script from their click ids (megacity-skyline.js mcAttr). */
+const LANDLORD_SOURCES = new Set(["valuation", "landlord"]);
+export function channelOf(r) {
+  const src = String((r && r.utm_source) || "").trim().toLowerCase();
+  const med = String((r && r.utm_medium) || "").trim().toLowerCase();
+  if (src) return { channel: src + (med ? " / " + med : ""), campaign: String(r.utm_campaign || "").trim() };
+  let host = "";
+  try { host = new URL(r && r.referrer).hostname.replace(/^www\./, "").toLowerCase(); } catch { host = ""; }
+  if (!host || /(^|\.)(megacityproperties\.co\.uk|billydigitals\.com)$/.test(host)) return { channel: "Direct or typed in", campaign: "" };
+  if (/(^|\.)google\./.test(host)) return { channel: "Google search (not an ad)", campaign: "" };
+  if (/(^|\.)(bing|duckduckgo|yahoo|ecosia)\./.test(host)) return { channel: "Other search engines", campaign: "" };
+  if (/(^|\.)(facebook|instagram|messenger)\.com$|(^|\.)fb\.me$/.test(host)) return { channel: "Facebook / Instagram (not an ad)", campaign: "" };
+  if (/(^|\.)(zoopla|onthemarket|rightmove)\.co\.uk$/.test(host)) return { channel: "Property portals", campaign: "" };
+  return { channel: host, campaign: "" };
+}
+export function channelTable(rows) {
+  const m = new Map();
+  for (const r of rows || []) {
+    const { channel, campaign } = channelOf(r);
+    const k = channel + "\u0000" + campaign;
+    const x = m.get(k) || { channel, campaign, landlord: 0, total: 0 };
+    x.total += 1;
+    if (LANDLORD_SOURCES.has(r.source)) x.landlord += 1;
+    m.set(k, x);
+  }
+  return [...m.values()].sort((a, b) => b.landlord - a.landlord || b.total - a.total || a.channel.localeCompare(b.channel)).slice(0, 20);
 }
