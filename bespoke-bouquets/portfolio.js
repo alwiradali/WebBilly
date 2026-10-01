@@ -126,9 +126,9 @@ menuBtn.addEventListener('click', () => toggleDrawer(!drawer.classList.contains(
    One titled section per category, in this order; every piece lives in
    exactly one. The buttons at the top jump to a section. */
 const SECTIONS = [
+  { key: 'personalised', title: 'Personalised',       sub: 'Names, initials, numbers and balloons.' },
   { key: 'red',          title: 'Red roses',          sub: 'Classic, romantic and always a favourite.' },
   { key: 'pastel',       title: 'Pastels & whites',   sub: 'Soft blush, ivory and white, with seasonal touches.' },
-  { key: 'personalised', title: 'Personalised',       sub: 'Names, initials, numbers and balloons.' },
   { key: 'hatbox',       title: 'Hatboxes & baskets', sub: 'Arranged and ready to display.' },
   { key: 'gifts',        title: 'Gifts',              sub: 'Money bouquets, hampers and something a little different.' },
   { key: 'bridal',       title: 'Weddings & nikkahs', sub: 'Bridal bouquets and gajre for the big day.' }
