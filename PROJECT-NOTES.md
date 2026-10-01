@@ -1548,3 +1548,12 @@ Display headings at 400 (solid strokes — Bodoni's hairlines were unreadable)
 and Jost body at 17.5px in near-black. Light pink footer. The drawn flowers are
 gone. Don't reintroduce cards, shadows or decoration — space and photographs
 carry it.
+
+**Floating petals on every page (owner asked for "floating stuff on all the
+website").** `bespoke-bouquets/petals.js`, loaded by both pages: one fixed
+canvas (`.petal-sky`, z-index 1) between the section backgrounds and the
+content (`.wrap` and the hero's children at z-index 2), so petals and the odd
+blossom drift through empty space and pass behind text, photos and buttons —
+never over them. 26 on desktop, 14 on phones, dpr capped at 2, paused when the
+tab is hidden, absent under reduced motion. If a new block has its own
+background, keep its content inside a `.wrap` or the petals will draw over it.

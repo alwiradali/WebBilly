@@ -541,3 +541,12 @@ details[open] .pm::after{transform:rotate(0)}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 .b-empty img{object-fit:contain;border-radius:0!important;width:90px!important;height:100px!important}
+
+/* ------------------------------ floating petals (petals.js) ------------------------------
+   The canvas is fixed at z-index 1: above every section's background colour,
+   below all content, which sits at z-index 2. So petals drift through the
+   empty space and pass behind text, photos and buttons. */
+.petal-sky{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.wrap{position:relative;z-index:2}
+.hero-text>*{position:relative;z-index:2}
+.hero-media{z-index:2}
