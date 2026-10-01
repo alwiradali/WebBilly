@@ -1536,3 +1536,15 @@ plate colour, so it reads as her logo with the circle removed. The header uses
 `rose-ink.png` (the rose alone), the dark footer `logo-plate.png` (same alpha
 in the plate pink). `logo.png`, the round badge, is now only the favicon and
 share image.
+
+**Third design, chosen by the owner: "light & luxurious".** She hated the
+cards-and-cartoon-flowers version. Now: split hero (her plate pink `#ffe6e7`
+with the SVG logo + headline on the left, the skirt bouquet full-height on the
+right; on phones the photo comes first), cream page, big photographs with
+captions underneath and NO boxes, shadows or rounded corners on content, thin
+1px rules instead of cards, square dark buttons in small tracked caps (`.btn-dark`;
+`.btn-satin` is kept as an alias because the JS still emits it), Playfair
+Display headings at 400 (solid strokes — Bodoni's hairlines were unreadable)
+and Jost body at 17.5px in near-black. Light pink footer. The drawn flowers are
+gone. Don't reintroduce cards, shadows or decoration — space and photographs
+carry it.

@@ -90,7 +90,7 @@ const OPTION_DEFS = {
 };
 const CAT_LABEL = { signature: 'Signature', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Bridal & mehndi' };
 const IMG = n => `/assets/bespoke/photos/${n}.webp`;
-const LOGO = '/assets/bespoke/logo.png';
+const LOGO = '/assets/bespoke/rose-ink.svg';
 
 /* ------------------------------ helpers ------------------------------ */
 const $ = (s, r = document) => r.querySelector(s);
