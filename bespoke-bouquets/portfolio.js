@@ -136,7 +136,7 @@ let n = 0;
 grid.innerHTML = SECTIONS.map(sec => {
   const items = PIECES.map((p, i) => ({ p, i })).filter(x => x.p.cats[0] === sec.key);
   return `<section class="pf-sec" id="pf-${sec.key}" data-sec="${sec.key}">
-    <header class="pf-sec-head"><h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p><span class="pf-count">${items.length} ${items.length === 1 ? 'piece' : 'pieces'}</span></header>
+    <header class="pf-sec-head"><h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p></header>
     <div class="pf-sec-grid">${items.map(({ p, i }) => `
       <figure class="pf-tile" data-i="${i}" data-sec="${sec.key}">
         <button type="button" class="pf-img" aria-label="View ${esc(p.name)}">
