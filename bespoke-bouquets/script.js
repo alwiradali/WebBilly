@@ -6,38 +6,8 @@
 (() => {
 'use strict';
 
-/* --------------------------------------------------------------------
-   CONFIG
-   Every empty value degrades to something that still works:
-   - no web3formsKey  -> orders/enquiries are handed back as a ready-written
-                         message, one tap from her Instagram DMs
-   - no whatsapp      -> the WhatsApp contact card stays hidden
-   - no payment setup -> checkout runs in preview mode and says so
-   -------------------------------------------------------------------- */
-const CONFIG = {
-  instagram: 'thebespokebouquets',
-  tiktok: 'thebespokebouquets_',
-  whatsapp: '',            // digits with country code, e.g. '447700900123'
-  email: '',               // e.g. 'hello@thebespokebouquets.co.uk'
-  web3formsKey: '',        // from web3forms.com — the key IS the inbox
-  depositRate: 1,          // shop orders are paid in full (owner's call); bespoke deposits are arranged by hand
-  minDays: 5,              // her order guide: minimum 5 days in advance
-  deliveryFee: null,       // number (e.g. 8) once set; null = "confirmed with order"
-  payments: {
-    // POST the order here and expect { url } back (a Stripe Checkout
-    // Session made by a small worker). That is the seam for real card,
-    // Apple Pay and Google Pay payments.
-    checkoutEndpoint: '',
-    paypalMe: '',          // e.g. 'thebespokebouquets' -> paypal.me/<name>/<amount>
-    bank: null             // e.g. { name:'…', sort:'00-00-00', account:'00000000' }
-  },
-  google: {
-    profile: '',           // her Google Business profile link
-    write: '',             // the "write a review" link
-    rating: null,          // e.g. 5.0
-    count: null            // e.g. 37
-  }
-};
+/* CONFIG and the shared helpers live in shared.js (loaded first). */
+const { CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons } = window.TBB;
 
 /* --------------------------------------------------------------------
    REVIEWS — sample:true puts an "Example" chip on every card and a line
@@ -119,26 +89,6 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode: lasts the visit */ } }
 };
-const dm = () => `https://ig.me/m/${CONFIG.instagram}`;
-const wa = text => `https://wa.me/${CONFIG.whatsapp}${text ? '?text=' + encodeURIComponent(text) : ''}`;
-const isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const earliest = () => { const d = new Date(); d.setDate(d.getDate() + CONFIG.minDays); return isoDay(d); };
-const niceDate = v => { if (!v) return ''; const [y, m, d] = v.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long' }); };
-
-let toastT;
-function toast(msg) {
-  const t = $('.toast');
-  t.textContent = msg; t.classList.add('is-in');
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('is-in'), 3200);
-}
-async function copy(text) {
-  try { await navigator.clipboard.writeText(text); return true; } catch (e) {
-    const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(ta); ta.select();
-    let ok = false; try { ok = document.execCommand('copy'); } catch (e2) { /* ignore */ }
-    ta.remove(); return ok;
-  }
-}
 
 /* ------------------------------ smooth scroll ------------------------------
    Lenis drives the wheel on a mouse; touch screens keep their own native
@@ -493,9 +443,23 @@ coForm.addEventListener('change', e => {
   if (e.target.name === 'fulfil') $('[data-deliv-fields]', co).hidden = fulfil() !== 'delivery';
   renderSummary();
 });
-coForm.elements.postcode.addEventListener('input', e => {
-  const out = $('[data-co-pc]', co), r = checkPostcode(e.target.value);
-  out.className = 'pc-out ' + (r ? r.cls : ''); out.textContent = r ? r.msg : '';
+function showCoPostcode(final) {
+  const out = $('[data-co-pc]', co), r = checkPostcode(coForm.elements.postcode.value, final);
+  out.className = 'pc-out ' + (r ? r.cls : '');
+  const html = r ? esc(r.msg) + (r.cls === 'no' ? ' <button type="button" class="link-btn" data-to-collect>Switch to collection</button>' : '') : '';
+  if (out.dataset.html !== html) { out.dataset.html = html; out.innerHTML = html; }   // never rebuild mid-tap, or the button vanishes under the finger
+  return r;
+}
+coForm.elements.postcode.addEventListener('input', () => showCoPostcode(false));
+coForm.elements.postcode.addEventListener('blur', () => showCoPostcode(true));
+co.addEventListener('click', e => {
+  if (!e.target.closest('[data-to-collect]')) return;
+  coForm.elements.fulfil.value = 'collection';
+  $$('input[name="fulfil"]', coForm).forEach(i => { i.checked = i.value === 'collection'; });
+  $('[data-deliv-fields]', co).hidden = true;
+  const o = $('[data-co-pc]', co); o.textContent = ''; o.dataset.html = ''; $('[data-co-msg]', co).textContent = '';
+  coForm.elements.postcode.closest('.field').classList.remove('err');
+  renderSummary();
 });
 
 function goStep(n) {
@@ -516,6 +480,10 @@ function validStep(n) {
     const d = coForm.elements.date;
     if (d.value && d.value < earliest()) bad.push(d);
     if (fulfil() === 'delivery') ['address', 'postcode'].forEach(k => { if (!coForm.elements[k].value.trim()) bad.push(coForm.elements[k]); });
+    if (fulfil() === 'delivery' && coForm.elements.postcode.value.trim()) {
+      const r = showCoPostcode(true);
+      if (!r || !r.ok) { coForm.elements.postcode.closest('.field').classList.add('err'); $('[data-co-msg]', co).textContent = r && r.cls === 'no' ? 'Delivery is only available within Birmingham & Solihull — please choose collection from B92 instead.' : 'Please enter the full delivery postcode.'; coForm.elements.postcode.focus(); return false; }
+    }
   }
   if (n === 2) {
     const em = coForm.elements.email;
@@ -556,32 +524,6 @@ function orderText(o) {
     o.notes ? `Notes: ${o.notes}` : ''
   ];
   return lines.filter((l, i, a) => l !== '' || a[i - 1] !== '').join('\n').trim();
-}
-
-async function sendForm(subject, message, extra) {
-  if (!CONFIG.web3formsKey) return false;
-  try {
-    const r = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(Object.assign({ access_key: CONFIG.web3formsKey, subject, from_name: 'The Bespoke Bouquets website', message }, extra || {}))
-    });
-    const j = await r.json();
-    return !!j.success;
-  } catch (e) { return false; }
-}
-
-function handoverButtons(text, holder) {
-  holder.innerHTML = '';
-  const add = (html, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-satin btn-sm'; b.innerHTML = html; b.addEventListener('click', fn); holder.appendChild(b); };
-  add('<svg><use href="#i-insta"/></svg><span>Copy &amp; open Instagram</span>', async () => {
-    await copy(text); toast('Copied — paste it into the chat'); window.open(dm(), '_blank', 'noopener');
-  });
-  if (CONFIG.whatsapp) add('<svg><use href="#i-whatsapp"/></svg><span>WhatsApp</span>', () => window.open(wa(text), '_blank', 'noopener'));
-  if (CONFIG.email) add('<svg><use href="#i-mail"/></svg><span>Email</span>', () => { location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent('Bouquet enquiry')}&body=${encodeURIComponent(text)}`; });
-  if (navigator.share && !fine) add('<span>Share…</span>', () => navigator.share({ text }).catch(() => {}));
-  const c = document.createElement('button'); c.type = 'button'; c.className = 'btn btn-ghost btn-sm'; c.innerHTML = '<span>Copy text</span>';
-  c.addEventListener('click', async () => { toast(await copy(text) ? 'Copied to the clipboard' : 'Select the text above to copy it'); });
-  holder.appendChild(c);
 }
 
 async function placeOrder() {
@@ -628,105 +570,22 @@ async function placeOrder() {
   basket = []; saveBasket();
 }
 
-/* ------------------------------ bespoke enquiry ------------------------------ */
-const enq = $('#enquiry');
-$$('[data-name="occasion"] .chip', enq).forEach(c => c.addEventListener('click', () => {
-  $$('[data-name="occasion"] .chip', enq).forEach(x => x.classList.toggle('is-on', x === c && !c.classList.contains('is-on')));
-}));
-const swLabel = $('[data-swatch-label]', enq);
-$$('.sw', enq).forEach(s => s.addEventListener('click', () => {
-  s.classList.toggle('is-on');
-  s.setAttribute('aria-pressed', s.classList.contains('is-on'));
-  const on = $$('.sw.is-on', enq).map(x => x.title);
-  swLabel.textContent = on.length ? on.join(', ') : 'Tap all that apply.';
-}));
-const inspo = enq.elements.inspo, thumbs = $('[data-thumbs]', enq);
-inspo.addEventListener('change', () => {
-  thumbs.innerHTML = '';
-  Array.from(inspo.files).slice(0, 6).forEach(f => { const i = new Image(); i.src = URL.createObjectURL(f); i.alt = ''; thumbs.appendChild(i); });
-});
-function prefillEnquiry(name) {
-  const sel = enq.elements.style;
-  const match = Array.from(sel.options).find(o => name.toLowerCase().includes(o.text.toLowerCase().split(' ')[0]) && o.value !== '');
-  if (/bridal|gajre/i.test(name)) sel.value = 'Wedding / nikkah florals';
-  else if (match) sel.value = match.value || match.text;
-  const d = enq.elements.details;
-  if (!d.value.includes(name)) d.value = `Interested in: ${name}\n` + d.value;
-  scrollToEl($('#bespoke'));
-  setTimeout(() => d.focus({ preventScroll: true }), 900);
-}
+/* ------------------------------ bespoke enquiry ------------------------------
+   The enquiry has its own page (/bespoke-bouquets/enquire). Anything that
+   wants to start one with a design in mind sends people there. */
+const ENQ = '/bespoke-bouquets/enquire';
+function prefillEnquiry(name) { location.href = `${ENQ}?design=${encodeURIComponent(name)}`; }
 $$('[data-enquire]').forEach(b => b.addEventListener('click', () => prefillEnquiry(b.dataset.enquire)));
-/* the portfolio page sends people here as ?enquire=<design name>#bespoke */
+/* old links (?enquire=<design>) still work */
 (function fromPortfolio() {
   const want = new URLSearchParams(location.search).get('enquire');
-  if (!want) return;
-  history.replaceState(null, '', location.pathname + '#bespoke');
-  setTimeout(() => prefillEnquiry(want.slice(0, 80)), motion ? 2600 : 300);
+  if (want) location.replace(`${ENQ}?design=${encodeURIComponent(want.slice(0, 80))}`);
 })();
 
-const ho = $('#handoff');
-$$('[data-close-handoff]', ho).forEach(b => b.addEventListener('click', () => closeModal(ho)));
-
-enq.addEventListener('input', e => { const f = e.target.closest('.field'); if (f) f.classList.remove('err'); });
-enq.addEventListener('submit', async e => {
-  e.preventDefault();
-  if (enq.elements.botcheck.checked) return;
-  const f = enq.elements, msg = $('.form-msg', enq);
-  $$('.field', enq).forEach(x => x.classList.remove('err'));
-  const bad = ['details', 'name', 'contact', 'date'].map(k => f[k]).filter(i => !i.value.trim() || (i.type === 'date' && i.value < earliest()));
-  if (bad.length) {
-    bad.forEach(i => i.closest('.field').classList.add('err'));
-    msg.textContent = f.date.value && f.date.value < earliest() ? `Orders need at least ${CONFIG.minDays} days’ notice — the earliest date is ${niceDate(earliest())}.` : 'Just a couple of details missing — they’re highlighted above.';
-    bad[0].focus(); return;
-  }
-  const occ = $('[data-name="occasion"] .chip.is-on', enq);
-  const cols = $$('.sw.is-on', enq).map(x => x.title);
-  const pics = inspo.files.length;
-  const text = [
-    'Hi! I’d love a bespoke bouquet 🌸', '',
-    occ ? `Occasion: ${occ.textContent}` : '',
-    f.style.value ? `Design idea: ${f.style.value}` : '',
-    cols.length ? `Colours: ${cols.join(', ')}` : '',
-    f.budget.value ? `Budget: ${f.budget.value}` : '',
-    `Date needed: ${niceDate(f.date.value)}`,
-    `${f.fulfil.value}`,
-    f.lettering.value ? `Wording: ${f.lettering.value}` : '',
-    '', f.details.value.trim(), '',
-    pics ? `I have ${pics} inspiration picture${pics > 1 ? 's' : ''} to send over.` : '',
-    `— ${f.name.value.trim()} (${f.contact.value.trim()})`
-  ].filter((l, i, a) => l !== '' || a[i - 1] !== '').join('\n').trim();
-
-  const btn = $('button[type="submit"]', enq);
-  btn.disabled = true;
-  const sent = await sendForm(`Bespoke enquiry — ${f.name.value.trim()}`, text, { name: f.name.value.trim(), contact: f.contact.value.trim() });
-  btn.disabled = false;
-  if (sent) {
-    msg.textContent = 'Thank you! The enquiry is in — a personal quote is on its way.' + (pics ? ' Inspiration pictures can be sent over on Instagram too.' : '');
-    enq.reset(); thumbs.innerHTML = ''; $$('.is-on', enq).forEach(x => x.classList.remove('is-on')); swLabel.textContent = 'Tap all that apply.';
-  } else {
-    msg.textContent = '';
-    $('[data-ho-text]', ho).textContent = text;
-    handoverButtons(text, $('[data-ho-btns]', ho));
-    openModal(ho);
-  }
-});
-
 /* ------------------------------ postcode checker ------------------------------ */
-function checkPostcode(v) {
-  const s = (v || '').toUpperCase().replace(/\s+/g, '');
-  if (s.length < 2) return null;
-  const m = s.match(/^([A-Z]{1,2})(\d{1,2})/);
-  if (!m) return { cls: 'maybe', msg: 'That doesn’t look like a postcode yet.' };
-  const area = m[1], d = Number(m[2]);
-  if (area === 'B' && ((d >= 1 && d <= 48) || (d >= 72 && d <= 76) || (d >= 90 && d <= 94)))
-    return { cls: 'ok', msg: '✓ Good news — that’s within the local delivery area.' };
-  if (area === 'B' || area === 'CV' || area === 'WS' || area === 'DY' || area === 'WV')
-    return { cls: 'maybe', msg: 'Just outside the usual area — send a message to check.' };
-  return { cls: 'no', msg: 'That’s outside the delivery area, but collection from B92 is always an option.' };
-}
 $('#pcForm').addEventListener('submit', e => {
   e.preventDefault();
-  const out = $('.pc-out', e.target.closest('.deliv')), r = checkPostcode(e.target.elements.pc.value);
+  const out = $('.pc-out', e.target.closest('.deliv')), r = checkPostcode(e.target.elements.pc.value, false);
   out.className = 'pc-out ' + (r ? r.cls : 'maybe');
   out.textContent = r ? r.msg : 'Pop a postcode in first.';
 });

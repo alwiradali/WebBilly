@@ -1598,3 +1598,22 @@ multiples of four where possible so desktop rows fill (4 columns; 2 on phones).
 A sticky bar (`.pf-bar`, outside the hero so it can stick) jumps to each
 section and highlights the one in view; `?show=<key>` jumps on load. The
 viewer steps through the section the opened picture belongs to.
+
+**Enquiry page + delivery area (1 Oct).** The bespoke enquiry is its own page,
+`bespoke-bouquets/enquire.{html,js}` → `/bespoke-bouquets/enquire`, in six
+numbered steps (occasion & who for; style cards with her photos, size, budget;
+colours, flowers, wrap, ribbon; extras that reveal their own field — lettering,
+banner, balloon, card, money notes — plus inspiration upload and free text;
+date/time and collection or delivery; contact and preferred reply), with a
+live "Your enquiry" summary that is exactly the message sent. `?design=<name>`
+(from the portfolio viewer, the bridal button, or old `?enquire=` links, which
+redirect) preselects the style/occasion. The main page keeps a short
+"Something else in mind?" band in `#bespoke`.
+
+`shared.js` now holds CONFIG and the helpers (postcode check, dates, toast,
+copy, Web3Forms send, Instagram hand-over) for every page — edit CONFIG there.
+Delivery is Birmingham & Solihull only: B1–B38, B40, B42–B45, B72–B76,
+B90–B94. Checkout and the enquiry both refuse a delivery outside that (and
+checkout needs a full postcode), offering "Switch to collection". The message
+is only re-rendered when its text changes — rebuilding it on blur removed the
+button under the user's tap.

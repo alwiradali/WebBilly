@@ -184,7 +184,7 @@ function show(i, dir = 0) {
     $('[data-lb-cat]', lb).innerHTML = `<span class="dot"></span>${p.cats.map(c => CAT_LABEL[c]).join(' · ')}`;
     $('[data-lb-title]', lb).textContent = p.name;
     $('[data-lb-desc]', lb).textContent = p.desc;
-    $('[data-lb-enquire]', lb).href = `${MAIN}?enquire=${encodeURIComponent(p.name)}#bespoke`;
+    $('[data-lb-enquire]', lb).href = `/bespoke-bouquets/enquire?design=${encodeURIComponent(p.name)}`;
     $('[data-lb-count]', lb).textContent = `${pos + 1} / ${list.length}`;
   };
   if (dir && motion) {

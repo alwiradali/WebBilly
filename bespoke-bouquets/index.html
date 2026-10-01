@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/bespoke/logo-ink.svg">
 <link rel="preload" as="image" href="/assets/bespoke/photos/skirt-bouquet.webp">
-<link rel="stylesheet" href="/bespoke-bouquets/style.css?v=202610012000">
+<link rel="stylesheet" href="/bespoke-bouquets/style.css?v=202610012100">
 <script>document.documentElement.classList.add('js');</script>
 
 <script type="application/ld+json">
@@ -106,7 +106,7 @@
     <button class="basket-btn" type="button" data-open-basket aria-label="Open basket">
       <svg><use href="#i-bag"/></svg><span class="basket-count" data-count>0</span>
     </button>
-    <a class="btn btn-dark btn-sm hdr-cta" href="#bespoke">Enquire</a>
+    <a class="btn btn-dark btn-sm hdr-cta" href="/bespoke-bouquets/enquire">Enquire</a>
     <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
   </div>
 </header>
@@ -117,13 +117,13 @@
     <a href="/bespoke-bouquets/portfolio">Portfolio</a>
     <a href="#how">How to order</a>
     <a href="#bridal">Weddings &amp; nikkahs</a>
-    <a href="#bespoke">Bespoke enquiry</a>
+    <a href="/bespoke-bouquets/enquire">Bespoke enquiry</a>
     <a href="#reviews">Reviews</a>
     <a href="#delivery">Collection &amp; delivery</a>
     <a href="#care">Aftercare &amp; FAQs</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn btn-dark" href="#bespoke">Make an enquiry</a>
+    <a class="btn btn-dark" href="/bespoke-bouquets/enquire">Make an enquiry</a>
     <div class="drawer-social">
       <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
       <a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tiktok"/></svg></a>
@@ -249,90 +249,18 @@
   </div>
 </section>
 
-<!-- BESPOKE ENQUIRY -->
+<!-- BESPOKE (the full enquiry is its own page) -->
 <section class="sec" id="bespoke">
   <div class="wrap">
-    <div class="sec-head">
-      <div>
+    <div class="bespoke-band">
+      <div class="bespoke-band-img"><img src="/assets/bespoke/photos/blush-astilbe.webp" alt="Blush and ivory roses with pink astilbe in ivory wrap" width="1290" height="1605" loading="lazy"></div>
+      <div class="bespoke-band-copy">
         <p class="label">Bespoke</p>
-        <h2>Tell us what <em>you have in mind</em></h2>
+        <h2>Something else <em>in mind?</em></h2>
+        <p>Every bouquet can be designed from scratch. Choose the occasion, the style, the flowers and colours, the size and every little detail — then a personal quote comes straight back.</p>
+        <ol class="mini-steps"><li>Tell us the occasion &amp; style</li><li>Pick flowers, colours &amp; extras</li><li>Get your personal quote</li></ol>
+        <div class="btn-row"><a class="btn btn-dark" href="/bespoke-bouquets/enquire">Start a bespoke enquiry</a></div>
       </div>
-      <p>The colours, the flowers, a budget, a picture from Pinterest — share the idea and a personal quote comes back.</p>
-    </div>
-    <div class="form-wrap">
-    <form class="form card" id="enquiry" novalidate>
-      <div class="step-block">
-        <h3><span>1</span>The occasion</h3>
-        <div class="chips" data-name="occasion">
-          <button type="button" class="chip">Birthday</button>
-          <button type="button" class="chip">Anniversary</button>
-          <button type="button" class="chip">Valentine’s</button>
-          <button type="button" class="chip">Wedding / nikkah</button>
-          <button type="button" class="chip">Graduation</button>
-          <button type="button" class="chip">New baby</button>
-          <button type="button" class="chip">Just because</button>
-          <button type="button" class="chip">Something else</button>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <h3><span>2</span>Colours &amp; style</h3>
-        <div class="swatches" data-name="colours">
-          <button type="button" class="sw" style="--c:#f7c3cd" aria-label="Blush pink" title="Blush pink"></button>
-          <button type="button" class="sw" style="--c:#b3123a" aria-label="Red" title="Red"></button>
-          <button type="button" class="sw" style="--c:#fffaf2" aria-label="White &amp; ivory" title="White &amp; ivory"></button>
-          <button type="button" class="sw" style="--c:#b39ad6" aria-label="Lilac" title="Lilac"></button>
-          <button type="button" class="sw" style="--c:#2348b8" aria-label="Royal blue" title="Royal blue"></button>
-          <button type="button" class="sw" style="--c:#f39b3a" aria-label="Autumn tones" title="Autumn tones"></button>
-          <button type="button" class="sw" style="--c:#1f1418" aria-label="Black wrap" title="Black wrap"></button>
-          <button type="button" class="sw sw-mix" aria-label="Florist’s choice" title="Florist’s choice"></button>
-        </div>
-        <p class="hint" data-swatch-label>Tap all that apply.</p>
-        <div class="row">
-          <label class="field"><span>Design idea</span>
-            <select name="style">
-              <option value="">Choose a starting point…</option>
-              <option>Skirt bouquet</option><option>Hand-tied bouquet</option><option>Gift bag bouquet</option><option>Hatbox</option><option>Balloon bouquet</option><option>100 roses / lettering</option><option>Money bouquet</option><option>Hamper / basket</option><option>Wedding / nikkah florals</option><option>Not sure yet</option>
-            </select>
-          </label>
-          <label class="field"><span>Budget</span>
-            <select name="budget">
-              <option value="">Select…</option>
-              <option>Up to £50</option><option>£50 – £100</option><option>£100 – £150</option><option>£150 – £250</option><option>£250+</option><option>Not sure yet</option>
-            </select>
-          </label>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <h3><span>3</span>The details</h3>
-        <div class="row">
-          <label class="field"><span>Date needed</span><input type="date" name="date" data-min-days="5" required></label>
-          <label class="field"><span>Collection or delivery</span>
-            <select name="fulfil"><option>Collection from B92</option><option>Delivery (Birmingham / Solihull)</option><option>Not sure yet</option></select>
-          </label>
-        </div>
-        <label class="field"><span>Lettering, numbers or banner wording <i>(optional)</i></span><input type="text" name="lettering" maxlength="60" placeholder="e.g. Happy 21st Aisha"></label>
-        <label class="field"><span>The idea</span><textarea name="details" rows="4" required placeholder="Flowers, size, wrap colour, anything that matters…"></textarea></label>
-        <label class="upload">
-          <input type="file" name="inspo" accept="image/*" multiple>
-          <svg><use href="#i-upload"/></svg>
-          <span><b>Add inspiration pictures</b><br>Screenshots, Pinterest saves, the outfit…</span>
-        </label>
-        <div class="thumbs" data-thumbs></div>
-      </div>
-
-      <div class="step-block">
-        <h3><span>4</span>Who’s it from?</h3>
-        <div class="row">
-          <label class="field"><span>Name</span><input type="text" name="name" autocomplete="name" required></label>
-          <label class="field"><span>Phone or email</span><input type="text" name="contact" autocomplete="email" required></label>
-        </div>
-      </div>
-      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
-      <button type="submit" class="btn btn-dark btn-wide">Send enquiry <svg><use href="#i-arrow"/></svg></button>
-      <p class="form-msg" role="status" aria-live="polite"></p>
-    </form>
     </div>
   </div>
 </section>
@@ -477,7 +405,7 @@
       <img src="/assets/bespoke/logo-ink.svg" alt="The Bespoke Bouquets" width="816" height="390" loading="lazy">
       <p>Fresh bouquets, hand-tied to order in Solihull. Collection from B92 or local delivery across Birmingham &amp; Solihull.</p>
     </div>
-    <div><h4>The site</h4><a href="#shop">Shop</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="#bespoke">Bespoke enquiry</a><a href="#bridal">Weddings &amp; nikkahs</a></div>
+    <div><h4>The site</h4><a href="#shop">Shop</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="/bespoke-bouquets/enquire">Bespoke enquiry</a><a href="#bridal">Weddings &amp; nikkahs</a></div>
     <div><h4>Help</h4><a href="#how">How to order</a><a href="#delivery">Collection &amp; delivery</a><a href="#care">Aftercare</a><a href="#faq">FAQs</a></div>
     <div><h4>Follow</h4><a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener">TikTok</a></div>
   </div>
@@ -543,7 +471,7 @@
           <h4>How would you like it?</h4>
           <div class="opt-cards" data-fulfil>
             <label class="opt"><input type="radio" name="fulfil" value="collection" checked><span><svg><use href="#i-pin"/></svg><b>Collection</b><small>From B92, Solihull · Free</small></span></label>
-            <label class="opt"><input type="radio" name="fulfil" value="delivery"><span><svg><use href="#i-van"/></svg><b>Local delivery</b><small>Birmingham &amp; Solihull</small></span></label>
+            <label class="opt"><input type="radio" name="fulfil" value="delivery"><span><svg><use href="#i-van"/></svg><b>Local delivery</b><small>Birmingham &amp; Solihull only</small></span></label>
           </div>
           <div class="row">
             <label class="field"><span>Date</span><input type="date" name="date" data-min-days="5" required></label>
@@ -620,23 +548,11 @@
   </div>
 </div>
 
-<!-- Handover panel for enquiries (used when no form inbox is connected) -->
-<div class="modal handoff" id="handoff" role="dialog" aria-modal="true" aria-labelledby="hoTitle" hidden>
-  <div class="modal-scrim" data-close-handoff></div>
-  <div class="ho-panel" data-lenis-prevent>
-    <button type="button" class="round close" data-close-handoff aria-label="Close"><svg><use href="#i-close"/></svg></button>
-    <p class="label">Almost there</p>
-    <h3 id="hoTitle">Send it over</h3>
-    <p>The enquiry is written up below. Pick the easiest way to send it — Instagram opens with the message already copied, ready to paste.</p>
-    <pre class="ho-text" data-ho-text></pre>
-    <div class="handover-btns" data-ho-btns></div>
-  </div>
-</div>
-
 <div class="toast" role="status" aria-live="polite"></div>
 
-<script src="/bespoke-bouquets/petals.js?v=202610011433" defer></script>
+<script src="/bespoke-bouquets/petals.js?v=202610012100" defer></script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
-<script src="/bespoke-bouquets/script.js?v=202610012000" defer></script>
+<script src="/bespoke-bouquets/shared.js?v=202610012100" defer></script>
+<script src="/bespoke-bouquets/script.js?v=202610012100" defer></script>
 </body>
 </html>
