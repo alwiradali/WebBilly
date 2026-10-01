@@ -57,9 +57,10 @@ const REVIEWS = {
 };
 
 /* --------------------------------------------------------------------
-   CATALOGUE — the three prices are hers (£145 / £95 / £70, from her own
-   messages). price:null shows "Price on request" and the button becomes
-   "Ask for a quote". Give any design a number and it becomes buyable.
+   CATALOGUE — the shop. The three prices are hers (£145 / £95 / £70, from
+   her own messages). Everything else she makes is on the portfolio page
+   (bespoke-bouquets-portfolio.js); give a design a price and add it here
+   to make it buyable. price:null would show "Price on request".
    -------------------------------------------------------------------- */
 const CATALOGUE = [
   { id: 'skirt', name: 'The Skirt Bouquet', price: 145, cats: ['signature', 'personalised'], badge: 'Showstopper',
@@ -77,54 +78,6 @@ const CATALOGUE = [
     short: 'Carnations, lilac roses and a personalised satin banner.',
     desc: 'Pink carnations, lilac roses and clouds of gypsophila in white wrap, with a satin banner across the top carrying any name, age or message.',
     options: ['banner', 'ribbon', 'card'] },
-  { id: 'cloud', name: 'Pink Cloud Hand-tie', price: null, cats: ['signature'],
-    imgs: ['pink-cloud'], alt: 'A full dome of pink roses and gypsophila wrapped in ivory mesh',
-    short: 'A full dome of pink roses in soft ivory mesh.',
-    desc: 'Roses and spray roses in every shade of pink, dotted with gypsophila and wrapped in soft ivory mesh. Simple, romantic and full of blooms.' },
-  { id: 'hundred', name: '100 Red Roses', price: null, cats: ['personalised'], badge: 'Personalised',
-    imgs: ['hundred-roses', 'initials-vp'], alt: 'One hundred red roses in black wrap, lettered in pearls',
-    short: 'One hundred roses, with a name or initials in pearls.',
-    desc: 'One hundred red roses wrapped in black or white, with a name, initials or a word spelled out in pearls — in any language.' },
-  { id: 'milestone', name: 'Milestone Bouquet', price: null, cats: ['personalised'], badge: 'Personalised',
-    imgs: ['milestone-22', 'milestone-250k'], alt: 'Pink roses with the number 22 spelled out in pearls',
-    short: 'Ages and numbers in pearls on a dome of roses.',
-    desc: 'Birthdays, anniversaries, follower milestones — any number, spelled out in pearls across a dome of roses and finished with a pearl trim.' },
-  { id: 'midnight', name: 'Midnight Blue', price: null, cats: ['signature'],
-    imgs: ['midnight-blue'], alt: 'Royal blue and white roses edged with pearls in black wrap',
-    short: 'Royal blue & white roses, edged in pearls.',
-    desc: 'Royal blue and white roses edged with pearls, wrapped in black and set in a black gift bag with an organza bow.' },
-  { id: 'reds', name: 'Classic Reds', price: null, cats: ['signature'],
-    imgs: ['valentine-reds'], alt: 'Red roses and gypsophila in matte black wrap',
-    short: 'Red roses and gypsophila in matte black wrap.',
-    desc: 'Deep red roses and gypsophila in matte black wrap — the timeless Valentine’s favourite, and just as lovely any day of the year.' },
-  { id: 'hatbox', name: 'Hatbox Blooms', price: null, cats: ['hatbox'],
-    imgs: ['hatbox-blooms'], alt: 'Roses, tulips and carnations in a round white hatbox',
-    short: 'Roses, tulips and carnations in a hatbox.',
-    desc: 'Roses, tulips, carnations and gypsophila arranged in a round white hatbox — ready to display straight away.' },
-  { id: 'balloon', name: 'Balloon Hatbox', price: null, cats: ['hatbox', 'personalised'], badge: 'Personalised',
-    imgs: ['balloon-hatbox'], alt: 'Red roses in a hatbox under a clear balloon lettered Happy Birthday Mum',
-    short: 'Red roses beneath a personalised bubble balloon.',
-    desc: 'Red roses and berries in a white hatbox, crowned with a feather-filled bubble balloon personalised in gold lettering.' },
-  { id: 'money', name: 'Money Bouquet', price: null, cats: ['gifts'],
-    imgs: ['money-bouquet'], alt: 'Bank notes folded into petals around ivory roses',
-    short: 'Notes folded into petals around ivory roses.',
-    desc: 'Bank notes folded into petals around ivory roses, framed with clouds of gypsophila. A gift that’s half bouquet, half surprise.' },
-  { id: 'hamper', name: 'Beauty & Blooms Hamper', price: null, cats: ['gifts'],
-    imgs: ['beauty-hamper'], alt: 'A white wicker basket of roses, carnations and beauty products',
-    short: 'A wicker basket of flowers and beauty favourites.',
-    desc: 'A white wicker basket filled with roses, carnations and berries, styled around beauty and skincare favourites and tied with a satin bow.' },
-  { id: 'seasonal', name: 'Seasonal Gift Bag', price: null, cats: ['signature'], badge: 'Seasonal',
-    imgs: ['autumn-pair'], alt: 'Two autumn bouquets in white gift bags with crimson ribbon',
-    short: 'The best blooms of the season, in a gift bag.',
-    desc: 'Whatever is most beautiful that season, hand-tied in a white gift bag with a crimson satin ribbon. Shown here in autumn colours.' },
-  { id: 'bridal', name: 'Bridal Bouquet', price: null, cats: ['bridal'], badge: 'Bridal',
-    imgs: ['bridal-calla', 'bridal-henna'], alt: 'Bridal bouquet of white calla lilies with plum and lilac flowers',
-    short: 'Designed around the outfit and the day.',
-    desc: 'Designed around the outfit and the day — shown here with white calla lilies and plum and lilac blooms, finished with an ivory silk wrap.' },
-  { id: 'gajre', name: 'Gajre & Wrist Corsages', price: null, cats: ['bridal'], badge: 'Bridal',
-    imgs: ['bridal-gajre'], alt: 'A white rose gajra on a bride’s wrist',
-    short: 'Fresh rose gajre for the bride and bridal party.',
-    desc: 'Fresh white roses and gypsophila made into gajre and wrist corsages for brides, bridesmaids and mehndi.' }
 ];
 
 const OPTION_DEFS = {
@@ -683,6 +636,13 @@ function prefillEnquiry(name) {
   setTimeout(() => d.focus({ preventScroll: true }), 900);
 }
 $$('[data-enquire]').forEach(b => b.addEventListener('click', () => prefillEnquiry(b.dataset.enquire)));
+/* the portfolio page sends people here as ?enquire=<design name>#bespoke */
+(function fromPortfolio() {
+  const want = new URLSearchParams(location.search).get('enquire');
+  if (!want) return;
+  history.replaceState(null, '', location.pathname + '#bespoke');
+  setTimeout(() => prefillEnquiry(want.slice(0, 80)), motion ? 2600 : 300);
+})();
 
 const ho = $('#handoff');
 $$('[data-close-handoff]', ho).forEach(b => b.addEventListener('click', () => closeModal(ho)));

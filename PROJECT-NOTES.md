@@ -1475,3 +1475,14 @@ back below 981px.
 number, email + Web3Forms key, Google Business profile + review link, prices
 for the remaining designs, delivery fee, and a Stripe / PayPal account if she
 wants payments taken online.
+
+**Portfolio page (`templates/bespoke-bouquets-portfolio.{html,js}`).** The
+shop shows only the designs with a published price; everything else she makes
+is on the portfolio — `PIECES` in its JS, one tile per photo, a masonry
+gallery with filters and a lightbox. "Request something like this" goes to
+`bespoke-bouquets.html?enquire=<name>#bespoke`, which prefills the bespoke
+form; the main page's occasion links go to `…-portfolio.html?show=<cat>`.
+The portfolio's head, icon sprite, header, drawer and footer were copied from
+the main page — change both if either changes. It shares `bespoke-bouquets.css`
+and reads the basket count from the same localStorage key. Same noindex
+headers as the main page.

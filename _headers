@@ -91,6 +91,10 @@
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /templates/bespoke-bouquets.html
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/bespoke-bouquets-portfolio
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/bespoke-bouquets-portfolio.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/bespoke/*
   X-Robots-Tag: noindex, noimageindex
 
