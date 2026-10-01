@@ -1565,3 +1565,11 @@ code path), and no copy anywhere mentions a 50% deposit. Bespoke designs are
 "confirmed once the quote is agreed" — she arranges any deposit herself. Body
 font is now Nunito Sans; intro lines (hero lead, `.sec-head>p`) are set in
 Playfair italic so they read as soft, short captions, not paragraphs.
+
+**Fourth look: the Henna by Zainab style (owner pointed at it, 1 Oct).**
+Centred hero on a pink-to-cream wash: "SOLIHULL · B92" in wide-tracked caps,
+her SVG logo, "FLORIST" in rose caps, a line-drawn floral ornament
+(`.ornament`, inline SVG in `currentColor`), a big Gilda Display headline with
+an EB Garamond italic second line, Garamond body copy, then a full-bleed strip
+of three photos. Fonts are Gilda Display + EB Garamond only. Buttons are
+rectangular, Garamond caps tracked .24em, filled crimson or outlined.
