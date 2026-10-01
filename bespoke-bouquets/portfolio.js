@@ -54,6 +54,8 @@ const PIECES = [
     desc: 'Blush roses with a birthday age in pearls, in a white gift bag with an organza bow.', alt: 'Pink roses with 22 in pearls' },
   { img: 'hatbox-blooms', w: 1200, h: 1716, name: 'Hatbox Blooms', cats: ['hatbox'],
     desc: 'Roses, tulips, carnations and gypsophila arranged in a round white hatbox.', alt: 'Roses, tulips and carnations in a white hatbox' },
+  { img: 'red-black-hatbox', w: 1290, h: 1604, name: 'Red Roses, Black Hatbox', cats: ['hatbox'],
+    desc: 'Deep red roses dotted with gypsophila, in a round black hatbox tied with an organza bow.', alt: 'Red roses with gypsophila in a black hatbox' },
   { img: 'bridal-gajre', w: 1200, h: 1472, name: 'Bridal Gajre', cats: ['bridal'],
     desc: 'Fresh white rose and gypsophila gajra for the bride.', alt: 'A white rose gajra on a bride’s wrist' }
 ];
