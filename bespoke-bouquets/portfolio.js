@@ -11,7 +11,7 @@
 
 const MAIN = '/bespoke-bouquets/';
 const IMG = n => `/assets/bespoke/photos/${n}.webp`;
-const CAT_LABEL = { red: 'Red roses', pastel: 'Pastels & whites', personalised: 'Personalised', hatbox: 'Hatboxes & baskets', gifts: 'Gifts', bridal: 'Bridal & mehndi' };
+const CAT_LABEL = { red: 'Red roses', pastel: 'Pastels & whites', personalised: 'Personalised', hatbox: 'Hatboxes & baskets', gifts: 'Gifts', bridal: 'Weddings & nikkahs' };
 
 const PIECES = [
   { img: 'red-mesh', w: 1290, h: 1605, name: 'Grand Red Roses', cats: ['red'],

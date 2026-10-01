@@ -50,7 +50,7 @@ const REVIEWS = {
     { name: 'Aaliyah R.', text: 'Ordered the skirt bouquet for my sister’s birthday and she was speechless. Even prettier in person — the bow is everything.', about: 'The Skirt Bouquet' },
     { name: 'Hamza S.', text: 'The 100 roses with our initials were absolutely stunning. So easy to order from start to finish.', about: '100 Red Roses' },
     { name: 'Sophie L.', text: 'Got the balloon hatbox for my mum and she hasn’t stopped talking about it. So thoughtful and beautifully made.', about: 'Balloon Hatbox' },
-    { name: 'Mariam K.', text: 'My gajre were perfect for my mehndi — fresh, delicate and exactly what I pictured.', about: 'Gajre' },
+    { name: 'Mariam K.', text: 'My gajre were perfect for my nikkah — fresh, delicate and exactly what I pictured.', about: 'Gajre' },
     { name: 'Daniel P.', text: 'The money bouquet was the best gift idea. Neatly done and so well presented.', about: 'Money Bouquet' },
     { name: 'Priya M.', text: 'Gorgeous flowers, gorgeous wrapping, and collection was so easy.', about: 'Blush Garden Gift Bag' }
   ]
@@ -99,7 +99,7 @@ const OPTION_DEFS = {
   banner: { label: 'Banner wording', type: 'text', max: 40, placeholder: 'e.g. Happy Birthday Matthew' },
   card:   { label: 'Message card', type: 'textarea', max: 160, optional: true, placeholder: 'A few words for the card…' }
 };
-const CAT_LABEL = { signature: 'Signature', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Bridal & mehndi' };
+const CAT_LABEL = { signature: 'Signature', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Weddings & nikkahs' };
 const IMG = n => `/assets/bespoke/photos/${n}.webp`;
 const LOGO = '/assets/bespoke/rose-ink.svg';
 
@@ -648,7 +648,7 @@ inspo.addEventListener('change', () => {
 function prefillEnquiry(name) {
   const sel = enq.elements.style;
   const match = Array.from(sel.options).find(o => name.toLowerCase().includes(o.text.toLowerCase().split(' ')[0]) && o.value !== '');
-  if (/bridal|gajre/i.test(name)) sel.value = 'Bridal / mehndi florals';
+  if (/bridal|gajre/i.test(name)) sel.value = 'Wedding / nikkah florals';
   else if (match) sel.value = match.value || match.text;
   const d = enq.elements.details;
   if (!d.value.includes(name)) d.value = `Interested in: ${name}\n` + d.value;
