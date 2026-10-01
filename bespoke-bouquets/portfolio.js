@@ -11,37 +11,51 @@
 
 const MAIN = '/bespoke-bouquets/';
 const IMG = n => `/assets/bespoke/photos/${n}.webp`;
-const CAT_LABEL = { signature: 'Bouquets', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Bridal & mehndi' };
+const CAT_LABEL = { red: 'Red roses', pastel: 'Pastels & whites', personalised: 'Personalised', hatbox: 'Hatboxes & baskets', gifts: 'Gifts', bridal: 'Bridal & mehndi' };
 
 const PIECES = [
-  { img: 'hundred-roses', w: 1200, h: 1494, name: '100 Red Roses', cats: ['personalised'],
-    desc: 'One hundred red roses in black, lettered in pearls — in any language.', alt: 'One hundred red roses in black wrap, lettered Wifey in pearls' },
-  { img: 'pink-cloud', w: 1200, h: 1594, name: 'Pink Cloud Hand-tie', cats: ['signature'],
-    desc: 'Roses and spray roses in every shade of pink, dotted with gypsophila and wrapped in soft ivory mesh.', alt: 'A full dome of pink roses and gypsophila in ivory mesh' },
+  { img: 'red-mesh', w: 1290, h: 1605, name: 'Grand Red Roses', cats: ['red'],
+    desc: 'A generous armful of red roses with hypericum berries and eucalyptus, wrapped in black mesh.', alt: 'Large bouquet of red roses with berries and eucalyptus in black mesh wrap' },
+  { img: 'blush-astilbe', w: 1290, h: 1605, name: 'Blush & Ivory Hand-tie', cats: ['pastel'],
+    desc: 'Blush and ivory roses with spray roses, gypsophila and pink astilbe, wrapped in ivory linen with a black ribbon.', alt: 'Blush and white roses with pink astilbe in ivory wrap, tied with black ribbon' },
+  { img: 'hundred-roses', w: 1200, h: 1494, name: '100 Red Roses', cats: ['red', 'personalised'],
+    desc: 'One hundred red roses in black, lettered in pearls — in any language.', alt: 'One hundred red roses in black wrap, lettered in pearls' },
+  { img: 'peony-pearl', w: 1290, h: 1490, name: 'Peony & Pearl Bag', cats: ['pastel'],
+    desc: 'Magenta roses, white peonies and candy-striped carnations in a pearl-edged ruffle, standing in a white gift bag.', alt: 'Pink roses, white peonies and carnations with a pearl ruffle in a white gift bag' },
+  { img: 'royal-blue', w: 1290, h: 1605, name: 'Royal Blue & White', cats: ['gifts'],
+    desc: 'Royal blue and white roses with gypsophila and a pearl trim, in black wrap and a black gift bag.', alt: 'Blue and white roses edged with pearls in black wrap' },
+  { img: 'red-white-hatbox', w: 1290, h: 1602, name: 'Red & White Hatbox', cats: ['red', 'hatbox'],
+    desc: 'Red and white roses with eucalyptus and gypsophila, arranged in a round white hatbox.', alt: 'Red and white roses with eucalyptus in a white hatbox' },
   { img: 'balloon-hatbox', w: 1200, h: 1781, name: 'Balloon Hatbox', cats: ['hatbox', 'personalised'],
-    desc: 'Red roses and berries in a white hatbox, crowned with a feather-filled bubble balloon personalised in gold.', alt: 'Red roses in a hatbox under a clear balloon lettered Happy Birthday Mum' },
-  { img: 'milestone-250k', w: 1200, h: 1494, name: 'Milestone Bouquet', cats: ['personalised'],
-    desc: 'Red and blush roses with a milestone spelled out in pearls — made for a 250K celebration.', alt: 'Red and pink roses with 250K in pearls' },
+    desc: 'Red roses and berries in a white hatbox, crowned with a feather-filled bubble balloon personalised in gold.', alt: 'Red roses in a hatbox under a clear personalised balloon' },
+  { img: 'white-noir', w: 1290, h: 1605, name: 'White Roses, Black Wrap', cats: ['pastel'],
+    desc: 'A full dome of white roses with gypsophila, in black wrap and a black gift bag.', alt: 'White roses with gypsophila in black wrap and gift bag' },
+  { img: 'milestone-250k', w: 1200, h: 1494, name: 'Milestone Bouquet', cats: ['red', 'personalised'],
+    desc: 'Red and blush roses with a milestone spelled out in pearls.', alt: 'Red and pink roses with 250K in pearls' },
+  { img: 'baby-girl-basket', w: 1290, h: 1605, name: 'Baby Girl Basket', cats: ['hatbox', 'pastel'],
+    desc: 'Pink and white roses with lilac limonium in a wicker basket, finished with a pink organza bow — made for a new arrival.', alt: 'Pink and white roses with lilac limonium in a wicker basket' },
   { img: 'money-bouquet', w: 1200, h: 1493, name: 'Money Bouquet', cats: ['gifts'],
     desc: 'Bank notes folded into petals around ivory roses, framed with clouds of gypsophila.', alt: 'Bank notes folded into petals around ivory roses' },
-  { img: 'bridal-gajre', w: 1200, h: 1472, name: 'Bridal Gajre', cats: ['bridal'],
-    desc: 'Fresh white rose and gypsophila gajra for the bride. Photography: @shumaelaphotography.', alt: 'A white rose gajra on a bride’s wrist' },
-  { img: 'midnight-blue', w: 1200, h: 1494, name: 'Midnight Blue', cats: ['signature'],
-    desc: 'Royal blue and white roses edged with pearls, wrapped in black with an organza bow.', alt: 'Royal blue and white roses in black wrap' },
-  { img: 'beauty-hamper', w: 1200, h: 1594, name: 'Beauty & Blooms Hamper', cats: ['gifts'],
+  { img: 'red-greenery', w: 1290, h: 1605, name: 'Hand-tied Red Roses', cats: ['red'],
+    desc: 'Deep red roses with pistachio greenery and gypsophila, hand-tied with a crimson ribbon.', alt: 'Hand-tied red roses with greenery and gypsophila' },
+  { img: 'tulip-bag', w: 1290, h: 1473, name: 'Tulip & Rose Bag', cats: ['pastel'],
+    desc: 'Pink and white tulips with roses and carnations in a pearl-edged ruffle, in a white gift bag.', alt: 'Pink and white tulips with roses in a pearl ruffle and white gift bag' },
+  { img: 'bridal-bouquet', w: 1290, h: 1587, name: 'Bridal Bouquet', cats: ['bridal'],
+    desc: 'Abida’s bridal bouquet: white calla lilies, ivory carnations and blush peonies with plum clematis, magenta globe amaranth and astilbe, tied with an ivory silk ribbon.', alt: 'Bridal bouquet of white calla lilies, ivory and blush blooms and purple clematis' },
+  { img: 'premium-red-pair', w: 1290, h: 1605, name: 'Premium Red Pair', cats: ['red', 'gifts'],
+    desc: 'Two premium red rose bouquets with gypsophila in pearl-edged black ruffles, each in a black gift bag.', alt: 'Two red rose bouquets in black pearl-edged ruffles and gift bags' },
+  { img: 'pink-cloud', w: 1200, h: 1594, name: 'Pink Cloud Hand-tie', cats: ['pastel'],
+    desc: 'Roses and spray roses in every shade of pink, dotted with gypsophila and wrapped in soft ivory mesh.', alt: 'A dome of pink roses and gypsophila in ivory mesh' },
+  { img: 'beauty-hamper', w: 1200, h: 1594, name: 'Beauty & Blooms Hamper', cats: ['gifts', 'hatbox'],
     desc: 'A white wicker basket of roses, carnations and berries, styled around beauty favourites.', alt: 'A white wicker hamper of roses and beauty products' },
-  { img: 'milestone-22', w: 1200, h: 1260, name: 'Birthday Number Bouquet', cats: ['personalised'],
-    desc: 'Blush roses with a birthday age in pearls, set in a white gift bag with an organza bow.', alt: 'Pink roses with 22 in pearls' },
+  { img: 'red-cloud-black', w: 1290, h: 1605, name: 'Red Roses, Gypsophila Halo', cats: ['red'],
+    desc: 'Red roses ringed with a deep halo of gypsophila and pearls, in black wrap and a black gift bag.', alt: 'Red roses ringed with gypsophila in black wrap' },
+  { img: 'milestone-22', w: 1200, h: 1260, name: 'Birthday Number Bouquet', cats: ['personalised', 'pastel'],
+    desc: 'Blush roses with a birthday age in pearls, in a white gift bag with an organza bow.', alt: 'Pink roses with 22 in pearls' },
   { img: 'hatbox-blooms', w: 1200, h: 1716, name: 'Hatbox Blooms', cats: ['hatbox'],
     desc: 'Roses, tulips, carnations and gypsophila arranged in a round white hatbox.', alt: 'Roses, tulips and carnations in a white hatbox' },
-  { img: 'initials-vp', w: 1200, h: 1378, name: 'Initials & Luxe Gift Bouquet', cats: ['personalised', 'gifts'],
-    desc: 'A sea of red roses lettered with initials, beside a gift bouquet of roses, notes and beauty treats.', alt: 'Red roses lettered V and P beside a gift bouquet' },
-  { img: 'valentine-reds', w: 1200, h: 1374, name: 'Classic Reds', cats: ['signature'],
-    desc: 'Deep red roses and gypsophila in matte black wrap — a Valentine’s favourite.', alt: 'Red roses and gypsophila in black wrap with a Valentine’s card' },
-  { img: 'autumn-pair', w: 1200, h: 1781, name: 'Seasonal Gift Bags', cats: ['signature'],
-    desc: 'Autumn colour, hand-tied and standing in white gift bags with crimson satin ribbon.', alt: 'Two autumn bouquets in white gift bags' },
-  { img: 'bridal-bouquet', w: 1290, h: 1587, name: 'Bridal Bouquet', cats: ['bridal'],
-    desc: 'Abida’s bridal bouquet: white calla lilies, ivory carnations and blush peonies with plum clematis, magenta globe amaranth and astilbe, tied with an ivory silk ribbon.', alt: 'Bridal bouquet of white calla lilies, ivory and blush blooms and purple clematis, tied with ivory ribbon' }
+  { img: 'bridal-gajre', w: 1200, h: 1472, name: 'Bridal Gajre', cats: ['bridal'],
+    desc: 'Fresh white rose and gypsophila gajra for the bride. Photography: @shumaelaphotography.', alt: 'A white rose gajra on a bride’s wrist' }
 ];
 
 /* ------------------------------ helpers ------------------------------ */
@@ -121,6 +135,10 @@ $$('.pf-img img', grid).forEach(img => {
   else { img.addEventListener('load', on, { once: true }); img.addEventListener('error', on, { once: true }); setTimeout(on, 4000); }
 });
 
+$$('.pf-filters .chip').forEach(c => {
+  const f = c.dataset.filter, n = f === 'all' ? PIECES.length : PIECES.filter(p => p.cats.includes(f)).length;
+  c.insertAdjacentHTML('beforeend', ` <span class="n">${n}</span>`);
+});
 let current = 'all';
 const visible = () => $$('.pf-tile', grid).filter(t => !t.classList.contains('is-out'));
 function setFilter(f, animate = true) {

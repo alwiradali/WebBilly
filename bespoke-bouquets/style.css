@@ -579,3 +579,8 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .p-buy{flex-wrap:nowrap}
 .p-buy .btn{min-width:0;padding:0 1rem;letter-spacing:.12em;white-space:normal;text-align:center;line-height:1.2}
 @media (max-width:420px){ .p-buy .btn{font-size:.82rem;letter-spacing:.08em} .p-buy .btn>svg{display:none} }
+
+.chip .n{font-size:.78em;color:var(--mute);margin-left:.35em}
+.chip.is-on .n{color:rgba(255,255,255,.7)}
+.pf-filters{flex-wrap:wrap}
+@media (max-width:640px){.pf-filters{flex-wrap:nowrap}}

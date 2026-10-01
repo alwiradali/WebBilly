@@ -1,7 +1,7 @@
 {
-  "stamp": "e26b8e3b7db5",
-  "built": "2026-10-01T14:40:14Z",
-  "head": "fdc386b",
-  "files": 2273,
+  "stamp": "b293e077e9f0",
+  "built": "2026-10-01T14:49:54Z",
+  "head": "080dc1a",
+  "files": 2282,
   "note": "stamp identifies the deployed tree; head is what main last had when it was built"
 }
