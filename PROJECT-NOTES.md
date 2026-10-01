@@ -1589,3 +1589,12 @@ iOS ignores `overflow:hidden` on body, so `lock()` pins the body with
 `position:fixed; top:-scrollY` and restores the exact scroll on close.
 CSS/JS links carry `?v=<timestamp>` — bump it on every deploy, or phones keep
 running cached code (the owner saw a broken thumbnail from a stale script).
+
+**Portfolio is grouped, not filtered (owner: "not organised at all").** One
+titled section per category, in order — Red roses, Pastels & whites,
+Personalised, Hatboxes & baskets, Gifts, Weddings & nikkahs — and every piece
+lives in exactly ONE (`cats[0]`), so nothing repeats. Sections are kept to
+multiples of four where possible so desktop rows fill (4 columns; 2 on phones).
+A sticky bar (`.pf-bar`, outside the hero so it can stick) jumps to each
+section and highlights the one in view; `?show=<key>` jumps on load. The
+viewer steps through the section the opened picture belongs to.
