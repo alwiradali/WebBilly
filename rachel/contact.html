@@ -176,14 +176,14 @@
           <label>Delivery or collection?</label>
           <div class="seg">
             <label><input type="radio" name="fulfil" value="Delivery" checked><span>Delivery</span></label>
-            <label><input type="radio" name="fulfil" value="Collection"><span>Collection</span></label>
+            <label><input type="radio" name="fulfil" value="Collection"><span>Collection (M22)</span></label>
           </div>
           <div id="deliveryRow" class="on">
             <label for="fAddr">Delivery address</label>
             <input id="fAddr" type="text" placeholder="House number and street" name="address" autocomplete="street-address" autocapitalize="words">
             <label for="fPostcode">Postcode</label>
             <input id="fPostcode" type="text" placeholder="M14 …" name="postcode" autocomplete="postal-code" autocapitalize="characters">
-            <p class="formhint">We deliver within Manchester only (postcodes starting with M). Anywhere else, choose collection.</p>
+            <p class="formhint" id="fDelHint">We deliver within Manchester only (postcodes starting with M): the first 2 miles from M22 are free, then £1 a mile. Anywhere else, choose collection from M22.</p>
           </div>
           <div class="orow">
             <div><label for="fDate">Date needed</label><input id="fDate" type="date" name="date" autocomplete="off" data-notice="3"></div>
@@ -368,9 +368,9 @@
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
               <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
-        <p class="cohint">We deliver within Manchester only (postcodes starting with M).</p>
+        <p class="cohint" id="coDelHint">We deliver within Manchester only (postcodes starting with M). The first 2 miles from M22 are free, then £1 a mile.</p>
         </div>
-        <p class="cohint" id="coCollect" hidden>Collection is from Rachel in Manchester. We send the address and a time with your confirmation.</p>
+        <p class="cohint" id="coCollect" hidden>Collection is free, from Rachel in M22 (Wythenshawe). We send the address and a time with your confirmation.</p>
 
         <div id="coCardLive" hidden>
           <div class="cofield"><label for="co-card">Card Number</label>
@@ -405,7 +405,7 @@
         <div id="coLines"></div>
         <div style="margin-top:16px">
           <div class="cotot"><span>Subtotal</span><b id="coSub">£0</b></div>
-          <div class="cotot"><span>Delivery</span><b>Free</b></div>
+          <div class="cotot"><span id="coDelLbl">Delivery</span><b id="coDel">Add your postcode</b></div>
           <div class="cotot grand"><span>Total</span><b id="coTot">£0</b></div>
         </div>
         <div class="cosecure">
@@ -474,10 +474,10 @@
         </div>
         <div style="margin-top:18px">
           <div class="sline"><span>Subtotal</span><b id="cSub">£0</b></div>
-          <div class="sline"><span>Delivery</span><b>Free</b></div>
+          <div class="sline"><span>Delivery</span><b>At checkout</b></div>
           <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
         </div>
-        <p class="cnote">Please allow <b>3 days' notice</b>. We deliver within Manchester only, or you can collect.</p>
+        <p class="cnote">Please allow <b>3 days' notice</b>. Delivery within Manchester: the first 2 miles are free, then £1 a mile. Or collect from M22 for free.</p>
         <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
         <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
       </aside>

@@ -481,6 +481,29 @@
     var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + 3);
     return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
   };
+  /* Delivery is priced from her collection point in M22: the first 2 miles
+     free, then £1 for each mile after that. postcodes.io turns postcodes
+     into map points (free, no key); straight-line distance × 1.25 is
+     close to driving miles. If the lookup fails the fee is confirmed with
+     the order instead, and nothing is charged. */
+  var RR_FROM = 'M22', RR_FREE_MILES = 2, RR_PER_MILE = 1, RR_ROAD = 1.25, geoCache = {};
+  function rrGeo(pc) {
+    var k = String(pc).toUpperCase().replace(/\s+/g, '');
+    if (geoCache[k]) return Promise.resolve(geoCache[k]);
+    var full = /\d[A-Z]{2}$/.test(k) && k.length > 4;
+    return fetch('https://api.postcodes.io/' + (full ? 'postcodes/' : 'outcodes/') + encodeURIComponent(k))
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { if (!j.result) throw 0; return (geoCache[k] = { lat: j.result.latitude, lon: j.result.longitude }); });
+  }
+  window.rrDeliveryQuote = function (pc) {
+    return Promise.all([rrGeo(RR_FROM), rrGeo(pc)]).then(function (g) {
+      var a = g[0], b = g[1], R = 3958.8, rad = function (x) { return x * Math.PI / 180; };
+      var dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+      var h = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.pow(Math.sin(dLon / 2), 2);
+      var miles = Math.round(2 * R * Math.asin(Math.sqrt(h)) * RR_ROAD * 10) / 10;
+      return { miles: miles, fee: Math.max(0, Math.ceil(miles) - RR_FREE_MILES) * RR_PER_MILE };
+    }).catch(function () { return null; });
+  };
   window.rrInArea = function (pc) { return /^M\d/i.test(String(pc || '').trim()); };
   [].forEach.call(document.querySelectorAll('input[type=date][data-notice]'), function (d) {
     d.min = rrMinDate();
@@ -574,6 +597,19 @@
     if (!hit) { var o = document.createElement('option'); o.text = what; sel.add(o); hit = what; }
     sel.value = hit;
   }
+  var formQuoteFor = '';
+  function quoteForm() {
+    var h = $('fDelHint'); if (!h) return;
+    var pc = val('fPostcode');
+    if (pc.replace(/\s/g, '').length < 5 || !rrInArea(pc) || pc === formQuoteFor) return;
+    formQuoteFor = pc;
+    rrDeliveryQuote(pc).then(function (q) {
+      if (!q || pc !== formQuoteFor) return;
+      h.textContent = 'About ' + q.miles + ' miles from M22: ' +
+        (q.fee ? money(q.fee) + ' delivery (first 2 miles free, then £1 a mile).' : 'free delivery.');
+    });
+  }
+  on('fPostcode', 'blur', quoteForm); on('fPostcode', 'change', quoteForm);
   ['fName','fEmail','fPhone','fStyle','fPres','fOcc','fAddr','fPostcode','fDate','fTime','fBudget','fColours','fFor','fCard','fNotes']
     .forEach(function (id) { on(id, 'input', compose); on(id, 'change', compose); });
   [].forEach.call(document.querySelectorAll('input[name="fulfil"]'), function (r) {
@@ -863,7 +899,7 @@
     }).join('');
     var t = cartTotal();
     $('coSub').textContent = money(t);
-    $('coTot').textContent = money(t);
+    paintDelivery();
   }
   function mountStripe() {
     if (!RR_STRIPE_PK || coCard) return;
@@ -887,6 +923,28 @@
   }
   $('cox').addEventListener('click', function () { closeCheckout(); openCart(); });
   $('coHome').addEventListener('click', function (e) { e.preventDefault(); closeCheckout(); });
+  var coFee = null, coFeeFor = '';
+  function paintDelivery() {
+    var del = coFulfil() === 'Delivery', t = cartTotal();
+    $('coDelLbl').textContent = del ? 'Delivery' : 'Collection (M22)';
+    if (!del) { $('coDel').textContent = 'Free'; $('coTot').textContent = money(t); return; }
+    if (coFee == null) { $('coDel').textContent = coFeeFor ? 'Confirmed with order' : 'Add your postcode'; $('coTot').textContent = money(t); return; }
+    $('coDel').textContent = coFee.fee ? money(coFee.fee) : 'Free';
+    $('coTot').textContent = money(t + coFee.fee);
+  }
+  function quoteCheckout() {
+    var pc = ($('coPost').value || '').trim();
+    if (pc.replace(/\s/g, '').length < 5 || !rrInArea(pc)) { coFee = null; coFeeFor = ''; paintDelivery(); return; }
+    if (pc === coFeeFor) return;
+    coFeeFor = pc; coFee = null; $('coDel').textContent = 'Working it out…';
+    rrDeliveryQuote(pc).then(function (q) {
+      if (pc !== coFeeFor) return;
+      coFee = q; paintDelivery();
+      if (q) $('coDelHint').textContent = 'About ' + q.miles + ' miles from M22: ' +
+        (q.fee ? money(q.fee) + ' delivery (first 2 miles free, then £1 a mile).' : 'free delivery.');
+    });
+  }
+  ['input', 'change', 'blur'].forEach(function (ev) { $('coPost').addEventListener(ev, quoteCheckout); });
   function coFulfil() {
     var r = document.querySelector('input[name="coFulfil"]:checked');
     return r ? r.value : 'Delivery';
@@ -897,6 +955,7 @@
       $('coAddrBox').hidden = !del;
       $('coCollect').hidden = del;
       ['coAddr', 'coCity', 'coPost'].forEach(function (id) { $(id).required = del; });
+      paintDelivery();
     });
   });
   $('coform').addEventListener('submit', function (e) {
@@ -917,9 +976,12 @@
 
     /* no Stripe yet: send it to us as a written order so nothing is lost */
     var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
-    var notes = 'Checkout order: ' + lines + ', total ' + money(cartTotal()) +
+    var fee = del && coFee ? coFee.fee : 0;
+    var notes = 'Checkout order: ' + lines + ', flowers ' + money(cartTotal()) +
+      (del ? ', delivery ' + (coFee ? (fee ? money(fee) + ' (about ' + coFee.miles + ' miles)' : 'free (about ' + coFee.miles + ' miles)') : 'to confirm') : '') +
+      ', total ' + money(cartTotal() + fee) +
       '\nDate: ' + nice(date) +
-      (del ? '\nDeliver to: ' + addr + ', ' + city + ' ' + post : '\nCollection');
+      (del ? '\nDeliver to: ' + addr + ', ' + city + ' ' + post : '\nCollection from M22');
     track('order_submit', { source: 'checkout', value: cartTotal() });
     closeCheckout();
     if ($('oform')) {
