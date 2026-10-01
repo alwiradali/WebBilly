@@ -100,7 +100,7 @@ const OPTION_DEFS = {
   card:   { label: 'Message card', type: 'textarea', max: 160, optional: true, placeholder: 'A few words for the card…' }
 };
 const CAT_LABEL = { signature: 'Signature', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Weddings & nikkahs' };
-const IMG = n => `/assets/bespoke/photos/${n}.webp`;
+const IMG = n => `/assets/bespoke/photos/${n}.webp?v=2`;
 const LOGO = '/assets/bespoke/rose-ink.svg';
 
 /* ------------------------------ helpers ------------------------------ */
