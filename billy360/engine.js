@@ -2350,8 +2350,14 @@
         if (!reduce) { cam.yaw -= 22; cam.fov = Math.min(100, cam.fov + 8); }   // settle into the opening view
         /* only compile the space shader when the starting room will actually
            draw it — a real captured panorama never touches it, and on some
-           laptop drivers this compile alone stalls the tab for seconds */
-        if (room.space && !room.pano && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
+           laptop drivers this compile alone stalls the tab for seconds.
+           With noBake (the Studio editor, the public site) a room with no
+           photograph is a flat tile and the shader is never drawn, so it is
+           never compiled either: on 1 Oct a brand-new tour, no photographs
+           yet, compiled it on opening the Studio's 360 tab and froze the
+           whole browser on a Windows laptop, the GPU process being shared
+           by every tab. */
+        if (room.space && !room.pano && !noBake() && !bakeProgram(room.space.layout || 0)) return api;   // reload or error already handled
         resize();
         needLo(room, true); needHi(room, true);
         prefetchAround(room);
