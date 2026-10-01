@@ -13,7 +13,6 @@
 
 User-agent: *
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -25,7 +24,6 @@ Allow: /
 # (ChatGPT / OpenAI)
 User-agent: GPTBot
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -33,7 +31,6 @@ Allow: /
 
 User-agent: OAI-SearchBot
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -41,7 +38,6 @@ Allow: /
 
 User-agent: ChatGPT-User
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -50,7 +46,6 @@ Allow: /
 # (Anthropic / Claude)
 User-agent: ClaudeBot
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -58,7 +53,6 @@ Allow: /
 
 User-agent: Claude-Web
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -66,7 +60,6 @@ Allow: /
 
 User-agent: anthropic-ai
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -75,7 +68,6 @@ Allow: /
 # (Perplexity)
 User-agent: PerplexityBot
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -83,7 +75,6 @@ Allow: /
 
 User-agent: Perplexity-User
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -92,7 +83,6 @@ Allow: /
 # (Google AI — Gemini / AI Overviews)
 User-agent: Google-Extended
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -101,7 +91,6 @@ Allow: /
 # (Apple Intelligence)
 User-agent: Applebot-Extended
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html
@@ -110,7 +99,6 @@ Allow: /
 # (Microsoft Copilot / Bing)
 User-agent: Bingbot
 Disallow: /templates/
-Disallow: /bespoke-bouquets/
 Disallow: /westfield
 Disallow: /send-review.html
 Disallow: /admin.html

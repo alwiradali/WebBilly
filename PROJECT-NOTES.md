@@ -23,7 +23,9 @@ each one in its own top-level folder — `/<client>/index.html` (served at
 (`/assets/…`, `/<client>/style.css`) so the folder works with or without the
 trailing slash, load GSAP / ScrollTrigger / Lenis from `/assets/vendor/`
 (copies of the ones in the old folder), and add the folder to `_headers`
-(noindex) and to every group in `robots.txt`. The older previews still live
+(noindex). Do NOT list it in `robots.txt`: that file is public, so a line
+there tells anyone where the preview is — and a Disallow also stops crawlers
+from ever seeing the noindex. The meta tag plus the header is enough. The older previews still live
 under `/templates/` and keep working there; don't add anything new to it.
 
 ## Scroll effects / animations — use the global toolkit
