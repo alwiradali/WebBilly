@@ -37,16 +37,18 @@
 <script>
 /* Inline and first, so the curtain is up before anything paints. Everything
    about it is fail-safe: it is only ever shown by this script, it lifts on
-   window load, it lifts anyway after 2.6 seconds, and it is skipped entirely
-   for anyone returning within the session or asking for reduced motion — so
-   moving between pages never meets it twice. */
+   window load, and it lifts anyway after 2.6 seconds. It shows every time the
+   home page opens, and on whichever page someone lands on first; moving
+   between the other pages does not meet it again. Reduced motion still sees
+   the logo, just briefly and without the animation. */
 (function () {
   var el = document.getElementById('rrload');
   if (!el) return;
   var seen = false;
   try { seen = sessionStorage.getItem('rr-seen') === '1'; } catch (e) {}
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (seen || still) { el.parentNode.removeChild(el); return; }
+  var home = /\/(index\.html)?$/.test(location.pathname);
+  if (seen && !home) { el.parentNode.removeChild(el); return; }
   el.classList.add('on');
   document.documentElement.style.overflow = 'hidden';
   var done = false;
@@ -57,7 +59,7 @@
     el.classList.add('gone');
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700);
   }
-  var started = Date.now(), MIN = 1150;
+  var started = Date.now(), MIN = still ? 700 : 1150;
   function liftWhenSettled() {
     var waited = Date.now() - started;
     setTimeout(lift, waited >= MIN ? 260 : MIN - waited);
@@ -170,7 +172,7 @@
   <div class="spec">
     <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9 17.5 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Arranged the morning it goes out</b><p>Nothing is made in advance and held in a cold room waiting for an order.</p></div></div>
     <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9 17.5 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Chosen stem by stem</b><p>Bought fresh from the trade markets and conditioned in our own buckets before anything is built from it.</p></div></div>
-    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9 17.5 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Delivered by us</b><p>Across Greater Manchester and to the airport. You get a text when it has been handed over.</p></div></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9 17.5 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Delivered by us</b><p>Across Manchester and to the airport. You get a text when it has been handed over.</p></div></div>
     <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9 17.5 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Told the truth about the season</b><p>If peonies are not available in November we will say so, and show you what looks like them instead.</p></div></div>
   </div>
       </div>
@@ -241,7 +243,7 @@
       <div><h4>Services</h4><ul><li><a href="subscriptions.html">Subscriptions</a></li><li><a href="weddings.html">Weddings &amp; occasions</a></li><li><a href="airport.html">Airport arrivals</a></li><li><a href="corporate.html">Corporate &amp; contract</a></li></ul></div>
       <div><h4>More</h4><ul><li><a href="about.html">About Us</a></li><li><a href="work.html">Our work</a></li><li><a href="journal.html">The journal</a></li><li><a href="faqs.html">Questions &amp; answers</a></li><li><a href="contact.html">Place an order</a></li></ul></div>
     </div>
-    <p>Manchester florist · Delivery across Greater Manchester and Manchester Airport<br>
+    <p>Manchester florist · Delivery within Manchester, or collection<br>
       © <span id="yr">2026</span> Roses by Rachel</p>
     <div class="fbottom">
       <svg viewBox="0 0 34 12" aria-hidden="true"><path d="M2 6h10M22 6h10M14 6c1-3 3-3 3 0s-2 3-3 0zm6 0c-1-3-3-3-3 0s2 3 3 0z"/></svg>
@@ -272,6 +274,18 @@
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
             <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
 
+        <div class="cofield"><label>Delivery or collection?</label>
+          <div class="seg">
+            <label><input type="radio" name="coFulfil" value="Delivery" checked><span>Delivery</span></label>
+            <label><input type="radio" name="coFulfil" value="Collection"><span>Collection</span></label>
+          </div></div>
+
+        <div class="cofield"><label for="coDate">Date needed</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+            <input id="coDate" type="date" required name="date" data-notice="3"></div>
+          <p class="cohint">We need 3 days' notice, so the earliest date is already set.</p></div>
+
+        <div id="coAddrBox">
         <div class="cofield"><label for="coAddr">Delivery Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
             <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
@@ -284,6 +298,9 @@
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
               <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
+        <p class="cohint">We deliver within Manchester only (postcodes starting with M).</p>
+        </div>
+        <p class="cohint" id="coCollect" hidden>Collection is from Rachel in Manchester. We send the address and a time with your confirmation.</p>
 
         <div id="coCardLive" hidden>
           <div class="cofield"><label for="co-card">Card Number</label>
@@ -390,6 +407,7 @@
           <div class="sline"><span>Delivery</span><b>Free</b></div>
           <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
         </div>
+        <p class="cnote">Please allow <b>3 days' notice</b>. We deliver within Manchester only, or you can collect.</p>
         <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
         <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
       </aside>

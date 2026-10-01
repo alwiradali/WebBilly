@@ -44,11 +44,11 @@ function settings(env) {
 /* A field she has to read at 6am on a phone, so: her own labels, in the order
    she needs them, and nothing empty taking up a row. */
 const ORDER_FIELDS = [
-  ["name", "Name"], ["contact", "Email or mobile"], ["style", "Bouquet"],
-  ["presentation", "Presentation"], ["occasion", "Occasion"],
-  ["fulfilment", "Delivery or collection"], ["postcode", "Postcode"],
-  ["date", "Date needed"], ["budget", "Budget"], ["colours", "Colours"],
-  ["notes", "Notes"],
+  ["name", "Name"], ["contact", "Email or mobile"], ["phone", "Mobile"],
+  ["style", "Bouquet"], ["presentation", "Presentation"], ["occasion", "Occasion"],
+  ["fulfilment", "Delivery or collection"], ["address", "Address"], ["postcode", "Postcode"],
+  ["date", "Date needed"], ["time", "Time"], ["budget", "Budget"], ["colours", "Colours"],
+  ["recipient", "For"], ["card", "Card message"], ["notes", "Notes"],
 ];
 
 async function sendOrder(env, body) {

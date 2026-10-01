@@ -74,16 +74,18 @@ LOADER = '''<div class="rrload" id="rrload" role="status" aria-live="polite" ari
 <script>
 /* Inline and first, so the curtain is up before anything paints. Everything
    about it is fail-safe: it is only ever shown by this script, it lifts on
-   window load, it lifts anyway after 2.6 seconds, and it is skipped entirely
-   for anyone returning within the session or asking for reduced motion — so
-   moving between pages never meets it twice. */
+   window load, and it lifts anyway after 2.6 seconds. It shows every time the
+   home page opens, and on whichever page someone lands on first; moving
+   between the other pages does not meet it again. Reduced motion still sees
+   the logo, just briefly and without the animation. */
 (function () {
   var el = document.getElementById('rrload');
   if (!el) return;
   var seen = false;
   try { seen = sessionStorage.getItem('rr-seen') === '1'; } catch (e) {}
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (seen || still) { el.parentNode.removeChild(el); return; }
+  var home = /\/(index\.html)?$/.test(location.pathname);
+  if (seen && !home) { el.parentNode.removeChild(el); return; }
   el.classList.add('on');
   document.documentElement.style.overflow = 'hidden';
   var done = false;
@@ -94,7 +96,7 @@ LOADER = '''<div class="rrload" id="rrload" role="status" aria-live="polite" ari
     el.classList.add('gone');
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700);
   }
-  var started = Date.now(), MIN = 1150;
+  var started = Date.now(), MIN = still ? 700 : 1150;
   function liftWhenSettled() {
     var waited = Date.now() - started;
     setTimeout(lift, waited >= MIN ? 260 : MIN - waited);
@@ -177,7 +179,7 @@ def footer():
     <div class="fcols">
 %s
     </div>
-    <p>Manchester florist · Delivery across Greater Manchester and Manchester Airport<br>
+    <p>Manchester florist · Delivery within Manchester, or collection<br>
       © <span id="yr">2026</span> Roses by Rachel</p>
     <div class="fbottom">
       <svg viewBox="0 0 34 12" aria-hidden="true"><path d="M2 6h10M22 6h10M14 6c1-3 3-3 3 0s-2 3-3 0zm6 0c-1-3-3-3-3 0s2 3 3 0z"/></svg>

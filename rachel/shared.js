@@ -473,6 +473,21 @@
       'My own bouquet: ' + parts.join(', ') + ', ' + fin.label + ' (about ' + money(+total.toFixed(2)) + ')');
   });
 
+  /* ---------------- notice and delivery area ----------------
+     Three days' notice for every order, and delivery inside Manchester only:
+     postcodes whose district starts with M (M1 to M99, the airport is M90).
+     Anywhere else can still order, by collecting. */
+  window.rrMinDate = function () {
+    var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + 3);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  };
+  window.rrInArea = function (pc) { return /^M\d/i.test(String(pc || '').trim()); };
+  [].forEach.call(document.querySelectorAll('input[type=date][data-notice]'), function (d) {
+    d.min = rrMinDate();
+    if (!d.value) d.value = d.min;
+    d.addEventListener('change', function () { if (d.value && d.value < d.min) d.value = d.min; });
+  });
+
   /* ---------------- the order form ---------------- */
   function val(id) { return ($(id).value || '').trim(); }
   function fulfil() {
@@ -532,19 +547,34 @@
     L.push('Presented: ' + $('fPres').value);
     if (val('fOcc')) L.push('Occasion: ' + val('fOcc'));
     L.push(f === 'Delivery'
-      ? 'Delivery' + (val('fPostcode') ? ' to ' + val('fPostcode') : '')
+      ? 'Delivery' + (val('fAddr') || val('fPostcode') ? ' to ' + [val('fAddr'), val('fPostcode')].filter(Boolean).join(', ') : '')
       : 'I will collect');
-    if (val('fDate')) L.push('Date: ' + nice(val('fDate')));
+    if (val('fDate')) L.push('Date: ' + nice(val('fDate')) + (val('fTime') && val('fTime') !== 'Any time' ? ', ' + val('fTime').toLowerCase() : ''));
     if (val('fBudget')) L.push('Budget: ' + val('fBudget'));
     if (val('fColours')) L.push('Colours: ' + val('fColours'));
+    if (val('fFor')) L.push('For: ' + val('fFor'));
+    if (val('fCard')) L.push('Card: ' + val('fCard'));
     if (val('fNotes')) L.push('Notes: ' + val('fNotes'));
     L.push('');
-    L.push((val('fName') || 'Thank you') + (val('fEmail') ? ', ' + val('fEmail') : ''));
+    L.push((val('fName') || 'Thank you') + [val('fEmail'), val('fPhone')].filter(Boolean).map(function (x) { return ', ' + x; }).join(''));
     var txt = L.join('\n');
     $('msgOut').textContent = txt;
     return txt;
   }
-  ['fName','fEmail','fStyle','fPres','fOcc','fPostcode','fDate','fBudget','fColours','fNotes']
+  /* Occasion is a list now; a button elsewhere may name one in its own
+     words ("Birthday flowers"), so match on the first word and add it if
+     nothing fits rather than drop it. */
+  function setOcc(what) {
+    var sel = $('fOcc'); if (!sel || !what) return;
+    if (sel.tagName !== 'SELECT') { sel.value = what; return; }
+    var w = what.toLowerCase(), hit = '';
+    [].forEach.call(sel.options, function (o) {
+      if (!hit && o.value && w.indexOf(o.text.toLowerCase().split(' ')[0]) === 0) hit = o.text;
+    });
+    if (!hit) { var o = document.createElement('option'); o.text = what; sel.add(o); hit = what; }
+    sel.value = hit;
+  }
+  ['fName','fEmail','fPhone','fStyle','fPres','fOcc','fAddr','fPostcode','fDate','fTime','fBudget','fColours','fFor','fCard','fNotes']
     .forEach(function (id) { on(id, 'input', compose); on(id, 'change', compose); });
   [].forEach.call(document.querySelectorAll('input[name="fulfil"]'), function (r) {
     r.addEventListener('change', function () {
@@ -556,7 +586,7 @@
     row.addEventListener('click', function () {
       var what = row.getAttribute('data-occ');
       track('enquiry_start', { item: what });
-      if ($('oform')) { $('fOcc').value = what; compose(); $('order').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      if ($('oform')) { setOcc(what); compose(); $('order').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       else goOrder('', what);
     });
   });
@@ -575,7 +605,11 @@
   });
   on('sendBtn', 'click', function () {
     var txt = compose();
-    if (!val('fName') || !val('fEmail')) { toast('Add your name and how to reach you'); return; }
+    if (!val('fName') || (!val('fEmail') && !val('fPhone'))) { toast('Add your name and an email or mobile'); return; }
+    if (fulfil() === 'Delivery' && val('fPostcode') && !rrInArea(val('fPostcode'))) {
+      toast('We only deliver within Manchester (M postcodes). Choose collection instead'); return;
+    }
+    if (val('fDate') && val('fDate') < rrMinDate()) { toast('We need 3 days\' notice. Pick a later date'); return; }
     track('order_submit');
     function done() {
       $('formBody').style.display = 'none';
@@ -590,11 +624,14 @@
     fetch('/api/rbr/order', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: val('fName'), contact: val('fEmail'), style: val('fStyle'),
-        presentation: val('fPres'), occasion: val('fOcc'),
+        name: val('fName'), contact: val('fEmail') || val('fPhone'), phone: val('fEmail') ? val('fPhone') : '',
+        style: val('fStyle'), presentation: val('fPres'), occasion: val('fOcc'),
         fulfilment: (document.querySelector('input[name=fulfil]:checked') || {}).value || '',
-        postcode: val('fPostcode'), date: val('fDate'), budget: val('fBudget'),
-        colours: val('fColours'), notes: val('fNotes'), botcheck: val('botcheck')
+        address: fulfil() === 'Delivery' ? val('fAddr') : '',
+        postcode: fulfil() === 'Delivery' ? val('fPostcode') : '',
+        date: val('fDate'), time: val('fTime'), budget: val('fBudget'),
+        colours: val('fColours'), recipient: val('fFor'), card: val('fCard'),
+        notes: val('fNotes'), botcheck: val('botcheck')
       })
     }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {
@@ -850,26 +887,48 @@
   }
   $('cox').addEventListener('click', function () { closeCheckout(); openCart(); });
   $('coHome').addEventListener('click', function (e) { e.preventDefault(); closeCheckout(); });
+  function coFulfil() {
+    var r = document.querySelector('input[name="coFulfil"]:checked');
+    return r ? r.value : 'Delivery';
+  }
+  [].forEach.call(document.querySelectorAll('input[name="coFulfil"]'), function (r) {
+    r.addEventListener('change', function () {
+      var del = coFulfil() === 'Delivery';
+      $('coAddrBox').hidden = !del;
+      $('coCollect').hidden = del;
+      ['coAddr', 'coCity', 'coPost'].forEach(function (id) { $(id).required = del; });
+    });
+  });
   $('coform').addEventListener('submit', function (e) {
     e.preventDefault();
+    var del   = coFulfil() === 'Delivery';
     var email = ($('coEmail').value || '').trim();
     var addr  = ($('coAddr').value || '').trim();
     var city  = ($('coCity').value || '').trim();
     var post  = ($('coPost').value || '').trim();
-    if (!email || !addr || !city || !post) { toast('Fill in your email and delivery address'); return; }
+    var date  = ($('coDate').value || '').trim();
+    if (!email) { toast('Add your email address'); return; }
+    if (!date) { toast('Choose the date you need them'); return; }
+    if (date < rrMinDate()) { toast('We need 3 days\' notice. Pick a later date'); return; }
+    if (del && (!addr || !city || !post)) { toast('Fill in the delivery address'); return; }
+    if (del && !rrInArea(post)) { toast('We only deliver within Manchester (M postcodes). Choose collection instead'); return; }
 
     if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
 
     /* no Stripe yet: send it to us as a written order so nothing is lost */
     var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
     var notes = 'Checkout order: ' + lines + ', total ' + money(cartTotal()) +
-      '\nDeliver to: ' + addr + ', ' + city + ' ' + post;
+      '\nDate: ' + nice(date) +
+      (del ? '\nDeliver to: ' + addr + ', ' + city + ' ' + post : '\nCollection');
     track('order_submit', { source: 'checkout', value: cartTotal() });
     closeCheckout();
     if ($('oform')) {
       $('fName').value  = $('fName').value || email.split('@')[0];
       $('fEmail').value = email;
-      $('fPostcode').value = post;
+      var want = document.querySelector('input[name="fulfil"][value="' + (del ? 'Delivery' : 'Collection') + '"]');
+      if (want) { want.checked = true; want.dispatchEvent(new Event('change')); }
+      if (del) { $('fAddr').value = addr + ', ' + city; $('fPostcode').value = post; }
+      $('fDate').value = date;
       applyOrder('Something bespoke, help me choose', notes);
       $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
       toast('Nearly there. Press Send my order and it comes to us');
@@ -1024,6 +1083,12 @@
       at = -1;
     }
 
+    function renderNo() {
+      box.innerHTML = '<li class="no" role="option" aria-disabled="true">We deliver within Manchester only (M postcodes). Choose collection for anywhere else.</li>';
+      items = []; box.hidden = false; at = -1;
+      input.setAttribute('aria-expanded', 'true');
+    }
+
     input.addEventListener('input', function () {
       var q = input.value.trim();
       clearTimeout(timer);
@@ -1035,7 +1100,10 @@
           .then(function (j) {
             /* a slow answer to an old keystroke must not replace a newer one */
             if (mine !== seq) return;
-            render((j && j.result) ? j.result.slice(0, 7) : []);
+            var all = (j && j.result) ? j.result : [];
+            var ok = all.filter(function (pc) { return window.rrInArea ? rrInArea(pc) : true; });
+            if (!ok.length && all.length) { renderNo(); return; }
+            render(ok.slice(0, 7));
           })
           .catch(function () { close(); });
       }, 180);

@@ -412,7 +412,8 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .oform input:focus,.oform select:focus,.oform textarea:focus{outline:none;border-color:var(--gold)}
 .oform textarea{min-height:92px;resize:vertical}
 .orow{display:grid;gap:0 16px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-@media(max-width:560px){.orow{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:340px){.orow{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.orow{gap:0 10px}.orow input,.orow select{padding-left:12px;padding-right:12px}}
 .oform .btn{width:100%;margin-top:24px}
 .opreview{position:sticky;top:96px}
 .pcard{background:var(--cream);border:1px solid var(--gold-fade);border-radius:18px;padding:clamp(22px,3vw,32px)}
@@ -1168,3 +1169,13 @@ footer .fmain > a{border-bottom:0}
 .hero-facts li{display:flex;align-items:center;gap:22px}
 .hero-facts li+li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold);margin-left:-11px;margin-right:-11px}
 @media(max-width:939px){.hero-cta,.hero-facts{justify-content:center;margin-inline:auto}}
+
+/* Basket and checkout: notice and delivery area, said where it matters. */
+.cnote{margin-top:16px;padding:12px 14px;border-radius:12px;background:rgba(192,152,42,.07);
+  border:1px solid var(--gold-fade);font-size:.98rem;line-height:1.45;color:var(--burg-soft);text-align:center}
+.cnote b{color:var(--burg)}
+.cohint{margin:7px 2px 0;font-size:.95rem;color:var(--burg-soft);line-height:1.4}
+#coAddrBox .cohint{margin:-6px 2px 18px}
+#coCollect{margin:0 2px 18px}
+.formhint{margin:6px 0 0;font-size:.95rem;color:var(--burg-soft)}
+.pcbox li.no{color:var(--burg-soft);cursor:default;font-style:italic}

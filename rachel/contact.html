@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Order Flowers | Roses by Rachel, Manchester Florist</title>
-<meta name="description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Greater Manchester.">
+<meta name="description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Manchester.">
 <meta name="theme-color" content="#FBF6F0">
 <link rel="canonical" href="https://rosesbyrachel.co.uk/contact">
 <meta property="og:type" content="website">
@@ -13,11 +13,11 @@
 <meta property="og:locale" content="en_GB">
 <meta property="og:url" content="https://rosesbyrachel.co.uk/contact">
 <meta property="og:title" content="Order Flowers | Roses by Rachel, Manchester Florist">
-<meta property="og:description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Greater Manchester.">
+<meta property="og:description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Manchester.">
 <meta property="og:image" content="https://rosesbyrachel.co.uk/assets/rachel/hero-bouquet.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Order Flowers | Roses by Rachel, Manchester Florist">
-<meta name="twitter:description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Greater Manchester.">
+<meta name="twitter:description" content="Tell us what you need and we come back the same day with a price and the next available date. Delivery across Manchester.">
 <link rel="stylesheet" href="../assets/css/scroll-fx.css">
 <link rel="stylesheet" href="shared.css">
 <link rel="icon" href="../assets/rachel/icon-32.png" sizes="32x32">
@@ -37,16 +37,18 @@
 <script>
 /* Inline and first, so the curtain is up before anything paints. Everything
    about it is fail-safe: it is only ever shown by this script, it lifts on
-   window load, it lifts anyway after 2.6 seconds, and it is skipped entirely
-   for anyone returning within the session or asking for reduced motion — so
-   moving between pages never meets it twice. */
+   window load, and it lifts anyway after 2.6 seconds. It shows every time the
+   home page opens, and on whichever page someone lands on first; moving
+   between the other pages does not meet it again. Reduced motion still sees
+   the logo, just briefly and without the animation. */
 (function () {
   var el = document.getElementById('rrload');
   if (!el) return;
   var seen = false;
   try { seen = sessionStorage.getItem('rr-seen') === '1'; } catch (e) {}
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (seen || still) { el.parentNode.removeChild(el); return; }
+  var home = /\/(index\.html)?$/.test(location.pathname);
+  if (seen && !home) { el.parentNode.removeChild(el); return; }
   el.classList.add('on');
   document.documentElement.style.overflow = 'hidden';
   var done = false;
@@ -57,7 +59,7 @@
     el.classList.add('gone');
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700);
   }
-  var started = Date.now(), MIN = 1150;
+  var started = Date.now(), MIN = still ? 700 : 1150;
   function liftWhenSettled() {
     var waited = Date.now() - started;
     setTimeout(lift, waited >= MIN ? 260 : MIN - waited);
@@ -140,8 +142,10 @@
         <div id="formBody">
           <label for="fName">Your name</label>
           <input id="fName" type="text" autocomplete="name" placeholder="Jane Smith" name="name" autocapitalize="words">
-          <label for="fEmail">Email or mobile</label>
-          <input id="fEmail" type="text" autocomplete="email" placeholder="jane@email.com" name="contact" inputmode="email">
+          <div class="orow">
+            <div><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="email" placeholder="jane@email.com" name="email" inputmode="email"></div>
+            <div><label for="fPhone">Mobile</label><input id="fPhone" type="tel" autocomplete="tel" placeholder="07…" name="phone" inputmode="tel"></div>
+          </div>
           <label for="fStyle">What would you like?</label>
           <select id="fStyle">
             <option>Blush Garden, £45</option><option>Velvet Romance, £62</option>
@@ -157,29 +161,46 @@
             <option>Corporate or contract flowers</option>
             <option>My own bouquet (built above)</option><option>Something bespoke, help me choose</option>
           </select>
-          <label for="fPres">How should it be presented?</label>
-          <select id="fPres">
-            <option>Hand-tied wrap, no box</option><option>In a gift box</option><option>In a vase</option>
-          </select>
-          <label for="fOcc">Occasion</label>
-          <input id="fOcc" type="text" placeholder="Birthday, anniversary, just because…" name="occasion" autocomplete="off">
+          <div class="orow">
+            <div><label for="fPres">Presentation</label>
+              <select id="fPres">
+                <option>Wrapped, no box</option><option>In a gift box</option><option>In a vase</option><option>Florist's choice</option>
+              </select></div>
+            <div><label for="fOcc">Occasion</label>
+              <select id="fOcc">
+                <option value="">Choose one</option><option>Birthday</option><option>Anniversary</option><option>Love &amp; romance</option>
+                <option>New baby</option><option>Thank you</option><option>Get well soon</option><option>Congratulations</option>
+                <option>New home</option><option>Sympathy</option><option>Just because</option><option>Something else</option>
+              </select></div>
+          </div>
           <label>Delivery or collection?</label>
           <div class="seg">
             <label><input type="radio" name="fulfil" value="Delivery" checked><span>Delivery</span></label>
             <label><input type="radio" name="fulfil" value="Collection"><span>Collection</span></label>
           </div>
           <div id="deliveryRow" class="on">
-            <label for="fPostcode">Delivery postcode</label>
+            <label for="fAddr">Delivery address</label>
+            <input id="fAddr" type="text" placeholder="House number and street" name="address" autocomplete="street-address" autocapitalize="words">
+            <label for="fPostcode">Postcode</label>
             <input id="fPostcode" type="text" placeholder="M14 …" name="postcode" autocomplete="postal-code" autocapitalize="characters">
+            <p class="formhint">We deliver within Manchester only (postcodes starting with M). Anywhere else, choose collection.</p>
           </div>
           <div class="orow">
-            <div><label for="fDate">Date needed</label><input id="fDate" type="date" name="date" autocomplete="off"></div>
-            <div><label for="fBudget">Budget</label><input id="fBudget" type="text" placeholder="£45" name="budget" autocomplete="off" inputmode="numeric"></div>
+            <div><label for="fDate">Date needed</label><input id="fDate" type="date" name="date" autocomplete="off" data-notice="3"></div>
+            <div><label for="fTime">Time</label>
+              <select id="fTime"><option>Any time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
           </div>
-          <label for="fColours">Colours you love</label>
-          <input id="fColours" type="text" placeholder="Blush, ivory, deep red…" name="colours" autocomplete="off">
+          <p class="formhint">We need 3 days' notice for every order.</p>
+          <div class="orow">
+            <div><label for="fBudget">Budget</label><input id="fBudget" type="text" placeholder="£45" name="budget" autocomplete="off" inputmode="numeric"></div>
+            <div><label for="fColours">Colours you love</label><input id="fColours" type="text" placeholder="Blush, ivory…" name="colours" autocomplete="off"></div>
+          </div>
+          <label for="fFor">Who are they for?</label>
+          <input id="fFor" type="text" placeholder="Their name" name="recipient" autocomplete="off" autocapitalize="words">
+          <label for="fCard">Card message</label>
+          <input id="fCard" type="text" placeholder="Happy birthday, love from…" name="card" autocomplete="off" maxlength="200">
           <label for="fNotes">Anything else</label>
-          <textarea id="fNotes" placeholder="Card message, flight number, delivery notes…"></textarea>
+          <textarea id="fNotes" placeholder="Flight number, delivery notes, anything we should know…"></textarea>
           <button class="btn" id="sendBtn" type="button">Send my order</button>
         </div>
         <div id="sentPanel">
@@ -292,7 +313,7 @@
       <div><h4>Services</h4><ul><li><a href="subscriptions.html">Subscriptions</a></li><li><a href="weddings.html">Weddings &amp; occasions</a></li><li><a href="airport.html">Airport arrivals</a></li><li><a href="corporate.html">Corporate &amp; contract</a></li></ul></div>
       <div><h4>More</h4><ul><li><a href="about.html">About Us</a></li><li><a href="work.html">Our work</a></li><li><a href="journal.html">The journal</a></li><li><a href="faqs.html">Questions &amp; answers</a></li><li><a href="contact.html">Place an order</a></li></ul></div>
     </div>
-    <p>Manchester florist · Delivery across Greater Manchester and Manchester Airport<br>
+    <p>Manchester florist · Delivery within Manchester, or collection<br>
       © <span id="yr">2026</span> Roses by Rachel</p>
     <div class="fbottom">
       <svg viewBox="0 0 34 12" aria-hidden="true"><path d="M2 6h10M22 6h10M14 6c1-3 3-3 3 0s-2 3-3 0zm6 0c-1-3-3-3-3 0s2 3 3 0z"/></svg>
@@ -323,6 +344,18 @@
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
             <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
 
+        <div class="cofield"><label>Delivery or collection?</label>
+          <div class="seg">
+            <label><input type="radio" name="coFulfil" value="Delivery" checked><span>Delivery</span></label>
+            <label><input type="radio" name="coFulfil" value="Collection"><span>Collection</span></label>
+          </div></div>
+
+        <div class="cofield"><label for="coDate">Date needed</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+            <input id="coDate" type="date" required name="date" data-notice="3"></div>
+          <p class="cohint">We need 3 days' notice, so the earliest date is already set.</p></div>
+
+        <div id="coAddrBox">
         <div class="cofield"><label for="coAddr">Delivery Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
             <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
@@ -335,6 +368,9 @@
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
               <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
+        <p class="cohint">We deliver within Manchester only (postcodes starting with M).</p>
+        </div>
+        <p class="cohint" id="coCollect" hidden>Collection is from Rachel in Manchester. We send the address and a time with your confirmation.</p>
 
         <div id="coCardLive" hidden>
           <div class="cofield"><label for="co-card">Card Number</label>
@@ -441,6 +477,7 @@
           <div class="sline"><span>Delivery</span><b>Free</b></div>
           <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
         </div>
+        <p class="cnote">Please allow <b>3 days' notice</b>. We deliver within Manchester only, or you can collect.</p>
         <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
         <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
       </aside>

@@ -18,6 +18,18 @@
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
             <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
 
+        <div class="cofield"><label>Delivery or collection?</label>
+          <div class="seg">
+            <label><input type="radio" name="coFulfil" value="Delivery" checked><span>Delivery</span></label>
+            <label><input type="radio" name="coFulfil" value="Collection"><span>Collection</span></label>
+          </div></div>
+
+        <div class="cofield"><label for="coDate">Date needed</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+            <input id="coDate" type="date" required name="date" data-notice="3"></div>
+          <p class="cohint">We need 3 days' notice, so the earliest date is already set.</p></div>
+
+        <div id="coAddrBox">
         <div class="cofield"><label for="coAddr">Delivery Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
             <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
@@ -30,6 +42,9 @@
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
               <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
+        <p class="cohint">We deliver within Manchester only (postcodes starting with M).</p>
+        </div>
+        <p class="cohint" id="coCollect" hidden>Collection is from Rachel in Manchester. We send the address and a time with your confirmation.</p>
 
         <div id="coCardLive" hidden>
           <div class="cofield"><label for="co-card">Card Number</label>
@@ -136,6 +151,7 @@
           <div class="sline"><span>Delivery</span><b>Free</b></div>
           <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
         </div>
+        <p class="cnote">Please allow <b>3 days' notice</b>. We deliver within Manchester only, or you can collect.</p>
         <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
         <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
       </aside>
