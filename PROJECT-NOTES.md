@@ -1617,3 +1617,12 @@ B90–B94. Checkout and the enquiry both refuse a delivery outside that (and
 checkout needs a full postcode), offering "Switch to collection". The message
 is only re-rendered when its text changes — rebuilding it on blur removed the
 button under the user's tap.
+
+**Per-mile delivery (owner asked: "calculate how far they are and charge per
+mile").** `CONFIG.delivery` in shared.js: `from` (B92), `perMile`, `minimum`,
+`freeUnderMiles`, `roadFactor` (1.25). Checkout looks up the customer's full
+postcode and the origin on postcodes.io (free, no key, CORS), takes the
+straight-line distance × roadFactor, and charges ceil(miles) × perMile, never
+below `minimum`. Until `perMile` is a number nothing is charged — the distance
+is shown and the fee is "confirmed with order". If the lookup fails the order
+still goes through with the fee confirmed by hand. Her rates are still needed.

@@ -19,7 +19,17 @@ const CONFIG = {
   web3formsKey: '',        // from web3forms.com — the key IS the inbox
   depositRate: 1,          // shop orders are paid in full (owner's call); bespoke deposits are arranged by hand
   minDays: 5,              // her order guide: minimum 5 days in advance
-  deliveryFee: null,       // number (e.g. 8) once set; null = "confirmed with order"
+  deliveryFee: null,       // flat fee, used only if perMile below is not set
+  delivery: {
+    // Per-mile delivery, measured from her B92 collection point.
+    // Fill in HER rates — until perMile is a number the fee is "confirmed
+    // with order" and nothing extra is charged at checkout.
+    from: 'B92',           // where distance is measured from (postcode or district)
+    perMile: null,         // £ per mile, e.g. 1.5
+    minimum: null,         // lowest delivery charge, e.g. 5
+    freeUnderMiles: null,  // optional: free if closer than this, e.g. 2
+    roadFactor: 1.25       // straight-line miles × this ≈ driving miles
+  },
   payments: {
     // POST the order here and expect { url } back (a Stripe Checkout
     // Session made by a small worker). That is the seam for real card,
@@ -107,5 +117,43 @@ function handoverButtons(text, holder) {
   holder.appendChild(c);
 }
 
-window.TBB = { CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons };
+/* --------------------------------------------------------------------
+   DISTANCE + FEE — postcodes.io (free, no key) turns postcodes into map
+   points; the distance is straight-line × roadFactor, rounded to 0.1 mile.
+   Returns { miles, fee } (fee null while rates aren't set) or null if
+   the lookup fails, in which case the fee is simply confirmed with order.
+   -------------------------------------------------------------------- */
+const geoCache = {};
+async function geo(pc) {
+  const k = pc.toUpperCase().replace(/\s+/g, '');
+  if (geoCache[k]) return geoCache[k];
+  const url = /\d[A-Z]{2}$/.test(k) && k.length > 4 ? `https://api.postcodes.io/postcodes/${k}` : `https://api.postcodes.io/outcodes/${k}`;
+  const r = await fetch(url); if (!r.ok) throw new Error('lookup');
+  const j = await r.json(); const res = j.result; if (!res) throw new Error('lookup');
+  return (geoCache[k] = { lat: res.latitude, lon: res.longitude });
+}
+function feeFor(miles) {
+  const d = CONFIG.delivery;
+  if (d.perMile == null) return null;
+  if (d.freeUnderMiles != null && miles < d.freeUnderMiles) return 0;
+  const raw = Math.ceil(miles) * d.perMile;
+  return Math.round(Math.max(d.minimum || 0, raw) * 100) / 100;
+}
+async function deliveryQuote(pc) {
+  try {
+    const [a, b] = await Promise.all([geo(CONFIG.delivery.from), geo(pc)]);
+    const R = 3958.8, rad = x => x * Math.PI / 180;
+    const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    const miles = Math.round(2 * R * Math.asin(Math.sqrt(h)) * CONFIG.delivery.roadFactor * 10) / 10;
+    return { miles, fee: feeFor(miles) };
+  } catch (e) { return null; }
+}
+const perMileText = () => {
+  const d = CONFIG.delivery; if (d.perMile == null) return null;
+  const m = n => '£' + (n % 1 ? n.toFixed(2) : n);
+  return `${m(d.perMile)} per mile from ${d.from}` + (d.minimum ? ` (min ${m(d.minimum)})` : '');
+};
+
+window.TBB = { deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons };
 })();

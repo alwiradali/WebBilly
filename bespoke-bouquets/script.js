@@ -7,7 +7,7 @@
 'use strict';
 
 /* CONFIG and the shared helpers live in shared.js (loaded first). */
-const { CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons } = window.TBB;
+const { deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons } = window.TBB;
 
 /* --------------------------------------------------------------------
    REVIEWS — sample:true puts an "Example" chip on every card and a line
@@ -198,7 +198,8 @@ addEventListener('resize', sizeDrawer);
   }
   if (CONFIG.email) { const m = $('[data-mail]'); m.href = 'mailto:' + CONFIG.email; m.hidden = false; }
   $$('[data-dm]').forEach(a => { a.href = dm(); });
-  if (CONFIG.deliveryFee != null) $('[data-delivery-fee]').textContent = money(CONFIG.deliveryFee);
+  if (perMileText()) $('[data-delivery-fee]').textContent = perMileText();
+  else if (CONFIG.deliveryFee != null) $('[data-delivery-fee]').textContent = money(CONFIG.deliveryFee);
   $$('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 })();
 
@@ -413,9 +414,25 @@ $$('[data-close-checkout]').forEach(b => b.addEventListener('click', () => {
 }));
 
 function fulfil() { return coForm.elements.fulfil.value; }
+/* delivery fee: per mile when rates are set, else the flat fee, else "confirmed" */
+let quote = null, quoteFor = '';
+const delFee = () => fulfil() !== 'delivery' ? 0 : (quote && quote.fee != null ? quote.fee : (CONFIG.delivery.perMile == null && CONFIG.deliveryFee != null ? CONFIG.deliveryFee : null));
+const quoteMsg = () => `✓ About ${quote.miles} miles from ${CONFIG.delivery.from}` + (quote.fee != null ? ` — delivery ${money(quote.fee)}` : ' — the delivery fee is confirmed with the order');
+async function refreshQuote() {
+  const pc = coForm.elements.postcode.value.trim(), r = checkPostcode(pc, true);
+  if (!r || !r.ok) { quote = null; quoteFor = ''; renderSummary(); return; }
+  if (quoteFor === pc.toUpperCase()) return;
+  quoteFor = pc.toUpperCase();
+  const q = await deliveryQuote(pc);
+  if (quoteFor !== pc.toUpperCase()) return;          // a newer postcode was typed meanwhile
+  quote = q;
+  const out = $('[data-co-pc]', co);
+  if (q) { const t = esc(quoteMsg()); out.dataset.html = t; out.innerHTML = t; out.className = 'pc-out ok'; }
+  renderSummary();
+}
 function totals() {
   const sub = subtotal();
-  const del = fulfil() === 'delivery' && CONFIG.deliveryFee != null ? CONFIG.deliveryFee : 0;
+  const del = delFee() || 0;
   const total = sub + del;
   const today = coForm.elements.amount.value === 'full' ? total : deposit(total);
   return { sub, del, total, today };
@@ -428,7 +445,8 @@ function renderSummary() {
     return `<div class="co-line"><img src="${IMG(p.imgs[0])}" alt=""><div>${esc(p.name)}${l.qty > 1 ? ` × ${l.qty}` : ''}<small>${o}</small></div><b>${money(p.price * l.qty)}</b></div>`;
   }).join('');
   $('[data-co-sub]', co).textContent = money(t.sub);
-  $('[data-co-del]', co).textContent = fulfil() === 'collection' ? 'Free' : (CONFIG.deliveryFee != null ? money(CONFIG.deliveryFee) : 'Confirmed with order');
+  const df = delFee();
+  $('[data-co-del]', co).textContent = fulfil() === 'collection' ? 'Free' : (df != null ? money(df) + (quote ? ` (${quote.miles} mi)` : '') : 'Confirmed with order');
   $('[data-co-total]', co).textContent = money(t.total);
   $('[data-co-today]', co).textContent = money(t.today);
   const next = $('[data-co-next]', co);
@@ -446,12 +464,14 @@ coForm.addEventListener('change', e => {
 function showCoPostcode(final) {
   const out = $('[data-co-pc]', co), r = checkPostcode(coForm.elements.postcode.value, final);
   out.className = 'pc-out ' + (r ? r.cls : '');
-  const html = r ? esc(r.msg) + (r.cls === 'no' ? ' <button type="button" class="link-btn" data-to-collect>Switch to collection</button>' : '') : '';
+  let html = r ? esc(r.msg) + (r.cls === 'no' ? ' <button type="button" class="link-btn" data-to-collect>Switch to collection</button>' : '') : '';
+  if (r && r.ok && quote && quoteFor === coForm.elements.postcode.value.trim().toUpperCase()) html = esc(quoteMsg());
   if (out.dataset.html !== html) { out.dataset.html = html; out.innerHTML = html; }   // never rebuild mid-tap, or the button vanishes under the finger
   return r;
 }
 coForm.elements.postcode.addEventListener('input', () => showCoPostcode(false));
-coForm.elements.postcode.addEventListener('blur', () => showCoPostcode(true));
+coForm.elements.postcode.addEventListener('blur', () => { const r = showCoPostcode(true); if (r && r.ok) refreshQuote(); });
+coForm.elements.postcode.addEventListener('input', () => { clearTimeout(refreshQuote.t); refreshQuote.t = setTimeout(refreshQuote, 700); });
 co.addEventListener('click', e => {
   if (!e.target.closest('[data-to-collect]')) return;
   coForm.elements.fulfil.value = 'collection';
@@ -517,7 +537,8 @@ function orderText(o) {
     o.fulfil === 'delivery' ? `Address: ${o.address}, ${o.postcode.toUpperCase()}${o.recipient ? ' (for ' + o.recipient + ')' : ''}` : '',
     o.card ? `Message card: “${o.card}”` : '',
     '',
-    `Total: ${money(o.total)}${o.fulfil === 'delivery' && CONFIG.deliveryFee == null ? ' + delivery' : ''}`,
+    o.fulfil === 'delivery' && quote ? `Distance: about ${quote.miles} miles from ${CONFIG.delivery.from}` : '',
+    `Total: ${money(o.total)}${o.fulfil === 'delivery' && delFee() == null ? ' + delivery' : ''}`,
     `Paid today: ${money(o.today)} by ${{ card: 'card', paypal: 'PayPal', bank: 'bank transfer' }[o.method]}`,
     '',
     `Name: ${o.name}`, `Phone: ${o.phone}`, `Email: ${o.email}`, o.ig ? `Instagram: ${o.ig}` : '',
