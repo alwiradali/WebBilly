@@ -21,7 +21,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/bespoke/logo-ink.svg">
 <link rel="preload" as="image" href="/assets/bespoke/photos/skirt-bouquet.webp">
 <link rel="stylesheet" href="/bespoke-bouquets/style.css">
@@ -138,12 +138,12 @@
   <div class="hero-text">
     <h1 class="hero-mark"><img src="/assets/bespoke/logo-ink.svg" alt="The Bespoke Bouquets" width="816" height="390" fetchpriority="high"></h1>
     <h2 class="hero-title">Fresh bouquets, <em>beautifully made to order</em></h2>
-    <p class="lead">Hand-tied in Solihull for birthdays, anniversaries, mehndis and every “just because” — wrapped, ribboned and personalised to the last detail.</p>
+    <p class="lead">Hand-tied in Solihull, for every moment worth remembering.</p>
     <div class="btn-row">
       <a href="#shop" class="btn btn-dark">Shop bouquets</a>
       <a href="/bespoke-bouquets/portfolio" class="btn btn-ghost">View the portfolio</a>
     </div>
-    <p class="hero-meta">Collection from B92 <span>·</span> Local delivery <span>·</span> 5 days’ notice</p>
+    <ul class="hero-meta"><li>Collection</li><li>Local delivery</li><li>Made to order</li></ul>
   </div>
   <figure class="hero-media">
     <img src="/assets/bespoke/photos/skirt-bouquet.webp" alt="Red and blush roses in layered pink wrap with an oversized crimson satin bow" width="1144" height="2063" fetchpriority="high">
@@ -158,7 +158,7 @@
         <p class="label">The shop</p>
         <h2>Order <em>online</em></h2>
       </div>
-      <p>Choose a bouquet, pick the colours and wording, then secure the date with a 50% deposit. Collection from B92 or local delivery.</p>
+      <p>Choose your bouquet, add your colours and message, and pick collection or delivery.</p>
     </div>
     <div class="grid" id="grid" aria-live="polite"></div>
     <a class="more-band" href="/bespoke-bouquets/portfolio">
@@ -204,7 +204,7 @@
       <li><span>1</span><h3>Order 5 days ahead</h3><p>Orders are placed at least five days before they’re needed.</p></li>
       <li><span>2</span><h3>Share the date &amp; time</h3><p>Include the date and time the bouquet is needed.</p></li>
       <li><span>3</span><h3>Make it personal</h3><p>Size, colours and wrapping can all be personalised. Inspiration pictures are welcome.</p></li>
-      <li><span>4</span><h3>Pay the deposit</h3><p>A non-refundable 50% deposit confirms the order.</p></li>
+      <li><span>4</span><h3>Confirm &amp; pay</h3><p>Shop bouquets are paid at checkout. Bespoke designs are confirmed once the quote is agreed.</p></li>
       <li><span>5</span><h3>Collect or delivery</h3><p>Collection from B92, or local delivery across Birmingham &amp; Solihull (subject to conditions).</p></li>
     </ol>
     <p class="note"><svg><use href="#i-petal"/></svg>Seasonal flowers may be swapped for similar blooms, so every bouquet looks its freshest.</p>
@@ -426,7 +426,7 @@
       <h2>Questions</h2>
       <div class="faq-list">
         <details><summary>How far ahead should an order be placed?<span class="pm"></span></summary><div><p>At least 5 days before the date needed. For busy dates like Valentine’s and Mother’s Day, earlier is always better.</p></div></details>
-        <details><summary>How does the deposit work?<span class="pm"></span></summary><div><p>A 50% deposit secures the date and is non-refundable. The balance can be paid at checkout, or before collection or delivery.</p></div></details>
+        <details><summary>How does payment work?<span class="pm"></span></summary><div><p>Bouquets from the shop are paid in full at checkout. For bespoke designs, payment is arranged once the quote is agreed.</p></div></details>
         <details><summary>Where is delivery available?<span class="pm"></span></summary><div><p>Local delivery covers Birmingham and Solihull, subject to conditions. Collection is from B92, Solihull.</p></div></details>
         <details><summary>Can a design be changed?<span class="pm"></span></summary><div><p>Yes — size, colours, wrapping, ribbon and lettering can all be personalised. Inspiration pictures are always welcome.</p></div></details>
         <details><summary>What if a flower is out of season?<span class="pm"></span></summary><div><p>It’s swapped for a similar bloom in the same colours, so the bouquet always looks its freshest.</p></div></details>
@@ -505,7 +505,6 @@
     <div class="basket-items" data-basket-items></div>
     <div class="basket-foot" data-basket-foot>
       <div class="sum-row"><span>Subtotal</span><b data-subtotal>£0</b></div>
-      <div class="sum-row soft"><span>Deposit to secure (50%)</span><b data-deposit>£0</b></div>
       <p class="tiny">Delivery, if chosen, is confirmed at the next step.</p>
       <button type="button" class="btn btn-dark btn-wide" data-checkout><svg><use href="#i-lock"/></svg><span>Checkout securely</span></button>
     </div>
@@ -565,18 +564,14 @@
 
         <!-- step 3 -->
         <section class="co-step" data-step="3">
-          <h4>How much today?</h4>
-          <div class="opt-cards" data-pay-amount>
-            <label class="opt"><input type="radio" name="amount" value="deposit" checked><span><b data-amt-deposit>£0</b><small>50% deposit today, balance before collection or delivery</small></span></label>
-            <label class="opt"><input type="radio" name="amount" value="full"><span><b data-amt-full>£0</b><small>Pay in full today</small></span></label>
-          </div>
+          <input type="hidden" name="amount" value="full">
           <h4>Payment method</h4>
           <div class="pay-methods">
             <label class="pay"><input type="radio" name="method" value="card" checked><span><svg><use href="#i-card"/></svg><b>Card, Apple Pay or Google Pay</b><small class="badges"><i>VISA</i><i>Mastercard</i><i>Apple Pay</i><i>G Pay</i></small></span></label>
             <label class="pay"><input type="radio" name="method" value="paypal"><span><b class="pp">Pay<em>Pal</em></b><small>Pay with a PayPal account or Pay in 3</small></span></label>
             <label class="pay"><input type="radio" name="method" value="bank"><span><svg><use href="#i-bank"/></svg><b>Bank transfer</b><small>Details sent with the order confirmation</small></span></label>
           </div>
-          <label class="agree"><input type="checkbox" name="agree" required><span>I understand the 50% deposit is non-refundable, and seasonal flowers may be swapped for similar blooms.</span></label>
+          <label class="agree"><input type="checkbox" name="agree" required><span>I understand seasonal flowers may be swapped for similar blooms, so the bouquet looks its freshest.</span></label>
           <p class="secure"><svg><use href="#i-lock"/></svg>Payments are processed securely — card details never touch this website.</p>
         </section>
 

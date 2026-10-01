@@ -1557,3 +1557,11 @@ blossom drift through empty space and pass behind text, photos and buttons —
 never over them. 26 on desktop, 14 on phones, dpr capped at 2, paused when the
 tab is hidden, absent under reduced motion. If a new block has its own
 background, keep its content inside a `.wrap` or the petals will draw over it.
+
+**No deposit in the shop (owner, 1 Oct).** Shop orders are paid in full at
+checkout: `CONFIG.depositRate` is 1, the basket's deposit row and the
+checkout's "how much today" choice are gone (a hidden `amount=full` keeps the
+code path), and no copy anywhere mentions a 50% deposit. Bespoke designs are
+"confirmed once the quote is agreed" — she arranges any deposit herself. Body
+font is now Nunito Sans; intro lines (hero lead, `.sec-head>p`) are set in
+Playfair italic so they read as soft, short captions, not paragraphs.

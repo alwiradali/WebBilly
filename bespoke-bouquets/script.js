@@ -20,7 +20,7 @@ const CONFIG = {
   whatsapp: '',            // digits with country code, e.g. '447700900123'
   email: '',               // e.g. 'hello@thebespokebouquets.co.uk'
   web3formsKey: '',        // from web3forms.com — the key IS the inbox
-  depositRate: 0.5,        // her order guide: non-refundable 50% deposit
+  depositRate: 1,          // shop orders are paid in full (owner's call); bespoke deposits are arranged by hand
   minDays: 5,              // her order guide: minimum 5 days in advance
   deliveryFee: null,       // number (e.g. 8) once set; null = "confirmed with order"
   payments: {
@@ -405,7 +405,6 @@ function renderBasket() {
     }).join('');
     const s = subtotal();
     $('[data-subtotal]', bk).textContent = money(s);
-    $('[data-deposit]', bk).textContent = money(deposit(s));
   }
   $$('[data-close-basket]', wrap).forEach(b => b.addEventListener('click', () => closeModal(bk)));
 }
@@ -451,8 +450,6 @@ function renderSummary() {
   $('[data-co-del]', co).textContent = fulfil() === 'collection' ? 'Free' : (CONFIG.deliveryFee != null ? money(CONFIG.deliveryFee) : 'Confirmed with order');
   $('[data-co-total]', co).textContent = money(t.total);
   $('[data-co-today]', co).textContent = money(t.today);
-  $('[data-amt-deposit]', co).textContent = money(deposit(t.total));
-  $('[data-amt-full]', co).textContent = money(t.total);
   const next = $('[data-co-next]', co);
   const bank = coForm.elements.method.value === 'bank';
   next.querySelector('span').textContent = step === 3 ? (bank ? `Place order · ${money(t.today)} by transfer` : `Pay ${money(t.today)} securely`) : 'Continue';
@@ -501,7 +498,7 @@ function validStep(n) {
   if (n === 3) {
     const ag = $('.agree', co);
     ag.classList.toggle('err', !coForm.elements.agree.checked);
-    if (!coForm.elements.agree.checked) { msg.textContent = 'Please tick to confirm the deposit and seasonal flowers note.'; return false; }
+    if (!coForm.elements.agree.checked) { msg.textContent = 'Please tick to confirm the seasonal flowers note.'; return false; }
   }
   if (bad.length) { bad[0].focus(); return false; }
   return true;
@@ -522,7 +519,7 @@ function orderText(o) {
     o.card ? `Message card: “${o.card}”` : '',
     '',
     `Total: ${money(o.total)}${o.fulfil === 'delivery' && CONFIG.deliveryFee == null ? ' + delivery' : ''}`,
-    `Paying today: ${money(o.today)} (${o.amount === 'full' ? 'in full' : '50% deposit'}) by ${{ card: 'card', paypal: 'PayPal', bank: 'bank transfer' }[o.method]}`,
+    `Paid today: ${money(o.today)} by ${{ card: 'card', paypal: 'PayPal', bank: 'bank transfer' }[o.method]}`,
     '',
     `Name: ${o.name}`, `Phone: ${o.phone}`, `Email: ${o.email}`, o.ig ? `Instagram: ${o.ig}` : '',
     o.notes ? `Notes: ${o.notes}` : ''
@@ -591,7 +588,7 @@ async function placeOrder() {
   $('[data-preview-note]', co).hidden = !preview;
   const bank = CONFIG.payments.bank;
   $('[data-done-msg]', co).textContent = o.method === 'bank'
-    ? (bank ? `Please transfer ${money(o.today)} to ${bank.name}, sort code ${bank.sort}, account ${bank.account}, using ${o.ref} as the reference.` : `Bank details for the ${money(o.today)} ${o.amount === 'full' ? 'payment' : 'deposit'} follow with the order confirmation — use ${o.ref} as the reference.`)
+    ? (bank ? `Please transfer ${money(o.today)} to ${bank.name}, sort code ${bank.sort}, account ${bank.account}, using ${o.ref} as the reference.` : `Bank details for the ${money(o.today)} payment follow with the order confirmation — use ${o.ref} as the reference.`)
     : `${o.fulfil === 'delivery' ? 'Delivery' : 'Collection'} on ${niceDate(o.date)}, ${o.time}. A confirmation follows with everything that happens next.`;
   const ho = $('[data-handover]', co);
   ho.hidden = sent;
