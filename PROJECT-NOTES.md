@@ -1528,7 +1528,7 @@ section corners and clipped by `.sec{overflow:hidden}` — never behind body cop
 Colours are set per `<use>` through `--p` / `--c` / `--l`. A slow sway is the
 only animation they carry, and it stops under reduced motion.
 
-**No circle around her logo (owner's call).** The hero shows `logo-ink.png` —
+**No circle around her logo (owner's call); the logos are SVG traces** (potracer on the keyed alpha, 6× upscale, threshold 150 — the PNG cut-outs looked blurry on phones; `logo-ink.png` etc. are kept as the trace sources). The hero shows `logo-ink.png` —
 the rose and lettering keyed off the plate by projection onto the plate→ink
 axis (plate `#ffe6e7`, ink `#1b1110`, alpha remapped 0.12→0.85 so the plate's
 own shading drops out, circle rim ignored) — on a hero background that IS the
