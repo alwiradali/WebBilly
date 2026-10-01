@@ -1417,3 +1417,61 @@ Each category now carries its own `optsNote` and `blurb` in the data file, and
 the closing block is a heading and two buttons with no prose. A short audit
 script that splits every page into sentences and counts duplicates is the way
 to check this after any copy change.
+
+## The Bespoke Bouquets (florist, Solihull B92) — `templates/bespoke-bouquets.{html,css,js}`
+
+`@thebespokebouquets` on Instagram, `@thebespokebouquets_` on TikTok. Fresh
+bouquets, collection from B92 or local delivery across Birmingham / Solihull.
+She asked for the shop to be the main focus. Noindex like every client demo;
+`_headers` covers the page and `/assets/bespoke/*`.
+
+**Everything on the page is hers.** The logo is her profile picture lifted
+pixel for pixel (circle at 644,1261 r=424 in the 1290px screenshot, corners
+transparent) — `assets/bespoke/logo.png`, plus the icon sizes. Every photo in
+`assets/bespoke/photos/` is her own work cut out of screenshots of her posts
+and stories (crops avoid the story's rounded corners and Instagram's mute /
+carousel badges). The gajre photo carries the `@shumaelaphotography` credit
+from her own caption.
+
+**Her rules, from her own story highlights, are the shop's rules:** 5 days'
+minimum notice (`CONFIG.minDays` — every date field's `min`, and re-checked on
+submit because desktop Safari ignores `min` when typed), a non-refundable 50%
+deposit (`CONFIG.depositRate`), seasonal swaps, collection from B92 or local
+delivery "subject to conditions". The aftercare tips are her text.
+
+**Only three prices exist** (£145 skirt bouquet, £95 blush gift bag, £70
+birthday banner — from her DMs). Every other design has `price: null`, shows
+"Price on request", and its button prefills the bespoke enquiry instead of
+adding to the basket. Give any `CATALOGUE` entry a number and it becomes
+buyable; nothing else changes. Product names are descriptive placeholders.
+
+**Payments are a seam, not a fake.** Checkout offers deposit-or-full and card
+/ Apple Pay / Google Pay, PayPal or bank transfer — but no card field exists
+on the page. `CONFIG.payments.checkoutEndpoint` is where a worker that makes a
+Stripe Checkout Session goes (POST the order, get `{url}` back, redirect).
+Until it is set, the confirmation says plainly that it is preview mode and no
+payment was taken. With no `web3formsKey`, both the order and the bespoke
+enquiry are handed back as a written message with "Copy & open Instagram"
+(DMs can't be prefilled) so nothing is lost.
+
+**Reviews are labelled examples** (`REVIEWS.sample`) until her Google profile
+is linked — every card has an Example chip and the section says so.
+
+**Two things this build found:**
+1. **Never pass a `<form>` to GSAP.** A form has `.length` (its control
+   count), so GSAP treats it as a list and tweens its inputs; the form itself
+   stayed at opacity 0 forever. Reveal a wrapper (`.form-wrap`).
+2. **Create pinned ScrollTriggers first, in page order.** The occasions pin
+   was created after the reveal triggers, so everything below it was measured
+   without the pin's extra scroll length. Both pins (hero, occasions) are now
+   created before anything else in `runMotion()`.
+
+The hero arch is moved out of `.hero-visual` into `.hero` on desktop (a hidden
+placeholder keeps its slot and is re-measured on every refresh) so it can grow
+to fill the viewport while the hero is pinned. GSAP's `matchMedia` puts it
+back below 981px.
+
+**Still needed from her**, all in `CONFIG` at the top of the JS: WhatsApp
+number, email + Web3Forms key, Google Business profile + review link, prices
+for the remaining designs, delivery fee, and a Stripe / PayPal account if she
+wants payments taken online.

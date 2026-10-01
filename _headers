@@ -84,6 +84,16 @@
 /assets/starlit/*
   X-Robots-Tag: noindex, noimageindex
 
+# --- Unlisted client preview: The Bespoke Bouquets ----------------------
+# Every photograph in /assets/bespoke/ is her own work, cut from her
+# Instagram — keep it out of image search on its own.
+/templates/bespoke-bouquets
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/bespoke-bouquets.html
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/bespoke/*
+  X-Robots-Tag: noindex, noimageindex
+
 # --- Unlisted client preview: Makeup by Sadia ----------------------------
 /templates/makeup-by-sadia
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
