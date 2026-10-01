@@ -5,7 +5,9 @@
    survives a lost phone and follows him between the van and the laptop.
 
    Secrets (set with `wrangler secret put … --env heatfix`):
-     HF_ADMIN_PASSWORD  — the one password that opens the back office
+     HF_ADMIN_PASSWORD  — the FIRST password, and only until he sets his own.
+                          The moment a password is saved in the back office this
+                          one stops opening the door. See passwordOk.
      HF_SESSION_SECRET  — any long random string; signs the session cookie
      RESEND_API_KEY     — already used by the review emails; sends invoices
 
@@ -77,10 +79,18 @@ async function validSession(request, env) {
 }
 
 /* ------------------------------------------------------------- passwords
-   PBKDF2-SHA256, 150k iterations, a fresh 16-byte salt per password. Slow on
-   purpose: the whole point is that guessing costs the attacker real time.
-   Never store the password, only this. */
-const PBKDF2_ROUNDS = 150000;
+   PBKDF2-SHA256, a fresh 16-byte salt per password. Slow on purpose: the whole
+   point is that guessing costs the attacker real time. Never store the
+   password, only this.
+
+   100,000 is not a preference, it is the ceiling. The Workers runtime refuses
+   a PBKDF2 deriveBits above 100,000 iterations and throws a DOMException
+   rather than doing the work. This was set to 150,000, so hashPassword threw
+   every time it was called -- which meant setting a password ALWAYS failed,
+   from the very first attempt, with an uncaught exception and a bare 500 on
+   the "New password" screen. Nothing was ever stored, so there are no old
+   150,000-round hashes to keep compatible with. */
+const PBKDF2_ROUNDS = 100000;
 
 function toHex(buf) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -106,10 +116,23 @@ async function sha256Hex(s) {
   return toHex(await crypto.subtle.digest("SHA-256", enc.encode(String(s))));
 }
 
-/* His own password if he has set one. HF_ADMIN_PASSWORD keeps working as a
-   recovery password so a forgotten password with no email configured is not a
-   locked door -- the back office says as much, rather than leaving him to
-   find out. */
+/* HF_ADMIN_PASSWORD is a starter password, not a permanent master key.
+
+   It used to keep working alongside his own as a recovery route, which sounds
+   prudent and is in fact the opposite: changing your password and finding the
+   old one still lets you in is not a recovery feature, it is a password change
+   that did nothing. Anyone who ever knew the starter password -- and the point
+   of changing it is usually that somebody does -- still had the door.
+
+   So the rule is now the one anybody would expect: the moment he saves a
+   password of his own, that is the only password. HF_ADMIN_PASSWORD opens the
+   back office only while no password has been set, which is exactly the window
+   it exists for -- the very first sign-in.
+
+   Locked out is still not a dead end. "Forgotten password" mails a 45-minute
+   link to the address in My details (heatfixmcr@hotmail.com, checked before
+   this change went in), and failing that the stored hash can be cleared from
+   the D1 console, which puts him back to the starter password above. */
 /* ---- how many wrong guesses before the door shuts, and for how long ----
    Login is generous, because the person most likely to get it wrong repeatedly
    is Mohammad on a phone keyboard. Reset requests are tighter, because each one
@@ -171,8 +194,11 @@ async function clearAttempts(env, scope, ip) {
 }
 
 async function passwordOk(env, s, attempt) {
+  /* His own password, once set, is the only one. Note the `return` rather than
+     falling through: a wrong attempt against his hash must fail here and not
+     get a second look against the starter password below. */
   if (s && s.password_hash && s.password_salt) {
-    if (safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash)) return true;
+    return safeEqual(await hashPassword(attempt, s.password_salt), s.password_hash);
   }
   if (env.HF_ADMIN_PASSWORD && safeEqual(attempt, env.HF_ADMIN_PASSWORD)) return true;
   return false;
@@ -233,6 +259,41 @@ async function saveSettings(env, body) {
 }
 
 /* -------------------------------------------------------------- customers */
+/* Every email address he has already typed, newest first.
+
+   He types the customer's address into the invoice by hand, and the same
+   people come back: a landlord with four properties, a letting agent, the
+   neighbour of the last job. Retyping it is where the typos come from, and a
+   typo here means the invoice quietly goes nowhere.
+
+   Two sources, because both are addresses he has used: customers he has
+   invoiced, and enquiries that came in through the website. Deduplicated by
+   the address itself, lower-cased for comparison but returned as it was
+   entered, and capped -- this feeds a dropdown, not a mailing list. */
+async function listKnownEmails(env) {
+  const rows = await env.HF_DB.prepare(
+    `SELECT email, name, created_at, 'customer' AS src FROM hf_customers
+      WHERE email IS NOT NULL AND TRIM(email) <> ''
+     UNION ALL
+     SELECT email, name, created_at, 'enquiry' AS src FROM hf_enquiries
+      WHERE email IS NOT NULL AND TRIM(email) <> ''
+     ORDER BY created_at DESC
+     LIMIT 400`
+  ).all();
+
+  const seen = new Set(), out = [];
+  for (const r of (rows.results || [])) {
+    const email = clean(r.email, 160).trim();
+    if (!email || email.indexOf("@") < 1) continue;
+    const key = email.toLowerCase();
+    if (seen.has(key)) continue;          /* the customer record wins: it is first */
+    seen.add(key);
+    out.push({ email, name: clean(r.name, 80), src: r.src });
+    if (out.length >= 60) break;
+  }
+  return out;
+}
+
 async function listCustomers(env, q) {
   const like = `%${(q || "").trim()}%`;
   const sql = q
@@ -273,6 +334,15 @@ async function upsertCustomer(env, c) {
 }
 
 /* --------------------------------------------------------------- invoices */
+/* What a line on an invoice can be. The first two are the original pair and
+   every existing row in the database is one of them; the rest are the
+   combinations he actually bills, in his own words -- a job is rarely cleanly
+   one thing, and out-of-hours work is its own rate before parking is counted. */
+const LINE_KINDS = [
+  "labour", "parts", "parts_labour", "parts_labour_parking", "callout",
+  "callout_parking", "ooh_callout", "ooh_parking_parts", "ooh_parking",
+];
+
 /* Worked out here so the browser cannot post its own totals. */
 function totals(items, vatRateBp, vatRegistered) {
   let net = 0;
@@ -281,9 +351,12 @@ function totals(items, vatRateBp, vatRegistered) {
     const unit = pence(it.unit);
     const line = Math.round(qty * unit);
     net += line;
-    /* Anything not explicitly parts is labour: that is the commoner line, and
-       an unrecognised value must not invent a third section on the document. */
-    const kind = clean(it.kind, 12) === "parts" ? "parts" : "labour";
+    /* Whitelisted, not trusted. An unrecognised value falls back to labour --
+       the commoner line -- rather than inventing a section on the document.
+       Keep LINE_KINDS, the dropdown in templates/heatfix-office.html and the
+       section titles in assets/js/heatfix-invoice-templates.js in step: a
+       value stored here with no title there prints an untitled section. */
+    const kind = LINE_KINDS.indexOf(clean(it.kind, 24)) !== -1 ? clean(it.kind, 24) : "labour";
     return { position: i, description: clean(it.description, 400), qty, unit_pence: unit, line_pence: line, kind };
   }).filter((r) => r.description || r.line_pence);
   const vat = vatRegistered ? Math.round(net * vatRateBp / 10000) : 0;
@@ -323,6 +396,105 @@ async function readInvoice(env, id) {
     .prepare("SELECT description, qty, unit_pence, line_pence, kind FROM hf_invoice_items WHERE invoice_id = ? ORDER BY position")
     .bind(id).all()).results || [];
   return { ...inv, items };
+}
+
+/* ------------------------------------------------------- photos of the work
+
+   A job is worth more to the customer with the work shown than described, and
+   worth more to him six months later when someone asks what was actually
+   done. The photos hang off the invoice because the invoice is already the
+   record of the job -- there is no second thing to keep in step.
+
+   Nothing here ever selects `data` alongside the other columns. A dozen
+   photos is a couple of megabytes, and a list endpoint that dragged the image
+   bytes through it would make opening the invoice list slower every time he
+   added a photo. The bytes come out one at a time, through the photo
+   endpoint, and only when a browser actually asks for that image. */
+
+const PHOTO_LIMIT = 12;              /* per invoice */
+const PHOTO_MAX_BYTES = 900 * 1024;  /* per photo, after the browser shrinks it */
+
+async function listPhotos(env, invoiceId) {
+  return (await env.HF_DB.prepare(
+    `SELECT id, caption, mime, bytes, created_at, position
+       FROM hf_invoice_photos WHERE invoice_id = ? ORDER BY position, created_at`
+  ).bind(invoiceId).all()).results || [];
+}
+
+async function addPhoto(env, invoiceId, body) {
+  const inv = await env.HF_DB.prepare("SELECT id FROM hf_invoices WHERE id = ?").bind(invoiceId).first();
+  if (!inv) return { error: "No such invoice", status: 404 };
+
+  const count = await env.HF_DB.prepare(
+    "SELECT COUNT(*) AS n FROM hf_invoice_photos WHERE invoice_id = ?").bind(invoiceId).first();
+  if (Number(count?.n || 0) >= PHOTO_LIMIT) {
+    return { error: `That job already has ${PHOTO_LIMIT} photos, which is the most an invoice can carry.`, status: 409 };
+  }
+
+  /* The browser sends a data URL because that is what a canvas produces.
+     Split it here so the mime type is trusted from the prefix we can parse
+     rather than from a field the page could set to anything. */
+  const m = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(String(body.data || ""));
+  if (!m) return { error: "That photo did not arrive as an image.", status: 400 };
+  const mime = m[1];
+  const b64 = m[2];
+
+  /* base64 carries 3 bytes in every 4 characters. */
+  const realBytes = Math.floor((b64.length * 3) / 4);
+  if (realBytes > PHOTO_MAX_BYTES) {
+    return { error: "That photo is too big even after shrinking. Try another one.", status: 413 };
+  }
+
+  const id = newId();
+  await env.HF_DB.prepare(
+    `INSERT INTO hf_invoice_photos (id, invoice_id, created_at, position, caption, mime, bytes, data)
+     VALUES (?,?,?,?,?,?,?,?)`
+  ).bind(
+    id, invoiceId, nowIso(), Math.round(num(body.position, Number(count?.n || 0))),
+    clean(body.caption, 120), mime, realBytes, b64
+  ).run();
+
+  return { ok: true, id, caption: clean(body.caption, 120), bytes: realBytes };
+}
+
+/* Public: the customer holds the invoice link, and the photos on that page
+   have to load without a password. The id is a UUID, so it cannot be guessed
+   or counted through -- the same reasoning that makes the invoice itself
+   public. A draft's photos stay private, because a draft invoice is not
+   readable either and half-finished work should not be on show. */
+async function servePhoto(env, photoId, request) {
+  const row = await env.HF_DB.prepare(
+    `SELECT p.mime, p.data, i.status
+       FROM hf_invoice_photos p JOIN hf_invoices i ON i.id = p.invoice_id
+      WHERE p.id = ?`
+  ).bind(photoId).first();
+  if (!row || row.status === "draft") {
+    return new Response("Not found", { status: 404 });
+  }
+
+  /* A photo never changes once uploaded -- a re-crop is a new row with a new
+     id -- so the browser may keep it as long as it likes. The etag lets a
+     revisit come back 304 instead of moving the bytes again. */
+  const etag = `"${photoId}"`;
+  if (request.headers.get("if-none-match") === etag) {
+    return new Response(null, { status: 304, headers: { etag } });
+  }
+
+  const bin = atob(row.data);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+
+  return new Response(bytes, {
+    headers: {
+      "content-type": row.mime,
+      "cache-control": "public, max-age=31536000, immutable",
+      etag,
+      /* It is a photo of a boiler in someone's kitchen. Keep it off search
+         engines and out of other people's pages. */
+      "x-robots-tag": "noindex, noimageindex",
+      "x-content-type-options": "nosniff",
+    },
+  });
 }
 
 /* Charging VAT takes BOTH the switch and a registration number.
@@ -481,6 +653,10 @@ async function emailInvoice(env, id, origin, message) {
   const s = await getSettings(env);
   const link = `${origin}/i/${inv.id}`;
   const money = (p) => "£" + (p / 100).toFixed(2);
+  /* Named in the email so the customer knows to open the link. Photos are not
+     attached: a mail with a dozen images is the one that lands in junk, and
+     the invoice page shows them better than any inbox will. */
+  const photoCount = (await listPhotos(env, id)).length;
 
   const html = `<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#0d1726;line-height:1.6">
     <p>Hello ${escape_(inv.cust_name)},</p>
@@ -488,7 +664,10 @@ async function emailInvoice(env, id, origin, message) {
     <p style="font-size:18px;margin:22px 0 6px"><b>Invoice ${escape_(inv.number)}</b></p>
     <p style="margin:0 0 18px">Total ${money(inv.gross_pence)}${inv.paid_pence ? ` &middot; already paid ${money(inv.paid_pence)}` : ""}
       &middot; <b>due ${money(inv.gross_pence - inv.paid_pence)}</b></p>
-    <p><a href="${link}" style="display:inline-block;background:#0B2E63;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none">View your invoice</a></p>
+    ${photoCount ? `<p style="margin:0 0 18px">${photoCount === 1
+      ? "There is a photo of the work on your invoice page."
+      : `There are ${photoCount} photos of the work on your invoice page.`}</p>` : ""}
+    <p><a href="${link}" style="display:inline-block;background:#0B2E63;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none">View your invoice${photoCount ? " and photos" : ""}</a></p>
     ${s.review_url ? `<p style="margin:26px 0 0;padding-top:20px;border-top:1px solid #e2e8f0">
       If you were happy with the work, a quick Google review really helps a small
       business like ours.<br>
@@ -527,22 +706,25 @@ function escape_(s) {
   return String(s ?? "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
 }
 
-/* Tell him a lead has come in, by way of Web3Forms.
+/* Tell him a lead has come in.
  *
- * Called from the Worker rather than from the page on purpose. The usual way
- * to use Web3Forms is to put the access key in the form's HTML, but this
- * repository is public and the key would then also sit in the page source of
- * every visitor, where scrapers collect them and spam the address behind it.
- * From here the key never leaves Cloudflare.
+ * Sent from the Worker rather than from the page on purpose. A form that
+ * carries its own access key puts that key in the page source of every
+ * visitor, where scrapers collect them and spam the address behind it. From
+ * here no key ever leaves Cloudflare.
  *
- * The enquiry is already committed to his database before this runs, so an
- * outage at Web3Forms costs him a notification, never the lead itself — hence
- * the catch that deliberately swallows everything, and the timeout that stops
- * a hanging request holding up the customer's confirmation.
+ * Resend first, because it is already carrying his invoices and is therefore
+ * the path known to work; Web3Forms only if Resend is not configured. If
+ * neither is, that is recorded too -- see below.
  *
- * With no key configured it simply does nothing, which is what happens on
- * billydigitals.com, where the preview copy of the site must not be able to
- * send anything to him.
+ * This used to be Web3Forms alone, and it failed silently in three separate
+ * ways at once: `if (!key) return` with no key set, a bare `catch {}` around
+ * the fetch, and no check of the response (Web3Forms answers 200 with
+ * {"success": false} when it rejects a key). All three meant a missing
+ * notification looked exactly like a delivered one. The enquiry is committed
+ * to the database before any of this runs, so a mail outage still costs a
+ * notification and never the lead -- but the OUTCOME is now written to the
+ * row, so the back office can say plainly that the email did not go.
  */
 const ENQUIRY_LABELS = {
   name: "Name", phone: "Phone", email: "Email", address: "Address",
@@ -550,35 +732,107 @@ const ENQUIRY_LABELS = {
   details: "Details", source: "Came from",
 };
 
-async function notifyEnquiry(env, enquiry) {
-  const key = clean(env.HF_WEB3FORMS_KEY, 120);
-  if (!key) return;
-
-  const fields = {};
+function enquiryFields(enquiry) {
+  const out = {};
   for (const [k, label] of Object.entries(ENQUIRY_LABELS)) {
-    if (enquiry[k]) fields[label] = enquiry[k];      /* blank rows read as broken */
+    if (enquiry[k]) out[label] = enquiry[k];      /* blank rows read as broken */
   }
+  return out;
+}
 
-  const payload = {
-    access_key: key,
-    subject: `New enquiry from ${enquiry.name} — HeatFix website`,
-    from_name: "HeatFix website",
-    ...fields,
-    "Open the back office": "https://heatfixmcrlimited.co.uk/office",
-  };
-  /* So he can hit reply in his inbox and reach the customer directly. */
-  if (enquiry.email) payload.replyto = enquiry.email;
+async function sendEnquiryByResend(env, enquiry, to, fields) {
+  const rows = Object.entries(fields).map(([k, v]) =>
+    `<tr><td style="padding:6px 14px 6px 0;color:#55657a;vertical-align:top;white-space:nowrap">${escape_(k)}</td>` +
+    `<td style="padding:6px 0"><b>${escape_(v)}</b></td></tr>`).join("");
 
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: `HeatFix website <${env.HF_MAIL_FROM || "invoices@heatfixmcrlimited.co.uk"}>`,
+      to: [to],
+      /* So he can hit reply in his inbox and reach the customer directly. */
+      reply_to: enquiry.email || undefined,
+      subject: `New enquiry from ${enquiry.name} — HeatFix website`,
+      html: `<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#0d1726;line-height:1.6">
+        <p style="font-size:17px;margin:0 0 4px"><b>New enquiry from the website</b></p>
+        <p style="margin:0 0 18px;color:#55657a">${escape_(enquiry.name)} is waiting to hear back.</p>
+        <table style="border-collapse:collapse;font-size:15px">${rows}</table>
+        <p style="margin:24px 0 0"><a href="https://heatfixmcrlimited.co.uk/office"
+          style="display:inline-block;background:#0B2E63;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none">Open the back office</a></p>
+      </div>`,
+    }),
+    /* The customer is waiting on this response, so the notification
+       gets a short leash: the lead is already saved, and a slow mail
+       provider must not become a slow booking form. */
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!res.ok) {
+    throw new Error("Resend refused it: " + (await res.text().catch(() => "")).slice(0, 200));
+  }
+}
+
+async function sendEnquiryByWeb3Forms(env, enquiry, key, fields) {
+  const res = await fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({
+      access_key: key,
+      subject: `New enquiry from ${enquiry.name} — HeatFix website`,
+      from_name: "HeatFix website",
+      ...fields,
+      "Open the back office": "https://heatfixmcrlimited.co.uk/office",
+      ...(enquiry.email ? { replyto: enquiry.email } : {}),
+    }),
+    /* The customer is waiting on this response, so the notification
+       gets a short leash: the lead is already saved, and a slow mail
+       provider must not become a slow booking form. */
+    signal: AbortSignal.timeout(5000),
+  });
+  /* A 200 is not success here. Web3Forms answers 200 with success:false when
+     it rejects the key, which is exactly the case worth catching. */
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok || out.success === false) {
+    throw new Error("Web3Forms refused it: " + String(out.message || res.status).slice(0, 200));
+  }
+}
+
+async function notifyEnquiry(env, enquiry) {
+  const settings = await getSettings(env);
+  const to = clean(settings.email, 160);
+  const w3 = clean(env.HF_WEB3FORMS_KEY, 120);
+  const fields = enquiryFields(enquiry);
+
+  let via = "", error = "";
   try {
-    await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(5000),
-    });
-  } catch {
-    /* Saved already; the email is a courtesy, not the record. */
+    if (env.RESEND_API_KEY && to) {
+      via = "resend";
+      await sendEnquiryByResend(env, enquiry, to, fields);
+    } else if (w3) {
+      via = "web3forms";
+      await sendEnquiryByWeb3Forms(env, enquiry, w3, fields);
+    } else {
+      /* Nothing is configured to send with. That is a real state -- it is how
+         the preview copy on billydigitals.com behaves, and it must not be able
+         to mail him -- but on his own domain it means every lead arrives
+         unannounced, so it is recorded rather than passed over in silence. */
+      error = !to
+        ? "No email address is saved in My details, so there is nowhere to send it."
+        : "Neither RESEND_API_KEY nor HF_WEB3FORMS_KEY is set.";
+    }
+  } catch (err) {
+    error = String(err && err.message || err).slice(0, 300);
   }
+
+  /* Never let recording the outcome throw: the customer is waiting on the
+     response to this request, and the lead is already saved. */
+  try {
+    await env.HF_DB.prepare(
+      "UPDATE hf_enquiries SET notified = ?, notify_via = ?, notify_error = ? WHERE id = ?"
+    ).bind(error ? "failed" : "sent", via || null, error || null, enquiry.id).run();
+  } catch { /* the columns arrive with migration 0009 */ }
+
+  if (error) console.error("HeatFix enquiry notification failed:", error);
 }
 
 /* ------------------------------------------------------------- the router */
@@ -586,7 +840,22 @@ export function isHfCrmPath(pathname) {
   return pathname.startsWith("/api/hf/");
 }
 
+/* Everything below the sign-in gate already runs inside a try/catch. The
+   endpoints ABOVE it -- login, forgot, reset -- did not, so a throw in any of
+   them reached the browser as a bare 500 with no JSON body, and the office
+   could only say "Something went wrong (500)". That is the worst possible
+   message to hand someone who is locked out of his own back office: it names
+   nothing he can act on and nothing anyone can debug from. A failure here now
+   says what actually broke. */
 export async function handleHfCrm(request, env, url) {
+  try {
+    return await routeHfCrm(request, env, url);
+  } catch (err) {
+    return json({ error: "The back office hit an error: " + String(err && err.message || err).slice(0, 200) }, 500);
+  }
+}
+
+async function routeHfCrm(request, env, url) {
   if (!env.HF_DB) return json({ error: "The back office database is not connected yet." }, 503);
   const path = url.pathname.replace(/^\/api\/hf\//, "");
   const method = request.method;
@@ -680,6 +949,13 @@ ignore it &mdash; nothing has changed.</p>`,
       await new Promise((r) => setTimeout(r, 600));
       return json({ error: "That reset link is not valid any more." }, 400);
     }
+    /* A session cannot be signed without this, and issuing one below would
+       throw on a zero-length key. Say so before changing the password, rather
+       than after — resetting it and then failing to sign him in would leave
+       him with a new password and no way to tell whether it saved. */
+    if (!env.HF_SESSION_SECRET) {
+      return json({ error: "The back office is missing its HF_SESSION_SECRET setting, so it cannot sign you in." }, 503);
+    }
     await setPassword(env, next);      /* clears the token as it goes */
     /* He has just proved he holds the mailbox, so wipe both counters: locking
        him out immediately after a successful reset would be absurd. */
@@ -700,6 +976,11 @@ ignore it &mdash; nothing has changed.</p>`,
   if (path.startsWith("public/") && method === "GET") {
     const data = await readPublicInvoice(env, path.slice(7));
     return data ? json(data) : json({ error: "That invoice is not available." }, 404);
+  }
+
+  /* The image itself, for the <img> tags on that same customer page. */
+  if (path.startsWith("photo/") && method === "GET") {
+    return servePhoto(env, path.slice(6), request);
   }
 
   /* The booking form posts here before it opens WhatsApp, so a lead exists on
@@ -826,6 +1107,10 @@ ignore it &mdash; nothing has changed.</p>`,
       }
     }
 
+    if (seg[0] === "emails" && method === "GET") {
+      return json({ emails: await listKnownEmails(env) });
+    }
+
     if (seg[0] === "customers") {
       if (method === "GET") return json({ customers: await listCustomers(env, url.searchParams.get("q")) });
       if (method === "DELETE" && seg[1]) {
@@ -835,6 +1120,33 @@ ignore it &mdash; nothing has changed.</p>`,
     }
 
     if (seg[0] === "invoices") {
+      /* Photos of the work, FIRST in this block and deliberately so. Every
+         rule below matches on seg[1] alone — the invoice id — and would
+         happily answer a request that was about a photo hanging off it.
+         "GET /invoices/<id>/photos" would return the invoice, and worse,
+         "DELETE /invoices/<id>/photos/<photo>" would delete the whole
+         invoice rather than the one photograph. */
+      if (seg[2] === "photos") {
+        if (method === "GET")  return json({ photos: await listPhotos(env, seg[1]) });
+        if (method === "POST") {
+          const r = await addPhoto(env, seg[1], body);
+          return r.error ? json({ error: r.error }, r.status) : json(r, 201);
+        }
+        if (method === "PUT" && seg[3]) {
+          await env.HF_DB.prepare(
+            "UPDATE hf_invoice_photos SET caption = ? WHERE id = ? AND invoice_id = ?")
+            .bind(clean(body.caption, 120), seg[3], seg[1]).run();
+          return json({ ok: true });
+        }
+        if (method === "DELETE" && seg[3]) {
+          await env.HF_DB.prepare(
+            "DELETE FROM hf_invoice_photos WHERE id = ? AND invoice_id = ?")
+            .bind(seg[3], seg[1]).run();
+          return json({ ok: true });
+        }
+        return json({ error: "Unknown photo request" }, 404);
+      }
+
       if (method === "GET" && !seg[1]) {
         const status = url.searchParams.get("status");
         const sql = status
@@ -869,6 +1181,12 @@ ignore it &mdash; nothing has changed.</p>`,
       if (method === "DELETE" && seg[1]) {
         const inv = await env.HF_DB.prepare("SELECT status FROM hf_invoices WHERE id = ?").bind(seg[1]).first();
         if (inv && inv.status !== "draft") return json({ error: "Only a draft can be deleted. Void a sent invoice instead." }, 409);
+        /* The photos carry ON DELETE CASCADE, but that only fires where
+           foreign keys are enforced. Photographs are the biggest rows in the
+           database, so an orphan is not a tidiness problem -- it is storage
+           kept forever for an invoice that no longer exists. Delete them
+           outright and the question never arises. */
+        await env.HF_DB.prepare("DELETE FROM hf_invoice_photos WHERE invoice_id = ?").bind(seg[1]).run();
         await env.HF_DB.prepare("DELETE FROM hf_invoices WHERE id = ?").bind(seg[1]).run();
         return json({ ok: true });
       }
@@ -901,7 +1219,12 @@ export async function readPublicInvoice(env, id) {
   delete inv.cust_email;
   delete inv.customer_id;
 
-  return { invoice: inv, business: {
+  /* Ids and captions only. The images come down one at a time from
+     /api/hf/photo/<id>, so this payload stays the size of a text response
+     however many photos are on the job. */
+  const photos = (await listPhotos(env, id)).map((p) => ({ id: p.id, caption: p.caption || "" }));
+
+  return { invoice: inv, photos, business: {
     name: s.business_name, address: s.address, postcode: s.postcode, phone: s.phone,
     email: s.email, website: s.website, vat_number: s.vat_number, company_no: s.company_no,
     gas_safe_no: s.gas_safe_no, logo_data: s.logo_data, review_url: s.review_url,

@@ -8,7 +8,7 @@
 <meta property="og:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="HeatFix Mcr Limited — installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
+<meta property="og:image:alt" content="HeatFix Mcr Limited, installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <link rel="icon" href="/assets/heatfix/icon-32.png" sizes="32x32">
@@ -144,7 +144,7 @@
 
             <div class="hfo-grid">
               <div class="hfo-field"><label for="cPhone">Phone</label><input id="cPhone" inputmode="tel" placeholder="07…"></div>
-              <div class="hfo-field"><label for="cEmail">Email <span class="hint">(needed to send by email)</span></label><input id="cEmail" type="email" inputmode="email"></div>
+              <div class="hfo-field hfo-suggest"><label for="cEmail">Email <span class="hint">(needed to send by email)</span></label><input id="cEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com"><div class="hfo-suggest-list" id="eSuggest" hidden></div></div>
             </div>
             <div class="hfo-field"><label for="cAddr">Address</label><textarea id="cAddr" rows="3" placeholder="12 Example Road&#10;Manchester"></textarea></div>
             <div class="hfo-grid">
@@ -205,6 +205,18 @@
             </div>
             <div class="hfo-field"><label for="iNotes">Notes for the customer <span class="hint">(optional)</span></label>
               <textarea id="iNotes" rows="3" placeholder="Parts guaranteed 12 months. Next service due September 2027."></textarea></div>
+          </div>
+
+          <div class="hfo-card">
+            <h3>Photos of the work</h3>
+            <p class="hfo-sub">Take them on your phone and add them here. The customer
+              sees them on the same page as the invoice. They are not emailed as
+              attachments, so nothing gets blocked or lands in junk.</p>
+            <div class="hfo-btnrow" style="margin-bottom:14px">
+              <label class="btn btn-sm">Add photos<input type="file" id="shotFiles" accept="image/*" multiple hidden></label>
+              <span class="hfo-sub" id="shotCount" style="align-self:center"></span>
+            </div>
+            <div class="hfo-shots" id="shotList"></div>
           </div>
 
           <div class="hfo-card">
@@ -286,7 +298,7 @@
         <p class="hfo-sub">A VAT invoice has to show your VAT number, the rate and the VAT as its own line. Leave this on and every invoice does it for you.</p>
         <div class="hfo-check">
           <input type="checkbox" id="bVatReg">
-          <label for="bVatReg">I am VAT registered &mdash; add VAT to my invoices</label>
+          <label for="bVatReg">I am VAT registered, add VAT to my invoices</label>
         </div>
         <p class="hfo-sub" id="vatHint">Leave this off until you are VAT
           registered. Turn it on and fill in your VAT number and invoices will
@@ -295,9 +307,9 @@
           <div class="hfo-field"><label for="bVatNo">VAT number</label><input id="bVatNo" placeholder="GB123456789"></div>
           <div class="hfo-field"><label for="bVatRate">Rate</label>
             <select id="bVatRate">
-              <option value="2000">20% — standard</option>
-              <option value="500">5% — reduced (energy saving materials)</option>
-              <option value="0">0% — zero rated</option>
+              <option value="2000">20%, standard</option>
+              <option value="500">5%, reduced (energy saving materials)</option>
+              <option value="0">0%, zero rated</option>
             </select>
           </div>
         </div>
@@ -429,8 +441,27 @@
     filter: "",
     inv: null,          /* the invoice being edited, null until saved */
     lines: [],
+    photos: [],         /* photos of the work on the invoice being edited */
     tplPreview: null    /* template chosen on this invoice only */
   };
+
+  /* What a line can be. The value is what gets stored, the label is what he
+     picks from and what prints as the section heading on the invoice. It has
+     to match LINE_KINDS in worker/heatfix/crm.js, which rejects anything else,
+     and the titles in assets/js/heatfix-invoice-templates.js, which prints
+     them. Anything unrecognised -- an old row, a bad value -- reads as labour. */
+  const KINDS = [
+    ["labour", "Labour"],
+    ["parts", "Parts"],
+    ["parts_labour", "Parts and labour"],
+    ["parts_labour_parking", "Parts, labour and parking"],
+    ["callout", "Call-out"],
+    ["callout_parking", "Call-out and parking"],
+    ["ooh_callout", "Out of hours call-out"],
+    ["ooh_parking_parts", "Out of hours, parking and parts"],
+    ["ooh_parking", "Out of hours and parking"],
+  ];
+  const kindOf = (l) => (KINDS.some((k) => k[0] === l.kind) ? l.kind : "labour");
 
   const blankLine = () => ({ description: "", qty: 1, unit: "", kind: "labour" });
 
@@ -623,6 +654,13 @@
         (e.job ? '<p class="hfo-enq-job">' + esc(e.job) + (e.slot ? ' &middot; ' + esc(e.slot) : "") + '</p>' : "") +
         (where ? '<p class="hfo-enq-addr">' + esc(where) + '</p>' : "") +
         (e.details ? '<p class="hfo-enq-note">' + esc(e.details) + '</p>' : "") +
+        /* The lead is safe either way — it is on this screen. But if the
+           email never went, he needs telling here rather than finding out
+           by wondering why his inbox has been quiet. */
+        (e.notified === "failed"
+          ? '<p class="hfo-enq-warn">Saved here, but the email alert did not send' +
+            (e.notify_error ? ': ' + esc(e.notify_error) : "") + '</p>'
+          : "") +
         '<div class="hfo-enq-acts">' +
           '<a class="btn btn-sm" href="tel:' + esc(String(e.phone).replace(/\s+/g, "")) + '">Ring ' + esc(e.phone) + '</a>' +
           (wa ? '<a class="btn btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc(wa) + '">WhatsApp</a>' : "") +
@@ -737,15 +775,84 @@
     if (!suggest.contains(e.target) && e.target !== nameBox) suggest.hidden = true;
   });
 
+  /* ------------------------------------------------ email he has used before
+     He types the customer's address by hand every time, and the same people
+     come back -- a landlord with four properties, an agent, the neighbour of
+     last week's job. Retyping is where typos come from, and a typo here sends
+     the invoice nowhere at all, quietly.
+
+     So the field remembers. Tapping it lists every address already in the back
+     office, newest first; typing filters that list. The list is built server
+     side from his customers and his enquiries, so it is the same on the van
+     phone as on the laptop rather than living in one browser. */
+  const emailBox = $("cEmail"), eSuggest = $("eSuggest");
+  let knownEmails = null, emailLoading = null;
+
+  async function loadKnownEmails() {
+    if (knownEmails) return knownEmails;
+    if (!emailLoading) {
+      emailLoading = get("emails")
+        .then((d) => { knownEmails = d.emails || []; return knownEmails; })
+        .catch(() => { emailLoading = null; return []; });
+    }
+    return emailLoading;
+  }
+
+  function drawEmailList(list) {
+    if (!list.length) { eSuggest.hidden = true; return; }
+    eSuggest.innerHTML = list.slice(0, 8).map((e) =>
+      '<button type="button" data-email="' + esc(e.email) + '">' +
+      "<b>" + esc(e.email) + "</b>" +
+      "<small>" + esc(e.name || "no name saved") +
+      (e.src === "enquiry" ? " &middot; from an enquiry" : "") + "</small></button>"
+    ).join("");
+    eSuggest.hidden = false;
+    eSuggest.querySelectorAll("button").forEach((b) => {
+      /* mousedown, not click: blur fires first on a click and would hide the
+         list out from under the pointer. */
+      b.addEventListener("mousedown", (ev) => {
+        ev.preventDefault();
+        emailBox.value = b.dataset.email;
+        eSuggest.hidden = true;
+        refresh();
+      });
+    });
+  }
+
+  function matchEmails(q) {
+    const list = knownEmails || [];
+    const needle = q.trim().toLowerCase();
+    if (!needle) return list;
+    return list.filter((e) =>
+      e.email.toLowerCase().indexOf(needle) !== -1 ||
+      (e.name || "").toLowerCase().indexOf(needle) !== -1);
+  }
+
+  emailBox.addEventListener("focus", async () => {
+    await loadKnownEmails();
+    drawEmailList(matchEmails(emailBox.value));
+  });
+  emailBox.addEventListener("input", () => {
+    refresh();
+    if (knownEmails) drawEmailList(matchEmails(emailBox.value));
+  });
+  emailBox.addEventListener("blur", () => { setTimeout(() => { eSuggest.hidden = true; }, 120); });
+  emailBox.addEventListener("keydown", (e) => { if (e.key === "Escape") eSuggest.hidden = true; });
+
+  /* A new address typed on this invoice should be offered on the next one
+     without a reload, so drop the cache whenever the customer is saved. */
+  function forgetKnownEmails() { knownEmails = null; emailLoading = null; }
+
   /* --------------------------------------------------------- the lines */
   function drawLines() {
     const host = $("lines");
     host.innerHTML = S.lines.map((l, i) =>
       '<div class="hfo-line" data-i="' + i + '">' +
       '<input class="d" placeholder="What you did or fitted" value="' + esc(l.description) + '">' +
-      '<select class="k" aria-label="Labour or parts">' +
-        '<option value="labour"' + (l.kind !== "parts" ? " selected" : "") + '>Labour</option>' +
-        '<option value="parts"' + (l.kind === "parts" ? " selected" : "") + '>Parts</option>' +
+      '<select class="k" aria-label="What this line is for">' +
+        KINDS.map((k) =>
+          '<option value="' + k[0] + '"' + (kindOf(l) === k[0] ? " selected" : "") + ">" + k[1] + "</option>"
+        ).join("") +
       '</select>' +
       '<input class="q" inputmode="decimal" value="' + esc(l.qty) + '" aria-label="Quantity">' +
       '<input class="u" inputmode="decimal" placeholder="0.00" value="' + esc(l.unit) + '" aria-label="Unit price">' +
@@ -842,7 +949,7 @@
         vat_rate: c.rateBp,
         items: S.lines.map((l) => ({
           description: l.description, qty: Number(l.qty) || 0,
-          unit_pence: pence(l.unit), line_pence: lineTotal(l), kind: l.kind || "labour"
+          unit_pence: pence(l.unit), line_pence: lineTotal(l), kind: kindOf(l)
         })).filter((r) => r.description || r.line_pence)
       },
       business: businessFromSettings(),
@@ -1025,6 +1132,8 @@
     $("edStatus").className = "pill pill-draft";
     $("edStatus").textContent = "Draft";
     $("edLink").textContent = "";
+    S.photos = [];
+    drawShots();
     drawLines();
     lockForStatus();
     refresh();
@@ -1038,7 +1147,7 @@
       description: it.description,
       qty: it.qty,
       unit: (it.unit_pence / 100).toFixed(2),
-      kind: it.kind === "parts" ? "parts" : "labour"
+      kind: kindOf(it)
     }));
     if (!S.lines.length) S.lines = [blankLine()];
     $("cName").value = inv.cust_name || "";
@@ -1065,6 +1174,9 @@
     lockForStatus();
     show("editor");
     refresh();
+    /* Not awaited: the editor should be on screen and usable while a dozen
+       thumbnails come down. */
+    loadShots();
   }
 
   function showLink() {
@@ -1113,15 +1225,29 @@
       show_cust_name: $("iShowName").checked ? 1 : 0,
       show_cust_address: $("iShowAddr").checked ? 1 : 0,
       show_cust_phone: $("iShowPhone").checked ? 1 : 0,
-      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, kind: l.kind || "labour" }))
+      items: S.lines.map((l) => ({ description: l.description, qty: l.qty, unit: l.unit, kind: kindOf(l) }))
     };
   }
 
   async function save(quiet) {
-    if (!$("cName").value.trim()) { toast("Put the customer's name in first.", "bad"); return null; }
+    /* The customer's name used to be required here, and that one line was
+       doing far more damage than it looks. save() is what every other action
+       calls first: adding a photograph saves the draft, so does taking a
+       payment, so does sending. With no name it returned null, the caller hit
+       its own `if (!S.inv) return`, and the photograph simply did not happen --
+       no error he could act on, nothing saved, nothing said.
+
+       Nothing below needs it. The server already treats a nameless invoice as
+       one with no customer record attached, the list prints an em dash, and
+       the invoice itself falls back to the job number rather than an empty
+       line. He starts an invoice at the van with photographs and a couple of
+       lines, and puts the name on when he knows it. */
     const body = payload();
     const d = S.inv ? await put("invoices/" + S.inv.id, body) : await post("invoices", body);
     S.inv = d.invoice;
+    /* Saving writes the customer, so an address typed here is now one of the
+       remembered ones. Drop the cache or it will not appear until a reload. */
+    forgetKnownEmails();
     $("edTitle").textContent = "Invoice " + S.inv.number;
     lockForStatus();
     showLink();
@@ -1286,6 +1412,136 @@
   async function reloadSettings() {
     S.settings = (await get("settings")).settings || {};
   }
+
+  /* ------------------------------------------------- photos of the work
+
+     A phone camera produces four megabytes and 4032 pixels across. Nothing
+     on the customer's page is wider than about 1100, and he is often adding
+     these from a van on mobile data, so every photo is shrunk in the browser
+     before a byte of it is uploaded. What arrives is a couple of hundred
+     kilobytes -- small enough to live in the database beside the invoice. */
+  const SHOT_MAX_EDGE = 1400;
+  const SHOT_QUALITY = 0.72;
+
+  function shrinkPhoto(file) {
+    return new Promise((resolve, reject) => {
+      if (!/^image\//.test(file.type)) { reject(new Error(file.name + " is not an image.")); return; }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error(file.name + " would not open."));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error(file.name + " would not open."));
+        img.onload = () => {
+          const scale = Math.min(1, SHOT_MAX_EDGE / Math.max(img.width, img.height));
+          const cv = document.createElement("canvas");
+          cv.width = Math.round(img.width * scale);
+          cv.height = Math.round(img.height * scale);
+          const ctx = cv.getContext("2d");
+          /* A photo has no transparency to keep, and JPEG at this size is a
+             third of what PNG costs. Paint white underneath in case one
+             does arrive with an alpha channel, or it turns black. */
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, cv.width, cv.height);
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          resolve(cv.toDataURL("image/jpeg", SHOT_QUALITY));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function drawShots() {
+    const host = $("shotList");
+    const list = S.photos || [];
+    $("shotCount").textContent = list.length
+      ? list.length + (list.length === 1 ? " photo" : " photos")
+      : "";
+
+    if (!list.length) {
+      host.innerHTML = '<p class="hfo-shots-empty">No photos yet. ' +
+        "Add a few and the customer sees them with the invoice.</p>";
+      return;
+    }
+    host.innerHTML = list.map((p) =>
+      '<figure class="hfo-shot" data-id="' + esc(p.id) + '">' +
+        '<img src="/api/hf/photo/' + encodeURIComponent(p.id) + '" alt="" loading="lazy">' +
+        '<input class="cap" value="' + esc(p.caption || "") + '" maxlength="120" ' +
+          'placeholder="Say what it shows (optional)" aria-label="Caption for this photo">' +
+        '<button type="button" class="rm">Remove</button>' +
+      "</figure>").join("");
+  }
+
+  async function loadShots() {
+    if (!S.inv) { S.photos = []; drawShots(); return; }
+    try {
+      S.photos = (await get("invoices/" + S.inv.id + "/photos")).photos || [];
+    } catch (e) { S.photos = []; }
+    drawShots();
+  }
+
+  $("shotFiles").addEventListener("change", async (e) => {
+    const files = Array.prototype.slice.call(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+
+    /* Photos hang off an invoice, so there has to be one. Saving the draft
+       for him beats telling him to go and press a different button first. */
+    if (!S.inv) {
+      try { await save(true); } catch (err) { toast("Save the invoice first: " + err.message, "bad"); return; }
+      /* save() no longer refuses a nameless invoice, so this should not
+         happen; it stays as a guard against walking into a null if saving
+         ever fails without throwing. */
+      if (!S.inv) return;
+    }
+
+    toast(files.length === 1 ? "Adding the photo…" : "Adding " + files.length + " photos…");
+    let added = 0;
+    for (const file of files) {
+      try {
+        const data = await shrinkPhoto(file);
+        const r = await post("invoices/" + S.inv.id + "/photos", { data });
+        S.photos.push({ id: r.id, caption: "" });
+        added++;
+        drawShots();          /* one at a time, so he can see it working */
+      } catch (err) {
+        toast(err.message, "bad");
+        break;                /* the limit was hit, or the file was no good */
+      }
+    }
+    if (added) toast(added === 1 ? "Photo added." : added + " photos added.", "good");
+  });
+
+  /* Captions save when he clicks away, not on every keystroke. */
+  $("shotList").addEventListener("change", async (e) => {
+    const cap = e.target.closest("input.cap");
+    if (!cap) return;
+    const id = cap.closest(".hfo-shot").getAttribute("data-id");
+    try {
+      await put("invoices/" + S.inv.id + "/photos/" + id, { caption: cap.value });
+      const p = (S.photos || []).find((x) => x.id === id);
+      if (p) p.caption = cap.value;
+      toast("Caption saved.", "good");
+    } catch (err) { toast(err.message, "bad"); }
+  });
+
+  $("shotList").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.rm");
+    if (!btn) return;
+    const fig = btn.closest(".hfo-shot");
+    const id = fig.getAttribute("data-id");
+    if (!confirm("Remove this photo? The customer will no longer see it.")) return;
+    fig.classList.add("busy");
+    try {
+      await del("invoices/" + S.inv.id + "/photos/" + id);
+      S.photos = (S.photos || []).filter((x) => x.id !== id);
+      drawShots();
+      toast("Photo removed.", "good");
+    } catch (err) {
+      fig.classList.remove("busy");
+      toast(err.message, "bad");
+    }
+  });
 
   /* The logo is stored with the data, not as a file, so it travels with
      the invoice and cannot go missing later. Big photos are shrunk first. */

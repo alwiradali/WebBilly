@@ -137,9 +137,31 @@
     return bits.join(" &nbsp;·&nbsp; ");
   }
 
-  function itemLine(it) {
+  /* What each line is for, in his own words from the dropdown. It prints under
+     the description only when the invoice is not already split into sections
+     -- with headings above them the label would say the same thing twice. On a
+     one-line invoice there is no heading, which is exactly the case where the
+     customer was left reading "OUT OF HOURS" with no idea whether that was
+     labour, parking or the call-out. */
+  function kindLabel(kind) {
+    var TITLES = {
+      labour: "Labour",
+      parts: "Parts & materials",
+      parts_labour: "Parts and labour",
+      parts_labour_parking: "Parts, labour and parking",
+      callout: "Call-out",
+      callout_parking: "Call-out and parking",
+      ooh_callout: "Out of hours call-out",
+      ooh_parking_parts: "Out of hours, parking and parts",
+      ooh_parking: "Out of hours and parking"
+    };
+    return TITLES[kind] || TITLES.labour;
+  }
+
+  function itemLine(it, showKind) {
     return '<tr>' +
-      '<td class="hf-desc">' + escLines(it.description) + '</td>' +
+      '<td class="hf-desc">' + escLines(it.description) +
+        (showKind ? '<span class="hf-kind">' + kindLabel(it.kind) + '</span>' : '') + '</td>' +
       '<td class="hf-num">' + qty(it.qty) + '</td>' +
       '<td class="hf-num">' + money(it.unit_pence) + '</td>' +
       '<td class="hf-num hf-line">' + money(it.line_pence) + '</td>' +
@@ -157,17 +179,42 @@
     if (!items.length) {
       return '<tr class="hf-empty"><td colspan="4">No work has been listed on this invoice yet.</td></tr>';
     }
-    var labour = items.filter(function (i) { return i.kind !== "parts"; });
-    var parts  = items.filter(function (i) { return i.kind === "parts"; });
-    if (!labour.length || !parts.length) return items.map(itemLine).join("");
+    /* The order these print in, and what each one is called on the document.
+       Must match LINE_KINDS in worker/heatfix/crm.js and the KINDS list in
+       templates/heatfix-office.html. Anything unrecognised is treated as
+       labour rather than printed under a heading nobody wrote. */
+    var SECTIONS = [
+      ["labour", "Labour"],
+      ["parts", "Parts &amp; materials"],
+      ["parts_labour", "Parts and labour"],
+      ["parts_labour_parking", "Parts, labour and parking"],
+      ["callout", "Call-out"],
+      ["callout_parking", "Call-out and parking"],
+      ["ooh_callout", "Out of hours call-out"],
+      ["ooh_parking_parts", "Out of hours, parking and parts"],
+      ["ooh_parking", "Out of hours and parking"]
+    ];
+    var known = {};
+    SECTIONS.forEach(function (s) { known[s[0]] = true; });
+
+    var groups = SECTIONS.map(function (s) {
+      return { title: s[1], rows: items.filter(function (i) {
+        return (known[i.kind] ? i.kind : "labour") === s[0];
+      }) };
+    }).filter(function (g) { return g.rows.length; });
+
+    /* One kind on the invoice means there is nothing to separate, so it prints
+       as a plain list. A heading over every line of a single-kind invoice is
+       filing, not information. */
+    if (groups.length < 2) return items.map(function (i) { return itemLine(i, true); }).join("");
 
     function section(title, rows) {
       var sum = rows.reduce(function (a, r) { return a + (r.line_pence || 0); }, 0);
       return '<tr class="hf-sect"><td colspan="3">' + title + '</td>' +
              '<td class="hf-num hf-line">' + money(sum) + '</td></tr>' +
-             rows.map(itemLine).join("");
+             rows.map(function (i) { return itemLine(i, false); }).join("");
     }
-    return section("Labour", labour) + section("Parts &amp; materials", parts);
+    return groups.map(function (g) { return section(g.title, g.rows); }).join("");
   }
 
   function itemsTable(inv) {
@@ -481,6 +528,12 @@
     '.hfdoc .hf-items .hf-num{text-align:right;white-space:nowrap}' +
     '.hfdoc .hf-items .hf-line{font-weight:600}' +
     '.hfdoc .hf-items .hf-desc{width:auto}' +
+    /* What the line was for, under the description. Quiet enough that the
+       description still reads first, clear enough to answer "what is this
+       charge" without ringing him. */
+    '.hfdoc .hf-items .hf-kind{display:block;margin-top:3px;'+
+      'font:700 8.5px/1.3 Montserrat,Inter,sans-serif;letter-spacing:.1em;'+
+      'text-transform:uppercase;opacity:.6}' +
     '.hfdoc .hf-items th.hf-num{text-align:right}' +
     /* The Labour / Parts headings. Their own subtotal sits on the right, so a
        customer can see what the visit cost without adding the lines up. */

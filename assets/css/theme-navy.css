@@ -1,0 +1,447 @@
+/* Billy Digitals — ORIGINAL NAVY + BLUE THEME. Generated from theme-white.css (scratch navy.py); tokens at the top. */
+/* ============================================================
+   Billy Digitals — WHITE THEME (shared layer)
+   ------------------------------------------------------------
+   Loaded LAST in <head> on every page built on style.css
+   (sub-pages, blog, service + area pages, and index.html, which
+   adds its own homepage-only overrides on top of this file).
+
+   This is a recolour only: no layout, spacing, type or content
+   changes. Order: tokens first, then each component that
+   hard-codes a dark colour in style.css, grouped by section in
+   the same order style.css declares them.
+
+   Palette
+     ground #ffffff · alt/footer #f7f6fb · hairline #e8e5f0
+     ink #15131f · body #2e2b3a · muted #5f5b70
+     original palette: navy #060b1a, blue #1d6ff5 → cyan #22d3ee, text #eaf2ff
+     amber #ffb829 (decorative fills only, never text)
+   ============================================================ */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  /* style.css tokens, re-pointed at the white palette */
+  --bg: #060b1a;
+  --bg-2: #f7f6fb;
+  --card: #0d1733;
+  --card-hover: #19191a;
+  --border: rgba(120, 180, 255, 0.14);
+  --text: #eaf2ff;
+  --muted: #93a4c4;
+  --c1: #2b7fff;
+  --c2: #38bdf8;
+  --c3: #22d3ee;
+  --grad: linear-gradient(100deg, #2b7fff, #38bdf8 50%, #22d3ee);
+  --grad-btn: #1d6ff5;
+  --shadow: none;
+
+  /* white-theme helpers (prefixed so they never collide) */
+  --w-ink: #eaf2ff;
+  --w-body: #c9d6ee;
+  --w-muted: #93a4c4;
+  --w-accent: #38bdf8;
+  --w-accent-hover: #7dd3fc;
+  --w-tint: rgba(56, 189, 248, 0.12);
+  --w-alt: #0a1226;
+  --w-line: rgba(120, 180, 255, 0.14);
+  --w-line-strong: rgba(120, 180, 255, 0.26);
+  --w-placeholder: #7a786f;
+  --w-amber: #ffb829;
+  --w-bubble: #101c3a;
+  --w-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03);
+  --w-shadow-lift: 0 20px 44px rgba(0, 0, 0, 0.5);
+  --w-ring: 0 0 0 3px rgba(56, 189, 248, 0.35);
+}
+
+/* ---------- 2. Base ---------- */
+/* html gets the footer ground, so on a page shorter than the window the space
+   under the footer matches it, and body's own background stays on body's box
+   (no longer spread over the canvas, so the glow cannot tile below the page) */
+html { background: var(--w-alt); }
+body {
+  background:
+    radial-gradient(1100px 560px at 50% -8%, rgba(43, 127, 255, 0.05), transparent 62%) no-repeat,
+    #060b1a;
+  color: var(--w-body);
+}
+/* zero-specificity so any component (or a coloured accent block) can recolour its own headings */
+:where(h1, h2, h3, h4) { color: var(--w-ink); }
+::selection { background: rgba(43, 127, 255, 0.18); color: var(--w-ink); }
+::-webkit-scrollbar-track { background: var(--w-alt); }
+::-webkit-scrollbar-thumb { background: var(--w-line-strong); }
+::-webkit-scrollbar-thumb:hover { background: rgba(245, 245, 240, 0.3); }
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+.fbtn:focus-visible, .faq-q:focus-visible { outline-color: var(--w-accent); }
+summary:focus-visible { outline: 2px solid var(--w-accent); outline-offset: 3px; border-radius: 10px; }
+/* The faint right-hand hero haze bands into visible rings on white; the left one carries the wash alone. */
+@media (min-width: 721px) { body .lp-orb.b, body .lm-orb.b { display: none; } }
+
+/* ---------- 3. Utilities + generic sections ---------- */
+.section-alt { background: var(--w-alt); }
+.sub { color: var(--w-muted); }
+.tag {
+  color: var(--w-accent); background: var(--w-tint);
+  border-color: rgba(43, 127, 255, 0.18); box-shadow: none;
+}
+.skip-link { background: #1d6ff5; color: #fff; }
+
+/* ---------- 4. Buttons ---------- */
+.btn-primary {
+  background: #1d6ff5; color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.32), 0 8px 22px rgba(43, 127, 255, 0.24);
+}
+.btn-primary:hover { background: #1560d8; color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.32), 0 14px 30px rgba(43, 127, 255, 0.30); }
+.btn-ghost { background: #0d1733; border: 1px solid var(--w-line-strong); color: var(--w-ink); }
+.btn-ghost:hover { background: #0d1733; border-color: rgba(43, 127, 255, 0.55); color: var(--w-ink); }
+
+/* ---------- 5. Header + nav ---------- */
+.site-header,
+.site-header.subpage {
+  background: rgba(6, 11, 26, 0.88);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+.site-header.scrolled,
+.site-header.subpage.scrolled {
+  background: rgba(6, 11, 26, 0.88);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-bottom-color: var(--w-line);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.20);
+}
+/* dark lockup (assets/logo-billy-dark.png): no dark halo / cyan glow.
+   Redefining the existing keyframes keeps the sway + reduced-motion rules intact. */
+.logo-full { filter: none; }
+@keyframes logoGlow { 0%, 100% { filter: none; } }
+.nav-links a { color: var(--w-body); }
+.nav-links a:hover, .nav-links a.active { color: var(--w-accent); }
+.hamburger span { background: var(--w-ink); }
+
+/* ---------- 6. Mobile menu (open panel sits above content: header is fixed, z-index 100) ---------- */
+@media (max-width: 900px) {
+  .nav-links {
+    background: #0d1733;
+    border-bottom: 1px solid var(--w-line);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+  }
+  .nav-links a { color: var(--w-ink); }
+  .nav-links a:hover, .nav-links a.active { color: var(--w-accent); }
+  .site-header:has(.nav-links.open) { background: #0d1733; border-bottom-color: var(--w-line); }
+}
+
+/* ---------- 7. Hero ---------- */
+.hero-badge {
+  color: var(--w-ink); background: #2a2110;
+  border-color: rgba(255, 184, 41, 0.55);
+}
+.hero-sub { color: var(--w-muted); }
+.hero h1 .grad {
+  background-image: linear-gradient(100deg, #1560d8, #1d6ff5 38%, #8a55ff 55%, #1d6ff5 75%, #1560d8);
+}
+.hero-stats dd { color: var(--w-muted); }
+/* ambient orbs: faint violet / amber haze instead of neon blue */
+.orb-1 { background: rgba(43, 127, 255, 0.34); }
+.orb-2 { background: rgba(139, 92, 246, 0.28); }
+.orb-3 { background: rgba(255, 184, 41, 0.30); }
+/* scrim now lifts text off any effect with white, not navy */
+.hero-scrim {
+  background:
+    radial-gradient(60% 55% at 50% 46%, rgba(6, 11, 26, 0.72), rgba(6, 11, 26, 0.3) 55%, transparent 78%),
+    linear-gradient(180deg, transparent 60%, var(--bg) 100%);
+}
+.hero::before {
+  background-image:
+    linear-gradient(rgba(43, 127, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(43, 127, 255, 0.05) 1px, transparent 1px);
+}
+/* typewriter welcome */
+.hw-top .ch { color: var(--w-ink); text-shadow: 1px 1px 0 rgba(43, 127, 255, 0.22), 2px 2px 0 rgba(43, 127, 255, 0.12); }
+.hw-bot { background-image: linear-gradient(100deg, #1560d8, #1d6ff5 60%, #8a55ff); }
+.hw-cursor { background: #1d6ff5; box-shadow: 0 0 10px rgba(43, 127, 255, 0.45); }
+
+/* ---------- 8. Marquee, trust strip, powered-by band ---------- */
+.marquee { background: var(--w-alt); border-block-color: var(--w-line); }
+.marquee li { color: var(--w-muted); }
+.marquee li:nth-child(3n+1) { color: var(--w-accent); }
+.marquee li:nth-child(3n+2) { color: var(--w-body); }
+.marquee li:nth-child(3n+3) { color: var(--w-muted); }
+.trust-label { color: var(--w-muted); opacity: 1; }
+.trust-dot { color: #bdb6d3; }
+.trust-sep { background: var(--w-line); }
+.trust-cta { color: var(--w-muted); }
+.trust-cta:hover { color: var(--w-accent); }
+.powerstrip {
+  border-top-color: var(--w-line);
+  background: linear-gradient(180deg, rgba(247, 246, 251, 0) 0%, var(--w-alt) 100%);
+}
+.ps-label { color: var(--w-muted); }
+.ps-chip { color: var(--w-body); border-color: var(--w-line); background: #0d1733; }
+.ps-chip b { color: var(--w-ink); }
+.ps-chip:hover { border-color: rgba(43, 127, 255, 0.45); background: var(--w-tint); }
+.ps-chip--soft { color: var(--w-muted); border-color: var(--w-line-strong); }
+.ps-tech { color: var(--w-body); border-color: var(--w-line); background: #0d1733; }
+.ps-tech svg { stroke: var(--w-accent); }
+.ps-tech:hover { color: var(--w-accent); border-color: rgba(43, 127, 255, 0.45); }
+.ps-div { background: linear-gradient(90deg, transparent, var(--w-line-strong), transparent); }
+
+/* ---------- 9. Cards (services and every .card) ---------- */
+.card { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.card p { color: var(--w-muted); }
+.card-icon {
+  background: var(--w-tint); border-color: rgba(43, 127, 255, 0.18); color: var(--w-accent);
+}
+.card::before {
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(43, 127, 255, 0.07), transparent 70%);
+}
+.tilt-glare {
+  background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 0%), rgba(43, 127, 255, 0.06), transparent 60%);
+}
+/* one shared hover elevation for every surface style.css lifts */
+.card:hover, .plan:hover, .tcard:hover, .quote:hover {
+  background: #0d1733;
+  border-color: rgba(43, 127, 255, 0.35);
+  box-shadow: var(--w-shadow-lift);
+}
+/* the per-card vivid icon tiles (.services-grid / .offer-grid, white glyph on
+   colour) and their own-colour hover edge are left as style.css draws them */
+
+/* ---------- 10. Templates, filters, mock-ups, coverflow ---------- */
+.fbtn { color: var(--w-muted); border-color: var(--w-line-strong); background: #0d1733; }
+.fbtn:hover { color: var(--w-ink); border-color: rgba(43, 127, 255, 0.45); }
+.fbtn.active { background: #1d6ff5; color: #fff; border-color: transparent; }
+.cw-label { color: var(--w-muted); }
+.tcard { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.mock {
+  border-color: var(--w-line);
+  background: linear-gradient(160deg, hsla(var(--h), 70%, 96%, 1), #0d1733);
+}
+.mock-bar { background: rgba(0, 0, 0, 0.12); border-bottom-color: var(--w-line); }
+.tcat { color: var(--w-muted); }
+.tlink { color: var(--w-accent); }
+.tlink:hover { color: var(--w-accent-hover); }
+.cf-arrow { background: #0d1733; border-color: var(--w-line-strong); color: var(--w-ink); box-shadow: var(--w-shadow-card); }
+.cf-arrow:hover { background: #1d6ff5; color: #fff; }
+.cf-arrow:disabled:hover { background: #0d1733; color: var(--w-ink); }
+.cf-dot { background: var(--w-line-strong); }
+.cf-dot:hover { background: rgba(245, 245, 240, 0.3); }
+.cf-dot-on, .cf-dot-on:hover { background: #1d6ff5; }
+
+/* ---------- 11. Process + why strip ---------- */
+.process-list li { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.process-list p { color: var(--w-muted); }
+.why-strip > div { border-color: var(--w-line-strong); }
+.why-strip span { color: var(--w-muted); }
+
+/* ---------- 12. Plans, offer ribbon, hosting note, add-ons ---------- */
+.plan { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.plan-price span, .plan-for { color: var(--w-muted); }
+.plan-pay { color: var(--w-muted); }
+.plan-pay strong { color: var(--w-ink); }
+.plan li { color: var(--w-body); }
+.plan li::before { color: var(--w-accent); }
+.plan-featured,
+.plan-featured:hover {
+  background: linear-gradient(170deg, #0c1530, #0d1733 60%);
+  border-color: rgba(43, 127, 255, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(43, 127, 255, 0.30),
+    0 4px 12px rgba(0, 0, 0, 0.24),
+    0 24px 56px rgba(43, 127, 255, 0.16);
+}
+.plan-badge { background: #1d6ff5; color: #fff; }
+/* blaze ring: keep the colour, calm the glow so it reads clean on white */
+.plan-featured .blaze::before, .plan:hover .blaze::before { opacity: 0.55; }
+.offer-ribbon { border-color: var(--w-line); box-shadow: var(--w-shadow-lift); }
+.offer-split { background: #0d1733; }
+.offer-split p { color: var(--w-muted); }
+.offer-split p strong { color: var(--w-ink); }
+.hosting-note {
+  color: var(--w-muted); background: var(--w-alt);
+  border-color: rgba(43, 127, 255, 0.2);
+}
+.hosting-note strong { color: var(--w-ink); }
+.addon-cloud span { color: var(--w-body); background: #0d1733; border-color: var(--w-line-strong); }
+.addon-cloud span:hover { background: var(--w-tint); border-color: rgba(43, 127, 255, 0.45); }
+.addon-cloud span:last-child { background: #1d6ff5; border-color: transparent; color: #fff; }
+
+/* ---------- 13. Socials + project card ---------- */
+.socials a { background: #0d1733; border-color: var(--w-line-strong); color: var(--w-muted); }
+.socials a:hover {
+  background: #1d6ff5; border-color: transparent; color: #fff;
+  box-shadow: 0 10px 24px rgba(43, 127, 255, 0.28);
+}
+.project-tag { color: var(--w-accent); }
+.project-desc, .project-note { color: var(--w-muted); }
+.project-feats li::before { color: var(--w-accent); }
+
+/* ---------- 14. Testimonials ---------- */
+.quote { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.stars, #testimonials .tstars { color: var(--w-accent); }
+.quote blockquote { color: var(--w-body); }
+.quote figcaption span { color: var(--w-muted); }
+#testimonials .tmonial { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-lift); }
+#testimonials .tmonial blockquote { color: var(--w-ink); }
+#testimonials .tmonial figcaption { color: var(--w-muted); }
+#testimonials .tmonial figcaption strong { color: var(--w-ink); }
+#testimonials .tsource { color: var(--w-accent); }
+
+/* ---------- 15. FAQ ---------- */
+.faq-item { background: #0d1733; border-color: var(--w-line); }
+.faq-item.open { border-color: rgba(43, 127, 255, 0.4); }
+.faq-q { color: var(--w-ink); }
+.faq-x { color: var(--w-accent); }
+.faq-a p { color: var(--w-muted); }
+
+/* ---------- 16. Contact + forms + payment trust line ---------- */
+.ccard { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+a.ccard:hover { border-color: rgba(43, 127, 255, 0.4); }
+.ccard p { color: var(--w-body); }
+.ccard span { color: var(--w-muted); }
+.contact-form { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.field label { color: var(--w-body); }
+.field label .opt { color: var(--w-muted); }
+.field input, .field select, .field textarea {
+  background-color: #0d1733; border: 1px solid var(--w-line-strong); color: var(--w-ink);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--w-placeholder); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--w-accent); box-shadow: var(--w-ring);
+}
+.field select option { background: #0d1733; color: var(--w-ink); }
+.form-note { color: var(--w-muted); }
+.pay-trust { border-top-color: var(--w-line); }
+.pay-trust-lead { color: var(--w-muted); }
+.pay-trust-lead svg { color: var(--w-accent); }
+.pay-trust .pay { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.40); border-color: var(--w-line); }
+
+/* ---------- 17. Footer ---------- */
+.site-footer { background: var(--w-alt); border-top: 1px solid var(--w-line); }
+.footer-grid h4 { color: var(--w-ink); }
+.footer-grid p { color: var(--w-muted); }
+.footer-grid ul a { color: var(--w-muted); }
+.footer-grid ul a:hover { color: var(--w-accent); }
+.footer-bottom { border-top-color: var(--w-line); color: var(--w-muted); }
+.footer-bottom a { color: var(--w-muted); transition: color 0.2s ease; }
+.footer-bottom a:hover { color: var(--w-accent); }
+/* on phones the floating WhatsApp and chat buttons sit over the last line; give it room to scroll clear */
+@media (max-width: 720px) { .footer-bottom { padding-bottom: 84px; } }
+
+/* ---------- 18. Chat widget + toast ---------- */
+.chat-toggle { background: #1d6ff5; color: #fff; box-shadow: 0 12px 30px rgba(43, 127, 255, 0.35); }
+.chat-panel {
+  background: #0d1733; border-color: var(--w-line); color: var(--w-ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24), 0 28px 64px rgba(0, 0, 0, 0.60);
+}
+.chat-head { background: #1d6ff5; border-bottom-color: transparent; color: #fff; }
+.chat-head strong { color: #fff; }
+.chat-head span { color: rgba(255, 255, 255, 0.92); }
+.chat-avatar { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55), 0 4px 12px rgba(0, 0, 0, 0.60); }
+.msg.bot { background: var(--w-bubble); border-color: var(--w-line); color: var(--w-ink); }
+.msg.user { background: #1d6ff5; color: #fff; }
+.msg a { color: var(--w-accent); }
+.msg.user a { color: #fff; }
+.chat-chips button { color: var(--w-accent); background: var(--w-tint); border-color: var(--w-line); }
+.chat-chips button:hover { color: var(--w-accent-hover); background: #12264d; border-color: rgba(43, 127, 255, 0.45); }
+.chat-input { background: #0d1733; border-top-color: var(--w-line); }
+.chat-input input { background: #0d1733; border-color: var(--w-line-strong); color: var(--w-ink); }
+.chat-input input::placeholder { color: var(--w-placeholder); }
+.chat-input input:focus { border-color: var(--w-accent); box-shadow: var(--w-ring); }
+.chat-input button { background: #1d6ff5; color: #fff; }
+.toast {
+  background: #0d1733; border-color: rgba(43, 127, 255, 0.55); color: var(--w-ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.32), 0 18px 44px rgba(0, 0, 0, 0.60);
+  width: max-content; max-width: min(92vw, 440px);
+}
+/* these lists have no class, so style.css's ul[class] reset misses them and they grew bullet dots */
+.plan ul, .footer-grid ul { list-style: none; }
+
+/* ---------- 19. Thank-you page ---------- */
+.ty-check { background: #1d6ff5; color: #fff; box-shadow: 0 14px 34px rgba(43, 127, 255, 0.28); }
+.ty-steps li { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.ty-steps span { color: var(--w-muted); }
+/* the step number is also a span, so it needs the extra class to stay white */
+.ty-steps .ty-num { background: #1d6ff5; color: #fff; }
+
+/* ---------- 20. Blog index, lead-magnet banner, article typography ---------- */
+.blog-head p { color: var(--w-muted); }
+.post-card { background: #0d1733; border-color: var(--w-line); box-shadow: var(--w-shadow-card); }
+.post-card:hover { border-color: rgba(43, 127, 255, 0.35); box-shadow: var(--w-shadow-lift); }
+.post-card .pc-tag, .article .art-tag { color: var(--w-accent); }
+.post-card h2 { color: var(--w-ink); }
+.post-card p { color: var(--w-muted); }
+.post-card .pc-meta, .art-back { color: var(--w-accent); }
+.lm-banner {
+  background: linear-gradient(120deg, #0c1530, #0b1430);
+  border-color: rgba(43, 127, 255, 0.2);
+}
+.lm-banner:hover { border-color: rgba(43, 127, 255, 0.4); box-shadow: var(--w-shadow-lift); }
+.lm-banner .pc-tag { color: var(--w-accent); }
+.lm-banner .pc-meta { color: var(--w-accent); }
+.lm-banner p { color: var(--w-muted); }
+.lm-banner img { box-shadow: 0 16px 36px rgba(0, 0, 0, 0.60); border-color: var(--w-line); }
+.article .art-meta { color: var(--w-muted); border-bottom-color: var(--w-line); }
+.article-body { color: var(--w-body); }
+.article-body h2, .article-body h3, .article-body strong { color: var(--w-ink); }
+.article-body a { color: var(--w-accent); }
+.article-body a:hover { color: var(--w-accent-hover); }
+.article-body blockquote { color: var(--w-body); border-left-color: var(--w-accent); }
+.article-body code, .article-body pre { background: var(--w-bubble); color: var(--w-ink); }
+.article-body table, .article-body th, .article-body td { border-color: var(--w-line); }
+.article-body th { color: var(--w-ink); }
+.art-cta {
+  background: linear-gradient(170deg, #0c1530, #0d1733);
+  border-color: var(--w-line); box-shadow: var(--w-shadow-card);
+}
+.art-cta p { color: var(--w-muted); }
+
+/* ---------- 21. 3D showcase + offerings ---------- */
+.threed {
+  background:
+    radial-gradient(120% 82% at 82% -12%, rgba(43, 127, 255, 0.07), transparent 55%),
+    radial-gradient(120% 82% at -6% 112%, rgba(255, 184, 41, 0.06), transparent 55%),
+    var(--w-alt);
+}
+.threed-glow { background: radial-gradient(46% 38% at 50% 0%, rgba(43, 127, 255, 0.06), transparent 70%); }
+.threed-showcase {
+  background: linear-gradient(160deg, #0d1733, #0b1430);
+  border-color: var(--w-line); box-shadow: var(--w-shadow-card);
+}
+.threed-showcase:hover { border-color: rgba(43, 127, 255, 0.35); box-shadow: var(--w-shadow-lift); }
+.threed-frame { background: var(--w-alt); border-color: var(--w-line); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.48); }
+.threed-frame .tbar { background: var(--w-alt); border-bottom-color: var(--w-line); }
+.threed-frame .tbar i { background: var(--w-line-strong); }
+.threed-frame .tbar b { color: var(--w-muted); }
+.threed-play { background: rgba(43, 127, 255, 0.92); border-color: rgba(255, 255, 255, 0.35); color: #fff; }
+.badge3d { color: var(--w-accent); background: var(--w-tint); border-color: rgba(43, 127, 255, 0.25); }
+.threed-meta p { color: var(--w-muted); }
+.threed-cue, .offer-cta { color: var(--w-accent); }
+
+/* ---------- 22. Flagship spotlight + ORBIT scroll story ---------- */
+.flagship::before {
+  background:
+    radial-gradient(50% 60% at 78% 40%, rgba(43, 127, 255, 0.06), transparent 60%),
+    radial-gradient(45% 55% at 20% 70%, rgba(139, 92, 246, 0.05), transparent 60%);
+}
+.flagship-txt .sub { color: var(--w-muted); }
+.flagship-tags span { color: var(--w-muted); border-color: var(--w-line-strong); background: #0d1733; }
+.flagship-card { background: var(--w-alt); border-color: var(--w-line); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.60); }
+.flagship-card .flag-glow { opacity: 0.45; }
+.flagship-card .tthumb-chrome { background: linear-gradient(180deg, rgba(6, 11, 26, 0.9), rgba(255, 255, 255, 0)); }
+.flagship-open { background: #1d6ff5; color: #fff; box-shadow: 0 12px 30px -8px rgba(43, 127, 255, 0.55); }
+.os-visual { background: var(--w-alt); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.60); }
+.os-badge {
+  color: var(--w-ink); background: rgba(6, 11, 26, 0.92);
+  border-color: var(--w-line);
+}
+.os-eyebrow, .os-num { color: var(--w-accent); }
+.os-chapter::before { background: linear-gradient(180deg, #1d6ff5, #a855f7); }
+.os-chapter h3 { color: var(--w-ink); }
+.os-chapter p { color: var(--w-muted); }
+.os-chapter.is-lit p { color: var(--w-body); }
+.os-chapter.is-lit::before { box-shadow: 0 0 12px 1px rgba(43, 127, 255, 0.35); }
+
+/* original gradient buttons */
+.btn-primary, .nav-cta { background: linear-gradient(100deg, #1d6ff5, #0ea5e9 50%, #0891b2); color: #fff; }
+.btn-primary:hover, .nav-cta:hover { background: linear-gradient(100deg, #1d6ff5, #0ea5e9 50%, #0891b2); filter: brightness(1.08); color: #fff; }
+.skip-link { background: #1d6ff5; }

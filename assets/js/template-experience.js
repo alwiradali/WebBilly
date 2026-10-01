@@ -34,7 +34,9 @@
   if (items.length < 2) return;
 
   /* ==========================================================
-     Live animated background (unchanged)
+     Live animated background: soft violet / amber haze and faint
+     violet specks on the light section (normal blending; additive
+     blending washed out on white)
      ========================================================== */
   var bg = document.createElement("canvas");
   bg.className = "tx-bg"; bg.setAttribute("aria-hidden", "true");
@@ -42,7 +44,7 @@
   (function background() {
     var ctx = bg.getContext("2d");
     var blobs = [], stars = [], W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    var cols = ["#2b7fff", "#22d3ee", "#7c3aed", "#0ea5e9"];
+    var cols = ["#6b3df2", "#b39dff", "#8a55ff", "#ffb829"];
     function size() {
       W = section.clientWidth; H = section.clientHeight;
       bg.width = W * dpr; bg.height = H * dpr; bg.style.width = W + "px"; bg.style.height = H + "px";
@@ -60,27 +62,25 @@
     var running = false, raf = null, onScreen = true, t = 0;
     function frame() {
       raf = requestAnimationFrame(frame); t += 0.016;
-      ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter";
+      ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < blobs.length; i++) {
         var b = blobs[i];
         b.x += b.vx + Math.sin(t * 0.3 + b.ph) * 0.12; b.y += b.vy + Math.cos(t * 0.24 + b.ph) * 0.10;
         if (b.x < -b.r) b.x = W + b.r; if (b.x > W + b.r) b.x = -b.r; if (b.y < -b.r) b.y = H + b.r; if (b.y > H + b.r) b.y = -b.r;
         var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-        g.addColorStop(0, hexA(b.c, 0.20)); g.addColorStop(1, hexA(b.c, 0));
+        g.addColorStop(0, hexA(b.c, 0.07)); g.addColorStop(1, hexA(b.c, 0));
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill();
       }
       for (var s = 0; s < stars.length; s++) {
-        var st = stars[s]; var a = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.4 + st.tw)) * st.z;
-        ctx.fillStyle = "rgba(200,220,255," + a.toFixed(3) + ")"; ctx.fillRect(st.x, st.y, st.z * 1.6, st.z * 1.6);
+        var st = stars[s]; var a = (0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.4 + st.tw)) * st.z) * 0.4;
+        ctx.fillStyle = "rgba(107,61,242," + a.toFixed(3) + ")"; ctx.fillRect(st.x, st.y, st.z * 1.6, st.z * 1.6);
       }
-      ctx.globalCompositeOperation = "source-over";
     }
     function play() { if (running) return; running = true; frame(); }
     function pause() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
     function paintStatic() {
-      ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = "lighter";
-      for (var i = 0; i < blobs.length; i++) { var b = blobs[i]; var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, hexA(b.c, 0.16)); g.addColorStop(1, hexA(b.c, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill(); }
-      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < blobs.length; i++) { var b = blobs[i]; var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, hexA(b.c, 0.06)); g.addColorStop(1, hexA(b.c, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 6.2832); ctx.fill(); }
     }
     function sync() { (onScreen && document.visibilityState !== "hidden" && !reduce) ? play() : (pause(), reduce && paintStatic()); }
     new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; sync(); }, { threshold: 0.01 }).observe(section);
@@ -199,12 +199,20 @@
       var ry = -sgn * capA * 46;
       var sc = Math.max(1 - a * 0.12, 0.7) * (a < 0.5 ? 1.06 : 1);
       var z = -Math.min(a, 4) * 130;
-      var op = Math.max(1 - a * 0.26, 0.18);
+      // On the white ground a see-through card turns milky, its white label
+      // vanishes and the card behind ghosts through it, so side cards stay
+      // opaque and recede by darkening instead (1 -> 0.9 -> 0.85 -> 0.8);
+      // the outermost card fades out over its last quarter step so it
+      // never pops in or out.
+      var op = Math.min(1, Math.max(0, (3.25 - a) / 0.25));
+      var br = (1 - Math.min(a, 1) * 0.1 - Math.max(Math.min(a, 3) - 1, 0) * 0.05).toFixed(3);
+      if (c._br !== br) { c._br = br; c.firstChild.style.filter = br === "1.000" ? "" : "brightness(" + br + ")"; }
       c.style.transform = "translate(-50%,-50%) translateX(" + x.toFixed(1) + "px) translateZ(" + z.toFixed(1) + "px) rotateY(" + ry.toFixed(1) + "deg) scale(" + sc.toFixed(3) + ")";
       c.style.opacity = op.toFixed(3);
       c.style.zIndex = String(200 - Math.round(a * 10));
       c.style.pointerEvents = "auto";
       c.classList.toggle("front", a < 0.5);
+      c.classList.toggle("tcf-r", rel > 0.5);   // right-hand cards: label on the edge that shows
     }
     prevBtn.classList.toggle("on", true); nextBtn.classList.toggle("on", true);
   }
