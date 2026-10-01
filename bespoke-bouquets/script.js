@@ -64,9 +64,10 @@ const REVIEWS = {
    -------------------------------------------------------------------- */
 const CATALOGUE = [
   { id: 'skirt', name: 'The Skirt Bouquet', price: 145, cats: ['signature', 'personalised'], badge: 'Showstopper',
-    imgs: ['skirt-bouquet'], alt: 'Red and blush roses in layered pink wrap with an oversized crimson satin bow',
+    imgs: ['skirt-bouquet', 'skirt-white-black', 'skirt-ivory-crimson'],
+    wrapPhoto: { 'Blush pink': 'skirt-bouquet', 'White': 'skirt-white-black', 'Ivory': 'skirt-ivory-crimson' }, alt: 'Red and blush roses in layered pink wrap with an oversized crimson satin bow',
     short: 'Red & blush roses, a layered skirt wrap and an oversized satin bow.',
-    desc: 'The showstopper. Red and blush roses framed in layer upon layer of pink wrap, finished with an oversized satin bow that falls like a ball-gown skirt. Pearl lettering can be added to the centre.',
+    desc: 'The showstopper. Roses framed in layer upon layer of wrap, finished with an oversized satin bow that falls like a ball-gown skirt. Shown in blush with crimson, white with black, and ivory with crimson — any combination can be chosen below. Pearl lettering can be added to the centre.',
     options: ['wrap', 'bow', 'lettering', 'card'] },
   { id: 'blush', name: 'Blush Garden Gift Bag', price: 95, cats: ['signature'],
     imgs: ['blush-stocks'], alt: 'Pink roses, white stocks and eucalyptus in a white gift bag with a pink satin bow',
@@ -350,6 +351,12 @@ function openProduct(id) {
         <div class="qty"><button type="button" data-q="-1" aria-label="One fewer"><svg><use href="#i-minus"/></svg></button><output>1</output><button type="button" data-q="1" aria-label="One more"><svg><use href="#i-plus"/></svg></button></div>
         <button type="submit" class="btn btn-satin"><svg><use href="#i-bag"/></svg><span>Add to basket · <b data-line>${money(p.price)}</b></span></button>
       </div>`;
+    if (p.wrapPhoto) form.addEventListener('change', e => {
+      if (e.target.name !== 'wrap' || !p.wrapPhoto[e.target.value]) return;
+      const src = IMG(p.wrapPhoto[e.target.value]);
+      $$('[data-p-thumbs] button', pm).forEach(b => b.classList.toggle('is-on', b.dataset.src === src));
+      main.style.opacity = 0; setTimeout(() => { main.src = src; main.style.opacity = 1; }, 180);
+    });
     let q = 1;
     const out = $('output', form);
     $$('[data-q]', form).forEach(b => b.addEventListener('click', () => {
