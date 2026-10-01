@@ -484,10 +484,10 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   max-height:0;opacity:0;overflow:hidden;
   transition:max-height .6s cubic-bezier(.22,1,.36,1),opacity .45s,margin-top .5s;
 }
-.tile:hover p,.tile:focus-within p{max-height:180px;opacity:1}
+.tile:hover p,.tile:focus-within p{max-height:200px;opacity:1}
 /* on touch there is no hover, so the copy is simply always shown */
 @media(hover:none){
-  .tile p{max-height:180px;opacity:1}
+  .tile p{max-height:200px;opacity:1}
   .tile-img img{filter:grayscale(.25) contrast(1.04) brightness(.8)}
 }
 .tile .more{
