@@ -179,10 +179,24 @@ document.addEventListener('click', e => {
 });
 
 let locks = 0;
+let lockedY = 0;
 function lock(on) {
+  const was = locks > 0;
   locks = Math.max(0, locks + (on ? 1 : -1));
   const l = locks > 0;
-  document.body.classList.toggle('locked', l);
+  if (l === was) return;
+  if (l) {
+    // pin the page where it is, so it cannot scroll behind a pop-up (iOS too)
+    lockedY = scrollY;
+    document.body.style.top = -lockedY + 'px';
+    document.body.classList.add('locked');
+  } else {
+    document.body.classList.remove('locked');
+    document.body.style.top = '';
+    root.style.scrollBehavior = 'auto';
+    scrollTo(0, lockedY);
+    if (lenis) root.style.scrollBehavior = 'auto'; else root.style.scrollBehavior = '';
+  }
   if (lenis) l ? lenis.stop() : lenis.start();
 }
 

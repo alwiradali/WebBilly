@@ -567,3 +567,15 @@ body{--bg:var(--cream)}
 .pf-hero{--bg:var(--plate)}
 .sec-head>*,.pcard-body,.more-band>*,.occ div,.steps li,.split-copy>*,.review,.deliv,.contact,.care-list li,.faq-list,.note,.two-col h2,.two-col .label,.ftr-grid>div,.ftr-bottom>*,.pf-tile figcaption,.pf-cta>*,.pf-hero .wrap>*{background:var(--bg)}
 .hero .lead,.hero-title,.hero-facts,.hero-place,.hero-role{background:radial-gradient(closest-side,rgba(255,236,238,.92),rgba(255,236,238,.92) 80%,rgba(255,236,238,0))}
+
+/* Pop-ups never wider than the screen: grid columns may shrink below their
+   content's natural width, and nothing inside may push the panel sideways. */
+.modal-panel,.co-panel,.ho-panel,.basket-panel{overflow-x:hidden;max-width:100vw}
+.modal-panel>*,.co-body>*,.p-info,.p-form,.p-form>*,.o-chips{min-width:0;max-width:100%}
+.o-chips{flex-wrap:wrap}
+@media (max-width:920px){ .modal-panel{grid-template-columns:minmax(0,1fr)} .co-body{grid-template-columns:minmax(0,1fr)} }
+/* iOS ignores overflow:hidden on body; the JS pins the page in place instead */
+body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+.p-buy{flex-wrap:nowrap}
+.p-buy .btn{min-width:0;padding:0 1rem;letter-spacing:.12em;white-space:normal;text-align:center;line-height:1.2}
+@media (max-width:420px){ .p-buy .btn{font-size:.82rem;letter-spacing:.08em} .p-buy .btn>svg{display:none} }

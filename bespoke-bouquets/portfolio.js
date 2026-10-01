@@ -72,10 +72,15 @@ if (!reduced && fine && typeof window.Lenis === 'function') {
   else { const raf = t => { lenis.raf(t); requestAnimationFrame(raf); }; requestAnimationFrame(raf); }
 }
 let locks = 0;
+let lockedY = 0;
 function lock(on) {
+  const was = locks > 0;
   locks = Math.max(0, locks + (on ? 1 : -1));
-  document.body.classList.toggle('locked', locks > 0);
-  if (lenis) locks > 0 ? lenis.stop() : lenis.start();
+  const l = locks > 0;
+  if (l === was) return;
+  if (l) { lockedY = scrollY; document.body.style.top = -lockedY + 'px'; document.body.classList.add('locked'); }
+  else { document.body.classList.remove('locked'); document.body.style.top = ''; root.style.scrollBehavior = 'auto'; scrollTo(0, lockedY); if (!lenis) root.style.scrollBehavior = ''; }
+  if (lenis) l ? lenis.stop() : lenis.start();
 }
 
 /* ------------------------------ header + drawer ------------------------------ */
