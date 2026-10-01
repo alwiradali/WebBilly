@@ -4,13 +4,13 @@
    Instagram. "Request something like this" sends people to the bespoke
    enquiry on the main page with the design already filled in.
    To move a design into the shop, give it a price in CATALOGUE in
-   bespoke-bouquets.js and take it out of PIECES here.
+   script.js (in this folder) and take it out of PIECES here.
    ===================================================================== */
 (() => {
 'use strict';
 
-const MAIN = 'bespoke-bouquets.html';
-const IMG = n => `../assets/bespoke/photos/${n}.webp`;
+const MAIN = '/bespoke-bouquets/';
+const IMG = n => `/assets/bespoke/photos/${n}.webp`;
 const CAT_LABEL = { signature: 'Bouquets', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Bridal & mehndi' };
 
 const PIECES = [

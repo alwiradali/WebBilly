@@ -13,6 +13,19 @@ Brand palette: `--bg:#060b1a`, `--text:#eaf2ff`, accents `--c1:#2b7fff` /
 `--c2:#38bdf8` / `--c3:#22d3ee`. Fonts: Space Grotesk (display), Inter (body),
 Playfair Display (serif). Keep client-demo pages `noindex`.
 
+## RULE: client example links never contain the word "templates"
+
+The owner's instruction (1 Oct 2026): a client preview is not a template, and
+the word must never appear in the link of any example built from now on. Put
+each one in its own top-level folder — `/<client>/index.html` (served at
+`billydigitals.com/<client>/`) plus extra pages beside it
+(`/<client>/portfolio.html` → `/<client>/portfolio`). Use root-absolute paths
+(`/assets/…`, `/<client>/style.css`) so the folder works with or without the
+trailing slash, load GSAP / ScrollTrigger / Lenis from `/assets/vendor/`
+(copies of the ones in the old folder), and add the folder to `_headers`
+(noindex) and to every group in `robots.txt`. The older previews still live
+under `/templates/` and keep working there; don't add anything new to it.
+
 ## Scroll effects / animations — use the global toolkit
 When asked to add scroll effects or animations, use the **`data-fx` system** in
 `assets/css/scroll-fx.css` + `assets/js/scroll-fx.js` (loaded globally). Tag
@@ -1418,7 +1431,7 @@ the closing block is a heading and two buttons with no prose. A short audit
 script that splits every page into sentences and counts duplicates is the way
 to check this after any copy change.
 
-## The Bespoke Bouquets (florist, Solihull B92) — `templates/bespoke-bouquets.{html,css,js}`
+## The Bespoke Bouquets (florist, Solihull B92) — `bespoke-bouquets/` → billydigitals.com/bespoke-bouquets/
 
 `@thebespokebouquets` on Instagram, `@thebespokebouquets_` on TikTok. Fresh
 bouquets, collection from B92 or local delivery across Birmingham / Solihull.
@@ -1476,13 +1489,13 @@ number, email + Web3Forms key, Google Business profile + review link, prices
 for the remaining designs, delivery fee, and a Stripe / PayPal account if she
 wants payments taken online.
 
-**Portfolio page (`templates/bespoke-bouquets-portfolio.{html,js}`).** The
+**Portfolio page (`bespoke-bouquets/portfolio.{html,js}` → `/bespoke-bouquets/portfolio`).** The
 shop shows only the designs with a published price; everything else she makes
 is on the portfolio — `PIECES` in its JS, one tile per photo, a masonry
 gallery with filters and a lightbox. "Request something like this" goes to
-`bespoke-bouquets.html?enquire=<name>#bespoke`, which prefills the bespoke
-form; the main page's occasion links go to `…-portfolio.html?show=<cat>`.
+`/bespoke-bouquets/?enquire=<name>#bespoke`, which prefills the bespoke
+form; the main page's occasion links go to `/bespoke-bouquets/portfolio?show=<cat>`.
 The portfolio's head, icon sprite, header, drawer and footer were copied from
-the main page — change both if either changes. It shares `bespoke-bouquets.css`
+the main page — change both if either changes. It shares `style.css`
 and reads the basket count from the same localStorage key. Same noindex
 headers as the main page.

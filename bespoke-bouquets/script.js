@@ -59,7 +59,7 @@ const REVIEWS = {
 /* --------------------------------------------------------------------
    CATALOGUE — the shop. The three prices are hers (£145 / £95 / £70, from
    her own messages). Everything else she makes is on the portfolio page
-   (bespoke-bouquets-portfolio.js); give a design a price and add it here
+   (portfolio.js (in this folder)); give a design a price and add it here
    to make it buyable. price:null would show "Price on request".
    -------------------------------------------------------------------- */
 const CATALOGUE = [
@@ -89,8 +89,8 @@ const OPTION_DEFS = {
   card:   { label: 'Message card', type: 'textarea', max: 160, optional: true, placeholder: 'A few words for the card…' }
 };
 const CAT_LABEL = { signature: 'Signature', personalised: 'Personalised', hatbox: 'Hatboxes & balloons', gifts: 'Gifts & hampers', bridal: 'Bridal & mehndi' };
-const IMG = n => `../assets/bespoke/photos/${n}.webp`;
-const LOGO = '../assets/bespoke/logo.png';
+const IMG = n => `/assets/bespoke/photos/${n}.webp`;
+const LOGO = '/assets/bespoke/logo.png';
 
 /* ------------------------------ helpers ------------------------------ */
 const $ = (s, r = document) => r.querySelector(s);

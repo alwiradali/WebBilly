@@ -87,13 +87,9 @@
 # --- Unlisted client preview: The Bespoke Bouquets ----------------------
 # Every photograph in /assets/bespoke/ is her own work, cut from her
 # Instagram — keep it out of image search on its own.
-/templates/bespoke-bouquets
+/bespoke-bouquets
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
-/templates/bespoke-bouquets.html
-  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
-/templates/bespoke-bouquets-portfolio
-  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
-/templates/bespoke-bouquets-portfolio.html
+/bespoke-bouquets/*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /assets/bespoke/*
   X-Robots-Tag: noindex, noimageindex
