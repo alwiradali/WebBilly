@@ -1527,3 +1527,12 @@ clusters: absolutely positioned, `z-index:0`, `pointer-events:none`, always at
 section corners and clipped by `.sec{overflow:hidden}` — never behind body copy.
 Colours are set per `<use>` through `--p` / `--c` / `--l`. A slow sway is the
 only animation they carry, and it stops under reduced motion.
+
+**No circle around her logo (owner's call).** The hero shows `logo-ink.png` —
+the rose and lettering keyed off the plate by projection onto the plate→ink
+axis (plate `#ffe6e7`, ink `#1b1110`, alpha remapped 0.12→0.85 so the plate's
+own shading drops out, circle rim ignored) — on a hero background that IS the
+plate colour, so it reads as her logo with the circle removed. The header uses
+`rose-ink.png` (the rose alone), the dark footer `logo-plate.png` (same alpha
+in the plate pink). `logo.png`, the round badge, is now only the favicon and
+share image.
