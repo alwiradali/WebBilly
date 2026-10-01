@@ -105,21 +105,30 @@
     </div>
   </div>
 </nav>
-<div class="drawer" id="drawer">
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="drawer-in">
-    <button class="x" id="drawerx" type="button" aria-label="Close menu">&times;</button>
-    <a href="shop.html">Shop</a>
-    <a href="work.html">Our Work</a>
-    <a href="build.html">Build Your Own</a>
-    <a href="subscriptions.html">Subscriptions</a>
-    <a href="weddings.html">Weddings</a>
-    <a href="airport.html">Airport Arrivals</a>
-    <a href="corporate.html">Corporate</a>
-    <a href="journal.html">Journal</a>
-    <a href="about.html">About Us</a>
-    <a href="faqs.html">Questions</a>
-    <a href="contact.html">Contact</a>
-    <a class="btn" href="contact.html">Order a Bouquet</a>
+    <div class="dtop">
+      <a class="dlogo" href="index.html"><img src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464"></a>
+      <button class="x" id="drawerx" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <nav class="dlinks" aria-label="Pages">
+      <a href="shop.html" class="on" style="--i:0"><span>Shop</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="work.html" style="--i:1"><span>Our Work</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="build.html" style="--i:2"><span>Build Your Own</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="subscriptions.html" style="--i:3"><span>Subscriptions</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="weddings.html" style="--i:4"><span>Weddings</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="airport.html" style="--i:5"><span>Airport Arrivals</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="corporate.html" style="--i:6"><span>Corporate</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="journal.html" style="--i:7"><span>Journal</span><i aria-hidden="true">&rsaquo;</i></a>
+      <a href="about.html" style="--i:8"><span>About Us</span><i aria-hidden="true">&rsaquo;</i></a>
+    </nav>
+    <div class="dsmall"><a href="faqs.html">Questions</a><span aria-hidden="true">&middot;</span><a href="contact.html">Contact</a></div>
+    <a class="btn dbtn" href="shop.html">Order a Bouquet</a>
+    <div class="dfoot">
+      <a class="dig" href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" aria-label="Roses by Rachel on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+      <a class="dhandle" href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">@rosesbyrachelx</a>
+      <a class="dtel" href="tel:+447306063563">07306 063563</a>
+    </div>
   </div>
 </div>
 <!-- /chrome:nav -->

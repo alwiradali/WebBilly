@@ -162,18 +162,45 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
   border-radius:100px;background:transparent;cursor:pointer;flex:none}
 .burger svg{width:19px;height:19px;stroke:var(--burg);stroke-width:1.6;fill:none}
 @media(min-width:1080px){.burger{display:none}}
-.drawer{position:fixed;inset:0;z-index:95;background:rgba(106,46,58,.45);backdrop-filter:blur(6px);
-  display:none}
+.drawer{position:fixed;inset:0;z-index:95;background:rgba(78,32,41,.38);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);display:none}
 .drawer.on{display:block}
-.drawer-in{position:absolute;top:0;right:0;bottom:0;width:min(340px,88vw);background:var(--cream);
-  padding:26px 28px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;
-  border-left:1px solid var(--gold-fade);animation:dr .3s cubic-bezier(.2,.8,.2,1)}
-@keyframes dr{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
-.drawer-in a{font-family:var(--ser);font-weight:600;font-size:1rem;letter-spacing:.19em;
-  text-transform:uppercase;padding:14px 0;border-bottom:1px solid var(--gold-fade)}
-.drawer-in .btn{margin-top:22px}
-.drawer .x{align-self:flex-end;border:0;background:none;font-size:1.9rem;color:var(--burg-soft);
-  cursor:pointer;line-height:1;margin-bottom:10px}
+.drawer-in{position:absolute;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--cream);
+  padding:max(18px,env(safe-area-inset-top)) 30px max(26px,env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;overflow-y:auto;
+  box-shadow:-30px 0 60px -40px rgba(78,32,41,.6);animation:dr .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes dr{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+.dtop{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;
+  border-bottom:1px solid var(--gold-fade)}
+.dlogo img{width:64px;height:auto;display:block}
+.drawer .x{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold-pale);background:transparent;
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.drawer .x svg{width:18px;height:18px;stroke:var(--burg);stroke-width:1.6;fill:none}
+.dlinks{display:flex;flex-direction:column;margin:10px 0 8px}
+.dlinks a{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;
+  font-family:var(--disp);font-size:1.2rem;font-weight:400;letter-spacing:.01em;color:var(--burg);
+  opacity:0;animation:dl .45s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i) * 35ms + 80ms)}
+.dlinks a i{font-style:normal;font-family:var(--ser);font-size:1.5rem;line-height:1;color:var(--gold);
+  transition:transform .25s}
+.dlinks a:hover i,.dlinks a:focus-visible i{transform:translateX(4px)}
+.dlinks a.on{color:var(--gold-dk)}
+.dlinks a.on span{border-bottom:1px solid var(--gold)}
+@keyframes dl{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.dsmall{display:flex;gap:12px;align-items:center;padding:14px 2px 0;border-top:1px solid var(--gold-fade);
+  font-family:var(--ui);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--burg-soft)}
+.dsmall a{color:var(--burg-soft)}
+.dsmall span{color:var(--gold)}
+.drawer .dbtn{margin-top:22px;width:100%}
+.dfoot{margin-top:auto;padding-top:26px;display:grid;justify-items:center;gap:6px;text-align:center}
+.dig{width:48px;height:48px;border-radius:50%;border:1px solid var(--gold-pale);display:grid;place-items:center;
+  color:var(--burg);transition:background .25s,color .25s}
+.dig:hover{background:var(--burg);color:var(--cream)}
+.dig svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.6;fill:none}
+.dhandle{font-family:var(--ser);font-size:1.05rem;color:var(--burg);margin-top:4px}
+.dtel{font-family:var(--ui);font-size:.78rem;letter-spacing:.14em;color:var(--burg-soft)}
+@media(prefers-reduced-motion:reduce){.dlinks a{animation:none;opacity:1}}
+body:has(.drawer.on) .cbar{visibility:hidden}
+.dfoot{padding-bottom:4px}
 
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;background:var(--blush)}
@@ -1179,3 +1206,4 @@ footer .fmain > a{border-bottom:0}
 #coCollect{margin:0 2px 18px}
 .formhint{margin:6px 0 0;font-size:.95rem;color:var(--burg-soft)}
 .pcbox li.no{color:var(--burg-soft);cursor:default;font-style:italic}
+@media(max-height:720px){.dlinks a{padding:5px 2px;font-size:1.1rem}.dtop{padding-bottom:10px}.dlogo img{width:54px}.drawer .dbtn{margin-top:16px}.dfoot{padding-top:16px}}

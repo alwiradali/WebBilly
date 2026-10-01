@@ -41,7 +41,6 @@ LINKS = [
     ('journal.html', 'Journal'),
     ('about.html', 'About Us'),
 ]
-DRAWER_LINKS = LINKS + [('faqs.html', 'Questions'), ('contact.html', 'Contact')]
 
 # A page inside a section should light that section up in the header.
 BELONGS = {
@@ -117,7 +116,9 @@ def nav(page):
         '      <a href="%s"%s>%s</a>' % (href, ' class="on"' if href == here else '', text)
         for href, text in LINKS)
     drawer = '\n'.join(
-        '    <a href="%s">%s</a>' % (href, text) for href, text in DRAWER_LINKS)
+        '      <a href="%s"%s style="--i:%d"><span>%s</span><i aria-hidden="true">&rsaquo;</i></a>'
+        % (href, ' class="on"' if href == here else '', n, text)
+        for n, (href, text) in enumerate(LINKS))
     return '''<nav class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="index.html" aria-label="Roses by Rachel, home">
@@ -141,11 +142,22 @@ def nav(page):
     </div>
   </div>
 </nav>
-<div class="drawer" id="drawer">
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="drawer-in">
-    <button class="x" id="drawerx" type="button" aria-label="Close menu">&times;</button>
+    <div class="dtop">
+      <a class="dlogo" href="index.html"><img src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464"></a>
+      <button class="x" id="drawerx" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <nav class="dlinks" aria-label="Pages">
 %s
-    <a class="btn" href="contact.html">Order a Bouquet</a>
+    </nav>
+    <div class="dsmall"><a href="faqs.html">Questions</a><span aria-hidden="true">&middot;</span><a href="contact.html">Contact</a></div>
+    <a class="btn dbtn" href="shop.html">Order a Bouquet</a>
+    <div class="dfoot">
+      <a class="dig" href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener" aria-label="Roses by Rachel on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+      <a class="dhandle" href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">@rosesbyrachelx</a>
+      <a class="dtel" href="tel:+447306063563">07306 063563</a>
+    </div>
   </div>
 </div>''' % (links, drawer)
 
