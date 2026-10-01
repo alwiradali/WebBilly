@@ -689,6 +689,7 @@ function swipeRow(list, dots) {
 }
 swipeRow($('.steps'), $('.steps-dots'));
 swipeRow($('#reviewRail'), $('.reviews-dots'));
+swipeRow($('.care-list'), $('.care-dots'));
 
 /* ------------------------------ FAQ: smooth open/close ------------------------------ */
 $$('.faq-list details').forEach(d => {
