@@ -1516,3 +1516,14 @@ is #4a3539 on cream, muted copy #6d5a5e — both well over 4.5:1. The only
 motion is `.rv` fade-up via IntersectionObserver, added by JS so nothing is
 hidden without it, with a 6s safety net. Keep it this way: if something new
 is added, it goes in a card under a `.sec-head`, not floating on top.
+
+**Second pass, same day (Krem & Choc reference).** Headings moved from Bodoni
+Moda to **Fraunces 500/600 with SOFT 100** — Bodoni's hairlines were the
+"can't read it" complaint. Body copy is Manrope 500 at 17px. The hero is now
+centred on her logo badge (Krem & Choc puts the mark front and centre), with
+three arch photos below. Cute flowers are inline SVG symbols (`fl-blossom`,
+`fl-rose`, `fl-tulip`, `fl-leaf`, `fl-dot`) composed into `.flora` corner
+clusters: absolutely positioned, `z-index:0`, `pointer-events:none`, always at
+section corners and clipped by `.sec{overflow:hidden}` — never behind body copy.
+Colours are set per `<use>` through `--p` / `--c` / `--l`. A slow sway is the
+only animation they carry, and it stops under reduced motion.
