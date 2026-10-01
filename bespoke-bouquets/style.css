@@ -677,3 +677,23 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .care-list li::before{left:1.3rem;top:1.35rem}
 }
 .two-col>*{min-width:0}
+
+/* our own date picker (the iPhone's ignores the 5-day minimum) */
+.field{position:relative}
+.dp-btn{width:100%;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.8rem 1rem;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:1.02rem;text-align:left}
+.dp-btn:focus-visible,.dp-btn[aria-expanded="true"]{outline:none;border-color:var(--ink)}
+.dp-btn svg{font-size:1.15rem;color:var(--rose)}
+.dp-ph{color:#958589}
+.field.err .dp-btn{border-color:var(--satin);box-shadow:0 0 0 3px rgba(142,31,59,.1)}
+.dp-pop{position:absolute;z-index:60;top:calc(100% + 6px);left:0;width:min(330px,calc(100vw - 2 * var(--gut)));background:var(--paper);border:1px solid var(--line);box-shadow:0 24px 50px -24px rgba(35,26,28,.4);padding:1rem}
+.dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.dp-head b{font:400 1.15rem/1 var(--f-d);color:var(--ink)}
+.dp-nav{width:38px;height:38px;border:1px solid var(--line);font-size:1.3rem;line-height:1;color:var(--ink)}
+.dp-nav:disabled{opacity:.3;cursor:default}
+.dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.dp-week span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:.3rem 0}
+.dp-grid button{aspect-ratio:1;font-size:.98rem;color:var(--ink);border:1px solid transparent}
+.dp-grid button:hover:not(:disabled){border-color:var(--ink)}
+.dp-grid button:disabled{color:#c9bec0;text-decoration:line-through;cursor:not-allowed;background:var(--blush)}
+.dp-grid button.is-on{background:var(--satin);color:#fff}
+.dp-note{margin-top:.7rem;font-size:.82rem;color:var(--mute);line-height:1.4}

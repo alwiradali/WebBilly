@@ -1626,3 +1626,11 @@ straight-line distance × roadFactor, and charges ceil(miles) × perMile, never
 below `minimum`. Until `perMile` is a number nothing is charged — the distance
 is shown and the fee is "confirmed with order". If the lookup fails the order
 still goes through with the fee confirmed by hand. Her rates are still needed.
+
+**Our own date picker (`TBB.datePicker` in shared.js).** The iPhone's native
+date picker ignores `min`, so customers could tap a day inside the 5-day
+notice. Checkout and the enquiry now use a small calendar: the real input is
+turned into a hidden field holding YYYY-MM-DD (so every existing `.value`
+check still works), and a button opens a Monday-first month grid where every
+day before `earliest()` is disabled and struck through. Tests must click the
+calendar (`.dp-btn`, then `.dp-grid button:not([disabled])`), not fill the input.

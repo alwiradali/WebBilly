@@ -7,7 +7,7 @@
 'use strict';
 
 /* CONFIG and the shared helpers live in shared.js (loaded first). */
-const { deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons } = window.TBB;
+const { datePicker, deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons } = window.TBB;
 
 /* --------------------------------------------------------------------
    REVIEWS — sample:true puts an "Example" chip on every card and a line
@@ -205,6 +205,7 @@ addEventListener('resize', sizeDrawer);
 
 /* minimum dates (5 days' notice) */
 $$('input[type="date"][data-min-days]').forEach(i => { i.min = earliest(); });
+datePicker($('#coForm input[name="date"]'));
 
 /* ------------------------------ SHOP ------------------------------ */
 const grid = $('#grid');

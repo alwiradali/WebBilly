@@ -155,5 +155,66 @@ const perMileText = () => {
   return `${m(d.perMile)} per mile from ${d.from}` + (d.minimum ? ` (min ${m(d.minimum)})` : '');
 };
 
-window.TBB = { deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons };
+/* --------------------------------------------------------------------
+   DATE PICKER — our own calendar, because the iPhone's native picker
+   ignores the minimum date and lets people tap days that are too soon.
+   The real <input> stays in the form (hidden) holding YYYY-MM-DD, so
+   every check that reads input.value keeps working.
+   -------------------------------------------------------------------- */
+function datePicker(input) {
+  if (!input || input.dataset.dp) return;
+  input.dataset.dp = '1';
+  const minISO = () => earliest();
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'dp-btn';
+  btn.setAttribute('aria-haspopup', 'dialog');
+  const pop = document.createElement('div');
+  pop.className = 'dp-pop'; pop.hidden = true; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Choose a date');
+  input.type = 'hidden';
+  input.after(btn, pop);
+  const show = () => { btn.innerHTML = input.value ? `<span>${niceDate(input.value)}</span>` : '<span class="dp-ph">Choose a date</span>'; btn.insertAdjacentHTML('beforeend', '<svg aria-hidden="true"><use href="#i-calendar"/></svg>'); };
+  let view;
+  const pad = n => String(n).padStart(2, '0');
+  function draw() {
+    const y = view.getFullYear(), m = view.getMonth();
+    const first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+    const lead = (first.getDay() + 6) % 7;            // Monday first
+    const min = minISO(), now = new Date();
+    const atStart = y * 12 + m <= Math.min(now.getFullYear() * 12 + now.getMonth(), Number(min.slice(0, 4)) * 12 + Number(min.slice(5, 7)) - 1);
+    let cells = '';
+    for (let i = 0; i < lead; i++) cells += '<span></span>';
+    for (let d = 1; d <= days; d++) {
+      const iso = `${y}-${pad(m + 1)}-${pad(d)}`;
+      const off = iso < min;
+      cells += `<button type="button" data-d="${iso}"${off ? ' disabled aria-disabled="true"' : ''}${iso === input.value ? ' class="is-on"' : ''}>${d}</button>`;
+    }
+    pop.innerHTML = `<div class="dp-head"><button type="button" class="dp-nav" data-step="-1" aria-label="Previous month"${atStart ? ' disabled' : ''}>‹</button><b>${first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</b><button type="button" class="dp-nav" data-step="1" aria-label="Next month">›</button></div>
+      <div class="dp-week"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+      <div class="dp-grid">${cells}</div>
+      <p class="dp-note">At least ${CONFIG.minDays} days’ notice — the first available date is ${niceDate(min)}.</p>`;
+  }
+  function open() {
+    const base = input.value || minISO();
+    view = new Date(Number(base.slice(0, 4)), Number(base.slice(5, 7)) - 1, 1);
+    draw(); pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
+  }
+  function close() { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', () => pop.hidden ? open() : close());
+  pop.addEventListener('click', e => {
+    const nav = e.target.closest('.dp-nav');
+    if (nav) { view.setMonth(view.getMonth() + Number(nav.dataset.step)); draw(); return; }
+    const d = e.target.closest('[data-d]');
+    if (!d || d.disabled) return;
+    input.value = d.dataset.d; show(); close();
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    const f = input.closest('.field'); if (f) f.classList.remove('err');
+  });
+  document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden) { e.stopPropagation(); close(); btn.focus(); } }, true);
+  const form = input.form; if (form) form.addEventListener('reset', () => setTimeout(() => { input.value = ''; show(); }, 0));
+  show();
+}
+
+window.TBB = { datePicker, deliveryQuote, perMileText, CONFIG, checkPostcode, isoDay, earliest, niceDate, dm, wa, toast, copy, sendForm, handoverButtons };
 })();

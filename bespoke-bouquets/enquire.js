@@ -6,7 +6,7 @@
    ===================================================================== */
 (() => {
 'use strict';
-const { CONFIG, checkPostcode, earliest, niceDate, toast, sendForm, handoverButtons } = window.TBB;
+const { datePicker, CONFIG, checkPostcode, earliest, niceDate, toast, sendForm, handoverButtons } = window.TBB;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const root = document.documentElement;
@@ -79,6 +79,7 @@ inspo.addEventListener('change', () => {
 
 /* ------------------------------ when & where ------------------------------ */
 f.date.min = earliest();
+datePicker(f.date);
 const pcField = $('[data-pc-field]'), pcOut = $('[data-pc-out]');
 function delivery() { return f.fulfil.value === 'Delivery'; }
 function showPc(final) {
