@@ -86,7 +86,8 @@ binding = "ASSETS"
 # from a text message.
 run_worker_first = ["/api/*", "/", "/admin", "/invoice", "/sign",
                     "/westfield", "/westfield/", "/Westfield", "/Westfield/",
-                    "/templates/westfield-garage", "/templates/westfield-garage.html"]
+                    "/templates/westfield-garage", "/templates/westfield-garage.html",
+                    "/templates/rachel", "/templates/rachel/*"]
 
 # ---------------------------------------------------------------------------
 # Molecular Miracles on Lynsey's own Cloudflare account.

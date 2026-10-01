@@ -4,13 +4,13 @@
    petals and gold bokeh drifting behind everything.
    ============================================================ */
 @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:swap;
-  src:url(../../assets/rachel/fonts/playfair.woff2) format('woff2')}
+  src:url(../assets/rachel/fonts/playfair.woff2) format('woff2')}
 @font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400 700;font-display:swap;
-  src:url(../../assets/rachel/fonts/cormorant.woff2) format('woff2')}
+  src:url(../assets/rachel/fonts/cormorant.woff2) format('woff2')}
 @font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400 600;font-display:swap;
-  src:url(../../assets/rachel/fonts/cormorant-italic.woff2) format('woff2')}
+  src:url(../assets/rachel/fonts/cormorant-italic.woff2) format('woff2')}
 @font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;
-  src:url(../../assets/rachel/fonts/inter-var.woff2) format('woff2')}
+  src:url(../assets/rachel/fonts/inter-var.woff2) format('woff2')}
 :root{
   --burg:#6A2E3A; --burg-dk:#5A2432; --burg-soft:#8A5A64; --burg-ink:#4E2029;
   --gold:#C0982A; --gold-dk:#A87F1E; --gold-deep:#8C6714; --gold-pale:#E6D5A2; --gold-fade:#EFE3C4;
@@ -664,7 +664,7 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
   background:rgba(78,32,41,.55);backdrop-filter:blur(7px)}
 .pop.on{display:grid}
 .popcard{width:min(500px,100%);aspect-ratio:1.09;position:relative;
-  background:url(../../assets/rachel/popup-frame.webp) center/100% 100% no-repeat;
+  background:url(../assets/rachel/popup-frame.webp) center/100% 100% no-repeat;
   display:grid;place-items:center;animation:shUp .35s cubic-bezier(.2,.8,.2,1)}
 .popin{width:74%;text-align:center}
 .popcard h3{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:500}

@@ -200,6 +200,11 @@ export default {
     if (!isOwnClientHost(url.hostname, env)) {
       const parked = PARKED[url.pathname.toLowerCase().replace(/\.html$/, "").replace(/\/+$/, "")];
       if (parked) return Response.redirect(parked, 301);
+
+      /* Roses by Rachel moved from /templates/rachel/ to /rachel/. Links
+         already shared (a flower's ?p= included) land on the same page. */
+      const rbr = url.pathname.match(/^\/templates\/rachel(\/.*)?$/i);
+      if (rbr) return Response.redirect(url.origin + "/rachel" + (rbr[1] || "/") + url.search, 301);
     }
 
     // Everything else is a static asset (ASSETS honours 404-page handling).

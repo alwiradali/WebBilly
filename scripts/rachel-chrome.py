@@ -25,7 +25,7 @@ import os
 import re
 import sys
 
-ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'templates', 'rachel')
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'rachel')
 
 # The eight that share the links row. Contact is the button beside the cart,
 # FAQs is in the burgundy strip, and every page including the four shop
@@ -66,7 +66,7 @@ WA = ('https://wa.me/447306063563?text=Hi%2C%20I%20found%20you%20through%20'
 
 LOADER = '''<div class="rrload" id="rrload" role="status" aria-live="polite" aria-label="Loading Roses by Rachel">
   <div class="rrload-in">
-    <img src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+    <img src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
     <div class="rrload-rule" aria-hidden="true"></div>
   </div>
 </div>
@@ -128,8 +128,8 @@ def nav(page):
   </div>
   <div class="nav-in">
     <a class="brand" href="index.html" aria-label="Roses by Rachel, home">
-      <img class="mk" src="../../assets/rachel/logo-monogram.webp" alt="" width="433" height="365">
-      <img class="wd" src="../../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
+      <img class="mk" src="../assets/rachel/logo-monogram.webp" alt="" width="433" height="365">
+      <img class="wd" src="../assets/rachel/logo-word.webp" alt="Roses by Rachel" width="1005" height="82">
     </a>
     <div class="navutil">
       <a class="btn sm navbtn" href="contact.html">Order a Bouquet</a>
@@ -165,7 +165,7 @@ def footer():
     return '''<footer>
   <div class="wrap">
     <div class="fmain">
-      <a href="index.html"><img class="m" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464" style="width:96px;height:auto;margin:0 auto"></a>
+      <a href="index.html"><img class="m" src="../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464" style="width:96px;height:auto;margin:0 auto"></a>
       <div class="fdiv" aria-hidden="true"></div>
       <div class="fcontact">
         <div><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>

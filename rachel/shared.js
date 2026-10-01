@@ -227,10 +227,10 @@
      place that draws a product goes through these two, so neither has to know
      which kind it is holding. */
   function imgSmall(p) {
-    return p.imgUrl || ('../../assets/rachel/' + p.img + '-sm.webp');
+    return p.imgUrl || ('../assets/rachel/' + p.img + '-sm.webp');
   }
   function imgBig(p) {
-    return p.imgUrl || ('../../assets/rachel/' + (p.big || p.img) + '.webp');
+    return p.imgUrl || ('../assets/rachel/' + (p.big || p.img) + '.webp');
   }
 
   var SHARE_ICON ='<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.1c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8c-.5-.5-1.2-.8-2-.8-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
