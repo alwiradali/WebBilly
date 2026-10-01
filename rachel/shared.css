@@ -131,19 +131,6 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
   border-bottom:1px solid var(--gold-fade);transition:box-shadow .3s}
 .nav.stuck{box-shadow:0 10px 30px -22px rgba(106,46,58,.5)}
 
-.navtop{background:var(--burg);color:#F6E7E2;overflow:hidden;max-height:40px;
-  transition:max-height .3s ease,opacity .3s ease}
-.nav.stuck .navtop{max-height:0;opacity:0}
-.navtop-in{max-width:1240px;margin:0 auto;padding:7px 22px;display:flex;align-items:center;
-  justify-content:space-between;gap:20px;
-  font-family:var(--ui);font-size:.76rem;letter-spacing:.09em}
-.navtop-r{display:flex;align-items:center;gap:20px}
-.navtop a{color:#FBEEE9;transition:color .2s}
-.navtop a:hover{color:var(--gold-pale)}
-.navtop .tel{font-family:var(--ser);font-size:.94rem;font-weight:600;letter-spacing:.1em}
-@media(max-width:760px){.navtop .navwhere{display:none}
-  .navtop-in{justify-content:center;padding:8px 16px}}
-
 .nav-in{max-width:1240px;margin:0 auto;padding:11px 22px 10px;
   display:flex;align-items:center;gap:18px}
 .brand{display:flex;align-items:center;gap:14px;flex:none}
@@ -162,6 +149,7 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
   background:var(--gold);transition:left .25s,right .25s}
 .navlinks a:hover::after,.navlinks a.on::after{left:0;right:0}
 .navlinks a.on{color:var(--gold-dk)}
+@media(max-width:1299px){.navlinks{gap:clamp(14px,1.6vw,24px)}.navlinks a{font-size:.82rem;letter-spacing:.11em}}
 
 .navutil{display:flex;align-items:center;gap:12px;margin-left:auto}
 .navbtn{flex:none}
@@ -1170,3 +1158,13 @@ footer .fmain > a{border-bottom:0}
 .pcbox li{padding:11px 14px;border-radius:8px;cursor:pointer;
   font-family:var(--ui);font-size:1rem;letter-spacing:.04em;color:var(--burg-ink)}
 .pcbox li.on,.pcbox li:hover{background:var(--blush);color:var(--burg)}
+
+/* Home hero: the two buttons side by side, and the small line under them. */
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero .hero-cta .btn{margin-top:0}
+.hero-facts{display:flex;flex-wrap:wrap;gap:6px 22px;list-style:none;margin:26px 0 0;padding:16px 0 0;
+  border-top:1px solid var(--gold-fade);max-width:420px;
+  font-family:var(--ui);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--burg-soft)}
+.hero-facts li{display:flex;align-items:center;gap:22px}
+.hero-facts li+li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold);margin-left:-11px;margin-right:-11px}
+@media(max-width:939px){.hero-cta,.hero-facts{justify-content:center;margin-inline:auto}}

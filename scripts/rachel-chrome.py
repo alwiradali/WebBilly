@@ -27,11 +27,12 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'rachel')
 
-# The eight that share the links row. Contact is the button beside the cart,
-# FAQs is in the burgundy strip, and every page including the four shop
+# The nine that share the links row. Contact is the button beside the cart,
+# FAQs is in the menu and footer, and every page including the four shop
 # categories is in the footer, so nothing is reachable only from the menu.
 LINKS = [
     ('shop.html', 'Shop'),
+    ('work.html', 'Our Work'),
     ('build.html', 'Build Your Own'),
     ('subscriptions.html', 'Subscriptions'),
     ('weddings.html', 'Weddings'),
@@ -57,7 +58,7 @@ FOOTER_COLS = [
               ('shop-gifts.html', 'Gifts'), ('build.html', 'Build your own')]),
     ('Services', [('subscriptions.html', 'Subscriptions'), ('weddings.html', 'Weddings &amp; occasions'),
                   ('airport.html', 'Airport arrivals'), ('corporate.html', 'Corporate &amp; contract')]),
-    ('More', [('about.html', 'About Us'), ('journal.html', 'The journal'),
+    ('More', [('about.html', 'About Us'), ('work.html', 'Our work'), ('journal.html', 'The journal'),
               ('faqs.html', 'Questions &amp; answers'), ('contact.html', 'Place an order')]),
 ]
 
@@ -116,16 +117,6 @@ def nav(page):
     drawer = '\n'.join(
         '    <a href="%s">%s</a>' % (href, text) for href, text in DRAWER_LINKS)
     return '''<nav class="nav" id="nav">
-  <div class="navtop">
-    <div class="navtop-in">
-      <span class="navwhere">Delivery across Greater Manchester and Manchester Airport</span>
-      <span class="navtop-r">
-        <a href="faqs.html">Questions</a>
-        <a class="tel" href="tel:+447306063563">07306 063563</a>
-        <a href="https://www.instagram.com/rosesbyrachelx" target="_blank" rel="noopener">Instagram</a>
-      </span>
-    </div>
-  </div>
   <div class="nav-in">
     <a class="brand" href="index.html" aria-label="Roses by Rachel, home">
       <img class="mk" src="../assets/rachel/logo-monogram.webp" alt="" width="433" height="365">
