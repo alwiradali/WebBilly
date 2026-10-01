@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/bespoke/logo.png">
-<link rel="stylesheet" href="/bespoke-bouquets/style.css?v=202610020300">
+<link rel="stylesheet" href="/bespoke-bouquets/style.css?v=202610020400">
 <script>document.documentElement.classList.add('js');</script>
 
 </head>
@@ -174,12 +174,11 @@
     <fieldset class="enq-step" id="s5">
       <legend><span>5</span>When &amp; where</legend>
       <div class="row">
-        <label class="field"><span>Date needed</span><input type="date" name="date" required></label>
+        <div class="field"><span>Date needed</span><input type="date" name="date" required><p class="date-note"><svg><use href="#i-calendar"/></svg>At least 5 days’ notice — earlier dates can’t be chosen.</p></div>
         <label class="field"><span>Time</span>
           <select name="time"><option value="">Any time</option><option>9am – 11am</option><option>11am – 1pm</option><option>1pm – 3pm</option><option>3pm – 5pm</option><option>5pm – 7pm</option></select>
         </label>
       </div>
-      <p class="hint">At least 5 days’ notice — earlier dates aren’t available.</p>
       <div class="opt-cards">
         <label class="opt"><input type="radio" name="fulfil" value="Collection from B92" checked><span><svg><use href="#i-pin"/></svg><b>Collection</b><small>From B92, Solihull · Free</small></span></label>
         <label class="opt"><input type="radio" name="fulfil" value="Delivery"><span><svg><use href="#i-van"/></svg><b>Delivery</b><small>Birmingham &amp; Solihull only</small></span></label>
@@ -257,9 +256,9 @@
 </div>
 <div class="toast" role="status" aria-live="polite"></div>
 
-<script src="/bespoke-bouquets/petals.js?v=202610020300" defer></script>
+<script src="/bespoke-bouquets/petals.js?v=202610020400" defer></script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
-<script src="/bespoke-bouquets/shared.js?v=202610020300" defer></script>
-<script src="/bespoke-bouquets/enquire.js?v=202610020300" defer></script>
+<script src="/bespoke-bouquets/shared.js?v=202610020400" defer></script>
+<script src="/bespoke-bouquets/enquire.js?v=202610020400" defer></script>
 </body>
 </html>

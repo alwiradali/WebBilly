@@ -196,6 +196,7 @@ function datePicker(input) {
   function open() {
     const base = input.value || minISO();
     view = new Date(Number(base.slice(0, 4)), Number(base.slice(5, 7)) - 1, 1);
+    pop.style.top = (btn.offsetTop + btn.offsetHeight + 6) + 'px';   // open right under the box, over the note
     draw(); pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
   }
   function close() { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); }

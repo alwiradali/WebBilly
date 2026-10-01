@@ -697,3 +697,6 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .dp-grid button:disabled{color:#c9bec0;text-decoration:line-through;cursor:not-allowed;background:var(--blush)}
 .dp-grid button.is-on{background:var(--satin);color:#fff}
 .dp-note{margin-top:.7rem;font-size:.82rem;color:var(--mute);line-height:1.4}
+
+.date-note{display:flex;align-items:center;gap:.45rem;margin-top:.55rem;font-size:.92rem;font-weight:500;color:var(--satin);line-height:1.35}
+.date-note svg{font-size:1rem;flex:none}
