@@ -124,9 +124,18 @@ document.addEventListener('click', e => {
   const el = $(id);
   if (!el) return;
   e.preventDefault();
-  closeDrawer();
+  /* from the phone menu: no visible scroll — the page jumps to the section
+     behind the still-opaque menu, then the menu fades away over it */
+  if (drawer.classList.contains('is-open')) { closeDrawer(el); return; }
   scrollToEl(el);
 });
+function jumpTo(el) {
+  const y = el.id === 'top' ? 0 : el.getBoundingClientRect().top + scrollY - HEAD() + 1;
+  if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+  const sb = root.style.scrollBehavior; root.style.scrollBehavior = 'auto';
+  scrollTo(0, y);
+  root.style.scrollBehavior = sb;
+}
 
 let locks = 0;
 let lockedY = 0;
@@ -181,11 +190,12 @@ function openDrawer() {
   menuBtn.setAttribute('aria-expanded', 'true'); menuBtn.setAttribute('aria-label', 'Close menu');
   hdr.classList.remove('is-hidden'); lock(true);
 }
-function closeDrawer() {
+function closeDrawer(target) {
   if (!drawer.classList.contains('is-open')) return;
-  drawer.classList.remove('is-open');
   menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.setAttribute('aria-label', 'Open menu');
   lock(false);
+  if (target) jumpTo(target);          // same frame, hidden behind the menu
+  drawer.classList.remove('is-open');
   setTimeout(() => { if (!drawer.classList.contains('is-open')) drawer.hidden = true; }, 800);
 }
 menuBtn.addEventListener('click', () => drawer.classList.contains('is-open') ? closeDrawer() : openDrawer());
