@@ -700,3 +700,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
 .date-note{display:flex;align-items:center;gap:.45rem;margin-top:.55rem;font-size:.92rem;font-weight:500;color:var(--satin);line-height:1.35}
 .date-note svg{font-size:1rem;flex:none}
+/* swipe cards: no dark top line, just the same soft border all round */
+@media (max-width:640px){
+  .review-grid .review,.steps li,.care-list li{border:1px solid var(--line-2)!important}
+}
