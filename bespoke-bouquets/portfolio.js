@@ -36,14 +36,12 @@ const PIECES = [
     desc: 'Roses, tulips, carnations and gypsophila arranged in a round white hatbox.', alt: 'Roses, tulips and carnations in a white hatbox' },
   { img: 'initials-vp', w: 1200, h: 1378, name: 'Initials & Luxe Gift Bouquet', cats: ['personalised', 'gifts'],
     desc: 'A sea of red roses lettered with initials, beside a gift bouquet of roses, notes and beauty treats.', alt: 'Red roses lettered V and P beside a gift bouquet' },
-  { img: 'bridal-calla', w: 426, h: 568, name: 'Bridal Bouquet', cats: ['bridal'],
-    desc: 'White calla lilies with plum and lilac blooms, finished with an ivory silk wrap.', alt: 'Bridal bouquet of white calla lilies with plum flowers' },
   { img: 'valentine-reds', w: 1200, h: 1374, name: 'Classic Reds', cats: ['signature'],
     desc: 'Deep red roses and gypsophila in matte black wrap — a Valentine’s favourite.', alt: 'Red roses and gypsophila in black wrap with a Valentine’s card' },
   { img: 'autumn-pair', w: 1200, h: 1781, name: 'Seasonal Gift Bags', cats: ['signature'],
     desc: 'Autumn colour, hand-tied and standing in white gift bags with crimson satin ribbon.', alt: 'Two autumn bouquets in white gift bags' },
-  { img: 'bridal-henna', w: 426, h: 568, name: 'Mehndi Florals', cats: ['bridal'],
-    desc: 'Calla lilies and plum blooms for the nikkah, alongside the henna.', alt: 'Hennaed hands resting on a calla lily bouquet' }
+  { img: 'bridal-bouquet', w: 1290, h: 1587, name: 'Bridal Bouquet', cats: ['bridal'],
+    desc: 'Abida’s bridal bouquet: white calla lilies, ivory carnations and blush peonies with plum clematis, magenta globe amaranth and astilbe, tied with an ivory silk ribbon.', alt: 'Bridal bouquet of white calla lilies, ivory and blush blooms and purple clematis, tied with ivory ribbon' }
 ];
 
 /* ------------------------------ helpers ------------------------------ */
