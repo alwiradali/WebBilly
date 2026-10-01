@@ -55,7 +55,7 @@ const PIECES = [
   { img: 'hatbox-blooms', w: 1200, h: 1716, name: 'Hatbox Blooms', cats: ['hatbox'],
     desc: 'Roses, tulips, carnations and gypsophila arranged in a round white hatbox.', alt: 'Roses, tulips and carnations in a white hatbox' },
   { img: 'bridal-gajre', w: 1200, h: 1472, name: 'Bridal Gajre', cats: ['bridal'],
-    desc: 'Fresh white rose and gypsophila gajra for the bride. Photography: @shumaelaphotography.', alt: 'A white rose gajra on a bride’s wrist' }
+    desc: 'Fresh white rose and gypsophila gajra for the bride.', alt: 'A white rose gajra on a bride’s wrist' }
 ];
 
 /* ------------------------------ helpers ------------------------------ */
