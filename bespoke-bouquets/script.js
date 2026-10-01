@@ -11,7 +11,7 @@
    Every empty value degrades to something that still works:
    - no web3formsKey  -> orders/enquiries are handed back as a ready-written
                          message, one tap from her Instagram DMs
-   - no whatsapp      -> the floating bubble opens an Instagram DM
+   - no whatsapp      -> the WhatsApp contact card stays hidden
    - no payment setup -> checkout runs in preview mode and says so
    -------------------------------------------------------------------- */
 const CONFIG = {
@@ -99,10 +99,8 @@ const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(pointer: fine)').matches;
 const desktop = () => innerWidth > 980;
-const gsap = window.gsap, ST = window.ScrollTrigger;
-const motion = !reduced && !!gsap && !!ST;
-if (gsap && ST) gsap.registerPlugin(ST);
-if (!motion) root.classList.add(reduced ? 'no-motion' : 'no-gsap');
+const gsap = null, ST = null;
+const motion = false;
 
 const money = n => '£' + (Math.round(n * 100) / 100).toFixed(n % 1 ? 2 : 0);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -184,10 +182,8 @@ function onScrollHeader() {
   const y = scrollY;
   hdr.classList.toggle('is-solid', y > 30);
   const menuOpen = $('#drawer').classList.contains('is-open');
-  if (!menuOpen && y > 500 && y > lastY + 4) hdr.classList.add('is-hidden');
-  else if (y < lastY - 4 || y < 500) hdr.classList.remove('is-hidden');
   lastY = y;
-  $('[data-bubble]').classList.toggle('is-in', y > innerHeight * 0.8);
+
 }
 addEventListener('scroll', onScrollHeader, { passive: true });
 onScrollHeader();
@@ -222,11 +218,7 @@ addEventListener('resize', sizeDrawer);
 
 /* contact links that depend on config */
 (function contactLinks() {
-  const bubble = $('[data-bubble]');
   if (CONFIG.whatsapp) {
-    bubble.href = wa('Hi! I have a question about a bouquet 🌸');
-    bubble.setAttribute('aria-label', 'Message on WhatsApp');
-    bubble.innerHTML = '<svg><use href="#i-whatsapp"/></svg><span>WhatsApp</span>';
     const w = $('[data-wa]'); w.href = wa(''); w.hidden = false; w.target = '_blank'; w.rel = 'noopener';
   }
   if (CONFIG.email) { const m = $('[data-mail]'); m.href = 'mailto:' + CONFIG.email; m.hidden = false; }
@@ -399,7 +391,7 @@ function renderBasket() {
   const wrap = $('[data-basket-items]', bk);
   const foot = $('[data-basket-foot]', bk);
   if (!basket.length) {
-    wrap.innerHTML = `<div class="b-empty"><img src="${LOGO}" alt=""><span class="script">so empty…</span><p>Nothing in the basket yet — the bouquets are waiting.</p><a href="#shop" class="btn btn-satin" data-close-basket>Browse the shop</a></div>`;
+    wrap.innerHTML = `<div class="b-empty"><img src="${LOGO}" alt=""><span class="label">Your basket is empty</span><p>Nothing in the basket yet — the bouquets are waiting.</p><a href="#shop" class="btn btn-satin" data-close-basket>Browse the shop</a></div>`;
     foot.hidden = true;
   } else {
     foot.hidden = false;
@@ -790,355 +782,24 @@ $$('.faq-list details').forEach(d => {
   });
 });
 
-/* ------------------------------ marquee ------------------------------
-   Each word moves on its own, so no single layer is ever wider than a word.
-   (Moving the whole strip makes one layer wider than iOS will paint.)
-   --------------------------------------------------------------------- */
-(function marquee() {
-  const box = $('.marquee'), track = $('.marquee-track');
-  if (!box) return;
-  const run = track.innerHTML;
-  let runW = 0, items = [], off = 0, last = 0, visible = true, boost = 0;
-  function build() {
-    track.innerHTML = run;
-    runW = track.scrollWidth;
-    const n = Math.max(2, Math.ceil((innerWidth * 2) / Math.max(1, runW)) + 1);
-    track.innerHTML = run.repeat(n);
-    items = Array.from(track.children);
-  }
-  build();
-  addEventListener('resize', () => { build(); });
-  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(box);
-  if (lenis) lenis.on('scroll', ({ velocity }) => { boost = Math.min(240, Math.abs(velocity) * 22); });
-  if (reduced) return;
-  const tick = now => {
-    const dt = Math.min(50, now - (last || now)); last = now;
-    if (visible) {
-      off = (off + (42 + boost) * dt / 1000) % runW;
-      boost *= 0.92;
-      const tx = `translate3d(${-off}px,0,0)`;
-      for (let i = 0; i < items.length; i++) items[i].style.transform = tx;
-    }
-    requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-})();
-
-/* ------------------------------ falling petals ------------------------------ */
-function petals(canvas) {
-  const ctx = canvas.getContext('2d');
-  const N = Number(canvas.dataset.petals) || 20;
-  const cols = ['#f7c6cf', '#f2a7b8', '#ffe0e5', '#e98ea4', '#fff4f6', '#d9667f'];
-  let w, h, dpr, list = [], on = true, raf;
-  function size() {
-    dpr = Math.min(2, devicePixelRatio || 1);
-    w = canvas.clientWidth; h = canvas.clientHeight;
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  const make = (init) => ({
-    x: Math.random() * w, y: init ? Math.random() * h : -30 - Math.random() * 80,
-    s: 7 + Math.random() * 11, vy: 18 + Math.random() * 28, vx: -8 + Math.random() * 16,
-    r: Math.random() * Math.PI * 2, vr: (-0.6 + Math.random() * 1.2), ph: Math.random() * 6.28,
-    c: cols[(Math.random() * cols.length) | 0], a: 0.45 + Math.random() * 0.45
-  });
-  size(); list = Array.from({ length: N }, () => make(true));
-  addEventListener('resize', size);
-  new IntersectionObserver(([en]) => { on = en.isIntersecting; if (on) { last = 0; raf = requestAnimationFrame(tick); } }).observe(canvas);
-  let last = 0;
-  function draw(p) {
-    ctx.save();
-    ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.scale(1, Math.abs(Math.cos(p.ph)) * 0.75 + 0.25);
-    ctx.globalAlpha = p.a;
-    ctx.fillStyle = p.c;
-    ctx.beginPath();
-    ctx.moveTo(0, -p.s);
-    ctx.bezierCurveTo(p.s * 0.9, -p.s * 0.6, p.s * 0.75, p.s * 0.7, 0, p.s);
-    ctx.bezierCurveTo(-p.s * 0.75, p.s * 0.7, -p.s * 0.9, -p.s * 0.6, 0, -p.s);
-    ctx.fill();
-    ctx.globalAlpha = p.a * 0.5; ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.8;
-    ctx.beginPath(); ctx.moveTo(0, -p.s * 0.7); ctx.quadraticCurveTo(p.s * 0.15, 0, 0, p.s * 0.7); ctx.stroke();
-    ctx.restore();
-  }
-  function tick(now) {
-    if (!on) return;
-    const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
-    ctx.clearRect(0, 0, w, h);
-    for (const p of list) {
-      p.ph += dt * 1.6; p.y += p.vy * dt; p.x += (p.vx + Math.sin(p.ph) * 22) * dt; p.r += p.vr * dt;
-      if (p.y > h + 30 || p.x < -40 || p.x > w + 40) Object.assign(p, make(false));
-      draw(p);
-    }
-    raf = requestAnimationFrame(tick);
-  }
-  raf = requestAnimationFrame(tick);
-}
-if (!reduced) $$('canvas.petals').forEach(petals);
-
-/* ------------------------------ hero wrap petals (SVG) ------------------------------ */
-(function wrapPetals() {
-  const back = $('.wrap-back'), front = $('.wrap-front');
-  const petal = (len, wd) => `M0 0 C ${-wd} ${-len * 0.35}, ${-wd * 0.9} ${-len * 0.78}, 0 ${-len} C ${wd * 0.9} ${-len * 0.78}, ${wd} ${-len * 0.35}, 0 0Z`;
-  const ns = 'http://www.w3.org/2000/svg';
-  for (let i = 0; i < 12; i++) {
-    const p = document.createElementNS(ns, 'path');
-    p.setAttribute('d', petal(262 + (i % 3) * 14, 64));
-    p.setAttribute('fill', 'url(#wrapA)'); p.setAttribute('opacity', '.55');
-    p.setAttribute('transform', `rotate(${i * 30 + 6})`);
-    back.appendChild(p);
-  }
-  for (let i = 0; i < 10; i++) {
-    const p = document.createElementNS(ns, 'path');
-    p.setAttribute('d', petal(212 + (i % 2) * 18, 58));
-    p.setAttribute('fill', 'url(#wrapB)'); p.setAttribute('opacity', '.85');
-    p.setAttribute('stroke', 'rgba(255,255,255,.7)'); p.setAttribute('stroke-width', '1');
-    p.setAttribute('transform', `rotate(${i * 36 + 20})`);
-    front.appendChild(p);
-  }
-})();
-
-/* ribbons are drawn at their real pixel size, so the stroke never stretches */
-function ribbonPath(svg, fn) {
-  const path = $('path', svg);
-  const set = () => {
-    const w = svg.clientWidth, h = svg.clientHeight;
-    if (!w || !h) return;
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    path.setAttribute('d', fn(w, h));
-    path.setAttribute('pathLength', '1');
-  };
-  set(); addEventListener('resize', set);
-  if (window.ResizeObserver) new ResizeObserver(set).observe(svg);
-  return path;
-}
-const heroRibbon = ribbonPath($('.hero-ribbon'), (w, h) => `M -40 ${h * 0.96} C ${w * 0.18} ${h * 1.02}, ${w * 0.36} ${h * 0.88}, ${w * 0.55} ${h * 0.5} S ${w * 0.82} ${h * 0.02}, ${w + 40} ${h * 0.34}`);
-const stepsRibbon = ribbonPath($('.steps-ribbon'), (w, h) => {
-  let d = `M ${w / 2} 0`; const seg = 5;
-  for (let i = 0; i < seg; i++) {
-    const y0 = h * i / seg, y1 = h * (i + 1) / seg, dx = i % 2 ? -w * 0.42 : w * 0.42;
-    d += ` C ${w / 2 + dx} ${y0 + (y1 - y0) * 0.33}, ${w / 2 + dx} ${y0 + (y1 - y0) * 0.66}, ${w / 2} ${y1}`;
-  }
-  return d;
-});
-
-/* ------------------------------ cursor + magnetic + tilt ------------------------------ */
-if (fine && !reduced) {
-  const cur = $('.cursor'), dot = $('.cursor-dot'), ring = $('.cursor-ring');
-  let mx = -100, my = -100, rx = -100, ry = -100;
-  addEventListener('pointermove', e => {
-    if (e.pointerType !== 'mouse') return;
-    mx = e.clientX; my = e.clientY;
-    dot.style.transform = `translate3d(${mx}px,${my}px,0)`;
-    const t = e.target;
-    cur.classList.toggle('is-view', !!t.closest('[data-cursor="view"]'));
-    cur.classList.toggle('is-link', !t.closest('[data-cursor="view"]') && !!t.closest('a,button,label,.chip,select,input,textarea,summary'));
-  }, { passive: true });
-  document.addEventListener('mouseleave', () => cur.classList.add('is-hidden'));
-  document.addEventListener('mouseenter', () => cur.classList.remove('is-hidden'));
-  (function loop() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.transform = `translate3d(${rx}px,${ry}px,0)`; requestAnimationFrame(loop); })();
-
-  if (gsap) $$('.magnetic').forEach(b => {
-    const xTo = gsap.quickTo(b, 'x', { duration: 0.6, ease: 'power3' }), yTo = gsap.quickTo(b, 'y', { duration: 0.6, ease: 'power3' });
-    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); xTo((e.clientX - r.left - r.width / 2) * 0.25); yTo((e.clientY - r.top - r.height / 2) * 0.35); });
-    b.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
-  });
-  $$('[data-tilt]').forEach(c => {
-    const img = $('.detail-img', c);
-    c.addEventListener('pointermove', e => {
-      const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-      img.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
+/* ------------------------------ gentle reveals ------------------------------
+   The only motion on the page: things fade up once as they arrive. Nothing
+   moves on its own, nothing sits over text. Everything is visible without JS
+   or under reduced motion. */
+(function reveals() {
+  if (reduced || !('IntersectionObserver' in window)) return;
+  const els = $$('.sec-head, .pcard, .more-band, .occ, .steps li, .split-copy, .split-photos, .form-wrap, .review, .insta-grid a, .deliv, .contact, .care-list, .faq-list');
+  root.classList.add('rv-on');
+  const ob = new IntersectionObserver(entries => {
+    let n = 0;
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      en.target.style.transitionDelay = Math.min(n++, 5) * 70 + 'ms';
+      en.target.classList.add('rv-in');
+      ob.unobserve(en.target);
     });
-    c.addEventListener('pointerleave', () => { img.style.transform = ''; });
-  });
-}
-
-/* ------------------------------ INTRO + MOTION ------------------------------ */
-const intro = $('#intro');
-function hideIntro() { if (intro) intro.remove(); }
-
-if (!motion) {
-  hideIntro();
-  if (!reduced) {
-    // GSAP did not load: everything is simply there, nothing is hidden
-    $$('.statement-text').forEach(el => { el.style.opacity = 1; });
-  }
-  splitWords();
-  $$('.statement-text .w').forEach(w => { w.style.opacity = 1; });
-} else {
-  splitWords();
-  runMotion();
-}
-
-function splitWords() {
-  $$('.statement-text').forEach(el => {
-    el.innerHTML = el.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
-  });
-  if (!motion) return;
-  $$('[data-split]').forEach(el => {
-    const walk = node => {
-      Array.from(node.childNodes).forEach(n => {
-        if (n.nodeType === 3) {
-          const frag = document.createDocumentFragment();
-          n.textContent.split(/(\s+)/).forEach(part => {
-            if (!part) return;
-            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(' '));
-            else { const w = document.createElement('span'); w.className = 'w'; w.innerHTML = `<span>${esc(part)}</span>`; frag.appendChild(w); }
-          });
-          n.replaceWith(frag);
-        } else if (n.nodeType === 1) walk(n);
-      });
-    };
-    walk(el);
-  });
-}
-
-function runMotion() {
-  /* ---------- intro: a fixed beat, not a wait for load ---------- */
-  const seen = (() => { try { return sessionStorage.getItem('tbb-intro'); } catch (e) { return null; } })();
-  try { sessionStorage.setItem('tbb-intro', '1'); } catch (e) { /* ignore */ }
-  const MIN = seen ? 500 : 1900, t0 = performance.now();
-  const heroArch = $('.hero-arch');
-  gsap.set('.hero-wrap', { xPercent: -50, yPercent: -50, x: 0, y: 0 });
-  gsap.set('.hero-mirror', { xPercent: -62, yPercent: -50, x: 0, y: 0 });
-  gsap.set('.hero-title .ln > span', { yPercent: 112 });
-  gsap.set(['.hero .eyebrow', '.hero-sub', '.hero-cta', '.hero-facts'], { opacity: 0, y: 24 });
-  gsap.set(heroArch, { opacity: 0, y: 70, scale: 0.94 });
-  gsap.set('.hero-mirror', { opacity: 0, scale: 0.85 });
-  gsap.set('.hero-wrap path', { scale: 0.15, opacity: 0, svgOrigin: '0 0' });
-  gsap.set('.hero-tag', { opacity: 0, y: 18, scale: 0.9 });
-  gsap.set(heroRibbon, { strokeDasharray: 1, strokeDashoffset: 1 });
-
-  if (intro) {
-    gsap.to('.intro-ring circle', { strokeDashoffset: 0, duration: seen ? 0.5 : 1.4, ease: 'power2.inOut' });
-    gsap.fromTo('.intro-badge img', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: 'expo.out' });
-    gsap.to('.intro-line', { opacity: 1, duration: 0.8, delay: 0.5 });
-  }
-  let done = false;
-  const finish = () => {
-    if (done) return; done = true;
-    const tl = gsap.timeline();
-    if (intro) tl.to(intro, { yPercent: -100, duration: 1, ease: 'power4.inOut', onComplete: hideIntro });
-    tl.add(heroIn(), intro ? '-=0.45' : 0);
-  };
-  const wait = Math.max(0, MIN - (performance.now() - t0));
-  setTimeout(finish, wait);
-  setTimeout(finish, 4600);
-
-  function heroIn() {
-    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-    tl.to('.hero-title .ln > span', { yPercent: 0, duration: 1.4, stagger: 0.1 }, 0)
-      .to('.hero .eyebrow', { opacity: 1, y: 0, duration: 1 }, 0.1)
-      .to(['.hero-sub', '.hero-cta', '.hero-facts'], { opacity: 1, y: 0, duration: 1.1, stagger: 0.1 }, 0.35)
-      .to('.hero-mirror', { opacity: 1, scale: 1, duration: 1.8 }, 0.1)
-      .to('.hero-wrap .wrap-back path', { scale: 1, opacity: 0.55, duration: 1.8, stagger: { each: 0.035, from: 'random' } }, 0.15)
-      .to('.hero-wrap .wrap-front path', { scale: 1, opacity: 0.85, duration: 1.6, stagger: { each: 0.04, from: 'random' } }, 0.3)
-      .to(heroArch, { opacity: 1, y: 0, scale: 1, duration: 1.6 }, 0.25)
-      .to('.hero-tag', { opacity: 1, y: 0, scale: 1, duration: 1, stagger: 0.15, ease: 'back.out(1.6)' }, 0.9)
-      .to(heroRibbon, { strokeDashoffset: 0, duration: 2.2, ease: 'power2.inOut' }, 0.3)
-      .add(() => { gsap.to('.tag-a', { y: -10, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' }); gsap.to('.tag-b', { y: 9, duration: 3.1, yoyo: true, repeat: -1, ease: 'sine.inOut' }); });
-    return tl;
-  }
-
-  const mm = gsap.matchMedia();
-
-  /* ---------- hero: the arch opens up to fill the screen (desktop) ---------- */
-  mm.add('(min-width: 981px)', () => {
-    const hero = $('.hero'), arch = $('.hero-arch'), visual = $('.hero-visual');
-    const ph = document.createElement('div');
-    ph.className = 'hero-arch'; ph.style.visibility = 'hidden'; ph.setAttribute('aria-hidden', 'true');
-    visual.insertBefore(ph, arch);
-    hero.appendChild(arch);
-    arch.style.position = 'absolute'; arch.style.margin = '0'; arch.style.zIndex = '4';
-    const shade = document.createElement('div');
-    shade.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,rgba(46,10,20,.15),rgba(46,10,20,.55));opacity:0;pointer-events:none';
-    arch.appendChild(shade);
-    const home = () => { const h = hero.getBoundingClientRect(), p = ph.getBoundingClientRect(); return { left: p.left - h.left, top: p.top - h.top, width: p.width, height: p.height }; };
-    const place = () => gsap.set(arch, home());
-    place();
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: hero, start: 'top top', end: '+=120%', pin: true, scrub: 0.8, invalidateOnRefresh: true, onRefreshInit: () => { gsap.set(arch, { clearProps: 'left,top,width,height,borderRadius' }); place(); } }
-    });
-    tl.to('.hero-copy', { y: -120, opacity: 0, ease: 'none', duration: 0.45 }, 0)
-      .to('.hero-tag', { autoAlpha: 0, ease: 'none', duration: 0.3 }, 0)
-      .to('.hero-wrap', { scale: 1.9, rotate: 28, opacity: 0, ease: 'none', duration: 0.7 }, 0)
-      .to('.hero-mirror', { scale: 1.5, opacity: 0, ease: 'none', duration: 0.6 }, 0)
-      .to('.hero-ribbon', { opacity: 0, y: 60, ease: 'none', duration: 0.4 }, 0)
-      .to('.scroll-cue', { opacity: 0, duration: 0.1 }, 0)
-      .fromTo(arch, { left: () => home().left, top: () => home().top, width: () => home().width, height: () => home().height, borderRadius: '400px 400px 26px 26px' },
-        { left: 0, top: 0, width: () => hero.clientWidth, height: () => innerHeight, borderRadius: '0px 0px 0px 0px', ease: 'power2.inOut', duration: 0.85 }, 0.05)
-      .fromTo($('img', arch), { scale: 1 }, { scale: 1.08, ease: 'none', duration: 1 }, 0)
-      .to(shade, { opacity: 1, ease: 'none', duration: 0.35 }, 0.6)
-      .fromTo('.hero-reveal-copy', { opacity: 0, y: 40 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.68);
-    return () => {
-      visual.insertBefore(arch, ph); ph.remove(); shade.remove();
-      arch.style.position = arch.style.margin = arch.style.zIndex = '';
-      gsap.set(arch, { clearProps: 'left,top,width,height,borderRadius' });
-    };
-  });
-
-  /* ---------- occasions: horizontal ride on desktop ----------
-     Pins are created first, in page order, so every trigger below them
-     is measured with their extra scroll length already in place. */
-  mm.add('(min-width: 981px)', () => {
-    const track = $('.moments-track');
-    const dist = () => Math.max(0, track.scrollWidth - (innerWidth - track.getBoundingClientRect().left) + 40);
-    const tween = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '.moments', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.6, invalidateOnRefresh: true } });
-    $$('.moment figure img').forEach(img => gsap.fromTo(img, { xPercent: -5 }, { xPercent: 5, ease: 'none', scrollTrigger: { trigger: img.closest('.moment'), containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } }));
-  });
-
-  /* ---------- mobile hero: gentle parallax only ---------- */
-  mm.add('(max-width: 980px)', () => {
-    gsap.to('.hero-wrap', { rotate: 30, scale: 1.15, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  });
-
-  /* ---------- statement: words fill in as you read ---------- */
-  gsap.to('.statement-text .w', { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: { trigger: '.statement-text', start: 'top 80%', end: 'bottom 45%', scrub: true } });
-
-  /* ---------- counters ---------- */
-  $$('[data-count-to]').forEach(el => {
-    const to = Number(el.dataset.countTo), o = { v: 0 };
-    ST.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => gsap.to(o, { v: to, duration: 2, ease: 'power2.out', onUpdate: () => { el.textContent = Math.round(o.v).toLocaleString('en-GB'); } }) });
-  });
-
-  /* ---------- split headings ---------- */
-  $$('[data-split]').forEach(h => {
-    gsap.from($$('.w > span', h), { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: 0.06, scrollTrigger: { trigger: h, start: 'top 88%' } });
-  });
-
-  /* ---------- general reveals ----------
-     Never hand GSAP a <form> directly: it has a .length, so GSAP treats it
-     as a list and animates its inputs instead. Reveal a wrapper. */
-  const rev = $$('.sec-head .sec-sub, .filters, .pcard, .detail, .steps li, .how-side, .bridal-copy, .bespoke-side, .form-wrap, .g-card, .ig, .deliv, .care, .faq-list details, .insta-cta, .shop-note, .stats > div, .moments-head');
-  rev.forEach(el => el.setAttribute('data-reveal', ''));
-  /* one trigger per element; things that arrive in the same frame share a
-     small stagger so a row of cards still lands in sequence */
-  let queued = 0, qFrame = 0;
-  const stagger = () => { if (!qFrame) qFrame = requestAnimationFrame(() => { queued = 0; qFrame = 0; }); return Math.min(queued++, 6) * 0.08; };
-  rev.forEach(el => ST.create({
-    trigger: el, start: 'top 92%', once: true,
-    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', delay: stagger(), overwrite: 'auto' })
-  }));
-
-  /* ---------- product images: a soft arch wipe as they come in ---------- */
-  $$('.pcard-img').forEach(el => ST.create({ trigger: el, start: 'top 94%', once: true, onEnter: () => gsap.fromTo(el, { clipPath: 'inset(18% 8% 0% 8% round 46% 46% 18px 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0% 0% 0px 0px)', duration: 1.4, ease: 'expo.out', clearProps: 'clipPath' }) }));
-
-  /* ---------- how-to ribbon draws down the steps ---------- */
-  gsap.set(stepsRibbon, { strokeDasharray: 1, strokeDashoffset: 1 });
-  gsap.to(stepsRibbon, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.steps', start: 'top 70%', end: 'bottom 60%', scrub: true } });
-  $$('.step-n').forEach(n => gsap.from(n, { scale: 0, duration: 0.8, ease: 'back.out(2)', scrollTrigger: { trigger: n, start: 'top 80%' } }));
-
-  /* ---------- parallax ---------- */
-  gsap.to('.bridal-bg', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.bridal', start: 'top bottom', end: 'bottom top', scrub: true } });
-  gsap.from('.bridal-stack .b1', { yPercent: 20, rotate: -10, ease: 'none', scrollTrigger: { trigger: '.bridal', start: 'top bottom', end: 'center center', scrub: true } });
-  gsap.from('.bridal-stack .b2', { yPercent: 35, rotate: 12, ease: 'none', scrollTrigger: { trigger: '.bridal', start: 'top bottom', end: 'center center', scrub: true } });
-  gsap.from('.bespoke-photo', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.bespoke', start: 'top bottom', end: 'bottom top', scrub: true } });
-  $$('.ig img').forEach((img, i) => gsap.fromTo(img, { yPercent: -4 - (i % 3) * 2 }, { yPercent: 4 + (i % 3) * 2, scale: 1.1, ease: 'none', scrollTrigger: { trigger: img.parentNode, start: 'top bottom', end: 'bottom top', scrub: true } }));
-  gsap.from('.ftr-big', { yPercent: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ftr', start: 'top bottom', end: 'center bottom', scrub: true } });
-  gsap.from('.cta h2', { scale: 0.92, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.cta', start: 'top 85%', end: 'center center', scrub: true } });
-
-  /* fonts change heights; re-measure once they land */
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ST.refresh());
-  addEventListener('load', () => ST.refresh());
-}
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(el => { el.classList.add('rv'); ob.observe(el); });
+  setTimeout(() => els.forEach(el => el.classList.add('rv-in')), 6000);   // safety net
+})();
 })();

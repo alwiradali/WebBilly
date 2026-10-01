@@ -1501,3 +1501,18 @@ The portfolio's head, icon sprite, header, drawer and footer were copied from
 the main page — change both if either changes. It shares `style.css`
 and reads the basket count from the same localStorage key. Same noindex
 headers as the main page.
+
+**Redesigned 1 Oct 2026 to the Strictly Sprinkles pattern** after the owner
+called the first version messy and hard to read. What changed, and why:
+everything that moved on its own or sat over text is gone — loader, custom
+cursor, falling-petal canvases, wrap-paper SVG, ribbon, mirror ring, floating
+price tags, pinned hero expansion, sideways-pinned occasions, the word-fill
+statement, marquee, floating message bubble. GSAP and ScrollTrigger are no
+longer loaded; Lenis is the only library. One solid header that never hides.
+Every section opens the same way (`.sec-head`: label with a rule, Bodoni 500
+title with one italic phrase, one line of copy beside it); content sits in
+white `.card`s on cream / blush (`.sec.tint`) / wine (`.sec.dark`). Body copy
+is #4a3539 on cream, muted copy #6d5a5e — both well over 4.5:1. The only
+motion is `.rv` fade-up via IntersectionObserver, added by JS so nothing is
+hidden without it, with a 6s safety net. Keep it this way: if something new
+is added, it goes in a card under a `.sec-head`, not floating on top.

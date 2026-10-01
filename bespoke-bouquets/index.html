@@ -21,7 +21,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Manrope:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/bespoke/logo.png">
 <link rel="preload" as="image" href="/assets/bespoke/photos/skirt-bouquet.webp">
 <link rel="stylesheet" href="/bespoke-bouquets/style.css">
@@ -89,36 +89,24 @@
   </defs>
 </svg>
 
-<!-- ============================== INTRO ============================== -->
-<div class="intro" id="intro" aria-hidden="true">
-  <div class="intro-badge">
-    <svg class="intro-ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="96"/></svg>
-    <img src="/assets/bespoke/logo.png" alt="" width="844" height="844">
-  </div>
-  <p class="intro-line">hand-tied with love</p>
-</div>
-
-<div class="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"><em>View</em></span></div>
-
-<!-- ============================== HEADER ============================== -->
 <header class="hdr" id="hdr">
-  <a href="#top" class="hdr-logo" aria-label="The Bespoke Bouquets — back to top">
-    <img src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844">
+  <a href="#top" class="brand" aria-label="The Bespoke Bouquets — back to top">
+    <img src="/assets/bespoke/logo.png" alt="" width="844" height="844">
+    <span>The Bespoke<br>Bouquets</span>
   </a>
   <nav class="hdr-nav" aria-label="Main">
     <a href="#shop">Shop</a>
-    <a href="#moments">Occasions</a>
     <a href="/bespoke-bouquets/portfolio">Portfolio</a>
+    <a href="#how">Ordering</a>
     <a href="#bridal">Bridal</a>
-    <a href="#bespoke">Bespoke</a>
     <a href="#reviews">Reviews</a>
     <a href="#delivery">Delivery</a>
   </nav>
   <div class="hdr-actions">
-    <a class="hdr-ig" href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
     <button class="basket-btn" type="button" data-open-basket aria-label="Open basket">
       <svg><use href="#i-bag"/></svg><span class="basket-count" data-count>0</span>
     </button>
+    <a class="btn btn-satin btn-sm hdr-cta" href="#bespoke">Enquire</a>
     <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
   </div>
 </header>
@@ -126,17 +114,16 @@
 <div class="drawer" id="drawer" hidden>
   <nav aria-label="Mobile">
     <a href="#shop">Shop</a>
-    <a href="#moments">Occasions</a>
     <a href="/bespoke-bouquets/portfolio">Portfolio</a>
     <a href="#how">How to order</a>
     <a href="#bridal">Bridal &amp; mehndi</a>
     <a href="#bespoke">Bespoke enquiry</a>
     <a href="#reviews">Reviews</a>
     <a href="#delivery">Collection &amp; delivery</a>
-    <a href="#aftercare">Aftercare</a>
+    <a href="#care">Aftercare &amp; FAQs</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn btn-satin" href="#shop">Shop bouquets</a>
+    <a class="btn btn-satin" href="#bespoke">Make an enquiry</a>
     <div class="drawer-social">
       <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
       <a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tiktok"/></svg></a>
@@ -146,209 +133,130 @@
 
 <main id="top">
 
-<!-- ============================== HERO ============================== -->
-<section class="hero" id="hero">
-  <canvas class="petals" data-petals="26" aria-hidden="true"></canvas>
-  <div class="hero-stage">
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="eyebrow"><span class="dot"></span>Florist · Solihull &amp; Birmingham</p>
-      <h1 class="hero-title">
-        <span class="ln"><span>Bouquets</span></span>
-        <span class="ln"><span>made to be</span></span>
-        <span class="ln"><span><em>remembered.</em></span></span>
-      </h1>
-      <p class="hero-sub">Fresh flowers, hand-tied to order — wrapped, ribboned and personalised right down to the very last pearl.</p>
-      <div class="hero-cta">
-        <a href="#shop" class="btn btn-satin magnetic"><span>Shop the bouquets</span><svg><use href="#i-arrow"/></svg></a>
-        <a href="#bespoke" class="btn btn-ghost magnetic"><span>Design something bespoke</span></a>
+      <p class="kicker">Florist · Solihull &amp; Birmingham</p>
+      <h1>Fresh bouquets, <em>made to be remembered</em></h1>
+      <p class="lead">Hand-tied to order for birthdays, anniversaries, mehndis and every “just because” — wrapped, ribboned and personalised right down to the last pearl.</p>
+      <div class="btn-row">
+        <a href="#shop" class="btn btn-satin">Shop bouquets <svg><use href="#i-arrow"/></svg></a>
+        <a href="/bespoke-bouquets/portfolio" class="btn btn-ghost">See the portfolio</a>
       </div>
-      <ul class="hero-facts">
+      <ul class="facts">
         <li><svg><use href="#i-pin"/></svg>Collection from B92</li>
         <li><svg><use href="#i-van"/></svg>Local delivery</li>
         <li><svg><use href="#i-calendar"/></svg>5 days’ notice</li>
       </ul>
     </div>
+    <figure class="hero-photo">
+      <img src="/assets/bespoke/photos/skirt-bouquet.webp" alt="Red and blush roses in layered pink wrap with an oversized crimson satin bow" width="1144" height="2063" fetchpriority="high">
+      <figcaption><b>The Skirt Bouquet</b><span>£145</span></figcaption>
+    </figure>
+  </div>
+</section>
 
-    <div class="hero-visual" aria-hidden="true">
-      <svg class="hero-wrap" viewBox="-300 -300 600 600">
-        <defs>
-          <linearGradient id="wrapA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd3db"/><stop offset="1" stop-color="#f6a9b8"/></linearGradient>
-          <linearGradient id="wrapB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1f3"/><stop offset="1" stop-color="#f9c7d1"/></linearGradient>
-        </defs>
-        <g class="wrap-back"></g>
-        <g class="wrap-front"></g>
-      </svg>
-      <div class="hero-mirror"></div>
-      <div class="hero-arch" data-cursor="view">
-        <img src="/assets/bespoke/photos/skirt-bouquet.webp" alt="" width="1144" height="2063">
+<!-- SHOP -->
+<section class="sec" id="shop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">The shop</p>
+        <h2>Order <em>online</em></h2>
       </div>
-      <div class="hero-tag tag-a"><span class="script">The</span> Skirt Bouquet <b>£145</b></div>
-      <div class="hero-tag tag-b"><svg><use href="#i-star"/></svg> Made to order</div>
+      <p>Choose a bouquet, pick the colours and wording, then secure the date with a 50% deposit. Collection from B92 or local delivery.</p>
     </div>
-  </div>
-  <div class="hero-reveal-copy" aria-hidden="true">
-    <p class="script">made by hand</p>
-    <p class="big">Made to order. Made <em>for them.</em></p>
-  </div>
-  <svg class="hero-ribbon" viewBox="0 0 1440 260" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M-40 190 C 220 40, 420 250, 700 140 S 1180 30, 1480 120"/>
-  </svg>
-  <a href="#statement" class="scroll-cue" aria-label="Scroll down"><span></span></a>
-</section>
-
-<!-- ============================== MARQUEE ============================== -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <span>Skirt bouquets</span><i>✿</i><span>Hatbox flowers</span><i>✿</i><span>Balloon bouquets</span><i>✿</i><span>100 red roses</span><i>✿</i><span>Pearl lettering</span><i>✿</i><span>Money bouquets</span><i>✿</i><span>Beauty hampers</span><i>✿</i><span>Bridal gajre</span><i>✿</i>
-  </div>
-</div>
-
-<!-- ============================== STATEMENT ============================== -->
-<section class="statement" id="statement">
-  <p class="script">the bespoke way</p>
-  <p class="statement-text" data-words>Every bouquet begins with a moment — a birthday, a mehndi, a “just because”. The colours, the wrap, the ribbon and every little detail are chosen around it, so no two are ever quite the same.</p>
-  <div class="stats">
-    <div><b data-count-to="2861">0</b><span>followers on Instagram</span></div>
-    <div><b data-count-to="100">0</b><span>roses in the biggest statement</span></div>
-    <div><b>B92</b><span>collection, Solihull</span></div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+    <a class="more-band" href="/bespoke-bouquets/portfolio">
+      <div>
+        <h3>Something else in mind?</h3>
+        <p>Lettered roses, hatboxes, balloon and money bouquets, hampers and bridal florals — all in the portfolio, and all made to order.</p>
+      </div>
+      <span class="btn btn-ghost">See the portfolio <svg><use href="#i-arrow"/></svg></span>
+    </a>
   </div>
 </section>
 
-<!-- ============================== SHOP ============================== -->
-<section class="shop" id="shop">
-  <div class="sec-head">
-    <p class="eyebrow"><span class="dot"></span>Order online</p>
-    <h2 class="sec-title" data-split>Pick a favourite, <em>make it theirs.</em></h2>
-    <p class="sec-sub">Choose a design, add colours and wording, then secure the date with a 50% deposit. Something different in mind? Browse the portfolio or send a bespoke enquiry.</p>
-  </div>
-  <div class="grid" id="grid" aria-live="polite"></div>
-  <a class="pf-teaser" href="/bespoke-bouquets/portfolio">
-    <span class="pf-stack" aria-hidden="true">
-      <img src="/assets/bespoke/photos/hundred-roses.webp" alt="" width="1200" height="1494" loading="lazy">
-      <img src="/assets/bespoke/photos/balloon-hatbox.webp" alt="" width="1200" height="1781" loading="lazy">
-      <img src="/assets/bespoke/photos/money-bouquet.webp" alt="" width="1200" height="1493" loading="lazy">
-    </span>
-    <span class="pf-copy"><span class="eyebrow"><span class="dot"></span>Portfolio</span><b>Lettered roses, hatboxes, money bouquets, hampers, bridal &amp; more</b><span class="link">See the full portfolio <svg><use href="#i-arrow"/></svg></span></span>
-  </a>
-  <p class="shop-note"><svg><use href="#i-petal"/></svg>Seasonal flowers may be swapped for similar blooms, so every bouquet looks its freshest.</p>
-</section>
-
-<!-- ============================== MOMENTS (horizontal) ============================== -->
-<section class="moments" id="moments">
-  <div class="moments-pin">
-    <div class="moments-head">
-      <p class="eyebrow"><span class="dot"></span>Occasions</p>
-      <h2 class="sec-title">Made for <em>every moment.</em></h2>
-      <p class="sec-sub">Drag, scroll or swipe through.</p>
+<!-- OCCASIONS -->
+<section class="sec tint" id="occasions">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Occasions</p>
+        <h2>Made for <em>every moment</em></h2>
+      </div>
+      <p>A few favourites from the portfolio. Tap one to see more like it.</p>
     </div>
-    <div class="moments-track" data-lenis-prevent-touch>
-      <article class="moment">
-        <figure><img src="/assets/bespoke/photos/balloon-hatbox.webp" alt="Red roses in a white hatbox under a clear balloon reading Happy Birthday Mum" width="1200" height="1781" loading="lazy"></figure>
-        <div class="moment-copy"><span class="num">01</span><h3>Birthdays</h3><p>Balloons, banners and ages spelled out in pearls.</p><a class="link" href="/bespoke-bouquets/portfolio?show=hatbox">See birthday picks <svg><use href="#i-arrow"/></svg></a></div>
-      </article>
-      <article class="moment">
-        <figure><img src="/assets/bespoke/photos/hundred-roses.webp" alt="One hundred red roses in black wrap, lettered Wifey in pearls" width="1200" height="1494" loading="lazy"></figure>
-        <div class="moment-copy"><span class="num">02</span><h3>Love</h3><p>One hundred roses and a name that means everything.</p><a class="link" href="/bespoke-bouquets/portfolio?show=personalised">See lettered roses <svg><use href="#i-arrow"/></svg></a></div>
-      </article>
-      <article class="moment">
-        <figure><img src="/assets/bespoke/photos/milestone-250k.webp" alt="Red and pink roses with 250K in pearls, in front of balloon numbers" width="1200" height="1494" loading="lazy"></figure>
-        <div class="moment-copy"><span class="num">03</span><h3>Milestones</h3><p>From 22 to 250K — every number deserves flowers.</p><a class="link" href="/bespoke-bouquets/portfolio?show=personalised">See milestone bouquets <svg><use href="#i-arrow"/></svg></a></div>
-      </article>
-      <article class="moment">
-        <figure><img src="/assets/bespoke/photos/money-bouquet.webp" alt="Bank notes folded into petals around ivory roses and gypsophila" width="1200" height="1493" loading="lazy"></figure>
-        <div class="moment-copy"><span class="num">04</span><h3>Gifting</h3><p>Bouquets with a little something extra tucked inside.</p><a class="link" href="/bespoke-bouquets/portfolio?show=gifts">See gifts &amp; hampers <svg><use href="#i-arrow"/></svg></a></div>
-      </article>
-      <article class="moment">
-        <figure><img src="/assets/bespoke/photos/bridal-gajre.webp" alt="A bride's hand in a white rose gajra, held by the groom" width="1200" height="1472" loading="lazy"></figure>
-        <div class="moment-copy"><span class="num">05</span><h3>Weddings &amp; mehndi</h3><p>Gajre, bridal bouquets and florals for the big day.</p><a class="link" href="/bespoke-bouquets/portfolio?show=bridal">See bridal <svg><use href="#i-arrow"/></svg></a></div>
-      </article>
+    <div class="occ-grid">
+      <a class="occ" href="/bespoke-bouquets/portfolio?show=hatbox"><img src="/assets/bespoke/photos/balloon-hatbox.webp" alt="Red roses in a hatbox under a personalised balloon" width="1200" height="1781" loading="lazy"><div><h3>Birthdays</h3><p>Balloons, banners and ages in pearls</p></div></a>
+      <a class="occ" href="/bespoke-bouquets/portfolio?show=personalised"><img src="/assets/bespoke/photos/hundred-roses.webp" alt="One hundred red roses lettered in pearls" width="1200" height="1494" loading="lazy"><div><h3>Love</h3><p>100 roses and a name that means everything</p></div></a>
+      <a class="occ" href="/bespoke-bouquets/portfolio?show=gifts"><img src="/assets/bespoke/photos/money-bouquet.webp" alt="Bank notes folded into petals around ivory roses" width="1200" height="1493" loading="lazy"><div><h3>Gifting</h3><p>Money bouquets and hampers</p></div></a>
+      <a class="occ" href="/bespoke-bouquets/portfolio?show=bridal"><img src="/assets/bespoke/photos/bridal-gajre.webp" alt="A white rose gajra on a bride’s wrist" width="1200" height="1472" loading="lazy"><div><h3>Weddings &amp; mehndi</h3><p>Gajre and bridal bouquets</p></div></a>
     </div>
   </div>
 </section>
 
-<!-- ============================== THE DETAILS ============================== -->
-<section class="details">
-  <div class="sec-head center">
-    <p class="eyebrow"><span class="dot"></span>The little things</p>
-    <h2 class="sec-title" data-split>Personal, <em>down to the pearl.</em></h2>
-  </div>
-  <div class="details-grid">
-    <figure class="detail" data-tilt>
-      <div class="detail-img"><img src="/assets/bespoke/photos/initials-vp.webp" alt="Initials V and P in pearls on red roses" width="1200" height="1378" loading="lazy" style="object-position:72% 60%"></div>
-      <figcaption><h3>Pearl lettering</h3><p>Names, initials, numbers — even Arabic script.</p></figcaption>
-    </figure>
-    <figure class="detail" data-tilt>
-      <div class="detail-img"><img src="/assets/bespoke/photos/skirt-bouquet-wide.webp" alt="An oversized crimson satin bow on a pink skirt bouquet" width="1200" height="1742" loading="lazy" style="object-position:50% 70%"></div>
-      <figcaption><h3>Satin bows</h3><p>Oversized, statement, in any colour.</p></figcaption>
-    </figure>
-    <figure class="detail" data-tilt>
-      <div class="detail-img"><img src="/assets/bespoke/photos/birthday-blush.webp" alt="A personalised birthday banner across pink carnations" width="434" height="702" loading="lazy" style="object-position:50% 30%"></div>
-      <figcaption><h3>Banners &amp; cards</h3><p>A message they’ll keep long after.</p></figcaption>
-    </figure>
-    <figure class="detail" data-tilt>
-      <div class="detail-img"><img src="/assets/bespoke/photos/midnight-blue.webp" alt="Blue and white roses in black wrap edged with pearls" width="1200" height="1494" loading="lazy" style="object-position:50% 40%"></div>
-      <figcaption><h3>Any colour wrap</h3><p>Blush, white, black, ivory — or something new.</p></figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- ============================== HOW TO ORDER ============================== -->
-<section class="how" id="how">
-  <div class="how-inner">
-    <div class="how-side">
-      <p class="eyebrow"><span class="dot"></span>How to order</p>
-      <h2 class="sec-title">Five easy steps <em>to the perfect bouquet.</em></h2>
-      <p class="sec-sub">Everything needed to place an order — straight from the order guide.</p>
-      <a href="#shop" class="btn btn-satin magnetic"><span>Start an order</span><svg><use href="#i-arrow"/></svg></a>
+<!-- HOW TO ORDER -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Ordering</p>
+        <h2>How it <em>works</em></h2>
+      </div>
+      <p>Everything needed to place an order, straight from the order guide.</p>
     </div>
     <ol class="steps">
-      <svg class="steps-ribbon" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M20 0 C 38 120, 2 220, 20 330 S 38 560, 20 670 S 2 880, 20 1000"/></svg>
-      <li><span class="step-n">1</span><div><h3>Order 5 days ahead</h3><p>Orders are placed at least five days before they’re needed.</p></div></li>
-      <li><span class="step-n">2</span><div><h3>Share the date &amp; time</h3><p>Include the date and time the bouquet is needed.</p></div></li>
-      <li><span class="step-n">3</span><div><h3>Make it personal</h3><p>Size, colouring and wrapping can all be personalised — inspiration pictures are always welcome.</p></div></li>
-      <li><span class="step-n">4</span><div><h3>Secure it with a deposit</h3><p>A non-refundable 50% deposit confirms the order.</p></div></li>
-      <li><span class="step-n">5</span><div><h3>Collect or have it delivered</h3><p>Collection from B92, or local delivery across Birmingham &amp; Solihull (subject to conditions).</p></div></li>
+      <li><span>1</span><h3>Order 5 days ahead</h3><p>Orders are placed at least five days before they’re needed.</p></li>
+      <li><span>2</span><h3>Share the date &amp; time</h3><p>Include the date and time the bouquet is needed.</p></li>
+      <li><span>3</span><h3>Make it personal</h3><p>Size, colours and wrapping can all be personalised. Inspiration pictures are welcome.</p></li>
+      <li><span>4</span><h3>Pay the deposit</h3><p>A non-refundable 50% deposit confirms the order.</p></li>
+      <li><span>5</span><h3>Collect or delivery</h3><p>Collection from B92, or local delivery across Birmingham &amp; Solihull (subject to conditions).</p></li>
     </ol>
+    <p class="note"><svg><use href="#i-petal"/></svg>Seasonal flowers may be swapped for similar blooms, so every bouquet looks its freshest.</p>
   </div>
 </section>
 
-<!-- ============================== BRIDAL ============================== -->
-<section class="bridal" id="bridal">
-  <div class="bridal-bg"><img src="/assets/bespoke/photos/bridal-gajre.webp" alt="" width="1200" height="1472" loading="lazy"></div>
-  <div class="bridal-inner">
-    <div class="bridal-copy">
-      <p class="eyebrow light"><span class="dot"></span>Weddings &amp; mehndi</p>
-      <h2 class="sec-title light">For the big day, <em>and every moment around it.</em></h2>
+<!-- BRIDAL -->
+<section class="sec dark" id="bridal">
+  <div class="wrap split">
+    <div class="split-photos">
+      <img src="/assets/bespoke/photos/bridal-gajre.webp" alt="A bride’s hand in a white rose gajra" width="1200" height="1472" loading="lazy">
+      <img src="/assets/bespoke/photos/bridal-calla.webp" alt="Bridal bouquet of white calla lilies with plum flowers" width="426" height="568" loading="lazy">
+    </div>
+    <div class="split-copy">
+      <p class="label">Weddings &amp; mehndi</p>
+      <h2>For the big day, <em>and every moment around it</em></h2>
       <p>Fresh rose gajre, bridal bouquets and wedding florals — designed around the outfit, the colours and the celebration.</p>
-      <ul class="bridal-list">
-        <li>Gajre &amp; wrist corsages</li>
-        <li>Bridal &amp; bridesmaid bouquets</li>
-        <li>Mehndi &amp; nikkah florals</li>
+      <ul class="ticks">
+        <li><svg><use href="#i-check"/></svg>Gajre &amp; wrist corsages</li>
+        <li><svg><use href="#i-check"/></svg>Bridal &amp; bridesmaid bouquets</li>
+        <li><svg><use href="#i-check"/></svg>Mehndi &amp; nikkah florals</li>
       </ul>
-      <button type="button" class="btn btn-pearl magnetic" data-enquire="Bridal / mehndi florals"><span>Start a bridal enquiry</span><svg><use href="#i-arrow"/></svg></button>
-      <p class="credit">Photography: @shumaelaphotography</p>
-    </div>
-    <div class="bridal-stack">
-      <figure class="b1"><img src="/assets/bespoke/photos/bridal-calla.webp" alt="Bridal bouquet of white calla lilies and plum flowers" width="426" height="568" loading="lazy"></figure>
-      <figure class="b2"><img src="/assets/bespoke/photos/bridal-henna.webp" alt="Hennaed hands resting on a calla lily bouquet" width="426" height="568" loading="lazy"></figure>
+      <div class="btn-row">
+        <button type="button" class="btn btn-pearl" data-enquire="Bridal / mehndi florals">Start a bridal enquiry <svg><use href="#i-arrow"/></svg></button>
+        <a class="btn btn-line" href="/bespoke-bouquets/portfolio?show=bridal">See bridal work</a>
+      </div>
+      <p class="credit">Gajre photography: @shumaelaphotography</p>
     </div>
   </div>
 </section>
 
-<!-- ============================== BESPOKE ENQUIRY ============================== -->
-<section class="bespoke" id="bespoke">
-  <div class="bespoke-inner">
-    <div class="bespoke-side">
-      <p class="eyebrow"><span class="dot"></span>Bespoke</p>
-      <h2 class="sec-title">Something else <em>in mind?</em></h2>
-      <p class="sec-sub">Describe the idea — the colours, the flowers, a budget, a picture from Pinterest — and a personal quote comes straight back.</p>
-      <figure class="bespoke-photo"><img src="/assets/bespoke/photos/hatbox-blooms.webp" alt="Roses, tulips and carnations in a white hatbox" width="1200" height="1716" loading="lazy"></figure>
+<!-- BESPOKE ENQUIRY -->
+<section class="sec" id="bespoke">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Bespoke</p>
+        <h2>Tell us what <em>you have in mind</em></h2>
+      </div>
+      <p>The colours, the flowers, a budget, a picture from Pinterest — share the idea and a personal quote comes back.</p>
     </div>
-
     <div class="form-wrap">
     <form class="form card" id="enquiry" novalidate>
-      <fieldset>
-        <legend>The occasion</legend>
+      <div class="step-block">
+        <h3><span>1</span>The occasion</h3>
         <div class="chips" data-name="occasion">
           <button type="button" class="chip">Birthday</button>
           <button type="button" class="chip">Anniversary</button>
@@ -359,10 +267,10 @@
           <button type="button" class="chip">Just because</button>
           <button type="button" class="chip">Something else</button>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Colours</legend>
+      <div class="step-block">
+        <h3><span>2</span>Colours &amp; style</h3>
         <div class="swatches" data-name="colours">
           <button type="button" class="sw" style="--c:#f7c3cd" aria-label="Blush pink" title="Blush pink"></button>
           <button type="button" class="sw" style="--c:#b3123a" aria-label="Red" title="Red"></button>
@@ -374,200 +282,203 @@
           <button type="button" class="sw sw-mix" aria-label="Florist’s choice" title="Florist’s choice"></button>
         </div>
         <p class="hint" data-swatch-label>Tap all that apply.</p>
-      </fieldset>
-
-      <div class="row">
-        <label class="field"><span>Design idea</span>
-          <select name="style">
-            <option value="">Choose a starting point…</option>
-            <option>Skirt bouquet</option><option>Hand-tied bouquet</option><option>Gift bag bouquet</option><option>Hatbox</option><option>Balloon bouquet</option><option>100 roses / lettering</option><option>Money bouquet</option><option>Hamper / basket</option><option>Bridal / mehndi florals</option><option>Not sure yet</option>
-          </select>
-        </label>
-        <label class="field"><span>Budget</span>
-          <select name="budget">
-            <option value="">Select…</option>
-            <option>Up to £50</option><option>£50 – £100</option><option>£100 – £150</option><option>£150 – £250</option><option>£250+</option><option>Not sure yet</option>
-          </select>
-        </label>
+        <div class="row">
+          <label class="field"><span>Design idea</span>
+            <select name="style">
+              <option value="">Choose a starting point…</option>
+              <option>Skirt bouquet</option><option>Hand-tied bouquet</option><option>Gift bag bouquet</option><option>Hatbox</option><option>Balloon bouquet</option><option>100 roses / lettering</option><option>Money bouquet</option><option>Hamper / basket</option><option>Bridal / mehndi florals</option><option>Not sure yet</option>
+            </select>
+          </label>
+          <label class="field"><span>Budget</span>
+            <select name="budget">
+              <option value="">Select…</option>
+              <option>Up to £50</option><option>£50 – £100</option><option>£100 – £150</option><option>£150 – £250</option><option>£250+</option><option>Not sure yet</option>
+            </select>
+          </label>
+        </div>
       </div>
 
-      <div class="row">
-        <label class="field"><span>Date needed</span><input type="date" name="date" data-min-days="5" required></label>
-        <label class="field"><span>Collection or delivery</span>
-          <select name="fulfil"><option>Collection from B92</option><option>Delivery (Birmingham / Solihull)</option><option>Not sure yet</option></select>
+      <div class="step-block">
+        <h3><span>3</span>The details</h3>
+        <div class="row">
+          <label class="field"><span>Date needed</span><input type="date" name="date" data-min-days="5" required></label>
+          <label class="field"><span>Collection or delivery</span>
+            <select name="fulfil"><option>Collection from B92</option><option>Delivery (Birmingham / Solihull)</option><option>Not sure yet</option></select>
+          </label>
+        </div>
+        <label class="field"><span>Lettering, numbers or banner wording <i>(optional)</i></span><input type="text" name="lettering" maxlength="60" placeholder="e.g. Happy 21st Aisha"></label>
+        <label class="field"><span>The idea</span><textarea name="details" rows="4" required placeholder="Flowers, size, wrap colour, anything that matters…"></textarea></label>
+        <label class="upload">
+          <input type="file" name="inspo" accept="image/*" multiple>
+          <svg><use href="#i-upload"/></svg>
+          <span><b>Add inspiration pictures</b><br>Screenshots, Pinterest saves, the outfit…</span>
         </label>
+        <div class="thumbs" data-thumbs></div>
       </div>
 
-      <label class="field"><span>Lettering, numbers or banner wording <i>(optional)</i></span><input type="text" name="lettering" maxlength="60" placeholder="e.g. Happy 21st Aisha"></label>
-      <label class="field"><span>The idea</span><textarea name="details" rows="4" required placeholder="Flowers, size, wrap colour, anything that matters…"></textarea></label>
-
-      <label class="upload">
-        <input type="file" name="inspo" accept="image/*" multiple>
-        <svg><use href="#i-upload"/></svg>
-        <span><b>Add inspiration pictures</b><br>Screenshots, Pinterest saves, the outfit…</span>
-      </label>
-      <div class="thumbs" data-thumbs></div>
-
-      <div class="row">
-        <label class="field"><span>Name</span><input type="text" name="name" autocomplete="name" required></label>
-        <label class="field"><span>Phone or email</span><input type="text" name="contact" autocomplete="email" required></label>
+      <div class="step-block">
+        <h3><span>4</span>Who’s it from?</h3>
+        <div class="row">
+          <label class="field"><span>Name</span><input type="text" name="name" autocomplete="name" required></label>
+          <label class="field"><span>Phone or email</span><input type="text" name="contact" autocomplete="email" required></label>
+        </div>
       </div>
       <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
-      <button type="submit" class="btn btn-satin btn-wide magnetic"><span>Send enquiry</span><svg><use href="#i-arrow"/></svg></button>
+      <button type="submit" class="btn btn-satin btn-wide">Send enquiry <svg><use href="#i-arrow"/></svg></button>
       <p class="form-msg" role="status" aria-live="polite"></p>
     </form>
     </div>
   </div>
 </section>
 
-<!-- ============================== REVIEWS ============================== -->
-<section class="reviews" id="reviews">
-  <div class="reviews-head">
-    <div>
-      <p class="eyebrow"><span class="dot"></span>Kind words</p>
-      <h2 class="sec-title" data-split>Loved, <em>and then some.</em></h2>
-    </div>
-    <div class="g-card">
-      <svg class="g-logo"><use href="#i-google"/></svg>
-      <div>
-        <p class="g-rate"><b data-g-rating>5.0</b><span class="stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span></p>
-        <p class="g-sub" data-g-sub>Reviews on Google</p>
-      </div>
-      <a class="btn btn-ghost btn-sm" data-g-write href="#" target="_blank" rel="noopener">Leave a review</a>
-    </div>
-  </div>
-  <p class="sample-note" data-sample-note hidden>These are example reviews showing the layout — real Google reviews appear here once the profile is linked.</p>
-  <div class="rail-wrap">
-    <div class="rail" id="reviewRail" data-rail data-lenis-prevent tabindex="0" aria-label="Reviews"></div>
-    <div class="rail-nav">
-      <button type="button" class="round" data-rail-prev aria-label="Previous review"><svg><use href="#i-left"/></svg></button>
-      <button type="button" class="round" data-rail-next aria-label="Next review"><svg><use href="#i-right"/></svg></button>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== INSTAGRAM ============================== -->
-<section class="insta" id="insta">
-  <div class="sec-head center">
-    <p class="eyebrow"><span class="dot"></span>Follow the flowers</p>
-    <h2 class="sec-title"><a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener">@thebespokebouquets</a></h2>
-    <p class="sec-sub">New bouquets, client cams and behind the scenes — on Instagram and TikTok.</p>
-  </div>
-  <div class="insta-grid">
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t1" data-cursor="view"><img src="/assets/bespoke/photos/pink-cloud.webp" alt="A dome of pink roses in ivory mesh" width="1200" height="1594" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t2" data-cursor="view"><img src="/assets/bespoke/photos/valentine-reds.webp" alt="Red roses in black wrap with a Happy Valentine's Day card" width="1200" height="1374" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t3" data-cursor="view"><img src="/assets/bespoke/photos/milestone-22.webp" alt="Pink roses lettered 22 in pearls" width="1200" height="1260" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t4" data-cursor="view"><img src="/assets/bespoke/photos/beauty-hamper.webp" alt="A white wicker hamper of roses and beauty products" width="1200" height="1594" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t5" data-cursor="view"><img src="/assets/bespoke/photos/autumn-pair.webp" alt="Two autumn bouquets in white gift bags with crimson ribbon" width="1200" height="1781" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-    <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" class="ig t6" data-cursor="view"><img src="/assets/bespoke/photos/blush-stocks.webp" alt="Pink roses and white stocks in a white gift bag" width="1144" height="2063" loading="lazy"><span><svg><use href="#i-insta"/></svg></span></a>
-  </div>
-  <div class="insta-cta">
-    <a class="btn btn-satin magnetic" href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><svg><use href="#i-insta"/></svg><span>Follow on Instagram</span></a>
-    <a class="btn btn-ghost magnetic" href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener"><svg><use href="#i-tiktok"/></svg><span>Watch on TikTok</span></a>
-  </div>
-</section>
-
-<!-- ============================== DELIVERY ============================== -->
-<section class="delivery" id="delivery">
-  <div class="sec-head center">
-    <p class="eyebrow"><span class="dot"></span>Collection &amp; delivery</p>
-    <h2 class="sec-title" data-split>From B92, <em>with love.</em></h2>
-  </div>
-  <div class="deliv-grid">
-    <article class="deliv card">
-      <span class="deliv-ico"><svg><use href="#i-pin"/></svg></span>
-      <h3>Collection</h3>
-      <p>Collect from B92, Solihull. The exact address and collection time are confirmed with the order.</p>
-      <span class="pill">Free</span>
-    </article>
-    <article class="deliv card">
-      <span class="deliv-ico"><svg><use href="#i-van"/></svg></span>
-      <h3>Local delivery</h3>
-      <p>Local delivery across Birmingham &amp; Solihull, subject to conditions. The delivery fee is confirmed with the order.</p>
-      <span class="pill" data-delivery-fee>Fee confirmed with order</span>
-    </article>
-    <article class="deliv card check">
-      <h3>Check a postcode</h3>
-      <form class="pc-form" id="pcForm">
-        <input type="text" name="pc" placeholder="e.g. B91 3AA" autocomplete="postal-code" aria-label="Postcode" maxlength="9">
-        <button type="submit" class="btn btn-satin btn-sm">Check</button>
-      </form>
-      <p class="pc-out" role="status" aria-live="polite"></p>
-      <ul class="areas"><li>Solihull</li><li>Shirley</li><li>Olton</li><li>Knowle</li><li>Acocks Green</li><li>Hall Green</li><li>Sheldon</li><li>Yardley</li><li>Moseley</li><li>Edgbaston</li><li>Sutton Coldfield</li><li>City centre</li></ul>
-    </article>
-  </div>
-</section>
-
-<!-- ============================== AFTERCARE ============================== -->
-<section class="aftercare" id="aftercare">
-  <div class="sec-head">
-    <p class="eyebrow"><span class="dot"></span>Aftercare</p>
-    <h2 class="sec-title" data-split>Keep them blooming <em>longer.</em></h2>
-    <p class="sec-sub">A few simple care tips for the longest-lasting blooms.</p>
-  </div>
-  <div class="care-grid">
-    <article class="care"><span class="care-ico"><svg><use href="#i-scissors"/></svg></span><span class="care-n">01</span><h3>Trim the stems</h3><p>Before arranging, cut the stems at an angle with a sharp knife or garden shears — it helps the flowers drink water efficiently.</p></article>
-    <article class="care"><span class="care-ico"><svg><use href="#i-drop"/></svg></span><span class="care-n">02</span><h3>Use clean water</h3><p>Fill the vase with fresh, cool water. Avoid hot water, as it can damage the flowers.</p></article>
-    <article class="care"><span class="care-ico"><svg><use href="#i-sun"/></svg></span><span class="care-n">03</span><h3>Choose the right spot</h3><p>A cool, well-lit area, away from direct sunlight and heat sources.</p></article>
-    <article class="care"><span class="care-ico"><svg><use href="#i-refresh"/></svg></span><span class="care-n">04</span><h3>Change the water</h3><p>Replace it every 2–3 days to prevent bacteria and keep the flowers fresh.</p></article>
-    <article class="care"><span class="care-ico"><svg><use href="#i-petal"/></svg></span><span class="care-n">05</span><h3>Remove wilted flowers</h3><p>Take out any wilting blooms and dead outer petals to prolong the life of the bouquet.</p></article>
-  </div>
-</section>
-
-<!-- ============================== FAQ ============================== -->
-<section class="faq" id="faq">
-  <div class="faq-inner">
+<!-- REVIEWS -->
+<section class="sec tint" id="reviews">
+  <div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow"><span class="dot"></span>Good to know</p>
-      <h2 class="sec-title" data-split>Questions, <em>answered.</em></h2>
+      <div>
+        <p class="label">Reviews</p>
+        <h2>What people <em>say</em></h2>
+      </div>
+      <div class="g-card">
+        <svg class="g-logo"><use href="#i-google"/></svg>
+        <div>
+          <p class="g-rate"><b data-g-rating>5.0</b><span class="stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span></p>
+          <p class="g-sub" data-g-sub>Reviews on Google</p>
+        </div>
+        <a class="btn btn-ghost btn-sm" data-g-write href="#" target="_blank" rel="noopener">Leave a review</a>
+      </div>
     </div>
-    <div class="faq-list">
-      <details><summary>How far in advance should an order be placed?<span class="pm"></span></summary><div><p>At least 5 days before the date needed. For busy dates like Valentine’s and Mother’s Day, earlier is always better.</p></div></details>
-      <details><summary>How does the deposit work?<span class="pm"></span></summary><div><p>A 50% deposit secures the date and is non-refundable. The balance can be paid at checkout, or before collection or delivery.</p></div></details>
-      <details><summary>Where is delivery available?<span class="pm"></span></summary><div><p>Local delivery covers Birmingham and Solihull, subject to conditions. Collection is from B92, Solihull. The postcode checker above gives a quick answer.</p></div></details>
-      <details><summary>Can a design be changed?<span class="pm"></span></summary><div><p>Absolutely — size, colours, wrapping, ribbon and lettering can all be personalised. Inspiration pictures are always welcome.</p></div></details>
-      <details><summary>What if a flower is out of season?<span class="pm"></span></summary><div><p>Seasonal flowers are swapped for similar blooms in the same colours, so the bouquet always looks its freshest.</p></div></details>
-      <details><summary>Are bridal and mehndi florals available?<span class="pm"></span></summary><div><p>Yes — gajre, wrist corsages, bridal bouquets and more. Send a bridal enquiry with the date and the outfit colours for a personal quote.</p></div></details>
+    <div class="review-grid" id="reviewRail"></div>
+    <p class="note" data-sample-note hidden>These are example reviews showing the layout — real Google reviews appear here once the profile is linked.</p>
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section class="sec" id="insta">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Instagram</p>
+        <h2>Recently <em>made</em></h2>
+      </div>
+      <p>New bouquets, client cams and behind the scenes — follow along on Instagram and TikTok.</p>
+    </div>
+    <div class="insta-grid">
+      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><img src="/assets/bespoke/photos/pink-cloud.webp" alt="A dome of pink roses in ivory mesh" width="1200" height="1594" loading="lazy"></a>
+      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><img src="/assets/bespoke/photos/milestone-22.webp" alt="Pink roses lettered 22 in pearls" width="1200" height="1260" loading="lazy"></a>
+      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><img src="/assets/bespoke/photos/beauty-hamper.webp" alt="A white wicker hamper of roses and beauty products" width="1200" height="1594" loading="lazy"></a>
+      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><img src="/assets/bespoke/photos/valentine-reds.webp" alt="Red roses in black wrap" width="1200" height="1374" loading="lazy"></a>
+    </div>
+    <div class="btn-row center">
+      <a class="btn btn-satin" href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener"><svg><use href="#i-insta"/></svg>Follow on Instagram</a>
+      <a class="btn btn-ghost" href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener"><svg><use href="#i-tiktok"/></svg>Watch on TikTok</a>
     </div>
   </div>
 </section>
 
-<!-- ============================== CTA ============================== -->
-<section class="cta">
-  <canvas class="petals" data-petals="16" aria-hidden="true"></canvas>
-  <p class="script">ready when you are</p>
-  <h2>Let’s make <em>someone’s day.</em></h2>
-  <div class="hero-cta center">
-    <a href="#shop" class="btn btn-satin magnetic"><span>Shop bouquets</span><svg><use href="#i-arrow"/></svg></a>
-    <a href="#bespoke" class="btn btn-ghost magnetic"><span>Send an enquiry</span></a>
+<!-- DELIVERY -->
+<section class="sec tint" id="delivery">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Collection &amp; delivery</p>
+        <h2>From B92, <em>with love</em></h2>
+      </div>
+      <p>Collection from Solihull, or local delivery across Birmingham and Solihull.</p>
+    </div>
+    <div class="deliv-grid">
+      <article class="card deliv">
+        <span class="ico"><svg><use href="#i-pin"/></svg></span>
+        <h3>Collection</h3>
+        <p>Collect from B92, Solihull. The exact address and time are confirmed with the order.</p>
+        <span class="pill">Free</span>
+      </article>
+      <article class="card deliv">
+        <span class="ico"><svg><use href="#i-van"/></svg></span>
+        <h3>Local delivery</h3>
+        <p>Across Birmingham &amp; Solihull, subject to conditions. The fee is confirmed with the order.</p>
+        <span class="pill" data-delivery-fee>Fee confirmed with order</span>
+      </article>
+      <article class="card deliv">
+        <span class="ico"><svg><use href="#i-check"/></svg></span>
+        <h3>Check a postcode</h3>
+        <form class="pc-form" id="pcForm">
+          <input type="text" name="pc" placeholder="e.g. B91 3AA" autocomplete="postal-code" aria-label="Postcode" maxlength="9">
+          <button type="submit" class="btn btn-satin btn-sm">Check</button>
+        </form>
+        <p class="pc-out" role="status" aria-live="polite"></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- AFTERCARE + FAQ -->
+<section class="sec" id="care">
+  <div class="wrap two-col">
+    <div>
+      <p class="label">Aftercare</p>
+      <h2>Keep them <em>blooming</em></h2>
+      <ol class="care-list">
+        <li><b>Trim the stems</b>Before arranging, cut the stems at an angle with a sharp knife or garden shears — it helps the flowers drink efficiently.</li>
+        <li><b>Use clean water</b>Fresh, cool water in the vase. Avoid hot water, as it can damage the flowers.</li>
+        <li><b>Choose the right spot</b>A cool, well-lit area, away from direct sunlight and heat sources.</li>
+        <li><b>Change the water</b>Every 2–3 days, to prevent bacteria and keep the flowers fresh.</li>
+        <li><b>Remove wilted flowers</b>Take out wilting blooms and dead outer petals to prolong the life of the bouquet.</li>
+      </ol>
+    </div>
+    <div id="faq">
+      <p class="label">Good to know</p>
+      <h2>Questions</h2>
+      <div class="faq-list">
+        <details><summary>How far ahead should an order be placed?<span class="pm"></span></summary><div><p>At least 5 days before the date needed. For busy dates like Valentine’s and Mother’s Day, earlier is always better.</p></div></details>
+        <details><summary>How does the deposit work?<span class="pm"></span></summary><div><p>A 50% deposit secures the date and is non-refundable. The balance can be paid at checkout, or before collection or delivery.</p></div></details>
+        <details><summary>Where is delivery available?<span class="pm"></span></summary><div><p>Local delivery covers Birmingham and Solihull, subject to conditions. Collection is from B92, Solihull.</p></div></details>
+        <details><summary>Can a design be changed?<span class="pm"></span></summary><div><p>Yes — size, colours, wrapping, ribbon and lettering can all be personalised. Inspiration pictures are always welcome.</p></div></details>
+        <details><summary>What if a flower is out of season?<span class="pm"></span></summary><div><p>It’s swapped for a similar bloom in the same colours, so the bouquet always looks its freshest.</p></div></details>
+        <details><summary>Are bridal and mehndi florals available?<span class="pm"></span></summary><div><p>Yes — gajre, wrist corsages, bridal bouquets and more. Send a bridal enquiry with the date and outfit colours for a personal quote.</p></div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec tint" id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label">Find us</p>
+        <h2>Come and <em>say hello</em></h2>
+      </div>
+      <p>Instagram DMs are the quickest way to get in touch.</p>
+    </div>
+    <div class="contact-grid">
+      <a class="card contact" href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-dm><span class="ico"><svg><use href="#i-insta"/></svg></span><span><b>Instagram</b><small>@thebespokebouquets</small></span></a>
+      <a class="card contact" href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener"><span class="ico"><svg><use href="#i-tiktok"/></svg></span><span><b>TikTok</b><small>@thebespokebouquets_</small></span></a>
+      <a class="card contact" href="#" data-wa hidden><span class="ico"><svg><use href="#i-whatsapp"/></svg></span><span><b>WhatsApp</b><small>Message directly</small></span></a>
+      <a class="card contact" href="#" data-mail hidden><span class="ico"><svg><use href="#i-mail"/></svg></span><span><b>Email</b><small>Send an email</small></span></a>
+      <div class="card contact"><span class="ico"><svg><use href="#i-pin"/></svg></span><span><b>Solihull, B92</b><small>Collection &amp; local delivery</small></span></div>
+    </div>
   </div>
 </section>
 
 </main>
 
-<!-- ============================== FOOTER ============================== -->
 <footer class="ftr">
-  <div class="ftr-top">
-    <img class="ftr-logo" src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844" loading="lazy">
-    <div class="ftr-cols">
-      <div><h4>Shop</h4><a href="#shop">All bouquets</a><a href="#moments">Occasions</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="#bridal">Bridal &amp; mehndi</a><a href="#bespoke">Bespoke enquiry</a></div>
-      <div><h4>Help</h4><a href="#how">How to order</a><a href="#delivery">Collection &amp; delivery</a><a href="#aftercare">Aftercare</a><a href="#faq">FAQs</a></div>
-      <div><h4>Say hello</h4><a href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-dm>DM on Instagram</a><a href="#" data-wa hidden>WhatsApp</a><a href="#" data-mail hidden>Email</a><p>Solihull / Birmingham based<br>Collection from B92</p></div>
+  <div class="wrap ftr-grid">
+    <div class="ftr-brand">
+      <img src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844" loading="lazy">
+      <p>Fresh bouquets, hand-tied to order in Solihull. Collection from B92 or local delivery across Birmingham &amp; Solihull.</p>
     </div>
+    <div><h4>The site</h4><a href="#shop">Shop</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="#bespoke">Bespoke enquiry</a><a href="#bridal">Bridal &amp; mehndi</a></div>
+    <div><h4>Help</h4><a href="#how">How to order</a><a href="#delivery">Collection &amp; delivery</a><a href="#care">Aftercare</a><a href="#faq">FAQs</a></div>
+    <div><h4>Follow</h4><a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener">TikTok</a></div>
   </div>
-  <div class="ftr-big" aria-hidden="true">The Bespoke Bouquets</div>
-  <div class="ftr-bottom">
-    <p>© <span data-year>2026</span> The Bespoke Bouquets</p>
-    <div class="ftr-social">
-      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
-      <a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tiktok"/></svg></a>
-    </div>
-    <p>Website by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></p>
+  <div class="wrap ftr-bottom">
+    <p>© <span data-year>2026</span> The Bespoke Bouquets · Solihull</p>
+    <p>Site by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></p>
   </div>
 </footer>
 
-<!-- Floating message bubble -->
-<a class="bubble" href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-bubble aria-label="Message on Instagram"><svg><use href="#i-insta"/></svg><span>Message</span></a>
 
 <!-- ============================== PRODUCT SHEET ============================== -->
 <div class="modal product" id="product" role="dialog" aria-modal="true" aria-labelledby="pTitle" hidden>
@@ -677,7 +588,7 @@
         <!-- done -->
         <section class="co-step co-done" data-step="4">
           <div class="done-badge"><svg><use href="#i-check"/></svg></div>
-          <p class="script">thank you</p>
+          <p class="label">Thank you</p>
           <h4>Order <span data-ref></span> is in!</h4>
           <p data-done-msg>A confirmation follows shortly with everything that happens next.</p>
           <div class="done-preview" data-preview-note hidden>Preview mode — no payment was taken. Card, Apple Pay, Google Pay and PayPal switch on as soon as a payment account is connected.</div>
@@ -711,7 +622,7 @@
   <div class="modal-scrim" data-close-handoff></div>
   <div class="ho-panel" data-lenis-prevent>
     <button type="button" class="round close" data-close-handoff aria-label="Close"><svg><use href="#i-close"/></svg></button>
-    <p class="script">almost there</p>
+    <p class="label">Almost there</p>
     <h3 id="hoTitle">Send it over</h3>
     <p>The enquiry is written up below. Pick the easiest way to send it — Instagram opens with the message already copied, ready to paste.</p>
     <pre class="ho-text" data-ho-text></pre>
@@ -721,8 +632,6 @@
 
 <div class="toast" role="status" aria-live="polite"></div>
 
-<script src="/assets/vendor/gsap.min.js" defer></script>
-<script src="/assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/bespoke-bouquets/script.js" defer></script>
 </body>

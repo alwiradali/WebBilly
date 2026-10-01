@@ -21,13 +21,13 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Manrope:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/bespoke/logo.png">
 <link rel="stylesheet" href="/bespoke-bouquets/style.css">
 <script>document.documentElement.classList.add('js');</script>
 
 </head>
-<body class="pf-page">
+<body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 20.5L6 8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
@@ -59,26 +59,24 @@
   </defs>
 </svg>
 
-<div class="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"><em>View</em></span></div>
-
 <header class="hdr" id="hdr">
-  <a href="/bespoke-bouquets/" class="hdr-logo" aria-label="The Bespoke Bouquets — back to top">
-    <img src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844">
+  <a href="/bespoke-bouquets/" class="brand" aria-label="The Bespoke Bouquets — back to top">
+    <img src="/assets/bespoke/logo.png" alt="" width="844" height="844">
+    <span>The Bespoke<br>Bouquets</span>
   </a>
   <nav class="hdr-nav" aria-label="Main">
     <a href="/bespoke-bouquets/#shop">Shop</a>
-    <a href="/bespoke-bouquets/#moments">Occasions</a>
     <a href="/bespoke-bouquets/portfolio" class="is-active" aria-current="page">Portfolio</a>
+    <a href="/bespoke-bouquets/#how">Ordering</a>
     <a href="/bespoke-bouquets/#bridal">Bridal</a>
-    <a href="/bespoke-bouquets/#bespoke">Bespoke</a>
     <a href="/bespoke-bouquets/#reviews">Reviews</a>
     <a href="/bespoke-bouquets/#delivery">Delivery</a>
   </nav>
   <div class="hdr-actions">
-    <a class="hdr-ig" href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
     <a class="basket-btn" href="/bespoke-bouquets/#shop" aria-label="Basket — go to the shop">
       <svg><use href="#i-bag"/></svg><span class="basket-count" data-count>0</span>
     </a>
+    <a class="btn btn-satin btn-sm hdr-cta" href="/bespoke-bouquets/#bespoke">Enquire</a>
     <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
   </div>
 </header>
@@ -86,17 +84,16 @@
 <div class="drawer" id="drawer" hidden>
   <nav aria-label="Mobile">
     <a href="/bespoke-bouquets/#shop">Shop</a>
-    <a href="/bespoke-bouquets/#moments">Occasions</a>
-    <a href="/bespoke-bouquets/portfolio" class="is-active" aria-current="page">Portfolio</a>
+    <a href="/bespoke-bouquets/portfolio">Portfolio</a>
     <a href="/bespoke-bouquets/#how">How to order</a>
     <a href="/bespoke-bouquets/#bridal">Bridal &amp; mehndi</a>
     <a href="/bespoke-bouquets/#bespoke">Bespoke enquiry</a>
     <a href="/bespoke-bouquets/#reviews">Reviews</a>
     <a href="/bespoke-bouquets/#delivery">Collection &amp; delivery</a>
-    <a href="/bespoke-bouquets/#aftercare">Aftercare</a>
+    <a href="/bespoke-bouquets/#care">Aftercare &amp; FAQs</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn btn-satin" href="/bespoke-bouquets/#shop">Shop bouquets</a>
+    <a class="btn btn-satin" href="/bespoke-bouquets/#bespoke">Make an enquiry</a>
     <div class="drawer-social">
       <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
       <a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tiktok"/></svg></a>
@@ -107,12 +104,11 @@
 <main id="top">
 
 <section class="pf-hero">
-  <canvas class="petals" data-petals="18" aria-hidden="true"></canvas>
-  <div class="pf-hero-in">
-    <p class="eyebrow"><span class="dot"></span>Portfolio</p>
-    <h1 class="pf-title"><span class="ln"><span>Made with love,</span></span> <span class="ln"><span><em>every single one.</em></span></span></h1>
-    <p class="sec-sub">Lettered roses, milestone numbers, hatboxes, balloon bouquets, money bouquets, hampers and bridal florals — all made to order. Tap any piece to see it closer, or to request something like it.</p>
-    <div class="filters pf-filters" role="tablist" aria-label="Filter the portfolio">
+  <div class="wrap">
+    <p class="label">Portfolio</p>
+    <h1>Made with love, <em>every single one</em></h1>
+    <p class="lead">Lettered roses, milestone numbers, hatboxes, balloon and money bouquets, hampers and bridal florals — all made to order. Tap any piece to see it closer, or to request something like it.</p>
+    <div class="pf-filters" role="tablist" aria-label="Filter the portfolio">
       <button type="button" class="chip is-on" data-filter="all" role="tab" aria-selected="true">All</button>
       <button type="button" class="chip" data-filter="personalised" role="tab" aria-selected="false">Personalised</button>
       <button type="button" class="chip" data-filter="signature" role="tab" aria-selected="false">Bouquets</button>
@@ -123,46 +119,36 @@
   </div>
 </section>
 
-<section class="pf-gallery">
-  <div class="pf-grid" id="pfGrid"></div>
-</section>
-
-<section class="cta">
-  <canvas class="petals" data-petals="14" aria-hidden="true"></canvas>
-  <p class="script">seen something you love?</p>
-  <h2>Let’s make <em>yours.</em></h2>
-  <div class="hero-cta center">
-    <a href="/bespoke-bouquets/#bespoke" class="btn btn-satin magnetic"><span>Send a bespoke enquiry</span><svg><use href="#i-arrow"/></svg></a>
-    <a href="/bespoke-bouquets/#shop" class="btn btn-ghost magnetic"><span>Shop bouquets</span></a>
+<section class="sec">
+  <div class="wrap">
+    <div class="pf-grid" id="pfGrid"></div>
+    <div class="pf-cta" style="margin-top:clamp(2rem,4vw,3rem)">
+      <div><p class="label">Bespoke</p><h2>Seen something you <em>love?</em></h2></div>
+      <div class="btn-row" style="margin:0">
+        <a href="/bespoke-bouquets/#bespoke" class="btn btn-satin">Send an enquiry <svg><use href="#i-arrow"/></svg></a>
+        <a href="/bespoke-bouquets/#shop" class="btn btn-ghost">Shop bouquets</a>
+      </div>
+    </div>
   </div>
 </section>
 
 </main>
 
 <footer class="ftr">
-  <div class="ftr-top">
-    <img class="ftr-logo" src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844" loading="lazy">
-    <div class="ftr-cols">
-      <div><h4>Shop</h4><a href="/bespoke-bouquets/#shop">All bouquets</a><a href="/bespoke-bouquets/#moments">Occasions</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="/bespoke-bouquets/#bridal">Bridal &amp; mehndi</a><a href="/bespoke-bouquets/#bespoke">Bespoke enquiry</a></div>
-      <div><h4>Help</h4><a href="/bespoke-bouquets/#how">How to order</a><a href="/bespoke-bouquets/#delivery">Collection &amp; delivery</a><a href="/bespoke-bouquets/#aftercare">Aftercare</a><a href="/bespoke-bouquets/#faq">FAQs</a></div>
-      <div><h4>Say hello</h4><a href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-dm>DM on Instagram</a><a href="#" data-wa hidden>WhatsApp</a><a href="#" data-mail hidden>Email</a><p>Solihull / Birmingham based<br>Collection from B92</p></div>
+  <div class="wrap ftr-grid">
+    <div class="ftr-brand">
+      <img src="/assets/bespoke/logo.png" alt="The Bespoke Bouquets" width="844" height="844" loading="lazy">
+      <p>Fresh bouquets, hand-tied to order in Solihull. Collection from B92 or local delivery across Birmingham &amp; Solihull.</p>
     </div>
+    <div><h4>The site</h4><a href="/bespoke-bouquets/#shop">Shop</a><a href="/bespoke-bouquets/portfolio">Portfolio</a><a href="/bespoke-bouquets/#bespoke">Bespoke enquiry</a><a href="/bespoke-bouquets/#bridal">Bridal &amp; mehndi</a></div>
+    <div><h4>Help</h4><a href="/bespoke-bouquets/#how">How to order</a><a href="/bespoke-bouquets/#delivery">Collection &amp; delivery</a><a href="/bespoke-bouquets/#care">Aftercare</a><a href="/bespoke-bouquets/#faq">FAQs</a></div>
+    <div><h4>Follow</h4><a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener">TikTok</a></div>
   </div>
-  <div class="ftr-big" aria-hidden="true">The Bespoke Bouquets</div>
-  <div class="ftr-bottom">
-    <p>© <span data-year>2026</span> The Bespoke Bouquets</p>
-    <div class="ftr-social">
-      <a href="https://www.instagram.com/thebespokebouquets" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
-      <a href="https://www.tiktok.com/@thebespokebouquets_" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tiktok"/></svg></a>
-    </div>
-    <p>Website by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></p>
+  <div class="wrap ftr-bottom">
+    <p>© <span data-year>2026</span> The Bespoke Bouquets · Solihull</p>
+    <p>Site by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></p>
   </div>
 </footer>
-
-<!-- Floating message bubble -->
-<a class="bubble" href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-bubble aria-label="Message on Instagram"><svg><use href="#i-insta"/></svg><span>Message</span></a>
-
-<a class="bubble" href="https://ig.me/m/thebespokebouquets" target="_blank" rel="noopener" data-bubble aria-label="Message on Instagram"><svg><use href="#i-insta"/></svg><span>Message</span></a>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Portfolio viewer" hidden>
   <button type="button" class="round lb-close" data-lb-close aria-label="Close"><svg><use href="#i-close"/></svg></button>
@@ -170,7 +156,7 @@
   <figure class="lb-fig">
     <div class="lb-img"><img alt="" data-lb-img></div>
     <figcaption class="lb-cap">
-      <p class="eyebrow light" data-lb-cat></p>
+      <p class="label" data-lb-cat></p>
       <h2 data-lb-title></h2>
       <p data-lb-desc></p>
       <div class="lb-actions">
@@ -182,8 +168,6 @@
   <button type="button" class="round lb-nav lb-next" data-lb-next aria-label="Next"><svg><use href="#i-right"/></svg></button>
 </div>
 
-<script src="/assets/vendor/gsap.min.js" defer></script>
-<script src="/assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/bespoke-bouquets/portfolio.js" defer></script>
 </body>

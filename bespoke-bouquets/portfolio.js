@@ -52,10 +52,8 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(pointer: fine)').matches;
-const gsap = window.gsap, ST = window.ScrollTrigger;
-const motion = !reduced && !!gsap && !!ST;
-if (gsap && ST) gsap.registerPlugin(ST);
-if (!motion) root.classList.add(reduced ? 'no-motion' : 'no-gsap');
+const gsap = null, ST = null;
+const motion = false;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* basket count is shared with the shop through localStorage */
@@ -86,10 +84,7 @@ let lastY = 0;
 function onScroll() {
   const y = scrollY;
   hdr.classList.toggle('is-solid', y > 30);
-  if (!drawer.classList.contains('is-open') && y > 400 && y > lastY + 4) hdr.classList.add('is-hidden');
-  else if (y < lastY - 4 || y < 400) hdr.classList.remove('is-hidden');
   lastY = y;
-  $('[data-bubble]').classList.toggle('is-in', y > 300);
 }
 addEventListener('scroll', onScroll, { passive: true }); onScroll();
 function toggleDrawer(open) {
@@ -112,7 +107,7 @@ menuBtn.addEventListener('click', () => toggleDrawer(!drawer.classList.contains(
 const grid = $('#pfGrid');
 grid.innerHTML = PIECES.map((p, i) => `
   <figure class="pf-tile" data-i="${i}" data-cats="${p.cats.join(' ')}">
-    <button type="button" class="pf-img" data-cursor="view" aria-label="View ${esc(p.name)}">
+    <button type="button" class="pf-img" aria-label="View ${esc(p.name)}">
       <img src="${IMG(p.img)}" alt="${esc(p.alt)}" width="${p.w}" height="${p.h}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async">
     </button>
     <figcaption><h3>${esc(p.name)}</h3><span>${p.cats.map(c => CAT_LABEL[c]).join(' · ')}</span></figcaption>
@@ -199,63 +194,4 @@ lb.addEventListener('touchend', e => {
 /* the main page links here as ?show=<category> */
 setFilter(new URLSearchParams(location.search).get('show') || 'all', false);
 
-/* ------------------------------ petals ------------------------------ */
-function petals(canvas) {
-  const ctx = canvas.getContext('2d'), N = Number(canvas.dataset.petals) || 16;
-  const cols = ['#f7c6cf', '#f2a7b8', '#ffe0e5', '#e98ea4', '#fff4f6', '#d9667f'];
-  let w, h, list, on = true, lastT = 0;
-  const size = () => { const d = Math.min(2, devicePixelRatio || 1); w = canvas.clientWidth; h = canvas.clientHeight; canvas.width = w * d; canvas.height = h * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
-  const make = init => ({ x: Math.random() * w, y: init ? Math.random() * h : -30, s: 7 + Math.random() * 10, vy: 18 + Math.random() * 26, vx: -8 + Math.random() * 16, r: Math.random() * 6.3, vr: -0.6 + Math.random() * 1.2, ph: Math.random() * 6.3, c: cols[(Math.random() * cols.length) | 0], a: 0.45 + Math.random() * 0.45 });
-  size(); list = Array.from({ length: N }, () => make(true));
-  addEventListener('resize', size);
-  const tick = now => {
-    if (!on) return;
-    const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
-    ctx.clearRect(0, 0, w, h);
-    for (const p of list) {
-      p.ph += dt * 1.6; p.y += p.vy * dt; p.x += (p.vx + Math.sin(p.ph) * 22) * dt; p.r += p.vr * dt;
-      if (p.y > h + 30 || p.x < -40 || p.x > w + 40) Object.assign(p, make(false));
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.scale(1, Math.abs(Math.cos(p.ph)) * 0.75 + 0.25);
-      ctx.globalAlpha = p.a; ctx.fillStyle = p.c; ctx.beginPath();
-      ctx.moveTo(0, -p.s); ctx.bezierCurveTo(p.s * 0.9, -p.s * 0.6, p.s * 0.75, p.s * 0.7, 0, p.s); ctx.bezierCurveTo(-p.s * 0.75, p.s * 0.7, -p.s * 0.9, -p.s * 0.6, 0, -p.s);
-      ctx.fill(); ctx.restore();
-    }
-    requestAnimationFrame(tick);
-  };
-  new IntersectionObserver(([en]) => { on = en.isIntersecting; if (on) { lastT = 0; requestAnimationFrame(tick); } }).observe(canvas);
-}
-if (!reduced) $$('canvas.petals').forEach(petals);
-
-/* ------------------------------ cursor + magnetic ------------------------------ */
-if (fine && !reduced) {
-  const cur = $('.cursor'), dot = $('.cursor-dot'), ring = $('.cursor-ring');
-  let mx = -100, my = -100, rx = -100, ry = -100;
-  addEventListener('pointermove', e => {
-    if (e.pointerType !== 'mouse') return;
-    mx = e.clientX; my = e.clientY; dot.style.transform = `translate3d(${mx}px,${my}px,0)`;
-    const v = !!e.target.closest('[data-cursor="view"]');
-    cur.classList.toggle('is-view', v);
-    cur.classList.toggle('is-link', !v && !!e.target.closest('a,button'));
-  }, { passive: true });
-  (function loop() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.transform = `translate3d(${rx}px,${ry}px,0)`; requestAnimationFrame(loop); })();
-  if (gsap) $$('.magnetic').forEach(b => {
-    const xTo = gsap.quickTo(b, 'x', { duration: 0.6, ease: 'power3' }), yTo = gsap.quickTo(b, 'y', { duration: 0.6, ease: 'power3' });
-    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); xTo((e.clientX - r.left - r.width / 2) * 0.25); yTo((e.clientY - r.top - r.height / 2) * 0.35); });
-    b.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
-  });
-}
-
-/* ------------------------------ motion ------------------------------ */
-if (motion) {
-  gsap.from('.pf-title .ln > span', { yPercent: 112, duration: 1.4, ease: 'expo.out', stagger: 0.12, delay: 0.1 });
-  gsap.from(['.pf-hero .eyebrow', '.pf-hero .sec-sub', '.pf-filters'], { opacity: 0, y: 24, duration: 1.1, ease: 'expo.out', stagger: 0.1, delay: 0.25 });
-  $$('.pf-tile').forEach((t, i) => {
-    gsap.set(t, { opacity: 0, y: 50 });
-    ST.create({ trigger: t, start: 'top 94%', once: true, onEnter: () => gsap.to(t, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', delay: (i % 3) * 0.08 }) });
-    gsap.fromTo($('img', t), { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: t, start: 'top bottom', end: 'bottom top', scrub: true } });
-  });
-  gsap.from('.ftr-big', { yPercent: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ftr', start: 'top bottom', end: 'center bottom', scrub: true } });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ST.refresh());
-  addEventListener('load', () => ST.refresh());
-}
 })();
