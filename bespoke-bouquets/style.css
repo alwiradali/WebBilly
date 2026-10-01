@@ -557,3 +557,13 @@ details[open] .pm::after{transform:rotate(0)}
 .wrap{position:relative;z-index:2}
 
 .co-summary .sum-row.soft{display:none}
+
+/* Petals hide behind words: text blocks get an invisible backing in their own
+   section's colour, so a petal slips out of sight behind copy and only shows
+   in the open space around it. */
+body{--bg:var(--cream)}
+.sec.tint,.bridal{--bg:var(--blush)}
+.ftr{--bg:var(--plate)}
+.pf-hero{--bg:var(--plate)}
+.sec-head>*,.pcard-body,.more-band>*,.occ div,.steps li,.split-copy>*,.review,.deliv,.contact,.care-list li,.faq-list,.note,.two-col h2,.two-col .label,.ftr-grid>div,.ftr-bottom>*,.pf-tile figcaption,.pf-cta>*,.pf-hero .wrap>*{background:var(--bg)}
+.hero .lead,.hero-title,.hero-facts,.hero-place,.hero-role{background:radial-gradient(closest-side,rgba(255,236,238,.92),rgba(255,236,238,.92) 80%,rgba(255,236,238,0))}

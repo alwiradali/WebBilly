@@ -1573,3 +1573,10 @@ her SVG logo, "FLORIST" in rose caps, a line-drawn floral ornament
 an EB Garamond italic second line, Garamond body copy, then a full-bleed strip
 of three photos. Fonts are Gilda Display + EB Garamond only. Buttons are
 rectangular, Garamond caps tracked .24em, filled crimson or outlined.
+
+**Shop photos are her originals now (1170x2080), not screenshot crops.** Five
+priced items, all from her own DMs: Skirt Bouquet £145, Blush Garden Gift Bag
+£95, Birthday Banner £70, Initial & Heart (black wrap, "R ♥") £70, Classic Red
+Roses (white wrap) £50. Text blocks carry `background:var(--bg)` in their
+section's colour so the floating petals slip behind copy instead of showing
+through the letters; a new section with its own colour must set `--bg`.

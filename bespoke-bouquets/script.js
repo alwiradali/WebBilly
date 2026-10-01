@@ -64,7 +64,7 @@ const REVIEWS = {
    -------------------------------------------------------------------- */
 const CATALOGUE = [
   { id: 'skirt', name: 'The Skirt Bouquet', price: 145, cats: ['signature', 'personalised'], badge: 'Showstopper',
-    imgs: ['skirt-bouquet', 'skirt-bouquet-wide'], alt: 'Red and blush roses in layered pink wrap with an oversized crimson satin bow',
+    imgs: ['skirt-bouquet'], alt: 'Red and blush roses in layered pink wrap with an oversized crimson satin bow',
     short: 'Red & blush roses, a layered skirt wrap and an oversized satin bow.',
     desc: 'The showstopper. Red and blush roses framed in layer upon layer of pink wrap, finished with an oversized satin bow that falls like a ball-gown skirt. Pearl lettering can be added to the centre.',
     options: ['wrap', 'bow', 'lettering', 'card'] },
@@ -74,17 +74,27 @@ const CATALOGUE = [
     desc: 'Soft pink roses, scented white stocks, eucalyptus and pistachio leaf, arranged standing in a crisp white gift bag and tied with satin ribbon — beautiful from every side.',
     options: ['ribbon', 'card'] },
   { id: 'birthday', name: 'Birthday Banner Bouquet', price: 70, cats: ['personalised', 'signature'], badge: 'Personalised',
-    imgs: ['birthday-blush'], alt: 'Pink carnations and lilac roses with a personalised birthday banner, in a white gift bag',
+    imgs: ['birthday-banner'], alt: 'Pink carnations and lilac roses with a personalised birthday banner, in a white gift bag',
     short: 'Carnations, lilac roses and a personalised satin banner.',
     desc: 'Pink carnations, lilac roses and clouds of gypsophila in white wrap, with a satin banner across the top carrying any name, age or message.',
     options: ['banner', 'ribbon', 'card'] },
+  { id: 'initial', name: 'Initial & Heart Bouquet', price: 70, cats: ['personalised'], badge: 'Personalised',
+    imgs: ['initial-heart'], alt: 'Red roses in black wrap with an initial and a heart in white gypsophila, edged with pearls',
+    short: 'Red roses with an initial and heart in gypsophila.',
+    desc: 'Deep red roses framed in gypsophila and a string of pearls, with an initial and a little heart picked out in white — wrapped in black with a crimson satin ribbon.',
+    options: ['lettering', 'ribbon', 'card'] },
+  { id: 'reds', name: 'Classic Red Roses', price: 50, cats: ['signature'],
+    imgs: ['classic-reds'], alt: 'Red roses with gypsophila and a pearl trim in white wrap, in a white gift bag',
+    short: 'Red roses, gypsophila and pearls in white wrap.',
+    desc: 'Red roses with touches of gypsophila and a pearl-edged collar, wrapped in white and standing in a gift bag with a crimson ribbon. Timeless, and perfect for any day.',
+    options: ['ribbon', 'card'] },
 ];
 
 const OPTION_DEFS = {
   wrap:   { label: 'Wrap colour', type: 'swatch', values: [['Blush pink', '#f7c3cd'], ['White', '#ffffff'], ['Black', '#1f1418'], ['Ivory', '#f4ecdf']] },
   bow:    { label: 'Satin bow', type: 'swatch', values: [['Crimson', '#a3123b'], ['Blush', '#f2a7b8'], ['Black', '#1f1418'], ['Ivory', '#f4ecdf']] },
   ribbon: { label: 'Ribbon colour', type: 'swatch', values: [['Pink', '#ef93ad'], ['Crimson', '#a3123b'], ['White', '#ffffff'], ['Black', '#1f1418']] },
-  lettering: { label: 'Pearl lettering', type: 'text', max: 14, optional: true, placeholder: 'e.g. Wifey, V & P, 21' },
+  lettering: { label: 'Initial or lettering', type: 'text', max: 14, optional: true, placeholder: 'e.g. R, V & P, 21' },
   banner: { label: 'Banner wording', type: 'text', max: 40, placeholder: 'e.g. Happy Birthday Matthew' },
   card:   { label: 'Message card', type: 'textarea', max: 160, optional: true, placeholder: 'A few words for the card…' }
 };
