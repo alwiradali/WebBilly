@@ -535,7 +535,6 @@ details[open] .pm::after{transform:rotate(0)}
   .occ h3{font-size:1.15rem}
   .occ p{font-size:.9rem}
   .review-grid{grid-template-columns:1fr;row-gap:2.2rem}
-  .review-grid .review:nth-child(n+4){display:none}
   .row,.opt-cards{grid-template-columns:1fr}
   .split-photos img:last-child{margin-bottom:1.5rem}
   .insta-grid{grid-template-columns:repeat(3,1fr);gap:3px}
@@ -660,4 +659,12 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .steps-dots{display:flex;justify-content:center;gap:.5rem;margin-top:1.2rem}
   .steps-dots button{width:8px;height:8px;border-radius:50%;background:var(--line);padding:0;transition:background .3s,width .3s}
   .steps-dots button.is-on{background:var(--satin);width:22px;border-radius:999px}
+}
+
+/* reviews swipe sideways on phones too */
+@media (max-width:640px){
+  .review-grid{display:flex;gap:.9rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gut);margin:0 calc(-1 * var(--gut));padding:0 var(--gut) .4rem;scrollbar-width:none;overscroll-behavior-x:contain}
+  .review-grid::-webkit-scrollbar{display:none}
+  .review-grid .review{flex:0 0 84%;scroll-snap-align:start;background:var(--paper);border:1px solid var(--line-2);border-top:1px solid var(--ink);padding:1.4rem 1.3rem}
+  .review .ex{top:1.4rem;right:1.3rem}
 }

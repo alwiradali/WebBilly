@@ -673,18 +673,22 @@ $$('[data-rail]').forEach(rail => {
   });
 });
 
-/* ------------------------------ swipeable steps (phones) ------------------------------ */
-(function stepsSwipe() {
-  const list = $('.steps'), dots = $('.steps-dots'); if (!list || !dots) return;
-  const items = $$('li', list);
-  dots.innerHTML = items.map((_, i) => `<button type="button" aria-label="Step ${i + 1}"></button>`).join('');
+/* ------------------------------ swipe rows (phones) ------------------------------
+   The how-it-works steps and the reviews scroll sideways on phones, with
+   dots that show (and jump to) the card in view. */
+function swipeRow(list, dots) {
+  if (!list || !dots) return;
+  const items = Array.from(list.children);
+  dots.innerHTML = items.map((_, i) => `<button type="button" aria-label="Show ${i + 1} of ${items.length}"></button>`).join('');
   const bs = $$('button', dots);
-  const current = () => { const x = list.scrollLeft; let best = 0, d = Infinity; items.forEach((li, i) => { const dd = Math.abs(li.offsetLeft - list.offsetLeft - x - parseFloat(getComputedStyle(list).paddingLeft)); if (dd < d) { d = dd; best = i; } }); return best; };
+  const current = () => { const x = list.scrollLeft; let best = 0, d = Infinity; items.forEach((li, i) => { const dd = Math.abs(li.offsetLeft - items[0].offsetLeft - x); if (dd < d) { d = dd; best = i; } }); return best; };
   const mark = () => { const c = list.scrollLeft + list.clientWidth >= list.scrollWidth - 4 ? items.length - 1 : current(); bs.forEach((b, i) => b.classList.toggle('is-on', i === c)); };
   list.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true });
   bs.forEach((b, i) => b.addEventListener('click', () => list.scrollTo({ left: items[i].offsetLeft - items[0].offsetLeft, behavior: reduced ? 'auto' : 'smooth' })));
   mark();
-})();
+}
+swipeRow($('.steps'), $('.steps-dots'));
+swipeRow($('#reviewRail'), $('.reviews-dots'));
 
 /* ------------------------------ FAQ: smooth open/close ------------------------------ */
 $$('.faq-list details').forEach(d => {
