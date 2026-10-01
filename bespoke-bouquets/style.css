@@ -649,3 +649,15 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 @media (max-width:1080px){.type-grid{grid-template-columns:repeat(3,1fr)}.size-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:920px){.enq-layout{grid-template-columns:1fr}.enq-summary{position:static;max-height:none}}
 @media (max-width:640px){.type-grid{grid-template-columns:1fr 1fr}.enq-step{padding:1.2rem}}
+
+/* how-it-works steps swipe sideways on phones */
+.steps-dots{display:none}
+@media (max-width:640px){
+  .steps{display:flex;gap:.9rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gut);margin:0 calc(-1 * var(--gut));padding:0 var(--gut) .4rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .steps::-webkit-scrollbar{display:none}
+  .steps li{flex:0 0 78%;scroll-snap-align:start;display:block;padding:1.4rem 1.3rem 1.5rem;background:var(--paper);border:1px solid var(--line-2);border-top:2px solid var(--ink)}
+  .steps li span{margin-bottom:.8rem}
+  .steps-dots{display:flex;justify-content:center;gap:.5rem;margin-top:1.2rem}
+  .steps-dots button{width:8px;height:8px;border-radius:50%;background:var(--line);padding:0;transition:background .3s,width .3s}
+  .steps-dots button.is-on{background:var(--satin);width:22px;border-radius:999px}
+}
