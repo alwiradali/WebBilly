@@ -11,7 +11,7 @@
 <meta property="og:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="HeatFix Mcr Limited — installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
+<meta property="og:image:alt" content="HeatFix Mcr Limited, installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
@@ -120,7 +120,7 @@
       <span class="brandtxt"><b>HEATFIX MCR LIMITED</b><span class="svcs full">Installation &middot; Servicing &middot; Repairs &middot; Heating &middot; Plumbing &middot; Gas Safety</span><span class="svcs short">Installation &middot; Servicing &middot; Repairs &middot; Gas Safety</span></span>
     </a>
     <div class="navlinks">
-      <a href="/#services">Services</a><a href="/#work">Our work</a>
+      <a href="/services">Services</a><a href="/#work">Our work</a>
       <a href="/#areas">Areas</a><a href="/#quote">Free quote</a>
     </div>
     <a class="navtel" href="tel:+447890452629">07890 452629</a>
@@ -128,7 +128,7 @@
   </div>
 </nav>
 <div class="drawer" id="drawer">
-  <a href="/#services">Services</a><a href="/#work">Our work</a>
+  <a href="/services">Services</a><a href="/#work">Our work</a>
   <a href="/#areas">Areas covered</a><a href="/#quote">Free quote</a><a href="/">Home</a>
 </div>
 
@@ -182,6 +182,7 @@
               <option>New boiler survey &amp; quote</option>
               <option>Boiler service</option>
               <option>Landlord gas safety certificate (CP12)</option>
+              <option>Several properties, landlord or agent quote</option>
               <option>Hot water cylinder</option>
               <option>Gas cooker, hob or fire</option>
               <option>Bathroom, shower or taps</option>
@@ -290,6 +291,24 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 (function(){
   var el = document.getElementById('gsNoBook'), n = (HF_GAS_SAFE_NO || '').trim();
   if (el && n) el.textContent = 'Reg. no. ' + n;
+})();
+
+/* The services page sends landlords and agents here with ?job=portfolio, so the
+   form opens on the right thing instead of asking them to find it. Matching on
+   a keyword rather than the exact label means rewording the option later does
+   not quietly break the link. */
+(function(){
+  var want = new URLSearchParams(location.search).get('job');
+  if (!want) return;
+  var key = { portfolio: 'several properties', cp12: 'landlord gas safety',
+              boiler: 'boiler not working', quote: 'new boiler survey',
+              service: 'boiler service', leak: 'leak or emergency' }[want.toLowerCase()];
+  if (!key) return;
+  var sel = document.getElementById('fJob');
+  if (!sel) return;
+  for (var i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text.toLowerCase().indexOf(key) === 0) { sel.selectedIndex = i; return; }
+  }
 })();
 
 /* nav + dock */

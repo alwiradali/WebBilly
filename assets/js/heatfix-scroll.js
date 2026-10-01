@@ -89,3 +89,52 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 })();
+
+/* ---- anchor jumps that land where they should ----
+ *
+ * Tapping "Contact" scrolled to the right place and then stopped being the
+ * right place. The reveal animations above the target finish a moment after
+ * the jump, each one settling from a translate into its final position, and
+ * everything below shifts by the total. The browser's scroll was correct when
+ * it happened and wrong a heartbeat later, which is why the form kept ending
+ * up just off the top of the screen.
+ *
+ * So the jump is taken over here: scroll with the fixed header's height
+ * subtracted, then re-measure once the animations have run and correct
+ * silently. Anything that is not a same-page anchor is left alone.
+ */
+(function () {
+  function headroom() { return window.innerWidth <= 900 ? 86 : 116; }
+
+  function goTo(el, smooth) {
+    var y = el.getBoundingClientRect().top + (window.pageYOffset || 0) - headroom();
+    window.scrollTo({ top: y < 0 ? 0 : y, behavior: smooth ? "smooth" : "auto" });
+  }
+
+  /* "#quote", "/#quote" and "/index.html#quote" all mean this page when this
+     page is the one being linked to; anything else is a real navigation. */
+  function samePage(path) {
+    if (!path) return true;
+    if (path === location.pathname) return true;
+    return path === "/" && (location.pathname === "/" ||
+      /(^|\/)(index|heatfixmcr)\.html$/.test(location.pathname));
+  }
+
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href*="#"]');
+    if (!a || a.target === "_blank") return;
+    var href = a.getAttribute("href") || "";
+    var cut = href.indexOf("#");
+    var id = href.slice(cut + 1);
+    if (!id || !samePage(href.slice(0, cut))) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+
+    e.preventDefault();
+    goTo(el, true);
+    /* Long enough for the reveals to have settled, short enough not to fight
+       a visitor who has started scrolling again. */
+    setTimeout(function () { goTo(el, false); }, 450);
+    if (history.replaceState) history.replaceState(null, "", "#" + id);
+  });
+})();

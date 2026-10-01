@@ -13,6 +13,21 @@ Brand palette: `--bg:#060b1a`, `--text:#eaf2ff`, accents `--c1:#2b7fff` /
 `--c2:#38bdf8` / `--c3:#22d3ee`. Fonts: Space Grotesk (display), Inter (body),
 Playfair Display (serif). Keep client-demo pages `noindex`.
 
+## RULE: client example links never contain the word "templates"
+
+The owner's instruction (1 Oct 2026): a client preview is not a template, and
+the word must never appear in the link of any example built from now on. Put
+each one in its own top-level folder — `/<client>/index.html` (served at
+`billydigitals.com/<client>/`) plus extra pages beside it
+(`/<client>/portfolio.html` → `/<client>/portfolio`). Use root-absolute paths
+(`/assets/…`, `/<client>/style.css`) so the folder works with or without the
+trailing slash, load GSAP / ScrollTrigger / Lenis from `/assets/vendor/`
+(copies of the ones in the old folder), and add the folder to `_headers`
+(noindex). Do NOT list it in `robots.txt`: that file is public, so a line
+there tells anyone where the preview is — and a Disallow also stops crawlers
+from ever seeing the noindex. The meta tag plus the header is enough. The older previews still live
+under `/templates/` and keep working there; don't add anything new to it.
+
 ## Scroll effects / animations — use the global toolkit
 When asked to add scroll effects or animations, use the **`data-fx` system** in
 `assets/css/scroll-fx.css` + `assets/js/scroll-fx.js` (loaded globally). Tag
@@ -1401,6 +1416,221 @@ the row is ~2930px, which at dpr 3 is 8800 device pixels, and iOS silently
 declines to paint a moving composited layer that wide. The same reasoning is
 why `.band[data-rv]` and `.sec[data-rv]` fade instead of translating.
 
-**Self-hosted fonts.** Fraunces, Jost, Oswald (all variable, one file each) and
-Caveat Brush, latin subsets, in `assets/strictly/fonts/`. Google Fonts is not
-called at all.
+**Self-hosted fonts: two families, not three.** Bodoni Moda (roman + italic)
+and Hanken Grotesk (roman + italic), latin subsets, in
+`assets/strictly/fonts/`. Google Fonts is not called at all. Bodoni because her
+own printed menus are set in a Didone, so it is the most expensive-reading
+serif that still matches her brand; headings run at weight 500 because 400
+hairlines go fragile on the dark ground. Hanken Grotesk is both the body face
+and the label face — `--cond` points at it, tracked and uppercased. The
+condensed poster grotesk that used to fill that slot read like a gym.
+
+**Copy rule: nothing substantive appears on two pages.** The six category
+pages once rendered the menu page's pricing paragraph verbatim, and the
+"something not listed" block and the closing call to action ran on all seven.
+Each category now carries its own `optsNote` and `blurb` in the data file, and
+the closing block is a heading and two buttons with no prose. A short audit
+script that splits every page into sentences and counts duplicates is the way
+to check this after any copy change.
+
+## The Bespoke Bouquets (florist, Solihull B92) — `bespoke-bouquets/` → billydigitals.com/bespoke-bouquets/
+
+`@thebespokebouquets` on Instagram, `@thebespokebouquets_` on TikTok. Fresh
+bouquets, collection from B92 or local delivery across Birmingham / Solihull.
+She asked for the shop to be the main focus. Noindex like every client demo;
+`_headers` covers the page and `/assets/bespoke/*`.
+
+**Everything on the page is hers.** The logo is her profile picture lifted
+pixel for pixel (circle at 644,1261 r=424 in the 1290px screenshot, corners
+transparent) — `assets/bespoke/logo.png`, plus the icon sizes. Every photo in
+`assets/bespoke/photos/` is her own work cut out of screenshots of her posts
+and stories (crops avoid the story's rounded corners and Instagram's mute /
+carousel badges). The gajre photo carries the `@shumaelaphotography` credit
+from her own caption.
+
+**Her rules, from her own story highlights, are the shop's rules:** 5 days'
+minimum notice (`CONFIG.minDays` — every date field's `min`, and re-checked on
+submit because desktop Safari ignores `min` when typed), a non-refundable 50%
+deposit (`CONFIG.depositRate`), seasonal swaps, collection from B92 or local
+delivery "subject to conditions". The aftercare tips are her text.
+
+**Only three prices exist** (£145 skirt bouquet, £95 blush gift bag, £70
+birthday banner — from her DMs). Every other design has `price: null`, shows
+"Price on request", and its button prefills the bespoke enquiry instead of
+adding to the basket. Give any `CATALOGUE` entry a number and it becomes
+buyable; nothing else changes. Product names are descriptive placeholders.
+
+**Payments are a seam, not a fake.** Checkout offers deposit-or-full and card
+/ Apple Pay / Google Pay, PayPal or bank transfer — but no card field exists
+on the page. `CONFIG.payments.checkoutEndpoint` is where a worker that makes a
+Stripe Checkout Session goes (POST the order, get `{url}` back, redirect).
+Until it is set, the confirmation says plainly that it is preview mode and no
+payment was taken. With no `web3formsKey`, both the order and the bespoke
+enquiry are handed back as a written message with "Copy & open Instagram"
+(DMs can't be prefilled) so nothing is lost.
+
+**Reviews are labelled examples** (`REVIEWS.sample`) until her Google profile
+is linked — every card has an Example chip and the section says so.
+
+**Two things this build found:**
+1. **Never pass a `<form>` to GSAP.** A form has `.length` (its control
+   count), so GSAP treats it as a list and tweens its inputs; the form itself
+   stayed at opacity 0 forever. Reveal a wrapper (`.form-wrap`).
+2. **Create pinned ScrollTriggers first, in page order.** The occasions pin
+   was created after the reveal triggers, so everything below it was measured
+   without the pin's extra scroll length. Both pins (hero, occasions) are now
+   created before anything else in `runMotion()`.
+
+The hero arch is moved out of `.hero-visual` into `.hero` on desktop (a hidden
+placeholder keeps its slot and is re-measured on every refresh) so it can grow
+to fill the viewport while the hero is pinned. GSAP's `matchMedia` puts it
+back below 981px.
+
+**Still needed from her**, all in `CONFIG` at the top of the JS: WhatsApp
+number, email + Web3Forms key, Google Business profile + review link, prices
+for the remaining designs, delivery fee, and a Stripe / PayPal account if she
+wants payments taken online.
+
+**Portfolio page (`bespoke-bouquets/portfolio.{html,js}` → `/bespoke-bouquets/portfolio`).** The
+shop shows only the designs with a published price; everything else she makes
+is on the portfolio — `PIECES` in its JS, one tile per photo, a masonry
+gallery with filters and a lightbox. "Request something like this" goes to
+`/bespoke-bouquets/?enquire=<name>#bespoke`, which prefills the bespoke
+form; the main page's occasion links go to `/bespoke-bouquets/portfolio?show=<cat>`.
+The portfolio's head, icon sprite, header, drawer and footer were copied from
+the main page — change both if either changes. It shares `style.css`
+and reads the basket count from the same localStorage key. Same noindex
+headers as the main page.
+
+**Redesigned 1 Oct 2026 to the Strictly Sprinkles pattern** after the owner
+called the first version messy and hard to read. What changed, and why:
+everything that moved on its own or sat over text is gone — loader, custom
+cursor, falling-petal canvases, wrap-paper SVG, ribbon, mirror ring, floating
+price tags, pinned hero expansion, sideways-pinned occasions, the word-fill
+statement, marquee, floating message bubble. GSAP and ScrollTrigger are no
+longer loaded; Lenis is the only library. One solid header that never hides.
+Every section opens the same way (`.sec-head`: label with a rule, Bodoni 500
+title with one italic phrase, one line of copy beside it); content sits in
+white `.card`s on cream / blush (`.sec.tint`) / wine (`.sec.dark`). Body copy
+is #4a3539 on cream, muted copy #6d5a5e — both well over 4.5:1. The only
+motion is `.rv` fade-up via IntersectionObserver, added by JS so nothing is
+hidden without it, with a 6s safety net. Keep it this way: if something new
+is added, it goes in a card under a `.sec-head`, not floating on top.
+
+**Second pass, same day (Krem & Choc reference).** Headings moved from Bodoni
+Moda to **Fraunces 500/600 with SOFT 100** — Bodoni's hairlines were the
+"can't read it" complaint. Body copy is Manrope 500 at 17px. The hero is now
+centred on her logo badge (Krem & Choc puts the mark front and centre), with
+three arch photos below. Cute flowers are inline SVG symbols (`fl-blossom`,
+`fl-rose`, `fl-tulip`, `fl-leaf`, `fl-dot`) composed into `.flora` corner
+clusters: absolutely positioned, `z-index:0`, `pointer-events:none`, always at
+section corners and clipped by `.sec{overflow:hidden}` — never behind body copy.
+Colours are set per `<use>` through `--p` / `--c` / `--l`. A slow sway is the
+only animation they carry, and it stops under reduced motion.
+
+**No circle around her logo (owner's call); the logos are SVG traces** (potracer on the keyed alpha, 6× upscale, threshold 150 — the PNG cut-outs looked blurry on phones; `logo-ink.png` etc. are kept as the trace sources). The hero shows `logo-ink.png` —
+the rose and lettering keyed off the plate by projection onto the plate→ink
+axis (plate `#ffe6e7`, ink `#1b1110`, alpha remapped 0.12→0.85 so the plate's
+own shading drops out, circle rim ignored) — on a hero background that IS the
+plate colour, so it reads as her logo with the circle removed. The header uses
+`rose-ink.png` (the rose alone), the dark footer `logo-plate.png` (same alpha
+in the plate pink). `logo.png`, the round badge, is now only the favicon and
+share image.
+
+**Third design, chosen by the owner: "light & luxurious".** She hated the
+cards-and-cartoon-flowers version. Now: split hero (her plate pink `#ffe6e7`
+with the SVG logo + headline on the left, the skirt bouquet full-height on the
+right; on phones the photo comes first), cream page, big photographs with
+captions underneath and NO boxes, shadows or rounded corners on content, thin
+1px rules instead of cards, square dark buttons in small tracked caps (`.btn-dark`;
+`.btn-satin` is kept as an alias because the JS still emits it), Playfair
+Display headings at 400 (solid strokes — Bodoni's hairlines were unreadable)
+and Jost body at 17.5px in near-black. Light pink footer. The drawn flowers are
+gone. Don't reintroduce cards, shadows or decoration — space and photographs
+carry it.
+
+**Floating petals on every page (owner asked for "floating stuff on all the
+website").** `bespoke-bouquets/petals.js`, loaded by both pages: one fixed
+canvas (`.petal-sky`, z-index 1) between the section backgrounds and the
+content (`.wrap` and the hero's children at z-index 2), so petals and the odd
+blossom drift through empty space and pass behind text, photos and buttons —
+never over them. 26 on desktop, 14 on phones, dpr capped at 2, paused when the
+tab is hidden, absent under reduced motion. If a new block has its own
+background, keep its content inside a `.wrap` or the petals will draw over it.
+
+**No deposit in the shop (owner, 1 Oct).** Shop orders are paid in full at
+checkout: `CONFIG.depositRate` is 1, the basket's deposit row and the
+checkout's "how much today" choice are gone (a hidden `amount=full` keeps the
+code path), and no copy anywhere mentions a 50% deposit. Bespoke designs are
+"confirmed once the quote is agreed" — she arranges any deposit herself. Body
+font is now Nunito Sans; intro lines (hero lead, `.sec-head>p`) are set in
+Playfair italic so they read as soft, short captions, not paragraphs.
+
+**Fourth look: the Henna by Zainab style (owner pointed at it, 1 Oct).**
+Centred hero on a pink-to-cream wash: "SOLIHULL · B92" in wide-tracked caps,
+her SVG logo, "FLORIST" in rose caps, a line-drawn floral ornament
+(`.ornament`, inline SVG in `currentColor`), a big Gilda Display headline with
+an EB Garamond italic second line, Garamond body copy, then a full-bleed strip
+of three photos. Fonts are Gilda Display + EB Garamond only. Buttons are
+rectangular, Garamond caps tracked .24em, filled crimson or outlined.
+
+**Shop photos are her originals now (1170x2080), not screenshot crops.** Five
+priced items, all from her own DMs: Skirt Bouquet £145, Blush Garden Gift Bag
+£95, Birthday Banner £70, Initial & Heart (black wrap, "R ♥") £70, Classic Red
+Roses (white wrap) £50. Text blocks carry `background:var(--bg)` in their
+section's colour so the floating petals slip behind copy instead of showing
+through the letters; a new section with its own colour must set `--bg`.
+
+**Pop-ups on phones (fixed 1 Oct).** The product sheet measured 492px inside a
+390px screen — the mobile grid was `1fr`, which won't shrink below content, and
+the tracked-caps "Add to basket · £145" button was `nowrap`. Now
+`minmax(0,1fr)`, `min-width:0` on the children, and the button may wrap.
+iOS ignores `overflow:hidden` on body, so `lock()` pins the body with
+`position:fixed; top:-scrollY` and restores the exact scroll on close.
+CSS/JS links carry `?v=<timestamp>` — bump it on every deploy, or phones keep
+running cached code (the owner saw a broken thumbnail from a stale script).
+
+**Portfolio is grouped, not filtered (owner: "not organised at all").** One
+titled section per category, in order — Red roses, Pastels & whites,
+Personalised, Hatboxes & baskets, Gifts, Weddings & nikkahs — and every piece
+lives in exactly ONE (`cats[0]`), so nothing repeats. Sections are kept to
+multiples of four where possible so desktop rows fill (4 columns; 2 on phones).
+A sticky bar (`.pf-bar`, outside the hero so it can stick) jumps to each
+section and highlights the one in view; `?show=<key>` jumps on load. The
+viewer steps through the section the opened picture belongs to.
+
+**Enquiry page + delivery area (1 Oct).** The bespoke enquiry is its own page,
+`bespoke-bouquets/enquire.{html,js}` → `/bespoke-bouquets/enquire`, in six
+numbered steps (occasion & who for; style cards with her photos, size, budget;
+colours, flowers, wrap, ribbon; extras that reveal their own field — lettering,
+banner, balloon, card, money notes — plus inspiration upload and free text;
+date/time and collection or delivery; contact and preferred reply), with a
+live "Your enquiry" summary that is exactly the message sent. `?design=<name>`
+(from the portfolio viewer, the bridal button, or old `?enquire=` links, which
+redirect) preselects the style/occasion. The main page keeps a short
+"Something else in mind?" band in `#bespoke`.
+
+`shared.js` now holds CONFIG and the helpers (postcode check, dates, toast,
+copy, Web3Forms send, Instagram hand-over) for every page — edit CONFIG there.
+Delivery is Birmingham & Solihull only: B1–B38, B40, B42–B45, B72–B76,
+B90–B94. Checkout and the enquiry both refuse a delivery outside that (and
+checkout needs a full postcode), offering "Switch to collection". The message
+is only re-rendered when its text changes — rebuilding it on blur removed the
+button under the user's tap.
+
+**Per-mile delivery (owner asked: "calculate how far they are and charge per
+mile").** `CONFIG.delivery` in shared.js: `from` (B92), `perMile`, `minimum`,
+`freeUnderMiles`, `roadFactor` (1.25). Checkout looks up the customer's full
+postcode and the origin on postcodes.io (free, no key, CORS), takes the
+straight-line distance × roadFactor, and charges ceil(miles) × perMile, never
+below `minimum`. Until `perMile` is a number nothing is charged — the distance
+is shown and the fee is "confirmed with order". If the lookup fails the order
+still goes through with the fee confirmed by hand. Her rates are still needed.
+
+**Our own date picker (`TBB.datePicker` in shared.js).** The iPhone's native
+date picker ignores `min`, so customers could tap a day inside the 5-day
+notice. Checkout and the enquiry now use a small calendar: the real input is
+turned into a hidden field holding YYYY-MM-DD (so every existing `.value`
+check still works), and a button opens a Monday-first month grid where every
+day before `earliest()` is disabled and struck through. Tests must click the
+calendar (`.dp-btn`, then `.dp-grid button:not([disabled])`), not fill the input.

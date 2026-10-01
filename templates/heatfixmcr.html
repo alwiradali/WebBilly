@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="HeatFix Mcr Limited — installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
+<meta property="og:image:alt" content="HeatFix Mcr Limited, installation, servicing, repairs, heating, plumbing and gas safety across Greater Manchester.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://heatfixmcrlimited.co.uk/assets/heatfix/og-card.jpg">
 <link rel="icon" href="../assets/heatfix/icon-32.png" sizes="32x32">
@@ -355,6 +355,19 @@ h1.hh em{font-style:normal;color:var(--ice)}
 /* ===================== QUOTE ===================== */
 .quote-wrap{display:grid;gap:clamp(32px,5vw,56px);grid-template-columns:minmax(0,1fr);align-items:start}
 @media(min-width:960px){.quote-wrap{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+/* Below 960 the column stacks, and it stacked headline, blurb, card of phone
+   numbers, THEN the form -- so a tap on "Contact" landed on a card the phone
+   already duplicates in its own Call/WhatsApp dock, with the form somewhere
+   below the fold. On a phone the form now comes first and the card follows it.
+   display:contents lifts the copy column's children into the same flex flow,
+   which is what lets `order` reach the card at all; the gap goes to 0 because
+   a flex gap would otherwise be applied between the headline and its blurb. */
+@media(max-width:959px){
+  .quote-wrap{display:flex;flex-direction:column;gap:0}
+  .quote-wrap>div:first-child{display:contents}
+  .quote-wrap .qcard{order:2;margin-top:26px}
+  .quote-wrap .side-card{order:3;margin-top:26px}
+}
 .qcard{
   padding:clamp(24px,3.4vw,38px);border-radius:var(--rl);background:var(--card);
   border:1px solid var(--line);position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
@@ -448,9 +461,9 @@ h1.hh em{font-style:normal;color:var(--ice)}
     </a>
     <div class="hfnav-links">
       <a href="#top">Home</a>
-      <a href="#services">Services</a>
+      <a href="/services">Services</a>
       <a href="/about">About</a>
-      <a href="#quote">Contact</a>
+      <a href="#quoteForm">Contact</a>
     </div>
     <a class="hfnav-tel" href="tel:+447890452629">07890 452629</a>
     <a class="hfbtn" href="#quote">Get a free quote</a>
@@ -463,9 +476,9 @@ h1.hh em{font-style:normal;color:var(--ice)}
 <div class="hfdrawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="hfdrawer-in">
     <a href="#top">Home</a>
-    <a href="#services">Services</a>
+    <a href="/services">Services</a>
     <a href="/about">About</a>
-    <a href="#quote">Contact</a>
+    <a href="#quoteForm">Contact</a>
     <a href="tel:+447890452629">07890 452629</a>
     <a class="hfbtn" href="#quote">Get a free quote</a>
   </div>
@@ -506,9 +519,6 @@ h1.hh em{font-style:normal;color:var(--ice)}
         </a>
       </div>
       <div class="hero-mini" data-fx="stagger" data-fx-step="90" data-fx-delay="450">
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Free</b> quotes, no obligation</div>
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Same-day</b> call-outs where we can</div>
-        <div><span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><b>Insured</b> <span id="insHero">public liability cover</span></div>
       </div>
     </div>
 
@@ -587,7 +597,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
 <!-- ================= WHAT WE DO ================= -->
 <section class="hfwhat" id="services">
   <h2 data-fx="reveal">What we do</h2>
-  <div class="hfcards three" data-fx="stagger" data-fx-step="80">
+  <div class="hfcards four" data-fx="stagger" data-fx-step="80">
     <article class="hfcard">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="6" y="3" width="12" height="16" rx="2"/><path d="M12 8c-1.2 1.7-1.9 2.6-1.9 3.7a1.9 1.9 0 0 0 3.8 0c0-1.1-.7-2-1.9-3.7z" fill="#fff" stroke="none"/><path d="M9 22v-3M15 22v-3"/></svg></span>
       <h3>Boilers and radiators</h3>
@@ -609,7 +619,26 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <p>CP12 for landlords, same visit</p>
       <a class="more" href="/gas-safety-certificate">Learn more</a>
     </article>
+    <!-- Gas leaks. The emergency service number stays on the card, because
+         telling someone standing in a house that smells of gas to ring a
+         one-man business first would be telling them to do the wrong thing.
+         But the line sells him rather than them: they only make it safe and
+         cap it, they never repair it or turn the gas back on, and that is
+         the work — so "0800 111 999 make it safe. We put it right." -->
+    <article class="hfcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7c2.5 3.4 4.6 5.6 4.6 8.3a4.6 4.6 0 0 1-9.2 0C7.4 8.3 9.5 6.1 12 2.7z"/><path d="M12 21.3v-2.4M8.2 20.1l.9-1.7M15.8 20.1l-.9-1.7"/></svg></span>
+      <h3>Gas leak detection &amp; repair</h3>
+      <p>0800 111 999 make it safe. We put it right</p>
+      <a class="more" href="/safety-tips">What to do</a>
+    </article>
   </div>
+  <a class="hfport-tease" href="/services#landlords">
+    <span class="pt-txt">
+      <b>Landlord, letting agent or more than one property?</b>
+      <span class="pt-sub">Send us the list and it comes back as a single written quote. Certificates and servicing priced as a portfolio, not as a stack of separate call-outs.</span>
+    </span>
+    <span class="pt-go">See how it works &rarr;</span>
+  </a>
 </section>
 
 <!-- ================= TRUSTED BY ================= -->
@@ -633,7 +662,6 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <span class="mqb plain"><span class="mqb-t"><b>Intergas</b><small>Serviced, installed &amp; repaired</small></span></span>
       <span class="mqb plain"><span class="mqb-t"><b>Ferroli</b><small>Serviced, installed &amp; repaired</small></span></span>
       <span class="mqb plain"><span class="mqb-t"><b>Any other make</b><small>Serviced, installed &amp; repaired</small></span></span>
-      <span class="mqb plain"><span class="mqb-t"><b>Public liability</b><small>Insured</small></span></span>
   </div>
 </div>
 
@@ -863,7 +891,6 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <div><b>Free</b><span>Written quotes</span></div>
         <div><b>Direct</b><span>The owner runs every job</span></div>
         <div><b>Local</b><span>Manchester, not a call centre</span></div>
-        <div><b>Insured</b><span id="insKv">Public liability cover</span></div>
       </div>
         <div class="gs-plate" data-fx="reveal" data-fx-delay="60" style="margin-top:26px;max-width:430px">
           <svg class="gs-mark" viewBox="0 0 100 118" aria-hidden="true" focusable="false"><polygon points="87,11 87,83 14,83" stroke-width="14" stroke-linejoin="round"/><g font-family="Montserrat,'Arial Black',Arial,sans-serif" fill="#111"><text x="72" y="62" font-size="12.5" font-weight="800" letter-spacing=".6" text-anchor="end">GAS</text><text x="74" y="57" font-size="6.5" font-weight="700">®</text><text x="84" y="80" font-size="26" font-weight="800" letter-spacing="-.6" text-anchor="end">safe</text></g><text x="15" y="104" font-size="10.5" font-weight="800" letter-spacing="2.4" font-family="Montserrat,Arial,sans-serif" fill="currentColor">REGISTER</text></svg>
@@ -892,7 +919,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
   </div>
   <div class="wrap" style="max-width:1220px">
     <div class="gal" id="gal">
-      <figure class="gi"><img src="../assets/heatfix/work-01-sm.webp" data-full="../assets/heatfix/work-01.webp" alt="Combi boiler with the case off in a fitted kitchen" loading="lazy"><b><i>Kitchen</i>Combi opened up</b></figure>
+      <figure class="gi"><img src="../assets/heatfix/work-01-sm.webp" data-full="../assets/heatfix/work-01.webp" alt="Combi boiler with the case off in a fitted kitchen" loading="lazy"><b><i>Boiler</i>Serviced and repaired</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-02-sm.webp" data-full="../assets/heatfix/work-02.webp" alt="New wall-mounted combi boiler above tiled splashback" loading="lazy"><b><i>Install</i>New combi fitted</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-05-sm.webp" data-full="../assets/heatfix/work-05.webp" alt="Megaflo unvented hot water cylinder installed and piped up" loading="lazy"><b><i>Hot water</i>Unvented cylinder</b></figure>
       <figure class="gi"><img src="../assets/heatfix/work-09-sm.webp" data-full="../assets/heatfix/work-09.webp" alt="Toilet cistern rebuilt with new fill and flush valves" loading="lazy"><b><i>Cistern</i>Valves replaced</b></figure>
@@ -974,7 +1001,6 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <details class="faq"><summary>Why does my boiler keep losing pressure?</summary><div class="a"><p>Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at.</p></div></details>
       <details class="faq"><summary>Does my boiler really need servicing every year?</summary><div class="a"><p>Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room.</p></div></details>
       <details class="faq"><summary>What areas do you cover?</summary><div class="a"><p>Manchester, Stockport and the areas we cover in between: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest, plus Sale, Timperley, Altrincham and Handforth. If you're a bit outside that, ring and ask; the answer is usually yes.</p></div></details>
-      <details class="faq"><summary>Are you insured?</summary><div class="a"><p>Yes, HeatFix Mcr Limited carries public liability insurance<span id="insFaq"></span>, on top of being Gas Safe registered. If a landlord, letting agent or managing agent needs to see the certificate before work starts, ask and it gets sent over.</p></div></details>
     </div>
   </div>
 </section>
@@ -1192,7 +1218,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
       </div>
     </details>
     <p class="areanote" data-fx="reveal" data-fx-delay="220">
-      Not on the list? Ring and ask &mdash; if the day works, we'll come.
+      Not on the list? Ring and ask, if the day works, we'll come.
     </p>
   </div>
 </section>
@@ -1224,7 +1250,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
       <img src="../assets/heatfix/logo-lockup-rev-600.webp" alt="HeatFix Mcr Limited" style="height:clamp(104px,13vw,140px);width:auto;display:block">
       <p style="color:var(--muted);font-size:.94rem;margin-top:18px">
         Heating and plumbing across Manchester and Stockport, done by Gas Safe
-      registered, insured engineers who answer their own phone.
+      registered engineers who answer their own phone.
       </p>
       <p class="serif" style="color:var(--gold2);margin-top:14px;font-size:1.05rem">Domestic Gas Engineer</p>
       <div class="gs-line" style="margin-top:18px">
@@ -1244,10 +1270,11 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <li><a href="/boilers-and-radiators">Boiler installation</a></li>
         <li><a href="/boilers-and-radiators">Repairs &amp; servicing</a></li>
         <li><a href="/plumbing">Unvented cylinders</a></li>
-        <li><a href="/#services">Cookers, hobs &amp; fires</a></li>
+        <li><a href="/services">Cookers, hobs &amp; fires</a></li>
         <li><a href="/plumbing">Bathrooms &amp; showers</a></li>
         <li><a href="/plumbing">Plumbing &amp; leaks</a></li>
         <li><a href="/gas-safety-certificate">Gas Safety Certificate (CP12)</a></li>
+        <li><a href="/safety-tips">Gas leak detection &amp; repair</a></li>
       </ul>
     </div>
     <div>
@@ -1268,6 +1295,7 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <li><a href="tel:+447890452629">07890 452629</a></li>
         <li><a href="mailto:heatfixmcr@hotmail.com">heatfixmcr@hotmail.com</a></li>
         <li><a href="https://wa.me/447890452629" target="_blank" rel="noopener">WhatsApp</a></li>
+      <li><a href="https://www.instagram.com/heatfixmcr/" target="_blank" rel="noopener">Instagram</a></li>
         <li><a href="/book">Ask for a visit</a></li>
         <li>heatfixmcrlimited.co.uk</li>
       </ul>
@@ -1280,8 +1308,8 @@ h1.hh em{font-style:normal;color:var(--ice)}
         <li>Cheadle &amp; Cheadle Hulme</li>
         <li>Chorlton, Didsbury &amp; Burnage</li>
         <li>Salford &amp; Eccles</li>
-        <li><a href="/#areas">Areas we cover</a></li>
       </ul>
+      <p class="foot-more">Not on the list? <a href="tel:+447890452629">Ring and ask</a><span class="fm-tail">The answer is usually yes.</span></p>
     </div>
   </div>
   <div class="wrap footbar">
@@ -1312,12 +1340,12 @@ h1.hh em{font-style:normal;color:var(--ice)}
 "description":"Gas Safe registered domestic gas engineer in Manchester. Boiler installation, repair and servicing, unvented cylinders, gas cookers, bathrooms and emergency plumbing.",
 "address":{"@type":"PostalAddress","addressLocality":"Manchester","addressRegion":"Greater Manchester","addressCountry":"GB"},
 "areaServed":["Manchester","Stockport","Salford","Trafford","Tameside","Cheadle","Cheadle Hulme","Bramhall","Gatley","Heald Green","Sale","Wythenshawe","Reddish","Denton"],
-"sameAs":["https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/"],
+"sameAs":["https://www.yell.com/biz/heatfix-mcr-ltd-manchester-10187176/","https://www.instagram.com/heatfixmcr/"],
 "knowsAbout":["Boiler installation","Boiler repair","Gas safety certificate","Unvented hot water cylinder","Gas cooker installation","Emergency plumbing"]}
 </script>
 
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at."}}, {"@type": "Question", "name": "Does my boiler really need servicing every year?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester, Stockport and the areas we cover in between: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest, plus Sale, Timperley, Altrincham and Handforth. If you're a bit outside that, ring and ask; the answer is usually yes."}}, {"@type": "Question", "name": "Are you insured?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, HeatFix Mcr Limited carries public liability insurance, on top of being Gas Safe registered. If a landlord, letting agent or managing agent needs to see the certificate before work starts, ask and it gets sent over."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Are you Gas Safe registered?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every gas job is carried out by a Gas Safe registered engineer, and the ID card comes out on the doorstep before you have to ask. You can check any engineer yourself on the Gas Safe Register website using the licence number on the card."}}, {"@type": "Question", "name": "Do you do landlord gas safety certificates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, CP12 landlord gas safety records for every gas appliance in the property, issued the same visit. Landlords in England and Wales must have one carried out every twelve months by a Gas Safe registered engineer, and must give the tenant a copy."}}, {"@type": "Question", "name": "How long does a new boiler take to fit?", "acceptedAnswer": {"@type": "Answer", "text": "A straight combi swap in the same spot is usually a single day. Moving the boiler, converting from a back boiler, or going from a tank system to a combi is normally two days. We'll tell you which yours is when we quote, not halfway through."}}, {"@type": "Question", "name": "Why does my boiler keep losing pressure?", "acceptedAnswer": {"@type": "Answer", "text": "Almost always one of three things: a leak somewhere on the pipework or a radiator valve, a failed expansion vessel inside the boiler, or a pressure relief valve passing water outside. Topping it up daily hides the fault rather than fixing it. It's worth getting looked at."}}, {"@type": "Question", "name": "Does my boiler really need servicing every year?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and two reasons matter more than the rest. A service is where a blocked condensate, a sooting burner or a tired seal gets caught before it strands you in January, and nearly every manufacturer's warranty is void without a service recorded every twelve months. It's also the check that keeps combustion clean, which is what keeps carbon monoxide out of the room."}}, {"@type": "Question", "name": "What areas do you cover?", "acceptedAnswer": {"@type": "Answer", "text": "Manchester, Stockport and the areas we cover in between: Salford, Chorlton, Didsbury, Withington, Burnage, Heaton Moor, Cheadle, Cheadle Hulme, Gatley, Bramhall, Reddish and the rest, plus Sale, Timperley, Altrincham and Handforth. If you're a bit outside that, ring and ask; the answer is usually yes."}}]}
 </script>
 
 <script src="../assets/js/scroll-fx.js" defer></script>
@@ -1332,11 +1360,6 @@ var HF_PHONE = "447890452629";
 /* The Gas Safe registration number. Gas Safe require it to be shown
    wherever the logo appears — put the 6 digits between the quotes. */
 var HF_GAS_SAFE_NO = "627019";
-/* Public liability cover. Leave this blank until the certificate is actually in
-   front of you — the page then just says "insured", which is true, rather than
-   quoting a figure nobody has checked. Fill it in like "\u00a32 million" and the
-   amount appears everywhere insurance is mentioned. */
-var HF_INSURANCE = "";
 
 /* Yell profile — where the reviews actually live. The Reviews section links
    here, and Yell's own widget (Reputation Manager → Reviews → Widgets) can be
@@ -1393,15 +1416,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   });
 })();
 
-/* Insurance wording. Only the amount is variable — "insured" stands on its own
-   until someone types a figure in above. */
-(function(){
-  var amt = (typeof HF_INSURANCE === 'string' ? HF_INSURANCE : '').trim();
-  if (!amt) return;
-  var hero = document.getElementById('insHero'); if (hero) hero.textContent = amt + ' public liability';
-  var kv   = document.getElementById('insKv');   if (kv)   kv.textContent   = amt + ' public liability';
-  var faq  = document.getElementById('insFaq');  if (faq)  faq.textContent  = ' of ' + amt;
-})();
 
 /* ---------- numbers count up when they scroll into view ---------- */
 (function(){

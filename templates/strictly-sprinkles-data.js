@@ -27,7 +27,6 @@ window.SS = (function () {
     whatsapp: "447378684907",
     email: "Strictlysprinkles@outlook.com",
     instagram: "strictly_sprinkles",
-    instagramStudio: "studio_bystrictlysprinkles",
     tiktok: "strictlysprinkles",
     facebook: "https://www.facebook.com/share/1NUqhH57mA/",
     /* her TikTok bio says DMs there are not monitored — the site sends
@@ -41,25 +40,25 @@ window.SS = (function () {
      and frosting while a pretzel box does not. */
   var cakes = [
     { id: "bento",        name: "4″ bento cake",              price: 30,  img: "work/vintage-pink-cake.webp",
-      blurb: "The little one. Two people, one message piped on top." },
+      blurb: "Two people, one message piped on top. The birthday cake for a small table." },
     { id: "bento2",       name: "4″ bento cake + 2 cupcakes", price: 35,  img: "work/umrah-cupcakes.webp",
-      blurb: "The bento, with a pair of cupcakes alongside." },
+      blurb: "The bento with a pair of cupcakes alongside — enough to share without a whole tin." },
     { id: "bento8",       name: "4″ bento cake + 8 cupcakes", price: 50,  img: "work/grad-cupcakes.webp",
-      blurb: "Enough to go round a small table." },
+      blurb: "The bento and eight cupcakes. Covers a small gathering without going up a size." },
     { id: "tall4",        name: "4″ tall cake",               price: 45,  img: "work/duck-cake.webp",
-      blurb: "Same footprint as the bento, twice the height." },
+      blurb: "The bento's footprint at twice the height. More layers to cut, same small table." },
     { id: "round6",       name: "6″ round cake",              price: 65,  img: "work/lamborghini-cake.webp",
-      blurb: "The usual birthday size." },
+      blurb: "The usual birthday size, and the one most people land on." },
     { id: "round6tall",   name: "6″ round cake, tall",        price: 80,  img: "work/pawpatrol-cake.webp",
-      blurb: "More layers of sponge, the same width." },
+      blurb: "Extra layers of sponge on the same width — taller in photographs, same slice count." },
     { id: "heart6",       name: "6″ heart cake",              price: 70,  img: "work/vintage-heart-cake.webp",
-      blurb: "Heart tin. Engagements, anniversaries, Valentine's." },
+      blurb: "Heart tin. Engagements, anniversaries and Valentine's." },
     { id: "round8",       name: "8″ round cake",              price: 85,  img: "work/nikkah-cake.webp",
       blurb: "The bigger round, for a proper party." },
     { id: "round8tall",   name: "8″ round cake, tall",        price: 100, img: "work/tiered-blue-gold.webp",
-      blurb: "The showpiece. Tall, sharp edges, plenty to cut." },
+      blurb: "The showpiece. Tall, sharp edges and plenty to cut in front of people." },
     { id: "heart8",       name: "8″ heart cake",              price: 95,  img: "work/vintage-heart-cake.webp",
-      blurb: "The heart, scaled up for a proper crowd." }
+      blurb: "The heart at party size." }
   ];
 
   /* ---------- cookies ---------- */
@@ -135,25 +134,25 @@ window.SS = (function () {
   var seasonal = [
     { id: "sn-ramadan", name: "Ramadan date boxes", when: "Ramadan", price: null,
       img: "work/date-boxes.webp",
-      blurb: "Chocolate-dipped dates, drizzled and dusted, ribboned and boxed." },
+      blurb: "Chocolate-dipped dates, drizzled, dusted and ribboned. The box people bring to iftar and everyone photographs." },
     { id: "sn-eid", name: "Mini Eid treatboxes", when: "Eid", price: null,
       img: "work/eid-box.webp",
-      blurb: "Hand-iced Eid cookies and dipped treats in a small gifting box." },
+      blurb: "A small gifting box of hand-iced Eid cookies and dipped treats — the right size for neighbours, teachers and the school run." },
     { id: "sn-paint", name: "Paint-your-own cookies", when: "Ramadan", price: null,
       img: "work/paint-cookies.webp",
-      blurb: "A cookie, an edible palette and a brush — something for the little ones to do." },
+      blurb: "A cookie, an edible palette and a brush. Something for the children to do in the last hour before iftar." },
     { id: "sn-mothers", name: "Mother's Day collection", when: "Mother's Day", price: null,
       img: "work/mothers-day.webp",
-      blurb: "Cupcake bouquets, mini cakes and dipped strawberries, boxed to give." },
+      blurb: "Cupcake bouquets, mini cakes and dipped strawberries, boxed to be handed over rather than unwrapped in the kitchen." },
     { id: "sn-mehndi", name: "Mehndi treatboxes", when: "Mehndi season", price: null,
       img: "work/mehndi-box.webp",
-      blurb: "Bangles, paisley and hearts, hand-piped in your wedding colours." },
+      blurb: "Bangles, paisley and hearts, hand-piped in the wedding colours. Made to sit on the table and be picked up all night." },
     { id: "sn-nikkah", name: "Nikkah favours and boxes", when: "Weddings", price: null,
       img: "work/nikkah-box.webp",
-      blurb: "Personalised cookies for every guest, and a large box for the couple." },
+      blurb: "Personalised cookies for every guest and a larger box for the couple. Names, the date, and gold where you want it." },
     { id: "sn-grad", name: "Graduation cupcakes", when: "Results season", price: null,
       img: "work/grad-cupcakes.webp",
-      blurb: "Black Forest cupcakes with gold toppers, caps and stethoscopes." }
+      blurb: "Black Forest cupcakes with gold toppers — caps, scrolls and stethoscopes. Ordered the week the results land." }
   ];
 
   /* ---------- flavours ----------
@@ -175,31 +174,31 @@ window.SS = (function () {
     brownie:    ["Brookies", "Regular", "Biscoff"]
   };
 
-  var allergyNote = "It is your responsibility to make us aware of any allergies we need to cater for.";
+  var allergyNote = "It is your responsibility to make me aware of any allergies I need to cater for.";
 
   /* ---------- the order builder ----------
      `opts` on a category decides which question groups the builder asks.
      Drop "filling" from a category and that step stops being asked. */
   var categories = [
-    { id: "cakes", slug: "cakes", blurb: "Every cake is made from scratch for your date and finished to your design. Pick a size below — the shape, the colours and the detail are all yours, and anything not listed can be quoted.",      label: "Cakes",            items: cakes,      unit: "cake",
+    { id: "cakes", optsNote: "Sizes are the starting point. Sculpted shapes, gold leaf, edible images and heavy hand-piping are priced with the design, and you will have the figure before anything is agreed.", slug: "cakes", blurb: "Tiered, sculpted, vintage-piped or a single bento — designed with you and baked for your date. Halal, from £30.",      label: "Cakes",            items: cakes,      unit: "cake",
       opts: ["sponge", "filling", "frosting"], img: "work/tiered-blue-gold.webp",
-      note: "Every cake is made to your design — send a picture and I'll price it." },
-    { id: "cookies", slug: "cookies", blurb: "Hand-iced and personalised: names, dates, monograms, florals, embossed detail and edible images. Sold by the dozen, boxed and ready to hand out.",    label: "Cookies",          items: cookies,    unit: "dozen",
+      note: "Bento, round, heart or tiered — designed with you." },
+    { id: "cookies", optsNote: "Priced by the dozen. Lettering, monograms, florals and edible images are included in the quote — send the names and the date and I will set them out for you.", slug: "cookies", blurb: "Flooded royal icing and smooth fondant, personalised with names, dates and monograms. The favour guests take home and keep the photograph of.",    label: "Cookies",          items: cookies,    unit: "dozen",
       opts: [], img: "work/nikkah-cookies.webp",
       note: "Personalised with names, dates and your colours." },
-    { id: "platters", slug: "party-platters", blurb: "A little of everything on one board, packed to match your theme. Three sizes, and the flavours inside are yours to choose.",   label: "Party platters",   items: platters,   unit: "platter",
+    { id: "platters", optsNote: "One board, everything on it. The counts below are fixed; which flavours fill them is entirely yours.", slug: "party-platters", blurb: "Thirty, sixty or a hundred and eight desserts on one board, finished in your colours. The centrepiece of the table without the work.",   label: "Party platters",   items: platters,   unit: "platter",
       opts: ["platterFlavours"], img: "work/dessert-table.webp",
-      note: "A little of everything, packed to match your theme." },
-    { id: "individual", slug: "individual-treats", blurb: "Party extras, gift boxes and dessert tables. Everything here is per dozen, so you can mix as many as you like.", name: "Individual treats", label: "Individual treats",
+      note: "Thirty to a hundred and eight desserts, one board." },
+    { id: "individual", optsNote: "Everything here is by the dozen, so you can build a table from as many or as few as you like. Mix freely — the price is per dozen either way.", slug: "individual-treats", blurb: "Cakesicles, macarons, dessert cups, cupcakes and brownies, by the dozen. Build a dessert table exactly the size you need.", name: "Individual treats", label: "Individual treats",
       items: null, groups: individual, unit: "dozen",
       opts: ["treatFlavour"], img: "work/macaron-boxes.webp",
-      note: "Per dozen only. Perfect for party extras and gift boxes." },
-    { id: "treatboxes", slug: "treatboxes", blurb: "Five sizes, filled with whichever treats you like and finished in your colours. Quoted per order because no two are the same.", label: "Treatboxes",       items: treatboxes, unit: "box",
+      note: "By the dozen. Build a dessert table your own size." },
+    { id: "treatboxes", optsNote: "Quoted per order, because no two are filled the same. Tell me the size, the occasion and your colours and I will come back with a figure.", slug: "treatboxes", blurb: "Five sizes, filled with whichever treats you like and finished in your colours. Nikkahs, Eid, thank-yous and anything worth wrapping a ribbon round.", label: "Treatboxes",       items: treatboxes, unit: "box",
       opts: ["treatFlavour"], img: "work/nikkah-box.webp",
-      note: "Five sizes, filled with whichever treats you like." },
-    { id: "babyboxes", slug: "baby-boxes", blurb: "For showers, gender reveals and new arrivals — iced cookies, macarons, cakesicles and a bento to match, boxed and ribboned.",  label: "Baby boxes",       items: babyboxes,  unit: "box",
+      note: "Five sizes, filled and finished in your colours." },
+    { id: "babyboxes", optsNote: "Quoted per order. Pick the arrangement, then the colours — pinks, blues, neutrals or something to match the invitation.", slug: "baby-boxes", blurb: "Iced cookies, macarons, cakesicles and a bento to match — boxed and ribboned for showers, gender reveals and new arrivals.",  label: "Baby boxes",       items: babyboxes,  unit: "box",
       opts: ["treatFlavour"], img: "work/baby-girl-box.webp",
-      note: "For showers, gender reveals and new arrivals." }
+      note: "Showers, gender reveals and new arrivals." }
   ];
 
   var occasions = ["Birthday", "Nikkah / wedding", "Engagement", "Baby shower",
@@ -211,7 +210,7 @@ window.SS = (function () {
   var terms = [
     { h: "Placing an order", l: [
       "Allow up to 24 hours for a reply.",
-      "Let us know when you would like the cake, any inspiration pictures you have, and what flavours you would like, so we can give you a quote."
+      "Let me know when you would like the cake, any inspiration pictures you have, and what flavours you would like, so I can give you a quote."
     ]},
     { h: "Deposits and final payments", l: [
       "All orders over £30 require a 50% non-refundable deposit (with 5 days notice) via bank transfer.",
@@ -228,10 +227,10 @@ window.SS = (function () {
 
   /* ---------- reviews ----------
      PLACEHOLDERS. Nothing here is a real customer: they are written as
-     examples so the section can be judged with words in it, and every one
-     is labelled as an example on the page. Replace `reviews` with her real
-     Google reviews and delete `reviewsAreExamples` to drop the label. */
-  var reviewsAreExamples = true;
+     examples so the section can be judged with words in it. Each one still
+     carries "Example review" where a customer's name goes, so nothing here
+     passes itself off as real — replace the whole list with her own Google
+     reviews, names and all, before the site is shown to anybody. */
   var reviews = [
     { name: "Example review", stars: 5, when: "—",
       text: "Ordered a treatbox for my sister's baby shower and it turned out exactly like the picture I sent. Everything tasted as good as it looked." },
@@ -241,14 +240,46 @@ window.SS = (function () {
       text: "Second cake I've ordered. Quick to reply, talked me through the flavours and the drip was perfect." }
   ];
 
+  /* Her photographs, strongest first. The home page shows the first six and
+     the rest live on /templates/strictly-sprinkles-work, so this order is
+     what a first-time visitor is judged by — keep the best at the top.
+     The last few are cropped screenshots off her feed rather than full
+     frames; they earn their place at the end, not the front. */
+  var work = [
+    { src: "work/nikkah-cake.webp",        alt: "Nikkah cake with sugar pearls and a gold monogram" },
+    { src: "work/duck-cake.webp",          alt: "First birthday cake with rubber ducks and balloons" },
+    { src: "work/vintage-pink-cake.webp",  alt: "Vintage piped cake in dusky pink" },
+    { src: "work/tiered-blue-gold.webp",   alt: "Three-tier birthday cake with a gold drip" },
+    { src: "work/nikkah-box.webp",         alt: "Nikkah treatbox of hand-iced cookies" },
+    { src: "work/dessert-table.webp",      alt: "Mehndi dessert table" },
+    { src: "work/baby-boy-cupcakes.webp",  alt: "Welcome-baby cupcakes, boxed" },
+    { src: "work/vintage-heart-cake.webp", alt: "Vintage heart cake in cream and black" },
+    { src: "work/eid-box.webp",            alt: "Eid Mubarak treatbox in mint and gold" },
+    { src: "work/mothers-day.webp",        alt: "Mother's Day buttercream flower bouquet" },
+    { src: "work/pawpatrol-cake.webp",     alt: "Character birthday cake" },
+    { src: "work/mehndi-box.webp",         alt: "Mehndi treatbox of coloured cookies" },
+    { src: "work/lamborghini-cake.webp",   alt: "Sculpted birthday cake with a hand-painted crest" },
+    { src: "work/chaat-table.webp",        alt: "Chaat table" },
+    { src: "work/nikkah-cookies.webp",     alt: "Personalised nikkah cookies" },
+    { src: "work/umrah-cupcakes.webp",     alt: "Umrah Mubarak cupcakes" },
+    { src: "work/unicorn-cake.webp",       alt: "Two-tier unicorn birthday cake" },
+    { src: "work/paint-cookies.webp",      alt: "Paint-your-own Ramadan cookie set" },
+    { src: "work/baby-boy-box.webp",       alt: "Baby announcement treatbox" },
+    { src: "work/macaron-boxes.webp",      alt: "Macarons, boxed" },
+    { src: "work/date-boxes.webp",         alt: "Ramadan date boxes" },
+    { src: "work/grad-cupcakes.webp",      alt: "Graduation cupcakes" },
+    { src: "work/baby-girl-box.webp",      alt: "Baby announcement treatbox" }
+  ];
+
   var faq = [
-    { q: "How do I order?", a: "Use the enquiry form on this page — it walks through the size, the flavours and the date, then sends the whole thing to my WhatsApp or my inbox in one message. You can also DM me on Instagram if you would rather." },
-    { q: "How far in advance should I order?", a: "The more notice the better, especially for a weekend. Deposits need five days' notice, so five days is the realistic minimum for anything over £30." },
-    { q: "What secures the date?", a: "A 50% non-refundable deposit by bank transfer on anything over £30. The order is confirmed once that has been paid, and the balance is due 24 hours before collection." },
-    { q: "Can you match a picture I've seen?", a: "Send it with your enquiry. Inspiration pictures are the fastest way to an accurate quote — I'll tell you honestly what I can and can't do." },
-    { q: "Is everything halal?", a: "Yes. Everything is halal." },
-    { q: "Do you do bigger or tiered cakes?", a: "Yes — tiered cakes and anything not listed here are quoted individually. Get in touch and tell me what you have in mind." },
-    { q: "Do you deliver?", a: "Most orders are collection from Stockton-on-Tees. Ask when you enquire and I'll let you know what's possible for your date." }
+    { q: "How do I place an order?", a: "Use the enquiry form on this page. It takes you through the size, the flavours and the date, and arrives with me as one message — so I can quote it properly." },
+    { q: "How far ahead should I book?", a: "For a weekend, as far ahead as you can — Saturdays go first, and Ramadan and Eid fill weeks in advance." },
+    { q: "What secures the date?", a: "A 50% non-refundable deposit by bank transfer on anything over £30. Until that is paid the date stays open to anyone else; once it is paid it is yours, and the balance is due 24 hours before collection." },
+    { q: "Can you recreate a cake I have seen?", a: "Usually, yes — send the picture with your enquiry. I will tell you honestly what I can match, what I would do differently and what it changes about the price. I would rather set the expectation now than hand you something that is not what you pictured." },
+    { q: "Is everything halal?", a: "Yes, without exception. Every ingredient in this kitchen is halal." },
+    { q: "Do you make tiered and wedding cakes?", a: "Yes. Tiered cakes, nikkah cakes and full dessert tables are quoted individually — tell me the guest count, the venue and the date and I will price it." },
+    { q: "Collection or delivery?", a: "Most orders are collected from Stockton-on-Tees. Delivery can sometimes be arranged for larger orders and dessert tables — ask when you enquire and I will tell you what is possible for your date." },
+    { q: "Can you work around allergies?", a: "Tell me at the enquiry stage and I will be straight with you about what I can and cannot guarantee." }
   ];
 
   return {
@@ -256,6 +287,6 @@ window.SS = (function () {
     platters: platters, individual: individual, treatboxes: treatboxes,
     babyboxes: babyboxes, seasonal: seasonal, flavours: flavours, allergyNote: allergyNote,
     occasions: occasions, terms: terms, cakeCare: cakeCare,
-    reviews: reviews, reviewsAreExamples: reviewsAreExamples, faq: faq
+    reviews: reviews, work: work, faq: faq
   };
 })();

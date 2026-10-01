@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fleuré &amp; Co. — Nottingham florist, fresh &amp; faux florals</title>
+<meta name="description" content="Nottingham florist. Fresh and faux bouquets, bloom baskets and gifts, personalised and made to order. Collection or delivery across Nottingham.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#84083a">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fleuré &amp; Co. — Nottingham florist">
+<meta property="og:description" content="Fresh and faux bouquets, bloom baskets and gifts. Personalised, made to order.">
+<meta property="og:image" content="/assets/fleure/icon-512.png">
+
+<link rel="icon" href="/assets/fleure/icon-32.png" sizes="32x32">
+<link rel="icon" href="/assets/fleure/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/assets/fleure/icon-180.png">
+
+<link rel="preload" as="font" type="font/woff2" href="/assets/fleure/fonts/cormorant.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fleure/fonts/jost.woff2" crossorigin>
+<link rel="preload" as="image" href="/assets/fleure/mark-ink.png">
+<link rel="stylesheet" href="/assets/fleure/fonts/fonts.css">
+<link rel="stylesheet" href="/templates/fleure.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <img src="/assets/fleure/mark-ink.png" alt="" width="850" height="850">
+  <span class="loader-bar"><i></i></span>
+</div>
+
+<div class="petals" id="petals" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav-logo" href="/templates/fleure" aria-label="Fleuré &amp; Co. — home">
+    <span class="nm">
+      <img class="nm-dark" src="/assets/fleure/mark-icon-blush.png" alt="" aria-hidden="true" width="373" height="373">
+      <img class="nm-light" src="/assets/fleure/mark-icon.png" alt="" aria-hidden="true" width="373" height="373">
+    </span>
+    <b>Fleuré &amp; Co.</b>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#collections">Collections</a>
+    <a href="/templates/fleure-work">The flowers</a>
+    <a href="#ordering">Ordering</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="btn btn-fill btn-sm nav-cta" href="#enquire">Enquire</a>
+  <button class="menu-open" id="menuOpen" aria-label="Open the menu" aria-expanded="false" aria-controls="menu"><span></span></button>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <button class="menu-close" id="menuClose" aria-label="Close the menu">&times;</button>
+  <a href="#collections">Collections</a>
+  <a href="/templates/fleure-work">The flowers</a>
+  <a href="#enquire">Enquire</a>
+  <a href="#ordering">Ordering</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<main id="main">
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+  <div class="wrap hero-in">
+    <div>
+      <img class="hero-mark" src="/assets/fleure/mark-ink.png" alt="Fleuré &amp; Co." width="850" height="850" data-rv>
+      <h1 data-rv data-rv-d="1"><span class="rise">Arranged by hand,</span> <span class="rise">for <em>someone in particular</em>.</span></h1>
+      <p class="hero-sub" data-rv data-rv-d="2">
+        A Nottingham florist working to order. Fresh stems for the day, faux florals
+        that keep, and baskets built around whatever you are giving with them.
+      </p>
+      <div class="hero-cta" data-rv data-rv-d="3">
+        <a class="btn btn-fill" href="#enquire">Start an enquiry</a>
+        <a class="btn btn-line" href="/templates/fleure-work">See the flowers</a>
+      </div>
+      <ul class="hero-facts" data-rv data-rv-d="4">
+        <li>Fresh &amp; faux</li>
+        <li>Made to order</li>
+        <li>Collection or delivery</li>
+      </ul>
+    </div>
+    <div class="hero-art" data-rv data-rv-d="2">
+      <img src="/assets/fleure/work/pink-pearls.webp"
+           alt="A Fleuré &amp; Co. bouquet of pink and red roses with gypsophila, in pearl-trimmed wrap"
+           width="1100" height="1347">
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true"><span>Scroll</span><i></i></div>
+</section>
+
+<!-- ==================== MARQUEE ==================== -->
+<div class="mq" data-dark aria-hidden="true"><div class="mq-row" id="mqRow"></div></div>
+
+<!-- ==================== COLLECTIONS ==================== -->
+<section class="sec" id="collections">
+  <div class="wrap">
+    <div class="sec-head split">
+      <div>
+        <p class="kicker" data-rv>What we make</p>
+        <h2 class="big" data-rv data-rv-d="1"><span class="rise">Four ways to <em>send flowers</em></span></h2>
+      </div>
+      <p class="lede" data-rv data-rv-d="2">
+        Every one is made to order, so the size, the colours and the flowers are yours to
+        choose. Pick the closest and say the rest in your enquiry.
+      </p>
+    </div>
+    <div class="tiles" id="tiles"></div>
+  </div>
+</section>
+
+<!-- ==================== BAND ==================== -->
+<section class="band" data-rv>
+  <img src="/assets/fleure/work/spray-roses.webp" alt="" width="1100" height="1347" loading="lazy">
+  <div class="wrap">
+    <blockquote>Nobody ever forgets being sent flowers.</blockquote>
+    <cite>Fleuré &amp; Co. · Nottingham</cite>
+  </div>
+</section>
+
+<!-- ==================== ENQUIRY ==================== -->
+<section class="sec sec-blush" id="enquire">
+  <div class="wrap">
+    <div class="sec-head centre">
+      <p class="kicker" data-rv>Enquire</p>
+      <h2 class="big" data-rv data-rv-d="1"><span class="rise">Tell us what <em>you have in mind</em></span></h2>
+    </div>
+    <div class="enq">
+      <form id="enquiry" novalidate data-rv>
+        <div class="field">
+          <label>Fresh, forever or a basket</label>
+          <ul class="chips" id="typeChips"></ul>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="fOccasion">The occasion</label>
+            <select id="fOccasion"><option value="">Choose…</option></select>
+          </div>
+          <div class="field">
+            <label for="fDate">Date needed</label>
+            <input type="date" id="fDate">
+          </div>
+        </div>
+        <div class="field">
+          <label>Colours and style</label>
+          <ul class="chips" id="paletteChips"></ul>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="fBudget">Your budget</label>
+            <input type="text" id="fBudget" placeholder="e.g. around £45" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fWhen">Collection or delivery</label>
+            <input type="text" id="fWhen" placeholder="e.g. delivery to NG7" autocomplete="off">
+          </div>
+        </div>
+        <div class="field">
+          <label for="fNotes">Anything else</label>
+          <textarea id="fNotes" placeholder="Favourite flowers, a name for the card, who it is for…"></textarea>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="fName">Your name</label>
+            <input type="text" id="fName" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="fContact">Best way to reach you</label>
+            <input type="text" id="fContact" placeholder="Instagram handle, email or number" autocomplete="off">
+          </div>
+        </div>
+        <div class="enq-send">
+          <button type="button" class="btn btn-fill" id="sendMail">Send by email</button>
+          <button type="button" class="btn btn-line" id="sendIg">Send on Instagram</button>
+        </div>
+        <div id="formMsg" role="status" aria-live="polite"></div>
+      </form>
+
+      <aside class="enq-aside" data-rv data-rv-d="1">
+        <h3>Your enquiry</h3>
+        <p>This is exactly what arrives. Add your inspiration photo when you send it.</p>
+        <div class="preview" id="preview"></div>
+        <div class="enq-send">
+          <button type="button" class="btn btn-line btn-sm" id="copyBtn">Copy the message</button>
+        </div>
+      </aside>
+    </div>
+    <p class="enq-note" id="enqNote" data-rv></p>
+  </div>
+</section>
+
+<!-- ==================== THE WORK ==================== -->
+<section class="sec" id="work">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker" data-rv>The flowers</p>
+      <h2 class="big" data-rv data-rv-d="1"><span class="rise">Recently <em>out of the studio</em></span></h2>
+    </div>
+    <div class="gal gal-teaser" id="gallery" data-limit="4"></div>
+    <div class="work-more" data-rv>
+      <a class="btn btn-fill" href="/templates/fleure-work">See all the flowers</a>
+      <a class="btn btn-line" id="igBtn" href="#" target="_blank" rel="noopener">Follow on Instagram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ORDERING ==================== -->
+<section class="sec" id="ordering">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker" data-rv>Ordering</p>
+      <h2 class="big" data-rv data-rv-d="1"><span class="rise">Terms and <em>conditions</em></span></h2>
+    </div>
+    <div class="pols" id="policies"></div>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section class="sec sec-blush">
+  <div class="wrap">
+    <div class="sec-head centre">
+      <p class="kicker" data-rv>Questions</p>
+      <h2 class="big" data-rv data-rv-d="1"><span class="rise">Before you <em>ask</em></span></h2>
+    </div>
+    <div class="faq" id="faq" data-rv data-rv-d="2"></div>
+  </div>
+</section>
+
+<!-- ==================== REVIEWS ==================== -->
+<section class="sec sec-wine" id="reviews" data-dark>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker" data-rv>Reviews</p>
+      <h2 class="big" data-rv data-rv-d="1"><span class="rise">What people <em>say</em></span></h2>
+    </div>
+    <div id="rvHead" data-rv data-rv-d="2"></div>
+    <div class="rvs" id="rvs"></div>
+  </div>
+</section>
+
+<!-- ==================== CONTACT ==================== -->
+<section class="sec" id="contact">
+  <div class="wrap">
+    <div class="sec-head split">
+      <div>
+        <p class="kicker" data-rv>Find us</p>
+        <h2 class="big" data-rv data-rv-d="1"><span class="rise">Come and <em>say hello</em></span></h2>
+      </div>
+      <p class="lede" data-rv data-rv-d="2">
+        Instagram reaches us fastest. Weekends are the busiest, so give us a little time
+        to come back to you.
+      </p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-top">
+    <div>
+      <div class="foot-logo">
+        <img src="/assets/fleure/icon-192.png" alt="" width="192" height="192" loading="lazy">
+        <b>Fleuré &amp; Co.</b>
+      </div>
+      <p>Fresh and faux florals, personalised and made to order in Nottingham.</p>
+    </div>
+    <div>
+      <h4>The site</h4>
+      <ul>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="/templates/fleure-work">The flowers</a></li>
+        <li><a href="#enquire">Enquire</a></li>
+        <li><a href="#ordering">Ordering</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <ul id="footContact"></ul>
+    </div>
+  </div>
+  <div class="wrap foot-btm">
+    <span id="footCopy"></span>
+    <span>Site by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></span>
+  </div>
+</footer>
+
+<script src="/templates/vendor/lenis.min.js"></script>
+<script src="/templates/fleure-data.js"></script>
+<script src="/templates/fleure.js"></script>
+</body>
+</html>

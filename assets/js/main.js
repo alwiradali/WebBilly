@@ -96,6 +96,7 @@ function initSmoothScroll() {
   function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    if (a.closest("#navLinks")) return; // menu links jump straight there (initHeader)
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
       if (!id || id.length < 2) return;
@@ -151,10 +152,22 @@ function initHeader() {
     burger.setAttribute("aria-expanded", String(open));
   });
   links.querySelectorAll("a").forEach((a) =>
-    a.addEventListener("click", () => {
+    a.addEventListener("click", (e) => {
       links.classList.remove("open");
       burger.classList.remove("open");
       burger.setAttribute("aria-expanded", "false");
+      // Menu taps land on the section at once, without scrolling through the page
+      const href = a.getAttribute("href") || "";
+      const target = href.charAt(0) === "#" && href.length > 1 ? document.querySelector(href) : null;
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight;
+      if (window.__lenis) window.__lenis.scrollTo(top, { immediate: true });
+      const root = document.documentElement, prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, top);
+      root.style.scrollBehavior = prev;
+      history.replaceState(null, "", href);
     })
   );
 
@@ -304,33 +317,39 @@ const WEB3FORMS_KEY = "ad07600b-6d90-4493-9a9c-ba5158049b9a";
 function initForm() {
   const form = document.getElementById("contactForm");
   if (!form) return;
+  const val = (id) => { const el = document.getElementById(id); return el && el.value ? el.value.trim() : ""; };
+  const btn = form.querySelector('button[type="submit"]');
+  const btnLabel = btn ? btn.innerHTML : "";
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = document.getElementById("f-name").value.trim();
-    const email = document.getElementById("f-email").value.trim();
-    const phone = (document.getElementById("f-phone") || {}).value ? document.getElementById("f-phone").value.trim() : "";
-    const business = (document.getElementById("f-business") || {}).value ? document.getElementById("f-business").value.trim() : "";
-    const category = document.getElementById("f-category").value;
-    const plan = document.getElementById("f-plan").value;
-    const message = document.getElementById("f-message").value.trim();
+    const name = val("f-name");
+    const email = val("f-email");
+    const phone = val("f-phone");
+    const business = val("f-business");
+    const category = val("f-category") || "Website";
+    const budget = val("f-budget");
+    const site = val("f-site");
+    // Older forms (experience page) still ask for a plan
+    const plan = val("f-plan") || (budget ? "Budget: " + budget : "Not sure yet");
+    let message = val("f-message");
     const botcheck = form.querySelector('[name="botcheck"]');
 
-    if (!name || !email || !phone || !message) {
-      showToast("Please fill in your name, email, phone and message.");
+    if (!name || !email || !message) {
+      showToast("Please add your name, email and a short message.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Please enter a valid email address.");
       return;
     }
-    if (phone.replace(/\D/g, "").length < 7) {
-      showToast("Please enter a valid phone number.");
+    if (phone && phone.replace(/\D/g, "").length < 7) {
+      showToast("That phone number looks too short. Leave it blank if you prefer.");
       return;
     }
     if (botcheck && botcheck.checked) return; // spam bot filled the honeypot
+    if (site) message += "\n\nCurrent website: " + site;
 
     const subject = "New project enquiry — " + category + " (" + plan + ")";
-    const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.textContent = "Sending…";
 
@@ -359,10 +378,10 @@ function initForm() {
       const body =
         "Name: " + name + "\n" +
         "Email: " + email + "\n" +
-        "Phone: " + phone + "\n" +
+        "Phone: " + (phone || "—") + "\n" +
         "Business: " + (business || "—") + "\n" +
-        "Website type: " + category + "\n" +
-        "Plan: " + plan + "\n\n" +
+        "Needs: " + category + "\n" +
+        "Plan / budget: " + plan + "\n\n" +
         "Project details:\n" + message;
       window.location.href =
         "mailto:" + CONFIG.email +
@@ -371,7 +390,7 @@ function initForm() {
       showToast("Opening your email app — just hit send!");
     } finally {
       btn.disabled = false;
-      btn.textContent = "Send Enquiry";
+      btn.innerHTML = btnLabel;
     }
   });
 }
@@ -485,37 +504,37 @@ function initChat() {
     {
       re: /\b(price|prices|pricing|cost|costs|rate|rates|charge|charges|budget|quote|quotation|estimate|fee|fees)\b|how much(?!\s+(?:time|long|longer))/i,
       reply: () =>
-        "Everything we do — websites, hosting and care plans — is priced per project, with no hourly surprises and no hidden fees. Tell us your vision via the <a href=\"#contact\">enquiry form</a> and you'll get a free, tailored quote within 24 hours. " + contactLine,
+        "Everything we do — websites, hosting and care plans — is priced per project, with no hourly surprises and no hidden fees. Tell us your vision via the <a href=\"/enquire\">enquiry form</a> and you'll get a free, tailored quote within 24 hours. " + contactLine,
       chips: ["Show me the plans", "Hosting plans", "Talk to a human"],
     },
     {
       re: /^\s*standard[\s!,.?]*$/i,
       reply: () =>
-        "<strong>Standard</strong> is perfect for personal brands and small businesses: up to 5 custom pages, fully responsive, contact & WhatsApp integration, essential SEO, 2 revision rounds and a month of post-launch support. Hosting is an easy optional add-on. <a href=\"#plans\">See it in Plans</a>.",
+        "<strong>Standard</strong> is perfect for personal brands and small businesses: up to 5 custom pages, fully responsive, contact & WhatsApp integration, essential SEO, 2 revision rounds and a month of post-launch support. Hosting is an easy optional add-on. <a href=\"/pricing#plans\">See it in Plans</a>.",
       chips: ["Premium", "Ultra Premium", "Get a quote"],
     },
     {
       re: /^\s*premium[\s!,.?]*$/i,
       reply: () =>
-        "<strong>Premium</strong> is our most popular: up to 12 custom pages, bespoke UI with animations, a CMS so you can edit content yourself, advanced SEO, an AI chatbot, <strong>managed hosting included</strong>, 4 revision rounds and 3 months of support. <a href=\"#plans\">See it in Plans</a>.",
+        "<strong>Premium</strong> is our most popular: up to 12 custom pages, bespoke UI with animations, a CMS so you can edit content yourself, advanced SEO, an AI chatbot, <strong>managed hosting included</strong>, 4 revision rounds and 3 months of support. <a href=\"/pricing#plans\">See it in Plans</a>.",
       chips: ["Standard", "Ultra Premium", "Get a quote"],
     },
     {
       re: /^\s*ultra( premium)?[\s!,.?]*$/i,
       reply: () =>
-        "<strong>Ultra Premium</strong> is the flagship: unlimited pages, full web applications, complete branding, AI automation, copywriting included, 12 months hosting & care, a dedicated project manager and unlimited revisions. <a href=\"#plans\">See it in Plans</a>.",
+        "<strong>Ultra Premium</strong> is the flagship: unlimited pages, full web applications, complete branding, AI automation, copywriting included, 12 months hosting & care, a dedicated project manager and unlimited revisions. <a href=\"/pricing#plans\">See it in Plans</a>.",
       chips: ["Standard", "Premium", "Get a quote"],
     },
     {
       re: /\b(host|hosting|server|servers|ssl|backup|backups)\b/i,
       reply: () =>
-        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> (personal sites), ⭐ <strong>Business</strong> (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> (fastest server resources, advanced security, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. Message us for a free quote. <a href=\"#hosting\">See hosting plans</a>.",
+        "We run fast, secure, fully managed UK hosting: 🚀 <strong>Starter</strong> (personal sites), ⭐ <strong>Business</strong> (most popular — 24/7 monitoring, priority fixes) and 💎 <strong>Premium</strong> (fastest server resources, advanced security, same-day support). Free SSL and daily backups on every plan — and hosting is <strong>included free</strong> with Premium & Ultra Premium builds. Message us for a free quote. <a href=\"/pricing#hosting\">See hosting plans</a>.",
       chips: ["Care plans", "Get a quote", "Show me the plans"],
     },
     {
       re: /\b(care plan|care plans|seo plan|growth plan|google ranking|rank on google|keyword|ongoing seo)\b/i,
       reply: () =>
-        "Our <strong>Care Plans</strong> keep your site growing on Google every month: 🔍 <strong>Starter Care</strong> (SEO health checks, Google Business monitoring), 📈 <strong>Growth Care</strong> (GBP management, keyword tracking, most popular) and 🚀 <strong>Complete Care</strong> (full SEO optimisation, competitor tracking, unlimited edits, monthly strategy call). Hosting keeps you online — Care keeps you found. Message us for a free quote. <a href=\"#care\">See Care Plans</a>.",
+        "Our <strong>Care Plans</strong> keep your site growing on Google every month: 🔍 <strong>Starter Care</strong> (SEO health checks, Google Business monitoring), 📈 <strong>Growth Care</strong> (GBP management, keyword tracking, most popular) and 🚀 <strong>Complete Care</strong> (full SEO optimisation, competitor tracking, unlimited edits, monthly strategy call). Hosting keeps you online — Care keeps you found. Message us for a free quote. <a href=\"/pricing#care\">See Care Plans</a>.",
       chips: ["Hosting plans", "Get a quote", "Talk to a human"],
     },
     {
@@ -545,13 +564,13 @@ function initChat() {
     {
       re: /\b(rack ?pilot|our apps|warehouse|warehouses|factory|factories|inventory|stock)\b/i,
       reply: () =>
-        "That's <strong>BillyRackPilot</strong> — our flagship platform for organisations running warehouses and factories. 🏭 Plan racking layouts, track stock locations in real time and manage team access, all from one dashboard, on any device. <a href=\"#apps\">Take a look</a> or request a demo!",
+        "That's <strong>BillyRackPilot</strong> — our flagship platform for organisations running warehouses and factories. 🏭 Plan racking layouts, track stock locations in real time and manage team access, all from one dashboard, on any device. <a href=\"/pricing#apps\">Take a look</a> or request a demo!",
       chips: ["Request a demo", "Talk to a human"],
     },
     {
       re: /\brequest a demo\b|book a demo/i,
       reply: () =>
-        "Brilliant — tell us a little about your organisation in the <a href=\"#contact\">enquiry form</a> and we'll set up a tailored RackPilot demo. " + contactLine,
+        "Brilliant — tell us a little about your organisation in the <a href=\"/enquire\">enquiry form</a> and we'll set up a tailored RackPilot demo. " + contactLine,
       chips: ["Talk to a human", "What can you build?"],
     },
     {
@@ -563,31 +582,31 @@ function initChat() {
     {
       re: /\b(add-?ons?|booking|calendar|appointment|address finder|postcode|login|register|portal|payments?|gallery|newsletter|multi-?language)\b/i,
       reply: () =>
-        "We build powerful add-ons into any plan: 🤖 AI chatbots, 📅 booking calendars & appointments, 📍 address/postcode finders, 🔐 customer login & registration, 💳 online payments, ⭐ Google review widgets, 💬 WhatsApp chat, galleries, blogs, newsletters and more. <a href=\"#hosting\">See the add-ons</a> — or tell us what you need!",
+        "We build powerful add-ons into any plan: 🤖 AI chatbots, 📅 booking calendars & appointments, 📍 address/postcode finders, 🔐 customer login & registration, 💳 online payments, ⭐ Google review widgets, 💬 WhatsApp chat, galleries, blogs, newsletters and more. <a href=\"/pricing#hosting\">See the add-ons</a> — or tell us what you need!",
       chips: ["Get a quote", "Show me the plans", "Talk to a human"],
     },
     {
       re: /\b(redesign|rebuild|existing|old site|revamp|refresh)\b/i,
       reply: () =>
-        "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"#contact\">enquiry form</a>.",
+        "We love a glow-up. ✨ We audit your current site, keep your SEO equity, and rebuild the experience so it looks and performs like new. Tell us your current URL in the <a href=\"/enquire\">enquiry form</a>.",
       chips: ["Get a quote", "How long does it take?"],
     },
     {
       re: /\b(template|templates|sample|samples|example|examples|portfolio|your work|previous work|design|designs|style|styles)\b/i,
       reply: () =>
-        "We build for every industry — restaurants, corporate, portfolios, real estate, medical, education, SaaS, fitness and travel. Browse the <a href=\"#templates\">sample styles</a>; every project is designed from scratch to match your brand.",
+        "We build for every industry — restaurants, corporate, portfolios, real estate, medical, education, SaaS, fitness and travel. Browse the <a href=\"/portfolio\">sample styles</a>; every project is designed from scratch to match your brand.",
       chips: ["Show me the plans", "Get a quote"],
     },
     {
       re: /\b(process|steps|start|begin|get started|getting started)\b|how (do you|does it|does this) work/i,
       reply: () =>
-        "Simple: 1) Discovery — we learn your goals. 2) Design — polished, on-brand screens. 3) Development — fast, clean code. 4) Launch — we handle everything. 5) Growth — ongoing support. Ready? <a href=\"#contact\">Send us your idea</a>!",
+        "Simple: 1) Discovery — we learn your goals. 2) Design — polished, on-brand screens. 3) Development — fast, clean code. 4) Launch — we handle everything. 5) Growth — ongoing support. Ready? <a href=\"/enquire\">Send us your idea</a>!",
       chips: ["Get a quote", "How long does it take?"],
     },
     {
       re: /\b(service|services|what can you|capability|capabilities)\b|what do you (do|offer)|do you (do|make|build)/i,
       reply: () =>
-        "We handle everything: custom website design, web applications, UI/UX & branding, SEO & performance, AI chatbots & automation, hosting & security, and copywriting. One team, end to end. See <a href=\"#services\">all services</a>.",
+        "We handle everything: custom website design, web applications, UI/UX & branding, SEO & performance, AI chatbots & automation, hosting & security, and copywriting. One team, end to end. See <a href=\"/#services\">all services</a>.",
       chips: ["Show me the plans", "Hosting plans", "Our apps"],
     },
     {
@@ -597,7 +616,7 @@ function initChat() {
     {
       re: /\b(website|web site|site|web app|application|landing page)\b/i,
       reply: () =>
-        "Whatever you're building, we've got you. 🚀 Explore our <a href=\"#services\">services</a> and <a href=\"#templates\">sample styles</a>, or <a href=\"#contact\">tell us about your project</a> and we'll come back with a plan within 24 hours.",
+        "Whatever you're building, we've got you. 🚀 Explore our <a href=\"/#services\">services</a> and <a href=\"/portfolio\">sample styles</a>, or <a href=\"/enquire\">tell us about your project</a> and we'll come back with a plan within 24 hours.",
       chips: ["Show me the plans", "Get a quote", "Talk to a human"],
     },
   ];
@@ -606,7 +625,7 @@ function initChat() {
 
   const fallback = () =>
     "Great question — a human can answer that better than I can! " + contactLine +
-    " Meanwhile, you can explore our <a href=\"#services\">services</a> and <a href=\"#plans\">plans</a>.";
+    " Meanwhile, you can explore our <a href=\"/#services\">services</a> and <a href=\"/pricing#plans\">plans</a>.";
 
   let focusTimer = null;
   function setOpen(open) {
@@ -646,7 +665,13 @@ function initChat() {
   let autoOpened = false;
   (function scheduleAutoOpen() {
     if (document.getElementById("intro")) { setTimeout(scheduleAutoOpen, 600); return; }
-    setTimeout(() => {
+    setTimeout(function tryOpen() {
+      // On a phone the open panel covers most of the screen, so it waits to be tapped.
+      if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) return;
+      // The homepage and the enquiry page lead with their own call to action; an open chat panel would sit on top of it.
+      if (document.querySelector(".h-form, .h-hero")) return;
+      // Wait until the visitor has scrolled past the first screen, so it never covers the headline.
+      if (window.scrollY < window.innerHeight * 0.9) { setTimeout(tryOpen, 1500); return; }
       if (!autoOpened && !engaged && !chat.classList.contains("open")) {
         autoOpened = true;
         setOpen(true);

@@ -27,11 +27,13 @@
   --line-2:rgba(78,65,117,.28);
   --sheet:#ffffff;
 
-  --display:"Fraunces",Georgia,serif;
+  --display:"Bodoni Moda",Didot,Georgia,serif;
   /* the accent face is the SAME family in italic, not a second font */
   --navh:86px;
-  --body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --cond:"Oswald","Arial Narrow",sans-serif;   /* the face her logo is set in */
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  /* the label face is the body sans, tracked and uppercased — a condensed
+     poster grotesk read like a gym, not a patisserie */
+  --cond:"Hanken Grotesk",system-ui,sans-serif;
 
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.65,0,.35,1);
@@ -57,7 +59,7 @@ body{
   background:var(--paper);
   color:var(--ink);
   font-family:var(--body);
-  font-size:clamp(16.5px,.45vw + 15px,18.5px);
+  font-size:clamp(16.5px,.45vw + 15px,18px);
   line-height:1.62;
   font-weight:400;
   overflow-x:hidden;
@@ -67,7 +69,7 @@ img{max-width:100%;display:block}
 a{color:inherit}
 button{font:inherit;color:inherit}
 
-h1,h2,h3,h4{font-family:var(--display);font-weight:400;line-height:1.08;margin:0;letter-spacing:-.022em}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;line-height:1.1;margin:0;letter-spacing:-.012em}
 p{margin:0}
 
 ::selection{background:var(--grape);color:var(--cream)}
@@ -244,6 +246,10 @@ body.menu-on .menu-open{opacity:0;pointer-events:none}
 
 /* ---------- section furniture ---------- */
 .sec{position:relative;padding:clamp(72px,11vh,140px) 0;z-index:1}
+/* Where two sections meet, both paddings stack — so the seam is twice the
+   gap you get inside one, and on a phone that read as a hole between the
+   reviews and the contacts. Tighter below the tablet breakpoint. */
+@media (max-width:700px){.sec{padding:clamp(48px,7vh,74px) 0}}
 .sec-grape{background:var(--grape);color:var(--on-grape)}
 .sec-grape h2,.sec-grape h3{color:var(--cream)}
 .sec-cream{background:var(--paper-2)}
@@ -319,7 +325,7 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   margin-bottom:clamp(14px,2.2vh,24px);
 }
 .hero-eyebrow{
-  position:relative;padding-top:14px;margin-bottom:clamp(12px,1.8vh,20px);
+  position:relative;padding-top:14px;text-wrap:balance;margin-bottom:clamp(12px,1.8vh,20px);
   font-family:var(--cond);font-weight:300;font-size:.71rem;letter-spacing:.3em;
   text-transform:uppercase;color:var(--gold-lit);
 }
@@ -343,8 +349,8 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   border-top:1px solid rgba(253,234,232,.18);width:min(100%,32rem);
 }
 .hero-facts li{
-  font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--on-grape-dim);
+  font-family:var(--cond);font-weight:400;font-size:.7rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--on-grape-dim);white-space:nowrap;
 }
 
 .hero-scroll{
@@ -646,6 +652,10 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .gal{columns:2;column-gap:clamp(10px,1.5vw,18px)}
 @media (min-width:760px){.gal{columns:3}}
 @media (min-width:1140px){.gal{columns:4}}
+/* the six on the home page divide evenly into two or three columns, so
+   they stop at three — a fourth column would leave a ragged half-row */
+@media (min-width:1140px){.gal-teaser{columns:3}}
+.work-more{margin-top:clamp(28px,4vw,42px);display:flex;flex-wrap:wrap;gap:12px}
 .gal figure{
   break-inside:avoid;margin:0 0 clamp(10px,1.5vw,18px);border-radius:var(--r);overflow:hidden;
   background:var(--paper-2);position:relative;
@@ -675,8 +685,14 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 
 .story{display:grid;gap:clamp(26px,4vw,56px);align-items:center}
 @media (min-width:940px){.story{grid-template-columns:.85fr 1.15fr}}
-.story-art{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:0 34px 70px -40px rgba(44,36,66,.6)}
-.story-art img{width:100%;height:auto;display:block}
+/* a circle, to echo her mark — the gold hairline is the same one the hero
+   logo carries, so the two read as a pair */
+.story-art{
+  position:relative;aspect-ratio:1/1;border-radius:50%;overflow:hidden;
+  width:min(100%,420px);margin-inline:auto;
+  box-shadow:0 34px 70px -40px rgba(44,36,66,.55),0 0 0 1px rgba(176,138,74,.45);
+}
+.story-art img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ============================================================
    TERMS / CARE / FAQ
@@ -712,10 +728,6 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .rv-score b{font-family:var(--display);font-size:2.3rem;color:var(--cream);line-height:1}
 .stars{display:inline-flex;gap:2.5px}
 .stars svg{width:17px;height:17px;fill:#f3c14b;flex:none}
-.rv-note{
-  font-family:var(--cond);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--grape);background:var(--cream);padding:6px 12px;border-radius:var(--r);
-}
 .rvs{display:grid;gap:clamp(12px,1.8vw,20px)}
 @media (min-width:820px){.rvs{grid-template-columns:repeat(3,1fr)}}
 .rv{
@@ -769,17 +781,6 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 }
 .foot-btm a{font-size:.83rem;display:inline-flex;align-items:center;min-height:44px}
 
-/* the sticky order bar on phones */
-.dock{
-  position:fixed;left:0;right:0;bottom:0;z-index:95;display:flex;gap:9px;
-  padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));
-  background:rgba(255,247,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 -1px 0 var(--line),0 -14px 34px -26px rgba(44,36,66,.6);
-  transform:translateY(120%);transition:transform .5s var(--ease);
-}
-.dock.up{transform:none}
-.dock .btn{flex:1;padding:.85em 1em;font-size:.76rem}
-@media (min-width:1000px){.dock{display:none}}
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
@@ -821,6 +822,10 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .page-head{
   background:var(--grape-dd);color:var(--on-grape);
   padding:calc(var(--navh) + clamp(46px,8vh,92px)) 0 clamp(46px,8vh,88px);
+  /* .hero-cta centres its buttons, so a left-aligned title above centred
+     buttons read as a mistake rather than a choice. The head is a crumb, a
+     title and two buttons — all of it centres. */
+  text-align:center;
 }
 .crumb{
   font-family:var(--cond);font-weight:300;font-size:.72rem;letter-spacing:.24em;
@@ -835,7 +840,7 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
   font-size:clamp(2.3rem,5.4vw,3.9rem);letter-spacing:-.03em;color:var(--cream);font-weight:400;
 }
 .page-head h1 em{font-style:italic;font-weight:300;color:#e9d7bd}
-.page-head .lede{color:var(--on-grape-dim);max-width:58ch;margin-top:18px}
+.page-head .lede{color:var(--on-grape-dim);max-width:58ch;margin:18px auto 0}
 .page-head .hero-cta{margin-top:clamp(24px,3.4vh,34px)}
 
 .seasons{display:grid;gap:clamp(12px,1.8vw,20px)}
@@ -936,3 +941,7 @@ h2.big em{font-family:var(--display);font-style:italic;font-weight:300;color:var
 .block-more::after{content:"\2192";transition:transform .35s var(--ease)}
 .block-more:hover::after{transform:translateX(4px)}
 .menu-block h3{flex-wrap:wrap}
+
+/* the route to the full menu, sitting under the tiles */
+.menu-foot{margin:clamp(24px,3.4vw,38px) 0 0;text-align:center}
+

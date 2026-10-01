@@ -328,6 +328,27 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .foot li{list-style:none;margin-bottom:9px;color:#bcc8d8;font-size:.94rem}
 .foot li a:hover{color:var(--gold2)}
 .foot p{color:#bcc8d8}
+
+/* "Areas we cover" is a link to another page, not another area. Sat as the
+   last <li> it read as one — a sixth patch of Manchester called "Areas we
+   cover". Out of the list, set apart by a rule and the brand gold, it reads
+   as the way through to the rest. */
+/* "Not on the list? Ring and ask." The Covering column names five areas and
+   stops, which reads as a boundary — so somebody in Sale, Urmston or Prestwich
+   closes the page believing the answer is no. It is usually yes, and the line
+   below the rule says so on every page of the site. */
+.foot .foot-more{margin-top:14px;padding-top:12px;font-size:.9rem;color:var(--muted);
+  border-top:1px solid rgba(255,255,255,.13)}
+.foot .foot-more .fm-tail{display:block;margin-top:4px}
+.foot .foot-more a{color:var(--gold2);font-weight:700;font-size:.9rem;
+  display:inline-flex;align-items:center;gap:7px}
+.foot .foot-more a::after{content:"\2192";transition:transform .2s ease}
+.foot .foot-more a:hover{color:#fff}
+.foot .foot-more a:hover::after{transform:translateX(3px)}
+@media(prefers-reduced-motion:reduce){
+  .foot .foot-more a::after{transition:none}
+  .foot .foot-more a:hover::after{transform:none}
+}
 .footbar{
   margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.13);
   display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;color:#93a2b5;font-size:.82rem;
@@ -564,6 +585,16 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .prose .callout::before{content:"";position:absolute;top:0;left:20px;right:20px;height:2px;background:var(--goldline)}
 .prose .callout p:last-child{margin-bottom:0}
 .prose .callout b{color:var(--navy)}
+/* A "ring us now" row inside an article. Both rules below are needed, not
+   belt and braces: `.prose a` is a more specific selector than `.btn`, so a
+   button dropped into a prose page comes out underlined and painted link-blue
+   on a gold background — unreadable, and it stops looking like a button. */
+.prose .hf-ring{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 6px}
+.prose .hf-ring .btn{text-decoration:none;color:#fff}
+.prose .hf-ring .btn.gold{color:#1d1400}
+.prose .hf-ring .btn.ghost{color:var(--navy)}
+/* An emergency reads as an emergency: fire above the box instead of gold. */
+.prose .callout.now::before{background:var(--fire)}
 .prose table{width:100%;border-collapse:collapse;margin:22px 0;font-size:.93rem}
 .prose th,.prose td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);color:#3a4a60}
 .prose th{font-family:var(--dis);font-weight:800;font-size:.7rem;letter-spacing:.13em;
@@ -622,6 +653,20 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 }
 
 /* ---------- navy bar ---------- */
+/* Every in-page target has to clear the fixed nav, or a jump to it lands
+   UNDER the header: the section heading and the first form fields sit behind
+   the navy bar and the visitor arrives halfway down something with no title
+   on it. That is what "Request a call back" looked like — it did reach the
+   quote form and did carry the answers over, but it put the email field at
+   the top of the screen and hid the name and phone above it, so it read as
+   having gone somewhere else entirely. Applies to the hero card's scroll and
+   to every #anchor link, including "Areas we cover" in the footer.
+   102px on desktop, 72px once the nav shrinks, plus a little breathing room. */
+#top,#about,#services,#quote,#quoteForm,#areas,#contact{scroll-margin-top:116px}
+@media(max-width:900px){
+  #top,#about,#services,#quote,#quoteForm,#areas,#contact{scroll-margin-top:86px}
+}
+
 .hfnav{position:fixed;inset:0 0 auto;z-index:90;background:var(--hf-navy);
   box-shadow:0 2px 18px -6px rgba(4,14,36,.55)}
 .hfnav-in{max-width:1400px;margin:0 auto;padding:10px 26px;display:flex;align-items:center;gap:22px}
@@ -815,6 +860,76 @@ h3{font-size:clamp(1.15rem,2.4vw,1.5rem);letter-spacing:-.015em}
 .hfduo li{font-family:var(--dis);font-weight:600;color:#5b6b7f;font-size:clamp(1rem,1.5vw,1.14rem);
   padding:13px 0;border-bottom:1px solid #e6ebf3}
 .hfduo li:first-child{border-top:1px solid #e6ebf3}
+
+/* ---------- the landlord banner that sits under the service cards ----------
+   The portfolio offer lived only at the foot of the services page, below four
+   cards and four sections of domestic work, and a letting agent scanning the
+   page never got that far -- it may as well not have been written. This is the
+   signpost: full width, straight under the cards, in the trade's own words. */
+.hfport-tease{display:flex;align-items:center;gap:clamp(14px,2vw,26px);
+  max-width:1400px;margin:clamp(20px,2.4vw,30px) auto 0;padding:clamp(18px,2.2vw,26px) clamp(20px,2.4vw,32px);
+  background:var(--hf-navy-d);border-radius:6px;text-decoration:none;color:#fff;
+  border-left:5px solid var(--hf-orange);
+  transition:transform .25s,box-shadow .25s}
+.hfport-tease:hover{transform:translateY(-3px);box-shadow:0 24px 44px -24px rgba(2,27,63,.7)}
+.hfport-tease .pt-txt{flex:1;min-width:0}
+.hfport-tease b{display:block;font-family:var(--dis);font-weight:900;text-transform:uppercase;
+  letter-spacing:.005em;line-height:1.2;font-size:clamp(1.02rem,1.8vw,1.34rem)}
+.hfport-tease span.pt-sub{display:block;color:#bcd0e6;font-size:clamp(.92rem,1.2vw,1.02rem);
+  margin-top:6px;line-height:1.45}
+.hfport-tease .pt-go{flex:none;font-family:var(--dis);font-weight:800;color:var(--hf-orange-l);
+  text-transform:uppercase;letter-spacing:.1em;font-size:.78rem;white-space:nowrap}
+@media(max-width:620px){
+  .hfport-tease{flex-wrap:wrap;margin-inline:26px}
+  .hfport-tease .pt-go{width:100%}
+}
+/* Cleared by the fixed header when the banner jumps down to the section. */
+#landlords{scroll-margin-top:116px}
+@media(max-width:900px){#landlords{scroll-margin-top:86px}}
+
+/* ---------- landlords, agents and property companies ----------------------
+   The one dark block on a page of white ones, and deliberately so: everything
+   above it is written for somebody with a broken boiler in their own house,
+   and this is written for somebody holding a spreadsheet of addresses. Making
+   it look like the other sections would bury it in them. */
+.hfport{position:relative;background:var(--hf-navy-d);overflow:hidden;isolation:isolate}
+.hfport::before{content:"";position:absolute;inset:-30% -10% auto auto;width:60vw;height:60vw;
+  background:radial-gradient(circle,rgba(239,91,24,.22),transparent 62%);z-index:-1;pointer-events:none}
+.hfport-in{display:grid;gap:clamp(28px,3.6vw,56px);grid-template-columns:minmax(0,1fr);
+  padding:clamp(52px,6.4vw,96px) 0}
+@media(min-width:960px){
+  .hfport-in{grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);align-items:start}
+}
+.hfport h2{font-family:var(--dis);font-weight:900;color:#fff;text-transform:uppercase;
+  letter-spacing:-.022em;line-height:1.04;font-size:clamp(1.7rem,3.5vw,3rem);margin:14px 0 18px}
+.hfport p{color:#c3d2e6;font-size:clamp(1rem,1.28vw,1.12rem);line-height:1.66;margin:0 0 18px;max-width:58ch}
+.hfport strong,.hfport b{color:#fff}
+.hfport-list{list-style:none;margin:26px 0 0;padding:0}
+.hfport-list li{position:relative;padding:13px 0 13px 30px;border-bottom:1px solid rgba(255,255,255,.13);
+  font-family:var(--dis);font-weight:600;color:#dbe6f4;font-size:clamp(.99rem,1.4vw,1.12rem);line-height:1.4}
+.hfport-list li:first-child{border-top:1px solid rgba(255,255,255,.13)}
+/* A tick drawn in CSS rather than eleven copies of the same inline SVG. */
+.hfport-list li::before{content:"";position:absolute;left:2px;top:calc(50% - 7px);
+  width:7px;height:12px;border:solid var(--hf-orange-l);border-width:0 2.4px 2.4px 0;transform:rotate(43deg)}
+.hfport-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--rl);padding:clamp(24px,2.7vw,36px);backdrop-filter:blur(8px)}
+.hfport-card h3{font-family:var(--dis);font-weight:800;color:#fff;text-transform:uppercase;
+  letter-spacing:.02em;font-size:clamp(1.02rem,1.5vw,1.22rem);margin:0 0 6px}
+.hfport-card>p{font-size:.97rem;margin-bottom:20px}
+.hfport-card ol{list-style:none;counter-reset:pq;margin:0;padding:0}
+.hfport-card li{counter-increment:pq;position:relative;padding:0 0 16px 40px;color:#dbe6f4;
+  font-size:clamp(.97rem,1.25vw,1.04rem);line-height:1.5}
+.hfport-card li::before{content:counter(pq);position:absolute;left:0;top:-1px;
+  width:26px;height:26px;border-radius:50%;background:var(--fire);color:#2c1400;
+  font-family:var(--dis);font-weight:800;font-size:.82rem;display:grid;place-items:center}
+.hfport-card li:last-child{padding-bottom:0}
+.hfport-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hfport-cta .btn{text-decoration:none}
+/* Scoped to .hfport twice on purpose: `.hfport p` above is a class-plus-type
+   selector, so a lone .hfport-note loses to it and the margin never applies —
+   which left the note sitting on top of the last numbered step. */
+.hfport .hfport-note{font-size:.9rem;color:#9fb2ca;line-height:1.55;
+  margin:26px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}
 
 /* ---------- about: ember band, taken straight from the approved artwork ---------- */
 .hfember-band{position:relative;background:var(--hf-navy-d);overflow:hidden;

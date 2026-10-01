@@ -36,7 +36,11 @@
     if (reduced) return;
     var n = parseInt(layer.getAttribute("data-sprinkles"), 10) || 14;
     if (innerWidth < 700) n = Math.round(n * 0.55);   /* phones pay for every layer */
-    var pal = layer.hasAttribute("data-sprinkles-light") ? SPRINKLE_LIGHT : SPRINKLE_DARK;
+    var onDark = layer.hasAttribute("data-sprinkles-light");
+    var pal = onDark ? SPRINKLE_LIGHT : SPRINKLE_DARK;
+    /* dark ink on a cream ground reads as specks of dirt at full strength —
+       it needs to be roughly half what the cream ink can carry on purple */
+    var lo = onDark ? 0.28 : 0.10, hi = onDark ? 0.34 : 0.14;
     var frag = document.createDocumentFragment();
     for (var i = 0; i < n; i++) {
       var b = el("i");
@@ -45,7 +49,7 @@
         "left:" + (Math.random() * 100).toFixed(2) + "%;" +
         "top:" + (Math.random() * 100).toFixed(2) + "%;" +
         "background:" + pal[i % pal.length] + ";" +
-        "opacity:" + (0.28 + Math.random() * 0.34).toFixed(2) + ";" +
+        "opacity:" + (lo + Math.random() * hi).toFixed(2) + ";" +
         "--rot:" + Math.round(Math.random() * 360) + "deg;" +
         "--dx:" + (Math.random() * 120 - 60).toFixed(0) + "px;" +
         "--dy:" + (Math.random() * 150 - 75).toFixed(0) + "px;" +
@@ -218,6 +222,7 @@
     if (!PAGE_CAT) return;
     var c = catBySlug(PAGE_CAT); if (!c) return;
 
+    var on = $("#catOptsNote"); if (on) on.textContent = c.optsNote || "";
     var t = $("#catTitle");   if (t) t.textContent = c.label;
     var bl = $("#catBlurb");  if (bl) bl.textContent = c.blurb || c.note || "";
     var cr = $("#catCrumb");  if (cr) cr.textContent = c.label;
@@ -347,32 +352,15 @@
   /* -- gallery -- */
   (function gallery() {
     var host = $("#gallery"); if (!host) return;
-    /* All hers. Order is deliberate: the two showpieces open, then a rhythm
-       of box / cake / box so the masonry never stacks two cakes together. */
-    var shots = [
-      ["work/nikkah-cake.webp",        "Nikkah cake — pearls and gold monogram"],
-      ["work/nikkah-box.webp",         "Nikkah treatbox"],
-      ["work/tiered-blue-gold.webp",   "Three-tier birthday cake"],
-      ["work/macaron-boxes.webp",      "Macarons, boxed"],
-      ["work/vintage-heart-cake.webp", "Vintage heart cake"],
-      ["work/baby-girl-box.webp",      "Baby announcement boxes"],
-      ["work/umrah-cupcakes.webp",     "Umrah Mubarak cupcakes"],
-      ["work/nikkah-cookies.webp",     "Personalised nikkah cookies"],
-      ["work/vintage-pink-cake.webp",  "Bridal shower cake"],
-      ["work/date-boxes.webp",         "Ramadan date boxes"],
-      ["work/duck-cake.webp",          "First birthday cake"],
-      ["work/mehndi-box.webp",         "Mehndi treatbox"],
-      ["work/dessert-table.webp",      "Mehndi dessert table"],
-      ["work/grad-cupcakes.webp",      "Black Forest graduation cupcakes"],
-      ["work/pawpatrol-cake.webp",     "Character birthday cake"],
-      ["work/baby-boy-box.webp",       "Baby announcement boxes"],
-      ["work/lamborghini-cake.webp",   "Sculpted birthday cake"],
-      ["work/chaat-table.webp",        "Chaat table"]
-    ];
+    /* One ordered list in the data file, strongest first. The home page asks
+       for a few of them with data-limit; the work page leaves it off and
+       gets all of them. */
+    var lim = parseInt(host.getAttribute("data-limit"), 10);
+    var shots = (lim > 0) ? D.work.slice(0, lim) : D.work;
     shots.forEach(function (s, i) {
       var fig = el("figure", { "data-rv": "", "data-rv-d": String((i % 4) + 1) });
-      fig.appendChild(el("img", { src: A + s[0], alt: s[1], loading: "lazy" }));
-      fig.appendChild(el("figcaption", null, s[1]));
+      fig.appendChild(el("img", { src: A + s.src, alt: s.alt, loading: i < 4 ? "eager" : "lazy" }));
+      fig.appendChild(el("figcaption", null, s.alt));
       host.appendChild(fig);
     });
   })();
@@ -429,9 +417,6 @@
     sc.appendChild(el("b", null, "5.0"));
     sc.appendChild(stars(5));
     head.appendChild(sc);
-    if (D.reviewsAreExamples) {
-      head.appendChild(el("span", { class: "rv-note" }, "Examples only — her real reviews go here"));
-    }
     var host = $("#rvs");
     D.reviews.forEach(function (r, i) {
       var c = el("article", { class: "rv", "data-rv": "", "data-rv-d": String(i + 1) });
@@ -449,6 +434,9 @@
   var IG = "https://instagram.com/" + B.instagram;
   var TT = "https://www.tiktok.com/@" + B.tiktok;
   var FB = B.facebook;
+
+  /* 07378684907 reads as a number, not a phone number */
+  var phoneText = B.phone.replace(/^(\d{5})(\d{6})$/, "$1 $2");
 
   function waLink(text) {
     return "https://wa.me/" + B.whatsapp + (text ? "?text=" + encodeURIComponent(text) : "");
@@ -482,21 +470,21 @@
     }
     var intro = "Hi! I found you through your website — I'd like to ask about an order.";
     if (host) {
-      host.appendChild(card("wa", "WhatsApp", B.phone, waLink(intro)));
+      host.appendChild(card("wa", "WhatsApp", phoneText, waLink(intro)));
       host.appendChild(card("ig", "Instagram", "@" + B.instagram, IG));
       host.appendChild(card("mail", "Email", B.email, mailLink("Enquiry from your website", intro)));
       host.appendChild(card("tt", "TikTok", "@" + B.tiktok, TT));
       host.appendChild(card("fb", "Facebook", B.name, FB));
-      host.appendChild(card("ig", "The studio", "@" + B.instagramStudio, "https://instagram.com/" + B.instagramStudio));
     }
 
     var ig = $("#igBtn"); if (ig) ig.href = IG;
-    var dw = $("#dockWa"); if (dw) dw.href = waLink(intro);
 
     var fc = $("#footContact");
-    if (fc) [["WhatsApp " + B.phone, waLink(intro)],
-     ["@" + B.instagram, IG],
-     [B.email, mailLink("Enquiry from your website", intro)],
+    /* the channel, not the details — her number and address are written out
+       in the contact section, which is where somebody goes looking for them */
+    if (fc) [["WhatsApp", waLink(intro)],
+     ["Email", mailLink("Enquiry from your website", intro)],
+     ["Instagram", IG],
      ["TikTok", TT], ["Facebook", FB]].forEach(function (p) {
       var li = el("li");
       li.appendChild(el("a", { href: p[1], target: "_blank", rel: "noopener" }, p[0]));
@@ -505,8 +493,8 @@
     var fcp = $("#footCopy"); if (fcp) fcp.textContent = "© " + new Date().getFullYear() + " " + B.name + " · " + B.town + " · Halal";
 
     var cta = $("#notListedCta"); if (!cta) return;
-    cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Ask on WhatsApp"));
-    cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Ask by email"));
+    cta.appendChild(el("a", { class: "btn btn-fill", href: waLink("Hi! Is this something you could make? "), target: "_blank", rel: "noopener" }, "Message on WhatsApp"));
+    cta.appendChild(el("a", { class: "btn btn-line", href: mailLink("A question about something not on the menu", "Hi,\n\nI'd like to ask about something that isn't on the menu:\n\n") }, "Email me"));
   })();
 
   /* ============================================================
@@ -845,14 +833,33 @@
     if (lenis) lenis.scrollTo(target, { offset: -74, duration: 1.2 });
     else target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
+  /* A tap in the drawer used to run the same 1.2s scroll, which from the top
+     of the page to the contact section is the whole site going past in a
+     blur. The drawer takes half a second to fade, so the move happens behind
+     it instead: what you see is the drawer lifting on the section you asked
+     for.
+
+     html carries scroll-behavior:smooth as the no-Lenis fallback, and that
+     alone turns this jump back into a glide — it is why asking Lenis for an
+     immediate scroll appeared to do nothing. Off for the assignment, back on
+     the next frame. */
+  function jumpTo(target) {
+    var y = target.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - 74;
+    var root = document.documentElement, prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else scrollTo(0, y);
+    requestAnimationFrame(function () { root.style.scrollBehavior = prev; });
+  }
   document.addEventListener("click", function (e) {
     var a = e.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute("href");
     if (id === "#" || id.length < 2) return;
     var t = document.querySelector(id); if (!t) return;
+    var fromDrawer = !!a.closest("#menu");
     e.preventDefault();
     closeMenu();
-    goTo(t);
+    if (fromDrawer) jumpTo(t); else goTo(t);
     history.replaceState(null, "", id);
   });
 
@@ -914,9 +921,9 @@
     frame();
   })();
 
-  /* nav state + the phone dock */
+  /* nav state */
   (function chrome() {
-    var nav = $("#nav"), dock = $("#dock"), hero = $("#hero");
+    var nav = $("#nav");
     /* The bar goes cream only once the dark block at the top of the page has
        actually scrolled away. Switching at 40px turned it white while the
        hero photograph was still behind it, which put a white bar between two
@@ -931,7 +938,6 @@
       var edge = 40;
       if (lastDark) edge = Math.max(40, lastDark.offsetTop + lastDark.offsetHeight - nav.offsetHeight);
       nav.classList.toggle("solid", scrollY > edge);
-      if (dock && hero) dock.classList.toggle("up", scrollY > hero.offsetHeight * 0.7);
     }
     addEventListener("scroll", frame, { passive: true });
     addEventListener("resize", frame);

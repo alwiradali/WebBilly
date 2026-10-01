@@ -84,6 +84,16 @@
 /assets/starlit/*
   X-Robots-Tag: noindex, noimageindex
 
+# --- Unlisted client preview: The Bespoke Bouquets ----------------------
+# Every photograph in /assets/bespoke/ is her own work, cut from her
+# Instagram — keep it out of image search on its own.
+/bespoke-bouquets
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/bespoke-bouquets/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/bespoke/*
+  X-Robots-Tag: noindex, noimageindex
+
 # --- Unlisted client preview: Makeup by Sadia ----------------------------
 /templates/makeup-by-sadia
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
@@ -123,6 +133,9 @@
 /templates/strictly-sprinkles-menu
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 
+/templates/strictly-sprinkles-work
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
 # The six category pages, written by scripts/strictly-category-pages.py.
 /templates/strictly-sprinkles-cakes
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
@@ -135,4 +148,23 @@
 /templates/strictly-sprinkles-treatboxes
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 /templates/strictly-sprinkles-baby-boxes
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+
+# Fleuré & Co. — Nottingham florist, unlisted preview. Not linked from
+# anywhere and not for Google until she has seen it and said yes. Her own
+# photographs live in assets/fleure and should not be indexed off somebody
+# else's domain either.
+/templates/fleure
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-work
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-fresh
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-forever
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-bloom-baskets
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/templates/fleure-bespoke
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+/assets/fleure/*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

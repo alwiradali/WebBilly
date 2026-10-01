@@ -19,8 +19,8 @@
 <link rel="icon" href="/assets/strictly/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/assets/strictly/icon-180.png">
 
-<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/fraunces.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/jost.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/bodoni.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/strictly/fonts/hanken.woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/strictly/logo.png">
 <link rel="stylesheet" href="/assets/strictly/fonts/fonts.css">
 <link rel="stylesheet" href="/templates/strictly-sprinkles.css">
@@ -42,7 +42,7 @@
   </a>
   <nav class="nav-links" aria-label="Sections">
     <a href="/templates/strictly-sprinkles-menu">The menu</a>
-    <a href="#work">The work</a>
+    <a href="/templates/strictly-sprinkles-work">The work</a>
     <a href="#terms">Ordering</a>
     <a href="#reviews">Reviews</a>
   </nav>
@@ -54,7 +54,7 @@
   <button class="menu-close" id="menuClose" aria-label="Close the menu">&times;</button>
   <a href="/templates/strictly-sprinkles-menu">The menu</a>
   <a href="#enquire">Enquire</a>
-  <a href="#work">The work</a>
+  <a href="/templates/strictly-sprinkles-work">The work</a>
   <a href="#terms">Ordering</a>
   <a href="#reviews">Reviews</a>
   <a href="#contact">Contact</a>
@@ -69,23 +69,22 @@
   <div class="hero-inner">
     <img class="hero-mark" src="/assets/strictly/mark.png" alt="Strictly Sprinkles"
          width="847" height="847" fetchpriority="high">
-    <p class="hero-eyebrow">Bespoke home bakery &middot; Stockton-on-Tees &middot; Halal</p>
+    <p class="hero-eyebrow">Bespoke cake studio &middot; Teesside</p>
     <h1>
-      <span class="rise"><span>Made for the</span></span>
-      <span class="rise"><span><em>sweetest</em> days</span></span>
-      <span class="rise"><span>of your life</span></span>
+      <span class="rise"><span>Every celebration</span></span>
+      <span class="rise"><span>deserves a <em>centrepiece</em></span></span>
     </h1>
     <p class="hero-sub" data-rv data-rv-d="3">
-      Bespoke celebration cakes, hand-iced cookies, party platters and treatboxes &mdash;
-      baked to order, and finished to look exactly like the picture in your head.
+      Hand-finished cakes, iced cookies and dessert tables for nikkahs, birthdays and
+      showers across Teesside &mdash; designed with you and baked fresh for your date.
     </p>
     <div class="hero-cta" data-rv data-rv-d="4">
       <a class="btn btn-cream" href="#enquire">Make an enquiry</a>
       <a class="btn btn-ghost-cream" href="/templates/strictly-sprinkles-menu">See the menu</a>
     </div>
     <ul class="hero-facts" data-rv data-rv-d="5">
-      <li>Made to order</li>
       <li>100% halal</li>
+      <li>Collection in Stockton</li>
       <li>Reply within 24 hours</li>
     </ul>
   </div>
@@ -106,44 +105,28 @@
 <!-- ==================== MARQUEE ==================== -->
 <div class="mq" aria-hidden="true" id="mq" data-dark></div>
 
-<!-- ==================== THE MENU (tiles) ==================== -->
+<!-- ============== THE RANGE (tiles + route to the menu + the ask) ============== -->
 <section class="sec" id="menu-sec">
   <div class="wrap">
-    <div class="sec-head split">
-      <div>
-        <p class="kicker" data-rv>What I make</p>
-        <h2 class="big" data-rv data-rv-d="1">Everything here is <em>made to order</em></h2>
-      </div>
-      <p class="lede" data-rv data-rv-d="2">
-        Nothing is sitting on a shelf. Pick a category to see the sizes and the prices,
-        then build the order in your own words further down the page.
-      </p>
+    <div class="sec-head">
+      <p class="kicker" data-rv>The range</p>
+      <h2 class="big" data-rv data-rv-d="1">Cakes, cookies and <em>dessert tables</em></h2>
     </div>
-    <div class="tiles" id="tiles"></div>
-  </div>
-</section>
 
-<!-- ==================== TO THE MENU ==================== -->
-<section class="sec sec-cream" id="menu-cta">
-  <div class="sprinkles" data-sprinkles="12" aria-hidden="true"></div>
-  <div class="wrap tomenu">
-    <div>
-      <p class="kicker" data-rv>The list</p>
-      <h2 class="big" data-rv data-rv-d="1">Sizes, prices <em>and flavours</em></h2>
-      <p class="lede" data-rv data-rv-d="2">
-        Every size and every price, the full flavour list, and the seasonal collections
-        for Ramadan, Eid, Mehndi and Mother&rsquo;s Day &mdash; all on one page.
-      </p>
-      <div class="hero-cta" data-rv data-rv-d="3">
-        <a class="btn btn-fill" href="/templates/strictly-sprinkles-menu">See the full menu</a>
-        <a class="btn btn-line" href="#enquire">Enquire</a>
+    <div class="tiles" id="tiles"></div>
+
+    <p class="menu-foot" data-rv>
+      <a class="btn btn-fill" href="/templates/strictly-sprinkles-menu">See the full menu &amp; prices</a>
+    </p>
+
+    <div class="notlisted" data-rv>
+      <div>
+        <h3>Something bigger, or not on the list?</h3>
+        <p>Tiered cakes, wedding and nikkah cakes, full dessert tables &mdash; anything beyond
+           the six above is quoted individually. Tell me what you have in mind and I&rsquo;ll price it.</p>
       </div>
+      <div class="notlisted-cta" id="notListedCta"></div>
     </div>
-    <ul class="tomenu-figs" data-rv data-rv-d="2">
-      <li><b>£30</b><span>Cakes from</span></li>
-      <li><b>£70</b><span>Party platters from</span></li>
-      <li><b>£12</b><span>Treats, per dozen from</span></li>
-    </ul>
   </div>
 </section>
 
@@ -151,8 +134,8 @@
 <section class="band" data-rv>
   <img src="/assets/strictly/work/dessert-table.webp" alt="" width="1106" height="1174" loading="lazy">
   <div class="wrap">
-    <blockquote>Send me the picture in your head.</blockquote>
-    <cite>Every order starts the same way</cite>
+    <blockquote>The detail is the whole job.</blockquote>
+    <cite>Hand-piped, hand-iced, one pair of hands</cite>
   </div>
 </section>
 
@@ -162,11 +145,11 @@
     <div class="sec-head split">
       <div>
         <p class="kicker" data-rv>Enquire</p>
-        <h2 class="big" data-rv data-rv-d="1">Tell me exactly <em>what you want</em></h2>
+        <h2 class="big" data-rv data-rv-d="1">Tell me what you <em>have in mind</em></h2>
       </div>
       <p class="lede" data-rv data-rv-d="2">
-        Work down the steps and the summary keeps up on the right. When it's right,
-        send it to my WhatsApp or my inbox — it arrives as one tidy message, nothing lost in translation.
+        Work down the steps and the summary keeps up as you go. Send it when it looks right
+        and I'll come back with a quote, usually the same day.
       </p>
     </div>
 
@@ -271,13 +254,13 @@
         <h2 class="big" data-rv data-rv-d="1">Recently <em>out of the kitchen</em></h2>
       </div>
       <p class="lede" data-rv data-rv-d="2">
-        A few of the orders that have gone out lately. There is plenty more on Instagram.
+        Real orders, photographed as they left.
       </p>
     </div>
-    <div class="gal" id="gallery"></div>
-    <div style="margin-top:clamp(28px,4vw,42px);display:flex;flex-wrap:wrap;gap:12px" data-rv>
-      <a class="btn btn-fill" id="igBtn" href="#" target="_blank" rel="noopener">See it all on Instagram</a>
-      <a class="btn btn-line" href="#enquire">Enquire about something like it</a>
+    <div class="gal gal-teaser" id="gallery" data-limit="6"></div>
+    <div class="work-more" data-rv>
+      <a class="btn btn-fill" href="/templates/strictly-sprinkles-work">View more recent work</a>
+      <a class="btn btn-line" id="igBtn" href="#" target="_blank" rel="noopener">See it all on Instagram</a>
     </div>
   </div>
 </section>
@@ -287,19 +270,20 @@
   <div class="sprinkles" data-sprinkles="14" aria-hidden="true"></div>
   <div class="wrap story">
     <div class="story-art" data-rv>
-      <img src="/assets/strictly/work/baker-portrait.webp" alt="The baker behind Strictly Sprinkles holding a finished chocolate cake" width="430" height="509" loading="lazy">
+      <img src="/assets/strictly/work/baker-portrait.webp" alt="Hibbah, the baker behind Strictly Sprinkles, holding a two-tier chocolate cake" width="840" height="840" loading="lazy">
     </div>
     <div>
-      <p class="kicker" data-rv>Hello</p>
-      <h2 class="big" data-rv data-rv-d="1">One pair of hands, <em>start to finish</em></h2>
+      <p class="kicker" data-rv>The baker</p>
+      <h2 class="big" data-rv data-rv-d="1">Hello, I&rsquo;m <em>Hibbah</em></h2>
       <p class="lede" data-rv data-rv-d="2">
-        Strictly Sprinkles is a small home bakery in Stockton-on-Tees. Everything is halal,
-        everything is baked fresh for your date, and everything is made by me — from the sponge
-        to the last piped rose.
+        I&rsquo;m a self-taught baker in Stockton-on-Tees. I started posting my bakes over six years
+        ago because I was proud of them, and then people began asking if I&rsquo;d make one for them
+        &mdash; it grew from there.
       </p>
       <p class="lede" data-rv data-rv-d="3">
-        Most people come to me with a photograph and a date. That's all I need to start. I'll tell
-        you honestly what's possible, what it will cost, and when I need to know by.
+        Everything is baked fresh for your date and piped by hand. I&rsquo;m grateful for every
+        order and every occasion I&rsquo;ve been part of, and I can&rsquo;t wait to see what&rsquo;s next for
+        Strictly Sprinkles.
       </p>
       <div class="hero-cta" data-rv data-rv-d="4">
         <a class="btn btn-fill" href="#enquire">Start an enquiry</a>
@@ -349,8 +333,8 @@
         <h2 class="big" data-rv data-rv-d="1">Come and <em>say hello</em></h2>
       </div>
       <p class="lede" data-rv data-rv-d="2">
-        The quickest way to reach me is WhatsApp or Instagram. Please allow up to 24 hours for a reply —
-        I'm usually elbow-deep in buttercream.
+        WhatsApp and Instagram reach me fastest. Please allow up to 24 hours for a reply;
+        weekends are when the kitchen is busiest.
       </p>
     </div>
     <div class="socials" id="socials"></div>
@@ -373,7 +357,7 @@
         <li><a href="/templates/strictly-sprinkles-menu">The menu &amp; prices</a></li>
         <li><a href="/templates/strictly-sprinkles-menu#seasonal">Seasonal collections</a></li>
         <li><a href="#enquire">Enquire</a></li>
-        <li><a href="#work">The work</a></li>
+        <li><a href="/templates/strictly-sprinkles-work">The work</a></li>
         <li><a href="#terms">Ordering &amp; care</a></li>
       </ul>
     </div>
@@ -388,10 +372,6 @@
   </div>
 </footer>
 
-<div class="dock" id="dock">
-  <a class="btn btn-fill" href="#enquire">Enquire</a>
-  <a class="btn btn-line" id="dockWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
-</div>
 
 <script src="/templates/vendor/lenis.min.js"></script>
 <script src="/templates/strictly-sprinkles-data.js"></script>
