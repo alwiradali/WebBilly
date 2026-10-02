@@ -1333,3 +1333,14 @@ footer p.fpayline{margin-top:9px;font-family:var(--ui);font-size:.66rem;letter-s
 /* WhatsApp is its own filled mark, not an outline, wherever it appears */
 svg.wa{fill:currentColor!important;stroke:none!important}
 .fcontact svg.wa{color:var(--gold-pale)}
+
+/* Her name on a phone too: the wordmark sits beside the monogram at every
+   width, scaled to fit beside the cart and menu buttons. */
+@media(max-width:559px){
+  .brand{gap:9px}
+  .brand img.mk{height:50px}
+  .brand img.wd{display:block;height:auto;width:min(150px,38vw)}
+}
+@media(max-width:350px){.brand img.wd{width:118px}}
+.hero .eyebrow{font-family:var(--ui);font-size:.72rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--gold-dk);margin-bottom:16px}
