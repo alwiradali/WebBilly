@@ -154,16 +154,16 @@ def main():
                 path = '/' + (rel_dir + '/' if rel_dir else '')
             else:
                 path = '/' + (rel_dir + '/' if rel_dir else '') + name[:-5]
-            with open(os.path.join(SRC, rel)) as fh:
+            with open(os.path.join(SRC, rel), encoding='utf-8') as fh:
                 html = fh.read()
             dest = os.path.join(OUT, rel)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
-            with open(dest, 'w') as fh:
+            with open(dest, 'w', encoding='utf-8') as fh:
                 fh.write(rewrite(html, domain, path))
             pages.append(path)
 
     today = date.today().isoformat()
-    with open(os.path.join(OUT, 'sitemap.xml'), 'w') as fh:
+    with open(os.path.join(OUT, 'sitemap.xml'), 'w', encoding='utf-8') as fh:
         fh.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
         for p in sorted(pages):
@@ -180,7 +180,7 @@ def main():
     # [env.mm], which has always set its own main and was never affected.
     #
     # It does one thing: hand the request to the static assets.
-    with open(os.path.join(OUT, '_worker.js'), 'w') as fh:
+    with open(os.path.join(OUT, '_worker.js'), 'w', encoding='utf-8') as fh:
         fh.write('export default {\n'
                  '  async fetch(request, env) {\n'
                  '    return env.ASSETS.fetch(request);\n'
@@ -190,10 +190,10 @@ def main():
     # Deployed as a Worker the entry script is uploaded as code, but it also
     # sits in the asset directory, where the asset router would serve it to
     # anyone asking for /_worker.js.
-    with open(os.path.join(OUT, '.assetsignore'), 'w') as fh:
+    with open(os.path.join(OUT, '.assetsignore'), 'w', encoding='utf-8') as fh:
         fh.write('_worker.js\n')
 
-    with open(os.path.join(OUT, 'robots.txt'), 'w') as fh:
+    with open(os.path.join(OUT, 'robots.txt'), 'w', encoding='utf-8') as fh:
         fh.write(f'User-agent: *\nAllow: /\n\nSitemap: https://{domain}/sitemap.xml\n')
 
     print(f'built {len(pages)} pages into dist/smartin-science/ for {domain}')
@@ -201,7 +201,7 @@ def main():
     built = os.path.join(OUT, 'timetable.html')
     has_cal = False
     if os.path.exists(built):
-        with open(built) as fh:
+        with open(built, encoding='utf-8') as fh:
             page = fh.read()
         has_cal = bool(re.search(r'data-api-key="[^"]+"', page)
                        and re.search(r'data-calendar-id="[^"]+"', page))
