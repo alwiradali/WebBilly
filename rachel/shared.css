@@ -1344,3 +1344,11 @@ svg.wa{fill:currentColor!important;stroke:none!important}
 @media(max-width:350px){.brand img.wd{width:118px}}
 .hero .eyebrow{font-family:var(--ui);font-size:.72rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;
   color:var(--gold-dk);margin-bottom:16px}
+
+/* Arches: five equal columns that share the row. A long label (BOUQUETS)
+   used to widen its own column, so that arch grew and the labels collided. */
+.arches{gap:clamp(8px,2.2vw,34px)}
+.arch{flex:1 1 0;min-width:0;width:auto;max-width:132px;grid-template-columns:minmax(0,1fr)}
+.arch .ai{width:100%}
+.arch b{white-space:nowrap;font-size:clamp(.5rem,2.3vw,.66rem);letter-spacing:.12em;max-width:100%;text-align:center}
+@media(max-width:379px){.arches{gap:6px}.arch b{font-size:.48rem;letter-spacing:.06em}}
