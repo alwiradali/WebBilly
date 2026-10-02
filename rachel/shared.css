@@ -1329,3 +1329,7 @@ footer p.fpayline{margin-top:9px;font-family:var(--ui);font-size:.66rem;letter-s
 .bsp-steps b{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;
   font-family:var(--ser);font-weight:600;font-size:1rem;color:var(--gold-dk)}
 @media(max-width:859px){.bsp-ph{min-height:0}.bsp-ph img{aspect-ratio:4/3.4;height:auto}}
+
+/* WhatsApp is its own filled mark, not an outline, wherever it appears */
+svg.wa{fill:currentColor!important;stroke:none!important}
+.fcontact svg.wa{color:var(--gold-pale)}
