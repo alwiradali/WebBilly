@@ -94,10 +94,10 @@
     sample: true,
     items: [
       { name: "Danielle R.", area: "Beaumont", service: "The Radiance", text: "Ysabel set up right in my living room and talked me through every step. Calm, professional and so personal — and my smile was visibly brighter by the end." },
-      { name: "Priya S.", area: "Leduc", service: "The Aura", text: "I have sensitive teeth so I was nervous. The sensitivity screening and her aftercare tips made it completely stress-free. Already planning my next visit." },
+      { name: "Priya S.", area: "Leduc", service: "The Aura", text: "I have sensitive teeth so I was nervous. The sensitivity screening and Ysabel’s aftercare tips made it completely stress-free. Already planning my next visit." },
       { name: "Megan T.", area: "Edmonton", service: "The Lumina", text: "Booked The Lumina before my sister’s wedding. Both appointments were at home, and the difference in photos was honestly amazing." },
       { name: "Alyssa K.", area: "Edmonton", service: "Bride & Bridesmaids", text: "We did the bridal party the morning of my bachelorette — such a fun, glowy way to start the weekend. Everyone loved it!" },
-      { name: "Jasmine L.", area: "Beaumont", service: "The Aura", text: "No waiting room, no driving across town. She came to me after work and it felt like a little spa evening at home." }
+      { name: "Jasmine L.", area: "Beaumont", service: "The Aura", text: "No waiting room, no driving across town. Ysabel came to me after work and it felt like a little spa evening at home." }
     ]
   };
 
@@ -1312,7 +1312,7 @@
       var first = d.name.split(/\s+/)[0];
       $("[data-done-title]", done).textContent = sent ? "Thank you, " + first : "Almost there, " + first;
       $("[data-done-text]", done).textContent = sent
-        ? "Your enquiry is with me — I’ll reply by " + d.reply.toLowerCase() + " as soon as she can."
+        ? "Your enquiry is with me — I’ll reply by " + d.reply.toLowerCase() + " as soon as I can."
         : "Your message is written and ready. Send it to me whichever way suits you — nothing has been sent yet.";
       var ho = $("[data-handoff]", done); ho.hidden = sent;
       if (!sent) {
