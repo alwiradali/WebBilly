@@ -457,7 +457,7 @@
     $$("[data-pick]", finder).forEach(function (x) { x.setAttribute("aria-pressed", x === b && on ? "true" : "false"); });
     grid.classList.toggle("has-pick", on);
     $$("[data-exp]").forEach(function (c) { c.classList.toggle("is-picked", on && c.getAttribute("data-exp") === key); });
-    note.textContent = on ? PICK_NOTE[key] + " Ysabel confirms the right choice at your consultation." : NOTE0;
+    note.textContent = on ? PICK_NOTE[key] + " I’ll confirm the right choice at your consultation." : NOTE0;
     if (on) {
       var card = $('[data-exp="' + key + '"]'), r = card.getBoundingClientRect();
       if (r.top < hdrH() || r.bottom > window.innerHeight) goTo(card);
@@ -900,7 +900,7 @@
         return;
       }
       var h = HOURS[dow(S.day)], out = '<h4 class="cal-dname">' + longDay(S.day) + "</h4>";
-      out += '<p class="cal-hours"><svg class="ic"><use href="#i-' + (evening(S.day) ? "moon" : "sun") + '"/></svg>Ysabel’s hours <b>' + fmtMins(h[0]) + " – " + fmtMins(h[1]) + "</b></p>";
+      out += '<p class="cal-hours"><svg class="ic"><use href="#i-' + (evening(S.day) ? "moon" : "sun") + '"/></svg>My hours <b>' + fmtMins(h[0]) + " – " + fmtMins(h[1]) + "</b></p>";
       var L = 480, R = 1320, a = (h[0] - L) / (R - L) * 100, w = (h[1] - h[0]) / (R - L) * 100;
       out += '<div class="cal-line" aria-hidden="true"><i style="left:' + a.toFixed(1) + "%;width:" + w.toFixed(1) + '%"></i>' +
         '<span style="left:7.1%">9a</span><span style="left:28.6%">12p</span><span style="left:50%">3p</span><span style="left:71.4%">6p</span><span style="left:92.9%">9p</span></div>';
@@ -912,7 +912,7 @@
           out += group(slots, slotHour, function (iso) { return chip(iso, timeFmt.format(new Date(iso)), iso === S.time); });
         } else {
           var next = Object.keys(f.byDay).filter(function (k) { return k > S.day && f.byDay[k].length; }).sort()[0];
-          out += '<p class="cal-note">Fully booked on this day.' + (next ? "" : " Try the next month, or text Ysabel — she may be able to fit you in.") + "</p>";
+          out += '<p class="cal-note">Fully booked on this day.' + (next ? "" : " Try the next month, or text me — I may be able to fit you in.") + "</p>";
           if (next) out += '<button type="button" class="btn btn-ghost btn-sm cal-next" data-goto="' + next + '"><span>Next free day: ' + shortDay(next) + '</span><svg class="ic"><use href="#i-arrow"/></svg></button>';
         }
       } else {
@@ -920,7 +920,7 @@
         if (!S.exp) out += '<p class="cal-note">Choose your experience to see times.</p>';
         else if (!pref.length) out += '<p class="cal-note">No times left today — please pick another day.</p>';
         else {
-          out += '<p class="cal-note cal-pref-note"><svg class="ic"><use href="#i-clock"/></svg>Choose a preferred start — Ysabel confirms it with you.</p>';
+          out += '<p class="cal-note cal-pref-note"><svg class="ic"><use href="#i-clock"/></svg>Choose a preferred start — I’ll confirm it with you.</p>';
           out += group(pref, function (m) { return Math.floor(m / 60); }, function (m) { return chip(m, fmtMins(m), !S.any && m === S.time); });
           out += '<div class="cal-slots cal-any">' + chip("any", "Any time that day", S.any) + "</div>";
         }
@@ -939,7 +939,7 @@
       goLabel.textContent = !S.exp ? "Choose your experience" : !S.day ? "Choose a day" : !ready ? "Choose a time" : "Continue to your details";
       fine.textContent = CFG.booking
         ? "Next: your details and the 20% deposit — secure card payment, all on this page."
-        : "Next: your details — Ysabel confirms your time and your 20% deposit.";
+        : "Next: your details — I’ll confirm your time and your 20% deposit.";
       go.classList.toggle("is-wait", !ready);
       go.setAttribute("aria-disabled", ready ? "false" : "true");
     }
@@ -1062,7 +1062,7 @@
         box.innerHTML = "";
         return c.attach("#lo-card").then(function () { card = c; return c; });
       }).catch(function () {
-        box.innerHTML = '<p class="cal-card-wait">The secure card form didn’t load. Check your connection and <button type="button" class="link-btn" data-card-retry>try again</button>, or text Ysabel to book.</p>';
+        box.innerHTML = '<p class="cal-card-wait">The secure card form didn’t load. Check your connection and <button type="button" class="link-btn" data-card-retry>try again</button>, or text me to book.</p>';
         throw new Error("card");
       });
     }
@@ -1131,7 +1131,7 @@
 
     function payAndBook(d) {
       var label = submitLabel.textContent, parts = d.name.split(/\s+/), dep = depositCents();
-      if (!card) return mountCard().then(function () { fail("The card form is ready — please add your card."); }, function () { fail("The secure card form didn’t load — please try again, or text Ysabel to book."); });
+      if (!card) return mountCard().then(function () { fail("The card form is ready — please add your card."); }, function () { fail("The secure card form didn’t load — please try again, or text me to book."); });
       busy(true, "Securing your time…");
       card.tokenize().then(function (t) {
         if (!t || t.status !== "OK") throw { card: true, msg: (t && t.errors && t.errors[0] && t.errors[0].message) || "Please check your card details." };
@@ -1161,7 +1161,7 @@
           return toast(res.j.error || "That time was just taken — please choose another.");
         }
         if (res.status === 402) return fail(res.j.error || "Your card couldn’t be charged. Please try another card.");
-        fail((res.j && res.j.error) || "Something went wrong — nothing was charged. Please try again, or text Ysabel.");
+        fail((res.j && res.j.error) || "Something went wrong — nothing was charged. Please try again, or text me.");
       }).catch(function (err) {
         busy(false, label);
         fail(err && err.card ? err.msg : "We couldn’t reach the booking system — nothing was charged. Please try again.");
@@ -1210,16 +1210,16 @@
       var rows = [["Experience", SERVICES[S.exp].name], ["When", when], ["Where", d.address + ", " + d.city]];
       if (kind === "booked") {
         h.textContent = "You’re booked, " + fname + " ✨";
-        p.textContent = j.deposit_taken ? "Your time is in Ysabel’s calendar and your deposit is paid." : "Your time is in Ysabel’s calendar. Your deposit is held on your card and Ysabel will confirm it.";
+        p.textContent = j.deposit_taken ? "You’re in my calendar and your deposit is paid." : "You’re in my calendar. Your deposit is held on your card and I will confirm it.";
         rows.push(["Deposit paid", money2(j.deposit_cents)]);
         icsA.href = ics(d, j); icsA.hidden = false;
       } else if (kind === "requested") {
         h.textContent = "Request sent, " + fname + " ✨";
-        p.textContent = "Ysabel will confirm your time by text or email — usually the same day — and send your 20% deposit request to secure it.";
+        p.textContent = "I’ll confirm your time by text or email — usually the same day — and send your 20% deposit request to secure it.";
       } else {
         var text = composed(d);
         h.textContent = "Almost there, " + fname;
-        p.textContent = "Your booking request is written and ready — send it to Ysabel and she’ll confirm your time and deposit. Nothing has been sent yet.";
+        p.textContent = "Your booking request is written and ready — send it to me and I’ll confirm your time and deposit. Nothing has been sent yet.";
         smsA.href = "sms:" + CONFIG.phone + "?&body=" + encodeURIComponent(text); smsA.hidden = false;
         mailA.href = "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Booking request — " + SERVICES[S.exp].name + " · " + shortDay(S.day)) + "&body=" + encodeURIComponent(text); mailA.hidden = false;
       }
@@ -1274,8 +1274,8 @@
       var first = d.name.split(/\s+/)[0];
       $("[data-done-title]", done).textContent = sent ? "Thank you, " + first : "Almost there, " + first;
       $("[data-done-text]", done).textContent = sent
-        ? "Your enquiry is with Ysabel — she’ll reply by " + d.reply.toLowerCase() + " as soon as she can."
-        : "Your message is written and ready. Send it to Ysabel whichever way suits you — nothing has been sent yet.";
+        ? "Your enquiry is with me — I’ll reply by " + d.reply.toLowerCase() + " as soon as she can."
+        : "Your message is written and ready. Send it to me whichever way suits you — nothing has been sent yet.";
       var ho = $("[data-handoff]", done); ho.hidden = sent;
       if (!sent) {
         $("[data-enq-msg]", done).textContent = text;
