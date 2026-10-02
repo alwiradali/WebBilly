@@ -103,7 +103,7 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .rrload.on{display:grid}
 .rrload.gone{opacity:0;pointer-events:none}
 .rrload-in{display:grid;justify-items:center;gap:22px;padding:24px}
-.rrload img{width:min(300px,68vw);height:auto;
+.rrload img{width:min(190px,46vw);height:auto;
   animation:rrfade 1.1s cubic-bezier(.2,.8,.2,1) both}
 .rrload-rule{width:132px;height:1px;background:var(--gold-fade);position:relative;overflow:hidden}
 .rrload-rule::after{content:"";position:absolute;inset:0;background:var(--gold);
