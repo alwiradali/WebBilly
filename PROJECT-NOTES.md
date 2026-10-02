@@ -1654,6 +1654,13 @@ experience steps, "treatment time + 15 minutes", policies, care guide.
 refer-5-friends. Don't add claims she hasn't made (no shade promises, no
 "painless"); the results section says results vary.
 
+**Voice and visuals (owner, 2 Oct).** The site is written by the studio,
+never about it: no "her"/"she" anywhere a visitor (or view-source) can see.
+The ritual shows no photos at any width; its step numbers sit centred in
+the arch on laptops, as on phones. Reviews are swipeable inside their own
+strip (the page never scrolls sideways); each example card keeps its
+"Example" tag, with no extra note above them.
+
 **Booking happens on her site — nobody is sent to Square (owner, 2 Oct).**
 The calendar (`#reserve`) runs the whole booking: 1 experience · 2 day ·
 3 time · 4 details · 5 deposit · confirmation, all on the page. Every "Book"
