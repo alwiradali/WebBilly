@@ -1449,3 +1449,16 @@ svg.wa{fill:currentColor!important;stroke:none!important}
 .svc .svc-go{color:var(--gold-dk);margin-top:8px}
 @media(min-width:760px){.svc{grid-template-columns:minmax(0,1fr);padding:0;overflow:hidden}
   .svc img{width:100%;height:auto;aspect-ratio:4/3.2;border-radius:0}.svc > div{padding:16px 18px 20px}}
+
+/* Delivery / Collection switch: the selected side is a rounded pill sitting
+   inside the track, so the gold always follows the curve; both halves stay
+   one line high. */
+.seg{padding:4px;gap:4px;background:rgba(255,252,248,.7);border-color:var(--gold-pale);overflow:visible}
+.seg label + label{border-left:0}
+.seg span{border-radius:100px;padding:11px 8px;white-space:nowrap;line-height:1.1;
+  transition:background .25s,color .25s,box-shadow .25s}
+.seg span small{font-size:.8em;opacity:.75;margin-left:5px;letter-spacing:.06em}
+.seg input:checked + span{background:var(--gold);color:#FFFBF2;box-shadow:0 6px 14px -8px rgba(168,127,30,.8)}
+.seg input:focus-visible + span{outline:2px solid var(--gold-dk);outline-offset:2px}
+.seg label{margin:0!important;padding:0!important;display:flex!important;align-items:stretch}
+.seg span{min-width:0;letter-spacing:.1em;padding:11px 4px}.seg label{min-width:0;overflow:hidden;border-radius:100px}@media(max-width:400px){.seg span small{display:none}}
