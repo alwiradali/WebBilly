@@ -224,7 +224,7 @@
   }
   // links between her pages fade out, and the new page fades in
   (function () {
-    if (reduce) return;
+    if (reduce) { root.classList.remove("arriving"); return; }
     var v = jumpVeil(); v.classList.add("is-on", "is-instant");
     var tgt = location.hash.length > 1 && $(location.hash);
     if (tgt) {
@@ -239,11 +239,13 @@
           if (hasGSAP) ScrollTrigger.update();
           settleView();
           v.classList.remove("is-instant");
+          root.classList.remove("arriving");
           requestAnimationFrame(function () { v.classList.remove("is-on"); });
         }, 120);
       });
       return;
     }
+    root.classList.remove("arriving");
     requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-instant", "is-on"); }); });
     window.addEventListener("pageshow", function (e) { if (e.persisted) v.classList.remove("is-on"); });
   })();

@@ -1321,3 +1321,6 @@ main .faq { background: var(--pearl-2); }
 .fx-snap [data-reveal], .fx-snap [data-reveal] *, .fx-snap [data-reveal-split], .fx-snap [data-reveal-split] *,
 .fx-snap [data-insta], .fx-snap [data-insta] *, .fx-snap [data-shade-scale] { transition: none !important; animation-delay: 0s !important; }
 html.fx-snap, html.fx-snap body { scroll-behavior: auto !important; }
+
+/* arriving at a section from another page: covered from the very first paint */
+html.arriving body::before { content: ""; position: fixed; inset: 0; z-index: 59; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, #fbf7f3, #f1e7e1); }
