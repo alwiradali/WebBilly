@@ -411,7 +411,11 @@ main > *:not([data-silk-window]) { position: relative; background-color: var(--p
 .pillar p { font-size: 15.5px; color: var(--body); }
 
 /* ─────────────────────────── experiences ─────────────────────────── */
-main .exps { background: linear-gradient(180deg, var(--pearl) 0%, var(--pearl-2) 100%); }
+main .exps { background: linear-gradient(180deg, #f3e4dc 0%, var(--pearl-2) 55%, var(--pearl-2) 100%); }
+main .exps::before { content: ""; position: absolute; left: 50%; top: 0; width: min(78%, 900px); height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--champagne) 40%, transparent 47%, transparent 53%, var(--champagne) 60%, transparent); }
+main .exps::after { content: "✦"; position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); font-size: 13px; line-height: 1; color: var(--champagne); }
+main .story { padding-bottom: clamp(40px, 8vw, 120px); }
+main .exps { padding-top: clamp(52px, 9vw, 140px); }
 .finder {
   display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;
   padding: 18px 20px 18px 26px; margin-bottom: 34px; border-radius: 24px;
