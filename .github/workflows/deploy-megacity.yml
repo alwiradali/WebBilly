@@ -112,6 +112,17 @@ jobs:
             echo "::notice::His Cloudflare credentials are not set — built and checked, but not deployed."
           fi
 
+      - name: A skipped deploy is a failed deploy
+        # Without this the job goes green having deployed nothing, which is how
+        # Megacity Properties
+        # sat un-deployed while every run showed a tick. A fork has no secrets
+        # and is not meant to deploy, so this only speaks up in the repository
+        # that owns the site.
+        if: steps.creds.outputs.ready != 'true' && github.repository == 'alwiradali/WebBilly'
+        run: |
+          echo "::error::Built and checked, but NOT deployed. The live site has not changed. CLOUDFLARE_API_TOKEN_MEGACITY and/or CLOUDFLARE_ACCOUNT_ID_MEGACITY are missing from repository secrets (Settings -> Secrets and variables -> Actions)."
+          exit 1
+
       - name: Deploy to his Cloudflare Worker
         if: steps.creds.outputs.ready == 'true'
         env:
