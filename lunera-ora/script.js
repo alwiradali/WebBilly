@@ -185,11 +185,12 @@
     }
   }
 
-  function goTo(target) {
+  function jumpVeil() { return $(".jump-veil") || doc.body.appendChild(Object.assign(doc.createElement("div"), { className: "jump-veil" })); }
+  function goTo(target, fade) {
     var el = typeof target === "string" ? $(target) : target;
     if (!el) return;
     var off = -hdrH() - 8;
-    if (el.id === "top") { if (lenis) lenis.scrollTo(0, { duration: 1.6 }); else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); return; }
+    if (el.id === "top" && !fade) { if (lenis) lenis.scrollTo(0, { duration: 1.6 }); else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); return; }
     // An absolute target from the page's layout: Lenis's own idea of the scroll
     // position goes stale after a jump it didn't make (find-in-page, a focus),
     // and a box still mid fade-up would be measured 30px low.
@@ -197,11 +198,11 @@
     while (n) { y += n.offsetTop; n = n.offsetParent; }
     y += off;
     // A far jump fades through a veil instead of scrolling past everything.
-    if (!reduce && Math.abs(y - window.scrollY) > window.innerHeight * 1.2) {
-      var v = $(".jump-veil") || doc.body.appendChild(Object.assign(doc.createElement("div"), { className: "jump-veil" }));
+    if (fade && !reduce) {
+      var v = jumpVeil();
       v.classList.add("is-on");
       setTimeout(function () {
-        if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+        if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo({ top: y, behavior: "instant" });
         if (hasGSAP) ScrollTrigger.update();
         requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-on"); }); });
       }, 400);
@@ -210,6 +211,23 @@
     if (lenis) lenis.scrollTo(y, { duration: 1.6, easing: function (x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; } });
     else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
   }
+  // links between her pages fade out, and the new page fades in
+  (function () {
+    if (reduce) return;
+    var v = jumpVeil(); v.classList.add("is-on", "is-instant");
+    requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-instant", "is-on"); }); });
+    window.addEventListener("pageshow", function (e) { if (e.persisted) v.classList.remove("is-on"); });
+  })();
+  doc.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="/lunera-ora"]');
+    if (!a || reduce || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
+    var u = new URL(a.href, location.href);
+    if (u.pathname.replace(/\.html$/, "") === location.pathname.replace(/\.html$/, "") && u.hash) return;
+    e.preventDefault();
+    closeDrawer();
+    jumpVeil().classList.add("is-on");
+    setTimeout(function () { location.href = u.href; }, 380);
+  });
   doc.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (!a) return;
@@ -220,7 +238,7 @@
     var topic = a.getAttribute("data-enquire");
     if (topic) setTopic(topic);
     if (a.hasAttribute("data-book") && cal) cal.choose(a.getAttribute("data-book"));
-    goTo(id);
+    goTo(id, true);
     if (history.replaceState) history.replaceState(null, "", id);
   });
 

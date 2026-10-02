@@ -1236,3 +1236,4 @@ main .faq { background: var(--pearl-2); }
 .js .founder-still[data-reveal="mask"] img, .js .founder-still[data-reveal="mask"].in img { transform: none; }
 .founder-arch img { object-position: 50% 20%; }
 .page-book .hdr:not(.is-solid) .hdr-logo { opacity: 1; transform: none; pointer-events: auto; }
+.jump-veil.is-instant { transition: none; }
