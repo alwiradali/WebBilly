@@ -21,7 +21,7 @@
     email: "lunera.mobilestudio@gmail.com",
     instagram: "https://www.instagram.com/luneraora.mobilestudio/",
     instagramDM: "https://ig.me/m/luneraora.mobilestudio",
-    founderInstagram: "https://www.instagram.com/ysabennett/",
+    founderInstagram: "https://www.instagram.com/luneraora.mobilestudio/",
     // Paste a Web3Forms access key to have enquiries emailed straight to her.
     // Until then the enquiry is handed back as a ready-written text / email / DM.
     web3formsKey: "",
