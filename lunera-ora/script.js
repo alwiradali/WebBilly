@@ -726,7 +726,7 @@
       $(".rv-who small", card).textContent = r.area + " · " + r.service;
       rv.appendChild(card);
     });
-    if (REVIEWS.sample) $("[data-sample-note]").hidden = false;
+
     var g = CONFIG.google, gs = $("[data-g-summary]");
     if (g.rating && g.count) gs.textContent = g.rating.toFixed(1) + " · " + g.count + " review" + (g.count === 1 ? "" : "s");
     var gBadge = $("[data-gbadge]");
