@@ -211,7 +211,8 @@ def footer():
 
 
 OVERLAYS = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'rachel-overlays.html')).read().strip()
+                             'rachel-overlays.html'),
+                encoding='utf-8').read().strip()
 
 
 def stamp(html, name, block):
@@ -230,7 +231,7 @@ def main():
     changed = 0
     for f in files:
         page = os.path.basename(f)
-        s = before = open(f).read()
+        s = before = open(f, encoding='utf-8').read()
         for name, block in (('loader', LOADER), ('nav', nav(page)),
                             ('footer', footer()), ('overlays', OVERLAYS)):
             out = stamp(s, name, block)
@@ -239,7 +240,7 @@ def main():
                          'a half-updated page' % (page, name))
             s = out
         if s != before:
-            open(f, 'w').write(s)
+            open(f, 'w', encoding='utf-8').write(s)
             changed += 1
     print('chrome refreshed on %d of %d pages' % (changed, len(files)))
 

@@ -126,14 +126,14 @@ def main():
         rel = os.path.relpath(f, ROOT)
         depth = rel.count(os.sep)
         nav, footer = chrome(depth)
-        s = open(f).read()
+        s = open(f, encoding='utf-8').read()
         before = s
         s, n1 = re.subn(r'<nav class="nav">.*?</nav>', lambda _m: nav, s, count=1, flags=re.S)
         s, n2 = re.subn(r'<footer>.*?</footer>', lambda _m: footer, s, count=1, flags=re.S)
         if not n1 or not n2:
             sys.exit('%s: nav=%d footer=%d — refusing to write a half-updated page' % (rel, n1, n2))
         if s != before:
-            open(f, 'w').write(s)
+            open(f, 'w', encoding='utf-8').write(s)
             changed += 1
     print('nav + footer refreshed on %d of %d pages' % (changed, len(files)))
 

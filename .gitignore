@@ -13,3 +13,7 @@ dist/
 # Local Worker development (Megacity Studio)
 .dev.vars
 .wrangler/
+
+# Python bytecode, left behind by anything that imports scripts/
+__pycache__/
+*.pyc

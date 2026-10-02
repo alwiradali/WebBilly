@@ -595,9 +595,9 @@ def areas_index():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for a in AREAS:
-        with open(os.path.join(OUT, a['slug'] + '.html'), 'w') as fh:
+        with open(os.path.join(OUT, a['slug'] + '.html'), 'w', encoding='utf-8') as fh:
             fh.write(area_page(a))
-    with open(os.path.join(OUT, 'index.html'), 'w') as fh:
+    with open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8') as fh:
         fh.write(areas_index())
     print(f'wrote {len(AREAS)} area pages + index into templates/smartin/areas/')
 

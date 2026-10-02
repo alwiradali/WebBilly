@@ -1,7 +1,7 @@
 import json, os, html
 
 DOMAIN='https://molecularmiracleschemistrytuition.co.uk'
-data=json.load(open('extracted.json'))
+data=json.load(open('extracted.json', encoding='utf-8'))
 
 def meta(rel):
     parts=rel[:-5].split('/')
@@ -47,7 +47,7 @@ for rel,items in sorted(data.items()):
     blocks=[b for b in (block(i) for i in items) if b]
     content='\n\n'.join(blocks)
     json.dump({'slug':slug,'title':title,'content':content},
-              open('payloads/%s.json'%slug,'w'))
+              open('payloads/%s.json'%slug,'w', encoding='utf-8'))
     index.append((slug,title,len(blocks),len(content)))
 for s,t,n,c in index: print(f'{s:28s} {t:28s} {n:3d} blocks {c:6d} chars')
 print('total pages:',len(index))

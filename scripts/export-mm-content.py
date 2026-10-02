@@ -24,7 +24,7 @@ async def main():
                 print('NO BRIDGE:',rel); continue
             out[rel]=items
         await b.close()
-    json.dump(out,open('extracted.json','w'))
+    json.dump(out,open('extracted.json','w', encoding='utf-8'))
     for rel in pages:
         n=len(out.get(rel,[]))
         print(f'{rel}: {n} blocks')

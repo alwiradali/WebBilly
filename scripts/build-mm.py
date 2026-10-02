@@ -673,14 +673,14 @@ def main():
     # is in her shop right now) and passes everything else to the static
     # assets. Kept in lockstep with the same handler in the billydigitals
     # worker.js, which serves the demo copy.
-    with open(os.path.join(OUT, '_worker.js'), 'w') as fh:
+    with open(os.path.join(OUT, '_worker.js'), 'w', encoding='utf-8') as fh:
         fh.write(PAGES_WORKER)
 
     # Deployed as a Worker, the entry script is uploaded as code — but it also
     # sits in the asset directory, where the asset router would happily serve
     # it to anyone asking for /_worker.js. It was doing exactly that on the
     # live site. This keeps it out of the served files.
-    with open(os.path.join(OUT, '.assetsignore'), 'w') as fh:
+    with open(os.path.join(OUT, '.assetsignore'), 'w', encoding='utf-8') as fh:
         fh.write('_worker.js\n')
 
     # the shop, read here because the Worker is not allowed to
@@ -688,12 +688,12 @@ def main():
     snapshot = fetch_shop_products()
     if snapshot is None:
         prev = os.path.join(os.path.dirname(__file__), 'mm-shop-snapshot.json')
-        snapshot = _json.load(open(prev)) if os.path.exists(prev) else []
+        snapshot = _json.load(open(prev, encoding='utf-8')) if os.path.exists(prev) else []
     else:
-        with open(os.path.join(os.path.dirname(__file__), 'mm-shop-snapshot.json'), 'w') as fh:
+        with open(os.path.join(os.path.dirname(__file__), 'mm-shop-snapshot.json'), 'w', encoding='utf-8') as fh:
             _json.dump(snapshot, fh, indent=1)
     local = localise_shop_images(snapshot, OUT)
-    with open(os.path.join(OUT, 'shop.json'), 'w') as fh:
+    with open(os.path.join(OUT, 'shop.json'), 'w', encoding='utf-8') as fh:
         _json.dump({'products': snapshot}, fh)
     print(f'  shop snapshot: {len(snapshot)} products, {local} covers hosted locally')
 
@@ -717,11 +717,11 @@ def main():
             else:
                 path = '/' + (rel_dir + '/' if rel_dir else '') + name[:-5]
 
-            with open(os.path.join(SRC, rel)) as fh:
+            with open(os.path.join(SRC, rel), encoding='utf-8') as fh:
                 html = fh.read()
             dest = os.path.join(OUT, rel)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
-            with open(dest, 'w') as fh:
+            with open(dest, 'w', encoding='utf-8') as fh:
                 fh.write(rewrite(html, domain, path))
 
             depth = path.strip('/').count('/')
@@ -737,15 +737,15 @@ def main():
         sitemap.append('  <url><loc>https://%s%s</loc><lastmod>%s</lastmod>'
                        '<priority>%s</priority></url>' % (domain, path, today, priority))
     sitemap.append('</urlset>')
-    with open(os.path.join(OUT, 'sitemap.xml'), 'w') as fh:
+    with open(os.path.join(OUT, 'sitemap.xml'), 'w', encoding='utf-8') as fh:
         fh.write('\n'.join(sitemap) + '\n')
 
-    with open(os.path.join(OUT, 'robots.txt'), 'w') as fh:
+    with open(os.path.join(OUT, 'robots.txt'), 'w', encoding='utf-8') as fh:
         fh.write('User-agent: *\nAllow: /\n\nSitemap: https://%s/sitemap.xml\n' % domain)
 
     # long cache on fingerprint-free assets is safe here: images change rarely
     # and the HTML that references them is always revalidated.
-    with open(os.path.join(OUT, '_headers'), 'w') as fh:
+    with open(os.path.join(OUT, '_headers'), 'w', encoding='utf-8') as fh:
         fh.write('/assets/*\n  Cache-Control: public, max-age=604800\n')
 
     print('built %d pages into dist/molecular-miracles/ for %s' % (len(pages), domain))
