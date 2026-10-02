@@ -657,8 +657,11 @@ footer .fnav{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 22px;mar
 .fmain .fdiv{display:none;background:rgba(230,213,162,.45);align-self:stretch}
 @media(min-width:900px){.fmain .fdiv{display:block}}
 .fcontact{display:grid;gap:16px}
-.fcontact div{display:flex;align-items:flex-start;gap:14px;justify-content:center}
-@media(min-width:900px){.fcontact div{justify-content:flex-start}}
+.fcontact .fc{display:flex;align-items:flex-start;gap:14px;justify-content:center;border:0}
+@media(min-width:900px){.fcontact .fc{justify-content:flex-start}}
+.fcontact em{display:block;font-style:normal;color:#E0CDC0}
+.fcontact .fc:hover em{color:#FDF4EC}
+.fcontact .fc-ig{display:none}
 .fcontact svg{width:22px;height:22px;fill:none;stroke:var(--gold-pale);stroke-width:1.5;flex:none;margin-top:3px}
 .fcontact b{display:block;color:#FDF4EC;font-family:var(--disp);font-weight:600;font-size:1.06rem}
 .fcontact a{color:#E0CDC0;border:0}
@@ -962,7 +965,7 @@ footer p{font-size:.96rem}
 .fcols ul{list-style:none;margin-top:14px;display:grid;gap:10px}
 .fcols a{font-family:var(--ser);font-size:1.04rem;color:#E0CDC0;border:0}
 .fcols a:hover{color:#FDF4EC}
-@media(max-width:659px){.fcols{text-align:center}}
+
 
 /* ---------- the footer on a phone ----------
    Three faults, all of them visible at 390px and none of them on a desktop.
@@ -982,23 +985,29 @@ footer p{font-size:.96rem}
 footer .fmain > a{border-bottom:0}
 
 @media(max-width:659px){
-  footer{padding:34px 0 30px}
-  .fmain{gap:22px}
-
-  /* One grid for all three rows. display:contents lets each row hand its icon
-     and its words straight to the parent's columns. */
-  .fcontact{grid-template-columns:22px minmax(0,auto);justify-content:center;
-    align-items:start;gap:15px 13px;text-align:left}
-  .fcontact > div{display:contents}
-
-  .fsocial{margin-top:2px}
-  .fcols{gap:20px;margin:26px auto 0}
-  .fcols ul{margin-top:9px;gap:7px}
-  /* The serif carries a lot of leading, which on one-line links reads as a
-     gap nobody asked for. */
-  .fcols li{line-height:1.3}
-  .fcols a{font-size:1rem}
-  .fbottom{margin-top:24px;padding-top:18px}
+  /* On a phone: the logo, one row of four round buttons (email, phone,
+     WhatsApp, Instagram), then the links in three short columns. About half
+     the height of the stacked version, and nothing to read twice. */
+  footer{padding:30px 0 26px}
+  .fmain{gap:20px}
+  .fmain > a img{width:70px!important}
+  .fsocial{display:none}
+  .fcontact{display:flex;justify-content:center;gap:clamp(14px,5vw,26px)}
+  .fcontact .fc,.fcontact .fc-ig{display:flex;flex-direction:column;align-items:center;gap:7px;width:62px}
+  .fcontact .fc svg{width:48px;height:48px;padding:13px;margin:0;border-radius:50%;
+    border:1px solid rgba(230,213,162,.55);transition:background .2s}
+  .fcontact .fc:hover svg,.fcontact .fc:active svg{background:rgba(230,213,162,.14)}
+  .fcontact b{font-family:var(--ui);font-weight:500;font-size:.62rem;letter-spacing:.12em;
+    text-transform:uppercase;color:#D9C3B6}
+  .fcontact em{display:none}
+  .fcols{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px auto 0;text-align:left;
+    padding-top:22px;border-top:1px solid rgba(230,213,162,.18)}
+  .fcols h4{font-size:.66rem;letter-spacing:.18em}
+  .fcols ul{margin-top:10px;gap:6px}
+  .fcols li{line-height:1.25}
+  .fcols a{font-size:.95rem}
+  footer p{font-size:.86rem;margin-top:22px;line-height:1.5}
+  .fbottom{margin-top:18px;padding-top:14px;white-space:nowrap;letter-spacing:.24em;font-size:.82rem;gap:10px}
 }
 
 /* Six across made every bouquet the size of a stamp. Four gives each
