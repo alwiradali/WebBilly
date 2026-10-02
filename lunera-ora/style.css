@@ -1316,3 +1316,8 @@ main .faq { background: var(--pearl-2); }
 .insta-line { font: italic 400 clamp(21px, 2.2vw, 26px)/1.4 var(--serif); color: var(--ink); max-width: 22em; }
 .insta-card .btn { white-space: normal; text-align: center; }
 .insta-at { font: 600 12px/1 var(--sans); letter-spacing: .14em; color: var(--cocoa); margin-top: -6px; }
+
+/* a jump lands on a finished view: nothing on screen animates in */
+.fx-snap [data-reveal], .fx-snap [data-reveal] *, .fx-snap [data-reveal-split], .fx-snap [data-reveal-split] *,
+.fx-snap [data-insta], .fx-snap [data-insta] *, .fx-snap [data-shade-scale] { transition: none !important; animation-delay: 0s !important; }
+html.fx-snap, html.fx-snap body { scroll-behavior: auto !important; }

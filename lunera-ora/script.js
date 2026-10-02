@@ -186,6 +186,16 @@
   }
 
   function jumpVeil() { return $(".jump-veil") || doc.body.appendChild(Object.assign(doc.createElement("div"), { className: "jump-veil" })); }
+  // whatever is on screen after a jump appears finished, not animating in
+  function settleView() {
+    root.classList.add("fx-snap");
+    $$("[data-reveal], [data-reveal-split], [data-insta], [data-shade-scale]").forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("in");
+    });
+    void doc.body.offsetHeight;
+    setTimeout(function () { root.classList.remove("fx-snap"); }, 60);
+  }
   function goTo(target, fade) {
     var el = typeof target === "string" ? $(target) : target;
     if (!el) return;
@@ -204,6 +214,7 @@
       setTimeout(function () {
         if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo({ top: y, behavior: "instant" });
         if (hasGSAP) ScrollTrigger.update();
+        settleView();
         requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-on"); }); });
       }, 400);
       return;
@@ -215,6 +226,24 @@
   (function () {
     if (reduce) return;
     var v = jumpVeil(); v.classList.add("is-on", "is-instant");
+    var tgt = location.hash.length > 1 && $(location.hash);
+    if (tgt) {
+      // arriving at a section: land on it under the veil, then fade in
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      requestAnimationFrame(function () {
+        var y = -hdrH() - 8, n = tgt;
+        while (n) { y += n.offsetTop; n = n.offsetParent; }
+        if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo({ top: y, behavior: "instant" });
+        setTimeout(function () {
+          if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo({ top: y, behavior: "instant" });
+          if (hasGSAP) ScrollTrigger.update();
+          settleView();
+          v.classList.remove("is-instant");
+          requestAnimationFrame(function () { v.classList.remove("is-on"); });
+        }, 120);
+      });
+      return;
+    }
     requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-instant", "is-on"); }); });
     window.addEventListener("pageshow", function (e) { if (e.persisted) v.classList.remove("is-on"); });
   })();
@@ -400,7 +429,7 @@
     });
     // hero drifts and softens as you leave it
     var heroIn = $("[data-hero]");
-    if (heroIn) gsap.to(heroIn, { yPercent: 14, opacity: 0.15, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    // (the hero stays put: its buttons never drift or fade while scrolling)
     // booking steps fill as you read them
     var steps = $("[data-steps]");
     if (steps) {
