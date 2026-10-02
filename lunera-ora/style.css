@@ -1329,3 +1329,8 @@ html.arriving body::before { content: ""; position: fixed; inset: 0; z-index: 59
 .drawer { height: 100dvh; bottom: auto; }
 .drawer-in { min-height: 100dvh; gap: 22px; padding-bottom: calc(env(safe-area-inset-bottom) + 96px); }
 .drawer-nav a { font-size: min(clamp(26px, 7.2vw, 42px), 4.1dvh); padding: min(8px, .9dvh) 0; }
+
+/* the ritual: no photos at any screen size */
+.ritual .r-panel:not(.r-intro):not(.r-outro) .r-art { background: radial-gradient(90% 70% at 50% 40%, #f6ece6 0%, #e4d3ca 55%, #c9b2a7 100%) !important; }
+.ritual .r-panel .r-art-photo img { display: none !important; }
+.ritual .r-art-photo .r-num, .ritual .r-art-lamp .r-num { color: var(--cocoa); text-shadow: none; }
