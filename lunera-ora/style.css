@@ -262,6 +262,7 @@ main > *:not([data-silk-window]) { position: relative; background-color: var(--p
 .drawer.is-open .drawer-nav a:nth-child(6) { transition-delay: .2s; } .drawer.is-open .drawer-nav a:nth-child(7) { transition-delay: .24s; }
 .drawer.is-open .drawer-nav a:nth-child(8) { transition-delay: .28s; }
 .drawer.is-open .drawer-nav a:nth-child(9) { transition-delay: .32s; }
+.drawer.is-open .drawer-nav a:nth-child(10) { transition-delay: .36s; }
 .drawer-foot { display: grid; gap: 18px; }
 .drawer-links { display: flex; gap: 10px; flex-wrap: wrap; }
 .drawer-links a { flex: 1; min-width: 92px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border: 1px solid var(--line-2); border-radius: 999px; text-decoration: none; font: 600 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--cocoa); }
@@ -1300,3 +1301,9 @@ main .faq { background: var(--pearl-2); }
   .ritual .r-panel .r-art-photo img { display: none; }
   .ritual .r-art-photo .r-num, .ritual .r-art-lamp .r-num { color: var(--cocoa); text-shadow: none; }
 }
+
+/* reviews: all on the page, no sideways scrolling */
+.reviews .rail { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; overflow: visible; scroll-snap-type: none; cursor: auto; padding: 4px 0 0; }
+.reviews .rv { width: auto; }
+.reviews .rail-ctl { display: none; }
+.drawer-nav a { font-size: clamp(28px, 7.6vw, 42px); padding: 8px 0; }
