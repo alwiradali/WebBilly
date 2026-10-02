@@ -123,7 +123,14 @@
   /* ───────────────────────── links ───────────────────────── */
   // Every "Book" button leads to the booking calendar on this page — customers
   // book and pay the deposit here, never on Square's own pages.
-  $$("[data-book]").forEach(function (a) { a.setAttribute("href", "#reserve"); });
+  // On the booking page they jump to the calendar; elsewhere they open the
+  // booking page with that experience already chosen.
+  var ON_BOOK = !!$("[data-cal]");
+  $$("[data-book]").forEach(function (a) {
+    var k = a.getAttribute("data-book");
+    a.setAttribute("href", ON_BOOK ? "#reserve" : "/lunera-ora/book" + (k ? "?exp=" + k : "") + "#reserve");
+    a.removeAttribute("target"); a.removeAttribute("rel");
+  });
   $$("[data-sms]").forEach(function (a) { a.href = "sms:" + CONFIG.phone; });
   $$("[data-tel]").forEach(function (a) { a.href = "tel:" + CONFIG.phone; });
   $$("[data-mail]").forEach(function (a) { a.href = "mailto:" + CONFIG.email; });
@@ -1248,6 +1255,8 @@
     });
 
     /* — start: ask the site whether Square is connected — */
+    var pre = (location.search.match(/[?&]exp=(\w+)/) || [])[1];
+    if (pre && SERVICES[pre]) choose(pre);
     render();
     fetch(CONFIG.api + "/config", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })

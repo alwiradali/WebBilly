@@ -21,7 +21,7 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/cormorant.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/montserrat.woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/lunera-ora/logo.svg" crossorigin>
-<link rel="stylesheet" href="/lunera-ora/style.css?v=202610023300">
+<link rel="stylesheet" href="/lunera-ora/style.css?v=202610023400">
 <script>document.documentElement.classList.add('js');</script>
 
 <script type="application/ld+json">
@@ -115,7 +115,7 @@
       <a href="#ritual">The ritual</a>
       <a href="#results">Results</a>
       <a href="#founder">About</a>
-      <a href="#book">Book</a>
+      <a href="/lunera-ora/book">Book</a>
       <a href="#travel">Travel</a>
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
@@ -134,7 +134,7 @@
       <a href="#ritual"><small>02</small>The ritual</a>
       <a href="#results"><small>03</small>Results</a>
       <a href="#founder"><small>04</small>Meet Ysabel</a>
-      <a href="#book"><small>05</small>Book online</a>
+      <a href="/lunera-ora/book"><small>05</small>Book online</a>
       <a href="#travel"><small>06</small>Travel &amp; fees</a>
       <a href="#faq"><small>07</small>FAQ</a>
       <a href="#contact"><small>08</small>Contact</a>
@@ -156,7 +156,6 @@
   <a href="#ritual" data-sec="ritual"><i></i><span>The ritual</span></a>
   <a href="#results" data-sec="results"><i></i><span>Results</span></a>
   <a href="#founder" data-sec="founder"><i></i><span>Meet Ysabel</span></a>
-  <a href="#book" data-sec="book"><i></i><span>Book online</span></a>
   <a href="#travel" data-sec="travel"><i></i><span>Travel</span></a>
   <a href="#promos" data-sec="promos"><i></i><span>Promos</span></a>
   <a href="#care" data-sec="care"><i></i><span>Care guide</span></a>
@@ -430,8 +429,8 @@
   <div class="founder-satin" aria-hidden="true"></div>
   <div class="wrap founder-grid">
     <figure class="founder-art">
-      <div class="frame frame-arch founder-arch" data-reveal="mask">
-        <img src="/assets/lunera-ora/photos/ysabel-portrait.webp" width="525" height="658" alt="Ysabel, Registered Dental Hygienist and founder of Lunera Ora, in black scrubs with dental loupes" data-parallax="-0.06" loading="lazy" decoding="async">
+      <div class="frame frame-arch founder-arch founder-still" data-reveal="mask">
+        <img src="/assets/lunera-ora/photos/ysabel-portrait.webp" width="920" height="1150" alt="Ysabel, Registered Dental Hygienist and founder of Lunera Ora, in black scrubs with dental loupes" loading="lazy" decoding="async">
       </div>
       <span class="founder-badge" data-reveal><svg class="ic"><use href="#i-shield"/></svg>Registered Dental Hygienist</span>
     </figure>
@@ -446,164 +445,6 @@
         <span class="founder-name">Ysabel</span>
         <a href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener" data-founder-ig><svg class="ic"><use href="#i-insta"/></svg>@luneraora.mobilestudio</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════ BOOK ONLINE ═══════════════════════════ -->
-<section class="sec book" id="book">
-  <div class="wrap">
-    <header class="sec-head">
-      <div>
-        <p class="eyebrow" data-reveal>Book online</p>
-        <h2 class="h2" data-split>Your appointment <em>awaits</em></h2>
-      </div>
-      <p class="sec-intro" data-reveal>Choose your experience and a day that suits you, then secure your time with a 20% deposit — all right here, in a couple of minutes.</p>
-    </header>
-
-    <!-- The booking calendar. Built by script.js (Calendar); without JavaScript
-         the button below still opens her Square booking page. -->
-    <div class="cal" id="reserve" data-cal data-reveal>
-      <div class="cal-col cal-pick">
-        <p class="cal-step"><span>1</span>Choose your experience</p>
-        <div class="cal-exps" role="radiogroup" aria-label="Experience" data-cal-exps></div>
-      </div>
-
-      <div class="cal-col cal-month">
-        <p class="cal-step"><span>2</span>Choose a day</p>
-        <div class="cal-head">
-          <button class="cal-nav" type="button" data-cal-prev aria-label="Previous month"><svg><use href="#i-arrow"/></svg></button>
-          <h3 class="cal-title" data-cal-title aria-live="polite">Booking calendar</h3>
-          <button class="cal-nav" type="button" data-cal-next aria-label="Next month"><svg><use href="#i-arrow"/></svg></button>
-        </div>
-        <div class="cal-dow" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
-        <div class="cal-grid" data-cal-grid></div>
-        <p class="cal-legend" data-cal-legend>
-          <span><svg class="ic"><use href="#i-sun"/></svg>Day &amp; evening</span>
-          <span><svg class="ic"><use href="#i-moon"/></svg>Evenings</span>
-          <span class="cal-tz">Mountain Time</span>
-        </p>
-      </div>
-
-      <div class="cal-col cal-day">
-        <p class="cal-step"><span>3</span><b data-cal-step3>Your day</b></p>
-        <div class="cal-dayview" data-cal-day aria-live="polite">
-          <p class="cal-empty">Pick a day on the calendar to see my hours.</p>
-        </div>
-        <div class="cal-sum" data-cal-sum>
-          <dl class="cal-lines">
-            <div><dt>Experience</dt><dd data-sum-exp>—</dd></div>
-            <div><dt>Day</dt><dd data-sum-day>—</dd></div>
-            <div data-sum-time-row hidden><dt>Time</dt><dd data-sum-time>—</dd></div>
-            <div><dt>Deposit today</dt><dd data-sum-dep>20% of your total</dd></div>
-          </dl>
-          <button class="btn btn-ink btn-block cal-go" type="button" data-cal-go><span data-cal-go-label>Continue</span><svg class="ic"><use href="#i-arrow"/></svg></button>
-          <p class="cal-fine" data-cal-fine>Your details and the 20% deposit come next — all on this page.</p>
-        </div>
-      </div>
-
-      <!-- 4 + 5: details and deposit, on this page -->
-      <div class="cal-co" data-cal-co hidden>
-        <aside class="cal-co-sum">
-          <button type="button" class="cal-back" data-cal-back><svg class="ic"><use href="#i-arrow"/></svg>Change experience or time</button>
-          <div class="cal-co-card">
-            <span class="cal-co-img" data-co-img aria-hidden="true"></span>
-            <p class="cal-co-k">Your booking</p>
-            <h3 class="cal-co-name" data-co-name></h3>
-            <p class="cal-co-when" data-co-when></p>
-            <p class="cal-co-pref" data-co-pref hidden><svg class="ic"><use href="#i-clock"/></svg>Preferred time — I’ll confirm it with you</p>
-            <dl class="cal-lines">
-              <div><dt>Experience</dt><dd data-co-price></dd></div>
-              <div><dt>Length</dt><dd data-co-len></dd></div>
-              <div><dt>Travel</dt><dd data-co-travel>By distance</dd></div>
-              <div class="cal-co-dep"><dt>Deposit today</dt><dd data-co-dep></dd></div>
-              <div><dt>On the day</dt><dd data-co-bal></dd></div>
-            </dl>
-            <p class="cal-fine">Balance by debit, credit, e-transfer or cash on the day. 24 hours’ notice to cancel or reschedule.</p>
-          </div>
-        </aside>
-        <form class="cal-co-form" data-co-form novalidate>
-          <p class="cal-step"><span>4</span>Your details</p>
-          <div class="enq-row">
-            <label class="fld"><span>Your name <i>*</i></span><input name="name" autocomplete="name" required></label>
-            <label class="fld"><span>Email <i>*</i></span><input name="email" type="email" autocomplete="email" required></label>
-          </div>
-          <div class="enq-row">
-            <label class="fld"><span>Phone <i>*</i></span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
-            <label class="fld"><span>Postal code</span><input name="postal" autocomplete="postal-code" maxlength="7" placeholder="T4X 1A1"></label>
-          </div>
-          <label class="fld"><span>Street address <i>*</i> <small>— I come to you</small></span><input name="address" autocomplete="address-line1" required></label>
-          <label class="fld"><span>Town / area <i>*</i></span><input name="city" autocomplete="address-level2" list="lo-towns" required placeholder="e.g. Beaumont, Leduc, Edmonton · Mill Woods"></label>
-          <datalist id="lo-towns" data-co-towns></datalist>
-          <label class="fld"><span>Anything I should know?</span><textarea name="notes" rows="3" placeholder="Parking, buzzer code, first whitening, sensitivity… (please keep medical history for your intake form)"></textarea></label>
-
-          <div class="cal-pay" data-co-pay hidden>
-            <p class="cal-step"><span>5</span>Secure your time</p>
-            <div class="cal-card" id="lo-card" data-co-card><p class="cal-card-wait">Loading secure card fields…</p></div>
-            <p class="cal-secure"><svg class="ic"><use href="#i-shield"/></svg>Your card goes straight to Square, Lunera Ora’s payment processor — it never touches this website. Only the 20% deposit is taken today.</p>
-          </div>
-          <p class="cal-reqnote" data-co-reqnote hidden><svg class="ic"><use href="#i-spark"/></svg>I’ll confirm your time and send your 20% deposit request — usually the same day.</p>
-
-          <label class="cal-consent"><input type="checkbox" name="consent"><span>I agree to the <a href="#payments">deposit, 24-hour cancellation and no-show policies</a>.</span></label>
-          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <button class="btn btn-ink btn-block" type="submit" data-co-submit><span data-co-submit-label>Book</span><svg class="ic"><use href="#i-arrow"/></svg></button>
-          <p class="enq-err" data-co-err role="alert" hidden></p>
-        </form>
-      </div>
-
-      <!-- 6: confirmation -->
-      <div class="cal-done" data-cal-done hidden tabindex="-1">
-        <span class="enq-done-ic"><svg><use href="#i-check"/></svg></span>
-        <h3 data-done-h></h3>
-        <p class="cal-done-p" data-done-p></p>
-        <dl class="cal-lines cal-done-lines" data-done-lines></dl>
-        <div class="cal-done-btns">
-          <a class="btn btn-ink btn-sm" data-done-ics download="lunera-ora-appointment.ics" hidden><svg class="ic"><use href="#i-cal"/></svg><span>Add to my calendar</span></a>
-          <a class="btn btn-ink btn-sm" data-done-sms hidden><svg class="ic"><use href="#i-chat"/></svg><span>Send as a text</span></a>
-          <a class="btn btn-ghost btn-sm" data-done-mail hidden><svg class="ic"><use href="#i-mail"/></svg><span>Send by email</span></a>
-        </div>
-        <ol class="cal-done-next" data-done-next>
-          <li><b>Forms</b> I’ll send your intake &amp; consent forms before your visit.</li>
-          <li><b>I come to you</b> I arrive with everything — allow treatment time + 15 minutes.</li>
-          <li><b>Aftercare</b> Lighter foods for 24–48 hours — <a href="#care">see the care guide</a>.</li>
-        </ol>
-        <button class="link-btn" type="button" data-done-again>Book another experience</button>
-      </div>
-      <noscript><p class="cal-noscript">Online booking needs JavaScript — text <a href="sms:+16479835983">(647) 983-5983</a> to book.</p></noscript>
-    </div>
-
-    <div class="book-grid book-more">
-      <div class="book-steps">
-        <p class="eyebrow" data-reveal>How it works</p>
-        <ol class="steps" data-steps>
-          <li><span class="st-n">1</span><div><h3>Choose your experience</h3><p>The Aura, The Radiance or The Lumina.</p></div></li>
-          <li><span class="st-n">2</span><div><h3>Your appointment awaits</h3><p>Select your preferred appointment date and time.</p></div></li>
-          <li><span class="st-n">3</span><div><h3>Pay the deposit</h3><p>A 20% deposit is required upon booking to secure your appointment, and is applied toward your total.</p></div></li>
-          <li><span class="st-n">4</span><div><h3>Complete forms</h3><p>Intake and consent.</p></div></li>
-          <li><span class="st-n">5</span><div><h3>We come to you</h3><p>We deliver your whitening experience.</p></div></li>
-          <li><span class="st-n">6</span><div><h3>Ready?</h3><p>Pick your experience, day and time above — it takes a couple of minutes.</p></div></li>
-        </ol>
-      </div>
-      <aside class="book-card" data-reveal>
-        <div class="book-card-in">
-          <span class="mark mark-word book-mark" aria-hidden="true"></span>
-          <p class="book-card-t">Booking hours</p>
-          <p class="book-today" data-today>Booking hours shown in Mountain Time</p>
-          <table class="hours" data-hours>
-            <caption class="sr">Booking hours</caption>
-            <tbody>
-              <tr data-day="0"><th>Sunday</th><td>9:00 a.m. – 8:00 p.m.</td></tr>
-              <tr data-day="1"><th>Monday</th><td>9:00 a.m. – 8:00 p.m.</td></tr>
-              <tr data-day="2"><th>Tuesday</th><td>6:30 p.m. – 9:00 p.m.</td></tr>
-              <tr data-day="3"><th>Wednesday</th><td>6:30 p.m. – 9:00 p.m.</td></tr>
-              <tr data-day="4"><th>Thursday</th><td>6:30 p.m. – 9:00 p.m.</td></tr>
-              <tr data-day="5"><th>Friday</th><td>5:30 p.m. – 9:00 p.m.</td></tr>
-              <tr data-day="6"><th>Saturday</th><td>9:00 a.m. – 8:00 p.m.</td></tr>
-            </tbody>
-          </table>
-          <p class="book-alt">Prefer to ask first? <a data-sms href="sms:+16479835983">Text (647) 983-5983</a></p>
-        </div>
-      </aside>
     </div>
   </div>
 </section>
@@ -643,35 +484,6 @@
         <div class="calc-towns" data-town-chips role="group" aria-label="Choose your area"></div>
         <button class="btn btn-ghost btn-sm calc-geo" type="button" data-geo><svg class="ic"><use href="#i-locate"/></svg><span>Use my location</span></button>
         <p class="fine">Estimates only — your exact travel fee is confirmed when you book. Over 50 km? <a href="#contact" data-enquire="Travel beyond 50 km">Ask us</a>.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════ PAYMENTS & POLICIES ═══════════════════════════ -->
-<section class="sec pay" id="payments">
-  <div class="wrap pay-grid">
-    <div class="pay-left">
-      <p class="eyebrow" data-reveal>Payments</p>
-      <h2 class="h2" data-split>Payment <em>options</em></h2>
-      <p class="lead" data-reveal>For your Lunera Ora appointment, I accept:</p>
-      <ul class="pay-methods">
-        <li data-reveal><svg><use href="#i-card"/></svg><span>Debit</span></li>
-        <li data-reveal><svg><use href="#i-credit"/></svg><span>Credit</span></li>
-        <li data-reveal><svg><use href="#i-transfer"/></svg><span>E-Transfer</span></li>
-        <li data-reveal><svg><use href="#i-cash"/></svg><span>Cash</span></li>
-      </ul>
-      <p class="pay-note" data-reveal><svg class="ic"><use href="#i-cash"/></svg><span><b>Paying with cash?</b> Please bring the exact total, including your travel fee — I’m unable to provide change. Thank you!</span></p>
-      <p class="pay-note" data-reveal><svg class="ic"><use href="#i-shield"/></svg><span><b>Deposit online.</b> A 20% deposit is paid securely when you book, and comes off your total on the day.</span></p>
-    </div>
-    <div class="pay-right">
-      <p class="eyebrow" data-reveal>Policies &amp; guidelines</p>
-      <div class="acc" data-acc>
-        <details data-reveal><summary>Deposit policy<i></i></summary><div class="acc-b"><p>A 20% deposit is required at the time of booking to secure your appointment. The deposit will be applied toward the total cost of your appointment.</p></div></details>
-        <details data-reveal><summary>Cancellations &amp; rescheduling<i></i></summary><div class="acc-b"><p>Please provide at least 24 hours’ notice if you need to cancel or reschedule. Cancellations made with less than 24 hours’ notice may be subject to a $50 cancellation fee + the forfeit of the deposit.</p></div></details>
-        <details data-reveal><summary>No-shows<i></i></summary><div class="acc-b"><p>Missed appointments without notice will be considered a no-show and may be subject to a $50 fee. Future appointments may require payment in full at the time of booking.</p></div></details>
-        <details data-reveal><summary>Refunds &amp; concerns<i></i></summary><div class="acc-b"><p>Completed services are non-refundable. If Lunera Ora cancels an appointment or is unable to provide the booked service, any payment made will be fully refunded. If you have concerns regarding your service, please contact us within 48 hours so we can review the concern and determine an appropriate resolution.</p></div></details>
-        <details data-reveal><summary>Photo / video consent<i></i></summary><div class="acc-b"><p>Photos and/or videos may be taken during or after your appointment for treatment records. With your consent, they may also be used by Lunera Ora for social media and website content.</p></div></details>
       </div>
     </div>
   </div>
@@ -935,7 +747,7 @@
     </div>
     <div class="foot-bot">
       <p>© <span data-year>2026</span> Lunera Ora · Mobile Smile Studio</p>
-      <p><a href="#payments">Policies</a> · <a href="#care">Care guide</a> · <a href="#faq">FAQ</a></p>
+      <p><a href="/lunera-ora/book#payments">Policies</a> · <a href="#care">Care guide</a> · <a href="#faq">FAQ</a></p>
       <p>Site by <a href="https://billydigitals.com" target="_blank" rel="noopener">Billy Digitals</a></p>
     </div>
   </div>
@@ -953,7 +765,7 @@
 <script src="/assets/vendor/gsap.min.js"></script>
 <script src="/assets/vendor/ScrollTrigger.min.js"></script>
 <script src="/assets/vendor/lenis.min.js"></script>
-<script src="/lunera-ora/silk.js?v=202610023300"></script>
-<script src="/lunera-ora/script.js?v=202610023300"></script>
+<script src="/lunera-ora/silk.js?v=202610023400"></script>
+<script src="/lunera-ora/script.js?v=202610023400"></script>
 </body>
 </html>
