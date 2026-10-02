@@ -364,7 +364,7 @@ main > *:not([data-silk-window]) { position: relative; background-color: var(--p
 .ribbon-track .rb-i { position: absolute; left: 0; top: 50%; white-space: nowrap; will-change: transform; }
 
 /* ─────────────────────────── sections ─────────────────────────── */
-.sec { padding: clamp(96px, 12vw, 172px) 0; }
+.sec { padding: clamp(72px, 10vw, 150px) 0; }
 .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: clamp(44px, 6vw, 76px); }
 .sec-head-c { flex-direction: column; align-items: center; text-align: center; }
 .sec-intro { max-width: 440px; font-size: 16.5px; color: var(--body); }
@@ -412,11 +412,9 @@ main > *:not([data-silk-window]) { position: relative; background-color: var(--p
 
 /* ─────────────────────────── experiences ─────────────────────────── */
 main .exps { background: linear-gradient(180deg, #f3e4dc 0%, var(--pearl-2) 55%, var(--pearl-2) 100%); }
-main .exps::before, main .pay::before { content: ""; position: absolute; left: 50%; top: 0; width: min(78%, 900px); height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--champagne) 40%, transparent 47%, transparent 53%, var(--champagne) 60%, transparent); }
-main .exps::after, main .pay::after { content: "✦"; position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); font-size: 13px; line-height: 1; color: var(--champagne); }
-main .story { padding-bottom: clamp(40px, 8vw, 120px); }
+main .sec:not(.story)::before { content: ""; position: absolute; left: 50%; top: 0; width: min(78%, 900px); height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--champagne) 40%, transparent 47%, transparent 53%, var(--champagne) 60%, transparent); }
+main .sec:not(.story)::after { content: "✦"; position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); font-size: 13px; line-height: 1; color: var(--champagne); }
 main .exps { padding-top: clamp(52px, 9vw, 140px); }
-main .travel { padding-bottom: clamp(48px, 8vw, 120px); }
 main .pay { padding-top: clamp(52px, 9vw, 140px); background: linear-gradient(180deg, #f3e4dc 0%, var(--pearl) 45%); }
 .finder {
   display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;
