@@ -29,7 +29,7 @@ import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
 import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
 import { isRachelPath, handleRachel } from "./worker/rachel/orders.js";
-import { isLuneraPath, handleLunera } from "./worker/lunera/availability.js";
+import { isLuneraPath, handleLunera } from "./worker/lunera/booking.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -97,8 +97,8 @@ export default {
     if (isRachelPath(url.pathname)) {
       return handleRachel(request, env, url);
     }
-    /* Lunera Ora: live free times for the booking calendar on /lunera-ora/,
-       read from Square's Bookings API with her token (worker/lunera). */
+    /* Lunera Ora: free times, bookings and deposits for the calendar on
+       /lunera-ora/, through Square's APIs with her token (worker/lunera). */
     if (isLuneraPath(url.pathname)) {
       return handleLunera(request, env, ctx);
     }

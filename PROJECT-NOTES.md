@@ -1654,52 +1654,76 @@ experience steps, "treatment time + 15 minutes", policies, care guide.
 refer-5-friends. Don't add claims she hasn't made (no shade promises, no
 "painless"); the results section says results vary.
 
-**The booking calendar (`#reserve`, 2 Oct).** The owner asked for a calendar
-on the site, with her hours, that can be booked from. Every "Book" button now
-scrolls to it with that experience chosen (`data-book="<key>"`; the HTML still
-carries her Square link for anyone without JavaScript). Pick an experience and
-a day, then "See free times & book" opens Square with
-`?service_id=…&variation_id=…&date=YYYY-MM-DD` — Square's booking app reads
-those (found in its bundle, `mdt`/`setPreselectParams`) and lands on that
-service; after Add → Next its calendar is already on that day. Do NOT add
-`start_time`: tried, and Square opened a "Join the waitlist" sheet instead.
+**Booking happens on her site — nobody is sent to Square (owner, 2 Oct).**
+The calendar (`#reserve`) runs the whole booking: 1 experience · 2 day ·
+3 time · 4 details · 5 deposit · confirmation, all on the page. Every "Book"
+button scrolls to it with that experience chosen, and no link on the page
+points at squareup.com (the regression test checks). Her calendar and money
+still live in Square, so the site books INTO Square through its official APIs
+— one calendar, no double bookings.
 
-Live free times are a seam, like payments. `worker/lunera/availability.js`
-answers `GET /api/lunera/availability?variation=&from=&days=` by calling
-Square's official SearchAvailability with the Worker secret
-`LUNERA_SQUARE_TOKEN` (her token, from developer.squareup.com → her app →
-Production access token; `wrangler secret put LUNERA_SQUARE_TOKEN`). Only her
-seven variations are accepted, answers are edge-cached 60 s, the token never
-leaves the Worker. Without the secret it answers 503 and the calendar shows her
-published hours per day (sun = day & evening, moon = evenings) and lets Square
-show the free times. With it, days with nothing free are shaded, free days get
-a dot, times appear grouped Morning / Afternoon / Evening, and a full day
-offers "Next free day". Her real calendar is much sparser than her hours (on
-2 Oct: Tue–Thu nothing, Fri only 6 p.m., weekends 9–5 starts) — which is why
-the hours-only mode never offers a time.
+`worker/lunera/booking.js` (routed from worker.js):
+- `GET /api/lunera/config` — tells the page which mode it is in.
+- `GET /api/lunera/availability` — her live free times (SearchAvailability).
+- `POST /api/lunera/book` — re-checks the time is still free → finds or creates
+  the customer by email → HOLDS the 20% deposit on the card (`autocomplete:
+  false`) → creates the booking at the client's address (`CUSTOMER_LOCATION`;
+  retried with the address in the note if her location isn't set up for
+  visits) → captures the deposit. If the booking fails the hold is cancelled,
+  so nobody is charged for a booking that didn't happen. The deposit is 20% of
+  her live Square catalogue price.
+- `POST /api/lunera/request` — before Square is connected: emails her the
+  request via Resend (reply-to = the client). Off unless `LUNERA_REQUESTS_TO`
+  is set, so the preview never writes to her inbox uninvited; when off, the
+  page hands the client a ready-written text / email to her instead.
+
+The card fields are Square's Web Payments SDK (`web.squarecdn.com/v1/square.js`),
+loaded only at step 5: Square's own iframes inside her page, so card numbers
+never touch this site. `verifyBuyer` runs for 3-D Secure.
+
+**To switch it on she needs to give us two things** (Cloudflare → the Worker →
+Settings → Variables and secrets):
+1. `LUNERA_SQUARE_APP_ID` (plain) — developer.squareup.com → sign in with HER
+   Square → Create app → Credentials → **Production** Application ID (`sq0idp-…`).
+2. `LUNERA_SQUARE_TOKEN` (secret) — same page, Production Access token.
+   `wrangler secret put LUNERA_SQUARE_TOKEN`. Never in the repo or the page.
+Optional: `LUNERA_REQUESTS_TO=lunera.mobilestudio@gmail.com` to have requests
+emailed while she's not connected.
+Until both are set the calendar runs in request mode: her published hours give
+*preferred* start times (on the hour, finishing by closing; labelled
+"Ysabel confirms it"), and the form sends a request. It never presents those as
+free — her real calendar is much sparser than her hours (2 Oct: Tue–Thu
+nothing free, Fri only 6 p.m.).
+
+**Her Square plan matters.** An access token from her own app is seller-level,
+and Square only lets seller-level calls CREATE bookings on Appointments Plus
+or Premium (her booking page offers a waitlist, which suggests Plus — check).
+On the free plan the booking call is refused: the hold is released, the page
+says nothing was charged and to text her. The fix then is OAuth with only
+APPOINTMENTS_READ/WRITE, CUSTOMERS_READ/WRITE, PAYMENTS_WRITE, ITEMS_READ
+(buyer-level), which needs a refresh-token store — not built yet.
+Test the first live booking with a real card, then refund it in Square.
 
 Not done, deliberately: her Square booking page reads free times from
 `app.squareup.com/appointments/api/buyer/availability`, which only answers when
 the request's Origin is Square's own site. Proxying it with a forged Origin
 would work without her token, and would be getting round Square's check — use
-the token. Embedding Square in an iframe doesn't work either: inside a frame
-its Add / Next buttons deliberately open a new tab.
+the token. Embedding Square's booking page in an iframe doesn't work either:
+inside a frame its Add / Next buttons deliberately open a new tab.
 
-Endpoint tests: `node scripts/lunera-availability-test.mjs` (mocked Square, no
-token, covers both DST changeovers). `goTo()` now measures targets from layout (`offsetTop` chain), not
-`getBoundingClientRect`, so a box mid fade-up or a stale Lenis position can't
-land it under the header.
+Tests: `node scripts/lunera-booking-test.mjs` (mocked Square: the happy path in
+order, every failure, both DST changeovers, origin check, escaping). `goTo()`
+measures targets from layout (`offsetTop` chain), so a box mid fade-up or a
+stale Lenis position can't land it under the header.
 
-**Booking buttons open the exact service in Square.** Square's booking app has
-a `services/:serviceId` route (found in its bundle) that looks the service up
-by its top-level `id` and redirects to the full list if the id is unknown, so a
-deleted service degrades to the list, never a dead page. IDs live in `SERVICES`
-in script.js. `CONFIG.launchPromo` (true) points The Aura / Radiance / Lumina at
-her "Launch promo-" services ($119 / $139 / $199) and shows the regular price
-struck through; set it false when the first 10 spots are gone and everything
-switches to the regular services ($149 / $179 / $249), the launch cards hide,
-and the hero pill becomes the referral offer. Bride/Bridesmaids is $159 · 1 hr.
-The 20% deposit is taken by Square at booking — the site never takes money.
+**Square service ids.** `SERVICES` in script.js holds each experience's
+Square service + variation ids (and the worker's `SERVICES` the variation ids
+it will book). `CONFIG.launchPromo` (true) books The Aura / Radiance / Lumina
+as her "Launch promo-" services ($119 / $139 / $199) and shows the regular
+price struck through; set it false when the first 10 spots are gone and
+everything switches to the regular services ($149 / $179 / $249), the launch
+cards hide, and the hero pill becomes the referral offer. Bride/Bridesmaids is
+$159 · 1 hr.
 
 **Her logo is a vector trace, used as a CSS mask.** Lifted from the "Pricing"
 story cover (the most-used lockup: "LUNERA ORA" + "Mobile Smile Studio"),

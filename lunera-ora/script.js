@@ -8,6 +8,10 @@
   /* ───────────────────────── her details ───────────────────────── */
   var CONFIG = {
     // Her Square booking site (decoded from the QR code in her "Booking" story).
+    // The site's booking API (worker/lunera/booking.js): free times, bookings
+    // and deposits go through it to her Square, with her token.
+    api: "/api/lunera",
+    // Her Square booking page — for reference; the site never sends customers there.
     booking: "https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services",
     // While true, the "Book" buttons open the launch-promo service in Square and
     // the cards show launch prices. Set false when the first 10 spots are gone.
@@ -34,16 +38,16 @@
   // Her services on Square (ids read from her booking page). `launchIds` are the
   // "Launch promo-" versions, used while CONFIG.launchPromo is true.
   var SERVICES = {
-    aura:     { name: "The Aura", tag: "The subtle refresh", time: "1 hr", price: 149, launchPrice: 119, img: "lips-aura",
+    aura:     { name: "The Aura", tag: "The subtle refresh", time: "1 hr", mins: 60, price: 149, launchPrice: 119, img: "lips-aura",
                 ids: { service: "36FBOJEGYBT62O2QGPZKSBAI", variation: "TF2UNCPOH3I4OZFO7HKX3NY7" },
                 launchIds: { service: "FOABZNCYESK4TVSB7MRHTB4S", variation: "B2PUH46HJKJI7QHS7RTG2Z2D" } },
-    radiance: { name: "The Radiance", tag: "The signature experience", time: "1 hr", price: 179, launchPrice: 139, img: "lips-radiance",
+    radiance: { name: "The Radiance", tag: "The signature experience", time: "1 hr", mins: 60, price: 179, launchPrice: 139, img: "lips-radiance",
                 ids: { service: "OQ5Y7FBISU2SIDVJEW2JFAMF", variation: "KH6OBDR37HWXJ7QKQ6K6LWW3" },
                 launchIds: { service: "NEZSBKHLOYX565LJMZG6ILSW", variation: "TCSCFBWSGXDH6SXEKYURNH2C" } },
-    lumina:   { name: "The Lumina", tag: "The ultimate experience", time: "1 hr 30 min + follow-up", price: 249, launchPrice: 199, img: "lips-lumina",
+    lumina:   { name: "The Lumina", tag: "The ultimate experience", time: "1 hr 30 min + follow-up", mins: 90, price: 249, launchPrice: 199, img: "lips-lumina",
                 ids: { service: "4VMQHVFHAHWQLKIMGJQL5HGK", variation: "D6QW4UIBB5OJXPSEAMCCZYFV" },
                 launchIds: { service: "TAMV25J24HFGHYYIWWEQ2JGB", variation: "EFNBDZQST6J2WJOL5U7STXPY" } },
-    bridal:   { name: "Bride & Bridesmaids", tag: "For the bridal party", time: "1 hr", price: 159,
+    bridal:   { name: "Bride & Bridesmaids", tag: "For the bridal party", time: "1 hr", mins: 60, price: 159,
                 ids: { service: "UW4YFXE73MMCSJGVHOTRJO7E", variation: "AIEJXQEJUKTEUSZRXENUEOTV" } }
   };
   function svcIds(key) { var s = SERVICES[key]; return (CONFIG.launchPromo && s.launchIds) || s.ids; }
@@ -117,17 +121,9 @@
   }
 
   /* ───────────────────────── links ───────────────────────── */
-  // Square opens on her booking flow with the experience chosen and, given a
-  // day, the calendar already on that day (her booking app reads these).
-  function squareUrl(key, ymd) {
-    if (!SERVICES[key]) return CONFIG.booking;
-    var ids = svcIds(key);
-    return CONFIG.booking + "?service_id=" + ids.service + "&variation_id=" + ids.variation + (ymd ? "&date=" + ymd : "");
-  }
-  // Every "Book" button leads to the calendar on this page (the HTML keeps
-  // her Square link for anyone without JavaScript).
-  $$("[data-book]").forEach(function (a) { a.setAttribute("href", "#reserve"); a.removeAttribute("target"); a.removeAttribute("rel"); });
-  $$("[data-square]").forEach(function (a) { a.href = CONFIG.booking; });
+  // Every "Book" button leads to the booking calendar on this page — customers
+  // book and pay the deposit here, never on Square's own pages.
+  $$("[data-book]").forEach(function (a) { a.setAttribute("href", "#reserve"); });
   $$("[data-sms]").forEach(function (a) { a.href = "sms:" + CONFIG.phone; });
   $$("[data-tel]").forEach(function (a) { a.href = "tel:" + CONFIG.phone; });
   $$("[data-mail]").forEach(function (a) { a.href = "mailto:" + CONFIG.email; });
@@ -709,24 +705,33 @@
   })();
 
   /* ───────────────────────── booking calendar ─────────────────────────
-     Pick an experience, a day and (when her Square is connected) a time, then
-     continue to Square with all of it chosen. Square takes the deposit.
+     The whole booking happens here — customers never leave for Square:
+       1 experience · 2 day · 3 time · 4 details · 5 deposit · done.
+     Behind it is worker/lunera/booking.js, which talks to her Square with
+     her token, so the booking lands in her real Square calendar and the
+     deposit in her Square balance.
 
-     Live free times come from /api/lunera/availability (worker/lunera), which
-     reads Square's Bookings API with her token. Until that token is set the
-     endpoint says so, and the calendar shows her published hours for each
-     day instead — Square then shows that day's free times on the next step.
-     Nothing on this calendar ever claims a time is free unless Square said so. */
+     Two modes, chosen by /api/lunera/config:
+     · booking — Square is connected: her live free times, the card fields
+       (Square's own, inside this page) and an instant booking.
+     · request — not connected yet: her published hours give preferred
+       times, and the form is sent to her as a request (or, if requests
+       aren't switched on, handed back as a ready-written text / email).
+     Nothing on this calendar claims a time is free unless Square said so. */
   var cal = (function () {
     var root = $("[data-cal]");
     if (!root) return null;
-    var TZ = "America/Edmonton", AHEAD = 5; // months viewable after this one
+    var TZ = "America/Edmonton", AHEAD = 5;
     var grid = $("[data-cal-grid]", root), title = $("[data-cal-title]", root);
     var prevB = $("[data-cal-prev]", root), nextB = $("[data-cal-next]", root);
     var expsBox = $("[data-cal-exps]", root), dayBox = $("[data-cal-day]", root), step3 = $("[data-cal-step3]", root);
     var go = $("[data-cal-go]", root), goLabel = $("[data-cal-go-label]", root), fine = $("[data-cal-fine]", root);
-    var S = { exp: null, view: null, day: null, time: null, live: null };
-    var feeds = {};          // "variation|from" → { state: "loading"|"ok"|"fail", byDay: { ymd: [iso…] } }
+    var co = $("[data-cal-co]", root), form = $("[data-co-form]", root), coErr = $("[data-co-err]", root);
+    var submit = $("[data-co-submit]", root), submitLabel = $("[data-co-submit-label]", root);
+    var done = $("[data-cal-done]", root);
+    var S = { exp: null, view: null, day: null, time: null, any: false };
+    var CFG = { live: false, booking: false, appId: null, locationId: null, sdk: null };
+    var feeds = {};          // "variation|from" → { state, byDay: { ymd: [iso…] } }
 
     /* — dates, always in her time zone — */
     function nowParts() {
@@ -752,12 +757,13 @@
     var dayFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
     var hourFmt = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", hourCycle: "h23" });
     function slotDay(iso) { var p = {}; dayFmt.formatToParts(new Date(iso)).forEach(function (x) { p[x.type] = x.value; }); return p.year + "-" + p.month + "-" + p.day; }
-    function slotTime(iso) { return timeFmt.format(new Date(iso)); }
+    function slotHour(iso) { return +hourFmt.format(new Date(iso)) % 24; }
+    function money(c) { return "$" + (c / 100).toFixed(2).replace(/\.00$/, ""); }
+    function money2(c) { return "$" + (c / 100).toFixed(2); }
 
     var now = nowParts(), today = ymd(now.y, now.m, now.d), first = { y: now.y, m: now.m };
     S.view = { y: now.y, m: now.m };
 
-    /* A day can be asked for when it is still ahead, or today with an hour left. */
     function open(s) {
       if (s < today) return false;
       if (s > today) return true;
@@ -765,25 +771,41 @@
     }
     function evening(s) { return HOURS[dow(s)][0] >= 15 * 60; }
 
+    /* — the chosen time: a live slot (ISO) or a preferred time (minutes) — */
+    function timeLabel() {
+      if (S.any) return "Any time";
+      if (S.time == null) return "";
+      return typeof S.time === "string" ? timeFmt.format(new Date(S.time)) : fmtMins(S.time);
+    }
+    // preferred starts from her hours, on the hour, finishing by closing time
+    function prefTimes(s) {
+      var h = HOURS[dow(s)], len = S.exp ? SERVICES[S.exp].mins : 60, out = [];
+      for (var m = Math.ceil(h[0] / 60) * 60; m + len <= h[1]; m += 60) {
+        if (s === today && m < now.mins + 90) continue;
+        out.push(m);
+      }
+      return out;
+    }
+
     /* — live free times — */
     function feedKey() {
-      if (!S.exp || S.live === false) return null;
+      if (!S.exp || !CFG.live) return null;
       var v = S.view, from = cmpView(v, first) === 0 ? today : ymd(v.y, v.m, 1);
       return svcIds(S.exp).variation + "|" + from;
     }
     function feed() { var k = feedKey(); return k ? feeds[k] : null; }
-    function load() {
+    function load(force) {
       var k = feedKey();
-      if (!k || feeds[k]) return;
+      if (!k || (feeds[k] && !force)) return;
       var parts = k.split("|"), f = feeds[k] = { state: "loading", byDay: {} };
-      fetch("/api/lunera/availability?variation=" + parts[0] + "&from=" + parts[1] + "&days=31", { headers: { Accept: "application/json" } })
+      fetch(CONFIG.api + "/availability?variation=" + parts[0] + "&from=" + parts[1] + "&days=31", { headers: { Accept: "application/json" } })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function (j) {
           if (!j || j.live !== true || !Array.isArray(j.slots)) throw new Error("not live");
           j.slots.forEach(function (iso) { var d = slotDay(iso); (f.byDay[d] = f.byDay[d] || []).push(iso); });
-          f.state = "ok"; S.live = true;
+          f.state = "ok";
         })
-        .catch(function () { f.state = "fail"; if (S.live !== true) S.live = false; })
+        .catch(function () { f.state = "fail"; })
         .then(render);
     }
 
@@ -803,10 +825,14 @@
       $("input", l).addEventListener("change", function () { choose(key, true); });
       expsBox.appendChild(l);
     });
+    // towns for the address field (and the travel estimate)
+    var dl = $("[data-co-towns]", root);
+    if (dl) TOWNS.forEach(function (t) { var o = doc.createElement("option"); o.value = t.name; dl.appendChild(o); });
 
     function choose(key, fromList) {
       if (!SERVICES[key]) return;
-      if (S.exp !== key) S.time = null;
+      if (S.stage === "co" || S.stage === "done") back(true);
+      if (S.exp !== key) { S.time = null; S.any = false; }
       S.exp = key;
       $$(".cal-x", expsBox).forEach(function (l) {
         var on = l.getAttribute("data-x") === key;
@@ -816,14 +842,14 @@
       if (fromList && !S.day && innerWidth < 961) nudge($(".cal-month", root));
     }
 
-    /* — rendering — */
+    /* — rendering: the picker — */
     function render() {
-      var v = S.view, f = feed(), liveNow = f && f.state === "ok", loading = f && f.state === "loading";
+      var v = S.view, f = feed(), liveNow = !!(f && f.state === "ok"), loading = !!(f && f.state === "loading");
       title.textContent = fmtDay(ymd(v.y, v.m, 1), { month: "long", year: "numeric" });
       prevB.disabled = cmpView(v, first) <= 0;
       nextB.disabled = cmpView(v, addMonths(first, AHEAD)) >= 0;
-      root.classList.toggle("is-live", S.live === true);
-      grid.classList.toggle("is-loading", !!loading);
+      root.classList.toggle("is-live", CFG.live);
+      grid.classList.toggle("is-loading", loading);
 
       var html = "", lead = new Date(Date.UTC(v.y, v.m - 1, 1)).getUTCDay(), n = daysIn(v.y, v.m);
       for (var i = 0; i < lead; i++) html += '<span class="cal-d is-blank" aria-hidden="true"></span>';
@@ -846,38 +872,47 @@
       renderSum(liveNow);
     }
 
+    function chip(val, label, on) {
+      return '<button type="button" class="cal-t' + (on ? " is-on" : "") + '" data-t="' + val + '" aria-pressed="' + on + '">' + label + "</button>";
+    }
+    function group(list, hourOf, chipOf) {
+      var g = { Morning: [], Afternoon: [], Evening: [] }, out = "";
+      list.forEach(function (x) { var hr = hourOf(x); g[hr < 12 ? "Morning" : hr < 17 ? "Afternoon" : "Evening"].push(x); });
+      Object.keys(g).forEach(function (k) { if (g[k].length) out += '<p class="cal-g">' + k + '</p><div class="cal-slots">' + g[k].map(chipOf).join("") + "</div>"; });
+      return out;
+    }
+
     function renderDay(f, liveNow, loading) {
-      step3.textContent = S.live === true ? "Choose a time" : "Your day";
+      step3.textContent = "Choose a time";
       if (!S.day) {
         dayBox.innerHTML = '<p class="cal-empty">' + (S.exp ? "Pick a day on the calendar." : "Choose your experience, then pick a day on the calendar.") + "</p>";
         return;
       }
       var h = HOURS[dow(S.day)], out = '<h4 class="cal-dname">' + longDay(S.day) + "</h4>";
       out += '<p class="cal-hours"><svg class="ic"><use href="#i-' + (evening(S.day) ? "moon" : "sun") + '"/></svg>Ysabel’s hours <b>' + fmtMins(h[0]) + " – " + fmtMins(h[1]) + "</b></p>";
-      // her working window on an 8 a.m. – 10 p.m. line
       var L = 480, R = 1320, a = (h[0] - L) / (R - L) * 100, w = (h[1] - h[0]) / (R - L) * 100;
       out += '<div class="cal-line" aria-hidden="true"><i style="left:' + a.toFixed(1) + "%;width:" + w.toFixed(1) + '%"></i>' +
-        "<span style=\"left:7.1%\">9a</span><span style=\"left:28.6%\">12p</span><span style=\"left:50%\">3p</span><span style=\"left:71.4%\">6p</span><span style=\"left:92.9%\">9p</span></div>";
+        '<span style="left:7.1%">9a</span><span style="left:28.6%">12p</span><span style="left:50%">3p</span><span style="left:71.4%">6p</span><span style="left:92.9%">9p</span></div>';
       if (loading) {
         out += '<div class="cal-slots is-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
       } else if (liveNow) {
         var slots = f.byDay[S.day] || [];
         if (slots.length) {
-          var groups = { Morning: [], Afternoon: [], Evening: [] };
-          slots.forEach(function (iso) { var hr = +hourFmt.format(new Date(iso)) % 24; groups[hr < 12 ? "Morning" : hr < 17 ? "Afternoon" : "Evening"].push(iso); });
-          Object.keys(groups).forEach(function (g) {
-            if (!groups[g].length) return;
-            out += '<p class="cal-g">' + g + '</p><div class="cal-slots">' + groups[g].map(function (iso) {
-              return '<button type="button" class="cal-t' + (iso === S.time ? " is-on" : "") + '" data-iso="' + iso + '" aria-pressed="' + (iso === S.time) + '">' + slotTime(iso) + "</button>";
-            }).join("") + "</div>";
-          });
+          out += group(slots, slotHour, function (iso) { return chip(iso, timeFmt.format(new Date(iso)), iso === S.time); });
         } else {
           var next = Object.keys(f.byDay).filter(function (k) { return k > S.day && f.byDay[k].length; }).sort()[0];
           out += '<p class="cal-note">Fully booked on this day.' + (next ? "" : " Try the next month, or text Ysabel — she may be able to fit you in.") + "</p>";
           if (next) out += '<button type="button" class="btn btn-ghost btn-sm cal-next" data-goto="' + next + '"><span>Next free day: ' + shortDay(next) + '</span><svg class="ic"><use href="#i-arrow"/></svg></button>';
         }
       } else {
-        out += '<p class="cal-note">Square shows the times still free on ' + shortDay(S.day) + " on the next step, with your experience already chosen.</p>";
+        var pref = S.exp ? prefTimes(S.day) : [];
+        if (!S.exp) out += '<p class="cal-note">Choose your experience to see times.</p>';
+        else if (!pref.length) out += '<p class="cal-note">No times left today — please pick another day.</p>';
+        else {
+          out += '<p class="cal-note cal-pref-note"><svg class="ic"><use href="#i-clock"/></svg>Choose a preferred start — Ysabel confirms it with you.</p>';
+          out += group(pref, function (m) { return Math.floor(m / 60); }, function (m) { return chip(m, fmtMins(m), !S.any && m === S.time); });
+          out += '<div class="cal-slots cal-any">' + chip("any", "Any time that day", S.any) + "</div>";
+        }
       }
       dayBox.innerHTML = out;
     }
@@ -886,28 +921,16 @@
       var e = S.exp && SERVICES[S.exp], price = e ? svcPrice(S.exp) : 0;
       $("[data-sum-exp]", root).textContent = e ? e.name + " · $" + price + (price !== e.price ? " (reg. $" + e.price + ")" : "") : "—";
       $("[data-sum-day]", root).textContent = S.day ? shortDay(S.day) : "—";
-      var tRow = $("[data-sum-time-row]", root);
-      tRow.hidden = !(S.live === true);
-      $("[data-sum-time]", root).textContent = S.time ? slotTime(S.time) : "—";
-      $("[data-sum-dep]", root).textContent = e ? "$" + (price * 0.2).toFixed(2) + " (20%)" : "20% of your total";
-
-      var ready = !!(S.exp && S.day && (!liveNow || S.time)), label, note;
-      if (!S.exp) { label = "Choose your experience"; note = "Secure booking and deposit by Square. Travel fee by distance is added to your total."; }
-      else if (!S.day) { label = "Choose a day"; note = "Secure booking and deposit by Square. Travel fee by distance is added to your total."; }
-      else if (liveNow && !S.time) { label = "Choose a time"; note = "Times shown are free right now in Ysabel’s Square calendar (Mountain Time)."; }
-      else if (liveNow) {
-        label = "Secure " + slotTime(S.time) + " on Square";
-        note = "Square opens on " + shortDay(S.day) + " with " + e.name + " ready — tap Add, then Next, then " + slotTime(S.time) + " Your 20% deposit is paid there; the travel fee is added to your total.";
-      } else {
-        label = "See free times & book";
-        note = "Square opens on " + shortDay(S.day) + " with " + e.name + " ready — tap Add, then Next, to choose your time. Your 20% deposit is paid there; the travel fee is added to your total.";
-      }
-      goLabel.textContent = label;
-      fine.textContent = note;
+      $("[data-sum-time-row]", root).hidden = false;
+      $("[data-sum-time]", root).textContent = timeLabel() || "—";
+      $("[data-sum-dep]", root).textContent = e ? money2(price * 20) + " (20%)" : "20% of your total";
+      var ready = !!(S.exp && S.day && (S.time != null || S.any));
+      goLabel.textContent = !S.exp ? "Choose your experience" : !S.day ? "Choose a day" : !ready ? "Choose a time" : "Continue to your details";
+      fine.textContent = CFG.booking
+        ? "Next: your details and the 20% deposit — secure card payment, all on this page."
+        : "Next: your details — Ysabel confirms your time and your 20% deposit.";
       go.classList.toggle("is-wait", !ready);
       go.setAttribute("aria-disabled", ready ? "false" : "true");
-      go.href = ready ? squareUrl(S.exp, S.day) : "#reserve";
-      if (ready) { go.target = "_blank"; go.rel = "noopener"; } else { go.removeAttribute("target"); go.removeAttribute("rel"); }
     }
 
     function nudge(el) {
@@ -916,12 +939,12 @@
       if (r.top < hdrH() || r.top > innerHeight * 0.72) goTo(el);
     }
 
-    /* — events — */
+    /* — picker events — */
     prevB.addEventListener("click", function () { S.view = addMonths(S.view, -1); load(); render(); });
     nextB.addEventListener("click", function () { S.view = addMonths(S.view, 1); load(); render(); });
     grid.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-ymd]"); if (!b || b.disabled) return;
-      if (S.day !== b.getAttribute("data-ymd")) S.time = null;
+      if (S.day !== b.getAttribute("data-ymd")) { S.time = null; S.any = false; }
       S.day = b.getAttribute("data-ymd");
       render();
       var again = $('button[data-ymd="' + S.day + '"]', grid); if (again) again.focus({ preventScroll: true });
@@ -940,26 +963,276 @@
       var nb = $('button[data-ymd="' + s + '"]', grid); if (nb) nb.focus();
     });
     dayBox.addEventListener("click", function (e) {
-      var t = e.target.closest("[data-iso]"), g = e.target.closest("[data-goto]");
-      if (t) { S.time = t.getAttribute("data-iso"); render(); var again = $('[data-iso="' + S.time + '"]', dayBox); if (again) again.focus({ preventScroll: true }); }
+      var t = e.target.closest("[data-t]"), g = e.target.closest("[data-goto]");
+      if (t) {
+        var v = t.getAttribute("data-t");
+        S.any = v === "any"; S.time = S.any ? null : (/^\d+$/.test(v) ? +v : v);
+        render();
+        var again = $('[data-t="' + v + '"]', dayBox); if (again) again.focus({ preventScroll: true });
+        if (innerWidth < 961) nudge($(".cal-sum", root));
+      }
       if (g) {
         var p = parse(g.getAttribute("data-goto"));
-        S.day = g.getAttribute("data-goto"); S.time = null;
+        S.day = g.getAttribute("data-goto"); S.time = null; S.any = false;
         if (p.y !== S.view.y || p.m !== S.view.m) { S.view = { y: p.y, m: p.m }; load(); }
         render();
       }
     });
-    go.addEventListener("click", function (e) {
-      if (go.getAttribute("aria-disabled") !== "true") return;
-      e.preventDefault(); e.stopPropagation();
-      var target = !S.exp ? $(".cal-pick", root) : !S.day ? $(".cal-month", root) : $(".cal-day", root);
-      target.classList.remove("is-ask"); void target.offsetWidth; target.classList.add("is-ask");
-      if (innerWidth < 961) nudge(target);
-      var f = !S.exp ? $("input", expsBox) : !S.day ? $("button[data-ymd]:not([disabled])", grid) : $("[data-iso]", dayBox);
-      if (f) f.focus({ preventScroll: innerWidth >= 961 });
+    go.addEventListener("click", function () {
+      if (go.getAttribute("aria-disabled") === "true") {
+        var target = !S.exp ? $(".cal-pick", root) : !S.day ? $(".cal-month", root) : $(".cal-day", root);
+        target.classList.remove("is-ask"); void target.offsetWidth; target.classList.add("is-ask");
+        if (innerWidth < 961) nudge(target);
+        var f = !S.exp ? $("input", expsBox) : !S.day ? $("button[data-ymd]:not([disabled])", grid) : $("[data-t]", dayBox);
+        if (f) f.focus({ preventScroll: innerWidth >= 961 });
+        return;
+      }
+      checkout();
     });
 
+    /* — 4 + 5: details and deposit — */
+    function priceCents() { return svcPrice(S.exp) * 100; }
+    function depositCents() { return Math.round(priceCents() * 0.2); }
+    function travelFor(city) {
+      var c = String(city || "").toLowerCase().trim();
+      if (!c) return null;
+      var t = TOWNS.filter(function (x) { return x.name.toLowerCase() === c; })[0] ||
+              TOWNS.filter(function (x) { var n = x.name.toLowerCase().replace("edmonton · ", ""); return n.length > 3 && c.indexOf(n) > -1; })[0];
+      return t ? TIERS[tierOf(roadKm(t))].fee : null;
+    }
+    function fillSummary() {
+      var e = SERVICES[S.exp], price = svcPrice(S.exp);
+      $("[data-co-img]", root).innerHTML = e.img ? '<img src="/assets/lunera-ora/photos/' + e.img + '.webp" alt="">' : '<svg><use href="#i-people"/></svg>';
+      $("[data-co-name]", root).textContent = e.name;
+      $("[data-co-when]", root).textContent = longDay(S.day) + " · " + timeLabel();
+      $("[data-co-pref]", root).hidden = CFG.booking && typeof S.time === "string";
+      $("[data-co-price]", root).textContent = "$" + price + (price !== e.price ? " (reg. $" + e.price + ")" : "");
+      $("[data-co-len]", root).textContent = e.time;
+      updateTravel();
+    }
+    function updateTravel() {
+      var fee = travelFor(form.elements.city.value), dep = depositCents();
+      $("[data-co-travel]", root).textContent = fee ? (fee === "Complimentary" ? "Complimentary" : fee === "Please inquire" ? "Please inquire" : "≈ " + fee) : "By distance";
+      var extra = fee && /^\$/.test(fee) ? +fee.slice(1) * 100 : 0;
+      $("[data-co-dep]", root).textContent = money2(dep);
+      $("[data-co-bal]", root).textContent = money2(priceCents() - dep + extra) + (fee && fee !== "Please inquire" ? "" : " + travel");
+    }
+    form.elements.city.addEventListener("input", updateTravel);
+
+    var payments = null, card = null, sdkLoading = null;
+    function loadSdk() {
+      if (window.Square) return Promise.resolve();
+      if (sdkLoading) return sdkLoading;
+      sdkLoading = new Promise(function (ok, no) {
+        var s = doc.createElement("script"); s.src = CFG.sdk; s.async = true;
+        s.onload = function () { window.Square ? ok() : no(new Error("no Square")); };
+        s.onerror = function () { sdkLoading = null; no(new Error("sdk")); };
+        doc.head.appendChild(s);
+      });
+      return sdkLoading;
+    }
+    function mountCard() {
+      if (card) return Promise.resolve(card);
+      var box = $("[data-co-card]", root);
+      return loadSdk().then(function () {
+        payments = window.Square.payments(CFG.appId, CFG.locationId);
+        return payments.card({
+          style: {
+            ".input-container": { borderColor: "#d9c9c0", borderRadius: "14px" },
+            ".input-container.is-focus": { borderColor: "#6b5341" },
+            ".input-container.is-error": { borderColor: "#b4553f" },
+            input: { color: "#3b2d26", fontSize: "16px" },
+            "input::placeholder": { color: "#a8968c" },
+            ".message-text": { color: "#76625a" },
+            ".message-icon": { color: "#76625a" }
+          }
+        });
+      }).then(function (c) {
+        box.innerHTML = "";
+        return c.attach("#lo-card").then(function () { card = c; return c; });
+      }).catch(function () {
+        box.innerHTML = '<p class="cal-card-wait">The secure card form didn’t load. Check your connection and <button type="button" class="link-btn" data-card-retry>try again</button>, or text Ysabel to book.</p>';
+        throw new Error("card");
+      });
+    }
+    root.addEventListener("click", function (e) { if (e.target.closest("[data-card-retry]")) mountCard().catch(function () {}); });
+
+    function checkout() {
+      S.stage = "co";
+      fillSummary();
+      var book = CFG.booking && typeof S.time === "string";
+      $("[data-co-pay]", root).hidden = !book;
+      $("[data-co-reqnote]", root).hidden = book;
+      submitLabel.textContent = book ? "Pay " + money2(depositCents()) + " deposit & book" : "Send booking request";
+      coErr.hidden = true;
+      root.classList.add("is-co");
+      co.hidden = false; done.hidden = true;
+      if (book) mountCard().catch(function () {});
+      goTo(root);
+      setTimeout(function () { var n = form.elements.name; if (n && !n.value && innerWidth >= 961) n.focus({ preventScroll: true }); }, 700);
+    }
+    function back(silent) {
+      S.stage = "pick";
+      root.classList.remove("is-co", "is-done");
+      co.hidden = true; done.hidden = true;
+      if (!silent) goTo(root);
+    }
+    $("[data-cal-back]", root).addEventListener("click", function () { back(); });
+
+    function readForm() {
+      var el = form.elements, d = {};
+      ["name", "email", "phone", "postal", "address", "city", "notes"].forEach(function (k) { d[k] = String(el[k].value || "").trim(); });
+      d.consent = el.consent.checked; d.botcheck = el.botcheck.checked;
+      return d;
+    }
+    function check(d) {
+      var bad = [];
+      if (!d.name) bad.push(["name", "your name"]);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) bad.push(["email", "a valid email"]);
+      if (d.phone.replace(/\D/g, "").length < 10) bad.push(["phone", "a phone number"]);
+      if (!d.address) bad.push(["address", "your street address"]);
+      if (!d.city) bad.push(["city", "your town or area"]);
+      $$(".fld", form).forEach(function (f) { var i = $("input,textarea", f); f.classList.toggle("is-bad", bad.some(function (b) { return b[0] === i.name; })); });
+      return bad;
+    }
+    function fail(msg, focusEl) {
+      coErr.textContent = msg; coErr.hidden = false;
+      if (focusEl) focusEl.focus();
+    }
+    function busy(on, label) {
+      submit.disabled = on; submit.classList.toggle("is-busy", on);
+      if (label) submitLabel.textContent = label;
+    }
+    form.addEventListener("input", function (e) { var f = e.target.closest(".fld"); if (f) f.classList.remove("is-bad"); coErr.hidden = true; });
+    form.addEventListener("change", function () { coErr.hidden = true; });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      coErr.hidden = true;
+      var d = readForm();
+      if (d.botcheck) return;
+      var bad = check(d);
+      if (bad.length) return fail("Please add " + bad.map(function (b) { return b[1]; }).join(", ").replace(/, ([^,]*)$/, " and $1") + ".", form.elements[bad[0][0]]);
+      if (!d.consent) return fail("Please agree to the booking policies.", form.elements.consent);
+      var book = CFG.booking && typeof S.time === "string";
+      return book ? payAndBook(d) : sendRequest(d);
+    });
+
+    function payAndBook(d) {
+      var label = submitLabel.textContent, parts = d.name.split(/\s+/), dep = depositCents();
+      if (!card) return mountCard().then(function () { fail("The card form is ready — please add your card."); }, function () { fail("The secure card form didn’t load — please try again, or text Ysabel to book."); });
+      busy(true, "Securing your time…");
+      card.tokenize().then(function (t) {
+        if (!t || t.status !== "OK") throw { card: true, msg: (t && t.errors && t.errors[0] && t.errors[0].message) || "Please check your card details." };
+        var details = {
+          amount: (dep / 100).toFixed(2), currencyCode: "CAD", intent: "CHARGE",
+          billingContact: { givenName: parts[0], familyName: parts.slice(1).join(" "), email: d.email, phone: d.phone, addressLines: [d.address], city: d.city, postalCode: d.postal, countryCode: "CA" }
+        };
+        var verify = payments.verifyBuyer ? payments.verifyBuyer(t.token, details).then(function (v) { return v && v.token; }, function () { return ""; }) : Promise.resolve("");
+        return verify.then(function (vt) {
+          return fetch(CONFIG.api + "/book", {
+            method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              variation: svcIds(S.exp).variation, start_at: S.time, card_token: t.token, verification_token: vt || "",
+              name: d.name, email: d.email, phone: d.phone, address: d.address, city: d.city, postal: d.postal,
+              area: d.city, notes: d.notes, consent: true, idem: "lo-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+            })
+          });
+        });
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
+      }).then(function (res) {
+        busy(false, label);
+        if (res.j && res.j.ok) return finish("booked", d, res.j);
+        if (res.status === 409) {
+          feeds = {}; S.time = null;
+          back(); load(); render();
+          return toast(res.j.error || "That time was just taken — please choose another.");
+        }
+        if (res.status === 402) return fail(res.j.error || "Your card couldn’t be charged. Please try another card.");
+        fail((res.j && res.j.error) || "Something went wrong — nothing was charged. Please try again, or text Ysabel.");
+      }).catch(function (err) {
+        busy(false, label);
+        fail(err && err.card ? err.msg : "We couldn’t reach the booking system — nothing was charged. Please try again.");
+      });
+    }
+
+    function composed(d) {
+      return [
+        "Hi Ysabel — I’d like to book through your website ✨", "",
+        "Experience: " + SERVICES[S.exp].name, "Day: " + longDay(S.day), "Preferred time: " + timeLabel(),
+        "Name: " + d.name, "Email: " + d.email, "Phone: " + d.phone,
+        "Address: " + d.address + ", " + d.city + (d.postal ? " " + d.postal : ""),
+        d.notes ? "Notes: " + d.notes : ""
+      ].filter(Boolean).join("\n");
+    }
+    function sendRequest(d) {
+      var label = submitLabel.textContent;
+      busy(true, "Sending…");
+      fetch(CONFIG.api + "/request", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ service: SERVICES[S.exp].name, day: shortDay(S.day), time: timeLabel(), name: d.name, email: d.email, phone: d.phone, address: d.address, city: d.city, postal: d.postal, area: d.city, notes: d.notes, consent: true })
+      }).then(function (r) { return r.json().catch(function () { return {}; }); }, function () { return {}; })
+        .then(function (j) { busy(false, label); finish(j && j.sent ? "requested" : "handoff", d, j); });
+    }
+
+    /* — done — */
+    function ics(d, j) {
+      var start = new Date(j.booking.start_at), end = new Date(start.getTime() + SERVICES[S.exp].mins * 60000);
+      var f = function (t) { return t.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); };
+      var esc = function (s) { return String(s).replace(/[\\,;]/g, "\\$&").replace(/\n/g, "\\n"); };
+      return "data:text/calendar;charset=utf-8," + encodeURIComponent([
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Lunera Ora//Booking//EN", "BEGIN:VEVENT",
+        "UID:" + j.booking.id + "@luneraora", "DTSTAMP:" + f(new Date()), "DTSTART:" + f(start), "DTEND:" + f(end),
+        "SUMMARY:" + esc("Lunera Ora — " + SERVICES[S.exp].name),
+        "LOCATION:" + esc(d.address + ", " + d.city),
+        "DESCRIPTION:" + esc("Mobile teeth whitening with Ysabel. Allow treatment time + 15 minutes. Questions: text " + CONFIG.phoneLabel + "."),
+        "END:VEVENT", "END:VCALENDAR"
+      ].join("\r\n"));
+    }
+    function finish(kind, d, j) {
+      S.stage = "done";
+      var fname = d.name.split(/\s+/)[0], when = longDay(S.day) + " · " + timeLabel();
+      var h = $("[data-done-h]", done), p = $("[data-done-p]", done), lines = $("[data-done-lines]", done);
+      var icsA = $("[data-done-ics]", done), smsA = $("[data-done-sms]", done), mailA = $("[data-done-mail]", done);
+      icsA.hidden = smsA.hidden = mailA.hidden = true;
+      var rows = [["Experience", SERVICES[S.exp].name], ["When", when], ["Where", d.address + ", " + d.city]];
+      if (kind === "booked") {
+        h.textContent = "You’re booked, " + fname + " ✨";
+        p.textContent = j.deposit_taken ? "Your time is in Ysabel’s calendar and your deposit is paid." : "Your time is in Ysabel’s calendar. Your deposit is held on your card and Ysabel will confirm it.";
+        rows.push(["Deposit paid", money2(j.deposit_cents)]);
+        icsA.href = ics(d, j); icsA.hidden = false;
+      } else if (kind === "requested") {
+        h.textContent = "Request sent, " + fname + " ✨";
+        p.textContent = "Ysabel will confirm your time by text or email — usually the same day — and send your 20% deposit request to secure it.";
+      } else {
+        var text = composed(d);
+        h.textContent = "Almost there, " + fname;
+        p.textContent = "Your booking request is written and ready — send it to Ysabel and she’ll confirm your time and deposit. Nothing has been sent yet.";
+        smsA.href = "sms:" + CONFIG.phone + "?&body=" + encodeURIComponent(text); smsA.hidden = false;
+        mailA.href = "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Booking request — " + SERVICES[S.exp].name + " · " + shortDay(S.day)) + "&body=" + encodeURIComponent(text); mailA.hidden = false;
+      }
+      lines.innerHTML = rows.map(function (r) { return "<div><dt></dt><dd></dd></div>"; }).join("");
+      $$("div", lines).forEach(function (row, i) { $("dt", row).textContent = rows[i][0]; $("dd", row).textContent = rows[i][1]; });
+      co.hidden = true; done.hidden = false;
+      root.classList.remove("is-co"); root.classList.add("is-done");
+      goTo(root);
+      setTimeout(function () { done.focus({ preventScroll: true }); }, 400);
+    }
+    $("[data-done-again]", done).addEventListener("click", function () {
+      S.time = null; S.any = false; S.day = null; feeds = {};
+      form.reset();
+      back(); load(); render();
+    });
+
+    /* — start: ask the site whether Square is connected — */
     render();
+    fetch(CONFIG.api + "/config", { headers: { Accept: "application/json" } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j) { CFG = j; CFG.live = !!j.live; CFG.booking = !!(j.booking && j.appId && j.sdk); } })
+      .catch(function () {})
+      .then(function () { load(); render(); });
+
     return { choose: choose };
   })();
 

@@ -21,7 +21,7 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/cormorant.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/montserrat.woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/lunera-ora/logo.svg" crossorigin>
-<link rel="stylesheet" href="/lunera-ora/style.css?v=202610021900">
+<link rel="stylesheet" href="/lunera-ora/style.css?v=202610022100">
 <script>document.documentElement.classList.add('js');</script>
 
 <script type="application/ld+json">
@@ -78,6 +78,7 @@
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.6s-7.6-4.5-7.6-10A4.2 4.2 0 0 1 12 6.9a4.2 4.2 0 0 1 7.6 2.7c0 5.5-7.6 10-7.6 10z"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2 4.8 6v5.4c0 4.6 3 8.2 7.2 9.4 4.2-1.2 7.2-4.8 7.2-9.4V6z"/><path d="m9 12 2.2 2.2L15.4 10"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 10.8 12 4l8.2 6.8M6 9.4v10.2h12V9.4"/><path d="M10 19.6v-5.2h4v5.2"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.6" y="5" width="16.8" height="15.4" rx="2.4"/><path d="M3.6 9.6h16.8M8 3.4v3.2M16 3.4v3.2M8.4 14h.01M12 14h.01M15.6 14h.01M8.4 17h.01M12 17h.01"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.6"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2M5.9 5.9l1.5 1.5M16.6 16.6l1.5 1.5M5.9 18.1l1.5-1.5M16.6 7.4l1.5-1.5"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.6 14.6A8 8 0 0 1 9.4 4.4a8 8 0 1 0 10.2 10.2z"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.6 4.4 4.4L19 7.4"/></symbol>
@@ -120,7 +121,7 @@
       <a href="#contact">Contact</a>
     </nav>
     <div class="hdr-act">
-      <a class="btn btn-ink btn-sm" data-book data-magnetic href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book now</span></a>
+      <a class="btn btn-ink btn-sm" data-book data-magnetic href="#reserve"><span>Book now</span></a>
       <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-burger><i></i><i></i></button>
     </div>
   </div>
@@ -139,7 +140,7 @@
       <a href="#contact"><small>08</small>Contact</a>
     </nav>
     <div class="drawer-foot">
-      <a class="btn btn-ink" data-book href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book your experience</span></a>
+      <a class="btn btn-ink" data-book href="#reserve"><span>Book your experience</span></a>
       <div class="drawer-links">
         <a data-sms href="sms:+16479835983"><svg><use href="#i-chat"/></svg>Text</a>
         <a data-tel href="tel:+16479835983"><svg><use href="#i-phone"/></svg>Call</a>
@@ -175,7 +176,7 @@
     <p class="hero-line">A brighter smile, <em>brought to you.</em></p>
     <p class="hero-sub">Professional whitening by a Registered Dental Hygienist, in the comfort of your own space — across Beaumont, Leduc &amp; Edmonton.</p>
     <div class="hero-cta">
-      <a class="btn btn-ink" data-book data-magnetic href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book your experience</span></a>
+      <a class="btn btn-ink" data-book data-magnetic href="#reserve"><span>Book your experience</span></a>
       <a class="btn btn-ghost" href="#experiences" data-magnetic><span>Explore experiences</span></a>
     </div>
   </div>
@@ -284,7 +285,7 @@
         </ul>
         <p class="exp-desc">A gentle brightening experience designed to refresh your smile and enhance its natural radiance. Perfect for clients looking for a lighter touch or maintaining their results.</p>
         <div class="exp-price"><span class="exp-now" data-price-now>$119</span><span class="exp-was" data-price-was>Reg. $149</span></div>
-        <a class="btn btn-ink btn-block" data-book="aura" href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book The Aura</span><svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ink btn-block" data-book="aura" href="#reserve"><span>Book The Aura</span><svg class="ic"><use href="#i-arrow"/></svg></a>
       </article>
 
       <article class="exp exp-feature" data-exp="radiance" style="--glow:.66">
@@ -301,7 +302,7 @@
         </ul>
         <p class="exp-desc">Our classic whitening treatment for a visibly brighter smile. Designed for clients wanting a more noticeable transformation while keeping the experience comfortable and personalized.</p>
         <div class="exp-price"><span class="exp-now" data-price-now>$139</span><span class="exp-was" data-price-was>Reg. $179</span></div>
-        <a class="btn btn-ink btn-block" data-book="radiance" href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book The Radiance</span><svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ink btn-block" data-book="radiance" href="#reserve"><span>Book The Radiance</span><svg class="ic"><use href="#i-arrow"/></svg></a>
       </article>
 
       <article class="exp" data-exp="lumina" style="--glow:1">
@@ -319,7 +320,7 @@
         <p class="exp-desc">Our most elevated whitening treatment, designed for clients seeking their brightest appropriate result. A more intensive experience, personalized to your starting shade, goals, and individual suitability.</p>
         <p class="exp-more">Includes two appointments: a 1.5-hour comprehensive whitening session, then a 45-minute follow-up tailored to your progress and suitability.</p>
         <div class="exp-price"><span class="exp-now" data-price-now>$199</span><span class="exp-was" data-price-was>Reg. $249</span></div>
-        <a class="btn btn-ink btn-block" data-book="lumina" href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book The Lumina</span><svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ink btn-block" data-book="lumina" href="#reserve"><span>Book The Lumina</span><svg class="ic"><use href="#i-arrow"/></svg></a>
       </article>
     </div>
 
@@ -335,7 +336,7 @@
       </div>
       <div class="bridal-side">
         <p class="bridal-price"><span>$159</span> · 1 hour</p>
-        <a class="btn btn-ink" data-book="bridal" href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book bridal</span></a>
+        <a class="btn btn-ink" data-book="bridal" href="#reserve"><span>Book bridal</span></a>
         <a class="btn btn-ghost" href="#contact" data-enquire="Bridal party or group"><span>Plan a party</span></a>
       </div>
     </article>
@@ -390,7 +391,7 @@
         <p class="eyebrow">Please keep in mind</p>
         <h3 class="r-big">Treatment time <em>+ 15 minutes</em></h3>
         <p>Please allow additional time for your consultation, smile assessment, treatment preparation &amp; personalized aftercare. Because a brighter smile deserves more than just treatment time.</p>
-        <a class="btn btn-ink" data-book data-magnetic href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Ready for your new era?</span></a>
+        <a class="btn btn-ink" data-book data-magnetic href="#reserve"><span>Ready for your new era?</span></a>
       </article>
     </div>
     <div class="ritual-bar" aria-hidden="true"><i data-ritual-bar></i></div>
@@ -457,7 +458,7 @@
         <p class="eyebrow" data-reveal>Book online</p>
         <h2 class="h2" data-split>Your appointment <em>awaits</em></h2>
       </div>
-      <p class="sec-intro" data-reveal>Choose your experience and a day that suits you, then secure your time on Square with a 20% deposit — it takes a couple of minutes.</p>
+      <p class="sec-intro" data-reveal>Choose your experience and a day that suits you, then secure your time with a 20% deposit — all right here, in a couple of minutes.</p>
     </header>
 
     <!-- The booking calendar. Built by script.js (Calendar); without JavaScript
@@ -496,10 +497,79 @@
             <div data-sum-time-row hidden><dt>Time</dt><dd data-sum-time>—</dd></div>
             <div><dt>Deposit today</dt><dd data-sum-dep>20% of your total</dd></div>
           </dl>
-          <a class="btn btn-ink btn-block cal-go" data-cal-go href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span data-cal-go-label>Book on Square</span><svg class="ic"><use href="#i-arrow"/></svg></a>
-          <p class="cal-fine" data-cal-fine>Secure booking and deposit by Square. Travel fee by distance is added to your total.</p>
+          <button class="btn btn-ink btn-block cal-go" type="button" data-cal-go><span data-cal-go-label>Continue</span><svg class="ic"><use href="#i-arrow"/></svg></button>
+          <p class="cal-fine" data-cal-fine>Your details and the 20% deposit come next — all on this page.</p>
         </div>
       </div>
+
+      <!-- 4 + 5: details and deposit, on this page -->
+      <div class="cal-co" data-cal-co hidden>
+        <aside class="cal-co-sum">
+          <button type="button" class="cal-back" data-cal-back><svg class="ic"><use href="#i-arrow"/></svg>Change experience or time</button>
+          <div class="cal-co-card">
+            <span class="cal-co-img" data-co-img aria-hidden="true"></span>
+            <p class="cal-co-k">Your booking</p>
+            <h3 class="cal-co-name" data-co-name></h3>
+            <p class="cal-co-when" data-co-when></p>
+            <p class="cal-co-pref" data-co-pref hidden><svg class="ic"><use href="#i-clock"/></svg>Preferred time — Ysabel confirms it with you</p>
+            <dl class="cal-lines">
+              <div><dt>Experience</dt><dd data-co-price></dd></div>
+              <div><dt>Length</dt><dd data-co-len></dd></div>
+              <div><dt>Travel</dt><dd data-co-travel>By distance</dd></div>
+              <div class="cal-co-dep"><dt>Deposit today</dt><dd data-co-dep></dd></div>
+              <div><dt>On the day</dt><dd data-co-bal></dd></div>
+            </dl>
+            <p class="cal-fine">Balance by debit, credit, e-transfer or cash on the day. 24 hours’ notice to cancel or reschedule.</p>
+          </div>
+        </aside>
+        <form class="cal-co-form" data-co-form novalidate>
+          <p class="cal-step"><span>4</span>Your details</p>
+          <div class="enq-row">
+            <label class="fld"><span>Your name <i>*</i></span><input name="name" autocomplete="name" required></label>
+            <label class="fld"><span>Email <i>*</i></span><input name="email" type="email" autocomplete="email" required></label>
+          </div>
+          <div class="enq-row">
+            <label class="fld"><span>Phone <i>*</i></span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
+            <label class="fld"><span>Postal code</span><input name="postal" autocomplete="postal-code" maxlength="7" placeholder="T4X 1A1"></label>
+          </div>
+          <label class="fld"><span>Street address <i>*</i> <small>— Ysabel comes to you</small></span><input name="address" autocomplete="address-line1" required></label>
+          <label class="fld"><span>Town / area <i>*</i></span><input name="city" autocomplete="address-level2" list="lo-towns" required placeholder="e.g. Beaumont, Leduc, Edmonton · Mill Woods"></label>
+          <datalist id="lo-towns" data-co-towns></datalist>
+          <label class="fld"><span>Anything Ysabel should know?</span><textarea name="notes" rows="3" placeholder="Parking, buzzer code, first whitening, sensitivity… (please keep medical history for your intake form)"></textarea></label>
+
+          <div class="cal-pay" data-co-pay hidden>
+            <p class="cal-step"><span>5</span>Secure your time</p>
+            <div class="cal-card" id="lo-card" data-co-card><p class="cal-card-wait">Loading secure card fields…</p></div>
+            <p class="cal-secure"><svg class="ic"><use href="#i-shield"/></svg>Your card goes straight to Square, Lunera Ora’s payment processor — it never touches this website. Only the 20% deposit is taken today.</p>
+          </div>
+          <p class="cal-reqnote" data-co-reqnote hidden><svg class="ic"><use href="#i-spark"/></svg>Ysabel confirms your time and sends your 20% deposit request — usually the same day.</p>
+
+          <label class="cal-consent"><input type="checkbox" name="consent"><span>I agree to the <a href="#payments">deposit, 24-hour cancellation and no-show policies</a>.</span></label>
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn btn-ink btn-block" type="submit" data-co-submit><span data-co-submit-label>Book</span><svg class="ic"><use href="#i-arrow"/></svg></button>
+          <p class="enq-err" data-co-err role="alert" hidden></p>
+        </form>
+      </div>
+
+      <!-- 6: confirmation -->
+      <div class="cal-done" data-cal-done hidden tabindex="-1">
+        <span class="enq-done-ic"><svg><use href="#i-check"/></svg></span>
+        <h3 data-done-h></h3>
+        <p class="cal-done-p" data-done-p></p>
+        <dl class="cal-lines cal-done-lines" data-done-lines></dl>
+        <div class="cal-done-btns">
+          <a class="btn btn-ink btn-sm" data-done-ics download="lunera-ora-appointment.ics" hidden><svg class="ic"><use href="#i-cal"/></svg><span>Add to my calendar</span></a>
+          <a class="btn btn-ink btn-sm" data-done-sms hidden><svg class="ic"><use href="#i-chat"/></svg><span>Send as a text</span></a>
+          <a class="btn btn-ghost btn-sm" data-done-mail hidden><svg class="ic"><use href="#i-mail"/></svg><span>Send by email</span></a>
+        </div>
+        <ol class="cal-done-next" data-done-next>
+          <li><b>Forms</b> Ysabel sends your intake &amp; consent forms before your visit.</li>
+          <li><b>We come to you</b> She arrives with everything — allow treatment time + 15 minutes.</li>
+          <li><b>Aftercare</b> Lighter foods for 24–48 hours — <a href="#care">see the care guide</a>.</li>
+        </ol>
+        <button class="link-btn" type="button" data-done-again>Book another experience</button>
+      </div>
+      <noscript><p class="cal-noscript">Online booking needs JavaScript — text <a href="sms:+16479835983">(647) 983-5983</a> to book.</p></noscript>
     </div>
 
     <div class="book-grid book-more">
@@ -511,7 +581,7 @@
           <li><span class="st-n">3</span><div><h3>Pay the deposit</h3><p>A 20% deposit is required upon booking to secure your appointment, and is applied toward your total.</p></div></li>
           <li><span class="st-n">4</span><div><h3>Complete forms</h3><p>Intake and consent.</p></div></li>
           <li><span class="st-n">5</span><div><h3>We come to you</h3><p>We deliver your whitening experience.</p></div></li>
-          <li><span class="st-n">6</span><div><h3>Ready?</h3><p>Pick your day above — or scan the code to book on your phone.</p></div></li>
+          <li><span class="st-n">6</span><div><h3>Ready?</h3><p>Pick your experience, day and time above — it takes a couple of minutes.</p></div></li>
         </ol>
       </div>
       <aside class="book-card" data-reveal>
@@ -531,12 +601,6 @@
               <tr data-day="6"><th>Saturday</th><td>9:00 a.m. – 8:00 p.m.</td></tr>
             </tbody>
           </table>
-          <div class="book-qr-row">
-            <a class="book-qr" data-square href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener" aria-label="Open the Lunera Ora booking page">
-              <img src="/assets/lunera-ora/book-qr.svg" width="160" height="160" alt="QR code for the Lunera Ora booking page" loading="lazy">
-            </a>
-            <p>On your phone? <b>Scan to book</b> on Square.</p>
-          </div>
           <p class="book-alt">Prefer to ask first? <a data-sms href="sms:+16479835983">Text (647) 983-5983</a></p>
         </div>
       </aside>
@@ -630,7 +694,7 @@
           <li><span>The Radiance</span><b>$139</b><s>$179</s></li>
           <li><span>The Lumina</span><b>$199</b><s>$249</s></li>
         </ul>
-        <a class="btn btn-ink" data-book data-magnetic href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Claim launch pricing</span></a>
+        <a class="btn btn-ink" data-book data-magnetic href="#reserve"><span>Claim launch pricing</span></a>
       </article>
       <article class="promo promo-refer" data-reveal>
         <p class="promo-kicker">Refer 5 friends</p>
@@ -846,7 +910,7 @@
     <svg class="ic finale-spark" aria-hidden="true"><use href="#i-spark"/></svg>
     <h2 class="finale-t" data-split>Ready for your <em>new era?</em></h2>
     <p>Your Lunera Ora experience is just a booking away.</p>
-    <a class="btn btn-ink btn-lg" data-book data-magnetic href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book your experience</span><svg class="ic"><use href="#i-arrow"/></svg></a>
+    <a class="btn btn-ink btn-lg" data-book data-magnetic href="#reserve"><span>Book your experience</span><svg class="ic"><use href="#i-arrow"/></svg></a>
   </div>
 </section>
 
@@ -874,7 +938,7 @@
 
 <!-- phone action dock -->
 <div class="dock" data-dock>
-  <a class="dock-book" data-book href="https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services" target="_blank" rel="noopener"><span>Book now</span></a>
+  <a class="dock-book" data-book href="#reserve"><span>Book now</span></a>
   <a class="dock-ic" data-sms href="sms:+16479835983" aria-label="Text Lunera Ora"><svg><use href="#i-chat"/></svg></a>
   <a class="dock-ic" data-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener" aria-label="Lunera Ora on Instagram"><svg><use href="#i-insta"/></svg></a>
 </div>
@@ -884,7 +948,7 @@
 <script src="/assets/vendor/gsap.min.js"></script>
 <script src="/assets/vendor/ScrollTrigger.min.js"></script>
 <script src="/assets/vendor/lenis.min.js"></script>
-<script src="/lunera-ora/silk.js?v=202610021900"></script>
-<script src="/lunera-ora/script.js?v=202610021900"></script>
+<script src="/lunera-ora/silk.js?v=202610022100"></script>
+<script src="/lunera-ora/script.js?v=202610022100"></script>
 </body>
 </html>
