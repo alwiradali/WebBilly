@@ -1031,7 +1031,7 @@ form.enq{display:grid;gap:18px;align-content:start}
 .treg-note{margin:0 0 12px;font:400 12.5px/1.5 var(--ff-b,system-ui,sans-serif);color:rgba(255,255,255,.6)}
 .treg-boxes{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 6px}
 @media (min-width:440px){.treg-boxes{grid-template-columns:1fr 1fr}}
-.treg-boxes--beds{grid-template-columns:repeat(5,1fr)}
+.treg-boxes--beds{grid-template-columns:repeat(3,1fr)}
 .treg-boxes--beds .treg-box{padding:12px 6px 12px 34px;text-align:left}
 .pd-vform .treg-boxes--beds .treg-box input[type="checkbox"]{left:10px}
 /* a tap target that is the whole chip, not the 17px box inside it */
@@ -1045,6 +1045,26 @@ form.enq{display:grid;gap:18px;align-content:start}
 .treg-box:focus-within{outline:3px solid #7fc4ff;outline-offset:2px}
 .treg-box--sub{margin-top:14px}
 .treg-foot{margin-top:22px}
+/* areas and property types: a dropdown of tick boxes (Walid, 1 Oct: "much
+   nicer to have them in drop down and include all Manchester areas") */
+.treg-opt-note{font-weight:400;color:rgba(255,255,255,.55)}
+.treg-dd{position:relative;margin:0 0 6px}
+.treg-dd>summary{list-style:none;cursor:pointer;min-height:44px;box-sizing:border-box;padding:11px 42px 11px 12px;border:1px solid rgba(255,255,255,.28);border-radius:10px;background:rgba(255,255,255,.06);color:#fff;font:400 15px/1.4 var(--ff-b,system-ui,sans-serif);position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.treg-dd>summary::-webkit-details-marker{display:none}
+.treg-dd>summary::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);transition:transform .2s}
+.treg-dd[open]>summary{border-color:#7fc4ff}
+.treg-dd[open]>summary::after{transform:rotate(-135deg);margin-top:-2px}
+.treg-dd>summary:focus-visible{outline:3px solid #7fc4ff;outline-offset:2px}
+.treg-dd-panel{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;max-height:330px;overflow:auto;overscroll-behavior:contain;padding:8px;background:#12142b;border:1px solid rgba(255,255,255,.28);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.treg-dd-find{display:block;width:100%;box-sizing:border-box;min-height:42px;margin:0 0 6px;padding:9px 12px;border:1px solid rgba(255,255,255,.28);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font:400 15px/1.4 var(--ff-b,system-ui,sans-serif)}
+.treg-dd-find:focus-visible{outline:3px solid #7fc4ff;outline-offset:1px}
+.treg-dd-h{margin:10px 6px 4px;font:700 11px/1.3 var(--ff-b,system-ui,sans-serif);letter-spacing:.12em;text-transform:uppercase;color:#7fc4ff}
+.treg-dd-h:first-of-type{margin-top:4px}
+.treg-opt{display:flex;align-items:center;gap:10px;min-height:42px;padding:6px 8px;border-radius:8px;color:#fff;font:400 14.5px/1.35 var(--ff-b,system-ui,sans-serif);cursor:pointer}
+.treg-opt:hover{background:rgba(255,255,255,.08)}
+.treg-opt:focus-within{outline:2px solid #7fc4ff;outline-offset:-2px}
+.pd-vform .treg-opt input[type="checkbox"]{flex:none;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:#7fc4ff;cursor:pointer}
+.treg-opt[hidden],.treg-dd-h[hidden]{display:none}
 
 .pd-v360{position:relative;width:100%;aspect-ratio:16/9;min-height:280px;margin:0 0 14px;border-radius:16px;overflow:hidden;background:#060b1a;touch-action:none}
 @media (max-width:700px){.pd-v360{min-height:60vh}}

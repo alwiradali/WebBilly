@@ -325,16 +325,9 @@
 
           <p class="treg-lab" id="tgBedsLab">Bedrooms</p>
           <div class="treg-boxes treg-boxes--beds" role="group" aria-labelledby="tgBedsLab">
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed0" value="1"><span>1</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed1" value="2"><span>2</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed2" value="3"><span>3</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed3" value="4"><span>4</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed4" value="5"><span>5</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed5" value="6"><span>6</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed6" value="7"><span>7</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed7" value="8"><span>8</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed8" value="9"><span>9</span></label>
-          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed9" value="10+"><span>10+</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed0" value="1"><span>1 bedroom</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed1" value="2"><span>2 bedrooms</span></label>
+          <label class="treg-box"><input type="checkbox" name="bedrooms" id="tgBed2" value="3+"><span>3+ bedrooms</span></label>
           </div>
 
           <div class="treg-row">
@@ -391,28 +384,101 @@
           </div>
           <p class="treg-note">Per calendar month.</p>
 
-          <p class="treg-lab" id="tgAreaLab">Areas</p>
-          <div class="treg-boxes" role="group" aria-labelledby="tgAreaLab">
-          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea0" value="Bury"><span>Bury</span></label>
-          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea1" value="Manchester City Centre"><span>Manchester City Centre</span></label>
-          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea2" value="Salford"><span>Salford</span></label>
-          <label class="treg-box"><input type="checkbox" name="areas" id="tgArea3" value="Stockport"><span>Stockport</span></label>
-          </div>
+          <p class="treg-lab" id="tgAreaLab">Areas <span class="treg-opt-note">(tick as many as you like)</span></p>
+          <details class="treg-dd" data-dd data-any="Any area">
+            <summary aria-labelledby="tgAreaLab"><span data-dd-sum>Any area</span></summary>
+            <div class="treg-dd-panel" role="group" aria-labelledby="tgAreaLab">
+              <input type="search" class="treg-dd-find" data-dd-find placeholder="Type to find an area" aria-label="Find an area" autocomplete="off">
+              <p class="treg-dd-h">Manchester</p>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea0" value="Manchester City Centre"><span>Manchester City Centre</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea1" value="Ancoats"><span>Ancoats</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea2" value="Northern Quarter"><span>Northern Quarter</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea3" value="Castlefield"><span>Castlefield</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea4" value="Deansgate"><span>Deansgate</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea5" value="Spinningfields"><span>Spinningfields</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea6" value="Hulme"><span>Hulme</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea7" value="Moss Side"><span>Moss Side</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea8" value="Whalley Range"><span>Whalley Range</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea9" value="Rusholme"><span>Rusholme</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea10" value="Fallowfield"><span>Fallowfield</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea11" value="Withington"><span>Withington</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea12" value="Didsbury"><span>Didsbury</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea13" value="West Didsbury"><span>West Didsbury</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea14" value="Chorlton"><span>Chorlton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea15" value="Levenshulme"><span>Levenshulme</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea16" value="Longsight"><span>Longsight</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea17" value="Ardwick"><span>Ardwick</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea18" value="Gorton"><span>Gorton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea19" value="Openshaw"><span>Openshaw</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea20" value="Clayton"><span>Clayton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea21" value="Beswick"><span>Beswick</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea22" value="Miles Platting"><span>Miles Platting</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea23" value="Newton Heath"><span>Newton Heath</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea24" value="Moston"><span>Moston</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea25" value="Harpurhey"><span>Harpurhey</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea26" value="Blackley"><span>Blackley</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea27" value="Crumpsall"><span>Crumpsall</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea28" value="Cheetham Hill"><span>Cheetham Hill</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea29" value="Burnage"><span>Burnage</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea30" value="Northenden"><span>Northenden</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea31" value="Wythenshawe"><span>Wythenshawe</span></label>
+              <p class="treg-dd-h">Salford</p>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea32" value="Salford"><span>Salford</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea33" value="Salford Quays"><span>Salford Quays</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea34" value="MediaCityUK"><span>MediaCityUK</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea35" value="Ordsall"><span>Ordsall</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea36" value="Pendleton"><span>Pendleton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea37" value="Seedley"><span>Seedley</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea38" value="Weaste"><span>Weaste</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea39" value="Broughton"><span>Broughton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea40" value="Kersal"><span>Kersal</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea41" value="Eccles"><span>Eccles</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea42" value="Swinton"><span>Swinton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea43" value="Pendlebury"><span>Pendlebury</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea44" value="Walkden"><span>Walkden</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea45" value="Worsley"><span>Worsley</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea46" value="Irlam"><span>Irlam</span></label>
+              <p class="treg-dd-h">Trafford</p>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea47" value="Old Trafford"><span>Old Trafford</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea48" value="Stretford"><span>Stretford</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea49" value="Urmston"><span>Urmston</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea50" value="Sale"><span>Sale</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea51" value="Altrincham"><span>Altrincham</span></label>
+              <p class="treg-dd-h">Bury</p>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea52" value="Bury"><span>Bury</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea53" value="Prestwich"><span>Prestwich</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea54" value="Whitefield"><span>Whitefield</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea55" value="Radcliffe"><span>Radcliffe</span></label>
+              <p class="treg-dd-h">Rest of Greater Manchester</p>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea56" value="Stockport"><span>Stockport</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea57" value="Oldham"><span>Oldham</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea58" value="Rochdale"><span>Rochdale</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea59" value="Bolton"><span>Bolton</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea60" value="Wigan"><span>Wigan</span></label>
+              <label class="treg-opt"><input type="checkbox" name="areas" id="tgArea61" value="Tameside"><span>Tameside</span></label>
+            </div>
+          </details>
 
-          <p class="treg-lab" id="tgTypeLab">Property type</p>
-          <div class="treg-boxes" role="group" aria-labelledby="tgTypeLab">
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType0" value="Apartment"><span>Apartment</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType1" value="Bungalow"><span>Bungalow</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType2" value="Cottage"><span>Cottage</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType3" value="Detached House"><span>Detached House</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType4" value="Double Room"><span>Double Room</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType5" value="Flat"><span>Flat</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType6" value="Maisonette"><span>Maisonette</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType7" value="Semi-Detached House"><span>Semi-Detached House</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType8" value="Single Room"><span>Single Room</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType9" value="Studio"><span>Studio</span></label>
-          <label class="treg-box"><input type="checkbox" name="propertyTypes" id="tgType10" value="Terraced House"><span>Terraced House</span></label>
-          </div>
+          <p class="treg-lab" id="tgTypeLab">Property type <span class="treg-opt-note">(tick as many as you like)</span></p>
+          <details class="treg-dd" data-dd data-any="Any type">
+            <summary aria-labelledby="tgTypeLab"><span data-dd-sum>Any type</span></summary>
+            <div class="treg-dd-panel" role="group" aria-labelledby="tgTypeLab">
+              <p class="treg-dd-h">Flats</p>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType0" value="Apartment"><span>Apartment</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType1" value="Flat"><span>Flat</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType2" value="Studio"><span>Studio</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType3" value="Maisonette"><span>Maisonette</span></label>
+              <p class="treg-dd-h">Houses</p>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType4" value="Terraced House"><span>Terraced House</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType5" value="Semi-Detached House"><span>Semi-Detached House</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType6" value="Detached House"><span>Detached House</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType7" value="Bungalow"><span>Bungalow</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType8" value="Cottage"><span>Cottage</span></label>
+              <p class="treg-dd-h">Rooms in a shared house</p>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType9" value="Double Room"><span>Double Room</span></label>
+              <label class="treg-opt"><input type="checkbox" name="propertyTypes" id="tgType10" value="Single Room"><span>Single Room</span></label>
+            </div>
+          </details>
 
           <p class="treg-lab" id="tgFurnLab">Furnishing</p>
           <div class="treg-boxes" role="group" aria-labelledby="tgFurnLab">

@@ -853,6 +853,42 @@ window.mcBeacon = (name, extra) => {
 (() => {
   const f = document.querySelector("[data-register]");
   if (!f) return;
+  /* the area and property-type dropdowns: tick boxes inside a <details>, so
+     the form posts them exactly as before. The closed box says what is
+     ticked; one opens at a time; a click outside or Escape closes it; the
+     area list can be narrowed by typing. */
+  const dds = Array.from(f.querySelectorAll("[data-dd]"));
+  const sumUp = (d) => {
+    const on = Array.from(d.querySelectorAll('input[type="checkbox"]:checked')).map((b) => b.value);
+    d.querySelector("[data-dd-sum]").textContent = !on.length ? d.dataset.any : on.length <= 2 ? on.join(", ") : on.slice(0, 2).join(", ") + " +" + (on.length - 2) + " more";
+  };
+  dds.forEach((d) => {
+    sumUp(d);
+    d.addEventListener("change", () => sumUp(d));
+    d.addEventListener("toggle", () => {
+      if (!d.open) return;
+      dds.forEach((o) => { if (o !== d) o.open = false; });
+      const find = d.querySelector("[data-dd-find]");
+      if (find && window.matchMedia("(pointer: fine)").matches) find.focus();
+    });
+    const find = d.querySelector("[data-dd-find]");
+    if (find) find.addEventListener("input", () => {
+      const q = find.value.trim().toLowerCase();
+      let head = null, any = false;
+      Array.from(d.querySelector(".treg-dd-panel").children).forEach((el) => {
+        if (el.classList.contains("treg-dd-h")) { if (head) head.hidden = !any; head = el; any = false; return; }
+        if (!el.classList.contains("treg-opt")) return;
+        const hit = !q || el.textContent.toLowerCase().includes(q);
+        el.hidden = !hit; if (hit) any = true;
+      });
+      if (head) head.hidden = !any;
+    });
+  });
+  document.addEventListener("click", (e) => { dds.forEach((d) => { if (d.open && !d.contains(e.target)) d.open = false; }); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    dds.forEach((d) => { if (d.open) { d.open = false; d.querySelector("summary").focus(); } });
+  });
   f.addEventListener("submit", async (e) => {
     e.preventDefault();
     const note = f.querySelector(".pd-vnote");
@@ -879,11 +915,13 @@ window.mcBeacon = (name, extra) => {
         ["Current address", addr],
         ["Bedrooms", beds.join(", ")],
         ["Price", price],
-        ["Areas", areas.join(", ")],
         ["Property type", types.join(", ")],
         ["Furnishing", furn.join(", ")],
         ["Notes", val("message")],
-        ["Property alerts", f.elements.alerts && f.elements.alerts.checked ? "yes" : "no"]
+        ["Property alerts", f.elements.alerts && f.elements.alerts.checked ? "yes" : "no"],
+        /* last: with every Manchester area on offer this can run long, and
+           10ninety keeps the first 900 characters of the message */
+        ["Areas", areas.join(", ")]
       ].filter((l) => l[1]).map((l) => l[0] + ": " + l[1]);
 
       const r = await fetch("/api/megacity-contact", {

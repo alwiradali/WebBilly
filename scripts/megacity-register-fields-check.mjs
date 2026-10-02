@@ -16,7 +16,7 @@
  *   node scripts/megacity-register-fields-check.mjs
  */
 import { readFileSync } from "node:fs";
-import { leadBody } from "../worker/studio/tenninety-lead.js";
+import { leadBody, tenninetyAreas, TENNINETY_AREAS } from "../worker/studio/tenninety-lead.js";
 
 let bad = 0;
 const ok = (c, what) => { console.log((c ? "ok   " : "FAIL ") + what); if (!c) bad++; };
@@ -41,13 +41,22 @@ const values = (form, name) => [...form.matchAll(new RegExp('name="' + name + '"
   };
   for (const [theirs, ours] of Object.entries(THEIRS)) ok(have.has(ours), `tenant: ${theirs} -> ${ours}`);
 
-  ok(JSON.stringify(values(f, "areas")) === JSON.stringify(["Bury", "Manchester City Centre", "Salford", "Stockport"]),
-    "tenant: the same four areas, in the same order");
+  /* Walid, 1 Oct 2026: areas and property types in a dropdown, with all
+     Manchester areas. His four 10ninety areas are kept (they reach 10ninety
+     by name, as AreaNames), and the rest of Greater Manchester is added. */
+  const areas = values(f, "areas");
+  ok(["Bury", "Manchester City Centre", "Salford", "Stockport"].every((a) => areas.includes(a)), "tenant: his four 10ninety areas are all still there");
+  ok(areas.length >= 50 && new Set(areas).size === areas.length, `tenant: all Manchester areas, each once (${areas.length})`);
+  ok(["Hulme", "Fallowfield", "Didsbury", "Salford Quays", "Eccles", "Swinton", "Old Trafford", "Stretford", "Whitefield", "Prestwich", "Oldham", "Bolton"].every((a) => areas.includes(a)),
+    "tenant: the areas his properties and tenants are actually in");
+  const dd = (name) => { const i = f.indexOf('name="' + name + '"'); const d = f.lastIndexOf("<details", i); return d >= 0 && f.indexOf("</details>", d) > i && /data-dd/.test(f.slice(d, d + 80)); };
+  ok(dd("areas") && dd("propertyTypes"), "tenant: areas and property types are dropdowns");
+  ok(/data-dd-find/.test(f.slice(f.indexOf('id="tgAreaLab"'))), "tenant: the area list can be narrowed by typing");
   ok(values(f, "propertyTypes").length === 11 && values(f, "propertyTypes").includes("Semi-Detached House"),
     "tenant: all eleven property types");
   ok(JSON.stringify(values(f, "furnishing")) === JSON.stringify(["Fully", "Furnished/unfurnished", "Part", "Unfurnished", "Unfurnished + white appliances"]),
     "tenant: the same five furnishing options, worded as his were");
-  ok(values(f, "bedrooms").join(",") === "1,2,3,4,5,6,7,8,9,10+", "tenant: bedrooms 1 to 10+");
+  ok(values(f, "bedrooms").join(",") === "1,2,3+", "tenant: bedrooms 1, 2 or 3+ (Walid, 1 Oct: no need to go up to 10)");
   const prices = [...f.slice(f.indexOf('name="minPrice"'), f.indexOf("</select>", f.indexOf('name="minPrice"'))).matchAll(/value="(\d+)"/g)].map((m) => +m[1]);
   ok(prices.length === 21 && prices[0] === 100 && prices[20] === 5000, `tenant: the same 21 price steps, £100 to £5,000 (${prices.length})`);
   ok(!have.has("service") && !/Tenant Find|Rent Collection/.test(f),
@@ -82,6 +91,23 @@ const values = (form, name) => [...form.matchAll(new RegExp('name="' + name + '"
   ok(b.ContactRoleType === "Tenant", "a tenant registration becomes a Tenant lead");
   ok(JSON.stringify(b.AreaNames) === JSON.stringify(["Salford", "Bury"]), "with the areas they ticked");
   ok(b.Address && b.Address.Town === "Salford" && b.Address.Postcode === "M6 1AA", "and their current address");
+
+  /* The website offers every Manchester area since 1 Oct; his 10ninety has
+     four. Only those four are sent as AreaNames, the full list goes in the
+     notes, and the notes put it last so 10ninety's 900 characters never cut
+     the tenant's own notes off. */
+  ok(JSON.stringify(tenninetyAreas(["Hulme", "Salford", "Salford Quays", "Stockport"])) === JSON.stringify(["Salford", "Stockport"]),
+    "only areas his 10ninety has are sent as AreaNames");
+  ok(tenninetyAreas(["Hulme", "Didsbury"]) === undefined && tenninetyAreas(undefined) === undefined && tenninetyAreas("Salford") === undefined,
+    "  and none at all when nothing ticked is one of them");
+  const tenantForm = (() => { const h = readFileSync(new URL("../templates/megacity-renting.html", import.meta.url), "utf8"); const i = h.indexOf("data-register"); return h.slice(i, h.indexOf("</form>", i)); })();
+  ok(TENNINETY_AREAS.every((a) => tenantForm.includes('name="areas"') && new RegExp('name="areas"[^>]*value="' + a + '"').test(tenantForm)), "  and each of the four is still a choice on the form");
+  const wk = readFileSync(new URL("../worker.js", import.meta.url), "utf8");
+  ok(/areaNames: tenninetyAreas\(body\.areaNames\)/.test(wk), "  the tenant registration route uses that filter");
+  const sky = readFileSync(new URL("../templates/megacity-skyline.js", import.meta.url), "utf8");
+  const reg = sky.slice(sky.indexOf("const lines = [", sky.indexOf("[data-register]")));
+  const block = reg.slice(0, reg.indexOf("].filter((l)"));
+  ok(/\["Areas", areas\.join\(", "\)\]\s*$/.test(block), "  and every area ticked is written last in the message");
 
   const L = leadBody({ kind: "landlord", firstName: "Walid", surname: "Mhana", email: "x@example.com", phone: "0161" });
   ok(L.ContactRoleType === "Landlord" && L.Firstname === "Walid", "a landlord registration becomes a Landlord lead");

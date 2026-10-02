@@ -56,6 +56,17 @@ export const ROLE_FOR = {
    in the same "property" field, so it is not on this list.) */
 const ABOUT_A_HOME = new Set(["viewing", "application", "tour"]);
 
+/* The areas set up in Megacity's 10ninety: its own registration form offered
+   these four, and the website's form did until 1 Oct 2026, when Walid asked
+   for every Manchester area. Only these go to 10ninety as AreaNames, so it is
+   never sent a name its own form could not have sent; every area the tenant
+   ticked is still in the lead's notes and in the email. */
+export const TENNINETY_AREAS = ["Bury", "Manchester City Centre", "Salford", "Stockport"];
+export const tenninetyAreas = (names) => {
+  const known = (Array.isArray(names) ? names : []).map((a) => String(a)).filter((a) => TENNINETY_AREAS.includes(a));
+  return known.length ? known : undefined;
+};
+
 const clip = (v, n) => (v === null || v === undefined ? undefined : String(v).trim().slice(0, n) || undefined);
 
 /* "Jane Smith" -> first and last. Their API takes either a split name or a

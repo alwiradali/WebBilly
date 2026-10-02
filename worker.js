@@ -25,6 +25,7 @@ const LOGO = "https://www.billydigitals.com/assets/email-logo.png";
 import { handleMegacity, isMegacityPath } from "./worker/studio/router.js";
 import { recordEnquiry, notifyTo, formAllowed, kindFromTopic } from "./worker/studio/enquiries.js";
 import { mailFrom } from "./worker/studio/email.js";
+import { tenninetyAreas } from "./worker/studio/tenninety-lead.js";
 import { label as optionLabel } from "./worker/studio/options.js";
 import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
@@ -1042,7 +1043,7 @@ async function handleMegacityContact(request, env, ctx) {
     topic, leadKind: kindFromTopic(topic), name, email, phone, property: topic, message, attr: body.attr,
     firstName: body.firstName, surname: body.surname,
     address1: body.address1, address2: body.address2, town: body.town, postcode: body.postcode,
-    areaNames: Array.isArray(body.areaNames) ? body.areaNames.slice(0, 10).map((a) => String(a).slice(0, 80)) : undefined,
+    areaNames: tenninetyAreas(body.areaNames),
   });
   if (!env.RESEND_API_KEY) return megacityDown("RESEND_API_KEY is not set on this Worker", 500);
   const res = await fetch("https://api.resend.com/emails", {
