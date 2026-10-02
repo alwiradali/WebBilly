@@ -20,76 +20,82 @@
   ];
   let W, H, dpr, list = [], raf = 0, last = 0, running = true;
 
+  /* Each petal is drawn once into a small sprite; every frame just stamps
+     the sprites, which keeps the animation smooth on phones. */
+  const SPRITES = [];
+  function sprite(c1, c2, isBlossom) {
+    const S = 48, s = 18, k = document.createElement('canvas');
+    k.width = k.height = S;
+    const g2 = k.getContext('2d');
+    g2.translate(S / 2, S / 2);
+    if (isBlossom) {
+      g2.fillStyle = c1;
+      for (let i = 0; i < 5; i++) {
+        g2.save(); g2.rotate(i * 1.2566);
+        g2.beginPath(); g2.ellipse(0, -s * 0.62, s * 0.42, s * 0.62, 0, 0, 6.2832); g2.fill();
+        g2.restore();
+      }
+      g2.fillStyle = c2;
+      g2.beginPath(); g2.arc(0, 0, s * 0.3, 0, 6.2832); g2.fill();
+    } else {
+      const g = g2.createLinearGradient(0, -s, 0, s);
+      g.addColorStop(0, c1); g.addColorStop(1, c2);
+      g2.fillStyle = g;
+      g2.beginPath();
+      g2.moveTo(0, s);
+      g2.bezierCurveTo(-s * 0.95, s * 0.35, -s * 0.8, -s * 0.85, -s * 0.12, -s * 0.95);
+      g2.quadraticCurveTo(0, -s * 0.7, s * 0.12, -s * 0.95);
+      g2.bezierCurveTo(s * 0.8, -s * 0.85, s * 0.95, s * 0.35, 0, s);
+      g2.fill();
+      g2.globalAlpha = 0.5;
+      g2.strokeStyle = 'rgba(255,255,255,.8)'; g2.lineWidth = 0.8;
+      g2.beginPath(); g2.moveTo(0, s * 0.8); g2.quadraticCurveTo(s * 0.1, 0, 0, -s * 0.6); g2.stroke();
+    }
+    return k;
+  }
+  for (const [a, b] of PINKS) SPRITES.push([sprite(a, b, false), sprite(a, b, true)]);
+
   function size() {
-    dpr = Math.min(2, devicePixelRatio || 1);
+    dpr = Math.min(1.5, devicePixelRatio || 1);
     W = innerWidth; H = innerHeight;
     c.width = W * dpr; c.height = H * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const want = W < 640 ? 14 : W < 1100 ? 20 : 26;
+    const want = W < 640 ? 11 : W < 1100 ? 16 : 22;
     while (list.length < want) list.push(make(true));
     list.length = want;
   }
   function make(anywhere) {
-    const [a, b] = PINKS[(Math.random() * PINKS.length) | 0];
     const blossom = Math.random() < 0.18;
     return {
       x: Math.random() * W,
       y: anywhere ? Math.random() * H : -40 - Math.random() * 120,
       s: blossom ? 7 + Math.random() * 6 : 9 + Math.random() * 13,
-      vy: 14 + Math.random() * 20,
-      vx: -6 + Math.random() * 12,
-      sway: 14 + Math.random() * 22,
+      vy: 7 + Math.random() * 9,          // slow, gentle fall
+      vx: -3 + Math.random() * 6,
+      sway: 8 + Math.random() * 12,
       ph: Math.random() * 6.28,
-      tumble: 0.6 + Math.random() * 1.2,
+      tumble: 0.3 + Math.random() * 0.5,
       r: Math.random() * 6.28,
-      vr: -0.5 + Math.random(),
+      vr: -0.25 + Math.random() * 0.5,
       a: 0.55 + Math.random() * 0.4,
-      c1: a, c2: b, blossom
+      img: SPRITES[(Math.random() * SPRITES.length) | 0][blossom ? 1 : 0]
     };
-  }
-  function petal(p) {
-    const s = p.s;
-    const g = ctx.createLinearGradient(0, -s, 0, s);
-    g.addColorStop(0, p.c1); g.addColorStop(1, p.c2);
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.moveTo(0, s);
-    ctx.bezierCurveTo(-s * 0.95, s * 0.35, -s * 0.8, -s * 0.85, -s * 0.12, -s * 0.95);
-    ctx.quadraticCurveTo(0, -s * 0.7, s * 0.12, -s * 0.95);
-    ctx.bezierCurveTo(s * 0.8, -s * 0.85, s * 0.95, s * 0.35, 0, s);
-    ctx.fill();
-    ctx.globalAlpha *= 0.5;
-    ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 0.8;
-    ctx.beginPath(); ctx.moveTo(0, s * 0.8); ctx.quadraticCurveTo(s * 0.1, 0, 0, -s * 0.6); ctx.stroke();
-  }
-  function blossom(p) {
-    const s = p.s;
-    ctx.fillStyle = p.c1;
-    for (let i = 0; i < 5; i++) {
-      ctx.save(); ctx.rotate(i * 1.2566);
-      ctx.beginPath(); ctx.ellipse(0, -s * 0.62, s * 0.42, s * 0.62, 0, 0, 6.2832); ctx.fill();
-      ctx.restore();
-    }
-    ctx.fillStyle = p.c2;
-    ctx.beginPath(); ctx.arc(0, 0, s * 0.3, 0, 6.2832); ctx.fill();
   }
   function tick(now) {
     if (!running) return;
     const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
-    ctx.clearRect(0, 0, W, H);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
     for (const p of list) {
       p.ph += dt * p.tumble;
       p.y += p.vy * dt;
       p.x += (p.vx + Math.sin(p.ph) * p.sway) * dt;
       p.r += p.vr * dt;
       if (p.y > H + 40 || p.x < -60 || p.x > W + 60) Object.assign(p, make(false));
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.r);
-      ctx.scale(1, 0.35 + 0.65 * Math.abs(Math.cos(p.ph)));   // gentle 3D tumble
+      const sc = p.s / 18, cos = Math.cos(p.r), sin = Math.sin(p.r);
+      const sy = sc * (0.35 + 0.65 * Math.abs(Math.cos(p.ph)));   // gentle 3D tumble
+      ctx.setTransform(cos * sc * dpr, sin * sc * dpr, -sin * sy * dpr, cos * sy * dpr, p.x * dpr, p.y * dpr);
       ctx.globalAlpha = p.a;
-      p.blossom ? blossom(p) : petal(p);
-      ctx.restore();
+      ctx.drawImage(p.img, -24, -24);
     }
     raf = requestAnimationFrame(tick);
   }
