@@ -1,0 +1,1199 @@
+/* ============================================================
+   ROSES BY RACHEL
+   FILL IN WHEN RACHEL HAS THEM
+                  land in their inbox
+     RR_GA4     — "G-XXXXXXX" from Google Analytics
+     RR_PIXEL   — the long number from Meta Events Manager
+     RR_PAYLINK — the Stripe payment link
+   Leave any of them empty and the site still works, it just
+   doesn't send / track / take payment.
+   ============================================================ */
+(function () {
+  'use strict';
+  var RR_EMAIL   = 'info@rosesbyrachel.co.uk';
+  var RR_GA4     = '';
+  var RR_PIXEL   = '';
+  var RR_PAYLINK = '';
+
+  var $  = function (id) { return document.getElementById(id); };
+  var money = function (p) { return '£' + (p % 1 ? p.toFixed(2) : p); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* One script serves nine pages, so nothing may assume an element is here.
+     `on` binds only when the element exists; every block that belongs to a
+     single page checks for its own anchor first. */
+  function on(id, ev, fn) { var el = $(id); if (el) el.addEventListener(ev, fn); }
+
+  if ($('yr')) $('yr').textContent = new Date().getFullYear();
+
+  /* ---------------- petals + gold bokeh ---------------- */
+  (function petals() {
+    var c = $('petals'); if (!c) return;
+    var x = c.getContext('2d'), W, H, bits = [], raf, last = 0;
+    /* Real petals are not one flat colour: nearly translucent at the edge,
+       holding more colour where they met the flower. Each pair is
+       [edge, heart]. */
+    var PINKS = [
+      ['#FDEDE8', '#EFB3AC'], ['#FBE2DB', '#E79E99'], ['#FDF2EE', '#F2C0B8'],
+      ['#F8DDD6', '#DE8F8C'], ['#FFF6F3', '#E9AFA8']
+    ];
+    function size() {
+      W = c.width = innerWidth; H = c.height = innerHeight;
+      var n = Math.round(Math.min(64, W / 26));
+      bits = [];
+      for (var i = 0; i < n; i++) bits.push(make(true));
+      for (var j = 0; j < Math.round(n * 0.55); j++) bits.push(spark());
+    }
+    function make(any) {
+      var s = 9 + Math.random() * 26;
+      return { t: 'p', x: Math.random() * W, y: any ? Math.random() * H : -40,
+        s: s, sp: 0.22 + Math.random() * 0.55, dr: (Math.random() - 0.5) * 0.5,
+        a: Math.random() * Math.PI * 2, va: (Math.random() - 0.5) * 0.016,
+        o: 0.26 + Math.random() * 0.42,
+        /* Depth of field: the ones nearest the camera are the blurred ones. */
+        blur: Math.random() < 0.42 ? 1.5 + Math.random() * 3.5 : 0,
+        /* The turn. A falling petal twists, showing its face and then its
+           edge, which is most of what separates a real one from a pink blob. */
+        fl: Math.random() * Math.PI * 2, vf: 0.012 + Math.random() * 0.028,
+        cup: 0.62 + Math.random() * 0.5,
+        col: PINKS[(Math.random() * PINKS.length) | 0] };
+    }
+    function spark() {
+      return { t: 's', x: Math.random() * W, y: Math.random() * H,
+        r: 0.8 + Math.random() * 2.4, sp: 0.05 + Math.random() * 0.18,
+        ph: Math.random() * Math.PI * 2, vp: 0.012 + Math.random() * 0.03 };
+    }
+    function petal(b) {
+      /* Squashing the width as the flutter phase turns is what reads as a
+         petal rolling over in the air. It never reaches zero, so it thins to
+         an edge rather than disappearing. */
+      var turn = 0.18 + 0.82 * Math.abs(Math.cos(b.fl));
+      var s = b.s;
+      x.save();
+      x.translate(b.x, b.y);
+      x.rotate(b.a);
+      x.scale(turn, 1);
+      x.globalAlpha = b.o;
+      if (b.blur) x.filter = 'blur(' + b.blur + 'px)';
+
+      var g = x.createLinearGradient(0, -s * 0.5, 0, s * 0.52);
+      g.addColorStop(0, b.col[0]);
+      g.addColorStop(0.55, b.col[1]);
+      g.addColorStop(1, b.col[0]);
+      x.fillStyle = g;
+
+      /* Asymmetric, because a rose petal is: one shoulder fuller than the
+         other, and a notch where it met the stem. */
+      x.beginPath();
+      x.moveTo(0, -s * 0.5);
+      x.bezierCurveTo(s * 0.66 * b.cup, -s * 0.36, s * 0.52, s * 0.40, s * 0.05, s * 0.52);
+      x.bezierCurveTo(-s * 0.46, s * 0.44, -s * 0.60 * b.cup, -s * 0.30, 0, -s * 0.5);
+      x.fill();
+
+      /* The fold down the middle, which catches the light on a real one. */
+      if (!b.blur && turn > 0.45) {
+        x.globalAlpha = b.o * 0.42;
+        x.strokeStyle = b.col[0];
+        x.lineWidth = Math.max(0.6, s * 0.045);
+        x.beginPath();
+        x.moveTo(0, -s * 0.42);
+        x.quadraticCurveTo(s * 0.06, 0, s * 0.02, s * 0.44);
+        x.stroke();
+      }
+      x.restore();
+    }
+    function draw(ts) {
+      raf = requestAnimationFrame(draw);
+      if (ts - last < 33) return; last = ts;              /* 30fps is plenty */
+      x.clearRect(0, 0, W, H);
+      for (var i = 0; i < bits.length; i++) {
+        var b = bits[i];
+        if (b.t === 'p') {
+          b.y += b.sp; b.x += b.dr + Math.sin(b.y / 90) * 0.35; b.a += b.va;
+          b.fl += b.vf;
+          if (b.y > H + 50) { bits[i] = make(false); continue; }
+          petal(b);
+        } else {
+          b.y -= b.sp; b.ph += b.vp;
+          if (b.y < -8) { b.y = H + 8; b.x = Math.random() * W; }
+          var tw = 0.28 + Math.abs(Math.sin(b.ph)) * 0.62;
+          x.save(); x.globalAlpha = tw; x.fillStyle = '#D8B45C'; x.filter = 'blur(.6px)';
+          x.beginPath(); x.arc(b.x, b.y, b.r, 0, 7); x.fill(); x.restore();
+        }
+      }
+    }
+    size(); addEventListener('resize', size, { passive: true });
+    if (reduce) {
+      x.clearRect(0, 0, W, H);
+      bits.forEach(function (b) { if (b.t === 'p') petal(b); });
+    } else {
+      raf = requestAnimationFrame(draw);
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else raf = requestAnimationFrame(draw);
+      });
+    }
+  })();
+
+  /* ---------------- nav ---------------- */
+  var nav = $('nav');
+  addEventListener('scroll', function () { nav.classList.toggle('stuck', scrollY > 30); }, { passive: true });
+  var drawer = $('drawer');
+  $('burger').addEventListener('click', function () { drawer.classList.add('on'); });
+  $('drawerx').addEventListener('click', function () { drawer.classList.remove('on'); });
+  drawer.addEventListener('click', function (e) {
+    if (e.target === drawer || e.target.tagName === 'A') drawer.classList.remove('on');
+  });
+
+  function toast(t) {
+    var el = $('toast'); el.textContent = t; el.classList.add('on');
+    clearTimeout(el._t); el._t = setTimeout(function () { el.classList.remove('on'); }, 2600);
+  }
+
+  /* ---------------- consent, then analytics ---------------- */
+  function loadAnalytics() {
+    if (RR_GA4) {
+      var g = document.createElement('script'); g.async = true;
+      g.src = 'https://www.googletagmanager.com/gtag/js?id=' + RR_GA4;
+      document.head.appendChild(g);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date()); gtag('config', RR_GA4);
+    }
+    if (RR_PIXEL) {
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+        t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', RR_PIXEL); fbq('track', 'PageView');
+    }
+  }
+  function track(n, d) { if (window.gtag) gtag('event', n, d || {}); if (window.fbq) fbq('trackCustom', n, d || {}); }
+  var bar = $('cbar'), choice = null;
+  try { choice = localStorage.getItem('rr-consent'); } catch (e) {}
+  if (choice === 'yes') loadAnalytics();
+  else if (choice !== 'no') setTimeout(function () { bar.classList.add('on'); }, 1500);
+  function decide(v) {
+    try { localStorage.setItem('rr-consent', v); } catch (e) {}
+    bar.classList.remove('on'); if (v === 'yes') loadAnalytics();
+  }
+  $('cok').addEventListener('click', function () { decide('yes'); });
+  $('cno').addEventListener('click', function () { decide('no'); });
+
+  /* ---------------- the collection ---------------- */
+  var PRODUCTS = [
+    { n: "Rose & Astilbe",    p: 45, img: 'work/roses-astilbe',   cat: ['roses','bouquets'],
+      alt: 'Pink and ivory roses with blush astilbe in a rose pink wrap',
+      d: 'Pink and ivory roses lifted with feathery blush astilbe, wrapped in rose pink and stood in a gift box.' },
+    { n: "Coral Roses",       p: 62, img: 'work/orange-roses',    cat: ['roses','bouquets'],
+      alt: 'Coral roses with blush astilbe in an ivory wrap',
+      d: 'A dozen coral roses with blush astilbe either side, wrapped in ivory. Bright without shouting.' },
+    { n: "Vintage Hand-Tied", p: 58, img: 'work/hand-tied-hydrangea', cat: ['wedding','bouquets'],
+      alt: 'A hand-tied bouquet of antique hydrangea, roses, gerbera and spider chrysanthemum',
+      d: 'Antique hydrangea, dusky roses, gerbera and spider chrysanthemum, tied by hand. Soft, vintage tones for a bride or a table.' },
+    { n: "Garden Hand-Tied",  p: 52, img: 'work/hand-tied-table', cat: ['wedding','bouquets'],
+      alt: 'A loose hand-tied bouquet in kraft paper on a dining table',
+      d: 'A loose, natural hand-tie of hydrangea, astrantia, gerbera and a single white rose, wrapped in kraft paper.' },
+    { n: "Pink Lilies",       p: 68, img: 'work/pink-lilies',     cat: ['bouquets','gifts'],
+      alt: 'Pink oriental lilies wrapped in rose pink in a gift box',
+      d: 'Oriental lilies in deep pink, some open and some still to come, so the bouquet keeps opening for days.' },
+    { n: "Rachel's Choice",   p: 74, img: 'work/roses-dahlias',   cat: ['gifts','bouquets'],
+      alt: 'Blush roses with pink dahlias and chamomile in a blush wrap',
+      d: 'The best of whatever came in that morning, arranged the way I would want it myself.' },
+    { n: "White & Wine",      p: 45, img: 'work/white-chrysanthemums', cat: ['bouquets','gifts'],
+      alt: 'White chrysanthemums with solidago and a single wine bloom',
+      d: 'Big white chrysanthemums with bright solidago and one deep wine bloom in the middle. Fresh, clean and cheerful.' },
+    { n: "Blush & Chamomile", p: 49, img: 'own-blush', cat: ['roses','bouquets'],
+      alt: 'Pink roses with chamomile daisies in a blush and cream wrap',
+      d: 'Pink roses set against chamomile daisies, wrapped in blush and cream and stood in a gift bag so it can be carried and handed over without a vase.' },
+    { n: "Classic Cream",    p: 55, img: 'own-classic', cat: ['roses','gifts'],
+      alt: 'Pink and ivory roses banked with gypsophila in an ivory wrap',
+      d: 'Pink and ivory roses banked in gypsophila, finished in ivory and tied with a lace bow. The one people order when they are not sure and want to be certain.' },
+    { n: "Twelve Ivory Roses", p: 58, img: 'own-ivory', cat: ['roses','wedding'],
+      alt: 'Twelve long-stem ivory roses laid on fresh salal',
+      d: 'Twelve long-stem ivory roses laid on fresh salal and boxed flat. Quiet and formal, and right when a dozen red would say too much.' },
+    { n: "Sorbet",          p: 47, img: 'own-sorbet', cat: ['bouquets','gifts'],
+      alt: 'Peach and mango roses with gypsophila and solidago in a gift bag',
+      d: 'Peach and mango roses with gypsophila and solidago. It goes with almost any room, which is why it travels well as a thank you.' },
+    { n: "The Statement",   p: 95, img: 'own-statement', cat: ['gifts','bouquets'],
+      alt: 'Deep pink hydrangea heads with gypsophila in a grey and blush wrap',
+      d: 'Three deep pink hydrangea heads with gypsophila behind them. Large, and meant to be: this is the one that gets photographed.' },
+    { n: "Sunshine",        p: 42, img: 'own-sunshine', cat: ['gifts','bouquets'],
+      alt: 'Sunflowers, alstroemeria and yellow chrysanthemum in a box',
+      d: 'Sunflowers, white alstroemeria and yellow chrysanthemum, boxed so it stands up on a table the moment it arrives. Hard to be miserable near.' }
+  ];
+  /* A product that came from Stripe carries its own photograph on Stripe's
+     servers. One that shipped with the site is a file in assets/rachel. Every
+     place that draws a product goes through these two, so neither has to know
+     which kind it is holding. */
+  function imgSmall(p) {
+    return p.imgUrl || ('../assets/rachel/' + p.img + '-sm.webp');
+  }
+  function imgBig(p) {
+    return p.imgUrl || ('../assets/rachel/' + (p.big || p.img) + '.webp');
+  }
+
+  var SHARE_ICON ='<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.1c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8c-.5-.5-1.2-.8-2-.8-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
+  var cardsEl = $('cards');
+  function renderCards(cat) {
+    if (!cardsEl) return;
+    cardsEl.innerHTML = '';
+    var only = +(cardsEl.getAttribute('data-max') || 0), shown = 0;
+    PRODUCTS.forEach(function (pr) {
+      if (cat !== 'all' && pr.cat.indexOf(cat) === -1) return;
+      if (only && ++shown > only) return;
+      var a = document.createElement('article');
+      a.className = 'card';
+      a.innerHTML =
+        '<div class="ph" data-open="' + pr.n + '" role="button" tabindex="0" aria-label="View ' + pr.n + '">' +
+        '<img src="' + imgSmall(pr) + '" alt="' + pr.alt + '" loading="lazy" width="451" height="563">' +
+        '<button class="shbtn" type="button" data-share="' + pr.n + '" aria-label="Share ' + pr.n + '">' + SHARE_ICON + '</button>' +
+        '<button class="add" type="button" data-add="' + pr.n + '">Add to basket</button></div>' +
+        '<div class="bd"><h3 data-open="' + pr.n + '">' + pr.n + '</h3><p class="pr">' + money(pr.p) + '</p></div>';
+      cardsEl.appendChild(a);
+    });
+  }
+  if (cardsEl) {
+    renderCards(cardsEl.getAttribute('data-only') || 'all');
+    [].forEach.call(document.querySelectorAll('.filters button'), function (b) {
+      b.addEventListener('click', function () {
+        [].forEach.call(document.querySelectorAll('.filters button'), function (o) {
+          o.setAttribute('aria-pressed', String(o === b));
+        });
+        renderCards(b.getAttribute('data-cat'));
+        track('filter_collection', { category: b.getAttribute('data-cat') });
+      });
+    });
+  }
+
+  /* ---------------- the collection, live from Stripe ----------------
+
+     Rachel keeps the shop in Stripe: adds a bouquet, changes a price, takes
+     one off sale. The page draws its own list first so there is never a blank
+     grid, then asks the Worker what Stripe currently holds and redraws if the
+     answer is different. If Stripe is unreachable, or the key has not been
+     set, nothing happens and the built-in collection stands.
+
+     PRODUCTS is replaced in place rather than reassigned, because the cart,
+     the product window and the checkout all close over this same array. */
+  function currentCat() {
+    var b = document.querySelector('.filters button[aria-pressed="true"]');
+    return (b && b.getAttribute('data-cat')) ||
+      (cardsEl && cardsEl.getAttribute('data-only')) || 'all';
+  }
+
+  function adoptCatalogue(list) {
+    if (!list || !list.length) return false;
+    PRODUCTS.length = 0;
+    list.forEach(function (p) { PRODUCTS.push(p); });
+
+    /* A bouquet somebody added to their cart last week may have come off sale
+       since. Leaving the line in shows a row with no price and a total that
+       does not add up, so it goes. */
+    var before = cart.length;
+    cart = cart.filter(function (l) { return !!findProduct(l.n); });
+    if (cart.length !== before) { saveCart(); paintCount(); }
+    return true;
+  }
+
+  /* The subscription plans come from the same catalogue: a Stripe product with
+     a recurring price. What each plan actually includes is its Stripe
+     description, so Rachel writes it once, in the place she is already
+     working, and it appears here. */
+  var plansEl = document.querySelector('.plans');
+  function renderPlans(plans) {
+    if (!plansEl || !plans || !plans.length) return;
+    var ROSE = plansEl.querySelector('.rosemark');
+    var RULE = plansEl.querySelector('.prule');
+    if (!ROSE || !RULE) return;
+    var rose = ROSE.outerHTML, rule = RULE.outerHTML;
+    var per = { month: 'per month', year: 'per year', week: 'per week' };
+
+    plansEl.innerHTML = plans.map(function (pl, i) {
+      var featured = /popular|best|favourite/i.test(pl.badge || '') ||
+        (plans.length === 3 && i === 1 && !plans.some(function (o) { return o.badge; }));
+      var label = 'Subscription: ' + pl.n + ', ' + money(pl.p) + ' a ' + pl.interval;
+      /* No data-fx here on purpose. The reveal observer takes its list of
+         elements once, at load; anything built afterwards is never seen by it
+         and would sit at opacity 0 for ever. These arrive already visible. */
+      return '<article class="plan' + (featured ? ' featured' : '') + '">' +
+        (pl.badge ? '<span class="tag">' + esc(pl.badge) + '</span>' : '') +
+        rose +
+        '<h3>' + esc(pl.n) + '</h3>' +
+        rule +
+        (pl.d ? '<p class="pdesc">' + esc(pl.d) + '</p>' : '') +
+        '<p class="amt">' + money(pl.p) + '</p>' +
+        '<p class="per">' + (per[pl.interval] || ('per ' + pl.interval)) + '</p>' +
+        '<button class="btn' + (featured ? ' burg' : '') + '" type="button" data-order="' +
+          esc(label) + '">Subscribe</button>' +
+      '</article>';
+    }).join('');
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  if (cardsEl || plansEl) {
+    fetch('/api/rbr/catalogue', { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || d.source !== 'stripe') return;
+        if (adoptCatalogue(d.products) && cardsEl) renderCards(currentCat());
+        renderPlans(d.plans);
+        /* A link shared for a bouquet that only exists in Stripe could not be
+           matched a moment ago, because the built-in list was all we had. */
+        openShared();
+      })
+      .catch(function () { /* the built-in collection is already on screen */ });
+  }
+
+  /* ---------------- share ---------------- */
+  var sheet = $('sharesheet'), shWhat = '';
+  /* Writing the link and reading it back have to agree exactly, so both go
+     through here. "Rachel's Choice" becomes "rachel-s-choice" either way. */
+  function slug(name) {
+    return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+  function shareUrl() {
+    return location.origin + location.pathname + '?f=' + slug(shWhat);
+  }
+  function openShare(what) {
+    shWhat = what; $('shtitle').textContent = what;
+    var url = shareUrl(), msg = what + ' from Roses by Rachel, Manchester florist. ' + url;
+    $('sh-wa').href   = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    $('sh-fb').href   = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    $('sh-x').href    = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(what + ' from Roses by Rachel') + '&url=' + encodeURIComponent(url);
+    $('sh-mail').href = 'mailto:?subject=' + encodeURIComponent(what + ' from Roses by Rachel') + '&body=' + encodeURIComponent(msg);
+    $('sh-sms').href  = 'sms:?&body=' + encodeURIComponent(msg);
+    $('sh-native').style.display = navigator.share ? '' : 'none';
+    sheet.classList.add('on'); track('share_open', { item: what });
+  }
+  function closeShare() { sheet.classList.remove('on'); }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-share]');
+    if (b) { e.preventDefault(); openShare(b.getAttribute('data-share').replace(/&amp;/g, '&')); }
+  });
+  $('shx').addEventListener('click', closeShare);
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) closeShare(); });
+  addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeShare(); drawer.classList.remove('on'); }
+  });
+  function copyText(t, after) {
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { toast(after); });
+    else { var a = document.createElement('textarea'); a.value = t; document.body.appendChild(a);
+           a.select(); document.execCommand('copy'); a.remove(); toast(after); }
+  }
+  $('sh-copy').addEventListener('click', function () { copyText(shareUrl(), 'Link copied'); closeShare(); });
+  $('sh-ig').addEventListener('click', function () {
+    /* Instagram has no web share target, so the link goes to the clipboard */
+    copyText(shareUrl(), 'Link copied. Paste it into your Instagram story or DM'); closeShare();
+  });
+  $('sh-native').addEventListener('click', function () {
+    if (navigator.share) navigator.share({ title: 'Roses by Rachel', text: shWhat, url: shareUrl() }).catch(function () {});
+    closeShare();
+  });
+
+  /* ---------------- build your own ---------------- */
+  var ROSE = '<path d="M25 5c8 0 14 6 14 13s-6 15-14 21C17 33 11 25 11 18S17 5 25 5z" fill="{a}"/><path d="M25 11c4 0 7 3 7 7s-3 8-7 11c-4-3-7-7-7-11s3-7 7-7z" fill="{b}"/><circle cx="25" cy="18" r="3" fill="{c}"/>';
+  var DAISY = '<g fill="{a}"><ellipse cx="25" cy="8" rx="4" ry="8"/><ellipse cx="25" cy="32" rx="4" ry="8"/><ellipse cx="13" cy="20" rx="8" ry="4"/><ellipse cx="37" cy="20" rx="8" ry="4"/><ellipse cx="16" cy="11" rx="7" ry="3.4" transform="rotate(-45 16 11)"/><ellipse cx="34" cy="29" rx="7" ry="3.4" transform="rotate(-45 34 29)"/><ellipse cx="34" cy="11" rx="7" ry="3.4" transform="rotate(45 34 11)"/><ellipse cx="16" cy="29" rx="7" ry="3.4" transform="rotate(45 16 29)"/></g><circle cx="25" cy="20" r="6" fill="{c}"/>';
+  var TULIP = '<path d="M13 13c0-3 3-6 12-6s12 3 12 6c0 10-5 20-12 20S13 23 13 13z" fill="{a}"/><path d="M19 8c0 9 2 16 6 22 4-6 6-13 6-22-2 4-4 6-6 6s-4-2-6-6z" fill="{b}"/>';
+  var CLUSTER = '<g fill="{a}"><circle cx="17" cy="13" r="7"/><circle cx="33" cy="13" r="7"/><circle cx="25" cy="23" r="8"/><circle cx="13" cy="26" r="6"/><circle cx="37" cy="26" r="6"/><circle cx="25" cy="9" r="6"/></g><g fill="{c}"><circle cx="17" cy="13" r="2.2"/><circle cx="33" cy="13" r="2.2"/><circle cx="25" cy="23" r="2.4"/></g>';
+  var SUNNY = '<g fill="{a}">' + (function () { var o = '';
+    for (var i = 0; i < 12; i++) o += '<ellipse cx="25" cy="6" rx="3.3" ry="7.6" transform="rotate(' + i * 30 + ' 25 20)"/>';
+    return o; })() + '</g><circle cx="25" cy="20" r="7.6" fill="{c}"/>';
+  var LEAF = '<path d="M25 4c10 6 14 13 14 20 0 8-6 13-14 13S11 32 11 24c0-7 4-14 14-20z" fill="{a}" opacity=".88"/><path d="M25 6v30" stroke="{c}" stroke-width="1.5" fill="none"/><path d="M25 13l7 4M25 20l8 4M25 27l7 4M25 13l-7 4M25 20l-8 4M25 27l-7 4" stroke="{c}" stroke-width="1.1" fill="none" opacity=".7"/>';
+
+  var STEMS = [
+    { n: 'Roses',             u: 'stem',  p: 3.50, s: ROSE,    a: '#E0899F', b: '#CE6B85', c: '#A94766' },
+    { n: 'Peonies',           u: 'stem',  p: 6.00, s: ROSE,    a: '#F3C3CD', b: '#E8A7B7', c: '#D77B93' },
+    { n: 'Ranunculus',        u: 'stem',  p: 4.20, s: ROSE,    a: '#F2C9A8', b: '#E5AB7F', c: '#C98A5C' },
+    { n: 'Lisianthus',        u: 'stem',  p: 3.20, s: ROSE,    a: '#F7F0E4', b: '#EADFC7', c: '#C0982A' },
+    { n: 'Hydrangea',         u: 'head',  p: 7.50, s: CLUSTER, a: '#E3B4CC', b: '#D194B3', c: '#B06F95' },
+    { n: 'Gypsophila',        u: 'bunch', p: 5.00, s: CLUSTER, a: '#FCF8F2', b: '#F0E8D8', c: '#DCCDAF' },
+    { n: 'Tulips',            u: 'stem',  p: 2.60, s: TULIP,   a: '#EAA0B4', b: '#D97D97', c: '#B95A76' },
+    { n: 'Sunflowers',        u: 'stem',  p: 3.60, s: SUNNY,   a: '#EEC457', b: '#DCAE3C', c: '#8A6A3C' },
+    { n: 'Chamomile daisies', u: 'bunch', p: 3.00, s: DAISY,   a: '#FDFAF3', b: '#F0E8D8', c: '#EEC457' },
+    { n: 'Alstroemeria',      u: 'stem',  p: 2.80, s: DAISY,   a: '#F6C9B0', b: '#EAB094', c: '#D98D68' },
+    { n: 'Dahlias',           u: 'stem',  p: 4.60, s: SUNNY,   a: '#C96B8B', b: '#B4577A', c: '#8E3B5C' },
+    { n: 'Eucalyptus',        u: 'sprig', p: 2.40, s: LEAF,    a: '#9FB193', b: '#8AA07D', c: '#6D8262' }
+  ];
+  var picked = {};
+  var stemsEl = $('stems');
+  if (stemsEl) STEMS.forEach(function (f, i) {
+    var d = document.createElement('div');
+    d.className = 'stem'; d.setAttribute('data-i', i);
+    d.innerHTML = '<b>' + f.n + '</b><em>' + money(f.p) + ' per ' + f.u + '</em>' +
+      '<div class="qty"><button type="button" data-d="-1" aria-label="One fewer ' + f.n + '">&minus;</button>' +
+      '<i data-q>0</i><button type="button" data-d="1" aria-label="One more ' + f.n + '">+</button></div>';
+    stemsEl.appendChild(d);
+  });
+  if (stemsEl) stemsEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-d]'), card = e.target.closest('.stem');
+    if (!card) return;
+    var i = +card.getAttribute('data-i'), step = btn ? +btn.getAttribute('data-d') : 1;
+    picked[i] = Math.max(0, Math.min(40, (picked[i] || 0) + step));
+    card.querySelector('[data-q]').textContent = picked[i];
+    card.classList.toggle('picked', picked[i] > 0);
+    redraw();
+  });
+  function finish() {
+    var r = document.querySelector('input[name="bfin"]:checked');
+    return r ? { label: r.value, add: +r.getAttribute('data-add') } : { label: 'Hand-tied', add: 0 };
+  }
+  function redraw() {
+    if (!$('blines')) return 0;
+    var html = '', total = 0, any = false;
+    STEMS.forEach(function (f, i) {
+      var q = picked[i] || 0; if (!q) return;
+      any = true; var line = q * f.p; total += line;
+      html += '<div><span>' + f.n + ' <b>&times;' + q + '</b></span><b>' + money(+line.toFixed(2)) + '</b></div>';
+    });
+    var fin = finish();
+    if (any && fin.add) { total += fin.add; html += '<div><span>' + fin.label + '</span><b>' + money(fin.add) + '</b></div>'; }
+    $('blines').innerHTML = any ? html : '<div class="empty">Nothing picked yet. Start with a rose.</div>';
+    $('btot').textContent = money(+total.toFixed(2));
+    return total;
+  }
+  [].forEach.call(document.querySelectorAll('input[name="bfin"]'), function (r) {
+    r.addEventListener('change', redraw);
+  });
+  on('bsend', 'click', function () {
+    var parts = [], total = 0, fin = finish();
+    STEMS.forEach(function (f, i) { var q = picked[i] || 0; if (q) { parts.push(q + ' × ' + f.n); total += q * f.p; } });
+    if (!parts.length) { toast('Pick a few stems first'); return; }
+    total += fin.add;
+    if (total < 25) { toast('Bouquets start at £25. Add a few more stems'); return; }
+    track('build_bouquet', { value: +total.toFixed(2), items: parts.length });
+    goOrder('My own bouquet (built above)',
+      'My own bouquet: ' + parts.join(', ') + ', ' + fin.label + ' (about ' + money(+total.toFixed(2)) + ')');
+  });
+
+  /* ---------------- notice and delivery area ----------------
+     Three days' notice for every order, and delivery inside Manchester only:
+     postcodes whose district starts with M (M1 to M99, the airport is M90).
+     Anywhere else can still order, by collecting. */
+  window.rrMinDate = function () {
+    var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + 3);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  };
+  /* Delivery is priced from her collection point in M22: the first 2 miles
+     free, then £1 for each mile after that. postcodes.io turns postcodes
+     into map points (free, no key); straight-line distance × 1.25 is
+     close to driving miles. If the lookup fails the fee is confirmed with
+     the order instead, and nothing is charged. */
+  var RR_FROM = 'M22', RR_FREE_MILES = 2, RR_PER_MILE = 1, RR_ROAD = 1.25, geoCache = {};
+  function rrGeo(pc) {
+    var k = String(pc).toUpperCase().replace(/\s+/g, '');
+    if (geoCache[k]) return Promise.resolve(geoCache[k]);
+    var full = /\d[A-Z]{2}$/.test(k) && k.length > 4;
+    return fetch('https://api.postcodes.io/' + (full ? 'postcodes/' : 'outcodes/') + encodeURIComponent(k))
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { if (!j.result) throw 0; return (geoCache[k] = { lat: j.result.latitude, lon: j.result.longitude }); });
+  }
+  window.rrDeliveryQuote = function (pc) {
+    return Promise.all([rrGeo(RR_FROM), rrGeo(pc)]).then(function (g) {
+      var a = g[0], b = g[1], R = 3958.8, rad = function (x) { return x * Math.PI / 180; };
+      var dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+      var h = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.pow(Math.sin(dLon / 2), 2);
+      var miles = Math.round(2 * R * Math.asin(Math.sqrt(h)) * RR_ROAD * 10) / 10;
+      return { miles: miles, fee: Math.max(0, Math.ceil(miles) - RR_FREE_MILES) * RR_PER_MILE };
+    }).catch(function () { return null; });
+  };
+  window.rrInArea = function (pc) { return /^M\d/i.test(String(pc || '').trim()); };
+  [].forEach.call(document.querySelectorAll('input[type=date][data-notice]'), function (d) {
+    d.min = rrMinDate();
+    if (!d.value) d.value = d.min;
+    d.addEventListener('change', function () { if (d.value && d.value < d.min) d.value = d.min; });
+  });
+
+  /* ---------------- the order form ---------------- */
+  function val(id) { return ($(id).value || '').trim(); }
+  function fulfil() {
+    var r = document.querySelector('input[name="fulfil"]:checked');
+    return r ? r.value : 'Delivery';
+  }
+  /* The form is on one page now. A button pressed anywhere else carries what
+     it was asked for across in the session, so the reader arrives at the form
+     with it already filled in rather than having to say it twice. */
+  function goOrder(label, notes) {
+    try {
+      sessionStorage.setItem('rr-prefill', JSON.stringify({ label: label || '', notes: notes || '' }));
+    } catch (e) {}
+    location.href = 'contact.html';
+  }
+  /* A button that says "Plan the surprise" is not the name of an option in
+     the list, so the words it was pressed for decide which one it picks. */
+  var ROUTE = [
+    [/airport|arrival/i,             'Airport arrivals bouquet'],
+    [/corporate|contract|reception/i,'Corporate or contract flowers'],
+    [/subscription|monthly|six weeks|birthday list|pre-book/i, 'A flower subscription'],
+    [/wedding/i,                     'A wedding, please quote the whole day'],
+    [/sympathy|funeral/i,            'Sympathy flowers']
+  ];
+  function applyOrder(label, notes) {
+    if (!$('oform')) return;
+    if (label) {
+      var sel = $('fStyle'), hit = false;
+      [].forEach.call(sel.options, function (o) { if (o.text === label) { sel.value = o.value; hit = true; } });
+      if (!hit) {
+        for (var r = 0; r < ROUTE.length && !hit; r++) {
+          if (!ROUTE[r][0].test(label)) continue;
+          [].forEach.call(sel.options, function (o) {
+            if (o.text === ROUTE[r][1]) { sel.value = o.value; hit = true; }
+          });
+        }
+        notes = (notes ? notes + '\n' : '') + label;
+      }
+    }
+    if (notes && $('fNotes').value.indexOf(notes) === -1) {
+      $('fNotes').value = ($('fNotes').value ? $('fNotes').value + '\n' : '') + notes;
+    }
+    compose();
+  }
+  function nice(d) {
+    if (!d) return '';
+    var p = d.split('-'); if (p.length !== 3) return d;
+    var M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return (+p[2]) + ' ' + M[(+p[1]) - 1] + ' ' + p[0];
+  }
+  function compose() {
+    if (!$('oform')) return '';
+    var f = fulfil(), L = [];
+    L.push('Hello Rachel, I would love to order.');
+    L.push('');
+    L.push('Bouquet: ' + $('fStyle').value);
+    L.push('Presented: ' + $('fPres').value);
+    if (val('fOcc')) L.push('Occasion: ' + val('fOcc'));
+    L.push(f === 'Delivery'
+      ? 'Delivery' + (val('fAddr') || val('fPostcode') ? ' to ' + [val('fAddr'), val('fPostcode')].filter(Boolean).join(', ') : '')
+      : 'I will collect');
+    if (val('fDate')) L.push('Date: ' + nice(val('fDate')) + (val('fTime') && val('fTime') !== 'Any time' ? ', ' + val('fTime').toLowerCase() : ''));
+    if (val('fBudget')) L.push('Budget: ' + val('fBudget'));
+    if (val('fColours')) L.push('Colours: ' + val('fColours'));
+    if (val('fFor')) L.push('For: ' + val('fFor'));
+    if (val('fCard')) L.push('Card: ' + val('fCard'));
+    if (val('fNotes')) L.push('Notes: ' + val('fNotes'));
+    L.push('');
+    L.push((val('fName') || 'Thank you') + [val('fEmail'), val('fPhone')].filter(Boolean).map(function (x) { return ', ' + x; }).join(''));
+    var txt = L.join('\n');
+    $('msgOut').textContent = txt;
+    return txt;
+  }
+  /* Occasion is a list now; a button elsewhere may name one in its own
+     words ("Birthday flowers"), so match on the first word and add it if
+     nothing fits rather than drop it. */
+  function setOcc(what) {
+    var sel = $('fOcc'); if (!sel || !what) return;
+    if (sel.tagName !== 'SELECT') { sel.value = what; return; }
+    var w = what.toLowerCase(), hit = '';
+    [].forEach.call(sel.options, function (o) {
+      if (!hit && o.value && w.indexOf(o.text.toLowerCase().split(' ')[0]) === 0) hit = o.text;
+    });
+    if (!hit) { var o = document.createElement('option'); o.text = what; sel.add(o); hit = what; }
+    sel.value = hit;
+  }
+  var formQuoteFor = '';
+  function quoteForm() {
+    var h = $('fDelHint'); if (!h) return;
+    var pc = val('fPostcode');
+    if (pc.replace(/\s/g, '').length < 5 || !rrInArea(pc) || pc === formQuoteFor) return;
+    formQuoteFor = pc;
+    rrDeliveryQuote(pc).then(function (q) {
+      if (!q || pc !== formQuoteFor) return;
+      h.textContent = 'About ' + q.miles + ' miles from M22: ' +
+        (q.fee ? money(q.fee) + ' delivery (first 2 miles free, then £1 a mile).' : 'free delivery.');
+    });
+  }
+  on('fPostcode', 'blur', quoteForm); on('fPostcode', 'change', quoteForm);
+  ['fName','fEmail','fPhone','fStyle','fPres','fOcc','fAddr','fPostcode','fDate','fTime','fBudget','fColours','fFor','fCard','fNotes']
+    .forEach(function (id) { on(id, 'input', compose); on(id, 'change', compose); });
+  [].forEach.call(document.querySelectorAll('input[name="fulfil"]'), function (r) {
+    r.addEventListener('change', function () {
+      $('deliveryRow').classList.toggle('on', fulfil() === 'Delivery');
+      compose();
+    });
+  });
+  [].forEach.call(document.querySelectorAll('.occ'), function (row) {
+    row.addEventListener('click', function () {
+      var what = row.getAttribute('data-occ');
+      track('enquiry_start', { item: what });
+      if ($('oform')) { setOcc(what); compose(); $('order').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      else goOrder('', what);
+    });
+  });
+  /* every [data-order] button anywhere routes into the form */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-order]');
+    if (!b) return;
+    var label = b.getAttribute('data-order').replace(/&amp;/g, '&');
+    track('enquiry_start', { item: label });
+    if (!$('oform')) { goOrder(label, ''); return; }
+    applyOrder(label, '');
+    $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  on('copyBtn', 'click', function () {
+    copyText(compose(), 'Message copied. Paste it into our DMs');
+  });
+  on('sendBtn', 'click', function () {
+    var txt = compose();
+    if (!val('fName') || (!val('fEmail') && !val('fPhone'))) { toast('Add your name and an email or mobile'); return; }
+    if (fulfil() === 'Delivery' && val('fPostcode') && !rrInArea(val('fPostcode'))) {
+      toast('We only deliver within Manchester (M postcodes). Choose collection instead'); return;
+    }
+    if (val('fDate') && val('fDate') < rrMinDate()) { toast('We need 3 days\' notice. Pick a later date'); return; }
+    track('order_submit');
+    function done() {
+      $('formBody').style.display = 'none';
+      $('sentPanel').classList.add('on');
+      if (RR_PAYLINK) window.open(RR_PAYLINK, '_blank', 'noopener');
+    }
+    /* Straight to our inbox. The page carries no key: the Worker holds
+       it and does the sending. "On its way" is only ever shown once the
+       server has actually accepted the order. */
+    var btn = $('sendBtn'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch('/api/rbr/order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: val('fName'), contact: val('fEmail') || val('fPhone'), phone: val('fEmail') ? val('fPhone') : '',
+        style: val('fStyle'), presentation: val('fPres'), occasion: val('fOcc'),
+        fulfilment: (document.querySelector('input[name=fulfil]:checked') || {}).value || '',
+        address: fulfil() === 'Delivery' ? val('fAddr') : '',
+        postcode: fulfil() === 'Delivery' ? val('fPostcode') : '',
+        date: val('fDate'), time: val('fTime'), budget: val('fBudget'),
+        colours: val('fColours'), recipient: val('fFor'), card: val('fCard'),
+        notes: val('fNotes'), botcheck: val('botcheck')
+      })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = was;
+        if (!res.ok || !res.j.ok) throw new Error(res.j.error || 'not sent');
+        done();
+      })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = was;
+        /* Never claim it went. Hand them the message so the sale is not lost. */
+        copyText(txt, 'Could not send. Message copied, paste it to us on WhatsApp');
+      });
+  });
+  if ($('oform')) {
+    var pre = null;
+    try { pre = JSON.parse(sessionStorage.getItem('rr-prefill') || 'null'); } catch (e) {}
+    if (pre) {
+      try { sessionStorage.removeItem('rr-prefill'); } catch (e) {}
+      applyOrder(pre.label, pre.notes);
+    }
+  }
+  compose();
+
+  /* ---------------- newsletter ---------------- */
+  on('newsform', 'submit', function (e) {
+    e.preventDefault();
+    var mail = val('newsmail'); if (!mail) return;
+    track('newsletter_signup');
+    var say = function (t) { $('newsmsg').textContent = t; };
+    say('One moment…');
+    fetch('/api/rbr/subscribe', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: mail })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j.ok) throw new Error('no');
+        $('newsform').style.display = 'none';
+        say('You’re on the list. Thank you');
+      })
+      .catch(function () { say('That didn’t send. Message us on Instagram and we’ll add you.'); });
+  });
+
+  /* ---------------- product page + cart ---------------- */
+  var CART_KEY = 'rr-cart';
+  var cart = [];
+  try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]') || []; } catch (e) { cart = []; }
+  function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} }
+  function findProduct(name) {
+    for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i].n === name) return PRODUCTS[i];
+    return null;
+  }
+  function cartCount() { return cart.reduce(function (a, l) { return a + l.q; }, 0); }
+  function cartTotal() {
+    return cart.reduce(function (a, l) {
+      var p = findProduct(l.n); return a + (p ? p.p * l.q : 0);
+    }, 0);
+  }
+  function paintCount() {
+    var n = cartCount(), b = $('cartcount');
+    b.textContent = n; b.classList.toggle('on', n > 0);
+  }
+  function addToCart(name, qty) {
+    var p = findProduct(name); if (!p) return;
+    var line = null;
+    cart.forEach(function (l) { if (l.n === name) line = l; });
+    if (line) line.q = Math.min(30, line.q + qty); else cart.push({ n: name, q: qty });
+    saveCart(); paintCount(); paintCart();
+    track('add_to_cart', { item: name, quantity: qty, value: p.p * qty });
+    toast(name + ' added to your cart');
+  }
+  function paintCart() {
+    var box = $('cartItems'), sum = $('cartSummary');
+    if (!cart.length) {
+      box.innerHTML = '<div class="cartempty"><h3>Nothing in here yet</h3>' +
+        '<p>Have a look through the collection. Everything is arranged the morning it goes out.</p>' +
+        '<button class="btn" type="button" id="emptyShop">Browse the collection</button></div>';
+      sum.style.display = 'none';
+      $('emptyShop').addEventListener('click', toShop);
+      return;
+    }
+    sum.style.display = '';
+    box.innerHTML = cart.map(function (l) {
+      var p = findProduct(l.n); if (!p) return '';
+      return '<div class="citem" data-line="' + p.n + '">' +
+        '<img src="' + imgSmall(p) + '" alt="' + p.alt + '" loading="lazy">' +
+        '<h3>' + p.n + '</h3>' +
+        '<p class="ip">' + money(p.p) + '</p>' +
+        '<div class="ctrl"><div class="stepper">' +
+          '<button type="button" data-line-d="-1" aria-label="One fewer ' + p.n + '">&minus;</button>' +
+          '<i>' + l.q + '</i>' +
+          '<button type="button" data-line-d="1" aria-label="One more ' + p.n + '">+</button>' +
+        '</div><button class="rm" type="button" data-rm="1">Remove</button></div>' +
+      '</div>';
+    }).join('');
+    var t = cartTotal();
+    $('cSub').textContent = money(t);
+    $('cTot').textContent = money(t);
+  }
+  $('cartItems').addEventListener('click', function (e) {
+    var row = e.target.closest('.citem'); if (!row) return;
+    var name = row.getAttribute('data-line');
+    var step = e.target.closest('[data-line-d]');
+    var rm = e.target.closest('[data-rm]');
+    if (rm) { cart = cart.filter(function (l) { return l.n !== name; }); }
+    else if (step) {
+      cart.forEach(function (l) { if (l.n === name) l.q += +step.getAttribute('data-line-d'); });
+      cart = cart.filter(function (l) { return l.q > 0; });
+    } else return;
+    saveCart(); paintCount(); paintCart();
+  });
+
+  /* On the shop page the collection is right there; anywhere else the cart
+     has to send the reader to it. */
+  function toShop() {
+    closeCart();
+    if ($('shop')) $('shop').scrollIntoView();
+    else location.href = 'shop.html';
+  }
+
+  var pdpCurrent = null, pdpQty = 1;
+  function openPDP(name) {
+    var p = findProduct(name); if (!p) return;
+    pdpCurrent = p; pdpQty = 1;
+    $('pdpImg').src = imgBig(p);
+    $('pdpImg').alt = p.alt;
+    $('pdpName').textContent = p.n;
+    $('pdpPrice').textContent = money(p.p);
+    $('pdpDesc').textContent = p.d;
+    $('pdpQty').textContent = '1';
+    $('pdp').classList.add('on');
+    document.body.style.overflow = 'hidden';
+    $('pdp').scrollTop = 0;
+    track('view_item', { item: name, value: p.p });
+  }
+  function closePDP() {
+    $('pdp').classList.remove('on'); document.body.style.overflow = '';
+    /* Take the shared flower back out of the address, so a refresh does not
+       reopen the window they have just closed. */
+    if (/[?&]f=/.test(location.search) && history.replaceState) {
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  }
+
+  /* Opening a link somebody shared.
+     The share button has always written "?f=velvet-romance" into the address
+     and nothing has ever read it back, so every link Rachel or a customer
+     sent landed at the top of the page with no sign of the flower they were
+     showing somebody. This is the other half of it. */
+  var sharedOpened = false;
+  function openShared() {
+    if (sharedOpened || !$('pdp')) return false;
+    var raw = (location.search.match(/[?&]f=([^&]*)/) || [])[1];
+    if (!raw) return false;
+    var want = slug(decodeURIComponent(raw.replace(/\+/g, ' ')));
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (slug(PRODUCTS[i].n) === want) {
+        sharedOpened = true;
+        openPDP(PRODUCTS[i].n);
+        return true;
+      }
+    }
+    /* Not one of ours — an old link, or something since taken off sale. The
+       page is still the shop, so say nothing and let them browse. */
+    return false;
+  }
+  function openCart() {
+    paintCart(); $('cart').classList.add('on'); document.body.style.overflow = 'hidden';
+    $('cart').scrollTop = 0; track('view_cart', { value: cartTotal() });
+  }
+  function closeCart() { $('cart').classList.remove('on'); document.body.style.overflow = ''; }
+
+  document.addEventListener('click', function (e) {
+    /* the add and share buttons sit on the photo, which itself opens the
+       bouquet: the button wins */
+    if (e.target.closest && e.target.closest('[data-share]')) return;
+    var add = e.target.closest && e.target.closest('[data-add]');
+    if (add) { addToCart(add.getAttribute('data-add'), 1); return; }
+    var open = e.target.closest && e.target.closest('[data-open]');
+    if (open) { openPDP(open.getAttribute('data-open')); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest && e.target.closest('[data-add],[data-share]')) return;
+    var open = e.target.closest && e.target.closest('[data-open]');
+    if (open) { e.preventDefault(); openPDP(open.getAttribute('data-open')); }
+  });
+  $('pdpMinus').addEventListener('click', function () { pdpQty = Math.max(1, pdpQty - 1); $('pdpQty').textContent = pdpQty; });
+  $('pdpPlus').addEventListener('click', function () { pdpQty = Math.min(30, pdpQty + 1); $('pdpQty').textContent = pdpQty; });
+  $('pdpAdd').addEventListener('click', function () { if (pdpCurrent) { addToCart(pdpCurrent.n, pdpQty); closePDP(); } });
+  $('pdpBuy').addEventListener('click', function () { if (pdpCurrent) { addToCart(pdpCurrent.n, pdpQty); closePDP(); openCart(); } });
+  $('pdpx').addEventListener('click', closePDP);
+  $('cartbtn').addEventListener('click', openCart);
+  $('cartx').addEventListener('click', closeCart);
+  $('keepShopping').addEventListener('click', toShop);
+  $('pdpHome').addEventListener('click', function (e) { e.preventDefault(); closePDP(); });
+  $('cartHome').addEventListener('click', function (e) { e.preventDefault(); closeCart(); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePDP(); closeCart(); closeCheckout(); $('pop').classList.remove('on'); } });
+
+  $('checkout').addEventListener('click', openCheckout);
+  paintCount(); paintCart();
+  openShared();
+
+  /* ---------------- checkout ----------------
+     The card boxes are Stripe Elements: Stripe drops its own iframed inputs
+     into them, so a card number never touches this page or our server.
+     Put the publishable key in RR_STRIPE_PK and it goes live. Building the
+     card fields as ordinary inputs would put us in full PCI scope and mean
+     card numbers arriving by email — so this is the only way it is done. */
+  var RR_STRIPE_PK = '';
+  var stripe = null, coCard = null;
+
+  function openCheckout() {
+    if (!cart.length) return;
+    paintCheckout();
+    closeCart();
+    $('checkoutScreen').classList.add('on');
+    document.body.style.overflow = 'hidden';
+    $('checkoutScreen').scrollTop = 0;
+    track('begin_checkout', { value: cartTotal(), items: cartCount() });
+    mountStripe();
+  }
+  function closeCheckout() {
+    $('checkoutScreen').classList.remove('on');
+    document.body.style.overflow = '';
+  }
+  function paintCheckout() {
+    $('coLines').innerHTML = cart.map(function (l) {
+      var p = findProduct(l.n); if (!p) return '';
+      return '<div class="coline">' +
+        '<img src="' + imgSmall(p) + '" alt="' + p.alt + '" loading="lazy">' +
+        '<span><b>' + p.n + '</b>' + (l.q > 1 ? '<small>Quantity ' + l.q + '</small>' : '') + '</span>' +
+        '<span class="p">' + money(p.p * l.q) + '</span></div>';
+    }).join('');
+    var t = cartTotal();
+    $('coSub').textContent = money(t);
+    paintDelivery();
+  }
+  function mountStripe() {
+    if (!RR_STRIPE_PK || coCard) return;
+    var go = function () {
+      if (!window.Stripe) return;
+      stripe = Stripe(RR_STRIPE_PK);
+      var el = stripe.elements();
+      var style = { base: { color: '#6A2E3A', fontFamily: 'Cormorant Garamond, Georgia, serif',
+        fontSize: '17px', '::placeholder': { color: '#B7A08F' } } };
+      coCard = el.create('cardNumber', { style: style, placeholder: '1234 5678 9012 3456' });
+      coCard.mount('#co-card');
+      el.create('cardExpiry', { style: style }).mount('#co-exp');
+      el.create('cardCvc', { style: style }).mount('#co-cvc');
+      $('coCardLive').hidden = false;
+      $('coCardOff').style.display = 'none';
+    };
+    if (window.Stripe) { go(); return; }
+    var sc = document.createElement('script');
+    sc.src = 'https://js.stripe.com/v3/'; sc.onload = go;
+    document.head.appendChild(sc);
+  }
+  $('cox').addEventListener('click', function () { closeCheckout(); openCart(); });
+  $('coHome').addEventListener('click', function (e) { e.preventDefault(); closeCheckout(); });
+  var coFee = null, coFeeFor = '';
+  function paintDelivery() {
+    var del = coFulfil() === 'Delivery', t = cartTotal();
+    $('coDelLbl').textContent = del ? 'Delivery' : 'Collection (M22)';
+    if (!del) { $('coDel').textContent = 'Free'; $('coTot').textContent = money(t); return; }
+    if (coFee == null) { $('coDel').textContent = coFeeFor ? 'Confirmed with order' : 'Add your postcode'; $('coTot').textContent = money(t); return; }
+    $('coDel').textContent = coFee.fee ? money(coFee.fee) : 'Free';
+    $('coTot').textContent = money(t + coFee.fee);
+  }
+  function quoteCheckout() {
+    var pc = ($('coPost').value || '').trim();
+    if (pc.replace(/\s/g, '').length < 5 || !rrInArea(pc)) { coFee = null; coFeeFor = ''; paintDelivery(); return; }
+    if (pc === coFeeFor) return;
+    coFeeFor = pc; coFee = null; $('coDel').textContent = 'Working it out…';
+    rrDeliveryQuote(pc).then(function (q) {
+      if (pc !== coFeeFor) return;
+      coFee = q; paintDelivery();
+      if (q) $('coDelHint').textContent = 'About ' + q.miles + ' miles from M22: ' +
+        (q.fee ? money(q.fee) + ' delivery (first 2 miles free, then £1 a mile).' : 'free delivery.');
+    });
+  }
+  ['input', 'change', 'blur'].forEach(function (ev) { $('coPost').addEventListener(ev, quoteCheckout); });
+  function coFulfil() {
+    var r = document.querySelector('input[name="coFulfil"]:checked');
+    return r ? r.value : 'Delivery';
+  }
+  [].forEach.call(document.querySelectorAll('input[name="coFulfil"]'), function (r) {
+    r.addEventListener('change', function () {
+      var del = coFulfil() === 'Delivery';
+      $('coAddrBox').hidden = !del;
+      $('coCollect').hidden = del;
+      ['coAddr', 'coCity', 'coPost'].forEach(function (id) { $(id).required = del; });
+      paintDelivery();
+    });
+  });
+  $('coform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var del   = coFulfil() === 'Delivery';
+    var email = ($('coEmail').value || '').trim();
+    var addr  = ($('coAddr').value || '').trim();
+    var city  = ($('coCity').value || '').trim();
+    var post  = ($('coPost').value || '').trim();
+    var date  = ($('coDate').value || '').trim();
+    if (!email) { toast('Add your email address'); return; }
+    if (!date) { toast('Choose the date you need them'); return; }
+    if (date < rrMinDate()) { toast('We need 3 days\' notice. Pick a later date'); return; }
+    if (del && (!addr || !city || !post)) { toast('Fill in the delivery address'); return; }
+    if (del && !rrInArea(post)) { toast('We only deliver within Manchester (M postcodes). Choose collection instead'); return; }
+
+    if (RR_PAYLINK) { window.open(RR_PAYLINK, '_blank', 'noopener'); return; }
+
+    /* no Stripe yet: send it to us as a written order so nothing is lost */
+    var lines = cart.map(function (l) { return l.q + ' × ' + l.n; }).join(', ');
+    var fee = del && coFee ? coFee.fee : 0;
+    var notes = 'Checkout order: ' + lines + ', flowers ' + money(cartTotal()) +
+      (del ? ', delivery ' + (coFee ? (fee ? money(fee) + ' (about ' + coFee.miles + ' miles)' : 'free (about ' + coFee.miles + ' miles)') : 'to confirm') : '') +
+      ', total ' + money(cartTotal() + fee) +
+      '\nDate: ' + nice(date) +
+      (del ? '\nDeliver to: ' + addr + ', ' + city + ' ' + post : '\nCollection from M22');
+    track('order_submit', { source: 'checkout', value: cartTotal() });
+    closeCheckout();
+    if ($('oform')) {
+      $('fName').value  = $('fName').value || email.split('@')[0];
+      $('fEmail').value = email;
+      var want = document.querySelector('input[name="fulfil"][value="' + (del ? 'Delivery' : 'Collection') + '"]');
+      if (want) { want.checked = true; want.dispatchEvent(new Event('change')); }
+      if (del) { $('fAddr').value = addr + ', ' + city; $('fPostcode').value = post; }
+      $('fDate').value = date;
+      applyOrder('Something bespoke, help me choose', notes);
+      $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast('Nearly there. Press Send my order and it comes to us');
+    } else {
+      goOrder('Something bespoke, help me choose', notes + '\nEmail: ' + email);
+    }
+  });
+
+  /* ---------------- rose-list popup ---------------- */
+  (function popup() {
+    var shown = false;
+    try { shown = localStorage.getItem('rr-pop') === 'seen'; } catch (e) {}
+    function show() {
+      if (shown) return; shown = true;
+      try { localStorage.setItem('rr-pop', 'seen'); } catch (e) {}
+      $('pop').classList.add('on'); track('popup_shown');
+    }
+    function hide() { $('pop').classList.remove('on'); }
+    $('popx').addEventListener('click', hide);
+    $('pop').addEventListener('click', function (e) { if (e.target === $('pop')) hide(); });
+    $('popform').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var mail = ($('popmail').value || '').trim(); if (!mail) return;
+      track('newsletter_signup', { source: 'popup' });
+      $('popmsg').textContent = 'One moment…';
+      fetch('/api/rbr/subscribe', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: mail, source: 'popup' })
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.j.ok) throw new Error('no');
+          $('popform').style.display = 'none';
+          $('popmsg').textContent = 'Thank you. You are on the list';
+        })
+        .catch(function () { $('popmsg').textContent = 'That didn’t send. Try the form at the bottom of the page.'; });
+    });
+    /* leaving on desktop, or a good scroll then a pause on touch */
+    document.addEventListener('mouseout', function (e) {
+      if (!e.relatedTarget && e.clientY < 12) show();
+    });
+    var deep = false;
+    addEventListener('scroll', function () {
+      if (deep) return;
+      if (scrollY > document.body.scrollHeight * 0.42) { deep = true; setTimeout(show, 9000); }
+    }, { passive: true });
+  })();
+
+  /* Safety net. The shared toolkit reveals with an IntersectionObserver;
+     if it ever misses one, this makes sure no content is left invisible. */
+  (function () {
+    var els = [].slice.call(document.querySelectorAll('[data-fx]'));
+    function sweep() {
+      var vh = innerHeight, i = els.length;
+      while (i--) {
+        var el = els[i];
+        if (el.getBoundingClientRect().top < vh * 0.94) {
+          el.classList.add('fx-in');
+          [].forEach.call(el.querySelectorAll('.fx-stagger-item,.fx-word-inner'),
+            function (c) { c.classList.add('fx-in'); });
+          els.splice(i, 1);
+        }
+      }
+      if (!els.length) removeEventListener('scroll', tick);
+    }
+    var t = 0;
+    function tick() { if (!t) t = requestAnimationFrame(function () { t = 0; sweep(); }); }
+    addEventListener('scroll', tick, { passive: true });
+    addEventListener('resize', tick, { passive: true });
+    setTimeout(sweep, 400); setTimeout(sweep, 1200);
+  })();
+
+  redraw();
+})();
+
+/* ---------------- postcode suggestions ----------------
+ *
+ * Typing a postcode is where a delivery order gets abandoned: people are not
+ * sure of the last three characters, they guess, and the order arrives with an
+ * address that cannot be delivered to.
+ *
+ * This is postcodes.io, which is the Royal Mail's postcode file published by
+ * the Ordnance Survey as open data. It needs no key, no account and no card,
+ * which matters: the alternative is Google Places, and that needs a Google
+ * Cloud project with billing switched on before it will return a single
+ * result. It also fills the town in from the postcode, so nobody types it.
+ *
+ * Strictly an enhancement. If the service is slow or unreachable the field
+ * stays an ordinary text box and the order still goes through.
+ */
+(function () {
+  'use strict';
+  var API = 'https://api.postcodes.io/postcodes/';
+
+  function attachPostcode(input, townInput) {
+    if (!input || input.dataset.pcOn) return;
+    input.dataset.pcOn = '1';
+    input.setAttribute('autocomplete', 'postal-code');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-autocomplete', 'list');
+
+    var box = document.createElement('ul');
+    box.className = 'pcbox';
+    box.setAttribute('role', 'listbox');
+    box.hidden = true;
+    var wrap = input.parentNode;
+    if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+    wrap.appendChild(box);
+
+    var items = [], at = -1, timer = null, seq = 0;
+
+    function close() {
+      box.hidden = true; box.innerHTML = ''; items = []; at = -1;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
+    function highlight() {
+      [].forEach.call(box.children, function (li, i) {
+        li.classList.toggle('on', i === at);
+        if (i === at) input.setAttribute('aria-activedescendant', li.id);
+      });
+    }
+    function choose(v) {
+      input.value = v;
+      close();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      fillTown(v);
+    }
+    function fillTown(pc) {
+      if (!townInput || townInput.value.trim()) return;
+      fetch(API + encodeURIComponent(pc.replace(/\s+/g, '')), { signal: AbortSignal.timeout(5000) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          var t = j && j.result && (j.result.post_town || j.result.admin_district);
+          if (t && !townInput.value.trim()) townInput.value = t;
+        })
+        .catch(function () {});
+    }
+    function render(list) {
+      box.innerHTML = '';
+      items = list;
+      list.forEach(function (pc, i) {
+        var li = document.createElement('li');
+        li.id = 'pc-' + (input.id || 'x') + '-' + i;
+        li.setAttribute('role', 'option');
+        li.textContent = pc;
+        li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(pc); });
+        box.appendChild(li);
+      });
+      box.hidden = !list.length;
+      input.setAttribute('aria-expanded', list.length ? 'true' : 'false');
+      at = -1;
+    }
+
+    function renderNo() {
+      box.innerHTML = '<li class="no" role="option" aria-disabled="true">We deliver within Manchester only (M postcodes). Choose collection for anywhere else.</li>';
+      items = []; box.hidden = false; at = -1;
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+      clearTimeout(timer);
+      if (q.length < 2) { close(); return; }
+      var mine = ++seq;
+      timer = setTimeout(function () {
+        fetch(API + encodeURIComponent(q) + '/autocomplete', { signal: AbortSignal.timeout(5000) })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) {
+            /* a slow answer to an old keystroke must not replace a newer one */
+            if (mine !== seq) return;
+            var all = (j && j.result) ? j.result : [];
+            var ok = all.filter(function (pc) { return window.rrInArea ? rrInArea(pc) : true; });
+            if (!ok.length && all.length) { renderNo(); return; }
+            render(ok.slice(0, 7));
+          })
+          .catch(function () { close(); });
+      }, 180);
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (box.hidden || !items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); at = (at + 1) % items.length; highlight(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); at = (at - 1 + items.length) % items.length; highlight(); }
+      else if (e.key === 'Enter' && at > -1) { e.preventDefault(); choose(items[at]); }
+      else if (e.key === 'Escape') { close(); }
+    });
+    input.addEventListener('blur', function () {
+      setTimeout(close, 120);
+      var v = input.value.trim();
+      if (v.length >= 5) fillTown(v);
+    });
+  }
+
+  function start() {
+    attachPostcode(document.getElementById('fPostcode'));
+    attachPostcode(document.getElementById('coPost'), document.getElementById('coCity'));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();

@@ -190,6 +190,16 @@ HTTP status decides instead of `body.success`.
 
 ---
 
+## Wet belts (1 Oct)
+
+His ask, by WhatsApp: "we do wet belts as well, next to timing belt". The
+eighth specialism is now **Timing & Wet Belts** everywhere the list appears
+— the hero chips, the marquee, the tile, the detail panel, both forms' job
+list (`Timing or wet belt`), the FAQ, the footer and the meta descriptions.
+The wording names no interval and no price; it says wet belts wear
+differently, often want doing sooner than the handbook first said, and that
+the oil spec matters, which is as far as a general page should go.
+
 ## His photographs are in (22 and 26 Sep)
 
 Eight photographs of the workshop now fill every workshop slot: the hero (the

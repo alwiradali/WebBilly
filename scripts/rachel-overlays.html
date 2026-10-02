@@ -1,10 +1,10 @@
 <!-- checkout -->
 <div class="screen" id="checkoutScreen" role="dialog" aria-modal="true" aria-label="Checkout">
   <div class="co-bar">
-    <img class="co-rose" src="../../assets/rachel/rose-ornament.webp" alt="" width="315" height="361" aria-hidden="true">
+    <img class="co-rose" src="../assets/rachel/rose-ornament.webp" alt="" width="315" height="361" aria-hidden="true">
     <div class="nav-in">
       <a class="brand" href="index.html" id="coHome">
-        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+        <img class="mk" src="../assets/rachel/rr-logo.svg" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="cox" type="button" aria-label="Back to your cart">&times;</button>
     </div>
@@ -18,6 +18,18 @@
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
             <input id="coEmail" type="email" autocomplete="email" placeholder="you@email.com" required name="email" inputmode="email"></div></div>
 
+        <div class="cofield"><label>Delivery or collection?</label>
+          <div class="seg">
+            <label><input type="radio" name="coFulfil" value="Delivery" checked><span>Delivery</span></label>
+            <label><input type="radio" name="coFulfil" value="Collection"><span>Collection</span></label>
+          </div></div>
+
+        <div class="cofield"><label for="coDate">Date needed</label>
+          <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+            <input id="coDate" type="date" required name="date" data-notice="3"></div>
+          <p class="cohint">We need 3 days' notice, so the earliest date is already set.</p></div>
+
+        <div id="coAddrBox">
         <div class="cofield"><label for="coAddr">Delivery Address</label>
           <div class="coinput"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
             <input id="coAddr" type="text" autocomplete="street-address" placeholder="14 Palatine Road" required name="address" autocapitalize="words"></div></div>
@@ -30,6 +42,9 @@
             <div class="coinput"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>
               <input id="coPost" type="text" autocomplete="postal-code" placeholder="M20 3JA" required name="postcode" autocapitalize="characters"></div></div>
         </div>
+        <p class="cohint" id="coDelHint">We deliver within Manchester only (postcodes starting with M). The first 2 miles from M22 are free, then £1 a mile.</p>
+        </div>
+        <p class="cohint" id="coCollect" hidden>Collection is free, from Rachel in M22 (Wythenshawe). We send the address and a time with your confirmation.</p>
 
         <div id="coCardLive" hidden>
           <div class="cofield"><label for="co-card">Card Number</label>
@@ -64,7 +79,7 @@
         <div id="coLines"></div>
         <div style="margin-top:16px">
           <div class="cotot"><span>Subtotal</span><b id="coSub">£0</b></div>
-          <div class="cotot"><span>Delivery</span><b>Free</b></div>
+          <div class="cotot"><span id="coDelLbl">Delivery</span><b id="coDel">Add your postcode</b></div>
           <div class="cotot grand"><span>Total</span><b id="coTot">£0</b></div>
         </div>
         <div class="cosecure">
@@ -81,7 +96,7 @@
   <div class="screen-bar">
     <div class="nav-in">
       <a class="brand" href="index.html" id="pdpHome">
-        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+        <img class="mk" src="../assets/rachel/rr-logo.svg" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="pdpx" type="button" aria-label="Back to the collection">&times;</button>
     </div>
@@ -114,7 +129,7 @@
   <div class="screen-bar">
     <div class="nav-in">
       <a class="brand" href="index.html" id="cartHome">
-        <img class="mk" src="../../assets/rachel/logo-official.webp" alt="Roses by Rachel" width="557" height="464">
+        <img class="mk" src="../assets/rachel/rr-logo.svg" alt="Roses by Rachel" width="557" height="464">
       </a>
       <button class="closebtn" id="cartx" type="button" aria-label="Close the cart">&times;</button>
     </div>
@@ -133,9 +148,10 @@
         </div>
         <div style="margin-top:18px">
           <div class="sline"><span>Subtotal</span><b id="cSub">£0</b></div>
-          <div class="sline"><span>Delivery</span><b>Free</b></div>
+          <div class="sline"><span>Delivery</span><b>At checkout</b></div>
           <div class="sline tot"><span>Total</span><b id="cTot">£0</b></div>
         </div>
+        <p class="cnote">Please allow <b>3 days' notice</b>. Delivery within Manchester: the first 2 miles are free, then £1 a mile. Or collect from M22 for free.</p>
         <button class="btn" id="checkout" type="button">Proceed to Checkout</button>
         <button class="cont" id="keepShopping" type="button">Continue Shopping</button>
       </aside>
@@ -167,7 +183,7 @@
     <h3 id="shtitle">Share this</h3>
     <p class="sb">Send it to someone who needs to see it.</p>
     <div class="shgrid">
-      <a id="sh-wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2 .9c.2.1.4.2.4.3.1.2.1.7-.1 1.4z"/></svg>WhatsApp</a>
+      <a id="sh-wa" target="_blank" rel="noopener"><svg class="wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88zm8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.42z"/></svg>WhatsApp</a>
       <a id="sh-fb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</a>
       <a id="sh-x" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18.2 2h3.3l-7.2 8.3L22.8 22h-6.6l-5.2-6.8L5.1 22H1.8l7.7-8.8L1.5 2h6.8l4.7 6.2L18.2 2zm-1.2 18h1.8L7.1 3.9H5.2L17 20z"/></svg>X</a>
       <a id="sh-mail"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>

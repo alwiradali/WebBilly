@@ -162,3 +162,10 @@ templates/makeup-by-sadia.html
 templates/makeup-by-sadia.css
 templates/makeup-by-sadia.js
 assets/sadia
+
+# Clean My Car — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/clean-my-car, its booking page and
+# every one of its pictures answer 404. Delete these lines to put it back.
+templates/clean-my-car.html
+templates/clean-my-car-book.html
+assets/cleanmycar
