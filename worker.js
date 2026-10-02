@@ -29,6 +29,7 @@ import { serveMegacityHost } from "./worker/studio/host.js";
 import { isMegacityHost } from "./worker/studio/urls.js";
 import { isHfCrmPath, handleHfCrm, readPublicInvoice } from "./worker/heatfix/crm.js";
 import { isRachelPath, handleRachel } from "./worker/rachel/orders.js";
+import { isLuneraPath, handleLunera } from "./worker/lunera/availability.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -95,6 +96,11 @@ export default {
        Resend key never reaches the page. */
     if (isRachelPath(url.pathname)) {
       return handleRachel(request, env, url);
+    }
+    /* Lunera Ora: live free times for the booking calendar on /lunera-ora/,
+       read from Square's Bookings API with her token (worker/lunera). */
+    if (isLuneraPath(url.pathname)) {
+      return handleLunera(request, env, ctx);
     }
     if (url.pathname === "/api/quote") {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);

@@ -1654,6 +1654,42 @@ experience steps, "treatment time + 15 minutes", policies, care guide.
 refer-5-friends. Don't add claims she hasn't made (no shade promises, no
 "painless"); the results section says results vary.
 
+**The booking calendar (`#reserve`, 2 Oct).** The owner asked for a calendar
+on the site, with her hours, that can be booked from. Every "Book" button now
+scrolls to it with that experience chosen (`data-book="<key>"`; the HTML still
+carries her Square link for anyone without JavaScript). Pick an experience and
+a day, then "See free times & book" opens Square with
+`?service_id=…&variation_id=…&date=YYYY-MM-DD` — Square's booking app reads
+those (found in its bundle, `mdt`/`setPreselectParams`) and lands on that
+service; after Add → Next its calendar is already on that day. Do NOT add
+`start_time`: tried, and Square opened a "Join the waitlist" sheet instead.
+
+Live free times are a seam, like payments. `worker/lunera/availability.js`
+answers `GET /api/lunera/availability?variation=&from=&days=` by calling
+Square's official SearchAvailability with the Worker secret
+`LUNERA_SQUARE_TOKEN` (her token, from developer.squareup.com → her app →
+Production access token; `wrangler secret put LUNERA_SQUARE_TOKEN`). Only her
+seven variations are accepted, answers are edge-cached 60 s, the token never
+leaves the Worker. Without the secret it answers 503 and the calendar shows her
+published hours per day (sun = day & evening, moon = evenings) and lets Square
+show the free times. With it, days with nothing free are shaded, free days get
+a dot, times appear grouped Morning / Afternoon / Evening, and a full day
+offers "Next free day". Her real calendar is much sparser than her hours (on
+2 Oct: Tue–Thu nothing, Fri only 6 p.m., weekends 9–5 starts) — which is why
+the hours-only mode never offers a time.
+
+Not done, deliberately: her Square booking page reads free times from
+`app.squareup.com/appointments/api/buyer/availability`, which only answers when
+the request's Origin is Square's own site. Proxying it with a forged Origin
+would work without her token, and would be getting round Square's check — use
+the token. Embedding Square in an iframe doesn't work either: inside a frame
+its Add / Next buttons deliberately open a new tab.
+
+Endpoint tests: `node scripts/lunera-availability-test.mjs` (mocked Square, no
+token, covers both DST changeovers). `goTo()` now measures targets from layout (`offsetTop` chain), not
+`getBoundingClientRect`, so a box mid fade-up or a stale Lenis position can't
+land it under the header.
+
 **Booking buttons open the exact service in Square.** Square's booking app has
 a `services/:serviceId` route (found in its bundle) that looks the service up
 by its top-level `id` and redirects to the full list if the id is unknown, so a
