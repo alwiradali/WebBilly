@@ -189,6 +189,17 @@
     var y = 0, n = el;
     while (n) { y += n.offsetTop; n = n.offsetParent; }
     y += off;
+    // A far jump fades through a veil instead of scrolling past everything.
+    if (!reduce && Math.abs(y - window.scrollY) > window.innerHeight * 1.2) {
+      var v = $(".jump-veil") || doc.body.appendChild(Object.assign(doc.createElement("div"), { className: "jump-veil" }));
+      v.classList.add("is-on");
+      setTimeout(function () {
+        if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+        if (hasGSAP) ScrollTrigger.update();
+        requestAnimationFrame(function () { requestAnimationFrame(function () { v.classList.remove("is-on"); }); });
+      }, 400);
+      return;
+    }
     if (lenis) lenis.scrollTo(y, { duration: 1.6, easing: function (x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; } });
     else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
   }

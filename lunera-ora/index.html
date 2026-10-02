@@ -21,7 +21,7 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/cormorant.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/lunera-ora/fonts/montserrat.woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/lunera-ora/logo.svg" crossorigin>
-<link rel="stylesheet" href="/lunera-ora/style.css?v=202610023200">
+<link rel="stylesheet" href="/lunera-ora/style.css?v=202610023300">
 <script>document.documentElement.classList.add('js');</script>
 
 <script type="application/ld+json">
@@ -836,11 +836,11 @@
       <p class="eyebrow" data-reveal>Enquiries</p>
       <h2 class="h2" data-split>Something else <em>in mind?</em></h2>
       <p class="lead" data-reveal>A question about whitening, a bridal party, an address further afield — send a note and I’ll reply as soon as I can.</p>
-      <ul class="contact-list" data-reveal>
-        <li><a data-sms href="sms:+16479835983"><span class="cl-ic"><svg><use href="#i-chat"/></svg></span><span><b>Text</b><small>(647) 983-5983</small></span></a></li>
-        <li><a data-tel href="tel:+16479835983"><span class="cl-ic"><svg><use href="#i-phone"/></svg></span><span><b>Call</b><small>(647) 983-5983</small></span></a></li>
-        <li><a data-mail href="mailto:lunera.mobilestudio@gmail.com"><span class="cl-ic"><svg><use href="#i-mail"/></svg></span><span><b>Email</b><small>lunera.mobilestudio@gmail.com</small></span></a></li>
-        <li><a data-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener"><span class="cl-ic"><svg><use href="#i-insta"/></svg></span><span><b>Instagram</b><small>@luneraora.mobilestudio</small></span></a></li>
+      <ul class="contact-icons" data-reveal aria-label="Contact">
+        <li><a data-sms href="sms:+16479835983" aria-label="Text (647) 983-5983"><svg><use href="#i-chat"/></svg><span>Text</span></a></li>
+        <li><a data-tel href="tel:+16479835983" aria-label="Call (647) 983-5983"><svg><use href="#i-phone"/></svg><span>Call</span></a></li>
+        <li><a data-mail href="mailto:lunera.mobilestudio@gmail.com" aria-label="Email lunera.mobilestudio@gmail.com"><svg><use href="#i-mail"/></svg><span>Email</span></a></li>
+        <li><a data-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener" aria-label="Instagram @luneraora.mobilestudio"><svg><use href="#i-insta"/></svg><span>Instagram</span></a></li>
       </ul>
       <p class="contact-today" data-today-2></p>
     </div>
@@ -876,7 +876,6 @@
           <label><input type="radio" name="reply" value="Text" checked><span>Text</span></label>
           <label><input type="radio" name="reply" value="Call"><span>Call</span></label>
           <label><input type="radio" name="reply" value="Email"><span>Email</span></label>
-          <label><input type="radio" name="reply" value="Instagram"><span>Instagram</span></label>
         </fieldset>
         <p class="enq-privacy">Please don’t include detailed medical history here — intake and consent forms are completed privately when you book.</p>
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -922,10 +921,17 @@
       <p class="foot-tag">Your smile. Your space. Your experience.</p>
     </div>
     <div class="foot-cols">
-      <div><h3>Visit</h3><p>A mobile studio based in Beaumont, Alberta — we come to you across Beaumont, Leduc &amp; Edmonton.</p></div>
-      <div><h3>Hours <small>(MDT)</small></h3><p>Sun, Mon &amp; Sat · 9 a.m. – 8 p.m.<br>Tue – Thu · 6:30 – 9 p.m.<br>Fri · 5:30 – 9 p.m.</p></div>
-      <div><h3>Contact</h3><p><a data-sms href="sms:+16479835983">Text (647) 983-5983</a><br><a data-mail href="mailto:lunera.mobilestudio@gmail.com">lunera.mobilestudio@gmail.com</a></p></div>
-      <div><h3>Follow</h3><p><a data-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener">@luneraora.mobilestudio</a><br><a data-founder-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener">@luneraora.mobilestudio</a></p></div>
+      <div class="foot-col"><h3>Studio</h3><p>Mobile teeth whitening, based in Beaumont, Alberta.</p><p class="foot-areas">Beaumont · Leduc · Edmonton</p></div>
+      <div class="foot-col"><h3>Hours <small>MDT</small></h3>
+        <dl class="foot-hours"><dt>Sun · Mon · Sat</dt><dd>9 a.m. – 8 p.m.</dd><dt>Tue – Thu</dt><dd>6:30 – 9 p.m.</dd><dt>Fri</dt><dd>5:30 – 9 p.m.</dd></dl></div>
+      <div class="foot-col"><h3>Get in touch</h3>
+        <div class="foot-icons">
+          <a data-sms href="sms:+16479835983" aria-label="Text"><svg><use href="#i-chat"/></svg></a>
+          <a data-tel href="tel:+16479835983" aria-label="Call"><svg><use href="#i-phone"/></svg></a>
+          <a data-mail href="mailto:lunera.mobilestudio@gmail.com" aria-label="Email"><svg><use href="#i-mail"/></svg></a>
+          <a data-ig href="https://www.instagram.com/luneraora.mobilestudio/" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-insta"/></svg></a>
+        </div>
+        <p class="foot-handle">(647) 983-5983 · @luneraora.mobilestudio</p></div>
     </div>
     <div class="foot-bot">
       <p>© <span data-year>2026</span> Lunera Ora · Mobile Smile Studio</p>
@@ -947,7 +953,7 @@
 <script src="/assets/vendor/gsap.min.js"></script>
 <script src="/assets/vendor/ScrollTrigger.min.js"></script>
 <script src="/assets/vendor/lenis.min.js"></script>
-<script src="/lunera-ora/silk.js?v=202610023200"></script>
-<script src="/lunera-ora/script.js?v=202610023200"></script>
+<script src="/lunera-ora/silk.js?v=202610023300"></script>
+<script src="/lunera-ora/script.js?v=202610023300"></script>
 </body>
 </html>
