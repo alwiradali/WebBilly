@@ -246,12 +246,10 @@
       a.className = 'card';
       a.innerHTML =
         '<div class="ph" data-open="' + pr.n + '" role="button" tabindex="0" aria-label="View ' + pr.n + '">' +
-        '<img src="' + imgSmall(pr) + '" alt="' + pr.alt + '" loading="lazy" width="451" height="563"></div>' +
-        '<div class="bd"><h3 data-open="' + pr.n + '" style="cursor:pointer">' + pr.n + '</h3><p class="pr">' + money(pr.p) + '</p>' +
-        '<button class="add" type="button" data-add="' + pr.n + '">Add to Cart</button>' +
-        '<div class="shr"><small>Share</small>' +
+        '<img src="' + imgSmall(pr) + '" alt="' + pr.alt + '" loading="lazy" width="451" height="563">' +
         '<button class="shbtn" type="button" data-share="' + pr.n + '" aria-label="Share ' + pr.n + '">' + SHARE_ICON + '</button>' +
-        '</div></div>';
+        '<button class="add" type="button" data-add="' + pr.n + '">Add to basket</button></div>' +
+        '<div class="bd"><h3 data-open="' + pr.n + '">' + pr.n + '</h3><p class="pr">' + money(pr.p) + '</p></div>';
       cardsEl.appendChild(a);
     });
   }
@@ -840,13 +838,17 @@
   function closeCart() { $('cart').classList.remove('on'); document.body.style.overflow = ''; }
 
   document.addEventListener('click', function (e) {
-    var open = e.target.closest && e.target.closest('[data-open]');
-    if (open) { openPDP(open.getAttribute('data-open')); return; }
+    /* the add and share buttons sit on the photo, which itself opens the
+       bouquet: the button wins */
+    if (e.target.closest && e.target.closest('[data-share]')) return;
     var add = e.target.closest && e.target.closest('[data-add]');
-    if (add) { addToCart(add.getAttribute('data-add'), 1); }
+    if (add) { addToCart(add.getAttribute('data-add'), 1); return; }
+    var open = e.target.closest && e.target.closest('[data-open]');
+    if (open) { openPDP(open.getAttribute('data-open')); }
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest && e.target.closest('[data-add],[data-share]')) return;
     var open = e.target.closest && e.target.closest('[data-open]');
     if (open) { e.preventDefault(); openPDP(open.getAttribute('data-open')); }
   });
