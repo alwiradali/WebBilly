@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    LUNERA ORA · MOBILE SMILE STUDIO
    Pearl, blush and taupe satin with cocoa ink — the colours are sampled from
-   her own story covers (the logo ink is #6b5341). Display: Cormorant
-   Garamond; text: Montserrat, the sans her own graphics are set in.
+   the studio's own story covers (the logo ink is #6b5341). Display: Cormorant
+   Garamond; text: Montserrat, the sans the studio's own graphics are set in.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* fonts — self-hosted variable files (Google Fonts, SIL OFL), latin subset */
@@ -77,7 +77,7 @@ svg.ic, .ic { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: cur
 svg use { pointer-events: none; }
 .wrap { width: 100%; max-width: 1320px; margin-inline: auto; padding-inline: var(--gut); }
 
-/* ─────────────────────────── her logo (mask of the vector trace) ─────────────────────────── */
+/* ─────────────────────────── the studio's logo (mask of the vector trace) ─────────────────────────── */
 .mark {
   display: block;
   background-color: currentColor;
@@ -1240,7 +1240,7 @@ main .faq { background: var(--pearl-2); }
 .page-book .hdr:not(.is-solid) .hdr-logo { opacity: 1; transform: none; pointer-events: auto; }
 .jump-veil.is-instant { transition: none; }
 
-/* founder: her full round profile photo, uncropped */
+/* founder: the studio's full round profile photo, uncropped */
 .founder-arch { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; box-shadow: 0 0 0 10px rgba(255, 250, 246, .55), 0 0 0 11px rgba(201, 169, 126, .5), 0 40px 80px -46px rgba(59, 45, 38, .7) !important; }
 .founder-arch img { object-position: 50% 50% !important; }
 .js .founder-still[data-reveal="mask"] { clip-path: circle(0% at 50% 50%); }

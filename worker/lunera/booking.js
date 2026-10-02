@@ -390,7 +390,7 @@ async function handleBook(request, env, fetchImpl, now) {
     await release();
     const code = (made.errors[0] && made.errors[0].code) || "";
     if (made.status === 403 || code === "FORBIDDEN" || code === "INSUFFICIENT_SCOPES") {
-      return json({ ok: false, reason: "not-allowed", error: "Online booking isn't switched on in Ysabel's Square yet. Nothing was charged — please text her to book." }, 503);
+      return json({ ok: false, reason: "not-allowed", error: "Online booking isn't switched on in Square yet. Nothing was charged — please text me to book." }, 503);
     }
     if (made.status === 409 || code === "CONFLICT" || /unavailable|not available|conflict/i.test(JSON.stringify(made.errors))) {
       return json({ ok: false, reason: "taken", error: "Sorry — that time was just taken. Nothing was charged; please choose another." }, 409);

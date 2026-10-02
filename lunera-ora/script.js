@@ -1,17 +1,17 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    LUNERA ORA · MOBILE SMILE STUDIO — page behaviour
-   Everything she may want changed lives in CONFIG / SERVICES / REVIEWS below.
+   Everything the studio may want changed lives in CONFIG / SERVICES / REVIEWS below.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   "use strict";
 
-  /* ───────────────────────── her details ───────────────────────── */
+  /* ───────────────────────── the studio's details ───────────────────────── */
   var CONFIG = {
-    // Her Square booking site (decoded from the QR code in her "Booking" story).
+    // The studio's Square booking site (decoded from the QR code in the studio's "Booking" story).
     // The site's booking API (worker/lunera/booking.js): free times, bookings
-    // and deposits go through it to her Square, with her token.
+    // and deposits go through it to the studio's Square, with the studio's token.
     api: "/api/lunera",
-    // Her Square booking page — for reference; the site never sends customers there.
+    // The studio's Square booking page — for reference; the site never sends customers there.
     booking: "https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services",
     // While true, the "Book" buttons open the launch-promo service in Square and
     // the cards show launch prices. Set false when the first 10 spots are gone.
@@ -22,12 +22,12 @@
     instagram: "https://www.instagram.com/luneraora.mobilestudio/",
     instagramDM: "https://ig.me/m/luneraora.mobilestudio",
     founderInstagram: "https://www.instagram.com/luneraora.mobilestudio/",
-    // Paste a Web3Forms access key to have enquiries emailed straight to her.
+    // Paste a Web3Forms access key to have enquiries emailed straight to the studio.
     // Until then the enquiry is handed back as a ready-written text / email / DM.
     web3formsKey: "",
     google: {
-      reviewUrl: "",   // her "Ask for reviews" link from Google Business Profile
-      profileUrl: "",  // her Google Maps listing
+      reviewUrl: "",   // the studio's "Ask for reviews" link from Google Business Profile
+      profileUrl: "",  // the studio's Google Maps listing
       rating: null,    // e.g. 5.0 once reviews exist
       count: null
     },
@@ -35,7 +35,7 @@
     roadFactor: 1.35  // straight-line km × this ≈ km by road around Edmonton’s grid
   };
 
-  // Her services on Square (ids read from her booking page). `launchIds` are the
+  // The studio's services on Square (ids read from the studio's booking page). `launchIds` are the
   // "Launch promo-" versions, used while CONFIG.launchPromo is true.
   var SERVICES = {
     aura:     { name: "The Aura", tag: "The subtle refresh", time: "1 hr", mins: 60, price: 149, launchPrice: 119, img: "lips-aura",
@@ -53,7 +53,7 @@
   function svcIds(key) { var s = SERVICES[key]; return (CONFIG.launchPromo && s.launchIds) || s.ids; }
   function svcPrice(key) { var s = SERVICES[key]; return (CONFIG.launchPromo && s.launchPrice) || s.price; }
 
-  // Booking hours from her Square page, minutes after midnight (Mountain Time).
+  // Booking hours from the studio's Square page, minutes after midnight (Mountain Time).
   var HOURS = { 0: [540, 1200], 1: [540, 1200], 2: [1110, 1260], 3: [1110, 1260], 4: [1110, 1260], 5: [1050, 1260], 6: [540, 1200] };
 
   // Areas for the travel estimate. Coordinates are public town / neighbourhood centres.
@@ -76,7 +76,7 @@
     { id: "sprucegrove", lab: "w", name: "Spruce Grove", short: "Spruce Grove", lat: 53.5450, lng: -113.9008 }
   ];
 
-  // Her travel fee tiers (from her "Pricing & Details" story).
+  // The studio's travel fee tiers (from the studio's "Pricing & Details" story).
   var TIERS = [
     { max: 10, fee: "Complimentary" },
     { max: 20, fee: "$10" },
@@ -88,8 +88,8 @@
 
   // Lunera Ora opened on 1 October 2026 and has no Google reviews yet. While
   // `sample` is true every card carries an "Example" chip and the section says
-  // so — a made-up review presented as a real one is a lie told on her behalf.
-  // Set sample:false and replace `items` with her real reviews when they exist.
+  // so — a made-up review presented as a real one is a lie told on the studio's behalf.
+  // Set sample:false and replace `items` with the studio's real reviews when they exist.
   var REVIEWS = {
     sample: true,
     items: [
@@ -222,7 +222,7 @@
     if (lenis) lenis.scrollTo(y, { duration: 1.6, easing: function (x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; } });
     else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
   }
-  // links between her pages fade out, and the new page fades in
+  // links between the studio's pages fade out, and the new page fades in
   (function () {
     if (reduce) { root.classList.remove("arriving"); return; }
     var v = jumpVeil(); v.classList.add("is-on", "is-instant");
@@ -785,15 +785,15 @@
   /* ───────────────────────── booking calendar ─────────────────────────
      The whole booking happens here — customers never leave for Square:
        1 experience · 2 day · 3 time · 4 details · 5 deposit · done.
-     Behind it is worker/lunera/booking.js, which talks to her Square with
-     her token, so the booking lands in her real Square calendar and the
-     deposit in her Square balance.
+     Behind it is worker/lunera/booking.js, which talks to the studio's Square with
+     the studio's token, so the booking lands in the studio's real Square calendar and the
+     deposit in the studio's Square balance.
 
      Two modes, chosen by /api/lunera/config:
-     · booking — Square is connected: her live free times, the card fields
+     · booking — Square is connected: the studio's live free times, the card fields
        (Square's own, inside this page) and an instant booking.
-     · request — not connected yet: her published hours give preferred
-       times, and the form is sent to her as a request (or, if requests
+     · request — not connected yet: the studio's published hours give preferred
+       times, and the form is sent to the studio as a request (or, if requests
        aren't switched on, handed back as a ready-written text / email).
      Nothing on this calendar claims a time is free unless Square said so. */
   var cal = (function () {
@@ -811,7 +811,7 @@
     var CFG = { live: false, booking: false, appId: null, locationId: null, sdk: null };
     var feeds = {};          // "variation|from" → { state, byDay: { ymd: [iso…] } }
 
-    /* — dates, always in her time zone — */
+    /* — dates, always in the studio's time zone — */
     function nowParts() {
       var p = {};
       try {
@@ -855,7 +855,7 @@
       if (S.time == null) return "";
       return typeof S.time === "string" ? timeFmt.format(new Date(S.time)) : fmtMins(S.time);
     }
-    // preferred starts from her hours, on the hour, finishing by closing time
+    // preferred starts from the studio's hours, on the hour, finishing by closing time
     function prefTimes(s) {
       var h = HOURS[dow(s)], len = S.exp ? SERVICES[S.exp].mins : 60, out = [];
       for (var m = Math.ceil(h[0] / 60) * 60; m + len <= h[1]; m += 60) {

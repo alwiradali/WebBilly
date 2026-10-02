@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    LUNERA ORA · SILK
-   The liquid satin behind the hero and the closing call to book — her whole
+   The liquid satin behind the hero and the closing call to book — the studio's whole
    brand is shot on satin, so the page is too. One WebGL canvas, fixed behind
    the page; sections that want satin are simply transparent "windows" onto it
    (`[data-silk-window]`). The render loop runs only while a window is on
@@ -11,8 +11,8 @@
    The surface is a height field: two layers of domain-warped folds, a slow
    drift, and a soft swell that follows the pointer. Its normal is lit like
    satin — a broad diffuse, a long anisotropic sheen and a sharp specular —
-   in her pearl, blush and taupe. A few glints twinkle on the brightest
-   crests (her captions use ✨ on almost every post).
+   in the studio's pearl, blush and taupe. A few glints twinkle on the brightest
+   crests (the studio's captions use ✨ on almost every post).
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   "use strict";
@@ -116,7 +116,7 @@
   ["uRes", "uTime", "uMouse", "uPress", "uScroll", "uBase", "uShade", "uBlush", "uDeep"].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
 
   function hex(h) { var n = parseInt(h.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
-  // Sampled from her own satin backdrops (story covers + the pink founder post).
+  // Sampled from the studio's own satin backdrops (story covers + the pink founder post).
   gl.uniform3fv(U.uBase, hex("#f3ece8"));
   gl.uniform3fv(U.uShade, hex("#c7b3ab"));
   gl.uniform3fv(U.uBlush, hex("#e7c6ba"));
