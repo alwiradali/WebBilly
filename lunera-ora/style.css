@@ -1237,3 +1237,10 @@ main .faq { background: var(--pearl-2); }
 .founder-arch img { object-position: 50% 20%; }
 .page-book .hdr:not(.is-solid) .hdr-logo { opacity: 1; transform: none; pointer-events: auto; }
 .jump-veil.is-instant { transition: none; }
+
+/* founder: her full round profile photo, uncropped */
+.founder-arch { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; box-shadow: 0 0 0 10px rgba(255, 250, 246, .55), 0 0 0 11px rgba(201, 169, 126, .5), 0 40px 80px -46px rgba(59, 45, 38, .7) !important; }
+.founder-arch img { object-position: 50% 50% !important; }
+.js .founder-still[data-reveal="mask"] { clip-path: circle(0% at 50% 50%); }
+.js .founder-still[data-reveal="mask"].in { clip-path: circle(50% at 50% 50%); }
+.founder-badge { bottom: -26px; }
