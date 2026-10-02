@@ -360,8 +360,8 @@ main > *:not([data-silk-window]) { position: relative; background-color: var(--p
 .ribbon-track span { font: 400 clamp(22px, 2.4vw, 30px)/1 var(--serif); letter-spacing: .01em; flex: none; }
 .ribbon-track em { color: #f1dcc0; }
 .ribbon-track .ic { width: 18px; height: 18px; color: var(--champagne); flex: none; }
-.ribbon-track.is-grouped { gap: 0; padding-left: 0; }
-.ribbon-group { display: flex; align-items: center; gap: 34px; padding-right: 34px; flex: none; }
+.ribbon-track.is-live { display: block; position: relative; height: 34px; padding: 0; }
+.ribbon-track .rb-i { position: absolute; left: 0; top: 50%; white-space: nowrap; will-change: transform; }
 
 /* ─────────────────────────── sections ─────────────────────────── */
 .sec { padding: clamp(96px, 12vw, 172px) 0; }

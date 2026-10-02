@@ -391,31 +391,42 @@
     var st = $("[data-steps]"); if (st) { st.style.setProperty("--p", 1); $$("li", st).forEach(function (li) { li.classList.add("is-lit"); }); }
   }
 
-  /* ───────────────────────── ribbon (scrolls a box — see notes on iOS) ───────────────────────── */
+  /* ───────────────────────── ribbon ─────────────────────────
+     Each phrase and sparkle is its own small layer, moved with a sub-pixel
+     transform and wrapped round when it leaves on the left. Nothing wide ever
+     moves (iOS won't paint a moving layer much wider than ~4096 device px),
+     and nothing snaps to whole pixels — that was the jitter of scrollLeft. */
   var ribbon = $("[data-ribbon]");
   if (ribbon) {
-    var group = doc.createElement("div"); group.className = "ribbon-group";
-    while (ribbon.firstChild) group.appendChild(ribbon.firstChild);
-    ribbon.appendChild(group);
-    ribbon.classList.add("is-grouped");
-    var fill = function () {
-      while (ribbon.scrollWidth < group.offsetWidth + window.innerWidth * 1.5 && ribbon.children.length < 8) ribbon.appendChild(group.cloneNode(true));
+    var proto = Array.prototype.slice.call(ribbon.children), items = [], total = 0, GAP = 34;
+    var build = function () {
+      ribbon.innerHTML = ""; items = []; total = 0;
+      var need = window.innerWidth + 400;
+      do {
+        proto.forEach(function (n) { var c = n.cloneNode(true); c.classList.add("rb-i"); ribbon.appendChild(c); items.push({ el: c, x: 0, w: 0 }); });
+      } while (items.length < proto.length * 8 && (function () { var w = 0; items.forEach(function (it) { w += it.el.getBoundingClientRect().width + GAP; }); return w < need * 1.2; })());
+      items.forEach(function (it) { it.w = it.el.getBoundingClientRect().width; it.x = total; total += it.w + GAP; });
     };
-    fill(); window.addEventListener("resize", fill);
+    ribbon.classList.add("is-live");
+    build();
+    var rw = window.innerWidth;
+    window.addEventListener("resize", function () { if (window.innerWidth !== rw) { rw = window.innerWidth; build(); } });
+    var ribbonAt = function (off) {
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i], x = ((it.x - off) % total + total) % total;
+        if (x > total - it.w - GAP) x -= total;          // wrap smoothly off the left edge
+        it.el.style.transform = "translate3d(" + x.toFixed(2) + "px,-50%,0)";
+      }
+    };
+    ribbonAt(0);
     if (!reduce) {
-      var rOn = true, lastT = performance.now(), boost = 0, lastY = window.scrollY, pos = 0;
+      var rOn = true, rLast = performance.now(), off = 0;
       if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { rOn = es[0].isIntersecting; }).observe(ribbon);
       (function tick(t) {
-        var dt = Math.min(64, t - lastT); lastT = t;
-        var y = window.scrollY; boost = boost * 0.92 + Math.min(600, Math.abs(y - lastY)) * 0.6; lastY = y;
-        if (rOn) {
-          pos += (36 + boost) * dt / 1000;
-          var w = group.offsetWidth;
-          if (w && pos >= w) pos -= w;
-          ribbon.scrollLeft = pos;
-        }
+        var dt = Math.min(50, t - rLast); rLast = t;
+        if (rOn) { off += 42 * dt / 1000; ribbonAt(off); }
         requestAnimationFrame(tick);
-      })(lastT);
+      })(rLast);
     }
   }
 
