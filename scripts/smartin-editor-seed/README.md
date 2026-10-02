@@ -20,10 +20,12 @@ created under Billy's account, so create it under his.
    `smartinscienceeditor.wordpress.com` (any free address).
 2. Settings: **Privacy → Discourage search engines** (keep the API public;
    do not make the site Private), timezone Europe/London.
-3. Create one page per file here (66 pages), title and slug from the file,
-   content pasted byte for byte in the Code editor, **published**. Plus one empty
-   page with slug `announcement` (anything typed there shows as a bar across the
-   top of every page). Delete the sample pages.
+3. In the editor site: **Tools → Import → WordPress**, upload
+   `smartin-wordpress-import.xml` (all 67 pages plus the empty `announcement`
+   page, published, slugs set). Delete the sample pages. Anything typed in
+   `announcement` shows as a bar across the top of every page.
+   Rebuild the XML after regenerating the seed (see the generator in the commit
+   that added it).
 4. Put the address in `EDITOR` at the top of `templates/smartin/content.js`
    (e.g. `'smartinscienceeditor.wordpress.com'`), commit, push, deploy.
 
