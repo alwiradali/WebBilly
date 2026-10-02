@@ -1352,3 +1352,23 @@ svg.wa{fill:currentColor!important;stroke:none!important}
 .arch .ai{width:100%}
 .arch b{white-space:nowrap;font-size:clamp(.5rem,2.3vw,.66rem);letter-spacing:.12em;max-width:100%;text-align:center}
 @media(max-width:379px){.arches{gap:6px}.arch b{font-size:.48rem;letter-spacing:.06em}}
+
+/* ---------- home: bouquets + the four ways in, as one section ---------- */
+@media(max-width:759px){
+  .cards.three.swipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;
+    margin-inline:-24px;padding:4px 24px 10px;scrollbar-width:none}
+  .cards.three.swipe::-webkit-scrollbar{display:none}
+  .cards.three.swipe > .card{flex:0 0 64%;scroll-snap-align:center}
+}
+.minis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:clamp(30px,4vw,48px)}
+@media(min-width:900px){.minis{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
+.mini-r{position:relative;display:grid;gap:3px;padding:16px 34px 16px 16px;border:1px solid var(--gold-fade);
+  border-radius:16px;background:var(--cream);transition:border-color .25s,transform .25s}
+.mini-r:hover{border-color:var(--gold);transform:translateY(-2px)}
+.mini-r b{font-family:var(--disp);font-weight:400;font-size:1.06rem;color:var(--burg);line-height:1.2}
+.mini-r span{font-size:.94rem;color:var(--burg-soft);line-height:1.3}
+.mini-r i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-size:1.5rem;color:var(--gold)}
+.mini-r em{justify-self:start;font-style:normal;font-family:var(--ui);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;
+  color:#FFF8F2;background:var(--burg);border-radius:100px;padding:3px 9px;margin-bottom:4px}
+.mini-r.loved{border-color:var(--gold-pale);background:linear-gradient(160deg,var(--blush),var(--cream))}
+#featured{padding-top:clamp(40px,5vw,70px)}
