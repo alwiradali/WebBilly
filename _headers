@@ -94,6 +94,22 @@
 /assets/bespoke/*
   X-Robots-Tag: noindex, noimageindex
 
+# --- Unlisted client preview: Lunera Ora — Mobile Smile Studio -----------
+# Every photograph in /assets/lunera-ora/ is cut from her Instagram — keep it
+# out of image search on its own. The travel-fee estimator has a "Use my
+# location" button, so this folder (only) lets the page ask for geolocation;
+# the site-wide policy at the top of this file blocks it everywhere else.
+/lunera-ora
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  ! Permissions-Policy
+  Permissions-Policy: geolocation=(self), microphone=(), camera=(), payment=()
+/lunera-ora/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  ! Permissions-Policy
+  Permissions-Policy: geolocation=(self), microphone=(), camera=(), payment=()
+/assets/lunera-ora/*
+  X-Robots-Tag: noindex, noimageindex
+
 # --- Unlisted client preview: Makeup by Sadia ----------------------------
 /templates/makeup-by-sadia
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex

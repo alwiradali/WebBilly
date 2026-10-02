@@ -1634,3 +1634,89 @@ turned into a hidden field holding YYYY-MM-DD (so every existing `.value`
 check still works), and a button opens a Monday-first month grid where every
 day before `earliest()` is disabled and struck through. Tests must click the
 calendar (`.dp-btn`, then `.dp-grid button:not([disabled])`), not fill the input.
+
+## Lunera Ora — Mobile Smile Studio (mobile teeth whitening, Beaumont AB) — `lunera-ora/` → billydigitals.com/lunera-ora/
+
+Ysabel, Registered Dental Hygienist (`@ysabennett`); the studio is
+`@luneraora.mobilestudio`, opened 1 Oct 2026. Serves Beaumont, Leduc and
+Edmonton from Beaumont. One page: `lunera-ora/{index.html,style.css,script.js,silk.js}`,
+assets in `assets/lunera-ora/`. Noindex; `_headers` covers the folder and the
+assets, and lets this folder (only) ask for geolocation — see below.
+
+**Every fact is hers, from three sources.** (1) Her Square booking site:
+`https://book.squareup.com/appointments/ya807bsxg2r71v/location/L8EH27QVVN1GN/services`
+— decoded from the QR code on her "Booking" story, because the link in her bio
+is truncated in the screenshot. Prices, durations, service descriptions,
+booking hours and the refund wording come from the JSON embedded in that page.
+(2) Her story highlights: how to book, travel fee tiers, payments, the
+experience steps, "treatment time + 15 minutes", policies, care guide.
+(3) Her posts: the founder quote, the story, the three FAQs, launch promo and
+refer-5-friends. Don't add claims she hasn't made (no shade promises, no
+"painless"); the results section says results vary.
+
+**Booking buttons open the exact service in Square.** Square's booking app has
+a `services/:serviceId` route (found in its bundle) that looks the service up
+by its top-level `id` and redirects to the full list if the id is unknown, so a
+deleted service degrades to the list, never a dead page. IDs live in `SERVICES`
+in script.js. `CONFIG.launchPromo` (true) points The Aura / Radiance / Lumina at
+her "Launch promo-" services ($119 / $139 / $199) and shows the regular price
+struck through; set it false when the first 10 spots are gone and everything
+switches to the regular services ($149 / $179 / $249), the launch cards hide,
+and the hero pill becomes the referral offer. Bride/Bridesmaids is $159 · 1 hr.
+The 20% deposit is taken by Square at booking — the site never takes money.
+
+**Her logo is a vector trace, used as a CSS mask.** Lifted from the "Pricing"
+story cover (the most-used lockup: "LUNERA ORA" + "Mobile Smile Studio"),
+keyed off the satin by projecting each pixel onto the local-background→ink
+axis (background = grayscale closing, 21px), 6× upscale, threshold .38,
+potrace (python `potracer`; the module is `potrace`, and it traces the *False*
+pixels, so pass the inverted mask). `logo.svg` (full), `wordmark.svg`,
+`subtitle.svg`. Every copy on the page is `.mark` — `mask-image` of the SVG over
+`currentColor` — so one file serves cocoa on pearl, pearl on espresso, and the
+shimmer sweep on the hero. The preload needs `crossorigin` (mask fetches are CORS).
+
+**The satin is live.** `silk.js` is one fixed WebGL canvas behind the page;
+the hero and the closing "Ready for your new era?" band are transparent
+`[data-silk-window]`s onto it, and it only renders while one is on screen
+(track the set of intersecting windows — a counter goes negative on the first
+callback and the canvas never shows). Colours sampled from her story covers.
+No WebGL / reduced motion → a still (`satin.webp`, rendered from the shader),
+which is also the texture on the cards and plates.
+
+**The ritual is a sideways pin on desktop, a vertical story under 961px.**
+Created first in `script.js` (pins before anything that measures). ScrollTrigger
+wraps a pinned section in `.pin-spacer`, so section CSS uses `main .ritual`, not
+`main > .ritual`, and the dark-header trigger watches `[data-ritual-wrap]` (the
+pinned section's own height is one screen, so its "bottom" comes far too soon).
+
+**Curtain reveals are observed through their parent.** Chrome's
+IntersectionObserver never reports a fully `clip-path`-hidden element as
+intersecting, so `[data-reveal="mask"]` waits on its parent.
+
+**Travel fee estimate.** `TOWNS` (public town / neighbourhood centres),
+straight-line distance from Beaumont × `CONFIG.roadFactor` 1.35 — checked
+against real drives: Leduc ≈19 km ($10), downtown Edmonton ≈29 ($15), Sherwood
+Park ≈29 ($15), St. Albert ≈45 ($30), Spruce Grove ≈52 (inquire). The radar
+places each area on its true bearing at that road distance, so dots and rings
+agree. "Use my location" needs `geolocation=(self)` — the site-wide
+`Permissions-Policy` blocks it, hence the override in `_headers`. Copy says
+"estimates only — confirmed when you book".
+
+**Enquiries never get lost.** With no `CONFIG.web3formsKey`, submitting writes
+the message and offers Send as a text (`sms:…?&body=`, works on iOS and
+Android), Send by email (mailto), or Copy & open Instagram (`ig.me/m/…`). With a
+key it posts to Web3Forms and falls back to the same hand-off on failure. The
+form asks people not to send medical history (intake/consent is done in Square).
+
+**Reviews are labelled examples** (`REVIEWS.sample`) — she has no Google
+profile yet. Fill `CONFIG.google` (review link, profile, rating, count) and set
+`sample:false` with real items.
+
+**Fonts are self-hosted** (`assets/lunera-ora/fonts/`, Cormorant Garamond +
+italic + Montserrat, variable, latin subset, SIL OFL) — Montserrat is the sans
+her own graphics use.
+
+**Still needed from her:** a Web3Forms key (or say where enquiries should go),
+her Google Business Profile + review link, whether launch pricing has ended,
+and any client photos she's happy to have on the site (with consent, per her
+own photo policy). Jonard's before/after is from her public post.
