@@ -900,3 +900,8 @@ footer a:hover{color:var(--green)}
    it is there for the case where the confirmation turns out to be wrong. */
 .ok .ok-alt{margin-top:12px;font-size:.88rem;color:var(--mut)}
 .ok .ok-alt a{color:var(--teal);font-weight:600;border-bottom:1px solid rgba(48,143,172,.4)}
+
+/* announcement bar, written by Rod in WordPress (content.js); absent until he writes one */
+#sm-notice{position:relative;z-index:60;background:var(--teal,#0f766e);color:#fff;text-align:center;font-size:.92rem;padding:10px 16px;line-height:1.45}
+#sm-notice p{margin:0}
+#sm-notice a{color:#fff;text-decoration:underline}
