@@ -66,7 +66,7 @@ WA = ('https://wa.me/447306063563?text=Hi%2C%20I%20found%20you%20through%20'
 
 LOADER = '''<div class="rrload" id="rrload" role="status" aria-live="polite" aria-label="Loading Roses by Rachel">
   <div class="rrload-in">
-    <img src="../assets/rachel/logo-official-hd.webp" alt="Roses by Rachel" width="1114" height="928">
+    <img src="../assets/rachel/rr-logo.svg" alt="Roses by Rachel" width="557" height="464">
     <div class="rrload-rule" aria-hidden="true"></div>
   </div>
 </div>
@@ -122,8 +122,8 @@ def nav(page):
     return '''<nav class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="index.html" aria-label="Roses by Rachel, home">
-      <img class="mk" src="../assets/rachel/logo-monogram-hd.webp" alt="" width="866" height="730">
-      <img class="wd" src="../assets/rachel/logo-word-hd.webp" alt="Roses by Rachel" width="2010" height="164">
+      <img class="mk" src="../assets/rachel/rr-monogram.svg" alt="" width="433" height="365">
+      <img class="wd" src="../assets/rachel/rr-word.svg" alt="Roses by Rachel" width="1005" height="82">
     </a>
     <div class="navutil">
       <a class="btn sm navbtn" href="contact.html">Order a Bouquet</a>
@@ -145,7 +145,7 @@ def nav(page):
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="drawer-in">
     <div class="dtop">
-      <a class="dlogo" href="index.html"><img src="../assets/rachel/logo-official-hd.webp" alt="Roses by Rachel" width="1114" height="928"></a>
+      <a class="dlogo" href="index.html"><img src="../assets/rachel/rr-logo.svg" alt="Roses by Rachel" width="557" height="464"></a>
       <button class="x" id="drawerx" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
     <nav class="dlinks" aria-label="Pages">
@@ -170,7 +170,7 @@ def footer():
     return '''<footer>
   <div class="wrap">
     <div class="fmain">
-      <a href="index.html"><img class="m" src="../assets/rachel/logo-official-light.webp" alt="Roses by Rachel" width="557" height="464" style="width:124px;height:auto;margin:0 auto"></a>
+      <a href="index.html"><img class="m" src="../assets/rachel/rr-logo-light.svg" alt="Roses by Rachel" width="557" height="464" style="width:124px;height:auto;margin:0 auto"></a>
       <div class="fdiv" aria-hidden="true"></div>
       <div class="fcontact">
         <a class="fc" href="mailto:info@rosesbyrachel.co.uk"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
