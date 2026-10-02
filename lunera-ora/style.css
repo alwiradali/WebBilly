@@ -1244,3 +1244,27 @@ main .faq { background: var(--pearl-2); }
 .js .founder-still[data-reveal="mask"] { clip-path: circle(0% at 50% 50%); }
 .js .founder-still[data-reveal="mask"].in { clip-path: circle(50% at 50% 50%); }
 .founder-badge { bottom: -26px; }
+
+/* the ritual on phones and tablets: a calm, compact list */
+@media (max-width: 960px) {
+  .ritual-pin { padding: 72px 0 64px; }
+  .ritual-track { gap: 0; }
+  .r-intro { margin-bottom: 30px; }
+  .r-intro .h2 { font-size: clamp(34px, 9vw, 48px); }
+  .r-panel:not(.r-intro):not(.r-outro) { grid-template-columns: 72px minmax(0, 1fr); gap: 18px; align-items: start; padding: 22px 0; border-top: 1px solid rgba(230, 209, 178, .14); }
+  .r-panel:not(.r-intro):not(.r-outro) .r-art { width: 72px; height: 72px !important; aspect-ratio: 1 !important; border-radius: 50%; display: grid; place-items: center; padding: 0; }
+  .r-art .r-num { position: relative; inset: auto; left: auto; top: auto; bottom: auto; font: 400 30px/1 var(--serif); color: var(--cocoa); -webkit-text-stroke: 0; z-index: 2; }
+  .r-art-photo .r-num, .r-art-lamp .r-num { color: #fbf3ec; text-shadow: 0 1px 8px rgba(0, 0, 0, .45); }
+  .r-art-photo img { position: absolute; inset: 0; filter: brightness(.7); }
+  .r-glyph, .care-float, .lamp-beam, .lamp-head, .lamp-glow, .r-chip { display: none !important; }
+  .r-art::after { border-radius: 50%; }
+  .r-step { font-size: 10px; }
+  .r-copy h3 { font-size: 28px; margin: 8px 0 6px; }
+  .r-copy p { font-size: 15px; line-height: 1.6; }
+  .r-outro { margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(230, 209, 178, .14); }
+  .r-big { font-size: clamp(34px, 9vw, 46px); }
+}
+@media (max-width: 960px) {
+  .ritual .r-panel:not(.r-intro):not(.r-outro) .r-art { min-height: 0; max-height: 72px; max-width: 72px; }
+  .ritual .r-outro .eyebrow { font-size: 11px; }
+}
