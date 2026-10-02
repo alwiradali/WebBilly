@@ -88,11 +88,12 @@ def rewrite(html, domain, path):
 
     # local css/js referenced relatively from blog pages
     html = html.replace('href="../shared.css"', 'href="/shared.css"')
-    html = re.sub(r'src="(?:\.\./)+(site|letters|book-hero)\.js"', r'src="/\1.js"', html)
+    html = re.sub(r'src="(?:\.\./)+(site|letters|book-hero|content)\.js"', r'src="/\1.js"', html)
     html = html.replace('src="site.js"', 'src="/site.js"')
     html = html.replace('src="letters.js"', 'src="/letters.js"')
     html = html.replace('src="book-hero.js"', 'src="/book-hero.js"')
     html = html.replace('src="calendar.js"', 'src="/calendar.js"')
+    html = html.replace('src="content.js"', 'src="/content.js"')
     html = html.replace('href="shared.css"', 'href="/shared.css"')
     html = html.replace('href="book-hero.css"', 'href="/book-hero.css"')
 
