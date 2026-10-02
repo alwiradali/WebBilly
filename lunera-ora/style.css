@@ -1302,10 +1302,10 @@ main .faq { background: var(--pearl-2); }
   .ritual .r-art-photo .r-num, .ritual .r-art-lamp .r-num { color: var(--cocoa); text-shadow: none; }
 }
 
-/* reviews: all on the page, no sideways scrolling */
-.reviews .rail { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; overflow: visible; scroll-snap-type: none; cursor: auto; padding: 4px 0 0; }
-.reviews .rv { width: auto; }
-.reviews .rail-ctl { display: none; }
+/* reviews: swipe through them inside their own strip; the page never moves sideways */
+.reviews .rail-wrap { overflow: hidden; max-width: 100%; }
+.reviews .rail { display: flex; gap: 14px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; padding: 4px 0 22px; }
+.reviews .rv { width: min(380px, 84%); scroll-snap-align: start; scroll-snap-stop: always; }
 .drawer-nav a { font-size: clamp(28px, 7.6vw, 42px); padding: 8px 0; }
 
 /* instagram: an invitation, no photo grid */
