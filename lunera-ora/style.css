@@ -1324,3 +1324,8 @@ html.fx-snap, html.fx-snap body { scroll-behavior: auto !important; }
 
 /* arriving at a section from another page: covered from the very first paint */
 html.arriving body::before { content: ""; position: fixed; inset: 0; z-index: 59; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, #fbf7f3, #f1e7e1); }
+
+/* menu fits above Safari's floating toolbar: sized by screen height, with room at the bottom */
+.drawer { height: 100dvh; bottom: auto; }
+.drawer-in { min-height: 100dvh; gap: 22px; padding-bottom: calc(env(safe-area-inset-bottom) + 96px); }
+.drawer-nav a { font-size: min(clamp(26px, 7.2vw, 42px), 4.1dvh); padding: min(8px, .9dvh) 0; }
