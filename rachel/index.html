@@ -171,25 +171,64 @@
   </div>
 </header>
 
-<!-- ============== SHOP, straight under the hero ==============
-     One section instead of two: three bouquets to buy now (a swipeable row
-     on a phone), and underneath them the four ways in as a compact grid. -->
-<section class="sect" id="featured">
+<!-- ============== MONTHLY FLOWERS, front and centre ==============
+     The subscription is worth more to her than any one bouquet, so it is
+     the first thing under the hero: the three plans as tappable pills, each
+     going straight into the order form already filled in. -->
+<section class="sect" id="monthly">
   <div class="wrap">
-    <div class="shead">
-      <p class="caps" data-fx="reveal">Order Flowers</p>
-      <h2 data-fx="reveal" data-fx-delay="60">Three to Start With</h2>
-      <div class="orn" aria-hidden="true"><svg viewBox="0 0 64 16"><path d="M2 8h18M44 8h18M24 8c2-4 5-4 5 0s-3 4-5 0zm16 0c-2-4-5-4-5 0s3 4 5 0z"/><circle cx="32" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg></div>
+    <div class="mf">
+      <div class="mf-ph" data-fx="reveal">
+        <img src="../assets/rachel/work/pink-ivory-roses.webp" alt="Pink and ivory roses banked in gypsophila, made by Rachel" width="1000" height="1250" loading="lazy">
+        <span class="mf-tag">Most loved</span>
+      </div>
+      <div class="mf-txt" data-fx="reveal" data-fx-delay="90">
+        <p class="caps">Flowers on repeat</p>
+        <h2>Monthly <span class="it">Flowers</span></h2>
+        <div class="orn left" aria-hidden="true"><svg viewBox="0 0 64 16"><path d="M2 8h18M44 8h18M24 8c2-4 5-4 5 0s-3 4-5 0zm16 0c-2-4-5-4-5 0s3 4 5 0z"/><circle cx="32" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg></div>
+        <p>Fresh flowers at the door every month, arranged by hand the morning they go out. Pause, skip or cancel whenever you like.</p>
+        <div class="mf-plans">
+          <button type="button" class="mf-plan" data-order="Subscription: Monthly Bloom, £39 a month"><b>Monthly Bloom</b><span>£39<small>/month</small></span></button>
+          <button type="button" class="mf-plan pop" data-order="Subscription: Seasonal Luxe, £59 a month"><em>Most popular</em><b>Seasonal Luxe</b><span>£59<small>/month</small></span></button>
+          <button type="button" class="mf-plan" data-order="Subscription: Wedding Club, £99 a month"><b>Wedding Club</b><span>£99<small>/month</small></span></button>
+        </div>
+        <a class="btn" href="subscriptions.html">See the plans</a>
+      </div>
     </div>
-    <div class="cards three swipe" id="cards" data-max="3" data-fx="stagger"></div>
-    <nav class="minis" aria-label="What Roses by Rachel does" data-fx="reveal">
-      <a class="mini-r" href="shop.html"><b>All Bouquets</b><span>Hand-tied, from £42</span><i aria-hidden="true">&rsaquo;</i></a>
-      <a class="mini-r loved" href="subscriptions.html"><em>Most loved</em><b>Monthly Flowers</b><span>From £39 a month</span><i aria-hidden="true">&rsaquo;</i></a>
-      <a class="mini-r" href="airport.html"><b>Airport Arrivals</b><span>Met at Manchester Airport</span><i aria-hidden="true">&rsaquo;</i></a>
-      <a class="mini-r" href="corporate.html"><b>Corporate</b><span>Reception flowers, from £60</span><i aria-hidden="true">&rsaquo;</i></a>
-    </nav>
   </div>
 </section>
+
+<!-- ============== THE SHOP ==============
+     Every bouquet, in one row: swipe on a phone, arrows on a computer. -->
+<section class="sect" id="featured">
+  <div class="wrap">
+    <div class="rail-head">
+      <div>
+        <p class="caps" data-fx="reveal">The Shop</p>
+        <h2 data-fx="reveal" data-fx-delay="60">Our Bouquets</h2>
+      </div>
+      <div class="rail-nav" aria-hidden="true">
+        <button type="button" class="rail-btn" data-rail="-1">&lsaquo;</button>
+        <button type="button" class="rail-btn" data-rail="1">&rsaquo;</button>
+      </div>
+    </div>
+    <div class="cards rail" id="cards"></div>
+    <div class="rail-foot">
+      <a class="btn ghost" href="shop.html">Shop all flowers</a>
+      <p class="rail-links"><a href="weddings.html">Weddings</a><span>&middot;</span><a href="airport.html">Airport Arrivals</a><span>&middot;</span><a href="corporate.html">Corporate</a></p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* arrows for the bouquet row */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('[data-rail]'); if (!b) return;
+  var r = document.querySelector('.cards.rail'); if (!r) return;
+  var card = r.querySelector('.card'); var step = card ? card.getBoundingClientRect().width + 20 : 300;
+  r.scrollBy({ left: step * (+b.getAttribute('data-rail')) * 2, behavior: 'smooth' });
+});
+</script>
 
 <!-- ============== BESPOKE ENQUIRY ============== -->
 <section class="sect" id="bespoke">

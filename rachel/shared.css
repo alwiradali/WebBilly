@@ -1372,3 +1372,51 @@ svg.wa{fill:currentColor!important;stroke:none!important}
   color:#FFF8F2;background:var(--burg);border-radius:100px;padding:3px 9px;margin-bottom:4px}
 .mini-r.loved{border-color:var(--gold-pale);background:linear-gradient(160deg,var(--blush),var(--cream))}
 #featured{padding-top:clamp(40px,5vw,70px)}
+
+/* ---------- home: Monthly Flowers, front and centre ---------- */
+#monthly{padding-top:clamp(40px,5vw,72px)}
+.mf{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-radius:28px;overflow:hidden;
+  background:linear-gradient(150deg,var(--blush),#FDF3EE 60%,var(--cream));border:1px solid var(--gold-fade);
+  box-shadow:0 40px 70px -50px rgba(106,46,58,.55)}
+@media(min-width:860px){.mf{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+.mf-ph{position:relative;min-height:260px}
+.mf-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(max-width:859px){.mf-ph{aspect-ratio:5/3.6;min-height:0}}
+.mf-tag{position:absolute;left:16px;top:16px;font-family:var(--ui);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:#FFF8F2;background:var(--burg);border-radius:100px;padding:7px 13px}
+.mf-txt{padding:clamp(26px,4vw,56px)}
+.mf-txt h2{margin-top:6px}
+.mf-txt .it{font-style:italic;color:var(--gold-dk)}
+.mf-txt > p:not(.caps){margin-top:12px;color:var(--burg-soft);max-width:48ch}
+.mf-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:24px 0 26px}
+.mf-plan{position:relative;display:grid;justify-items:center;gap:4px;padding:16px 8px 14px;cursor:pointer;
+  border:1px solid var(--gold-pale);border-radius:16px;background:rgba(255,252,248,.75);text-align:center;
+  transition:transform .25s,border-color .25s,box-shadow .25s}
+.mf-plan:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 18px 30px -22px rgba(106,46,58,.5)}
+.mf-plan b{font-family:var(--disp);font-weight:400;font-size:1rem;color:var(--burg);line-height:1.2}
+.mf-plan span{font-family:var(--disp);font-size:1.45rem;color:var(--gold-dk);line-height:1}
+.mf-plan small{font-family:var(--ser);font-size:.85rem;color:var(--burg-soft);margin-left:2px}
+.mf-plan.pop{border-color:var(--gold);background:#FFFBF6}
+.mf-plan em{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;
+  font-family:var(--ui);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:#FFF8F2;
+  background:var(--gold-dk);border-radius:100px;padding:3px 8px}
+@media(max-width:420px){.mf-plan b{font-size:.86rem}.mf-plan span{font-size:1.2rem}.mf-plans{gap:7px}}
+
+/* ---------- home: every bouquet in one row ---------- */
+.rail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:clamp(20px,3vw,32px)}
+.rail-head h2{margin-top:4px}
+.rail-nav{display:none;gap:10px}
+@media(min-width:760px){.rail-nav{display:flex}}
+.rail-btn{width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-pale);background:var(--cream);
+  font-size:1.6rem;line-height:1;color:var(--burg);cursor:pointer;transition:background .2s,color .2s}
+.rail-btn:hover{background:var(--burg);color:var(--cream)}
+.cards.rail{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:20px;scrollbar-width:none;
+  margin-inline:-24px;padding:4px 24px 14px;scroll-padding-inline:24px}
+.cards.rail::-webkit-scrollbar{display:none}
+.cards.rail > .card{flex:0 0 clamp(200px,24%,300px);scroll-snap-align:start}
+@media(max-width:759px){.cards.rail{gap:14px}.cards.rail > .card{flex-basis:62%}}
+.rail-foot{display:grid;justify-items:center;gap:16px;margin-top:clamp(22px,3vw,34px)}
+.rail-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-family:var(--ui);font-size:.7rem;
+  letter-spacing:.16em;text-transform:uppercase}
+.rail-links a{color:var(--burg-soft);border-bottom:1px solid var(--gold-fade);padding-bottom:2px}
+.rail-links span{color:var(--gold)}
