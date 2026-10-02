@@ -38,6 +38,10 @@ const REAL = [
   "/media/abc123/photo.jpg", "/api/public/listings", "/api/studio/auth/me",
   u.listingPath("root", "carlton-road-5"), "/property/95", "/properties/MEG-1001", "/propertydet.asp",
   "/letting-agents-manchester-city-centre", "/landlord-login", "/settings-page", "/test", "/about-us",
+  /* 2 Oct: the new rules' near misses, and the site's own files */
+  "/old-trafford", "/rest-of-greater-manchester", "/files-and-forms", "/developers", "/temp-accommodation", "/storage-units",
+  "/sitemap_index.xml", "/version.json", "/templates/assets/missing.json", "/media/abc/missing.json", "/api/public/missing.json",
+  "/js/main.js", "/scripts/app.js", "/content/feed.xml",
 ];
 const wrong = REAL.filter((p) => u.notFoundKind(p) === "probe");
 ok(wrong.length === 0, `no real address is called a probe (${REAL.length} checked)` + (wrong.length ? ": " + wrong.join(", ") : ""));
@@ -58,6 +62,7 @@ const GO = {
   "/lettings/city-centre": "/letting-agents-manchester-city-centre",
   "/lettings/manchester-city-centre": "/letting-agents-manchester-city-centre",
   "/lettings/bury": "/lettings", "/index.php": "/", "/index.htm": "/", "/favicon.png": "/apple-touch-icon.png",
+  "/team": "/about-us", "/our-team/": "/about-us", "/meet-the-team": "/about-us",
 };
 for (const [from, to] of Object.entries(GO)) ok(u.fallbackRedirect(from) === to, `${from} -> ${to}`);
 for (const [, to] of Object.entries(GO)) {
@@ -77,10 +82,57 @@ ok(!/fallbackRedirect/.test(host.slice(0, host.indexOf("export async function no
 const lg = host.slice(host.indexOf("export async function logNotFound"));
 ok(/notFoundKind\(path\) === "probe"\) return/.test(lg.slice(0, 900)), "bot probes are not written to the database");
 
+/* ── what the Studio listed on 2 Oct ("505 missing pages") ─────────────── */
+const PROBES_OCT = [
+  "/wp", "/wp/", "/_profiler/phpinfo", "/appsettings.production.json", "/meta.json", "/aws-exports.js",
+  "/readme.html", "/files", "/uploads", "/rest/settings",
+  /* and their usual cousins */
+  "/license.txt", "/package.json", "/server.js", "/_next/static/chunks/main.js", "/_debugbar/open", "/upload/",
+  "/backup/db", "/api-docs", "/swagger-ui/index.html", "/graphql", "/vendor/autoload.php", "/storage/logs/laravel.log",
+  "/static/js/main.js", "/assets/config.json",
+];
+for (const p of PROBES_OCT) ok(u.notFoundKind(p) === "probe", `${p} is a bot probe`);
+ok(u.notFoundKind("/js/main.js") === "legacy" && u.notFoundKind("/scripts/app.js") === "legacy", "the old site's own scripts stay 'old-site files'");
+
+/* scanners name the address they ask for as where they came from */
+ok(u.selfReferred("/team", "https://megacityproperties.co.uk/team"), "a hit that names its own address as where it came from is a scanner's");
+ok(u.selfReferred("/wp", "https://www.megacityproperties.co.uk/wp/?rest_route=/wp/v2/users"), "  with or without a trailing slash and a query");
+ok(u.selfReferred("/Some-Page", "https://www.megacityproperties.co.uk/some-page"), "  in any case");
+ok(!u.selfReferred("/old-listing", "https://www.google.com/"), "a visitor from Google is not");
+ok(!u.selfReferred("/old-listing", "https://www.megacityproperties.co.uk/lettings"), "nor one following a link on another page of the site");
+ok(!u.selfReferred("/old-listing", null) && !u.selfReferred("/old-listing", "") && !u.selfReferred("/old-listing", "not a url"), "nor one with no referrer, or a broken one");
+
+/* the Studio list, from a database holding a scanner, a real missing page
+   reached three ways, and a probe */
+{
+  const { list404s } = await import("../worker/studio/redirects.js");
+  const ROWS = [
+    { p: "/team", kind: "page", ref: "https://megacityproperties.co.uk/team", n: 5, last: "2026-10-02T04:00:00.000Z", bots: 1 },
+    { p: "/old-listing", kind: "page", ref: "https://www.google.com/", n: 3, last: "2026-10-01T10:00:00.000Z", bots: 0 },
+    { p: "/old-listing", kind: "page", ref: "https://www.megacityproperties.co.uk/old-listing", n: 4, last: "2026-10-02T09:00:00.000Z", bots: 0 },
+    { p: "/old-listing", kind: "page", ref: null, n: 1, last: "2026-09-30T10:00:00.000Z", bots: 1 },
+    { p: "/another-page", kind: "page", ref: null, n: 2, last: "2026-10-02T08:00:00.000Z", bots: 0 },
+    { p: "/.env", kind: "page", ref: null, n: 9, last: "2026-10-02T07:00:00.000Z", bots: 0 },
+  ];
+  const fakeDb = { prepare: (sql) => {
+    const all = async () => ({ results: /not_found/.test(sql) ? ROWS : [] });
+    return { all, bind: () => ({ all }) };
+  } };
+  const L = await (await list404s({ url: new URL("https://x.test/api?days=7"), db: fakeDb })).json();
+  ok(JSON.stringify(L.items.map((r) => r.path)) === JSON.stringify(["/old-listing", "/another-page"]), `the list shows the real missing pages, most hits first (${L.items.map((r) => r.path).join(", ")})`);
+  const o = L.items[0];
+  ok(o.count === 4 && o.bots === 1 && o.lastSeen === "2026-10-01T10:00:00.000Z", `  counting only the hits that did not name themselves (${o.count}, last ${o.lastSeen})`);
+  ok(o.referrer === "https://www.google.com/", "  and showing where people really came from");
+  ok(L.probes.addresses === 2 && L.probes.hits === 14, `an address only ever 'referred' by itself joins the bot probes (${L.probes.addresses} addresses, ${L.probes.hits} hits)`);
+}
+const lgSelf = host.slice(host.indexOf("export async function logNotFound"));
+ok(/urls\.selfReferred\(path, request\.headers\.get\("referer"\)\)\) return/.test(lgSelf.slice(0, 1000)), "a self-referred hit is not written to the database either");
+
 /* ── the dashboard and the list agree ──────────────────────────────────── */
 const enq = readFileSync(new URL("../worker/studio/enquiries.js", import.meta.url), "utf8");
 const red = readFileSync(new URL("../worker/studio/redirects.js", import.meta.url), "utf8");
 ok(/notFoundKindOf as kindOf/.test(enq) && /k === "probe" \|\| k === "legacy"/.test(enq), "the dashboard counts pages and site files, not probes or old-site files");
+ok(/GROUP BY p, f LIMIT/.test(enq) && /selfReferred\(r\.p, r\.f\) \? "probe"/.test(enq), "  and the tile leaves out self-referred hits the same way the list does");
 ok(/notFoundKindOf as kindOf/.test(red) && /r\.kind !== "probe"\)\.slice\(0, limit\)/.test(red), "the list leaves probes out before its limit");
 const studio = readFileSync(new URL("../templates/megacity-studio.js", import.meta.url), "utf8");
 ok(/tile\("Missing pages this week"/.test(studio) && /r\.kind !== "legacy"/.test(studio), "the Studio tile and list read the same kinds");

@@ -239,6 +239,8 @@ const FALLBACK_REDIRECTS = [
   [/^\/(news|news-list|newslist|articles)(\/.*)?$/i, "/journal"],
   [/^\/valuation\/.+$/, "/valuation"],
   ["/favicon.png", "/apple-touch-icon.png"],
+  /* there is no team page; the About page is where the people are */
+  [/^\/(team|our-team|the-team|meet-the-team)\/?$/i, "/about-us"],
   /* /lettings/manchester, /lettings/salford ... -> the area page when there
      is one, otherwise the full list */
   [/^\/lettings\/([a-z0-9-]+)(\/.*)?$/, (m) => {
@@ -283,10 +285,20 @@ const PROBE = [
   /(^|\/)env([._~-][^/]*)?$/i,
   /~$|\.(env|ini|sql|bak|old|orig|save|swp|swo|tmp|log|ya?ml|toml|conf|cfg|pem|key|crt|p12|zip|tar|t?gz|rar|7z|map|ds_store)$/i,
   /(^|\/)(config|configuration|credentials|secrets?|appsettings|parameters|settings|database|docker-compose|composer|package(-lock)?|phpinfo|info|debug)\.(json|js|php|xml|txt)$/i,
-  /^\/(xmlrpc|wp[-_/]|wordpress(\/|$)|admin(istrator)?(\/|$|\.)|login(\/|$|\.)|user\/login|cgi-bin\/|phpmyadmin|pma(\/|$)|myadmin|vendor\/phpunit|actuator|server-status|owa\/|autodiscover|ecp\/|boaform|hnap1|solr\/|telescope|_ignition|geoserver|manager\/html|cpanel|webmail)/i,
+  /^\/(xmlrpc|wp([-_/]|$)|wordpress(\/|$)|admin(istrator)?(\/|$|\.)|login(\/|$|\.)|user\/login|cgi-bin\/|phpmyadmin|pma(\/|$)|myadmin|vendor\/phpunit|actuator|server-status|owa\/|autodiscover|ecp\/|boaform|hnap1|solr\/|telescope|_ignition|geoserver|manager\/html|cpanel|webmail)/i,
   /does-?not-?exist|non-?existent|404-?test/i,
   /^\/(llms(-full)?\.txt|ai\.txt|ads\.txt|app-ads\.txt|humans\.txt|security\.txt|sellers\.json|crossdomain\.xml|clientaccesspolicy\.xml|browserconfig\.xml|site\.webmanifest|manifest\.json)$/i,
   /^\/(apple-touch-icon-\d|android-chrome|mstile)[^/]*\.png$/i,
+  /* 2 Oct: what got past the list above. Framework internals (/_profiler/
+     phpinfo); code, settings and readme files anywhere outside the site's
+     own folders (/aws-exports.js, /meta.json, /appsettings.production.json,
+     /readme.html), and the folders scanners try for uploads and APIs
+     (/files, /uploads, /rest/settings). This site keeps its files in
+     /templates, /media, /billy360 and /api, serves only the root files
+     named here, and the previous site's own folders stay "old-site files". */
+  /^\/_/,
+  /^\/(?!(templates|media|billy360|api|images|css|js|content|scripts|styles|fonts)\/)(?!(robots\.txt|sitemap(_index)?\.xml|version\.json|google[0-9a-f]+\.html)$)(?:[^/]*\/)*[^/]+\.(js|mjs|cjs|ts|jsx|json|xml|txt|html?|md|ya?ml|lock|sh|py|rb|exe|dll|jar|war)$/i,
+  /^\/(files|uploads?|rest|backups?|bak|old|tmp|temp|dev|staging|debug|console|graphql|swagger(-ui)?|api-docs|storage|vendor|node_modules|druid|jenkins|laravel|phpunit|shell|cmd|remote)(\/|$)/i,
 ];
 const LEGACY_FILE = /^\/(images|css|js|content|scripts|styles|fonts)\/|\.(asp|aspx|php|cgi|jsp)$|\/wp-|^\/xmlrpc/i;
 function notFoundKind(path) {
@@ -299,6 +311,22 @@ function notFoundKind(path) {
    Studio decides the kind again on the way out, from the address itself. */
 function notFoundKindOf(path, logged) {
   return notFoundKind(path) || (logged && logged !== "page" ? logged : "page");
+}
+/* A browser reports the page a link was on. Scanners fill that in with the
+   address they are asking for, so the Studio showed /aws-exports.js as
+   having come from megacityproperties.co.uk/aws-exports.js. Nobody follows
+   a link on a page that does not exist, so a hit like that is a probe,
+   whatever the address looks like. */
+function selfReferred(path, ref) {
+  if (!ref) return false;
+  let from;
+  try { from = new URL(String(ref)).pathname; } catch { return false; }
+  const norm = (v) => {
+    let x = String(v || "").split(/[?#]/)[0];
+    try { x = decodeURIComponent(x); } catch { /* keep it as sent */ }
+    return x.replace(/\/+$/, "").toLowerCase() || "/";
+  };
+  return norm(from) === norm(path);
 }
 
 /* A link written for the client's own domain ("/valuation", "/let/x") -> the
@@ -322,5 +350,5 @@ function demoHref(v) {
 export {
   DEMO_HOSTS, FALLBACK_HOST, ROOT_MAP, PATH_TO_SLUG, PUBLIC_STATIC_SLUGS, STATIC_LET_SLUGS, LEGACY_LISTINGS, RESERVED_ROOT_SLUGS, LEGACY_REDIRECTS,
   pagePath, listingPath, studioPath, assetPath, rewriteHref, demoHref, rewriteSrcset, rewriteStyle, resolveRoot, slugOfPath,
-  megacityHosts, isMegacityHost, canonicalHost, mode, publicBase, absUrl, legacyRedirect, fallbackRedirect, FALLBACK_REDIRECTS, notFoundKind, notFoundKindOf, LEGACY_FILE,
+  megacityHosts, isMegacityHost, canonicalHost, mode, publicBase, absUrl, legacyRedirect, fallbackRedirect, FALLBACK_REDIRECTS, notFoundKind, notFoundKindOf, selfReferred, LEGACY_FILE,
 };

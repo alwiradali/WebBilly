@@ -8,7 +8,7 @@
 import { officeDb, uid, nowIso, json, HttpError, readJsonBody, clampStr, isEmail, clientIp, bump, audit, parseJson, sha256Hex } from "./db.js";
 import { valid, label } from "./options.js";
 import { sendEmail, layout, esc } from "./email.js";
-import { notFoundKindOf as kindOf } from "./urls.js";
+import { notFoundKindOf as kindOf, selfReferred } from "./urls.js";
 
 export const OFFICE_TO = "info@megacityproperties.co.uk";
 export const LETTINGS_TO = "lettings@megacityproperties.co.uk";
@@ -345,8 +345,10 @@ export async function stats(db) {
      missing site files), not scanners probing for /.env or the old site's
      images — those are counted separately so the tile can say so */
   ev.not_found = 0; ev.not_found_ignored = 0;
-  for (const r of (await db.prepare(`SELECT json_extract(meta_json,'$.path') p, MAX(json_extract(meta_json,'$.kind')) k, COUNT(*) n FROM events WHERE name='not_found' AND at >= ?1 GROUP BY p LIMIT 5000`).bind(since7).all()).results || []) {
-    const k = kindOf(r.p, r.k);
+  for (const r of (await db.prepare(`SELECT json_extract(meta_json,'$.path') p, MAX(json_extract(meta_json,'$.kind')) k, json_extract(meta_json,'$.ref') f, COUNT(*) n FROM events WHERE name='not_found' AND at >= ?1 GROUP BY p, f LIMIT 5000`).bind(since7).all()).results || []) {
+    /* by address and where it "came from": a scanner naming the missing
+       address itself as its referrer is a probe, whatever the address */
+    const k = selfReferred(r.p, r.f) ? "probe" : kindOf(r.p, r.k);
     if (k === "probe" || k === "legacy") ev.not_found_ignored += Number(r.n) || 0;
     else ev.not_found += Number(r.n) || 0;
   }

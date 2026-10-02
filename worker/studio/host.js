@@ -411,6 +411,7 @@ export async function logNotFound(env, request, path, kind) {
     /* scanners and crawlers asking for files no site like this has: a 404
        is the right answer and there is nothing for anybody to do about it */
     if (urls.notFoundKind(path) === "probe") return;
+    if (urls.selfReferred(path, request.headers.get("referer"))) return;
     const ua = request.headers.get("user-agent") || "";
     const day = new Date().toISOString().slice(0, 10);
     const session = (await sha256Hex(clientIp(request) + "|" + ua + "|" + day)).slice(0, 24);
