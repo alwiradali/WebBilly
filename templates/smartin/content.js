@@ -45,6 +45,11 @@
      span is allowed solely to carry the gradient classes used in headings. */
   var ALLOW = { UL: 1, OL: 1, LI: 1, P: 1, B: 1, STRONG: 1, EM: 1, I: 1, BR: 1, A: 1, SPAN: 1 };
 
+  /* Unknown tags are unwrapped and their text kept, which is right for a stray
+     <div> but wrong for these: their text is code, not copy, and unwrapping
+     would print it on the page. Dropped whole instead. */
+  var DROP = { SCRIPT: 1, STYLE: 1, TEMPLATE: 1, NOSCRIPT: 1, IFRAME: 1, OBJECT: 1, EMBED: 1 };
+
   function safeHref(href) {
     if (/^https?:\/\//i.test(href)) return true;
     return !/^[a-z][a-z0-9+.-]*:/i.test(href);   // relative, /path or #anchor
@@ -57,6 +62,7 @@
       for (var n = from.firstChild; n; n = n.nextSibling) {
         if (n.nodeType === 3) { to.appendChild(document.createTextNode(n.nodeValue)); continue; }
         if (n.nodeType !== 1) continue;
+        if (DROP[n.tagName]) continue;                     // drop these and everything inside them
         if (!ALLOW[n.tagName]) { walk(n, to); continue; }  // unwrap unknown tags, keep their text
         var el = document.createElement(n.tagName.toLowerCase());
         if (n.tagName === 'A') {
