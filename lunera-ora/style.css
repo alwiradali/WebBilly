@@ -1334,3 +1334,10 @@ html.arriving body::before { content: ""; position: fixed; inset: 0; z-index: 59
 .ritual .r-panel:not(.r-intro):not(.r-outro) .r-art { background: radial-gradient(90% 70% at 50% 40%, #f6ece6 0%, #e4d3ca 55%, #c9b2a7 100%) !important; }
 .ritual .r-panel .r-art-photo img { display: none !important; }
 .ritual .r-art-photo .r-num, .ritual .r-art-lamp .r-num { color: var(--cocoa); text-shadow: none; }
+
+/* the ritual on laptops: the step number sits in the middle of the arch, like on phones */
+@media (min-width: 961px) {
+  .ritual .r-panel:not(.r-intro):not(.r-outro) .r-art { display: grid !important; place-items: center; }
+  .ritual .r-art .r-num { position: relative; inset: auto; left: auto; top: auto; bottom: auto; font: 400 clamp(110px, 11vw, 170px)/1 var(--serif); color: var(--cocoa); -webkit-text-stroke: 0; text-shadow: none; z-index: 2; }
+  .ritual .r-art .r-glyph, .ritual .r-art .care-float, .ritual .r-art .lamp-beam, .ritual .r-art .lamp-head, .ritual .r-art .lamp-glow, .ritual .r-art .r-chip { display: none !important; }
+}
