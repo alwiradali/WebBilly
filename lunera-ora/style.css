@@ -1294,3 +1294,8 @@ main .faq { background: var(--pearl-2); }
   .r-outro p { margin-inline: auto; font-size: 15px; }
   .r-outro .btn { margin-bottom: 18px; }
 }
+@media (max-width: 960px) {
+  .ritual .r-panel:not(.r-intro):not(.r-outro) .r-art { background: radial-gradient(90% 70% at 50% 40%, #f6ece6 0%, #e4d3ca 55%, #c9b2a7 100%) !important; }
+  .ritual .r-panel .r-art-photo img { display: none; }
+  .ritual .r-art-photo .r-num, .ritual .r-art-lamp .r-num { color: var(--cocoa); text-shadow: none; }
+}
