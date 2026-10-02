@@ -165,7 +165,7 @@ h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .drawer{position:fixed;inset:0;z-index:95;background:rgba(78,32,41,.38);backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);display:none}
 .drawer.on{display:block}
-.drawer-in{position:absolute;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--cream);
+.drawer-in{position:absolute;top:0;right:0;bottom:0;left:0;width:auto;background:var(--cream);
   padding:max(18px,env(safe-area-inset-top)) 30px max(26px,env(safe-area-inset-bottom));
   display:flex;flex-direction:column;overflow-y:auto;
   box-shadow:-30px 0 60px -40px rgba(78,32,41,.6);animation:dr .35s cubic-bezier(.2,.8,.2,1)}
@@ -1311,3 +1311,4 @@ footer p.fpayline{margin-top:9px;font-family:var(--ui);font-size:.66rem;letter-s
 .arch.on .ai{border-color:var(--gold)}
 .arch.on b{color:var(--gold-dk)}
 @media(max-width:420px){.arches{gap:9px}.arch b{font-size:.56rem;letter-spacing:.14em}}
+@media(min-width:761px){.drawer-in{left:auto;width:420px}}
