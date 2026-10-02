@@ -1000,12 +1000,12 @@ footer .fmain > a{border-bottom:0}
   .fcontact b{font-family:var(--ui);font-weight:500;font-size:.62rem;letter-spacing:.12em;
     text-transform:uppercase;color:#D9C3B6}
   .fcontact em{display:none}
-  .fcols{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px auto 0;text-align:left;
+  .fcols{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:28px auto 0;text-align:left;
     padding-top:22px;border-top:1px solid rgba(230,213,162,.18)}
   .fcols h4{font-size:.66rem;letter-spacing:.18em}
   .fcols ul{margin-top:10px;gap:6px}
   .fcols li{line-height:1.25}
-  .fcols a{font-size:.95rem}
+  .fcols a{font-size:.9rem;white-space:nowrap}
   footer p{font-size:.86rem;margin-top:22px;line-height:1.5}
   .fbottom{margin-top:18px;padding-top:14px;white-space:nowrap;letter-spacing:.24em;font-size:.82rem;gap:10px}
 }
@@ -1242,3 +1242,10 @@ footer .fmain > a{border-bottom:0}
   .mo1{flex-basis:78%}
   .mo1 span{font-size:1.2rem;left:16px;bottom:14px}
 }
+
+/* ---------- payment marks, small, at the foot of every page ---------- */
+.fpay{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:30px}
+.fpay svg{width:44px;height:28px;display:block;border-radius:4px;box-shadow:0 0 0 1px rgba(230,213,162,.25)}
+footer p.fpayline{margin-top:9px;font-family:var(--ui);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#B89C8F}
+@media(max-width:659px){.fpay{margin-top:24px;gap:7px}.fpay svg{width:40px;height:26px}}
+@media(max-width:379px){.fcols a{font-size:.82rem}.fcols{gap:8px}}
