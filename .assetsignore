@@ -169,3 +169,11 @@ assets/sadia
 templates/clean-my-car.html
 templates/clean-my-car-book.html
 assets/cleanmycar
+
+# Henna by Zainab — parked. The files stay in the repository but are not
+# uploaded to Cloudflare, so /templates/henna-by-zainab and every one of its
+# pictures answer 404. Delete these lines to put it back.
+templates/henna-by-zainab.html
+templates/henna-by-zainab.css
+templates/henna-by-zainab.js
+assets/zainab
